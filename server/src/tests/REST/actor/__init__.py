@@ -29,6 +29,3 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import test_login_logout
-from . import test_register
-from . import test_initialize

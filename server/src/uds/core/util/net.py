@@ -35,8 +35,9 @@ import socket
 import logging
 import typing
 
-NetworkType = typing.Tuple[int, int]
-NetworklistType = typing.List[NetworkType]
+class NetworkType(typing.NamedTuple):
+    start: int
+    end: int
 
 logger = logging.getLogger(__name__)
 
@@ -83,17 +84,11 @@ def longToIp(n: int) -> str:
 
         return '.'.join(q)
     except Exception:
-        return '0.0.0.0'  # Invalid values will map to "0.0.0.0"
+        return '0.0.0.0'  # nosec: Invalid values will map to "0.0.0.0"
 
 
 def networkFromString(strNets: str) -> NetworkType:
-    return typing.cast(NetworkType, networksFromString(strNets, False))
-
-
-def networksFromString(
-    strNets: str, allowMultipleNetworks: bool = True
-) -> typing.Union[NetworklistType, NetworkType]:
-    """
+    '''
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
       - A.B.* (or A.B.*.* )
@@ -102,10 +97,9 @@ def networksFromString(
       - A.B.C.D netmask X.X.X.X (i.e. 192.168.0.0 netmask 255.255.255.0)
       - A.B.C.D - E.F.G.D (i.e. 192-168.0.0-192.168.0.255)
       - A.B.C.D
-    If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
-    Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
-    """
-
+    returns a named tuple with networks start and network end
+    '''
+    
     inputString = strNets
     logger.debug('Getting network from %s', strNets)
 
@@ -128,17 +122,10 @@ def networksFromString(
             v |= 1 << (31 - n)
         return v
 
-    if allowMultipleNetworks:
-        res = []
-        for strNet in re.split('[;,]', strNets):
-            if strNet != '':
-                res.append(typing.cast(NetworkType, networksFromString(strNet, False)))
-        return res
-
     strNets = strNets.replace(' ', '')
 
     if strNets == '*':
-        return 0, 4294967295
+        return NetworkType(0, 4294967295)
 
     try:
         # Test patterns
@@ -152,7 +139,7 @@ def networksFromString(
             val = toNum(*m.groups())
             bits = maskFromBits(bits)
             noBits = ~bits & 0xFFFFFFFF
-            return val & bits, val | noBits
+            return NetworkType(val & bits, val | noBits)
 
         m = reMask.match(strNets)
         if m is not None:
@@ -161,7 +148,7 @@ def networksFromString(
             val = toNum(*(m.groups()[0:4]))
             bits = toNum(*(m.groups()[4:8]))
             noBits = ~bits & 0xFFFFFFFF
-            return val & bits, val | noBits
+            return NetworkType(val & bits, val | noBits)
 
         m = reRange.match(strNets)
         if m is not None:
@@ -171,14 +158,14 @@ def networksFromString(
             val2 = toNum(*(m.groups()[4:8]))
             if val2 < val:
                 raise Exception()
-            return val, val2
+            return NetworkType(val, val2)
 
         m = reHost.match(strNets)
         if m is not None:
             logger.debug('Format is a single host')
             check(*m.groups())
             val = toNum(*m.groups())
-            return val, val
+            return NetworkType(val, val)
 
         for v in ((re1Asterisk, 3), (re2Asterisk, 2), (re3Asterisk, 1)):
             m = v[0].match(strNets)
@@ -187,7 +174,7 @@ def networksFromString(
                 val = toNum(*(m.groups()[0 : v[1] + 1]))
                 bits = maskFromBits(v[1] * 8)
                 noBits = ~bits & 0xFFFFFFFF
-                return val & bits, val | noBits
+                return NetworkType(val & bits, val | noBits)
 
         # No pattern recognized, invalid network
         raise Exception()
@@ -196,15 +183,31 @@ def networksFromString(
         raise ValueError(inputString)
 
 
+def networksFromString(
+    strNets: str
+) -> typing.List[NetworkType]:
+    """
+    If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
+    Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
+    """
+    res = []
+    for strNet in re.split('[;,]', strNets):
+        if strNet != '':
+            res.append(typing.cast(NetworkType, networkFromString(strNet)))
+    return res
+
+
 def ipInNetwork(
-    ip: typing.Union[str, int], network: typing.Union[str, NetworklistType]
+    ip: typing.Union[str, int], network: typing.Union[str, NetworkType, typing.List[NetworkType]]
 ) -> bool:
     if isinstance(ip, str):
         ip = ipToLong(ip)
     if isinstance(network, str):
-        network = typing.cast(NetworklistType, networksFromString(network))
+        network = [networkFromString(network)]
+    elif isinstance(network, NetworkType):
+        network = [network]
 
-    for net in typing.cast(NetworklistType, network):
+    for net in network:
         if net[0] <= ip <= net[1]:
             return True
     return False

@@ -69,7 +69,6 @@ class CalendarChecker:
 
     def _updateData(self, dtime: datetime.datetime) -> bitarray.bitarray:
         logger.debug('Updating %s', dtime)
-        # Else, update the array
         CalendarChecker.updates += 1
 
         data = bitarray.bitarray(60 * 24)  # Granurality is minute

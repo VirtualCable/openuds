@@ -30,7 +30,7 @@
 """
 from django.test import TestCase
 
-from .. import fixtures
+from ..fixtures import notifiers as notifiers_fixtures
 from uds.core import messaging
 
 class TestEmailNotifier(TestCase):
@@ -58,7 +58,7 @@ class TestEmailNotifier(TestCase):
         """
         Test email notifier
         """
-        notifier = fixtures.notifiers.createEmailNotifier(
+        notifier = notifiers_fixtures.createEmailNotifier(
             host='localhost',
             port=self.smtp_server.port,
             enableHtml=False

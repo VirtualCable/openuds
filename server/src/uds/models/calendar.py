@@ -52,7 +52,7 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Calendar]'
+    objects: 'models.manager.Manager["Calendar"]'
     rules: 'models.manager.RelatedManager[CalendarRule]'
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     calendaraccess_set: 'models.manager.RelatedManager[CalendarAccess]'
@@ -78,7 +78,7 @@ class Calendar(UUIDModel, TaggingMixin):
         try:
             for v in self.calendaraction_set.all():
                 v.save()
-        except Exception:
+        except Exception:  # nosec: catch all, we don't want to fail here (if one action cannot be saved, we don't want to fail all)
             pass
 
         return res

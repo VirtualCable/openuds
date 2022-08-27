@@ -35,7 +35,7 @@ import typing
 from uds import models
 
 from .. import test, generators, constants
-from ... import fixtures
+from ...fixtures import authenticators as authenticators_fixtures, services as service_fixtures
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
@@ -53,28 +53,28 @@ class WEBTestCase(test.UDSTransactionTestCase):
     def setUp(self) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
-        self.auth = fixtures.authenticators.createAuthenticator()
-        self.groups = fixtures.authenticators.createGroups(
+        self.auth = authenticators_fixtures.createAuthenticator()
+        self.groups = authenticators_fixtures.createGroups(
             self.auth, NUMBER_OF_ITEMS_TO_CREATE
         )
         # Create some users, one admin, one staff and one user
-        self.admins = fixtures.authenticators.createUsers(
+        self.admins = authenticators_fixtures.createUsers(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_admin=True,
             groups=self.groups,
         )
-        self.staffs = fixtures.authenticators.createUsers(
+        self.staffs = authenticators_fixtures.createUsers(
             self.auth,
             number_of_users=NUMBER_OF_ITEMS_TO_CREATE,
             is_staff=True,
             groups=self.groups,
         )
-        self.plain_users = fixtures.authenticators.createUsers(
+        self.plain_users = authenticators_fixtures.createUsers(
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
-        self.provider = fixtures.services.createProvider()
+        self.provider = service_fixtures.createProvider()
 
     def do_login(self, username: str, password: str, authid: str, check: bool = False) -> 'test.UDSHttpResponse':
         response = typing.cast(

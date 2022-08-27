@@ -28,7 +28,3 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import core
-from . import web
-from . import messaging
-from . import REST

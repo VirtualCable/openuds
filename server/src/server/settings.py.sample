@@ -37,15 +37,6 @@ DATABASES = {
         # 'CONN_MAX_AGE': 600,		     # Enable DB Pooling, 10 minutes max connection duration
     }
 }
-# If testing, with test or with pytest, use the local test database
-if any(arg.endswith('test') for arg in sys.argv):
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'OPTIONS': {
-            'timeout': 20,
-        },
-        'NAME': ':memory:',
-    }
 
 ALLOWED_HOSTS = ['*']
 
@@ -148,6 +139,19 @@ CACHES = {
         'LOCATION': 'db.dkmon.com:11211',
     },
 }
+
+# Update DB and CACHE y debug
+if any(arg.endswith('test') or '/pytest' in arg for arg in sys.argv) or 'PYTEST_XDIST_WORKER' in os.environ:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+        },
+        'NAME': ':memory:',
+    }
+    CACHES['memory'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
 
 # Related to file uploading
 FILE_UPLOAD_PERMISSIONS = 0o640

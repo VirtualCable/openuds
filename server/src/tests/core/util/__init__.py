@@ -28,5 +28,3 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import test_cache
-from . import test_stats_counters

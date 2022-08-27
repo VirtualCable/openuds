@@ -47,8 +47,10 @@ glob = {
     'user_service_id': 1,
 }
 
+
 def createProvider() -> models.Provider:
     from uds.services.Test.provider import TestProvider
+
     provider = models.Provider()
     provider.name = 'Testing provider {}'.format(glob['provider_id'])
     provider.comments = 'Tesging provider comment {}'.format(glob['provider_id'])
@@ -62,7 +64,8 @@ def createProvider() -> models.Provider:
 
 def createSingleTestingUserServiceStructure(
     provider: 'models.Provider',
-    user: 'models.User', groups: typing.List['models.Group'],
+    user: 'models.User',
+    groups: typing.List['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
 
@@ -100,20 +103,6 @@ def createSingleTestingUserServiceStructure(
         )
         glob['osmanager_id'] += 1
 
-    values = {
-        'testURL': 'http://www.udsenterprise.com',
-        'forceNewWindow': True,
-    }
-    transport: 'models.Transport' = models.Transport.objects.create(
-        name='Transport %d' % (glob['transport_id']),
-        comments='Comment for Trnasport %d' % (glob['transport_id']),
-        data_type=TestTransport.typeType,
-        data=TestTransport(
-            environment.Environment(str(glob['transport_id'])), values
-        ).serialize(),
-    )
-    glob['transport_id'] += 1
-
     service_pool: 'models.ServicePool' = service.deployedServices.create(
         name='Service pool %d' % (glob['service_pool_id']),
         short_name='pool%d' % (glob['service_pool_id']),
@@ -129,9 +118,25 @@ def createSingleTestingUserServiceStructure(
     )
     glob['service_pool_id'] += 1
 
+    values = {
+        'testURL': 'http://www.udsenterprise.com',
+        'forceNewWindow': True,
+    }
+    transport: 'models.Transport' = models.Transport.objects.create(
+        name='Transport %d' % (glob['transport_id']),
+        comments='Comment for Trnasport %d' % (glob['transport_id']),
+        data_type=TestTransport.typeType,
+        data=TestTransport(
+            environment.Environment(str(glob['transport_id'])), values
+        ).serialize(),
+    )
+    glob['transport_id'] += 1
+
     service_pool.publications.add(publication)
     for g in groups:
         service_pool.assignedGroups.add(g)
+    service_pool.transports.add(transport)
+
     service_pool.transports.add(transport)
 
     user_service: 'models.UserService' = service_pool.userServices.create(

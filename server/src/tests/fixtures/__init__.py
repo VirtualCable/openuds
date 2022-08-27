@@ -28,7 +28,3 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from uds.models import notifications
-from . import authenticators
-from . import notifiers
-from . import services

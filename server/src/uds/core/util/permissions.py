@@ -68,9 +68,6 @@ def getEffectivePermission(
         if user.is_admin:
             return PERMISSION_ALL
 
-        if not user.staff_member:
-            return PERMISSION_NONE
-
         # Just check permissions for staff members
         # root means for "object type" not for an object
         if root is False:

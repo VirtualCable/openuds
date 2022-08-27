@@ -28,6 +28,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import copy
 import typing
 import datetime
 import random
@@ -35,59 +36,199 @@ import random
 from uds import models
 from uds.models.calendar_rule import freqs, dunits
 
-# Counters so we can reinvoke the same method and generate new data
-glob = {
-    'calendar_id': 1,
-    'calendar_rule_id': 1,
+
+# fixtures for calendars and calendar rules
+CALENDAR_DATA: typing.Mapping[str, typing.List[typing.Dict[str, typing.Union[str,int,None]]]] = {
+    'calendars': [
+        {
+            "modified": "2015-09-18T00:04:31.792",
+            "uuid": "2cf6846b-d889-57ce-bb35-e647040a95b6",
+            "comments": "Calendar by days",
+            "name": "Calendar Dayly",
+        },
+        {
+            "modified": "2015-09-18T00:05:44.386",
+            "uuid": "c1221a6d-3848-5fa3-ae98-172662c0f554",
+            "comments": "Calendar by weeks",
+            "name": "Calendar Weekly",
+        },
+        {
+            "modified": "2015-09-18T00:03:47.362",
+            "uuid": "353c4cb8-e02d-5387-a18f-f634729fde81",
+            "comments": "Calendar by months",
+            "name": "Calendar Monthly",
+        },
+        {
+            "modified": "2015-09-18T00:05:33.958",
+            "uuid": "bccfd011-605b-565f-a08e-80bf75114dce",
+            "comments": "Calendar by day of week",
+            "name": "Calendar Weekdays",
+        },
+        {
+            "modified": "2015-09-18T00:19:51.131",
+            "uuid": "60160f94-c8fe-5fdc-bbbe-325010980106",
+            "comments": "Calendar tests for durations",
+            "name": "Calendar xDurations",
+        },
+    ],
+    'rules': [
+        {
+            "end": None,
+            "uuid": "42846f5f-6a61-5257-beb5-67beb179d6b1",
+            "duration_unit": "HOURS",
+            "interval": 1,
+            "comments": "Rule with 1 day interval, no end",
+            "start": "2015-09-01T08:00:00",
+            "frequency": "DAILY",
+            "duration": 12,
+            "calendar": 0,
+            "name": "Rule interval 1 day, no end",
+        },
+        {
+            "end": "2015-10-01",
+            "uuid": "f20d8841-72d2-5054-b590-37dc19729b80",
+            "duration_unit": "MINUTES",
+            "interval": 1,
+            "comments": "Rule with 1 day interval, with an end",
+            "start": "2015-09-01T21:00:00",
+            "frequency": "DAILY",
+            "duration": 300,
+            "calendar": 0,
+            "name": "Rule interval 1 day, end",
+        },
+        {
+            "end": None,
+            "uuid": "935cceba-4384-50ba-a125-ea40727f0609",
+            "duration_unit": "HOURS",
+            "interval": 1,
+            "comments": "Rule with 1 week interval, no end.",
+            "start": "2015-09-01T07:00:00",
+            "frequency": "WEEKLY",
+            "duration": 2,
+            "calendar": 1,
+            "name": "Rule with 1 week interval, no end",
+        },
+        {
+            "end": "2015-10-01",
+            "uuid": "53c94b8a-6ab4-5c06-b863-083e88bd8469",
+            "duration_unit": "MINUTES",
+            "interval": 1,
+            "comments": "Rule with 1 week interval, with end",
+            "start": "2015-09-01T10:00:00",
+            "frequency": "WEEKLY",
+            "duration": 120,
+            "calendar": 1,
+            "name": "Rule with 1 week interval, with end",
+        },
+        {
+            "end": None,
+            "uuid": "ff8168a4-0c0c-5a48-acee-f8b3f04d52b8",
+            "duration_unit": "HOURS",
+            "interval": 1,
+            "comments": "Rule with 1 month interval, no end",
+            "start": "2015-09-01T07:00:00",
+            "frequency": "MONTHLY",
+            "duration": 2,
+            "calendar": 2,
+            "name": "Rule with 1 month interval, no end",
+        },
+        {
+            "end": "2015-11-01",
+            "uuid": "0c4e2086-f807-5801-889c-3d568e42033f",
+            "duration_unit": "MINUTES",
+            "interval": 1,
+            "comments": "Rule with 1 month interval, with end",
+            "start": "2015-09-01T10:00:00",
+            "frequency": "MONTHLY",
+            "duration": 120,
+            "calendar": 2,
+            "name": "Rule with 1 month interval, with end",
+        },
+        {
+            "end": None,
+            "uuid": "3227f381-c017-5d5c-b2ca-863e5ac643ce",
+            "duration_unit": "HOURS",
+            "interval": 42,
+            "comments": "Rule for Mon, Wed & Fri, no end",
+            "start": "2015-09-01T07:00:00",
+            "frequency": "WEEKDAYS",
+            "duration": 2,
+            "calendar": 3,
+            "name": "Rule for Mon, Wed & Fri, no end",
+        },
+        {
+            "end": "2015-10-01",
+            "uuid": "2c16056e-97b1-5a4e-ae34-ab99c73ddd8f",
+            "duration_unit": "MINUTES",
+            "interval": 42,
+            "comments": "Rule for Mon, Wed & Fri, with end",
+            "start": "2015-09-01T10:00:00",
+            "frequency": "WEEKDAYS",
+            "duration": 120,
+            "calendar": 3,
+            "name": "Rule for Mon, Wed & Fri, with end",
+        },
+        {
+            "end": "2015-01-01",
+            "uuid": "a4dd4e82-65bd-5824-bd78-95eafb40abf5",
+            "duration_unit": "MINUTES",
+            "interval": 1,
+            "comments": "For testing minutes",
+            "start": "2015-01-01T00:00:00",
+            "frequency": "DAILY",
+            "duration": 2,
+            "calendar": 4,
+            "name": "Test Minutes",
+        },
+        {
+            "end": "2015-02-01",
+            "uuid": "9194d314-a6b0-5d7f-a3e3-08ff475e271c",
+            "duration_unit": "HOURS",
+            "interval": 1,
+            "comments": "for testing hours",
+            "start": "2015-02-01T00:00:00",
+            "frequency": "DAILY",
+            "duration": 2,
+            "calendar": 4,
+            "name": "Test Hours",
+        },
+        {
+            "end": "2015-03-01",
+            "uuid": "bffb7290-16eb-5be0-adb2-6b454d6d7b49",
+            "duration_unit": "DAYS",
+            "interval": 1,
+            "comments": "For testing days",
+            "start": "2015-03-01T00:00:00",
+            "frequency": "DAILY",
+            "duration": 2,
+            "calendar": 4,
+            "name": "Test Days",
+        },
+        {
+            "end": "2015-04-01",
+            "uuid": "dc8e30e9-2bf2-5008-a46b-2457376fb2e0",
+            "duration_unit": "WEEKS",
+            "interval": 1,
+            "comments": "for testing weeks",
+            "start": "2015-04-01T08:00:00",
+            "frequency": "DAILY",
+            "duration": 2,
+            "calendar": 4,
+            "name": "Test Weeks",
+        },
+    ],
 }
 
-def createCalendars(number: int) -> typing.List[models.Calendar]:
-    """
-    Creates some testing calendars
-    """
+def createCalendars() -> typing.Tuple[typing.List[models.Calendar], typing.List[models.CalendarRule]]:
     calendars: typing.List[models.Calendar] = []
-    for i in range(number):
-        calendar = models.Calendar.objects.create(
-            name='Calendar {}'.format(glob['calendar_id']),
-            comments='Calendar {} comments'.format(glob['calendar_id']),
-        )
-        calendars.append(calendar)
-        glob['calendar_id'] += 1
-    return calendars
-
-
-def createRules(number: int, calendar: models.Calendar) -> typing.List[models.CalendarRule]:
-    """
-    Creates some testing rules associated to a calendar
-    """
     rules: typing.List[models.CalendarRule] = []
-    rnd = random.Random()  # nosec: testing purposes
-    for i in range(number):
-        # All rules will start now
-        # Rules duration will be a random between 1 and 10 days
-        # freqs a random value from freqs
-        # interval is a random value between 1 and 10
-        # duration is a random value between 0 and 24
-        # duration_unit is a random from dunits
-        start = datetime.datetime.now()
-        end = start + datetime.timedelta(days=rnd.randint(1, 10))
-        freq = rnd.choice(freqs)
-        interval = rnd.randint(1, 10)
-        duration = rnd.randint(0, 24)
-        duration_unit = rnd.choice(dunits)
+    for calendar in CALENDAR_DATA["calendars"]:
+        calendars.append(models.Calendar.objects.create(**calendar))
+    for r in CALENDAR_DATA["rules"]:
+        # Extract parent calendar
+        rule = r.copy()
+        parent = calendars[typing.cast(int, rule['calendar'])]
+        del rule['calendar']
+        rules.append(parent.rules.create(**rule))
 
-        rule = models.CalendarRule.objects.create(
-            calendar=calendar,
-            name='Rule {}'.format(glob['calendar_rule_id']),
-            comments='Rule {} comments'.format(glob['calendar_rule_id']),
-            start=start,
-            end=end,
-            freq=freq,
-            interval=interval,
-            duration=duration,
-            duration_unit=duration_unit,
-        )
-        rules.append(rule)
-        glob['calendar_rule_id'] += 1
-
-    return rules
+    return calendars, rules
