@@ -56,7 +56,7 @@ class HangedCleaner(Job):
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
             state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING
-        )
+        ) | Q(state_date__lt=since_removing, state__in=[State.REMOVING, State.CANCELING])
 
         withHangedServices = (
             ServicePool.objects.annotate(
@@ -74,7 +74,7 @@ class HangedCleaner(Job):
                     )
                     | Q(
                         userServices__state_date__lt=since_removing,
-                        userServices__state=State.REMOVING,
+                        userServices__state__in=[State.REMOVING, State.CANCELING],
                     ),
                 )
             )
@@ -96,7 +96,7 @@ class HangedCleaner(Job):
                     continue
                 logger.debug('Found hanged service %s', us)
                 if (
-                    us.state == State.REMOVING
+                    us.state in [State.REMOVING, State.CANCELING]
                 ):  # Removing too long, remark it as removable
                     log.doLog(
                         us,
