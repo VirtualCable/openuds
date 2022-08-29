@@ -85,19 +85,24 @@ class UniqueIdTests(UDSTestCase):
         self.assertEqual(self.uidGen.get(), 0)
 
     def test_release_older_unique_id(self):
-        self.uidGen.get()  # 0
+        NUM = 100
+        for i in range(NUM):
+            self.assertEqual(self.uidGen.get(), i)
 
-        self.assertEqual(self.uidGen.get(), 1)
-
+        stamp = getSqlDatetimeAsUnix() + 1
         time.sleep(2)
 
-        self.uidGen.get()  # 2
+        for i in range(NUM):
+            self.assertEqual(self.uidGen.get(), i + NUM)
 
-        self.uidGen.releaseOlderThan(getSqlDatetimeAsUnix() - 1)  # Clear ups older than 1 seconds ago
+        self.uidGen.releaseOlderThan(stamp)  # Clear ups older than 0 seconds ago
 
-        self.assertEqual(self.uidGen.get(), 0)
-        self.assertEqual(self.uidGen.get(), 1)
-        self.assertEqual(self.uidGen.get(), 3)
+        for i in range(NUM):
+            self.assertEqual(self.uidGen.get(), i)
+
+        # from NUM to NUM*2-1 (both included) are still there, so we should get 200
+        self.assertEqual(self.uidGen.get(), NUM*2)
+        self.assertEqual(self.uidGen.get(), NUM*2+1)
 
     def test_gid(self):
         for x in range(100):

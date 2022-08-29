@@ -36,9 +36,8 @@ from django.test.client import Client
 from django.http.response import HttpResponse
 from django.conf import settings
 
-from uds import models
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 from uds.core.managers.crypto import CryptoManager
+from uds.core.util.config import GlobalConfig
 
 
 logger = logging.getLogger(__name__)
@@ -104,14 +103,26 @@ class UDSClient(Client):
     def post(self, *args, **kwargs) -> 'UDSHttpResponse':
         return typing.cast('UDSHttpResponse', super().post(*args, **kwargs))
 
-
 class UDSTestCase(TestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient
 
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        setupClass(cls)
 
 class UDSTransactionTestCase(TransactionTestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        setupClass(cls)
+
+def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]) -> None:
+    # Nothing right now
+    pass

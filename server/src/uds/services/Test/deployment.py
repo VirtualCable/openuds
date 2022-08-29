@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 20122 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -64,7 +64,11 @@ class TestUserDeployment(services.UserDeployment):
         ip: str = ''
         mac: str = ''
 
-    data: Data = dataclasses.field(default_factory=Data)
+    data: Data
+
+    def initialize(self) -> None:
+        super().initialize()
+        self.data = TestUserDeployment.Data()
 
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 5

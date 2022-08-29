@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import base64
-import pickle
+import pickle  # nosec: Safe pickle usage
 import gzip
 import typing
 
@@ -92,7 +92,7 @@ class Serializable:
                to unmarshal that data variable
         """
         if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
-            setattr(self, 'data', pickle.loads(data))
+            setattr(self, 'data', pickle.loads(data))  # nosec: Safe pickle load
             return
 
         raise NotImplementedError('You must override the unmarshal method or provide a data member')

@@ -153,3 +153,24 @@ def createSingleTestingUserServiceStructure(
     )
 
     return user_service
+
+
+def newUserServiceForTesting(
+    count: int = 1,
+    type_: typing.Union[
+        typing.Literal['managed'], typing.Literal['unmanaged']
+    ] = 'managed',
+) -> typing.List[models.UserService]:
+    from . import authenticators
+
+    auth = authenticators.createAuthenticator()
+    user_services: typing.List[models.UserService] = []
+    for _ in range(count):
+        groups = authenticators.createGroups(auth, 3)
+        user = authenticators.createUsers(auth, 1, groups=groups)[0]
+        user_services.append(
+            createSingleTestingUserServiceStructure(
+                createProvider(), user, groups, type_
+            )
+        )
+    return user_services

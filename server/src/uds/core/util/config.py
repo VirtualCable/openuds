@@ -86,7 +86,7 @@ class Config:
 
 
     class Value:
-        _section: 'Config.Section'
+        _section: 'Config.Section'  # type: ignore  # mypy bug?
         _type: int
         _key: str
         _crypt: bool
@@ -211,13 +211,16 @@ class Config:
         def getHelp(self) -> str:
             return gettext(self._help)
 
-        def set(self, value: typing.Union[str, bool]) -> None:
+        def set(self, value: typing.Union[str, bool, int]) -> None:
             if GlobalConfig.isInitialized() is False:
                 _saveLater.append((self, value))
                 return
 
             if isinstance(value, bool):
                 value = ['0', '1'][value]
+
+            if isinstance(value, int):
+                value = str(value)
 
             if self._crypt:
                 value = cryptoManager().encrypt(value)
@@ -249,6 +252,8 @@ class Config:
                     self._section.name(),
                     self._key,
                 )
+            finally:
+                self._data = value
 
         def __str__(self) -> str:
             return '{}.{}'.format(self._section.name(), self._key)
