@@ -140,6 +140,27 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
 
+    @property
+    def destroy_after(self) -> bool:
+        """
+        Returns True if this service is to be removed
+        """
+        return self.getProperty('to_be_removed', 'n') == 'y'
+
+    @destroy_after.setter
+    def destroy_after(self, value: bool) -> None:
+        """
+        Sets the to_be_removed property
+        """
+        self.setProperty('destroy_after', 'y' if value else 'n')
+
+    @destroy_after.deleter
+    def destroy_after(self) -> None:
+        """
+        Removes the to_be_removed property
+        """
+        self.deleteProperty('destroy_after')
+
     def getEnvironment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents.
@@ -570,6 +591,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         prop, _ = self.properties.get_or_create(name=propName)
         prop.value = propValue or ''
         prop.save()
+
+    def deleteProperty(self, propName: str) -> None:
+        try:
+            self.properties.get(name=propName).delete()
+        except Exception:  # nosec: we don't care if it does not exists
+            pass
 
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.setProperty('comms_url', commsUrl)

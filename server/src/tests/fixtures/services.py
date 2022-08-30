@@ -62,21 +62,21 @@ def createProvider() -> models.Provider:
     return provider
 
 
-def createSingleTestingUserServiceStructure(
+def createOneCacheTestingUserService(
     provider: 'models.Provider',
     user: 'models.User',
     groups: typing.List['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
 
-    from uds.services.Test.service import ServiceTestCache, ServiceTestNoCache
+    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
     from uds.osmanagers.Test import TestOSManager
     from uds.transports.Test import TestTransport
 
     service: 'models.Service' = provider.services.create(
         name='Service {}'.format(glob['service_id']),
-        data_type=ServiceTestCache.typeType,
-        data=ServiceTestCache(
+        data_type=TestServiceCache.typeType,
+        data=TestServiceCache(
             environment.Environment(str(glob['service_id'])), provider.getInstance()
         ).serialize(),
         token=generators.random_string(16) + str(glob['service_id']),
@@ -155,7 +155,7 @@ def createSingleTestingUserServiceStructure(
     return user_service
 
 
-def createUserServiceForTesting(
+def createCacheTestingUserServices(
     count: int = 1,
     type_: typing.Union[
         typing.Literal['managed'], typing.Literal['unmanaged']
@@ -169,7 +169,7 @@ def createUserServiceForTesting(
         groups = authenticators.createGroups(auth, 3)
         user = authenticators.createUsers(auth, 1, groups=groups)[0]
         user_services.append(
-            createSingleTestingUserServiceStructure(
+            createOneCacheTestingUserService(
                 createProvider(), user, groups, type_
             )
         )

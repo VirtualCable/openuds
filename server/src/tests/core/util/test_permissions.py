@@ -66,7 +66,7 @@ class PermissionsTests(UDSTransactionTestCase):
         self.staffs = authenticators_fixtures.createUsers(
             self.authenticator, is_staff=True, groups=self.groups
         )
-        self.userService = services_fixtures.createSingleTestingUserServiceStructure(
+        self.userService = services_fixtures.createOneCacheTestingUserService(
             services_fixtures.createProvider(),
             self.users[0],
             list(self.users[0].groups.all()),

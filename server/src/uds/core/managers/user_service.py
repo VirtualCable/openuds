@@ -88,8 +88,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return Q(cache_level=level) & self.getStateFilter(servicePool.service)
 
     @staticmethod
-    def getStateFilter(servicePool: ServicePool) -> Q:
-        if servicePool.service.oldMaxAccountingMethod:  # If no limits and accounting method is not old one
+    def getStateFilter(service: 'models.Service') -> Q:
+        if service.oldMaxAccountingMethod:  # If no limits and accounting method is not old one
             # Valid states are: PREPARING, USABLE
             states = [State.PREPARING, State.USABLE] 
         else:  # New accounting method selected
@@ -97,6 +97,18 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return Q(state__in=states)
 
     def _checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
+        """
+        Checks if maxDeployed for the service has been reached, and, if so,
+        raises an exception that no more services of this kind can be reached
+        """
+        if self.maximumUserServicesDeployed(servicePool.service):
+            raise MaxServicesReachedError(
+                _('Maximum number of user services reached for this {}').format(
+                    servicePool
+                )
+            )
+
+    def getExistingUserServices(self, service: 'models.Service') -> int:
         """
         Returns the number of running user services for this service
         """
@@ -113,23 +125,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if serviceInstance.maxDeployed == services.Service.UNLIMITED:
             return False
 
-        numberOfServices = servicePool.userServices.filter(
-            self.getStateFilter(servicePool)
-        ).count()
+        if self.getExistingUserServices(service) >= (serviceInstance.maxDeployed or 1):
+            logger.debug('Maximum number of user services reached for this service: {}'.format(service.name))
+            return True
 
         return False
-
-    def __checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
-        """
-        Checks if maxDeployed for the service has been reached, and, if so,
-        raises an exception that no more services of this kind can be reached
-        """
-        if self.maximumUserServicesDeployed(servicePool.service):
-            raise MaxServicesReachedError(
-                _('Maximum number of user services reached for this {}').format(
-                    servicePool
-                )
-            )
 
     def _createCacheAtDb(
         self, publication: ServicePoolPublication, cacheLevel: int
@@ -217,7 +217,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Creates a new assigned deployed service for the current publication (if any) of service pool and user indicated
         """
         # First, honor maxPreparingServices
-        if self.canInitiateServiceFromDeployedService(servicePool) is False:
+        if self.canGrowServicePool(servicePool) is False:
             # Cannot create new
             logger.info(
                 'Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).'
@@ -338,7 +338,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             not userServiceInstance.supportsCancel()
         ):  # Does not supports cancel, but destroy, so mark it for "later" destroy
             # State is kept, just mark it for destroy after finished preparing
-            userService.setProperty('destroy_after', 'y')
+            userService.destroy_after = True
         else:
             userService.setState(State.CANCELING)
             # We simply notify service that it should cancel operation
@@ -595,7 +595,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return False
         return True
 
-    def canInitiateServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
+    def canGrowServicePool(self, servicePool: ServicePool) -> bool:
         """
         Checks if we can start a new service
         """
@@ -1004,7 +1004,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             sortPools = [(p.pool.usage(), p.pool) for p in poolMembers]
         else:
             sortPools = [
-                (random.randint(0, 10000), p.pool) for p in poolMembers
+                (random.randint(0, 10000), p.pool) for p in poolMembers  # nosec: just a suffle, not a crypto (to get a round robin-like behavior)
             ]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys

@@ -53,7 +53,7 @@ class StuckCleaner(Job):
     We keep it in a new place to "control" more specific thins
     """
 
-    frecuency = 3601 * 8  # Executes Once a day
+    frecuency = 3601 * 8  # Executes every 8 hours
     friendly_name = 'Stuck States cleaner'
 
     def run(self) -> None:
@@ -84,6 +84,8 @@ class StuckCleaner(Job):
         # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
         def stuckUserServices(servicePool: ServicePool) -> typing.Iterable[UserService]:
             q = servicePool.userServices.filter(state_date__lt=since_state)
+            # Get all that are not in valid or info states, AND the ones that are "PREPARING" with 
+            # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)
             yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
             yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
 

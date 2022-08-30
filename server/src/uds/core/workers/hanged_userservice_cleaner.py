@@ -90,9 +90,7 @@ class HangedCleaner(Job):
             logger.debug('Searching for hanged services for %s', servicePool)
             us: UserService
             for us in servicePool.userServices.filter(flt):
-                if us.getProperty(
-                    'destroy_after'
-                ):  # It's waiting for removal, skip this very specific case
+                if us.destroy_after:  # It's waiting for removal, skip this very specific case
                     continue
                 logger.debug('Found hanged service %s', us)
                 if (

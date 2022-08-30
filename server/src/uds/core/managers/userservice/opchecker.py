@@ -156,8 +156,8 @@ class UpdateFromPreparing(StateUpdater):
         return state
 
     def finish(self):
-        if self.userService.getProperty('destroy_after'):  # Marked for destroyal
-            self.userService.setProperty('destroy_after', '')  # Cleanup..
+        if self.userService.destroy_after:  # Marked for destroyal
+            del self.userService.destroy_after  # Cleanup..
             self.save(State.REMOVABLE)  # And start removing it
             return
 
@@ -311,6 +311,6 @@ class UserServiceOpChecker(DelayedTask):
                 log.doLog(uService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
                 try:
                     uService.setState(State.ERROR)
-                    uService.save(update_fields=['data', 'state', 'state_date'])
+                    uService.save(update_fields=['data'])
                 except Exception:
                     logger.error('Can\'t update state of uService object')

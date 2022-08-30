@@ -40,7 +40,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core import services
 from uds.core import module
-from .service import ServiceTestNoCache, ServiceTestCache
+from .service import TestServiceNoCache, TestServiceCache
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,7 +57,7 @@ class TestProvider(services.ServiceProvider):
 
     """
     # : What kind of services we offer, this are classes inherited from Service
-    offers = [ServiceTestNoCache, ServiceTestCache]
+    offers = [TestServiceNoCache, TestServiceCache]
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)

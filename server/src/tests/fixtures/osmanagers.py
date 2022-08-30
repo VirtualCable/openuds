@@ -69,8 +69,8 @@ def createServices(
     """
     Creates a number of services
     """
-    from uds.services.Test.service import ServiceTestCache, ServiceTestNoCache
-    service_type = ServiceTestCache if type_of_service == 'cache' else ServiceTestNoCache
+    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
+    service_type = TestServiceCache if type_of_service == 'cache' else TestServiceNoCache
 
     services = []
     for i in range(number_of_services):

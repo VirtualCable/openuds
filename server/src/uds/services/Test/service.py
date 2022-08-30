@@ -48,53 +48,27 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServiceTestNoCache(services.Service):
+class TestServiceNoCache(services.Service):
     """
     Basic testing service without cache and no publication OFC
     """
-    # : Name to show the administrator. This string will be translated BEFORE
-    # : sending it to administration interface, so don't forget to
-    # : mark it as _ (using gettext_noop)
     typeName = _('Testing Service no cache')
-    # : Type used internally to identify this provider
     typeType = 'TestService1'
-    # : Description shown at administration interface for this provider
     typeDescription = _('Testing (and dummy) service with no cache')
-    # : Icon file used as icon for this provider. This string will be translated
-    # : BEFORE sending it to administration interface, so don't forget to
-    # : mark it as _ (using gettext_noop)
     iconFile = 'service.png'
 
     # Functional related data
 
-    # : If the service provides more than 1 "deployed user" (-1 = no limit,
-    # : 0 = ???? (do not use it!!!), N = max number to deploy
-    maxDeployed = -1
-    # : If we need to generate "cache" for this service, so users can access the
-    # : provided services faster. Is usesCache is True, you will need also
-    # : set publicationType, do take care about that!
+    maxDeployed = 1000  # A big number for testing purposes
     usesCache = False
-    # : Tooltip shown to user when this item is pointed at admin interface, none
-    # : because we don't use it
     cacheTooltip = _('None')
-    # : If we need to generate a "Level 2" cache for this service (i.e., L1
-    # : could be running machines and L2 suspended machines)
     usesCache_L2 = False
-    # : Tooltip shown to user when this item is pointed at admin interface, None
-    # : also because we don't use it
     cacheTooltip_L2 = _('None')
 
-    # : If the service needs a s.o. manager (managers are related to agents
-    # : provided by services itselfs, i.e. virtual machines with actors)
     needsManager = False
-    # : If true, the system can't do an automatic assignation of a deployed user
-    # : service from this service
     mustAssignManually = False
 
-    # : Types of publications (preparated data for deploys)
-    # : In our case, we do no need a publication, so this is None
     publicationType = None
-    # : Types of deploys (services in cache and/or assigned to users)
     deployedType = TestUserDeployment
 
     def parent(self) -> 'TestProvider':
@@ -106,7 +80,7 @@ class ServiceTestNoCache(services.Service):
     def getBaseName(self) -> str:
         return self.parent().getName()
 
-class ServiceTestCache(services.Service):
+class TestServiceCache(services.Service):
     """
     A simple testging service WITH cache and publication OFC
     """
@@ -117,7 +91,7 @@ class ServiceTestCache(services.Service):
     iconFile = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
     # Functional related data
-    maxDeployed = -1
+    maxDeployed = 1000  # A big number for testing
     usesCache = True
     cacheTooltip = _('L1 cache for dummy elements')
     usesCache_L2 = True

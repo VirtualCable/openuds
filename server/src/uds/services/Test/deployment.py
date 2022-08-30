@@ -42,7 +42,7 @@ from . import service
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from .service import ServiceTestNoCache, ServiceTestCache
+    from .service import TestServiceNoCache, TestServiceCache
     from .publication import TestPublication
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ class TestUserDeployment(services.UserDeployment):
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 5
 
-    def service(self) -> typing.Union['ServiceTestNoCache', 'ServiceTestCache']:
+    def service(self) -> typing.Union['TestServiceNoCache', 'TestServiceCache']:
         return typing.cast('ServiceTestNoCache', super().service())
 
     def getName(self) -> str:

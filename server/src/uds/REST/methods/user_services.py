@@ -76,7 +76,7 @@ class AssignedService(DetailHandler):
             'friendly_name': item.friendly_name,
             'state': item.state
             if not (props.get('destroy_after') and item.state == State.PREPARING)
-            else State.CANCELING,
+            else State.CANCELING,  # Destroy after means that we need to cancel AFTER finishing preparing, but not before...
             'os_state': item.os_state,
             'state_date': item.state_date,
             'creation_date': item.creation_date,
@@ -208,7 +208,7 @@ class AssignedService(DetailHandler):
         user = models.User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            userService.user.pretty_name, user.pretty_name, self._user.pretty_name
+            userService.user, user.pretty_name, self._user.pretty_name
         )
 
         # If there is another service that has this same owner, raise an exception

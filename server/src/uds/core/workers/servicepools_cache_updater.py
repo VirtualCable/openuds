@@ -179,12 +179,9 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # If this service don't allows more starting user services, continue
-            if (
-                userServiceManager().canInitiateServiceFromDeployedService(servicePool)
-                is False
-            ):
+            if not userServiceManager().canGrowServicePool(servicePool):
                 logger.debug(
-                    'This provider has the max allowed starting services running: %s',
+                    'This pool cannot grow rithg now: %s',
                     servicePool,
                 )
                 continue
