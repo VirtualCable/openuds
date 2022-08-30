@@ -146,7 +146,7 @@ class ServiceCacheUpdater(Job):
             )
             inAssigned: int = (
                 servicePool.assignedUserServices()
-                .filter(userServiceManager().getStateFilter(servicePool))
+                .filter(userServiceManager().getStateFilter(servicePool.service))
                 .count()
             )
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider

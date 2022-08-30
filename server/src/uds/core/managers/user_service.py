@@ -66,6 +66,9 @@ from uds.web.util.errors import MAX_SERVICES_REACHED
 from .userservice import comms
 from .userservice.opchecker import UserServiceOpChecker
 
+if typing.TYPE_CHECKING:
+    from uds import models
+
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 
@@ -80,14 +83,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
             UserServiceManager()
         )  # Singleton pattern will return always the same instance
 
-    @staticmethod
-    def getCacheStateFilter(servicePool: ServicePool, level: int) -> Q:
-        return Q(cache_level=level) & UserServiceManager.getStateFilter(servicePool)
+    def getCacheStateFilter(self, servicePool: ServicePool, level: int) -> Q:
+        return Q(cache_level=level) & self.getStateFilter(servicePool.service)
 
-    @staticmethod
-    def getStateFilter(servicePool: ServicePool) -> Q:
+    def getStateFilter(self, service: 'models.Service') -> Q:
         if (
-            servicePool.service.getInstance().maxDeployed == services.Service.UNLIMITED
+            service.getInstance().maxDeployed == services.Service.UNLIMITED
             and GlobalConfig.MAX_SERVICES_COUNT_NEW.getBool() is False
         ):
             states = [State.PREPARING, State.USABLE]
@@ -95,23 +96,38 @@ class UserServiceManager(metaclass=singleton.Singleton):
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
 
+    def getExistingUserServices(self, service: 'models.Service') -> int:
+        """
+        Returns the number of running user services for this service
+        """
+        return UserService.objects.filter(
+            self.getStateFilter(service) & Q(deployed_service__service=service)
+        ).count()
+
+    def maximumUserServicesDeployed(self, service: 'models.Service') -> bool:
+        """
+        Checks if the maximum number of user services for this service has been reached
+        """
+        serviceInstance = service.getInstance()
+        # Early return, so no database count is needed
+        if serviceInstance.maxDeployed == services.Service.UNLIMITED:
+            return False
+
+        if self.getExistingUserServices(service) >= serviceInstance.maxDeployed:
+            return True
+
+        return False
+
     def __checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
         """
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         """
-        serviceInstance = servicePool.service.getInstance()
-        # Early return, so no database count is needed
-        if serviceInstance.maxDeployed == services.Service.UNLIMITED:
-            return
-
-        numberOfServices = servicePool.userServices.filter(
-            state__in=[State.PREPARING, State.USABLE]
-        ).count()
-
-        if serviceInstance.maxDeployed <= numberOfServices:
+        if self.maximumUserServicesDeployed(servicePool.service):
             raise MaxServicesReachedError(
-                'Max number of allowed deployments for service reached'
+                _('Maximum number of user services reached for this {}').format(
+                    servicePool
+                )
             )
 
     def __createCacheAtDb(
@@ -528,7 +544,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if serviceType.usesCache:
             inAssigned = (
                 servicePool.assignedUserServices()
-                .filter(UserServiceManager.getStateFilter(servicePool))
+                .filter(self.getStateFilter(servicePool.service))
                 .count()
             )
             if (
@@ -546,12 +562,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
         events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=0)
         return self.createAssignedFor(servicePool, user)
 
-    def getServicesInStateForProvider(self, provider_id: int, state: str) -> int:
+    def getUserServicesInStatesForProvider(
+        self, provider: 'models.Provider', states: typing.List[str]
+    ) -> int:
         """
         Returns the number of services of a service provider in the state indicated
         """
         return UserService.objects.filter(
-            deployed_service__service__provider__id=provider_id, state=state
+            deployed_service__service__provider=provider, state__in=states
         ).count()
 
     def canRemoveServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
@@ -559,8 +577,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         checks if we can do a "remove" from a deployed service
         serviceIsntance is just a helper, so if we already have unserialized deployedService
         """
-        removing = self.getServicesInStateForProvider(
-            servicePool.service.provider.id, State.REMOVING
+        removing = self.getUserServicesInStatesForProvider(
+            servicePool.service.provider, [State.REMOVING]
         )
         serviceInstance = servicePool.service.getInstance()
         if (
@@ -574,12 +592,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Checks if we can start a new service
         """
-        preparing = self.getServicesInStateForProvider(
-            servicePool.service.provider.id, State.PREPARING
+        preparingForProvider = self.getUserServicesInStatesForProvider(
+            servicePool.service.provider, [State.PREPARING]
         )
         serviceInstance = servicePool.service.getInstance()
-        if (
-            preparing >= serviceInstance.parent().getMaxPreparingServices()
+        if self.maximumUserServicesDeployed(servicePool.service) or (
+            preparingForProvider >= serviceInstance.parent().getMaxPreparingServices()
             and serviceInstance.parent().getIgnoreLimits() is False
         ):
             return False
