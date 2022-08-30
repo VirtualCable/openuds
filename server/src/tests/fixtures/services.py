@@ -155,7 +155,7 @@ def createSingleTestingUserServiceStructure(
     return user_service
 
 
-def newUserServiceForTesting(
+def createUserServiceForTesting(
     count: int = 1,
     type_: typing.Union[
         typing.Literal['managed'], typing.Literal['unmanaged']

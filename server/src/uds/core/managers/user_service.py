@@ -94,7 +94,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
 
-    def __checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
+    def _checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
         """
         Checks if maxDeployed for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
@@ -105,7 +105,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return
 
         numberOfServices = servicePool.userServices.filter(
-            state__in=[State.PREPARING, State.USABLE]
+            self.getStateFilter(servicePool)
         ).count()
 
         if serviceInstance.maxDeployed <= numberOfServices:
@@ -113,14 +113,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 'Max number of allowed deployments for service reached'
             )
 
-    def __createCacheAtDb(
+    def _createCacheAtDb(
         self, publication: ServicePoolPublication, cacheLevel: int
     ) -> UserService:
         """
         Private method to instatiate a cache element at database with default states
         """
         # Checks if maxDeployed has been reached and if so, raises an exception
-        self.__checkMaxDeployedReached(publication.deployed_service)
+        self._checkMaxDeployedReached(publication.deployed_service)
         now = getSqlDatetime()
         return publication.userServices.create(
             cache_level=cacheLevel,
@@ -134,13 +134,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def __createAssignedAtDb(
+    def _createAssignedAtDb(
         self, publication: ServicePoolPublication, user: User
     ) -> UserService:
         """
         Private method to instatiate an assigned element at database with default state
         """
-        self.__checkMaxDeployedReached(publication.deployed_service)
+        self._checkMaxDeployedReached(publication.deployed_service)
         now = getSqlDatetime()
         return publication.userServices.create(
             cache_level=0,
@@ -154,7 +154,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             in_use=False,
         )
 
-    def __createAssignedAtDbForNoPublication(
+    def _createAssignedAtDbForNoPublication(
         self, servicePool: ServicePool, user: User
     ) -> UserService:
         """
@@ -162,7 +162,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
         an UserService with no publications, and create them from an ServicePool
         """
-        self.__checkMaxDeployedReached(servicePool)
+        self._checkMaxDeployedReached(servicePool)
         now = getSqlDatetime()
         return servicePool.userServices.create(
             cache_level=0,
@@ -187,7 +187,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             cacheLevel,
             publication,
         )
-        cache = self.__createCacheAtDb(publication, cacheLevel)
+        cache = self._createCacheAtDb(publication, cacheLevel)
         ci = cache.getInstance()
         state = ci.deployForCache(cacheLevel)
 
@@ -214,7 +214,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 publication,
             )
             if publication:
-                assigned = self.__createAssignedAtDb(publication, user)
+                assigned = self._createAssignedAtDb(publication, user)
             else:
                 raise Exception(
                     'Invalid publication creating service assignation: {} {}'.format(
@@ -223,7 +223,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 )
         else:
             logger.debug('Creating a new assigned element for user %s', user)
-            assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
+            assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
         assignedInstance = assigned.getInstance()
         state = assignedInstance.deployForUser(user)
@@ -251,7 +251,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 publication,
             )
             if publication:
-                assigned = self.__createAssignedAtDb(publication, user)
+                assigned = self._createAssignedAtDb(publication, user)
             else:
                 raise Exception(
                     'Invalid publication creating service assignation: {} {}'.format(
@@ -264,7 +264,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 assignableId,
                 user,
             )
-            assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
+            assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
         # Now, get from serviceInstance the data
         assignedInstance = assigned.getInstance()

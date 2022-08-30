@@ -390,7 +390,7 @@ class Service(Module):
     @classmethod
     def canAssign(cls) -> bool:
         """
-        Helper to query if a class is custom (implements getJavascript method)
+        Helper to query if a class is assignable (can be assigned to an user manually)
         """
         return (
             cls.listAssignables is not Service.listAssignables
