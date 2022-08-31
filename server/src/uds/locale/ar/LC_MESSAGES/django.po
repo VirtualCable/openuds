@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-30 16:32+0200\n"
+"POT-Creation-Date: 2022-08-31 15:20+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -32,7 +32,7 @@ msgstr "حسابات"
 #: REST/methods/reports.py:69 REST/methods/services_pool_groups.py:71
 #: REST/methods/services_pools.py:136 REST/methods/transports.py:66
 #: REST/methods/user_services.py:325 REST/methods/user_services.py:400
-#: REST/methods/users_groups.py:167 REST/model.py:149
+#: REST/methods/users_groups.py:169 REST/model.py:149
 msgid "Name"
 msgstr "الاسم"
 
@@ -42,8 +42,8 @@ msgstr "الاسم"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:73
 #: REST/methods/proxies.py:63 REST/methods/services.py:241
 #: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:68
-#: REST/methods/user_services.py:402 REST/methods/users_groups.py:168
-#: REST/methods/users_groups.py:384 REST/model.py:173
+#: REST/methods/user_services.py:402 REST/methods/users_groups.py:170
+#: REST/methods/users_groups.py:389 REST/model.py:173
 msgid "Comments"
 msgstr "تعليقات"
 
@@ -213,7 +213,7 @@ msgid "If active, authenticator will be visible for users"
 msgstr "إذا كان المصدق نشطًا ، فسيكون مرئيًا للمستخدمين"
 
 #: REST/methods/authenticators.py:125 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:46 mfas/SMS/mfa.py:112
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:145
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
@@ -229,11 +229,11 @@ msgstr "مزود MFA"
 msgid "MFA provider to use for this authenticator"
 msgstr "مزود MFA لاستخدامه لهذا المصدق"
 
-#: REST/methods/authenticators.py:193
+#: REST/methods/authenticators.py:194
 msgid "Too many results..."
 msgstr "نتائج كثيرة للغاية ..."
 
-#: REST/methods/authenticators.py:193
+#: REST/methods/authenticators.py:194
 msgid "Refine your query"
 msgstr "حدد استفسارك"
 
@@ -588,7 +588,7 @@ msgstr "تحقق من الشهادة"
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:67
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -606,7 +606,7 @@ msgstr "الخادم (IP أو FQDN) الذي سيعمل بمثابة وكيل."
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
 #: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:74
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -653,12 +653,12 @@ msgstr ""
 msgid "Available reports"
 msgstr "التقارير المتوفرة"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:375
-#: REST/methods/users_groups.py:396
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:380
+#: REST/methods/users_groups.py:401
 #: auths/ActiveDirectory_enterprise/authenticator.py:153
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
+#: auths/EDirectory_enterprise/authenticator.py:114
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
 #: auths/SAML_enterprise/saml.py:109 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
@@ -724,13 +724,13 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 msgid "Advanced"
 msgstr "متقدم"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:296
-#: REST/methods/users_groups.py:500
+#: REST/methods/services.py:365 REST/methods/users_groups.py:301
+#: REST/methods/users_groups.py:507
 msgid "With errors"
 msgstr "مع الأخطاء"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:296
-#: REST/methods/users_groups.py:500
+#: REST/methods/services.py:365 REST/methods/users_groups.py:301
+#: REST/methods/users_groups.py:507
 msgid "Ok"
 msgstr "موافق"
 
@@ -1006,15 +1006,15 @@ msgstr "سجل التغيير"
 msgid "Comment"
 msgstr "التعليق"
 
-#: REST/methods/users_groups.py:113 REST/methods/users_groups.py:135
+#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:137
 msgid "Admin"
 msgstr "مشرف"
 
-#: REST/methods/users_groups.py:113 REST/methods/users_groups.py:135
+#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:137
 msgid "Staff member"
 msgstr "موظف"
 
-#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:136
+#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
@@ -1026,20 +1026,20 @@ msgstr "موظف"
 msgid "User"
 msgstr "المستخدم"
 
-#: REST/methods/users_groups.py:148
+#: REST/methods/users_groups.py:150
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "مستخدمين {0}"
 
-#: REST/methods/users_groups.py:154
+#: REST/methods/users_groups.py:156
 msgid "Current users"
 msgstr "المستخدمون الحاليون"
 
-#: REST/methods/users_groups.py:160
+#: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:151
-#: auths/EDirectory_enterprise/authenticator.py:103
-#: auths/RegexLdap/authenticator.py:189 auths/SimpleLDAP/authenticator.py:180
-#: mfas/Email/mfa.py:54 services/HyperV_enterprise/legacy/provider.py:103
+#: auths/EDirectory_enterprise/authenticator.py:112
+#: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
+#: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
 #: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
@@ -1057,48 +1057,48 @@ msgstr "المستخدمون الحاليون"
 msgid "Username"
 msgstr "اسم المستخدم"
 
-#: REST/methods/users_groups.py:166
+#: REST/methods/users_groups.py:168
 msgid "Role"
 msgstr "وظيفة"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:387
+#: REST/methods/users_groups.py:173 REST/methods/users_groups.py:392
 msgid "state"
 msgstr "الحالة"
 
-#: REST/methods/users_groups.py:176 reports/lists/users.py:113
+#: REST/methods/users_groups.py:178 reports/lists/users.py:113
 msgid "Last access"
 msgstr "آخر وصول"
 
-#: REST/methods/users_groups.py:202
+#: REST/methods/users_groups.py:204
 msgid "Username cannot be empty"
 msgstr "اسم المستخدم لا يمكن أن يكون فارغا"
 
-#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:468
+#: REST/methods/users_groups.py:245 REST/methods/users_groups.py:473
 msgid "User already exists (duplicate key error)"
 msgstr "المستخدم موجود مسبقا (خطأ مفتاح مكرر)"
 
-#: REST/methods/users_groups.py:363
+#: REST/methods/users_groups.py:368
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "مجموعات من {0}"
 
-#: REST/methods/users_groups.py:369
+#: REST/methods/users_groups.py:374
 msgid "Current groups"
 msgstr "المجموعات الحالية"
 
-#: REST/methods/users_groups.py:396
+#: REST/methods/users_groups.py:401
 msgid "UDS Group"
 msgstr "المجموعة المصغرة"
 
-#: REST/methods/users_groups.py:397
+#: REST/methods/users_groups.py:402
 msgid "Meta group"
 msgstr "Meta المجموعة"
 
-#: REST/methods/users_groups.py:397
+#: REST/methods/users_groups.py:402
 msgid "UDS Meta Group"
 msgstr "مجموعة Meta المصغرة"
 
-#: REST/methods/users_groups.py:428
+#: REST/methods/users_groups.py:433
 msgid "Group name is required"
 msgstr "اسم المجموعة مطلوب"
 
@@ -1188,9 +1188,9 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/ActiveDirectory_enterprise/authenticator.py:155
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:193
+#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
-#: core/auths/authenticator.py:147 mfas/Email/mfa.py:63
+#: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:76
 #: services/HyperV_enterprise/legacy/provider.py:110
@@ -1274,11 +1274,15 @@ msgstr ""
 "خادم المضيف الرئيسي"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/EDirectory_enterprise/authenticator.py:95
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "سمة MFA"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/EDirectory_enterprise/authenticator.py:97
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "السمة من مكان استخراج رمز MFA"
@@ -1292,50 +1296,50 @@ msgid "Authenticate against Active Directory"
 msgstr "المصادقة بالمقابلة مع خدمة Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:648
+#: auths/ActiveDirectory_enterprise/authenticator.py:647
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "يجب تحديد اسم المستخدم في النموذج USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:521
-#: auths/ActiveDirectory_enterprise/authenticator.py:578
+#: auths/ActiveDirectory_enterprise/authenticator.py:520
+#: auths/ActiveDirectory_enterprise/authenticator.py:577
 #: auths/AzureAD_enterprise/azure_ad.py:315
-#: auths/EDirectory_enterprise/authenticator.py:269
-#: auths/EDirectory_enterprise/authenticator.py:300
-#: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
+#: auths/EDirectory_enterprise/authenticator.py:293
+#: auths/EDirectory_enterprise/authenticator.py:324
+#: auths/RegexLdap/authenticator.py:586 auths/RegexLdap/authenticator.py:617
 #: auths/SimpleLDAP/authenticator.py:435 auths/SimpleLDAP/authenticator.py:478
 msgid "Username not found"
 msgstr "لم يتم العثور على اسم المستخدم"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:560
+#: auths/ActiveDirectory_enterprise/authenticator.py:559
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "لم يتم العثور على المجموعة"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:605
-#: auths/ActiveDirectory_enterprise/authenticator.py:627
-#: auths/EDirectory_enterprise/authenticator.py:322
-#: auths/RegexLdap/authenticator.py:597 auths/SimpleLDAP/authenticator.py:503
+#: auths/ActiveDirectory_enterprise/authenticator.py:604
+#: auths/ActiveDirectory_enterprise/authenticator.py:626
+#: auths/EDirectory_enterprise/authenticator.py:346
+#: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "الكثير من النتائج، كن أكثر تحديداً"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:659
+#: auths/ActiveDirectory_enterprise/authenticator.py:658
 msgid "Domain seems to be incorrect, please check it"
 msgstr "المجال غير صحيح، الرجاء التحقق من ذلك"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:678
+#: auths/ActiveDirectory_enterprise/authenticator.py:677
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المستخدم)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:701
+#: auths/ActiveDirectory_enterprise/authenticator.py:700
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنات المجموعة)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:710
-#: auths/EDirectory_enterprise/authenticator.py:445
-#: auths/RegexLdap/authenticator.py:707 auths/SimpleLDAP/authenticator.py:686
+#: auths/ActiveDirectory_enterprise/authenticator.py:709
+#: auths/EDirectory_enterprise/authenticator.py:469
+#: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "يبدو الاتصال params  صحيحا، تم تنفيذ الأختبار بنجاح"
 
@@ -1469,30 +1473,30 @@ msgstr "اسم المستخدم امتيازات القراءة على eDirector
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "المهلة بالثواني لاتصال LDAP"
 
-#: auths/EDirectory_enterprise/authenticator.py:93
+#: auths/EDirectory_enterprise/authenticator.py:102
 msgid "eDirectory Authenticator"
 msgstr "eDirectory المصادق"
 
-#: auths/EDirectory_enterprise/authenticator.py:95
+#: auths/EDirectory_enterprise/authenticator.py:104
 msgid "Authenticate against eDirectory"
 msgstr "مصادقة ضد eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:340
+#: auths/EDirectory_enterprise/authenticator.py:364
 msgid "Edirectory connection error: {}"
 msgstr "خطأ في اتصال Edirectory: {}"
 
-#: auths/EDirectory_enterprise/authenticator.py:345
-#: auths/RegexLdap/authenticator.py:620 auths/SimpleLDAP/authenticator.py:548
+#: auths/EDirectory_enterprise/authenticator.py:369
+#: auths/RegexLdap/authenticator.py:668 auths/SimpleLDAP/authenticator.py:548
 msgid "Ldap search base is incorrect"
 msgstr "قاعدة البحث Ldap غير صحيح"
 
-#: auths/EDirectory_enterprise/authenticator.py:363
-#: auths/RegexLdap/authenticator.py:638 auths/SimpleLDAP/authenticator.py:556
+#: auths/EDirectory_enterprise/authenticator.py:387
+#: auths/RegexLdap/authenticator.py:686 auths/SimpleLDAP/authenticator.py:556
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
 
-#: auths/EDirectory_enterprise/authenticator.py:386
+#: auths/EDirectory_enterprise/authenticator.py:410
 #: auths/SimpleLDAP/authenticator.py:602
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
@@ -1500,11 +1504,11 @@ msgid ""
 msgstr ""
 "يبدو أن Ldap المستخدم معرف السمة غير صحيحة (أي مستخدم موجود بذلك السمة)"
 
-#: auths/EDirectory_enterprise/authenticator.py:409
+#: auths/EDirectory_enterprise/authenticator.py:433
 msgid "Expected group attribute "
 msgstr "مجموعة السمة المتوقعة "
 
-#: auths/EDirectory_enterprise/authenticator.py:436
+#: auths/EDirectory_enterprise/authenticator.py:460
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
@@ -1569,11 +1573,11 @@ msgstr "عكس DNS"
 msgid "If checked, the host will be reversed dns"
 msgstr "في حالة تحديد المضيف سوف تكون عكس dns"
 
-#: auths/InternalDB/authenticator.py:174
+#: auths/InternalDB/authenticator.py:180
 msgid "Internal structures seems ok"
 msgstr "هياكل داخلية على ما يرام"
 
-#: auths/InternalDB/authenticator.py:177
+#: auths/InternalDB/authenticator.py:183
 msgid "All seems fine in the authenticator."
 msgstr "كل شيء يبدو بشكل جيد في المصادق."
 
@@ -1581,27 +1585,27 @@ msgstr "كل شيء يبدو بشكل جيد في المصادق."
 msgid "Radius Authenticator"
 msgstr "Radius Authenticator"
 
-#: auths/Radius/authenticator.py:69
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:69
 msgid "Radius Server IP or Hostname"
 msgstr "Radius Server IP أو اسم المضيف"
 
-#: auths/Radius/authenticator.py:77
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:77
 msgid "Radius authentication port (usually 1812)"
 msgstr "منفذ مصادقة نصف قطر (عادة 1812)"
 
-#: auths/Radius/authenticator.py:82
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:82
 msgid "Secret"
 msgstr "سر"
 
-#: auths/Radius/authenticator.py:84
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:84
 msgid "Radius client secret"
 msgstr "سر عميل Radius"
 
-#: auths/Radius/authenticator.py:90
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:98
 msgid "NAS Identifier"
 msgstr "معرف NAS"
 
-#: auths/Radius/authenticator.py:93
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:101
 msgid "NAS Identifier for Radius Server"
 msgstr "معرف NAS لخادم Radius"
 
@@ -1622,15 +1626,15 @@ msgid "If set, this value will be added as group for all radius users"
 msgstr ""
 "في حالة التعيين ، ستتم إضافة هذه القيمة كمجموعة لجميع مستخدمي النطاق الجغرافي"
 
-#: auths/Radius/authenticator.py:174
+#: auths/Radius/authenticator.py:196
 msgid "Error testing connection"
 msgstr "خطأ في اختبار الاتصال"
 
-#: auths/Radius/authenticator.py:186
+#: auths/Radius/authenticator.py:208
 msgid "Connection to Radius server failed"
 msgstr "فشل الاتصال بخادم Radius"
 
-#: auths/Radius/authenticator.py:187
+#: auths/Radius/authenticator.py:209
 msgid "Connection to Radius server seems ok"
 msgstr "يبدو الاتصال بخادم Radius جيدًا"
 
@@ -1707,22 +1711,22 @@ msgid ""
 msgstr ""
 "فئة لكائنات LDAP التي سيتم التحقق منها أيضا لاسترجاعها للمجموعات (عادة فارغة)"
 
-#: auths/RegexLdap/authenticator.py:179
+#: auths/RegexLdap/authenticator.py:189
 msgid "Regex LDAP Authenticator"
 msgstr "المصادق Regex LDAP"
 
-#: auths/RegexLdap/authenticator.py:181
+#: auths/RegexLdap/authenticator.py:191
 msgid "Regular Expressions LDAP authenticator"
 msgstr " التعبيرات العادية لمصادق LDAP"
 
-#: auths/RegexLdap/authenticator.py:663
+#: auths/RegexLdap/authenticator.py:711
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
-#: auths/RegexLdap/authenticator.py:692 auths/SimpleLDAP/authenticator.py:625
+#: auths/RegexLdap/authenticator.py:740 auths/SimpleLDAP/authenticator.py:625
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2028,38 +2032,43 @@ msgstr "لا يمكن إلغاء نشر منشور غير صالح للاستع�
 msgid "Can't unpublish publications with services in process"
 msgstr "لا يمكن إلغاء نشر المنشورات مع خدمات في طور الإستعمال"
 
-#: core/managers/user_service.py:348
+#: core/managers/user_service.py:128
+#| msgid "Maximum number of services to provide"
+msgid "Maximum number of user services reached for this {}"
+msgstr "تم بلوغ الحد الأقصى لعدد خدمات المستخدم لهذا {}"
+
+#: core/managers/user_service.py:364
 msgid "Can't remove a non active element"
 msgstr "لا يمكن إزالة عنصر غير نشط"
 
-#: core/managers/user_service.py:374
+#: core/managers/user_service.py:390
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "لا يمكن إزالة أو إلغاء {} لأن حالته لا تسمح بذلك"
 
-#: core/managers/user_service.py:406
+#: core/managers/user_service.py:422
 msgid "The requested service is restrained"
 msgstr "الخدمة المطلوبة مقيدة"
 
-#: core/managers/user_service.py:770 web/util/errors.py:83
+#: core/managers/user_service.py:788 web/util/errors.py:83
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
 msgstr ""
 "الخدمة غير صالحة. الخدمة غير متوفرة في هذه اللحظة. من فضلك، حاول في وقت لاحق"
 
-#: core/managers/user_service.py:807
+#: core/managers/user_service.py:825
 msgid "The requested transport {} is not valid for {}"
 msgstr "النقل المطلوب {} غير صالح لـ {}"
 
-#: core/managers/user_service.py:1084
+#: core/managers/user_service.py:1102
 msgid "The service is not accessible from this device"
 msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 
-#: core/mfas/mfa.py:60 core/mfas/mfa.py:72
+#: core/mfas/mfa.py:61 core/mfas/mfa.py:73
 msgid "Base MFA"
 msgstr "قاعدة MFA"
 
-#: core/mfas/mfa.py:184
+#: core/mfas/mfa.py:193
 msgid "Invalid MFA code"
 msgstr "رمز MFA غير صالح"
 
@@ -2358,19 +2367,19 @@ msgstr "نقل غير موجود"
 msgid "Service not ready at this moment. Please, try again in a while."
 msgstr "الخدمة ليست على استعداد في هذه اللحظة. من فضلك، حاول مرة أخرى في حين."
 
-#: mfas/Email/mfa.py:22
+#: mfas/Email/mfa.py:55
 msgid "Email Multi Factor"
 msgstr "متعدد العوامل البريد الإلكتروني"
 
-#: mfas/Email/mfa.py:24
+#: mfas/Email/mfa.py:57
 msgid "Email Multi Factor Authenticator"
 msgstr "أداة مصادقة متعددة العوامل للبريد الإلكتروني"
 
-#: mfas/Email/mfa.py:29
+#: mfas/Email/mfa.py:62
 msgid "SMTP Host"
 msgstr "مضيف SMTP"
 
-#: mfas/Email/mfa.py:32
+#: mfas/Email/mfa.py:65
 msgid ""
 "SMTP Server hostname or IP address. If you are using a  non-standard port, "
 "add it after a colon, for example: smtp.gmail.com:587"
@@ -2378,88 +2387,192 @@ msgstr ""
 "اسم مضيف خادم SMTP أو عنوان IP. إذا كنت تستخدم منفذًا غير قياسي ، فأضفه بعد "
 "نقطتين ، على سبيل المثال: smtp.gmail.com:587"
 
-#: mfas/Email/mfa.py:37 mfas/Email/mfa.py:50 mfas/Email/mfa.py:59
-#: mfas/Email/mfa.py:68
+#: mfas/Email/mfa.py:70 mfas/Email/mfa.py:83 mfas/Email/mfa.py:92
+#: mfas/Email/mfa.py:101
 msgid "SMTP Server"
 msgstr "خادم SMTP"
 
-#: mfas/Email/mfa.py:41 transports/HTML5RDP/html5rdp.py:268
+#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:268
 #: transports/HTML5RDS_enterprise/html5rds.py:255
 msgid "Security"
 msgstr "الأمن"
 
-#: mfas/Email/mfa.py:42
+#: mfas/Email/mfa.py:75
 msgid "Security protocol to use"
 msgstr "بروتوكول أمان للاستخدام"
 
-#: mfas/Email/mfa.py:44
+#: mfas/Email/mfa.py:77
 msgid "TLS"
 msgstr "TLS"
 
-#: mfas/Email/mfa.py:45
+#: mfas/Email/mfa.py:78
 msgid "SSL"
 msgstr "SSL"
 
-#: mfas/Email/mfa.py:56
+#: mfas/Email/mfa.py:89
 msgid "User with access to SMTP server"
 msgstr "مستخدم لديه حق الوصول إلى خادم SMTP"
 
-#: mfas/Email/mfa.py:65
+#: mfas/Email/mfa.py:98
 msgid "Password of the user with access to SMTP server"
 msgstr "كلمة مرور المستخدم مع الوصول إلى خادم SMTP"
 
-#: mfas/Email/mfa.py:74
+#: mfas/Email/mfa.py:107
 msgid "Subject"
 msgstr "موضوعات"
 
-#: mfas/Email/mfa.py:76
+#: mfas/Email/mfa.py:109
 msgid "Subject of the email"
 msgstr "موضوع البريد الإلكتروني"
 
-#: mfas/Email/mfa.py:78 mfas/Email/mfa.py:87 mfas/Email/mfa.py:95
+#: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
+#: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
+#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:193
+#: mfas/SMS/mfa.py:208 mfas/SMS/mfa.py:218
 msgid "Config"
 msgstr "التكوين"
 
-#: mfas/Email/mfa.py:83
+#: mfas/Email/mfa.py:116
 msgid "From Email"
 msgstr "من البريد الإلكترونى"
 
-#: mfas/Email/mfa.py:85
+#: mfas/Email/mfa.py:118
 msgid "Email address that will be used as sender"
 msgstr "عنوان البريد الإلكتروني الذي سيتم استخدامه كمرسل"
 
-#: mfas/Email/mfa.py:91
+#: mfas/Email/mfa.py:124
 msgid "Enable HTML"
 msgstr "تمكين HTML"
 
-#: mfas/Email/mfa.py:93
+#: mfas/Email/mfa.py:126
 msgid "Enable HTML in emails"
 msgstr "تمكين HTML في رسائل البريد الإلكتروني"
 
-#: mfas/Email/mfa.py:110
+#: mfas/Email/mfa.py:133 mfas/SMS/mfa.py:197
+msgid "User without MFA policy"
+msgstr "مستخدم بدون سياسة MFA"
+
+#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:185 mfas/SMS/mfa.py:200
+msgid "Action for SMS response error"
+msgstr "الإجراء لخطأ استجابة SMS"
+
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
+#| msgid "Allow user log in without MFA"
+msgid "Allow user login"
+msgstr "السماح بتسجيل دخول المستخدم"
+
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
+#| msgid "Deny user log in"
+msgid "Deny user login"
+msgstr "رفض تسجيل دخول المستخدم"
+
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/SMS/mfa.py:190 mfas/SMS/mfa.py:205
+msgid "Allow user to login if it IP is in the networks list"
+msgstr "اسمح للمستخدم بتسجيل الدخول إذا كان IP موجودًا في قائمة الشبكات"
+
+#: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
+#: mfas/SMS/mfa.py:191 mfas/SMS/mfa.py:206
+msgid "Deny user to login if it IP is in the networks list"
+msgstr "رفض المستخدم لتسجيل الدخول إذا كان IP موجودًا في قائمة الشبكات"
+
+#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
+#| msgid "Subnetwork"
+msgid "SMS networks"
+msgstr "شبكات الرسائل القصيرة"
+
+#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
+#| msgid "Password for SMS authentication"
+msgid "Networks for SMS authentication"
+msgstr "شبكات لمصادقة الرسائل القصيرة"
+
+#: mfas/Email/mfa.py:169
 msgid "Invalid SMTP hostname"
 msgstr "اسم مضيف SMTP غير صالح"
 
-#: mfas/SMS/mfa.py:19
+#: mfas/Email/mfa.py:185
+msgid "Check your mail. You will receive an email with the verification code"
+msgstr "راجع بريدك. سوف تتلقى رسالة بريد إلكتروني مع رمز التحقق"
+
+#: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
+msgid "Radius OTP Challenge"
+msgstr "تحدي Radius OTP"
+
+#: mfas/Radius/mfa.py:88
+msgid "All users must send OTP"
+msgstr "يجب على جميع المستخدمين إرسال OTP"
+
+#: mfas/Radius/mfa.py:92
+msgid ""
+"If unchecked, an authentication step is needed in order to know if this user "
+"must enter OTP. If checked, all users must enter OTP, so authentication step "
+"is skipped."
+msgstr ""
+"إذا لم يتم تحديده ، فستكون هناك حاجة إلى خطوة مصادقة لمعرفة ما إذا كان يجب "
+"على هذا المستخدم إدخال OTP. إذا تم تحديده ، يجب على جميع المستخدمين إدخال "
+"OTP ، لذلك يتم تخطي خطوة المصادقة."
+
+#: mfas/Radius/mfa.py:106
+msgid "Radius OTP communication error action"
+msgstr "إجراء خطأ اتصال Radius OTP"
+
+#: mfas/Radius/mfa.py:109
+#| msgid "Action for SMS response error"
+msgid "Action for OTP server communication error"
+msgstr "الإجراء الخاص بخطأ اتصال خادم OTP"
+
+#: mfas/Radius/mfa.py:121
+msgid "Radius OTP networks"
+msgstr "شبكات Radius OTP"
+
+#: mfas/Radius/mfa.py:125
+#| msgid "Password for SMS authentication"
+msgid "Networks for Radius OTP authentication"
+msgstr "شبكات لمصادقة Radius OTP"
+
+#: mfas/Radius/mfa.py:131
+#| msgid "User with access to SMTP server"
+msgid "User without defined OTP in server"
+msgstr "مستخدم بدون كلمة مرور محددة في الخادم"
+
+#: mfas/Radius/mfa.py:134
+msgid "Action for user without defined Radius Challenge"
+msgstr "إجراء للمستخدم بدون تحدي نصف القطر المحدد"
+
+#: mfas/Radius/mfa.py:194
+#| msgid "MFA Code"
+msgid "OTP Code"
+msgstr "رمز OTP"
+
+#: mfas/Radius/mfa.py:202
+msgid "Please enter OTP"
+msgstr "الرجاء إدخال OTP"
+
+#: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
+#| msgid "Connection error: "
+msgid "Radius OTP connection error"
+msgstr "خطأ في اتصال Radius OTP"
+
+#: mfas/Radius/mfa.py:279
+#| msgid "Invalid MFA code"
+msgid "Invalid OTP code"
+msgstr "رمز OTP غير صحيح"
+
+#: mfas/SMS/mfa.py:53
 msgid "SMS Thought HTTP"
 msgstr "يعتقد SMS HTTP"
 
-#: mfas/SMS/mfa.py:21
+#: mfas/SMS/mfa.py:55
 msgid "Simple SMS sending MFA using HTTP"
 msgstr "إرسال رسائل قصيرة بسيطة MFA باستخدام HTTP"
 
-#: mfas/SMS/mfa.py:26
+#: mfas/SMS/mfa.py:60
 msgid "URL pattern for SMS sending"
 msgstr "نمط URL لإرسال الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:29
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
+#: mfas/SMS/mfa.py:63
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2467,20 +2580,20 @@ msgid ""
 "* {username} - the username\n"
 "* {justUsername} - the username without @...."
 msgstr ""
-"نمط URL لإرسال الرسائل القصيرة. يمكن أن يحتوي على المتغيرات التالية: * {code}"
-" - رمز الإرسال * {phone / + phone} - رقم الهاتف * {username} - اسم المستخدم *"
-" {justUsername} - اسم المستخدم بدون @ ...."
+"نمط URL لإرسال الرسائل القصيرة. يمكن أن يحتوي على المتغيرات التالية: * "
+"{code} - رمز الإرسال * {phone / + phone} - رقم الهاتف * {username} - اسم "
+"المستخدم * {justUsername} - اسم المستخدم بدون @ ...."
 
-#: mfas/SMS/mfa.py:37 mfas/SMS/mfa.py:43 mfas/SMS/mfa.py:56 mfas/SMS/mfa.py:75
-#: mfas/SMS/mfa.py:92 mfas/SMS/mfa.py:101
+#: mfas/SMS/mfa.py:71 mfas/SMS/mfa.py:82 mfas/SMS/mfa.py:91 mfas/SMS/mfa.py:109
+#: mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:136
 msgid "HTTP Server"
 msgstr "خادم HTTP"
 
-#: mfas/SMS/mfa.py:41
+#: mfas/SMS/mfa.py:75
 msgid "Ignore certificate errors"
 msgstr "تجاهل أخطاء الشهادة"
 
-#: mfas/SMS/mfa.py:46
+#: mfas/SMS/mfa.py:79
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2488,19 +2601,19 @@ msgstr ""
 "إذا تم تحديده ، فسيتم تجاهل شهادة الخادم. يكون هذا مفيدًا إذا كان الخادم "
 "يستخدم شهادة موقعة ذاتيًا."
 
-#: mfas/SMS/mfa.py:52
+#: mfas/SMS/mfa.py:86
 msgid "SMS sending method"
 msgstr "طريقة إرسال الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:54 mfas/SMS/mfa.py:108
+#: mfas/SMS/mfa.py:88 mfas/SMS/mfa.py:142
 msgid "Method for sending SMS"
 msgstr "طريقة إرسال الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:63
+#: mfas/SMS/mfa.py:97
 msgid "Headers for SMS requests"
 msgstr "رؤوس طلبات الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:66
+#: mfas/SMS/mfa.py:100
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2514,18 +2627,11 @@ msgstr ""
 "{justUsername} - اسم المستخدم بدون @ .... العناوين موجودة شكل \"Header: Value"
 "\". (بدون اقتباس)"
 
-#: mfas/SMS/mfa.py:81
+#: mfas/SMS/mfa.py:115
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "معلمات لإرسال POST / PUT SMS"
 
-#: mfas/SMS/mfa.py:84
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
+#: mfas/SMS/mfa.py:118
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2535,102 +2641,102 @@ msgid ""
 "* {justUsername} - the username without @...."
 msgstr ""
 "معلمات إرسال الرسائل القصيرة عبر POST / PUT. يمكن أن يحتوي على المتغيرات "
-"التالية: * {code} - رمز الإرسال * {phone / + phone} - رقم الهاتف * {username}"
-" - اسم المستخدم * {justUsername} - اسم المستخدم بدون @ ...."
+"التالية: * {code} - رمز الإرسال * {phone / + phone} - رقم الهاتف * "
+"{username} - اسم المستخدم * {justUsername} - اسم المستخدم بدون @ ...."
 
-#: mfas/SMS/mfa.py:96
+#: mfas/SMS/mfa.py:130
 msgid "SMS encoding"
 msgstr "ترميز الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:99
+#: mfas/SMS/mfa.py:133
 msgid "Encoding for SMS"
 msgstr "ترميز الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:106
+#: mfas/SMS/mfa.py:140
 msgid "SMS authentication method"
 msgstr "طريقة مصادقة الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:110 mfas/SMS/mfa.py:124 mfas/SMS/mfa.py:133
-msgid "HTTP Authentication"
-msgstr "مصادقة HTTP"
-
-#: mfas/SMS/mfa.py:113
+#: mfas/SMS/mfa.py:146
 msgid "HTTP Basic Auth"
 msgstr "مصادقة HTTP الأساسية"
 
-#: mfas/SMS/mfa.py:114
+#: mfas/SMS/mfa.py:147
 msgid "HTTP Digest Auth"
 msgstr "مصادقة ملخص HTTP"
 
-#: mfas/SMS/mfa.py:120
+#: mfas/SMS/mfa.py:149 mfas/SMS/mfa.py:158 mfas/SMS/mfa.py:167
+msgid "HTTP Authentication"
+msgstr "مصادقة HTTP"
+
+#: mfas/SMS/mfa.py:154
 msgid "SMS authentication user or token"
 msgstr "مستخدم مصادقة SMS أو رمز مميز"
 
-#: mfas/SMS/mfa.py:122
+#: mfas/SMS/mfa.py:156
 msgid "User or token for SMS authentication"
 msgstr "مستخدم أو رمز مميز للمصادقة عبر الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:129
+#: mfas/SMS/mfa.py:163
 msgid "SMS authentication password"
 msgstr "كلمة مرور مصادقة SMS"
 
-#: mfas/SMS/mfa.py:131
+#: mfas/SMS/mfa.py:165
 msgid "Password for SMS authentication"
 msgstr "كلمة مرور لمصادقة الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:138
+#: mfas/SMS/mfa.py:172
 msgid "SMS response OK regex"
 msgstr "استجابة الرسائل القصيرة موافق regex"
 
-#: mfas/SMS/mfa.py:141
+#: mfas/SMS/mfa.py:175
+#| msgid ""
+#| "Regex for SMS response OK. If emty, the response is considered OK if "
+#| "status code is 200."
 msgid ""
-"Regex for SMS response OK. If emty, the response is considered OK if status "
+"Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
 msgstr ""
-"Regex لاستجابة الرسائل القصيرة موافق. إذا كانت emty ، تعتبر الاستجابة جيدة "
-"إذا كان رمز الحالة 200."
+"Regex لاستجابة الرسائل القصيرة موافق. إذا كانت الاستجابة فارغة ، فسيتم "
+"اعتبارها على ما يرام إذا كان رمز الحالة 200."
 
-#: mfas/SMS/mfa.py:144 mfas/SMS/mfa.py:153
+#: mfas/SMS/mfa.py:178
 msgid "HTTP Response"
 msgstr "استجابة HTTP"
 
-#: mfas/SMS/mfa.py:148
+#: mfas/SMS/mfa.py:182
 msgid "SMS response error action"
 msgstr "إجراء خطأ استجابة SMS"
 
-#: mfas/SMS/mfa.py:151
-msgid "Action for SMS response error"
-msgstr "الإجراء لخطأ استجابة SMS"
-
-#: mfas/SMS/mfa.py:155
-msgid "Allow user log in without MFA"
-msgstr "السماح للمستخدم بتسجيل الدخول بدون MFA"
-
-#: mfas/SMS/mfa.py:156
-msgid "Deny user log in"
-msgstr "رفض تسجيل دخول المستخدم"
-
-#: mfas/SMS/mfa.py:199
+#: mfas/SMS/mfa.py:291
 msgid "SMS sending failed"
 msgstr "فشل إرسال الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:263 web/views/modern.py:275
+#: mfas/SMS/mfa.py:300
+#| msgid "SMS response error action"
+msgid "SMS response error"
+msgstr "خطأ في استجابة الرسائل القصيرة"
+
+#: mfas/SMS/mfa.py:354 web/views/modern.py:294
 msgid "MFA Code"
 msgstr "كود وزارة الخارجية"
 
-#: mfas/Sample/mfa.py:16
+#: mfas/SMS/mfa.py:357
+msgid "Check your phone. You will receive an SMS with the verification code"
+msgstr "افحص هاتفك. ستتلقى رسالة نصية قصيرة تحتوي على رمز التحقق"
+
+#: mfas/Sample/mfa.py:47
 msgid "Sample Multi Factor"
 msgstr "نموذج متعدد العوامل"
 
-#: mfas/Sample/mfa.py:18
+#: mfas/Sample/mfa.py:49
 msgid "Sample Multi Factor Authenticator"
 msgstr "نموذج مصدق متعدد العوامل"
 
-#: mfas/Sample/mfa.py:22
+#: mfas/Sample/mfa.py:53
 msgid "Sample useless field"
 msgstr "عينة مجال عديم الفائدة"
 
-#: mfas/Sample/mfa.py:25
+#: mfas/Sample/mfa.py:56
 msgid "This is a useless field, for sample and testing pourposes"
 msgstr "هذا مجال عديم الفائدة ، لأخذ العينات والاختبار"
 
@@ -2819,6 +2925,17 @@ msgstr ""
 "<b>(يتطلب بيثون&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:80
+#| msgid ""
+#| "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+#| "<b>(Requires python >= 3.6)</b>"
+msgid ""
+"UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for "
+"static machines. <b>(Requires python >= 3.6)</b>"
+msgstr ""
+"ممثل UDS لأجهزة Centos و Fedora و RH و Suse و ... أجهزة Linux. تستخدم فقط "
+"للأجهزة الثابتة. <b>(يتطلب python&gt; = 3.6)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:90
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
@@ -2826,7 +2943,7 @@ msgstr ""
 "<b>إرث</b> الفاعل مصغراً ديبيان، أوبونتو،... آلات لينكس <b>(يتطلب بيثون 2.7)</"
 "b>"
 
-#: osmanagers/LinuxOsManager/__init__.py:90
+#: osmanagers/LinuxOsManager/__init__.py:100
 msgid ""
 "<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
 "<b>(Requires python 2.7)</b>"
@@ -2834,7 +2951,7 @@ msgstr ""
 "<b>Legacy</b> UDS Actor for Centos ، Fedora ، RH ، ... أجهزة Linux <b>(يتطلب "
 "python 2.7)</b>"
 
-#: osmanagers/LinuxOsManager/__init__.py:100
+#: osmanagers/LinuxOsManager/__init__.py:110
 msgid ""
 "<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
 "2.7)</b>"
@@ -4457,6 +4574,16 @@ msgstr ""
 "إذا كانت الأجهزة نشطة ، فستحاول الأجهزة غير المتوفرة عند اتصال المستخدم (في "
 "بعض أنظمة التشغيل) التشغيل من خلال OpenGnsys."
 
+#: services/OpenGnsys/service.py:150 services/RDS_enterprise/service.py:86
+#| msgid "Max. Allowd services"
+msgid "Max. Allowed services"
+msgstr "الأعلى. الخدمات المسموح بها"
+
+#: services/OpenGnsys/service.py:155 services/RDS_enterprise/service.py:91
+#| msgid "Maximum number of allowed services (0 means no limit)"
+msgid "Maximum number of allowed services (0 or less means no limit)"
+msgstr "الحد الأقصى لعدد الخدمات المسموح بها (0 أو أقل يعني عدم وجود حد)"
+
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
 msgstr "مزودمنصة OpenNebula ."
@@ -5120,19 +5247,11 @@ msgstr "بداية المسار"
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "المسار حيث سيتم تشغيل التطبيق على. (مثال: f: \\ example \\ folder)"
 
-#: services/RDS_enterprise/service.py:86
-msgid "Max. Allowd services"
-msgstr "الخدمات المسموح بها كحد أقصى."
-
-#: services/RDS_enterprise/service.py:91
-msgid "Maximum number of allowed services (0 means no limit)"
-msgstr "الحد الأقصى لعدد الخدمات  المسموح بها (0 يعني عدم وجود حد)"
-
-#: services/RDS_enterprise/service.py:96
+#: services/RDS_enterprise/service.py:97
 msgid "Wait spawned processes"
 msgstr "انتظر العمليات الناتجة"
 
-#: services/RDS_enterprise/service.py:100
+#: services/RDS_enterprise/service.py:101
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -5140,7 +5259,7 @@ msgstr ""
 "إذا تم تحديده، RDS Actor سينتظر إنهاء التطبيق وجميع العمليات قبل النظر في "
 "تطبيق الخروج"
 
-#: services/RDS_enterprise/service.py:112
+#: services/RDS_enterprise/service.py:113
 msgid "A valid application path is required"
 msgstr "مطلوب مسار تطبيق صحيح"
 
@@ -7017,10 +7136,10 @@ msgstr "جاري إنشاء الخدمة الخاصة بك ، يرجى الان�
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"
 
-#: web/views/modern.py:269
+#: web/views/modern.py:285
 msgid "{} days"
 msgstr "{} أيام"
 
-#: web/views/modern.py:271
+#: web/views/modern.py:287
 msgid "{} hours"
 msgstr "{} ساعات"

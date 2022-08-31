@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-30 16:32+0200\n"
+"POT-Creation-Date: 2022-08-31 15:20+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -33,7 +33,7 @@ msgstr "Comptes"
 #: REST/methods/reports.py:69 REST/methods/services_pool_groups.py:71
 #: REST/methods/services_pools.py:136 REST/methods/transports.py:66
 #: REST/methods/user_services.py:325 REST/methods/user_services.py:400
-#: REST/methods/users_groups.py:167 REST/model.py:149
+#: REST/methods/users_groups.py:169 REST/model.py:149
 msgid "Name"
 msgstr "Nom"
 
@@ -43,8 +43,8 @@ msgstr "Nom"
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:73
 #: REST/methods/proxies.py:63 REST/methods/services.py:241
 #: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:68
-#: REST/methods/user_services.py:402 REST/methods/users_groups.py:168
-#: REST/methods/users_groups.py:384 REST/model.py:173
+#: REST/methods/user_services.py:402 REST/methods/users_groups.py:170
+#: REST/methods/users_groups.py:389 REST/model.py:173
 msgid "Comments"
 msgstr "Comentaris"
 
@@ -214,7 +214,7 @@ msgid "If active, authenticator will be visible for users"
 msgstr "Si està actiu, l&#39;autenticador serà visible per als usuaris"
 
 #: REST/methods/authenticators.py:125 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:46 mfas/SMS/mfa.py:112
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:145
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
@@ -230,11 +230,11 @@ msgstr "Proveïdor de MFA"
 msgid "MFA provider to use for this authenticator"
 msgstr "Proveïdor de MFA que cal utilitzar per a aquest autenticador"
 
-#: REST/methods/authenticators.py:193
+#: REST/methods/authenticators.py:194
 msgid "Too many results..."
 msgstr "Hi ha massa resultats ..."
 
-#: REST/methods/authenticators.py:193
+#: REST/methods/authenticators.py:194
 msgid "Refine your query"
 msgstr "Refineu la vostra consulta"
 
@@ -592,7 +592,7 @@ msgstr "Comproveu el certificat"
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:67
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -610,7 +610,7 @@ msgstr "Servidor (IP o FQDN) que servirà de servidor proxy."
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
 #: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:74
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -657,12 +657,12 @@ msgstr ""
 msgid "Available reports"
 msgstr "Informes disponibles"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:375
-#: REST/methods/users_groups.py:396
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:380
+#: REST/methods/users_groups.py:401
 #: auths/ActiveDirectory_enterprise/authenticator.py:153
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:191
+#: auths/EDirectory_enterprise/authenticator.py:114
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
 #: auths/SAML_enterprise/saml.py:109 auths/SimpleLDAP/authenticator.py:182
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
@@ -728,13 +728,13 @@ msgstr "Proxy per a serveis darrere d'un tallafoc"
 msgid "Advanced"
 msgstr "Avançat"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:296
-#: REST/methods/users_groups.py:500
+#: REST/methods/services.py:365 REST/methods/users_groups.py:301
+#: REST/methods/users_groups.py:507
 msgid "With errors"
 msgstr "Amb errors"
 
-#: REST/methods/services.py:365 REST/methods/users_groups.py:296
-#: REST/methods/users_groups.py:500
+#: REST/methods/services.py:365 REST/methods/users_groups.py:301
+#: REST/methods/users_groups.py:507
 msgid "Ok"
 msgstr "D'acord"
 
@@ -1018,15 +1018,15 @@ msgstr "Registre de canvis"
 msgid "Comment"
 msgstr "Comentari"
 
-#: REST/methods/users_groups.py:113 REST/methods/users_groups.py:135
+#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:137
 msgid "Admin"
 msgstr "Admin"
 
-#: REST/methods/users_groups.py:113 REST/methods/users_groups.py:135
+#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:137
 msgid "Staff member"
 msgstr "Membre del personal"
 
-#: REST/methods/users_groups.py:114 REST/methods/users_groups.py:136
+#: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
@@ -1038,20 +1038,20 @@ msgstr "Membre del personal"
 msgid "User"
 msgstr "Usuari"
 
-#: REST/methods/users_groups.py:148
+#: REST/methods/users_groups.py:150
 #, python-brace-format
 msgid "Users of {0}"
 msgstr "Usuaris de {0}"
 
-#: REST/methods/users_groups.py:154
+#: REST/methods/users_groups.py:156
 msgid "Current users"
 msgstr "Usuaris actuals"
 
-#: REST/methods/users_groups.py:160
+#: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:151
-#: auths/EDirectory_enterprise/authenticator.py:103
-#: auths/RegexLdap/authenticator.py:189 auths/SimpleLDAP/authenticator.py:180
-#: mfas/Email/mfa.py:54 services/HyperV_enterprise/legacy/provider.py:103
+#: auths/EDirectory_enterprise/authenticator.py:112
+#: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
+#: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
 #: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
@@ -1069,48 +1069,48 @@ msgstr "Usuaris actuals"
 msgid "Username"
 msgstr "Nom d'usuari"
 
-#: REST/methods/users_groups.py:166
+#: REST/methods/users_groups.py:168
 msgid "Role"
 msgstr "Paper"
 
-#: REST/methods/users_groups.py:171 REST/methods/users_groups.py:387
+#: REST/methods/users_groups.py:173 REST/methods/users_groups.py:392
 msgid "state"
 msgstr "estat"
 
-#: REST/methods/users_groups.py:176 reports/lists/users.py:113
+#: REST/methods/users_groups.py:178 reports/lists/users.py:113
 msgid "Last access"
 msgstr "Darrer accés"
 
-#: REST/methods/users_groups.py:202
+#: REST/methods/users_groups.py:204
 msgid "Username cannot be empty"
 msgstr "El nom d&#39;usuari no pot estar buit"
 
-#: REST/methods/users_groups.py:240 REST/methods/users_groups.py:468
+#: REST/methods/users_groups.py:245 REST/methods/users_groups.py:473
 msgid "User already exists (duplicate key error)"
 msgstr "Aquest usuari ja existeix (error de clau duplicada)"
 
-#: REST/methods/users_groups.py:363
+#: REST/methods/users_groups.py:368
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grups de {0}"
 
-#: REST/methods/users_groups.py:369
+#: REST/methods/users_groups.py:374
 msgid "Current groups"
 msgstr "Grups actuals"
 
-#: REST/methods/users_groups.py:396
+#: REST/methods/users_groups.py:401
 msgid "UDS Group"
 msgstr "Grup UDS"
 
-#: REST/methods/users_groups.py:397
+#: REST/methods/users_groups.py:402
 msgid "Meta group"
 msgstr "Metagrup"
 
-#: REST/methods/users_groups.py:397
+#: REST/methods/users_groups.py:402
 msgid "UDS Meta Group"
 msgstr "Metagrup UDS"
 
-#: REST/methods/users_groups.py:428
+#: REST/methods/users_groups.py:433
 msgid "Group name is required"
 msgstr "El nom del grup és obligatori"
 
@@ -1205,9 +1205,9 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/ActiveDirectory_enterprise/authenticator.py:155
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:193
+#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
-#: core/auths/authenticator.py:147 mfas/Email/mfa.py:63
+#: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:76
 #: services/HyperV_enterprise/legacy/provider.py:110
@@ -1292,11 +1292,15 @@ msgstr ""
 "al servidor principal"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/EDirectory_enterprise/authenticator.py:95
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "Atribut MFA"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/EDirectory_enterprise/authenticator.py:97
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atribut d&#39;on extreure el codi MFA"
@@ -1310,50 +1314,50 @@ msgid "Authenticate against Active Directory"
 msgstr "Autenticar sobre Directori Actiu"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:648
+#: auths/ActiveDirectory_enterprise/authenticator.py:647
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Cal especificar el nom d'usuari en format USUARI@DOMINI.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:521
-#: auths/ActiveDirectory_enterprise/authenticator.py:578
+#: auths/ActiveDirectory_enterprise/authenticator.py:520
+#: auths/ActiveDirectory_enterprise/authenticator.py:577
 #: auths/AzureAD_enterprise/azure_ad.py:315
-#: auths/EDirectory_enterprise/authenticator.py:269
-#: auths/EDirectory_enterprise/authenticator.py:300
-#: auths/RegexLdap/authenticator.py:538 auths/RegexLdap/authenticator.py:569
+#: auths/EDirectory_enterprise/authenticator.py:293
+#: auths/EDirectory_enterprise/authenticator.py:324
+#: auths/RegexLdap/authenticator.py:586 auths/RegexLdap/authenticator.py:617
 #: auths/SimpleLDAP/authenticator.py:435 auths/SimpleLDAP/authenticator.py:478
 msgid "Username not found"
 msgstr "Nom d'usuari no trobat"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:560
+#: auths/ActiveDirectory_enterprise/authenticator.py:559
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Grup no trobat"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:605
-#: auths/ActiveDirectory_enterprise/authenticator.py:627
-#: auths/EDirectory_enterprise/authenticator.py:322
-#: auths/RegexLdap/authenticator.py:597 auths/SimpleLDAP/authenticator.py:503
+#: auths/ActiveDirectory_enterprise/authenticator.py:604
+#: auths/ActiveDirectory_enterprise/authenticator.py:626
+#: auths/EDirectory_enterprise/authenticator.py:346
+#: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "Massa resultats, cal especificar més"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:659
+#: auths/ActiveDirectory_enterprise/authenticator.py:658
 msgid "Domain seems to be incorrect, please check it"
 msgstr "El Domini sembla ser incorrecte, si us plau verifiqueu-ho"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:678
+#: auths/ActiveDirectory_enterprise/authenticator.py:677
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes d'usuari)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:701
+#: auths/ActiveDirectory_enterprise/authenticator.py:700
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "El servidor sembla no ser un Directori Actiu (no té objectes de grup)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:710
-#: auths/EDirectory_enterprise/authenticator.py:445
-#: auths/RegexLdap/authenticator.py:707 auths/SimpleLDAP/authenticator.py:686
+#: auths/ActiveDirectory_enterprise/authenticator.py:709
+#: auths/EDirectory_enterprise/authenticator.py:469
+#: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 "Els paràmetres de connexió semblen correctes, la prova s'ha executat "
@@ -1492,31 +1496,31 @@ msgstr "Nom d'usuari amb privilegis de lectura sobre l'eDirectory"
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "Temps d'espera de la connexió amb el LDAP en segons"
 
-#: auths/EDirectory_enterprise/authenticator.py:93
+#: auths/EDirectory_enterprise/authenticator.py:102
 msgid "eDirectory Authenticator"
 msgstr "Autenticador eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:95
+#: auths/EDirectory_enterprise/authenticator.py:104
 msgid "Authenticate against eDirectory"
 msgstr "Autenticar sobre eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:340
+#: auths/EDirectory_enterprise/authenticator.py:364
 msgid "Edirectory connection error: {}"
 msgstr "Error de connexió amb l'eDirectori: {}"
 
-#: auths/EDirectory_enterprise/authenticator.py:345
-#: auths/RegexLdap/authenticator.py:620 auths/SimpleLDAP/authenticator.py:548
+#: auths/EDirectory_enterprise/authenticator.py:369
+#: auths/RegexLdap/authenticator.py:668 auths/SimpleLDAP/authenticator.py:548
 msgid "Ldap search base is incorrect"
 msgstr "La base de cerca LDAP no és correcta"
 
-#: auths/EDirectory_enterprise/authenticator.py:363
-#: auths/RegexLdap/authenticator.py:638 auths/SimpleLDAP/authenticator.py:556
+#: auths/EDirectory_enterprise/authenticator.py:387
+#: auths/RegexLdap/authenticator.py:686 auths/SimpleLDAP/authenticator.py:556
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "La classe d'usuari LDAP sembla no ser correcta (no s'ha trobat cap usuari "
 "amb aquesta classe)"
 
-#: auths/EDirectory_enterprise/authenticator.py:386
+#: auths/EDirectory_enterprise/authenticator.py:410
 #: auths/SimpleLDAP/authenticator.py:602
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
@@ -1525,11 +1529,11 @@ msgstr ""
 "L'atribut d'ID de l'usuari LDAP sembla no ser correcte (no s'ha trobat cap "
 "usuari amb aquest atribut)"
 
-#: auths/EDirectory_enterprise/authenticator.py:409
+#: auths/EDirectory_enterprise/authenticator.py:433
 msgid "Expected group attribute "
 msgstr "Atribut de grup esperat"
 
-#: auths/EDirectory_enterprise/authenticator.py:436
+#: auths/EDirectory_enterprise/authenticator.py:460
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
@@ -1597,11 +1601,11 @@ msgstr "DNS invers"
 msgid "If checked, the host will be reversed dns"
 msgstr "Si està seleccionat, el host serà DNS invers"
 
-#: auths/InternalDB/authenticator.py:174
+#: auths/InternalDB/authenticator.py:180
 msgid "Internal structures seems ok"
 msgstr "Les estructures internes semblen correctes"
 
-#: auths/InternalDB/authenticator.py:177
+#: auths/InternalDB/authenticator.py:183
 msgid "All seems fine in the authenticator."
 msgstr "Tot sembla correcte a l'autenticador"
 
@@ -1609,27 +1613,27 @@ msgstr "Tot sembla correcte a l'autenticador"
 msgid "Radius Authenticator"
 msgstr "Autenticador Radius"
 
-#: auths/Radius/authenticator.py:69
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:69
 msgid "Radius Server IP or Hostname"
 msgstr "IP del servidor Radius o nom d’amfitrió"
 
-#: auths/Radius/authenticator.py:77
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:77
 msgid "Radius authentication port (usually 1812)"
 msgstr "Port d'autenticació Radius (normalment 1812)"
 
-#: auths/Radius/authenticator.py:82
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:82
 msgid "Secret"
 msgstr "Secret"
 
-#: auths/Radius/authenticator.py:84
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:84
 msgid "Radius client secret"
 msgstr "Secret del client Radius"
 
-#: auths/Radius/authenticator.py:90
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:98
 msgid "NAS Identifier"
 msgstr "Identificador NAS"
 
-#: auths/Radius/authenticator.py:93
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:101
 msgid "NAS Identifier for Radius Server"
 msgstr "Identificador NAS del servidor Radius"
 
@@ -1651,15 +1655,15 @@ msgstr ""
 "Si es defineix, aquest valor s'afegirà com a grup per a tots els usuaris de "
 "radius"
 
-#: auths/Radius/authenticator.py:174
+#: auths/Radius/authenticator.py:196
 msgid "Error testing connection"
 msgstr "S'ha produït un error intentant la connexió"
 
-#: auths/Radius/authenticator.py:186
+#: auths/Radius/authenticator.py:208
 msgid "Connection to Radius server failed"
 msgstr "Ha fallat la connexió amb el servidor Radius"
 
-#: auths/Radius/authenticator.py:187
+#: auths/Radius/authenticator.py:209
 msgid "Connection to Radius server seems ok"
 msgstr "La connexió amb servidor Radius sembla correcta"
 
@@ -1740,15 +1744,15 @@ msgstr ""
 "Classe per a objectes LDAP que també se seleccionarà per a la recuperació de "
 "grups (normalment buit)"
 
-#: auths/RegexLdap/authenticator.py:179
+#: auths/RegexLdap/authenticator.py:189
 msgid "Regex LDAP Authenticator"
 msgstr "Autenticador Regex LDAP"
 
-#: auths/RegexLdap/authenticator.py:181
+#: auths/RegexLdap/authenticator.py:191
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP d'Expressions Regulars"
 
-#: auths/RegexLdap/authenticator.py:663
+#: auths/RegexLdap/authenticator.py:711
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1756,7 +1760,7 @@ msgstr ""
 "L'atribut d'ID d'usuari de LDAP probablement és incorrecte (no es pot trobar "
 "cap usuari que compleixi les dues condicions)"
 
-#: auths/RegexLdap/authenticator.py:692 auths/SimpleLDAP/authenticator.py:625
+#: auths/RegexLdap/authenticator.py:740 auths/SimpleLDAP/authenticator.py:625
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -2070,19 +2074,24 @@ msgstr "No es pot anul·lar una publicació que no es pot utilitzar"
 msgid "Can't unpublish publications with services in process"
 msgstr "No es poden anul·lar publicacions amb serveis en procés"
 
-#: core/managers/user_service.py:348
+#: core/managers/user_service.py:128
+#| msgid "Maximum number of services to provide"
+msgid "Maximum number of user services reached for this {}"
+msgstr "Nombre màxim de serveis d&#39;usuari assolit per a aquest {}"
+
+#: core/managers/user_service.py:364
 msgid "Can't remove a non active element"
 msgstr "No es pot eliminar un element no actiu"
 
-#: core/managers/user_service.py:374
+#: core/managers/user_service.py:390
 msgid "Can't remove nor cancel {} cause its state don't allow it"
 msgstr "No es pot eliminar ni cancel·lar {} perquè el seu estat no ho permet"
 
-#: core/managers/user_service.py:406
+#: core/managers/user_service.py:422
 msgid "The requested service is restrained"
 msgstr "El servei sol·licitat està restringit"
 
-#: core/managers/user_service.py:770 web/util/errors.py:83
+#: core/managers/user_service.py:788 web/util/errors.py:83
 msgid ""
 "Invalid service. The service is not available at this moment. Please, try "
 "later"
@@ -2090,19 +2099,19 @@ msgstr ""
 "Servei no vàlid. El servei no està disponible ara mateix. Si us plau, "
 "intenteu-ho més tard"
 
-#: core/managers/user_service.py:807
+#: core/managers/user_service.py:825
 msgid "The requested transport {} is not valid for {}"
 msgstr "El transport sol·licitat {} no és vàlid per a {}"
 
-#: core/managers/user_service.py:1084
+#: core/managers/user_service.py:1102
 msgid "The service is not accessible from this device"
 msgstr "El servei no és accessible des d'aquest dispositiu"
 
-#: core/mfas/mfa.py:60 core/mfas/mfa.py:72
+#: core/mfas/mfa.py:61 core/mfas/mfa.py:73
 msgid "Base MFA"
 msgstr "Base MFA"
 
-#: core/mfas/mfa.py:184
+#: core/mfas/mfa.py:193
 msgid "Invalid MFA code"
 msgstr "Codi MFA no vàlid"
 
@@ -2402,19 +2411,19 @@ msgid "Service not ready at this moment. Please, try again in a while."
 msgstr ""
 "Servei no disponible en aquest moment. Si us plau, intenteu-ho més tard."
 
-#: mfas/Email/mfa.py:22
+#: mfas/Email/mfa.py:55
 msgid "Email Multi Factor"
 msgstr "Correu electrònic multifactor"
 
-#: mfas/Email/mfa.py:24
+#: mfas/Email/mfa.py:57
 msgid "Email Multi Factor Authenticator"
 msgstr "Correu electrònic Multifactor Authenticator"
 
-#: mfas/Email/mfa.py:29
+#: mfas/Email/mfa.py:62
 msgid "SMTP Host"
 msgstr "Amfitrió SMTP"
 
-#: mfas/Email/mfa.py:32
+#: mfas/Email/mfa.py:65
 msgid ""
 "SMTP Server hostname or IP address. If you are using a  non-standard port, "
 "add it after a colon, for example: smtp.gmail.com:587"
@@ -2422,88 +2431,198 @@ msgstr ""
 "Nom d&#39;amfitrió del servidor SMTP o adreça IP. Si utilitzeu un port no "
 "estàndard, afegiu-lo després de dos punts, per exemple: smtp.gmail.com:587"
 
-#: mfas/Email/mfa.py:37 mfas/Email/mfa.py:50 mfas/Email/mfa.py:59
-#: mfas/Email/mfa.py:68
+#: mfas/Email/mfa.py:70 mfas/Email/mfa.py:83 mfas/Email/mfa.py:92
+#: mfas/Email/mfa.py:101
 msgid "SMTP Server"
 msgstr "Servidor SMTP"
 
-#: mfas/Email/mfa.py:41 transports/HTML5RDP/html5rdp.py:268
+#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:268
 #: transports/HTML5RDS_enterprise/html5rds.py:255
 msgid "Security"
 msgstr "Seguretat"
 
-#: mfas/Email/mfa.py:42
+#: mfas/Email/mfa.py:75
 msgid "Security protocol to use"
 msgstr "Protocol de seguretat a utilitzar"
 
-#: mfas/Email/mfa.py:44
+#: mfas/Email/mfa.py:77
 msgid "TLS"
 msgstr "TLS"
 
-#: mfas/Email/mfa.py:45
+#: mfas/Email/mfa.py:78
 msgid "SSL"
 msgstr "SSL"
 
-#: mfas/Email/mfa.py:56
+#: mfas/Email/mfa.py:89
 msgid "User with access to SMTP server"
 msgstr "Usuari amb accés al servidor SMTP"
 
-#: mfas/Email/mfa.py:65
+#: mfas/Email/mfa.py:98
 msgid "Password of the user with access to SMTP server"
 msgstr "Contrasenya de l&#39;usuari amb accés al servidor SMTP"
 
-#: mfas/Email/mfa.py:74
+#: mfas/Email/mfa.py:107
 msgid "Subject"
 msgstr "Assignatura"
 
-#: mfas/Email/mfa.py:76
+#: mfas/Email/mfa.py:109
 msgid "Subject of the email"
 msgstr "Assumpte del correu electrònic"
 
-#: mfas/Email/mfa.py:78 mfas/Email/mfa.py:87 mfas/Email/mfa.py:95
+#: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
+#: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
+#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:193
+#: mfas/SMS/mfa.py:208 mfas/SMS/mfa.py:218
 msgid "Config"
 msgstr "Config"
 
-#: mfas/Email/mfa.py:83
+#: mfas/Email/mfa.py:116
 msgid "From Email"
 msgstr "Des del correu electrònic"
 
-#: mfas/Email/mfa.py:85
+#: mfas/Email/mfa.py:118
 msgid "Email address that will be used as sender"
 msgstr "Adreça de correu electrònic que s&#39;utilitzarà com a remitent"
 
-#: mfas/Email/mfa.py:91
+#: mfas/Email/mfa.py:124
 msgid "Enable HTML"
 msgstr "Activa HTML"
 
-#: mfas/Email/mfa.py:93
+#: mfas/Email/mfa.py:126
 msgid "Enable HTML in emails"
 msgstr "Activa l&#39;HTML als correus electrònics"
 
-#: mfas/Email/mfa.py:110
+#: mfas/Email/mfa.py:133 mfas/SMS/mfa.py:197
+msgid "User without MFA policy"
+msgstr "Usuari sense política MFA"
+
+#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:185 mfas/SMS/mfa.py:200
+msgid "Action for SMS response error"
+msgstr "Acció per error de resposta SMS"
+
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
+#| msgid "Allow user log in without MFA"
+msgid "Allow user login"
+msgstr "Permet l&#39;inici de sessió de l&#39;usuari"
+
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
+#| msgid "Deny user log in"
+msgid "Deny user login"
+msgstr "Denegar l&#39;inici de sessió de l&#39;usuari"
+
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/SMS/mfa.py:190 mfas/SMS/mfa.py:205
+msgid "Allow user to login if it IP is in the networks list"
+msgstr ""
+"Permet que l&#39;usuari iniciï sessió si la seva IP es troba a la llista de "
+"xarxes"
+
+#: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
+#: mfas/SMS/mfa.py:191 mfas/SMS/mfa.py:206
+msgid "Deny user to login if it IP is in the networks list"
+msgstr ""
+"Denegueu que l&#39;usuari iniciï sessió si la seva IP és a la llista de "
+"xarxes"
+
+#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
+#| msgid "Subnetwork"
+msgid "SMS networks"
+msgstr "Xarxes SMS"
+
+#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
+#| msgid "Password for SMS authentication"
+msgid "Networks for SMS authentication"
+msgstr "Xarxes per a l&#39;autenticació de SMS"
+
+#: mfas/Email/mfa.py:169
 msgid "Invalid SMTP hostname"
 msgstr "Nom d&#39;amfitrió SMTP no vàlid"
 
-#: mfas/SMS/mfa.py:19
+#: mfas/Email/mfa.py:185
+msgid "Check your mail. You will receive an email with the verification code"
+msgstr ""
+"Comproveu el vostre correu. Rebràs un correu electrònic amb el codi de "
+"verificació"
+
+#: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
+msgid "Radius OTP Challenge"
+msgstr "Repte Radius OTP"
+
+#: mfas/Radius/mfa.py:88
+msgid "All users must send OTP"
+msgstr "Tots els usuaris han d&#39;enviar OTP"
+
+#: mfas/Radius/mfa.py:92
+msgid ""
+"If unchecked, an authentication step is needed in order to know if this user "
+"must enter OTP. If checked, all users must enter OTP, so authentication step "
+"is skipped."
+msgstr ""
+"Si no està marcat, cal un pas d&#39;autenticació per saber si aquest usuari "
+"ha d&#39;introduir OTP. Si està marcat, tots els usuaris han d&#39;introduir "
+"OTP, de manera que es salta el pas d&#39;autenticació."
+
+#: mfas/Radius/mfa.py:106
+msgid "Radius OTP communication error action"
+msgstr "Acció d&#39;error de comunicació de Radius OTP"
+
+#: mfas/Radius/mfa.py:109
+#| msgid "Action for SMS response error"
+msgid "Action for OTP server communication error"
+msgstr "Acció per error de comunicació del servidor OTP"
+
+#: mfas/Radius/mfa.py:121
+msgid "Radius OTP networks"
+msgstr "Xarxes Radius OTP"
+
+#: mfas/Radius/mfa.py:125
+#| msgid "Password for SMS authentication"
+msgid "Networks for Radius OTP authentication"
+msgstr "Xarxes per a l&#39;autenticació Radius OTP"
+
+#: mfas/Radius/mfa.py:131
+#| msgid "User with access to SMTP server"
+msgid "User without defined OTP in server"
+msgstr "Usuari sense OTP definit al servidor"
+
+#: mfas/Radius/mfa.py:134
+msgid "Action for user without defined Radius Challenge"
+msgstr "Acció per a l&#39;usuari sense Radius Challenge definit"
+
+#: mfas/Radius/mfa.py:194
+#| msgid "MFA Code"
+msgid "OTP Code"
+msgstr "Codi OTP"
+
+#: mfas/Radius/mfa.py:202
+msgid "Please enter OTP"
+msgstr "Introduïu OTP"
+
+#: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
+#| msgid "Connection error: "
+msgid "Radius OTP connection error"
+msgstr "Error de connexió de Radius OTP"
+
+#: mfas/Radius/mfa.py:279
+#| msgid "Invalid MFA code"
+msgid "Invalid OTP code"
+msgstr "Codi OTP no vàlid"
+
+#: mfas/SMS/mfa.py:53
 msgid "SMS Thought HTTP"
 msgstr "SMS Pensat HTTP"
 
-#: mfas/SMS/mfa.py:21
+#: mfas/SMS/mfa.py:55
 msgid "Simple SMS sending MFA using HTTP"
 msgstr "SMS senzill que envia MFA mitjançant HTTP"
 
-#: mfas/SMS/mfa.py:26
+#: mfas/SMS/mfa.py:60
 msgid "URL pattern for SMS sending"
 msgstr "Patró d&#39;URL per enviar SMS"
 
-#: mfas/SMS/mfa.py:29
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
+#: mfas/SMS/mfa.py:63
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2511,20 +2630,21 @@ msgid ""
 "* {username} - the username\n"
 "* {justUsername} - the username without @...."
 msgstr ""
-"Patró d&#39;URL per enviar SMS. Pot contenir les variables següents: * {code}"
-" - el codi a enviar * {telèfon/+telèfon} - el número de telèfon * {username} "
-"- el nom d&#39;usuari * {justUsername} - el nom d&#39;usuari sense @...."
+"Patró d&#39;URL per enviar SMS. Pot contenir les variables següents: * "
+"{code} - el codi a enviar * {telèfon/+telèfon} - el número de telèfon * "
+"{username} - el nom d&#39;usuari * {justUsername} - el nom d&#39;usuari "
+"sense @...."
 
-#: mfas/SMS/mfa.py:37 mfas/SMS/mfa.py:43 mfas/SMS/mfa.py:56 mfas/SMS/mfa.py:75
-#: mfas/SMS/mfa.py:92 mfas/SMS/mfa.py:101
+#: mfas/SMS/mfa.py:71 mfas/SMS/mfa.py:82 mfas/SMS/mfa.py:91 mfas/SMS/mfa.py:109
+#: mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:136
 msgid "HTTP Server"
 msgstr "Servidor HTTP"
 
-#: mfas/SMS/mfa.py:41
+#: mfas/SMS/mfa.py:75
 msgid "Ignore certificate errors"
 msgstr "Ignora els errors del certificat"
 
-#: mfas/SMS/mfa.py:46
+#: mfas/SMS/mfa.py:79
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2532,19 +2652,19 @@ msgstr ""
 "Si està marcat, el certificat del servidor s&#39;ignorarà. Això és útil si "
 "el servidor utilitza un certificat autofirmat."
 
-#: mfas/SMS/mfa.py:52
+#: mfas/SMS/mfa.py:86
 msgid "SMS sending method"
 msgstr "Mètode d&#39;enviament de SMS"
 
-#: mfas/SMS/mfa.py:54 mfas/SMS/mfa.py:108
+#: mfas/SMS/mfa.py:88 mfas/SMS/mfa.py:142
 msgid "Method for sending SMS"
 msgstr "Mètode per enviar SMS"
 
-#: mfas/SMS/mfa.py:63
+#: mfas/SMS/mfa.py:97
 msgid "Headers for SMS requests"
 msgstr "Capçaleres per a sol·licituds d&#39;SMS"
 
-#: mfas/SMS/mfa.py:66
+#: mfas/SMS/mfa.py:100
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2559,18 +2679,11 @@ msgstr ""
 "usuari sense @.... Les capçaleres estan a la forma de \"Encapçalament: valor"
 "\". (sense cometes)"
 
-#: mfas/SMS/mfa.py:81
+#: mfas/SMS/mfa.py:115
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "Paràmetres per a l&#39;enviament de SMS POST/PUT"
 
-#: mfas/SMS/mfa.py:84
-#| msgid ""
-#| "Parameters for SMS sending via POST/PUT. It can contain the following "
-#| "variables:\n"
-#| "* {code} - the code to send\n"
-#| "* {phone/+phone} - the phone number\n"
-#| "* {username} - the username\n"
-#| "* {justUsername} - the username without @....\n"
+#: mfas/SMS/mfa.py:118
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2584,99 +2697,99 @@ msgstr ""
 "número de telèfon * {username} - el nom d&#39;usuari * {justUsername} - el "
 "nom d&#39;usuari sense @...."
 
-#: mfas/SMS/mfa.py:96
+#: mfas/SMS/mfa.py:130
 msgid "SMS encoding"
 msgstr "Codificació de SMS"
 
-#: mfas/SMS/mfa.py:99
+#: mfas/SMS/mfa.py:133
 msgid "Encoding for SMS"
 msgstr "Codificació per a SMS"
 
-#: mfas/SMS/mfa.py:106
+#: mfas/SMS/mfa.py:140
 msgid "SMS authentication method"
 msgstr "Mètode d&#39;autenticació per SMS"
 
-#: mfas/SMS/mfa.py:110 mfas/SMS/mfa.py:124 mfas/SMS/mfa.py:133
-msgid "HTTP Authentication"
-msgstr "Autenticació HTTP"
-
-#: mfas/SMS/mfa.py:113
+#: mfas/SMS/mfa.py:146
 msgid "HTTP Basic Auth"
 msgstr "Autenticació bàsica HTTP"
 
-#: mfas/SMS/mfa.py:114
+#: mfas/SMS/mfa.py:147
 msgid "HTTP Digest Auth"
 msgstr "HTTP Digest Auth"
 
-#: mfas/SMS/mfa.py:120
+#: mfas/SMS/mfa.py:149 mfas/SMS/mfa.py:158 mfas/SMS/mfa.py:167
+msgid "HTTP Authentication"
+msgstr "Autenticació HTTP"
+
+#: mfas/SMS/mfa.py:154
 msgid "SMS authentication user or token"
 msgstr "Usuari o testimoni d&#39;autenticació per SMS"
 
-#: mfas/SMS/mfa.py:122
+#: mfas/SMS/mfa.py:156
 msgid "User or token for SMS authentication"
 msgstr "Usuari o testimoni per a l&#39;autenticació per SMS"
 
-#: mfas/SMS/mfa.py:129
+#: mfas/SMS/mfa.py:163
 msgid "SMS authentication password"
 msgstr "Contrasenya d&#39;autenticació per SMS"
 
-#: mfas/SMS/mfa.py:131
+#: mfas/SMS/mfa.py:165
 msgid "Password for SMS authentication"
 msgstr "Contrasenya per a l&#39;autenticació per SMS"
 
-#: mfas/SMS/mfa.py:138
+#: mfas/SMS/mfa.py:172
 msgid "SMS response OK regex"
 msgstr "Resposta d&#39;SMS OK regex"
 
-#: mfas/SMS/mfa.py:141
+#: mfas/SMS/mfa.py:175
+#| msgid ""
+#| "Regex for SMS response OK. If emty, the response is considered OK if "
+#| "status code is 200."
 msgid ""
-"Regex for SMS response OK. If emty, the response is considered OK if status "
+"Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
 msgstr ""
-"Regex per a la resposta d&#39;SMS OK. Si està buida, la resposta es "
-"considera correcta si el codi d&#39;estat és 200."
+"Regex per a la resposta d&#39;SMS OK. Si està buit, la resposta es considera "
+"correcta si el codi d&#39;estat és 200."
 
-#: mfas/SMS/mfa.py:144 mfas/SMS/mfa.py:153
+#: mfas/SMS/mfa.py:178
 msgid "HTTP Response"
 msgstr "Resposta HTTP"
 
-#: mfas/SMS/mfa.py:148
+#: mfas/SMS/mfa.py:182
 msgid "SMS response error action"
 msgstr "Acció d&#39;error de resposta SMS"
 
-#: mfas/SMS/mfa.py:151
-msgid "Action for SMS response error"
-msgstr "Acció per error de resposta SMS"
-
-#: mfas/SMS/mfa.py:155
-msgid "Allow user log in without MFA"
-msgstr "Permet que l&#39;usuari iniciï sessió sense MFA"
-
-#: mfas/SMS/mfa.py:156
-msgid "Deny user log in"
-msgstr "Denegueu l&#39;inici de sessió de l&#39;usuari"
-
-#: mfas/SMS/mfa.py:199
+#: mfas/SMS/mfa.py:291
 msgid "SMS sending failed"
 msgstr "S&#39;ha produït un error en l&#39;enviament de SMS"
 
-#: mfas/SMS/mfa.py:263 web/views/modern.py:275
+#: mfas/SMS/mfa.py:300
+#| msgid "SMS response error action"
+msgid "SMS response error"
+msgstr "Error de resposta SMS"
+
+#: mfas/SMS/mfa.py:354 web/views/modern.py:294
 msgid "MFA Code"
 msgstr "Codi MFA"
 
-#: mfas/Sample/mfa.py:16
+#: mfas/SMS/mfa.py:357
+msgid "Check your phone. You will receive an SMS with the verification code"
+msgstr "Comprova el teu telèfon. Rebràs un SMS amb el codi de verificació"
+
+#: mfas/Sample/mfa.py:47
 msgid "Sample Multi Factor"
 msgstr "Mostra de múltiples factors"
 
-#: mfas/Sample/mfa.py:18
+#: mfas/Sample/mfa.py:49
 msgid "Sample Multi Factor Authenticator"
 msgstr "Exemple d&#39;autenticador de múltiples factors"
 
-#: mfas/Sample/mfa.py:22
+#: mfas/Sample/mfa.py:53
 msgid "Sample useless field"
 msgstr "Camp inútil de mostra"
 
-#: mfas/Sample/mfa.py:25
+#: mfas/Sample/mfa.py:56
 msgid "This is a useless field, for sample and testing pourposes"
 msgstr "Aquest és un camp inútil, per a mostres i proves"
 
@@ -2867,6 +2980,17 @@ msgstr ""
 "màquines estàtiques. <b>(requereix python >= 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:80
+#| msgid ""
+#| "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
+#| "<b>(Requires python >= 3.6)</b>"
+msgid ""
+"UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for "
+"static machines. <b>(Requires python >= 3.6)</b>"
+msgstr ""
+"UDS Actor per a màquines Centos, Fedora, RH, Suse, ... Linux. S&#39;utilitza "
+"NOMÉS per a màquines estàtiques. <b>(Requereix Python &gt;= 3.6)</b>"
+
+#: osmanagers/LinuxOsManager/__init__.py:90
 msgid ""
 "<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires "
 "python 2.7)</b>"
@@ -2874,7 +2998,7 @@ msgstr ""
 "<b>Legacy</b> Actor UDS per a màquines Linux Debian, Ubuntu, ... "
 "<b>(Requereix python 2.7)</b>"
 
-#: osmanagers/LinuxOsManager/__init__.py:90
+#: osmanagers/LinuxOsManager/__init__.py:100
 msgid ""
 "<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines "
 "<b>(Requires python 2.7)</b>"
@@ -2882,7 +3006,7 @@ msgstr ""
 "Actor UDS \"legacy\" per a Centos, Fedora, RH, ... Machines Linux "
 "<b>(requereix python 2.7)</b>"
 
-#: osmanagers/LinuxOsManager/__init__.py:100
+#: osmanagers/LinuxOsManager/__init__.py:110
 msgid ""
 "<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python "
 "2.7)</b>"
@@ -4542,6 +4666,16 @@ msgstr ""
 "l'usuari (en alguns sistemes operatius) intentaran engegar-se a través "
 "d'OpenGnsys."
 
+#: services/OpenGnsys/service.py:150 services/RDS_enterprise/service.py:86
+#| msgid "Max. Allowd services"
+msgid "Max. Allowed services"
+msgstr "Màx. Serveis permesos"
+
+#: services/OpenGnsys/service.py:155 services/RDS_enterprise/service.py:91
+#| msgid "Maximum number of allowed services (0 means no limit)"
+msgid "Maximum number of allowed services (0 or less means no limit)"
+msgstr "Nombre màxim de serveis permesos (0 o menys significa sense límit)"
+
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
 msgstr "Proveïdor de la plataforma OpenNebula"
@@ -5232,19 +5366,11 @@ msgstr "Ruta inicial"
 msgid "Path where the app will be started on. (i.e. f:\\example\\folder)"
 msgstr "Ruta on s’iniciarà l’aplicació. (per exemple, F:\\ruta\\carpeta)"
 
-#: services/RDS_enterprise/service.py:86
-msgid "Max. Allowd services"
-msgstr "Màxim de serveis permesos"
-
-#: services/RDS_enterprise/service.py:91
-msgid "Maximum number of allowed services (0 means no limit)"
-msgstr "Nombre màxim de serveis permesos (0 vol dir sense límit)"
-
-#: services/RDS_enterprise/service.py:96
+#: services/RDS_enterprise/service.py:97
 msgid "Wait spawned processes"
 msgstr "Esperar els processos generats"
 
-#: services/RDS_enterprise/service.py:100
+#: services/RDS_enterprise/service.py:101
 msgid ""
 "If active, RDS Actor will wait until the application and all spawned "
 "processes finished before considering app logged out"
@@ -5252,7 +5378,7 @@ msgstr ""
 "Si està activat, l'actor de RDS esperarà fins que l'aplicació i tots els "
 "processos generats finalitzin abans de considerar-ne la sortida"
 
-#: services/RDS_enterprise/service.py:112
+#: services/RDS_enterprise/service.py:113
 msgid "A valid application path is required"
 msgstr "Es necessita una ruta d'aplicació vàlida"
 
@@ -7191,10 +7317,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
-#: web/views/modern.py:269
+#: web/views/modern.py:285
 msgid "{} days"
 msgstr "{} dies"
 
-#: web/views/modern.py:271
+#: web/views/modern.py:287
 msgid "{} hours"
 msgstr "{} hores"
