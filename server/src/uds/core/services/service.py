@@ -243,15 +243,33 @@ class Service(Module):
         """
         return self._provider
 
+    def unmarshal(self, data: bytes) -> None:
+        # In fact, we will not unmarshall anything here, but setup maxDeployed
+        # if maxServices exists and it is a gui.NumericField
+        # Invoke base unmarshall, so "gui fields" gets loaded from data
+        super().unmarshal(data)
+
+        if hasattr(self, 'maxServices'):
+            # Fix Own "maxDeployed" value after loading fields
+            try:
+                self.maxDeployed = getattr(self, 'maxServices').num()
+            except Exception:
+                self.maxDeployed = Service.UNLIMITED
+
+            if self.maxDeployed < 1:
+                self.maxDeployed = Service.UNLIMITED
+        else:
+            self.maxDeployed = Service.UNLIMITED
+
     def requestServicesForAssignation(
         self, **kwargs
     ) -> typing.Iterable[UserDeployment]:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
-        @return an array with the services that we can assign (they must be of type deployedType)
-        We will access the returned array in "name" basis. This means that the service will be assigned by "name", so be care that every single service
-        returned are not repeated... :-)
+        @return an iterable with the services that we can assign  manually (they must be of type UserDeployment)
+        We will access the returned iterable in "name" basis. This means that the service will be assigned by "name", so be care that every single service
+        name returned is unique :-)
         """
         raise Exception(
             'The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(
