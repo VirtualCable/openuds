@@ -145,6 +145,17 @@ class OGService(Service):
         ),
     )
 
+    maxServices = gui.NumericField(
+        order=4,
+        label=_("Max. Allowd services"),
+        minValue=0,
+        maxValue=99999,
+        defvalue=0,
+        rdonly=False,
+        tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
+        required=True,
+    )
+
     ov = gui.HiddenField(value=None)
     ev = gui.HiddenField(
         value=None
