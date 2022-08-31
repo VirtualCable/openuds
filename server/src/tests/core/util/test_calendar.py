@@ -37,7 +37,7 @@ from uds.models import Calendar
 import datetime
 
 
-class CalendarTests(UDSTransactionTestCase):
+class CalendarTest(UDSTransactionTestCase):
 
     def setUp(self) -> None:
         createCalendars()

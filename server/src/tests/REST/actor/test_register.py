@@ -40,7 +40,7 @@ from ...utils import rest, constants
 logger = logging.getLogger(__name__)
 
 
-class ActorRegisterV3(rest.test.RESTTestCase):
+class ActorRegisterTest(rest.test.RESTTestCase):
     """
     Test actor functionality
     """

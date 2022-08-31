@@ -54,7 +54,7 @@ def macToInt(mac):
     return int(mac.replace(':', ''), 16)
 
 
-class UniqueIdTests(UDSTestCase):
+class UniqueIdTest(UDSTestCase):
     uidGen: UniqueIDGenerator
     ugidGen: UniqueGIDGenerator
     macGen: UniqueMacGenerator

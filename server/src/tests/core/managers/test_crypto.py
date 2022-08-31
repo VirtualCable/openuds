@@ -38,7 +38,7 @@ from django.conf import settings
 from uds.core.managers.crypto import CryptoManager
 from ...utils.test import UDSTestCase
 
-class CryptoManagerTests(UDSTestCase):
+class CryptoManagerTest(UDSTestCase):
     manager: CryptoManager = CryptoManager()
 
 

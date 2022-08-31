@@ -42,7 +42,7 @@ from ...utils.test import UDSTransactionTestCase
 from ...fixtures import services as fixtures_services
 
 
-class AssignedAndUnusedTests(UDSTransactionTestCase):
+class AssignedAndUnusedTest(UDSTransactionTestCase):
     userServices: typing.List[models.UserService]
 
     def setUp(self):

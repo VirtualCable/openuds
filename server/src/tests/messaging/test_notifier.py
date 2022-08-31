@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TestEmailNotifier(UDSTransactionTestCase):
+class EmailNotifierTest(UDSTransactionTestCase):
     """
     Test Email Notifier
     """

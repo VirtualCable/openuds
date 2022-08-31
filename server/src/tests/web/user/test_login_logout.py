@@ -36,7 +36,7 @@ from django.urls import reverse
 from uds.core.util.config import GlobalConfig
 
 from ...utils.web import test
-from ... import fixtures
+from ...fixtures import authenticators as fixtures_authenticators
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
@@ -45,7 +45,7 @@ from uds import models
 
 
 
-class WebLoginLogout(test.WEBTestCase):
+class WebLoginLogoutTest(test.WEBTestCase):
     """
     Test WEB login and logout
     """
@@ -61,18 +61,18 @@ class WebLoginLogout(test.WEBTestCase):
         """
         Test login and logout
         """
-        auth = fixtures.authenticators.createAuthenticator()
+        auth = fixtures_authenticators.createAuthenticator()
         # Create some ramdom users
-        admins = fixtures.authenticators.createUsers(
+        admins = fixtures_authenticators.createUsers(
             auth, number_of_users=8, is_admin=True
         )
-        stafs = fixtures.authenticators.createUsers(
+        stafs = fixtures_authenticators.createUsers(
             auth, number_of_users=8, is_staff=True
         )
-        users = fixtures.authenticators.createUsers(auth, number_of_users=8)
+        users = fixtures_authenticators.createUsers(auth, number_of_users=8)
 
         # Create some groups
-        groups = fixtures.authenticators.createGroups(auth, number_of_groups=32)
+        groups = fixtures_authenticators.createGroups(auth, number_of_groups=32)
 
         # Add users to some groups, ramdomly
         for user in users + admins + stafs:
@@ -115,8 +115,8 @@ class WebLoginLogout(test.WEBTestCase):
         self.assertInvalidLogin(response)
 
     def test_login_valid_user_no_group(self):
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
         )[0]
 
         response = self.do_login(user.name, user.name, user.manager.uuid)
@@ -124,8 +124,8 @@ class WebLoginLogout(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 2)
 
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
             is_staff=True,
         )[0]
 
@@ -134,8 +134,8 @@ class WebLoginLogout(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 4)
 
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
             is_admin=True,
         )[0]
 
@@ -145,8 +145,8 @@ class WebLoginLogout(test.WEBTestCase):
         self.assertEqual(models.Log.objects.count(), 6)
 
     def test_login_invalid_user(self):
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
         )[0]
 
         response = self.do_login(user.name, 'wrong password', user.manager.uuid)
@@ -155,8 +155,8 @@ class WebLoginLogout(test.WEBTestCase):
         # Invalid password log & access denied, in auth and user log
         self.assertEqual(models.Log.objects.count(), 4)
 
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
             is_staff=True,
         )[0]
 
@@ -165,8 +165,8 @@ class WebLoginLogout(test.WEBTestCase):
 
         self.assertEqual(models.Log.objects.count(), 8)
 
-        user = fixtures.authenticators.createUsers(
-            fixtures.authenticators.createAuthenticator(),
+        user = fixtures_authenticators.createUsers(
+            fixtures_authenticators.createAuthenticator(),
             is_admin=True,
         )[0]
 

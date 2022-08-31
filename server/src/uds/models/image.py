@@ -49,27 +49,29 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from uds.models import ServicePool, MetaPool, ServicePoolGroup
 
+
 class Image(UUIDModel):
     """
     Image storing on DB model
     This is intended for small images (i will limit them to 128x128), so storing at db is fine
-
     """
 
-    MAX_IMAGE_SIZE = (128, 128)
+    MAX_IMAGE_SIZE = (
+        256,
+        256,
+    )  # Previouslt mas image size was 128x128, but now we are going to limit it to 256x256
     THUMBNAIL_SIZE = (48, 48)
 
     name = models.CharField(max_length=128, unique=True, db_index=True)
-    stamp = (
-        models.DateTimeField()
-    )  # Date creation or validation of this entry. Set at write time
+    # Datetime creation or validation of this entry. Set at write time
+    stamp = models.DateTimeField()
     data = models.BinaryField()  # Image storage
     thumb = models.BinaryField()  # Thumbnail, very small
     width = models.IntegerField(default=0)
     height = models.IntegerField(default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.RelatedManager[Image]'
+    objects: 'models.manager.RelatedManager["Image"]'
 
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     metaPools: 'models.manager.RelatedManager[MetaPool]'
@@ -92,18 +94,27 @@ class Image(UUIDModel):
         return codecs.decode(data64.encode(), 'base64')
 
     @staticmethod
-    def prepareForDb(data: bytes) -> bytes:
+    def resizeAndConvert(image: PIL.Image.Image, size: typing.Tuple[int, int]) -> typing.Tuple[int, int, bytes]:
+        """
+        Resizes an image to the given size
+        """
+        image.thumbnail(
+            size=Image.MAX_IMAGE_SIZE, resample=PIL.Image.LANCZOS, reducing_gap=3.0
+        )
+        output = io.BytesIO()
+        image.save(output, 'png')
+        return (image.width, image.height, output.getvalue())
+
+    @staticmethod
+    def prepareForDb(data: bytes) -> typing.Tuple[int, int, bytes]:
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
-        except Exception:  # Image data is incorrect, fix as a simple transparent image
+        except Exception:  # Image data is incorrect, replace as a simple transparent image
             image = PIL.Image.new('RGBA', (128, 128))
 
         # Max image size, keeping aspect and using antialias
-        image.thumbnail(Image.MAX_IMAGE_SIZE, PIL.Image.ANTIALIAS)
-        output = io.BytesIO()
-        image.save(output, 'png')
-        return output.getvalue()
+        return Image.resizeAndConvert(image, Image.MAX_IMAGE_SIZE)
 
     @property
     def data64(self) -> str:
@@ -152,18 +163,14 @@ class Image(UUIDModel):
         return self.width, self.height
 
     def updateThumbnail(self) -> None:
-        thumb = self.image
-        self.width, self.height = thumb.size
-        thumb.thumbnail(Image.THUMBNAIL_SIZE, PIL.Image.ANTIALIAS)
-        output = io.BytesIO()
-        thumb.save(output, 'png')
-        self.thumb = output.getvalue()
+        img = self.image
+        _, _, self.thumb = Image.resizeAndConvert(img, Image.THUMBNAIL_SIZE)
 
     def _processImageStore(self) -> None:
-        self.data = Image.prepareForDb(self.data)
+        self.width, self.height, self.data = Image.prepareForDb(self.data)
         self.updateThumbnail()
 
-    def storeImageFromBinary(self, data) -> None:
+    def storeImageFromBinary(self, data: bytes) -> None:
         self.data = data
         self._processImageStore()
 
@@ -187,22 +194,6 @@ class Image(UUIDModel):
         return super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
-        return 'Image id {}, name {}, {} bytes, {} bytes thumb'.format(
-            self.id, self.name, len(self.data), len(self.thumb)
+        return 'Image id: {}, name: {}, size: {}, length: {} bytes, thumb length: {} bytes'.format(
+            self.id, self.name, self.size, len(self.data), len(self.thumb)
         )
-
-    @staticmethod
-    def beforeDelete(sender, **kwargs):
-        """
-        Used to invoke the Service class "Destroy" before deleting it from database.
-
-        In this case, this is a dummy method, waiting for something useful to do :-)
-
-        :note: If destroy raises an exception, the deletion is not taken.
-        """
-        toDelete = kwargs['instance']
-
-        logger.debug('Deleted image %s', toDelete)
-
-
-models.signals.pre_delete.connect(Image.beforeDelete, sender=Image)

@@ -29,12 +29,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import logging
-import string
 import random
 import typing
 
 from . import constants
+
 
 def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
     chars = chars or constants.STRING_CHARS
@@ -48,7 +47,7 @@ def random_ip() -> str:
     return '.'.join(
         str(
             random.randint(0, 255)  # nosec: Not used for cryptography, just for testing
-        )  
+        )
         for _ in range(4)
     )
 

@@ -45,7 +45,7 @@ from ...fixtures import (
 )
 
 
-class PermissionsTests(UDSTransactionTestCase):
+class PermissionsTest(UDSTransactionTestCase):
     authenticator: models.Authenticator
     groups: typing.List[models.Group]
     users: typing.List[models.User]

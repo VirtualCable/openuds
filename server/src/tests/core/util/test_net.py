@@ -40,7 +40,7 @@ from uds.core.util import net
 logger = logging.getLogger(__name__)
 
 
-class NetTestCase(UDSTransactionTestCase):
+class NetTest(UDSTransactionTestCase):
 
     def testNetworkFromString(self):
         for n in (

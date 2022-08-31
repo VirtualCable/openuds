@@ -38,7 +38,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = ['unicode', b'string', {'a': 1, 'b': 2.0}]
 
 
-class StorageTests(UDSTransactionTestCase):
+class StorageTest(UDSTransactionTestCase):
     def test_storage(self):
         storage = Storage(UNICODE_CHARS)
 

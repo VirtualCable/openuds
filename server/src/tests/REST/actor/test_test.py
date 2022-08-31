@@ -39,7 +39,7 @@ from ...utils import rest
 logger = logging.getLogger(__name__)
 
 
-class TestActorV3(rest.test.RESTTestCase):
+class ActorTestTest(rest.test.RESTTestCase):
     """
     Test actor functionality
     """

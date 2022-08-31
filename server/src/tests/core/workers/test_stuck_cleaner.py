@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class StuckCleanerTests(UDSTransactionTestCase):
+class StuckCleanerTest(UDSTransactionTestCase):
     userServices: typing.List['models.UserService']
 
     def setUp(self) -> None:

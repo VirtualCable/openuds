@@ -47,7 +47,7 @@ END_DATE_DAY = datetime.datetime(2020, 1, 2, 0, 0, 0)
 END_DATE_MONTH = datetime.datetime(2020, 2, 1, 0, 0, 0)
 END_DATE_YEAR = datetime.datetime(2021, 1, 1, 0, 0, 0)
 
-class StatsCountersTests(UDSTransactionTestCase):
+class StatsCountersTest(UDSTransactionTestCase):
     def setUp(self) -> None:
         return super().setUp()
 

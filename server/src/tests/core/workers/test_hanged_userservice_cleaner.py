@@ -45,7 +45,7 @@ MAX_INIT = 300
 TEST_SERVICES = 5 * 5  # Ensure multiple of 5 for testing
 
 
-class HangedCleanerTests(UDSTransactionTestCase):
+class HangedCleanerTest(UDSTransactionTestCase):
     userServices: typing.List[models.UserService]
 
     def setUp(self):

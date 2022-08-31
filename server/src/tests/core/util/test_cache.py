@@ -41,7 +41,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = [u'únîcödè€', b'string', {'a': 1, 'b': 2.0}]
 
 
-class CacheTests(UDSTransactionTestCase):
+class CacheTest(UDSTransactionTestCase):
 
     def test_cache(self):
         cache = Cache(UNICODE_CHARS)

@@ -32,11 +32,11 @@ import random
 import typing
 
 
-from ... import fixtures
+from ...fixtures import authenticators as fixtures_authenticators
 from ...utils import rest, test
 
 
-class RESTLoginLogoutCase(test.UDSTestCase):
+class LoginLogoutTest(test.UDSTestCase):
     """
     Test login and logout
     """
@@ -45,18 +45,18 @@ class RESTLoginLogoutCase(test.UDSTestCase):
         """
         Test login and logout
         """
-        auth = fixtures.authenticators.createAuthenticator()
+        auth = fixtures_authenticators.createAuthenticator()
         # Create some ramdom users
-        admins = fixtures.authenticators.createUsers(
+        admins = fixtures_authenticators.createUsers(
             auth, number_of_users=8, is_admin=True
         )
-        staffs = fixtures.authenticators.createUsers(
+        staffs = fixtures_authenticators.createUsers(
             auth, number_of_users=8, is_staff=True
         )
-        users = fixtures.authenticators.createUsers(auth, number_of_users=8)
+        users = fixtures_authenticators.createUsers(auth, number_of_users=8)
 
         # Create some groups
-        groups = fixtures.authenticators.createGroups(auth, number_of_groups=32)
+        groups = fixtures_authenticators.createGroups(auth, number_of_groups=32)
 
         # Add users to some groups, ramdomly
         for user in users + admins + staffs:

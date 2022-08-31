@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class ServiceCacheUpdaterTests(UDSTransactionTestCase):
+class ServiceCacheUpdaterTest(UDSTransactionTestCase):
     servicePool: 'models.ServicePool'
 
     def setUp(self) -> None:

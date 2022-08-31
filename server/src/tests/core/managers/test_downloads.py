@@ -44,7 +44,7 @@ from uds.core.util.config import GlobalConfig
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
 
-class DownloadsManagerTests(WEBTestCase):
+class DownloadsManagerTest(WEBTestCase):
     filePath: str = ''
     manager: DownloadsManager
 
@@ -52,7 +52,7 @@ class DownloadsManagerTests(WEBTestCase):
     def setUpClass(cls):
         from uds.core.managers import downloadsManager
 
-        super(DownloadsManagerTests, cls).setUpClass()
+        super().setUpClass()
 
         cls.filePath = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'downloadable.txt'
