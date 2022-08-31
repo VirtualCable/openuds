@@ -258,8 +258,8 @@ class Service(Module):
 
             if self.maxDeployed < 1:
                 self.maxDeployed = Service.UNLIMITED
-        else:
-            self.maxDeployed = Service.UNLIMITED
+
+        # Keep untouched if maxServices is not present
 
     def requestServicesForAssignation(
         self, **kwargs
