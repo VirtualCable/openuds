@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-30 16:32+0200\n"
+"POT-Creation-Date: 2022-08-31 15:20+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -507,14 +507,14 @@ msgstr "服务池"
 #: static/admin/translations-fakejs.js:420
 #: static/admin/translations-fakejs.js:459
 #: static/admin/translations-fakejs.js:464
-#: static/admin/translations-fakejs.js:490
-#: static/admin/translations-fakejs.js:494
+#: static/admin/translations-fakejs.js:491
+#: static/admin/translations-fakejs.js:495
 msgid "Groups"
 msgstr "组"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:264
 #: static/admin/translations-fakejs.js:462
-#: static/admin/translations-fakejs.js:495
+#: static/admin/translations-fakejs.js:496
 msgid "Services Pools"
 msgstr "服务池"
 
@@ -704,7 +704,7 @@ msgstr "分配服务"
 #: static/admin/translations-fakejs.js:413
 #: static/admin/translations-fakejs.js:455
 #: static/admin/translations-fakejs.js:476
-#: static/admin/translations-fakejs.js:491
+#: static/admin/translations-fakejs.js:492
 msgid "Cancel"
 msgstr "取消"
 
@@ -1055,8 +1055,8 @@ msgstr "加"
 #: static/admin/translations-fakejs.js:456
 #: static/admin/translations-fakejs.js:465
 #: static/admin/translations-fakejs.js:477
-#: static/admin/translations-fakejs.js:492
-#: static/admin/translations-fakejs.js:497
+#: static/admin/translations-fakejs.js:493
+#: static/admin/translations-fakejs.js:498
 msgid "Ok"
 msgstr "好"
 
@@ -1401,7 +1401,7 @@ msgstr "图表"
 
 #: static/admin/translations-fakejs.js:427
 #: static/admin/translations-fakejs.js:461
-#: static/admin/translations-fakejs.js:493
+#: static/admin/translations-fakejs.js:494
 msgid "Information for"
 msgstr "信息"
 
@@ -1534,7 +1534,11 @@ msgstr "管理员"
 msgid "Staff member"
 msgstr "工作人员"
 
-#: static/admin/translations-fakejs.js:496
+#: static/admin/translations-fakejs.js:490
+msgid "MFA"
+msgstr "外交部"
+
+#: static/admin/translations-fakejs.js:497
 msgid "Assigned Services"
 msgstr "指定服务"
 
