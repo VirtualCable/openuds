@@ -39,7 +39,7 @@ from uds import models
 if typing.TYPE_CHECKING:
     pass
 
-class ModelXXTest(UDSTransactionTestCase):
+class ModelUUIDTest(UDSTransactionTestCase):
     auth: 'models.Authenticator'
     user: 'models.User'
     group: 'models.Group'

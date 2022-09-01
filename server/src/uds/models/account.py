@@ -52,13 +52,13 @@ class Account(UUIDModel, TaggingMixin):
 
     name = models.CharField(max_length=128, unique=False, db_index=True)
     time_mark = models.DateTimeField(default=NEVER)
-    comments = models.CharField(max_length=256)
+    comments = models.CharField(max_length=256, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Account]'
+    objects: 'models.manager.Manager["Account"]'
     usages: 'models.manager.RelatedManager[AccountUsage]'
 
-    def startUsageAccounting(self, userService: 'UserService') -> None:
+    def startUsageAccounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
         if hasattr(userService, 'accounting'):  # Already has an account
             return None
 
@@ -71,7 +71,7 @@ class Account(UUIDModel, TaggingMixin):
             userName = '??????'
             userUuid = '00000000-0000-0000-0000-000000000000'
 
-        self.usages.create(
+        return self.usages.create(
             user_service=userService,
             user_name=userName,
             user_uuid=userUuid,
@@ -81,15 +81,16 @@ class Account(UUIDModel, TaggingMixin):
             end=start,
         )
 
-    def stopUsageAccounting(self, userService: 'UserService') -> None:
+    def stopUsageAccounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
         # if one to one does not exists, attr is not there
         if not hasattr(userService, 'accounting'):
-            return
+            return None
 
         tmp = userService.accounting
         tmp.user_service = None  # type: ignore
         tmp.end = getSqlDatetime()
         tmp.save()
+        return tmp
 
     class Meta:
         """

@@ -72,6 +72,3 @@ class UUIDModel(models.Model):
             kwargs['update_fields'] = list(kwargs['update_fields']) + ['uuid']
 
         return models.Model.save(self, *args, **kwargs)
-
-    def __str__(self) -> str:
-        return 'Object of class {} with uuid {}'.format(self.__class__, self.uuid)

@@ -54,7 +54,7 @@ class AccountUsage(UUIDModel):
     """
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[AccountUsage]'
+    objects: 'models.manager.Manager["AccountUsage"]'
 
     user_name = models.CharField(max_length=128, db_index=True, default='')
     user_uuid = models.CharField(max_length=50, db_index=True, default='')
@@ -62,7 +62,7 @@ class AccountUsage(UUIDModel):
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service: 'models.OneToOneField[AccountUsage, UserService]' = (
+    user_service: 'models.OneToOneField["AccountUsage", UserService]' = (
         models.OneToOneField(
             UserService,
             null=True,
@@ -71,7 +71,7 @@ class AccountUsage(UUIDModel):
             on_delete=models.SET_NULL,
         )
     )
-    account: 'models.ForeignKey[AccountUsage, Account]' = models.ForeignKey(
+    account: 'models.ForeignKey["AccountUsage", Account]' = models.ForeignKey(
         Account, related_name='usages', on_delete=models.CASCADE
     )
 
@@ -85,13 +85,13 @@ class AccountUsage(UUIDModel):
 
     @property
     def elapsed_seconds(self) -> int:
-        if NEVER in (self.end, self.start):
+        if NEVER in (self.end, self.start) or self.end < self.start:
             return 0
-        return (self.end - self.start).total_seconds()
+        return int((self.end - self.start).total_seconds())
 
     @property
     def elapsed_seconds_timemark(self) -> int:
-        if NEVER in (self.end, self.start):
+        if NEVER in (self.end, self.start, self.account.time_mark):
             return 0
 
         start = self.start
@@ -101,7 +101,7 @@ class AccountUsage(UUIDModel):
         if end < start:
             return 0
 
-        return (end - start).total_seconds()
+        return int((end - start).total_seconds())
 
     @property
     def elapsed(self) -> str:
