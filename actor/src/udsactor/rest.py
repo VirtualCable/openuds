@@ -37,7 +37,7 @@ import typing
 import requests
 
 from udsactor import types, tools
-from udsactor.version import VERSION
+from udsactor.version import VERSION, BUILD
 
 # Default public listen port
 LISTEN_PORT = 43910
@@ -110,7 +110,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
     def _headers(self) -> typing.MutableMapping[str, str]:
         return {
             'Content-Type': 'application/json',
-            'User-Agent': 'UDS Actor v{}'.format(VERSION),
+            'User-Agent': 'UDS Actor v{}/{}'.format(VERSION, BUILD),
         }
 
     def _api_url(self, method: str) -> str:
@@ -252,6 +252,7 @@ class UDSServerApi(UDSApi):
             'type': actor_type or types.MANAGED,
             'token': token,
             'version': VERSION,
+            'build': BUILD,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
         }
         r = self._doPost('initialize', payload)
