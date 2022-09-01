@@ -42,5 +42,5 @@ if typing.TYPE_CHECKING:
     from uds import models
 
 
-class ModelImageTest(UDSTransactionTestCase):
+class ModelXXTest(UDSTransactionTestCase):
     pass

@@ -167,12 +167,12 @@ class ServiceCacheUpdaterTest(UDSTransactionTestCase):
         self.assertEqual(self.runCacheUpdater(10), 40)
 
     def test_service_max_deployed(self) -> None:
-        TestServiceCache.maxDeployed = 10
+        TestServiceCache.maxDeployed = 22
 
-        self.setCache(initial=100, cache=10, max=50)
+        self.setCache(initial=100, cache=100, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 10)
+        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.maxDeployed)
 
         # Delete all userServices
         self.servicePool.userServices.all().delete()

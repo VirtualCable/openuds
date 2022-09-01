@@ -32,15 +32,43 @@
 import typing
 import logging
 
-
-from uds.core import messaging
-
 from ...utils.test import UDSTransactionTestCase
-from ...fixtures.images import createImage
+from ...fixtures import authenticators as authenticators_fixtures
+from uds import models
 
 if typing.TYPE_CHECKING:
-    from uds import models
-
-
-class ModelImageTest(UDSTransactionTestCase):
     pass
+
+class ModelXXTest(UDSTransactionTestCase):
+    auth: 'models.Authenticator'
+    user: 'models.User'
+    group: 'models.Group'
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.auth = authenticators_fixtures.createAuthenticator()
+        self.group = authenticators_fixtures.createGroups(self.auth, 1)[0]
+        self.user = authenticators_fixtures.createUsers(self.auth, 1, groups=[self.group])[0]
+    
+    def test_uuid_lowercase(self):
+        """
+        Tests that uuids are always lowercase
+        """
+        # Change user uuid to uppercase
+        self.user.uuid = self.user.uuid.upper()
+        self.user.save()
+        self.assertEqual(self.user.uuid, self.user.uuid.lower())
+
+    def test_uuid_regenerated(self) -> None:
+        """
+        Tests that uuids are regenerated when user is saved
+        """
+        self.user.uuid = None
+        self.user.save()
+        self.assertNotEqual(None, self.user.uuid)
+
+    def test_uuidmodel_str(self) -> None:
+        """
+        Tests that uuids are regenerated when user is saved
+        """
+        self.assertIsInstance(str(self.user), str)
