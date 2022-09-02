@@ -69,11 +69,13 @@ def ensureResponseIsValid(
             errMsg = 'Invalid response'
 
         try:
-            err = response.json()[
-                'message'
-            ]  # Extract any key, in case of error is expected to have only one top key so this will work
+            # Extract any key, in case of error is expected to have only one top key so this will work
+            err = response.json()['message']
         except Exception:
-            err = response.content
+            err = response.content.decode()
+        if 'Database error' in err:
+            err = 'Database error: Please, check OpenGnsys fields length on remotepc table (loginurl and logouturl)'
+            
         errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
         logger.error('%s: %s', errMsg, response.content)
         raise Exception(errMsg)
