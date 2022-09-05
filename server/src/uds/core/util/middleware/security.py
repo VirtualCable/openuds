@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021 Virtual Cable S.L.U.
+# Copyright (c) 2021-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,8 @@ from django.http import HttpResponse
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import isTrustedSource
 
+from uds.core.util.request import ExtendedHttpRequest
+
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
@@ -56,20 +58,12 @@ class UDSSecurityMiddleware:
     ) -> None:
         self.get_response = get_response
 
-    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
-        # If bot, break now
+    def __call__(self, request: 'ExtendedHttpRequest') -> 'HttpResponse':
         ua = request.META.get(
-            'HTTP_USER_AGENT', 'Connection Maybe a bot. No user agent detected.'
+            'HTTP_USER_AGENT', 'Unknown'
         )
-        # Simple ip check, to allow "trusted" ips to access UDS
-        ip = (
-            request.META.get(
-                'REMOTE_ADDR',
-                request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[-1],
-            )
-            or '0.0.0.0'
-        )
-        if not isTrustedSource(ip) and bot.search(ua):
+        # If bot, break now
+        if bot.search(ua) or (ua == 'Unknown' and not isTrustedSource(request.ip)):
             # Return emty response if bot is detected
             logger.info(
                 'Denied Bot %s from %s to %s',

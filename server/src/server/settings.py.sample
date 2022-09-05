@@ -194,8 +194,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'uds.core.util.middleware.security.UDSSecurityMiddleware',
     'uds.core.util.middleware.request.GlobalRequestMiddleware',
+    'uds.core.util.middleware.security.UDSSecurityMiddleware',
     'uds.core.util.middleware.xua.XUACompatibleMiddleware',
     'uds.core.util.middleware.redirect.RedirectMiddleware',
 ]
