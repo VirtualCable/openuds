@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 from django.http import HttpResponse
 
 from uds.core.util.config import GlobalConfig
+from uds.core.auths.auth import isTrustedSource
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
@@ -56,8 +57,18 @@ class UDSSecurityMiddleware:
 
     def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
         # If bot, break now
-        ua = request.META.get('HTTP_USER_AGENT', 'Connection Maybe a bot. No user agent detected.')
-        if bot.search(ua):
+        ua = request.META.get(
+            'HTTP_USER_AGENT', 'Connection Maybe a bot. No user agent detected.'
+        )
+        # Simple ip check, to allow "trusted" ips to access UDS
+        ip = (
+            request.META.get(
+                'REMOTE_ADDR',
+                request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[-1],
+            )
+            or '0.0.0.0'
+        )
+        if not isTrustedSource(ip) and bot.search(ua):
             # Return emty response if bot is detected
             logger.info(
                 'Denied Bot %s from %s to %s',
@@ -71,10 +82,13 @@ class UDSSecurityMiddleware:
             return HttpResponse(content='Forbbiden', status=403)
 
         response = self.get_response(request)
-        
+
         if GlobalConfig.ENHANCED_SECURITY.getBool():
             # Legacy browser support for X-XSS-Protection
             response.headers.setdefault('X-XSS-Protection', '1; mode=block')
             # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
-            response.headers.setdefault('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;")
+            response.headers.setdefault(
+                'Content-Security-Policy',
+                "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;",
+            )
         return response
