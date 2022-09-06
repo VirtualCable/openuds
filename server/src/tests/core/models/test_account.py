@@ -35,13 +35,7 @@ import logging
 
 from uds import models
 from uds.models.account_usage import AccountUsage
-from ...fixtures import authenticators as authenticators_fixtures
 from ...fixtures import services as services_fixtures
-from ...fixtures import images as images_fixtures
-from ...fixtures import networks as networks_fixtures
-from ...fixtures import osmanagers as osmanagers_fixtures
-from ...fixtures import notifiers as notifiers_fixtures
-from ...fixtures import stats_counters as stats_counters_fixtures
 
 from ...utils.test import UDSTransactionTestCase
 
@@ -88,7 +82,7 @@ class ModelAccountTest(UDSTransactionTestCase):
 
             self.assertEqual(acc.usages.count(), 0, 'loop {}'.format(i))
 
-    def test_start_single_userservices(self) -> None:
+    def test_start_single_many(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
         for i in range(32):
             for i in range(NUM_USERSERVICES):
@@ -113,7 +107,7 @@ class ModelAccountTest(UDSTransactionTestCase):
 
             self.assertEqual(acc.usages.count(), 1)
 
-    def test_end_single_service(self) -> None:
+    def test_end_single(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
         for i in range(
             32
@@ -123,7 +117,7 @@ class ModelAccountTest(UDSTransactionTestCase):
 
             self.assertEqual(acc.usages.count(), i + 1)
 
-    def test_end_single_services(self) -> None:
+    def test_end_single_many(self) -> None:
         # Now create one acconting with the same user service 32 times
         # no usage is created
         for i in range(32):

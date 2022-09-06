@@ -106,7 +106,7 @@ class CalendarRule(UUIDModel):
     interval = models.IntegerField(
         default=1
     )  # If interval is for WEEKDAYS, every bit means a day of week (bit 0 = SUN, 1 = MON, ...)
-    duration = models.IntegerField(default=0)  # Duration in minutes
+    duration = models.IntegerField(default=0)  # Duration in "duration_unit" units
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
     calendar: 'models.ForeignKey["CalendarRule", Calendar]' = models.ForeignKey(
