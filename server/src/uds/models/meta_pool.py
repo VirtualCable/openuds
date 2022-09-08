@@ -129,9 +129,9 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     ha_policy = models.SmallIntegerField(default=HA_POLICY_DISABLED)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[MetaPool]'
+    objects: 'models.BaseManager["MetaPool"]'
     calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
-    members: 'models.QuerySet[MetaPoolMember]'
+    members: 'models.QuerySet["MetaPoolMember"]'
 
     class Meta(UUIDModel.Meta):
         """
@@ -140,6 +140,22 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         db_table = 'uds__pool_meta'
         app_label = 'uds'
+
+    @property
+    def allow_users_remove(self) -> bool:
+        # Returns true if all members allow users remove
+        for p in self.members.all():
+            if not p.pool.allow_users_remove:
+                return False
+        return True
+
+    @property
+    def allow_users_reset(self) -> bool:
+        # Returns true if all members allow users reset
+        for p in self.members.all():
+            if not p.pool.allow_users_reset:
+                return False
+        return True
 
     def isInMaintenance(self) -> bool:
         """If a Metapool is in maintenance (that is, all its pools are in maintenance)
@@ -262,10 +278,10 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: 'models.ForeignKey[MetaPoolMember, ServicePool]' = models.ForeignKey(
+    pool: 'models.ForeignKey["MetaPoolMember", ServicePool]' = models.ForeignKey(
         ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE
     )
-    meta_pool: 'models.ForeignKey[MetaPoolMember, MetaPool]' = models.ForeignKey(
+    meta_pool: 'models.ForeignKey["MetaPoolMember", MetaPool]' = models.ForeignKey(
         MetaPool, related_name='members', on_delete=models.CASCADE
     )
     priority = models.PositiveIntegerField(default=0)
