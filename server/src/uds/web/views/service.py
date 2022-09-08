@@ -194,9 +194,14 @@ def userServiceStatus(
 def action(
     request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
 ) -> HttpResponse:
-    userService = userServiceManager().locateUserService(
+    userService = userServiceManager().locateMetaService(
         request.user, idService, create=False
     )
+    if not userService:
+        userService = userServiceManager().locateUserService(
+            request.user, idService, create=False
+        )
+
     response: typing.Any = None
     rebuild: bool = False
     if userService:
@@ -231,6 +236,7 @@ def action(
             )
             # userServiceManager().requestLogoff(userService)
             userServiceManager().reset(userService)
+            
 
     if rebuild:
         # Rebuild services data, but return only "this" service
