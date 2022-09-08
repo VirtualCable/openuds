@@ -936,7 +936,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return metaId[0] == 'M'
 
     def locateMetaService(
-        self, user: User, idService: str, create: bool = False
+        self, user: User, idService: str
     ) -> typing.Optional[UserService]:
         kind, uuidMetapool = idService[0], idService[1:]
         if kind != 'M':
