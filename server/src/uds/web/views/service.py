@@ -197,7 +197,7 @@ def action(
     request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
 ) -> HttpResponse:
     userService = userServiceManager().locateMetaService(
-        request.user, idService, create=False
+        request.user, idService
     )
     if not userService:
         userService = userServiceManager().locateUserService(
