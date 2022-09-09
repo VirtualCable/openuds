@@ -203,7 +203,7 @@ def ipInNetwork(
     if isinstance(ip, str):
         ip = ipToLong(ip)
     if isinstance(network, str):
-        network = [networkFromString(network)]
+        network = networksFromString(network)
     elif isinstance(network, NetworkType):
         network = [network]
 
