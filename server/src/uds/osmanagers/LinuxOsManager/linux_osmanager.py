@@ -173,7 +173,7 @@ class LinuxOsManager(osmanagers.OSManager):
         pass
 
     def loginNotified(self, userService, userName=None):
-        if '\\' not in userName:
+        if userName and  '\\' not in userName:
             osmanagers.OSManager.loggedIn(userService, userName)
 
     def logoutNotified(self, userService, userName=None):
