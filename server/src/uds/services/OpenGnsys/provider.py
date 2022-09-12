@@ -136,7 +136,7 @@ class OGProvider(ServiceProvider):
         order=6,
         tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'),
         required=False,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     maxPreparingServices = gui.NumericField(
@@ -148,7 +148,7 @@ class OGProvider(ServiceProvider):
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -159,7 +159,7 @@ class OGProvider(ServiceProvider):
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -169,7 +169,7 @@ class OGProvider(ServiceProvider):
         order=90,
         tooltip=_('Timeout in seconds of connection to OpenGnsys'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     # Own variables

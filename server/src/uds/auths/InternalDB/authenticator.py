@@ -73,7 +73,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_('If checked, each host will have a different user name'),
         defvalue='false',
         rdonly=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     reverseDns = gui.CheckBoxField(
         label=_('Reverse DNS'),
@@ -81,7 +81,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_('If checked, the host will be reversed dns'),
         defvalue='false',
         rdonly=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
@@ -90,7 +90,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def getIp(self, request: 'ExtendedHttpRequest') -> str:

@@ -30,38 +30,42 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from functools import wraps
+import functools
 import logging
 import inspect
 import typing
 import threading
 
-from uds.core.util.html import checkBrowser
-from uds.core.util.cache import Cache
-from uds.web.util import errors
+if typing.TYPE_CHECKING:
+    from uds.core.util.cache import Cache
 
 
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
 
+def _defaultDenyView(request) -> typing.Any:
+    from uds.web.util import errors
+    return errors.errorView(
+        request, errors.BROWSER_NOT_SUPPORTED
+    )
+
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
 def denyBrowsers(
     browsers: typing.Optional[typing.List[str]] = None,
-    errorResponse: typing.Callable = lambda request: errors.errorView(
-        request, errors.BROWSER_NOT_SUPPORTED
-    ),
+    errorResponse: typing.Callable = _defaultDenyView,
 ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator to set protection to access page
     Look for samples at uds.core.web.views
     """
+    from uds.core.util.html import checkBrowser
 
     denied: typing.List[str] = browsers or ['ie<9']
 
     def wrap(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        @wraps(view_func)
+        @functools.wraps(view_func)
         def _wrapped_view(request, *args, **kwargs) -> RT:
             """
             Wrapped function for decorator
@@ -82,7 +86,7 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     as deprecated. It will result in a warning being emitted
     when the function is used."""
 
-    @wraps(func)
+    @functools.wraps(func)
     def new_func(*args, **kwargs) -> RT:
         try:
             caller = inspect.stack()[1]
@@ -99,11 +103,37 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
     return new_func
 
+def deprecatedClassValue(newVarName: str) -> typing.Callable:
+    class innerDeprecated:
+        fget: typing.Callable
+        new_var_name: str
+
+        def __init__(self, method: typing.Callable, newVarName: str) -> None:
+            self.new_var_name = newVarName
+            self.fget = method  # type: ignore
+
+        def __get__(self, instance, cls=None):
+            try:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Use of deprecated class value %s from %s:%s. Use %s instead.',
+                    self.fget.__name__,
+                    caller[1],
+                    caller[2],
+                    self.new_var_name,
+                )
+            except Exception:
+                logger.info('No stack info on deprecated value use %s', self.fget.__name__)
+
+            return self.fget(cls)
+
+    return functools.partial(innerDeprecated, newVarName=newVarName)
+
 
 def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
-    @wraps(func)
+    @functools.wraps(func)
     def new_func(*args, **kwargs) -> RT:
         args[0].connect()
         return func(*args, **kwargs)
@@ -117,7 +147,7 @@ def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 # Decorator that tries to get from cache before executing
 def allowCache(
     cachePrefix: str,
-    cacheTimeout: typing.Union[typing.Callable[[], int], int] = Cache.DEFAULT_VALIDITY,
+    cacheTimeout: typing.Union[typing.Callable[[], int], int] = -1,
     cachingArgs: typing.Optional[
         typing.Union[typing.List[int], typing.Tuple[int], int]
     ] = None,
@@ -136,10 +166,11 @@ def allowCache(
     :param cachingKWArgs: The caching kwargs. Can be a single string or a list.
     :param cachingKeyFnc: A function that receives the args and kwargs and returns the key
     """
+    cacheTimeout = Cache.DEFAULT_VALIDITY if cacheTimeout == -1 else cacheTimeout
     keyFnc = cachingKeyFnc or (lambda x: '')
 
     def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        @wraps(fnc)
+        @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
             argList: typing.List[str] = []
             if cachingArgs:
@@ -202,7 +233,7 @@ def allowCache(
 def threaded(func: typing.Callable[..., None]) -> typing.Callable[..., None]:
     """Decorator to execute method in a thread"""
 
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs) -> None:
         thread = threading.Thread(target=func, args=args, kwargs=kwargs)
         thread.start()

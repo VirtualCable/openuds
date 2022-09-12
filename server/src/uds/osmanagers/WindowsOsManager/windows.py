@@ -82,7 +82,7 @@ class WindowsOsManager(osmanagers.OSManager):
         tooltip=_(
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
         defvalue=gui.TRUE,
     )
 

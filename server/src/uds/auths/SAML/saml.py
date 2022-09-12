@@ -193,7 +193,7 @@ class SAMLAuthenticator(auths.Authenticator):
         defvalue=False,
         order=10,
         tooltip=_('If set, logout from UDS will trigger SAML logout'),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     adFS = gui.CheckBoxField(
@@ -201,7 +201,7 @@ class SAMLAuthenticator(auths.Authenticator):
         defvalue=False,
         order=11,
         tooltip=_('If set, enable lowercase url encoding so ADFS can work correctly'),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     checkSSLCertificate = gui.CheckBoxField(

@@ -149,7 +149,7 @@ class OpenStackProvider(ServiceProvider):
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -160,7 +160,7 @@ class OpenStackProvider(ServiceProvider):
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -172,7 +172,7 @@ class OpenStackProvider(ServiceProvider):
         order=99,
         tooltip=_('Timeout in seconds of connection to OpenStack'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     tenant = gui.TextField(
@@ -184,7 +184,7 @@ class OpenStackProvider(ServiceProvider):
         ),
         required=False,
         defvalue='',
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     region = gui.TextField(
         length=64,
@@ -193,7 +193,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_('Region for this provider. Set only if required by server.'),
         required=False,
         defvalue='',
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     useSubnetsName = gui.CheckBoxField(
@@ -203,7 +203,7 @@ class OpenStackProvider(ServiceProvider):
             'If checked, the name of the subnets will be used instead of the names of networks'
         ),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     httpsProxy = gui.TextField(
@@ -214,7 +214,7 @@ class OpenStackProvider(ServiceProvider):
             'Proxy used on server connections for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
         ),
         required=False,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     legacy = False

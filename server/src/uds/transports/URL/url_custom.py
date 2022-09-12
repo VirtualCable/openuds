@@ -82,7 +82,7 @@ class URLCustomTransport(transports.Transport):
             'If checked, every connection will try to open its own window instead of reusing the "global" one.'
         ),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType'):

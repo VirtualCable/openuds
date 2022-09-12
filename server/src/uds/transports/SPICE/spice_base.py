@@ -63,19 +63,19 @@ class BaseSpiceTransport(transports.Transport):
         order=1,
         label=_('Empty credentials'),
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     fixedName = gui.TextField(
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     fixedPassword = gui.PasswordField(
         order=3,
         label=_('Password'),
         tooltip=_('If not empty, this password will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     serverCertificate = gui.TextField(
         order=4,
@@ -91,28 +91,28 @@ class BaseSpiceTransport(transports.Transport):
         order=5,
         label=_('Fullscreen Mode'),
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     smartCardRedirect = gui.CheckBoxField(
         order=6,
         label=_('Smartcard Redirect'),
         tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     usbShare = gui.CheckBoxField(
         order=7,
         label=_('Enable USB'),
         tooltip=_('If checked, USB redirection will be allowed.'),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     autoNewUsbShare = gui.CheckBoxField(
         order=8,
         label=_('New USB Auto Sharing'),
         tooltip=_('Auto-redirect USB devices when plugged in.'),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

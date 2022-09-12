@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -33,16 +33,18 @@
 import codecs
 import datetime
 import time
-import pickle
+import pickle  # nosec: safe usage
 import copy
 import typing
 import logging
+import enum
 from collections import abc
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
 
 from uds.core.managers import cryptoManager
+from uds.core.util.decorators import deprecatedClassValue
 
 logger = logging.getLogger(__name__)
 
@@ -101,18 +103,45 @@ class gui:
     ]
     ChoiceType = typing.Dict[str, str]
 
+    
     # : True string value
     TRUE: typing.ClassVar[str] = 'true'
     # : False string value
     FALSE: typing.ClassVar[str] = 'false'
 
-    # : String for advanced tabs
-    ADVANCED_TAB: typing.ClassVar[str] = gettext_noop('Advanced')
-    PARAMETERS_TAB: typing.ClassVar[str] = gettext_noop('Parameters')
-    CREDENTIALS_TAB: typing.ClassVar[str] = gettext_noop('Credentials')
-    TUNNEL_TAB: typing.ClassVar[str] = gettext_noop('Tunnel')
-    DISPLAY_TAB: typing.ClassVar[str] = gettext_noop('Display')
-    MFA_TAB: typing.ClassVar[str] = gettext_noop('MFA')
+
+    class Tab(enum.Enum):
+        ADVANCED = gettext_noop('Advanced')
+        PARAMETERS = gettext_noop('Parameters')
+        CREDENTIALS = gettext_noop('Credentials')
+        TUNNEL = gettext_noop('Tunnel')
+        DISPLAY = gettext_noop('Display')
+        MFA = gettext_noop('MFA')
+
+        def __str__(self) -> str:
+            return str(self.value)
+
+    
+    # : For backward compatibility, will be removed in future versions
+    # For now, will log an warning if used
+    @deprecatedClassValue('gui.Tab.ADVANCED')
+    def ADVANCED_TAB(cls) -> str:
+        return str(gui.Tab.ADVANCED)
+    @deprecatedClassValue('gui.Tab.PARAMETERS')
+    def PARAMETERS_TAB(cls) -> str:
+        return str(gui.Tab.PARAMETERS)
+    @deprecatedClassValue('gui.Tab.CREDENTIALS')
+    def CREDENTIALS_TAB(cls) -> str:
+        return str(gui.Tab.CREDENTIALS)
+    @deprecatedClassValue('gui.Tab.TUNNEL')
+    def TUNNEL_TAB(cls) -> str:
+        return str(gui.Tab.TUNNEL)
+    @deprecatedClassValue('gui.Tab.DISPLAY')
+    def DISPLAY_TAB(cls) -> str:
+        return str(gui.Tab.DISPLAY)
+    @deprecatedClassValue('gui.Tab.MFA')
+    def MFA_TAB(cls) -> str:
+        return str(gui.Tab.MFA)
 
     # : Static Callbacks simple registry
     callbacks: typing.Dict[
@@ -296,7 +325,7 @@ class gui:
                 'value': options.get('value', ''),
             }
             if 'tab' in options:
-                self._data['tab'] = options.get('tab')
+                self._data['tab'] = str(options.get('tab'))  # Ensure it's a string
 
         def _type(self, type_: str) -> None:
             """
@@ -360,7 +389,7 @@ class gui:
             data['label'] = _(data['label']) if data['label'] else ''
             data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
-                data['tab'] = _(data['tab'])
+                data['tab'] = _(data['tab'])  # Translates tab name
             return data
 
         @property
@@ -1142,7 +1171,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 if k in self._gui:
                     try:
                         if v.startswith(MULTIVALUE_FIELD):
-                            val = pickle.loads(v[1:])
+                            val = pickle.loads(v[1:])  # nosec: secure pickled by us for sure
                         elif v.startswith(OLD_PASSWORD_FIELD):
                             val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
                         elif v.startswith(PASSWORD_FIELD):

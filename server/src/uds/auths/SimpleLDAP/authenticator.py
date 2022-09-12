@@ -82,7 +82,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=4,
         tooltip=_('Username with read privileges on the base selected'),
         required=True,
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     password = gui.PasswordField(
         lenth=32,
@@ -90,7 +90,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=5,
         tooltip=_('Password of the ldap user'),
         required=True,
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     timeout = gui.NumericField(
         length=3,

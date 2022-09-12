@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,44 +28,3 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-import typing
-import logging
-
-from django.utils.translation import gettext_noop as _
-
-from uds.core import mfas
-from uds.core.ui import gui
-
-if typing.TYPE_CHECKING:
-    from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequest
-
-logger = logging.getLogger(__name__)
-
-class SampleMFA(mfas.MFA):
-    typeName = _('Sample Multi Factor')
-    typeType = 'sampleMFA'
-    typeDescription = _('Sample Multi Factor Authenticator')
-    iconFile = 'sample.png'
-
-    useless = gui.CheckBoxField(
-        label=_('Sample useless field'),
-        order=90,
-        tooltip=_(
-            'This is a useless field, for sample and testing pourposes'
-        ),
-        tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
-    )
-
-    def initialize(self, values: 'Module.ValuesType') -> None:
-        return super().initialize(values)
-
-    def label(self) -> str:
-        return 'Code is in log'
-
-    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
-        logger.debug('Sending code: %s (from %s)', code, request.ip)
-        return mfas.MFA.RESULT.OK
-

@@ -79,20 +79,20 @@ class HTML5VNCTransport(transports.Transport):
         defvalue='https://',
         length=64,
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     username = gui.TextField(
         label=_('Username'),
         order=20,
         tooltip=_('Username for VNC connection authentication.'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for VNC connection authentication'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     vncPort = gui.NumericField(
@@ -102,7 +102,7 @@ class HTML5VNCTransport(transports.Transport):
         order=2,
         tooltip=_('Port of the VNC server.'),
         required=True,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     colorDepth = gui.ChoiceField(
@@ -118,7 +118,7 @@ class HTML5VNCTransport(transports.Transport):
             gui.choiceItem('32', '33 bits'),
         ],
         defvalue='-',
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     swapRedBlue = gui.CheckBoxField(
         label=_('Swap red/blue'),
@@ -126,19 +126,19 @@ class HTML5VNCTransport(transports.Transport):
         tooltip=_(
             'Use this if your colours seems incorrect (blue appears red, ..) to swap them.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     cursor = gui.CheckBoxField(
         label=_('Remote cursor'),
         order=28,
         tooltip=_('If set, force to show remote cursor'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     readOnly = gui.CheckBoxField(
         label=_('Read only'),
         order=29,
         tooltip=_('If set, the connection will be read only'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     ticketValidity = gui.NumericField(
@@ -151,7 +151,7 @@ class HTML5VNCTransport(transports.Transport):
         ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     forceNewWindow = gui.ChoiceField(
         order=91,
@@ -172,7 +172,7 @@ class HTML5VNCTransport(transports.Transport):
             ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType'):

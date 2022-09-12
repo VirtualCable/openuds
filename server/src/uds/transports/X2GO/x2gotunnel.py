@@ -71,7 +71,7 @@ class TX2GOTransport(BaseX2GOTransport):
         tooltip=_(
             'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
         ),
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     tunnelWait = gui.NumericField(
@@ -83,7 +83,7 @@ class TX2GOTransport(BaseX2GOTransport):
         order=2,
         tooltip=_('Maximum time to wait before closing the tunnel listener'),
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     verifyCertificate = gui.CheckBoxField(
@@ -93,7 +93,7 @@ class TX2GOTransport(BaseX2GOTransport):
             'If enabled, the certificate of tunnel server will be verified (recommended).'
         ),
         defvalue=gui.FALSE,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     fixedName = BaseX2GOTransport.fixedName

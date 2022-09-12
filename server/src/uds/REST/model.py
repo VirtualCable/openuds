@@ -222,7 +222,7 @@ class BaseModelHandler(Handler):
                     ),
                     'type': 'choice',
                     'order': 100,  # At end
-                    'tab': uiGui.ADVANCED_TAB,
+                    'tab': uiGui.Tab.ADVANCED,
                 },
             )
             self.addField(
@@ -240,7 +240,7 @@ class BaseModelHandler(Handler):
                     ),
                     'type': 'multichoice',
                     'order': 101,
-                    'tab': uiGui.ADVANCED_TAB,
+                    'tab': uiGui.Tab.ADVANCED,
                 },
             )
 

@@ -91,7 +91,7 @@ class RadiusAuth(auths.Authenticator):
         order=10,
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     appClassPrefix = gui.TextField(
@@ -100,7 +100,7 @@ class RadiusAuth(auths.Authenticator):
         defvalue='',
         order=11,
         tooltip=_('Application prefix for filtering groups from "Class" attribute'),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     globalGroup = gui.TextField(
@@ -109,7 +109,7 @@ class RadiusAuth(auths.Authenticator):
         defvalue='',
         order=12,
         tooltip=_('If set, this value will be added as group for all radius users'),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     mfaAttr = gui.TextField(
         length=2048,
@@ -118,7 +118,7 @@ class RadiusAuth(auths.Authenticator):
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.MFA_TAB,
+        tab=gui.Tab.MFA,
     )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:

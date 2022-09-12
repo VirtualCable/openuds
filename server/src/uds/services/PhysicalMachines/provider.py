@@ -60,7 +60,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         order=3,
         tooltip=_('Advanced configuration data for the provider'),
         required=False,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:

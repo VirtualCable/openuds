@@ -80,7 +80,7 @@ class HTML5RDPTransport(transports.Transport):
         defvalue='https://',
         length=64,
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     useGlyptodonTunnel = gui.CheckBoxField(
@@ -89,26 +89,26 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
         ),
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     useEmptyCreds = gui.CheckBoxField(
         label=_('Empty creds'),
         order=3,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     fixedName = gui.TextField(
         label=_('Username'),
         order=4,
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     fixedPassword = gui.PasswordField(
         label=_('Password'),
         order=5,
         tooltip=_('If not empty, this password will be always used as credential'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     withoutDomain = gui.CheckBoxField(
         label=_('Without Domain'),
@@ -116,7 +116,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     fixedDomain = gui.TextField(
         label=_('Domain'),
@@ -124,7 +124,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     wallpaper = gui.CheckBoxField(
         label=_('Show wallpaper'),
@@ -132,19 +132,19 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     desktopComp = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=19,
         tooltip=_('If checked, desktop composition will be allowed'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
         order=20,
         tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enableAudio = gui.CheckBoxField(
         label=_('Enable Audio'),
@@ -152,7 +152,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the audio will be redirected to remote session (if client browser supports it)'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
         defvalue=gui.TRUE,
     )
     enableAudioInput = gui.CheckBoxField(
@@ -161,7 +161,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the microphone will be redirected to remote session (if client browser supports it)'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enablePrinting = gui.CheckBoxField(
         label=_('Enable Printing'),
@@ -169,7 +169,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the printing will be redirected to remote session (if client browser supports it)'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enableFileSharing = gui.ChoiceField(
         label=_('File Sharing'),
@@ -182,7 +182,7 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'up', 'text': _('Allow upload only')},
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enableClipboard = gui.ChoiceField(
         label=_('Clipboard'),
@@ -195,7 +195,7 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'dis-paste', 'text': _('Disable paste to remote')},
             {'id': 'enabled', 'text': _('Enable clipboard')},
         ],
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     serverLayout = gui.ChoiceField(
@@ -225,7 +225,7 @@ class HTML5RDPTransport(transports.Transport):
             gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     ticketValidity = gui.NumericField(
@@ -238,7 +238,7 @@ class HTML5RDPTransport(transports.Transport):
         ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     forceNewWindow = gui.ChoiceField(
@@ -260,7 +260,7 @@ class HTML5RDPTransport(transports.Transport):
             ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     security = gui.ChoiceField(
         order=92,
@@ -290,7 +290,7 @@ class HTML5RDPTransport(transports.Transport):
             gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
         defvalue='any',
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     rdpPort = gui.NumericField(
@@ -300,7 +300,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         required=True,  #: Numeric fields have always a value, so this not really needed
         defvalue='3389',
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     customGEPath = gui.TextField(
@@ -312,7 +312,7 @@ class HTML5RDPTransport(transports.Transport):
         defvalue='/',
         length=128,
         required=False,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType'):

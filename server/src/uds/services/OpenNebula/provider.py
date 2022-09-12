@@ -119,7 +119,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -130,7 +130,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -140,7 +140,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=90,
         tooltip=_('Timeout in seconds of connection to OpenNebula'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     # Own variables

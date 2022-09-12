@@ -129,7 +129,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -140,7 +140,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     macsRange = gui.TextField(
@@ -151,7 +151,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         rdonly=True,
         tooltip=_('Range of valid macs for created machines'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     verifySSL = gui.CheckBoxField(
         label=_('Verify Certificate'),
@@ -159,7 +159,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_(
             'If selected, certificate will be checked against system valid certificate providers'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
         defvalue=gui.FALSE,
     )
 
@@ -170,7 +170,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_(
             'XenServer BACKUP IP or Hostname (used on connection failure to main server)'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
         required=False,
     )
 

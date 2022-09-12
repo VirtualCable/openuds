@@ -154,7 +154,7 @@ class OGService(Service):
         rdonly=False,
         tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
         required=True,
-        tab=gui.ADVANCED_TAB
+        tab=gui.Tab.ADVANCED
     )
 
     ov = gui.HiddenField(value=None)

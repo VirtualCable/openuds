@@ -91,7 +91,7 @@ class Dispatcher(View):
         service = Dispatcher.services
         full_path_lst: typing.List[str] = []
         # Guess content type from content type header (post) or ".xxx" to method
-        content_type: str = request.META.get('CONTENT_TYPE', 'json')
+        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
         while path:
             clean_path = path[0]
@@ -111,13 +111,13 @@ class Dispatcher(View):
         logger.debug("REST request: %s (%s)", full_path, content_type)
 
         # Here, service points to the path and the value of '' is the handler
-        cls: typing.Optional[typing.Type[Handler]] = service['']
+        cls: typing.Optional[typing.Type[Handler]] = service['']  # Get "root" class, that is stored on
         if not cls:
             return http.HttpResponseNotFound(
                 'Method not found', content_type="text/plain"
             )
 
-        processor = processors.available_processors_ext_dict.get(
+        processor = processors.available_processors_mime_dict .get(
             content_type, processors.default_processor
         )(request)
 

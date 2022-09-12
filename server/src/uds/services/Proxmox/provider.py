@@ -106,7 +106,7 @@ class ProxmoxProvider(
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -117,7 +117,7 @@ class ProxmoxProvider(
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -127,7 +127,7 @@ class ProxmoxProvider(
         order=90,
         tooltip=_('Timeout in seconds of connection to Proxmox'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     startVmId = gui.NumericField(
@@ -140,7 +140,7 @@ class ProxmoxProvider(
         tooltip=_('Starting machine id on proxmox'),
         required=True,
         rdonly=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     # Own variables

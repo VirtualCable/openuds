@@ -165,7 +165,7 @@ class ProviderLegacy(ServiceProvider):
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -176,7 +176,7 @@ class ProviderLegacy(ServiceProvider):
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -188,7 +188,7 @@ class ProviderLegacy(ServiceProvider):
         order=99,
         tooltip=_('Timeout in seconds of connection to OpenStack'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     httpsProxy = gui.TextField(
@@ -199,7 +199,7 @@ class ProviderLegacy(ServiceProvider):
             'Proxy used for connection to azure for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
         ),
         required=False,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')

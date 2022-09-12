@@ -73,7 +73,7 @@ class TRDPTransport(BaseRDPTransport):
         tooltip=_(
             'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
         ),
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     tunnelWait = gui.NumericField(
@@ -85,7 +85,7 @@ class TRDPTransport(BaseRDPTransport):
         order=2,
         tooltip=_('Maximum time to wait before closing the tunnel listener'),
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     verifyCertificate = gui.CheckBoxField(
@@ -95,7 +95,7 @@ class TRDPTransport(BaseRDPTransport):
             'If enabled, the certificate of tunnel server will be verified (recommended).'
         ),
         defvalue=gui.FALSE,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds

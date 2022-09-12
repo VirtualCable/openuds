@@ -54,7 +54,7 @@ class IPAuth(auths.Authenticator):
             'If checked, requests via proxy will get FORWARDED ip address'
             ' (take care with this bein checked, can take internal IP addresses from internet)'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     visibleFromNets = gui.TextField(
@@ -64,7 +64,7 @@ class IPAuth(auths.Authenticator):
         tooltip=_(
             'This authenticator will be visible only from these networks. Leave empty to allow all networks'
         ),
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     typeName = _('IP Authenticator')

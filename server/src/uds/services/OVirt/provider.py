@@ -141,7 +141,7 @@ class OVirtProvider(
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -152,7 +152,7 @@ class OVirtProvider(
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -162,7 +162,7 @@ class OVirtProvider(
         order=90,
         tooltip=_('Timeout in seconds of connection to oVirt'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     macsRange = gui.TextField(
         length=36,
@@ -172,7 +172,7 @@ class OVirtProvider(
         rdonly=True,
         tooltip=_('Range of valid macs for UDS managed machines'),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     # Own variables

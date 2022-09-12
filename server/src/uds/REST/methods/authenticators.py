@@ -139,7 +139,7 @@ class Authenticators(ModelHandler):
                             ),
                             'type': gui.InputField.CHOICE_TYPE,
                             'order': 108,
-                            'tab': gui.MFA_TAB,
+                            'tab': gui.Tab.MFA,
                         },
                     )
                 return field
