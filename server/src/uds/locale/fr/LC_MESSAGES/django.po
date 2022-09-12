@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-31 15:20+0200\n"
+"POT-Creation-Date: 2022-09-12 15:03+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster at dkmon dot com>, 2012\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
@@ -205,7 +205,7 @@ msgstr "Étiquette"
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:104
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
 msgid "MFA"
 msgstr "AMF"
 
@@ -528,7 +528,7 @@ msgstr "Actions prévues"
 msgid "Action"
 msgstr "Action"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:100
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
 msgid "Parameters"
 msgstr "Paramètres"
 
@@ -723,7 +723,7 @@ msgstr "Proxy pour les services derrière un pare-feu"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:99
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -824,7 +824,7 @@ msgstr "Si actif, le transport sera visible pour les utilisateurs"
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:103 services/OVirt/service.py:188
+#: core/ui/user_interface.py:104 services/OVirt/service.py:188
 msgid "Display"
 msgstr "Affichage"
 
@@ -2100,7 +2100,6 @@ msgstr ""
 "Ne peut annuler la publication des publications avec services en processus"
 
 #: core/managers/user_service.py:128
-#| msgid "Maximum number of services to provide"
 msgid "Maximum number of user services reached for this {}"
 msgstr "Nombre maximum de services utilisateur atteint pour ce {}"
 
@@ -2193,11 +2192,11 @@ msgstr "Direct"
 msgid "Tunneled"
 msgstr "En tunnel"
 
-#: core/ui/user_interface.py:101
+#: core/ui/user_interface.py:102
 msgid "Credentials"
 msgstr "Informations d'identification"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Tunnel"
 msgstr "Tunnel"
 
@@ -2529,13 +2528,11 @@ msgstr "Action en cas d&#39;erreur de réponse SMS"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
-#| msgid "Allow user log in without MFA"
 msgid "Allow user login"
 msgstr "Autoriser la connexion de l&#39;utilisateur"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 #: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
-#| msgid "Deny user log in"
 msgid "Deny user login"
 msgstr "Refuser la connexion de l&#39;utilisateur"
 
@@ -2554,12 +2551,10 @@ msgstr ""
 "réseaux"
 
 #: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
-#| msgid "Subnetwork"
 msgid "SMS networks"
 msgstr "Réseaux SMS"
 
 #: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
-#| msgid "Password for SMS authentication"
 msgid "Networks for SMS authentication"
 msgstr "Réseaux pour l&#39;authentification par SMS"
 
@@ -2595,7 +2590,6 @@ msgid "Radius OTP communication error action"
 msgstr "Action d&#39;erreur de communication Radius OTP"
 
 #: mfas/Radius/mfa.py:109
-#| msgid "Action for SMS response error"
 msgid "Action for OTP server communication error"
 msgstr "Action en cas d&#39;erreur de communication du serveur OTP"
 
@@ -2604,12 +2598,10 @@ msgid "Radius OTP networks"
 msgstr "Réseaux Radius OTP"
 
 #: mfas/Radius/mfa.py:125
-#| msgid "Password for SMS authentication"
 msgid "Networks for Radius OTP authentication"
 msgstr "Réseaux pour l&#39;authentification Radius OTP"
 
 #: mfas/Radius/mfa.py:131
-#| msgid "User with access to SMTP server"
 msgid "User without defined OTP in server"
 msgstr "Utilisateur sans OTP défini sur le serveur"
 
@@ -2618,7 +2610,6 @@ msgid "Action for user without defined Radius Challenge"
 msgstr "Action pour l&#39;utilisateur sans défi Radius défini"
 
 #: mfas/Radius/mfa.py:194
-#| msgid "MFA Code"
 msgid "OTP Code"
 msgstr "Code OTP"
 
@@ -2627,12 +2618,10 @@ msgid "Please enter OTP"
 msgstr "Veuillez entrer OTP"
 
 #: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
-#| msgid "Connection error: "
 msgid "Radius OTP connection error"
 msgstr "Erreur de connexion Radius OTP"
 
 #: mfas/Radius/mfa.py:279
-#| msgid "Invalid MFA code"
 msgid "Invalid OTP code"
 msgstr "Code OTP invalide"
 
@@ -2768,9 +2757,6 @@ msgid "SMS response OK regex"
 msgstr "Réponse SMS OK regex"
 
 #: mfas/SMS/mfa.py:175
-#| msgid ""
-#| "Regex for SMS response OK. If emty, the response is considered OK if "
-#| "status code is 200."
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2791,7 +2777,6 @@ msgid "SMS sending failed"
 msgstr "L&#39;envoi du SMS a échoué"
 
 #: mfas/SMS/mfa.py:300
-#| msgid "SMS response error action"
 msgid "SMS response error"
 msgstr "Erreur de réponse SMS"
 
@@ -3009,9 +2994,6 @@ msgstr ""
 "pour les machines statiques. <b>(Nécessite python&gt; = 3,6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:80
-#| msgid ""
-#| "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
-#| "<b>(Requires python >= 3.6)</b>"
 msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for "
 "static machines. <b>(Requires python >= 3.6)</b>"
@@ -4710,12 +4692,10 @@ msgstr ""
 "de s&#39;allumer via OpenGnsys."
 
 #: services/OpenGnsys/service.py:150 services/RDS_enterprise/service.py:86
-#| msgid "Max. Allowd services"
 msgid "Max. Allowed services"
 msgstr "Max. Services autorisés"
 
 #: services/OpenGnsys/service.py:155 services/RDS_enterprise/service.py:91
-#| msgid "Maximum number of allowed services (0 means no limit)"
 msgid "Maximum number of allowed services (0 or less means no limit)"
 msgstr ""
 "Nombre maximal de services autorisés (0 ou moins signifie aucune limite)"
