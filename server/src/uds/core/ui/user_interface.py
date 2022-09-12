@@ -37,6 +37,7 @@ import pickle
 import copy
 import typing
 import logging
+from collections import abc
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
@@ -122,19 +123,30 @@ class gui:
     # Helpers
     @staticmethod
     def convertToChoices(
-        vals: typing.Union[typing.List[str], typing.MutableMapping[str, str]]
+        vals: typing.Union[typing.Iterable[typing.Union[str, typing.Dict[str, str]]], typing.Dict[str, str]]
     ) -> typing.List[typing.Dict[str, str]]:
         """
-        Helper to convert from array of strings to the same dict used in choice,
+        Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
         multichoice, ..
         """
         if not vals:
             return []
-        if isinstance(vals, (list, tuple)):
-            return [{'id': v, 'text': v} for v in vals]
+        # Helper to convert an item to a dict
+        def choiceFromValue(val: typing.Union[str, typing.Dict[str, str]]) -> typing.Dict[str, str]:
+            if isinstance(val, str):
+                return {'id': val, 'name': val}
+            # Return a deepcopy
+            return copy.deepcopy(val)
+            
+        # If is an iterator
+        if isinstance(vals, abc.Iterable):
+            return [choiceFromValue(v) for v in vals]
 
-        # Dictionary
-        return [{'id': str(k), 'text': v} for k, v in vals.items()]
+        # If is a dict
+        if isinstance(vals, abc.Mapping):
+            return [{'id': str(k), 'text': v} for k, v in vals.items()]
+        
+        raise ValueError('Invalid type for convertToChoices: {}'.format(type(vals)))
 
     @staticmethod
     def convertToList(vals: typing.Iterable[str]) -> typing.List[str]:
@@ -780,7 +792,8 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            if options.get('values') and isinstance(options.get('values'), (dict, list, tuple)):
+            vals = options.get('values')
+            if vals and isinstance(vals, (dict, list, tuple)):
                 options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             if 'fills' in options:
@@ -792,7 +805,7 @@ class gui:
                 gui.callbacks[fills['callbackName']] = fnc
             self._type(gui.InputField.CHOICE_TYPE)
 
-        def setValues(self, values: typing.List[typing.Any]):
+        def setValues(self, values: typing.List[typing.Dict[str, typing.Any]]):
             """
             Set the values for this choice field
             """

@@ -217,7 +217,7 @@
        <string>UDS Service Token</string>
       </property>
       <property name="whatsThis">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Token of the service on UDS platform&lt;/p&gt;&lt;p&gt;This token can be obtainend from the service configuration on UDS.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -268,10 +268,10 @@
     <item row="3" column="1">
      <widget class="QLineEdit" name="restrictNet">
       <property name="toolTip">
-       <string>UDS user with administration rights (Will not be stored on template)</string>
+       <string>Restrict valid detection of network interfaces to this network.</string>
       </property>
       <property name="whatsThis">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Administrator user on UDS Server.&lt;/p&gt;&lt;p&gt;Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restrics valid detection of network interfaces.&lt;/p&gt;&lt;p&gt;Note: Use this field only in case of several network interfaces, so UDS knows which one is the interface where the user will be connected..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
