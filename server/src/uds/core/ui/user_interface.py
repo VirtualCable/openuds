@@ -285,20 +285,24 @@ class gui:
         so if you use both, the used one will be "value". This is valid for
         all form fields.
         """
+        class Types(enum.Enum):
+            TEXT = 'text'
+            TEXT_AUTOCOMPLETE = 'text-autocomplete'
+            # TEXTBOX = 'textbox'
+            NUMERIC = 'numeric'
+            PASSWORD = 'password'  # nosec: this is not a password
+            HIDDEN = 'hidden'
+            CHOICE = 'choice'
+            MULTI_CHOICE = 'multichoice'
+            EDITABLE_LIST = 'editlist'
+            CHECKBOX = 'checkbox'
+            IMAGECHOICE = 'imgchoice'
+            DATE = 'date'
+            INFO = 'dummy'
 
-        TEXT_TYPE: typing.ClassVar[str] = 'text'
-        TEXT_AUTOCOMPLETE_TYPE: typing.ClassVar[str] = 'text-autocomplete'
-        TEXTBOX_TYPE: typing.ClassVar[str] = 'textbox'
-        NUMERIC_TYPE: typing.ClassVar[str] = 'numeric'
-        PASSWORD_TYPE: typing.ClassVar[str] = 'password'
-        HIDDEN_TYPE: typing.ClassVar[str] = 'hidden'
-        CHOICE_TYPE: typing.ClassVar[str] = 'choice'
-        MULTI_CHOICE_TYPE: typing.ClassVar[str] = 'multichoice'
-        EDITABLE_LIST: typing.ClassVar[str] = 'editlist'
-        CHECKBOX_TYPE: typing.ClassVar[str] = 'checkbox'
-        IMAGECHOICE_TYPE: typing.ClassVar[str] = 'imgchoice'
-        DATE_TYPE: typing.ClassVar[str] = 'date'
-        INFO_TYPE: typing.ClassVar[str] = 'dummy'
+            def __str__(self):
+                return self.value
+
         # : If length of some fields are not especified, this value is used as default
         DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
@@ -321,26 +325,26 @@ class gui:
                 ),  # This property only affects in "modify" operations
                 'order': options.get('order', 0),
                 'tooltip': options.get('tooltip', ''),
-                'type': gui.InputField.TEXT_TYPE,
+                'type': str(gui.InputField.Types.TEXT),
                 'value': options.get('value', ''),
             }
             if 'tab' in options:
                 self._data['tab'] = str(options.get('tab'))  # Ensure it's a string
 
-        def _type(self, type_: str) -> None:
+        def _type(self, type_: typing.Union[Types, str]) -> None:
             """
             Sets the type of this field.
 
             Args:
                 type: Type to set (from constants of this class)
             """
-            self._data['type'] = type_
+            self._data['type'] = str(type_)
 
-        def isType(self, type_: str) -> bool:
+        def isType(self, type_: typing.Union[Types, str]) -> bool:
             """
             Returns true if this field is of specified type
             """
-            return self._data['type'] == type_
+            return self._data['type'] == str(type_)
 
         def isSerializable(self) -> bool:
             return True
@@ -450,7 +454,7 @@ class gui:
 
         def __init__(self, **options) -> None:
             super().__init__(**options)
-            self._type(gui.InputField.TEXT_TYPE)
+            self._type(gui.InputField.Types.TEXT)
             multiline = int(options.get('multiline', 0))
             if multiline > 8:
                 multiline = 8
@@ -468,7 +472,7 @@ class gui:
         def __init__(self, **options) -> None:
             super().__init__(**options)
             # Change the type
-            self._type(gui.InputField.TEXT_AUTOCOMPLETE_TYPE)
+            self._type(gui.InputField.Types.TEXT_AUTOCOMPLETE)
             # And store values in a list
             self._data['values'] = gui.convertToChoices(options.get('values', []))
 
@@ -508,7 +512,7 @@ class gui:
                 options.get('maxValue', options.get('maxvalue', '987654321'))
             )
 
-            self._type(gui.InputField.NUMERIC_TYPE)
+            self._type(gui.InputField.Types.NUMERIC)
 
         def _setValue(self, value: typing.Any):
             # Internally stores an string
@@ -568,7 +572,7 @@ class gui:
                 self.processValue(v, options)
 
             super().__init__(**options)
-            self._type(gui.InputField.DATE_TYPE)
+            self._type(gui.InputField.Types.DATE)
 
         def date(self, min: bool = True) -> datetime.date:
             """
@@ -635,7 +639,7 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            self._type(gui.InputField.PASSWORD_TYPE)
+            self._type(gui.InputField.Types.PASSWORD)
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -675,7 +679,7 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options)
             self._isSerializable: bool = options.get('serializable', '') != ''
-            self._type(gui.InputField.HIDDEN_TYPE)
+            self._type(gui.InputField.Types.HIDDEN)
 
         def isSerializable(self) -> bool:
             return self._isSerializable
@@ -701,7 +705,7 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            self._type(gui.InputField.CHECKBOX_TYPE)
+            self._type(gui.InputField.Types.CHECKBOX)
 
         @staticmethod
         def _checkTrue(val: typing.Union[str, bytes, bool]) -> bool:
@@ -832,7 +836,7 @@ class gui:
                 fills.pop('function')
                 self._data['fills'] = fills
                 gui.callbacks[fills['callbackName']] = fnc
-            self._type(gui.InputField.CHOICE_TYPE)
+            self._type(gui.InputField.Types.CHOICE)
 
         def setValues(self, values: typing.List[typing.Dict[str, typing.Any]]):
             """
@@ -845,7 +849,7 @@ class gui:
             super().__init__(**options)
             self._data['values'] = options.get('values', [])
 
-            self._type(gui.InputField.IMAGECHOICE_TYPE)
+            self._type(gui.InputField.Types.IMAGECHOICE)
 
         def setValues(self, values: typing.List[typing.Any]):
             """
@@ -893,7 +897,7 @@ class gui:
                 options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             self._data['rows'] = options.get('rows', -1)
-            self._type(gui.InputField.MULTI_CHOICE_TYPE)
+            self._type(gui.InputField.Types.MULTI_CHOICE)
 
         def setValues(self, values: typing.List[typing.Any]) -> None:
             """
@@ -934,7 +938,7 @@ class gui:
         def __init__(self, **options) -> None:
             super().__init__(**options)
             self._data['values'] = gui.convertToList(options.get('values', []))
-            self._type(gui.InputField.EDITABLE_LIST)
+            self._type(gui.InputField.Types.EDITABLE_LIST)
 
         def _setValue(self, value):
             """
@@ -950,7 +954,7 @@ class gui:
 
         def __init__(self, **options) -> None:
             super().__init__(**options)
-            self._type(gui.InputField.TEXT_TYPE)
+            self._type(gui.InputField.Types.TEXT)
 
     class InfoField(InputField):
         """
@@ -959,7 +963,7 @@ class gui:
 
         def __init__(self, **options) -> None:
             super().__init__(**options)
-            self._type(gui.InputField.INFO_TYPE)
+            self._type(gui.InputField.Types.INFO)
 
 
 class UserInterfaceType(type):
@@ -1082,9 +1086,9 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         dic: gui.ValuesDictType = {}
         for k, v in self._gui.items():
-            if v.isType(gui.InputField.EDITABLE_LIST):
+            if v.isType(gui.InputField.Types.EDITABLE_LIST):
                 dic[k] = gui.convertToList(v.value)
-            elif v.isType(gui.InputField.MULTI_CHOICE_TYPE):
+            elif v.isType(gui.InputField.Types.MULTI_CHOICE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
@@ -1110,24 +1114,24 @@ class UserInterface(metaclass=UserInterfaceType):
         val: typing.Any
         for k, v in self._gui.items():
             logger.debug('serializing Key: %s/%s', k, v.value)
-            if v.isType(gui.InputField.HIDDEN_TYPE) and v.isSerializable() is False:
+            if v.isType(gui.InputField.Types.HIDDEN) and v.isSerializable() is False:
                 # logger.debug('Field {0} is not serializable'.format(k))
                 continue
-            if v.isType(gui.InputField.INFO_TYPE):
+            if v.isType(gui.InputField.Types.INFO):
                 # logger.debug('Field {} is a dummy field and will not be serialized')
                 continue
-            if v.isType(gui.InputField.EDITABLE_LIST) or v.isType(
-                gui.InputField.MULTI_CHOICE_TYPE
+            if v.isType(gui.InputField.Types.EDITABLE_LIST) or v.isType(
+                gui.InputField.Types.MULTI_CHOICE
             ):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
-            elif v.isType(gui.InfoField.PASSWORD_TYPE):
+            elif v.isType(gui.InfoField.Types.PASSWORD):
                 val = PASSWORD_FIELD + cryptoManager().AESCrypt(
                     v.value.encode('utf8'), settings.SECRET_KEY.encode(), True
                 )
-            elif v.isType(gui.InputField.NUMERIC_TYPE):
+            elif v.isType(gui.InputField.Types.NUMERIC):
                 val = str(int(v.num())).encode('utf8')
-            elif v.isType(gui.InputField.CHECKBOX_TYPE):
+            elif v.isType(gui.InputField.Types.CHECKBOX):
                 val = v.isTrue()
             else:
                 val = v.value.encode('utf8')
@@ -1154,7 +1158,7 @@ class UserInterface(metaclass=UserInterfaceType):
             # Set all values to defaults ones
             for k in self._gui:
                 if (
-                    self._gui[k].isType(gui.InputField.HIDDEN_TYPE)
+                    self._gui[k].isType(gui.InputField.Types.HIDDEN)
                     and self._gui[k].isSerializable() is False
                 ):
                     # logger.debug('Field {0} is not unserializable'.format(k))

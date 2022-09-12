@@ -81,7 +81,7 @@ class MFA(ModelHandler):
                 'tooltip': gettext(
                     'Time in hours to cache device so MFA is not required again. User based.'
                 ),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 111,
             },
         )
@@ -95,7 +95,7 @@ class MFA(ModelHandler):
                 'tooltip': gettext(
                     'Time in minutes to allow MFA code to be used.'
                 ),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 112,
             },
 

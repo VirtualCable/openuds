@@ -115,7 +115,7 @@ class Authenticators(ModelHandler):
                         'tooltip': gettext(
                             'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
                         ),
-                        'type': gui.InputField.CHOICE_TYPE,
+                        'type': gui.InputField.Types.CHOICE,
                         'order': 107,
                         'tab': gettext('Display'),
                     },
@@ -137,7 +137,7 @@ class Authenticators(ModelHandler):
                             'tooltip': gettext(
                                 'MFA provider to use for this authenticator'
                             ),
-                            'type': gui.InputField.CHOICE_TYPE,
+                            'type': gui.InputField.Types.CHOICE,
                             'order': 108,
                             'tab': gui.Tab.MFA,
                         },

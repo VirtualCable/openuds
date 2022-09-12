@@ -155,7 +155,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('Policy'),
                 'tooltip': gettext('Service pool policy'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'order': 100,
             },
             {
@@ -165,7 +165,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('HA Policy'),
                 'tooltip': gettext('Service pool HA policy. Enable with care!'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'order': 101,
             },
             {
@@ -179,7 +179,7 @@ class MetaPools(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'type': gui.InputField.Types.IMAGECHOICE,
                 'order': 120,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -196,7 +196,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext(
                     'Pool group for this pool (for pool classify on display)'
                 ),
-                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'type': gui.InputField.Types.IMAGECHOICE,
                 'order': 121,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -205,7 +205,7 @@ class MetaPools(ModelHandler):
                 'value': True,
                 'label': gettext('Visible'),
                 'tooltip': gettext('If active, metapool will be visible for users'),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'order': 123,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -216,7 +216,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext(
                     'Custom message to be shown to users if access is limited by calendar rules.'
                 ),
-                'type': gui.InputField.TEXT_TYPE,
+                'type': gui.InputField.Types.TEXT,
                 'order': 124,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -228,7 +228,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('Transport Selection'),
                 'tooltip': gettext('Transport selection policy'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'order': 125,
                 'tab': gui.Tab.DISPLAY,
             },

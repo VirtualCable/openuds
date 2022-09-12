@@ -86,7 +86,7 @@ class Notifiers(ModelHandler):
                 'values': [gui.choiceItem(i[0], i[1]) for i in NotificationLevel.all()],
                 'label': gettext('Level'),
                 'tooltip': gettext('Level of notifications'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'order': 102,
             }
         ]:

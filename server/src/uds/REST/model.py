@@ -109,7 +109,7 @@ class BaseModelHandler(Handler):
                 'multiline': field.get('multiline', 0),
                 'tooltip': field.get('tooltip', ''),
                 'rdonly': field.get('rdonly', False),
-                'type': field.get('type', uiGui.InputField.TEXT_TYPE),
+                'type': str(field.get('type', uiGui.InputField.Types.TEXT)),
                 'order': field.get('order', 0),
                 'values': field.get('values', []),
             },

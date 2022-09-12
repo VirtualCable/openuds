@@ -331,7 +331,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Base service'),
                 'tooltip': gettext('Service used as base of this service pool'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'rdonly': True,
                 'order': 100,  # Ensures is At end
             },
@@ -343,7 +343,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'rdonly': True,
                 'order': 101,
             },
@@ -354,7 +354,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'If active, the user will be allowed to remove the service "manually". Be careful with this, because the user will have the "power" to delete it\'s own service'
                 ),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'order': 111,
                 'tab': gettext('Advanced'),
             },
@@ -365,7 +365,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'If active, the user will be allowed to reset the service'
                 ),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'order': 112,
                 'tab': gettext('Advanced'),
             },
@@ -376,7 +376,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'If the option is enabled, UDS will not attempt to detect and remove the user services assigned but not in use.'
                 ),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'order': 113,
                 'tab': gettext('Advanced'),
             },
@@ -385,7 +385,7 @@ class ServicesPools(ModelHandler):
                 'value': True,
                 'label': gettext('Visible'),
                 'tooltip': gettext('If active, transport will be visible for users'),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'order': 107,
                 'tab': gettext('Display'),
             },
@@ -400,7 +400,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'type': gui.InputField.Types.IMAGECHOICE,
                 'order': 120,
                 'tab': gettext('Display'),
             },
@@ -417,7 +417,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Pool group for this pool (for pool classify on display)'
                 ),
-                'type': gui.InputField.IMAGECHOICE_TYPE,
+                'type': gui.InputField.Types.IMAGECHOICE,
                 'order': 121,
                 'tab': gettext('Display'),
             },
@@ -428,7 +428,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Custom message to be shown to users if access is limited by calendar rules.'
                 ),
-                'type': gui.InputField.TEXT_TYPE,
+                'type': gui.InputField.Types.TEXT,
                 'order': 122,
                 'tab': gettext('Display'),
             },
@@ -438,7 +438,7 @@ class ServicesPools(ModelHandler):
                 'minValue': '0',
                 'label': gettext('Initial available services'),
                 'tooltip': gettext('Services created initially for this service pool'),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 130,
                 'tab': gettext('Availability'),
             },
@@ -450,7 +450,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Services kept in cache for improved user service assignation'
                 ),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 131,
                 'tab': gettext('Availability'),
             },
@@ -462,7 +462,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Services kept in cache of level2 for improved service generation'
                 ),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 132,
                 'tab': gettext('Availability'),
             },
@@ -474,7 +474,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Maximum number of service (assigned and L1 cache) that can be created for this service'
                 ),
-                'type': gui.InputField.NUMERIC_TYPE,
+                'type': gui.InputField.Types.NUMERIC,
                 'order': 133,
                 'tab': gettext('Availability'),
             },
@@ -485,7 +485,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'If active, alternative transports for user will be shown'
                 ),
-                'type': gui.InputField.CHECKBOX_TYPE,
+                'type': gui.InputField.Types.CHECKBOX,
                 'tab': gettext('Advanced'),
                 'order': 130,
             },
@@ -497,7 +497,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
-                'type': gui.InputField.CHOICE_TYPE,
+                'type': gui.InputField.Types.CHOICE,
                 'tab': gettext('Advanced'),
                 'order': 131,
             },
@@ -624,8 +624,8 @@ class ServicesPools(ModelHandler):
         if self._params.get('publish_on_save', False) is True:
             try:
                 item.publish()
-            except Exception:
-                pass
+            except Exception as e:  
+                logger.error('Could not publish service pool %s: %s',item.name, e)
 
     def deleteItem(self, item: ServicePool) -> None:
         try:

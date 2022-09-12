@@ -92,7 +92,7 @@ class Networks(ModelHandler):
                 'tooltip': gettext(
                     'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
                 ),
-                'type': gui.InputField.TEXT_TYPE,
+                'type': gui.InputField.Types.TEXT,
                 'order': 100,  # At end
             },
         )
