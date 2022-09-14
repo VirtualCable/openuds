@@ -384,7 +384,7 @@ def webLogin(
     # Note that encripted password is done using a value that the server does not know
     # unless a request by a valid user is done, so, if the server is compromised, the
     # password is not compromised.
-    if GlobalConfig.PARANOID_SECURITY.getBool(False):
+    if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
         password = ''
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie
