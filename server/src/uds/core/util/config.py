@@ -52,6 +52,27 @@ _getLater = []
 _configParams = {}
 
 
+# Pair of section/value removed from current UDS version
+REMOVED_CONFIG_ELEMENTS = {
+    'UDS': (
+        'allowPreferencesAccess',
+        'customHtmlLogin',
+        'UDS Theme',
+        'UDS Theme Enhaced',
+        'css',
+        'allowPreferencesAccess',
+        'loginUrl',
+        'maxLoginTries',
+        'loginBlockTime',
+    ),
+    'Cluster': ('Destination CPU Load', 'Migration CPU Load', 'Migration Free Memory'),
+    'IPAUTH': ('autoLogin',),
+    'VMWare': ('minUsableDatastoreGB', 'maxRetriesOnError'),
+    'HyperV': ('minUsableDatastoreGB',),
+    'Security': ('adminIdleTime', 'userSessionLength'),
+}
+
+
 class Config:
     # Fields types, so inputs get more "beautiful"
     TEXT_FIELD: int = 0
@@ -275,6 +296,34 @@ class Config:
             return True
         except Exception:
             return False
+
+    @staticmethod
+    def getConfigValues(addCrypt: bool = False) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+        """
+        Returns a dictionary with all config values
+        """
+        res: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+        for cfg in Config.enumerate():
+            # Skip removed configuration values, even if they are in database
+            logger.debug('Key: %s, val: %s', cfg.section(), cfg.key())
+            if cfg.key() in REMOVED_CONFIG_ELEMENTS.get(cfg.section(), ()):
+                continue
+
+            if cfg.isCrypted() is True and addCrypt is False:
+                continue
+
+            # add section if it do not exists
+            if cfg.section() not in res:
+                res[cfg.section()] = {}
+            res[cfg.section()][cfg.key()] = {
+                'value': cfg.get(),
+                'crypt': cfg.isCrypted(),
+                'longText': cfg.isLongText(),
+                'type': cfg.getType(),
+                'params': cfg.getParams(),
+            }
+        logger.debug('Configuration: %s', res)
+        return res
 
 
 class GlobalConfig:
