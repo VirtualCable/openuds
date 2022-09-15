@@ -380,12 +380,11 @@ def webLogin(
     request.authorized = (
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
-    # If Enabled paranoid securit6, do not cache encrypted password
-    # Note that encripted password is done using a value that the server does not know
-    # unless a request by a valid user is done, so, if the server is compromised, the
-    # password is not compromised.
+    # If Enabled zero trust, do not cache credentials
     if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
         password = ''
+
+    request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = cryptoManager().symCrypt(
         password, cookie
     )  # Stores "bytes"
