@@ -406,6 +406,10 @@ def webLogin(
     request.authorized = (
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
+    # If Enabled zero trust, do not cache credentials
+    if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
+        password = ''
+
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = codecs.encode(cryptoManager().symCrypt(password, cookie), "base64").decode()  # as str
 

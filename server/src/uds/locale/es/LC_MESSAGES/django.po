@@ -17,14 +17,14 @@
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
 # Víctor Alonso <valonso@virtualcable.net>, 2020
-# Víctor Alonso <valonso@virtualcable.net>, 2020
+# Víctor Alonso <valonso@virtualcable.net>, 2020,2022
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-31 15:20+0200\n"
+"POT-Creation-Date: 2022-09-12 15:03+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -218,7 +218,7 @@ msgstr "Etiqueta"
 msgid "Users"
 msgstr "Usuarios"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:104
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
 msgid "MFA"
 msgstr "AMF"
 
@@ -539,7 +539,7 @@ msgstr "Acciones programadas"
 msgid "Action"
 msgstr "Acción"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:100
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
 msgid "Parameters"
 msgstr "Parámetros"
 
@@ -732,7 +732,7 @@ msgstr "Proxy para servicios detrás de un firewall"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:99
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -832,7 +832,7 @@ msgstr "Si está activo, el transporte será visible para los usuarios."
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:103 services/OVirt/service.py:188
+#: core/ui/user_interface.py:104 services/OVirt/service.py:188
 msgid "Display"
 msgstr "Visualización"
 
@@ -2093,7 +2093,6 @@ msgid "Can't unpublish publications with services in process"
 msgstr "No se pueden anular publicaciones con servicios en proceso"
 
 #: core/managers/user_service.py:128
-#| msgid "Maximum number of services to provide"
 msgid "Maximum number of user services reached for this {}"
 msgstr "Número máximo de servicios de usuario alcanzados para este {}"
 
@@ -2185,11 +2184,11 @@ msgstr "Directo"
 msgid "Tunneled"
 msgstr "Tunelizado"
 
-#: core/ui/user_interface.py:101
+#: core/ui/user_interface.py:102
 msgid "Credentials"
 msgstr "Credenciales"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Tunnel"
 msgstr "Túnel"
 
@@ -2522,13 +2521,11 @@ msgstr "Acción para el error de respuesta de SMS"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
-#| msgid "Allow user log in without MFA"
 msgid "Allow user login"
 msgstr "Permitir inicio de sesión de usuario"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 #: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
-#| msgid "Deny user log in"
 msgid "Deny user login"
 msgstr "Denegar inicio de sesión de usuario"
 
@@ -2545,12 +2542,10 @@ msgstr ""
 "Denegar al usuario el inicio de sesión si su IP está en la lista de redes"
 
 #: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
-#| msgid "Subnetwork"
 msgid "SMS networks"
 msgstr "Redes SMS"
 
 #: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
-#| msgid "Password for SMS authentication"
 msgid "Networks for SMS authentication"
 msgstr "Redes para la autenticación de SMS"
 
@@ -2585,7 +2580,6 @@ msgid "Radius OTP communication error action"
 msgstr "Acción de error de comunicación Radius OTP"
 
 #: mfas/Radius/mfa.py:109
-#| msgid "Action for SMS response error"
 msgid "Action for OTP server communication error"
 msgstr "Acción para el error de comunicación del servidor OTP"
 
@@ -2594,12 +2588,10 @@ msgid "Radius OTP networks"
 msgstr "Redes OTP de radio"
 
 #: mfas/Radius/mfa.py:125
-#| msgid "Password for SMS authentication"
 msgid "Networks for Radius OTP authentication"
 msgstr "Redes para autenticación Radius OTP"
 
 #: mfas/Radius/mfa.py:131
-#| msgid "User with access to SMTP server"
 msgid "User without defined OTP in server"
 msgstr "Usuario sin OTP definida en servidor"
 
@@ -2608,7 +2600,6 @@ msgid "Action for user without defined Radius Challenge"
 msgstr "Acción para usuario sin Radius Challenge definido"
 
 #: mfas/Radius/mfa.py:194
-#| msgid "MFA Code"
 msgid "OTP Code"
 msgstr "Código OTP"
 
@@ -2617,12 +2608,10 @@ msgid "Please enter OTP"
 msgstr "Por favor ingrese OTP"
 
 #: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
-#| msgid "Connection error: "
 msgid "Radius OTP connection error"
 msgstr "Error de conexión OTP de radio"
 
 #: mfas/Radius/mfa.py:279
-#| msgid "Invalid MFA code"
 msgid "Invalid OTP code"
 msgstr "Código OTP no válido"
 
@@ -2758,9 +2747,6 @@ msgid "SMS response OK regex"
 msgstr "Respuesta de SMS OK expresión regular"
 
 #: mfas/SMS/mfa.py:175
-#| msgid ""
-#| "Regex for SMS response OK. If emty, the response is considered OK if "
-#| "status code is 200."
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2781,7 +2767,6 @@ msgid "SMS sending failed"
 msgstr "Envío de SMS fallido"
 
 #: mfas/SMS/mfa.py:300
-#| msgid "SMS response error action"
 msgid "SMS response error"
 msgstr "Error de respuesta de SMS"
 
@@ -2997,9 +2982,6 @@ msgstr ""
 "estáticas. <b>(Requiere python&gt; = 3.6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:80
-#| msgid ""
-#| "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
-#| "<b>(Requires python >= 3.6)</b>"
 msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for "
 "static machines. <b>(Requires python >= 3.6)</b>"
@@ -4675,12 +4657,10 @@ msgstr ""
 "OpenGnsys."
 
 #: services/OpenGnsys/service.py:150 services/RDS_enterprise/service.py:86
-#| msgid "Max. Allowd services"
 msgid "Max. Allowed services"
 msgstr "máx. Servicios permitidos"
 
 #: services/OpenGnsys/service.py:155 services/RDS_enterprise/service.py:91
-#| msgid "Maximum number of allowed services (0 means no limit)"
 msgid "Maximum number of allowed services (0 or less means no limit)"
 msgstr ""
 "Número máximo de servicios permitidos (0 o menos significa que no hay límite)"
@@ -4767,7 +4747,7 @@ msgstr "Proveedor de plataforma OpenStack"
 
 #: services/OpenStack/provider.py:84
 msgid "OpenStack platform service provider"
-msgstr "Proveedor de servicios de Plataforma OpenStack"
+msgstr "Proveedor de servicios de plataforma OpenStack"
 
 #: services/OpenStack/provider.py:101
 msgid "Identity endpoint"

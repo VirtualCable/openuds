@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-31 15:20+0200\n"
+"POT-Creation-Date: 2022-09-12 15:03+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -204,7 +204,7 @@ msgstr "Etiketa"
 msgid "Users"
 msgstr "Erabiltzaileak"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:104
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
 msgid "MFA"
 msgstr "MFA"
 
@@ -525,7 +525,7 @@ msgstr "Programatutako ekintzak"
 msgid "Action"
 msgstr "Ekintza"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:100
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
 msgid "Parameters"
 msgstr "Parametroak"
 
@@ -720,7 +720,7 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:99
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -820,7 +820,7 @@ msgstr "Aktibo bada, garraioak ikusgai egongo dira erabiltzaileentzat"
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:103 services/OVirt/service.py:188
+#: core/ui/user_interface.py:104 services/OVirt/service.py:188
 msgid "Display"
 msgstr "Pantaila"
 
@@ -2065,7 +2065,6 @@ msgid "Can't unpublish publications with services in process"
 msgstr "Ezin dira argitalpenak argitaratu zerbitzuen prozesuan"
 
 #: core/managers/user_service.py:128
-#| msgid "Maximum number of services to provide"
 msgid "Maximum number of user services reached for this {}"
 msgstr "{} honetarako erabiltzaile-zerbitzuen gehienezko kopurua lortu da"
 
@@ -2157,11 +2156,11 @@ msgstr "Zuzenean"
 msgid "Tunneled"
 msgstr "Tunel bitartez"
 
-#: core/ui/user_interface.py:101
+#: core/ui/user_interface.py:102
 msgid "Credentials"
 msgstr "Egiaztagiria"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Tunnel"
 msgstr "Tunela"
 
@@ -2492,13 +2491,11 @@ msgstr "SMSen erantzunaren errorearen ekintza"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
-#| msgid "Allow user log in without MFA"
 msgid "Allow user login"
 msgstr "Baimendu erabiltzaileari saioa hasteko"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 #: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
-#| msgid "Deny user log in"
 msgid "Deny user login"
 msgstr "Ukatu erabiltzailearen saioa"
 
@@ -2513,12 +2510,10 @@ msgid "Deny user to login if it IP is in the networks list"
 msgstr "Ukatu erabiltzaileari saioa hasteko IP sareen zerrendan badago"
 
 #: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
-#| msgid "Subnetwork"
 msgid "SMS networks"
 msgstr "SMS sareak"
 
 #: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
-#| msgid "Password for SMS authentication"
 msgid "Networks for SMS authentication"
 msgstr "SMS autentifikaziorako sareak"
 
@@ -2554,7 +2549,6 @@ msgid "Radius OTP communication error action"
 msgstr "Radius OTP komunikazio-errorearen ekintza"
 
 #: mfas/Radius/mfa.py:109
-#| msgid "Action for SMS response error"
 msgid "Action for OTP server communication error"
 msgstr "OTP zerbitzariaren komunikazio-errorearen ekintza"
 
@@ -2563,12 +2557,10 @@ msgid "Radius OTP networks"
 msgstr "Radius OTP sareak"
 
 #: mfas/Radius/mfa.py:125
-#| msgid "Password for SMS authentication"
 msgid "Networks for Radius OTP authentication"
 msgstr "Radius OTP autentifikaziorako sareak"
 
 #: mfas/Radius/mfa.py:131
-#| msgid "User with access to SMTP server"
 msgid "User without defined OTP in server"
 msgstr "Zerbitzarian OTP definitu gabeko erabiltzailea"
 
@@ -2577,7 +2569,6 @@ msgid "Action for user without defined Radius Challenge"
 msgstr "Radius Challenge definitu gabeko erabiltzaileentzako ekintza"
 
 #: mfas/Radius/mfa.py:194
-#| msgid "MFA Code"
 msgid "OTP Code"
 msgstr "OTP kodea"
 
@@ -2586,12 +2577,10 @@ msgid "Please enter OTP"
 msgstr "Mesedez, sartu OTP"
 
 #: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
-#| msgid "Connection error: "
 msgid "Radius OTP connection error"
 msgstr "Radius OTP konexio-errorea"
 
 #: mfas/Radius/mfa.py:279
-#| msgid "Invalid MFA code"
 msgid "Invalid OTP code"
 msgstr "OTP kodea baliogabea"
 
@@ -2725,9 +2714,6 @@ msgid "SMS response OK regex"
 msgstr "SMS erantzuna OK regex"
 
 #: mfas/SMS/mfa.py:175
-#| msgid ""
-#| "Regex for SMS response OK. If emty, the response is considered OK if "
-#| "status code is 200."
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2748,7 +2734,6 @@ msgid "SMS sending failed"
 msgstr "Ezin izan da SMS bidaltzean"
 
 #: mfas/SMS/mfa.py:300
-#| msgid "SMS response error action"
 msgid "SMS response error"
 msgstr "SMS erantzunaren errorea"
 
@@ -2962,9 +2947,6 @@ msgstr ""
 "BAKARRA erabiltzen da. <b>(Python behar du = = 3,6)</b>"
 
 #: osmanagers/LinuxOsManager/__init__.py:80
-#| msgid ""
-#| "UDS Actor for Debian based Linux machines. Used ONLY for static machines. "
-#| "<b>(Requires python >= 3.6)</b>"
 msgid ""
 "UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for "
 "static machines. <b>(Requires python >= 3.6)</b>"
@@ -4636,12 +4618,10 @@ msgstr ""
 "(sistema eragile batzuetan) OpenGnsys bidez saiatuko dira."
 
 #: services/OpenGnsys/service.py:150 services/RDS_enterprise/service.py:86
-#| msgid "Max. Allowd services"
 msgid "Max. Allowed services"
 msgstr "Max. Baimendutako zerbitzuak"
 
 #: services/OpenGnsys/service.py:155 services/RDS_enterprise/service.py:91
-#| msgid "Maximum number of allowed services (0 means no limit)"
 msgid "Maximum number of allowed services (0 or less means no limit)"
 msgstr ""
 "Onartutako zerbitzuen gehienezko kopurua (0 edo gutxiago mugarik ez dela "
