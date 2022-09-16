@@ -41,8 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    args = "<mod.name=value mod.name=value mod.name=value...>"
-    help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
+    help = "Show current PUBLIC configuration of UDS broker (passwords are not shown)"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -71,7 +70,7 @@ class Command(BaseCommand):
                         writer.writerow([section, key, value['value']])
                     else:
                         v = value['value'].replace('\n', '\\n')
-                        print(f'{section}.{key}="{v}"')
+                        self.stdout.write(f'{section}.{key}="{v}"')
 
         except Exception as e:
             print('The command could not be processed: {}'.format(e))

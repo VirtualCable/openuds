@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
 from django.core.management.base import BaseCommand
@@ -42,10 +43,10 @@ class Command(BaseCommand):
     args = "<mod.name=value mod.name=value mod.name=value...>"
     help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument('name_value', nargs='+', type=str)
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         logger.debug("Handling settings")
         GlobalConfig.initialize()
         try:
@@ -62,5 +63,5 @@ class Command(BaseCommand):
                 ):  # If not exists, try to store value without any special parameters
                     Config.section(mod).value(name, value).get()
         except Exception as e:
-            print('The command could not be processed: {}'.format(e))
+            self.stderr.write('The command could not be processed: {}'.format(e))
             logger.exception('Exception processing %s', args)
