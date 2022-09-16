@@ -33,6 +33,7 @@
 import logging
 import typing
 import csv
+import yaml
 
 from django.core.management.base import BaseCommand
 from uds.core.util import config
@@ -41,8 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    args = "<mod.name=value mod.name=value mod.name=value...>"
-    help = "Updates configuration values. If mod is omitted, UDS will be used. Omit whitespaces betwen name, =, and value (they must be a single param)"
+    help = "Show current PUBLIC configuration of UDS broker (passwords are not shown)"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -51,6 +51,13 @@ class Command(BaseCommand):
             dest='csv',
             default=False,
             help='Shows configuration in CVS format',
+        )
+        parser.add_argument(
+            '--yaml',
+            action='store_true',
+            dest='yaml',
+            default=False,
+            help='Shows configuration in YAML format',
         )
 
     def handle(self, *args, **options):
@@ -62,17 +69,26 @@ class Command(BaseCommand):
                 # Print header
                 writer = csv.writer(self.stdout, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 writer.writerow(['Section', 'Name', 'Value'])
-                
+            elif options['yaml']:
+                writer = {}  # Create a dict to store data, and write at the end
             # Get sections, key, value as a list of tuples
             for section, data in config.Config.getConfigValues().items():
                 for key, value in data.items():
                     # value is a dict, get 'value' key
                     if options['csv']:
                         writer.writerow([section, key, value['value']])
+                    elif options['yaml']:
+                        if section not in writer:
+                            writer[section] = {}
+                        writer[section][key] = value['value']
                     else:
                         v = value['value'].replace('\n', '\\n')
-                        print(f'{section}.{key}="{v}"')
+                        self.stdout.write(f'{section}.{key}="{v}"')
 
+                if options['csv']:
+                    writer.writerow([])
+                elif options['yaml']:
+                    self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
         except Exception as e:
             print('The command could not be processed: {}'.format(e))
             logger.exception('Exception processing %s', args)

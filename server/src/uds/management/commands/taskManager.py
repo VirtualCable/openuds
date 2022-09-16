@@ -168,8 +168,8 @@ class Command(BaseCommand):
 
         if not start and not stop:
             if pid:
-                sys.stdout.write(
+                self.stdout.write(
                     "Task manager found running (pid file exists: {0})\n".format(pid)
                 )
             else:
-                sys.stdout.write("Task manager not foud (pid file do not exits)\n")
+                self.stdout.write("Task manager not foud (pid file do not exits)\n")
