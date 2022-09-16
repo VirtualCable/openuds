@@ -278,7 +278,7 @@ class Command(BaseCommand):
             gallery = {}
             for galleryItem in models.Image.objects.all():
                 gallery[galleryItem.name] = {
-                    'size': galleryItem.size,
+                    'size': f'{galleryItem.width}x{galleryItem.height}',
                     'stamp': galleryItem.stamp,
                     'length': len(galleryItem.data),
                 }
@@ -299,7 +299,7 @@ class Command(BaseCommand):
 
             tree[counter('TUNNELTOKENS')] = tunnelTokens
 
-            self.stdout.write(yaml.dump(tree, default_flow_style=False))
+            self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 
         except Exception as e:
             print('The command could not be processed: {}'.format(e))
