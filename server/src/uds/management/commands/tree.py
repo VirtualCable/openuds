@@ -36,8 +36,9 @@ import yaml
 import collections
 
 from django.core.management.base import BaseCommand
-from uds.core.util import config
+from uds.core.util import log
 from uds import models
+from uds.core.util.state import State
 
 
 logger = logging.getLogger(__name__)
@@ -77,7 +78,9 @@ def getSerializedFromManagedObject(
 
 
 def getSerializedFromModel(
-    mod: 'dbmodels.Model', removableFields: typing.Optional[typing.List[str]] = None, passwordFields: typing.Optional[typing.List[str]] = None
+    mod: 'dbmodels.Model',
+    removableFields: typing.Optional[typing.List[str]] = None,
+    passwordFields: typing.Optional[typing.List[str]] = None,
 ) -> typing.Mapping[str, typing.Any]:
     removableFields = removableFields or []
     passwordFields = passwordFields or []
@@ -99,7 +102,13 @@ class Command(BaseCommand):
     help = "Outputs all UDS Trees of elements in YAML format"
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument(
+            '--all-userservices',
+            action='store_true',
+            dest='alluserservices',
+            default=False,
+            help='Shows ALL user services, not just the ones with errors',
+        )
 
     def handle(self, *args, **options):
         logger.debug("Show Tree")
@@ -117,10 +126,51 @@ class Command(BaseCommand):
             for provider in models.Provider.objects.all():
 
                 services = {}
+                numberOfServices = 0
+                numberOfServicePools = 0
+                numberOfUserServices = 0
                 for service in provider.services.all():
-
                     servicePools = {}
                     for servicePool in service.deployedServices.all():
+                        # get assigned user services with ERROR status
+                        userServices = {}
+                        fltr = servicePool.userServices.all()
+                        if not options['alluserservices']:
+                            fltr = fltr.filter(state=State.ERROR)
+                        for item in fltr[:10]:  # at most 100 items
+                            logs = [
+                                '{}: {} [{}] - {}'.format(
+                                    l['date'],
+                                    log.logStrFromLevel(l['level']),
+                                    l['source'],
+                                    l['message'],
+                                )
+                                for l in log.getLogs(item)
+                            ]
+                            userServices[item.friendly_name] = {
+                                '_': {
+                                    'id': item.uuid,
+                                    'id_deployed_service': item.deployed_service.uuid,
+                                    'unique_id': item.unique_id,
+                                    'friendly_name': item.friendly_name,
+                                    'state': State.toString(item.state),
+                                    'os_state': State.toString(item.os_state),
+                                    'state_date': item.state_date,
+                                    'creation_date': item.creation_date,
+                                    'revision': item.publication
+                                    and item.publication.revision
+                                    or '',
+                                    'is_cache': item.cache_level != 0,
+                                    'ip': item.getProperty('ip', 'unknown'),
+                                    'actor_version': item.getProperty(
+                                        'actor_version', 'unknown'
+                                    ),
+                                },
+                                'logs': logs,
+                            }
+
+                        numberOfUserServices += len(userServices)
+
                         # get publications
                         publications = {}
                         for publication in servicePool.publications.all():
@@ -170,18 +220,24 @@ class Command(BaseCommand):
 
                         servicePools[servicePool.name] = {
                             '_': getSerializedFromModel(servicePool),
+                            'userServices': userServices,
                             'calendarAccess': calendarAccess,
                             'calendarActions': calendarActions,
                             'groups': groups,
                             'publications': publications,
                         }
 
+                    numberOfServicePools += len(servicePools)
+
                     services[service.name] = {
                         '_': getSerializedFromManagedObject(service),
                         'servicePools': servicePools,
                     }
 
-                providers[provider.name] = {
+                numberOfServices += len(services)
+                providers[
+                    f'{provider.name} ({numberOfServices}, {numberOfServicePools}, {numberOfUserServices})'
+                ] = {
                     '_': getSerializedFromManagedObject(provider),
                     'services': services,
                 }
@@ -288,14 +344,18 @@ class Command(BaseCommand):
             # Actor tokens
             actorTokens = {}
             for actorToken in models.ActorToken.objects.all():
-                actorTokens[actorToken.hostname] = getSerializedFromModel(actorToken, passwordFields=['token'])
+                actorTokens[actorToken.hostname] = getSerializedFromModel(
+                    actorToken, passwordFields=['token']
+                )
 
             tree[counter('ACTORTOKENS')] = actorTokens
 
             # Tunnel tokens
             tunnelTokens = {}
             for tunnelToken in models.TunnelToken.objects.all():
-                tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(tunnelToken, passwordFields=['token'])
+                tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(
+                    tunnelToken, passwordFields=['token']
+                )
 
             tree[counter('TUNNELTOKENS')] = tunnelTokens
 
