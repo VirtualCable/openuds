@@ -84,11 +84,8 @@ class Command(BaseCommand):
                     else:
                         v = value['value'].replace('\n', '\\n')
                         self.stdout.write(f'{section}.{key}="{v}"')
-
-                if options['csv']:
-                    writer.writerow([])
-                elif options['yaml']:
-                    self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
+            if options['yaml']:
+                self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
         except Exception as e:
             print('The command could not be processed: {}'.format(e))
             logger.exception('Exception processing %s', args)

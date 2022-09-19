@@ -109,6 +109,14 @@ class Command(BaseCommand):
             default=False,
             help='Shows ALL user services, not just the ones with errors',
         )
+        # Maximum items allowed for groups and user services
+        parser.add_argument(
+            '--max-items',
+            action='store',
+            dest='maxitems',
+            default=100,
+            help='Maximum elements exported for groups and user services',
+        )
 
     def handle(self, *args, **options):
         logger.debug("Show Tree")
@@ -120,24 +128,28 @@ class Command(BaseCommand):
             cntr += 1
             return f'{cntr:02d}.-{s}'
 
+        max_items = int(options['maxitems'])
+
         tree = {}
         try:
             providers = {}
             for provider in models.Provider.objects.all():
 
                 services = {}
-                numberOfServices = 0
-                numberOfServicePools = 0
-                numberOfUserServices = 0
+                totalServices = 0
+                totalServicePools = 0
+                totalUserServices = 0
                 for service in provider.services.all():
                     servicePools = {}
+                    numberOfServicePools = 0   
+                    numberOfUserServices = 0
                     for servicePool in service.deployedServices.all():
                         # get assigned user services with ERROR status
                         userServices = {}
                         fltr = servicePool.userServices.all()
                         if not options['alluserservices']:
                             fltr = fltr.filter(state=State.ERROR)
-                        for item in fltr[:10]:  # at most 100 items
+                        for item in fltr[:max_items]:  # at most max_items items
                             logs = [
                                 '{}: {} [{}] - {}'.format(
                                     l['date'],
@@ -150,7 +162,6 @@ class Command(BaseCommand):
                             userServices[item.friendly_name] = {
                                 '_': {
                                     'id': item.uuid,
-                                    'id_deployed_service': item.deployed_service.uuid,
                                     'unique_id': item.unique_id,
                                     'friendly_name': item.friendly_name,
                                     'state': State.toString(item.state),
@@ -169,7 +180,8 @@ class Command(BaseCommand):
                                 'logs': logs,
                             }
 
-                        numberOfUserServices += len(userServices)
+                        numberOfUserServices = len(userServices)
+                        totalUserServices += numberOfUserServices
 
                         # get publications
                         publications = {}
@@ -218,7 +230,7 @@ class Command(BaseCommand):
                         ):
                             calendarAccess[ca.calendar.name] = ca.access
 
-                        servicePools[servicePool.name] = {
+                        servicePools[f'{servicePool.name} ({numberOfUserServices})'] = {
                             '_': getSerializedFromModel(servicePool),
                             'userServices': userServices,
                             'calendarAccess': calendarAccess,
@@ -227,16 +239,17 @@ class Command(BaseCommand):
                             'publications': publications,
                         }
 
-                    numberOfServicePools += len(servicePools)
+                    numberOfServicePools = len(servicePools)
+                    totalServicePools += numberOfServicePools
 
-                    services[service.name] = {
+                    services[f'{service.name} ({numberOfServicePools}, {numberOfUserServices})'] = {
                         '_': getSerializedFromManagedObject(service),
                         'servicePools': servicePools,
                     }
 
-                numberOfServices += len(services)
+                totalServices += len(services)
                 providers[
-                    f'{provider.name} ({numberOfServices}, {numberOfServicePools}, {numberOfUserServices})'
+                    f'{provider.name} ({totalServices}, {totalServicePools}, {totalUserServices})'
                 ] = {
                     '_': getSerializedFromManagedObject(provider),
                     'services': services,
@@ -248,12 +261,12 @@ class Command(BaseCommand):
             authenticators = {}
             for authenticator in models.Authenticator.objects.all():
                 # Groups
-                # groups = {}
-                # for group in authenticator.groups.all():
-                #     groups[group.name] = getSerializedFromModel(group)
+                groups = {}
+                for group in authenticator.groups.all()[:max_items]:  # at most max_items items
+                    groups[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
                 authenticators[authenticator.name] = {
                     '_': getSerializedFromManagedObject(authenticator),
-                    # 'groups': groups,
+                    'groups': groups,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators
