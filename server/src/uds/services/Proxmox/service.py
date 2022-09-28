@@ -295,11 +295,20 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     ) -> None:
         self.parent().setProtection(vmId, node, protection)
 
+    def setVmMac(self, vmId: int, mac: str) -> None:
+        self.parent().setVmMac(vmId, mac)
+
     def getBaseName(self) -> str:
         return self.baseName.value
 
     def getLenName(self) -> int:
         return int(self.lenName.value)
+
+    def getMacRange(self) -> str:
+        """
+        Returns de selected mac range
+        """
+        return self.parent().getMacRange()
 
     def isHaEnabled(self) -> bool:
         return self.ha.isTrue()

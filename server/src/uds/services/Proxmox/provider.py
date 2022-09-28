@@ -36,6 +36,7 @@ from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.unique_id_generator import UniqueIDGenerator
+from uds.core.util.unique_mac_generator import UniqueMacGenerator
 
 from .service import ProxmoxLinkedService
 
@@ -141,9 +142,24 @@ class ProxmoxProvider(
         tab=gui.ADVANCED_TAB,
     )
 
+    macsRange = gui.TextField(
+        length=36,
+        label=_('Macs range'),
+        defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF',
+        order=91,
+        rdonly=False,
+        tooltip=_(
+            'Range of valid macs for created machines. Any value accepted by Proxmox is valid here.'
+        ),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+
+
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
+    _macs_generator: UniqueMacGenerator
 
     def __getApi(self) -> client.ProxmoxClient:
         """
@@ -261,6 +277,11 @@ class ProxmoxProvider(
     ) -> None:
         self.__getApi().enableVmHA(vmId, started, group)
 
+    def setVmMac(
+        self, vmId: int, macAddress: str
+    ) -> None:
+        self.__getApi().setVmMac(vmId, macAddress)
+
     def disableHA(self, vmId: int) -> None:
         self.__getApi().disableVmHA(vmId)
 
@@ -284,6 +305,9 @@ class ProxmoxProvider(
             if self.__getApi().isVMIdAvailable(vmId):
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)
+
+    def getMacRange(self) -> str:
+        return self.macsRange.value
 
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:

@@ -160,7 +160,7 @@ class UserDeployment(
         self._uuid = kwargs.get('uuid', '')
         # If it has dbService, got uuid from it
         if self._dbService:
-            self._uuid = self._dbService.uuid
+            self._uuid = self._dbService.uuid or ''
 
         self.initialize()
 
