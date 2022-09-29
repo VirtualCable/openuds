@@ -513,13 +513,39 @@ class ProxmoxClient:
     @ensureConected
     # @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
     def getVmConfiguration(
-        self, vmId: int, node: typing.Optional[str] = None, **kwargs
-    ):
+        self, vmId: int, node: typing.Optional[str] = None):
         node = node or self.getVmInfo(vmId).node
         return types.VMConfiguration.fromDict(
             self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
         )
 
+    @ensureConected
+    def setVmMac(
+        self, vmId: int, mac: str, netid: typing.Optional[str] = None, node: typing.Optional[str] = None
+    ) -> None:
+        node = node or self.getVmInfo(vmId).node
+        # First, read current configuration and extract network configuration
+        config = self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
+        if netid not in config:
+            # Get first network interface (netX where X is a number)
+                netid = next(
+                    (k for k in config if k.startswith('net') and k[3:].isdigit()), None
+                )
+        if not netid:
+            raise ProxmoxError('No network interface found')
+
+        netdata = config[netid]
+
+        # Update mac address, that is the first field <model>=<mac>,<other options>
+        netdata = re.sub(r'^([^=]+)=([^,]+),', r'\1={},'.format(mac), netdata)
+
+        logger.debug('Updating mac address for VM %s: %s=%s', vmId, netid, netdata)
+
+        self._post(
+            'nodes/{}/qemu/{}/config'.format(node, vmId),
+            data=[(netid, netdata)],
+        )
+    
     @ensureConected
     def startVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine

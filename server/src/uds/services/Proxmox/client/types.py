@@ -162,17 +162,18 @@ class TaskStatus(typing.NamedTuple):
 
 
 class NetworkConfiguration(typing.NamedTuple):
+    net: str
     type: str
     mac: str
 
     @staticmethod
-    def fromString(value: str) -> 'NetworkConfiguration':
+    def fromString(net: str, value: str) -> 'NetworkConfiguration':
         v = networkRe.match(value)
         type = mac = ''
         if v:
             type, mac = v.group(1), v.group(2)
 
-        return NetworkConfiguration(type=type, mac=mac)
+        return NetworkConfiguration(net=net, type=type, mac=mac)
 
 
 class VMInfo(typing.NamedTuple):
@@ -217,15 +218,15 @@ class VMConfiguration(typing.NamedTuple):
 
     @staticmethod
     def fromDict(
-        dictionary: typing.MutableMapping[str, typing.Any]
+        src: typing.MutableMapping[str, typing.Any]
     ) -> 'VMConfiguration':
         nets: typing.List[NetworkConfiguration] = []
-        for k in dictionary.keys():
+        for k in src.keys():
             if k[:3] == 'net':
-                nets.append(NetworkConfiguration.fromString(dictionary[k]))
+                nets.append(NetworkConfiguration.fromString(k, src[k]))
 
-        dictionary['networks'] = nets
-        return convertFromDict(VMConfiguration, dictionary)
+        src['networks'] = nets
+        return convertFromDict(VMConfiguration, src)
 
 
 class VmCreationResult(typing.NamedTuple):

@@ -143,9 +143,24 @@ class ProxmoxProvider(
         tab=gui.Tab.ADVANCED,
     )
 
+    macsRange = gui.TextField(
+        length=36,
+        label=_('Macs range'),
+        defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF',
+        order=91,
+        rdonly=False,
+        tooltip=_(
+            'Range of valid macs for created machines. Any value accepted by Proxmox is valid here.'
+        ),
+        required=True,
+        tab=gui.ADVANCED_TAB,
+    )
+
+
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
+    _macs_generator: UniqueMacGenerator
 
     def __getApi(self) -> client.ProxmoxClient:
         """
@@ -262,6 +277,11 @@ class ProxmoxProvider(
         self, vmId: int, started: bool = False, group: typing.Optional[str] = None
     ) -> None:
         self.__getApi().enableVmHA(vmId, started, group)
+
+    def setVmMac(
+        self, vmId: int, macAddress: str
+    ) -> None:
+        self.__getApi().setVmMac(vmId, macAddress)
 
     def disableHA(self, vmId: int) -> None:
         self.__getApi().disableVmHA(vmId)

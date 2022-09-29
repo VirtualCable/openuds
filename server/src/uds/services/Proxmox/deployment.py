@@ -161,6 +161,17 @@ class ProxmoxDeployment(services.UserDeployment):
         self._ip = ip
 
     def getUniqueId(self) -> str:
+        """
+        Return and unique identifier for this service.
+        In our case, we will generate a mac name, that can be also as sample
+        of 'mac' generator use, and probably will get used something like this
+        at some services.
+
+        The get method of a mac generator takes one param, that is the mac range
+        to use to get an unused mac.
+        """
+        if self._mac == '':
+            self._mac = self.macGenerator().get(self.service().getMacRange())
         return self._mac
 
     def getIp(self) -> str:
@@ -315,7 +326,7 @@ if sys.platform == 'win32':
             opShutdown: self.__shutdownMachine,
             opWait: self.__wait,
             opRemove: self.__remove,
-            opGetMac: self.__getMac,
+            opGetMac: self.__updateVmMacAndHA,
         }
 
         try:
@@ -442,15 +453,17 @@ if sys.platform == 'win32':
         self.storage.putPickle('shutdown', shutdown)
         return State.RUNNING
 
-    def __getMac(self) -> str:
+    def __updateVmMacAndHA(self) -> str:
         try:
             self.service().enableHA(
                 int(self._vmid), True
             )  # Enable HA before continuing here
-            self._mac = self.service().getMac(int(self._vmid))
-        except Exception:
-            logger.exception('Getting MAC on proxmox')
-            raise Exception('Machine not found getting mac')
+
+            # Set vm mac address now on first interface
+            self.service().setVmMac(int(self._vmid), self.getUniqueId())
+        except Exception as e:
+            logger.exception('Setting HA and MAC on proxmox')
+            raise Exception('Error setting MAC and HA on proxmox: {}'.format(e))
         return State.RUNNING
 
     # Check methods
