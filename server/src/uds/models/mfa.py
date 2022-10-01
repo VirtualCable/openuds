@@ -51,12 +51,14 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     An OS Manager represents a manager for responding requests for agents inside services.
     """
 
-    # "fake" declarations for type checking
-    objects: 'models.BaseManager[MFA]'
-    authenticators: 'models.manager.RelatedManager[Authenticator]'
+    # Time to remember the device MFA in hours
+    remember_device = models.IntegerField(default=0)
+    # Limit of time for this MFA to be used, in seconds
+    validity = models.IntegerField(default=0)
 
-    remember_device = models.IntegerField(default=0)  # Time to remember the device MFA in hours
-    validity = models.IntegerField(default=0)  # Limit of time for this MFA to be used, in seconds
+    # "fake" declarations for type checking
+    # objects: 'models.BaseManager[MFA]'
+    authenticators: 'models.manager.RelatedManager[Authenticator]'
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
@@ -64,15 +66,15 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
         return typing.cast('mfas.MFA', super().getInstance(values=values))
 
     def getType(self) -> typing.Type['mfas.MFA']:
-        """
-        Get the type of the object this record represents.
+        """Get the type of the object this record represents.
 
-        The type is Python type, it obtains this OsManagersFactory and associated record field.
+        The type is a Python type, it obtains this MFA and associated record field.
 
         Returns:
             The python type for this record object
 
-        :note: We only need to get info from this, not access specific data (class specific info)
+        Note:
+            We only need to get info from this, not access specific data (class specific info)
         """
         # We only need to get info from this, not access specific data (class specific info)
         from uds.core import mfas
@@ -100,7 +102,11 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
                 s.destroy()
                 s.env.clearRelatedData()
             except Exception as e:
-                logger.error('Error processing deletion of notifier %s: %s (forced deletion)', toDelete.name, e)
+                logger.error(
+                    'Error processing deletion of notifier %s: %s (forced deletion)',
+                    toDelete.name,
+                    e,
+                )
 
         logger.debug('Before delete mfa provider %s', toDelete)
 

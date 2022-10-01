@@ -65,7 +65,7 @@ class Tag(UUIDModel):
     tag = models.CharField(max_length=32, db_index=True, unique=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["Tag"]'
+    # objects: 'models.manager.Manager["Tag"]'
 
     # Every single related class has a relation with this
     # Its inverse is "xxx_set" class

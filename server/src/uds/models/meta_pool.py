@@ -129,7 +129,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     ha_policy = models.SmallIntegerField(default=HA_POLICY_DISABLED)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager["MetaPool"]'
+    # objects: 'models.BaseManager["MetaPool"]'
     calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
     members: 'models.QuerySet["MetaPoolMember"]'
 
@@ -182,7 +182,9 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
+        for ac in sorted(
+            self.calendarAccess.all(), key=operator.attrgetter('priority')
+        ):
             if CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found
@@ -278,10 +280,10 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: 'models.ForeignKey["MetaPoolMember", ServicePool]' = models.ForeignKey(
+    pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
         ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE
     )
-    meta_pool: 'models.ForeignKey["MetaPoolMember", MetaPool]' = models.ForeignKey(
+    meta_pool: 'models.ForeignKey[MetaPool]' = models.ForeignKey(
         MetaPool, related_name='members', on_delete=models.CASCADE
     )
     priority = models.PositiveIntegerField(default=0)

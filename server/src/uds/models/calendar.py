@@ -52,7 +52,7 @@ class Calendar(UUIDModel, TaggingMixin):
     modified = models.DateTimeField(auto_now=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["Calendar"]'
+    # objects: 'models.manager.Manager["Calendar"]'
     rules: 'models.manager.RelatedManager[CalendarRule]'
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     calendaraccess_set: 'models.manager.RelatedManager[CalendarAccess]'

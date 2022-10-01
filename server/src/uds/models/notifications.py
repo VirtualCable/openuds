@@ -73,7 +73,7 @@ class Notification(models.Model):
     processed = models.BooleanField(default=False)
 
     # "fake" declarations for type checking
-    objects: 'models.BaseManager[Notification]'
+    # objects: 'models.BaseManager[Notification]'
 
     class Meta:
         """

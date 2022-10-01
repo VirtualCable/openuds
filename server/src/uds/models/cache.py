@@ -49,13 +49,12 @@ class Cache(models.Model):
     owner = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, primary_key=True)
     value = models.TextField(default='')
-    created = (
-        models.DateTimeField()
-    )  # Date creation or validation of this entry. Set at write time
+    # Date creation or validation of this entry. Set at write time
+    created = models.DateTimeField()
     validity = models.IntegerField(default=60)  # Validity of this entry, in seconds
 
     # "fake" relations declarations for type checking
-    objects: 'models.manager.Manager[Cache]'
+    # objects: 'models.manager.Manager[Cache]'
 
     class Meta:
         """

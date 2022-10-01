@@ -48,7 +48,7 @@ class TunnelToken(models.Model):
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[TunnelToken]'
+    # objects: 'models.manager.Manager[TunnelToken]'
 
     class Meta:
         app_label = 'uds'

@@ -52,7 +52,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
     """
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[OSManager]'
+    # objects: 'models.manager.Manager[OSManager]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
 
     class Meta(ManagedObjectModel.Meta):

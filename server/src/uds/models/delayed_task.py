@@ -59,7 +59,7 @@ class DelayedTask(models.Model):
     execution_time = models.DateTimeField(db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[DelayedTask]'
+    # objects: 'models.manager.Manager[DelayedTask]'
 
     class Meta:
         """

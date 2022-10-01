@@ -58,12 +58,12 @@ class UserServiceSession(models.Model):  # pylint: disable=too-many-public-metho
     start = models.DateTimeField(default=getSqlDatetime)
     end = models.DateTimeField(null=True, blank=True)
 
-    user_service = models.ForeignKey(
+    user_service: 'models.ForeignKey[UserService]' = models.ForeignKey(
         UserService, on_delete=models.CASCADE, related_name='sessions'
     )
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["UserServiceSession"]'
+    # objects: 'models.manager.Manager["UserServiceSession"]'
 
     class Meta:
         """

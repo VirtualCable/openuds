@@ -97,6 +97,7 @@ class Module(UserInterface, Environmentable, Serializable):
     Environmentable is a base class that provides utility method to access a separate Environment for every single
     module.
     """
+
     __slots__ = ['_uuid']
     # Import variable indicating this module is a base class not a real module
     # Note that Module is not a real module, but a base class for all modules so isBase is not used on this class
@@ -184,12 +185,25 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
         """
-        file_ = open(
-            os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile,
-            'rb',
-        )
-        data = file_.read()
-        file_.close()
+        try:
+            with open(
+                os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__))
+                + '/'
+                + cls.iconFile,
+                'rb',
+            ) as f:
+                data = f.read()
+        except Exception as e:
+            logger.error('Error reading icon file for module %s: %s', cls.type(), e)
+            # blank png bytes
+            data = codecs.decode(
+                (
+                    b'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEMJKL'
+                    b'/nI4W4R1KlOPtQABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAg'
+                    b'AABAgQIECBAgAABAgQIECBAgAABAgQIEHDfAvLdn4FABR1mAAAAAElFTkSuQmCC'
+                ),
+                'base64',
+            )
 
         return data
 

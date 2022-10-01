@@ -54,7 +54,7 @@ class AccountUsage(UUIDModel):
     """
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["AccountUsage"]'
+    # objects: 'models.manager.Manager["AccountUsage"]'
 
     user_name = models.CharField(max_length=128, db_index=True, default='')
     user_uuid = models.CharField(max_length=50, db_index=True, default='')
@@ -62,7 +62,7 @@ class AccountUsage(UUIDModel):
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service: 'models.OneToOneField["AccountUsage", UserService]' = (
+    user_service: 'models.OneToOneField[UserService | None]' = (
         models.OneToOneField(
             UserService,
             null=True,
@@ -71,7 +71,7 @@ class AccountUsage(UUIDModel):
             on_delete=models.SET_NULL,
         )
     )
-    account: 'models.ForeignKey["AccountUsage", Account]' = models.ForeignKey(
+    account: 'models.ForeignKey[Account]' = models.ForeignKey(
         Account, related_name='usages', on_delete=models.CASCADE
     )
 

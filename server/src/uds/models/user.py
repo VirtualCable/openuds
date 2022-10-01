@@ -57,7 +57,7 @@ class User(UUIDModel):
     This class represents a single user, associated with one authenticator
     """
 
-    manager: 'models.ForeignKey["User", Authenticator]' = UnsavedForeignKey(
+    manager: 'models.ForeignKey[Authenticator]' = UnsavedForeignKey(
         Authenticator, on_delete=models.CASCADE, related_name='users'
     )
     name = models.CharField(max_length=128, db_index=True)
@@ -79,7 +79,7 @@ class User(UUIDModel):
     created = models.DateTimeField(default=getSqlDatetime, blank=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["User"]'
+    # objects: 'models.manager.Manager["User"]'
     groups: 'models.manager.RelatedManager[Group]'
     userServices: 'models.manager.RelatedManager[UserService]'
     permissions: 'models.manager.RelatedManager[Permissions]'

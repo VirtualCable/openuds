@@ -36,6 +36,7 @@ from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.unique_id_generator import UniqueIDGenerator
+from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import allowCache
 

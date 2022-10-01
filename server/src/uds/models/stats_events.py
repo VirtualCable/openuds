@@ -60,7 +60,7 @@ class StatsEvents(models.Model):
     fld4 = models.CharField(max_length=128, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[StatsEvents]'
+    # objects: 'models.manager.Manager[StatsEvents]'
 
     class Meta:
         """

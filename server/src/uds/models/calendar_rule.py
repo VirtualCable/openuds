@@ -109,12 +109,12 @@ class CalendarRule(UUIDModel):
     duration = models.IntegerField(default=0)  # Duration in "duration_unit" units
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
-    calendar: 'models.ForeignKey["CalendarRule", Calendar]' = models.ForeignKey(
+    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(
         Calendar, related_name='rules', on_delete=models.CASCADE
     )
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["CalendarRule"]'
+    # objects: 'models.manager.Manager["CalendarRule"]'
 
     class Meta:
         """
@@ -134,7 +134,11 @@ class CalendarRule(UUIDModel):
         )
 
         # If at end of interval is requested, displace dstart to match end of interval
-        dstart = self.start if not atEnd else self.start + datetime.timedelta(minutes=self.duration_as_minutes)
+        dstart = (
+            self.start
+            if not atEnd
+            else self.start + datetime.timedelta(minutes=self.duration_as_minutes)
+        )
 
         if self.frequency == WEEKDAYS:
             dw = []

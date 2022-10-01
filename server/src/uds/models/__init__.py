@@ -106,9 +106,6 @@ from .account_usage import AccountUsage
 # Tagging
 from .tag import Tag, TaggingMixin
 
-# Utility
-from .dbfile import DBFile
-
 # Tokens
 from .actor_token import ActorToken
 from .tunnel_token import TunnelToken

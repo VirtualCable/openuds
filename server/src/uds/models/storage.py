@@ -51,7 +51,7 @@ class Storage(models.Model):
     )
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Storage]'
+    # objects: 'models.manager.Manager[Storage]'
 
     class Meta:
         """
@@ -62,5 +62,5 @@ class Storage(models.Model):
 
     def __str__(self) -> str:
         return '{} {}  > str= {}, {}'.format(
-            self.owner, self.key, self.data, '/'.join([self.attr1])
+            self.owner, self.key, self.data, '/'.join([self.attr1 or ''])
         )

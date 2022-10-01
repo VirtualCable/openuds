@@ -53,7 +53,7 @@ class Config(models.Model):
     help = models.CharField(max_length=256, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Config]'
+    # objects: 'models.manager.Manager[Config]'
 
     class Meta:
         """

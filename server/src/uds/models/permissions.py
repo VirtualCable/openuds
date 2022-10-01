@@ -84,7 +84,7 @@ class Permissions(UUIDModel):
     permission = models.SmallIntegerField(default=PERMISSION_NONE, db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Permissions]'
+    # objects: 'models.manager.Manager[Permissions]'
 
     @staticmethod
     def permissionAsString(perm: int) -> str:

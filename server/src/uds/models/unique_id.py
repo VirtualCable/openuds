@@ -50,7 +50,7 @@ class UniqueId(models.Model):
     stamp = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[UniqueId]'
+    # objects: 'models.manager.Manager[UniqueId]'
 
     class Meta:
         """

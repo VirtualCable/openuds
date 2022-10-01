@@ -76,7 +76,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
 
     # "fake" relations declarations for type checking
-    objects: 'models.manager.Manager["Authenticator"]'
+    # objects: 'models.manager.Manager["Authenticator"]'
     users: 'models.manager.RelatedManager[User]'
     groups: 'models.manager.RelatedManager[Group]'
 
@@ -163,7 +163,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         user: 'User'
-        realName = realName if realName is None else username
+        realName = realName or username
         user, _ = self.users.get_or_create(
             name=username,
             defaults={

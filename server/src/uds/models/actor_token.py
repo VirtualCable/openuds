@@ -50,7 +50,7 @@ class ActorToken(models.Model):
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[ActorToken]'
+    # objects: 'models.manager.Manager[ActorToken]'
 
     class Meta:
         app_label = 'uds'

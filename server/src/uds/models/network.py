@@ -63,7 +63,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     )
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Network]'
+    # objects: 'models.manager.Manager[Network]'
 
     class Meta(UUIDModel.Meta):
         """

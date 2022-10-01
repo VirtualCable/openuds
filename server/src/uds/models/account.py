@@ -55,7 +55,7 @@ class Account(UUIDModel, TaggingMixin):
     comments = models.CharField(max_length=256, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["Account"]'
+    #objects: 'models.manager.Manager["Account"]'
     usages: 'models.manager.RelatedManager[AccountUsage]'
 
     def startUsageAccounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:

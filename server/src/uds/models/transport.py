@@ -71,7 +71,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     label = models.CharField(max_length=32, default='', db_index=True)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Transport]'
+    # objects: 'models.manager.Manager[Transport]'
 
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     networks: 'models.manager.RelatedManager[Network]'

@@ -55,7 +55,7 @@ class Log(models.Model):
     data = models.CharField(max_length=255, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[Log]'
+    # objects: 'models.manager.Manager[Log]'
 
     class Meta:
         """

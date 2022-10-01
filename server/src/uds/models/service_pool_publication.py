@@ -55,17 +55,15 @@ logger = logging.getLogger(__name__)
 
 class ServicePoolPublicationChangelog(models.Model):
     # This should be "servicePool"
-    publication: 'models.ForeignKey[ServicePoolPublicationChangelog, ServicePool]' = (
-        models.ForeignKey(
-            ServicePool, on_delete=models.CASCADE, related_name='changelog'
-        )
+    publication: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
+        ServicePool, on_delete=models.CASCADE, related_name='changelog'
     )
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[ServicePoolPublicationChangelog]'
+    # objects: 'models.manager.Manager[ServicePoolPublicationChangelog]'
 
     class Meta(UUIDModel.Meta):
         """
@@ -86,10 +84,8 @@ class ServicePoolPublication(UUIDModel):
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
 
-    deployed_service: 'models.ForeignKey["ServicePoolPublication", ServicePool]' = (
-        models.ForeignKey(
-            ServicePool, on_delete=models.CASCADE, related_name='publications'
-        )
+    deployed_service: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
+        ServicePool, on_delete=models.CASCADE, related_name='publications'
     )
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
@@ -106,7 +102,7 @@ class ServicePoolPublication(UUIDModel):
     revision = models.PositiveIntegerField(default=1)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["ServicePoolPublication"]'
+    # objects: 'models.manager.Manager["ServicePoolPublication"]'
     userServices: 'models.manager.RelatedManager[UserService]'
 
     class Meta(UUIDModel.Meta):
@@ -122,7 +118,7 @@ class ServicePoolPublication(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
+        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
 
     def getInstance(self) -> 'services.Publication':
         """
@@ -139,6 +135,8 @@ class ServicePoolPublication(UUIDModel):
 
         Raises:
         """
+        if not self.deployed_service.service:
+            raise Exception('No service assigned to publication')
         serviceInstance = self.deployed_service.service.getInstance()
         osManager = self.deployed_service.osmanager
         osManagerInstance = osManager.getInstance() if osManager else None

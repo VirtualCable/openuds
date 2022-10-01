@@ -71,18 +71,16 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: 'models.ForeignKey["UserService", ServicePool]' = models.ForeignKey(
+    deployed_service: 'models.ForeignKey["ServicePool"]' = models.ForeignKey(
         ServicePool, on_delete=models.CASCADE, related_name='userServices'
     )
-    publication: 'models.ForeignKey["UserService", ServicePoolPublication]' = (
-        models.ForeignKey(
+    publication: 'models.ForeignKey[ServicePoolPublication | None]' = models.ForeignKey(
             ServicePoolPublication,
             on_delete=models.CASCADE,
             null=True,
             blank=True,
             related_name='userServices',
         )
-    )
 
     unique_id = models.CharField(
         max_length=128, default='', db_index=True
@@ -116,7 +114,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     src_ip = models.CharField(max_length=128, default='')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["UserService"]'
+    # objects: 'models.manager.Manager["UserService"]'
     properties: 'models.manager.RelatedManager[UserServiceProperty]'
     sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
@@ -174,7 +172,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
         return Environment.getEnvForTableElement(
-            self._meta.verbose_name,
+            self._meta.verbose_name,  # type: ignore
             self.id,
             {
                 'mac': unique.UniqueMacGenerator,
@@ -201,6 +199,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         # We get the service instance, publication instance and osmanager instance
         servicePool = self.deployed_service
+        if not servicePool.service:
+            raise Exception('Service not found')
         serviceInstance = servicePool.service.getInstance()
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             osmanagerInstance = None
@@ -374,6 +374,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         :note: This method MUST be invoked by transport before using credentials passed to getJavascript.
         """
         servicePool = self.deployed_service
+        if not servicePool.service:
+            raise Exception('Service not found')
         serviceInstance = servicePool.service.getInstance()
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
@@ -615,7 +617,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service.getType().publicationType is None
+            (self.deployed_service.service and self.deployed_service.service.getType().publicationType is None)
             or self.publication == self.deployed_service.activePublication()
         )
 

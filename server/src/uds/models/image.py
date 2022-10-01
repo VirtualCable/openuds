@@ -71,7 +71,7 @@ class Image(UUIDModel):
     height = models.IntegerField(default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.RelatedManager["Image"]'
+    # objects: 'models.manager.RelatedManager["Image"]'
 
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     metaPools: 'models.manager.RelatedManager[MetaPool]'

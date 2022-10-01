@@ -45,7 +45,7 @@ class UUIDModel(models.Model):
     Base abstract model for models that require an uuid
     """
 
-    uuid = models.CharField(max_length=50, default=None, null=True, unique=True)
+    uuid = models.CharField(max_length=50, unique=True, default=generateUuid)
 
     # Automatic field from Model without a defined specific primary_key
     # Just a fake declaration to allow type checking
@@ -58,16 +58,14 @@ class UUIDModel(models.Model):
         return generateUuid()
 
     # Override default save to add uuid
-    def save(
-        self, *args, **kwargs
-    ):
+    def save(self, *args, **kwargs):
         if not self.uuid:
             self.uuid = self.genUuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = (
                 self.uuid.lower()
             )  # If we modify uuid elsewhere, ensure that it's stored in lower case
-        
+
         if 'update_fields' in kwargs:
             kwargs['update_fields'] = list(kwargs['update_fields']) + ['uuid']
 

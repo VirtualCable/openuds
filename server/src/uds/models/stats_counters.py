@@ -57,7 +57,7 @@ class StatsCounters(models.Model):
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[StatsCounters]'
+    # objects: 'models.manager.Manager[StatsCounters]'
 
     class Meta:
         """
@@ -125,7 +125,7 @@ class StatsCounters(models.Model):
 
         floor = getSqlFnc('FLOOR')
         if interval > 0:
-            q = q.extra(
+            q = q.extra(  # nosec: SQL injection is not possible here, all values are integers
                 select={
                     'group_by_stamp': f'{floor}(stamp / {interval}) * {interval}',
                 },
@@ -227,7 +227,7 @@ class StatsCounters(models.Model):
         # fnc = getSqlFnc('MAX' if kwargs.get('use_max', False) else 'AVG')
 
         query = (
-            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, '
+            'SELECT -1 as id,-1 as owner_id,-1 as owner_type,-1 as counter_type, '  # nosec: SQL injection is not possible here, all values are controlled
             + stampValue
             + '*{}'.format(interval)
             + ' AS stamp, '

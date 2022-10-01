@@ -55,14 +55,16 @@ class UnsavedForeignKey(models.ForeignKey):
 
 
 def getSqlDatetime() -> datetime:
-    """
-    Returns the current date/time of the database server.
+    """Returns the current date/time of the database server.
 
-    We use this time as method of keeping all operations betwen different servers in sync.
+    We use this time as method to keep all operations betwen different servers in sync.
 
     We support get database datetime for:
       * mysql
       * sqlite
+
+    Returns:
+        datetime: Current datetime of the database server
     """
     if connection.vendor in ('mysql', 'microsoft'):
         cursor = connection.cursor()
@@ -72,7 +74,7 @@ def getSqlDatetime() -> datetime:
             else 'SELECT CURRENT_TIMESTAMP'
         )
         cursor.execute(sentence)
-        date = cursor.fetchone()[0]
+        date = (cursor.fetchone() or [datetime.now()])[0]
     else:
         date = (
             datetime.now()
@@ -82,12 +84,19 @@ def getSqlDatetime() -> datetime:
 
 
 def getSqlDatetimeAsUnix() -> int:
+    """Returns the current date/time of the database server as unix timestamp
+
+    Returns:
+        int: Unix timestamp
+    """
     return int(mktime(getSqlDatetime().timetuple()))
 
 
 def getSqlFnc(fncName: str) -> str:
-    """
-    Convert different sql functions for different platforms
+    """Convert different sql functions for different platforms
+
+    i.e. CEIL --> CEILING on mssql
+
     """
     if connection.vendor == 'microsoft':
         return {'CEIL': 'CEILING'}.get(fncName, fncName)

@@ -74,7 +74,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     Server configuration).
     """
 
-    provider: 'models.ForeignKey["Service", Provider]' = models.ForeignKey(
+    provider: 'models.ForeignKey[Provider]' = models.ForeignKey(
         Provider, related_name='services', on_delete=models.CASCADE
     )
 
@@ -89,10 +89,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     _cachedInstance: typing.Optional['services.Service'] = None
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager["Service"]'
+    # objects: 'models.manager.Manager["Service"]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
-
 
     class Meta(ManagedObjectModel.Meta):
         """
@@ -112,7 +111,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns an environment valid for the record this object represents
         """
         return Environment.getEnvForTableElement(
-            self._meta.verbose_name,
+            self._meta.verbose_name,  # type: ignore
             self.id,
             {
                 'mac': unique.UniqueMacGenerator,
@@ -194,10 +193,8 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         # Counts EVERYTHING for max limit checking
         return self.max_services_count_type == 1
 
-
     def __str__(self) -> str:
         return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
-
 
     @staticmethod
     def beforeDelete(sender, **kwargs) -> None:

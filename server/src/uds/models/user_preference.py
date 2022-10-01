@@ -51,7 +51,7 @@ class UserPreference(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='preferences')
 
     # "fake" declarations for type checking
-    objects: 'models.manager.Manager[UserPreference]'
+    # objects: 'models.manager.Manager[UserPreference]'
 
     class Meta:
         app_label = 'uds'
