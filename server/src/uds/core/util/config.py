@@ -577,6 +577,11 @@ class GlobalConfig:
         ),
     )
 
+    # Maximum security logs duration in days
+    MAX_AUDIT_LOGS_DURATION: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Max Audit Logs duration', '365', type=Config.NUMERIC_FIELD
+    )
+
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES: Config.Value = Config.section(SECURITY_SECTION).value(
         'Trusted Hosts',

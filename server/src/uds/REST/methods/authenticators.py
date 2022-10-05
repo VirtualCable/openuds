@@ -144,7 +144,8 @@ class Authenticators(ModelHandler):
                     )
                 return field
             raise Exception()  # Not found
-        except Exception:
+        except Exception as e:
+            logger.info('Type not found: %s', e)
             raise NotFound('type not found')
 
     def item_as_dict(self, item: Authenticator) -> typing.Dict[str, typing.Any]:
@@ -231,7 +232,7 @@ class Authenticators(ModelHandler):
         self, fields: typing.Dict[str, typing.Any]
     ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         logger.debug(self._params)
-        if fields['mfa_id']:
+        if fields.get('mfa_id'):
             try:
                 mfa = MFA.objects.get(
                     uuid=processUuid(fields['mfa_id'])
