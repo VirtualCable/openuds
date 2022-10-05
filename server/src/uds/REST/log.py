@@ -31,7 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-from uds.models import Log, getSqlDatetime
+from uds import models
 from uds.core.util.log import (
     REST,
     OWNER_TYPE_AUDIT,
@@ -40,31 +40,68 @@ from uds.core.util.log import (
     WARNING,
     ERROR,
     CRITICAL,
-    # These are legacy support until full removal
-    WARN,
-    FATAL,
 )
-
 
 if typing.TYPE_CHECKING:
     from .handlers import Handler
 
+# This structct allows us to perform the following:
+#   If path has ".../providers/[uuid]/..." we will replace uuid with "provider nanme" sourrounded by []
+#   If path has ".../services/[uuid]/..." we will replace uuid with "service name" sourrounded by []
+#   If path has ".../users/[uuid]/..." we will replace uuid with "user name" sourrounded by []
+#   If path has ".../groups/[uuid]/..." we will replace uuid with "group name" sourrounded by []
+UUID_REPLACER = (
+    ('providers', models.Provider),
+    ('services', models.Service),
+    ('users', models.User),
+    ('groups', models.Group),
+)
 
-def log_operation(handler: typing.Optional['Handler'], response_code: int, level: int = INFO):
+
+def replacePath(path: str) -> str:
+    """Replaces uuids in path with names
+    All paths are in the form .../type/uuid/...
+    """
+    for type, model in UUID_REPLACER:
+        if f'/{type}/' in path:
+            try:
+                uuid = path.split(f'/{type}/')[1].split('/')[0]
+                name = model.objects.get(uuid=uuid).name  # type: ignore
+                path = path.replace(uuid, f'[{name}]')
+            except Exception:
+                pass
+
+    return path
+
+
+def log_operation(
+    handler: typing.Optional['Handler'], response_code: int, level: int = INFO
+):
     """
     Logs a request
     """
     if not handler:
         return  # Nothing to log
+
+    path = handler._request.path
+
+    # If a common request, and no error, we don't log it because it's useless and a waste of resources
+    if response_code < 400 and any(
+        x in path for x in ('overview', 'tableinfo', 'gui', 'types', 'system')
+    ):
+        return
+
+    path = replacePath(path)
+
     username = handler._request.user.pretty_name if handler._request.user else 'Unknown'
     # Global log is used without owner nor type
-    Log.objects.create(
+    models.Log.objects.create(
         owner_id=0,
         owner_type=OWNER_TYPE_AUDIT,
-        created=getSqlDatetime(),
+        created=models.getSqlDatetime(),
         level=level,
         source=REST,
-        data=f'{username}: [{handler._request.method}/{response_code}] {handler._request.path}'[
+        data=f'{handler._request.ip} {username}: [{handler._request.method}/{response_code}] {path}'[
             :255
         ],
     )
