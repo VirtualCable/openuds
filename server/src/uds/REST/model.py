@@ -268,8 +268,9 @@ class BaseModelHandler(Handler):
         args: typing.Dict[str, str] = {}
         try:
             for key in fldList:
-                if key.startswith('-'):  # optional
-                    args[key[1:]] = self._params.get(key[1:], '')
+                if ':' in key:  # optional field? get default if not present
+                    k, default = key.split(':')[:2]
+                    args[k] = self._params.get(k, default)
                 else:
                     args[key] = self._params[key]
                 # del self._params[key]
@@ -678,7 +679,9 @@ class ModelHandler(BaseModelHandler):
     detail: typing.ClassVar[
         typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]
     ] = None  # Dictionary containing detail routing
-    # Put needed fields
+    # Fields that are going to be saved directly
+    # If a field is in the form "field:default" and field is not present in the request, default will be used
+    # Note that these fields has to be present in the model, and they can be "edited" in the beforeSave method
     save_fields: typing.ClassVar[typing.List[str]] = []
     # Put removable fields before updating
     remove_fields: typing.ClassVar[typing.List[str]] = []
