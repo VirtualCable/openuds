@@ -34,7 +34,7 @@ import typing
 from uds.models import Log, getSqlDatetime
 from uds.core.util.log import (
     REST,
-    OWNER_TYPE_REST,
+    OWNER_TYPE_AUDIT,
     DEBUG,
     INFO,
     WARNING,
@@ -60,7 +60,7 @@ def log_operation(handler: typing.Optional['Handler'], response_code: int, level
     # Global log is used without owner nor type
     Log.objects.create(
         owner_id=0,
-        owner_type=OWNER_TYPE_REST,
+        owner_type=OWNER_TYPE_AUDIT,
         created=getSqlDatetime(),
         level=level,
         source=REST,

@@ -33,6 +33,7 @@
 import logging
 
 from django.db import models
+from uds.core.util.log import logStrFromLevel
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ class Log(models.Model):
 
         if owner id is 0, these are valid owner_type values:
             -1: Global log
-            -2: REST API log
+            -2: AUDIT log
         See :py:mod:`uds.core.util.log` for more information
     """
 
@@ -71,6 +72,10 @@ class Log(models.Model):
 
         db_table = 'uds_log'
         app_label = 'uds'
+
+    @property
+    def level_str(self) -> str:
+        return logStrFromLevel(self.level)
 
     def __str__(self) -> str:
         return "Log of {}({}): {} - {} - {} - {}".format(

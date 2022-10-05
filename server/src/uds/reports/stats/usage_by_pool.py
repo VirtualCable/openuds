@@ -83,6 +83,7 @@ class UsageByPool(StatsReport):
         vals = [gui.choiceItem('0-0-0-0', ugettext('ALL POOLS'))] + [
             gui.choiceItem(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
+            if v.uuid
         ]
         self.pool.setValues(vals)
 

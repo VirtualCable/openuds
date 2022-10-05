@@ -32,3 +32,4 @@
 
 # Make reports visible to autoloader
 from . import users
+from . import audit

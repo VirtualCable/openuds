@@ -87,7 +87,7 @@ __valueLevels = {v: k for k, v in __nameLevels.items()}
 
 # Global log owner types:
 OWNER_TYPE_GLOBAL = -1
-OWNER_TYPE_REST = -2
+OWNER_TYPE_AUDIT = -2
 
 
 def logLevelFromStr(level: str) -> int:

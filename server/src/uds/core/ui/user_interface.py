@@ -548,7 +548,7 @@ class gui:
             except Exception:
                 return datetime.date.min if min else datetime.date.max
 
-        def datetime(self, min: bool) -> datetime.datetime:
+        def datetime(self, min: bool = True) -> datetime.datetime:
             """
             Returns the date this object represents
 
