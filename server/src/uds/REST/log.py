@@ -30,30 +30,41 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import datetime
 
 from uds.models import Log, getSqlDatetime
-from uds.core.util import log, config
-from uds.core.jobs import Job
+from uds.core.util.log import (
+    REST,
+    OWNER_TYPE_REST,
+    DEBUG,
+    INFO,
+    WARNING,
+    ERROR,
+    CRITICAL,
+    # These are legacy support until full removal
+    WARN,
+    FATAL,
+)
+
 
 if typing.TYPE_CHECKING:
     from .handlers import Handler
 
 
-def log_operation(handler: 'Handler', level: int = log.INFO):
+def log_operation(handler: typing.Optional['Handler'], response_code: int, level: int = INFO):
     """
     Logs a request
     """
+    if not handler:
+        return  # Nothing to log
     username = handler._request.user.pretty_name if handler._request.user else 'Unknown'
     # Global log is used without owner nor type
     Log.objects.create(
         owner_id=0,
-        owner_type=log.OWNER_TYPE_REST,
+        owner_type=OWNER_TYPE_REST,
         created=getSqlDatetime(),
         level=level,
-        source=log.REST,
-        data=f'{username}: [{handler._request.method}] {handler._request.path}'[
+        source=REST,
+        data=f'{username}: [{handler._request.method}/{response_code}] {handler._request.path}'[
             :255
         ],
     )
-
