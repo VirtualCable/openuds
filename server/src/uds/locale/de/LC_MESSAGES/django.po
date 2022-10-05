@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-12 15:03+0200\n"
+"POT-Creation-Date: 2022-10-05 18:05+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -230,11 +230,11 @@ msgstr "MFA-Anbieter"
 msgid "MFA provider to use for this authenticator"
 msgstr "MFA-Anbieter, der für diesen Authentifikator verwendet werden soll"
 
-#: REST/methods/authenticators.py:194
+#: REST/methods/authenticators.py:195
 msgid "Too many results..."
 msgstr "Zu viele Ergebnisse ..."
 
-#: REST/methods/authenticators.py:194
+#: REST/methods/authenticators.py:195
 msgid "Refine your query"
 msgstr "Verfeinern Sie Ihre Suchanfrage"
 
@@ -599,7 +599,7 @@ msgstr "Zertifikat prüfen"
 #: services/NutanixPrism_enterprise/provider.py:39
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:78
-#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
+#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:67
 #: services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:45 services/Xen/provider.py:100
 msgid "Host"
@@ -617,7 +617,7 @@ msgstr "Server (IP oder FQDN), der als Proxy dienen soll."
 #: services/NutanixPrism_enterprise/provider.py:46
 #: services/Nutanix_enterprise/provider.py:46
 #: services/OpenGnsys/provider.py:101 services/OpenNebula/provider.py:82
-#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
+#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:74
 #: services/RDS_enterprise/provider.py:111
 #: services/VCloud_enterprise/provider.py:43
 #: services/Vmware_enterprise/provider.py:52
@@ -1061,7 +1061,7 @@ msgstr "Derzeitige Nutzer"
 #: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:97
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
-#: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:128
+#: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
@@ -1153,23 +1153,23 @@ msgstr ""
 msgid "Label for this element"
 msgstr "Beschriftung für dieses Element"
 
-#: REST/model.py:308
+#: REST/model.py:311
 msgid "Invalid Request"
 msgstr "ungültige Anfrage"
 
-#: REST/model.py:322
+#: REST/model.py:325
 msgid "Method not found in {}: {}"
 msgstr "Methode nicht gefunden in {}: {}"
 
-#: REST/model.py:331
+#: REST/model.py:334
 msgid "Item not found"
 msgstr "Artikel nicht gefunden"
 
-#: REST/model.py:336 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:339 web/util/authentication.py:143 web/util/errors.py:81
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: REST/model.py:339
+#: REST/model.py:342
 msgid "Operation not supported"
 msgstr "Vorgang wird nicht unterstützt"
 
@@ -1220,7 +1220,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:61 services/OVirt/provider.py:129
 #: services/OpenGnsys/provider.py:125 services/OpenNebula/provider.py:105
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
-#: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:138
+#: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
@@ -1249,7 +1249,7 @@ msgstr "Passwort des LDAP-Benutzers"
 #: services/Nutanix_enterprise/provider.py:90 services/OVirt/provider.py:160
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:136
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
-#: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:119
+#: services/Proxmox/provider.py:124 services/VCloud_enterprise/provider.py:119
 #: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
 msgstr "Auszeit"
@@ -3709,7 +3709,7 @@ msgstr ""
 #: services/Nutanix_enterprise/provider.py:68 services/OVirt/provider.py:137
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:113
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
-#: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:96
+#: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
 #: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
 msgid "Creation concurrency"
@@ -3723,7 +3723,7 @@ msgstr "Parallelität der Schöpfung"
 #: services/Nutanix_enterprise/provider.py:73 services/OVirt/provider.py:142
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:118
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
-#: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:101
+#: services/Proxmox/provider.py:106 services/VCloud_enterprise/provider.py:101
 #: services/Vmware_enterprise/provider.py:81 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "Maximale Anzahl der gleichzeitig erstellten VMs"
@@ -3736,7 +3736,7 @@ msgstr "Maximale Anzahl der gleichzeitig erstellten VMs"
 #: services/Nutanix_enterprise/provider.py:79 services/OVirt/provider.py:148
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:124
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
-#: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:107
+#: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
 #: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
 msgid "Removal concurrency"
@@ -3750,7 +3750,7 @@ msgstr "Parallelität entfernen"
 #: services/Nutanix_enterprise/provider.py:84 services/OVirt/provider.py:153
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:129
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
-#: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:112
+#: services/Proxmox/provider.py:117 services/VCloud_enterprise/provider.py:112
 #: services/Vmware_enterprise/provider.py:92 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "Maximale Anzahl gleichzeitig entfernter VMs"
@@ -4073,7 +4073,8 @@ msgstr "Timeout in Sekunden der Verbindung zu HyperV"
 #: services/HyperV_enterprise/legacy/provider.py:150
 #: services/HyperV_enterprise/provider.py:125
 #: services/Nutanix_enterprise/provider.py:100 services/OVirt/provider.py:169
-#: services/Vmware_enterprise/provider.py:109 services/Xen/provider.py:146
+#: services/Proxmox/provider.py:147 services/Vmware_enterprise/provider.py:109
+#: services/Xen/provider.py:146
 msgid "Macs range"
 msgstr "Macs reichen"
 
@@ -4090,7 +4091,7 @@ msgstr "Verbindungstest erfolgreich"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:294 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:321 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:345 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "Verbindung fehlgeschlagen. Überprüfen Sie die Verbindungsparameter"
 
@@ -5043,44 +5044,53 @@ msgstr "geteilt"
 msgid " (bound to {})"
 msgstr "(gebunden an {})"
 
-#: services/Proxmox/provider.py:59
+#: services/Proxmox/provider.py:60
 msgid "Proxmox Platform Provider"
 msgstr "Proxmox Plattform Anbieter"
 
-#: services/Proxmox/provider.py:61
+#: services/Proxmox/provider.py:62
 msgid "Proxmox platform service provider"
 msgstr "Proxmox-Plattform-Service-Provider"
 
-#: services/Proxmox/provider.py:68
+#: services/Proxmox/provider.py:69
 msgid "Proxmox Server IP or Hostname"
 msgstr "Proxmox Server IP oder Hostname"
 
-#: services/Proxmox/provider.py:75
+#: services/Proxmox/provider.py:76
 msgid "Proxmox API port (default is 8006)"
 msgstr "Proxmox API-Port (Standard ist 8006)"
 
-#: services/Proxmox/provider.py:85
+#: services/Proxmox/provider.py:86
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr ""
 "Benutzer mit gültigen Berechtigungen für Proxmox (verwenden Sie das Format "
 "\"user@authenticator\")."
 
-#: services/Proxmox/provider.py:94
+#: services/Proxmox/provider.py:95
 msgid "Password of the user of Proxmox"
 msgstr "Passwort des Benutzers von Proxmox"
 
-#: services/Proxmox/provider.py:126
+#: services/Proxmox/provider.py:127
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "Zeitüberschreitung in Sekunden nach Verbindung mit Proxmox"
 
-#: services/Proxmox/provider.py:133
+#: services/Proxmox/provider.py:134
 msgid "Starting VmId"
 msgstr "VmId starten"
 
-#: services/Proxmox/provider.py:138
+#: services/Proxmox/provider.py:139
 msgid "Starting machine id on proxmox"
 msgstr "Start-Maschinen-ID auf proxmox"
+
+#: services/Proxmox/provider.py:152
+#| msgid "Range of valid macs for created machines"
+msgid ""
+"Range of valid macs for created machines. Any value accepted by Proxmox is "
+"valid here."
+msgstr ""
+"Bereich gültiger Macs für erstellte Maschinen. Hier gilt jeder von Proxmox "
+"akzeptierte Wert."
 
 #: services/Proxmox/publication.py:116
 #: services/Vmware_enterprise/publication.py:80
@@ -5381,11 +5391,11 @@ msgstr ""
 msgid "A valid application path is required"
 msgstr "Ein gültiger Anwendungspfad ist erforderlich"
 
-#: services/RDS_enterprise/service_session.py:31
+#: services/RDS_enterprise/service_session.py:30
 msgid "RDS Platform Session"
 msgstr "RDS-Plattform-Sitzung"
 
-#: services/RDS_enterprise/service_session.py:33
+#: services/RDS_enterprise/service_session.py:32
 msgid "RDS Platform Full session desktop service"
 msgstr "RDS-Plattform Desktop-Dienst mit vollständiger Sitzung"
 

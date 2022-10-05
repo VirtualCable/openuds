@@ -3,8 +3,10 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
+# Elena Mishina, 2022
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
@@ -12,9 +14,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-12 15:03+0200\n"
+"POT-Creation-Date: 2022-10-05 18:05+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
+"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -457,17 +459,17 @@ msgstr "Удалить пользовательский сервис"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:266
 #: static/admin/translations-fakejs.js:269
 msgid "New Authenticator"
-msgstr "Новый Аутентификатор"
+msgstr "Новый аутентификатор"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 #: static/admin/translations-fakejs.js:270
 msgid "Edit Authenticator"
-msgstr "Изменить Аутентификатор"
+msgstr "Изменить аутентификатор"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 #: static/admin/translations-fakejs.js:271
 msgid "Delete Authenticator"
-msgstr "Удалить Аутентификатор"
+msgstr "Удалить аутентификатор"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 msgid "Any"
@@ -1022,7 +1024,7 @@ msgstr "Удалить ключ клиента - ИСПОЛЬЗУЙТЕ С БО�
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:230
 msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Удалите токен туннеля - ИСПОЛЬЗУЙТЕ С КРАЙНЕЙ ПРЕДОСТОРОЖНОСТЬЮ !!!"
+msgstr "Удалить токен туннеля - ИСПОЛЬЗУЙТЕ С БОЛЬШОЙ ОСТОРОЖНОСТЬЮ!!!"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:24
 msgid "Cache flushed"
@@ -1659,7 +1661,7 @@ msgstr "Предупреждение"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
 msgid "Service is in maintenance and cannot be executed"
-msgstr "Сервис находится в обслуживании и не может быть выполнен"
+msgstr "Сервис находится на обслуживании и не может быть запущен"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:26
 msgid "We use cookies to track usage and preferences"
@@ -1803,7 +1805,7 @@ msgstr "Имя пользователя"
 
 #: static/modern/translations-fakejs.js:71
 msgid "Password"
-msgstr "пароль"
+msgstr "Пароль"
 
 #: static/modern/translations-fakejs.js:73
 msgid "Login"
@@ -1815,7 +1817,7 @@ msgstr "Подтверждение входа"
 
 #: static/modern/translations-fakejs.js:75
 msgid "Remember Me"
-msgstr "Запомните меня"
+msgstr "Запомнить меня"
 
 #: static/modern/translations-fakejs.js:76
 msgid "Submit"

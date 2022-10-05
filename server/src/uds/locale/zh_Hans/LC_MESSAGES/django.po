@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-12 15:03+0200\n"
+"POT-Creation-Date: 2022-10-05 18:05+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -227,11 +227,11 @@ msgstr "MFA 提供者"
 msgid "MFA provider to use for this authenticator"
 msgstr "用于此身份验证器的 MFA 提供程序"
 
-#: REST/methods/authenticators.py:194
+#: REST/methods/authenticators.py:195
 msgid "Too many results..."
 msgstr "结果太多......"
 
-#: REST/methods/authenticators.py:194
+#: REST/methods/authenticators.py:195
 msgid "Refine your query"
 msgstr "优化您的查询"
 
@@ -588,7 +588,7 @@ msgstr "检查证书"
 #: services/NutanixPrism_enterprise/provider.py:39
 #: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:78
-#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:66
+#: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:67
 #: services/VCloud_enterprise/provider.py:36
 #: services/Vmware_enterprise/provider.py:45 services/Xen/provider.py:100
 msgid "Host"
@@ -606,7 +606,7 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 #: services/NutanixPrism_enterprise/provider.py:46
 #: services/Nutanix_enterprise/provider.py:46
 #: services/OpenGnsys/provider.py:101 services/OpenNebula/provider.py:82
-#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:73
+#: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:74
 #: services/RDS_enterprise/provider.py:111
 #: services/VCloud_enterprise/provider.py:43
 #: services/Vmware_enterprise/provider.py:52
@@ -1025,7 +1025,7 @@ msgstr "目前的用户"
 #: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:97
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
-#: services/Proxmox/provider.py:82 services/RDS_enterprise/provider.py:128
+#: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
 #: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
@@ -1115,23 +1115,23 @@ msgstr "选择此元素的优先级（较低的数字表示较高的优先级）
 msgid "Label for this element"
 msgstr "此元素的标签"
 
-#: REST/model.py:308
+#: REST/model.py:311
 msgid "Invalid Request"
 msgstr "非法请求"
 
-#: REST/model.py:322
+#: REST/model.py:325
 msgid "Method not found in {}: {}"
 msgstr "在{}中找不到的方法：{}"
 
-#: REST/model.py:331
+#: REST/model.py:334
 msgid "Item not found"
 msgstr "物品未找到"
 
-#: REST/model.py:336 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:339 web/util/authentication.py:143 web/util/errors.py:81
 msgid "Access denied"
 msgstr "拒绝访问"
 
-#: REST/model.py:339
+#: REST/model.py:342
 msgid "Operation not supported"
 msgstr "操作不受支持"
 
@@ -1177,7 +1177,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Nutanix_enterprise/provider.py:61 services/OVirt/provider.py:129
 #: services/OpenGnsys/provider.py:125 services/OpenNebula/provider.py:105
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
-#: services/Proxmox/provider.py:92 services/RDS_enterprise/provider.py:138
+#: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
 #: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
@@ -1206,7 +1206,7 @@ msgstr "ldap用户的密码"
 #: services/Nutanix_enterprise/provider.py:90 services/OVirt/provider.py:160
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:136
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
-#: services/Proxmox/provider.py:123 services/VCloud_enterprise/provider.py:119
+#: services/Proxmox/provider.py:124 services/VCloud_enterprise/provider.py:119
 #: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
 msgstr "超时"
@@ -3545,7 +3545,7 @@ msgstr "从在 AWS IAM 上为 UDS Enteprise 创建的用户获取 - 密钥"
 #: services/Nutanix_enterprise/provider.py:68 services/OVirt/provider.py:137
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:113
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
-#: services/Proxmox/provider.py:100 services/VCloud_enterprise/provider.py:96
+#: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
 #: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
 msgid "Creation concurrency"
@@ -3559,7 +3559,7 @@ msgstr "创建并发"
 #: services/Nutanix_enterprise/provider.py:73 services/OVirt/provider.py:142
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:118
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
-#: services/Proxmox/provider.py:105 services/VCloud_enterprise/provider.py:101
+#: services/Proxmox/provider.py:106 services/VCloud_enterprise/provider.py:101
 #: services/Vmware_enterprise/provider.py:81 services/Xen/provider.py:128
 msgid "Maximum number of concurrently creating VMs"
 msgstr "最大并发创建VM的数量"
@@ -3572,7 +3572,7 @@ msgstr "最大并发创建VM的数量"
 #: services/Nutanix_enterprise/provider.py:79 services/OVirt/provider.py:148
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:124
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
-#: services/Proxmox/provider.py:111 services/VCloud_enterprise/provider.py:107
+#: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
 #: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
 msgid "Removal concurrency"
@@ -3586,7 +3586,7 @@ msgstr "删除并发"
 #: services/Nutanix_enterprise/provider.py:84 services/OVirt/provider.py:153
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:129
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
-#: services/Proxmox/provider.py:116 services/VCloud_enterprise/provider.py:112
+#: services/Proxmox/provider.py:117 services/VCloud_enterprise/provider.py:112
 #: services/Vmware_enterprise/provider.py:92 services/Xen/provider.py:139
 msgid "Maximum number of concurrently removing VMs"
 msgstr "最大并发删除VM数"
@@ -3901,7 +3901,8 @@ msgstr "连接到HyperV的超时时间"
 #: services/HyperV_enterprise/legacy/provider.py:150
 #: services/HyperV_enterprise/provider.py:125
 #: services/Nutanix_enterprise/provider.py:100 services/OVirt/provider.py:169
-#: services/Vmware_enterprise/provider.py:109 services/Xen/provider.py:146
+#: services/Proxmox/provider.py:147 services/Vmware_enterprise/provider.py:109
+#: services/Xen/provider.py:146
 msgid "Macs range"
 msgstr "Macs系列"
 
@@ -3918,7 +3919,7 @@ msgstr "连接测试成功"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:294 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:321 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:345 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -4817,42 +4818,49 @@ msgstr "共享"
 msgid " (bound to {})"
 msgstr "（势必 {}）"
 
-#: services/Proxmox/provider.py:59
+#: services/Proxmox/provider.py:60
 msgid "Proxmox Platform Provider"
 msgstr "Proxmox平台提供商"
 
-#: services/Proxmox/provider.py:61
+#: services/Proxmox/provider.py:62
 msgid "Proxmox platform service provider"
 msgstr "Proxmox平台服务提供商"
 
-#: services/Proxmox/provider.py:68
+#: services/Proxmox/provider.py:69
 msgid "Proxmox Server IP or Hostname"
 msgstr "Proxmox服务器IP或主机名"
 
-#: services/Proxmox/provider.py:75
+#: services/Proxmox/provider.py:76
 msgid "Proxmox API port (default is 8006)"
 msgstr "Proxmox API端口（默认为8006）"
 
-#: services/Proxmox/provider.py:85
+#: services/Proxmox/provider.py:86
 msgid ""
 "User with valid privileges on Proxmox, (use \"user@authenticator\" form)"
 msgstr "在Proxmox上具有有效特权的用户（使用“ user @ authenticator”表格）"
 
-#: services/Proxmox/provider.py:94
+#: services/Proxmox/provider.py:95
 msgid "Password of the user of Proxmox"
 msgstr "Proxmox用户的密码"
 
-#: services/Proxmox/provider.py:126
+#: services/Proxmox/provider.py:127
 msgid "Timeout in seconds of connection to Proxmox"
 msgstr "与Proxmox连接的超时时间（以秒为单位）"
 
-#: services/Proxmox/provider.py:133
+#: services/Proxmox/provider.py:134
 msgid "Starting VmId"
 msgstr "启动 VmId"
 
-#: services/Proxmox/provider.py:138
+#: services/Proxmox/provider.py:139
 msgid "Starting machine id on proxmox"
 msgstr "proxmox 上的启动机器 ID"
+
+#: services/Proxmox/provider.py:152
+#| msgid "Range of valid macs for created machines"
+msgid ""
+"Range of valid macs for created machines. Any value accepted by Proxmox is "
+"valid here."
+msgstr "已创建机器的有效 mac 范围。 Proxmox 接受的任何值在这里都是有效的。"
 
 #: services/Proxmox/publication.py:116
 #: services/Vmware_enterprise/publication.py:80
@@ -5131,11 +5139,11 @@ msgstr ""
 msgid "A valid application path is required"
 msgstr "需要有效的应用程序路径"
 
-#: services/RDS_enterprise/service_session.py:31
+#: services/RDS_enterprise/service_session.py:30
 msgid "RDS Platform Session"
 msgstr "RDS平台专场"
 
-#: services/RDS_enterprise/service_session.py:33
+#: services/RDS_enterprise/service_session.py:32
 msgid "RDS Platform Full session desktop service"
 msgstr "RDS 平台全会话桌面服务"
 

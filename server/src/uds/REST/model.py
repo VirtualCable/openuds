@@ -114,8 +114,8 @@ class BaseModelHandler(Handler):
                 'values': field.get('values', []),
             },
         }
-        if 'tab' in field:
-            v['gui']['tab'] = _(field['tab'] or '')
+        if field.get('tab', None):
+            v['gui']['tab'] = _(field['tab'])
         gui.append(v)
         return gui
 
