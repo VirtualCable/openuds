@@ -43,9 +43,12 @@ logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
 # Logging levels
-OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (
+OTHER, DEBUG, INFO, WARNING, ERROR, CRITICAL = (
     10000 * (x + 1) for x in range(6)
 )  # @UndefinedVariable
+
+WARN = WARNING
+FATAL  = CRITICAL
 
 # Logging sources
 INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE, REST = (

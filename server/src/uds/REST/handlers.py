@@ -181,8 +181,6 @@ class Handler:
         else:
             self._user = User()  # Empty user for non authenticated handlers
 
-        # Keep track of the operation
-        log.log_operation(self)
 
     def headers(self) -> typing.Dict[str, str]:
         """
