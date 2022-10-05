@@ -44,8 +44,7 @@ def log_operation(handler: 'Handler', level: int = log.INFO):
     """
     Logs a request
     """
-    # pylint: disable=import-outside-toplevel
-
+    username = handler._request.user.pretty_name if handler._request.user else 'Unknown'
     # Global log is used without owner nor type
     Log.objects.create(
         owner_id=0,
@@ -53,7 +52,7 @@ def log_operation(handler: 'Handler', level: int = log.INFO):
         created=getSqlDatetime(),
         level=level,
         source=log.REST,
-        data=f'{handler._request.user.pretty_name}: [{handler._request.method}] {handler._request.path}'[
+        data=f'{username}: [{handler._request.method}] {handler._request.path}'[
             :255
         ],
     )
