@@ -227,6 +227,7 @@ class SMSMFA(mfas.MFA):
         cls.networks.setValues([
             gui.choiceItem(v.uuid, v.name)
             for v in models.Network.objects.all().order_by('name')
+            if v.uuid
         ])
 
     def composeSmsUrl(self, userId: str, userName: str, code: str, phone: str) -> str:

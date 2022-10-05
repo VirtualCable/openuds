@@ -80,7 +80,7 @@ class ListReportAuditCSV(ListReport):
     def genData(self) -> typing.Generator[typing.Tuple, None, None]:
         # Xtract user method, response_code and request from data
         # the format is "user: [method/response_code] request"
-        rx = re.compile(r'(?P<user>[^:]*): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)')
+        rx = re.compile(r'(?P<ip>[^ ]*) (?P<user>[^:]*): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)')
 
         start = self.startDate.datetime().replace(hour=0, minute=0, second=0, microsecond=0)
         end = self.endDate.datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
@@ -91,10 +91,6 @@ class ListReportAuditCSV(ListReport):
             m = rx.match(i.data)
             
             if m is not None:
-                # Skip fields with 200 and one of this words on the request
-                # overview, tableinfo, gui, types, system
-                if m.group('response_code') == '200' and any(x in m.group('request') for x in ('overview', 'tableinfo', 'gui', 'types', 'system')):
-                    continue
                 # Convert response code to an string if 200, else, to an error
                 response_code = {
                     '200': 'OK',
@@ -105,10 +101,11 @@ class ListReportAuditCSV(ListReport):
                     '405': 'Method Not Allowed',
                     '500': 'Internal Server Error',
                     '501': 'Not Implemented',
-                }.get(m.group('response_code'), 'CODE: ' + m.group('response_code'))
+                }.get(m.group('response_code'), 'Code: ' + m.group('response_code'))
                 yield (
                     i.created,
                     i.level_str,
+                    m.group('ip'),
                     m.group('user'),
                     m.group('method'),
                     response_code,
@@ -120,7 +117,7 @@ class ListReportAuditCSV(ListReport):
         writer = csv.writer(output)
 
         writer.writerow(
-            [ugettext('Date'), ugettext('Level'), ugettext('User'), ugettext('Method'), ugettext('Response code'), ugettext('Request')]
+            [ugettext('Date'), ugettext('Level'), ugettext('IP'), ugettext('User'), ugettext('Method'), ugettext('Response code'), ugettext('Request')]
         )
 
         for l in self.genData():

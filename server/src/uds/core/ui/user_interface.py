@@ -163,7 +163,7 @@ class gui:
         # Helper to convert an item to a dict
         def choiceFromValue(val: typing.Union[str, typing.Dict[str, str]]) -> typing.Dict[str, str]:
             if isinstance(val, str):
-                return {'id': val, 'name': val}
+                return {'id': val, 'text': val}
             # Return a deepcopy
             return copy.deepcopy(val)
             

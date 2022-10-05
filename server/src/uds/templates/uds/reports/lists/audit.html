@@ -1,0 +1,33 @@
+{% load l10n i18n %}
+<html lang="en">
+    <head>
+        <title>Users Report</title>
+        <meta name="author" content="UDS">
+        <meta name="description" content="List of UDS audit logs">
+        <meta name="keywords" content="uds,report,audit,log,list">
+        <meta name="generator" content="UDS Reporting">
+    </head>
+    <body>
+        <table style="width: 100%; font-size: 0.8em;">
+            <thead>
+                <tr>
+                    <th style="width: 25%">{% trans 'Date' %}</th>
+                    <th style="width: 15%">{% trans 'Level' %}</th>
+                    <th style="width: 60%">{% trans 'Message' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.date }}</td>
+                    <td>{{ log.level }}</td>
+                    <td>{{ log.message }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!-- <p style="page-break-before: always">
+            This is a new page
+        </p> -->
+    </body>
+</html>
