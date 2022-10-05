@@ -115,7 +115,7 @@ class BaseModelHandler(Handler):
             },
         }
         if 'tab' in field:
-            v['gui']['tab'] = field['tab']
+            v['gui']['tab'] = _(field['tab'] or '')
         gui.append(v)
         return gui
 
@@ -268,7 +268,10 @@ class BaseModelHandler(Handler):
         args: typing.Dict[str, str] = {}
         try:
             for key in fldList:
-                args[key] = self._params[key]
+                if key.startswith('-'):  # optional
+                    args[key[1:]] = self._params.get(key[1:], '')
+                else:
+                    args[key] = self._params[key]
                 # del self._params[key]
         except KeyError as e:
             raise RequestError('needed parameter not found in data {0}'.format(e))

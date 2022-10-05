@@ -59,7 +59,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible', 'mfa_id']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'visible', '-mfa_id']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -140,7 +140,8 @@ class Authenticators(ModelHandler):
                     )
                 return g
             raise Exception()  # Not found
-        except Exception:
+        except Exception as e:
+            logger.info('Type not found: %s', e)
             raise NotFound('type not found')
 
     def item_as_dict(self, item: Authenticator) -> typing.Dict[str, typing.Any]:
@@ -213,7 +214,7 @@ class Authenticators(ModelHandler):
         self, fields: typing.Dict[str, typing.Any]
     ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         logger.debug(self._params)
-        if fields['mfa_id']:
+        if fields.get('mfa_id'):
             try:
                 mfa = MFA.objects.get(
                     uuid=processUuid(fields['mfa_id'])

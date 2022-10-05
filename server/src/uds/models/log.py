@@ -39,11 +39,18 @@ logger = logging.getLogger(__name__)
 
 
 class Log(models.Model):
-    """
-    Log model associated with an object.
+    """Log model associated with an object.
 
     This log is mainly used to keep track of log relative to objects
     (such as when a user access a machine, or information related to user logins/logout, errors, ...)
+
+    Note:
+        owner_id can be 0, in wich case, the log is global (not related to any object)
+
+        if owner id is 0, these are valid owner_type values:
+            -1: Global log
+            -2: REST API log
+        See :py:mod:`uds.core.util.log` for more information
     """
 
     owner_id = models.IntegerField(db_index=True, default=0)

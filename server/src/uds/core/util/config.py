@@ -140,7 +140,11 @@ class Config:
                     self.set(self._default)
                 self._data = self._default
             except Exception as e:
-                logger.info('Error accessing db config {0}.{1}'.format(self._section.name(), self._key))
+                logger.info(
+                    'Error accessing db config {0}.{1}'.format(
+                        self._section.name(), self._key
+                    )
+                )
                 logger.exception(e)
                 self._data = self._default
 
@@ -298,7 +302,9 @@ class Config:
             return False
 
     @staticmethod
-    def getConfigValues(addCrypt: bool = False) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+    def getConfigValues(
+        addCrypt: bool = False,
+    ) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
         """
         Returns a dictionary with all config values
         """
@@ -470,6 +476,11 @@ class GlobalConfig:
     # How "max services" is computed
     MAX_SERVICES_COUNT_NEW: Config.Value = Config.section(GLOBAL_SECTION).value(
         'New Max restriction', '0', type=Config.BOOLEAN_FIELD
+    )
+
+    # Maximum security logs duration in days
+    MAX_AUDIT_LOGS_DURATION: Config.Value = Config.section(SECURITY_SECTION).value(
+        'Max Audit Logs duration', '365', type=Config.NUMERIC_FIELD
     )
 
     # Allowed "trusted sources" for request

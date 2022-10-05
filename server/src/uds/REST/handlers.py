@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
@@ -28,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
@@ -41,6 +40,9 @@ from uds.core.auths.auth import getRootUser
 from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers import cryptoManager
+
+from . import log
+
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -127,8 +129,8 @@ class Handler:
         self,
         request: 'ExtendedHttpRequestWithUser',
         path: str,
-        operation: str,
-        params: typing.Any,
+        method: str,
+        params: typing.MutableMapping[str, typing.Any],
         *args: str,
         **kwargs
     ):
@@ -147,7 +149,7 @@ class Handler:
 
         self._request = request
         self._path = path
-        self._operation = operation
+        self._operation = method
         self._params = params
         self._args = args
         self._kwargs = kwargs
@@ -177,6 +179,9 @@ class Handler:
             self._user = self.getUser()
         else:
             self._user = User()  # Empty user for non authenticated handlers
+
+        # Keep track of the operation
+        log.log_operation(self)
 
     def headers(self) -> typing.Dict[str, str]:
         """

@@ -43,6 +43,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from uds.core import VERSION, VERSION_STAMP
 
+from . import log
+
 from .handlers import (
     Handler,
     HandlerError,
@@ -60,8 +62,6 @@ if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
-
-__all__ = ['Handler', 'Dispatcher']
 
 AUTH_TOKEN_HEADER = 'X-Auth-Token'
 
@@ -237,7 +237,9 @@ class Dispatcher(View):
         # Dinamycally import children of this package.
         package = 'methods'
 
-        pkgpath = os.path.join(os.path.dirname(typing.cast(str, sys.modules[__name__].__file__)), package)
+        pkgpath = os.path.join(
+            os.path.dirname(typing.cast(str, sys.modules[__name__].__file__)), package
+        )
         for _, name, _ in pkgutil.iter_modules([pkgpath]):
             # __import__(__name__ + '.' + package + '.' + name, globals(), locals(), [], 0)
             importlib.import_module(

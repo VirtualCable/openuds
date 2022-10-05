@@ -48,7 +48,7 @@ OTHER, DEBUG, INFO, WARN, ERROR, FATAL = (
 )  # @UndefinedVariable
 
 # Logging sources
-INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = (
+INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE, REST = (
     'internal',
     'actor',
     'transport',
@@ -57,6 +57,7 @@ INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE = (
     'web',
     'admin',
     'service',
+    'rest',
 )
 
 OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = (
@@ -80,6 +81,10 @@ __nameLevels = {
 
 # Reverse dict of names
 __valueLevels = {v: k for k, v in __nameLevels.items()}
+
+# Global log owner types:
+OWNER_TYPE_GLOBAL = -1
+OWNER_TYPE_REST = -2
 
 
 def logLevelFromStr(level: str) -> int:
