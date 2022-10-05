@@ -99,5 +99,5 @@ class AuditLogCleanup(Job):
             - datetime.timedelta(
                 days=config.GlobalConfig.MAX_AUDIT_LOGS_DURATION.getInt()
             ),
-            owner_type=log.OWNER_TYPE_REST,
+            owner_type=log.OWNER_TYPE_AUDIT,
         ).delete()
