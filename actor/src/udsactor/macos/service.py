@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 import signal
@@ -79,13 +79,12 @@ class UDSActorSvc(CommonService):
 
             self.finish()
             return # Stop daemon if initializes told to do so
-        else:
-            if not self.initializeUnmanaged():
-                # Wait a bit, this is mac os and will be run by launchd
-                # If the daemon shuts down too quickly, launchd may think it is a crash.
-                self.doWait(10000)
-                self.finish()
-                return
+        if not self.initializeUnmanaged():
+            # Wait a bit, this is mac os and will be run by launchd
+            # If the daemon shuts down too quickly, launchd may think it is a crash.
+            self.doWait(10000)
+            self.finish()
+            return
 
         # Start listening for petitions
         self.startHttpServer()

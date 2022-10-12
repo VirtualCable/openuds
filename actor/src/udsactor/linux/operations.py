@@ -158,6 +158,9 @@ def getLinuxOs() -> str:
         return 'unknown'
 
 
+def getVersion() -> str:
+    return 'Linux ' + getLinuxOs()
+
 def reboot(flags: int = 0):
     '''
     Simple reboot using os command

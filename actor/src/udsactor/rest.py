@@ -181,7 +181,7 @@ class UDSServerApi(UDSApi):
         except Exception:  # nosec: not interested in exceptions
             pass
 
-    def register(  # pylint: disable=too-many-arguments, too-many-locals
+    def register(
         self,
         auth: str,
         username: str,
