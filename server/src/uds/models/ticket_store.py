@@ -173,6 +173,7 @@ class TicketStore(UUIDModel):
         uuid: str,
         secure: bool = False,
         owner: typing.Optional[str] = None,
+        checkFnc: typing.Callable[[typing.Any], bool] = lambda x: True,
         **kwargs: typing.Any,
     ) -> None:
         try:
@@ -188,6 +189,10 @@ class TicketStore(UUIDModel):
                 )
 
             dct = pickle.loads(data)
+
+            # invoke check function
+            if checkFnc(dct) is False:
+                raise TicketStore.InvalidTicket('Validation failed')
 
             for k, v in kwargs.items():
                 if v is not None:

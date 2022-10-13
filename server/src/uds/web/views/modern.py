@@ -308,7 +308,7 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
         if request.method == 'POST':
             # Get request body as json
             data = json.loads(request.body)
-    
+
             # Update username andd password in ticket
             username = data.get('username', None) or None # None if not present
             password = data.get('password', None) or None # If password is empty, set it to None
@@ -317,8 +317,21 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
             if password:
                 password = cryptoManager().symCrypt(password, scrambler)
 
+            def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
+                if 'ticket-info' not in data:
+                    return True
+                try:
+                    user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                    if request.user == user:
+                        return True
+                except models.User.DoesNotExist:
+                    pass
+                return False
+                
+
             models.TicketStore.update(
                 uuid=idTicket,
+                checkFnc=checkValidTicket,
                 username=username,
                 password=password,
                 domain=domain,

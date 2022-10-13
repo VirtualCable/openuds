@@ -123,15 +123,24 @@ def getRootUser() -> User:
 
 # Decorator to make easier protect pages that needs to be logged in
 def webLoginRequired(
-    admin: typing.Union[bool, str] = False
+    admin: typing.Union[bool, typing.Literal['admin']] = False
 ) -> typing.Callable[
     [typing.Callable[..., HttpResponse]], typing.Callable[..., HttpResponse]
 ]:
-    """
-    Decorator to set protection to access page
+    """Decorator to set protection to access page
     Look for samples at uds.core.web.views
     if admin == True, needs admin or staff
     if admin == 'admin', needs admin
+
+    Args:
+        admin (bool, optional): If True, needs admin or staff. Is it's "admin" literal, needs admin . Defaults to False (any user).
+
+    Returns:
+        typing.Callable[[typing.Callable[..., HttpResponse]], typing.Callable[..., HttpResponse]]: Decorator
+
+    Note:
+        This decorator is used to protect pages that needs to be logged in.
+        To protect against ajax calls, use `denyNonAuthenticated` instead
     """
 
     def decorator(
@@ -148,7 +157,7 @@ def webLoginRequired(
             if not request.user or not request.authorized:
                 return HttpResponseRedirect(reverse('page.login'))
 
-            if admin is True or admin == 'admin':  # bool or string "admin"
+            if admin in (True, 'admin'): 
                 if request.user.isStaff() is False or (
                     admin == 'admin' and not request.user.is_admin
                 ):
@@ -172,7 +181,6 @@ def trustedSourceRequired(
 ) -> typing.Callable[..., RT]:
     """
     Decorator to set protection to access page
-    look for sample at uds.dispatchers.pam
     """
 
     @wraps(view_func)
@@ -194,6 +202,8 @@ def trustedSourceRequired(
 
 
 # decorator to deny non authenticated requests
+# The difference with webLoginRequired is that this one does not redirect to login page
+# it's designed to be used in ajax calls mainly
 def denyNonAuthenticated(
     view_func: typing.Callable[..., RT]
 ) -> typing.Callable[..., RT]:

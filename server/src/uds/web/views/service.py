@@ -62,12 +62,14 @@ def transportOwnLink(
 ):
     response: typing.MutableMapping[str, typing.Any] = {}
 
+    # If userService is not owned by user, will raise an exception
+
     # For type checkers to "be happy"
     try:
         res = userServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport
         )
-        ip, userService, iads, trans, itrans = res  # pylint: disable=unused-variable
+        ip, userService, iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
             response = {

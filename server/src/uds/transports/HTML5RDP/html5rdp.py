@@ -35,14 +35,10 @@ import logging
 import typing
 from urllib.parse import urlencode
 
-from uds.models.util import getSqlDatetime
-
 from django.utils.translation import ugettext_noop as _
 
 from uds.core.ui import gui
-
 from uds.core import transports
-
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers import cryptoManager
 from uds import models
@@ -457,7 +453,7 @@ class HTML5RDPTransport(transports.Transport):
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
-                'user': userService.user.uuid if userService.user else '',
+                'user': user.uuid,
             },
         }
 
@@ -474,7 +470,7 @@ class HTML5RDPTransport(transports.Transport):
                 + '_'
                 + sanitize(user.name)
                 + '/'
-                + getSqlDatetime().strftime('%Y%m%d-%H%M')
+                + models.getSqlDatetime().strftime('%Y%m%d-%H%M')
             )
             params['create-recording-path'] = 'true'
 
