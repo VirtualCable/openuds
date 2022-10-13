@@ -138,7 +138,7 @@ class Transports(ModelHandler):
                 ),
                 'type': 'text',
                 'order': 201,
-                'tab': gettext(gui.Tab.ADVANCED),
+                'tab': gui.Tab.ADVANCED,
             },
         )
 

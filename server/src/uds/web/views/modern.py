@@ -32,6 +32,7 @@ import time
 import logging
 import hashlib
 import typing
+import json
 
 from django.middleware import csrf
 from django.shortcuts import render
@@ -45,6 +46,7 @@ from django.views.decorators.cache import never_cache
 
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
+from uds.core.managers import cryptoManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -54,14 +56,14 @@ from uds.web.util import configjs
 from uds.core import mfas
 
 
+
 logger = logging.getLogger(__name__)
 
 CSRF_FIELD = 'csrfmiddlewaretoken'
 MFA_COOKIE_NAME = 'mfa_status'
 
 if typing.TYPE_CHECKING:
-    from uds import models
-
+    pass
 
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
@@ -172,12 +174,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     ):  # If no user, or user is already authorized, redirect to index
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
-    mfaProvider: 'models.MFA' = request.user.manager.mfa
+    mfaProvider: typing.Optional['models.MFA'] = request.user.manager.mfa
     if not mfaProvider:
         return HttpResponseRedirect(reverse('page.index'))
 
     userHashValue: str = hashlib.sha3_256(
-        (request.user.name + request.user.uuid + mfaProvider.uuid).encode()
+        (request.user.name + (request.user.uuid or '') + mfaProvider.uuid).encode()
     ).hexdigest()
 
     # Try to get cookie anc check it
@@ -295,3 +297,46 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         'html': mfaHtml,
     }
     return index(request)  # Render index with MFA data
+
+@csrf_exempt
+@auth.denyNonAuthenticated
+def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str) -> HttpResponse:
+    try:
+        if request.method == 'POST':
+            # Get request body as json
+            data = json.loads(request.body)
+
+            # Update username andd password in ticket
+            username = data.get('username', None) or None # None if not present
+            password = data.get('password', None) or None # If password is empty, set it to None
+            domain = data.get('domain', None) or None  # If empty string, set to None
+
+            if password:
+                password = cryptoManager().symCrypt(password, scrambler)
+
+            def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
+                if 'ticket-info' not in data:
+                    return True
+                try:
+                    user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                    if request.user == user:
+                        return True
+                except models.User.DoesNotExist:
+                    pass
+                return False
+                
+
+            models.TicketStore.update(
+                uuid=idTicket,
+                checkFnc=checkValidTicket,
+                username=username,
+                password=password,
+                domain=domain,
+            )
+            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
+    except Exception as e:
+        # fallback to error
+        pass
+
+    # Invalid request
+    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')

@@ -37,7 +37,7 @@ import csv
 import datetime
 import logging
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util import log
@@ -117,7 +117,7 @@ class ListReportAuditCSV(ListReport):
         writer = csv.writer(output)
 
         writer.writerow(
-            [ugettext('Date'), ugettext('Level'), ugettext('IP'), ugettext('User'), ugettext('Method'), ugettext('Response code'), ugettext('Request')]
+            [gettext('Date'), gettext('Level'), gettext('IP'), gettext('User'), gettext('Method'), gettext('Response code'), gettext('Request')]
         )
 
         for l in self.genData():

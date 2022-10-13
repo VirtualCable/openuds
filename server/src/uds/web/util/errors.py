@@ -128,33 +128,31 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
 
     logger.debug(traceback.format_exc())
 
-    try:
-        raise exception  # Raise it so we can "catch" and redirect
-    except UserService.DoesNotExist:
-        return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
-    except ServicePool.DoesNotExist:  # type: ignore
-        return errorView(request, SERVICE_NOT_FOUND)
-    except Transport.DoesNotExist:  # type: ignore
-        return errorView(request, TRANSPORT_NOT_FOUND)
-    except Authenticator.DoesNotExist:  # type: ignore
-        return errorView(request, AUTHENTICATOR_NOT_FOUND)
-    except InvalidUserException:
+    if isinstance(exception, InvalidUserException):
         return errorView(request, ACCESS_DENIED)
-    except InvalidServiceException:
-        return errorView(request, INVALID_SERVICE)
-    except MaxServicesReachedError:
-        return errorView(request, MAX_SERVICES_REACHED)
-    except InvalidAuthenticatorException:
+    elif isinstance(exception, InvalidAuthenticatorException):
         return errorView(request, INVALID_CALLBACK)
-    except ServiceInMaintenanceMode:
+    elif isinstance(exception, InvalidServiceException):
+        return errorView(request, INVALID_SERVICE)
+    elif isinstance(exception, MaxServicesReachedError):
+        return errorView(request, MAX_SERVICES_REACHED)
+    elif isinstance(exception, ServiceInMaintenanceMode):
         return errorView(request, SERVICE_IN_MAINTENANCE)
-    except ServiceNotReadyError as e:
-        # add code as high bits of idError
+    elif isinstance(exception, ServiceNotReadyError):
         return errorView(request, SERVICE_NOT_READY)
-    except Exception as e:
-        logger.exception('Exception cautgh at view!!!')
-        return errorView(request, UNKNOWN_ERROR)
-        # raise e
+    elif isinstance(exception, UserService.DoesNotExist):
+        return errorView(request, ERR_USER_SERVICE_NOT_FOUND)
+    elif isinstance(exception, Transport.DoesNotExist):
+        return errorView(request, TRANSPORT_NOT_FOUND)
+    elif isinstance(exception, ServicePool.DoesNotExist):
+        return errorView(request, SERVICE_NOT_FOUND)
+    elif isinstance(exception, Authenticator.DoesNotExist):
+        return errorView(request, AUTHENTICATOR_NOT_FOUND)
+
+    logger.error(
+        'Unexpected exception: %s, traceback: %s', exception, traceback.format_exc()
+    )
+    return errorView(request, UNKNOWN_ERROR)
 
 
 def error(request: 'HttpRequest', err: str) -> 'HttpResponse':

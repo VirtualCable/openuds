@@ -120,7 +120,7 @@ class TicketStore(UUIDModel):
             validator=validator,
             validity=validity,
             owner=owner,
-        ).uuid
+        ).uuid or ''
 
     @staticmethod
     def get(
@@ -169,6 +169,47 @@ class TicketStore(UUIDModel):
             raise TicketStore.InvalidTicket('Does not exists')
 
     @staticmethod
+    def update(
+        uuid: str,
+        secure: bool = False,
+        owner: typing.Optional[str] = None,
+        checkFnc: typing.Callable[[typing.Any], bool] = lambda x: True,
+        **kwargs: typing.Any,
+    ) -> None:
+        try:
+            t = TicketStore.objects.get(uuid=uuid)
+
+            data: bytes = t.data
+
+            if secure:  # Owner has already been tested and it's not emtpy
+                if not owner:
+                    raise ValueError('Tried to use a secure ticket without owner')
+                data = cryptoManager().AESDecrypt(
+                    data, typing.cast(str, owner).encode()
+                )
+
+            dct = pickle.loads(data)
+
+            # invoke check function
+            if checkFnc(dct) is False:
+                raise TicketStore.InvalidTicket('Validation failed')
+
+            for k, v in kwargs.items():
+                if v is not None:
+                    dct[k] = v
+
+            # Reserialize
+            data = pickle.dumps(dct)
+            if secure:
+                if not owner:
+                    raise ValueError('Tried to use a secure ticket without owner')
+                data = cryptoManager().AESCrypt(data, owner.encode())
+            t.data = data
+            t.save(update_fields=['data'])
+        except TicketStore.DoesNotExist:
+            pass
+
+    @staticmethod
     def revalidate(
         uuid: str,
         validity: typing.Optional[int] = None,
@@ -193,6 +234,8 @@ class TicketStore(UUIDModel):
         validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
     ) -> str:
         owner = cryptoManager().randomString(length=8)
+        if not userService.user:
+            raise ValueError('User is not set in userService')
         data = {
             'u': userService.user.uuid if userService.user else '',
             's': userService.uuid,

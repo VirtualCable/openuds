@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
 import logging
@@ -41,9 +41,7 @@ from uds.models.util import getSqlDatetime
 from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
-
 from uds.core import transports
-
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers import cryptoManager
 from uds import models
@@ -327,12 +325,12 @@ class HTML5RDPTransport(transports.Transport):
             raise transports.Transport.ValidationException(
                 _('The server must be http or https')
             )
-        if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
-            raise transports.Transport.ValidationException(
-                _(
-                    'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
-                )
-            )
+        #if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
+        #    raise transports.Transport.ValidationException(
+        #        _(
+        #            'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
+        #        )
+        #    )
 
     # Same check as normal RDP transport
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
@@ -458,12 +456,12 @@ class HTML5RDPTransport(transports.Transport):
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
-                'user': userService.user.uuid if userService.user else '',
+                'user': user.uuid,
             },
         }
 
         if password == '' and self.security.value != 'rdp':
-            extra_params='&' + urlencode({'username': username, 'domain': domain, 'reqcreds': 'true'})
+            extra_params=f'&creds={username}@{domain}'
         else:
             extra_params=''
 
@@ -475,7 +473,7 @@ class HTML5RDPTransport(transports.Transport):
                 + '_'
                 + sanitize(user.name)
                 + '/'
-                + getSqlDatetime().strftime('%Y%m%d-%H%M')
+                + models.getSqlDatetime().strftime('%Y%m%d-%H%M')
             )
             params['create-recording-path'] = 'true'
 

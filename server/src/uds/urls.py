@@ -165,17 +165,17 @@ urlpatterns = [
     ),
     # Enabler and Status action are first processed, and if not match, execute the generic "action" handler
     re_path(
-        r'^uds/webapi/action/(?P<idService>.+)/enable/(?P<idTransport>[a-zA-Z0-9:-]+)$',
+        r'^uds/webapi/action/(?P<idService>[a-zA-Z0-9:-]+)/enable/(?P<idTransport>[a-zA-Z0-9:-]+)$',
         uds.web.views.userServiceEnabler,
         name='webapi.enabler',
     ),
     re_path(
-        r'^uds/webapi/action/(?P<idService>.+)/status/(?P<idTransport>[a-zA-Z0-9:-]+)$',
+        r'^uds/webapi/action/(?P<idService>[a-zA-Z0-9:-]+)/status/(?P<idTransport>[a-zA-Z0-9:-]+)$',
         uds.web.views.userServiceStatus,
         name='webapi.status',
     ),
     re_path(
-        r'^uds/webapi/action/(?P<idService>.+)/(?P<actionString>[a-zA-Z0-9:-]+)$',
+        r'^uds/webapi/action/(?P<idService>[a-zA-Z0-9:-]+)/(?P<actionString>[a-zA-Z0-9:-]+)$',
         uds.web.views.action,
         name='webapi.action',
     ),
@@ -187,13 +187,19 @@ urlpatterns = [
     ),
     # Transport own link processor
     re_path(
-        r'^uds/webapi/trans/(?P<idService>.+)/(?P<idTransport>.+)$',
+        r'^uds/webapi/trans/(?P<idService>[a-zA-Z0-9:-]+)/(?P<idTransport>[a-zA-Z0-9:-]+)$',
         uds.web.views.transportOwnLink,
         name='TransportOwnLink',
     ),
+    # Transport ticket update (for username/password on html5)
+    re_path(
+        r'^uds/webapi/trans/ticket/(?P<idTicket>[a-zA-Z0-9:-]+)/(?P<scrambler>[a-zA-Z0-9:-]+)$',
+        uds.web.views.modern.update_transport_ticket,
+        name='webapi.transport.UpdateTransportTicket',
+    ),
     # Authenticators custom html
     re_path(
-        r'^uds/webapi/customAuth/(?P<idAuth>.*)$',
+        r'^uds/webapi/customAuth/(?P<idAuth>[a-zA-Z0-9:-]*)$',
         uds.web.views.customAuth,
         name='uds.web.views.customAuth',
     ),
