@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-05 18:05+0200\n"
+"POT-Creation-Date: 2022-10-13 14:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
@@ -134,9 +134,11 @@ msgid "Actor tokens"
 msgstr "Tokens del Actor"
 
 #: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:52
-#: reports/auto/fields.py:58 reports/stats/pools_performance.py:201
+#: reports/auto/fields.py:58 reports/lists/audit.py:120
+#: reports/stats/pools_performance.py:201
 #: reports/stats/pools_performance.py:220 reports/stats/pools_usage_day.py:64
-#: reports/stats/usage_by_pool.py:170 reports/stats/user_access.py:176
+#: reports/stats/usage_by_pool.py:171 reports/stats/user_access.py:176
+#: templates/uds/reports/lists/audit.html:14
 #: templates/uds/reports/stats/authenticator_stats.html:14
 msgid "Date"
 msgstr "Fecha"
@@ -146,7 +148,7 @@ msgid "Issued by"
 msgstr "Emitido por"
 
 #: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:54
-#: reports/stats/usage_by_pool.py:174
+#: reports/stats/usage_by_pool.py:175
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "Origen"
@@ -408,7 +410,7 @@ msgstr "Fecha de creación"
 #: reports/stats/pool_users_summary.py:60
 #: reports/stats/pools_performance.py:267 reports/stats/pools_usage_day.py:169
 #: reports/stats/pools_usage_summary.py:156 reports/stats/usage_by_pool.py:59
-#: reports/stats/usage_by_pool.py:173 services/Proxmox/service.py:111
+#: reports/stats/usage_by_pool.py:174 services/Proxmox/service.py:111
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -419,6 +421,7 @@ msgstr "Pool"
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:127
 #: REST/methods/tunnel_token.py:55 REST/methods/user_services.py:140
 #: REST/methods/user_services.py:274 auths/IP/authenticator.py:72
+#: reports/lists/audit.py:120
 msgid "IP"
 msgstr "IP "
 
@@ -1044,8 +1047,8 @@ msgstr "Miembro del personal"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:106 reports/stats/pool_users_summary.py:177
-#: reports/stats/usage_by_pool.py:171
+#: auths/SAML_enterprise/saml.py:106 reports/lists/audit.py:120
+#: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
@@ -1073,7 +1076,7 @@ msgstr "Usuarios actuales"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
@@ -1161,23 +1164,23 @@ msgstr ""
 msgid "Label for this element"
 msgstr "Etiqueta para este elemento"
 
-#: REST/model.py:311
+#: REST/model.py:312
 msgid "Invalid Request"
 msgstr "Solicitud no válida"
 
-#: REST/model.py:325
+#: REST/model.py:326
 msgid "Method not found in {}: {}"
 msgstr "Método no encontrado en {}: {}"
 
-#: REST/model.py:334
+#: REST/model.py:335
 msgid "Item not found"
 msgstr "Elemento no encontrado"
 
-#: REST/model.py:339 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:340 web/util/authentication.py:143 web/util/errors.py:81
 msgid "Access denied"
 msgstr "Acceso denegado"
 
-#: REST/model.py:342
+#: REST/model.py:343
 msgid "Operation not supported"
 msgstr "Operación no soportada"
 
@@ -1230,7 +1233,7 @@ msgstr ""
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:112 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -2455,7 +2458,7 @@ msgstr ""
 msgid "SMTP Server"
 msgstr "Servidor SMTP"
 
-#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:268
+#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:271
 #: transports/HTML5RDS_enterprise/html5rds.py:255
 msgid "Security"
 msgstr "Seguridad"
@@ -2762,19 +2765,19 @@ msgstr "Respuesta HTTP"
 msgid "SMS response error action"
 msgstr "Acción de error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:291
+#: mfas/SMS/mfa.py:292
 msgid "SMS sending failed"
 msgstr "Envío de SMS fallido"
 
-#: mfas/SMS/mfa.py:300
+#: mfas/SMS/mfa.py:301
 msgid "SMS response error"
 msgstr "Error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:354 web/views/modern.py:294
+#: mfas/SMS/mfa.py:355 web/views/modern.py:294
 msgid "MFA Code"
 msgstr "Código MFA"
 
-#: mfas/SMS/mfa.py:357
+#: mfas/SMS/mfa.py:358
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "Revisa tu teléfono. Recibirás un SMS con el código de verificación"
 
@@ -3166,7 +3169,7 @@ msgstr "Os Manager para controlar máquinas Windows en dominio AD."
 
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
-#: transports/HTML5RDP/html5rdp.py:123
+#: transports/HTML5RDP/html5rdp.py:126
 #: transports/HTML5RDS_enterprise/html5rds.py:112
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
 #: transports/RDS_enterprise/rds_base.py:60
@@ -3314,9 +3317,9 @@ msgstr "Contraseña actual (plantilla) de la cuenta de usuario"
 msgid "Must provide a password for the account!!!"
 msgstr "¡Debe indicar una contraseña para la cuenta!"
 
-#: reports/auto/fields.py:48 reports/stats/pool_users_summary.py:65
-#: reports/stats/pools_performance.py:72 reports/stats/usage_by_pool.py:64
-#: reports/stats/user_access.py:66
+#: reports/auto/fields.py:48 reports/lists/audit.py:63
+#: reports/stats/pool_users_summary.py:65 reports/stats/pools_performance.py:72
+#: reports/stats/usage_by_pool.py:64 reports/stats/user_access.py:66
 msgid "Starting date"
 msgstr "Fecha de inicio"
 
@@ -3377,6 +3380,51 @@ msgstr "Proveedor de servicios"
 msgid "Service provider for report"
 msgstr "Proveedor de servicios para el informe"
 
+#: reports/lists/audit.py:54
+msgid "Audit Log list"
+msgstr "Lista de registros de auditoría"
+
+#: reports/lists/audit.py:55
+msgid "List administration audit logs"
+msgstr "Listar registros de auditoría de administración"
+
+#: reports/lists/audit.py:64 reports/stats/pool_users_summary.py:66
+#: reports/stats/pools_performance.py:73 reports/stats/usage_by_pool.py:65
+#: reports/stats/user_access.py:67
+msgid "starting date for report"
+msgstr "fecha de inicio para informe"
+
+#: reports/lists/audit.py:71 reports/stats/pool_users_summary.py:73
+#: reports/stats/pools_performance.py:80 reports/stats/usage_by_pool.py:72
+#: reports/stats/user_access.py:74
+msgid "Finish date"
+msgstr "Fecha de finalización"
+
+#: reports/lists/audit.py:72 reports/stats/pool_users_summary.py:74
+#: reports/stats/pools_performance.py:81 reports/stats/usage_by_pool.py:73
+#: reports/stats/user_access.py:75
+msgid "finish date for report"
+msgstr "fecha de finalización para informe"
+
+#: reports/lists/audit.py:120 templates/uds/reports/lists/audit.html:15
+#| msgid "Log level"
+msgid "Level"
+msgstr "Nivel"
+
+#: reports/lists/audit.py:120
+msgid "Method"
+msgstr "Método"
+
+#: reports/lists/audit.py:120
+#| msgid "HTTP Response"
+msgid "Response code"
+msgstr "Código de respuesta"
+
+#: reports/lists/audit.py:120
+#| msgid "Invalid Request"
+msgid "Request"
+msgstr "Solicitud"
+
 #: reports/lists/base.py:40
 msgid "Lists"
 msgstr "Listados"
@@ -3421,14 +3469,14 @@ msgstr ""
 "Genera un informe con estadísticas de un autenticador durante un periodo "
 "específico"
 
-#: reports/stats/auth_stats.py:123 reports/stats/usage_by_pool.py:146
+#: reports/stats/auth_stats.py:123 reports/stats/usage_by_pool.py:147
 #: templates/uds/reports/stats/authenticator_stats.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
 msgstr "Lista del uso de los usuarios"
 
-#: reports/stats/auth_stats.py:124 reports/stats/usage_by_pool.py:147
+#: reports/stats/auth_stats.py:124 reports/stats/usage_by_pool.py:148
 msgid "UDS Report of users usage"
 msgstr "Informe del uso de los usuarios"
 
@@ -3449,21 +3497,6 @@ msgstr ""
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:59
 msgid "Pool for report"
 msgstr "Pool para informe"
-
-#: reports/stats/pool_users_summary.py:66 reports/stats/pools_performance.py:73
-#: reports/stats/usage_by_pool.py:65 reports/stats/user_access.py:67
-msgid "starting date for report"
-msgstr "fecha de inicio para informe"
-
-#: reports/stats/pool_users_summary.py:73 reports/stats/pools_performance.py:80
-#: reports/stats/usage_by_pool.py:72 reports/stats/user_access.py:74
-msgid "Finish date"
-msgstr "Fecha de finalización"
-
-#: reports/stats/pool_users_summary.py:74 reports/stats/pools_performance.py:81
-#: reports/stats/usage_by_pool.py:73 reports/stats/user_access.py:75
-msgid "finish date for report"
-msgstr "fecha de finalización para informe"
 
 #: reports/stats/pool_users_summary.py:153
 msgid "Users usage list for {}"
@@ -3611,7 +3644,7 @@ msgstr "Uso de Pools por informe de usuario"
 msgid "ALL POOLS"
 msgstr "TODOS LOS POOLS"
 
-#: reports/stats/usage_by_pool.py:172
+#: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "Segundos"
@@ -5076,7 +5109,6 @@ msgid "Starting machine id on proxmox"
 msgstr "ID de máquina de inicio en proxmox"
 
 #: services/Proxmox/provider.py:152
-#| msgid "Range of valid macs for created machines"
 msgid ""
 "Range of valid macs for created machines. Any value accepted by Proxmox is "
 "valid here."
@@ -5950,6 +5982,11 @@ msgstr "Catalán"
 msgid "Chinese"
 msgstr "Chino"
 
+#: templates/uds/reports/lists/audit.html:16
+#| msgid "Usage"
+msgid "Message"
+msgstr "Mensaje"
+
 #: templates/uds/reports/lists/users.html:15
 msgid "Real name"
 msgstr "Nombre a mostrar"
@@ -6047,21 +6084,21 @@ msgstr "Acceso usuarios por hora"
 msgid "Users Access by day of week/hour"
 msgstr "Acceso de usuarios por día de la semana/hora"
 
-#: transports/HTML5RDP/html5rdp.py:65
+#: transports/HTML5RDP/html5rdp.py:68
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
-#: transports/HTML5RDP/html5rdp.py:67
+#: transports/HTML5RDP/html5rdp.py:70
 msgid "RDP protocol using HTML5 client"
 msgstr "Protocolo RDP utilizando a cliente de HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:76
+#: transports/HTML5RDP/html5rdp.py:79
 #: transports/HTML5RDS_enterprise/html5rds.py:79
 #: transports/HTML5VNC/html5vnc.py:75
 msgid "Tunnel Server"
 msgstr "Servidor de túnel"
 
-#: transports/HTML5RDP/html5rdp.py:79
+#: transports/HTML5RDP/html5rdp.py:82
 #: transports/HTML5RDS_enterprise/html5rds.py:82
 #: transports/HTML5VNC/html5vnc.py:78
 msgid ""
@@ -6072,12 +6109,12 @@ msgstr ""
 "usuarios.\n"
 "(https://tunel:10443)"
 
-#: transports/HTML5RDP/html5rdp.py:88
+#: transports/HTML5RDP/html5rdp.py:91
 #: transports/HTML5RDS_enterprise/html5rds.py:90
 msgid "Use Glyptodon Enterprise tunnel"
 msgstr "Utilice el túnel de Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:91
+#: transports/HTML5RDP/html5rdp.py:94
 #: transports/HTML5RDS_enterprise/html5rds.py:93
 msgid ""
 "If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling "
@@ -6086,7 +6123,7 @@ msgstr ""
 "Si está marcado, UDS utilizará Glyptodon Enterprise Tunnel para tunelización "
 "HTML en lugar de UDS Tunnel"
 
-#: transports/HTML5RDP/html5rdp.py:97
+#: transports/HTML5RDP/html5rdp.py:100
 #: transports/HTML5RDS_enterprise/html5rds.py:98
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
@@ -6094,7 +6131,7 @@ msgstr ""
 msgid "Empty creds"
 msgstr "Credenciales vacías"
 
-#: transports/HTML5RDP/html5rdp.py:99
+#: transports/HTML5RDP/html5rdp.py:102
 #: transports/HTML5RDS_enterprise/html5rds.py:100
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
@@ -6105,7 +6142,7 @@ msgstr ""
 "Si está seleccionado, las credenciales utilizadas para conectar estarán "
 "vacías"
 
-#: transports/HTML5RDP/html5rdp.py:105
+#: transports/HTML5RDP/html5rdp.py:108
 #: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
@@ -6114,7 +6151,7 @@ msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Si no está vacío, este nombre de usuario se utilizará siempre como credencial"
 
-#: transports/HTML5RDP/html5rdp.py:111
+#: transports/HTML5RDP/html5rdp.py:114
 #: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
@@ -6122,13 +6159,13 @@ msgstr ""
 msgid "If not empty, this password will be always used as credential"
 msgstr "Si no está vacío, este password se utiizará siempre como credencial "
 
-#: transports/HTML5RDP/html5rdp.py:115
+#: transports/HTML5RDP/html5rdp.py:118
 #: transports/HTML5RDS_enterprise/html5rds.py:104 transports/RDP/rdp_base.py:87
 #: transports/RDS_enterprise/rds_base.py:52
 msgid "Without Domain"
 msgstr "Sin dominio"
 
-#: transports/HTML5RDP/html5rdp.py:118
+#: transports/HTML5RDP/html5rdp.py:121
 #: transports/HTML5RDS_enterprise/html5rds.py:107
 #: transports/RDS_enterprise/rds_base.py:55
 msgid ""
@@ -6138,7 +6175,7 @@ msgstr ""
 "Si está marcada, la parte del dominio siempre estará vacía (se necesita, por "
 "ejemplo, para conectar a xrdp)"
 
-#: transports/HTML5RDP/html5rdp.py:126
+#: transports/HTML5RDP/html5rdp.py:129
 #: transports/HTML5RDS_enterprise/html5rds.py:115 transports/RDP/rdp_base.py:98
 #: transports/RDS_enterprise/rds_base.py:63
 msgid ""
@@ -6148,12 +6185,12 @@ msgstr ""
 "Si no está vacío, este dominio se utilizará siempre como parte de las "
 "credenciales (como DOMINIO\\usuario)"
 
-#: transports/HTML5RDP/html5rdp.py:131
+#: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:120
 msgid "Show wallpaper"
 msgstr "Mostrar fondo de pantalla "
 
-#: transports/HTML5RDP/html5rdp.py:134
+#: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:123
 #: transports/RDP/rdp_base.py:241
 msgid ""
@@ -6163,37 +6200,37 @@ msgstr ""
 "Si está marcada, el fondo de pantalla y los temas aparecerán en la máquina "
 "(mayor ancho de banda, mejor experiencia de usuario)"
 
-#: transports/HTML5RDP/html5rdp.py:139
+#: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:128
 #: transports/RDP/rdp_base.py:254
 msgid "Allow Desk.Comp."
 msgstr "Permitir Comp.Escr."
 
-#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:130
 #: transports/RDP/rdp_base.py:256
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si está marcada, se permitirá la composición de escritorio"
 
-#: transports/HTML5RDP/html5rdp.py:145
+#: transports/HTML5RDP/html5rdp.py:148
 #: transports/HTML5RDS_enterprise/html5rds.py:134
 #: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "Suavizado de fuentes"
 
-#: transports/HTML5RDP/html5rdp.py:147
+#: transports/HTML5RDP/html5rdp.py:150
 #: transports/HTML5RDS_enterprise/html5rds.py:136
 #: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
 
-#: transports/HTML5RDP/html5rdp.py:151
+#: transports/HTML5RDP/html5rdp.py:154
 #: transports/HTML5RDS_enterprise/html5rds.py:140
 msgid "Enable Audio"
 msgstr "Activar el sonido"
 
-#: transports/HTML5RDP/html5rdp.py:154
+#: transports/HTML5RDP/html5rdp.py:157
 #: transports/HTML5RDS_enterprise/html5rds.py:143
 msgid ""
 "If checked, the audio will be redirected to remote session (if client "
@@ -6202,12 +6239,12 @@ msgstr ""
 "Si está marcado, el audio se redirigirá a la sesión remota (si el navegador "
 "del cliente lo admite)"
 
-#: transports/HTML5RDP/html5rdp.py:160
+#: transports/HTML5RDP/html5rdp.py:163
 #: transports/HTML5RDS_enterprise/html5rds.py:149
 msgid "Enable Microphone"
 msgstr "Habilitar micrófono"
 
-#: transports/HTML5RDP/html5rdp.py:163
+#: transports/HTML5RDP/html5rdp.py:166
 #: transports/HTML5RDS_enterprise/html5rds.py:152
 msgid ""
 "If checked, the microphone will be redirected to remote session (if client "
@@ -6216,12 +6253,12 @@ msgstr ""
 "Si está marcado, el micrófono se redirigirá a la sesión remota (si el "
 "navegador del cliente lo admite)"
 
-#: transports/HTML5RDP/html5rdp.py:168
+#: transports/HTML5RDP/html5rdp.py:171
 #: transports/HTML5RDS_enterprise/html5rds.py:157
 msgid "Enable Printing"
 msgstr "Habilitar la impresión"
 
-#: transports/HTML5RDP/html5rdp.py:171
+#: transports/HTML5RDP/html5rdp.py:174
 #: transports/HTML5RDS_enterprise/html5rds.py:160
 msgid ""
 "If checked, the printing will be redirected to remote session (if client "
@@ -6230,174 +6267,174 @@ msgstr ""
 "Si está marcado, la impresión se redirigirá a la sesión remota (si el "
 "navegador del cliente lo admite)"
 
-#: transports/HTML5RDP/html5rdp.py:176
+#: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:165
 msgid "File Sharing"
 msgstr "Compartición de archivos"
 
-#: transports/HTML5RDP/html5rdp.py:178
+#: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:167
 msgid "File upload/download redirection policy"
 msgstr "Política de redireccionamiento de carga/descarga de archivos"
 
-#: transports/HTML5RDP/html5rdp.py:181
+#: transports/HTML5RDP/html5rdp.py:184
 #: transports/HTML5RDS_enterprise/html5rds.py:170
 msgid "Disable file sharing"
 msgstr "Deshabilitar el uso compartido de archivos"
 
-#: transports/HTML5RDP/html5rdp.py:182
+#: transports/HTML5RDP/html5rdp.py:185
 #: transports/HTML5RDS_enterprise/html5rds.py:171
 msgid "Allow download only"
 msgstr "Permitir solo descarga"
 
-#: transports/HTML5RDP/html5rdp.py:183
+#: transports/HTML5RDP/html5rdp.py:186
 #: transports/HTML5RDS_enterprise/html5rds.py:172
 msgid "Allow upload only"
 msgstr "Permitir solo la carga"
 
-#: transports/HTML5RDP/html5rdp.py:184
+#: transports/HTML5RDP/html5rdp.py:187
 #: transports/HTML5RDS_enterprise/html5rds.py:173
 msgid "Enable file sharing"
 msgstr "Habilitar el uso compartido de archivos"
 
-#: transports/HTML5RDP/html5rdp.py:189
+#: transports/HTML5RDP/html5rdp.py:192
 #: transports/HTML5RDS_enterprise/html5rds.py:178
 msgid "Clipboard"
 msgstr "Portapapeles"
 
-#: transports/HTML5RDP/html5rdp.py:191
+#: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:180
 msgid "Clipboard redirection policy"
 msgstr "Política de redireccionamiento del portapapeles"
 
-#: transports/HTML5RDP/html5rdp.py:194
+#: transports/HTML5RDP/html5rdp.py:197
 #: transports/HTML5RDS_enterprise/html5rds.py:183
 msgid "Disable clipboard"
 msgstr "Deshabilitar el portapapeles"
 
-#: transports/HTML5RDP/html5rdp.py:195
+#: transports/HTML5RDP/html5rdp.py:198
 #: transports/HTML5RDS_enterprise/html5rds.py:184
 msgid "Disable copy from remote"
 msgstr "Deshabilitar la copia desde el control remoto"
 
-#: transports/HTML5RDP/html5rdp.py:196
+#: transports/HTML5RDP/html5rdp.py:199
 #: transports/HTML5RDS_enterprise/html5rds.py:185
 msgid "Disable paste to remote"
 msgstr "Deshabilitar pegar en remoto"
 
-#: transports/HTML5RDP/html5rdp.py:197
+#: transports/HTML5RDP/html5rdp.py:200
 #: transports/HTML5RDS_enterprise/html5rds.py:186
 #: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
 msgid "Enable clipboard"
 msgstr "Activar el portapapeles"
 
-#: transports/HTML5RDP/html5rdp.py:204
+#: transports/HTML5RDP/html5rdp.py:207
 #: transports/HTML5RDS_enterprise/html5rds.py:192
 msgid "Layout"
 msgstr "Distribución"
 
-#: transports/HTML5RDP/html5rdp.py:205
+#: transports/HTML5RDP/html5rdp.py:208
 #: transports/HTML5RDS_enterprise/html5rds.py:193
 msgid "Keyboards Layout of server"
 msgstr "Distribución de los teclados del servidor"
 
-#: transports/HTML5RDP/html5rdp.py:209
+#: transports/HTML5RDP/html5rdp.py:212
 #: transports/HTML5RDS_enterprise/html5rds.py:197
 msgid "English (US) keyboard"
 msgstr "Teclado en inglés (Estados Unidos)"
 
-#: transports/HTML5RDP/html5rdp.py:210
+#: transports/HTML5RDP/html5rdp.py:213
 #: transports/HTML5RDS_enterprise/html5rds.py:198
 msgid "English (GB) keyboard"
 msgstr "Teclado inglés (GB)"
 
-#: transports/HTML5RDP/html5rdp.py:211
+#: transports/HTML5RDP/html5rdp.py:214
 #: transports/HTML5RDS_enterprise/html5rds.py:199
 msgid "Spanish keyboard"
 msgstr "Teclado español"
 
-#: transports/HTML5RDP/html5rdp.py:212
+#: transports/HTML5RDP/html5rdp.py:215
 #: transports/HTML5RDS_enterprise/html5rds.py:200
 msgid "Latin American keyboard"
 msgstr "Teclado latinoamericano"
 
-#: transports/HTML5RDP/html5rdp.py:213
+#: transports/HTML5RDP/html5rdp.py:216
 #: transports/HTML5RDS_enterprise/html5rds.py:201
 msgid "Danish keyboard"
 msgstr "Teclado Danés"
 
-#: transports/HTML5RDP/html5rdp.py:214
+#: transports/HTML5RDP/html5rdp.py:217
 #: transports/HTML5RDS_enterprise/html5rds.py:202
 msgid "German keyboard (qwertz)"
 msgstr "Teclado en alemán (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:215
+#: transports/HTML5RDP/html5rdp.py:218
 #: transports/HTML5RDS_enterprise/html5rds.py:203
 msgid "French keyboard (azerty)"
 msgstr "Teclado en francés (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:216
+#: transports/HTML5RDP/html5rdp.py:219
 #: transports/HTML5RDS_enterprise/html5rds.py:204
 msgid "Belgian French keyboard (azerty)"
 msgstr "Teclado Francés Belga (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:217
+#: transports/HTML5RDP/html5rdp.py:220
 #: transports/HTML5RDS_enterprise/html5rds.py:205
 msgid "Swiss German keyboard (qwertz)"
 msgstr "Teclado alemán suizo (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:218
+#: transports/HTML5RDP/html5rdp.py:221
 #: transports/HTML5RDS_enterprise/html5rds.py:206
 msgid "Swiss French keyboard (qwertz)"
 msgstr "Teclado francés suizo (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:219
+#: transports/HTML5RDP/html5rdp.py:222
 #: transports/HTML5RDS_enterprise/html5rds.py:207
 msgid "Hungarian keyboard"
 msgstr "Teclado Húngaro"
 
-#: transports/HTML5RDP/html5rdp.py:220
+#: transports/HTML5RDP/html5rdp.py:223
 #: transports/HTML5RDS_enterprise/html5rds.py:208
 msgid "Italian keyboard"
 msgstr "Teclado en italiano"
 
-#: transports/HTML5RDP/html5rdp.py:221
+#: transports/HTML5RDP/html5rdp.py:224
 #: transports/HTML5RDS_enterprise/html5rds.py:209
 msgid "Japanese keyboard"
 msgstr "Teclado japonés"
 
-#: transports/HTML5RDP/html5rdp.py:222
+#: transports/HTML5RDP/html5rdp.py:225
 #: transports/HTML5RDS_enterprise/html5rds.py:210
 msgid "Norwegian keyboard"
 msgstr "Teclado Noruego"
 
-#: transports/HTML5RDP/html5rdp.py:223
+#: transports/HTML5RDP/html5rdp.py:226
 #: transports/HTML5RDS_enterprise/html5rds.py:211
 msgid "Portuguese Brazilian keyboard"
 msgstr "Teclado Brasileño Portugués"
 
-#: transports/HTML5RDP/html5rdp.py:224
+#: transports/HTML5RDP/html5rdp.py:227
 #: transports/HTML5RDS_enterprise/html5rds.py:212
 msgid "Swedish keyboard"
 msgstr "Teclado en sueco"
 
-#: transports/HTML5RDP/html5rdp.py:225
+#: transports/HTML5RDP/html5rdp.py:228
 #: transports/HTML5RDS_enterprise/html5rds.py:213
 msgid "Turkish keyboard"
 msgstr "Teclado Turco"
 
-#: transports/HTML5RDP/html5rdp.py:226
+#: transports/HTML5RDP/html5rdp.py:229
 #: transports/HTML5RDS_enterprise/html5rds.py:214
 msgid "Failsafe"
 msgstr "A prueba de fallos"
 
-#: transports/HTML5RDP/html5rdp.py:234
+#: transports/HTML5RDP/html5rdp.py:237
 #: transports/HTML5RDS_enterprise/html5rds.py:221
 #: transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validez del ticket"
 
-#: transports/HTML5RDP/html5rdp.py:238
+#: transports/HTML5RDP/html5rdp.py:241
 #: transports/HTML5RDS_enterprise/html5rds.py:225
 #: transports/HTML5VNC/html5vnc.py:151
 msgid ""
@@ -6408,20 +6445,20 @@ msgstr ""
 "los datos de conexión desde el broker UDS. Se recomienda el valor "
 "predeterminado de 60."
 
-#: transports/HTML5RDP/html5rdp.py:247
+#: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:234
 #: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forzar nueva ventana HTML"
 
-#: transports/HTML5RDP/html5rdp.py:248
+#: transports/HTML5RDP/html5rdp.py:251
 #: transports/HTML5RDS_enterprise/html5rds.py:235
 #: transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleccione el comportamiento de Windows para nuevas conexiones en HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:253
+#: transports/HTML5RDP/html5rdp.py:256
 #: transports/HTML5RDS_enterprise/html5rds.py:240
 #: transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
@@ -6429,34 +6466,34 @@ msgstr ""
 "Abre todas las conexiones en la misma ventana, pero mantiene la ventana de "
 "UDS."
 
-#: transports/HTML5RDP/html5rdp.py:256
+#: transports/HTML5RDP/html5rdp.py:259
 #: transports/HTML5RDS_enterprise/html5rds.py:243
 #: transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Fuerza que todas las conexiones se abran en una nueva ventana."
 
-#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDP/html5rdp.py:263
 #: transports/HTML5RDS_enterprise/html5rds.py:247
 #: transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Anule la ventana UDS y reemplácela con la conexión."
 
-#: transports/HTML5RDP/html5rdp.py:269
+#: transports/HTML5RDP/html5rdp.py:272
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr "Modo de seguridad de conexión para la conexión RDP de Guacamole"
 
-#: transports/HTML5RDP/html5rdp.py:273
+#: transports/HTML5RDP/html5rdp.py:276
 #: transports/HTML5RDS_enterprise/html5rds.py:260
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr "Any (permitir que el servidor a elegir el tipo de autenticación)"
 
-#: transports/HTML5RDP/html5rdp.py:277
+#: transports/HTML5RDP/html5rdp.py:280
 #: transports/HTML5RDS_enterprise/html5rds.py:264
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr "RDP (cifrado RDP estándar. Soportado por todos los servidores)"
 
-#: transports/HTML5RDP/html5rdp.py:282
+#: transports/HTML5RDP/html5rdp.py:285
 #: transports/HTML5RDS_enterprise/html5rds.py:269
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
@@ -6465,7 +6502,7 @@ msgstr ""
 "NLA (autenticación de capa de red. Requiere nombre de usuario VÁLIDO y "
 "contraseña, o la conexión fallará)"
 
-#: transports/HTML5RDP/html5rdp.py:288
+#: transports/HTML5RDP/html5rdp.py:291
 msgid ""
 "NLA extended (Network Layer authentication. Requires VALID "
 "username&password, or connection will fail)"
@@ -6473,25 +6510,25 @@ msgstr ""
 "NLA extendido (autenticación de capa de red. Requiere nombre de usuario y "
 "contraseña VÁLIDOS o la conexión fallará)"
 
-#: transports/HTML5RDP/html5rdp.py:291
+#: transports/HTML5RDP/html5rdp.py:294
 #: transports/HTML5RDS_enterprise/html5rds.py:272
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (encriptación de capa de seguridad de transporte)"
 
-#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:192
+#: transports/HTML5RDP/html5rdp.py:303 transports/RDP/rdp_base.py:192
 msgid "RDP Port"
 msgstr "Puerto RDP"
 
-#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:193
+#: transports/HTML5RDP/html5rdp.py:304 transports/RDP/rdp_base.py:193
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "Utilice este puerto como puerto RDP. El valor predeterminado es 3389."
 
-#: transports/HTML5RDP/html5rdp.py:308
+#: transports/HTML5RDP/html5rdp.py:311
 #: transports/HTML5RDS_enterprise/html5rds.py:279
 msgid "Glyptodon Enterprise context path"
 msgstr "Ruta de contexto de Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:311
+#: transports/HTML5RDP/html5rdp.py:314
 #: transports/HTML5RDS_enterprise/html5rds.py:282
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
@@ -6500,13 +6537,13 @@ msgstr ""
 "Ruta personalizada para el túnel de Glyptodon Enterprise. (Solo válido para "
 "Glyptodon Enterprise Tunnel)"
 
-#: transports/HTML5RDP/html5rdp.py:326
+#: transports/HTML5RDP/html5rdp.py:329
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
 
-#: transports/HTML5RDP/html5rdp.py:331
+#: transports/HTML5RDP/html5rdp.py:334
 #: transports/HTML5RDS_enterprise/html5rds.py:301
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
