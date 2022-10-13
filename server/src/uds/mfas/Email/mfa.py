@@ -189,7 +189,7 @@ class EmailMFA(mfas.MFA):
         # Populate the networks list
         cls.networks.setValues([
             gui.choiceItem(v.uuid, v.name)
-            for v in models.Network.objects.all().order_by('name')
+            for v in models.Network.objects.all().order_by('name') if v.uuid
         ])
 
 

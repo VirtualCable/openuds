@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-05 18:05+0200\n"
+"POT-Creation-Date: 2022-10-13 14:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -118,9 +118,11 @@ msgid "Actor tokens"
 msgstr "演员代币"
 
 #: REST/methods/actor_token.py:54 REST/methods/tunnel_token.py:52
-#: reports/auto/fields.py:58 reports/stats/pools_performance.py:201
+#: reports/auto/fields.py:58 reports/lists/audit.py:120
+#: reports/stats/pools_performance.py:201
 #: reports/stats/pools_performance.py:220 reports/stats/pools_usage_day.py:64
-#: reports/stats/usage_by_pool.py:170 reports/stats/user_access.py:176
+#: reports/stats/usage_by_pool.py:171 reports/stats/user_access.py:176
+#: templates/uds/reports/lists/audit.html:14
 #: templates/uds/reports/stats/authenticator_stats.html:14
 msgid "Date"
 msgstr "日期"
@@ -130,7 +132,7 @@ msgid "Issued by"
 msgstr "由...发出"
 
 #: REST/methods/actor_token.py:56 REST/methods/tunnel_token.py:54
-#: reports/stats/usage_by_pool.py:174
+#: reports/stats/usage_by_pool.py:175
 #: templates/uds/reports/stats/usage-by-pool.html:18
 msgid "Origin"
 msgstr "起源"
@@ -389,7 +391,7 @@ msgstr "创立日期"
 #: reports/stats/pool_users_summary.py:60
 #: reports/stats/pools_performance.py:267 reports/stats/pools_usage_day.py:169
 #: reports/stats/pools_usage_summary.py:156 reports/stats/usage_by_pool.py:59
-#: reports/stats/usage_by_pool.py:173 services/Proxmox/service.py:111
+#: reports/stats/usage_by_pool.py:174 services/Proxmox/service.py:111
 #: templates/uds/reports/stats/pools-performance.html:33
 #: templates/uds/reports/stats/pools-usage-day.html:27
 #: templates/uds/reports/stats/pools-usage-summary.html:14
@@ -400,6 +402,7 @@ msgstr "池"
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:127
 #: REST/methods/tunnel_token.py:55 REST/methods/user_services.py:140
 #: REST/methods/user_services.py:274 auths/IP/authenticator.py:72
+#: reports/lists/audit.py:120
 msgid "IP"
 msgstr "IP"
 
@@ -999,8 +1002,8 @@ msgstr "工作人员"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:106 reports/stats/pool_users_summary.py:177
-#: reports/stats/usage_by_pool.py:171
+#: auths/SAML_enterprise/saml.py:106 reports/lists/audit.py:120
+#: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
 msgid "User"
@@ -1028,7 +1031,7 @@ msgstr "目前的用户"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:103 transports/HTML5VNC/html5vnc.py:87
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
@@ -1115,23 +1118,23 @@ msgstr "选择此元素的优先级（较低的数字表示较高的优先级）
 msgid "Label for this element"
 msgstr "此元素的标签"
 
-#: REST/model.py:311
+#: REST/model.py:312
 msgid "Invalid Request"
 msgstr "非法请求"
 
-#: REST/model.py:325
+#: REST/model.py:326
 msgid "Method not found in {}: {}"
 msgstr "在{}中找不到的方法：{}"
 
-#: REST/model.py:334
+#: REST/model.py:335
 msgid "Item not found"
 msgstr "物品未找到"
 
-#: REST/model.py:339 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:340 web/util/authentication.py:143 web/util/errors.py:81
 msgid "Access denied"
 msgstr "拒绝访问"
 
-#: REST/model.py:342
+#: REST/model.py:343
 msgid "Operation not supported"
 msgstr "操作不受支持"
 
@@ -1180,7 +1183,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:109 transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:112 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -2336,7 +2339,7 @@ msgstr ""
 msgid "SMTP Server"
 msgstr "SMTP 服务器"
 
-#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:268
+#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:271
 #: transports/HTML5RDS_enterprise/html5rds.py:255
 msgid "Security"
 msgstr "安全"
@@ -2633,19 +2636,19 @@ msgstr "HTTP 响应"
 msgid "SMS response error action"
 msgstr "短信响应错误动作"
 
-#: mfas/SMS/mfa.py:291
+#: mfas/SMS/mfa.py:292
 msgid "SMS sending failed"
 msgstr "短信发送失败"
 
-#: mfas/SMS/mfa.py:300
+#: mfas/SMS/mfa.py:301
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:354 web/views/modern.py:294
+#: mfas/SMS/mfa.py:355 web/views/modern.py:294
 msgid "MFA Code"
 msgstr "MFA 代码"
 
-#: mfas/SMS/mfa.py:357
+#: mfas/SMS/mfa.py:358
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "检查你的手机。您将收到一条带有验证码的短信"
 
@@ -3027,7 +3030,7 @@ msgstr "Os Manager用于控制带域的Windows机器。"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
-#: transports/HTML5RDP/html5rdp.py:123
+#: transports/HTML5RDP/html5rdp.py:126
 #: transports/HTML5RDS_enterprise/html5rds.py:112
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
 #: transports/RDS_enterprise/rds_base.py:60
@@ -3163,9 +3166,9 @@ msgstr "用户帐户的当前（模板）密码"
 msgid "Must provide a password for the account!!!"
 msgstr "必须提供帐户密码！"
 
-#: reports/auto/fields.py:48 reports/stats/pool_users_summary.py:65
-#: reports/stats/pools_performance.py:72 reports/stats/usage_by_pool.py:64
-#: reports/stats/user_access.py:66
+#: reports/auto/fields.py:48 reports/lists/audit.py:63
+#: reports/stats/pool_users_summary.py:65 reports/stats/pools_performance.py:72
+#: reports/stats/usage_by_pool.py:64 reports/stats/user_access.py:66
 msgid "Starting date"
 msgstr "开始日期"
 
@@ -3226,6 +3229,51 @@ msgstr "服务提供者"
 msgid "Service provider for report"
 msgstr "报告服务商"
 
+#: reports/lists/audit.py:54
+msgid "Audit Log list"
+msgstr "审核日志列表"
+
+#: reports/lists/audit.py:55
+msgid "List administration audit logs"
+msgstr "列出管理审核日志"
+
+#: reports/lists/audit.py:64 reports/stats/pool_users_summary.py:66
+#: reports/stats/pools_performance.py:73 reports/stats/usage_by_pool.py:65
+#: reports/stats/user_access.py:67
+msgid "starting date for report"
+msgstr "报告的开始日期"
+
+#: reports/lists/audit.py:71 reports/stats/pool_users_summary.py:73
+#: reports/stats/pools_performance.py:80 reports/stats/usage_by_pool.py:72
+#: reports/stats/user_access.py:74
+msgid "Finish date"
+msgstr "完成日期"
+
+#: reports/lists/audit.py:72 reports/stats/pool_users_summary.py:74
+#: reports/stats/pools_performance.py:81 reports/stats/usage_by_pool.py:73
+#: reports/stats/user_access.py:75
+msgid "finish date for report"
+msgstr "完成报告日期"
+
+#: reports/lists/audit.py:120 templates/uds/reports/lists/audit.html:15
+#| msgid "Log level"
+msgid "Level"
+msgstr "等级"
+
+#: reports/lists/audit.py:120
+msgid "Method"
+msgstr "方法"
+
+#: reports/lists/audit.py:120
+#| msgid "HTTP Response"
+msgid "Response code"
+msgstr "响应代码"
+
+#: reports/lists/audit.py:120
+#| msgid "Invalid Request"
+msgid "Request"
+msgstr "要求"
+
 #: reports/lists/base.py:40
 msgid "Lists"
 msgstr "清单"
@@ -3268,14 +3316,14 @@ msgid ""
 "period"
 msgstr "生成所需时间段内的身份验证器统计信息的报告"
 
-#: reports/stats/auth_stats.py:123 reports/stats/usage_by_pool.py:146
+#: reports/stats/auth_stats.py:123 reports/stats/usage_by_pool.py:147
 #: templates/uds/reports/stats/authenticator_stats.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:4
 #: templates/uds/reports/stats/usage-by-pool.html:6
 msgid "Users usage list"
 msgstr "用户使用情况列表"
 
-#: reports/stats/auth_stats.py:124 reports/stats/usage_by_pool.py:147
+#: reports/stats/auth_stats.py:124 reports/stats/usage_by_pool.py:148
 msgid "UDS Report of users usage"
 msgstr "UDS用户使用情况报告"
 
@@ -3294,21 +3342,6 @@ msgstr "生成包含池用户使用情况摘要的报告"
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:59
 msgid "Pool for report"
 msgstr "报告池"
-
-#: reports/stats/pool_users_summary.py:66 reports/stats/pools_performance.py:73
-#: reports/stats/usage_by_pool.py:65 reports/stats/user_access.py:67
-msgid "starting date for report"
-msgstr "报告的开始日期"
-
-#: reports/stats/pool_users_summary.py:73 reports/stats/pools_performance.py:80
-#: reports/stats/usage_by_pool.py:72 reports/stats/user_access.py:74
-msgid "Finish date"
-msgstr "完成日期"
-
-#: reports/stats/pool_users_summary.py:74 reports/stats/pools_performance.py:81
-#: reports/stats/usage_by_pool.py:73 reports/stats/user_access.py:75
-msgid "finish date for report"
-msgstr "完成报告日期"
 
 #: reports/stats/pool_users_summary.py:153
 msgid "Users usage list for {}"
@@ -3456,7 +3489,7 @@ msgstr "按用户报告使用池"
 msgid "ALL POOLS"
 msgstr "所有池"
 
-#: reports/stats/usage_by_pool.py:172
+#: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:16
 msgid "Seconds"
 msgstr "秒"
@@ -4856,7 +4889,6 @@ msgid "Starting machine id on proxmox"
 msgstr "proxmox 上的启动机器 ID"
 
 #: services/Proxmox/provider.py:152
-#| msgid "Range of valid macs for created machines"
 msgid ""
 "Range of valid macs for created machines. Any value accepted by Proxmox is "
 "valid here."
@@ -5686,6 +5718,11 @@ msgstr "加泰罗尼亚"
 msgid "Chinese"
 msgstr "中文"
 
+#: templates/uds/reports/lists/audit.html:16
+#| msgid "Usage"
+msgid "Message"
+msgstr "信息"
+
 #: templates/uds/reports/lists/users.html:15
 msgid "Real name"
 msgstr "真正的名字"
@@ -5783,21 +5820,21 @@ msgstr "用户按小时访问"
 msgid "Users Access by day of week/hour"
 msgstr "用户按星期/小时访问"
 
-#: transports/HTML5RDP/html5rdp.py:65
+#: transports/HTML5RDP/html5rdp.py:68
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
-#: transports/HTML5RDP/html5rdp.py:67
+#: transports/HTML5RDP/html5rdp.py:70
 msgid "RDP protocol using HTML5 client"
 msgstr "使用HTML5客户端的RDP协议"
 
-#: transports/HTML5RDP/html5rdp.py:76
+#: transports/HTML5RDP/html5rdp.py:79
 #: transports/HTML5RDS_enterprise/html5rds.py:79
 #: transports/HTML5VNC/html5vnc.py:75
 msgid "Tunnel Server"
 msgstr "隧道服务器"
 
-#: transports/HTML5RDP/html5rdp.py:79
+#: transports/HTML5RDP/html5rdp.py:82
 #: transports/HTML5RDS_enterprise/html5rds.py:82
 #: transports/HTML5VNC/html5vnc.py:78
 msgid ""
@@ -5805,12 +5842,12 @@ msgid ""
 "from users"
 msgstr "隧道服务器的主机（如果需要，使用http / https＆port）可以从用户访问"
 
-#: transports/HTML5RDP/html5rdp.py:88
+#: transports/HTML5RDP/html5rdp.py:91
 #: transports/HTML5RDS_enterprise/html5rds.py:90
 msgid "Use Glyptodon Enterprise tunnel"
 msgstr "使用 Glyptodon Enterprise 隧道"
 
-#: transports/HTML5RDP/html5rdp.py:91
+#: transports/HTML5RDP/html5rdp.py:94
 #: transports/HTML5RDS_enterprise/html5rds.py:93
 msgid ""
 "If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling "
@@ -5819,7 +5856,7 @@ msgstr ""
 "如果选中，UDS 将使用 Glyptodon Enterprise Tunnel 进行 HTML 隧道而不是 UDS "
 "Tunnel"
 
-#: transports/HTML5RDP/html5rdp.py:97
+#: transports/HTML5RDP/html5rdp.py:100
 #: transports/HTML5RDS_enterprise/html5rds.py:98
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
@@ -5827,7 +5864,7 @@ msgstr ""
 msgid "Empty creds"
 msgstr "空的信誉"
 
-#: transports/HTML5RDP/html5rdp.py:99
+#: transports/HTML5RDP/html5rdp.py:102
 #: transports/HTML5RDS_enterprise/html5rds.py:100
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
@@ -5836,7 +5873,7 @@ msgstr "空的信誉"
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "如果选中，则用于连接的凭据将为emtpy"
 
-#: transports/HTML5RDP/html5rdp.py:105
+#: transports/HTML5RDP/html5rdp.py:108
 #: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
@@ -5844,7 +5881,7 @@ msgstr "如果选中，则用于连接的凭据将为emtpy"
 msgid "If not empty, this username will be always used as credential"
 msgstr "如果不为空，则此用户名将始终用作凭据"
 
-#: transports/HTML5RDP/html5rdp.py:111
+#: transports/HTML5RDP/html5rdp.py:114
 #: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
@@ -5852,13 +5889,13 @@ msgstr "如果不为空，则此用户名将始终用作凭据"
 msgid "If not empty, this password will be always used as credential"
 msgstr "如果不为空，则此密码将始终用作凭证"
 
-#: transports/HTML5RDP/html5rdp.py:115
+#: transports/HTML5RDP/html5rdp.py:118
 #: transports/HTML5RDS_enterprise/html5rds.py:104 transports/RDP/rdp_base.py:87
 #: transports/RDS_enterprise/rds_base.py:52
 msgid "Without Domain"
 msgstr "没有域名"
 
-#: transports/HTML5RDP/html5rdp.py:118
+#: transports/HTML5RDP/html5rdp.py:121
 #: transports/HTML5RDS_enterprise/html5rds.py:107
 #: transports/RDS_enterprise/rds_base.py:55
 msgid ""
@@ -5866,7 +5903,7 @@ msgid ""
 "example is needed)"
 msgstr "如果选中，则域部分将始终清空（例如，需要连接到xrdp）"
 
-#: transports/HTML5RDP/html5rdp.py:126
+#: transports/HTML5RDP/html5rdp.py:129
 #: transports/HTML5RDS_enterprise/html5rds.py:115 transports/RDP/rdp_base.py:98
 #: transports/RDS_enterprise/rds_base.py:63
 msgid ""
@@ -5874,12 +5911,12 @@ msgid ""
 "\\user)"
 msgstr "如果不为空，则此域将始终用作凭据（用作DOMAIN \\ user）"
 
-#: transports/HTML5RDP/html5rdp.py:131
+#: transports/HTML5RDP/html5rdp.py:134
 #: transports/HTML5RDS_enterprise/html5rds.py:120
 msgid "Show wallpaper"
 msgstr "显示壁纸"
 
-#: transports/HTML5RDP/html5rdp.py:134
+#: transports/HTML5RDP/html5rdp.py:137
 #: transports/HTML5RDS_enterprise/html5rds.py:123
 #: transports/RDP/rdp_base.py:241
 msgid ""
@@ -5887,234 +5924,234 @@ msgid ""
 "experience, more bandwidth)"
 msgstr "如果选中，壁纸和主题将显示在机器上（更好的用户体验，更多带宽）"
 
-#: transports/HTML5RDP/html5rdp.py:139
+#: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:128
 #: transports/RDP/rdp_base.py:254
 msgid "Allow Desk.Comp."
 msgstr "允许Desk.Comp。"
 
-#: transports/HTML5RDP/html5rdp.py:141
+#: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:130
 #: transports/RDP/rdp_base.py:256
 msgid "If checked, desktop composition will be allowed"
 msgstr "如果选中，则允许桌面合成"
 
-#: transports/HTML5RDP/html5rdp.py:145
+#: transports/HTML5RDP/html5rdp.py:148
 #: transports/HTML5RDS_enterprise/html5rds.py:134
 #: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "字体平滑"
 
-#: transports/HTML5RDP/html5rdp.py:147
+#: transports/HTML5RDP/html5rdp.py:150
 #: transports/HTML5RDS_enterprise/html5rds.py:136
 #: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "如果选中，将允许字体平滑（仅限Windows客户端）"
 
-#: transports/HTML5RDP/html5rdp.py:151
+#: transports/HTML5RDP/html5rdp.py:154
 #: transports/HTML5RDS_enterprise/html5rds.py:140
 msgid "Enable Audio"
 msgstr "启用音频"
 
-#: transports/HTML5RDP/html5rdp.py:154
+#: transports/HTML5RDP/html5rdp.py:157
 #: transports/HTML5RDS_enterprise/html5rds.py:143
 msgid ""
 "If checked, the audio will be redirected to remote session (if client "
 "browser supports it)"
 msgstr "如果选中，音频将被重定向到远程会话（如果客户端浏览器支持）"
 
-#: transports/HTML5RDP/html5rdp.py:160
+#: transports/HTML5RDP/html5rdp.py:163
 #: transports/HTML5RDS_enterprise/html5rds.py:149
 msgid "Enable Microphone"
 msgstr "启用麦克风"
 
-#: transports/HTML5RDP/html5rdp.py:163
+#: transports/HTML5RDP/html5rdp.py:166
 #: transports/HTML5RDS_enterprise/html5rds.py:152
 msgid ""
 "If checked, the microphone will be redirected to remote session (if client "
 "browser supports it)"
 msgstr "如果选中，麦克风将被重定向到远程会话（如果客户端浏览器支持）"
 
-#: transports/HTML5RDP/html5rdp.py:168
+#: transports/HTML5RDP/html5rdp.py:171
 #: transports/HTML5RDS_enterprise/html5rds.py:157
 msgid "Enable Printing"
 msgstr "启用打印"
 
-#: transports/HTML5RDP/html5rdp.py:171
+#: transports/HTML5RDP/html5rdp.py:174
 #: transports/HTML5RDS_enterprise/html5rds.py:160
 msgid ""
 "If checked, the printing will be redirected to remote session (if client "
 "browser supports it)"
 msgstr "如果选中，打印将被重定向到远程会话（如果客户端浏览器支持）"
 
-#: transports/HTML5RDP/html5rdp.py:176
+#: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:165
 msgid "File Sharing"
 msgstr "文件共享"
 
-#: transports/HTML5RDP/html5rdp.py:178
+#: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:167
 msgid "File upload/download redirection policy"
 msgstr "文件上传/下载重定向策略"
 
-#: transports/HTML5RDP/html5rdp.py:181
+#: transports/HTML5RDP/html5rdp.py:184
 #: transports/HTML5RDS_enterprise/html5rds.py:170
 msgid "Disable file sharing"
 msgstr "禁用文件共享"
 
-#: transports/HTML5RDP/html5rdp.py:182
+#: transports/HTML5RDP/html5rdp.py:185
 #: transports/HTML5RDS_enterprise/html5rds.py:171
 msgid "Allow download only"
 msgstr "只允许下载"
 
-#: transports/HTML5RDP/html5rdp.py:183
+#: transports/HTML5RDP/html5rdp.py:186
 #: transports/HTML5RDS_enterprise/html5rds.py:172
 msgid "Allow upload only"
 msgstr "只允许上传"
 
-#: transports/HTML5RDP/html5rdp.py:184
+#: transports/HTML5RDP/html5rdp.py:187
 #: transports/HTML5RDS_enterprise/html5rds.py:173
 msgid "Enable file sharing"
 msgstr "启用文件共享"
 
-#: transports/HTML5RDP/html5rdp.py:189
+#: transports/HTML5RDP/html5rdp.py:192
 #: transports/HTML5RDS_enterprise/html5rds.py:178
 msgid "Clipboard"
 msgstr "剪贴板"
 
-#: transports/HTML5RDP/html5rdp.py:191
+#: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:180
 msgid "Clipboard redirection policy"
 msgstr "剪贴板重定向策略"
 
-#: transports/HTML5RDP/html5rdp.py:194
+#: transports/HTML5RDP/html5rdp.py:197
 #: transports/HTML5RDS_enterprise/html5rds.py:183
 msgid "Disable clipboard"
 msgstr "禁用剪贴板"
 
-#: transports/HTML5RDP/html5rdp.py:195
+#: transports/HTML5RDP/html5rdp.py:198
 #: transports/HTML5RDS_enterprise/html5rds.py:184
 msgid "Disable copy from remote"
 msgstr "禁用远程复制"
 
-#: transports/HTML5RDP/html5rdp.py:196
+#: transports/HTML5RDP/html5rdp.py:199
 #: transports/HTML5RDS_enterprise/html5rds.py:185
 msgid "Disable paste to remote"
 msgstr "禁用粘贴到远程"
 
-#: transports/HTML5RDP/html5rdp.py:197
+#: transports/HTML5RDP/html5rdp.py:200
 #: transports/HTML5RDS_enterprise/html5rds.py:186
 #: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
 msgid "Enable clipboard"
 msgstr "启用剪贴板"
 
-#: transports/HTML5RDP/html5rdp.py:204
+#: transports/HTML5RDP/html5rdp.py:207
 #: transports/HTML5RDS_enterprise/html5rds.py:192
 msgid "Layout"
 msgstr "布局"
 
-#: transports/HTML5RDP/html5rdp.py:205
+#: transports/HTML5RDP/html5rdp.py:208
 #: transports/HTML5RDS_enterprise/html5rds.py:193
 msgid "Keyboards Layout of server"
 msgstr "键盘服务器的布局"
 
-#: transports/HTML5RDP/html5rdp.py:209
+#: transports/HTML5RDP/html5rdp.py:212
 #: transports/HTML5RDS_enterprise/html5rds.py:197
 msgid "English (US) keyboard"
 msgstr "英语（美国）键盘"
 
-#: transports/HTML5RDP/html5rdp.py:210
+#: transports/HTML5RDP/html5rdp.py:213
 #: transports/HTML5RDS_enterprise/html5rds.py:198
 msgid "English (GB) keyboard"
 msgstr "英文（GB）键盘"
 
-#: transports/HTML5RDP/html5rdp.py:211
+#: transports/HTML5RDP/html5rdp.py:214
 #: transports/HTML5RDS_enterprise/html5rds.py:199
 msgid "Spanish keyboard"
 msgstr "西班牙语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:212
+#: transports/HTML5RDP/html5rdp.py:215
 #: transports/HTML5RDS_enterprise/html5rds.py:200
 msgid "Latin American keyboard"
 msgstr "拉丁美洲键盘"
 
-#: transports/HTML5RDP/html5rdp.py:213
+#: transports/HTML5RDP/html5rdp.py:216
 #: transports/HTML5RDS_enterprise/html5rds.py:201
 msgid "Danish keyboard"
 msgstr "丹麦语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:214
+#: transports/HTML5RDP/html5rdp.py:217
 #: transports/HTML5RDS_enterprise/html5rds.py:202
 msgid "German keyboard (qwertz)"
 msgstr "德语键盘（qwertz）"
 
-#: transports/HTML5RDP/html5rdp.py:215
+#: transports/HTML5RDP/html5rdp.py:218
 #: transports/HTML5RDS_enterprise/html5rds.py:203
 msgid "French keyboard (azerty)"
 msgstr "法式键盘（azerty）"
 
-#: transports/HTML5RDP/html5rdp.py:216
+#: transports/HTML5RDP/html5rdp.py:219
 #: transports/HTML5RDS_enterprise/html5rds.py:204
 msgid "Belgian French keyboard (azerty)"
 msgstr "比利时法语键盘 (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:217
+#: transports/HTML5RDP/html5rdp.py:220
 #: transports/HTML5RDS_enterprise/html5rds.py:205
 msgid "Swiss German keyboard (qwertz)"
 msgstr "瑞士德语键盘（qwertz）"
 
-#: transports/HTML5RDP/html5rdp.py:218
+#: transports/HTML5RDP/html5rdp.py:221
 #: transports/HTML5RDS_enterprise/html5rds.py:206
 msgid "Swiss French keyboard (qwertz)"
 msgstr "瑞士法语键盘（qwertz）"
 
-#: transports/HTML5RDP/html5rdp.py:219
+#: transports/HTML5RDP/html5rdp.py:222
 #: transports/HTML5RDS_enterprise/html5rds.py:207
 msgid "Hungarian keyboard"
 msgstr "匈牙利语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:220
+#: transports/HTML5RDP/html5rdp.py:223
 #: transports/HTML5RDS_enterprise/html5rds.py:208
 msgid "Italian keyboard"
 msgstr "意大利键盘"
 
-#: transports/HTML5RDP/html5rdp.py:221
+#: transports/HTML5RDP/html5rdp.py:224
 #: transports/HTML5RDS_enterprise/html5rds.py:209
 msgid "Japanese keyboard"
 msgstr "日文键盘"
 
-#: transports/HTML5RDP/html5rdp.py:222
+#: transports/HTML5RDP/html5rdp.py:225
 #: transports/HTML5RDS_enterprise/html5rds.py:210
 msgid "Norwegian keyboard"
 msgstr "挪威语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:223
+#: transports/HTML5RDP/html5rdp.py:226
 #: transports/HTML5RDS_enterprise/html5rds.py:211
 msgid "Portuguese Brazilian keyboard"
 msgstr "葡萄牙语巴西键盘"
 
-#: transports/HTML5RDP/html5rdp.py:224
+#: transports/HTML5RDP/html5rdp.py:227
 #: transports/HTML5RDS_enterprise/html5rds.py:212
 msgid "Swedish keyboard"
 msgstr "瑞典语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:225
+#: transports/HTML5RDP/html5rdp.py:228
 #: transports/HTML5RDS_enterprise/html5rds.py:213
 msgid "Turkish keyboard"
 msgstr "土耳其语键盘"
 
-#: transports/HTML5RDP/html5rdp.py:226
+#: transports/HTML5RDP/html5rdp.py:229
 #: transports/HTML5RDS_enterprise/html5rds.py:214
 msgid "Failsafe"
 msgstr "故障安全"
 
-#: transports/HTML5RDP/html5rdp.py:234
+#: transports/HTML5RDP/html5rdp.py:237
 #: transports/HTML5RDS_enterprise/html5rds.py:221
 #: transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "机票有效期"
 
-#: transports/HTML5RDP/html5rdp.py:238
+#: transports/HTML5RDP/html5rdp.py:241
 #: transports/HTML5RDS_enterprise/html5rds.py:225
 #: transports/HTML5VNC/html5vnc.py:151
 msgid ""
@@ -6124,83 +6161,83 @@ msgstr ""
 "HTML5客户端从UDS Broker重新加载数据的允许时间（以秒为单位）。建议使用默认值"
 "60。"
 
-#: transports/HTML5RDP/html5rdp.py:247
+#: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:234
 #: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
-#: transports/HTML5RDP/html5rdp.py:248
+#: transports/HTML5RDP/html5rdp.py:251
 #: transports/HTML5RDS_enterprise/html5rds.py:235
 #: transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "选择Windows行为以获取HTML5上的新连接"
 
-#: transports/HTML5RDP/html5rdp.py:253
+#: transports/HTML5RDP/html5rdp.py:256
 #: transports/HTML5RDS_enterprise/html5rds.py:240
 #: transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
 
-#: transports/HTML5RDP/html5rdp.py:256
+#: transports/HTML5RDP/html5rdp.py:259
 #: transports/HTML5RDS_enterprise/html5rds.py:243
 #: transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "强制在新窗口中打开每个连接。"
 
-#: transports/HTML5RDP/html5rdp.py:260
+#: transports/HTML5RDP/html5rdp.py:263
 #: transports/HTML5RDS_enterprise/html5rds.py:247
 #: transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "覆盖UDS窗口并将其替换为连接。"
 
-#: transports/HTML5RDP/html5rdp.py:269
+#: transports/HTML5RDP/html5rdp.py:272
 #: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr "Guacamole RDP连接的连接安全模式"
 
-#: transports/HTML5RDP/html5rdp.py:273
+#: transports/HTML5RDP/html5rdp.py:276
 #: transports/HTML5RDS_enterprise/html5rds.py:260
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr "任何（允许服务器选择身份验证的类型）"
 
-#: transports/HTML5RDP/html5rdp.py:277
+#: transports/HTML5RDP/html5rdp.py:280
 #: transports/HTML5RDS_enterprise/html5rds.py:264
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr "RDP（标准RDP加密。所有服务器都应支持）"
 
-#: transports/HTML5RDP/html5rdp.py:282
+#: transports/HTML5RDP/html5rdp.py:285
 #: transports/HTML5RDS_enterprise/html5rds.py:269
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
 msgstr "NLA（网络层身份验证。需要VALID用户名和密码，否则连接将失败）"
 
-#: transports/HTML5RDP/html5rdp.py:288
+#: transports/HTML5RDP/html5rdp.py:291
 msgid ""
 "NLA extended (Network Layer authentication. Requires VALID "
 "username&password, or connection will fail)"
 msgstr "NLA 扩展（网络层身份验证。需要有效的用户名和密码，否则连接将失败）"
 
-#: transports/HTML5RDP/html5rdp.py:291
+#: transports/HTML5RDP/html5rdp.py:294
 #: transports/HTML5RDS_enterprise/html5rds.py:272
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS（传输安全层加密）"
 
-#: transports/HTML5RDP/html5rdp.py:300 transports/RDP/rdp_base.py:192
+#: transports/HTML5RDP/html5rdp.py:303 transports/RDP/rdp_base.py:192
 msgid "RDP Port"
 msgstr "RDP 端口"
 
-#: transports/HTML5RDP/html5rdp.py:301 transports/RDP/rdp_base.py:193
+#: transports/HTML5RDP/html5rdp.py:304 transports/RDP/rdp_base.py:193
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "将此端口用作 RDP 端口。默认为 3389。"
 
-#: transports/HTML5RDP/html5rdp.py:308
+#: transports/HTML5RDP/html5rdp.py:311
 #: transports/HTML5RDS_enterprise/html5rds.py:279
 msgid "Glyptodon Enterprise context path"
 msgstr "Glyptodon 企业上下文路径"
 
-#: transports/HTML5RDP/html5rdp.py:311
+#: transports/HTML5RDP/html5rdp.py:314
 #: transports/HTML5RDS_enterprise/html5rds.py:282
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
@@ -6209,13 +6246,13 @@ msgstr ""
 "Glyptodon Enterprise 隧道的自定义路径。 （仅对 Glyptodon Enterprise Tunnel 有"
 "效）"
 
-#: transports/HTML5RDP/html5rdp.py:326
+#: transports/HTML5RDP/html5rdp.py:329
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
-#: transports/HTML5RDP/html5rdp.py:331
+#: transports/HTML5RDP/html5rdp.py:334
 #: transports/HTML5RDS_enterprise/html5rds.py:301
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "

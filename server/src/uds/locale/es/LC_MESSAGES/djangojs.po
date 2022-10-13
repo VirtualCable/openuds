@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-05 18:05+0200\n"
+"POT-Creation-Date: 2022-10-13 14:48+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
@@ -43,14 +43,14 @@ msgstr "Principal"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:11
 #: static/admin/translations-fakejs.js:29
-#: static/admin/translations-fakejs.js:141
-#: static/admin/translations-fakejs.js:153
-#: static/admin/translations-fakejs.js:155
-#: static/admin/translations-fakejs.js:157
-#: static/admin/translations-fakejs.js:159
-#: static/admin/translations-fakejs.js:216
-#: static/admin/translations-fakejs.js:218
-#: static/admin/translations-fakejs.js:220 static/modern/main-es5.js:1
+#: static/admin/translations-fakejs.js:142
+#: static/admin/translations-fakejs.js:154
+#: static/admin/translations-fakejs.js:156
+#: static/admin/translations-fakejs.js:158
+#: static/admin/translations-fakejs.js:160
+#: static/admin/translations-fakejs.js:217
+#: static/admin/translations-fakejs.js:219
+#: static/admin/translations-fakejs.js:221 static/modern/main-es5.js:1
 #: static/modern/translations-fakejs.js:14
 msgid "Error"
 msgstr "Error"
@@ -77,12 +77,12 @@ msgstr "Cargando datos..."
 #: static/admin/translations-fakejs.js:38
 #: static/admin/translations-fakejs.js:40
 #: static/admin/translations-fakejs.js:43
-#: static/admin/translations-fakejs.js:96
-#: static/admin/translations-fakejs.js:178
-#: static/admin/translations-fakejs.js:183
-#: static/admin/translations-fakejs.js:215
-#: static/admin/translations-fakejs.js:223
-#: static/admin/translations-fakejs.js:228
+#: static/admin/translations-fakejs.js:97
+#: static/admin/translations-fakejs.js:179
+#: static/admin/translations-fakejs.js:184
+#: static/admin/translations-fakejs.js:216
+#: static/admin/translations-fakejs.js:224
+#: static/admin/translations-fakejs.js:229
 msgid "dismiss"
 msgstr "cerrar"
 
@@ -99,7 +99,7 @@ msgid "Test passed successfully"
 msgstr "Test superado con éxito"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:37
-#: static/admin/translations-fakejs.js:222
+#: static/admin/translations-fakejs.js:223
 msgid "Successfully saved"
 msgstr "Guardado con éxito"
 
@@ -128,137 +128,142 @@ msgid "authenticator"
 msgstr "Autenticador"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:48
+#: static/admin/translations-fakejs.js:491
+msgid "MFA"
+msgstr "AMF"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:49
 msgid "user"
 msgstr "Usuario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:49
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:50
 msgid "group"
 msgstr "Grupo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:50
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:51
 msgid "transport"
 msgstr "Transporte"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:51
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:52
 msgid "OS manager"
 msgstr "OS manager"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:52
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:53
 msgid "calendar"
 msgstr "Calendario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:53
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:54
 msgid "pool group"
 msgstr "Pool group"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:54
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:55
 msgid "Go to"
 msgstr "Ir"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:275
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:276
 msgid "yes"
 msgstr "sí"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:276
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:277
 msgid "no"
 msgstr "no"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:272
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:273
 msgid "Error saving: "
 msgstr "Error al guardar:"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:273
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:274
 msgid "Error saving element"
 msgstr "Error al guardar el elemento"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:274
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:275
 msgid "Error handling your request"
 msgstr "Error al manejar su solicitud"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:56
-#: static/admin/translations-fakejs.js:115
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:57
+#: static/admin/translations-fakejs.js:116
 msgid "Sunday"
 msgstr "Domingo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:57
-#: static/admin/translations-fakejs.js:116
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:58
+#: static/admin/translations-fakejs.js:117
 msgid "Monday"
 msgstr "Lunes"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:58
-#: static/admin/translations-fakejs.js:117
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:59
+#: static/admin/translations-fakejs.js:118
 msgid "Tuesday"
 msgstr "Martes"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:59
-#: static/admin/translations-fakejs.js:118
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:60
+#: static/admin/translations-fakejs.js:119
 msgid "Wednesday"
 msgstr "Miércoles"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:60
-#: static/admin/translations-fakejs.js:119
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:61
+#: static/admin/translations-fakejs.js:120
 msgid "Thursday"
 msgstr "Jueves"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:61
-#: static/admin/translations-fakejs.js:120
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:62
+#: static/admin/translations-fakejs.js:121
 msgid "Friday"
 msgstr "Viernes"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:62
-#: static/admin/translations-fakejs.js:121
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:63
+#: static/admin/translations-fakejs.js:122
 msgid "Saturday"
 msgstr "Sábado"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:63
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:64
 msgid "January"
 msgstr "Enero"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:64
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:65
 msgid "February"
 msgstr "Febrero"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:65
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:66
 msgid "March"
 msgstr "Marzo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:66
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:67
 msgid "April"
 msgstr "Abril"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:67
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:68
 msgid "May"
 msgstr "Mayo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:68
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:69
 msgid "June"
 msgstr "Junio"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:69
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:70
 msgid "July"
 msgstr "Julio"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:70
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:71
 msgid "August"
 msgstr "Agosto"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:71
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:72
 msgid "September"
 msgstr "Septiembre"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:72
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:73
 msgid "October"
 msgstr "Octubre"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:73
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:74
 msgid "November"
 msgstr "Noviembre"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:74
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:75
 msgid "December"
 msgstr "Diciembre"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:75
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:76
 msgid "Never"
 msgstr "Nunca"
 
@@ -278,20 +283,20 @@ msgstr "#SERVICES_NUMBER# servicios de usuario"
 msgid "#RESTRAINED_NUMBER# restrained services!"
 msgstr "#RESTRAINED_NUMBER# servicios restringidos"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:211
-#: static/admin/translations-fakejs.js:265
-#: static/admin/translations-fakejs.js:366
-#: static/admin/translations-fakejs.js:418
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:212
+#: static/admin/translations-fakejs.js:266
+#: static/admin/translations-fakejs.js:367
+#: static/admin/translations-fakejs.js:419
 msgid "Assigned services"
 msgstr "Servicios Asignados"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:212
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:213
 msgid "Services in use"
 msgstr "Servicios en uso"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:21
-#: static/admin/translations-fakejs.js:295
-#: static/admin/translations-fakejs.js:303
+#: static/admin/translations-fakejs.js:296
+#: static/admin/translations-fakejs.js:304
 #: static/modern/translations-fakejs.js:30
 msgid "Filter"
 msgstr "Filtro"
@@ -309,25 +314,25 @@ msgid "Full Access"
 msgstr "Acceso completo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:15
-#: static/admin/translations-fakejs.js:373
-#: static/admin/translations-fakejs.js:378
-#: static/admin/translations-fakejs.js:489
+#: static/admin/translations-fakejs.js:374
+#: static/admin/translations-fakejs.js:379
+#: static/admin/translations-fakejs.js:490
 msgid "User"
 msgstr "Usuario"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:16
-#: static/admin/translations-fakejs.js:243
-#: static/admin/translations-fakejs.js:253
-#: static/admin/translations-fakejs.js:391
-#: static/admin/translations-fakejs.js:412
+#: static/admin/translations-fakejs.js:244
+#: static/admin/translations-fakejs.js:254
+#: static/admin/translations-fakejs.js:392
+#: static/admin/translations-fakejs.js:413
 msgid "Group"
 msgstr "Grupo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:17
-#: static/admin/translations-fakejs.js:372
-#: static/admin/translations-fakejs.js:377
-#: static/admin/translations-fakejs.js:390
-#: static/admin/translations-fakejs.js:411
+#: static/admin/translations-fakejs.js:373
+#: static/admin/translations-fakejs.js:378
+#: static/admin/translations-fakejs.js:391
+#: static/admin/translations-fakejs.js:412
 #: static/modern/translations-fakejs.js:72
 msgid "Authenticator"
 msgstr "Autenticador"
@@ -344,89 +349,89 @@ msgstr "Eliminar"
 msgid "Confirm revokation of permission"
 msgstr "Confirmar revocación de permiso"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:200
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:201
 msgid "Maintenance"
 msgstr "Mantenimiento"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:201
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:202
 msgid "Exit maintenance mode"
 msgstr "Salir del modo de mantenimiento"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:202
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:203
 msgid "Enter maintenance mode"
 msgstr "Entrar en modo de mantenimiento"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:203
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:204
 msgid "New provider"
 msgstr "Nuevo proveedor"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:204
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:205
 msgid "Edit provider"
 msgstr "Editar proveedor"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:205
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:206
 msgid "Delete provider"
 msgstr "Eliminar proveedor"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:206
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:207
 msgid "Exit maintenance mode?"
 msgstr "¿Salir del modo de mantenimiento?"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:207
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:208
 msgid "Enter maintenance mode?"
 msgstr "¿Entrar en modo de mantenimiento?"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:208
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:209
 msgid "Maintenance mode for"
 msgstr "Modo de mantenimiento para"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:209
-#: static/admin/translations-fakejs.js:232
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:210
+#: static/admin/translations-fakejs.js:233
 msgid "In Maintenance"
 msgstr "En mantenimiento"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:210
-#: static/admin/translations-fakejs.js:233
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:211
+#: static/admin/translations-fakejs.js:234
 msgid "Active"
 msgstr "Activo"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:191
-#: static/admin/translations-fakejs.js:236
-#: static/admin/translations-fakejs.js:255
-msgid "Pool"
-msgstr "Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:192
 #: static/admin/translations-fakejs.js:237
 #: static/admin/translations-fakejs.js:256
-#: static/admin/translations-fakejs.js:470
-#: static/admin/translations-fakejs.js:482
-msgid "State"
-msgstr "Estado"
+msgid "Pool"
+msgstr "Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:193
 #: static/admin/translations-fakejs.js:238
 #: static/admin/translations-fakejs.js:257
+#: static/admin/translations-fakejs.js:471
+#: static/admin/translations-fakejs.js:483
+msgid "State"
+msgstr "Estado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:194
+#: static/admin/translations-fakejs.js:239
+#: static/admin/translations-fakejs.js:258
 msgid "User Services"
 msgstr "Servicios de usuario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:194
-#: static/admin/translations-fakejs.js:248
-#: static/admin/translations-fakejs.js:326
-#: static/admin/translations-fakejs.js:365
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:195
+#: static/admin/translations-fakejs.js:249
+#: static/admin/translations-fakejs.js:327
+#: static/admin/translations-fakejs.js:366
 msgid "Service pools"
 msgstr "Pools de servicio"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 #: static/admin/translations-fakejs.js:7
-#: static/admin/translations-fakejs.js:311
+#: static/admin/translations-fakejs.js:312
 #: static/modern/translations-fakejs.js:44
 msgid "Yes"
 msgstr "Sí"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:8
-#: static/admin/translations-fakejs.js:312
+#: static/admin/translations-fakejs.js:313
 #: static/modern/translations-fakejs.js:45
 msgid "No"
 msgstr "No"
@@ -439,623 +444,287 @@ msgstr "(oculto)"
 msgid "Selected items :"
 msgstr "Elementos seleccionados:"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:195
-#: static/admin/translations-fakejs.js:231
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:196
+#: static/admin/translations-fakejs.js:232
 #: static/modern/translations-fakejs.js:35
 msgid "Information"
 msgstr "Información"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:196
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:197
 msgid "New service"
 msgstr "Nuevo servicio"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:197
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:198
 msgid "Edit service"
 msgstr "Editar servicio"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:198
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:199
 msgid "Delete service"
 msgstr "Eliminar servicio"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:199
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:200
 msgid "Delete user service"
 msgstr "Eliminar servicio de usuario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:266
-#: static/admin/translations-fakejs.js:269
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 msgid "New Authenticator"
 msgstr "Nuevo Autenticador"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:267
-#: static/admin/translations-fakejs.js:270
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:268
 msgid "Edit Authenticator"
 msgstr "Editar Autentificador"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:268
-#: static/admin/translations-fakejs.js:271
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:269
 msgid "Delete Authenticator"
 msgstr "Eliminar Autenticador"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:251
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:270
+msgid "New MFA"
+msgstr "Nuevo MFA"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:271
+#| msgid "Edit"
+msgid "Edit MFA"
+msgstr "Editar MFA"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:272
+#| msgid "Delete"
+msgid "Delete MFA"
+msgstr "Eliminar MFA"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:252
 msgid "Any"
 msgstr "Cualquiera"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:252
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:253
 msgid "All"
 msgstr "Todos"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:244
-#: static/admin/translations-fakejs.js:254
-#: static/admin/translations-fakejs.js:343
-#: static/admin/translations-fakejs.js:399
-#: static/admin/translations-fakejs.js:469
-#: static/admin/translations-fakejs.js:481
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:245
+#: static/admin/translations-fakejs.js:255
+#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:400
+#: static/admin/translations-fakejs.js:470
+#: static/admin/translations-fakejs.js:482
 msgid "Comments"
 msgstr "Comentarios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:258
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:259
 msgid "Unique ID"
 msgstr "ID único"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:259
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:260
 msgid "Friendly Name"
 msgstr "Nombre descriptivo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:260
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:261
 msgid "In Use"
 msgstr "En uso"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:261
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:262
 msgid "IP"
 msgstr "IP"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:262
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:263
 msgid "Services Pool"
 msgstr "Pool de Servicios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:250
-#: static/admin/translations-fakejs.js:263
-#: static/admin/translations-fakejs.js:290
-#: static/admin/translations-fakejs.js:328
-#: static/admin/translations-fakejs.js:367
-#: static/admin/translations-fakejs.js:420
-#: static/admin/translations-fakejs.js:459
-#: static/admin/translations-fakejs.js:464
-#: static/admin/translations-fakejs.js:491
-#: static/admin/translations-fakejs.js:495
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:251
+#: static/admin/translations-fakejs.js:264
+#: static/admin/translations-fakejs.js:291
+#: static/admin/translations-fakejs.js:329
+#: static/admin/translations-fakejs.js:368
+#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:460
+#: static/admin/translations-fakejs.js:465
+#: static/admin/translations-fakejs.js:492
+#: static/admin/translations-fakejs.js:496
 msgid "Groups"
 msgstr "Grupos"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:264
-#: static/admin/translations-fakejs.js:462
-#: static/admin/translations-fakejs.js:496
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:265
+#: static/admin/translations-fakejs.js:463
+#: static/admin/translations-fakejs.js:497
 msgid "Services Pools"
 msgstr "Pools de Servicios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:239
-#: static/admin/translations-fakejs.js:342
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:240
+#: static/admin/translations-fakejs.js:343
 msgid "Name"
 msgstr "Nombre"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:240
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:241
 msgid "Real Name"
 msgstr "Nombre Real"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:241
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:242
 msgid "state"
 msgstr "Estado"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:242
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:243
 msgid "Last access"
 msgstr "Ultimo acceso"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:249
-#: static/admin/translations-fakejs.js:289
-#: static/admin/translations-fakejs.js:458
-#: static/admin/translations-fakejs.js:463
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:250
+#: static/admin/translations-fakejs.js:290
+#: static/admin/translations-fakejs.js:459
+#: static/admin/translations-fakejs.js:464
 msgid "Users"
 msgstr "Usuarios"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:245
-#: static/admin/translations-fakejs.js:471
-#: static/admin/translations-fakejs.js:483
-msgid "Enabled"
-msgstr "Habilitado"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:246
 #: static/admin/translations-fakejs.js:472
 #: static/admin/translations-fakejs.js:484
+msgid "Enabled"
+msgstr "Habilitado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:247
+#: static/admin/translations-fakejs.js:473
+#: static/admin/translations-fakejs.js:485
 msgid "Disabled"
 msgstr "Deshabilitado"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:247
-#: static/admin/translations-fakejs.js:485
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:248
+#: static/admin/translations-fakejs.js:486
 msgid "Blocked"
 msgstr "Bloqueado"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:234
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:235
 msgid "Delete user"
 msgstr "Eliminar usuario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:235
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:236
 msgid "Delete group"
 msgstr "Borrar grupo"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:85
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"
 msgstr "Nuevo OS Manager"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:86
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:87
 msgid "Edit OS Manager"
 msgstr "Editar OS Manager"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:87
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:88
 msgid "Delete OS Manager"
 msgstr "Eliminar OS Manager"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:82
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:83
 msgid "New Transport"
 msgstr "Nuevo Transporte"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:83
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:84
 msgid "Edit Transport"
 msgstr "Editar Transporte"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:84
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:85
 msgid "Delete Transport"
 msgstr "Eliminar Transporte"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:76
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:77
 msgid "New Network"
 msgstr "Nueva Red"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:77
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:78
 msgid "Edit Network"
 msgstr "Editar Red"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:78
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:79
 msgid "Delete Network"
 msgstr "Eliminar Red"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:79
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:80
 msgid "New Proxy"
 msgstr "Nuevo Proxy"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:80
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:81
 msgid "Edit Proxy"
 msgstr "Editar Proxy"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:81
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:82
 msgid "Delete Proxy"
 msgstr "Eliminar Proxy"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:185
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:186
 msgid "(This service does not requires an OS Manager)"
 msgstr "(Este servicio no requiere de un OS Manager)"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:186
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:187
 msgid "New service Pool"
 msgstr "Nuevo Pool de Servicios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:187
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:188
 msgid "Publish on creation"
 msgstr "Publicar en la creación"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:188
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:189
 msgid "If selected, will initiate the publication inmediatly after creation"
 msgstr ""
 "Si se selecciona, se iniciará la publicación inmediatamente después de la "
 "creación"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:189
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:190
 msgid "Edit Service Pool"
 msgstr "Editar Pool de Servicios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:190
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:191
 msgid "Delete service pool"
 msgstr "Eliminar Pool de Servicios"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:154
-#: static/admin/translations-fakejs.js:156
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:155
+#: static/admin/translations-fakejs.js:157
 msgid "Please, select a valid user"
 msgstr "Por favor, seleccione un usuario válido"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:158
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:159
 msgid "Please, select a valid group"
 msgstr "Por favor, seleccione un grupo válido"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:160
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:161
 msgid "Please, select a valid transport"
 msgstr "Por favor, seleccione un transporte válido"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:161
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:162
 msgid "Assigned"
 msgstr "Asignado"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:162
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:163
 msgid "Cached"
 msgstr "En caché"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:163
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:164
 msgid "In use"
 msgstr "En uso"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:164
-#: static/admin/translations-fakejs.js:293
-#: static/admin/translations-fakejs.js:369
-#: static/admin/translations-fakejs.js:426
-#: static/admin/translations-fakejs.js:429
-#: static/admin/translations-fakejs.js:434
-#: static/admin/translations-fakejs.js:460
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:165
+#: static/admin/translations-fakejs.js:294
+#: static/admin/translations-fakejs.js:370
+#: static/admin/translations-fakejs.js:427
+#: static/admin/translations-fakejs.js:430
+#: static/admin/translations-fakejs.js:435
+#: static/admin/translations-fakejs.js:461
 msgid "Logs"
 msgstr "Logs"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:165
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:166
 msgid "VNC"
 msgstr "VNC"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:166
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:167
 msgid "Launch now"
 msgstr "Lanzar ahora"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:167
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:168
 msgid "Change owner"
 msgstr "Cambiar propietario"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:168
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:169
 msgid "Assign service"
 msgstr "Servicios asignados"
 
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:169
-#: static/admin/translations-fakejs.js:280
-#: static/admin/translations-fakejs.js:286
-#: static/admin/translations-fakejs.js:354
-#: static/admin/translations-fakejs.js:362
-#: static/admin/translations-fakejs.js:374
-#: static/admin/translations-fakejs.js:379
-#: static/admin/translations-fakejs.js:387
-#: static/admin/translations-fakejs.js:392
-#: static/admin/translations-fakejs.js:396
-#: static/admin/translations-fakejs.js:400
-#: static/admin/translations-fakejs.js:413
-#: static/admin/translations-fakejs.js:455
-#: static/admin/translations-fakejs.js:476
-#: static/admin/translations-fakejs.js:492
-msgid "Cancel"
-msgstr "Cancelar"
-
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:170
-msgid "Changelog"
-msgstr "Registro de cambios"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:144
-#: static/admin/translations-fakejs.js:171
-msgid "Delete assigned service"
-msgstr "Eliminar servicio asignado"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:172
-msgid "Delete cached service"
-msgstr "Eliminar servicio en caché"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:145
-#: static/admin/translations-fakejs.js:173
-msgid "Delete assigned group"
-msgstr "Eliminar grupo asignado"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:174
-msgid "Delete assigned transport"
-msgstr "Eliminar transporte asignado"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:175
-msgid "Publication"
-msgstr "Publicación"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:176
-msgid "Cancel publication?"
-msgstr "¿Cancelar la publicación?"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:177
-msgid "Publication canceled"
-msgstr "Publicación cancelada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:179
-msgid "Delete scheduled action"
-msgstr "Eliminar acción programada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:180
-msgid "Execute scheduled action"
-msgstr "Ejecutar acción programada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:181
-msgid "Execute scheduled action right now?"
-msgstr "¿Ejecutar la acción programada ahora?"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:182
-msgid "Scheduled action executed"
-msgstr "Acción programada ejecutada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:146
-#: static/admin/translations-fakejs.js:184
-msgid "Delete calendar access rule"
-msgstr "Eliminar regla de acceso al calendario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:147
-msgid "New meta pool"
-msgstr "Nuevo meta pool"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:148
-msgid "Edit meta pool"
-msgstr "Editar meta pool"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:149
-msgid "Delete meta pool"
-msgstr "Eliminar meta pool"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:142
-msgid "Please, select a valid service pool"
-msgstr "Por favor, seleccione un pool de servicios válido"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:143
-msgid "Remove member pool"
-msgstr "Eliminar miembro del pool"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:150
-msgid "New pool group"
-msgstr "Nuevo grupo de Service Pools"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:151
-msgid "Edit pool group"
-msgstr "Editar grupo de Service Pools"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:152
-msgid "Delete pool group"
-msgstr "Eliminar grupo de Service Pools"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:138
-msgid "New calendar"
-msgstr "Nuevo calendario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:139
-msgid "Edit calendar"
-msgstr "Editar calendario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:140
-msgid "Delete calendar"
-msgstr "Eliminar calendario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:98
-msgid "day"
-msgstr "día"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:99
-msgid "days"
-msgstr "días"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:100
-msgid "Daily"
-msgstr "Diario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:101
-msgid "week"
-msgstr "semana"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:102
-msgid "weeks"
-msgstr "semanas"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:103
-msgid "Weekly"
-msgstr "Semanal"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:104
-msgid "month"
-msgstr "mes"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:105
-msgid "months"
-msgstr "meses"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:106
-msgid "Monthly"
-msgstr "Mensual"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:107
-msgid "year"
-msgstr "año"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:108
-msgid "years"
-msgstr "años"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:109
-msgid "Yearly"
-msgstr "Anual"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:110
-#: static/admin/translations-fakejs.js:351
-msgid "Weekdays"
-msgstr "Días de la semana"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:111
-msgid "Minutes"
-msgstr "Minutos"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:112
-msgid "Hours"
-msgstr "Horas"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:113
-msgid "Days"
-msgstr "Días"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:114
-msgid "Weeks"
-msgstr "Semanas"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:122
-msgid "(no days)"
-msgstr "(sin días)"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:123
-msgid "Forever"
-msgstr "Siempre"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:124
-msgid "Start date/time"
-msgstr "Fecha/hora de inicio"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:125
-msgid "End date"
-msgstr "Fecha fin"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:126
-msgid "Interval"
-msgstr "Intervalo"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:127
-msgid "Week days"
-msgstr "Dias de la semana"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:128
-msgid "Invalid or incomplete rule. Please, fix field $FIELD"
-msgstr "Regla inválida o incompleta. Por favor, revisa el campo $FIELD"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:129
-msgid "This rule will be valid every"
-msgstr "Esta regla será válida cada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:130
-msgid "of any week"
-msgstr "de cualquier semana"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:131
-msgid "from"
-msgstr "Desde el"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:132
-msgid "until"
-msgstr "Hasta el"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:133
-msgid "onwards"
-msgstr "en adelante"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:134
-msgid "starting at"
-msgstr "comenzando a las"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:135
-msgid "and every event will be active for"
-msgstr "y cada evento estará activo para"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:136
-msgid "with no duration"
-msgstr "sin duración"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:137
-msgid "Delete calendar rule"
-msgstr "Eliminar regla de calendario"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:89
-msgid "Set time mark"
-msgstr "Establecer marca de tiempo"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:90
-msgid "New account"
-msgstr "Nuevo contador"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:91
-msgid "Edit account"
-msgstr "Editar contador"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:92
-msgid "Delete account"
-msgstr "Borrar contador"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:93
-msgid "Time mark"
-msgstr "Marca de tiempo"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:94
-msgid "Set time mark for $NAME to current date/time?"
-msgstr "¿Establecer marca de tiempo para $NAME a la fecha/hora actual?"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:95
-msgid "Time mark stablished"
-msgstr "Marca de tiempo establecida"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:97
-msgid "No time mark"
-msgstr "Sin marca de tiempo"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:88
-msgid "Delete account usage"
-msgstr "Eliminar uso de la cuenta"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:217
-msgid "Image is too big (max. upload size is 256Kb)"
-msgstr "La imagen es demasiado grande (el tamaño máximo es de 256Kb)"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:219
-msgid "Invalid image type (only supports JPEG, PNG and GIF"
-msgstr "Tipo de imagen no válido (solo soporta JPEG, PNG y GIF)"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:221
-msgid "Please, provide a name and a image"
-msgstr "Por favor, proporcione un nombre y una imagen"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:224
-msgid "Delete image"
-msgstr "Eliminar Imagen"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:225
-#: static/admin/translations-fakejs.js:229
-msgid "Generate report"
-msgstr "Generar informe"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:226
-msgid "Generating report..."
-msgstr "Generando informe..."
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:227
-msgid "Report finished"
-msgstr "Informe terminado"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:214
-msgid "Configuration saved"
-msgstr "Configuración guardada"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:213
-msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
-msgstr "Eliminar token de actor - ¡USAR CON EXTREMA PRECAUCIÓN!"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:230
-msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
-msgstr "Elimine el token del túnel: ¡UTILICE CON EXTREMA PRECAUCIÓN!"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:24
-msgid "Cache flushed"
-msgstr "La caché se ha vaciado"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:55
-msgid "Items per page"
-msgstr "Entradas por página"
-
-#: static/admin/main.js:1 static/admin/translations-fakejs.js:5
-msgid ", (%i more items)"
-msgstr ", (%i más artículos)"
-
-#: static/admin/translations-fakejs.js:278
-msgid "Remove all"
-msgstr "Eliminar todo"
-
-#: static/admin/translations-fakejs.js:279
-msgid "Add"
-msgstr "Añadir"
-
 #: static/admin/translations-fakejs.js:281
 #: static/admin/translations-fakejs.js:287
-#: static/admin/translations-fakejs.js:292
 #: static/admin/translations-fakejs.js:355
 #: static/admin/translations-fakejs.js:363
 #: static/admin/translations-fakejs.js:375
@@ -1064,408 +733,755 @@ msgstr "Añadir"
 #: static/admin/translations-fakejs.js:393
 #: static/admin/translations-fakejs.js:397
 #: static/admin/translations-fakejs.js:401
-#: static/admin/translations-fakejs.js:403
 #: static/admin/translations-fakejs.js:414
-#: static/admin/translations-fakejs.js:416
-#: static/admin/translations-fakejs.js:430
 #: static/admin/translations-fakejs.js:456
-#: static/admin/translations-fakejs.js:465
 #: static/admin/translations-fakejs.js:477
 #: static/admin/translations-fakejs.js:493
-#: static/admin/translations-fakejs.js:498
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:171
+msgid "Changelog"
+msgstr "Registro de cambios"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:145
+#: static/admin/translations-fakejs.js:172
+msgid "Delete assigned service"
+msgstr "Eliminar servicio asignado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:173
+msgid "Delete cached service"
+msgstr "Eliminar servicio en caché"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:146
+#: static/admin/translations-fakejs.js:174
+msgid "Delete assigned group"
+msgstr "Eliminar grupo asignado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:175
+msgid "Delete assigned transport"
+msgstr "Eliminar transporte asignado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:176
+msgid "Publication"
+msgstr "Publicación"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:177
+msgid "Cancel publication?"
+msgstr "¿Cancelar la publicación?"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:178
+msgid "Publication canceled"
+msgstr "Publicación cancelada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:180
+msgid "Delete scheduled action"
+msgstr "Eliminar acción programada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:181
+msgid "Execute scheduled action"
+msgstr "Ejecutar acción programada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:182
+msgid "Execute scheduled action right now?"
+msgstr "¿Ejecutar la acción programada ahora?"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:183
+msgid "Scheduled action executed"
+msgstr "Acción programada ejecutada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:147
+#: static/admin/translations-fakejs.js:185
+msgid "Delete calendar access rule"
+msgstr "Eliminar regla de acceso al calendario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:148
+msgid "New meta pool"
+msgstr "Nuevo meta pool"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:149
+msgid "Edit meta pool"
+msgstr "Editar meta pool"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:150
+msgid "Delete meta pool"
+msgstr "Eliminar meta pool"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:143
+msgid "Please, select a valid service pool"
+msgstr "Por favor, seleccione un pool de servicios válido"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:144
+msgid "Remove member pool"
+msgstr "Eliminar miembro del pool"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:151
+msgid "New pool group"
+msgstr "Nuevo grupo de Service Pools"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:152
+msgid "Edit pool group"
+msgstr "Editar grupo de Service Pools"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:153
+msgid "Delete pool group"
+msgstr "Eliminar grupo de Service Pools"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:139
+msgid "New calendar"
+msgstr "Nuevo calendario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:140
+msgid "Edit calendar"
+msgstr "Editar calendario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:141
+msgid "Delete calendar"
+msgstr "Eliminar calendario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:99
+msgid "day"
+msgstr "día"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:100
+msgid "days"
+msgstr "días"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:101
+msgid "Daily"
+msgstr "Diario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:102
+msgid "week"
+msgstr "semana"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:103
+msgid "weeks"
+msgstr "semanas"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:104
+msgid "Weekly"
+msgstr "Semanal"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:105
+msgid "month"
+msgstr "mes"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:106
+msgid "months"
+msgstr "meses"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:107
+msgid "Monthly"
+msgstr "Mensual"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:108
+msgid "year"
+msgstr "año"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:109
+msgid "years"
+msgstr "años"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:110
+msgid "Yearly"
+msgstr "Anual"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:111
+#: static/admin/translations-fakejs.js:352
+msgid "Weekdays"
+msgstr "Días de la semana"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:112
+msgid "Minutes"
+msgstr "Minutos"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:113
+msgid "Hours"
+msgstr "Horas"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:114
+msgid "Days"
+msgstr "Días"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:115
+msgid "Weeks"
+msgstr "Semanas"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:123
+msgid "(no days)"
+msgstr "(sin días)"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:124
+msgid "Forever"
+msgstr "Siempre"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:125
+msgid "Start date/time"
+msgstr "Fecha/hora de inicio"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:126
+msgid "End date"
+msgstr "Fecha fin"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:127
+msgid "Interval"
+msgstr "Intervalo"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:128
+msgid "Week days"
+msgstr "Dias de la semana"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:129
+msgid "Invalid or incomplete rule. Please, fix field $FIELD"
+msgstr "Regla inválida o incompleta. Por favor, revisa el campo $FIELD"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:130
+msgid "This rule will be valid every"
+msgstr "Esta regla será válida cada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:131
+msgid "of any week"
+msgstr "de cualquier semana"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:132
+msgid "from"
+msgstr "Desde el"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:133
+msgid "until"
+msgstr "Hasta el"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:134
+msgid "onwards"
+msgstr "en adelante"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:135
+msgid "starting at"
+msgstr "comenzando a las"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:136
+msgid "and every event will be active for"
+msgstr "y cada evento estará activo para"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:137
+msgid "with no duration"
+msgstr "sin duración"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:138
+msgid "Delete calendar rule"
+msgstr "Eliminar regla de calendario"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:90
+msgid "Set time mark"
+msgstr "Establecer marca de tiempo"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:91
+msgid "New account"
+msgstr "Nuevo contador"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:92
+msgid "Edit account"
+msgstr "Editar contador"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:93
+msgid "Delete account"
+msgstr "Borrar contador"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:94
+msgid "Time mark"
+msgstr "Marca de tiempo"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:95
+msgid "Set time mark for $NAME to current date/time?"
+msgstr "¿Establecer marca de tiempo para $NAME a la fecha/hora actual?"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:96
+msgid "Time mark stablished"
+msgstr "Marca de tiempo establecida"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:98
+msgid "No time mark"
+msgstr "Sin marca de tiempo"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:89
+msgid "Delete account usage"
+msgstr "Eliminar uso de la cuenta"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:218
+msgid "Image is too big (max. upload size is 256Kb)"
+msgstr "La imagen es demasiado grande (el tamaño máximo es de 256Kb)"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:220
+msgid "Invalid image type (only supports JPEG, PNG and GIF"
+msgstr "Tipo de imagen no válido (solo soporta JPEG, PNG y GIF)"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:222
+msgid "Please, provide a name and a image"
+msgstr "Por favor, proporcione un nombre y una imagen"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:225
+msgid "Delete image"
+msgstr "Eliminar Imagen"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:226
+#: static/admin/translations-fakejs.js:230
+msgid "Generate report"
+msgstr "Generar informe"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:227
+msgid "Generating report..."
+msgstr "Generando informe..."
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:228
+msgid "Report finished"
+msgstr "Informe terminado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:215
+msgid "Configuration saved"
+msgstr "Configuración guardada"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:214
+msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
+msgstr "Eliminar token de actor - ¡USAR CON EXTREMA PRECAUCIÓN!"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:231
+msgid "Delete tunnel token - USE WITH EXTREME CAUTION!!!"
+msgstr "Elimine el token del túnel: ¡UTILICE CON EXTREMA PRECAUCIÓN!"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:24
+msgid "Cache flushed"
+msgstr "La caché se ha vaciado"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:56
+msgid "Items per page"
+msgstr "Entradas por página"
+
+#: static/admin/main.js:1 static/admin/translations-fakejs.js:5
+msgid ", (%i more items)"
+msgstr ", (%i más artículos)"
+
+#: static/admin/translations-fakejs.js:279
+msgid "Remove all"
+msgstr "Eliminar todo"
+
+#: static/admin/translations-fakejs.js:280
+msgid "Add"
+msgstr "Añadir"
+
+#: static/admin/translations-fakejs.js:282
+#: static/admin/translations-fakejs.js:288
+#: static/admin/translations-fakejs.js:293
+#: static/admin/translations-fakejs.js:356
+#: static/admin/translations-fakejs.js:364
+#: static/admin/translations-fakejs.js:376
+#: static/admin/translations-fakejs.js:381
+#: static/admin/translations-fakejs.js:389
+#: static/admin/translations-fakejs.js:394
+#: static/admin/translations-fakejs.js:398
+#: static/admin/translations-fakejs.js:402
+#: static/admin/translations-fakejs.js:404
+#: static/admin/translations-fakejs.js:415
+#: static/admin/translations-fakejs.js:417
+#: static/admin/translations-fakejs.js:431
+#: static/admin/translations-fakejs.js:457
+#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:478
+#: static/admin/translations-fakejs.js:494
+#: static/admin/translations-fakejs.js:499
 msgid "Ok"
 msgstr "Ok"
 
-#: static/admin/translations-fakejs.js:282
+#: static/admin/translations-fakejs.js:283
 msgid "Discard & close"
 msgstr "Descartar y cerrar"
 
-#: static/admin/translations-fakejs.js:283
-#: static/admin/translations-fakejs.js:448
+#: static/admin/translations-fakejs.js:284
+#: static/admin/translations-fakejs.js:449
 msgid "Save"
 msgstr "Guardar"
 
-#: static/admin/translations-fakejs.js:284
+#: static/admin/translations-fakejs.js:285
 msgid "New user permission for"
 msgstr "Nuevo permiso de usuario para"
 
-#: static/admin/translations-fakejs.js:285
+#: static/admin/translations-fakejs.js:286
 msgid "New group permission for"
 msgstr "Nuevo permiso de grupo para"
 
-#: static/admin/translations-fakejs.js:288
+#: static/admin/translations-fakejs.js:289
 msgid "Permissions for"
 msgstr "Permisos para"
 
-#: static/admin/translations-fakejs.js:291
+#: static/admin/translations-fakejs.js:292
 msgid "New permission..."
 msgstr "Nuevo permiso..."
 
-#: static/admin/translations-fakejs.js:294
-#: static/admin/translations-fakejs.js:301
+#: static/admin/translations-fakejs.js:295
+#: static/admin/translations-fakejs.js:302
 msgid "Export"
 msgstr "Exportar"
 
-#: static/admin/translations-fakejs.js:296
 #: static/admin/translations-fakejs.js:297
 #: static/admin/translations-fakejs.js:298
+#: static/admin/translations-fakejs.js:299
 msgid "New"
 msgstr "Nuevo"
 
-#: static/admin/translations-fakejs.js:299
-#: static/admin/translations-fakejs.js:307
+#: static/admin/translations-fakejs.js:300
+#: static/admin/translations-fakejs.js:308
 msgid "Edit"
 msgstr "Editar"
 
-#: static/admin/translations-fakejs.js:300
-#: static/admin/translations-fakejs.js:308
+#: static/admin/translations-fakejs.js:301
+#: static/admin/translations-fakejs.js:309
 msgid "Permissions"
 msgstr "Permisos"
 
-#: static/admin/translations-fakejs.js:302
-#: static/admin/translations-fakejs.js:309
+#: static/admin/translations-fakejs.js:303
+#: static/admin/translations-fakejs.js:310
 msgid "Delete"
 msgstr "Borrar"
 
-#: static/admin/translations-fakejs.js:304
+#: static/admin/translations-fakejs.js:305
 msgid "Selected items"
 msgstr "Elementos seleccionados"
 
-#: static/admin/translations-fakejs.js:305
+#: static/admin/translations-fakejs.js:306
 msgid "Copy"
 msgstr "Copiar"
 
-#: static/admin/translations-fakejs.js:306
+#: static/admin/translations-fakejs.js:307
 msgid "Detail"
 msgstr "Detalles"
 
-#: static/admin/translations-fakejs.js:310
+#: static/admin/translations-fakejs.js:311
 #: static/modern/translations-fakejs.js:43
 msgid "Close"
 msgstr "Cerrar"
 
-#: static/admin/translations-fakejs.js:313
+#: static/admin/translations-fakejs.js:314
 msgid "User mode"
 msgstr "Modo de usuario"
 
-#: static/admin/translations-fakejs.js:314
+#: static/admin/translations-fakejs.js:315
 #: static/modern/translations-fakejs.js:48
 msgid "Logout"
 msgstr "Cerrar sesión"
 
-#: static/admin/translations-fakejs.js:315
-#: static/admin/translations-fakejs.js:353
-#: static/admin/translations-fakejs.js:364
-#: static/admin/translations-fakejs.js:417
-#: static/admin/translations-fakejs.js:431
-#: static/admin/translations-fakejs.js:457
+#: static/admin/translations-fakejs.js:316
+#: static/admin/translations-fakejs.js:354
+#: static/admin/translations-fakejs.js:365
+#: static/admin/translations-fakejs.js:418
+#: static/admin/translations-fakejs.js:432
+#: static/admin/translations-fakejs.js:458
 msgid "Summary"
 msgstr "Resumen"
 
-#: static/admin/translations-fakejs.js:316
-#: static/admin/translations-fakejs.js:432
+#: static/admin/translations-fakejs.js:317
+#: static/admin/translations-fakejs.js:433
 msgid "Services"
 msgstr "Servicios"
 
-#: static/admin/translations-fakejs.js:317
+#: static/admin/translations-fakejs.js:318
 msgid "Authentication"
 msgstr "Autenticación"
 
-#: static/admin/translations-fakejs.js:318
+#: static/admin/translations-fakejs.js:319
 msgid "Authenticators"
 msgstr "Autenticadores"
 
-#: static/admin/translations-fakejs.js:319
+#: static/admin/translations-fakejs.js:320
 msgid "Multi Factor"
 msgstr "multifactor"
 
-#: static/admin/translations-fakejs.js:320
+#: static/admin/translations-fakejs.js:321
 msgid "Os Managers"
 msgstr "OS Managers"
 
-#: static/admin/translations-fakejs.js:321
+#: static/admin/translations-fakejs.js:322
 msgid "Connectivity"
 msgstr "Conectividad"
 
-#: static/admin/translations-fakejs.js:322
-#: static/admin/translations-fakejs.js:421
+#: static/admin/translations-fakejs.js:323
+#: static/admin/translations-fakejs.js:422
 #: static/modern/translations-fakejs.js:39
 msgid "Transports"
 msgstr "Transportes"
 
-#: static/admin/translations-fakejs.js:323
+#: static/admin/translations-fakejs.js:324
 #: static/modern/translations-fakejs.js:41
 msgid "Networks"
 msgstr "Redes"
 
-#: static/admin/translations-fakejs.js:324
+#: static/admin/translations-fakejs.js:325
 msgid "Proxies"
 msgstr "Proxies"
 
-#: static/admin/translations-fakejs.js:325
+#: static/admin/translations-fakejs.js:326
 msgid "Pools"
 msgstr "Pools"
 
-#: static/admin/translations-fakejs.js:327
+#: static/admin/translations-fakejs.js:328
 msgid "Meta pools"
 msgstr "Meta pools"
 
-#: static/admin/translations-fakejs.js:329
+#: static/admin/translations-fakejs.js:330
 msgid "Calendars"
 msgstr "Calendarios"
 
-#: static/admin/translations-fakejs.js:330
+#: static/admin/translations-fakejs.js:331
 msgid "Accounts"
 msgstr "Contadores"
 
-#: static/admin/translations-fakejs.js:331
+#: static/admin/translations-fakejs.js:332
 msgid "Tools"
 msgstr "Herramientas"
 
-#: static/admin/translations-fakejs.js:332
+#: static/admin/translations-fakejs.js:333
 msgid "Gallery"
 msgstr "Galería"
 
-#: static/admin/translations-fakejs.js:333
+#: static/admin/translations-fakejs.js:334
 msgid "Reports"
 msgstr "Informes"
 
-#: static/admin/translations-fakejs.js:334
+#: static/admin/translations-fakejs.js:335
 msgid "Tokens"
 msgstr "Tokens"
 
-#: static/admin/translations-fakejs.js:335
+#: static/admin/translations-fakejs.js:336
 msgid "Actor"
 msgstr "Actor"
 
-#: static/admin/translations-fakejs.js:336
+#: static/admin/translations-fakejs.js:337
 msgid "Tunnel"
 msgstr "Túnel"
 
-#: static/admin/translations-fakejs.js:337
+#: static/admin/translations-fakejs.js:338
 msgid "Configuration"
 msgstr "Configuración"
 
-#: static/admin/translations-fakejs.js:338
+#: static/admin/translations-fakejs.js:339
 msgid "Flush Cache"
 msgstr "Vaciar caché"
 
-#: static/admin/translations-fakejs.js:339
+#: static/admin/translations-fakejs.js:340
 msgid "Account usage"
 msgstr "Uso de la cuenta"
 
-#: static/admin/translations-fakejs.js:340
+#: static/admin/translations-fakejs.js:341
 msgid "Edit rule"
 msgstr "Editar regla"
 
-#: static/admin/translations-fakejs.js:341
+#: static/admin/translations-fakejs.js:342
 msgid "New rule"
 msgstr "Nueva regla"
 
-#: static/admin/translations-fakejs.js:344
+#: static/admin/translations-fakejs.js:345
 msgid "Event"
 msgstr "Evento"
 
-#: static/admin/translations-fakejs.js:345
+#: static/admin/translations-fakejs.js:346
 msgid "Start time"
 msgstr "Hora de inicio"
 
-#: static/admin/translations-fakejs.js:346
+#: static/admin/translations-fakejs.js:347
 msgid "Duration"
 msgstr "Duración"
 
-#: static/admin/translations-fakejs.js:347
+#: static/admin/translations-fakejs.js:348
 msgid "Duration units"
 msgstr "Unidades de duración"
 
-#: static/admin/translations-fakejs.js:348
+#: static/admin/translations-fakejs.js:349
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: static/admin/translations-fakejs.js:349
+#: static/admin/translations-fakejs.js:350
 msgid "Repeat until date"
 msgstr "Repetir hasta la fecha"
 
-#: static/admin/translations-fakejs.js:350
+#: static/admin/translations-fakejs.js:351
 msgid "Frequency"
 msgstr "Frecuencia"
 
-#: static/admin/translations-fakejs.js:352
+#: static/admin/translations-fakejs.js:353
 msgid "Repeat every"
 msgstr "Repite cada"
 
-#: static/admin/translations-fakejs.js:356
+#: static/admin/translations-fakejs.js:357
 msgid "Rules"
 msgstr "Reglas"
 
-#: static/admin/translations-fakejs.js:357
+#: static/admin/translations-fakejs.js:358
 msgid "New member pool"
 msgstr "Nuevo miembro en el pool"
 
-#: static/admin/translations-fakejs.js:358
+#: static/admin/translations-fakejs.js:359
 msgid "Edit member pool"
 msgstr "Editar miembros en el pool"
 
-#: static/admin/translations-fakejs.js:359
-#: static/admin/translations-fakejs.js:384
+#: static/admin/translations-fakejs.js:360
+#: static/admin/translations-fakejs.js:385
 msgid "Priority"
 msgstr "Prioridad"
 
-#: static/admin/translations-fakejs.js:360
+#: static/admin/translations-fakejs.js:361
 msgid "Service pool"
 msgstr "Service pool"
 
-#: static/admin/translations-fakejs.js:361
+#: static/admin/translations-fakejs.js:362
 msgid "Enabled?"
 msgstr "¿Habilitado?"
 
-#: static/admin/translations-fakejs.js:368
-#: static/admin/translations-fakejs.js:424
+#: static/admin/translations-fakejs.js:369
+#: static/admin/translations-fakejs.js:425
 msgid "Access calendars"
 msgstr "Calendarios de acceso"
 
-#: static/admin/translations-fakejs.js:370
+#: static/admin/translations-fakejs.js:371
 msgid "Assign service to user manually"
 msgstr "Asignar servicio al usuario manualmente"
 
-#: static/admin/translations-fakejs.js:371
+#: static/admin/translations-fakejs.js:372
 msgid "Service"
 msgstr "Servicio"
 
-#: static/admin/translations-fakejs.js:376
+#: static/admin/translations-fakejs.js:377
 msgid "Change owner of assigned service"
 msgstr "Cambiar propietario del servicio asignado"
 
-#: static/admin/translations-fakejs.js:381
+#: static/admin/translations-fakejs.js:382
 msgid "New access rule for"
 msgstr "Nueva regla de acceso para"
 
-#: static/admin/translations-fakejs.js:382
+#: static/admin/translations-fakejs.js:383
 msgid "Edit access rule for"
 msgstr "Editar regla de acceso para"
 
-#: static/admin/translations-fakejs.js:383
+#: static/admin/translations-fakejs.js:384
 msgid "Default fallback access for"
 msgstr "Acceso de reserva predeterminado para"
 
-#: static/admin/translations-fakejs.js:385
-#: static/admin/translations-fakejs.js:406
+#: static/admin/translations-fakejs.js:386
+#: static/admin/translations-fakejs.js:407
 msgid "Calendar"
 msgstr "Calendario"
 
-#: static/admin/translations-fakejs.js:386
-#: static/admin/translations-fakejs.js:409
+#: static/admin/translations-fakejs.js:387
+#: static/admin/translations-fakejs.js:410
 msgid "Action"
 msgstr "Acción"
 
-#: static/admin/translations-fakejs.js:389
+#: static/admin/translations-fakejs.js:390
 msgid "New group for"
 msgstr "Nuevo grupo para"
 
-#: static/admin/translations-fakejs.js:394
+#: static/admin/translations-fakejs.js:395
 msgid "New transport for"
 msgstr "Nuevo transporte para"
 
-#: static/admin/translations-fakejs.js:395
-#: static/admin/translations-fakejs.js:410
+#: static/admin/translations-fakejs.js:396
+#: static/admin/translations-fakejs.js:411
 msgid "Transport"
 msgstr "Transporte"
 
-#: static/admin/translations-fakejs.js:398
+#: static/admin/translations-fakejs.js:399
 msgid "New publication for"
 msgstr "Nueva publicación para"
 
-#: static/admin/translations-fakejs.js:402
+#: static/admin/translations-fakejs.js:403
 msgid "Changelog of"
 msgstr "Registro de cambios de"
 
-#: static/admin/translations-fakejs.js:404
+#: static/admin/translations-fakejs.js:405
 msgid "Edit action for"
 msgstr "Editar acción para"
 
-#: static/admin/translations-fakejs.js:405
+#: static/admin/translations-fakejs.js:406
 msgid "New action for"
 msgstr "Nueva accion para"
 
-#: static/admin/translations-fakejs.js:407
+#: static/admin/translations-fakejs.js:408
 msgid "Events offset (minutes)"
 msgstr "Eventos compensados (minutos)"
 
-#: static/admin/translations-fakejs.js:408
+#: static/admin/translations-fakejs.js:409
 msgid "At the beginning of the interval?"
 msgstr "¿Al principio del intervalo?"
 
-#: static/admin/translations-fakejs.js:415
+#: static/admin/translations-fakejs.js:416
 msgid "Logs of"
 msgstr "Registros de"
 
-#: static/admin/translations-fakejs.js:419
+#: static/admin/translations-fakejs.js:420
 msgid "Cache"
 msgstr "Caché"
 
-#: static/admin/translations-fakejs.js:422
+#: static/admin/translations-fakejs.js:423
 msgid "Publications"
 msgstr "Publicaciones"
 
-#: static/admin/translations-fakejs.js:423
+#: static/admin/translations-fakejs.js:424
 msgid "Scheduled actions"
 msgstr "Acciones programadas"
 
-#: static/admin/translations-fakejs.js:425
+#: static/admin/translations-fakejs.js:426
 msgid "Charts"
 msgstr "Gráficos"
 
-#: static/admin/translations-fakejs.js:427
-#: static/admin/translations-fakejs.js:461
-#: static/admin/translations-fakejs.js:494
+#: static/admin/translations-fakejs.js:428
+#: static/admin/translations-fakejs.js:462
+#: static/admin/translations-fakejs.js:495
 msgid "Information for"
 msgstr "Información para"
 
-#: static/admin/translations-fakejs.js:428
+#: static/admin/translations-fakejs.js:429
 msgid "Services pools"
 msgstr "Services pools"
 
-#: static/admin/translations-fakejs.js:433
+#: static/admin/translations-fakejs.js:434
 msgid "Usage"
 msgstr "Uso"
 
-#: static/admin/translations-fakejs.js:435
+#: static/admin/translations-fakejs.js:436
 #: static/modern/translations-fakejs.js:46
 msgid "Dashboard"
 msgstr "Panel de control"
 
-#: static/admin/translations-fakejs.js:436
+#: static/admin/translations-fakejs.js:437
 msgid "View authenticators"
 msgstr "Ver autenticadores"
 
-#: static/admin/translations-fakejs.js:437
 #: static/admin/translations-fakejs.js:438
 #: static/admin/translations-fakejs.js:439
+#: static/admin/translations-fakejs.js:440
 msgid "View service pools"
 msgstr "Ver service pools"
 
-#: static/admin/translations-fakejs.js:440
+#: static/admin/translations-fakejs.js:441
 msgid "Assigned services chart"
 msgstr "Gráfico de servicios asignados"
 
-#: static/admin/translations-fakejs.js:441
+#: static/admin/translations-fakejs.js:442
 msgid "In use services chart"
 msgstr "Gráfico de servicios en uso"
 
-#: static/admin/translations-fakejs.js:442
+#: static/admin/translations-fakejs.js:443
 msgid "UDS Administration"
 msgstr "Administración de UDS"
 
-#: static/admin/translations-fakejs.js:443
+#: static/admin/translations-fakejs.js:444
 msgid "You are accessing UDS Administration as staff member."
 msgstr ""
 "Usted está accediendo al Panel de control de UDS como miembro del personal."
 
-#: static/admin/translations-fakejs.js:444
+#: static/admin/translations-fakejs.js:445
 msgid "This means that you have restricted access to elements."
 msgstr "Esto significa que tienes acceso restringido a los elementos."
 
-#: static/admin/translations-fakejs.js:445
+#: static/admin/translations-fakejs.js:446
 msgid ""
 "In order to increase your access privileges, please contact your local UDS "
 "administrator."
@@ -1473,91 +1489,87 @@ msgstr ""
 "Para aumentar sus privilegios de acceso, comuníquese con su administrador de "
 "UDS."
 
-#: static/admin/translations-fakejs.js:446
+#: static/admin/translations-fakejs.js:447
 msgid "Thank you."
 msgstr "Gracias."
 
-#: static/admin/translations-fakejs.js:447
+#: static/admin/translations-fakejs.js:448
 msgid "UDS Configuration"
 msgstr "Configuración UDS"
 
-#: static/admin/translations-fakejs.js:449
+#: static/admin/translations-fakejs.js:450
 msgid "New image for"
 msgstr "Nueva imagen para"
 
-#: static/admin/translations-fakejs.js:450
+#: static/admin/translations-fakejs.js:451
 msgid "Edit for"
 msgstr "Editar para"
 
-#: static/admin/translations-fakejs.js:451
+#: static/admin/translations-fakejs.js:452
 msgid "Image name"
 msgstr "Nombre de la imágen"
 
-#: static/admin/translations-fakejs.js:452
+#: static/admin/translations-fakejs.js:453
 msgid "Image (click to change)"
 msgstr "Imagen (click para cambiar)"
 
-#: static/admin/translations-fakejs.js:453
+#: static/admin/translations-fakejs.js:454
 msgid "For optimal results, use "
 msgstr "Para obtener resultados óptimos, use"
 
-#: static/admin/translations-fakejs.js:454
+#: static/admin/translations-fakejs.js:455
 msgid "The image will be resized on upload to"
 msgstr "La imagen se redimensionará al subir a"
 
-#: static/admin/translations-fakejs.js:466
+#: static/admin/translations-fakejs.js:467
 msgid "Edit group"
 msgstr "Editar grupo"
 
-#: static/admin/translations-fakejs.js:467
+#: static/admin/translations-fakejs.js:468
 msgid "New group"
 msgstr "Nuevo grupo"
 
-#: static/admin/translations-fakejs.js:468
+#: static/admin/translations-fakejs.js:469
 msgid "Meta group name"
 msgstr "Nombre del meta grupo"
 
-#: static/admin/translations-fakejs.js:473
+#: static/admin/translations-fakejs.js:474
 msgid "Service Pools"
 msgstr "Service Pool"
 
-#: static/admin/translations-fakejs.js:474
+#: static/admin/translations-fakejs.js:475
 msgid "Match mode"
 msgstr "Modo de coincidencia"
 
-#: static/admin/translations-fakejs.js:475
+#: static/admin/translations-fakejs.js:476
 msgid "Selected Groups"
 msgstr "Grupos seleccionados"
 
-#: static/admin/translations-fakejs.js:478
+#: static/admin/translations-fakejs.js:479
 msgid "Edit user"
 msgstr "Editar usuario"
 
-#: static/admin/translations-fakejs.js:479
+#: static/admin/translations-fakejs.js:480
 msgid "New user"
 msgstr "Nuevo usuario"
 
-#: static/admin/translations-fakejs.js:480
+#: static/admin/translations-fakejs.js:481
 msgid "Real name"
 msgstr "Nombre real"
 
-#: static/admin/translations-fakejs.js:486
+#: static/admin/translations-fakejs.js:487
 msgid "Role"
 msgstr "Rol"
 
-#: static/admin/translations-fakejs.js:487
+#: static/admin/translations-fakejs.js:488
 msgid "Admin"
 msgstr "Admin"
 
-#: static/admin/translations-fakejs.js:488
+#: static/admin/translations-fakejs.js:489
 msgid "Staff member"
 msgstr "Miembro del personal"
 
-#: static/admin/translations-fakejs.js:490
-msgid "MFA"
-msgstr "AMF"
-
-#: static/admin/translations-fakejs.js:497
+#: static/admin/translations-fakejs.js:498
 msgid "Assigned Services"
 msgstr "Servicios Asignados"
 

@@ -33,6 +33,9 @@
 import re
 import logging
 import typing
+from urllib.parse import urlencode
+
+from regex import W
 from uds.models.util import getSqlDatetime
 
 from django.utils.translation import gettext_noop as _
@@ -387,7 +390,7 @@ class HTML5RDPTransport(transports.Transport):
             domain = self.fixedDomain.value
 
         if self.useEmptyCreds.isTrue():
-            username, passwd, domain = '', '', ''
+            username, password, domain = '', '', ''
 
         if self.withoutDomain.isTrue():
             domain = ''
@@ -459,6 +462,11 @@ class HTML5RDPTransport(transports.Transport):
             },
         }
 
+        if password == '' and self.security.value != 'rdp':
+            extra_params='&' + urlencode({'username': username, 'domain': domain, 'reqcreds': 'true'})
+        else:
+            extra_params=''
+
         if False:  # Future imp
             sanitize = lambda x: re.sub("[^a-zA-Z0-9_-]", "_", x)
             params['recording-path'] = (
@@ -514,11 +522,12 @@ class HTML5RDPTransport(transports.Transport):
             path = path[:-1]
 
         return str(
-            "{server}{path}/#/?data={ticket}.{scrambler}{onw}".format(
+            "{server}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}".format(
                 server=self.guacamoleServer.value,
                 path=path,
                 ticket=ticket,
                 scrambler=scrambler,
                 onw=onw,
+                extra_params=extra_params,
             )
         )
