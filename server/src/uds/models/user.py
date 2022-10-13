@@ -48,7 +48,7 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import auths
-    from uds.models import Group, UserService
+    from uds.models import Group, UserService, MFA
 
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class User(UUIDModel):
     This class represents a single user, associated with one authenticator
     """
 
-    manager: 'models.ForeignKey[User, Authenticator]' = UnsavedForeignKey(
+    manager: 'models.ForeignKey[Authenticator]' = UnsavedForeignKey(
         Authenticator, on_delete=models.CASCADE, related_name='users'
     )
     name = models.CharField(max_length=128, db_index=True)
@@ -84,6 +84,7 @@ class User(UUIDModel):
     objects: 'models.BaseManager[User]'
     groups: 'models.manager.RelatedManager[Group]'
     userServices: 'models.manager.RelatedManager[UserService]'
+    mfa: 'models.manager.RelatedManager[MFA]'
 
     class Meta(UUIDModel.Meta):
         """

@@ -326,12 +326,12 @@ class HTML5RDPTransport(transports.Transport):
             raise transports.Transport.ValidationException(
                 _('The server must be http or https')
             )
-        if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
-            raise transports.Transport.ValidationException(
-                _(
-                    'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
-                )
-            )
+        #if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
+        #    raise transports.Transport.ValidationException(
+        #        _(
+        #            'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
+        #        )
+        #    )
 
     # Same check as normal RDP transport
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
@@ -462,7 +462,7 @@ class HTML5RDPTransport(transports.Transport):
         }
 
         if password == '' and self.security.value != 'rdp':
-            extra_params='&' + urlencode({'username': username, 'domain': domain, 'reqcreds': 'true'})
+            extra_params=f'&creds={username}@{domain}'
         else:
             extra_params=''
 

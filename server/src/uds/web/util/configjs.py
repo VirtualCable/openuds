@@ -190,6 +190,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             ),
             'static': static(''),
             'clientDownload': reverse('page.client-download'),
+            'updateTransportTicket': reverse('webapi.transport.UpdateTransportTicket', kwargs={'idTicket': 'param1', 'scrambler': 'param2'}),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
             'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else ''
