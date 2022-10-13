@@ -125,17 +125,17 @@ class gui:
         def choiceFromValue(val: typing.Union[str, typing.Dict[str, str]]) -> typing.Dict[str, str]:
             if isinstance(val, str):
                 return {'id': val, 'text': val}
-            # Return a deepcopy
             return copy.deepcopy(val)
-            
-        # If is an iterator
-        if isinstance(vals, abc.Iterable):
-            return [choiceFromValue(v) for v in vals]
 
         # If is a dict
         if isinstance(vals, abc.Mapping):
             return [{'id': str(k), 'text': v} for k, v in vals.items()]
-        
+
+        # If is an iterator
+        if isinstance(vals, abc.Iterable):
+            return [choiceFromValue(v) for v in vals]
+
+       
         raise ValueError('Invalid type for convertToChoices: {}'.format(type(vals)))
 
     @staticmethod
