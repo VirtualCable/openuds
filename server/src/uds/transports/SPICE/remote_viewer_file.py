@@ -48,6 +48,7 @@ toggle-fullscreen=shift+f11
 release-cursor=shift+f12
 secure-attention=ctrl+alt+end
 {secure_channel}
+{proxy}
 '''
 
 
@@ -65,6 +66,7 @@ class RemoteViewerFile:
     usb_auto_share: bool = True
     new_usb_auto_share: bool = False
     delete_file: bool = True
+    proxy: str = ''
 
     def __init__(
         self,
@@ -106,6 +108,8 @@ class RemoteViewerFile:
             '\n', '\\n'
         )  # So we get '\\n' and script works fine after replacement
 
+        # If proxy is set
+
         return TEMPLATE.format(
             type=self.connectionType,
             host=self.host,
@@ -123,4 +127,5 @@ class RemoteViewerFile:
             secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard'
             if tls_port != '-1'
             else '',
+            proxy=self.proxy,
         )
