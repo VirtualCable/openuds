@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-13 14:48+0200\n"
+"POT-Creation-Date: 2022-10-14 19:08+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -39,7 +39,7 @@ msgstr "Principal"
 #: static/admin/translations-fakejs.js:217
 #: static/admin/translations-fakejs.js:219
 #: static/admin/translations-fakejs.js:221 static/modern/main-es5.js:1
-#: static/modern/translations-fakejs.js:14
+#: static/modern/translations-fakejs.js:17
 msgid "Error"
 msgstr "Error"
 
@@ -285,7 +285,7 @@ msgstr "Serveis en ús"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:21
 #: static/admin/translations-fakejs.js:296
 #: static/admin/translations-fakejs.js:304
-#: static/modern/translations-fakejs.js:30
+#: static/modern/translations-fakejs.js:34
 msgid "Filter"
 msgstr "Filtre"
 
@@ -321,7 +321,7 @@ msgstr "Grup"
 #: static/admin/translations-fakejs.js:378
 #: static/admin/translations-fakejs.js:391
 #: static/admin/translations-fakejs.js:412
-#: static/modern/translations-fakejs.js:72
+#: static/modern/translations-fakejs.js:77
 msgid "Authenticator"
 msgstr "Autenticador"
 
@@ -413,14 +413,14 @@ msgstr "Pools de servei"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 #: static/admin/translations-fakejs.js:7
 #: static/admin/translations-fakejs.js:312
-#: static/modern/translations-fakejs.js:44
+#: static/modern/translations-fakejs.js:48
 msgid "Yes"
 msgstr "Sí"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:4
 #: static/admin/translations-fakejs.js:8
 #: static/admin/translations-fakejs.js:313
-#: static/modern/translations-fakejs.js:45
+#: static/modern/translations-fakejs.js:49
 msgid "No"
 msgstr "No"
 
@@ -434,7 +434,7 @@ msgstr "Elements seleccionats:"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:196
 #: static/admin/translations-fakejs.js:232
-#: static/modern/translations-fakejs.js:35
+#: static/modern/translations-fakejs.js:39
 msgid "Information"
 msgstr "Informació"
 
@@ -471,12 +471,10 @@ msgid "New MFA"
 msgstr "Nou MFA"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-#| msgid "Edit"
 msgid "Edit MFA"
 msgstr "Edita MFA"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:272
-#| msgid "Delete"
 msgid "Delete MFA"
 msgstr "Suprimeix MFA"
 
@@ -1143,7 +1141,7 @@ msgid "Detail"
 msgstr "Detall"
 
 #: static/admin/translations-fakejs.js:311
-#: static/modern/translations-fakejs.js:43
+#: static/modern/translations-fakejs.js:47
 msgid "Close"
 msgstr "Tanca"
 
@@ -1152,7 +1150,7 @@ msgid "User mode"
 msgstr "Mode d'usuari"
 
 #: static/admin/translations-fakejs.js:315
-#: static/modern/translations-fakejs.js:48
+#: static/modern/translations-fakejs.js:52
 msgid "Logout"
 msgstr "Tancar sessió"
 
@@ -1192,12 +1190,12 @@ msgstr "Connectivitat"
 
 #: static/admin/translations-fakejs.js:323
 #: static/admin/translations-fakejs.js:422
-#: static/modern/translations-fakejs.js:39
+#: static/modern/translations-fakejs.js:43
 msgid "Transports"
 msgstr "Transports"
 
 #: static/admin/translations-fakejs.js:324
-#: static/modern/translations-fakejs.js:41
+#: static/modern/translations-fakejs.js:45
 msgid "Networks"
 msgstr "Xarxes"
 
@@ -1433,7 +1431,7 @@ msgid "Usage"
 msgstr "Ús"
 
 #: static/admin/translations-fakejs.js:436
-#: static/modern/translations-fakejs.js:46
+#: static/modern/translations-fakejs.js:50
 msgid "Dashboard"
 msgstr "Panell"
 
@@ -1559,16 +1557,30 @@ msgstr "Membre del personal"
 msgid "Assigned Services"
 msgstr "Serveis assignats"
 
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
+#: static/modern/translations-fakejs.js:75
+msgid "Username"
+msgstr "Nom d'usuari"
+
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:14
+#: static/modern/translations-fakejs.js:76
+msgid "Password"
+msgstr "Contrasenya"
+
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
+msgid "Domain"
+msgstr "Domini"
+
 #: static/modern/main-es5.js:1
 msgid "Error communicating with your service. Please, retry again."
 msgstr "Error de comunicació amb el vostre servei. Torneu-ho a provar."
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:13
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
 msgid "Your session has expired. Please, login again"
 msgstr "La vostra sessió ha caducat. Torneu a iniciar sessió"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:15
-#: static/modern/translations-fakejs.js:20
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:18
+#: static/modern/translations-fakejs.js:24
 msgid "Please wait until the service is launched."
 msgstr "Si us plau, espereu fins que s'iniciï el servei."
 
@@ -1579,11 +1591,12 @@ msgid ""
 msgstr ""
 "Recordeu que necessiteu el client UDS instal·lat per accedir al servei."
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:16
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
+#: static/modern/translations-fakejs.js:20
 msgid "Service ready"
 msgstr "Servei preparat"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:17
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
 msgid "UDS Client not launching"
 msgstr "El client UDS no s'engega"
 
@@ -1594,7 +1607,7 @@ msgid ""
 msgstr ""
 "Sembla que no teniu instal·lat el client UDS. Instal·leu-lo des d’aquí:"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:18
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
 msgid "UDS Client Download"
 msgstr "Descàrrega del client UDS"
 
@@ -1606,7 +1619,7 @@ msgstr "Inici del client UDS, gairebé acabat."
 msgid "Machine ready, waiting for UDS Client"
 msgstr "Màquina preparada, esperant el client UDS"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:19
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
 msgid "Error launching service"
 msgstr "S'ha produït un error en iniciar el servei"
 
@@ -1617,12 +1630,12 @@ msgstr ""
 "La vostra connexió s'està preparant. S'obrirà en una finestra nova quan "
 "estigui preparada."
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:21
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:25
 msgid "Launching service"
 msgstr "Iniciant el servei"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
-#: static/modern/translations-fakejs.js:25
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:26
+#: static/modern/translations-fakejs.js:29
 msgid "Errors found"
 msgstr "S'han trobat errors"
 
@@ -1663,23 +1676,23 @@ msgstr "Servei restablert"
 msgid "Are you sure?"
 msgstr "Estàs segur?"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:27
 msgid "Warning"
 msgstr "Avís"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:24
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:28
 msgid "Service is in maintenance and cannot be executed"
 msgstr "El servei està en manteniment i no es pot executar"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:26
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:30
 msgid "We use cookies to track usage and preferences"
 msgstr "Utilitzem cookies per fer un seguiment d'ús i preferències"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:27
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:31
 msgid "I Understand"
 msgstr "Entenc"
 
-#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:28
+#: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:32
 msgid "Learn more"
 msgstr "Aprèn-ne més"
 
@@ -1688,76 +1701,80 @@ msgid "This service is currently not accessible due to schedule restrictions."
 msgstr ""
 "Actualment, aquest servei no és accessible a causa de restriccions d'horari."
 
-#: static/modern/translations-fakejs.js:31
+#: static/modern/translations-fakejs.js:35
 msgid "Release service"
 msgstr "Alliberar servei"
 
-#: static/modern/translations-fakejs.js:32
+#: static/modern/translations-fakejs.js:36
 msgid "Reset service"
 msgstr "Restablir el servei"
 
-#: static/modern/translations-fakejs.js:33
+#: static/modern/translations-fakejs.js:37
 msgid "Connections"
 msgstr "Connexions"
 
-#: static/modern/translations-fakejs.js:34
+#: static/modern/translations-fakejs.js:38
 msgid "Actions"
 msgstr "Accions"
 
-#: static/modern/translations-fakejs.js:36
-#: static/modern/translations-fakejs.js:37
+#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:41
 msgid "Client IP"
 msgstr "IP del client"
 
-#: static/modern/translations-fakejs.js:38
+#: static/modern/translations-fakejs.js:42
 msgid "Detected proxy ip"
 msgstr "Proxy ip detectat"
 
-#: static/modern/translations-fakejs.js:40
+#: static/modern/translations-fakejs.js:44
 msgid "UDS transports for this client"
 msgstr "Transports UDS per a aquest client"
 
-#: static/modern/translations-fakejs.js:42
+#: static/modern/translations-fakejs.js:46
 msgid "UDS networks for this IP"
 msgstr "Xarxes UDS per a aquesta IP"
 
-#: static/modern/translations-fakejs.js:47
-#: static/modern/translations-fakejs.js:58
+#: static/modern/translations-fakejs.js:51
+#: static/modern/translations-fakejs.js:63
 msgid "Downloads"
 msgstr "Descàrregues"
 
-#: static/modern/translations-fakejs.js:49
-#: static/modern/translations-fakejs.js:51
-#: static/modern/translations-fakejs.js:56
+#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:61
 msgid "UDS Client"
 msgstr "Client UDS"
 
-#: static/modern/translations-fakejs.js:50
-#: static/modern/translations-fakejs.js:52
+#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:56
 msgid "About"
 msgstr "Quant a"
 
-#: static/modern/translations-fakejs.js:53
+#: static/modern/translations-fakejs.js:57
+msgid "Please, enter access credentials"
+msgstr "Si us plau, introduïu les credencials d&#39;accés"
+
+#: static/modern/translations-fakejs.js:58
 msgid "You can access UDS Open Source code at"
 msgstr "Podeu accedir al codi obert d'UDS a"
 
-#: static/modern/translations-fakejs.js:54
+#: static/modern/translations-fakejs.js:59
 msgid "UDS has been developed using these components:"
 msgstr "UDS s'ha desenvolupat utilitzant aquests components:"
 
-#: static/modern/translations-fakejs.js:55
+#: static/modern/translations-fakejs.js:60
 msgid "If you find that we missed any component, please let us know"
 msgstr "Si creieu que hem oblidat algun component, si us plau feu-nos-ho saber"
 
-#: static/modern/translations-fakejs.js:57
+#: static/modern/translations-fakejs.js:62
 msgid "Download UDS client for your platform"
 msgstr "Descarregueu el client UDS per a la vostra plataforma"
 
-#: static/modern/translations-fakejs.js:59
+#: static/modern/translations-fakejs.js:64
 msgid "Always download the UDS actor matching your platform"
 msgstr "Baixeu sempre l';actor UDS que coincideixi amb la vostra plataforma"
 
-#: static/modern/translations-fakejs.js:60
+#: static/modern/translations-fakejs.js:65
 msgid ""
 "Legacy actors are only provided for old operating system support. Try to "
 "avoid them."
@@ -1765,31 +1782,31 @@ msgstr ""
 "Els clients \"legacy\" només es proporcionen per a suport de sistemes "
 "operatius antics. Intenteu evitar-los."
 
-#: static/modern/translations-fakejs.js:61
+#: static/modern/translations-fakejs.js:66
 msgid "An error has occurred"
 msgstr "S'ha produït un error"
 
-#: static/modern/translations-fakejs.js:62
+#: static/modern/translations-fakejs.js:67
 msgid "Return"
 msgstr "Retorn"
 
-#: static/modern/translations-fakejs.js:63
+#: static/modern/translations-fakejs.js:68
 msgid "UDS Service launcher"
 msgstr "Llançador del servei UDS"
 
-#: static/modern/translations-fakejs.js:64
+#: static/modern/translations-fakejs.js:69
 msgid "The service you have requested is being launched."
 msgstr "El servei que heu sol·licitat s'està iniciant."
 
-#: static/modern/translations-fakejs.js:65
+#: static/modern/translations-fakejs.js:70
 msgid "Please, note that reloading this page will not work."
 msgstr "Tingueu en compte que la recàrrega d'aquesta pàgina no funcionarà."
 
-#: static/modern/translations-fakejs.js:66
+#: static/modern/translations-fakejs.js:71
 msgid "To relaunch service, you will have to do it from origin."
 msgstr "Per reiniciar el servei, haureu de fer-ho des de l’origen."
 
-#: static/modern/translations-fakejs.js:67
+#: static/modern/translations-fakejs.js:72
 msgid ""
 "If the service does not launchs automatically, probably you dont have the "
 "UDS Client installed"
@@ -1797,34 +1814,26 @@ msgstr ""
 "Si el servei no es llança automàticament, probablement no tingueu instal·lat "
 "el client UDS"
 
-#: static/modern/translations-fakejs.js:68
+#: static/modern/translations-fakejs.js:73
 msgid "You can obtain it from the"
 msgstr "Podeu obtenir-lo de"
 
-#: static/modern/translations-fakejs.js:69
+#: static/modern/translations-fakejs.js:74
 msgid "UDS Client download page"
 msgstr "Pàgina de descàrrega del client UDS"
 
-#: static/modern/translations-fakejs.js:70
-msgid "Username"
-msgstr "Nom d'usuari"
-
-#: static/modern/translations-fakejs.js:71
-msgid "Password"
-msgstr "Contrasenya"
-
-#: static/modern/translations-fakejs.js:73
+#: static/modern/translations-fakejs.js:78
 msgid "Login"
 msgstr "Iniciar sessió"
 
-#: static/modern/translations-fakejs.js:74
+#: static/modern/translations-fakejs.js:79
 msgid "Login Verification"
 msgstr "Verificació d&#39;inici de sessió"
 
-#: static/modern/translations-fakejs.js:75
+#: static/modern/translations-fakejs.js:80
 msgid "Remember Me"
 msgstr "Recorda&#39;m"
 
-#: static/modern/translations-fakejs.js:76
+#: static/modern/translations-fakejs.js:81
 msgid "Submit"
 msgstr "Presentar"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-13 14:48+0200\n"
+"POT-Creation-Date: 2022-10-14 19:08+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -1063,7 +1063,7 @@ msgstr "Usuaris actuals"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:87
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
@@ -1222,7 +1222,7 @@ msgstr ""
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:112 transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -2042,7 +2042,7 @@ msgstr "No es pot localitzar cap grup amb l’atribut de membres especificat"
 msgid "System Administrator"
 msgstr "Administrador del sistema"
 
-#: core/auths/auth.py:155
+#: core/auths/auth.py:164
 msgid "Forbidden"
 msgstr "Prohibit"
 
@@ -2438,8 +2438,8 @@ msgstr ""
 msgid "SMTP Server"
 msgstr "Servidor SMTP"
 
-#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:271
-#: transports/HTML5RDS_enterprise/html5rds.py:255
+#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDS_enterprise/html5rds.py:256
 msgid "Security"
 msgstr "Seguretat"
 
@@ -2494,9 +2494,10 @@ msgstr "Activa HTML"
 msgid "Enable HTML in emails"
 msgstr "Activa l&#39;HTML als correus electrònics"
 
-#: mfas/Email/mfa.py:133 mfas/SMS/mfa.py:197
-msgid "User without MFA policy"
-msgstr "Usuari sense política MFA"
+#: mfas/Email/mfa.py:133
+#| msgid "User without MFA policy"
+msgid "Policy for users without MFA support"
+msgstr "Política per a usuaris sense suport MFA"
 
 #: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:185 mfas/SMS/mfa.py:200
 msgid "Action for SMS response error"
@@ -2749,6 +2750,10 @@ msgstr "Resposta HTTP"
 msgid "SMS response error action"
 msgstr "Acció d&#39;error de resposta SMS"
 
+#: mfas/SMS/mfa.py:197
+msgid "User without MFA policy"
+msgstr "Usuari sense política MFA"
+
 #: mfas/SMS/mfa.py:292
 msgid "SMS sending failed"
 msgstr "S&#39;ha produït un error en l&#39;enviament de SMS"
@@ -2757,7 +2762,7 @@ msgstr "S&#39;ha produït un error en l&#39;enviament de SMS"
 msgid "SMS response error"
 msgstr "Error de resposta SMS"
 
-#: mfas/SMS/mfa.py:355 web/views/modern.py:294
+#: mfas/SMS/mfa.py:355 web/views/modern.py:297
 msgid "MFA Code"
 msgstr "Codi MFA"
 
@@ -3153,8 +3158,8 @@ msgstr "Gestor de SO per a controlar màquines Windows amb domini"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
-#: transports/HTML5RDP/html5rdp.py:126
-#: transports/HTML5RDS_enterprise/html5rds.py:112
+#: transports/HTML5RDP/html5rdp.py:120
+#: transports/HTML5RDS_enterprise/html5rds.py:113
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
 #: transports/RDS_enterprise/rds_base.py:60
 msgid "Domain"
@@ -3393,7 +3398,6 @@ msgid "finish date for report"
 msgstr "data de finalització de l'informe"
 
 #: reports/lists/audit.py:120 templates/uds/reports/lists/audit.html:15
-#| msgid "Log level"
 msgid "Level"
 msgstr "Nivell"
 
@@ -3402,12 +3406,10 @@ msgid "Method"
 msgstr "Mètode"
 
 #: reports/lists/audit.py:120
-#| msgid "HTTP Response"
 msgid "Response code"
 msgstr "Codi de resposta"
 
 #: reports/lists/audit.py:120
-#| msgid "Invalid Request"
 msgid "Request"
 msgstr "Sol·licitud"
 
@@ -4106,7 +4108,7 @@ msgstr "La prova de connexió s'ha realitzat correctament"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:294 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:345 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "La connexió ha fallat. Verifiqueu els paràmetres de connexió"
 
@@ -5978,7 +5980,6 @@ msgid "Chinese"
 msgstr "Xinès"
 
 #: templates/uds/reports/lists/audit.html:16
-#| msgid "Usage"
 msgid "Message"
 msgstr "Missatge"
 
@@ -6079,22 +6080,22 @@ msgstr "Accés d'usuaris per hora"
 msgid "Users Access by day of week/hour"
 msgstr "Accés d'usuaris per dia de setmana/hora"
 
-#: transports/HTML5RDP/html5rdp.py:68
+#: transports/HTML5RDP/html5rdp.py:62
 msgid "HTML5 RDP"
 msgstr "HTML5 RDP"
 
-#: transports/HTML5RDP/html5rdp.py:70
+#: transports/HTML5RDP/html5rdp.py:64
 msgid "RDP protocol using HTML5 client"
 msgstr "Protocol RDP utilitzant client HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:79
-#: transports/HTML5RDS_enterprise/html5rds.py:79
+#: transports/HTML5RDP/html5rdp.py:73
+#: transports/HTML5RDS_enterprise/html5rds.py:80
 #: transports/HTML5VNC/html5vnc.py:75
 msgid "Tunnel Server"
 msgstr "Servidor de túnel"
 
-#: transports/HTML5RDP/html5rdp.py:82
-#: transports/HTML5RDS_enterprise/html5rds.py:82
+#: transports/HTML5RDP/html5rdp.py:76
+#: transports/HTML5RDS_enterprise/html5rds.py:83
 #: transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
@@ -6103,13 +6104,13 @@ msgstr ""
 "Host del servidor de túnel (utilitzeu http/https i port si escau) accessible "
 "pels usuaris"
 
-#: transports/HTML5RDP/html5rdp.py:91
-#: transports/HTML5RDS_enterprise/html5rds.py:90
+#: transports/HTML5RDP/html5rdp.py:85
+#: transports/HTML5RDS_enterprise/html5rds.py:91
 msgid "Use Glyptodon Enterprise tunnel"
 msgstr "Utilitzeu el túnel Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:94
-#: transports/HTML5RDS_enterprise/html5rds.py:93
+#: transports/HTML5RDP/html5rdp.py:88
+#: transports/HTML5RDS_enterprise/html5rds.py:94
 msgid ""
 "If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling "
 "instead of UDS Tunnel"
@@ -6117,16 +6118,16 @@ msgstr ""
 "Si està seleccionat, UDS utilitzarà Glyptodon Enterprise Tunnel per fer "
 "túnels HTML en lloc d'UDS Tunnel"
 
-#: transports/HTML5RDP/html5rdp.py:100
-#: transports/HTML5RDS_enterprise/html5rds.py:98
+#: transports/HTML5RDP/html5rdp.py:94
+#: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
 #: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
 msgid "Empty creds"
 msgstr "Credencials buides"
 
-#: transports/HTML5RDP/html5rdp.py:102
-#: transports/HTML5RDS_enterprise/html5rds.py:100
+#: transports/HTML5RDP/html5rdp.py:96
+#: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
 #: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
@@ -6136,7 +6137,7 @@ msgstr ""
 "Si està seleccionat, les credencials utilitzades per a connectar-se estaran "
 "buïdes"
 
-#: transports/HTML5RDP/html5rdp.py:108
+#: transports/HTML5RDP/html5rdp.py:102
 #: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
 #: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
@@ -6145,7 +6146,7 @@ msgid "If not empty, this username will be always used as credential"
 msgstr ""
 "Si no està buit, sempre s'utilitzarà aquest nom d'usuari a les credencials"
 
-#: transports/HTML5RDP/html5rdp.py:114
+#: transports/HTML5RDP/html5rdp.py:108
 #: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
 #: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
@@ -6154,14 +6155,14 @@ msgid "If not empty, this password will be always used as credential"
 msgstr ""
 "Si no està buit, sempre s'utilitzarà aquesta contrasenya a les credencials"
 
-#: transports/HTML5RDP/html5rdp.py:118
-#: transports/HTML5RDS_enterprise/html5rds.py:104 transports/RDP/rdp_base.py:87
+#: transports/HTML5RDP/html5rdp.py:112
+#: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
 #: transports/RDS_enterprise/rds_base.py:52
 msgid "Without Domain"
 msgstr "Sense domini"
 
-#: transports/HTML5RDP/html5rdp.py:121
-#: transports/HTML5RDS_enterprise/html5rds.py:107
+#: transports/HTML5RDP/html5rdp.py:115
+#: transports/HTML5RDS_enterprise/html5rds.py:108
 #: transports/RDS_enterprise/rds_base.py:55
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
@@ -6170,8 +6171,8 @@ msgstr ""
 "Si està seleccionat, la part del domini sempre estarà buida (es necessari "
 "per exemple per a connexions XRDP)"
 
-#: transports/HTML5RDP/html5rdp.py:129
-#: transports/HTML5RDS_enterprise/html5rds.py:115 transports/RDP/rdp_base.py:98
+#: transports/HTML5RDP/html5rdp.py:123
+#: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
 #: transports/RDS_enterprise/rds_base.py:63
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
@@ -6180,13 +6181,13 @@ msgstr ""
 "Si no està buit, aquest domini s'utilitzarà sempre per a les credencials (en "
 "format DOMINI\\usuari)"
 
-#: transports/HTML5RDP/html5rdp.py:134
-#: transports/HTML5RDS_enterprise/html5rds.py:120
+#: transports/HTML5RDP/html5rdp.py:128
+#: transports/HTML5RDS_enterprise/html5rds.py:121
 msgid "Show wallpaper"
 msgstr "Mostrar el fons de pantalla"
 
-#: transports/HTML5RDP/html5rdp.py:137
-#: transports/HTML5RDS_enterprise/html5rds.py:123
+#: transports/HTML5RDP/html5rdp.py:131
+#: transports/HTML5RDS_enterprise/html5rds.py:124
 #: transports/RDP/rdp_base.py:241
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
@@ -6195,39 +6196,39 @@ msgstr ""
 "Si està seleccionat, el fons de pantalla i els temes es mostraran a la "
 "màquina (millor experiència d'usuari, major amplària de banda)"
 
-#: transports/HTML5RDP/html5rdp.py:142
-#: transports/HTML5RDS_enterprise/html5rds.py:128
+#: transports/HTML5RDP/html5rdp.py:136
+#: transports/HTML5RDS_enterprise/html5rds.py:129
 #: transports/RDP/rdp_base.py:254
 msgid "Allow Desk.Comp."
 msgstr "Permetre composició d'escriptori"
 
-#: transports/HTML5RDP/html5rdp.py:144
-#: transports/HTML5RDS_enterprise/html5rds.py:130
+#: transports/HTML5RDP/html5rdp.py:138
+#: transports/HTML5RDS_enterprise/html5rds.py:131
 #: transports/RDP/rdp_base.py:256
 msgid "If checked, desktop composition will be allowed"
 msgstr "Si està seleccionat, es permet la composició d'escriptori"
 
-#: transports/HTML5RDP/html5rdp.py:148
-#: transports/HTML5RDS_enterprise/html5rds.py:134
+#: transports/HTML5RDP/html5rdp.py:142
+#: transports/HTML5RDS_enterprise/html5rds.py:135
 #: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
 msgid "Font Smoothing"
 msgstr "Suavització de fonts"
 
-#: transports/HTML5RDP/html5rdp.py:150
-#: transports/HTML5RDS_enterprise/html5rds.py:136
+#: transports/HTML5RDP/html5rdp.py:144
+#: transports/HTML5RDS_enterprise/html5rds.py:137
 #: transports/RDS_enterprise/rds_base.py:153
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si està seleccionat, es permet la suavització de fonts (només per a clients "
 "de Windows)"
 
-#: transports/HTML5RDP/html5rdp.py:154
-#: transports/HTML5RDS_enterprise/html5rds.py:140
+#: transports/HTML5RDP/html5rdp.py:148
+#: transports/HTML5RDS_enterprise/html5rds.py:141
 msgid "Enable Audio"
 msgstr "Habilitar l'àudio"
 
-#: transports/HTML5RDP/html5rdp.py:157
-#: transports/HTML5RDS_enterprise/html5rds.py:143
+#: transports/HTML5RDP/html5rdp.py:151
+#: transports/HTML5RDS_enterprise/html5rds.py:144
 msgid ""
 "If checked, the audio will be redirected to remote session (if client "
 "browser supports it)"
@@ -6235,13 +6236,13 @@ msgstr ""
 "Si està marcat, l’àudio es redirigirà a la sessió remota (si el navegador "
 "del client ho suporta)"
 
-#: transports/HTML5RDP/html5rdp.py:163
-#: transports/HTML5RDS_enterprise/html5rds.py:149
+#: transports/HTML5RDP/html5rdp.py:157
+#: transports/HTML5RDS_enterprise/html5rds.py:150
 msgid "Enable Microphone"
 msgstr "Activar el micròfon"
 
-#: transports/HTML5RDP/html5rdp.py:166
-#: transports/HTML5RDS_enterprise/html5rds.py:152
+#: transports/HTML5RDP/html5rdp.py:160
+#: transports/HTML5RDS_enterprise/html5rds.py:153
 msgid ""
 "If checked, the microphone will be redirected to remote session (if client "
 "browser supports it)"
@@ -6249,13 +6250,13 @@ msgstr ""
 "Si està seleccionat, el micròfon es redirigirà a la sessió remota (si el "
 "navegador del client ho suporta)"
 
-#: transports/HTML5RDP/html5rdp.py:171
-#: transports/HTML5RDS_enterprise/html5rds.py:157
+#: transports/HTML5RDP/html5rdp.py:165
+#: transports/HTML5RDS_enterprise/html5rds.py:158
 msgid "Enable Printing"
 msgstr "Habilitar la impressió"
 
-#: transports/HTML5RDP/html5rdp.py:174
-#: transports/HTML5RDS_enterprise/html5rds.py:160
+#: transports/HTML5RDP/html5rdp.py:168
+#: transports/HTML5RDS_enterprise/html5rds.py:161
 msgid ""
 "If checked, the printing will be redirected to remote session (if client "
 "browser supports it)"
@@ -6263,175 +6264,175 @@ msgstr ""
 "Si està seleccionat, la impressió es redirigirà a a la sessió remota (si el "
 "navegador del client ho suporta)"
 
-#: transports/HTML5RDP/html5rdp.py:179
-#: transports/HTML5RDS_enterprise/html5rds.py:165
+#: transports/HTML5RDP/html5rdp.py:173
+#: transports/HTML5RDS_enterprise/html5rds.py:166
 msgid "File Sharing"
 msgstr "Compartició de fitxers"
 
-#: transports/HTML5RDP/html5rdp.py:181
-#: transports/HTML5RDS_enterprise/html5rds.py:167
+#: transports/HTML5RDP/html5rdp.py:175
+#: transports/HTML5RDS_enterprise/html5rds.py:168
 msgid "File upload/download redirection policy"
 msgstr "Política de redirecció de càrrega/descàrrega de fitxers"
 
-#: transports/HTML5RDP/html5rdp.py:184
-#: transports/HTML5RDS_enterprise/html5rds.py:170
+#: transports/HTML5RDP/html5rdp.py:178
+#: transports/HTML5RDS_enterprise/html5rds.py:171
 msgid "Disable file sharing"
 msgstr "Desactiva la compartició de fitxers"
 
-#: transports/HTML5RDP/html5rdp.py:185
-#: transports/HTML5RDS_enterprise/html5rds.py:171
+#: transports/HTML5RDP/html5rdp.py:179
+#: transports/HTML5RDS_enterprise/html5rds.py:172
 msgid "Allow download only"
 msgstr "Permet només la descàrrega"
 
-#: transports/HTML5RDP/html5rdp.py:186
-#: transports/HTML5RDS_enterprise/html5rds.py:172
+#: transports/HTML5RDP/html5rdp.py:180
+#: transports/HTML5RDS_enterprise/html5rds.py:173
 msgid "Allow upload only"
 msgstr "Permet només la càrrega"
 
-#: transports/HTML5RDP/html5rdp.py:187
-#: transports/HTML5RDS_enterprise/html5rds.py:173
+#: transports/HTML5RDP/html5rdp.py:181
+#: transports/HTML5RDS_enterprise/html5rds.py:174
 msgid "Enable file sharing"
 msgstr "Activa la compartició de fitxers"
 
-#: transports/HTML5RDP/html5rdp.py:192
-#: transports/HTML5RDS_enterprise/html5rds.py:178
+#: transports/HTML5RDP/html5rdp.py:186
+#: transports/HTML5RDS_enterprise/html5rds.py:179
 msgid "Clipboard"
 msgstr "Portapapers"
 
-#: transports/HTML5RDP/html5rdp.py:194
-#: transports/HTML5RDS_enterprise/html5rds.py:180
+#: transports/HTML5RDP/html5rdp.py:188
+#: transports/HTML5RDS_enterprise/html5rds.py:181
 msgid "Clipboard redirection policy"
 msgstr "Política de redirecció del portapapers"
 
-#: transports/HTML5RDP/html5rdp.py:197
-#: transports/HTML5RDS_enterprise/html5rds.py:183
+#: transports/HTML5RDP/html5rdp.py:191
+#: transports/HTML5RDS_enterprise/html5rds.py:184
 msgid "Disable clipboard"
 msgstr "Desactiva el portapapers"
 
-#: transports/HTML5RDP/html5rdp.py:198
-#: transports/HTML5RDS_enterprise/html5rds.py:184
+#: transports/HTML5RDP/html5rdp.py:192
+#: transports/HTML5RDS_enterprise/html5rds.py:185
 msgid "Disable copy from remote"
 msgstr "Desactiva la còpia des de remot"
 
-#: transports/HTML5RDP/html5rdp.py:199
-#: transports/HTML5RDS_enterprise/html5rds.py:185
+#: transports/HTML5RDP/html5rdp.py:193
+#: transports/HTML5RDS_enterprise/html5rds.py:186
 msgid "Disable paste to remote"
 msgstr "Desactiva l'Enganxar a remot"
 
-#: transports/HTML5RDP/html5rdp.py:200
-#: transports/HTML5RDS_enterprise/html5rds.py:186
+#: transports/HTML5RDP/html5rdp.py:194
+#: transports/HTML5RDS_enterprise/html5rds.py:187
 #: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
 msgid "Enable clipboard"
 msgstr "Habilitar el portapapers"
 
-#: transports/HTML5RDP/html5rdp.py:207
-#: transports/HTML5RDS_enterprise/html5rds.py:192
+#: transports/HTML5RDP/html5rdp.py:201
+#: transports/HTML5RDS_enterprise/html5rds.py:193
 msgid "Layout"
 msgstr "Distribució"
 
-#: transports/HTML5RDP/html5rdp.py:208
-#: transports/HTML5RDS_enterprise/html5rds.py:193
+#: transports/HTML5RDP/html5rdp.py:202
+#: transports/HTML5RDS_enterprise/html5rds.py:194
 msgid "Keyboards Layout of server"
 msgstr "Distribució dels teclats del servidor"
 
-#: transports/HTML5RDP/html5rdp.py:212
-#: transports/HTML5RDS_enterprise/html5rds.py:197
+#: transports/HTML5RDP/html5rdp.py:206
+#: transports/HTML5RDS_enterprise/html5rds.py:198
 msgid "English (US) keyboard"
 msgstr "Teclat anglès (Estats Units)"
 
-#: transports/HTML5RDP/html5rdp.py:213
-#: transports/HTML5RDS_enterprise/html5rds.py:198
+#: transports/HTML5RDP/html5rdp.py:207
+#: transports/HTML5RDS_enterprise/html5rds.py:199
 msgid "English (GB) keyboard"
 msgstr "Teclat anglès (GB)"
 
-#: transports/HTML5RDP/html5rdp.py:214
-#: transports/HTML5RDS_enterprise/html5rds.py:199
+#: transports/HTML5RDP/html5rdp.py:208
+#: transports/HTML5RDS_enterprise/html5rds.py:200
 msgid "Spanish keyboard"
 msgstr "Teclat espanyol"
 
-#: transports/HTML5RDP/html5rdp.py:215
-#: transports/HTML5RDS_enterprise/html5rds.py:200
+#: transports/HTML5RDP/html5rdp.py:209
+#: transports/HTML5RDS_enterprise/html5rds.py:201
 msgid "Latin American keyboard"
 msgstr "Teclat llatinoamericà"
 
-#: transports/HTML5RDP/html5rdp.py:216
-#: transports/HTML5RDS_enterprise/html5rds.py:201
+#: transports/HTML5RDP/html5rdp.py:210
+#: transports/HTML5RDS_enterprise/html5rds.py:202
 msgid "Danish keyboard"
 msgstr "Teclat danès"
 
-#: transports/HTML5RDP/html5rdp.py:217
-#: transports/HTML5RDS_enterprise/html5rds.py:202
+#: transports/HTML5RDP/html5rdp.py:211
+#: transports/HTML5RDS_enterprise/html5rds.py:203
 msgid "German keyboard (qwertz)"
 msgstr "Teclat alemany (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:218
-#: transports/HTML5RDS_enterprise/html5rds.py:203
+#: transports/HTML5RDP/html5rdp.py:212
+#: transports/HTML5RDS_enterprise/html5rds.py:204
 msgid "French keyboard (azerty)"
 msgstr "Teclat francès (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:219
-#: transports/HTML5RDS_enterprise/html5rds.py:204
+#: transports/HTML5RDP/html5rdp.py:213
+#: transports/HTML5RDS_enterprise/html5rds.py:205
 msgid "Belgian French keyboard (azerty)"
 msgstr "Teclat francès belga (azerty)"
 
-#: transports/HTML5RDP/html5rdp.py:220
-#: transports/HTML5RDS_enterprise/html5rds.py:205
+#: transports/HTML5RDP/html5rdp.py:214
+#: transports/HTML5RDS_enterprise/html5rds.py:206
 msgid "Swiss German keyboard (qwertz)"
 msgstr "Teclat suís-alemany (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:221
-#: transports/HTML5RDS_enterprise/html5rds.py:206
+#: transports/HTML5RDP/html5rdp.py:215
+#: transports/HTML5RDS_enterprise/html5rds.py:207
 msgid "Swiss French keyboard (qwertz)"
 msgstr "Teclat suís-francès (qwertz)"
 
-#: transports/HTML5RDP/html5rdp.py:222
-#: transports/HTML5RDS_enterprise/html5rds.py:207
+#: transports/HTML5RDP/html5rdp.py:216
+#: transports/HTML5RDS_enterprise/html5rds.py:208
 msgid "Hungarian keyboard"
 msgstr "Teclat hongarès"
 
-#: transports/HTML5RDP/html5rdp.py:223
-#: transports/HTML5RDS_enterprise/html5rds.py:208
+#: transports/HTML5RDP/html5rdp.py:217
+#: transports/HTML5RDS_enterprise/html5rds.py:209
 msgid "Italian keyboard"
 msgstr "Teclat italià"
 
-#: transports/HTML5RDP/html5rdp.py:224
-#: transports/HTML5RDS_enterprise/html5rds.py:209
+#: transports/HTML5RDP/html5rdp.py:218
+#: transports/HTML5RDS_enterprise/html5rds.py:210
 msgid "Japanese keyboard"
 msgstr "Teclat japonès"
 
-#: transports/HTML5RDP/html5rdp.py:225
-#: transports/HTML5RDS_enterprise/html5rds.py:210
+#: transports/HTML5RDP/html5rdp.py:219
+#: transports/HTML5RDS_enterprise/html5rds.py:211
 msgid "Norwegian keyboard"
 msgstr "Teclat noruec"
 
-#: transports/HTML5RDP/html5rdp.py:226
-#: transports/HTML5RDS_enterprise/html5rds.py:211
+#: transports/HTML5RDP/html5rdp.py:220
+#: transports/HTML5RDS_enterprise/html5rds.py:212
 msgid "Portuguese Brazilian keyboard"
 msgstr "Teclat portuguès brasiler"
 
-#: transports/HTML5RDP/html5rdp.py:227
-#: transports/HTML5RDS_enterprise/html5rds.py:212
+#: transports/HTML5RDP/html5rdp.py:221
+#: transports/HTML5RDS_enterprise/html5rds.py:213
 msgid "Swedish keyboard"
 msgstr "Teclat suec"
 
-#: transports/HTML5RDP/html5rdp.py:228
-#: transports/HTML5RDS_enterprise/html5rds.py:213
+#: transports/HTML5RDP/html5rdp.py:222
+#: transports/HTML5RDS_enterprise/html5rds.py:214
 msgid "Turkish keyboard"
 msgstr "Teclat turc"
 
-#: transports/HTML5RDP/html5rdp.py:229
-#: transports/HTML5RDS_enterprise/html5rds.py:214
+#: transports/HTML5RDP/html5rdp.py:223
+#: transports/HTML5RDS_enterprise/html5rds.py:215
 msgid "Failsafe"
 msgstr "A prova de fallades"
 
-#: transports/HTML5RDP/html5rdp.py:237
-#: transports/HTML5RDS_enterprise/html5rds.py:221
+#: transports/HTML5RDP/html5rdp.py:231
+#: transports/HTML5RDS_enterprise/html5rds.py:222
 #: transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validesa del ticket"
 
-#: transports/HTML5RDP/html5rdp.py:241
-#: transports/HTML5RDS_enterprise/html5rds.py:225
+#: transports/HTML5RDP/html5rdp.py:235
+#: transports/HTML5RDS_enterprise/html5rds.py:226
 #: transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
@@ -6440,56 +6441,56 @@ msgstr ""
 "Temps permès, en segons, al client HTML5 per a recarregar dades del Broker "
 "UDS. Es recomana el valor predeterminat de 60."
 
-#: transports/HTML5RDP/html5rdp.py:250
-#: transports/HTML5RDS_enterprise/html5rds.py:234
+#: transports/HTML5RDP/html5rdp.py:244
+#: transports/HTML5RDS_enterprise/html5rds.py:235
 #: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forçar una nova finestra HTML"
 
-#: transports/HTML5RDP/html5rdp.py:251
-#: transports/HTML5RDS_enterprise/html5rds.py:235
+#: transports/HTML5RDP/html5rdp.py:245
+#: transports/HTML5RDS_enterprise/html5rds.py:236
 #: transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleccioneu el comportament de les finestres per a noves connexions a HTML5"
 
-#: transports/HTML5RDP/html5rdp.py:256
-#: transports/HTML5RDS_enterprise/html5rds.py:240
+#: transports/HTML5RDP/html5rdp.py:250
+#: transports/HTML5RDS_enterprise/html5rds.py:241
 #: transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Obrir totes les connexions a la mateixa finestra, però mantenir la finestra "
 "UDS."
 
-#: transports/HTML5RDP/html5rdp.py:259
-#: transports/HTML5RDS_enterprise/html5rds.py:243
+#: transports/HTML5RDP/html5rdp.py:253
+#: transports/HTML5RDS_enterprise/html5rds.py:244
 #: transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Forçar l'obertura de totes les connexions en una finestra nova."
 
-#: transports/HTML5RDP/html5rdp.py:263
-#: transports/HTML5RDS_enterprise/html5rds.py:247
+#: transports/HTML5RDP/html5rdp.py:257
+#: transports/HTML5RDS_enterprise/html5rds.py:248
 #: transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Substitueix la finestra d'UDS per la connexió."
 
-#: transports/HTML5RDP/html5rdp.py:272
-#: transports/HTML5RDS_enterprise/html5rds.py:256
+#: transports/HTML5RDP/html5rdp.py:266
+#: transports/HTML5RDS_enterprise/html5rds.py:257
 msgid "Connection security mode for Guacamole RDP connection"
 msgstr "Mode de seguretat de connexió per a la connexió RDP de Guacamole"
 
-#: transports/HTML5RDP/html5rdp.py:276
-#: transports/HTML5RDS_enterprise/html5rds.py:260
+#: transports/HTML5RDP/html5rdp.py:270
+#: transports/HTML5RDS_enterprise/html5rds.py:261
 msgid "Any (Allow the server to choose the type of auth)"
 msgstr "Qualsevol (Permetre al servidor triar el tipus d'autenticació)"
 
-#: transports/HTML5RDP/html5rdp.py:280
-#: transports/HTML5RDS_enterprise/html5rds.py:264
+#: transports/HTML5RDP/html5rdp.py:274
+#: transports/HTML5RDS_enterprise/html5rds.py:265
 msgid "RDP (Standard RDP encryption. Should be supported by all servers)"
 msgstr "RDP (xifrat RDP estàndard. Suportat per tots els servidors)"
 
-#: transports/HTML5RDP/html5rdp.py:285
-#: transports/HTML5RDS_enterprise/html5rds.py:269
+#: transports/HTML5RDP/html5rdp.py:279
+#: transports/HTML5RDS_enterprise/html5rds.py:270
 msgid ""
 "NLA (Network Layer authentication. Requires VALID username&password, or "
 "connection will fail)"
@@ -6497,7 +6498,7 @@ msgstr ""
 "NLA (autenticació de capa de xarxa. Requereix un usuari i contrasenya "
 "vàlids, o la connexió fallarà)"
 
-#: transports/HTML5RDP/html5rdp.py:291
+#: transports/HTML5RDP/html5rdp.py:285
 msgid ""
 "NLA extended (Network Layer authentication. Requires VALID "
 "username&password, or connection will fail)"
@@ -6505,26 +6506,26 @@ msgstr ""
 "NLA (Network Layer Authentication/Autenticació de Capa de Xarxa) ampliat. "
 "Requereix un nom d'usuari i una contrasenya vàlids o la connexió fallarà)"
 
-#: transports/HTML5RDP/html5rdp.py:294
-#: transports/HTML5RDS_enterprise/html5rds.py:272
+#: transports/HTML5RDP/html5rdp.py:288
+#: transports/HTML5RDS_enterprise/html5rds.py:273
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (xifrat de capa de seguretat de transport)"
 
-#: transports/HTML5RDP/html5rdp.py:303 transports/RDP/rdp_base.py:192
+#: transports/HTML5RDP/html5rdp.py:297 transports/RDP/rdp_base.py:192
 msgid "RDP Port"
 msgstr "Port RDP"
 
-#: transports/HTML5RDP/html5rdp.py:304 transports/RDP/rdp_base.py:193
+#: transports/HTML5RDP/html5rdp.py:298 transports/RDP/rdp_base.py:193
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "Utilitzeu aquest port com a port RDP. Per defecte és el 3389."
 
-#: transports/HTML5RDP/html5rdp.py:311
-#: transports/HTML5RDS_enterprise/html5rds.py:279
+#: transports/HTML5RDP/html5rdp.py:305
+#: transports/HTML5RDS_enterprise/html5rds.py:280
 msgid "Glyptodon Enterprise context path"
 msgstr "Ruta de context de Glyptodon Enterprise"
 
-#: transports/HTML5RDP/html5rdp.py:314
-#: transports/HTML5RDS_enterprise/html5rds.py:282
+#: transports/HTML5RDP/html5rdp.py:308
+#: transports/HTML5RDS_enterprise/html5rds.py:283
 msgid ""
 "Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon "
 "Enterprise Tunnel)"
@@ -6532,28 +6533,27 @@ msgstr ""
 "Ruta personalitzada per al túnel Glyptodon Enterprise. (Vàlida només per al "
 "túnel Glyptodon Enterprise)"
 
-#: transports/HTML5RDP/html5rdp.py:329
-#: transports/HTML5RDS_enterprise/html5rds.py:296
+#: transports/HTML5RDP/html5rdp.py:323
+#: transports/HTML5RDS_enterprise/html5rds.py:297
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
 
-#: transports/HTML5RDP/html5rdp.py:334
-#: transports/HTML5RDS_enterprise/html5rds.py:301
+#: transports/HTML5RDS_enterprise/html5rds.py:67
+msgid "HTML5 RDS for vApps"
+msgstr "HTML5 RDS per a vApps"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:69
+msgid "RDS protocol using HTML5 client for vApps"
+msgstr "Protocol RDP utilitzant client HTML5 per a vApps"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:302
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
 msgstr ""
 "Només es permeten credencials buides (a la pestanya de Credencials) amb el "
 "nivell de seguretat (a la pestanya Paràmetres) establert a \"RDP\""
-
-#: transports/HTML5RDS_enterprise/html5rds.py:66
-msgid "HTML5 RDS for vApps"
-msgstr "HTML5 RDS per a vApps"
-
-#: transports/HTML5RDS_enterprise/html5rds.py:68
-msgid "RDS protocol using HTML5 client for vApps"
-msgstr "Protocol RDP utilitzant client HTML5 per a vApps"
 
 #: transports/HTML5VNC/html5vnc.py:64
 msgid "HTML5 VNC Experimental"
@@ -7213,35 +7213,35 @@ msgstr "Dades no vàlides"
 msgid "Access limited by calendar"
 msgstr "Accés limitat per calendari"
 
-#: web/util/configjs.py:222
+#: web/util/configjs.py:223
 msgid "Windows client"
 msgstr "Client Windows"
 
-#: web/util/configjs.py:226
+#: web/util/configjs.py:227
 msgid "Mac OS X client"
 msgstr "Client MacOS X"
 
-#: web/util/configjs.py:229
+#: web/util/configjs.py:230
 msgid "Debian based Linux client"
 msgstr "Client Linux basat en Debian"
 
-#: web/util/configjs.py:231 web/util/configjs.py:239 web/util/configjs.py:259
+#: web/util/configjs.py:232 web/util/configjs.py:240 web/util/configjs.py:260
 msgid "(requires Python-3.6 or newer)"
 msgstr "(requereix Python-3.6 o més recent)"
 
-#: web/util/configjs.py:237
+#: web/util/configjs.py:238
 msgid "RPM based Linux client (Fedora, Suse, ...)"
 msgstr "Client de Linux basat en RPM (Fedora, Suse, ...)"
 
-#: web/util/configjs.py:245
+#: web/util/configjs.py:246
 msgid "Binary appimage X86_64 Linux client"
 msgstr "Client de Linux en Binari appimage X86_64"
 
-#: web/util/configjs.py:251
+#: web/util/configjs.py:252
 msgid "Binary appimage Raspberry Linux client"
 msgstr "Client de Raspberry Linux en Binari appimage"
 
-#: web/util/configjs.py:257
+#: web/util/configjs.py:258
 msgid "Generic .tar.gz Linux client"
 msgstr " Client Linux genèric .tar.gz"
 
@@ -7344,10 +7344,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
-#: web/views/modern.py:285
+#: web/views/modern.py:288
 msgid "{} days"
 msgstr "{} dies"
 
-#: web/views/modern.py:287
+#: web/views/modern.py:290
 msgid "{} hours"
 msgstr "{} hores"
