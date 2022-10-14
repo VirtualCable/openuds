@@ -118,7 +118,7 @@ class Transports(ModelHandler):
                 'values': [
                     {'id': x.uuid, 'text': x.name}
                     for x in ServicePool.objects.all().order_by('name')
-                    if transport.protocol in x.service.getType().allowedProtocols
+                    if x.service and transport.protocol in x.service.getType().allowedProtocols 
                 ],
                 'label': gettext('Service Pools'),
                 'tooltip': gettext('Currently assigned services pools'),
