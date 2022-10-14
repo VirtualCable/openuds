@@ -121,34 +121,57 @@ class TSPICETransport(BaseSpiceTransport):
         # Spice connection
         con = userServiceInstance.getConsoleConnection()
 
-        # We MAY need two tickets, one for 'insecure' port an one for secure
-        ticket = ''
-        if con['port']:
-            ticket = TicketStore.create_for_tunnel(
-                userService=userService,
-                port=int(con['port']),
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
-            )
-
-        ticket_secure = ''
-        if con['secure_port']:
-            ticket_secure = TicketStore.create_for_tunnel(
-                userService=userService,
-                port=int(con['secure_port']),
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
-            )
-
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
-        r = RemoteViewerFile(
-            '127.0.0.1',
-            '{port}',
-            '{secure_port}',
-            con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
-            self.serverCertificate.value.strip(),
-            con['cert_subject'],
-            fullscreen=self.fullScreen.isTrue(),
-        )
+        # We MAY need two tickets, one for 'insecure' port an one for secure
+        ticket = ''
+        ticket_secure = ''
+        if 'proxy' not in con:
+            if con['port']:
+                ticket = TicketStore.create_for_tunnel(
+                    userService=userService,
+                    port=int(con['port']),
+                    validity=self.tunnelWait.num() + 60,  # Ticket overtime
+                )
+
+            if con['secure_port']:
+                ticket_secure = TicketStore.create_for_tunnel(
+                    userService=userService,
+                    port=int(con['secure_port']),
+                    validity=self.tunnelWait.num() + 60,  # Ticket overtime
+                )
+
+            r = RemoteViewerFile(
+                '127.0.0.1',
+                '{port}',
+                '{secure_port}',
+                con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
+                con.get('ca', self.serverCertificate.value.strip()),
+                con['cert_subject'],
+                fullscreen=self.fullScreen.isTrue(),
+            )
+        else:
+            # extract host and port from proxy url
+            host, port = con['proxy'].split('://')[1].split(':')[0:2]
+            ticket = TicketStore.create_for_tunnel(
+                userService=userService,
+                host=host,
+                port=int(port),
+                validity=self.tunnelWait.num() + 60,  # Ticket overtime
+            )
+
+            r = RemoteViewerFile(
+                con.get('address'),
+                con.get('port',),
+                con.get('secure_port'),
+                con['ticket']['value'],  # password
+                con.get('ca', self.serverCertificate.value.strip()),
+                con['cert_subject'],
+                fullscreen=self.fullScreen.isTrue(),
+            )
+            # Set proxy to 127.0.0.1:{port}
+            r.proxy = con['proxy'].split('://')[0] + '://127.0.0.1:{port}'
+
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()

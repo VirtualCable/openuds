@@ -298,8 +298,7 @@ class ProxmoxProvider(
     def getConsoleConnection(
         self, machineId: str
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
-        # TODO: maybe proxmox also supports "spice"? for future release...
-        return None
+        return self.__getApi().getConsoleConnection(machineId)
 
     def getNewVmId(self) -> int:
         while True:  # look for an unused VmId

@@ -512,8 +512,7 @@ class ProxmoxClient:
 
     @ensureConected
     # @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
-    def getVmConfiguration(
-        self, vmId: int, node: typing.Optional[str] = None):
+    def getVmConfiguration(self, vmId: int, node: typing.Optional[str] = None):
         node = node or self.getVmInfo(vmId).node
         return types.VMConfiguration.fromDict(
             self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
@@ -521,16 +520,20 @@ class ProxmoxClient:
 
     @ensureConected
     def setVmMac(
-        self, vmId: int, mac: str, netid: typing.Optional[str] = None, node: typing.Optional[str] = None
+        self,
+        vmId: int,
+        mac: str,
+        netid: typing.Optional[str] = None,
+        node: typing.Optional[str] = None,
     ) -> None:
         node = node or self.getVmInfo(vmId).node
         # First, read current configuration and extract network configuration
         config = self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
         if netid not in config:
             # Get first network interface (netX where X is a number)
-                netid = next(
-                    (k for k in config if k.startswith('net') and k[3:].isdigit()), None
-                )
+            netid = next(
+                (k for k in config if k.startswith('net') and k[3:].isdigit()), None
+            )
         if not netid:
             raise ProxmoxError('No network interface found')
 
@@ -545,7 +548,7 @@ class ProxmoxClient:
             'nodes/{}/qemu/{}/config'.format(node, vmId),
             data=[(netid, netdata)],
         )
-    
+
     @ensureConected
     def startVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
@@ -660,3 +663,36 @@ class ProxmoxClient:
         return [
             types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']
         ]
+
+    @ensureConected
+    def getConsoleConnection(
+        self, vmId: int, node: typing.Optional[str] = None
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+        """
+        Gets the connetion info for the specified machine
+        """
+        node = node or self.getVmInfo(vmId).node
+        res = self._post(f'nodes/{node}/qemu/{vmId}/spiceproxy')['data']
+
+        return {
+            'type': res['type'],
+            'proxy': res['proxy'],
+            'address': res['host'],
+            'port': res.get('port', None),
+            'secure_port': res['tls-port'],
+            'cert_subject': res['host-subject'],
+            'ticket': {'value': res['password'], 'expiry': ''},
+        }
+        # Sample data:
+        # 'data': {'proxy': 'http://pvealone.dkmon.com:3128',
+        # 'release-cursor': 'Ctrl+Alt+R',
+        # 'host': 'pvespiceproxy:63489cf9:101:pvealone::c934cf7f7570012bbebab9e1167402b6471aae16',
+        # 'delete-this-file': 1,
+        # 'secure-attention': 'Ctrl+Alt+Ins',
+        # 'title': 'VM 101 - VM-1',
+        # 'password': '31a189dd71ce859867e28dd68ba166a701e77eed',
+        # 'type': 'spice',
+        # 'toggle-fullscreen': 'Shift+F11',
+        # 'host-subject': 'OU=PVE Cluster Node,O=Proxmox Virtual Environment,CN=pvealone.dkmon.com',
+        # 'tls-port': 61000,
+        # 'ca': '-----BEGIN CERTIFICATE-----\\n......\\n-----END CERTIFICATE-----\\n'}}
