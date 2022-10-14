@@ -130,7 +130,7 @@ class EmailMFA(mfas.MFA):
 
 
     allowLoginWithoutMFA = gui.ChoiceField(
-        label=_('User without MFA policy'),
+        label=_('Policy for users without MFA support'),
         order=31,
         defaultValue='0',
         tooltip=_('Action for SMS response error'),
