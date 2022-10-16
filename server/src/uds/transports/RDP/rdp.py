@@ -196,4 +196,4 @@ class RDPTransport(BaseRDPTransport):
                 }
             )
 
-        return self.getScript('scripts/{}/direct.py', osName, sp)
+        return self.getScript(osName, 'direct', sp)

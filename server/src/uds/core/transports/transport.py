@@ -30,6 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
+import sys
 import codecs
 import logging
 import json
@@ -273,6 +275,33 @@ class Transport(Module):
             .replace('\n', ''),
             signature_b64=transport_script.signature_b64,
             parameters=transport_script.parameters,
+        )
+
+    def getRelativeScript(
+        self, scriptName: str, params: typing.Mapping[str, typing.Any]
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        """Returns a script that will be executed on client, but will be downloaded from server
+
+        Args:
+            scriptName: Name of the script to be downloaded, relative path (i.e. 'scripts/direct/transport.py')
+            params: Parameters for the return tuple
+        """
+        # Reads script and signature
+        basePath = os.path.dirname(sys.modules[self.__module__].__file__ or 'not_found')  # Will raise if not found
+
+        script = open(os.path.join(basePath, scriptName), 'r').read()
+        signature = open(os.path.join(basePath, scriptName + '.signature'), 'r').read()
+
+        return script, signature, params
+
+    def getScript(
+        self, osName: str, type: typing.Literal['tunnel', 'direct'], params: typing.Mapping[str, typing.Any]
+    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        """
+        Returns a script for the given os and type
+        """
+        return self.getRelativeScript(
+            'scripts/{os}/{type}.py'.format(os=osName, type=type), params
         )
 
     def getLink(

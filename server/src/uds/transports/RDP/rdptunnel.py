@@ -243,4 +243,4 @@ class TRDPTransport(BaseRDPTransport):
                 }
             )
 
-        return self.getScript('scripts/{}/tunnel.py', osName, sp)
+        return self.getScript(osName, 'tunnel', sp)

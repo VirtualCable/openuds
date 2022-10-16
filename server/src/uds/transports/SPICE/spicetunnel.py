@@ -201,4 +201,4 @@ class TSPICETransport(BaseSpiceTransport):
             'ticket_secure': ticket_secure,
         }
 
-        return self.getScript('scripts/{}/tunnel.py', osName, sp)
+        return self.getScript(osName, 'tunnel', sp)

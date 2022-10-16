@@ -97,6 +97,8 @@ class SPICETransport(BaseSpiceTransport):
             con['cert_subject'],
             fullscreen=self.fullScreen.isTrue(),
         )
+        r.proxy = con.get('proxy', None)
+
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
@@ -119,4 +121,4 @@ class SPICETransport(BaseSpiceTransport):
             'as_file': r.as_file,
         }
 
-        return self.getScript('scripts/{}/direct.py', osName, sp)
+        return self.getScript(osName, 'direct', sp)

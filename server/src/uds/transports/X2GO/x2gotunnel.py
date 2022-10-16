@@ -197,4 +197,4 @@ class TX2GOTransport(BaseX2GOTransport):
             'xf': xf,
         }
 
-        return self.getScript('scripts/{}/tunnel.py', osName, sp)
+        return self.getScript(osName, 'tunnel', sp)

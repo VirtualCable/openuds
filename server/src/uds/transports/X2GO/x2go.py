@@ -120,4 +120,4 @@ class X2GOTransport(BaseX2GOTransport):
 
         sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
 
-        return self.getScript('scripts/{}/direct.py', osName, sp)
+        return self.getScript(osName, 'direct', sp)
