@@ -55,9 +55,12 @@ logger = logging.getLogger(__name__)
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
 
+
 class TransportScript(typing.NamedTuple):
     script: str = ''
-    script_type: typing.Union[typing.Literal['python'], typing.Literal['lua']] = 'python' # currently only python is supported
+    script_type: typing.Union[
+        typing.Literal['python'], typing.Literal['lua']
+    ] = 'python'  # currently only python is supported
     signature_b64: str = ''  # Signature of the script in base64
     parameters: typing.Mapping[str, typing.Any] = {}
 
@@ -66,7 +69,10 @@ class TransportScript(typing.NamedTuple):
         """
         Returns encoded parameters for transport script
         """
-        return codecs.encode(codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64').decode()
+        return codecs.encode(
+            codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64'
+        ).decode()
+
 
 class Transport(Module):
     """
@@ -270,7 +276,9 @@ class Transport(Module):
         logger.debug('Transport script: %s', transport_script)
 
         return TransportScript(
-            script=codecs.encode(codecs.encode(transport_script.script.encode(), 'bz2'), 'base64')
+            script=codecs.encode(
+                codecs.encode(transport_script.script.encode(), 'bz2'), 'base64'
+            )
             .decode()
             .replace('\n', ''),
             signature_b64=transport_script.signature_b64,
@@ -279,7 +287,7 @@ class Transport(Module):
 
     def getRelativeScript(
         self, scriptName: str, params: typing.Mapping[str, typing.Any]
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+    ) -> 'TransportScript':
         """Returns a script that will be executed on client, but will be downloaded from server
 
         Args:
@@ -287,16 +295,26 @@ class Transport(Module):
             params: Parameters for the return tuple
         """
         # Reads script and signature
-        basePath = os.path.dirname(sys.modules[self.__module__].__file__ or 'not_found')  # Will raise if not found
+        basePath = os.path.dirname(
+            sys.modules[self.__module__].__file__ or 'not_found'
+        )  # Will raise if not found
 
         script = open(os.path.join(basePath, scriptName), 'r').read()
         signature = open(os.path.join(basePath, scriptName + '.signature'), 'r').read()
 
-        return script, signature, params
+        return TransportScript(
+            script=script,
+            script_type='python',
+            signature_b64=signature,
+            parameters=params,
+        )
 
     def getScript(
-        self, osName: str, type: typing.Literal['tunnel', 'direct'], params: typing.Mapping[str, typing.Any]
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
+        self,
+        osName: str,
+        type: typing.Literal['tunnel', 'direct'],
+        params: typing.Mapping[str, typing.Any],
+    ) -> 'TransportScript':
         """
         Returns a script for the given os and type
         """
