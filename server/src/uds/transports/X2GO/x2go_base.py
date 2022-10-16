@@ -283,17 +283,3 @@ class BaseX2GOTransport(transports.Transport):
         authScript = self.getAuthorizeScript(userName, pub)
         userServiceManager().sendScript(userService, authScript)
         return priv, pub
-
-    def getScript(
-        self, scriptNameTemplate: str, osName: str, params: typing.Dict[str, typing.Any]
-    ) -> typing.Tuple[str, str, typing.Dict[str, typing.Any]]:
-        # Reads script
-        scriptNameTemplate = scriptNameTemplate.format(osName)
-        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
-            script = f.read()
-        # Reads signature
-        with open(
-            os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
-        ) as f:
-            signature = f.read()
-        return script, signature, params

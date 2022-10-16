@@ -130,7 +130,7 @@ def packageRelativeFile(moduleName: str, fileName: str) -> str:
     This allows to keep images alongside report
     """
     mod = sys.modules[moduleName]
-    if mod and mod.__file__:
+    if mod and hasattr(mod, '__file__') and mod.__file__:
         pkgpath = os.path.dirname(mod.__file__)
         return os.path.join(pkgpath, fileName)
     # Not found, return fileName

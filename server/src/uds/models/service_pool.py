@@ -83,14 +83,14 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service: 'models.ForeignKey[ServicePool, Service]' = models.ForeignKey(
+    service: 'models.ForeignKey[Service|None]' = models.ForeignKey(
         Service,
         null=True,
         blank=True,
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    osmanager: 'models.ForeignKey[ServicePool, OSManager]' = models.ForeignKey(
+    osmanager: 'models.ForeignKey[OSManager|None]' = models.ForeignKey(
         OSManager,
         null=True,
         blank=True,
@@ -114,7 +114,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     ignores_unused = models.BooleanField(default=False)
 
-    image: 'models.ForeignKey[ServicePool, Image]' = models.ForeignKey(
+    image: 'models.ForeignKey[Image|None]' = models.ForeignKey(
         Image,
         null=True,
         blank=True,
@@ -122,7 +122,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         on_delete=models.SET_NULL,
     )
 
-    servicesPoolGroup: 'models.ForeignKey[ServicePool, ServicePoolGroup]' = (
+    servicesPoolGroup: 'models.ForeignKey[ServicePoolGroup|None]' = (
         models.ForeignKey(
             ServicePoolGroup,
             null=True,
@@ -138,7 +138,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
     # Usage accounting
-    account: 'models.ForeignKey[ServicePool, Account]' = models.ForeignKey(
+    account: 'models.ForeignKey[Account|None]' = models.ForeignKey(
         Account,
         null=True,
         blank=True,

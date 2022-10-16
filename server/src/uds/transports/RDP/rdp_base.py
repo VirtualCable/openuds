@@ -433,20 +433,3 @@ class BaseRDPTransport(transports.Transport):
             password,
             altUsername=username,
         )
-
-    def getScript(
-        self,
-        scriptNameTemplate: str,
-        osName: str,
-        params: typing.Mapping[str, typing.Any],
-    ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
-        # Reads script
-        scriptNameTemplate = scriptNameTemplate.format(osName)
-        with open(os.path.join(os.path.dirname(__file__), scriptNameTemplate)) as f:
-            script = f.read()
-        # Reads signature
-        with open(
-            os.path.join(os.path.dirname(__file__), scriptNameTemplate + '.signature')
-        ) as f:
-            signature = f.read()
-        return script, signature, params
