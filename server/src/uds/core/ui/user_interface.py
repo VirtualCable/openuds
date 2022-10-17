@@ -310,7 +310,7 @@ class gui:
 
         def __init__(self, **options) -> None:
             # Added defaultValue as alias for defvalue
-            defvalue = options.get('defvalue', options.get('defaultValue', ''))
+            defvalue = options.get('defvalue', options.get('defaultValue', options.get('defValue', '')))
             if callable(defvalue):
                 defvalue = defvalue()
             self._data = {
