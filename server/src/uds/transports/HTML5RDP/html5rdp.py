@@ -33,10 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import re
 import logging
 import typing
-from urllib.parse import urlencode
-
-from regex import W
-from uds.models.util import getSqlDatetime
 
 from django.utils.translation import gettext_noop as _
 
@@ -460,7 +456,7 @@ class HTML5RDPTransport(transports.Transport):
             },
         }
 
-        if password == '' and self.security.value != 'rdp':
+        if not password and self.security.value != 'rdp':
             extra_params=f'&creds={username}@{domain}'
         else:
             extra_params=''

@@ -120,6 +120,6 @@ class AuthenticatorsStats(StatsReportAuto):
         return self.templateAsPDF(
             'uds/reports/stats/authenticator_stats.html',
             dct={'data': stats},
-            header=ugettext('Users usage list'),
-            water=ugettext('UDS Report of users usage'),
+            header=gettext('Users usage list'),
+            water=gettext('UDS Report of users usage'),
         )
