@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+import hashlib
 import time
 import typing
 import logging
@@ -53,21 +54,22 @@ ONE_DAY = 3600 * 24
 
 
 class CalendarChecker:
+    __slots__ = ('calendar',)
+    
     calendar: Calendar
 
     # For performance checking
-    updates: int = 0
-    cache_hit: int = 0
-    hits: int = 0
+    updates: typing.ClassVar[int] = 0
+    cache_hit: typing.ClassVar[int] = 0
+    hits: typing.ClassVar[int] = 0
 
-    cache = Cache('calChecker')
+    cache: typing.ClassVar[Cache] = Cache('calChecker')
 
     def __init__(self, calendar: Calendar) -> None:
         self.calendar = calendar
 
     def _updateData(self, dtime: datetime.datetime) -> bitarray.bitarray:
         logger.debug('Updating %s', dtime)
-        # Else, update the array
         CalendarChecker.updates += 1
 
         data = bitarray.bitarray(60 * 24)  # Granurality is minute
@@ -123,7 +125,9 @@ class CalendarChecker:
 
         return data
 
-    def _updateEvents(self, checkFrom, startEvent=True):
+    def _updateEvents(
+        self, checkFrom: datetime.datetime, startEvent: bool = True
+    ) -> typing.Optional[datetime.datetime]:
         next_event = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
@@ -140,7 +144,7 @@ class CalendarChecker:
 
         return next_event
 
-    def check(self, dtime=None) -> bool:
+    def check(self, dtime: typing.Optional[datetime.datetime] = None) -> bool:
         """
         Checks if the given time is a valid event on calendar
         @param dtime: Datetime object to check
@@ -152,10 +156,10 @@ class CalendarChecker:
         memCache = caches['memory']
 
         # First, try to get data from cache if it is valid
-        cacheKey = (
-            str(self.calendar.modified.toordinal())
-            + str(dtime.date().toordinal())
-            + self.calendar.uuid
+        cacheKey = CalendarChecker._cacheKey(
+            str(self.calendar.modified)
+            + str(dtime.date())
+            + (self.calendar.uuid or '')
             + 'checker'
         )
         # First, check "local memory cache", and if not found, from DB cache
@@ -180,33 +184,38 @@ class CalendarChecker:
         return bool(data[dtime.hour * 60 + dtime.minute])
 
     def nextEvent(
-        self, checkFrom=None, startEvent=True, offset=None
+        self,
+        checkFrom: typing.Optional[datetime.datetime] = None,
+        startEvent: bool = True,
+        offset: typing.Optional[datetime.timedelta] = None,
     ) -> typing.Optional[datetime.datetime]:
         """
         Returns next event for this interval
         """
         logger.debug('Obtaining nextEvent')
-        if checkFrom is None:
+        if not checkFrom:
             checkFrom = getSqlDatetime()
 
-        if offset is None:
+        if not offset:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = (
-            str(hash(self.calendar.modified))
-            + self.calendar.uuid
+        cacheKey = CalendarChecker._cacheKey(
+            str(self.calendar.modified)
+            + (self.calendar.uuid or '')
             + str(offset.seconds)
-            + str(int(time.mktime(checkFrom.timetuple())))
+            + str(checkFrom)
             + 'event'
             + ('x' if startEvent else '_')
         )
-        next_event = CalendarChecker.cache.get(cacheKey, None)
-        if next_event is None:
+        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(
+            cacheKey, None
+        )
+        if not next_event:
             logger.debug('Regenerating cached nextEvent')
             next_event = self._updateEvents(
                 checkFrom + offset, startEvent
             )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
-            if next_event is not None:
+            if next_event:
                 next_event += offset
             CalendarChecker.cache.put(cacheKey, next_event, 3600)
         else:
@@ -217,3 +226,12 @@ class CalendarChecker:
 
     def debug(self) -> str:
         return "Calendar checker for {}".format(self.calendar)
+
+    @staticmethod
+    def _cacheKey(key: str) -> str:
+        # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
+        # Simple, fastest algorihm is to use md5
+        h = hashlib.md5()
+        h.update(key.encode('utf-8'))
+        return h.hexdigest()
+
