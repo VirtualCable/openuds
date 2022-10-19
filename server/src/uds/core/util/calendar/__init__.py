@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+import hashlib
 import time
 import typing
 import logging
@@ -155,10 +156,10 @@ class CalendarChecker:
         memCache = caches['memory']
 
         # First, try to get data from cache if it is valid
-        cacheKey = (
-            str(self.calendar.modified.toordinal())
-            + str(dtime.date().toordinal())
-            + self.calendar.uuid
+        cacheKey = CalendarChecker._cacheKey(
+            str(self.calendar.modified)
+            + str(dtime.date())
+            + (self.calendar.uuid or '')
             + 'checker'
         )
         # First, check "local memory cache", and if not found, from DB cache
@@ -198,11 +199,11 @@ class CalendarChecker:
         if not offset:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = (
-            str(hash(self.calendar.modified))
-            + self.calendar.uuid
+        cacheKey = CalendarChecker._cacheKey(
+            str(self.calendar.modified)
+            + (self.calendar.uuid or '')
             + str(offset.seconds)
-            + str(int(time.mktime(checkFrom.timetuple())))
+            + str(checkFrom)
             + 'event'
             + ('x' if startEvent else '_')
         )
@@ -225,3 +226,12 @@ class CalendarChecker:
 
     def debug(self) -> str:
         return "Calendar checker for {}".format(self.calendar)
+
+    @staticmethod
+    def _cacheKey(key: str) -> str:
+        # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
+        # Simple, fastest algorihm is to use md5
+        h = hashlib.md5()
+        h.update(key.encode('utf-8'))
+        return h.hexdigest()
+
