@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 
 from uds.core.environment import Environmentable, Environment
@@ -43,11 +44,11 @@ class DelayedTask(Environmentable):
     This is an object that represents an execution to be done "later"
     """
 
-    def __init__(self):
+    def __init__(self, environment: typing.Optional[Environment] = None) -> None:
         """
         Remember to invoke parent init in derived clases using super(myClass,self).__init__() to let this initialize its own variables
         """
-        super().__init__(Environment('DelayedTask'))
+        super().__init__(environment or Environment.getEnvForType(self.__class__))
 
     def execute(self) -> None:
         """
