@@ -137,6 +137,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
 
         if taskInstance:
             logger.debug('Executing delayedTask:>%s<', task)
+            # Re-create environment data
             taskInstance.env = Environment.getEnvForType(taskInstance.__class__)
             DelayedTaskThread(taskInstance).start()
 
@@ -144,7 +145,13 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         now = getSqlDatetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
+
+        # Save "env" from delayed task, set it to None and restore it after save
+        env = instance.env
+        instance.env = None  # type: ignore   # clean env before saving pickle, save space (the env will be created again when executing)
         instanceDump = codecs.encode(pickle.dumps(instance), 'base64').decode()
+        instance.env = env
+
         typeName = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug(
