@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='user',
-            name='mfaData',
+            name='mfa_data',
             field=models.CharField(default='', max_length=128),
         ),
         migrations.CreateModel(
