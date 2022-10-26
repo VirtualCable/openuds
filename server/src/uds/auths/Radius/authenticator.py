@@ -135,7 +135,7 @@ class RadiusAuth(auths.Authenticator):
         )
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbAuthenticator().uuid + username
+        return 'mfa_' + str(self.dbAuthenticator().uuid) + username
 
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''

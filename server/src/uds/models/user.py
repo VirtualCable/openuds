@@ -67,7 +67,7 @@ class User(UUIDModel):
     password = models.CharField(
         max_length=128, default=''
     )  # Only used on "internal" sources or sources that "needs password"
-    mfaData = models.CharField(
+    mfa_data = models.CharField(
         max_length=128, default=''
     )  # Only used on "internal" sources
     staff_member = models.BooleanField(
@@ -222,8 +222,8 @@ class User(UUIDModel):
             If the key exists, the custom data will always contain something, but may be the values are the default ones.
 
         """
-        with storage.StorageAccess('manager' + self.manager.uuid) as store:
-            return store[self.uuid + '_' + key]
+        with storage.StorageAccess('manager' + str(self.manager.uuid)) as store:
+            return store[str(self.uuid) + '_' + key]
 
     def __str__(self):
         return 'User {} (id:{}) from auth {}'.format(
@@ -246,7 +246,7 @@ class User(UUIDModel):
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
         # Remove related stored values
-        with storage.StorageAccess('manager' + toDelete.manager.uuid) as store:
+        with storage.StorageAccess('manager' + str(toDelete.manager.uuid)) as store:
             for key in store.keys():
                 store.delete(key)
 
