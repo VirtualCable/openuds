@@ -68,7 +68,7 @@ class ManagedObjectModel(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)
+        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
 
     def deserialize(self, obj: Module, values: typing.Optional[typing.Dict[str, str]]):
         """

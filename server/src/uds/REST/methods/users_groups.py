@@ -104,7 +104,7 @@ class Users(DetailHandler):
                             'is_admin',
                             'last_access',
                             'parent',
-                            'mfaData',
+                            'mfa_data',
                         ))
                     )
                 )
@@ -128,7 +128,7 @@ class Users(DetailHandler):
                         'is_admin',
                         'last_access',
                         'parent',
-                        'mfaData',
+                        'mfa_data',
                     ),
                 )
                 res['id'] = u.uuid
@@ -207,9 +207,9 @@ class Users(DetailHandler):
             valid_fields.append('password')
             self._params['password'] = cryptoManager().hash(self._params['password'])
         
-        if 'mfaData' in self._params:
-            valid_fields.append('mfaData')
-            self._params['mfaData'] = self._params['mfaData'].strip()
+        if 'mfa_data' in self._params:
+            valid_fields.append('mfa_data')
+            self._params['mfa_data'] = self._params['mfa_data'].strip()
 
         fields = self.readFieldsFromParams(valid_fields)
         if not self._user.is_admin:

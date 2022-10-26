@@ -61,12 +61,12 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     Server configuration).
     """
 
-    provider: 'models.ForeignKey[Service, Provider]' = models.ForeignKey(
+    provider: 'models.ForeignKey[Provider]' = models.ForeignKey(
         Provider, related_name='services', on_delete=models.CASCADE
     )
 
     # Proxy for this service
-    proxy: 'models.ForeignKey[Service, Proxy]' = models.ForeignKey(
+    proxy: 'models.ForeignKey[Proxy|None]' = models.ForeignKey(
         Proxy, null=True, blank=True, related_name='services', on_delete=models.CASCADE
     )
 
