@@ -50,6 +50,8 @@ logger = logging.getLogger(__name__)
 
 # Old encryption key
 UDSB = b'udsprotect'
+# New encription key, different on each installation
+UDSK = settings.SECRET_KEY[8:24].encode()  # UDS key, new
 
 # Separators for fields
 MULTIVALUE_FIELD = b'\001'
@@ -1127,7 +1129,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InfoField.Types.PASSWORD):
                 val = PASSWORD_FIELD + cryptoManager().AESCrypt(
-                    v.value.encode('utf8'), settings.SECRET_KEY.encode(), True
+                    v.value.encode('utf8'), UDSK, True
                 )
             elif v.isType(gui.InputField.Types.NUMERIC):
                 val = str(int(v.num())).encode('utf8')
@@ -1181,7 +1183,7 @@ class UserInterface(metaclass=UserInterfaceType):
                         elif v.startswith(PASSWORD_FIELD):
                             val = (
                                 cryptoManager()
-                                .AESDecrypt(v[1:], settings.SECRET_KEY.encode(), True)
+                                .AESDecrypt(v[1:], UDSK, True)
                                 .decode()
                             )
                         else:
