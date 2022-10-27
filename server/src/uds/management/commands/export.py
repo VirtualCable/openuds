@@ -30,12 +30,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from functools import reduce
 import logging
+import operator
 import typing
-import csv
 import yaml
 
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
 from uds import models
 
@@ -195,12 +197,46 @@ def osmanager_exporter(osmanager: models.OSManager) -> typing.Dict[str, typing.A
     o = managed_object_exporter(osmanager)
     return o
 
+def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]:
+    """
+    Exports a calendar to a dict
+    """
+    c = uuid_object_exporter(calendar)
+    c.update(
+        {
+            'name': calendar.name,
+            'comments': calendar.comments,
+            'modified': calendar.modified,
+        }
+    )
+    return c
+
+def calendar_rule_exporter(calendar_rule: models.CalendarRule) -> typing.Dict[str, typing.Any]:
+    """
+    Exports a calendar rule to a dict
+    """
+    c = uuid_object_exporter(calendar_rule)
+    c.update(
+        {
+            'calendar': calendar_rule.calendar.uuid,
+            'name': calendar_rule.name,
+            'comments': calendar_rule.comments,
+            'start': calendar_rule.start,
+            'end': calendar_rule.end,
+            'frequency': calendar_rule.frequency,
+            'interval': calendar_rule.interval,
+            'duration': calendar_rule.duration,
+            'duration_unit': calendar_rule.duration_unit,
+        }
+    )
+    return c
 
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
 
     VALID_ENTITIES: typing.Mapping[str, typing.Callable[[], str]]
     verbose: bool = True
+    filter_args: typing.List[typing.Tuple[str, str]] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -234,21 +270,21 @@ class Command(BaseCommand):
             help='Output file name. Defaults to /tmp/export.yaml',
         )
 
-        # Filter ALL entities by name
+        # Filter ALL entities by name, multiple names can be specified
         parser.add_argument(
             '--filter-name',
-            action='store',
+            action='append',
             dest='filter_name',
-            default=None,
+            default=[],
             help='Filter ALL entities by name',
         )
 
-        # filter ALL entities by uuid
+        # Filter ALL entities by uuid, multiple uuids can be specified
         parser.add_argument(
             '--filter-uuid',
-            action='store',
+            action='append',
             dest='filter_uuid',
-            default=None,
+            default=[],
             help='Filter ALL entities by uuid',
         )
 
@@ -268,14 +304,11 @@ class Command(BaseCommand):
             self.stderr.write(f'Exporting entities: {",".join(options["entities"])}')
 
         # Compose filter name for kwargs
-        filter_kwargs = {}
+        for i in options['filter_name']:
+            self.filter_args.append(('name__icontains', i))
 
-        if options['filter_name']:
-            filter_kwargs['name__icontains'] = options['filter_name']
-
-        if options['filter_uuid']:
-            filter_kwargs['uuid__icontains'] = options['filter_uuid']
-        
+        for i in options['filter_uuid']:
+            self.filter_args.append(('uuid', i))
 
         # some entities are redundant, so remove them from the list
         entities = self.remove_reduntant_entities(options['entities'])
@@ -284,23 +317,27 @@ class Command(BaseCommand):
         with open(options['output'], 'w') as f:
             for entity in entities:
                 self.stderr.write(f'Exporting {entity}')
-                f.write(self.VALID_ENTITIES[entity](**filter_kwargs))
+                f.write(self.VALID_ENTITIES[entity]())
                 f.write('')
 
         if self.verbose:
             self.stderr.write(f'Exported to {options["output"]}')
 
     def apply_filter(
-        self, model: typing.Type[ModelType], **kwargs: str
+        self, model: typing.Type[ModelType]
     ) -> typing.Iterable[ModelType]:
         """
         Applies a filter to a model
         """
         if self.verbose:
-            # Explit xxx__icontains=yyy to xxx=yyy
-            values = [f'{k.split("__")[0]}={v}' for k, v in kwargs.items()]
-            self.stderr.write(f'Filtering {model.__name__} by {",".join(values)}')
-        yield from model.objects.all().filter(**kwargs)
+            # Filter is a filter name, and an array of values
+            values = [f'{k.split("__")[0]}={v}' for k, v in self.filter_args]
+            self.stderr.write(f'Filtering {model.__name__}: \n  ', ending='')
+            self.stderr.write("\n  ".join(values))
+        # Generate "OR" filter with all kwargs
+        if self.filter_args:
+            return model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args)))
+        return model.objects.all()
 
     def output_count(
         self, message: str, iterable: typing.Iterable[T]
@@ -318,19 +355,19 @@ class Command(BaseCommand):
         if self.verbose:
             self.stderr.write('\n')  # New line after count
 
-    def export_providers(self, **kwargs: str) -> str:
+    def export_providers(self) -> str:
         """
         Exports all providers to a list of dicts
         """
         return '# Providers\n' + yaml.safe_dump(
-            [provider_exporter(p) for p in self.apply_filter(models.Provider, **kwargs)]
+            [provider_exporter(p) for p in self.apply_filter(models.Provider)]
         )
 
-    def export_services(self, **kwargs: str) -> str:
+    def export_services(self) -> str:
         # First, locate providers for services with the filter
         services_list = list(
             self.output_count(
-                'Filtering services', self.apply_filter(models.Service, **kwargs)
+                'Filtering services', self.apply_filter(models.Service)
             )
         )
         providers_list = set(
@@ -358,7 +395,7 @@ class Command(BaseCommand):
             + yaml.safe_dump(services)
         )
 
-    def export_authenticators(self, **kwargs: str) -> str:
+    def export_authenticators(self) -> str:
         """
         Exports all authenticators to a list of dicts
         """
@@ -367,19 +404,19 @@ class Command(BaseCommand):
                 authenticator_exporter(a)
                 for a in self.output_count(
                     'Saving authenticators',
-                    self.apply_filter(models.Authenticator, **kwargs),
+                    self.apply_filter(models.Authenticator),
                 )
             ]
         )
 
-    def export_users(self, **kwargs: str) -> str:
+    def export_users(self) -> str:
         """
         Exports all users to a list of dicts
         """
         # first, locate authenticators for users with the filter
         users_list = list(
             self.output_count(
-                'Filtering users', self.apply_filter(models.User, **kwargs)
+                'Filtering users', self.apply_filter(models.User)
             )
         )
         authenticators_list = set(
@@ -417,14 +454,14 @@ class Command(BaseCommand):
             + yaml.safe_dump(users)
         )
 
-    def export_groups(self, **kwargs: str) -> str:
+    def export_groups(self) -> str:
         """
         Exports all groups to a list of dicts
         """
         # First export authenticators for groups with the filter
         groups_list = list(
             self.output_count(
-                'Filtering groups', self.apply_filter(models.Group, **kwargs)
+                'Filtering groups', self.apply_filter(models.Group)
             )
         )
         authenticators_list = set(
@@ -450,7 +487,7 @@ class Command(BaseCommand):
             + yaml.safe_dump(groups)
         )
 
-    def export_networks(self, **kwargs: str) -> str:
+    def export_networks(self) -> str:
         """
         Exports all networks to a list of dicts
         """
@@ -458,19 +495,19 @@ class Command(BaseCommand):
             [
                 network_exporter(n)
                 for n in self.output_count(
-                    'Saving networks', self.apply_filter(models.Network, **kwargs)
+                    'Saving networks', self.apply_filter(models.Network)
                 )
             ]
         )
 
-    def export_transports(self, **kwargs: str) -> str:
+    def export_transports(self) -> str:
         """
         Exports all transports to a list of dicts
         """
         # First, export networks for transports with the filter
         transports_list = list(
             self.output_count(
-                'Filtering transports', self.apply_filter(models.Transport, **kwargs)
+                'Filtering transports', self.apply_filter(models.Transport)
             )
         )
         networks_list = set()
@@ -494,7 +531,7 @@ class Command(BaseCommand):
             + yaml.safe_dump(transports)
         )
 
-    def export_osmanagers(self, **kwargs: str) -> str:
+    def export_osmanagers(self) -> str:
         """
         Exports all osmanagers to a list of dicts
         """
@@ -502,7 +539,7 @@ class Command(BaseCommand):
             [
                 osmanager_exporter(o)
                 for o in self.output_count(
-                    'Saving osmanagers', self.apply_filter(models.OSManager, **kwargs)
+                    'Saving osmanagers', self.apply_filter(models.OSManager)
                 )
             ]
         )
