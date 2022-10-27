@@ -40,13 +40,14 @@ import logging
 from collections import abc
 
 from django.utils.translation import get_language, ugettext as _, ugettext_noop
+from django.conf import settings
 
 from uds.core.managers import cryptoManager
 
 logger = logging.getLogger(__name__)
 
-UDSB = b'udsprotect'
-
+UDSB = b'udsprotect'  # UDS base key, old
+UDSK = settings.SECRET_KEY[8:24].encode()  # UDS key, new
 
 class gui:
     """
@@ -1080,8 +1081,9 @@ class UserInterface(metaclass=UserInterfaceType):
                 # logger.debug('Serializing value {0}'.format(v.value))
                 val = b'\001' + pickle.dumps(v.value, protocol=0)
             elif v.isType(gui.InfoField.PASSWORD_TYPE):
-                val = b'\004' + cryptoManager().AESCrypt(
-                    v.value.encode('utf8'), UDSB, True
+                # Old \004 field type is not used anymore, is for old "udsprotect" encryption
+                val = b'\005' + cryptoManager().AESCrypt(
+                    v.value.encode('utf8'), UDSK, True
                 )
             elif v.isType(gui.InputField.NUMERIC_TYPE):
                 val = str(int(v.num())).encode('utf8')
@@ -1132,6 +1134,8 @@ class UserInterface(metaclass=UserInterfaceType):
                             val = pickle.loads(v[1:])
                         elif v and v[0] == 4:
                             val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
+                        elif v and v[0] == 5:
+                            val = cryptoManager().AESDecrypt(v[1:], UDSK, True).decode()
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
