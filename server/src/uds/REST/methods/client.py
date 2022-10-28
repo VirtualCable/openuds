@@ -46,10 +46,13 @@ from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION, REQUIRED_CLIENT_VERSION
 
+if typing.TYPE_CHECKING:
+    from uds.models import UserService
 
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
+
 
 
 
@@ -122,6 +125,7 @@ class Client(Handler):
         if len(self._args) == 1:  # Simple test
             return Client.result(_('Correct'))
 
+        userService: typing.Optional['UserService'] = None
         try:
             (
                 ticket,
@@ -180,9 +184,6 @@ class Client(Handler):
             )
             password = cryptoManager().symDecrpyt(data['password'], scrambler)
 
-            # Set "accesedByClient"
-            userService.setProperty('accessedByClient', '1')
-
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
             if not ip:
                 raise ServiceNotReadyError()
@@ -212,10 +213,6 @@ class Client(Handler):
                 }
             )
         except ServiceNotReadyError as e:
-            # Set that client has accesed userService
-            if e.userService:
-                e.userService.setProperty('accessedByClient', '1')
-
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(
                 ticket, 20
@@ -226,3 +223,7 @@ class Client(Handler):
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))
+
+        finally:
+            if userService:
+                userService.setProperty('accessedByClient', '1')
