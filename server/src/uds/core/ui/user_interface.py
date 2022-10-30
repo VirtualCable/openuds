@@ -42,6 +42,7 @@ from collections import abc
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
+from numpy import isin
 
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import deprecatedClassValue
@@ -99,18 +100,20 @@ class gui:
 
     # Values dict type
     ValuesType = typing.Optional[typing.Dict[str, str]]
+
+    class ChoiceType(typing.TypedDict):
+        id: str
+        text: str
+
     ValuesDictType = typing.Dict[
         str,
-        typing.Union[str, bool, typing.List[str], typing.List[typing.Dict[str, str]]],
+        typing.Union[str, bool, typing.List[str], typing.List[ChoiceType]],
     ]
-    ChoiceType = typing.Dict[str, str]
 
-    
     # : True string value
     TRUE: typing.ClassVar[str] = 'true'
     # : False string value
     FALSE: typing.ClassVar[str] = 'false'
-
 
     class Tab(enum.Enum):
         ADVANCED = gettext_noop('Advanced')
@@ -123,24 +126,28 @@ class gui:
         def __str__(self) -> str:
             return str(self.value)
 
-    
     # : For backward compatibility, will be removed in future versions
     # For now, will log an warning if used
     @deprecatedClassValue('gui.Tab.ADVANCED')
     def ADVANCED_TAB(cls) -> str:
         return str(gui.Tab.ADVANCED)
+
     @deprecatedClassValue('gui.Tab.PARAMETERS')
     def PARAMETERS_TAB(cls) -> str:
         return str(gui.Tab.PARAMETERS)
+
     @deprecatedClassValue('gui.Tab.CREDENTIALS')
     def CREDENTIALS_TAB(cls) -> str:
         return str(gui.Tab.CREDENTIALS)
+
     @deprecatedClassValue('gui.Tab.TUNNEL')
     def TUNNEL_TAB(cls) -> str:
         return str(gui.Tab.TUNNEL)
+
     @deprecatedClassValue('gui.Tab.DISPLAY')
     def DISPLAY_TAB(cls) -> str:
         return str(gui.Tab.DISPLAY)
+
     @deprecatedClassValue('gui.Tab.MFA')
     def MFA_TAB(cls) -> str:
         return str(gui.Tab.MFA)
@@ -151,42 +158,10 @@ class gui:
         typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]],
     ] = {}
 
-    # Helpers
     @staticmethod
-    def convertToChoices(
-        vals: typing.Union[typing.Iterable[typing.Union[str, typing.Dict[str, str]]], typing.Dict[str, str]]
-    ) -> typing.List[typing.Dict[str, str]]:
-        """
-        Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
-        multichoice, ..
-        """
-        if not vals:
-            return []
-        # Helper to convert an item to a dict
-        def choiceFromValue(val: typing.Union[str, typing.Dict[str, str]]) -> typing.Dict[str, str]:
-            if isinstance(val, str):
-                return {'id': val, 'text': val}
-            return copy.deepcopy(val)
-
-        # If is a dict
-        if isinstance(vals, abc.Mapping):
-            return [{'id': str(k), 'text': v} for k, v in vals.items()]
-
-        # If is an iterator
-        if isinstance(vals, abc.Iterable):
-            return [choiceFromValue(v) for v in vals]
-
-       
-        raise ValueError('Invalid type for convertToChoices: {}'.format(type(vals)))
-
-    @staticmethod
-    def convertToList(vals: typing.Iterable[str]) -> typing.List[str]:
-        if vals:
-            return [str(v) for v in vals]
-        return []
-
-    @staticmethod
-    def choiceItem(id_: typing.Union[str, int], text: str) -> 'gui.ChoiceType':
+    def choiceItem(
+        id_: typing.Union[str, int], text: typing.Union[str, int]
+    ) -> 'gui.ChoiceType':
         """
         Helper method to create a single choice item.
 
@@ -204,6 +179,58 @@ class gui:
         """
         return {'id': str(id_), 'text': str(text)}
 
+    # Helpers
+    @staticmethod
+    def convertToChoices(
+        vals: typing.Union[
+            typing.Iterable[typing.Union[str, typing.Dict[str, str]]],
+            typing.Dict[str, str],
+            None,
+        ]
+    ) -> typing.List['gui.ChoiceType']:
+        """
+        Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
+        multichoice, ..
+        """
+        if not vals:
+            return []
+
+        # Helper to convert an item to a dict
+        def choiceFromValue(
+            val: typing.Union[str, int, typing.Dict[str, str]]
+        ) -> 'gui.ChoiceType':
+            if isinstance(val, dict):
+                if 'id' not in val or 'text' not in val:
+                    raise ValueError('Invalid choice dict: {}'.format(val))
+                return gui.choiceItem(val['id'], val['text'])
+            # If val is not a dict, and it has not 'id' and 'text', raise an exception
+            return gui.choiceItem(val, val)
+
+        # If is a dict
+        if isinstance(vals, abc.Mapping):
+            return [gui.choiceItem(str(k), v) for k, v in vals.items()]
+
+        # if single value, convert to list
+        if not isinstance(vals, abc.Iterable) or isinstance(vals, str):
+            vals = [vals]
+
+        # If is an iterable
+        if isinstance(vals, abc.Iterable):
+            return [choiceFromValue(v) for v in vals]
+
+        # This should never happen
+        raise RuntimeError('Invalid type for convertToChoices: {}'.format(type(vals)))
+
+    @staticmethod
+    def convertToList(
+        vals: typing.Union[str, int, typing.Iterable]
+    ) -> typing.List[str]:
+        if vals:
+            if isinstance(vals, (str, int)):
+                return [str(vals)]
+            return [str(v) for v in vals]
+        return []
+
     @staticmethod
     def choiceImage(
         id_: typing.Union[str, int], text: str, img: str
@@ -211,7 +238,7 @@ class gui:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod
-    def sortedChoices(choices):
+    def sortedChoices(choices: typing.Iterable):
         return sorted(choices, key=lambda item: item['text'].lower())
 
     @staticmethod
@@ -287,6 +314,7 @@ class gui:
         so if you use both, the used one will be "value". This is valid for
         all form fields.
         """
+
         class Types(enum.Enum):
             TEXT = 'text'
             TEXT_AUTOCOMPLETE = 'text-autocomplete'
@@ -312,7 +340,9 @@ class gui:
 
         def __init__(self, **options) -> None:
             # Added defaultValue as alias for defvalue
-            defvalue = options.get('defvalue', options.get('defaultValue', options.get('defValue', '')))
+            defvalue = options.get(
+                'defvalue', options.get('defaultValue', options.get('defValue', ''))
+            )
             if callable(defvalue):
                 defvalue = defvalue()
             self._data = {
@@ -604,9 +634,7 @@ class gui:
                 datetime.date: the date that this object holds, or "min" | "max" on error
             """
             try:
-                return datetime.datetime.strptime(
-                    self.value, '%Y-%m-%d'
-                )  # ISO Format
+                return datetime.datetime.strptime(self.value, '%Y-%m-%d')  # ISO Format
             except Exception:
                 return datetime.datetime.min if min else datetime.datetime.max
 
@@ -827,10 +855,7 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options)
-            vals = options.get('values')
-            if vals and isinstance(vals, (dict, list, tuple)):
-                options['values'] = gui.convertToChoices(options['values'])
-            self._data['values'] = options.get('values', [])
+            self._data['values'] = gui.convertToChoices(options.get('values'))
             if 'fills' in options:
                 # Save fnc to register as callback
                 fills = options['fills']
@@ -840,7 +865,7 @@ class gui:
                 gui.callbacks[fills['callbackName']] = fnc
             self._type(gui.InputField.Types.CHOICE)
 
-        def setValues(self, values: typing.List[typing.Dict[str, typing.Any]]):
+        def setValues(self, values: typing.List['gui.ChoiceType']):
             """
             Set the values for this choice field
             """
@@ -1177,15 +1202,13 @@ class UserInterface(metaclass=UserInterfaceType):
                 if k in self._gui:
                     try:
                         if v.startswith(MULTIVALUE_FIELD):
-                            val = pickle.loads(v[1:])  # nosec: secure pickled by us for sure
+                            val = pickle.loads(  # nosec: safe pickle, controlled
+                                v[1:]
+                            )  # nosec: secure pickled by us for sure
                         elif v.startswith(OLD_PASSWORD_FIELD):
                             val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
                         elif v.startswith(PASSWORD_FIELD):
-                            val = (
-                                cryptoManager()
-                                .AESDecrypt(v[1:], UDSK, True)
-                                .decode()
-                            )
+                            val = cryptoManager().AESDecrypt(v[1:], UDSK, True).decode()
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
