@@ -39,10 +39,13 @@ import typing
 import logging
 import enum
 from collections import abc
+import yaml
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
 from numpy import isin
+from regex import B
+from yaml import safe_dump
 
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import deprecatedClassValue
@@ -61,6 +64,9 @@ PASSWORD_FIELD = b'\005'
 
 FIELD_SEPARATOR = b'\002'
 NAME_VALUE_SEPARATOR = b'\003'
+
+SERIALIZATION_HEADER = b'GUIZ'
+SERIALIZATION_VERSION = b'\001'
 
 
 class gui:
@@ -316,7 +322,6 @@ class gui:
         class Types(enum.Enum):
             TEXT = 'text'
             TEXT_AUTOCOMPLETE = 'text-autocomplete'
-            # TEXTBOX = 'textbox'
             NUMERIC = 'numeric'
             PASSWORD = 'password'  # nosec: this is not a password
             HIDDEN = 'hidden'
@@ -324,9 +329,10 @@ class gui:
             MULTI_CHOICE = 'multichoice'
             EDITABLE_LIST = 'editlist'
             CHECKBOX = 'checkbox'
-            IMAGECHOICE = 'imgchoice'
+            IMAGE_CHOICE = 'imgchoice'
             DATE = 'date'
             INFO = 'dummy'
+            IMAGE = 'image'
 
             def __str__(self):
                 return self.value
@@ -338,30 +344,42 @@ class gui:
 
         def __init__(self, **options) -> None:
             # Added defaultValue as alias for defvalue
+            self._data = {}
+            if 'type' in options:
+                self.type = options['type']  # set type first
+
             defvalue = options.get(
                 'defvalue', options.get('defaultValue', options.get('defValue', ''))
             )
             if callable(defvalue):
                 defvalue = defvalue()
-            self._data = {
-                'length': options.get(
-                    'length', gui.InputField.DEFAULT_LENTGH
-                ),  # Length is not used on some kinds of fields, but present in all anyway
-                'required': options.get('required', False),
-                'label': options.get('label', ''),
-                'defvalue': str(defvalue),
-                'rdonly': options.get(
-                    'rdonly', options.get('readOnly', options.get('readonly', False))
-                ),  # This property only affects in "modify" operations
-                'order': options.get('order', 0),
-                'tooltip': options.get('tooltip', ''),
-                'type': str(gui.InputField.Types.TEXT),
-                'value': options.get('value', ''),
-            }
+            self._data.update(
+                {
+                    'length': options.get(
+                        'length', gui.InputField.DEFAULT_LENTGH
+                    ),  # Length is not used on some kinds of fields, but present in all anyway
+                    'required': options.get('required', False),
+                    'label': options.get('label', ''),
+                    'defvalue': str(defvalue),
+                    'rdonly': options.get(
+                        'rdonly',
+                        options.get('readOnly', options.get('readonly', False)),
+                    ),  # This property only affects in "modify" operations
+                    'order': options.get('order', 0),
+                    'tooltip': options.get('tooltip', ''),
+                    'type': str(gui.InputField.Types.TEXT),
+                    'value': options.get('value', ''),
+                }
+            )
             if 'tab' in options:
                 self._data['tab'] = str(options.get('tab'))  # Ensure it's a string
 
-        def _type(self, type_: typing.Union[Types, str]) -> None:
+        @property
+        def type(self) -> 'Types':
+            return gui.InputField.Types(self._data['type'])
+
+        @type.setter
+        def type(self, type_: Types) -> None:
             """
             Sets the type of this field.
 
@@ -483,8 +501,7 @@ class gui:
         """
 
         def __init__(self, **options) -> None:
-            super().__init__(**options)
-            self._type(gui.InputField.Types.TEXT)
+            super().__init__(**options, type=gui.InputField.Types.TEXT)
             multiline = int(options.get('multiline', 0))
             if multiline > 8:
                 multiline = 8
@@ -501,8 +518,8 @@ class gui:
 
         def __init__(self, **options) -> None:
             super().__init__(**options)
-            # Change the type
-            self._type(gui.InputField.Types.TEXT_AUTOCOMPLETE)
+            # Update parent type
+            self.type = gui.InputField.Types.TEXT_AUTOCOMPLETE
             # And store values in a list
             self._data['values'] = gui.convertToChoices(options.get('values', []))
 
@@ -534,15 +551,13 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.NUMERIC)
             self._data['minValue'] = int(
                 options.get('minValue', options.get('minvalue', '987654321'))
             )
             self._data['maxValue'] = int(
                 options.get('maxValue', options.get('maxvalue', '987654321'))
             )
-
-            self._type(gui.InputField.Types.NUMERIC)
 
         def _setValue(self, value: typing.Any):
             # Internally stores an string
@@ -601,8 +616,7 @@ class gui:
             for v in 'value', 'defvalue':
                 self.processValue(v, options)
 
-            super().__init__(**options)
-            self._type(gui.InputField.Types.DATE)
+            super().__init__(**options, type=gui.InputField.Types.DATE)
 
         def date(self, min: bool = True) -> datetime.date:
             """
@@ -666,8 +680,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
-            self._type(gui.InputField.Types.PASSWORD)
+            super().__init__(**options, type=gui.InputField.Types.PASSWORD)
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -705,9 +718,8 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.HIDDEN)
             self._isSerializable: bool = options.get('serializable', '') != ''
-            self._type(gui.InputField.Types.HIDDEN)
 
         def isSerializable(self) -> bool:
             return self._isSerializable
@@ -732,8 +744,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
-            self._type(gui.InputField.Types.CHECKBOX)
+            super().__init__(**options, type=gui.InputField.Types.CHECKBOX)
 
         @staticmethod
         def _checkTrue(val: typing.Union[str, bytes, bool]) -> bool:
@@ -852,7 +863,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.CHOICE)
             self._data['values'] = gui.convertToChoices(options.get('values'))
             if 'fills' in options:
                 # Save fnc to register as callback
@@ -861,7 +872,6 @@ class gui:
                 fills.pop('function')
                 self._data['fills'] = fills
                 gui.callbacks[fills['callbackName']] = fnc
-            self._type(gui.InputField.Types.CHOICE)
 
         def setValues(self, values: typing.List['gui.ChoiceType']):
             """
@@ -871,10 +881,8 @@ class gui:
 
     class ImageChoiceField(InputField):
         def __init__(self, **options):
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.IMAGE_CHOICE)
             self._data['values'] = options.get('values', [])
-
-            self._type(gui.InputField.Types.IMAGECHOICE)
 
         def setValues(self, values: typing.List[typing.Any]):
             """
@@ -917,12 +925,11 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.MULTI_CHOICE)
             if options.get('values') and isinstance(options.get('values'), dict):
                 options['values'] = gui.convertToChoices(options['values'])
             self._data['values'] = options.get('values', [])
             self._data['rows'] = options.get('rows', -1)
-            self._type(gui.InputField.Types.MULTI_CHOICE)
 
         def setValues(self, values: typing.List[typing.Any]) -> None:
             """
@@ -961,9 +968,8 @@ class gui:
         SEPARATOR = '\001'
 
         def __init__(self, **options) -> None:
-            super().__init__(**options)
+            super().__init__(**options, type=gui.InputField.Types.EDITABLE_LIST)
             self._data['values'] = gui.convertToList(options.get('values', []))
-            self._type(gui.InputField.Types.EDITABLE_LIST)
 
         def _setValue(self, value):
             """
@@ -978,8 +984,7 @@ class gui:
         """
 
         def __init__(self, **options) -> None:
-            super().__init__(**options)
-            self._type(gui.InputField.Types.TEXT)
+            super().__init__(**options, type=gui.InputField.Types.IMAGE)
 
     class InfoField(InputField):
         """
@@ -987,8 +992,7 @@ class gui:
         """
 
         def __init__(self, **options) -> None:
-            super().__init__(**options)
-            self._type(gui.InputField.Types.INFO)
+            super().__init__(**options, type=gui.InputField.Types.INFO)
 
 
 class UserInterfaceType(type):
@@ -1030,8 +1034,9 @@ class UserInterface(metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
+
     # Class variable that will hold the gui fields description
-    _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]] 
+    _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]]
 
     # instance variable that will hold the gui fields description
     # this allows us to modify the gui fields values at runtime without affecting other instances
@@ -1051,7 +1056,9 @@ class UserInterface(metaclass=UserInterfaceType):
 
         self._gui = copy.deepcopy(self._base_gui)
         for key, val in self._gui.items():  # And refresh self references to them
-            setattr(self, key, val)  # val is an InputField instance, so it is a reference to self._gui[key]
+            setattr(
+                self, key, val
+            )  # val is an InputField instance, so it is a reference to self._gui[key]
 
         if values is not None:
             for k, v in self._gui.items():
@@ -1168,6 +1175,43 @@ class UserInterface(metaclass=UserInterfaceType):
 
         return codecs.encode(FIELD_SEPARATOR.join(arr), 'zip')
 
+    # TODO: This method is being created, not to be used yet
+    def serializeFormTo(
+        self, serializer: typing.Optional[typing.Callable[[typing.Any], str]] = None
+    ) -> bytes:
+        """New form serialization
+
+        Returns:
+            bytes -- serialized form (zipped)
+        """
+
+        def serialize(value: typing.Any) -> str:
+            if serializer:
+                return serializer(value)
+            return yaml.safe_dump(value)
+
+        converters: typing.Mapping[
+            gui.InfoField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
+        ] = {
+            gui.InputField.Types.HIDDEN: (
+                lambda x: None if not x.isSerializable() else x.value
+            ),
+            gui.InputField.Types.INFO: lambda x: None,
+            gui.InputField.Types.EDITABLE_LIST: lambda x: serialize(x.value),
+            gui.InputField.Types.MULTI_CHOICE: lambda x: serialize(x.value),
+            gui.InputField.Types.PASSWORD: lambda x: (
+                cryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
+            ),
+            gui.InputField.Types.NUMERIC: lambda x: str(int(x.num())),
+            gui.InputField.Types.CHECKBOX: lambda x: str(x.isTrue()),
+        }
+        arr = [(k, v.type, converters[v.type](v)) for k, v in self._gui.items()]
+
+        return codecs.encode(
+            SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr).encode(),
+            'zip',
+        )
+
     def unserializeForm(self, values: bytes) -> None:
         """
         This method unserializes the values previously obtained using
@@ -1220,9 +1264,7 @@ class UserInterface(metaclass=UserInterfaceType):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    def guiDescription(
-        self
-    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    def guiDescription(self) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can

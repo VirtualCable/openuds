@@ -99,7 +99,7 @@ class ServicesPoolGroups(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.Types.IMAGECHOICE,
+                'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 102,
             }
         ]:

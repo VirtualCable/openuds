@@ -85,7 +85,7 @@ class Images(ModelHandler):
                 'value': '',
                 'label': gettext('Image'),
                 'tooltip': gettext('Image object'),
-                'type': gui.InputField.Types.IMAGECHOICE,
+                'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 100,  # At end
             },
         )

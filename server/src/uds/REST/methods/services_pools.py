@@ -400,7 +400,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.Types.IMAGECHOICE,
+                'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 120,
                 'tab': gettext('Display'),
             },
@@ -417,7 +417,7 @@ class ServicesPools(ModelHandler):
                 'tooltip': gettext(
                     'Pool group for this pool (for pool classify on display)'
                 ),
-                'type': gui.InputField.Types.IMAGECHOICE,
+                'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 121,
                 'tab': gettext('Display'),
             },
