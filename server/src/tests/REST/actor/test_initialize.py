@@ -145,7 +145,7 @@ class ActorInitializeTest(rest.test.RESTTestCase):
         Test actor initialize v3 for unmanaged actor
         """
         user_service = self.user_service_unmanaged
-        actor_token = user_service.deployed_service.service.token
+        actor_token: str = (user_service.deployed_service.service.token if user_service.deployed_service.service else None) or ''
 
         unique_id = user_service.getUniqueId()
 

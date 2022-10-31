@@ -44,7 +44,6 @@ if typing.TYPE_CHECKING:
 from uds import models
 
 
-
 class WebLoginLogoutTest(test.WEBTestCase):
     """
     Test WEB login and logout
@@ -77,8 +76,11 @@ class WebLoginLogoutTest(test.WEBTestCase):
         # Add users to some groups, ramdomly
         for user in users + admins + stafs:
             for group in random.sample(
-                groups, random.randint(1, len(groups))# nosec: Simple test, not strong cryptograde needed
-            ):  
+                groups,
+                random.randint(
+                    1, len(groups)
+                ),  # nosec: Simple test, not strong cryptograde needed
+            ):
                 user.groups.add(group)
 
         # All users, admin and staff must be able to login
@@ -92,9 +94,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
             response = self.do_login(up[0], up[1], auth.uuid)
             # Now invoke logout
             response = typing.cast('HttpResponse', self.client.get('/uds/page/logout'))
-            self.assertRedirects(
-                response, reverse('page.login'), status_code=302
-            )
+            self.assertRedirects(response, reverse('page.login'), status_code=302)
             # Ensures a couple of logs are created for every operation
             # Except for root, that has no user associated on db
             if up[0] is not root and up[1] is not rootpass:  # root user is last one
