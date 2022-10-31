@@ -190,7 +190,7 @@ class IPMachinesService(IPServiceBase):
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
-            'lockByExternalAccess': gui.boolToStr(self._lockByExternalAccess),
+            'lockByExternalAccess': gui.fromBool(self._lockByExternalAccess),
         }
 
     def marshal(self) -> bytes:
@@ -202,7 +202,7 @@ class IPMachinesService(IPServiceBase):
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
-                gui.boolToStr(self._lockByExternalAccess).encode(),
+                gui.fromBool(self._lockByExternalAccess).encode(),
             ]
         )
 
@@ -225,7 +225,7 @@ class IPMachinesService(IPServiceBase):
             if values[0] in (b'v5', b'v6'):
                 self._maxSessionForMachine = int(values[4].decode())
             if values[0] in (b'v6',):
-                self._lockByExternalAccess = gui.strToBool(values[5].decode())
+                self._lockByExternalAccess = gui.toBool(values[5].decode())
 
         # Sets maximum services for this
         self.maxDeployed = len(self._ips)

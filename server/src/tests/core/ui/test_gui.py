@@ -81,4 +81,8 @@ class GuiTest(UDSTestCase):
         # id, text, and base64 image
         self.assertEqual(gui.choiceImage('id', 'text', 'image'), {'id': 'id', 'text': 'text', 'img': 'image'})
 
-    
+    def test_to_bool(self) -> None:
+        for val in ('true', 'True', 'TRUE', 'yes', 'Yes', 'YES', '1'):
+            self.assertTrue(gui.toBool(val), 'Failed to convert {} to True'.format(val))
+        for val in ('false', 'False', 'FALSE', 'no', 'No', 'NO', '0'):
+            self.assertFalse(gui.toBool(val), 'Failed to convert {} to False'.format(val))

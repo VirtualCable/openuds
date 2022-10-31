@@ -230,7 +230,7 @@ class RegexLdap(auths.Authenticator):
 
             self._host = values['host']
             self._port = values['port']
-            self._ssl = gui.strToBool(values['ssl'])
+            self._ssl = gui.toBool(values['ssl'])
             self._username = values['username']
             self._password = values['password']
             self._timeout = values['timeout']
@@ -317,7 +317,7 @@ class RegexLdap(auths.Authenticator):
         return {
             'host': self._host,
             'port': self._port,
-            'ssl': gui.boolToStr(self._ssl),
+            'ssl': gui.fromBool(self._ssl),
             'username': self._username,
             'password': self._password,
             'timeout': self._timeout,
@@ -336,7 +336,7 @@ class RegexLdap(auths.Authenticator):
                 'v4',
                 self._host,
                 self._port,
-                gui.boolToStr(self._ssl),
+                gui.fromBool(self._ssl),
                 self._username,
                 self._password,
                 self._timeout,
@@ -368,7 +368,7 @@ class RegexLdap(auths.Authenticator):
                 _regex,
                 self._userNameAttr,
             ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            self._ssl = gui.toBool(ssl)
             self._groupNameAttr = self._groupNameAttr + '=' + _regex
             self._userNameAttr = '\n'.join(self._userNameAttr.split(','))
         elif vals[0] == 'v2':
@@ -386,7 +386,7 @@ class RegexLdap(auths.Authenticator):
                 self._groupNameAttr,
                 self._userNameAttr,
             ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            self._ssl = gui.toBool(ssl)
         elif vals[0] == 'v3':
             logger.debug("Data v3: %s", vals[1:])
             (
@@ -403,7 +403,7 @@ class RegexLdap(auths.Authenticator):
                 self._userNameAttr,
                 self._altClass,
             ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            self._ssl = gui.toBool(ssl)
         elif vals[0] == 'v4':
             logger.debug("Data v4: %s", vals[1:])
             (
@@ -421,7 +421,7 @@ class RegexLdap(auths.Authenticator):
                 self._altClass,
                 self._mfaAttr,
             ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            self._ssl = gui.toBool(ssl)
 
     def __connection(self) -> typing.Any:
         """

@@ -112,7 +112,7 @@ class WindowsOsManager(osmanagers.OSManager):
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
-            self._deadLine = gui.strToBool(values['deadLine'])
+            self._deadLine = gui.toBool(values['deadLine'])
         else:
             self._onLogout = ''
             self._idle = -1
@@ -222,7 +222,7 @@ class WindowsOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._onLogout, str(self._idle), gui.boolToStr(self._deadLine)]
+            ['v3', self._onLogout, str(self._idle), gui.fromBool(self._deadLine)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
@@ -238,7 +238,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 self._onLogout, self._idle, self._deadLine = (
                     vals[1],
                     int(vals[2]),
-                    gui.strToBool(vals[3]),
+                    gui.toBool(vals[3]),
                 )
         except Exception:
             logger.exception(
@@ -251,5 +251,5 @@ class WindowsOsManager(osmanagers.OSManager):
         return {
             'onLogout': self._onLogout,
             'idle': str(self._idle),
-            'deadLine': gui.boolToStr(self._deadLine),
+            'deadLine': gui.fromBool(self._deadLine),
         }

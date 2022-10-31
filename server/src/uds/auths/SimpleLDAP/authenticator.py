@@ -201,7 +201,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         if values:
             self._host = values['host']
             self._port = values['port']
-            self._ssl = gui.strToBool(values['ssl'])
+            self._ssl = gui.toBool(values['ssl'])
             self._username = values['username']
             self._password = values['password']
             self._timeout = values['timeout']
@@ -219,7 +219,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         return {
             'host': self._host,
             'port': self._port,
-            'ssl': gui.boolToStr(self._ssl),
+            'ssl': gui.fromBool(self._ssl),
             'username': self._username,
             'password': self._password,
             'timeout': self._timeout,
@@ -238,7 +238,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 'v1',
                 self._host,
                 self._port,
-                gui.boolToStr(self._ssl),
+                gui.fromBool(self._ssl),
                 self._username,
                 self._password,
                 self._timeout,
@@ -271,7 +271,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 self._memberAttr,
                 self._userNameAttr,
             ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            self._ssl = gui.toBool(ssl)
 
     def __connection(
         self,

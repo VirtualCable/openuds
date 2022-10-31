@@ -242,7 +242,7 @@ class gui:
         return sorted(choices, key=lambda item: item['text'].lower())
 
     @staticmethod
-    def strToBool(str_: typing.Union[str, bytes, bool]) -> bool:
+    def toBool(value: typing.Union[str, bool, int]) -> bool:
         """
         Converts the string "true" (case insensitive) to True (boolean).
         Anything else is converted to false
@@ -253,14 +253,12 @@ class gui:
         Returns:
             True if the string is "true" (case insensitive), False else.
         """
-        if isinstance(str_, bool):
-            return str_
-        if str(str_).lower() == gui.TRUE:
+        if value is True or str(value).lower() in [gui.TRUE, '1', 'yes']:
             return True
         return False
 
     @staticmethod
-    def boolToStr(bol: bool) -> str:
+    def fromBool(bol: bool) -> str:
         """
         Converts a boolean to the string representation. True is converted to
         "true", False to "false".
