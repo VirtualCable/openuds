@@ -85,7 +85,7 @@ def getSerializedFromModel(
     removableFields = removableFields or []
     passwordFields = passwordFields or []
     try:
-        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]
+        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]  # type: ignore
         for i in ['uuid', 'id'] + removableFields:
             if i in values:
                 del values[i]

@@ -555,7 +555,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user class seems to be incorrect (no user found by that class)'
                 ),
             ]
-        except Exception as e:
+        except Exception as e:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -578,7 +578,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap group class seems to be incorrect (no group found by that class)'
                 ),
             ]
-        except Exception as e:
+        except Exception as e:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -601,7 +601,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user id attribute seems to be incorrect (no user found by that attribute)'
                 ),
             ]
-        except Exception as e:
+        except Exception as e:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -624,7 +624,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap group id attribute seems to be incorrect (no group found by that attribute)'
                 ),
             ]
-        except Exception as e:
+        except Exception as e:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -649,7 +649,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'
                 ),
             ]
-        except Exception as e:
+        except Exception as e:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 

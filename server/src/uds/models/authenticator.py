@@ -109,12 +109,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         if self.id is None:
             return auths.Authenticator(
-                self, environment.Environment.getTempEnv(), values
+                environment.Environment.getTempEnv(), values, dbAuth=self
             )
 
         auType = self.getType()
         env = self.getEnvironment()
-        auth = auType(self, env, values)
+        auth = auType(env, values, dbAuth=self)
         self.deserialize(auth, values)
         return auth
 

@@ -37,7 +37,6 @@ from django.db import models
 from django.db.models import Count, Q, signals
 from uds.core import auths
 from uds.core.util import log, storage
-from uds.models import permissions
 
 from .authenticator import Authenticator
 from .util import NEVER, UnsavedForeignKey, getSqlDatetime
@@ -126,27 +125,6 @@ class User(UUIDModel):
         Return true if this user is admin or staff member
         """
         return self.staff_member or self.is_admin
-
-    def prefs(self, modName) -> typing.Dict:
-        """
-        Returns the preferences for this user for the provided module name.
-
-        Usually preferences will be associated with transports, but can be preferences registered by ANY module.
-
-        Args:
-            modName: name of the module to get preferences for
-
-
-        Returns:
-
-            The preferences for the module specified as a dictionary (can be empty if module is not found).
-
-            If the module exists, the preferences will always contain something, but may be the values are the default ones.
-
-        """
-        from uds.core.managers.user_preferences import UserPrefsManager
-
-        return UserPrefsManager.manager().getPreferencesForUser(modName, self)
 
     def updateLastAccess(self) -> None:
         """

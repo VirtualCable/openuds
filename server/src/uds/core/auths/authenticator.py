@@ -100,7 +100,7 @@ class Authenticator(Module):
 
     As always, if you override __init__, do not forget to invoke base __init__ as this::
 
-       super(self.__class__, self).__init__(self, dbAuth, environment, values)
+       super(self.__class__, self).__init__(self, environment, values, dbAuth)
 
     This is a MUST, so internal structured gets filled correctly, so don't forget it!.
 
@@ -203,9 +203,9 @@ class Authenticator(Module):
 
     def __init__(
         self,
-        dbAuth: 'models.Authenticator',
         environment: 'Environment',
         values: typing.Optional[typing.Dict[str, str]],
+        dbAuth: typing.Optional['models.Authenticator'] = None,
     ):
         """
         Instantiathes the authenticator.
@@ -213,7 +213,7 @@ class Authenticator(Module):
         @param environment: Environment for the authenticator
         @param values: Values passed to element
         """
-        self._dbAuth = dbAuth
+        self._dbAuth = dbAuth or models.Authenticator()  # Fake dbAuth if not provided
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 

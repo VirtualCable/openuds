@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 from uds import models
 from uds.core import mfas
+from uds.core.environment import Environment
 from uds.core.ui import gui
 from uds.core.util import permissions
 
@@ -63,10 +64,13 @@ class MFA(ModelHandler):
         return mfas.factory().providers().values()
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        mfa = mfas.factory().lookup(type_)
+        mfaType = mfas.factory().lookup(type_)
 
-        if not mfa:
+        if not mfaType:
             raise self.invalidItemException()
+
+        # Create a temporal instance to get the gui
+        mfa = mfaType(Environment.getTempEnv(), None)
 
         localGui = self.addDefaultFields(
             mfa.guiDescription(), ['name', 'comments', 'tags']

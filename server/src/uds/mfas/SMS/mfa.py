@@ -221,14 +221,15 @@ class SMSMFA(mfas.MFA):
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    @classmethod
-    def initClassGui(cls) -> None:
+    def initGui(self) -> None:
         # Populate the networks list
-        cls.networks.setValues([
-            gui.choiceItem(v.uuid, v.name)
-            for v in models.Network.objects.all().order_by('name')
-            if v.uuid
-        ])
+        self.networks.setValues(
+            [
+                gui.choiceItem(v.uuid, v.name)
+                for v in models.Network.objects.all().order_by('name')
+                if v.uuid
+            ]
+        )
 
     def composeSmsUrl(self, userId: str, userName: str, code: str, phone: str) -> str:
         url = self.sendingUrl.value
@@ -257,7 +258,7 @@ class SMSMFA(mfas.MFA):
         # If set ignoreCertificateErrors, do it
         if self.ignoreCertificateErrors.isTrue():
             session.verify = False
-        
+
         # Add headers. Headers are in the form of "Header: Value". (without the quotes)
         if self.headersParameters.value.strip():
             for header in self.headersParameters.value.split('\n'):
@@ -266,10 +267,12 @@ class SMSMFA(mfas.MFA):
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
-
     def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
         def checkIp() -> bool:
-            return any(i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in = self.networks.value))
+            return any(
+                i.ipInNetwork(request.ip)
+                for i in models.Network.objects.filter(uuid__in=self.networks.value)
+            )
 
         if action == '0':
             return True
@@ -285,13 +288,19 @@ class SMSMFA(mfas.MFA):
     def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
-    def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
+    def processResponse(
+        self, request: 'ExtendedHttpRequest', response: requests.Response
+    ) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
         if not response.ok:
             if self.responseErrorAction.value == '1':
                 raise Exception(_('SMS sending failed'))
         elif self.responseOkRegex.value.strip():
-            logger.debug('Checking response OK regex: %s: (%s)', self.responseOkRegex.value, re.search(self.responseOkRegex.value, response.text))
+            logger.debug(
+                'Checking response OK regex: %s: (%s)',
+                self.responseOkRegex.value,
+                re.search(self.responseOkRegex.value, response.text),
+            )
             if not re.search(self.responseOkRegex.value, response.text or ''):
                 logger.error(
                     'SMS response error: %s',
@@ -303,7 +312,13 @@ class SMSMFA(mfas.MFA):
         return mfas.MFA.RESULT.OK
 
     def getData(
-        self, request: 'ExtendedHttpRequest', userId: str, username: str, url: str, code: str, phone: str
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        url: str,
+        code: str,
+        phone: str,
     ) -> bytes:
         data = ''
         if self.sendingParameters.value:
@@ -316,11 +331,19 @@ class SMSMFA(mfas.MFA):
             )
         return data.encode(self.encoding.value)
 
-    def sendSMS_GET(self, request: 'ExtendedHttpRequest', userId: str, username: str, url: str) -> mfas.MFA.RESULT:
+    def sendSMS_GET(
+        self, request: 'ExtendedHttpRequest', userId: str, username: str, url: str
+    ) -> mfas.MFA.RESULT:
         return self.processResponse(request, self.getSession().get(url))
 
     def sendSMS_POST(
-        self, request: 'ExtendedHttpRequest', userId: str, username: str, url: str, code: str, phone: str
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        url: str,
+        code: str,
+        phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
         session = self.getSession()
@@ -331,7 +354,13 @@ class SMSMFA(mfas.MFA):
         return self.processResponse(request, session.post(url, data=bdata))
 
     def sendSMS_PUT(
-        self, request: 'ExtendedHttpRequest', userId: str, username: str, url: str, code: str, phone: str
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        url: str,
+        code: str,
+        phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
         data = ''
@@ -339,7 +368,12 @@ class SMSMFA(mfas.MFA):
         return self.processResponse(request, self.getSession().put(url, data=bdata))
 
     def sendSMS(
-        self, request: 'ExtendedHttpRequest', userId: str, username: str, code: str, phone: str
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        code: str,
+        phone: str,
     ) -> mfas.MFA.RESULT:
         url = self.composeSmsUrl(userId, username, code, phone)
         if self.sendingMethod.value == 'GET':
@@ -355,9 +389,18 @@ class SMSMFA(mfas.MFA):
         return gettext('MFA Code')
 
     def html(self, request: 'ExtendedHttpRequest') -> str:
-        return gettext('Check your phone. You will receive an SMS with the verification code')
+        return gettext(
+            'Check your phone. You will receive an SMS with the verification code'
+        )
 
-    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+    def sendCode(
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        identifier: str,
+        code: str,
+    ) -> mfas.MFA.RESULT:
         logger.debug(
             'Sending SMS code "%s" for user %s (userId="%s", identifier="%s")',
             code,

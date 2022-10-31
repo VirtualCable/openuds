@@ -108,7 +108,7 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfaData
+            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfa_data
         except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''

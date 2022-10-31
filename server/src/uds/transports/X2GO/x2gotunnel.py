@@ -34,7 +34,6 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import tools, validators
 from uds.core import transports

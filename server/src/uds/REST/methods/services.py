@@ -143,7 +143,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         if service:
             try:
                 service.delete()
-            except Exception:
+            except Exception:  # nosec: This is a delete, we don't care about exceptions
                 pass
 
     def saveItem(self, parent: 'Provider', item: typing.Optional[str]) -> None:
@@ -288,7 +288,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 Environment.getTempEnv(), parentInstance
             )  # Instantiate it so it has the opportunity to alter gui description based on parent
             localGui = self.addDefaultFields(
-                service.guiDescription(service), ['name', 'comments', 'tags']
+                service.guiDescription(), ['name', 'comments', 'tags']
             )
             self.addField(
                 localGui,

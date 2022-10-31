@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import gettext, gettext_lazy as _
 from uds.models import Authenticator, Network, MFA
 from uds.core import auths
+from uds.core.environment import Environment
 
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
@@ -70,7 +71,11 @@ class Authenticators(ModelHandler):
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
         {'small_name': {'title': _('Label')}},
         {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
-        {'mfa_name': {'title': _('MFA'),}},
+        {
+            'mfa_name': {
+                'title': _('MFA'),
+            }
+        },
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -97,8 +102,10 @@ class Authenticators(ModelHandler):
         try:
             authType = auths.factory().lookup(type_)
             if authType:
+                # Create a new instance of the authenticator to access to its GUI
+                authInstance = authType(Environment.getTempEnv(), None)
                 field = self.addDefaultFields(
-                    authType.guiDescription(),
+                    authInstance.guiDescription(),
                     ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                 )
                 self.addField(
@@ -220,10 +227,9 @@ class Authenticators(ModelHandler):
         if not authType:
             raise self.invalidRequestException('Invalid type: {}'.format(type_))
 
-        tmpEnvironment = Environment.getTempEnv()
         dct = self._params.copy()
         dct['_request'] = self._request
-        res = authType.test(tmpEnvironment, dct)
+        res = authType.test(Environment.getTempEnv(), dct)
         if res[0]:
             return self.success()
         return res[1]
@@ -234,17 +240,13 @@ class Authenticators(ModelHandler):
         logger.debug(self._params)
         if fields.get('mfa_id'):
             try:
-                mfa = MFA.objects.get(
-                    uuid=processUuid(fields['mfa_id'])
-                )
+                mfa = MFA.objects.get(uuid=processUuid(fields['mfa_id']))
                 fields['mfa_id'] = mfa.id
                 return
             except MFA.DoesNotExist:
                 pass  # will set field to null
 
         fields['mfa_id'] = None
-
-
 
     def deleteItem(self, item: Authenticator):
         # For every user, remove assigned services (mark them for removal)

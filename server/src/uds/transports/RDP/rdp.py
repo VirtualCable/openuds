@@ -105,7 +105,6 @@ class RDPTransport(BaseRDPTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
         # We use helper to keep this clean
-        # prefs = user.prefs('rdp')
 
         ci = self.getConnectionInfo(userService, user, password)
         username, password, domain = ci['username'], ci['password'], ci['domain']

@@ -34,6 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
+from uds.core.environment import Environment
 from uds.models import Notifier, NotificationLevel
 from uds.core import messaging
 from uds.core.ui import gui
@@ -71,10 +72,12 @@ class Notifiers(ModelHandler):
         return messaging.factory().providers().values()
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        notifier = messaging.factory().lookup(type_)
+        notifierType = messaging.factory().lookup(type_)
 
-        if not notifier:
+        if not notifierType:
             raise self.invalidItemException()
+
+        notifier = notifierType(Environment.getTempEnv(), None)
 
         localGui = self.addDefaultFields(
             notifier.guiDescription(), ['name', 'comments', 'tags']

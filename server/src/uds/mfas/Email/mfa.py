@@ -128,7 +128,6 @@ class EmailMFA(mfas.MFA):
         tab=_('Config'),
     )
 
-
     allowLoginWithoutMFA = gui.ChoiceField(
         label=_('Policy for users without MFA support'),
         order=31,
@@ -182,20 +181,26 @@ class EmailMFA(mfas.MFA):
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
 
     def html(self, request: 'ExtendedHttpRequest') -> str:
-        return gettext('Check your mail. You will receive an email with the verification code')
-
-    @classmethod
-    def initClassGui(cls) -> None:
+        return gettext(
+            'Check your mail. You will receive an email with the verification code'
+        )
+    
+    def initGui(self) -> None:
         # Populate the networks list
-        cls.networks.setValues([
-            gui.choiceItem(v.uuid, v.name)
-            for v in models.Network.objects.all().order_by('name') if v.uuid
-        ])
-
+        self.networks.setValues(
+            [
+                gui.choiceItem(v.uuid, v.name)
+                for v in models.Network.objects.all().order_by('name')
+                if v.uuid
+            ]
+        )
 
     def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
         def checkIp() -> bool:
-            return any(i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in = self.networks.value))
+            return any(
+                i.ipInNetwork(request.ip)
+                for i in models.Network.objects.filter(uuid__in=self.networks.value)
+            )
 
         if action == '0':
             return True
@@ -215,7 +220,9 @@ class EmailMFA(mfas.MFA):
         return 'OTP received via email'
 
     @decorators.threaded
-    def doSendCode(self, request: 'ExtendedHttpRequest', identifier: str, code: str) -> None:
+    def doSendCode(
+        self, request: 'ExtendedHttpRequest', identifier: str, code: str
+    ) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:
@@ -225,18 +232,39 @@ class EmailMFA(mfas.MFA):
                 msg['From'] = self.fromEmail.cleanStr()
                 msg['To'] = identifier
 
-                msg.attach(MIMEText(f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}', 'plain'))
+                msg.attach(
+                    MIMEText(
+                        f'A login attemt has been made from {request.ip}.\nTo continue, provide the verification code {code}',
+                        'plain',
+                    )
+                )
 
                 if self.enableHTML.value:
-                    msg.attach(MIMEText(f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>', 'html'))
+                    msg.attach(
+                        MIMEText(
+                            f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>',
+                            'html',
+                        )
+                    )
 
                 smtp.sendmail(self.fromEmail.value, identifier, msg.as_string())
             except smtplib.SMTPException as e:
                 logger.error('Error sending email: {}'.format(e))
                 raise
 
-    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
-        self.doSendCode(request, identifier, code,)
+    def sendCode(
+        self,
+        request: 'ExtendedHttpRequest',
+        userId: str,
+        username: str,
+        identifier: str,
+        code: str,
+    ) -> mfas.MFA.RESULT:
+        self.doSendCode(
+            request,
+            identifier,
+            code,
+        )
         return mfas.MFA.RESULT.OK
 
     def login(self) -> smtplib.SMTP:

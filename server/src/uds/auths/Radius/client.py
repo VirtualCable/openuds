@@ -131,7 +131,7 @@ class RadiusClient:
 
     # Second element of return value is the mfa code from field
     def authenticate(
-        self, username: str, password: str, mfaField: str
+        self, username: str, password: str, mfaField: str = ''
     ) -> typing.Tuple[typing.List[str], str]:
         reply = self.sendAccessRequest(username, password)
 

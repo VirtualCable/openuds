@@ -418,7 +418,7 @@ def webLogin(
     )
     # If Enabled zero trust, do not cache credentials
     if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
-        password = ''
+        password = ''  # nosec: clear password if zero trust is enabled
 
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = codecs.encode(cryptoManager().symCrypt(password, cookie), "base64").decode()  # as str

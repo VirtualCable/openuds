@@ -34,6 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+from uds.core.environment import Environment
 
 from uds.models import Provider, Service, UserService
 from uds.core import services
@@ -123,10 +124,11 @@ class Providers(ModelHandler):
 
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        clsType = services.factory().lookup(type_)
-        if clsType:
+        providerType = services.factory().lookup(type_)
+        if providerType:
+            provider = providerType(Environment.getTempEnv(), None)
             return self.addDefaultFields(
-                clsType.guiDescription(), ['name', 'comments', 'tags']
+                provider.guiDescription(), ['name', 'comments', 'tags']
             )
         raise NotFound('Type not found!')
 

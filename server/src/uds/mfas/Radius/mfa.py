@@ -145,10 +145,9 @@ class RadiusOTP(mfas.MFA):
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    @classmethod
-    def initClassGui(cls) -> None:
+    def initGui(self) -> None:
         # Populate the networks list
-        cls.networks.setValues(
+        self.networks.setValues(
             [
                 gui.choiceItem(v.uuid, v.name)
                 for v in models.Network.objects.all().order_by('name')

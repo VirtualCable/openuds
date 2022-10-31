@@ -35,9 +35,12 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
+from uds.core.environment import Environment
 from uds.REST import model
 from uds import reports
 
+if typing.TYPE_CHECKING:
+    from uds.core.reports.report import Report
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +81,7 @@ class Reports(model.BaseModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
 
-    def _findReport(self, uuid, values=None):
+    def _findReport(self, uuid: str, values=None) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.availableReports:
@@ -147,7 +150,7 @@ class Reports(model.BaseModelHandler):
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         report = self._findReport(type_)
-        return sorted(report.guiDescription(report), key=lambda f: f['gui']['order'])
+        return sorted(report.guiDescription(), key=lambda f: f['gui']['order'])
 
     # Returns the list of
     def getItems(

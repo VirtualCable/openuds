@@ -127,7 +127,7 @@ class gui:
             return str(self.value)
 
     # : For backward compatibility, will be removed in future versions
-    # For now, will log an warning if used
+    # For now, will log a warning if used
     @deprecatedClassValue('gui.Tab.ADVANCED')
     def ADVANCED_TAB(cls) -> str:
         return str(gui.Tab.ADVANCED)
@@ -928,7 +928,7 @@ class gui:
             """
             Set the values for this multi choice field
             """
-            self._data['values'] = values
+            self._data['values'] = gui.convertToChoices(values)
 
     class EditableList(InputField):
         """
@@ -1013,7 +1013,7 @@ class UserInterfaceType(type):
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
             newClassDict[attrName] = attr
-        newClassDict['_gui'] = _gui
+        newClassDict['_base_gui'] = _gui
         return typing.cast(
             'UserInterfaceType', type.__new__(cls, classname, bases, newClassDict)
         )
@@ -1030,7 +1030,11 @@ class UserInterface(metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
+    # Class variable that will hold the gui fields description
+    _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]] 
 
+    # instance variable that will hold the gui fields description
+    # this allows us to modify the gui fields values at runtime without affecting other instances
     _gui: typing.Dict[str, gui.InputField]
 
     def __init__(self, values: gui.ValuesType = None) -> None:
@@ -1045,9 +1049,9 @@ class UserInterface(metaclass=UserInterfaceType):
         # Ensure "gui" points to a copy of original gui, not the original one
         # this is done to avoid modifying the original gui description
 
-        self._gui = copy.deepcopy(self._gui)
+        self._gui = copy.deepcopy(self._base_gui)
         for key, val in self._gui.items():  # And refresh self references to them
-            setattr(self, key, val)
+            setattr(self, key, val)  # val is an InputField instance, so it is a reference to self._gui[key]
 
         if values is not None:
             for k, v in self._gui.items():
@@ -1074,12 +1078,6 @@ class UserInterface(metaclass=UserInterfaceType):
                but may happen that two services of same type are requested at same
                time, and returned data will be probable a nonsense. We will take care
                of this posibility in a near version...
-        """
-
-    @classmethod
-    def initClassGui(cls) -> None:
-        """
-        This method is used to initialize the gui fields of the class.
         """
 
     def valuesDict(self) -> gui.ValuesDictType:
@@ -1222,9 +1220,8 @@ class UserInterface(metaclass=UserInterfaceType):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    @classmethod
     def guiDescription(
-        cls, obj: typing.Optional['UserInterface'] = None
+        self
     ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
         """
         This simple method generates the theGui description needed by the
@@ -1236,16 +1233,11 @@ class UserInterface(metaclass=UserInterfaceType):
                     This will only happen (not to be None) in Services.
         """
         logger.debug('Active language for theGui translation: %s', get_language())
-        theGui: typing.Union[typing.Type['UserInterface'], 'UserInterface'] = cls
-        if obj:
-            obj.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
-            theGui = obj
-        else:
-            cls.initClassGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
+        self.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = [
             {'name': key, 'gui': val.guiDescription(), 'value': ''}
-            for key, val in theGui._gui.items()
+            for key, val in self._gui.items()
         ]
         logger.debug('theGui description: %s', res)
         return res

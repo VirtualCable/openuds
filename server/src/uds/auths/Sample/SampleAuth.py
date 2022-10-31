@@ -34,6 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+from uds.core.auths.authenticator import AuthenticationResult, AuthenticationSuccess
 from uds.core.ui import gui
 from uds.core import auths
 
@@ -278,7 +279,7 @@ class SampleAuth(auths.Authenticator):
 
     def authCallback(
         self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager', request: 'ExtendedHttpRequestWithUser'
-    ) -> typing.Optional[str]:
+    ) -> AuthenticationResult:
         """
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter
@@ -294,7 +295,7 @@ class SampleAuth(auths.Authenticator):
         """
         user = parameters.get('user', None)
 
-        return user
+        return AuthenticationResult(AuthenticationSuccess.OK, username=user)
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """

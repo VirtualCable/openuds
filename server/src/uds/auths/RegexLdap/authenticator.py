@@ -216,13 +216,7 @@ class RegexLdap(auths.Authenticator):
     _altClass: str = ''
     _mfaAttr: str = ''
 
-    def __init__(
-        self,
-        dbAuth: 'models.Authenticator',
-        environment: 'Environment',
-        values: typing.Optional[typing.Dict[str, str]],
-    ):
-        super().__init__(dbAuth, environment, values)
+    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if values:
             self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
             self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
@@ -242,6 +236,7 @@ class RegexLdap(auths.Authenticator):
             self._userNameAttr = values['userNameAttr']
             self._altClass = values['altClass']
             self._mfaAttr = values['mfaAttr']
+
 
     def __validateField(self, field: str, fieldLabel: str) -> None:
         """
@@ -302,7 +297,7 @@ class RegexLdap(auths.Authenticator):
                         continue
                     logger.debug("Found against %s: %s ", v, searchResult.groups())
                     res.append(''.join(searchResult.groups()))
-                except Exception:
+                except Exception:  # nosec
                     pass  # Ignore exceptions here
         logger.debug('Res: %s', res)
         return res
@@ -689,7 +684,7 @@ class RegexLdap(auths.Authenticator):
                     'Ldap user class seems to be incorrect (no user found by that class)'
                 ),
             ]
-        except Exception:
+        except Exception:  # nosec: Control flow
             # If found 1 or more, all right
             pass
 
@@ -714,7 +709,7 @@ class RegexLdap(auths.Authenticator):
                     'Ldap user id attr is probably wrong (can\'t find any user with both conditions)'
                 ),
             ]
-        except Exception:
+        except Exception:  # nosec: Control flow
             # If found 1 or more, all right
             pass
 
@@ -735,7 +730,7 @@ class RegexLdap(auths.Authenticator):
                     == 1
                 ):
                     continue
-            except Exception:
+            except Exception:  # nosec: Control flow
                 continue
             return [
                 False,
@@ -750,7 +745,7 @@ class RegexLdap(auths.Authenticator):
             # Check validity of regular expression (try to compile it)
             # this only right now
             pass
-        except Exception:
+        except Exception:  # nosec: Control flow
             pass
 
         return [

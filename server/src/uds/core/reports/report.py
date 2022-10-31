@@ -92,7 +92,7 @@ class Report(UserInterface):
         """
 
         # url fetcher for weasyprint
-        def report_fetcher(url: str) -> typing.Dict:
+        def report_fetcher(url: str, timeout=10, ssl_context=None) -> typing.Dict:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
                 imagePath = stock.getStockImagePath(url[8:])

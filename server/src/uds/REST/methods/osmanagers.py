@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import osmanagers
+from uds.core.environment import Environment
 from uds.core.util import permissions
 from uds.models import OSManager
 from uds.REST import NotFound, RequestError
@@ -90,8 +91,15 @@ class OsManagers(ModelHandler):
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         try:
+            osmanagerType = osmanagers.factory().lookup(type_)
+
+            if not osmanagerType:
+                raise NotFound('OS Manager type not found')
+
+            osmanager = osmanagerType(Environment.getTempEnv(), None)
+
             return self.addDefaultFields(
-                osmanagers.factory().lookup(type_).guiDescription(),  # type: ignore  # may raise an exception if lookup fails
+                osmanager.guiDescription(),  # type: ignore  # may raise an exception if lookup fails
                 ['name', 'comments', 'tags'],
             )
         except:
