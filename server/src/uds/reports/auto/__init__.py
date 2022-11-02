@@ -122,6 +122,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     def initGui(self):
         # Fills datasource
         fields.source_field_data(self.getModel(), self.data_source, self.source)
+        logger.debug('Source field data: %s', self.source)
 
     def getModelItems(self) -> typing.Iterable[ReportAutoModel]:
         model = self.getModel()

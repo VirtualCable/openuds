@@ -38,6 +38,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from django.urls import reverse
+
 from uds.core import Module
 
 # Not imported at runtime, just for type checking
@@ -46,9 +47,9 @@ if typing.TYPE_CHECKING:
         HttpRequest,
         HttpResponse,
     )
+    from uds import models
     from uds.core.environment import Environment
     from uds.core.util.request import ExtendedHttpRequest
-    from uds import models
     from .groups_manager import GroupsManager
 
 
@@ -213,7 +214,9 @@ class Authenticator(Module):
         @param environment: Environment for the authenticator
         @param values: Values passed to element
         """
-        self._dbAuth = dbAuth or models.Authenticator()  # Fake dbAuth if not provided
+        from uds.models import Authenticator as AuthenticatorModel
+        
+        self._dbAuth = dbAuth or AuthenticatorModel()  # Fake dbAuth if not provided
         super(Authenticator, self).__init__(environment, values)
         self.initialize(values)
 

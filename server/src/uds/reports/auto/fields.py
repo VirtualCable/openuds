@@ -116,9 +116,8 @@ def source_field_data(
     data_source: str,
     field: typing.Union[gui.ChoiceField, gui.MultiChoiceField],
 ) -> None:
-
     dataList: typing.List[gui.ChoiceType] = [
-        {'id': x.uuid, 'text': x.name} for x in model.objects.all().order_by('name')
+        gui.choiceItem(str(x.uuid), x.name) for x in model.objects.all().order_by('name')
     ]
 
     if isinstance(field, gui.MultiChoiceField):

@@ -53,20 +53,20 @@ from uds.core.util.decorators import deprecatedClassValue
 logger = logging.getLogger(__name__)
 
 # Old encryption key
-UDSB = b'udsprotect'
+UDSB: typing.Final[bytes] = b'udsprotect'
 # New encription key, different on each installation
-UDSK = settings.SECRET_KEY[8:24].encode()  # UDS key, new
+UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new
 
 # Separators for fields
-MULTIVALUE_FIELD = b'\001'
-OLD_PASSWORD_FIELD = b'\004'
-PASSWORD_FIELD = b'\005'
+MULTIVALUE_FIELD: typing.Final[bytes] = b'\001'
+OLD_PASSWORD_FIELD: typing.Final[bytes] = b'\004'
+PASSWORD_FIELD: typing.Final[bytes] = b'\005'
 
-FIELD_SEPARATOR = b'\002'
-NAME_VALUE_SEPARATOR = b'\003'
+FIELD_SEPARATOR: typing.Final[bytes] = b'\002'
+NAME_VALUE_SEPARATOR: typing.Final[bytes] = b'\003'
 
-SERIALIZATION_HEADER = b'GUIZ'
-SERIALIZATION_VERSION = b'\001'
+SERIALIZATION_HEADER: typing.Final[bytes] = b'GUIZ'
+SERIALIZATION_VERSION: typing.Final[bytes] = b'\001'
 
 
 class gui:
@@ -367,7 +367,6 @@ class gui:
                     ),  # This property only affects in "modify" operations
                     'order': options.get('order', 0),
                     'tooltip': options.get('tooltip', ''),
-                    'type': str(gui.InputField.Types.TEXT),
                     'value': options.get('value', ''),
                 }
             )
@@ -467,6 +466,14 @@ class gui:
         @property
         def label(self) -> str:
             return self._data['label']
+
+        def serialize(self) -> str:
+            """Serialize value to an string"""
+            return str(self.value)
+
+        def unserialize(self, value) -> None:
+            """Unserialize value from an string"""
+            self.value = value
 
     class TextField(InputField):
         """
@@ -582,25 +589,12 @@ class gui:
         This represents a date field.
 
         The values of parameres are inherited from :py:class:`InputField`
-
-        Example usage:
-
-           .. code-block:: python
-
-              # Declares an text form field, with label "Password",
-              # tooltip "Password of the user", that is required,
-              # with max length of 32 chars and order = 2, and is
-              # editable after creation.
-              passw = gui.DateField(label = _('Starting date'),
-                  order = 4, tooltip = _('Ending date'),
-                  required = True)
-
         """
 
         def processValue(
             self, valueName: str, options: typing.Dict[str, typing.Any]
         ) -> None:
-            val = options.get(valueName, '')
+            val = options.get(valueName, datetime.date.today())
 
             if not val and valueName == 'defvalue':
                 val = datetime.date.today()
@@ -610,7 +604,7 @@ class gui:
                 # val = datetime.date(2099, 12, 31)
                 val = datetime.date.today()
 
-            options[valueName] = val
+            options[valueName] = val.strftime('%Y-%m-%d')
 
         def __init__(self, **options):
             for v in 'value', 'defvalue':
@@ -656,6 +650,7 @@ class gui:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
                 )
             )
+
 
     class PasswordField(InputField):
         """
