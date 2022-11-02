@@ -37,8 +37,6 @@ import logging
 
 from django.db import models
 
-from .util import NEVER_UNIX
-from .util import getSqlDatetimeAsUnix
 from .util import getSqlFnc
 
 
@@ -49,6 +47,7 @@ class StatsCounters(models.Model):
     """
     Statistics about counters (number of users at a given time, number of services at a time, whatever...)
     """
+
     # Valid intervals types for counters data
     class CounterIntervalType(enum.IntEnum):
         NONE = 0
@@ -61,7 +60,9 @@ class StatsCounters(models.Model):
     owner_type = models.SmallIntegerField(db_index=True, default=0)
     counter_type = models.SmallIntegerField(db_index=True, default=0)
     stamp = models.IntegerField(db_index=True, default=0)
-    interval_type = models.SmallIntegerField(db_index=True, default=CounterIntervalType.NONE)
+    interval_type = models.SmallIntegerField(
+        db_index=True, default=CounterIntervalType.NONE
+    )
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
@@ -85,7 +86,13 @@ class StatsCounters(models.Model):
         if isinstance(owner_type, int):
             owner_type = [owner_type]
 
-        q = StatsCounters.objects.filter(owner_type__in=owner_type, counter_type=counter_type)
+        q = StatsCounters.objects.filter(
+            owner_type__in=owner_type,
+            counter_type=counter_type,
+            interval_type=kwargs.get(
+                'interval_type', StatsCounters.CounterIntervalType.NONE
+            ),
+        )
 
         if kwargs.get('owner_id'):
             # If owner_id is a int, we add it to the list
@@ -103,14 +110,14 @@ class StatsCounters(models.Model):
             since = int(since.timestamp())
         if not since:
             # Get first timestamp from table, we knwo table has at least one record
-            since = StatsCounters.objects.order_by('stamp').first().stamp # type: ignore
+            since = StatsCounters.objects.order_by('stamp').first().stamp  # type: ignore
         to = kwargs.get('to')
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
         if not to:
             # Get last timestamp from table, we know table has at least one record
-            to = StatsCounters.objects.order_by('-stamp').first().stamp # type: ignore
+            to = StatsCounters.objects.order_by('-stamp').first().stamp  # type: ignore
 
         q = q.filter(stamp__gte=since, stamp__lte=to)
 
@@ -135,14 +142,17 @@ class StatsCounters(models.Model):
                 },
             )
 
-
         fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
 
-        q = q.order_by('group_by_stamp').values('group_by_stamp').annotate(
-            value=fnc,
+        q = (
+            q.order_by('group_by_stamp')
+            .values('group_by_stamp')
+            .annotate(
+                value=fnc,
+            )
         )
         if kwargs.get('limit'):
-            q = q[:kwargs['limit']]
+            q = q[: kwargs['limit']]
 
         for i in q.values('group_by_stamp', 'value'):
             yield (i['group_by_stamp'], i['value'])
