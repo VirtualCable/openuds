@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
 cache = Cache('StatsDispatcher')
 
 # Enclosed methods under /stats path
-POINTS = 150
+POINTS = 70
 SINCE = 7  # Days, if higer values used, ensure mysql/mariadb has a bigger sort buffer
 USE_MAX = True
 CACHE_TIME = SINCE * 24 * 3600 // POINTS
