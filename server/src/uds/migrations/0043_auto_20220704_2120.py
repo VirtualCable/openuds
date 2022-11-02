@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='statscounters',
             name='interval_type',
-            field=models.SmallIntegerField(db_index=True, default=uds.models.stats_counters.StatsCounters.CounterIntervalType['NONE']),
+            field=models.SmallIntegerField(db_index=True, default=uds.models.stats_counters.StatsCounters.IntervalType['NONE']),
         ),
         migrations.RemoveIndex(
             model_name='statscounters',

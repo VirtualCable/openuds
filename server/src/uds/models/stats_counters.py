@@ -49,7 +49,7 @@ class StatsCounters(models.Model):
     """
 
     # Valid intervals types for counters data
-    class CounterIntervalType(enum.IntEnum):
+    class IntervalType(enum.IntEnum):
         NONE = 0
         MINUTE = 1
         HOUR = 2
@@ -61,7 +61,7 @@ class StatsCounters(models.Model):
     counter_type = models.SmallIntegerField(db_index=True, default=0)
     stamp = models.IntegerField(db_index=True, default=0)
     interval_type = models.SmallIntegerField(
-        db_index=True, default=CounterIntervalType.NONE
+        db_index=True, default=IntervalType.NONE
     )
     value = models.IntegerField(db_index=True, default=0)
 
@@ -90,7 +90,7 @@ class StatsCounters(models.Model):
             owner_type__in=owner_type,
             counter_type=counter_type,
             interval_type=kwargs.get(
-                'interval_type', StatsCounters.CounterIntervalType.NONE
+                'interval_type', StatsCounters.IntervalType.NONE
             ),
         )
 
