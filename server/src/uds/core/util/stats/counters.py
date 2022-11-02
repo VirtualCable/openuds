@@ -146,7 +146,7 @@ def getCounters(
         limit,
         use_max,
     ):
-        yield (datetime.datetime.fromtimestamp(i.stamp), i.value)
+        yield (datetime.datetime.fromtimestamp(i[0]), i[1])
 
 
 def getCounterTitle(counterType: int) -> str:
