@@ -38,4 +38,12 @@ class Migration(migrations.Migration):
             name='mfa',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='authenticators', to='uds.mfa'),
         ),
+        migrations.RemoveIndex(
+            model_name='statscounters',
+            name='uds_stats_c_owner_t_db894d_idx',
+        ),
+        migrations.RemoveIndex(
+            model_name='statscounters',
+            name='uds_stats_c_owner_t_a195c1_idx',
+        ),
     ]
