@@ -66,10 +66,6 @@ class StatsCounters(models.Model):
 
         db_table = 'uds_stats_c'
         app_label = 'uds'
-        indexes = [
-            models.Index(fields=['owner_type', 'stamp']),
-            models.Index(fields=['owner_type', 'counter_type', 'stamp']),
-        ]
 
     @staticmethod
     def get_grouped(
@@ -142,6 +138,44 @@ class StatsCounters(models.Model):
 
         for i in q:
             yield StatsCounters(id=-1, owner_type=-1, counter_type=-1, stamp=i['group_by_stamp'], value=i['value'])
+
+    @staticmethod
+    def gp(
+        owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
+    ) -> typing.Any:
+        """
+        Returns a QuerySet of counters grouped by owner_type and counter_type
+        """
+        if isinstance(owner_type, int):
+            owner_type = [owner_type]
+
+        q = StatsCounters.objects.filter(owner_type__in=owner_type, counter_type=counter_type)
+
+        if kwargs.get('owner_id'):
+            # If owner_id is a int, we add it to the list
+            if isinstance(kwargs['owner_id'], int):
+                kwargs['owner_id'] = [kwargs['owner_id']]
+
+            q = q.filter(owner_id__in=kwargs['owner_id'])
+
+        since = kwargs.get('since')
+        if isinstance(since, datetime.datetime):
+            # Convert to unix timestamp
+            since = int(since.timestamp())
+        if not since:
+            # Get first timestamp from table, we knwo table has at least one record
+            since = StatsCounters.objects.order_by('stamp').first().stamp # type: ignore
+        to = kwargs.get('to')
+        if isinstance(to, datetime.datetime):
+            # Convert to unix timestamp
+            to = int(to.timestamp())
+        if not to:
+            # Get last timestamp from table, we know table has at least one record
+            to = StatsCounters.objects.order_by('-stamp').first().stamp # type: ignore
+
+        q = q.filter(stamp__gte=since, stamp__lte=to)
+
+        return q
 
     @staticmethod
     def get_grouped_old(
