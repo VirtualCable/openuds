@@ -31,7 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import types
+import enum
 import datetime
 import logging
 
@@ -49,11 +49,19 @@ class StatsCounters(models.Model):
     """
     Statistics about counters (number of users at a given time, number of services at a time, whatever...)
     """
+    # Valid intervals types for counters data
+    class CounterIntervalType(enum.IntEnum):
+        NONE = 0
+        MINUTE = 1
+        HOUR = 2
+        DAY = 3
+        WEEK = 4
 
     owner_id = models.IntegerField(db_index=True, default=0)
     owner_type = models.SmallIntegerField(db_index=True, default=0)
     counter_type = models.SmallIntegerField(db_index=True, default=0)
     stamp = models.IntegerField(db_index=True, default=0)
+    interval_type = models.SmallIntegerField(db_index=True, default=CounterIntervalType.NONE)
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
