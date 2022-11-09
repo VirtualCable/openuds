@@ -31,14 +31,12 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import enum
 import datetime
 import logging
 
 from django.db import models
 
 from .util import getSqlFnc
-
 
 logger = logging.getLogger(__name__)
 
@@ -48,21 +46,10 @@ class StatsCounters(models.Model):
     Statistics about counters (number of users at a given time, number of services at a time, whatever...)
     """
 
-    # Valid intervals types for counters data
-    class IntervalType(enum.IntEnum):
-        NONE = 0
-        MINUTE = 1
-        HOUR = 2
-        DAY = 3
-        WEEK = 4
-
     owner_id = models.IntegerField(db_index=True, default=0)
     owner_type = models.SmallIntegerField(db_index=True, default=0)
     counter_type = models.SmallIntegerField(db_index=True, default=0)
     stamp = models.IntegerField(db_index=True, default=0)
-    interval_type = models.SmallIntegerField(
-        db_index=True, default=IntervalType.NONE
-    )
     value = models.IntegerField(db_index=True, default=0)
 
     # "fake" declarations for type checking
@@ -89,9 +76,6 @@ class StatsCounters(models.Model):
         q = StatsCounters.objects.filter(
             owner_type__in=owner_type,
             counter_type=counter_type,
-            interval_type=kwargs.get(
-                'interval_type', StatsCounters.IntervalType.NONE
-            ),
         )
 
         if kwargs.get('owner_id'):
@@ -136,7 +120,7 @@ class StatsCounters(models.Model):
 
         floor = getSqlFnc('FLOOR')
         if interval > 0:
-            q = q.extra(
+            q = q.extra(  # nosec: SQL injection is not possible here
                 select={
                     'group_by_stamp': f'{floor}(stamp / {interval}) * {interval}',
                 },
@@ -158,6 +142,4 @@ class StatsCounters(models.Model):
             yield (i['group_by_stamp'], i['value'])
 
     def __str__(self):
-        return u"Counter of {}({}): {} - {} - {}".format(
-            self.owner_type, self.owner_id, self.stamp, self.counter_type, self.value
-        )
+        return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'

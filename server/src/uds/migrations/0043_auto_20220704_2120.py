@@ -2,7 +2,50 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import uds.models.stats_counters
+import uds.models.stats_counters_accum
+
+# Forward migration, change table type of uds_stats_c to MyISAM
+# InnoDB is tremendlously slow when using this table
+def forwards(apps, schema_editor):
+    try:
+        from django.db import connection
+
+        # If we are not using MySQL, do nothing
+        if connection.vendor != 'mysql':
+            return
+
+        cursor = connection.cursor()
+        # Check current table type, if it is not InnoDB, do nothing
+        cursor.execute(
+            'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = "uds_stats_c"'
+        )
+        if cursor.fetchone()[0] == 'InnoDB':  # type: ignore
+            cursor.execute(
+                'ALTER TABLE uds_stats_c ENGINE=MyISAM'
+            )
+    except Exception:  # nosec: fine
+        pass
+
+
+# Backward migration, change table type of uds_stats_c to InnoDB
+def backwards(apps, schema_editor):
+    return
+    """
+    Backwards could restore table to innodb, but it's not needed, and it's slow
+    try:
+        from django.db import connection
+
+        cursor = connection.cursor()
+        # Check current table type, if it is not MyISAM, do nothing
+        cursor.execute(
+            'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = "uds_stats_c"'
+        )
+        if cursor.fetchone()[0] == 'MyISAM':  # type: ignore
+            cursor.execute('ALTER TABLE uds_stats_c ENGINE=InnoDB')
+        cursor.execute('ALTER TABLE uds_stats_c ENGINE=InnoDB')
+    except Exception:  # nosec: fine
+        pass
+    """
 
 
 class Migration(migrations.Migration):
@@ -39,11 +82,6 @@ class Migration(migrations.Migration):
             name='mfa',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='authenticators', to='uds.mfa'),
         ),
-        migrations.AddField(
-            model_name='statscounters',
-            name='interval_type',
-            field=models.SmallIntegerField(db_index=True, default=uds.models.stats_counters.StatsCounters.IntervalType['NONE']),
-        ),
         migrations.RemoveIndex(
             model_name='statscounters',
             name='uds_stats_c_owner_t_db894d_idx',
@@ -52,4 +90,36 @@ class Migration(migrations.Migration):
             model_name='statscounters',
             name='uds_stats_c_owner_t_a195c1_idx',
         ),
+        migrations.CreateModel(
+            name='StatsCountersAccum',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('owner_id', models.IntegerField(default=0)),
+                ('owner_type', models.SmallIntegerField(default=0)),
+                ('counter_type', models.SmallIntegerField(default=0)),
+                ('interval_type', models.SmallIntegerField(choices=[(1, 'HOUR'), (2, 'DAY')], default=uds.models.stats_counters_accum.StatsCountersAccum.IntervalType['HOUR'])),
+                ('stamp', models.IntegerField(default=0)),
+                ('v_count', models.IntegerField(default=0)),
+                ('v_sum', models.IntegerField(default=0)),
+                ('v_max', models.IntegerField(default=0)),
+                ('v_min', models.IntegerField(default=0)),
+            ],
+            options={
+                'db_table': 'uds_stats_c_accum',
+            },
+        ),
+        migrations.AddIndex(
+            model_name='statscountersaccum',
+            index=models.Index(fields=['stamp', 'interval_type', 'counter_type', 'owner_type', 'owner_id'], name='uds_stats_all'),
+        ),
+        migrations.AddIndex(
+            model_name='statscountersaccum',
+            index=models.Index(fields=['stamp', 'interval_type', 'counter_type'], name='uds_stats_partial'),
+        ),
+        migrations.AddIndex(
+            model_name='statscountersaccum',
+            index=models.Index(fields=['stamp', 'interval_type'], name='uds_stats_stamp'),
+        ),
+        # Migrate uds_stats_c from Innodb to MyISAM if possible
+        migrations.RunPython(forwards, backwards),
     ]

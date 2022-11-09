@@ -36,7 +36,7 @@ import typing
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
-from uds.models import StatsCounters
+from uds.models import StatsCounters, StatsCountersAccum
 from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.models import StatsEvents
 
@@ -73,7 +73,7 @@ class StatsManager(metaclass=singleton.Singleton):
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
 
-    def __doCleanup(self, model):
+    def __doCleanup(self, model: typing.Type[typing.Union['StatsCounters', 'StatsEvents']]) -> None:
         minTime = time.mktime(
             (
                 getSqlDatetime()
@@ -284,3 +284,7 @@ class StatsManager(metaclass=singleton.Singleton):
         """
 
         self.__doCleanup(StatsEvents)
+
+    def acummulate(self, max_days: int = 7):
+        for interval in StatsCountersAccum.IntervalType:
+            StatsCountersAccum.acummulate(interval, max_days)

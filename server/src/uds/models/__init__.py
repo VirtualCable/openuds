@@ -71,6 +71,7 @@ from .log import Log
 
 # Stats
 from .stats_counters import StatsCounters
+from .stats_counters_accum import StatsCountersAccum
 from .stats_events import StatsEvents
 
 # General utility models, such as a database cache (for caching remote content of slow connections to external services providers for example)
