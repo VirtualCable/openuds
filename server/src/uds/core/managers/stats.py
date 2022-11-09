@@ -73,7 +73,7 @@ class StatsManager(metaclass=singleton.Singleton):
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
 
-    def __doCleanup(self, model: typing.Type[typing.Union['StatsCounters', 'StatsEvents']]) -> None:
+    def __doCleanup(self, model: typing.Type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']]) -> None:
         minTime = time.mktime(
             (
                 getSqlDatetime()
@@ -178,6 +178,7 @@ class StatsManager(metaclass=singleton.Singleton):
         Removes all counters previous to configured max keep time for stat information from database.
         """
         self.__doCleanup(StatsCounters)
+        self.__doCleanup(StatsCountersAccum)
 
     def getEventFldFor(self, fld: str) -> str:
         '''

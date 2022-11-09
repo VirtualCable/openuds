@@ -41,6 +41,7 @@ from ...fixtures import stats_counters as fixtures_stats_counters
 
 from uds.core.workers import stats_collector
 from uds.core.environment import Environment
+from uds.core.util import config
 
 
 START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0)
@@ -79,7 +80,7 @@ class StatsAcummulatorTest(UDSTransactionTestCase):
             )
 
         # Setup worker
-        stats_collector.STATS_ACCUM_MAX_CHUNK_TIME.set(DAYS // 2 + 1)
+        config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.set(DAYS // 2 + 1)
         stats_collector.StatsAccumulator.setup()
 
     def test_stats_accumulator(self):

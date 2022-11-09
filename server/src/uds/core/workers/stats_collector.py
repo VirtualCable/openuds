@@ -44,19 +44,6 @@ from uds.core.util import config
 
 logger = logging.getLogger(__name__)
 
-# Early declaration of config variable
-STATS_ACCUM_FREQUENCY = config.Config.section(config.ADMIN_SECTION).value(
-    'Stats Accumulation Frequency',
-    '14400',
-    type=config.Config.NUMERIC_FIELD,
-    help=_('Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'),
-)
-STATS_ACCUM_MAX_CHUNK_TIME = config.Config.section(config.ADMIN_SECTION).value(
-    'Stats Accumulation Chunk',
-    '7',
-    type=config.Config.NUMERIC_FIELD,
-    help=_('Maximum number of time to accumulate on one run. Default is 7 (1 week)'),
-)
 
 class DeployedServiceStatsCollector(Job):
     """
@@ -179,13 +166,13 @@ class StatsAccumulator(Job):
     """
     frecuency = 3600  # Executed every 4 hours
     frecuency_cfg = (
-        STATS_ACCUM_FREQUENCY
+        config.GlobalConfig.STATS_ACCUM_FREQUENCY
     )
     friendly_name = 'Statistics acummulator'
 
     def run(self):
         try:
-            StatsManager.manager().acummulate(STATS_ACCUM_MAX_CHUNK_TIME.getInt())
+            StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.getInt())
         except Exception as e:
             logger.exception('Compressing counters')
 

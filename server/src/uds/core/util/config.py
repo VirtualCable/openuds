@@ -559,6 +559,21 @@ class GlobalConfig:
         type=Config.NUMERIC_FIELD,
         help=_('Statistics duration, in days'),
     )
+    # Statisctis accumulation frequency, in seconds
+    STATS_ACCUM_FREQUENCY: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'statsAccumFrequency',
+        '14400',
+        type=Config.NUMERIC_FIELD,
+        help=_('Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'),
+    )
+    # Statisctis accumulation chunk size, in days
+    STATS_ACCUM_MAX_CHUNK_TIME = Config.section(GLOBAL_SECTION).value(
+        'statsAccumMaxChunkTime',
+        '7',
+        type=Config.NUMERIC_FIELD,
+        help=_('Maximum number of time to accumulate on one run. Default is 7 (1 week)'),
+    )
+
     # If disallow login showing authenticatiors
     DISALLOW_GLOBAL_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value(
         'disallowGlobalLogin',
@@ -765,6 +780,7 @@ class GlobalConfig:
                 for v in GlobalConfig.__dict__.values():
                     if isinstance(v, Config.Value):
                         v.get()
+                        logger.debug('Initialized global config value %s=%s', v.key(), v.get())
 
                 for c in _getLater:
                     logger.debug('Get later: %s', c)

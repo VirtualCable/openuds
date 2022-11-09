@@ -216,7 +216,7 @@ class StatsCountersAccum(models.Model):
             )
 
         """Stores accumulated data in StatsCountersAccum"""
-        # Acummulate data
+        # Acummulate data, only register if there is data
         accumulated: typing.List[StatsCountersAccum] = [
             StatsCountersAccum(
                 owner_type=rec['owner_type'],
@@ -230,12 +230,14 @@ class StatsCountersAccum(models.Model):
                 v_min=rec['min'],
                 v_max=rec['max'],
             )
-            for rec in query
+            for rec in query if rec['sum'] and rec['min'] and rec['max']
         ]
 
         logger.debug('Inserting %s records', len(accumulated))
-        # If we have more than 20 inserts, do it in a single query
-        StatsCountersAccum.objects.bulk_create(accumulated)
+        # Insert in chunks of 2500 records
+        while accumulated:
+            StatsCountersAccum.objects.bulk_create(accumulated[:2500])
+            accumulated = accumulated[2500:]
 
     def __str__(self) -> str:
         return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_type}:{self.owner_id}:{self.counter_type} {StatsCountersAccum.IntervalType(self.interval_type)} {self.v_count},{self.v_sum},{self.v_min},{self.v_max}'
