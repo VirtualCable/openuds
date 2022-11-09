@@ -463,7 +463,20 @@ class GlobalConfig:
     STATS_DURATION: Config.Value = Config.section(GLOBAL_SECTION).value(
         'statsDuration', '365', type=Config.NUMERIC_FIELD
     )
-    # If disallow login using /login url, and must go to an authenticator
+    # Statisctis accumulation frequency, in seconds
+    STATS_ACCUM_FREQUENCY: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'statsAccumFrequency',
+        '14400',
+        type=Config.NUMERIC_FIELD,
+    )
+    # Statisctis accumulation chunk size, in days
+    STATS_ACCUM_MAX_CHUNK_TIME = Config.section(GLOBAL_SECTION).value(
+        'statsAccumMaxChunkTime',
+        '7',
+        type=Config.NUMERIC_FIELD,
+    )
+
+    # If disallow login showing authenticatiors
     DISALLOW_GLOBAL_LOGIN: Config.Value = Config.section(GLOBAL_SECTION).value(
         'disallowGlobalLogin', '0', type=Config.BOOLEAN_FIELD
     )
@@ -591,6 +604,7 @@ class GlobalConfig:
                 for v in GlobalConfig.__dict__.values():
                     if isinstance(v, Config.Value):
                         v.get()
+                        logger.debug('Initialized global config value %s=%s', v.key(), v.get())
 
                 for c in _getLater:
                     logger.debug('Get later: %s', c)
