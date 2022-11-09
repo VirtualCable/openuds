@@ -30,7 +30,6 @@
 """
 import typing
 import datetime
-import random
 
 from uds.core.util.stats import counters
 from uds import models
@@ -42,7 +41,8 @@ def create_stats_counters(
     counter_type: int,
     since: datetime.datetime,
     to: datetime.datetime,
-    number: int,
+    number: typing.Optional[int] = None,
+    interval: typing.Optional[int] = None,
 ) -> typing.List[models.StatsCounters]:
     '''
     Create a list of counters with the given type, counter_type, since and to, save it in the database
@@ -53,20 +53,63 @@ def create_stats_counters(
     to_stamp = int(to.timestamp())
 
     # Calculate the time interval between each counter
-    interval = (to_stamp - since_stamp) / number
-    
-    counters = []
-    for i in range(number):
-        counter = models.StatsCounters()
-        counter.owner_id = owner_id
-        counter.owner_type = owner_type
-        counter.counter_type = counter_type
-        counter.stamp = since_stamp + interval * i
-        counter.value = i * 10
-        # And add it to the list
-        counters.append(counter)
+    if number is None:
+        if interval is None:
+            raise ValueError('Either number or interval must be provided')
+        number = (to_stamp - since_stamp) // interval
+    interval = (to_stamp - since_stamp) // number
 
+    counters = [
+        models.StatsCounters(
+            owner_id=owner_id,
+            owner_type=owner_type,
+            counter_type=counter_type,
+            stamp=since_stamp + interval * i,
+            value=i*10,
+        )
+        for i in range(number)
+    ]
     # Bulk create the counters
     models.StatsCounters.objects.bulk_create(counters)
     return counters
 
+
+def create_stats_interval_total(
+    id: int,
+    counter_type: typing.List[int],
+    since: datetime.datetime,
+    days: int,
+    number_per_hour: int,
+    value: typing.Union[int, typing.Callable[[int, int], int]],
+    owner_type: int = counters.OT_DEPLOYED,
+) -> typing.List[models.StatsCounters]:
+    '''
+    Creates a list of counters with the given type, counter_type, since and to, save it in the database
+    and return it
+    '''
+    # Calculate the time interval between each counter
+    # Ensure number_per hour fix perfectly in an hour
+    if 3600 % number_per_hour != 0:
+        raise ValueError('Number of counters per hour must be a divisor of 3600')
+
+    interval = 3600 // number_per_hour
+
+    since_stamp = int(since.timestamp())
+
+    if isinstance(value, int):
+        xv = value
+        value = lambda x, y: xv
+
+    cntrs = [
+        models.StatsCounters(
+            owner_id=id,
+            owner_type=owner_type,
+            counter_type=ct,
+            stamp=since_stamp + interval * i,
+            value=value(i, ct),
+        ) for ct in counter_type for i in range(days * 24 * number_per_hour)
+    ]
+
+    # Bulk create the counters
+    models.StatsCounters.objects.bulk_create(cntrs)
+    return cntrs
