@@ -11,7 +11,7 @@ Release: %{release}
 Summary: Actor for Universal Desktop Services (UDS) Broker
 License: BSD3
 Group: Admin
-Requires: python3-six python3-requests python3-qt5 libXScrnSaver
+Requires: python3-six python3-requests python3-qt5 libXScrnSaver xset
 Vendor: Virtual Cable S.L.U.
 URL: http://www.udsenterprise.com
 Provides: udsactor

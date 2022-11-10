@@ -41,9 +41,10 @@ import typing
 
 from .. import types
 
+
+from udsactor.log import logger
 from .renamer import rename
 from . import xss
-
 
 def _getMacAddr(ifname: str) -> typing.Optional[str]:
     '''
@@ -137,14 +138,19 @@ def reboot(flags: int = 0):
     '''
     Simple reboot using os command
     '''
-    subprocess.call(['/sbin/shutdown', 'now', '-r'])
-
+    try:
+        subprocess.call(['/sbin/shutdown', 'now', '-r'])
+    except Exception as e:
+        logger.error('Error rebooting: %s', e)
 
 def loggoff() -> None:
     '''
     Right now restarts the machine...
     '''
-    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
+    try:
+        subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])
+    except Exception as e:
+        logger.error('Error killing user processes: %s', e)
     # subprocess.call(['/sbin/shutdown', 'now', '-r'])
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 
