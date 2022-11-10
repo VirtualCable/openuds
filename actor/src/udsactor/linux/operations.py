@@ -41,6 +41,8 @@ import typing
 
 from .. import types
 
+
+from udsactor.log import logger
 from .renamer import rename
 from . import xss
 
@@ -165,14 +167,19 @@ def reboot(flags: int = 0):
     '''
     Simple reboot using os command
     '''
-    subprocess.call(['/sbin/shutdown', 'now', '-r']) # nosec: Fine, all under control
-
+    try:
+        subprocess.call(['/sbin/shutdown', 'now', '-r'])  # nosec: fixed params
+    except Exception as e:
+        logger.error('Error rebooting: %s', e)
 
 def loggoff() -> None:
     '''
     Right now restarts the machine...
     '''
-    subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']]) # nosec: Fine, all under control
+    try:
+        subprocess.call(['/usr/bin/pkill', '-u', os.environ['USER']])  # nosec: Fixed params
+    except Exception as e:
+        logger.error('Error killing user processes: %s', e)
     # subprocess.call(['/sbin/shutdown', 'now', '-r'])
     # subprocess.call(['/usr/bin/systemctl', 'reboot', '-i'])
 

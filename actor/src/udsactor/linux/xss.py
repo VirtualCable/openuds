@@ -33,6 +33,10 @@ import ctypes
 import ctypes.util
 import subprocess  # nosec
 
+
+from udsactor.log import logger
+
+
 xlib = None
 xss = None
 display = None
@@ -116,11 +120,12 @@ def _ensureInitialized():
 def initIdleDuration(atLeastSeconds: int) -> None:
     _ensureInitialized()
     if atLeastSeconds:
-        subprocess.call(  # nosec, controlled params
-            ['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)]
-        )
-        # And now reset it
-        subprocess.call(['/usr/bin/xset', 's', 'reset'])  # nosec: fixed command
+        try:
+            subprocess.call(['/usr/bin/xset', 's', '{}'.format(atLeastSeconds + 30)])  # nosec
+            # And now reset it
+            subprocess.call(['/usr/bin/xset', 's', 'reset'])  # nosec
+        except Exception as e:
+            logger.error('Error setting screensaver time: %s', e)
 
 
 def getIdleDuration() -> float:
