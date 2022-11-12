@@ -37,7 +37,6 @@ from django.http.response import HttpResponse
 from django.conf import settings
 
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.config import GlobalConfig
 
 
 logger = logging.getLogger(__name__)
@@ -113,7 +112,7 @@ class UDSTestCase(TestCase):
         super().setUpClass()
         setupClass(cls)
 
-class UDSTestCase(TransactionTestCase):
+class UDSTransactionTestCase(TransactionTestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient
@@ -123,6 +122,6 @@ class UDSTestCase(TransactionTestCase):
         super().setUpClass()
         setupClass(cls)
 
-def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTestCase]]) -> None:
+def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]) -> None:
     # Nothing right now
     pass

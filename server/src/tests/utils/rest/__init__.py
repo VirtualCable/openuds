@@ -77,7 +77,7 @@ def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
         content_type='application/json',
         **{AUTH_TOKEN_HEADER: auth_token}
     )
-    caller.assertEqual(response.status_code, 200, 'Logout')
-    caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout')
+    caller.assertEqual(response.status_code, 200, 'Logout Result: {}'.format(response.content))
+    caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout Result: {}'.format(response.content))
 
 

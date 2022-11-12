@@ -32,7 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
-from ...utils.test import UDSTestCase
+from ...utils.test import UDSTransactionTestCase
 from uds.core.util.cache import Cache
 import time
 import string
@@ -43,7 +43,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = [u'únîcödè€', b'string', {'a': 1, 'b': 2.0}]
 
 
-class CacheTest(UDSTestCase):
+class CacheTest(UDSTransactionTestCase):
     def test_cache(self):
         cache = Cache(UNICODE_CHARS)
 
