@@ -35,12 +35,12 @@ import logging
 
 from uds.core import messaging
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures.images import createImage
 
 if typing.TYPE_CHECKING:
     from uds import models
 
 
-class ModelImageTest(UDSTransactionTestCase):
+class ModelImageTest(UDSTestCase):
     pass

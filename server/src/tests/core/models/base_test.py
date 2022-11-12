@@ -41,12 +41,12 @@ from ...fixtures import osmanagers as osmanagers_fixtures
 from ...fixtures import notifiers as notifiers_fixtures
 from ...fixtures import stats_counters as stats_counters_fixtures
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
     pass
 
 logger = logging.getLogger(__name__)
 
-class ModelXXTest(UDSTransactionTestCase):
+class ModelXXTest(UDSTestCase):
     pass

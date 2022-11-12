@@ -32,14 +32,14 @@
 import typing
 import logging
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import authenticators as authenticators_fixtures
 from uds import models
 
 if typing.TYPE_CHECKING:
     pass
 
-class ModelUUIDTest(UDSTransactionTestCase):
+class ModelUUIDTest(UDSTestCase):
     auth: 'models.Authenticator'
     user: 'models.User'
     group: 'models.Group'

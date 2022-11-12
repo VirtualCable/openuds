@@ -74,6 +74,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     deployed_service: 'models.ForeignKey["ServicePool"]' = models.ForeignKey(
         ServicePool, on_delete=models.CASCADE, related_name='userServices'
     )
+    # Althoug deployed_services has its publication, the user service is bound to a specific publication
+    # so we need to store the publication id here (or the revision, but we need to store something)
+    # storing the id simplifies the queries
     publication: 'models.ForeignKey[ServicePoolPublication | None]' = models.ForeignKey(
             ServicePoolPublication,
             on_delete=models.CASCADE,

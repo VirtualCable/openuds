@@ -84,10 +84,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service: 'models.ForeignKey[Service | None]' = models.ForeignKey(
+    service: 'models.ForeignKey[Service]' = models.ForeignKey(
         Service,
-        null=True,
-        blank=True,
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )

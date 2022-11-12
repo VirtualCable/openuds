@@ -33,7 +33,7 @@ import typing
 import logging
 import datetime
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import services as services_fixtures
 
 from uds.models import UserService
@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class StuckCleanerTest(UDSTransactionTestCase):
+class StuckCleanerTest(UDSTestCase):
     userServices: typing.List['models.UserService']
 
     def setUp(self) -> None:

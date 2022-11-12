@@ -36,7 +36,7 @@ import logging
 from uds.core import messaging
 
 from ..fixtures import notifiers as notifiers_fixtures
-from ..utils.test import UDSTransactionTestCase
+from ..utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class EmailNotifierTest(UDSTransactionTestCase):
+class EmailNotifierTest(UDSTestCase):
     """
     Test Email Notifier
     """

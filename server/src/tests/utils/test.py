@@ -113,7 +113,7 @@ class UDSTestCase(TestCase):
         super().setUpClass()
         setupClass(cls)
 
-class UDSTransactionTestCase(TransactionTestCase):
+class UDSTestCase(TransactionTestCase):
     client_class: typing.Type = UDSClient
 
     client: UDSClient
@@ -123,6 +123,6 @@ class UDSTransactionTestCase(TransactionTestCase):
         super().setUpClass()
         setupClass(cls)
 
-def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]) -> None:
+def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTestCase]]) -> None:
     # Nothing right now
     pass

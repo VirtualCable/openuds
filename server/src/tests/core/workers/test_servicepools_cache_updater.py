@@ -40,7 +40,7 @@ from uds.core.environment import Environment
 from uds.services.Test.provider import TestProvider
 from uds.services.Test.service import TestServiceCache, TestServiceNoCache
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import services as services_fixtures
 
 if typing.TYPE_CHECKING:
@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class ServiceCacheUpdaterTest(UDSTransactionTestCase):
+class ServiceCacheUpdaterTest(UDSTestCase):
     servicePool: 'models.ServicePool'
 
     def setUp(self) -> None:

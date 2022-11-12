@@ -38,11 +38,11 @@ from uds.core.util import config
 from uds.core.util.state import State
 from uds.core.workers.assigned_unused import AssignedAndUnused
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import services as fixtures_services
 
 
-class AssignedAndUnusedTest(UDSTransactionTestCase):
+class AssignedAndUnusedTest(UDSTestCase):
     userServices: typing.List[models.UserService]
 
     def setUp(self):

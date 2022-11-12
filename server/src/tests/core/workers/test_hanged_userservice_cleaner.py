@@ -38,14 +38,14 @@ from uds.core.util import config
 from uds.core.util.state import State
 from uds.core.workers.hanged_userservice_cleaner import HangedCleaner
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import services as fixtures_services
 
 MAX_INIT = 300
 TEST_SERVICES = 5 * 5  # Ensure multiple of 5 for testing
 
 
-class HangedCleanerTest(UDSTransactionTestCase):
+class HangedCleanerTest(UDSTestCase):
     userServices: typing.List[models.UserService]
 
     def setUp(self):

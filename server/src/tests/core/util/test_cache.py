@@ -32,40 +32,59 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from uds.core.util.cache import Cache
 import time
+import string
 
+# Some random chars, that include unicode non-ascci chars
 UNICODE_CHARS = 'ñöçóá^(pípè)'
 UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = [u'únîcödè€', b'string', {'a': 1, 'b': 2.0}]
 
 
-class CacheTest(UDSTransactionTestCase):
-
+class CacheTest(UDSTestCase):
     def test_cache(self):
         cache = Cache(UNICODE_CHARS)
 
         # Get default value, with unicode
-        self.assertEqual(cache.get(UNICODE_CHARS, UNICODE_CHARS_2), UNICODE_CHARS_2, 'Unicode unexisting key returns default unicode')
+        self.assertEqual(
+            cache.get(UNICODE_CHARS, UNICODE_CHARS_2),
+            UNICODE_CHARS_2,
+            'Unicode unexisting key returns default unicode',
+        )
 
         # Remove unexisting key, not a problem
-        self.assertEqual(cache.remove('non-existing-1'), False, 'Removing unexisting key')
+        self.assertEqual(
+            cache.remove('non-existing-1'), False, 'Removing unexisting key'
+        )
 
         # Add new key (non existing) with default duration (60 seconds probable)
         cache.put(UNICODE_CHARS_2, VALUE_1)
 
         # checks it
-        self.assertEqual(cache.get(UNICODE_CHARS_2), VALUE_1, 'Put a key and recover it')
+        self.assertEqual(
+            cache.get(UNICODE_CHARS_2), VALUE_1, 'Put a key and recover it'
+        )
 
         # Add new "str" key, with 1 second life, wait 2 seconds and recover
         cache.put(b'key', VALUE_1, 1)
         time.sleep(1.1)
-        self.assertEqual(cache.get(b'key'), None, 'Put an "str" key and recover it once it has expired')
+        self.assertEqual(
+            cache.get(b'key'),
+            None,
+            'Put an "str" key and recover it once it has expired',
+        )
 
         # Refresh previous key and will be again available
         cache.refresh(b'key')
-        self.assertEqual(cache.get(b'key'), VALUE_1, 'Refreshed cache key is {} and should be {}'.format(cache.get(b'key'), VALUE_1))
+        self.assertEqual(
+            cache.get(b'key'),
+            VALUE_1,
+            'Refreshed cache key is {} and should be {}'.format(
+                cache.get(b'key'), VALUE_1
+            ),
+        )
 
         # Checks cache clean
         cache.put('key', VALUE_1)
@@ -82,5 +101,8 @@ class CacheTest(UDSTransactionTestCase):
         time.sleep(0.1)
         Cache.cleanUp()
         cache.refresh('key')
-        self.assertEqual(cache.get('key'), None, 'Put a key and recover it once it has expired and has been cleaned')
-
+        self.assertEqual(
+            cache.get('key'),
+            None,
+            'Put a key and recover it once it has expired and has been cleaned',
+        )

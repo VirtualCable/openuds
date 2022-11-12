@@ -37,7 +37,7 @@ from uds import models
 from uds.models.account_usage import AccountUsage
 from ...fixtures import services as services_fixtures
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
     pass
@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 NUM_USERSERVICES = 8
 
 
-class ModelAccountTest(UDSTransactionTestCase):
+class ModelAccountTest(UDSTestCase):
     user_services: typing.List['models.UserService']
 
     def setUp(self) -> None:

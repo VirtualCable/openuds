@@ -30,7 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from uds.core.util.storage import Storage
 
 UNICODE_CHARS = 'ñöçóá^(pípè)'
@@ -38,7 +38,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 VALUE_1 = ['unicode', b'string', {'a': 1, 'b': 2.0}]
 
 
-class StorageTest(UDSTransactionTestCase):
+class StorageTest(UDSTestCase):
     def test_storage(self):
         storage = Storage(UNICODE_CHARS)
 

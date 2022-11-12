@@ -42,7 +42,7 @@ from uds.REST.handlers import AUTH_TOKEN_HEADER
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
 
-class WEBTestCase(test.UDSTransactionTestCase):
+class WEBTestCase(test.UDSTestCase):
     # Authenticators related
     auth: models.Authenticator
     groups: typing.List[models.Group]

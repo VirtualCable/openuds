@@ -30,14 +30,14 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures.calendars import createCalendars
 from uds.core.util import calendar
 from uds.models import Calendar
 import datetime
 
 
-class CalendarTest(UDSTransactionTestCase):
+class CalendarTest(UDSTestCase):
 
     def setUp(self) -> None:
         createCalendars()

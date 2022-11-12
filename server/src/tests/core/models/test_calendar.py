@@ -35,7 +35,7 @@ import logging
 
 from uds import models
 from uds.models.calendar_rule import freqs, dunits, weekdays
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 
 if typing.TYPE_CHECKING:
     pass
@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ModelCalendarTest(UDSTransactionTestCase):
+class ModelCalendarTest(UDSTestCase):
     def test_calendar(self) -> None:
         # Ensure we can create some calendars
         for i in range(32):

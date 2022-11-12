@@ -33,14 +33,14 @@ import typing
 import logging
 
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 
 from uds.core.util import net
 
 logger = logging.getLogger(__name__)
 
 
-class NetTest(UDSTransactionTestCase):
+class NetTest(UDSTestCase):
 
     def testNetworkFromString(self):
         for n in (

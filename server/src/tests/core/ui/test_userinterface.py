@@ -32,7 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # We use commit/rollback
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from uds.core.ui.user_interface import (
     gui,
     UserInterface
@@ -42,7 +42,7 @@ import time
 from django.conf import settings
 
 
-class UserinterfaceTest(UDSTransactionTestCase):
+class UserinterfaceTest(UDSTestCase):
 
     def test_userinterface(self):
         pass

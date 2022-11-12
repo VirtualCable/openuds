@@ -31,8 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import time
-import sys
-import threading
 
 from ...utils.test import UDSTestCase
 from django.conf import settings

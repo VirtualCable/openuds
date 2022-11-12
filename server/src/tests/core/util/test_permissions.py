@@ -37,7 +37,7 @@ from uds.core.util import permissions
 from uds.core.util import ot
 from uds import models
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import (
     authenticators as authenticators_fixtures,
     services as services_fixtures,
@@ -45,14 +45,18 @@ from ...fixtures import (
 )
 
 
-class PermissionsTest(UDSTransactionTestCase):
+class PermissionsTest(UDSTestCase):
     authenticator: models.Authenticator
     groups: typing.List[models.Group]
     users: typing.List[models.User]
     admins: typing.List[models.User]
     staffs: typing.List[models.User]
     userService: models.UserService
+    servicePool: models.ServicePool
+    service: models.Service
+    provider: models.Provider
     network: models.Network
+    
 
     def setUp(self) -> None:
         self.authenticator = authenticators_fixtures.createAuthenticator()
@@ -72,6 +76,10 @@ class PermissionsTest(UDSTransactionTestCase):
             list(self.users[0].groups.all()),
             'managed',
         )
+        self.servicePool = self.userService.deployed_service
+        self.service = self.servicePool.service
+        self.provider = self.service.provider 
+
         self.network = network_fixtures.createNetwork()
 
     def doTestUserPermissions(self, obj, user: models.User):

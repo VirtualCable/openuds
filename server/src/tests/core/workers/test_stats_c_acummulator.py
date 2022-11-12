@@ -36,7 +36,7 @@ import datetime
 from uds import models
 from uds.core.util.stats import counters
 
-from ...utils.test import UDSTransactionTestCase
+from ...utils.test import UDSTestCase
 from ...fixtures import stats_counters as fixtures_stats_counters
 
 from uds.core.workers import stats_collector
@@ -65,7 +65,7 @@ class StatsFunction:
         return self.counter * 100
 
 
-class StatsAcummulatorTest(UDSTransactionTestCase):
+class StatsAcummulatorTest(UDSTestCase):
     def setUp(self):
         # In fact, real data will not be assigned to Userservices, but it's ok for testing
         for pool_id in range(NUMBER_OF_POOLS):
