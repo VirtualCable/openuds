@@ -26,9 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
@@ -39,7 +38,7 @@ from ...utils import rest
 logger = logging.getLogger(__name__)
 
 
-class ActorTestTest(rest.test.RESTTestCase):
+class ActorTestTest(rest.test.RESTActorTestCase):
     """
     Test actor functionality
     """
@@ -110,5 +109,5 @@ class ActorTestTest(rest.test.RESTTestCase):
         service = self.user_service_managed.deployed_service.service
         rest_token, actor_token = self.login_and_register()
         # Get service token
-        self.do_test(UNMANAGED, service.token)
+        self.do_test(UNMANAGED, service.token or '')
 

@@ -30,7 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: pickle is used to cache data, not to load it
 import datetime
 import codecs
 import logging
@@ -98,7 +98,7 @@ def getServicesPoolsCounters(
             else:
                 val = [{'stamp': since, 'value': 0}, {'stamp': to, 'value': 0}]
         else:
-            val = pickle.loads(codecs.decode(cachedValue, 'zip'))
+            val = pickle.loads(codecs.decode(cachedValue, 'zip'))  # nosec: pickle is used to cache data, not to load it
 
         # return [{'stamp': since + datetime.timedelta(hours=i*10), 'value': i*i*counter_type//4} for i in range(300)]
 
@@ -109,8 +109,41 @@ def getServicesPoolsCounters(
 
 
 class System(Handler):
+
+    """
+    {
+        'paths': [
+            "/system/overview", "Returns a json object with the number of services, service pools, users, etc",
+            "/system/stats/assigned", "Returns a chart of assigned services (all pools)",
+            "/system/stats/inuse", "Returns a chart of in use services (all pools)",
+            "/system/stats/cached", "Returns a chart of cached services (all pools)",
+            "/system/stats/complete",  "Returns a chart of complete services (all pools)",
+            "/system/stats/assigned/<servicePoolId>", "Returns a chart of assigned services (for a pool)",
+            "/system/stats/inuse/<servicePoolId>", "Returns a chart of in use services (for a pool)",
+            "/system/stats/cached/<servicePoolId>", "Returns a chart of cached services (for a pool)",
+            "/system/stats/complete/<servicePoolId>", "Returns a chart of complete services (for a pool)",
+        ],
+        'comments': [
+            "Must be admin to access this",
+        ]
+    }
+    """
     needs_admin = False
     needs_staff = True
+
+    help_paths = [
+        ('overview', ''),
+        ('stats/assigned', ''),
+        ('stats/inuse', ''),
+        ('stats/cached', ''),
+        ('stats/complete', ''),
+        ('stats/assigned/<servicePoolId>', ''),
+        ('stats/inuse/<servicePoolId>', ''),
+        ('stats/cached/<servicePoolId>', ''),
+        ('stats/complete/<servicePoolId>', ''),
+    ]
+    help_text = 'Provides system information. Must be admin to access this'
+
 
     def get(self):
         logger.debug('args: %s', self._args)

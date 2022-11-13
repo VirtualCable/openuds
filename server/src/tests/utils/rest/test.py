@@ -99,22 +99,6 @@ class RESTTestCase(test.UDSTransactionTestCase):
             )
         )
 
-    @staticmethod
-    def register_data(chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
-        # Data for registration
-        return {
-            'username': generators.random_string(size=12, chars=chars)
-            + '@AUTH'
-            + generators.random_string(size=12, chars=chars),
-            'hostname': generators.random_string(size=48, chars=chars),
-            'ip': generators.random_ip(),
-            'mac': generators.random_mac(),
-            'pre_command': generators.random_string(size=64, chars=chars),
-            'run_once_command': generators.random_string(size=64, chars=chars),
-            'post_command': generators.random_string(size=64, chars=chars),
-            'log_level': '0',
-        }
-
     def login(
         self, user: typing.Optional[models.User] = None, as_admin: bool = True
     ) -> str:
@@ -135,6 +119,9 @@ class RESTTestCase(test.UDSTransactionTestCase):
         self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
         return response['token']
 
+
+class RESTActorTestCase(RESTTestCase):
+    
     # Login as admin or staff and register an actor
     # Returns as a tuple the auth token and the actor registration result token:
     #   - The login auth token
@@ -150,3 +137,18 @@ class RESTTestCase(test.UDSTransactionTestCase):
         )
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
         return token, response.json()['result']
+
+    def register_data(self, chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
+        # Data for registration
+        return {
+            'username': generators.random_string(size=12, chars=chars)
+            + '@AUTH'
+            + generators.random_string(size=12, chars=chars),
+            'hostname': generators.random_string(size=48, chars=chars),
+            'ip': generators.random_ip(),
+            'mac': generators.random_mac(),
+            'pre_command': generators.random_string(size=64, chars=chars),
+            'run_once_command': generators.random_string(size=64, chars=chars),
+            'post_command': generators.random_string(size=64, chars=chars),
+            'log_level': '0',
+        }

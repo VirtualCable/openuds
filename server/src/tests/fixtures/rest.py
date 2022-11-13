@@ -26,49 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import logging
 
 from uds import models
-from uds.REST.handlers import AUTH_TOKEN_HEADER
-
-from ...utils import rest, constants
-
-
-logger = logging.getLogger(__name__)
-
-
-class ActorRegisterTest(rest.test.RESTActorTestCase):
-    """
-    Test actor functionality
-    """
-
-    def test_register(self) -> None:
-        """
-        Test actor rest api registration
-        """
-        response: typing.Any
-        for i, usr in enumerate(self.admins + self.staffs + self.plain_users):
-            self.login(usr)  # User auth token will be set on headers on login
-
-            # Try to register. Plain users will fail
-            will_fail = usr in self.plain_users
-            response = self.client.post(
-                '/uds/rest/actor/v3/register',
-                data=self.register_data(
-                    constants.STRING_CHARS if i % 2 == 0 else constants.STRING_CHARS_INVALID
-                ),
-                content_type='application/json',
-            )
-            if will_fail:
-                self.assertEqual(response.status_code, 403)
-                continue  # Try next user, this one will fail
-
-            self.assertEqual(response.status_code, 200)
-            # This is the actor token
-            token = response.json()['result']
-
-            # Ensure database contains the registered token
-            self.assertEqual(models.ActorToken.objects.filter(token=token).count(), 1)

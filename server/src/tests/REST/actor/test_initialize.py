@@ -44,7 +44,7 @@ from ...utils import rest
 logger = logging.getLogger(__name__)
 
 
-class ActorInitializeTest(rest.test.RESTTestCase):
+class ActorInitializeTest(rest.test.RESTActorTestCase):
     """
     Test actor functionality
     """

@@ -112,6 +112,11 @@ class Handler:
     ] = False  # By default, the methods will be accessible by anyone if nothing else indicated
     needs_staff: typing.ClassVar[bool] = False  # By default, staff
 
+    # For implementing help
+    # A list of pairs of (path, help) for subpaths on this handler
+    help_paths: typing.ClassVar[typing.List[typing.Tuple[str, str]]] = []
+    help_text: typing.ClassVar[str] = 'No help available'
+
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
