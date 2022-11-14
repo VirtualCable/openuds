@@ -101,7 +101,7 @@ class UsageByPool(StatsReport):
             items = (
                 StatsManager.manager()
                 .getEvents(
-                    events.OT_DEPLOYED,
+                    events.OT_SERVICEPOOL,
                     (events.ET_LOGIN, events.ET_LOGOUT),
                     owner_id=pool.id,
                     since=start,

@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 (
     OT_USERSERVICE,
     OT_PUBLICATION,
-    OT_DEPLOYED_SERVICE,
+    OT_SERVICEPOOL,
     OT_SERVICE,
     OT_PROVIDER,
     OT_USER,
@@ -63,7 +63,7 @@ logger = logging.getLogger(__name__)
 transDict: typing.Dict[typing.Type['Model'], int] = {
     models.UserService: OT_USERSERVICE,
     models.ServicePoolPublication: OT_PUBLICATION,
-    models.ServicePool: OT_DEPLOYED_SERVICE,
+    models.ServicePool: OT_SERVICEPOOL,
     models.Service: OT_SERVICE,
     models.Provider: OT_PROVIDER,
     models.User: OT_USER,

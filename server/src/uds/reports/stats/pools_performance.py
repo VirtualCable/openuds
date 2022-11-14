@@ -142,7 +142,7 @@ class PoolPerformanceReport(StatsReport):
                 q = (
                     StatsManager.manager()
                     .getEvents(
-                        events.OT_DEPLOYED,
+                        events.OT_SERVICEPOOL,
                         events.ET_ACCESS,
                         since=interval[0],
                         to=interval[1],

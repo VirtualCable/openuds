@@ -28,12 +28,16 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import datetime
 import logging
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
+from uds.core.util.stats import counters
 
 from ..utils import rest
+from ..fixtures import stats_counters
 
 logger = logging.getLogger(__name__)
 
@@ -64,5 +68,24 @@ class SystemTest(rest.test.RESTTestCase):
         self.assertEqual(json['restrained_services_pools'], 0)
 
         
-    def test_charts(self):
-        pass
+    def test_chart_pool(self):
+        # First, create fixtures for the pool
+        DAYS = 30
+        for pool in [self.user_service_managed, self.user_service_unmanaged]:
+            stats_counters.create_stats_interval_total(
+                id=pool.deployed_service.id,
+                counter_type=[counters.CT_ASSIGNED, counters.CT_INUSE, counters.CT_CACHED],
+                since=datetime.datetime.now() - datetime.timedelta(days=DAYS),
+                days=DAYS,
+                number_per_hour=6,
+                value=lambda x, y: (x % y) * 10,
+                owner_type=counters.OT_SERVICEPOOL
+            )
+        # Now, test (will fail if not logged in)
+        response = self.client.get('/uds/rest/system/stats/assigned')
+        self.assertEqual(response.status_code, 403)
+
+        # Login as admin
+        self.login()
+        response = self.client.get('/uds/rest/system/stats/assigned')
+        self.assertEqual(response.status_code, 200)

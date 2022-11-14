@@ -84,7 +84,7 @@ EVENT_NAMES: typing.Mapping[int, str] = {
 (
     OT_PROVIDER,
     OT_SERVICE,
-    OT_DEPLOYED,
+    OT_SERVICEPOOL,
     OT_AUTHENTICATOR,
     OT_OSMANAGER
 ) = range(5)
@@ -92,13 +92,13 @@ EVENT_NAMES: typing.Mapping[int, str] = {
 TYPES_NAMES: typing.Mapping[int, str] = {
     OT_PROVIDER: 'Provider',
     OT_SERVICE: 'Service',
-    OT_DEPLOYED: 'Deployed',
+    OT_SERVICEPOOL: 'Deployed',
     OT_AUTHENTICATOR: 'Authenticator',
     OT_OSMANAGER: 'OS Manager'
 }
 
 MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
-    ServicePool: OT_DEPLOYED,
+    ServicePool: OT_SERVICEPOOL,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     Authenticator: OT_AUTHENTICATOR,
@@ -161,7 +161,7 @@ def getOwner(ownerType: int, ownerId: int) -> typing.Optional['models.Model']:
         return Provider.objects.get(pk=ownerId)
     elif ownerType == OT_SERVICE:
         return Service.objects.get(pk=ownerId)
-    elif ownerType == OT_DEPLOYED:
+    elif ownerType == OT_SERVICEPOOL:
         return ServicePool.objects.get(pk=ownerId)
     elif ownerType == OT_AUTHENTICATOR:
         return Authenticator.objects.get(pk=ownerId)

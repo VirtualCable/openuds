@@ -114,8 +114,7 @@ class StatsCounters(models.Model):
         max_intervals = kwargs.get('max_intervals') or 0
         if max_intervals > 0:
             count = q.count()
-            if max_intervals < count:
-                max_intervals = count
+            max_intervals = max(min(max_intervals, count), 2)
             interval = int(to - since) / max_intervals
 
         floor = getSqlFnc('FLOOR')

@@ -37,8 +37,15 @@ import typing
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Model
 
-from uds.core.managers.stats import StatsManager
-from uds.models import NEVER, Provider, Service, ServicePool, Authenticator
+from uds.core.managers.stats import StatsManager, AccumStat
+from uds.models import (
+    NEVER,
+    Provider,
+    Service,
+    ServicePool,
+    Authenticator,
+    StatsCountersAccum,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -60,11 +67,11 @@ CounterClass = typing.TypeVar(
     CT_CACHED,
 ) = range(8)
 
-OT_PROVIDER, OT_SERVICE, OT_DEPLOYED, OT_AUTHENTICATOR = range(4)
+OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR = range(4)
 
 # Helpers
 def _get_Id(obj):
-    return obj.id
+    return obj.id if obj.id != -1 else None
 
 
 def _get_P_S_Ids(provider) -> typing.Tuple:
@@ -82,7 +89,9 @@ def _get_P_S_DS_Ids(provider) -> typing.Tuple:
     return res
 
 
-idRetriever: typing.Mapping[typing.Type[Model], typing.Mapping[int, typing.Callable]] = {
+idRetriever: typing.Mapping[
+    typing.Type[Model], typing.Mapping[int, typing.Callable]
+] = {
     Provider: {
         CT_LOAD: _get_Id,
         CT_STORAGE: _get_P_S_Ids,
@@ -114,7 +123,7 @@ counterTypes: typing.Mapping[int, typing.Tuple[typing.Type[Model], ...]] = {
 }
 
 objectTypes: typing.Mapping[typing.Type[Model], int] = {
-    ServicePool: OT_DEPLOYED,
+    ServicePool: OT_SERVICEPOOL,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     Authenticator: OT_AUTHENTICATOR,
@@ -220,6 +229,24 @@ def getCounters(
 def getCounterTitle(counterType: int) -> str:
     return titles.get(counterType, '').title()
 
+
+def getAcumCounters(
+    intervalType: StatsCountersAccum.IntervalType,
+    counterType: int,
+    onwer_type: typing.Optional[int] = None,
+    owner_id: typing.Optional[int] = None,
+    since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
+    points: typing.Optional[int] = None,
+) -> typing.Generator[AccumStat, None, None]:
+    yield from StatsManager.manager().getAcumCounters(
+        intervalType=intervalType,
+        counterType=counterType,
+        owner_type=onwer_type,
+        owner_id=owner_id,
+        since=since,
+        points=points,
+    )
+    
 
 # Data initialization
 def _initializeData() -> None:

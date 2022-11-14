@@ -76,7 +76,7 @@ class StatsAcummulatorTest(UDSTestCase):
                 days=DAYS,
                 number_per_hour=NUMBER_PER_HOUR,
                 value=StatsFunction(10 ** (pool_id + 1)),
-                owner_type=counters.OT_DEPLOYED,
+                owner_type=counters.OT_SERVICEPOOL,
             )
 
         # Setup worker

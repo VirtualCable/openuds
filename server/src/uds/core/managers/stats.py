@@ -57,6 +57,14 @@ REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {
 }
 
 
+class AccumStat(typing.NamedTuple):
+    stamp: int
+    n: int  # Number of elements in this interval
+    sum: int  # Sum of elements in this interval
+    max: int  # Max of elements in this interval
+    min: int  # Min of elements in this interval
+
+
 class StatsManager(metaclass=singleton.Singleton):
     """
     Manager for statistics, so we can provide usefull info about platform usage
@@ -73,7 +81,12 @@ class StatsManager(metaclass=singleton.Singleton):
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
 
-    def __doCleanup(self, model: typing.Type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']]) -> None:
+    def __doCleanup(
+        self,
+        model: typing.Type[
+            typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']
+        ],
+    ) -> None:
         minTime = time.mktime(
             (
                 getSqlDatetime()
@@ -172,6 +185,61 @@ class StatsManager(metaclass=singleton.Singleton):
             limit=limit,
             use_max=use_max,
         )
+
+    def getAcumCounters(
+        self,
+        intervalType: StatsCountersAccum.IntervalType,
+        counterType: int,
+        owner_type: typing.Optional[int] = None,
+        owner_id: typing.Optional[int] = None,
+        since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
+        points: typing.Optional[int] = None,
+    ) -> typing.Generator[AccumStat, None, None]:
+        if since is None:
+            if points is None:
+                points = 100  # If since is not specified, we need at least points, get a default
+            since = getSqlDatetime() - datetime.timedelta(
+                seconds=intervalType.seconds() * points
+            )
+
+        if isinstance(since, datetime.datetime):
+            since = int(since.timestamp())
+
+        # Filter from since to now, get at most points
+        query = StatsCountersAccum.objects.filter(
+            interval_type=intervalType,
+            counter_type=counterType,
+            stamp__gte=since,
+        ).order_by('stamp')[0:points]
+        if owner_type is not None:
+            query = query.filter(owner_type=owner_type)
+        if owner_id is not None:
+            query = query.filter(owner_id=owner_id)
+
+        # Create a numpy array with all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
+        # Now, get exactly the points we need
+        stamp = since
+        last = AccumStat(stamp, 0, 0, 0, 0)
+        for rec in query:
+            # While query stamp is greater than stamp, repeat last AccumStat
+            while rec.stamp > stamp:
+                # Append to numpy array
+                yield last
+                stamp += intervalType.seconds()
+                last = last._replace(stamp=stamp)  # adjust stamp
+            # Now, we have a record that is greater or equal to stamp, so we can use it
+            # but replace record stamp with stamp
+            last = AccumStat(
+                stamp,
+                rec.v_count,
+                rec.v_sum,
+                rec.v_max,
+                rec.v_min,
+            )
+            # Append to numpy array
+            yield last
+            stamp += intervalType.seconds()
+            
 
     def cleanupCounters(self):
         """

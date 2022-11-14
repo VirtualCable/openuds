@@ -81,7 +81,7 @@ def create_stats_interval_total(
     days: int,
     number_per_hour: int,
     value: typing.Union[int, typing.Callable[[int, int], int]],
-    owner_type: int = counters.OT_DEPLOYED,
+    owner_type: int = counters.OT_SERVICEPOOL,
 ) -> typing.List[models.StatsCounters]:
     '''
     Creates a list of counters with the given type, counter_type, since and to, save it in the database

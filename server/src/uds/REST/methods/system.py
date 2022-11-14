@@ -89,7 +89,7 @@ def getServicesPoolsCounters(
                 to=to,
                 max_intervals=POINTS,
                 use_max=USE_MAX,
-                all=False,
+                all=us.id == -1,
             ):
                 val.append({'stamp': x[0], 'value': int(x[1])})
             logger.debug('val: %s', val)
