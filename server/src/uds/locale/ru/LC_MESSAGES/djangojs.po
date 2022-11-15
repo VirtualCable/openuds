@@ -11,13 +11,14 @@
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+# Александр Бурматов, 2022
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-14 19:08+0200\n"
+"POT-Creation-Date: 2022-11-15 14:02+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Elena Mishina, 2022\n"
+"Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -126,7 +127,7 @@ msgstr "аутентификатор"
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:48
 #: static/admin/translations-fakejs.js:491
 msgid "MFA"
-msgstr "МИД"
+msgstr "МФА"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:49
 msgid "user"
@@ -1240,11 +1241,11 @@ msgstr "Отчёты"
 
 #: static/admin/translations-fakejs.js:335
 msgid "Tokens"
-msgstr "Жетоны"
+msgstr "Токены"
 
 #: static/admin/translations-fakejs.js:336
 msgid "Actor"
-msgstr "Актер"
+msgstr "Агент"
 
 #: static/admin/translations-fakejs.js:337
 msgid "Tunnel"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-14 19:08+0200\n"
+"POT-Creation-Date: 2022-11-15 14:02+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -99,8 +99,8 @@ msgstr "Usos de {0}"
 msgid "Current usages"
 msgstr "Usos actuals"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:103
-#: REST/methods/client.py:123
+#: REST/methods/actor.py:97 REST/methods/client.py:106
+#: REST/methods/client.py:126
 msgid "Correct"
 msgstr "Correcte"
 
@@ -207,7 +207,7 @@ msgstr "Etiqueta"
 msgid "Users"
 msgstr "Usuaris"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "MFA"
 
@@ -277,7 +277,7 @@ msgstr "Calendaris"
 msgid "Modified"
 msgstr "Modificat"
 
-#: REST/methods/client.py:89
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "El vostre servei s'està creant. Si us plau, espereu mentre es completa"
 
@@ -529,7 +529,7 @@ msgstr "Accions programades"
 msgid "Action"
 msgstr "Acció"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:102
 msgid "Parameters"
 msgstr "Paràmetres"
 
@@ -722,7 +722,7 @@ msgstr "Proxy per a serveis darrere d'un tallafoc"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -821,7 +821,7 @@ msgstr "Si està activat, el transport serà visible per als usuaris"
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:104 services/OVirt/service.py:188
+#: core/ui/user_interface.py:105 services/OVirt/service.py:188
 msgid "Display"
 msgstr "Pantalla"
 
@@ -2161,19 +2161,19 @@ msgstr "S'ha imprès el {now:%Y,% b%, %d} a les {now:%H:%M}"
 msgid "Base Service"
 msgstr "Servei base"
 
-#: core/transports/transport.py:52
+#: core/transports/transport.py:54
 msgid "Direct"
 msgstr "Directe"
 
-#: core/transports/transport.py:53
+#: core/transports/transport.py:55
 msgid "Tunneled"
 msgstr "En túnel"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Credentials"
 msgstr "Credencials"
 
-#: core/ui/user_interface.py:103
+#: core/ui/user_interface.py:104
 msgid "Tunnel"
 msgstr "Túnel"
 
@@ -2352,6 +2352,15 @@ msgstr "L&#39;adreça electrònica és massa llarga"
 msgid "Email address is not valid"
 msgstr "L&#39;adreça de correu electrònic no és vàlida"
 
+#: core/workers/stats_collector.py:52
+msgid ""
+"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
+msgstr ""
+
+#: core/workers/stats_collector.py:58
+msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
+msgstr ""
+
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
 msgstr "No hi ha autenticadors disponibles per a iniciar sessió"
@@ -2495,7 +2504,6 @@ msgid "Enable HTML in emails"
 msgstr "Activa l&#39;HTML als correus electrònics"
 
 #: mfas/Email/mfa.py:133
-#| msgid "User without MFA policy"
 msgid "Policy for users without MFA support"
 msgstr "Política per a usuaris sense suport MFA"
 
@@ -2875,40 +2883,40 @@ msgstr "Elimina els serveis d&#39;usuari assignats ANTIC."
 msgid "Time in hours before considering the user service is OLD."
 msgstr "El temps en hores abans de considerar el servei d&#39;usuari és VELL."
 
-#: models/calendar_rule.py:53
+#: models/calendar_rule.py:54
 msgid "Yearly"
 msgstr "Anual"
 
-#: models/calendar_rule.py:54 reports/auto/fields.py:83
+#: models/calendar_rule.py:55 reports/auto/fields.py:83
 msgid "Monthly"
 msgstr "Mensual"
 
-#: models/calendar_rule.py:55 reports/auto/fields.py:82
+#: models/calendar_rule.py:56 reports/auto/fields.py:82
 msgid "Weekly"
 msgstr "Setmanal"
 
-#: models/calendar_rule.py:56 reports/auto/fields.py:81
+#: models/calendar_rule.py:57 reports/auto/fields.py:81
 msgid "Daily"
 msgstr "Diari"
 
-#: models/calendar_rule.py:57
+#: models/calendar_rule.py:58
 msgid "Weekdays"
 msgstr "Dies de la setmana"
 
-#: models/calendar_rule.py:75
+#: models/calendar_rule.py:76
 msgid "Minutes"
 msgstr "Minuts"
 
-#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:179
+#: models/calendar_rule.py:77 reports/stats/pool_users_summary.py:179
 #: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "Hores"
 
-#: models/calendar_rule.py:77
+#: models/calendar_rule.py:78
 msgid "Days"
 msgstr "Dies"
 
-#: models/calendar_rule.py:78
+#: models/calendar_rule.py:79
 msgid "Weeks"
 msgstr "Setmanes"
 
@@ -3863,7 +3871,7 @@ msgstr "Parell de claus que cal utilitzar per a aquesta màquina"
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:143
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -3875,7 +3883,7 @@ msgstr "Noms de màquina"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:135
+#: services/HyperV_enterprise/service.py:146
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -3887,7 +3895,7 @@ msgstr "Nom base per als clons d'aquesta màquina"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:153
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -3899,7 +3907,7 @@ msgstr "Llargada del nom"
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:145
+#: services/HyperV_enterprise/service.py:156
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4190,8 +4198,9 @@ msgstr "Màquina base del servei"
 #: services/HyperV_enterprise/service.py:105
 #: services/HyperV_enterprise/service.py:116
 #: services/HyperV_enterprise/service.py:127
-#: services/HyperV_enterprise/service.py:136
-#: services/HyperV_enterprise/service.py:146
+#: services/HyperV_enterprise/service.py:138
+#: services/HyperV_enterprise/service.py:147
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4288,7 +4297,7 @@ msgstr "Port remot WSman. Deixeu-lo a zero per defecte."
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "Forçar la verificació del certificat SSL"
@@ -4324,6 +4333,20 @@ msgstr "Linked Clon d’HiperV"
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Serveis basats en plantilles i discs diferencials"
+
+#: services/HyperV_enterprise/service.py:132
+msgid "Use Full Clones"
+msgstr ""
+
+#: services/HyperV_enterprise/service.py:136
+#, fuzzy
+#| msgid ""
+#| "If checked, the name of the subnets will be used instead of the names of "
+#| "networks"
+msgid "If checked, full clones will be used instead of differential disks"
+msgstr ""
+"Si es marca, s'utilitzarà el nom de les subxarxes en lloc dels noms de les "
+"xarxes"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -6654,14 +6677,14 @@ msgstr "Protocol NICE DCV. Connexió via túnel."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Servidor de túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:74
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6672,21 +6695,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:80
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Temps d'espera del túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:85
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Temps màxim d'espera abans de tancar l'agent d'escolta del túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:94
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6696,7 +6719,7 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:136 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:129
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Cal utilitzar HOST:PORT al camp Servidor de túnel"
@@ -6928,7 +6951,8 @@ msgstr ""
 "utilitzada amb el client xfreerdp"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDS_enterprise/rds_base.py:215
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:215
+#: transports/RDS_enterprise/rds_base.py:225
 msgid "Custom parameters"
 msgstr "Paràmetres personalitzats"
 
@@ -6963,12 +6987,16 @@ msgstr ""
 "exemple / usb: id, dev: 054c: 0268, o bé compatible amb el vostre client "
 "xfreerdp)"
 
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:228
+msgid "If not empty, extra parameters to include for Windows Client"
+msgstr ""
+
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "Protocol RDP. Connexió via túnel"
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:64
+#: transports/RDS_enterprise/rdstunnel.py:65
 msgid "RDS for vApps"
 msgstr "RDS per a vApps"
 
@@ -7008,7 +7036,7 @@ msgstr ""
 "Si està seleccionat, el client Linux executarà l'aplicació en una sessió en "
 "lloc d'una aplicació remota"
 
-#: transports/RDS_enterprise/rdstunnel.py:66
+#: transports/RDS_enterprise/rdstunnel.py:67
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "Accés RDP utilitzant RDP per a vAPPs. Connexió via túnel."
 

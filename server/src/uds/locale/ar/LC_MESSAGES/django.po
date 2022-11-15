@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-14 19:08+0200\n"
+"POT-Creation-Date: 2022-11-15 14:02+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -98,8 +98,8 @@ msgstr "استخدامات {0}"
 msgid "Current usages"
 msgstr "الاستخدامات الحالية"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:103
-#: REST/methods/client.py:123
+#: REST/methods/actor.py:97 REST/methods/client.py:106
+#: REST/methods/client.py:126
 msgid "Correct"
 msgstr "صحيح"
 
@@ -206,7 +206,7 @@ msgstr "التسمية"
 msgid "Users"
 msgstr "المستخدمين"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "MFA"
 
@@ -276,7 +276,7 @@ msgstr "التقويمات"
 msgid "Modified"
 msgstr "تعديل"
 
-#: REST/methods/client.py:89
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "يتم إنشاء الخدمة الخاصة بك. من فضلك انتظر بينما نكملها"
 
@@ -525,7 +525,7 @@ msgstr "الإجراءات المقررة"
 msgid "Action"
 msgstr "عمل"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:102
 msgid "Parameters"
 msgstr "معلمات"
 
@@ -718,7 +718,7 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -817,7 +817,7 @@ msgstr "إذا كان نشطًا ، فسيكون النقل مرئيًا للم�
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:104 services/OVirt/service.py:188
+#: core/ui/user_interface.py:105 services/OVirt/service.py:188
 msgid "Display"
 msgstr "عرض"
 
@@ -2118,19 +2118,19 @@ msgstr "طبع في {now:٪ Y،٪ b٪ d} في {now:٪ H:٪ M}"
 msgid "Base Service"
 msgstr "خدمة قاعدة"
 
-#: core/transports/transport.py:52
+#: core/transports/transport.py:54
 msgid "Direct"
 msgstr "مباشر"
 
-#: core/transports/transport.py:53
+#: core/transports/transport.py:55
 msgid "Tunneled"
 msgstr "نفقي"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Credentials"
 msgstr "وثائق التفويض"
 
-#: core/ui/user_interface.py:103
+#: core/ui/user_interface.py:104
 msgid "Tunnel"
 msgstr "النفق"
 
@@ -2309,6 +2309,15 @@ msgstr "عنوان البريد الإلكتروني طويل جدًا"
 msgid "Email address is not valid"
 msgstr "عنوان البريد الإلكتروني غير صالح"
 
+#: core/workers/stats_collector.py:52
+msgid ""
+"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
+msgstr ""
+
+#: core/workers/stats_collector.py:58
+msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
+msgstr ""
+
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
 msgstr "لا يتوفر أي مصادق لتسجيل الدخول"
@@ -2451,7 +2460,6 @@ msgid "Enable HTML in emails"
 msgstr "تمكين HTML في رسائل البريد الإلكتروني"
 
 #: mfas/Email/mfa.py:133
-#| msgid "User without MFA policy"
 msgid "Policy for users without MFA support"
 msgstr "سياسة للمستخدمين الذين ليس لديهم دعم MFA"
 
@@ -2821,40 +2829,40 @@ msgstr "قم بإزالة خدمات المستخدم القديمة المعي�
 msgid "Time in hours before considering the user service is OLD."
 msgstr "الوقت بالساعات قبل التفكير في خدمة المستخدم قديم."
 
-#: models/calendar_rule.py:53
+#: models/calendar_rule.py:54
 msgid "Yearly"
 msgstr "سنوياً"
 
-#: models/calendar_rule.py:54 reports/auto/fields.py:83
+#: models/calendar_rule.py:55 reports/auto/fields.py:83
 msgid "Monthly"
 msgstr "شهريا"
 
-#: models/calendar_rule.py:55 reports/auto/fields.py:82
+#: models/calendar_rule.py:56 reports/auto/fields.py:82
 msgid "Weekly"
 msgstr "أسبوعيا"
 
-#: models/calendar_rule.py:56 reports/auto/fields.py:81
+#: models/calendar_rule.py:57 reports/auto/fields.py:81
 msgid "Daily"
 msgstr "يوميا"
 
-#: models/calendar_rule.py:57
+#: models/calendar_rule.py:58
 msgid "Weekdays"
 msgstr "أيام الأسبوع"
 
-#: models/calendar_rule.py:75
+#: models/calendar_rule.py:76
 msgid "Minutes"
 msgstr "دقائق"
 
-#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:179
+#: models/calendar_rule.py:77 reports/stats/pool_users_summary.py:179
 #: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "ساعات"
 
-#: models/calendar_rule.py:77
+#: models/calendar_rule.py:78
 msgid "Days"
 msgstr "أيام"
 
-#: models/calendar_rule.py:78
+#: models/calendar_rule.py:79
 msgid "Weeks"
 msgstr "أسابيع"
 
@@ -3794,7 +3802,7 @@ msgstr "زوج المفاتيح الذي سيتم استخدامه لهذا ال
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:143
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -3806,7 +3814,7 @@ msgstr "أسماء الأجهزة"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:135
+#: services/HyperV_enterprise/service.py:146
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -3818,7 +3826,7 @@ msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:153
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -3830,7 +3838,7 @@ msgstr "طول الاسم "
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:145
+#: services/HyperV_enterprise/service.py:156
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4114,8 +4122,9 @@ msgstr "آلة قاعدة الخدمة"
 #: services/HyperV_enterprise/service.py:105
 #: services/HyperV_enterprise/service.py:116
 #: services/HyperV_enterprise/service.py:127
-#: services/HyperV_enterprise/service.py:136
-#: services/HyperV_enterprise/service.py:146
+#: services/HyperV_enterprise/service.py:138
+#: services/HyperV_enterprise/service.py:147
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4211,7 +4220,7 @@ msgstr "منفذ WSman عن بعد. ترك إلى الصفر افتراضيًا.
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "فرض التحقق من شهادة SSL"
@@ -4244,6 +4253,19 @@ msgstr "استنساخ HyperV مرتبط"
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
 msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
+
+#: services/HyperV_enterprise/service.py:132
+msgid "Use Full Clones"
+msgstr ""
+
+#: services/HyperV_enterprise/service.py:136
+#, fuzzy
+#| msgid ""
+#| "If checked, the name of the subnets will be used instead of the names of "
+#| "networks"
+msgid "If checked, full clones will be used instead of differential disks"
+msgstr ""
+"إذا تم تحديده ، فسيتم استخدام اسم الشبكات الفرعية بدلاً من أسماء الشبكات"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -6507,14 +6529,14 @@ msgstr "بروتوكول NICE DCV. اتصال نفق."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "ملقم نفق"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:74
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6525,21 +6547,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:80
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "وقت الانتظار النفق"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:85
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:94
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6547,7 +6569,7 @@ msgstr "في حالة التمكين ، سيتم التحقق من شهادة خ
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:136 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:129
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
@@ -6763,7 +6785,8 @@ msgstr ""
 "XFreeRDP"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDS_enterprise/rds_base.py:215
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:215
+#: transports/RDS_enterprise/rds_base.py:225
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
@@ -6797,12 +6820,16 @@ msgstr ""
 "المثال / usb: id ، dev: 054c: 0268 ، أو أي شيء متوافق مع عميل xfreerdp الخاص "
 "بك)"
 
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:228
+msgid "If not empty, extra parameters to include for Windows Client"
+msgstr ""
+
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "بروتوكول RDP. اتصال النفق."
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:64
+#: transports/RDS_enterprise/rdstunnel.py:65
 msgid "RDS for vApps"
 msgstr "RDS for vApps"
 
@@ -6841,7 +6868,7 @@ msgid ""
 msgstr ""
 "إذا تم تحديده ، فسيقوم عميل Linux بتنفيذ التطبيق في جلسة بدلاً من تطبيق عن بعد"
 
-#: transports/RDS_enterprise/rdstunnel.py:66
+#: transports/RDS_enterprise/rdstunnel.py:67
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "الوصول RDS باستخدام RDP VApps. اتصال النفق."
 
