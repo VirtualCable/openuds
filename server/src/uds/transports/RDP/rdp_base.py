@@ -335,6 +335,18 @@ class BaseRDPTransport(transports.Transport):
         length=256,
     )
 
+    customParametersWindows = gui.TextField(
+        label=_('Custom parameters'),
+        order=45,
+        tooltip=_(
+            'If not empty, extra parameters to include for Windows Client'
+        ),
+        length=4096,
+        multiline=10,
+        tab='Windows Client',
+    )
+
+
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip

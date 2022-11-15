@@ -69,7 +69,7 @@ class RDPFile:
     smartcardString = None
     enablecredsspsupport = False
     enableClipboard = False
-    linuxCustomParameters: typing.Optional[str] = None
+    customParameters: typing.Optional[str] = None
     enforcedShares: typing.Optional[str] = None
 
     def __init__(
@@ -189,8 +189,8 @@ class RDPFile:
         if forceRDPSecurity:
             params.append('/sec:rdp')
 
-        if self.linuxCustomParameters and self.linuxCustomParameters.strip() != '':
-            params += shlex.split(self.linuxCustomParameters.strip())
+        if self.customParameters and self.customParameters.strip() != '':
+            params += shlex.split(self.customParameters.strip())
 
         return params
 
@@ -291,6 +291,11 @@ class RDPFile:
 
         # Camera?
         # res += 'camerastoredirect:s:*\n'
+
+        # If target is windows, add customParameters
+        if self.target == OsDetector.KnownOS.Windows:
+            if self.customParameters and self.customParameters.strip() != '':
+                res += self.customParameters.strip() + '\n'
 
         return res
 

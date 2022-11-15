@@ -88,9 +88,10 @@ class RDPTransport(BaseRDPTransport):
     multimedia = BaseRDPTransport.multimedia
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
-    customParameters = BaseRDPTransport.customParameters
     allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
+    customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
+    customParametersWindows = BaseRDPTransport.customParametersWindows
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,
@@ -141,7 +142,6 @@ class RDPTransport(BaseRDPTransport):
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
-        r.linuxCustomParameters = self.customParameters.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
 
@@ -169,6 +169,7 @@ class RDPTransport(BaseRDPTransport):
         }
 
         if osName == 'windows':
+            r.customParameters = self.customParametersWindows.value
             if password != '':
                 r.password = '{password}'
             sp.update(
@@ -177,6 +178,7 @@ class RDPTransport(BaseRDPTransport):
                 }
             )
         elif osName == 'linux':
+            r.customParameters = self.customParameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
@@ -184,7 +186,7 @@ class RDPTransport(BaseRDPTransport):
                 }
             )
         else:  # Mac
-            r.linuxCustomParameters = self.customParametersMAC.value
+            r.customParameters = self.customParametersMAC.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
