@@ -107,7 +107,7 @@ class StatsAcummulatorTest(UDSTestCase):
         total_day_stats = (DAYS // 2 + 1) * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
         self.assertEqual(day_stats.count(), total_day_stats)
 
-        # Run it twice, now it will collect DAY - (DAYS // 2 + 1) stats      
+        # Run it twice, now it will collect DAY - (DAYS // 2 + 1) stats
         optimizer.run()
         # In fact, hour, day and week have AVG and MAX, so we need to multiply by 2 on testing
         total_hour_stats = DAYS * 24 * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
@@ -137,12 +137,18 @@ class StatsAcummulatorTest(UDSTestCase):
             self.assertEqual(stat.v_min, min(d[stamp]))
             self.assertEqual(stat.v_count, len(d[stamp]))
 
-        # Recalculate sum of stats, now from StatsCountersAccum (hourly)
-        data_d: typing.Dict[str, typing.Dict[int, typing.List[typing.Dict[str, int]]]] = {}
+        # Recalculate sum of stats, now from StatsCountersAccum (dayly)
+        data_d: typing.Dict[
+            str, typing.Dict[int, typing.List[typing.Dict[str, int]]]
+        ] = {}
         for i in hour_stats.order_by('owner_id', 'counter_type', 'stamp'):
-            stamp = i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24  # Round to day and to next day
+            stamp = (
+                i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24
+            )  # Round to day and to next day
             d = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
-            d.setdefault(stamp, []).append({'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min})
+            d.setdefault(stamp, []).append(
+                {'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min}
+            )
             pass
 
         for i in day_stats.order_by('owner_id', 'stamp'):
@@ -152,47 +158,3 @@ class StatsAcummulatorTest(UDSTestCase):
             self.assertEqual(i.v_max, max([x['max'] for x in d[stamp]]))
             self.assertEqual(i.v_min, min([x['min'] for x in d[stamp]]))
             self.assertEqual(i.v_count, sum([x['count'] for x in d[stamp]]))
-
-        return
-
-        # Calculate sum of stats, by hour, day
-        data: typing.Dict[int, typing.Dict[int, typing.List[int]]] = {}
-        for i in base_stats.order_by('owner_id', 'stamp'):
-            stamp = i.stamp - (i.stamp % 3600) + 3600  # Round to hour and to next hour
-            d = data.setdefault(i.owner_id, {})
-            d.setdefault(stamp, []).append(i.value)
-
-        # Last hour NEVER is completed (until next hour appears), so it's not included in hour stats
-
-        # Check that hourly stats are correctly generated
-        for i in hour_stats.order_by('owner_id', 'stamp'):
-            stamp = i.stamp  # Already rounded to hour
-            d = data[i.owner_id]
-            if i.interval_operation == models.StatsCounters.IntervalOperation.AVG:
-                self.assertEqual(i.value, sum(d[stamp]) // len(d[stamp]))
-            else:
-                self.assertEqual(i.value, max(d[stamp]))
-
-        # Now check day stats, max and avg
-        for op in (
-            models.StatsCounters.IntervalOperation.AVG,
-            models.StatsCounters.IntervalOperation.MAX,
-        ):
-            data = {}
-            for i in hour_stats.filter(interval_operation=op).order_by(
-                'owner_id', 'stamp'
-            ):
-                stamp = i.stamp - (i.stamp % 86400) + 86400
-                d = data.setdefault(i.owner_id, {})
-                d.setdefault(stamp, []).append(i.value)
-
-            # Last day NEVER is completed (until next day appears), so it's not included in day stats
-            for i in day_stats.filter(interval_operation=op).order_by(
-                'owner_id', 'stamp'
-            ):
-                stamp = i.stamp  # Already rounded to day
-                d = data[i.owner_id]
-                if i.interval_operation == models.StatsCounters.IntervalOperation.AVG:
-                    self.assertEqual(i.value, sum(d[stamp]) // len(d[stamp]))
-                else:
-                    self.assertEqual(i.value, max(d[stamp]))
