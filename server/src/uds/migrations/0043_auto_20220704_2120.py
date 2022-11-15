@@ -9,6 +9,8 @@ import uds.models.stats_counters_accum
 # Forward migration, change table type of uds_stats_c to MyISAM
 # InnoDB is tremendlously slow when using this table
 def forwards(apps, schema_editor):
+    return
+    """
     try:
         # If we are not using MySQL, do nothing
         if connection.vendor != 'mysql':
@@ -26,6 +28,7 @@ def forwards(apps, schema_editor):
                 cursor.execute(f'ALTER TABLE {table} ENGINE=MyISAM')
     except Exception:  # nosec: fine
         pass
+    """
 
 
 # Backward migration, change table type of uds_stats_c to InnoDB
