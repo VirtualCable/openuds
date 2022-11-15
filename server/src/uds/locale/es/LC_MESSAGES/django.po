@@ -22,10 +22,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-14 19:08+0200\n"
+"POT-Creation-Date: 2022-11-15 14:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, "
-"2014-2015,2017-2020,2022\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -113,8 +112,8 @@ msgstr "Usados de {0}"
 msgid "Current usages"
 msgstr "Uso actual"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:103
-#: REST/methods/client.py:123
+#: REST/methods/actor.py:97 REST/methods/client.py:106
+#: REST/methods/client.py:126
 msgid "Correct"
 msgstr "Correcto"
 
@@ -221,7 +220,7 @@ msgstr "Etiqueta"
 msgid "Users"
 msgstr "Usuarios"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "MFA"
 
@@ -291,7 +290,7 @@ msgstr "Calendarios"
 msgid "Modified"
 msgstr "Modificado"
 
-#: REST/methods/client.py:89
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "Su servicio está siendo creado. Por favor, espera mientras se completa"
 
@@ -543,7 +542,7 @@ msgstr "Acciones programadas"
 msgid "Action"
 msgstr "Acción"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:102
 msgid "Parameters"
 msgstr "Parámetros"
 
@@ -736,7 +735,7 @@ msgstr "Proxy para servicios detrás de un firewall"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -836,7 +835,7 @@ msgstr "Si está activo, el transporte será visible para los usuarios."
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:104 services/OVirt/service.py:188
+#: core/ui/user_interface.py:105 services/OVirt/service.py:188
 msgid "Display"
 msgstr "Visualización"
 
@@ -2180,19 +2179,19 @@ msgstr "Impreso en {ahora:% Y,% b% d} en {ahora:% H:% M}"
 msgid "Base Service"
 msgstr "Servicio Base"
 
-#: core/transports/transport.py:52
+#: core/transports/transport.py:54
 msgid "Direct"
 msgstr "Directo"
 
-#: core/transports/transport.py:53
+#: core/transports/transport.py:55
 msgid "Tunneled"
 msgstr "Tunelizado"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Credentials"
 msgstr "Credenciales"
 
-#: core/ui/user_interface.py:103
+#: core/ui/user_interface.py:104
 msgid "Tunnel"
 msgstr "Túnel"
 
@@ -2371,6 +2370,19 @@ msgstr "La dirección de correo electrónico es demasiado larga"
 msgid "Email address is not valid"
 msgstr "La dirección de correo electrónico no es válida"
 
+#: core/workers/stats_collector.py:52
+msgid ""
+"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
+msgstr ""
+"Frecuencia de recopilación de estadísticas en segundos. El valor "
+"predeterminado es 4 horas (14400 segundos)"
+
+#: core/workers/stats_collector.py:58
+msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
+msgstr ""
+"Número máximo de tiempo para acumular en una ejecución. El valor "
+"predeterminado es 7 (1 semana)"
+
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
 msgstr "No hay ningún autenticador disponibles para iniciar sesión"
@@ -2516,7 +2528,6 @@ msgid "Enable HTML in emails"
 msgstr "Habilitar HTML en correos electrónicos"
 
 #: mfas/Email/mfa.py:133
-#| msgid "User without MFA policy"
 msgid "Policy for users without MFA support"
 msgstr "Política para usuarios sin compatibilidad con MFA"
 
@@ -2893,40 +2904,40 @@ msgid "Time in hours before considering the user service is OLD."
 msgstr ""
 "El tiempo en horas antes de considerar el servicio al usuario es VIEJO."
 
-#: models/calendar_rule.py:53
+#: models/calendar_rule.py:54
 msgid "Yearly"
 msgstr "Anual"
 
-#: models/calendar_rule.py:54 reports/auto/fields.py:83
+#: models/calendar_rule.py:55 reports/auto/fields.py:83
 msgid "Monthly"
 msgstr "Mensual"
 
-#: models/calendar_rule.py:55 reports/auto/fields.py:82
+#: models/calendar_rule.py:56 reports/auto/fields.py:82
 msgid "Weekly"
 msgstr "Semanal"
 
-#: models/calendar_rule.py:56 reports/auto/fields.py:81
+#: models/calendar_rule.py:57 reports/auto/fields.py:81
 msgid "Daily"
 msgstr "Diario"
 
-#: models/calendar_rule.py:57
+#: models/calendar_rule.py:58
 msgid "Weekdays"
 msgstr "Días de la semana"
 
-#: models/calendar_rule.py:75
+#: models/calendar_rule.py:76
 msgid "Minutes"
 msgstr "Minutos"
 
-#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:179
+#: models/calendar_rule.py:77 reports/stats/pool_users_summary.py:179
 #: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "Horas"
 
-#: models/calendar_rule.py:77
+#: models/calendar_rule.py:78
 msgid "Days"
 msgstr "Días"
 
-#: models/calendar_rule.py:78
+#: models/calendar_rule.py:79
 msgid "Weeks"
 msgstr "Semanas"
 
@@ -3178,7 +3189,7 @@ msgstr "Os Manager para controlar máquinas Windows en dominio AD."
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
-#: transports/RDS_enterprise/rds_base.py:60
+#: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "Dominio"
 
@@ -3874,7 +3885,7 @@ msgstr "Par de claves a utilizar para esta máquina"
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:143
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -3886,7 +3897,7 @@ msgstr "Nombres de las máquinas"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:135
+#: services/HyperV_enterprise/service.py:146
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -3898,7 +3909,7 @@ msgstr "Nombre base para clones de esta máquina"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:153
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -3910,7 +3921,7 @@ msgstr "Longitud del nombre"
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:145
+#: services/HyperV_enterprise/service.py:156
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4201,8 +4212,9 @@ msgstr "Máquina base para el servicio"
 #: services/HyperV_enterprise/service.py:105
 #: services/HyperV_enterprise/service.py:116
 #: services/HyperV_enterprise/service.py:127
-#: services/HyperV_enterprise/service.py:136
-#: services/HyperV_enterprise/service.py:146
+#: services/HyperV_enterprise/service.py:138
+#: services/HyperV_enterprise/service.py:147
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4299,7 +4311,7 @@ msgstr "Puerto WSman remoto. Deje a cero por defecto."
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:88
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "Forzar verificación de certificado SSL"
@@ -4334,6 +4346,18 @@ msgstr "HyperV Linked Clone"
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Servicio HyperV basado en plantillas y discos diferenciales"
+
+#: services/HyperV_enterprise/service.py:132
+msgid "Use Full Clones"
+msgstr "Usar clones completos"
+
+#: services/HyperV_enterprise/service.py:136
+#| msgid ""
+#| "If checked, the name of the subnets will be used instead of the names of "
+#| "networks"
+msgid "If checked, full clones will be used instead of differential disks"
+msgstr ""
+"Si está marcado, se usarán clones completos en lugar de discos diferenciales"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -6129,7 +6153,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "Credenciales vacías"
 
@@ -6137,7 +6161,7 @@ msgstr "Credenciales vacías"
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr ""
@@ -6163,13 +6187,13 @@ msgstr "Si no está vacío, este password se utiizará siempre como credencial "
 
 #: transports/HTML5RDP/html5rdp.py:112
 #: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
-#: transports/RDS_enterprise/rds_base.py:52
+#: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "Sin dominio"
 
 #: transports/HTML5RDP/html5rdp.py:115
 #: transports/HTML5RDS_enterprise/html5rds.py:108
-#: transports/RDS_enterprise/rds_base.py:55
+#: transports/RDS_enterprise/rds_base.py:54
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -6179,7 +6203,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:123
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:63
+#: transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -6216,13 +6240,13 @@ msgstr "Si está marcada, se permitirá la composición de escritorio"
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
 msgid "Font Smoothing"
 msgstr "Suavizado de fuentes"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:153
+#: transports/RDS_enterprise/rds_base.py:152
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Si está marcada, se permitirá el suavizado de fuentes (sólo clientes windows)"
@@ -6326,7 +6350,7 @@ msgstr "Deshabilitar pegar en remoto"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "Activar el portapapeles"
 
@@ -6586,7 +6610,7 @@ msgid "Port of the VNC server."
 msgstr "Puerto del servidor VNC."
 
 #: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:136
+#: transports/RDS_enterprise/rds_base.py:135
 msgid "Color depth"
 msgstr "Profundidad de color"
 
@@ -6660,14 +6684,14 @@ msgstr "Protocolo NICE DCV. Conexión tunelizada."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:68
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Servidor de túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6678,21 +6702,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:77
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Tiempo de espera de túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:82
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Tiempo máximo de espera antes de cerrar el agente de escucha del túnel"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6702,7 +6726,7 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:136 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Debe utilizar HOST: PUERTO en el Campo Servidor de Túnel"
@@ -6774,37 +6798,37 @@ msgstr ""
 "Si está marcada, la parte del dominio se vaciará siempre (por ejemplo, para "
 "conectar con xrdp es necesario)"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "Permite Smartcards"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:70
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "Si está seleccionado, este transporte permitirá el uso de Smartcards"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "Permitir impresoras"
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Si está seleccionado, este transporte permitirá el uso de impresoras de "
 "usuario"
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:80
+#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "Política de unidades locales"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:82
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "Política de redireccionamiento de unidades locales"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "Unidades forzadas"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:95
+#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -6812,34 +6836,34 @@ msgstr ""
 "Utilice valores separados por comas, por ejemplo \"C:, D:\". Si no se "
 "permite la política de unidades, esto se ignorará"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:101
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "Permitir Series"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:103
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Si está seleccionado, este transporte permitirá el uso de series de puertos "
 "de usuario"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Si está marcada, se permitirá funciones de copiar-pegar"
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:114
+#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "Habilitar sonido"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:116
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "Si está marcada, el sonido será redirigido."
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:121
+#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "Habilitar cámara web"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:123
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "Si está marcado, la cámara web será redirigida (SOLO Windows)."
 
@@ -6851,11 +6875,11 @@ msgstr "redirección USB"
 msgid "USB redirection policy"
 msgstr "Política de redirección USB"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:128
+#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "Soporte CredSSP"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:130
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Si está marcada, permitirá el soporte de proveedor de credenciales)"
 
@@ -6867,7 +6891,7 @@ msgstr "Tamaño de pantalla"
 msgid "Screen size for this transport"
 msgstr "Tamaño de la pantalla para este transporte"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
 msgid "Color depth for this connection"
 msgstr "Profundidad de color para esta conexión"
 
@@ -6888,52 +6912,53 @@ msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Si está marcada, aparecerá barra de conexión (sólo en clientes de Windows)"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:181
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
 msgid "Multimedia sync"
 msgstr "Sincronización multimedia"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:184
+#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Si está marcada, el cliente Linux usará el parámetro multimedia para xfreerdp"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:189
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
 msgid "Use Alsa"
 msgstr "Use ALSA"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:192
+#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Si está marcado, el cliente Linux intentará usar ALSA, en caso contrario "
 "usará Pulse"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:197
+#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
 msgid "Printer string"
 msgstr "Cadena de impresora"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:200
+#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Si la impresora está activada, la cadena de impresora utilizadada con el "
 "cliente xfreerdp"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:206
+#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
 msgid "Smartcard string"
 msgstr "Cadena de tarjeta inteligente"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:209
+#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Si la smartcard está activada, la cadena de smartcard utilizada con el "
 "cliente xfreerdp"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDS_enterprise/rds_base.py:215
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
+#: transports/RDS_enterprise/rds_base.py:224
 msgid "Custom parameters"
 msgstr "Parámetros personalizados"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:218
+#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6963,12 +6988,17 @@ msgstr ""
 "Client (por ejemplo  /usb:id, dev:054c:0268 , o cualquiera compatible con su "
 "cliente xfreerdp)"
 
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
+msgid "If not empty, extra parameters to include for Windows Client"
+msgstr ""
+"Si no está vacío, parámetros adicionales para incluir para Windows Client"
+
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "Protocolo RDP. Conexión del túnel."
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:64
+#: transports/RDS_enterprise/rdstunnel.py:62
 msgid "RDS for vApps"
 msgstr "RDS para vApps"
 
@@ -6976,31 +7006,31 @@ msgstr "RDS para vApps"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "Acceso RDS mediante RDP para vApps. Conexión directa."
 
-#: transports/RDS_enterprise/rds_base.py:157
+#: transports/RDS_enterprise/rds_base.py:156
 msgid "Window state"
 msgstr "Estado de la Ventana"
 
-#: transports/RDS_enterprise/rds_base.py:160
+#: transports/RDS_enterprise/rds_base.py:159
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "UDS intentará ejecutar la aplicación con la ventana en este estado"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Normal"
 msgstr "Normal"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:164
 msgid "Maximized"
 msgstr "Maximizado"
 
-#: transports/RDS_enterprise/rds_base.py:166
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Minimized"
 msgstr "Minimizado"
 
-#: transports/RDS_enterprise/rds_base.py:172
+#: transports/RDS_enterprise/rds_base.py:171
 msgid "Execute as shell"
 msgstr "Ejecutar como shell"
 
-#: transports/RDS_enterprise/rds_base.py:176
+#: transports/RDS_enterprise/rds_base.py:175
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -7008,7 +7038,7 @@ msgstr ""
 "Si está marcado, el cliente Linux ejecutará la aplicación en una sesión en "
 "lugar de una aplicación remota."
 
-#: transports/RDS_enterprise/rdstunnel.py:66
+#: transports/RDS_enterprise/rdstunnel.py:64
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "Acceso RDS mediante RDP para vApps. Conexión del túnel."
 

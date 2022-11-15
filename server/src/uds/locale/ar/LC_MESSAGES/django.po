@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-14 19:08+0200\n"
+"POT-Creation-Date: 2022-11-15 14:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -98,8 +98,8 @@ msgstr "استخدامات {0}"
 msgid "Current usages"
 msgstr "الاستخدامات الحالية"
 
-#: REST/methods/actor.py:97 REST/methods/client.py:103
-#: REST/methods/client.py:123
+#: REST/methods/actor.py:97 REST/methods/client.py:106
+#: REST/methods/client.py:126
 msgid "Correct"
 msgstr "صحيح"
 
@@ -206,7 +206,7 @@ msgstr "التسمية"
 msgid "Users"
 msgstr "المستخدمين"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:105
+#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "MFA"
 
@@ -276,7 +276,7 @@ msgstr "التقويمات"
 msgid "Modified"
 msgstr "تعديل"
 
-#: REST/methods/client.py:89
+#: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
 msgstr "يتم إنشاء الخدمة الخاصة بك. من فضلك انتظر بينما نكملها"
 
@@ -525,7 +525,7 @@ msgstr "الإجراءات المقررة"
 msgid "Action"
 msgstr "عمل"
 
-#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:101
+#: REST/methods/op_calendars.py:180 core/ui/user_interface.py:102
 msgid "Parameters"
 msgstr "معلمات"
 
@@ -718,7 +718,7 @@ msgstr "وكيل للخدمات وراء جدار الحماية"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:100
+#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -817,7 +817,7 @@ msgstr "إذا كان نشطًا ، فسيكون النقل مرئيًا للم�
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
-#: core/ui/user_interface.py:104 services/OVirt/service.py:188
+#: core/ui/user_interface.py:105 services/OVirt/service.py:188
 msgid "Display"
 msgstr "عرض"
 
@@ -2118,19 +2118,19 @@ msgstr "طبع في {now:٪ Y،٪ b٪ d} في {now:٪ H:٪ M}"
 msgid "Base Service"
 msgstr "خدمة قاعدة"
 
-#: core/transports/transport.py:52
+#: core/transports/transport.py:54
 msgid "Direct"
 msgstr "مباشر"
 
-#: core/transports/transport.py:53
+#: core/transports/transport.py:55
 msgid "Tunneled"
 msgstr "نفقي"
 
-#: core/ui/user_interface.py:102
+#: core/ui/user_interface.py:103
 msgid "Credentials"
 msgstr "وثائق التفويض"
 
-#: core/ui/user_interface.py:103
+#: core/ui/user_interface.py:104
 msgid "Tunnel"
 msgstr "النفق"
 
@@ -2309,6 +2309,15 @@ msgstr "عنوان البريد الإلكتروني طويل جدًا"
 msgid "Email address is not valid"
 msgstr "عنوان البريد الإلكتروني غير صالح"
 
+#: core/workers/stats_collector.py:52
+msgid ""
+"Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
+msgstr "معدل تكرار جمع الإحصائيات بالثواني. الافتراضي 4 ساعات (14400 ثانية)"
+
+#: core/workers/stats_collector.py:58
+msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
+msgstr "أقصى عدد من الوقت للتراكم في تشغيل واحد. الافتراضي هو 7 (أسبوع واحد)"
+
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
 msgstr "لا يتوفر أي مصادق لتسجيل الدخول"
@@ -2451,7 +2460,6 @@ msgid "Enable HTML in emails"
 msgstr "تمكين HTML في رسائل البريد الإلكتروني"
 
 #: mfas/Email/mfa.py:133
-#| msgid "User without MFA policy"
 msgid "Policy for users without MFA support"
 msgstr "سياسة للمستخدمين الذين ليس لديهم دعم MFA"
 
@@ -2821,40 +2829,40 @@ msgstr "قم بإزالة خدمات المستخدم القديمة المعي�
 msgid "Time in hours before considering the user service is OLD."
 msgstr "الوقت بالساعات قبل التفكير في خدمة المستخدم قديم."
 
-#: models/calendar_rule.py:53
+#: models/calendar_rule.py:54
 msgid "Yearly"
 msgstr "سنوياً"
 
-#: models/calendar_rule.py:54 reports/auto/fields.py:83
+#: models/calendar_rule.py:55 reports/auto/fields.py:83
 msgid "Monthly"
 msgstr "شهريا"
 
-#: models/calendar_rule.py:55 reports/auto/fields.py:82
+#: models/calendar_rule.py:56 reports/auto/fields.py:82
 msgid "Weekly"
 msgstr "أسبوعيا"
 
-#: models/calendar_rule.py:56 reports/auto/fields.py:81
+#: models/calendar_rule.py:57 reports/auto/fields.py:81
 msgid "Daily"
 msgstr "يوميا"
 
-#: models/calendar_rule.py:57
+#: models/calendar_rule.py:58
 msgid "Weekdays"
 msgstr "أيام الأسبوع"
 
-#: models/calendar_rule.py:75
+#: models/calendar_rule.py:76
 msgid "Minutes"
 msgstr "دقائق"
 
-#: models/calendar_rule.py:76 reports/stats/pool_users_summary.py:179
+#: models/calendar_rule.py:77 reports/stats/pool_users_summary.py:179
 #: templates/uds/reports/stats/pool-users-summary.html:16
 msgid "Hours"
 msgstr "ساعات"
 
-#: models/calendar_rule.py:77
+#: models/calendar_rule.py:78
 msgid "Days"
 msgstr "أيام"
 
-#: models/calendar_rule.py:78
+#: models/calendar_rule.py:79
 msgid "Weeks"
 msgstr "أسابيع"
 
@@ -3104,7 +3112,7 @@ msgstr "مدير نظام التشغيل للسيطرة على أجهزة وين
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
-#: transports/RDS_enterprise/rds_base.py:60
+#: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "مجال"
 
@@ -3794,7 +3802,7 @@ msgstr "زوج المفاتيح الذي سيتم استخدامه لهذا ال
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:143
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -3806,7 +3814,7 @@ msgstr "أسماء الأجهزة"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:135
+#: services/HyperV_enterprise/service.py:146
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -3818,7 +3826,7 @@ msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:153
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -3830,7 +3838,7 @@ msgstr "طول الاسم "
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:145
+#: services/HyperV_enterprise/service.py:156
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4114,8 +4122,9 @@ msgstr "آلة قاعدة الخدمة"
 #: services/HyperV_enterprise/service.py:105
 #: services/HyperV_enterprise/service.py:116
 #: services/HyperV_enterprise/service.py:127
-#: services/HyperV_enterprise/service.py:136
-#: services/HyperV_enterprise/service.py:146
+#: services/HyperV_enterprise/service.py:138
+#: services/HyperV_enterprise/service.py:147
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4211,7 +4220,7 @@ msgstr "منفذ WSman عن بعد. ترك إلى الصفر افتراضيًا.
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:90
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:88
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "فرض التحقق من شهادة SSL"
@@ -4244,6 +4253,17 @@ msgstr "استنساخ HyperV مرتبط"
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
 msgstr "خدمات عالية تعتمد على القوالب والأقراص التفاضلية"
+
+#: services/HyperV_enterprise/service.py:132
+msgid "Use Full Clones"
+msgstr "استخدم النسخ الكاملة"
+
+#: services/HyperV_enterprise/service.py:136
+#| msgid ""
+#| "If checked, the name of the subnets will be used instead of the names of "
+#| "networks"
+msgid "If checked, full clones will be used instead of differential disks"
+msgstr "إذا تم تحديده ، فسيتم استخدام النسخ الكاملة بدلاً من الأقراص التفاضلية"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5987,7 +6007,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "أوراق الاعتماد فارغة."
 
@@ -5995,7 +6015,7 @@ msgstr "أوراق الاعتماد فارغة."
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "إذا تم، سيكون لأوراق الاعتماد المستخدمة للاتصال أن تكون فارغة."
@@ -6018,13 +6038,13 @@ msgstr "إن لم يكن فارغا، سيتم كلمة المرور هذه يس
 
 #: transports/HTML5RDP/html5rdp.py:112
 #: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
-#: transports/RDS_enterprise/rds_base.py:52
+#: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "دون المجال"
 
 #: transports/HTML5RDP/html5rdp.py:115
 #: transports/HTML5RDS_enterprise/html5rds.py:108
-#: transports/RDS_enterprise/rds_base.py:55
+#: transports/RDS_enterprise/rds_base.py:54
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -6034,7 +6054,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:123
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:63
+#: transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -6071,13 +6091,13 @@ msgstr "إذا تم، سيكون يسمح تكوين سطح المكتب."
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
 msgid "Font Smoothing"
 msgstr "تجانس الخطوط"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:153
+#: transports/RDS_enterprise/rds_base.py:152
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "في حالة تحديد تجانس الخطوط سيتم السماح (عملاء windows فقط)"
 
@@ -6180,7 +6200,7 @@ msgstr "تعطيل اللصق عن بعد"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "تمكين الحافظة"
 
@@ -6436,7 +6456,7 @@ msgid "Port of the VNC server."
 msgstr "منفذ خادم VNC."
 
 #: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:136
+#: transports/RDS_enterprise/rds_base.py:135
 msgid "Color depth"
 msgstr "عمق اللون"
 
@@ -6507,14 +6527,14 @@ msgstr "بروتوكول NICE DCV. اتصال نفق."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:70
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:68
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "ملقم نفق"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:73
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6525,21 +6545,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:79
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:77
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "وقت الانتظار النفق"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:84
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:82
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "الحد الأقصى لوقت الانتظار قبل إغلاق النفق المستمع"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:93
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6547,7 +6567,7 @@ msgstr "في حالة التمكين ، سيتم التحقق من شهادة خ
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:136 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "يجب استخدام HOST: PORT في خادم الميدان نفق"
@@ -6616,35 +6636,35 @@ msgid ""
 msgstr ""
 "إذا تم، سيكون دائما يتم تفريغ جزء المجال (للاتصال xrdp لهو مطلوب سبيل المثال)"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "تسمح البطاقات المشفرة"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:70
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام البطاقات الذكية"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "السماح للطابعات."
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام طابعات المستخدم."
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:80
+#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "سياسة محركات الأقراص المحلية"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:82
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "سياسة إعادة توجيه محركات الأقراص المحلية"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "قوة محركات"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:95
+#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -6652,32 +6672,32 @@ msgstr ""
 "استخدم القيم المفصولة بفواصل ، على سبيل المثال \"C: ، D:\". إذا تم إلغاء "
 "سياسة محركات الأقراص ، فسيتم تجاهل ذلك"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:101
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "السماح للمنافذ التسلسلية"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:103
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "إذا تم، سيكون هذا النقل تسمح باستخدام المنافذ التسلسلية المستخدم"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "إذا تم تحديدها، فسيتم السماح بوظائف النسخ واللصق."
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:114
+#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "تمكين الصوت"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:116
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "إذا تم تحديدها، ستتم إعادة توجيه الصوت."
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:121
+#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "تمكين كاميرا الويب"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:123
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "إذا تم تحديده ، فسيتم إعادة توجيه كاميرا الويب (Windows فقط)."
 
@@ -6689,11 +6709,11 @@ msgstr "إعادة توجيه USB"
 msgid "USB redirection policy"
 msgstr "سياسة إعادة توجيه USB"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:128
+#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "دعم Credssp"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:130
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "إذا راجعت، سيمكن دعم موفر بيانات الاعتماد)"
 
@@ -6705,7 +6725,7 @@ msgstr "حجم الشاشة"
 msgid "Screen size for this transport"
 msgstr "حجم الشاشة لهذا النقل"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
 msgid "Color depth for this connection"
 msgstr "عمق الألوان لهذا الاتصال"
 
@@ -6725,49 +6745,50 @@ msgstr "شريط الاتصال"
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "إذا راجعت، سيظهر شريط الاتصال (فقط على عملاء Windows)"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:181
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
 msgid "Multimedia sync"
 msgstr "تزامن الوسائط المتعددة"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:184
+#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "إذا تحققت. سوف العميل لينكس استخدام المعلمة الوسائط المتعددة لxfreerdp."
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:189
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
 msgid "Use Alsa"
 msgstr "استخدام ALSA"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:192
+#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "إذا تم، سيكون العميل لينكس في محاولة لاستخدام ALSA، وإلا سيتم استخدام نبض"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:197
+#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
 msgid "Printer string"
 msgstr "سلسلة الطابعة"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:200
+#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "إذا تم فحص طابعة، سلسلة الطابعة المستخدمة مع العميل XFreeRDP"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:206
+#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
 msgid "Smartcard string"
 msgstr "سلسلة البطاقة الذكية"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:209
+#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "إذا تم التحقق من البطاقة الذكية، استخدام السلسلة البطاقة الذكية مع العميل "
 "XFreeRDP"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDS_enterprise/rds_base.py:215
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
+#: transports/RDS_enterprise/rds_base.py:224
 msgid "Custom parameters"
 msgstr "معلمات مخصصة"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:218
+#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6797,12 +6818,16 @@ msgstr ""
 "المثال / usb: id ، dev: 054c: 0268 ، أو أي شيء متوافق مع عميل xfreerdp الخاص "
 "بك)"
 
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
+msgid "If not empty, extra parameters to include for Windows Client"
+msgstr "إذا لم يكن فارغًا ، فيجب تضمين معلمات إضافية لعميل Windows"
+
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "بروتوكول RDP. اتصال النفق."
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:64
+#: transports/RDS_enterprise/rdstunnel.py:62
 msgid "RDS for vApps"
 msgstr "RDS for vApps"
 
@@ -6810,38 +6835,38 @@ msgstr "RDS for vApps"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "الوصول RDS باستخدام RDP VApps. الاتصال المباشر."
 
-#: transports/RDS_enterprise/rds_base.py:157
+#: transports/RDS_enterprise/rds_base.py:156
 msgid "Window state"
 msgstr "حالة النافذة"
 
-#: transports/RDS_enterprise/rds_base.py:160
+#: transports/RDS_enterprise/rds_base.py:159
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "ستحاول UDS تنفيذ التطبيق مع النافذة في هذه الحالة"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Normal"
 msgstr "طبيعي"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:164
 msgid "Maximized"
 msgstr "مكبرة"
 
-#: transports/RDS_enterprise/rds_base.py:166
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Minimized"
 msgstr "مصغر"
 
-#: transports/RDS_enterprise/rds_base.py:172
+#: transports/RDS_enterprise/rds_base.py:171
 msgid "Execute as shell"
 msgstr "نفذ كقذيفة"
 
-#: transports/RDS_enterprise/rds_base.py:176
+#: transports/RDS_enterprise/rds_base.py:175
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
 msgstr ""
 "إذا تم تحديده ، فسيقوم عميل Linux بتنفيذ التطبيق في جلسة بدلاً من تطبيق عن بعد"
 
-#: transports/RDS_enterprise/rdstunnel.py:66
+#: transports/RDS_enterprise/rdstunnel.py:64
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "الوصول RDS باستخدام RDP VApps. اتصال النفق."
 
