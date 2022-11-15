@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:02+0100\n"
+"POT-Creation-Date: 2022-11-15 14:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -2346,10 +2346,13 @@ msgstr "Helbide elektronikoak ez du balio"
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
 msgstr ""
+"Estatistikak biltzeko maiztasuna segundotan. Lehenetsia 4 ordu (14400 "
+"segundo)"
 
 #: core/workers/stats_collector.py:58
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr ""
+"Korrika batean pilatzeko gehienezko denbora kopurua. Lehenetsia 7 da (aste 1)"
 
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
@@ -3152,7 +3155,7 @@ msgstr "Os Manager domeinuko leiho makinak kontrolatzeko."
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
-#: transports/RDS_enterprise/rds_base.py:60
+#: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "Domeinua"
 
@@ -4275,7 +4278,7 @@ msgstr "Urruneko WSman port.Leve zero zero lehenetsita."
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:91
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:88
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "SSL ziurtagiria egiaztatzea"
@@ -4312,15 +4315,14 @@ msgstr "Hyper Zerbitzuak txantiloietan eta disko diferentzialetan oinarrituta"
 
 #: services/HyperV_enterprise/service.py:132
 msgid "Use Full Clones"
-msgstr ""
+msgstr "Erabili Klon Osoak"
 
 #: services/HyperV_enterprise/service.py:136
-#, fuzzy
 #| msgid ""
 #| "If checked, the name of the subnets will be used instead of the names of "
 #| "networks"
 msgid "If checked, full clones will be used instead of differential disks"
-msgstr "Egiaztatuta badago, sareen izenak erabiliko dira sareen izenen ordez"
+msgstr "Hautatzen bada, klon osoak erabiliko dira disko diferentzialen ordez"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -6108,7 +6110,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "Kreditu hutsak"
 
@@ -6116,7 +6118,7 @@ msgstr "Kreditu hutsak"
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "Egiaztatuta badago, konektatzeko kredentzialak emtpy izango dira"
@@ -6140,13 +6142,13 @@ msgstr "Ez bada hutsik, pasahitza beti erabiliko da kredentzial gisa"
 
 #: transports/HTML5RDP/html5rdp.py:112
 #: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
-#: transports/RDS_enterprise/rds_base.py:52
+#: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "Domainik gabe"
 
 #: transports/HTML5RDP/html5rdp.py:115
 #: transports/HTML5RDS_enterprise/html5rds.py:108
-#: transports/RDS_enterprise/rds_base.py:55
+#: transports/RDS_enterprise/rds_base.py:54
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -6156,7 +6158,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:123
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:63
+#: transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -6193,13 +6195,13 @@ msgstr "Egiaztatuta badago, mahaigaineko konposizioa onartuko da"
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
 msgid "Font Smoothing"
 msgstr "Letra tipoaren leuntzea"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:153
+#: transports/RDS_enterprise/rds_base.py:152
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Egiaztatuta badago, letra-tipoak leuntzeko aukera izango dute (leiho "
@@ -6304,7 +6306,7 @@ msgstr "Desgaitu itsatsi urruneko moduan"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "Arbelean gaitu"
 
@@ -6560,7 +6562,7 @@ msgid "Port of the VNC server."
 msgstr "VNC zerbitzariaren ataka."
 
 #: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:136
+#: transports/RDS_enterprise/rds_base.py:135
 msgid "Color depth"
 msgstr "Koloreen sakonera"
 
@@ -6633,14 +6635,14 @@ msgstr "NICE DCV protokoloa. Tunelatutako konexioa."
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:71
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:68
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "Tunel zerbitzaria"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:74
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6651,21 +6653,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:80
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:77
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "Tunnel itxaron-denbora"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:85
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:82
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "Itxaroteko gehienezko denbora tunel entzulea itxi aurretik"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:94
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6675,7 +6677,7 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:129
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Tunnel zerbitzariaren eremuan HOSTALARI : PORTUA erabili behar da "
@@ -6746,39 +6748,39 @@ msgstr ""
 "Egiaztatuta badago, domeinuaren zati hori beti hustu egingo da (xrdp-rekin "
 "konektatzeko adibidez beharrezkoa da)"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "Onartu txartel adimendunak"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:70
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr ""
 "Egiaztatuta badago, garraio honek txartel adimendunak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "Onartu inprimagailuak"
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Egiaztatuta badago, garraio honek erabiltzailearen inprimagailuak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:80
+#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "Tokiko gidalerroen politika"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:82
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "Tokiko giden birbanaketa politika"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "Indar unitateak"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:95
+#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -6786,34 +6788,34 @@ msgstr ""
 "Erabili komaz bereizitako balioak, adibidez \"C:, D:\". Drive gidalerroak ez "
 "badira onartzen, hau alde batera utziko da"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:101
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "Baimendu serialak"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:103
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Egiaztatuta badago, garraio honek erabiltzailearen serieko atakak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Hautatuta badago, kopiatu eta itsasteko funtzioak onartuko dira"
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:114
+#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "Gaitu soinua"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:116
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "Egiaztatuta badago, soinua birbideratuko da."
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:121
+#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "Gaitu webcam"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:123
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "Markatuta badago, webcam-a birbideratuko da (Windows BAKARRIK)."
 
@@ -6825,11 +6827,11 @@ msgstr "USB birbideratzea"
 msgid "USB redirection policy"
 msgstr "USB birbideratze politika"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:128
+#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "Credssp laguntza"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:130
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Hautatuta badago, kredentzialak hornitzailearen euskarria gaituko du)"
 
@@ -6841,7 +6843,7 @@ msgstr "Pantaila-neurria"
 msgid "Screen size for this transport"
 msgstr "Garraioaren tamainaren tamaina"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
 msgid "Color depth for this connection"
 msgstr "Kolorearen sakontasuna konexio honetarako"
 
@@ -6862,53 +6864,53 @@ msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Egiaztatuta badago, konexioaren barra agertuko da (Windows bezeroetan soilik)"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:181
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
 msgid "Multimedia sync"
 msgstr "Multimedia sinkronizazioa"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:184
+#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Egiaztatuta badago. Linux bezeroak xfreerdp-ren multimedia parametroa "
 "erabiliko du"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:189
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
 msgid "Use Alsa"
 msgstr "Erabili Alsa"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:192
+#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Egiaztatuta badago, Linux bezeroak ALSA erabiliko du, bestela Pulse "
 "erabiliko da"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:197
+#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
 msgid "Printer string"
 msgstr "Inprimagailuen katea"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:200
+#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Inprimagailua hautatuta badago, xfreerdp bezeroarekin erabiliko den "
 "inprimagailuaren katea"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:206
+#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
 msgid "Smartcard string"
 msgstr "Smartcard katea"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:209
+#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Smartcard egiaztatzen bada, xfreerdp bezeroarekin erabilitako smartcard katea"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:215
-#: transports/RDS_enterprise/rds_base.py:225
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
+#: transports/RDS_enterprise/rds_base.py:224
 msgid "Custom parameters"
 msgstr "Parametro pertsonalizatuak"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:218
+#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6938,16 +6940,16 @@ msgstr ""
 "parametro gehigarria (adibidez / usb: id, dev: 054c: 0268 edo zure xfreerdp "
 "bezeroarekin bateragarria dena)"
 
-#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:228
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
 msgid "If not empty, extra parameters to include for Windows Client"
-msgstr ""
+msgstr "Hutsik ez badago, Windows Bezeroarentzat sartzeko parametro gehigarriak"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "RDP protokoloa. Tunel bidez egindako konexioa."
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:65
+#: transports/RDS_enterprise/rdstunnel.py:62
 msgid "RDS for vApps"
 msgstr "RDAs for vApps"
 
@@ -6955,31 +6957,31 @@ msgstr "RDAs for vApps"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "RDS sarbidea vPps bidez RDP erabiliz. Zuzeneko konexioa."
 
-#: transports/RDS_enterprise/rds_base.py:157
+#: transports/RDS_enterprise/rds_base.py:156
 msgid "Window state"
 msgstr "Leihoaren egoera"
 
-#: transports/RDS_enterprise/rds_base.py:160
+#: transports/RDS_enterprise/rds_base.py:159
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "UDS aplikazioa egoera horretan leihoarekin exekutatzen saiatuko da"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Normal"
 msgstr "Normala"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:164
 msgid "Maximized"
 msgstr "Maximizatuta"
 
-#: transports/RDS_enterprise/rds_base.py:166
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Minimized"
 msgstr "Minimizatua"
 
-#: transports/RDS_enterprise/rds_base.py:172
+#: transports/RDS_enterprise/rds_base.py:171
 msgid "Execute as shell"
 msgstr "Exekutatu shell gisa"
 
-#: transports/RDS_enterprise/rds_base.py:176
+#: transports/RDS_enterprise/rds_base.py:175
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -6987,7 +6989,7 @@ msgstr ""
 "Markatuta badago, Linux bezeroak aplikazioa exekutatuko du saio batean "
 "urruneko aplikazioaren ordez"
 
-#: transports/RDS_enterprise/rdstunnel.py:67
+#: transports/RDS_enterprise/rdstunnel.py:64
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "RDS sarbidea vPps bidez RDP erabiliz. Tunelatutako konexioa."
 

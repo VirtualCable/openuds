@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:02+0100\n"
+"POT-Creation-Date: 2022-11-15 14:21+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -2257,11 +2257,11 @@ msgstr "电子邮件地址无效"
 #: core/workers/stats_collector.py:52
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
-msgstr ""
+msgstr "以秒为单位的统计数据收集频率。默认为 4 小时（14400 秒）"
 
 #: core/workers/stats_collector.py:58
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
-msgstr ""
+msgstr "一次运行累积的最大时间数。默认值为 7（1 周）"
 
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
@@ -3046,7 +3046,7 @@ msgstr "Os Manager用于控制带域的Windows机器。"
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
 #: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
-#: transports/RDS_enterprise/rds_base.py:60
+#: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "域"
 
@@ -4137,7 +4137,7 @@ msgstr "远程WSman端口。默认保留为零。"
 #: services/VCloud_enterprise/provider.py:84
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:68
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:94
-#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:91
+#: transports/RDP/rdptunnel.py:89 transports/RDS_enterprise/rdstunnel.py:88
 #: transports/SPICE/spice_tunnel.py:88 transports/X2GO/x2go_tunnel.py:90
 msgid "Force SSL certificate verification"
 msgstr "强制SSL证书验证"
@@ -4170,15 +4170,14 @@ msgstr "基于模板和差异磁盘的超级服务"
 
 #: services/HyperV_enterprise/service.py:132
 msgid "Use Full Clones"
-msgstr ""
+msgstr "使用完整克隆"
 
 #: services/HyperV_enterprise/service.py:136
-#, fuzzy
 #| msgid ""
 #| "If checked, the name of the subnets will be used instead of the names of "
 #| "networks"
 msgid "If checked, full clones will be used instead of differential disks"
-msgstr "如果选中，将使用子网名称代替网络名称"
+msgstr "如果选中，将使用完整克隆而不是差异磁盘"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5882,7 +5881,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:46
+#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "空的信誉"
 
@@ -5890,7 +5889,7 @@ msgstr "空的信誉"
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:48
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "如果选中，则用于连接的凭据将为emtpy"
@@ -5913,13 +5912,13 @@ msgstr "如果不为空，则此密码将始终用作凭证"
 
 #: transports/HTML5RDP/html5rdp.py:112
 #: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
-#: transports/RDS_enterprise/rds_base.py:52
+#: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "没有域名"
 
 #: transports/HTML5RDP/html5rdp.py:115
 #: transports/HTML5RDS_enterprise/html5rds.py:108
-#: transports/RDS_enterprise/rds_base.py:55
+#: transports/RDS_enterprise/rds_base.py:54
 msgid ""
 "If checked, the domain part will always be emptied (to connecto to xrdp for "
 "example is needed)"
@@ -5927,7 +5926,7 @@ msgstr "如果选中，则域部分将始终清空（例如，需要连接到xrd
 
 #: transports/HTML5RDP/html5rdp.py:123
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:63
+#: transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as DOMAIN"
 "\\user)"
@@ -5960,13 +5959,13 @@ msgstr "如果选中，则允许桌面合成"
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:150
+#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
 msgid "Font Smoothing"
 msgstr "字体平滑"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:153
+#: transports/RDS_enterprise/rds_base.py:152
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "如果选中，将允许字体平滑（仅限Windows客户端）"
 
@@ -6063,7 +6062,7 @@ msgstr "禁用粘贴到远程"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:107
+#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "启用剪贴板"
 
@@ -6315,7 +6314,7 @@ msgid "Port of the VNC server."
 msgstr "VNC服务器的端口。"
 
 #: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:136
+#: transports/RDS_enterprise/rds_base.py:135
 msgid "Color depth"
 msgstr "颜色深度"
 
@@ -6383,14 +6382,14 @@ msgstr "NICE DCV 协议。隧道连接。"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:47
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:73
-#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:71
+#: transports/RDP/rdptunnel.py:68 transports/RDS_enterprise/rdstunnel.py:68
 #: transports/SPICE/spice_tunnel.py:67 transports/X2GO/x2go_tunnel.py:69
 msgid "Tunnel server"
 msgstr "隧道服务器"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:50
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:76
-#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:74
+#: transports/RDP/rdptunnel.py:71 transports/RDS_enterprise/rdstunnel.py:71
 #: transports/SPICE/spice_tunnel.py:70 transports/X2GO/x2go_tunnel.py:72
 msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
@@ -6401,21 +6400,21 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
-#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:80
+#: transports/RDP/rdptunnel.py:78 transports/RDS_enterprise/rdstunnel.py:77
 #: transports/SPICE/spice_tunnel.py:77 transports/X2GO/x2go_tunnel.py:79
 msgid "Tunnel wait time"
 msgstr "隧道等待时间"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:62
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:88
-#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:85
+#: transports/RDP/rdptunnel.py:83 transports/RDS_enterprise/rdstunnel.py:82
 #: transports/SPICE/spice_tunnel.py:82 transports/X2GO/x2go_tunnel.py:84
 msgid "Maximum time to wait before closing the tunnel listener"
 msgstr "关闭隧道侦听器之前等待的最长时间"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:71
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:97
-#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:94
+#: transports/RDP/rdptunnel.py:92 transports/RDS_enterprise/rdstunnel.py:91
 #: transports/SPICE/spice_tunnel.py:91 transports/X2GO/x2go_tunnel.py:93
 msgid ""
 "If enabled, the certificate of tunnel server will be verified (recommended)."
@@ -6423,7 +6422,7 @@ msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:129
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
 #: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "必须在隧道服务器字段中使用HOST：PORT"
@@ -6491,67 +6490,67 @@ msgid ""
 "example is needed)"
 msgstr "如果选中，域部分将始终清空（例如，需要连接到xrdp）"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:68
+#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "允许智能卡"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:70
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "如果选中，此传输将允许使用智能卡"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:74
+#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "允许打印机"
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:76
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "如果选中，则此传输将允许使用用户打印机"
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:80
+#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "本地驱动器策略"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:82
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "本地驱动器重定向策略"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:92
+#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "强制驱动"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:95
+#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
 msgstr ""
 "使用逗号分隔的值，例如“ C：，D：”。如果不允许使用驱动器策略，则将忽略该策略"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:101
+#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "允许序列号"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:103
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "如果选中，则此传输将允许使用用户串行端口"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:109
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "如果选中，则允许复制粘贴功能"
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:114
+#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "启用声音"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:116
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "如果选中，则会重定向声音。"
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:121
+#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "启用网络摄像头"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:123
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "如果选中，网络摄像头将被重定向（仅Windows）。"
 
@@ -6563,11 +6562,11 @@ msgstr "USB 重定向"
 msgid "USB redirection policy"
 msgstr "USB 重定向策略"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:128
+#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "Credssp支持"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:130
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "如果选中，将启用凭据提供程序支持）"
 
@@ -6579,7 +6578,7 @@ msgstr "屏幕尺寸"
 msgid "Screen size for this transport"
 msgstr "此运输的屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:138
+#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
 msgid "Color depth for this connection"
 msgstr "此连接的颜色深度"
 
@@ -6599,46 +6598,46 @@ msgstr "连接栏"
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "如果选中，将显示连接栏（仅在Windows客户端上）"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:181
+#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
 msgid "Multimedia sync"
 msgstr "多媒体同步"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:184
+#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "如果选中。 Linux客户端将使用xfreerdp的多媒体参数"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:189
+#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
 msgid "Use Alsa"
 msgstr "使用Alsa"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:192
+#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr "如果选中，Linux客户端将尝试使用ALSA，否则将使用Pulse"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:197
+#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
 msgid "Printer string"
 msgstr "打印机字符串"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:200
+#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "如果选中打印机，则打印机字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:206
+#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
 msgid "Smartcard string"
 msgstr "智能卡字符串"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:209
+#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr "如果选中智能卡，则智能卡字符串与xfreerdp客户端一起使用"
 
 #: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:215
-#: transports/RDS_enterprise/rds_base.py:225
+#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
+#: transports/RDS_enterprise/rds_base.py:224
 msgid "Custom parameters"
 msgstr "自定义参数"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:218
+#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6665,16 +6664,16 @@ msgstr ""
 "如果不为空，则为 Mac OS X Freerdp 客户端包含的额外参数（例如 /usb:id,"
 "dev:054c:0268，或与您的 xfreerdp 客户端兼容的任何内容）"
 
-#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:228
+#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
 msgid "If not empty, extra parameters to include for Windows Client"
-msgstr ""
+msgstr "如果不为空，则为 Windows 客户端包含额外参数"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
 msgstr "RDP协议。隧道连接。"
 
 #: transports/RDS_enterprise/rds.py:58
-#: transports/RDS_enterprise/rdstunnel.py:65
+#: transports/RDS_enterprise/rdstunnel.py:62
 msgid "RDS for vApps"
 msgstr "适用于vApp的RDS"
 
@@ -6682,37 +6681,37 @@ msgstr "适用于vApp的RDS"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "使用RDP为vApp进行RDS访问。直接连接。"
 
-#: transports/RDS_enterprise/rds_base.py:157
+#: transports/RDS_enterprise/rds_base.py:156
 msgid "Window state"
 msgstr "窗口状态"
 
-#: transports/RDS_enterprise/rds_base.py:160
+#: transports/RDS_enterprise/rds_base.py:159
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "UDS 将尝试在此状态下使用窗口执行应用程序"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:163
 msgid "Normal"
 msgstr "普通的"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:164
 msgid "Maximized"
 msgstr "最大化"
 
-#: transports/RDS_enterprise/rds_base.py:166
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Minimized"
 msgstr "最小化"
 
-#: transports/RDS_enterprise/rds_base.py:172
+#: transports/RDS_enterprise/rds_base.py:171
 msgid "Execute as shell"
 msgstr "作为 shell 执行"
 
-#: transports/RDS_enterprise/rds_base.py:176
+#: transports/RDS_enterprise/rds_base.py:175
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
 msgstr "如果选中，Linux 客户端将在会话而不是远程应用程序中执行应用程序"
 
-#: transports/RDS_enterprise/rdstunnel.py:67
+#: transports/RDS_enterprise/rdstunnel.py:64
 msgid "RDS access using RDP for vApps. Tunneled connection."
 msgstr "使用RDP为vApp进行RDS访问。隧道连接。"
 
