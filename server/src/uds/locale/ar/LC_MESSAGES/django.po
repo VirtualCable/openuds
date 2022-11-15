@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:21+0100\n"
+"POT-Creation-Date: 2022-11-15 14:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -6410,7 +6410,7 @@ msgstr ""
 "Tunnel)"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:365
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "يجب أن يكون خادم HTTP أو HTTPS"
@@ -6423,7 +6423,81 @@ msgstr "RDS HTML5 Vapps"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "بروتوكول RDS باستخدام عميل HTML5 vApps"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:302
+#: transports/HTML5RDS_enterprise/html5rds.py:293
+#| msgid "Balancing"
+msgid "Load Balancing Info"
+msgstr "معلومات موازنة التحميل"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:296
+msgid ""
+"Load Balancing Info. Normally, this field is blank. Check de documentation "
+"for your balancer."
+msgstr ""
+"معلومات موازنة التحميل. عادة ، هذا الحقل فارغ. تحقق من وثائق الموازن الخاص "
+"بك."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:305
+#| msgid "Hostname"
+msgid "Gateway Hostname"
+msgstr "اسم مضيف البوابة"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:308
+msgid ""
+"Hostname or IP address of the gateway server. if ommited, no gateway will be "
+"used"
+msgstr ""
+"اسم المضيف أو عنوان IP لخادم البوابة. إذا تم إيقاف التشغيل ، فلن يتم استخدام "
+"أي بوابة"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:316
+msgid "Gateway Port"
+msgstr "منفذ البوابة"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:318
+#| msgid "Port of the VNC server."
+msgid "Port of the gateway server."
+msgstr "ميناء خادم البوابة."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:326
+#| msgid "Username"
+msgid "Gateway Username"
+msgstr "اسم مستخدم البوابة"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:329
+msgid ""
+"Username for the gateway server. Normally, this will be blank, and the "
+"username will be taken from the connection parameters."
+msgstr ""
+"اسم المستخدم لخادم البوابة. عادة ، سيكون هذا فارغًا ، وسيتم أخذ اسم المستخدم "
+"من معلمات الاتصال."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:337
+#| msgid "Password"
+msgid "Gateway Password"
+msgstr "بوابة كلمة المرور"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:340
+msgid ""
+"Password for the gateway server. Normally, this will be blank, and the "
+"password will be taken from the connection parameters."
+msgstr ""
+"كلمة مرور خادم البوابة. عادة ، سيكون هذا فارغًا ، وسيتم أخذ كلمة المرور من "
+"معلمات الاتصال."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:348
+#| msgid "Datastore Domain"
+msgid "Gateway Domain"
+msgstr "مجال البوابة"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:351
+msgid ""
+"Domain for the gateway server. Normally, this will be blank, and the domain "
+"will be taken from the connection parameters."
+msgstr ""
+"المجال لخادم البوابة. عادة ، سيكون هذا فارغًا ، وسيتم أخذ المجال من معلمات "
+"الاتصال."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""

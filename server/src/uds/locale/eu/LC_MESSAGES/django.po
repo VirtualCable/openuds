@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:21+0100\n"
+"POT-Creation-Date: 2022-11-15 14:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -6516,7 +6516,7 @@ msgstr ""
 "Enterprise Tunnelerako soilik balio du)"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:365
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "Zerbitzariak http edo https izan behar du"
@@ -6529,7 +6529,81 @@ msgstr "HTML5 RDS vAppserako"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "RDS protokoloa HTML5 bezeroa erabiliz vApps-ekin"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:302
+#: transports/HTML5RDS_enterprise/html5rds.py:293
+#| msgid "Balancing"
+msgid "Load Balancing Info"
+msgstr "Karga orekatzeko informazioa"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:296
+msgid ""
+"Load Balancing Info. Normally, this field is blank. Check de documentation "
+"for your balancer."
+msgstr ""
+"Karga orekatzeko informazioa. Normalean, eremu hau hutsik dago. Egiaztatu "
+"zure orekatzailearen dokumentazioa."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:305
+#| msgid "Hostname"
+msgid "Gateway Hostname"
+msgstr "Gateway ostalari-izena"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:308
+msgid ""
+"Hostname or IP address of the gateway server. if ommited, no gateway will be "
+"used"
+msgstr ""
+"Pasabide-zerbitzariaren ostalari-izena edo IP helbidea. kenduz gero, ez da "
+"atebiderik erabiliko"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:316
+msgid "Gateway Port"
+msgstr "Gateway Portua"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:318
+#| msgid "Port of the VNC server."
+msgid "Port of the gateway server."
+msgstr "Pasabide zerbitzariaren ataka."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:326
+#| msgid "Username"
+msgid "Gateway Username"
+msgstr "Gateway Erabiltzaile-izena"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:329
+msgid ""
+"Username for the gateway server. Normally, this will be blank, and the "
+"username will be taken from the connection parameters."
+msgstr ""
+"Atebide-zerbitzariaren erabiltzaile-izena. Normalean, hau hutsik egongo da, "
+"eta erabiltzaile-izena konexio-parametroetatik hartuko da."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:337
+#| msgid "Password"
+msgid "Gateway Password"
+msgstr "Pasahitza pasahitza"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:340
+msgid ""
+"Password for the gateway server. Normally, this will be blank, and the "
+"password will be taken from the connection parameters."
+msgstr ""
+"Pasahitza atebideko zerbitzariaren pasahitza. Normalean, hau hutsik egongo "
+"da, eta pasahitza konexio-parametroetatik hartuko da."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:348
+#| msgid "Datastore Domain"
+msgid "Gateway Domain"
+msgstr "Gateway domeinua"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:351
+msgid ""
+"Domain for the gateway server. Normally, this will be blank, and the domain "
+"will be taken from the connection parameters."
+msgstr ""
+"Atebideko zerbitzariaren domeinua. Normalean, hau hutsik egongo da, eta "
+"domeinua konexio-parametroetatik hartuko da."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
