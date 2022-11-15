@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:21+0100\n"
+"POT-Creation-Date: 2022-11-15 14:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -6560,7 +6560,7 @@ msgstr ""
 "túnel Glyptodon Enterprise)"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:365
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor ha de ser http o https"
@@ -6573,7 +6573,81 @@ msgstr "HTML5 RDS per a vApps"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocol RDP utilitzant client HTML5 per a vApps"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:302
+#: transports/HTML5RDS_enterprise/html5rds.py:293
+#| msgid "Balancing"
+msgid "Load Balancing Info"
+msgstr "Informació d&#39;equilibri de càrrega"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:296
+msgid ""
+"Load Balancing Info. Normally, this field is blank. Check de documentation "
+"for your balancer."
+msgstr ""
+"Informació d&#39;equilibri de càrrega. Normalment, aquest camp està en "
+"blanc. Comproveu la documentació del vostre equilibrador."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:305
+#| msgid "Hostname"
+msgid "Gateway Hostname"
+msgstr "Nom d&#39;amfitrió de la passarel·la"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:308
+msgid ""
+"Hostname or IP address of the gateway server. if ommited, no gateway will be "
+"used"
+msgstr ""
+"Nom d&#39;amfitrió o adreça IP del servidor de passarel·la. si s&#39;omet, "
+"no s&#39;utilitzarà cap passarel·la"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:316
+msgid "Gateway Port"
+msgstr "Port d&#39;entrada"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:318
+#| msgid "Port of the VNC server."
+msgid "Port of the gateway server."
+msgstr "Port del servidor de passarel·la."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:326
+#| msgid "Username"
+msgid "Gateway Username"
+msgstr "Nom d&#39;usuari de la passarel·la"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:329
+msgid ""
+"Username for the gateway server. Normally, this will be blank, and the "
+"username will be taken from the connection parameters."
+msgstr ""
+"Nom d&#39;usuari per al servidor de passarel·la. Normalment, això estarà en "
+"blanc i el nom d&#39;usuari s&#39;agafarà dels paràmetres de connexió."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:337
+#| msgid "Password"
+msgid "Gateway Password"
+msgstr "Contrasenya de passarel·la"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:340
+msgid ""
+"Password for the gateway server. Normally, this will be blank, and the "
+"password will be taken from the connection parameters."
+msgstr ""
+"Contrasenya per al servidor de passarel·la. Normalment, aquesta estarà en "
+"blanc i la contrasenya s&#39;agafarà dels paràmetres de connexió."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:348
+#| msgid "Datastore Domain"
+msgid "Gateway Domain"
+msgstr "Domini Gateway"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:351
+msgid ""
+"Domain for the gateway server. Normally, this will be blank, and the domain "
+"will be taken from the connection parameters."
+msgstr ""
+"Domini per al servidor de passarel·la. Normalment, això estarà en blanc i el "
+"domini s&#39;agafarà dels paràmetres de connexió."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""

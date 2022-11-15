@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:21+0100\n"
+"POT-Creation-Date: 2022-11-15 14:34+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
@@ -6564,7 +6564,7 @@ msgstr ""
 "Glyptodon Enterprise Tunnel)"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:365
 #: transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
@@ -6577,7 +6577,81 @@ msgstr "HTML5 RDS para vApps"
 msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocolo RDS utilizando a cliente de HTML5 para vApps"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:302
+#: transports/HTML5RDS_enterprise/html5rds.py:293
+#| msgid "Balancing"
+msgid "Load Balancing Info"
+msgstr "Información de equilibrio de carga"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:296
+msgid ""
+"Load Balancing Info. Normally, this field is blank. Check de documentation "
+"for your balancer."
+msgstr ""
+"Información de equilibrio de carga. Normalmente, este campo está en blanco. "
+"Consulta la documentación de tu balanceadora."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:305
+#| msgid "Hostname"
+msgid "Gateway Hostname"
+msgstr "Nombre de host de puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:308
+msgid ""
+"Hostname or IP address of the gateway server. if ommited, no gateway will be "
+"used"
+msgstr ""
+"Nombre de host o dirección IP del servidor de puerta de enlace. si se omite, "
+"no se utilizará ninguna puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:316
+msgid "Gateway Port"
+msgstr "Puerto de puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:318
+#| msgid "Port of the VNC server."
+msgid "Port of the gateway server."
+msgstr "Puerto del servidor de puerta de enlace."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:326
+#| msgid "Username"
+msgid "Gateway Username"
+msgstr "Nombre de usuario de la puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:329
+msgid ""
+"Username for the gateway server. Normally, this will be blank, and the "
+"username will be taken from the connection parameters."
+msgstr ""
+"Nombre de usuario para el servidor de puerta de enlace. Normalmente, estará "
+"en blanco y el nombre de usuario se tomará de los parámetros de conexión."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:337
+#| msgid "Password"
+msgid "Gateway Password"
+msgstr "Contraseña de puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:340
+msgid ""
+"Password for the gateway server. Normally, this will be blank, and the "
+"password will be taken from the connection parameters."
+msgstr ""
+"Contraseña para el servidor de puerta de enlace. Normalmente, estará en "
+"blanco y la contraseña se tomará de los parámetros de conexión."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:348
+#| msgid "Datastore Domain"
+msgid "Gateway Domain"
+msgstr "Dominio de puerta de enlace"
+
+#: transports/HTML5RDS_enterprise/html5rds.py:351
+msgid ""
+"Domain for the gateway server. Normally, this will be blank, and the domain "
+"will be taken from the connection parameters."
+msgstr ""
+"Dominio para el servidor de puerta de enlace. Normalmente, esto estará en "
+"blanco y el dominio se tomará de los parámetros de conexión."
+
+#: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
