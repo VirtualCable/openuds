@@ -171,8 +171,8 @@ class RDPTransport(BaseRDPTransport):
 
         if osName == 'windows':
             r.customParameters = self.customParametersWindows.value
-            if password != '':
-                r.password = '{password}'
+            if password:
+                r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
                 {
                     'as_file': r.as_file,
