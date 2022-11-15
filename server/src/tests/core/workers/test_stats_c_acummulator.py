@@ -123,7 +123,7 @@ class StatsAcummulatorTest(UDSTestCase):
         data: typing.Dict[str, typing.Dict[int, typing.List[int]]] = {}
         for i in base_stats.order_by('owner_id', 'counter_type', 'stamp'):
             stamp = i.stamp - (i.stamp % 3600) + 3600  # Round to hour and to next hour
-            d = data.setdefault(f'{i.owner_id}{i.counter_type}', {})
+            d = data.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
             d.setdefault(stamp, []).append(i.value)
 
         # Last hour NEVER is completed (until next hour appears), so it's not included in hour stats
@@ -131,16 +131,27 @@ class StatsAcummulatorTest(UDSTestCase):
         stat: 'models.StatsCountersAccum'
         for stat in hour_stats.order_by('owner_id', 'stamp'):
             stamp = stat.stamp  # Already rounded to hour
-            d = data[f'{stat.owner_id}{stat.counter_type}']
+            d = data[f'{stat.owner_id:03d}{stat.counter_type}']
             self.assertEqual(stat.v_sum, sum(d[stamp]))
             self.assertEqual(stat.v_max, max(d[stamp]))
             self.assertEqual(stat.v_min, min(d[stamp]))
             self.assertEqual(stat.v_count, len(d[stamp]))
 
         # Recalculate sum of stats, now from StatsCountersAccum (hourly)
-        data: typing.Dict[str, typing.Dict[int, typing.List[int]]] = {}
+        data_d: typing.Dict[str, typing.Dict[int, typing.List[typing.Dict[str, int]]]] = {}
         for i in hour_stats.order_by('owner_id', 'counter_type', 'stamp'):
+            stamp = i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24  # Round to day and to next day
+            d = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
+            d.setdefault(stamp, []).append({'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min})
             pass
+
+        for i in day_stats.order_by('owner_id', 'stamp'):
+            stamp = i.stamp  # already rounded to day
+            d = data_d[f'{i.owner_id:03d}{i.counter_type}']
+            self.assertEqual(i.v_sum, sum([x['sum'] for x in d[stamp]]))
+            self.assertEqual(i.v_max, max([x['max'] for x in d[stamp]]))
+            self.assertEqual(i.v_min, min([x['min'] for x in d[stamp]]))
+            self.assertEqual(i.v_count, sum([x['count'] for x in d[stamp]]))
 
         return
 

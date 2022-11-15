@@ -127,7 +127,11 @@ class StatsCountersAccum(models.Model):
         """
         Compresses data in the table, generating "compressed" version of the data (mean values)
         """
-        logger.debug('Optimizing stats counters table')
+        logger.debug(
+            'Optimizing stats counters table for %s (max chunk days=%s)',
+            interval_type,
+            max_days,
+        )
 
         # Assign values depending on interval type
         model: typing.Union[
@@ -183,15 +187,14 @@ class StatsCountersAccum(models.Model):
         )
 
         # Get all records for this owner_type, counter_type, owner_id
-        floor = getSqlFnc('FLOOR')
         query = (
             model.objects.filter(  # nosec: SQL injection is not possible here, all values are controlled
                 stamp__gte=start_stamp,
                 stamp__lt=end_stamp,
             )
-            .extra(  
+            .extra(
                 select={
-                    'group_by_stamp': f'{floor}(stamp / {interval})',
+                    'group_by_stamp': f'stamp - (stamp %% {interval})',  # f'{floor}(stamp / {interval})',
                     'owner_id': 'owner_id',
                     'owner_type': 'owner_type',
                     'counter_type': 'counter_type',
@@ -208,7 +211,8 @@ class StatsCountersAccum(models.Model):
                 sum=models.Sum('value'),
             )
         else:
-            query = query.annotate(
+            # Only get Hourly data
+            query = query.filter(interval_type=interval_type.prev()).annotate(
                 min=models.Min('v_min'),
                 max=models.Max('v_max'),
                 count=models.Sum('v_count'),
@@ -223,14 +227,14 @@ class StatsCountersAccum(models.Model):
                 owner_id=rec['owner_id'],
                 counter_type=rec['counter_type'],
                 interval_type=interval_type,
-                stamp=rec['group_by_stamp'] * interval_type.seconds()
-                + interval_type.seconds(),
+                stamp=rec['group_by_stamp'] + interval_type.seconds(),
                 v_count=rec['count'],
                 v_sum=rec['sum'],
                 v_min=rec['min'],
                 v_max=rec['max'],
             )
-            for rec in query if rec['sum'] and rec['min'] and rec['max']
+            for rec in query
+            if rec['sum'] or rec['min'] or rec['max']
         ]
 
         logger.debug('Inserting %s records', len(accumulated))
