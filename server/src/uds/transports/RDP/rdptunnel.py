@@ -128,9 +128,10 @@ class TRDPTransport(BaseRDPTransport):
     multimedia = BaseRDPTransport.multimedia
     printerString = BaseRDPTransport.printerString
     smartcardString = BaseRDPTransport.smartcardString
-    customParameters = BaseRDPTransport.customParameters
     allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
+    customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
+    customParametersWindows = BaseRDPTransport.customParametersWindows
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -193,7 +194,6 @@ class TRDPTransport(BaseRDPTransport):
         r.alsa = self.alsa.isTrue()
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
-        r.linuxCustomParameters = self.customParameters.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
 
@@ -219,21 +219,23 @@ class TRDPTransport(BaseRDPTransport):
         }
 
         if osName == 'windows':
-            if password:
-                r.password = '{password}'  # nosec: no hardcoded password
+            r.customParameters = self.customParametersWindows.value
+            if password != '':
+                r.password = '{password}'
             sp.update(
                 {
                     'as_file': r.as_file,
                 }
             )
         elif osName == 'linux':
+            r.customParameters = self.customParameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 }
             )
         else:  # Mac
-            r.linuxCustomParameters = self.customParametersMAC.value
+            r.customParameters = self.customParametersMAC.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
