@@ -6,52 +6,6 @@ from django.db import connection
 import django.db.models.deletion
 import uds.models.stats_counters_accum
 
-# Forward migration, change table type of uds_stats_c to MyISAM
-# InnoDB is tremendlously slow when using this table
-def forwards(apps, schema_editor):
-    return
-    """
-    try:
-        # If we are not using MySQL, do nothing
-        if connection.vendor != 'mysql':
-            return
-
-        cursor = connection.cursor()
-        tables_to_change = ['uds_stats_c', 'uds_stats_c_accum']
-        for table in tables_to_change:
-            # Check current table type, if it is not InnoDB, do nothing
-            cursor.execute(
-                'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s',
-                [table],
-            )
-            if cursor.fetchone()[0] == 'InnoDB':  # type: ignore
-                cursor.execute(f'ALTER TABLE {table} ENGINE=MyISAM')
-    except Exception:  # nosec: fine
-        pass
-    """
-
-
-# Backward migration, change table type of uds_stats_c to InnoDB
-def backwards(apps, schema_editor):
-    return
-    """
-    Backwards could restore table to innodb, but it's not needed, and it's slow
-    try:
-        from django.db import connection
-
-        cursor = connection.cursor()
-        # Check current table type, if it is not MyISAM, do nothing
-        cursor.execute(
-            'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = "uds_stats_c"'
-        )
-        if cursor.fetchone()[0] == 'MyISAM':  # type: ignore
-            cursor.execute('ALTER TABLE uds_stats_c ENGINE=InnoDB')
-        cursor.execute('ALTER TABLE uds_stats_c ENGINE=InnoDB')
-    except Exception:  # nosec: fine
-        pass
-    """
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -124,6 +78,4 @@ class Migration(migrations.Migration):
             model_name='statscountersaccum',
             index=models.Index(fields=['stamp', 'interval_type'], name='uds_stats_stamp'),
         ),
-        # Migrate uds_stats_c from Innodb to MyISAM if possible
-        migrations.RunPython(forwards, backwards),
     ]
