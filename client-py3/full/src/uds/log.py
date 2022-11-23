@@ -61,3 +61,10 @@ except Exception:
     logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s', level=LOGLEVEL)
 
 logger = logging.getLogger('udsclient')
+
+# If debug mode, log environment variables
+if DEBUG:
+    logger.debug('Log level set to DEBUG')
+    logger.debug('Environment variables:')
+    for k, v in os.environ.items():
+        logger.debug('  %s=%s', k, v)
