@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:34+0100\n"
+"POT-Creation-Date: 2022-11-23 16:31+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster at dkmon dot com>, 2012\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -2350,7 +2350,7 @@ msgstr "o endereço de email não é válido"
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
 msgstr ""
-"Frequência de coleta de estatísticas em segundos. O padrão é 4 horas (14.400 "
+"Frequência da coleta de estatísticas em segundos. O padrão é 4 horas (14400 "
 "segundos)"
 
 #: core/workers/stats_collector.py:58
@@ -4328,7 +4328,7 @@ msgstr "Usar clones completos"
 #| "If checked, the name of the subnets will be used instead of the names of "
 #| "networks"
 msgid "If checked, full clones will be used instead of differential disks"
-msgstr "Se marcado, clones completos serão usados em vez de discos diferenciais"
+msgstr "Se marcada, clones completos serão usados em vez de discos diferenciais"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -6535,7 +6535,7 @@ msgstr "Protocolo RDS usando cliente HTML5 para vApps"
 #: transports/HTML5RDS_enterprise/html5rds.py:293
 #| msgid "Balancing"
 msgid "Load Balancing Info"
-msgstr "Informações de balanceamento de carga"
+msgstr "Informações de Balanceamento de Carga"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 msgid ""
@@ -6555,17 +6555,17 @@ msgid ""
 "Hostname or IP address of the gateway server. if ommited, no gateway will be "
 "used"
 msgstr ""
-"Nome do host ou endereço IP do servidor gateway. se omitido, nenhum gateway "
-"será usado"
+"Nome do host ou endereço IP do servidor de gateway. se omitido, nenhum "
+"gateway será usado"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:316
 msgid "Gateway Port"
-msgstr "Porta de Gateway"
+msgstr "porta de gateway"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:318
 #| msgid "Port of the VNC server."
 msgid "Port of the gateway server."
-msgstr "Porta do servidor gateway."
+msgstr "Porta do servidor de gateway."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:326
 #| msgid "Username"
@@ -6577,8 +6577,8 @@ msgid ""
 "Username for the gateway server. Normally, this will be blank, and the "
 "username will be taken from the connection parameters."
 msgstr ""
-"Nome de usuário para o servidor gateway. Normalmente, isso ficará em branco "
-"e o nome de usuário será obtido dos parâmetros de conexão."
+"Nome de usuário para o servidor de gateway. Normalmente, ficará em branco e "
+"o nome de usuário será obtido dos parâmetros de conexão."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:337
 #| msgid "Password"
@@ -6590,20 +6590,20 @@ msgid ""
 "Password for the gateway server. Normally, this will be blank, and the "
 "password will be taken from the connection parameters."
 msgstr ""
-"Senha para o servidor gateway. Normalmente, isso ficará em branco e a senha "
-"será obtida dos parâmetros de conexão."
+"Senha para o servidor de gateway. Normalmente, ficará em branco e a senha "
+"será retirada dos parâmetros de conexão."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:348
 #| msgid "Datastore Domain"
 msgid "Gateway Domain"
-msgstr "Domínio de Gateway"
+msgstr "domínio de gateway"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:351
 msgid ""
 "Domain for the gateway server. Normally, this will be blank, and the domain "
 "will be taken from the connection parameters."
 msgstr ""
-"Domínio para o servidor gateway. Normalmente, isso ficará em branco e o "
+"Domínio para o servidor de gateway. Normalmente, ficará em branco e o "
 "domínio será obtido dos parâmetros de conexão."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:370

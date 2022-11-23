@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:34+0100\n"
+"POT-Creation-Date: 2022-11-23 16:31+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -1615,15 +1615,15 @@ msgstr ""
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:22
 msgid "UDS Client Download"
-msgstr "Клиент UDS Скачать"
+msgstr "Скачать Клиент UDS"
 
 #: static/modern/main-es5.js:1
 msgid "Launching UDS Client, almost done."
-msgstr "Запуск UDS Client почти готов."
+msgstr "Запуск Клиент UDS почти завершён."
 
 #: static/modern/main-es5.js:1
 msgid "Machine ready, waiting for UDS Client"
-msgstr "Машина готова, ждет клиента UDS"
+msgstr "Машина готова, ожидание клиента UDS"
 
 #: static/modern/main-es5.js:1 static/modern/translations-fakejs.js:23
 msgid "Error launching service"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:34+0100\n"
+"POT-Creation-Date: 2022-11-23 16:31+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2019\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -2369,14 +2369,14 @@ msgstr "Indirizzo email non valido"
 msgid ""
 "Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)"
 msgstr ""
-"Frequenza di raccolta delle statistiche in secondi. Il valore predefinito è "
-"4 ore (14400 secondi)"
+"Frequenza di raccolta delle statistiche in secondi. L&#39;impostazione "
+"predefinita è 4 ore (14400 secondi)"
 
 #: core/workers/stats_collector.py:58
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 msgstr ""
-"Numero massimo di tempo da accumulare in una corsa. Il valore predefinito è "
-"7 (1 settimana)"
+"Numero massimo di tempo da accumulare in un&#39;esecuzione. Il valore "
+"predefinito è 7 (1 settimana)"
 
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
@@ -6581,7 +6581,7 @@ msgid ""
 "for your balancer."
 msgstr ""
 "Informazioni sul bilanciamento del carico. Normalmente, questo campo è "
-"vuoto. Controlla la documentazione per il tuo bilanciatore."
+"vuoto. Controlla la documentazione del tuo bilanciatore."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:305
 #| msgid "Hostname"
@@ -6598,7 +6598,7 @@ msgstr ""
 
 #: transports/HTML5RDS_enterprise/html5rds.py:316
 msgid "Gateway Port"
-msgstr "Porta d&#39;ingresso"
+msgstr "Porta del gateway"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:318
 #| msgid "Port of the VNC server."
@@ -6621,7 +6621,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:337
 #| msgid "Password"
 msgid "Gateway Password"
-msgstr "Password del gateway"
+msgstr "Password di accesso"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:340
 msgid ""
@@ -6642,7 +6642,7 @@ msgid ""
 "will be taken from the connection parameters."
 msgstr ""
 "Dominio per il server gateway. Normalmente, questo sarà vuoto e il dominio "
-"verrà prelevato dai parametri di connessione."
+"verrà preso dai parametri di connessione."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
@@ -7060,7 +7060,7 @@ msgstr ""
 
 #: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
 msgid "If not empty, extra parameters to include for Windows Client"
-msgstr "Se non vuoto, parametri aggiuntivi da includere per Windows Client"
+msgstr "Se non vuoto, parametri extra da includere per Windows Client"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
