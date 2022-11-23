@@ -32,6 +32,7 @@
 import logging
 import os
 import os.path
+import platform
 import sys
 import tempfile
 
@@ -62,9 +63,37 @@ except Exception:
 
 logger = logging.getLogger('udsclient')
 
-# If debug mode, log environment variables
 if DEBUG:
+    # Include as much as platform info as possible
+    logger.debug('Platform info:')
+    logger.debug('  Platform: %s', platform.platform())
+    logger.debug('  Node: %s', platform.node())
+    logger.debug('  System: %s', platform.system())
+    logger.debug('  Release: %s', platform.release())
+    logger.debug('  Version: %s', platform.version())
+    logger.debug('  Machine: %s', platform.machine())
+    logger.debug('  Processor: %s', platform.processor())
+    logger.debug('  Architecture: %s', platform.architecture())
+    logger.debug('  Python version: %s', platform.python_version())
+    logger.debug('  Python implementation: %s', platform.python_implementation())
+    logger.debug('  Python compiler: %s', platform.python_compiler())
+    logger.debug('  Python build: %s', platform.python_build())
+    # Also environment variables and any useful info
     logger.debug('Log level set to DEBUG')
     logger.debug('Environment variables:')
     for k, v in os.environ.items():
         logger.debug('  %s=%s', k, v)
+
+    # usefull info for debugging
+    logger.debug('Python path: %s', sys.path)
+    logger.debug('Python executable: %s', sys.executable)
+    logger.debug('Python version: %s', sys.version)
+    logger.debug('Python version info: %s', sys.version_info)
+    logger.debug('Python prefix: %s', sys.prefix)
+    logger.debug('Python base prefix: %s', sys.base_prefix)
+    logger.debug('Python executable: %s', sys.executable)
+    logger.debug('Python argv: %s', sys.argv)
+    logger.debug('Python modules path: %s', sys.path)
+    logger.debug('Python modules path (site): %s', sys.path_importer_cache)
+    logger.debug('Python modules path (site): %s', sys.path_hooks)
+    
