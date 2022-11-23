@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-15 14:34+0100\n"
+"POT-Creation-Date: 2022-11-23 16:31+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -2261,7 +2261,7 @@ msgstr "以秒为单位的统计数据收集频率。默认为 4 小时（14400 
 
 #: core/workers/stats_collector.py:58
 msgid "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
-msgstr "一次运行累积的最大时间数。默认值为 7（1 周）"
+msgstr "一次运行累积的最大时间数。默认为 7（1 周）"
 
 #: dispatchers/wyse_enterprise/views.py:119
 msgid "There are no authenticators available for login"
@@ -6284,13 +6284,13 @@ msgstr "使用HTML5客户端进行vApp的RDS协议"
 #: transports/HTML5RDS_enterprise/html5rds.py:293
 #| msgid "Balancing"
 msgid "Load Balancing Info"
-msgstr "负载均衡信息"
+msgstr "负载平衡信息"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 msgid ""
 "Load Balancing Info. Normally, this field is blank. Check de documentation "
 "for your balancer."
-msgstr "负载平衡信息。通常，此字段为空白。检查平衡器的文档。"
+msgstr "负载平衡信息。通常，此字段为空白。检查您的平衡器的文档。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:305
 #| msgid "Hostname"
@@ -6321,7 +6321,7 @@ msgstr "网关用户名"
 msgid ""
 "Username for the gateway server. Normally, this will be blank, and the "
 "username will be taken from the connection parameters."
-msgstr "网关服务器的用户名。通常，这将为空白，并且用户名将从连接参数中获取。"
+msgstr "网关服务器的用户名。通常，这将是空白的，用户名将从连接参数中获取。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:337
 #| msgid "Password"
@@ -6332,7 +6332,7 @@ msgstr "网关密码"
 msgid ""
 "Password for the gateway server. Normally, this will be blank, and the "
 "password will be taken from the connection parameters."
-msgstr "网关服务器的密码。通常，这将为空白，密码将从连接参数中获取。"
+msgstr "网关服务器的密码。通常，这将是空白的，密码将从连接参数中获取。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:348
 #| msgid "Datastore Domain"
@@ -6343,7 +6343,7 @@ msgstr "网关域"
 msgid ""
 "Domain for the gateway server. Normally, this will be blank, and the domain "
 "will be taken from the connection parameters."
-msgstr "网关服务器的域。通常，这将为空白，并且域将从连接参数中获取。"
+msgstr "网关服务器的域。通常，这将是空白的，域将从连接参数中获取。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:370
 msgid ""
@@ -6730,7 +6730,7 @@ msgstr ""
 
 #: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
 msgid "If not empty, extra parameters to include for Windows Client"
-msgstr "如果不为空，则为 Windows 客户端包含额外参数"
+msgstr "如果不为空，Windows 客户端要包含的额外参数"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
