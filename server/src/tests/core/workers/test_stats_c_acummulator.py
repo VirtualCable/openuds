@@ -31,7 +31,7 @@
 """
 import typing
 import datetime
-
+import random
 
 from uds import models
 from uds.core.util.stats import counters
@@ -62,7 +62,7 @@ class StatsFunction:
 
     def __call__(self, i: int, number_per_hour: int) -> int:
         self.counter += 1
-        return self.counter * 100
+        return self.counter * self.multiplier * 100 + random.randint(0, 100)  # nosec: just testing values, lower 2 digits are random
 
 
 class StatsAcummulatorTest(UDSTestCase):
@@ -75,7 +75,7 @@ class StatsAcummulatorTest(UDSTestCase):
                 START_DATE,
                 days=DAYS,
                 number_per_hour=NUMBER_PER_HOUR,
-                value=StatsFunction(10 ** (pool_id + 1)),
+                value=StatsFunction((pool_id + 1)),
                 owner_type=counters.OT_SERVICEPOOL,
             )
 

@@ -161,8 +161,7 @@ class StatsAccumulator(Job):
     """
     This Job is responsible of compressing stats tables.
     This is done by:
-        * For HOUR, DAY, WEEK
-        * For every row of same owner_id, owner_type
+        * For HOUR, DAY
     """
     frecuency = 3600  # Executed every 4 hours
     frecuency_cfg = (

@@ -37,11 +37,7 @@ import logging
 
 from django.db import models
 
-from .util import getSqlFnc
 from .stats_counters import StatsCounters
-
-if typing.TYPE_CHECKING:
-    from django.db.models.query import ValuesQuerySet
 
 logger = logging.getLogger(__name__)
 
