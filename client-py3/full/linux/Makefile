@@ -79,7 +79,7 @@ endif
 	tar czvf ../udsclient3-$(DISTRO)-$(VERSION).tar.gz -C $(DESTDIR) .
 
 # cleanup
-	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir appimage-build AppDir
+	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir appimage-build AppDir *.zsync
 
 build-igel:
 	rm -rf $(DESTDIR)
