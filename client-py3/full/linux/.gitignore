@@ -6,3 +6,4 @@
 /UDSClient*.AppImage
 /appimage*
 /UDSClient.desktop
+*.zsync
