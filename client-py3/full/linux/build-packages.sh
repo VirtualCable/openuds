@@ -12,9 +12,6 @@ cat udsclient-template.spec |
   sed -e s/"version 0.0.0"/"version ${VERSION}"/g |
   sed -e s/"release 1"/"release ${RELEASE}"/g > udsclient-$VERSION.spec
   
-cat appimage-udsclient.recipe |
-  sed -e s/"version: 0.0.0"/"version: ${VERSION}"/g > appimage.recipe
-
 # Now fix dependencies for opensuse
 # Note: Right now, opensuse & rh seems to have same dependencies, only 1 package needed
 # cat udsclient-template.spec | 
