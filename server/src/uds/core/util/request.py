@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 class ExtendedHttpRequest(HttpRequest):
     ip: str
+    ip_version: int
     ip_proxy: str
     os: DictAsObj
     user: typing.Optional[User]

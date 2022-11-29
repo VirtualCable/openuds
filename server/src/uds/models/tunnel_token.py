@@ -33,6 +33,8 @@ import typing
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 
+from .util import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
+
 
 class TunnelToken(models.Model):
     """
@@ -40,9 +42,9 @@ class TunnelToken(models.Model):
     """
 
     username = models.CharField(max_length=128)
-    ip_from = models.CharField(max_length=128)
-    ip = models.CharField(max_length=128)
-    hostname = models.CharField(max_length=128)
+    ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip = models.CharField(max_length=MAX_IPV6_LENGTH)
+    hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry

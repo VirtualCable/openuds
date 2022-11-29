@@ -34,60 +34,63 @@ import re
 import socket
 import logging
 import typing
+import ipaddress
+import enum
+
+class IpType(typing.NamedTuple):
+    ip: int
+    version: typing.Literal[4, 6, 0]  # 0 is only used for invalid detected ip
 
 class NetworkType(typing.NamedTuple):
     start: int
     end: int
+    version: typing.Literal[4, 6]  # 4 or 6
+
 
 logger = logging.getLogger(__name__)
 
-# Test patters for networks
-reCIDR = re.compile(
+# Test patters for networks IPv4
+reCIDRIPv4 = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$'
 )
-reMask = re.compile(
+reMaskIPv4 = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-re1Asterisk = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
-re2Asterisk = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
-re3Asterisk = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
-reRange = re.compile(
+re1AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
+re2AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
+re3AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
+reRangeIPv4 = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-reHost = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+reSingleIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
 
-def ipToLong(ip: str) -> int:
+def ipToLong(ip: str) -> IpType:
     """
-    convert decimal dotted quad string to long integer
+    Convert an ipv4 or ipv6 address to its long representation
     """
+    # First, check if it's an ipv6 address
     try:
-        hexn = int(''.join(["%02X" % int(i) for i in ip.split('.')]), 16)
-        logger.debug('IP %s is %s', ip, hexn)
-        return hexn
+        if ':' in ip:
+            return IpType(int(ipaddress.IPv6Address(ip)), 6)
+        else:  # ipv4
+            return IpType(int(ipaddress.IPv4Address(ip)), 4)
     except Exception as e:
         logger.error('Ivalid value: %s (%s)', ip, e)
-        return 0  # Invalid values will map to "0.0.0.0" --> 0
+        return IpType(0, 0)  # Invalid values will map to "0.0.0.0" --> 0
 
 
-def longToIp(n: int) -> str:
+def longToIp(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
     """
-    convert long int to dotted quad string
+    convert long int to ipv4 or ipv6 address, depending on size
     """
-    try:
-        d = 1 << 24
-        q = []
-        while d > 0:
-            m, n = divmod(n, d)
-            q.append(str(m))  # As m is an integer, this works on py2 and p3 correctly
-            d >>= 8
-
-        return '.'.join(q)
-    except Exception:
-        return '0.0.0.0'  # nosec: Invalid values will map to "0.0.0.0"
+    if n > 2**32 or version == 6:
+        return str(ipaddress.IPv6Address(n))
+    else:
+        return str(ipaddress.IPv4Address(n))
 
 
-def networkFromString(strNets: str) -> NetworkType:
+def networkFromStringIPv4(strNets: str, version: typing.Literal[0, 4, 6] = 0) -> NetworkType:
     '''
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
@@ -99,7 +102,7 @@ def networkFromString(strNets: str) -> NetworkType:
       - A.B.C.D
     returns a named tuple with networks start and network end
     '''
-    
+
     inputString = strNets
     logger.debug('Getting network from %s', strNets)
 
@@ -125,11 +128,11 @@ def networkFromString(strNets: str) -> NetworkType:
     strNets = strNets.replace(' ', '')
 
     if strNets == '*':
-        return NetworkType(0, 4294967295)
+        return NetworkType(0, 2**32 - 1, 4)
 
     try:
         # Test patterns
-        m = reCIDR.match(strNets)
+        m = reCIDRIPv4.match(strNets)
         if m is not None:
             logger.debug('Format is CIDR')
             check(*m.groups())
@@ -139,18 +142,18 @@ def networkFromString(strNets: str) -> NetworkType:
             val = toNum(*m.groups())
             bits = maskFromBits(bits)
             noBits = ~bits & 0xFFFFFFFF
-            return NetworkType(val & bits, val | noBits)
+            return NetworkType(val & bits, val | noBits, 4)
 
-        m = reMask.match(strNets)
+        m = reMaskIPv4.match(strNets)
         if m is not None:
             logger.debug('Format is network mask')
             check(*m.groups())
             val = toNum(*(m.groups()[0:4]))
             bits = toNum(*(m.groups()[4:8]))
             noBits = ~bits & 0xFFFFFFFF
-            return NetworkType(val & bits, val | noBits)
+            return NetworkType(val & bits, val | noBits, 4)
 
-        m = reRange.match(strNets)
+        m = reRangeIPv4.match(strNets)
         if m is not None:
             logger.debug('Format is network range')
             check(*m.groups())
@@ -158,23 +161,23 @@ def networkFromString(strNets: str) -> NetworkType:
             val2 = toNum(*(m.groups()[4:8]))
             if val2 < val:
                 raise Exception()
-            return NetworkType(val, val2)
+            return NetworkType(val, val2, 4)
 
-        m = reHost.match(strNets)
+        m = reSingleIPv4.match(strNets)
         if m is not None:
             logger.debug('Format is a single host')
             check(*m.groups())
             val = toNum(*m.groups())
-            return NetworkType(val, val)
+            return NetworkType(val, val, 4)
 
-        for v in ((re1Asterisk, 3), (re2Asterisk, 2), (re3Asterisk, 1)):
+        for v in ((re1AsteriskIPv4, 3), (re2AsteriskIPv4, 2), (re3AsteriskIPv4, 1)):
             m = v[0].match(strNets)
             if m is not None:
                 check(*m.groups())
                 val = toNum(*(m.groups()[0 : v[1] + 1]))
                 bits = maskFromBits(v[1] * 8)
                 noBits = ~bits & 0xFFFFFFFF
-                return NetworkType(val & bits, val | noBits)
+                return NetworkType(val & bits, val | noBits, 4)
 
         # No pattern recognized, invalid network
         raise Exception()
@@ -183,8 +186,38 @@ def networkFromString(strNets: str) -> NetworkType:
         raise ValueError(inputString)
 
 
+def networkFromStringIPv6(strNets: str, version: typing.Literal[0, 4, 6] = 0) -> NetworkType:
+    '''
+    returns a named tuple with networks start and network end
+    '''
+    logger.debug('Getting network from %s', strNets)
+
+    # if '*' or '::*', return the whole IPv6 range
+    if strNets == '*' or strNets == '::*':
+        return NetworkType(0, 2**128 - 1, 6)
+
+    try:
+        # using ipaddress module
+        net = ipaddress.ip_network(strNets, strict=False)
+        return NetworkType(int(net.network_address), int(net.broadcast_address), 6)
+    except Exception as e:
+        logger.error('Invalid network found: %s %s', strNets, e)
+        raise ValueError(strNets)
+
+
+def networkFromString(
+    strNets: str,
+    version: typing.Literal[0, 4, 6] = 0,
+) -> NetworkType:
+    if not ':' in strNets and version != 6:
+        return networkFromStringIPv4(strNets, version)
+    else:  # ':' in strNets or version == 6:
+        return networkFromStringIPv6(strNets, version)
+
+
 def networksFromString(
-    strNets: str
+    strNets: str,
+    version: typing.Literal[0, 4, 6] = 0,
 ) -> typing.List[NetworkType]:
     """
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
@@ -192,35 +225,39 @@ def networksFromString(
     """
     res = []
     for strNet in re.split('[;,]', strNets):
-        if strNet != '':
-            res.append(typing.cast(NetworkType, networkFromString(strNet)))
+        if strNet:
+            res.append(networkFromString(strNet, version))
     return res
 
 
 def ipInNetwork(
-    ip: typing.Union[str, int], network: typing.Union[str, NetworkType, typing.List[NetworkType]]
+    ip: typing.Union[str, int],
+    networks: typing.Union[str, NetworkType, typing.List[NetworkType]],
+    version: typing.Literal[0, 4, 6] = 0,
 ) -> bool:
     if isinstance(ip, str):
-        ip = ipToLong(ip)
-    if isinstance(network, str):
-        network = networksFromString(network)
-    elif isinstance(network, NetworkType):
-        network = [network]
+        ip, version = ipToLong(ip)  # Ip overrides protocol version
+    if isinstance(networks, str):
+        if networks == '*':
+            return True  # All IPs are in the * network
+        networks = networksFromString(networks, version)
+    elif isinstance(networks, NetworkType):
+        networks = [networks]
 
-    for net in network:
-        if net[0] <= ip <= net[1]:
+    # Ensure that the IP is in the same family as the network on checks
+    for net in networks:
+        if net.start <= ip <= net.end:
             return True
     return False
 
 
-def isValidIp(value: str) -> bool:
-    return (
-        re.match(
-            r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$',
-            value,
-        )
-        is not None
-    )
+def isValidIp(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
+    # Using ipaddress module
+    try:
+        addr = ipaddress.ip_address(value)
+        return version == 0 or addr.version == version
+    except ValueError:
+        return False
 
 
 def isValidFQDN(value: str) -> bool:

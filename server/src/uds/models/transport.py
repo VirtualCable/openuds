@@ -124,10 +124,10 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         if self.net_filtering == Transport.NO_FILTERING:
             return True
-        ip = net.ipToLong(ipStr)
+        ip, version = net.ipToLong(ipStr)
         # Allow
         if self.net_filtering == Transport.ALLOW:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists()
+            return self.networks.filter(net_start__lte=ip, net_end__gte=ip, version=version).exists()
         # Deny, must not be in any network
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 

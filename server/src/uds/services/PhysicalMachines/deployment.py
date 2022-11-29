@@ -75,15 +75,21 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
         # If multiple and has a ';' on IP, the values is IP;MAC
         ip = self._ip.split('~')[0].split(';')[0]
         # If ip is in fact a hostname...
-        if not net.ipToLong(ip):
+        if not net.ipToLong(ip).version:
             # Try to resolve name...
             try:
+                # Prefer ipv4 first
                 res = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
-                self.service().parent().doLog(
-                    log.WARN, f'User service could not resolve Name {ip}.'
-                )
+                # If not found, try ipv6
+                try:
+                    res = dns.resolver.resolve(ip, 'AAAA')
+                    ip = res[0].address
+                except Exception as e:
+                    self.service().parent().doLog(
+                        log.WARN, f'User service could not resolve Name {ip} ({e}).'
+                    )
 
         return ip
 

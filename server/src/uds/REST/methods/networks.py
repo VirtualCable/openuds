@@ -67,20 +67,22 @@ class Networks(ModelHandler):
             }
         },
         {'net_string': {'title': _('Range')}},
-        {'transports_count': {'title': _('Transports'), 'type': 'numeric', 'width': '8em'}},
-        {'authenticators_count': {'title': _('Authenticators'), 'type': 'numeric', 'width': '8em'}},
+        {
+            'transports_count': {
+                'title': _('Transports'),
+                'type': 'numeric',
+                'width': '8em',
+            }
+        },
+        {
+            'authenticators_count': {
+                'title': _('Authenticators'),
+                'type': 'numeric',
+                'width': '8em',
+            }
+        },
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
-
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
-        logger.debug('Before %s', fields)
-        try:
-            nr = net.networkFromString(fields['net_string'])
-            fields['net_start'] = nr[0]
-            fields['net_end'] = nr[1]
-        except Exception as e:
-            raise SaveException(gettext('Invalid network: {}').format(e))
-        logger.debug('Processed %s', fields)
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addField(

@@ -229,6 +229,7 @@ class Register(ActorV3Action):
                 username=self._user.pretty_name,
                 ip_from=self._request.ip,
                 ip=self._params['ip'],
+                ip_version=self._request.ip_version,
                 hostname=self._params['hostname'],
                 mac=self._params['mac'],
                 pre_command=self._params['pre_command'],

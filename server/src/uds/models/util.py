@@ -31,6 +31,7 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 from datetime import datetime
 from time import mktime
 
@@ -38,9 +39,12 @@ from django.db import connection, models
 
 logger = logging.getLogger(__name__)
 
-NEVER = datetime(1972, 7, 1)
-NEVER_UNIX = int(mktime(NEVER.timetuple()))
+NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
 
+# Max ip v6 string length representation, allowing ipv4 mapped addresses
+MAX_IPV6_LENGTH: typing.Final = 45
+MAX_DNS_NAME_LENGTH: typing.Final = 255
 
 class UnsavedForeignKey(models.ForeignKey):
     """

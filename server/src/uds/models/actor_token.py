@@ -30,6 +30,7 @@
 '''
 from django.db import models
 
+from .util import MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
 
 class ActorToken(models.Model):
     """
@@ -37,9 +38,11 @@ class ActorToken(models.Model):
     """
 
     username = models.CharField(max_length=128)
-    ip_from = models.CharField(max_length=128)
-    ip = models.CharField(max_length=128)
-    hostname = models.CharField(max_length=128)
+    ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip_version = models.IntegerField(default=4)  # Version of ip fields
+    
+    hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
     mac = models.CharField(max_length=128, db_index=True, unique=True)
     pre_command = models.CharField(max_length=255, blank=True, default='')
     post_command = models.CharField(max_length=255, blank=True, default='')

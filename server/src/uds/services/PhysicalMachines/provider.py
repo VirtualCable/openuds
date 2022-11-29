@@ -132,17 +132,22 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             return ''
 
         # If ip is in fact a hostname...
-        if not net.ipToLong(ip):
+        if not net.ipToLong(ip).version:
             # Try to resolve name...
             try:
+                # Prefer ipv4
                 res = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
-                self.doLog(log.WARN, f'Name {ip} could not be resolved')
-                logger.warning('Name %s could not be resolved', ip)
-                return ''
+                # Try ipv6
+                try:
+                    res = dns.resolver.resolve(ip, 'AAAA')
+                    ip = res[0].address
+                except Exception as e:
+                    self.doLog(log.WARN, f'Name {ip} could not be resolved')
+                    logger.warning('Name %s could not be resolved (%s)', ip, e)
+                    return ''
 
-        url = ''
         try:
             config = configparser.ConfigParser()
             config.read_string(self.config.value)

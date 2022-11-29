@@ -28,9 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec # Pickle use is controled by app, never by non admin user input
 import logging
 import typing
 
@@ -163,7 +163,7 @@ class IPMachinesService(IPServiceBase):
             ]  # Allow duplicates right now
             # Current stored data, if it exists
             d = self.storage.readData('ips')
-            old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
+            old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
             # dissapeared ones
             dissapeared = set(
                 IPServiceBase.getIp(i.split('~')[0]) for i in old_ips
@@ -210,9 +210,9 @@ class IPMachinesService(IPServiceBase):
         values: typing.List[bytes] = data.split(b'\0')
         d = self.storage.readData('ips')
         if isinstance(d, bytes):
-            self._ips = pickle.loads(d)
+            self._ips = pickle.loads(d)  # nosec: pickle is safe here
         elif isinstance(d, str):  # "legacy" saved elements
-            self._ips = pickle.loads(d.encode('utf8'))
+            self._ips = pickle.loads(d.encode('utf8'))  # nosec: pickle is safe here
             self.marshal()  # Ensure now is bytes..
         else:
             self._ips = []

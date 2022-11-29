@@ -52,9 +52,16 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     """
 
     name = models.CharField(max_length=64, unique=True)
-    net_start = models.BigIntegerField(db_index=True)
-    net_end = models.BigIntegerField(db_index=True)
-    net_string = models.CharField(max_length=128, default='')
+
+    start = models.CharField(
+        max_length=32, default='0', db_index=True
+    )  # 128 bits, for IPv6, network byte order, hex
+    end = models.CharField(
+        max_length=32, default='0', db_index=True
+    )  # 128 bits, for IPv6, network byte order, hex
+
+    version = models.IntegerField(default=4)  # network type, ipv4 or ipv6
+    net_string = models.CharField(max_length=240, default='')
     transports = models.ManyToManyField(
         Transport, related_name='networks', db_table='uds_net_trans'
     )
@@ -74,27 +81,85 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     @staticmethod
+    def _hexlify(number: int) -> str:
+        """
+        Converts a number to hex, but with 32 chars, and with leading zeros
+        """
+        return '{:032x}'.format(number)
+
+    @staticmethod
+    def _unhexlify(number: str) -> int:
+        """
+        Converts a hex string to a number
+        """
+        return int(number, 16)
+
+    @staticmethod
     def networksFor(ip: str) -> typing.Iterable['Network']:
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
-        ipInt = net.ipToLong(ip)
-        return Network.objects.filter(net_start__lte=ipInt, net_end__gte=ipInt)
+        ipInt, version = net.ipToLong(ip)
+        hex_value = Network._hexlify(ipInt)
+        # hexlify is used to convert to hex, and then decode to convert to string
+        return Network.objects.filter(
+            version=version,
+            start__lte=hex_value,
+            end__gte=hex_value,
+        )
 
     @staticmethod
     def create(name: str, netRange: str) -> 'Network':
         """
-        Creates an network record, with the specified net start and net end (dotted quad)
+        Creates an network record, with the specified network range. Supports IPv4 and IPv6
+        IPV4 has a versatile format, that can be:
+            - A single IP
+            - A range of IPs, in the form of "startIP - endIP"
+            - A network, in the form of "network/mask"
+            - A network, in the form of "network netmask mask"
+            - A network, in the form of "network*'
 
         Args:
-            netStart: Network start
+            name: Name of the network
+            netRange: Network range in any supported format
 
-            netEnd: Network end
         """
         nr = net.networkFromString(netRange)
         return Network.objects.create(
-            name=name, net_start=nr[0], net_end=nr[1], net_string=netRange
+            name=name,
+            start=Network._hexlify(nr.start),
+            end=Network._hexlify(nr.end),
+            net_string=netRange,
+            version=nr.version,
         )
+
+    @property
+    def net_start(self) -> int:
+        """
+        Returns the network start as an integer
+        """
+        return Network._unhexlify(self.start)
+
+    @net_start.setter
+    def net_start(self, value: int) -> None:
+        """
+        Sets the network start
+        """
+        self.start = Network._hexlify(value)
+
+    @property
+    def net_end(self) -> int:
+        """
+        Returns the network end as an integer
+        """
+        return Network._unhexlify(self.end)
+
+    @net_end.setter
+    def net_end(self, value: int) -> None:
+        """
+        Sets the network end
+        """
+        self.end = Network._hexlify(value)
 
     @property
     def netStart(self) -> str:
@@ -120,7 +185,21 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         Returns true if the specified ip is in this network
         """
-        return net.ipToLong(ip) >= self.net_start and net.ipToLong(ip) <= self.net_end
+        # if net_string is '*', then we are in all networks, return true
+        if self.net_string == '*':
+            return True
+        ipInt, version = net.ipToLong(ip)
+        return self.net_start <= ipInt <= self.net_end and self.version == version
+
+    def save(self, *args, **kwargs) -> None:
+        """
+        Overrides save to update the start, end and version fields
+        """
+        rng = net.networkFromString(self.net_string)
+        self.start = Network._hexlify(rng.start)
+        self.end = Network._hexlify(rng.end)
+        self.version = rng.version
+        super().save(*args, **kwargs)
 
     def update(self, name: str, netRange: str):
         """
@@ -134,18 +213,16 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
             netEnd: new Network end (quad dotted)
         """
         self.name = name
-        nr = net.networkFromString(netRange)
-        self.net_start = nr[0]
-        self.net_end = nr[1]
         self.net_string = netRange
         self.save()
 
     def __str__(self) -> str:
-        return u'Network {} ({}) from {} to {}'.format(
+        return u'Network {} ({}) from {} to {} ({})'.format(
             self.name,
             self.net_string,
             net.longToIp(self.net_start),
             net.longToIp(self.net_end),
+            self.version,
         )
 
     @staticmethod

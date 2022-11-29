@@ -36,7 +36,6 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.core.managers import cryptoManager
 from uds.core.environment import Environment
 from uds.core.util import log, unique
 from uds.core.util.state import State
@@ -45,8 +44,7 @@ from uds.models.uuid_model import UUIDModel
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
-from uds.models.util import NEVER
-from uds.models.util import getSqlDatetime
+from uds.models.util import NEVER, getSqlDatetime, MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -113,8 +111,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         db_index=True, default=0
     )  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
-    src_hostname = models.CharField(max_length=64, default='')
-    src_ip = models.CharField(max_length=128, default='')
+    src_hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
+    src_ip = models.CharField(max_length=MAX_IPV6_LENGTH, default='')  # Source IP of the user connecting to the service. Max length is 45 chars (ipv6)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["UserService"]'

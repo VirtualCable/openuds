@@ -162,6 +162,9 @@ class GlobalRequestMiddleware:
             request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
             logger.debug('Behind a proxy is active')
 
+        # Check if ip are ipv6 and set version field
+        request.ip_version = 6 if ':' in request.ip else 4
+
         logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 
     @staticmethod

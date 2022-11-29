@@ -116,11 +116,11 @@ class TunnelTicket(Handler):
                         received=recv,
                         tunnel=extra.get('t', 'unknown'),
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning('Error logging tunnel close event: %s', e)
 
             else:
-                if net.ipToLong(self._args[1][:32]) == 0:
+                if net.ipToLong(self._args[1][:32]).version == 0:
                     raise Exception('Invalid from IP')
                 events.addEvent(
                     userService.deployed_service,
