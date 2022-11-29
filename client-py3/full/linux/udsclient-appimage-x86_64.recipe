@@ -56,6 +56,6 @@ AppDir:
       PYTHONPATH: '${APPDIR}/usr/lib/python3.9/site-packages'
 
 AppImage:
-  update-information: None
-  sign-key: None
+  # update-information: None
+  sign-key: 592AF43A64B8559137FA2458AA4ECFEE784E6BA7
   arch: x86_64
