@@ -82,6 +82,9 @@ class IPAuth(auths.Authenticator):
     def getIp(self, request: 'ExtendedHttpRequest') -> str:
         ip = request.ip_proxy if self.acceptProxy.isTrue() else request.ip
         logger.debug('Client IP: %s', ip)
+        # If ipv4 on ipv6, we must remove the ipv6 prefix
+        if ':' in ip and '.' in ip:
+            ip = ip.split(':')[-1]
         return ip
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
@@ -113,7 +116,7 @@ class IPAuth(auths.Authenticator):
         """
         validNets = self.visibleFromNets.value.strip()
         # If has networks and not in any of them, not visible
-        if validNets and not net.contains(request.ip, validNets):
+        if validNets and not net.contains(validNets, request.ip):
             return False
         return super().isAccesibleFrom(request)
 

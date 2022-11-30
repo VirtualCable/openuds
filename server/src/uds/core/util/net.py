@@ -44,7 +44,7 @@ class IpType(typing.NamedTuple):
 class NetworkType(typing.NamedTuple):
     start: int
     end: int
-    version: typing.Literal[4, 6]  # 4 or 6
+    version: typing.Literal[0, 4, 6]  # 4 or 6
 
 
 logger = logging.getLogger(__name__)
@@ -71,9 +71,11 @@ def ipToLong(ip: str) -> IpType:
     """
     # First, check if it's an ipv6 address
     try:
-        if ':' in ip:
+        if ':' in ip and '.' not in ip:
             return IpType(int(ipaddress.IPv6Address(ip)), 6)
         else:  # ipv4
+            if ':' in ip and '.' in ip:
+                ip = ip.split(':')[-1]  # Last part of ipv6 address
             return IpType(int(ipaddress.IPv4Address(ip)), 4)
     except Exception as e:
         logger.error('Ivalid value: %s (%s)', ip, e)
@@ -212,6 +214,9 @@ def networkFromString(
     if not ':' in strNets and version != 6:
         return networkFromStringIPv4(strNets, version)
     else:  # ':' in strNets or version == 6:
+        # If is in fact an IPv4 address, return None network, this will not be used
+        if '.' in strNets:
+            return NetworkType(0, 0, 0)
         return networkFromStringIPv6(strNets, version)
 
 
