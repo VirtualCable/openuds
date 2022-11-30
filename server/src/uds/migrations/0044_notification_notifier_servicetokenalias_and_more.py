@@ -204,12 +204,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="network",
             name="end",
-            field=models.CharField(db_index=True, default="0", max_length=40),
+            field=models.CharField(db_index=True, default="0", max_length=32),
         ),
         migrations.AddField(
             model_name="network",
             name="start",
-            field=models.CharField(db_index=True, default="0", max_length=40),
+            field=models.CharField(db_index=True, default="0", max_length=32),
         ),
         migrations.AddField(
             model_name="network",
@@ -523,5 +523,10 @@ class Migration(migrations.Migration):
             constraint=models.UniqueConstraint(
                 fields=("session_id", "user_service"), name="u_session_userservice"
             ),
+        ),
+        migrations.AlterField(
+            model_name="log",
+            name="data",
+            field=models.CharField(default="", max_length=4096),
         ),
     ]

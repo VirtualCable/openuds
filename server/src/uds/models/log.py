@@ -60,7 +60,7 @@ class Log(models.Model):
     created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)
     level = models.PositiveIntegerField(default=0, db_index=True)
-    data = models.CharField(max_length=255, default='')
+    data = models.CharField(max_length=4096, default='')
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Log]'

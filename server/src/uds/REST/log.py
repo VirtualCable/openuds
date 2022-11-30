@@ -102,6 +102,6 @@ def log_operation(
         level=level,
         source=REST,
         data=f'{handler._request.ip} {username}: [{handler._request.method}/{response_code}] {path}'[
-            :255
+            :4096
         ],
     )

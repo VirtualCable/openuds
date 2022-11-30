@@ -66,13 +66,13 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # a few constants
-OVERVIEW = 'overview'
-TYPES = 'types'
-TABLEINFO = 'tableinfo'
-GUI = 'gui'
-LOG = 'log'
+OVERVIEW: typing.Final[str] = 'overview'
+TYPES: typing.Final[str] = 'types'
+TABLEINFO: typing.Final[str] = 'tableinfo'
+GUI: typing.Final[str] = 'gui'
+LOG: typing.Final[str] = 'log'
 
-OK = 'ok'  # Constant to be returned when result is just "operation complete successfully"
+OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
 # Exception to "rethrow" on save error
 class SaveException(HandlerError):

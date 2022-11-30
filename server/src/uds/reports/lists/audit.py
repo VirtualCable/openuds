@@ -80,7 +80,7 @@ class ListReportAuditCSV(ListReport):
     def genData(self) -> typing.Generator[typing.Tuple, None, None]:
         # Xtract user method, response_code and request from data
         # the format is "user: [method/response_code] request"
-        rx = re.compile(r'(?P<ip>[^ ]*) (?P<user>[^:]*): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)')
+        rx = re.compile(r'(?P<ip>[^ ]*) (?P<user>.*?): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)')
 
         start = self.startDate.datetime().replace(hour=0, minute=0, second=0, microsecond=0)
         end = self.endDate.datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
@@ -122,7 +122,5 @@ class ListReportAuditCSV(ListReport):
 
         for l in self.genData():
             writer.writerow(l)
-
-        # writer.writerow(['ñoño', 'ádios', 'hola'])
 
         return output.getvalue().encode()

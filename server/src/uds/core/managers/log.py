@@ -118,7 +118,7 @@ class LogManager(metaclass=singleton.Singleton):
                 if lg.data == message:
                     # Do not log again, already logged
                     return
-            except Exception:  # Do not exists log
+            except Exception:  # nosec: Do not exists log, all ok
                 pass
 
         # now, we add new log
@@ -131,7 +131,7 @@ class LogManager(metaclass=singleton.Singleton):
                 level=level,
                 data=message,
             )
-        except Exception:
+        except Exception:  # nosec
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 

@@ -35,7 +35,6 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.core.environment import Environment
 from uds.REST import model
 from uds import reports
 

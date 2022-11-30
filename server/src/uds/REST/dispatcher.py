@@ -42,7 +42,7 @@ from django.views.generic.base import View
 from uds.core import VERSION, VERSION_STAMP
 from uds.core.util import modfinder
 
-from . import processors
+from . import processors, log
 from .handlers import (
     AccessDenied,
     Handler,
@@ -142,6 +142,8 @@ class Dispatcher(View):
         except processors.ParametersException as e:
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
+
+            log.log_operation(handler, 500, log.ERROR)
             return http.HttpResponseServerError(
                 'Invalid parameters invoking {0}: {1}'.format(full_path, e),
                 content_type="text/plain",
@@ -151,14 +153,17 @@ class Dispatcher(View):
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
+            log.log_operation(handler, 405, log.ERROR)
             return http.HttpResponseNotAllowed(
                 allowedMethods, content_type="text/plain"
             )
         except AccessDenied:
+            log.log_operation(handler, 403, log.ERROR)
             return http.HttpResponseForbidden(
                 'access denied', content_type="text/plain"
             )
         except Exception:
+            log.log_operation(handler, 500, log.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
             return http.HttpResponseServerError(
@@ -168,27 +173,36 @@ class Dispatcher(View):
         # Invokes the handler's operation, add headers to response and returns
         try:
             response = operation()
-
+            
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
                 response = processor.getResponse(response)
             # Set response headers
             response['UDS-Version'] = f'{VERSION};{VERSION_STAMP}'
             for k, val in handler.headers().items():
                 response[k] = val
+
+            log.log_operation(handler, response.status_code, log.INFO)
             return response
         except RequestError as e:
+            log.log_operation(handler, 400, log.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except ResponseError as e:
+            log.log_operation(handler, 500, log.ERROR)
             return http.HttpResponseServerError(str(e), content_type="text/plain")
         except NotSupportedError as e:
+            log.log_operation(handler, 501, log.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except AccessDenied as e:
+            log.log_operation(handler, 403, log.ERROR)
             return http.HttpResponseForbidden(str(e), content_type="text/plain")
         except NotFound as e:
+            log.log_operation(handler, 404, log.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
         except HandlerError as e:
+            log.log_operation(handler, 500, log.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
+            log.log_operation(handler, 500, log.ERROR)
             logger.exception('Error processing request')
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
