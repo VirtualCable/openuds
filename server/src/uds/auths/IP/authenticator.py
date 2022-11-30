@@ -89,7 +89,7 @@ class IPAuth(auths.Authenticator):
         # The ranges are stored in group names
         for g in groupsManager.getGroupsNames():
             try:
-                if net.ipInNetwork(username, g):
+                if net.contains(g, username):
                     groupsManager.validate(g)
             except Exception as e:
                 logger.error('Invalid network for IP auth: %s', e)
@@ -113,7 +113,7 @@ class IPAuth(auths.Authenticator):
         """
         validNets = self.visibleFromNets.value.strip()
         # If has networks and not in any of them, not visible
-        if validNets and not net.ipInNetwork(request.ip, validNets):
+        if validNets and not net.contains(request.ip, validNets):
             return False
         return super().isAccesibleFrom(request)
 

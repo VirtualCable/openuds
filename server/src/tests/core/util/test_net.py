@@ -98,14 +98,14 @@ class NetTest(UDSTestCase):
         self.assertEqual(net.ipToLong('192.168.0.5').ip, 3232235525)
         self.assertEqual(net.longToIp(3232235525, 4), '192.168.0.5')
         for n in range(0, 255):
-            self.assertTrue(net.ipInNetwork('192.168.0.{}'.format(n), '192.168.0.0/24'))
+            self.assertTrue(net.contains('192.168.0.0/24', '192.168.0.{}'.format(n)))
 
         for n in range(4294):
             self.assertTrue(
-                net.ipInNetwork(n * 1000, [net.NetworkType(0, 4294967295, 4)])
+                net.contains([net.NetworkType(0, 4294967295, 4)], n * 1000)
             )
             self.assertTrue(
-                net.ipInNetwork(n * 1000, net.NetworkType(0, 4294967295, 4))
+                net.contains(net.NetworkType(0, 4294967295, 4), n * 1000)
             )
 
         # Test some ip conversions from long to ip and viceversa

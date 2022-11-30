@@ -36,6 +36,9 @@ from uds.models import Network
 
 from ...utils.test import UDSTestCase
 
+NET_IPV4_TEMPLATE = '192.168.{}.0/24'
+NET_IPV6_TEMPLATE = '2001:db8:85a3:8d3:13{:02x}::/64'
+
 logger = logging.getLogger(__name__)
 
 class NetworkModelTest(UDSTestCase):
@@ -44,9 +47,9 @@ class NetworkModelTest(UDSTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.nets = []
-        for i in range(32):
+        for i in range(0, 255, 15):
             n = Network()
-            n.name = f'Network {i}'
+            n.name = f'{i}'
             if i % 2 == 0:
                 n.net_string = f'192.168.{i}.0/24'
             else:  # ipv6 net
@@ -55,4 +58,19 @@ class NetworkModelTest(UDSTestCase):
             self.nets.append(n)
     
     def testNetworks(self) -> None:
-        pass
+        for n in self.nets:
+            i = int(n.name)
+            if i % 2 == 0:  # ipv4 net
+                self.assertEqual(n.net_string, NET_IPV4_TEMPLATE.format(i))
+                # Test some ips in range are in net
+                for r in range(0, 256, 15):
+                    self.assertTrue(n.contains(f'192.168.{i}.{r}'), f'192.168.{i}.{r} is not in {n.net_string}')
+                    self.assertTrue(f'192.168.{i}.{r}' in n, f'192.168.{i}.{r} is not in {n.net_string}')
+            else:  # ipv6 net
+                self.assertEqual(n.net_string, NET_IPV6_TEMPLATE.format(i))
+                # Test some ips in range are in net
+                for r in range(0, 65536, 255):
+                    self.assertTrue(n.contains(f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}::'), f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:: is not in {n.net_string}')
+                    self.assertTrue(f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}::' in n, f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:: is not in {n.net_string}')
+                    self.assertTrue(n.contains(f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:{r:04x}::'), f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:{r:04x}:: is not in {n.net_string}')
+                    self.assertTrue(f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:{r:04x}::' in n, f'2001:db8:85a3:8d3:13{i:02x}:{r:04x}:{r:04x}:: is not in {n.net_string}')

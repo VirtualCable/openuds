@@ -198,7 +198,7 @@ class EmailMFA(mfas.MFA):
     def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
         def checkIp() -> bool:
             return any(
-                i.ipInNetwork(request.ip)
+                i.contains(request.ip)
                 for i in models.Network.objects.filter(uuid__in=self.networks.value)
             )
 

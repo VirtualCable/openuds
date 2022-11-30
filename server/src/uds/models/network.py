@@ -181,15 +181,17 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         return net.longToIp(self.net_end)
 
-    def ipInNetwork(self, ip: str) -> bool:
+    def contains(self, ip: str) -> bool:
         """
-        Returns true if the specified ip is in this network
+        Returns True if the specified ip is in this network
         """
         # if net_string is '*', then we are in all networks, return true
         if self.net_string == '*':
             return True
         ipInt, version = net.ipToLong(ip)
         return self.net_start <= ipInt <= self.net_end and self.version == version
+
+    __contains__ = contains
 
     def save(self, *args, **kwargs) -> None:
         """
@@ -200,21 +202,6 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         self.end = Network._hexlify(rng.end)
         self.version = rng.version
         super().save(*args, **kwargs)
-
-    def update(self, name: str, netRange: str):
-        """
-        Updated this network with provided values
-
-        Args:
-            name: new name of the network
-
-            netStart: new Network start (quad dotted)
-
-            netEnd: new Network end (quad dotted)
-        """
-        self.name = name
-        self.net_string = netRange
-        self.save()
 
     def __str__(self) -> str:
         return u'Network {} ({}) from {} to {} ({})'.format(

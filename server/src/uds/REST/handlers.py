@@ -344,8 +344,8 @@ class Handler:
 
     def validSource(self) -> bool:
         try:
-            return net.ipInNetwork(
-                self._request.ip, GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True)
+            return net.contains(
+                GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
             )
         except Exception as e:
             logger.warning(

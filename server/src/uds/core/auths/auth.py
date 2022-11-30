@@ -178,7 +178,7 @@ def webLoginRequired(
 
 # Helper for checking if requests is from trusted source
 def isTrustedSource(ip: str) -> bool:
-    return net.ipInNetwork(ip, GlobalConfig.TRUSTED_SOURCES.get(True))
+    return net.contains(ip, GlobalConfig.TRUSTED_SOURCES.get(True))
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"

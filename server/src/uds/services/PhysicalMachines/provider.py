@@ -152,7 +152,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             config = configparser.ConfigParser()
             config.read_string(self.config.value)
             for key in config['wol']:
-                if net.ipInNetwork(ip, key):
+                if net.contains(key, ip):
                     return config['wol'][key].replace('{MAC}', mac).replace('{IP}', ip)
 
         except Exception as e:

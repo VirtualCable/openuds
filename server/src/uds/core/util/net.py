@@ -216,7 +216,7 @@ def networkFromString(
 
 
 def networksFromString(
-    strNets: str,
+    nets: str,
     version: typing.Literal[0, 4, 6] = 0,
 ) -> typing.List[NetworkType]:
     """
@@ -224,15 +224,15 @@ def networksFromString(
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
     """
     res = []
-    for strNet in re.split('[;,]', strNets):
+    for strNet in re.split('[;,]', nets):
         if strNet:
             res.append(networkFromString(strNet, version))
     return res
 
 
-def ipInNetwork(
-    ip: typing.Union[str, int],
+def contains(
     networks: typing.Union[str, NetworkType, typing.List[NetworkType]],
+    ip: typing.Union[str, int],
     version: typing.Literal[0, 4, 6] = 0,
 ) -> bool:
     if isinstance(ip, str):
