@@ -85,7 +85,7 @@ def longToIp(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
     convert long int to ipv4 or ipv6 address, depending on size
     """
     if n > 2**32 or version == 6:
-        return str(ipaddress.IPv6Address(n))
+        return str(ipaddress.IPv6Address(n).compressed)
     else:
         return str(ipaddress.IPv4Address(n))
 

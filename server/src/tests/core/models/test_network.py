@@ -32,54 +32,27 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import logging
 
+from uds.models import Network
 
-from uds.core import messaging
-
-from ..fixtures import notifiers as notifiers_fixtures
-from ..utils.test import UDSTestCase
-
-if typing.TYPE_CHECKING:
-    from uds import models
-
+from ...utils.test import UDSTestCase
 
 logger = logging.getLogger(__name__)
 
-
-class EmailNotifierTest(UDSTestCase):
-    """
-    Test Email Notifier
-    """
+class NetworkModelTest(UDSTestCase):
+    nets: 'typing.List[Network]'
 
     def setUp(self) -> None:
-        # Setup smtp server
-        from aiosmtpd.controller import Controller
-        from aiosmtpd.handlers import Debugging
-
-        self.smtp_server = Controller(
-            handler=Debugging(),
-            hostname='localhost',
-            port=1025,
-        )
-        self.smtp_server.start()
-        
-    def tearDown(self) -> None:
-        # Stop smtp debug server
-        self.smtp_server.stop()
-
-    def test_email_notifier(self) -> None:
-        """
-        Test email notifier
-        """
-        notifier = notifiers_fixtures.createEmailNotifier(
-            host='localhost',
-            port=self.smtp_server.port,
-            enableHtml=False
-        )
-
-        notifier.getInstance().notify(
-            'Group',
-            'Identificator',
-            messaging.NotificationLevel.CRITICAL,
-            'Test message cañón',
-        )
-
+        super().setUp()
+        self.nets = []
+        for i in range(32):
+            n = Network()
+            n.name = f'Network {i}'
+            if i % 2 == 0:
+                n.net_string = f'192.168.{i}.0/24'
+            else:  # ipv6 net
+                n.net_string = f'2001:db8:85a3:8d3:13{i:02x}::/64'
+            n.save()
+            self.nets.append(n)
+    
+    def testNetworks(self) -> None:
+        pass

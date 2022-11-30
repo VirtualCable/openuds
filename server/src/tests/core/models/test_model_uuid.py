@@ -63,7 +63,7 @@ class ModelUUIDTest(UDSTestCase):
         """
         Tests that uuids are regenerated when user is saved
         """
-        self.user.uuid = None
+        self.user.uuid = ''
         self.user.save()
         self.assertNotEqual(None, self.user.uuid)
 

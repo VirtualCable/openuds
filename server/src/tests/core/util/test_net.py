@@ -57,45 +57,39 @@ class NetTest(UDSTestCase):
             ('192.168.0.1-192.168.0.87', 3232235521, 3232235607),
             ('192.168.0.1 netmask 255.255.255.0', 3232235520, 3232235775),
         ):
-            try:
-                multiple_net: typing.List[net.NetworkType] = net.networksFromString(
-                    n[0]
-                )
-                self.assertEqual(
-                    len(multiple_net),
-                    1,
-                    'Incorrect number of network returned from {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    multiple_net[0][0],
-                    n[1],
-                    'Incorrect network start value for {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    multiple_net[0][1],
-                    n[2],
-                    'Incorrect network end value for {0}'.format(n[0]),
-                )
+            multiple_net: typing.List[net.NetworkType] = net.networksFromString(n[0])
+            self.assertEqual(
+                len(multiple_net),
+                1,
+                'Incorrect number of network returned from {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                multiple_net[0][0],
+                n[1],
+                'Incorrect network start value for {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                multiple_net[0][1],
+                n[2],
+                'Incorrect network end value for {0}'.format(n[0]),
+            )
 
-                single_net: net.NetworkType = net.networkFromString(n[0])
-                self.assertEqual(
-                    len(single_net),
-                    3,
-                    'Incorrect number of network returned from {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    single_net[0],
-                    n[1],
-                    'Incorrect network start value for {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    single_net[1],
-                    n[2],
-                    'Incorrect network end value for {0}'.format(n[0]),
-                )
-            except Exception as e:
-                logger.exception('Running test')
-                raise Exception('Value Error: {}. Input string: {}'.format(e, n[0]))
+            single_net: net.NetworkType = net.networkFromString(n[0])
+            self.assertEqual(
+                len(single_net),
+                3,
+                'Incorrect number of network returned from {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                single_net[0],
+                n[1],
+                'Incorrect network start value for {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                single_net[1],
+                n[2],
+                'Incorrect network end value for {0}'.format(n[0]),
+            )
 
         for n in ('192.168.0', '192.168.0.5-192.168.0.3', 'no net'):
             with self.assertRaises(ValueError):
@@ -113,6 +107,14 @@ class NetTest(UDSTestCase):
             self.assertTrue(
                 net.ipInNetwork(n * 1000, net.NetworkType(0, 4294967295, 4))
             )
+
+        # Test some ip conversions from long to ip and viceversa
+        for n in ('172', '192', '10'):
+            for n2 in range(0, 256, 17):
+                for n3 in range(0, 256, 13):
+                    for n4 in range(0, 256, 11):
+                        ip = '{0}.{1}.{2}.{3}'.format(n, n2, n3, n4)
+                        self.assertEqual(net.longToIp(net.ipToLong(ip).ip, 4), ip)
 
     def testNetworkFromStringIPv6(self):
         # IPv6 only support standard notation, and '*', but not "netmask" or "range"
@@ -144,48 +146,56 @@ class NetTest(UDSTestCase):
             ),
             (
                 'fe80::/10',
-                33828852492726108965401889684134769408,
-                33828852492726108965401889684134769408 + 2**118 - 1,
+                338288524927261089654018896841347694592,
+                338620831926207318622244848606417780735,
             ),
         ):
-            try:
-                multiple_net: typing.List[net.NetworkType] = net.networksFromString(
-                    n[0], version=(6 if n[0] == '*' else 0)
-                )
-                self.assertEqual(
-                    len(multiple_net),
-                    1,
-                    'Incorrect number of network returned from {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    multiple_net[0][0],
-                    n[1],
-                    'Incorrect network start value for {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    multiple_net[0][1],
-                    n[2],
-                    'Incorrect network end value for {0}'.format(n[0]),
-                )
+            multiple_net: typing.List[net.NetworkType] = net.networksFromString(
+                n[0], version=(6 if n[0] == '*' else 0)
+            )
+            self.assertEqual(
+                len(multiple_net),
+                1,
+                'Incorrect number of network returned from {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                multiple_net[0][0],
+                n[1],
+                'Incorrect network start value for {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                multiple_net[0][1],
+                n[2],
+                'Incorrect network end value for {0}'.format(n[0]),
+            )
 
-                single_net: net.NetworkType = net.networkFromString(
-                    n[0], version=(6 if n[0] == '*' else 0)
-                )
-                self.assertEqual(
-                    len(single_net),
-                    3,
-                    'Incorrect number of network returned from {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    single_net[0],
-                    n[1],
-                    'Incorrect network start value for {0}'.format(n[0]),
-                )
-                self.assertEqual(
-                    single_net[1],
-                    n[2],
-                    'Incorrect network end value for {0}'.format(n[0]),
-                )
-            except Exception as e:
-                logger.exception('Running test')
-                raise Exception('Value Error: {}. Input string: {}'.format(e, n[0]))
+            single_net: net.NetworkType = net.networkFromString(
+                n[0], version=(6 if n[0] == '*' else 0)
+            )
+            self.assertEqual(
+                len(single_net),
+                3,
+                'Incorrect number of network returned from {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                single_net[0],
+                n[1],
+                'Incorrect network start value for {0}'.format(n[0]),
+            )
+            self.assertEqual(
+                single_net[1],
+                n[2],
+                'Incorrect network end value for {0}'.format(n[0]),
+            )
+
+        # iterate some ipv6 addresses
+        for n in (
+            '2001:db8::1',
+            '2001:1::1',
+            '2001:2:3::1',
+            '2001:2:3:4::1',
+            '2001:2:3:4:5::1',
+            '2001:2:3:4:5:6:0:1',
+        ):
+            # Ensure converting back to string ips works
+            self.assertEqual(net.longToIp(net.ipToLong(n).ip, 6), n)
