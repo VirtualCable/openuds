@@ -50,9 +50,53 @@ logger = logging.getLogger(__name__)
 
 
 class SMSMFA(mfas.MFA):
-    typeName = _('SMS Thought HTTP')
+    """
+    Simple explnation of this class:
+
+    Basically, this is an interface to sending SMS messages to a phone number with the code to be used in the MFA process.
+    The Code will be check by UDS, and is generated also by UDS.
+
+    Basically, we will describe the HTTP Requeset needed to send the SMS, and the response we expect to get.
+
+    Example, we have a service, that provides us a method of sending an SMS with the following:
+    * URL: https://myserver.com/sendsms
+    * Method: POST
+    * content-type: application/x-www-form-urlencoded
+    * Parameters: phone={phone}&message={message}
+    * Headers:
+      - Authorization header: "Auth: 1234567890"
+      - Content-Type header: "application/x-www-form-urlencoded"
+      - NonsenseExtraHeader: "This is a nonsense example header"
+
+    If sms is sent, the response will be:
+    * Status code: 200
+    * Content-Type: application/json
+    * Content: {"status": "ok"}
+
+    The fields will have the following values:
+
+    sendingUrl: https://myserver.com/sendsms
+    ignoreCertificateErrors: False  (check certificate errors)
+    sendingMethod: 1 (POST)
+    headersParameters:
+       Auth: 1234567890
+       Content-Type: application/x-www-form-urlencoded
+       NonsenseExtraHeader: This is a nonsense example header
+    sendingParameters: phone={phone}&message={message}
+    encoding: 0 (UTF-8)
+    authenticationMethod: 0 (No authentication, already done in the headers field)
+    authenticationUserOrToken: (empty)
+    authenticationPassword: (empty)
+    responseOkRegex: {"status": "ok"}  (This is a regex. Only 2xx,3xx responses will be considered ok)
+    responseErrorAction: 1 (Deny login)
+    allowLoginWithoutMFA: 1 (If MFA Field (in our example, phone) is not provided, deny login)
+    networks: (empty) (If not empty, only users from this networks will be allowed to use this MFA)
+
+
+    """
+    typeName = _('SMS via HTTP')
     typeType = 'smsHttpMFA'
-    typeDescription = _('Simple SMS sending MFA using HTTP')
+    typeDescription = _('Simple SMS sending MFA using HTTP/HTTPS')
     iconFile = 'sms.png'
 
     sendingUrl = gui.TextField(
@@ -187,8 +231,8 @@ class SMSMFA(mfas.MFA):
         values={
             '0': _('Allow user login'),
             '1': _('Deny user login'),
-            '2': _('Allow user to login if it IP is in the networks list'),
-            '3': _('Deny user to login if it IP is in the networks list'),
+            '2': _('Allow user to login if its IP is in the networks list'),
+            '3': _('Deny user to login if its IP is in the networks list'),
         },
         tab=_('Config'),
     )
@@ -202,8 +246,8 @@ class SMSMFA(mfas.MFA):
         values={
             '0': _('Allow user login'),
             '1': _('Deny user login'),
-            '2': _('Allow user to login if it IP is in the networks list'),
-            '3': _('Deny user to login if it IP is in the networks list'),
+            '2': _('Allow user to login if its IP is in the networks list'),
+            '3': _('Deny user to login if its IP is in the networks list'),
         },
         tab=_('Config'),
     )
