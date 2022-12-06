@@ -279,9 +279,9 @@ def allowCache(
                 # Remove force key
                 del kwargs['force']
 
-            t = time.perf_counter_ns()
+            t = time.thread_time_ns()
             data = fnc(*args, **kwargs)
-            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + time.perf_counter_ns() - t)
+            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + time.thread_time_ns() - t)
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                 cache.put(cacheKey, data, timeout)
