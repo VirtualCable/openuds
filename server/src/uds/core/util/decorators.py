@@ -36,8 +36,7 @@ import inspect
 import typing
 import threading
 
-if typing.TYPE_CHECKING:
-    from uds.core.util.cache import Cache
+from uds.core.util.cache import Cache
 
 
 logger = logging.getLogger(__name__)
@@ -148,12 +147,8 @@ def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 def allowCache(
     cachePrefix: str,
     cacheTimeout: typing.Union[typing.Callable[[], int], int] = -1,
-    cachingArgs: typing.Optional[
-        typing.Union[typing.List[int], typing.Tuple[int], int]
-    ] = None,
-    cachingKWArgs: typing.Optional[
-        typing.Union[typing.List[str], typing.Tuple[str], str]
-    ] = None,
+    cachingArgs: typing.Optional[typing.Union[typing.Iterable[int], int]] = None,
+    cachingKWArgs: typing.Optional[typing.Union[typing.Iterable[str], str]] = None,
     cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None,
 ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature.
@@ -167,36 +162,54 @@ def allowCache(
     :param cachingKeyFnc: A function that receives the args and kwargs and returns the key
     """
     cacheTimeout = Cache.DEFAULT_VALIDITY if cacheTimeout == -1 else cacheTimeout
-    keyFnc = cachingKeyFnc or (lambda x: '')
+    cachingArgList: typing.List[int] = (
+        [cachingArgs] if isinstance(cachingArgs, int) else list(cachingArgs or [])
+    )
+    cachingKwargList: typing.List[str] = (
+        isinstance(cachingKWArgs, str) and [cachingKWArgs] or list(cachingKWArgs or [])
+    )
 
     def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+        # If no caching args and no caching kwargs, we will cache the whole call
+        # If no parameters provider, try to infer them from function signature
+        try:
+            if not cachingArgList and not cachingKwargList:
+                for pos, (paramName, param) in enumerate(
+                    inspect.signature(fnc).parameters.items()
+                ):
+                    if paramName == 'self':
+                        continue
+                    if param.kind in (
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        inspect.Parameter.POSITIONAL_ONLY,
+                    ):
+                        cachingArgList.append(pos)
+                    elif param.kind in (inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD):
+                        cachingKwargList.append(paramName)
+                    # *args and **kwargs are not supported                    
+        except Exception:  # nosec
+            pass  # Not inspectable, no caching
+        
+        keyFnc = cachingKeyFnc or (lambda x: fnc.__name__)
+        
         @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
-            argList: typing.List[str] = []
-            if cachingArgs:
-                ar = (
-                    [cachingArgs]
-                    if not isinstance(cachingArgs, (list, tuple))
-                    else cachingArgs
-                )
-                argList = [args[i] if i < len(args) else '' for i in ar]
+            argList: str = '.'.join(
+                [str(args[i]) for i in cachingArgList if i < len(args)]
+                + [str(kwargs.get(i, '')) for i in cachingKwargList]
+            )
+            # If invoked from a class, and the class provides "cache"
+            # we will use it, otherwise, we will use a global cache
+            cache = getattr(args[0], 'cache', None) or Cache('functionCache')
+            kkey = keyFnc(args[0]) if len(args) > 0 else ''
+            cacheKey = '{}-{}.{}'.format(cachePrefix, kkey, argList)
 
-            if cachingKWArgs:
-                kw = (
-                    [cachingKWArgs]
-                    if not isinstance(cachingKWArgs, (list, tuple))
-                    else cachingKWArgs
-                )
-                argList += [str(kwargs.get(i, '')) for i in kw]
-
-            if argList:
-                cacheKey = '{}-{}.{}'.format(cachePrefix, keyFnc(args[0]), argList)
-            else:
-                cacheKey = '{}-{}.gen'.format(cachePrefix, keyFnc(args[0]))
+            # if cacheTimeout is a function, call it
+            timeout = cacheTimeout() if callable(cacheTimeout) else cacheTimeout
 
             data: typing.Any = None
-            if kwargs.get('force', False) is False and args[0].cache:
-                data = args[0].cache.get(cacheKey)
+            if not kwargs.get('force', False) and timeout > 0:
+                data = cache.get(cacheKey)
                 if data:
                     logger.debug('Cache hit for %s', cacheKey)
                     return data
@@ -205,24 +218,18 @@ def allowCache(
                 # Remove force key
                 del kwargs['force']
                 
-            # ic cacheTimeout is a function, call it
-            timeout = cacheTimeout
-            if callable(timeout):
-                timeout = timeout()
-
-            if args[0].cache:  # Not in cache and object can cache it
-                data = fnc(*args, **kwargs)
-                try:
-                    # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                    args[0].cache.put(cacheKey, data, timeout)
-                except Exception as e:
-                    logger.debug(
-                        'Data for %s is not serializable on call to %s, not cached. %s (%s)',
-                        cacheKey,
-                        fnc.__name__,
-                        data,
-                        e,
-                    )
+            data = fnc(*args, **kwargs)
+            try:
+                # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
+                cache.put(cacheKey, data, timeout)
+            except Exception as e:
+                logger.debug(
+                    'Data for %s is not serializable on call to %s, not cached. %s (%s)',
+                    cacheKey,
+                    fnc.__name__,
+                    data,
+                    e,
+                )
             return data
 
         return wrapper
