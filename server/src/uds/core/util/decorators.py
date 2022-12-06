@@ -34,6 +34,8 @@ from functools import wraps
 import logging
 import inspect
 import typing
+import time
+import timeit
 import threading
 
 from uds.core.util.html import checkBrowser
@@ -44,6 +46,54 @@ from uds.web.util import errors
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
+
+# Caching statistics
+class StatsType:
+    __slots__ = ('hits', 'misses', 'total', 'start_time', 'saving_time')
+
+    hits: int
+    misses: int
+    total: int
+    start_time: float
+    saving_time: float
+    
+    def __init__(self) -> None:
+        self.hits = 0
+        self.misses = 0
+        self.total = 0
+        self.start_time = time.time()
+        self.saving_time = 0
+
+    def add_hit(self, saving_time: float = 0.0) -> None:
+        self.hits += 1
+        self.total += 1
+        self.saving_time += saving_time
+
+    def add_miss(self, saving_time: float = 0.0) -> None:
+        self.misses += 1
+        self.total += 1
+        self.saving_time += saving_time
+
+    @property
+    def uptime(self) -> float:
+        return time.time() - self.start_time
+
+    @property
+    def hit_rate(self) -> float:
+        return self.hits / self.total if self.total > 0 else 0.0
+
+    @property
+    def miss_rate(self) -> float:
+        return self.misses / self.total if self.total > 0 else 0.0
+
+    def __str__(self) -> str:
+        return (
+            f'CacheStats: {self.hits}/{self.misses} on {self.total}, '
+            f'uptime={self.uptime}, hit_rate={self.hit_rate:.2f}, '
+            f'saving_time={self.saving_time:.2f}'
+        )
+
+stats = StatsType()
 
 # Decorator that protects pages that needs at least a browser version
 # Default is to deny IE < 9
@@ -125,11 +175,18 @@ def allowCache(
     """Decorator that give us a "quick& clean" caching feature.
     The "cached" element must provide a "cache" variable, which is a cache object
 
-    :param cachePrefix: the cache key "prefix" (prepended on generated key from args)
-    :param cacheTimeout: The cache timeout in seconds
-    :param cachingArgs: The caching args. Can be a single integer or a list.
-                        First arg (self) is 0, so normally cachingArgs are 1, or [1,2,..]
+    Parameters:
+        cachePrefix: Prefix to use for cache key
+        cacheTimeout: Timeout for cache
+        cachingArgs: List of arguments to use for cache key (i.e. [0, 1] will use first and second argument for cache key, 0 will use "self" if a method, and 1 will use first argument)
+        cachingKWArgs: List of keyword arguments to use for cache key (i.e. ['a', 'b'] will use "a" and "b" keyword arguments for cache key)
+        cachingKeyFnc: Function to use for cache key. If provided, this function will be called with the same arguments as the wrapped function, and must return a string to use as cache key
+    
+    Note: 
+        If cachingArgs and cachingKWArgs are not provided, the whole arguments will be used for cache key
+
     """
+
     cachingArgList: typing.List[int] = (
         [cachingArgs] if isinstance(cachingArgs, int) else list(cachingArgs or [])
     )
@@ -140,13 +197,17 @@ def allowCache(
     def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
+        setattr(fnc, '__cache_hit__', 0)  # Cache hit
+        setattr(fnc, '__cache_miss__', 0) # Cache miss
+        setattr(fnc, '__exec_time__', 0.0)  # Execution time
         try:
-            if not cachingArgList and not cachingKwargList:
+            if cachingArgList is None and cachingKwargList is None:
                 for pos, (paramName, param) in enumerate(
                     inspect.signature(fnc).parameters.items()
                 ):
                     if paramName == 'self':
                         continue
+                    # Parameters can be included twice in the cache, but it's not a problem
                     if param.kind in (
                         inspect.Parameter.POSITIONAL_OR_KEYWORD,
                         inspect.Parameter.POSITIONAL_ONLY,
@@ -176,14 +237,20 @@ def allowCache(
             if not kwargs.get('force', False) and cacheTimeout > 0:
                 data = cache.get(cacheKey)
                 if data:
-                    logger.debug('Cache hit for %s', cacheKey)
+                    setattr(fnc, '__cache_hit__', getattr(fnc, '__cache_hit__') + 1)
+                    stats.add_hit(getattr(fnc, '__exec_time__'))
                     return data
+
+            setattr(fnc, '__cache_miss__', getattr(fnc, '__cache_miss__') + 1)
+            stats.add_miss(getattr(fnc, '__exec_time__'))
 
             if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
 
+            time = timeit.default_timer()
             data = fnc(*args, **kwargs)
+            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + timeit.default_timer() - time)
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                 cache.put(cacheKey, data, cacheTimeout)
