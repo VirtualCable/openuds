@@ -35,7 +35,6 @@ import logging
 import inspect
 import typing
 import time
-import timeit
 import threading
 
 from uds.core.util.html import checkBrowser
@@ -55,7 +54,7 @@ class StatsType:
     misses: int
     total: int
     start_time: float
-    saving_time: float
+    saving_time: int  # in nano seconds
     
     def __init__(self) -> None:
         self.hits = 0
@@ -64,12 +63,12 @@ class StatsType:
         self.start_time = time.time()
         self.saving_time = 0
 
-    def add_hit(self, saving_time: float = 0.0) -> None:
+    def add_hit(self, saving_time: int = 0) -> None:
         self.hits += 1
         self.total += 1
         self.saving_time += saving_time
 
-    def add_miss(self, saving_time: float = 0.0) -> None:
+    def add_miss(self, saving_time: int = 0) -> None:
         self.misses += 1
         self.total += 1
         self.saving_time += saving_time
@@ -90,7 +89,7 @@ class StatsType:
         return (
             f'CacheStats: {self.hits}/{self.misses} on {self.total}, '
             f'uptime={self.uptime}, hit_rate={self.hit_rate:.2f}, '
-            f'saving_time={self.saving_time:.2f}'
+            f'saving_time={self.saving_time/1000000:.2f}'
         )
 
 stats = StatsType()
@@ -199,7 +198,7 @@ def allowCache(
         # If no parameters provider, try to infer them from function signature
         setattr(fnc, '__cache_hit__', 0)  # Cache hit
         setattr(fnc, '__cache_miss__', 0) # Cache miss
-        setattr(fnc, '__exec_time__', 0.0)  # Execution time
+        setattr(fnc, '__exec_time__', 0)  # Execution time
         try:
             if cachingArgList is None and cachingKwargList is None:
                 for pos, (paramName, param) in enumerate(
@@ -248,9 +247,9 @@ def allowCache(
                 # Remove force key
                 del kwargs['force']
 
-            time = timeit.default_timer()
+            t = time.perf_counter_ns()
             data = fnc(*args, **kwargs)
-            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + timeit.default_timer() - time)
+            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + time.perf_counter_ns() - t)
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                 cache.put(cacheKey, data, cacheTimeout)
