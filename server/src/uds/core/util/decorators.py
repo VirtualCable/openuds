@@ -35,7 +35,6 @@ import logging
 import inspect
 import typing
 import time
-import timeit
 import threading
 
 from uds.core.util.cache import Cache
@@ -53,7 +52,7 @@ class StatsType:
     misses: int
     total: int
     start_time: float
-    saving_time: float
+    saving_time: int  # in nano seconds
     
     def __init__(self) -> None:
         self.hits = 0
@@ -62,12 +61,12 @@ class StatsType:
         self.start_time = time.time()
         self.saving_time = 0
 
-    def add_hit(self, saving_time: float = 0.0) -> None:
+    def add_hit(self, saving_time: int = 0) -> None:
         self.hits += 1
         self.total += 1
         self.saving_time += saving_time
 
-    def add_miss(self, saving_time: float = 0.0) -> None:
+    def add_miss(self, saving_time: int = 0) -> None:
         self.misses += 1
         self.total += 1
         self.saving_time += saving_time
@@ -88,7 +87,7 @@ class StatsType:
         return (
             f'CacheStats: {self.hits}/{self.misses} on {self.total}, '
             f'uptime={self.uptime}, hit_rate={self.hit_rate:.2f}, '
-            f'saving_time={self.saving_time:.2f}'
+            f'saving_time={self.saving_time/1000000:.2f}'
         )
 
 stats = StatsType()
@@ -279,10 +278,10 @@ def allowCache(
             if 'force' in kwargs:
                 # Remove force key
                 del kwargs['force']
-                
-            time = timeit.default_timer()
+
+            t = time.perf_counter_ns()
             data = fnc(*args, **kwargs)
-            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + timeit.default_timer() - time)
+            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + time.perf_counter_ns() - t)
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                 cache.put(cacheKey, data, timeout)
