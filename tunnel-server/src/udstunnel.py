@@ -157,7 +157,7 @@ async def tunnel_proc_async(
 
     while tasks:
         to_wait = tasks[:]  # Get a copy of the list, and clean the original
-        # Wait for all tasks to finish
+        # Wait for tasks to finish
         done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
         # Remove finished tasks
         for task in done:
