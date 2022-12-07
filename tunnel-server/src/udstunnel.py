@@ -41,7 +41,16 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 import typing
 
-import setproctitle
+try:
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:
+    pass  # no uvloop support
+
+try:
+    import setproctitle
+except ImportError:
+    setproctitle = None  # type: ignore
 
 
 from uds_tunnel import config, proxy, consts, processes, stats
@@ -202,7 +211,8 @@ def tunnel_main() -> None:
         logger.info(
             'Starting tunnel server on %s:%s', cfg.listen_address, cfg.listen_port
         )
-        setproctitle.setproctitle(f'UDSTunnel {cfg.listen_address}:{cfg.listen_port}')
+        if setproctitle:
+            setproctitle.setproctitle(f'UDSTunnel {cfg.listen_address}:{cfg.listen_port}')
 
         # Create pid file
         if cfg.pidfile:
