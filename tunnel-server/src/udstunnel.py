@@ -156,10 +156,14 @@ async def tunnel_proc_async(
     tasks.append(asyncio.create_task(run_server()))
 
     while tasks:
-        tasks_number = len(tasks)
-        await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
-        # Remove finished tasks from list
-        del tasks[:tasks_number]
+        to_wait = tasks[:]  # Get a copy of the list, and clean the original
+        # Wait for all tasks to finish
+        done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
+        # Remove finished tasks
+        for task in done:
+            tasks.remove(task)
+            if task.exception():
+                logger.exception('TUNNEL ERROR')
 
     logger.info('PROCESS %s stopped', os.getpid())
 
