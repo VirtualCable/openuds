@@ -106,8 +106,11 @@ def setup_log(cfg: config.ConfigurationType) -> None:
 async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
 ) -> None:
-
-    loop = asyncio.get_event_loop()
+    
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:  # older python versions
+        loop = asyncio.get_event_loop()
 
     tasks: typing.List[asyncio.Task] = []
 
@@ -242,6 +245,9 @@ def tunnel_main() -> None:
                     # Check if we have reached the max number of connections
                     # First part is checked on a thread, if HANDSHAKE is valid
                     # we will send socket to process pool
+                    # Note: We use a thread pool here because we want to
+                    #       ensure no denial of service is possible, or at least
+                    #       we try to limit it (if connection delays too long, we will close it on the thread)
                     executor.submit(process_connection, client, addr, prcs.best_child())
                 except socket.timeout:
                     pass  # Continue and retry

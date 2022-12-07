@@ -1,5 +1,6 @@
 import multiprocessing
 import asyncio
+import sys
 import logging
 import typing
 
@@ -124,4 +125,14 @@ class Processes:
         cfg: config.ConfigurationType,
         ns: 'Namespace',
     ) -> None:
-        asyncio.run(proc(conn, cfg, ns))
+        if cfg.use_uvloop:
+            import uvloop
+
+            if sys.version_info >= (3, 11):
+                with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:
+                    runner.run(proc(conn, cfg, ns))
+            else:
+                uvloop.install()
+                asyncio.run(proc(conn, cfg, ns))
+        else:
+            asyncio.run(proc(conn, cfg, ns))

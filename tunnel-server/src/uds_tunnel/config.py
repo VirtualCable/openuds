@@ -62,6 +62,8 @@ class ConfigurationType(typing.NamedTuple):
 
     secret: str
     allow: typing.Set[str]
+
+    use_uvloop: bool
     
 
 def read() -> ConfigurationType:
@@ -108,6 +110,7 @@ def read() -> ConfigurationType:
             uds_token=uds.get('uds_token', 'unauthorized'),
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
+            use_uvloop=uds.get('use_uvloop', 'true').lower() == 'true',
         )
     except ValueError as e:
         raise Exception(f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}')

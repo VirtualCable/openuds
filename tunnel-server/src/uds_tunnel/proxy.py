@@ -44,10 +44,10 @@ logger = logging.getLogger(__name__)
 
 
 class Proxy:
-    cfg: config.ConfigurationType
+    cfg: 'config.ConfigurationType'
     ns: 'Namespace'
 
-    def __init__(self, cfg: config.ConfigurationType, ns: 'Namespace') -> None:
+    def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
         self.cfg = cfg
         self.ns = ns
 
