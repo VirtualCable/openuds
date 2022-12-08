@@ -25,11 +25,14 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+import asyncio
 import logging
 import typing
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.utils.decorators import sync_and_async_middleware
+
 from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
@@ -38,39 +41,29 @@ if typing.TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 
-class RedirectMiddleware:
-    """
-    This class is responsible of redirection, if checked, requests to HTTPS.
+_NO_REDIRECT: typing.List[str] = [
+    'rest',
+    'pam',
+    'guacamole',
+    # For new paths
+    # 'uds/rest',  # REST must be HTTPS if redirect is enabled
+    'uds/pam',
+    'uds/guacamole',
+    # Test client can be http
+    'uds/rest/client/test',
+    # And also the tunnel
+    'uds/rest/tunnel',
+]
 
-    Some paths will not be redirected, to avoid problems, but they are advised to use SSL (this is for backwards compat)
-    """
-    __slots__ = ('get_response',)
+def registerException(path: str) -> None:
+    _NO_REDIRECT.append(path)
 
-    NO_REDIRECT: typing.ClassVar[typing.List[str]] = [
-        'rest',
-        'pam',
-        'guacamole',
-        # For new paths
-        # 'uds/rest',  # REST must be HTTPS if redirect is enabled
-        'uds/pam',
-        'uds/guacamole',
-        # Test client can be http
-        'uds/rest/client/test',
-        # And also the tunnel
-        'uds/rest/tunnel',
-    ]
-
-    get_response: typing.Any  # typing.Callable[['HttpRequest'], 'HttpResponse']
-
-    def __init__(
-        self, get_response: typing.Callable[['HttpRequest'], 'HttpResponse']
-    ) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: 'HttpRequest') -> 'HttpResponse':
+@sync_and_async_middleware
+def RedirectMiddleware(get_response: typing.Any) -> typing.Union[typing.Callable, typing.Coroutine]:
+    def check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
         full_path = request.get_full_path()
         redirect = True
-        for nr in RedirectMiddleware.NO_REDIRECT:
+        for nr in _NO_REDIRECT:
             if full_path.startswith('/' + nr):
                 redirect = False
                 break
@@ -88,8 +81,16 @@ class RedirectMiddleware:
             url = url.replace('http://', 'https://')
 
             return HttpResponseRedirect(url)
-        return self.get_response(request)
+        return None
 
-    @staticmethod
-    def registerException(path: str) -> None:
-        RedirectMiddleware.NO_REDIRECT.append(path)
+    # One-time configuration and initialization.
+    if asyncio.iscoroutinefunction(get_response):
+        async def async_middleware(request: 'HttpRequest') -> 'HttpResponse':
+            response = check_redirectable(request)
+            return response or await get_response(request)
+        return async_middleware
+    else:
+        def sync_middleware(request: 'HttpRequest') -> 'HttpResponse':
+            response = check_redirectable(request)
+            return response or get_response(request)
+        return sync_middleware
