@@ -26,27 +26,27 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
+import typing
 import logging
+
+from . import builder
+
+if typing.TYPE_CHECKING:
+    from django.http import HttpResponse
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
+def _process_response(
+    request: 'ExtendedHttpRequest', response: 'HttpResponse'
+) -> 'HttpResponse':
+    if response.get('content-type', '').startswith('text/html'):
+        response['X-UA-Compatible'] = 'IE=edge'
+    return response
 
-class XUACompatibleMiddleware:
-    """
-    Add a X-UA-Compatible header to the response
-    This header tells to Internet Explorer to render page with latest
-    possible version or to use chrome frame if it is installed.
-    """
-    __slots__ = ('get_response',)
-
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        response = self.get_response(request)
-        if response.get('content-type', '').startswith('text/html'):
-            response['X-UA-Compatible'] = 'IE=edge'
-        return response
+# Add a X-UA-Compatible header to the response
+# This header tells to Internet Explorer to render page with latest
+# possible version or to use chrome frame if it is installed. TO BE REMOVED SOON (edge does not need it)
+XUACompatibleMiddleware = builder.build_middleware(lambda x: None, _process_response)

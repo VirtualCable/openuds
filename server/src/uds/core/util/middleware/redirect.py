@@ -25,15 +25,19 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import asyncio
+"""
+ Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+
 import logging
 import typing
 
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.utils.decorators import sync_and_async_middleware
 
 from uds.core.util.config import GlobalConfig
+
+from . import builder
 
 logger = logging.getLogger(__name__)
 
@@ -55,42 +59,34 @@ _NO_REDIRECT: typing.List[str] = [
     'uds/rest/tunnel',
 ]
 
+
 def registerException(path: str) -> None:
     _NO_REDIRECT.append(path)
 
-@sync_and_async_middleware
-def RedirectMiddleware(get_response: typing.Any) -> typing.Union[typing.Callable, typing.Coroutine]:
-    def check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
-        full_path = request.get_full_path()
-        redirect = True
-        for nr in _NO_REDIRECT:
-            if full_path.startswith('/' + nr):
-                redirect = False
-                break
 
-        if (
-            redirect
-            and not request.is_secure()
-            and GlobalConfig.REDIRECT_TO_HTTPS.getBool()
-        ):
-            if request.method == 'POST':
-                # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
-                url = reverse('page.login')
-            else:
-                url = request.build_absolute_uri(full_path)
-            url = url.replace('http://', 'https://')
+def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
+    full_path = request.get_full_path()
+    redirect = True
+    for nr in _NO_REDIRECT:
+        if full_path.startswith('/' + nr):
+            redirect = False
+            break
 
-            return HttpResponseRedirect(url)
-        return None
+    if (
+        redirect
+        and not request.is_secure()
+        and GlobalConfig.REDIRECT_TO_HTTPS.getBool()
+    ):
+        if request.method == 'POST':
+            # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
+            url = reverse('page.login')
+        else:
+            url = request.build_absolute_uri(full_path)
+        url = url.replace('http://', 'https://')
 
-    # One-time configuration and initialization.
-    if asyncio.iscoroutinefunction(get_response):
-        async def async_middleware(request: 'HttpRequest') -> 'HttpResponse':
-            response = check_redirectable(request)
-            return response or await get_response(request)
-        return async_middleware
-    else:
-        def sync_middleware(request: 'HttpRequest') -> 'HttpResponse':
-            response = check_redirectable(request)
-            return response or get_response(request)
-        return sync_middleware
+        return HttpResponseRedirect(url)
+    return None
+
+
+# Compatibility with old middleware, so we can use it in settings.py as it was
+RedirectMiddleware = builder.build_middleware(_check_redirectable, lambda _, y: y)

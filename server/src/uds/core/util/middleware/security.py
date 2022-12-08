@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2022 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -25,65 +25,63 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+ Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+
 import re
 import logging
 import typing
 
 logger = logging.getLogger(__name__)
 
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import isTrustedSource
 
-from uds.core.util.request import ExtendedHttpRequest
+
+from . import builder
 
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest
+    from django.http import HttpResponse
+    from uds.core.util.request import ExtendedHttpRequest
 
 # Simple Bot detection
 bot = re.compile(r'bot|spider', re.IGNORECASE)
 
 
-class UDSSecurityMiddleware:
-    '''
-    This class contains all the security checks done by UDS in order to add some extra protection.
-    '''
-    __slots__ = ('get_response',)
-
-    get_response: typing.Any  # typing.Callable[['HttpRequest'], 'HttpResponse']
-
-    def __init__(
-        self, get_response: typing.Callable[['HttpRequest'], 'HttpResponse']
-    ) -> None:
-        self.get_response = get_response
-
-    def __call__(self, request: 'ExtendedHttpRequest') -> 'HttpResponse':
-        ua = request.META.get(
-            'HTTP_USER_AGENT', 'Unknown'
+def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpResponse']:
+    ua = request.META.get('HTTP_USER_AGENT', 'Unknown')
+    # If bot, break now
+    if bot.search(ua) or (ua == 'Unknown' and not isTrustedSource(request.ip)):
+        # Return emty response if bot is detected
+        logger.info(
+            'Denied Bot %s from %s to %s',
+            ua,
+            request.META.get(
+                'REMOTE_ADDR',
+                request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[-1],
+            ),
+            request.path,
         )
-        # If bot, break now
-        if bot.search(ua) or (ua == 'Unknown' and not isTrustedSource(request.ip)):
-            # Return emty response if bot is detected
-            logger.info(
-                'Denied Bot %s from %s to %s',
-                ua,
-                request.META.get(
-                    'REMOTE_ADDR',
-                    request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")[-1],
-                ),
-                request.path,
-            )
-            return HttpResponse(content='Forbbiden', status=403)
+        return HttpResponseForbidden(content='Forbbiden', content_type='text/plain')
+    return None
 
-        response = self.get_response(request)
 
-        if GlobalConfig.ENHANCED_SECURITY.getBool():
-            # Legacy browser support for X-XSS-Protection
-            response.headers.setdefault('X-XSS-Protection', '1; mode=block')
-            # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
-            response.headers.setdefault(
-                'Content-Security-Policy',
-                "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;",
-            )
-        return response
+def _process_response(
+    request: 'ExtendedHttpRequest', response: 'HttpResponse'
+) -> 'HttpResponse':
+    if GlobalConfig.ENHANCED_SECURITY.getBool():
+        # Legacy browser support for X-XSS-Protection
+        response.headers.setdefault('X-XSS-Protection', '1; mode=block')  # type: ignore
+        # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy
+        response.headers.setdefault(  # type: ignore
+            'Content-Security-Policy',
+            "default-src 'self' 'unsafe-inline' 'unsafe-eval' uds: udss:; img-src 'self' https: data:;",
+        )
+    return response
+
+
+# Compatibility with old middleware, so we can use it in settings.py as it was
+UDSSecurityMiddleware = builder.build_middleware(_process_request, _process_response)

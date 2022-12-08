@@ -26,13 +26,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
 import typing
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponseForbidden
 from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
@@ -47,7 +47,10 @@ from uds.core.auths.auth import (
 )
 from uds.models import User
 
+from . import builder 
+
 if typing.TYPE_CHECKING:
+    from django.http import HttpResponse
     from uds.core.util.request import ExtendedHttpRequest
 
 
@@ -57,132 +60,123 @@ logger = logging.getLogger(__name__)
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
 
-class GlobalRequestMiddleware:
-    __slots__ = ('_get_response',)
+def _fill_ips(request: 'ExtendedHttpRequest') -> None:
+    """
+    Obtains the IP of a Django Request, even behind a proxy
 
-    lastCheck: typing.ClassVar[datetime.datetime] = datetime.datetime.now()
+    Returns the obtained IP, that always will be a valid ip address.
+    """
+    behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
+    try:
+        request.ip = request.META.get('REMOTE_ADDR', '')
+    except Exception:
+        request.ip = ''  # No remote addr?? ...
 
-    def __init__(self, get_response: typing.Callable[[HttpRequest], HttpResponse]):
-        self._get_response: typing.Callable[[HttpRequest], HttpResponse] = get_response
-
-    def _process_response(self, request: 'ExtendedHttpRequest', response: HttpResponse):
-        # Remove IP from global cache (processing responses after this will make global request unavailable,
-        # but can be got from request again)
-
-        return response
-
-    def __call__(self, request: 'ExtendedHttpRequest'):
-        # Add IP to request
-        GlobalRequestMiddleware.fillIps(request)
-        request.authorized = request.session.get(AUTHORIZED_KEY, False)
-
-        # Ensures request contains os
-        request.os = OsDetector.getOsFromUA(
-            request.META.get('HTTP_USER_AGENT', 'Unknown')
+    # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
+    # We will accept only 2 proxies, the last ones
+    proxies = list(
+        reversed(
+            [
+                i.split('%')[0]
+                for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
+            ]
         )
+    )
+    # proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
+    # proxies = list(reversed(['172.27.0.12', '172.27.0.1']))
+    # proxies = list(reversed(['172.27.0.12']))
+    # request.ip = ''
 
-        # Ensures that requests contains the valid user
-        GlobalRequestMiddleware.getUser(request)
+    logger.debug('Detected proxies: %s', proxies)
 
-        # Now, check if session is timed out...
-        if request.user:
-            # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
-            now = timezone.now()
-            try:
-                expiry = datetime.datetime.fromisoformat(
-                    request.session.get(EXPIRY_KEY, '')
-                )
-            except ValueError:
-                expiry = now
-            if expiry < now:
-                try:
-                    return webLogout(request=request)
-                except Exception:  # nosec: intentionaly catching all exceptions and ignoring them
-                    pass  # If fails, we don't care, we just want to logout
-                return HttpResponse(content='Session Expired', status=403)
-            # Update session timeout..self.
-            request.session[EXPIRY_KEY] = (
-                now
-                + datetime.timedelta(
-                    seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
-                    if request.user.isStaff()
-                    else GlobalConfig.SESSION_DURATION_USER.getInt()
-                )
-            ).isoformat()  # store as ISO format, str, json serilizable
+    # Request.IP will be None in case of nginx & gunicorn using sockets, as we do
+    if not request.ip:
+        request.ip = proxies[0]  # Stores the ip
+        proxies = proxies[1:]  # Remove from proxies list
 
-        response = self._get_response(request)
+    logger.debug('Proxies: %s', proxies)
 
-        # Update authorized on session
-        if hasattr(request, 'session'):
-            request.session[AUTHORIZED_KEY] = request.authorized
+    request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
 
-        return self._process_response(request, response)
+    if behind_proxy:
+        request.ip = request.ip_proxy
+        request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
+        logger.debug('Behind a proxy is active')
 
-    @staticmethod
-    def fillIps(request: 'ExtendedHttpRequest'):
-        """
-        Obtains the IP of a Django Request, even behind a proxy
+    # Check if ip are ipv6 and set version field
+    request.ip_version = 6 if ':' in request.ip else 4
 
-        Returns the obtained IP, that always will be a valid ip address.
-        """
-        behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
+    logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
+
+
+def _get_user(request: 'ExtendedHttpRequest') -> None:
+    """
+    Ensures request user is the correct user
+    """
+    user_id = request.session.get(USER_KEY)
+    user: typing.Optional[User] = None
+    if user_id:
         try:
-            request.ip = request.META.get('REMOTE_ADDR', '')
-        except Exception:
-            request.ip = ''  # No remote addr?? ...
+            if user_id == ROOT_ID:
+                user = getRootUser()
+            else:
+                user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            user = None
 
-        # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
-        # We will accept only 2 proxies, the last ones
-        proxies = list(
-            reversed(
-                [
-                    i.split('%')[0]
-                    for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
-                ]
+    logger.debug('User at Middleware: %s %s', user_id, user)
+
+    request.user = user
+
+
+def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpResponse']:
+    # Add IP to request, user, ...
+    # Add IP to request
+    _fill_ips(request)
+    request.authorized = request.session.get(AUTHORIZED_KEY, False)
+
+    # Ensures request contains os
+    request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT', 'Unknown'))
+
+    # Ensures that requests contains the valid user
+    _get_user(request)
+
+    # Now, check if session is timed out...
+    if request.user:
+        # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
+        now = timezone.now()
+        try:
+            expiry = datetime.datetime.fromisoformat(
+                request.session.get(EXPIRY_KEY, '')
             )
-        )
-        # proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
-        # proxies = list(reversed(['172.27.0.12', '172.27.0.1']))
-        # proxies = list(reversed(['172.27.0.12']))
-        # request.ip = ''
-
-        logger.debug('Detected proxies: %s', proxies)
-
-        # Request.IP will be None in case of nginx & gunicorn using sockets, as we do
-        if not request.ip:
-            request.ip = proxies[0]  # Stores the ip
-            proxies = proxies[1:]  # Remove from proxies list
-
-        logger.debug('Proxies: %s', proxies)
-
-        request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
-
-        if behind_proxy:
-            request.ip = request.ip_proxy
-            request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
-            logger.debug('Behind a proxy is active')
-
-        # Check if ip are ipv6 and set version field
-        request.ip_version = 6 if ':' in request.ip else 4
-
-        logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
-
-    @staticmethod
-    def getUser(request: 'ExtendedHttpRequest') -> None:
-        """
-        Ensures request user is the correct user
-        """
-        user_id = request.session.get(USER_KEY)
-        user: typing.Optional[User] = None
-        if user_id:
+        except ValueError:
+            expiry = now
+        if expiry < now:
             try:
-                if user_id == ROOT_ID:
-                    user = getRootUser()
-                else:
-                    user = User.objects.get(pk=user_id)
-            except User.DoesNotExist:
-                user = None
+                return webLogout(request=request)
+            except Exception:  # nosec: intentionaly catching all exceptions and ignoring them
+                pass  # If fails, we don't care, we just want to logout
+            return HttpResponseForbidden(content='Session Expired', content_type='text/plain')
+        # Update session timeout..self.
+        request.session[EXPIRY_KEY] = (
+            now
+            + datetime.timedelta(
+                seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
+                if request.user.isStaff()
+                else GlobalConfig.SESSION_DURATION_USER.getInt()
+            )
+        ).isoformat()  # store as ISO format, str, json serilizable
 
-        logger.debug('User at Middleware: %s %s', user_id, user)
+    return None
 
-        request.user = user
+
+def _process_response(
+    request: 'ExtendedHttpRequest', response: 'HttpResponse'
+) -> 'HttpResponse':
+    # Update authorized on session
+    if hasattr(request, 'session'):
+        request.session[AUTHORIZED_KEY] = request.authorized
+    return response
+
+# Compatibility with old middleware, so we can use it in settings.py as it was
+GlobalRequestMiddleware = builder.build_middleware(_process_request, _process_response)
