@@ -94,11 +94,12 @@ class WEBTestCase(test.UDSTransactionTestCase):
 
     def login(
         self, user: typing.Optional[models.User] = None, as_admin: bool = True
-    ) -> None:
+    ) -> models.User:
     
         '''
         Login as specified user or first admin
         '''
         user = user or (self.admins[0] if as_admin else self.staffs[0])
         self.do_login(user.name, user.name, user.manager.uuid)
+        return user
 

@@ -65,6 +65,9 @@ def registerException(path: str) -> None:
 
 
 def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
+    if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is False or request.is_secure():
+        return None
+
     full_path = request.get_full_path()
     redirect = True
     for nr in _NO_REDIRECT:
@@ -72,13 +75,8 @@ def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse
             redirect = False
             break
 
-    if (
-        redirect
-        and not request.is_secure()
-        and GlobalConfig.REDIRECT_TO_HTTPS.getBool()
-    ):
+    if redirect:
         if request.method == 'POST':
-            # url = request.build_absolute_uri(GlobalConfig.LOGIN_URL.get())
             url = reverse('page.login')
         else:
             url = request.build_absolute_uri(full_path)

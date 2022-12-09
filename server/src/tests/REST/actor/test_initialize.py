@@ -32,11 +32,8 @@ import typing
 import functools
 import logging
 
-from django.conf import settings
-
 from uds import models
 from uds.core import VERSION
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 from ...utils import rest
 
@@ -107,7 +104,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         unique_id = self.user_service_managed.getUniqueId()
 
         success = functools.partial(self.invoke_success, 'managed', actor_token)
-        failure = functools.partial(self.invoke_failure, 'managed')
+        failure = functools.partial(self.invoke_failure, 'managed')  
 
         result = success(unique_id)
 

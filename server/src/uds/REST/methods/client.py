@@ -28,8 +28,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import json
-import codecs
 import logging
 import typing
 

@@ -59,6 +59,7 @@ class UDSClientMixin:
     headers: typing.Dict[str, str] = {
         'HTTP_USER_AGENT': 'Testing user agent',
     }
+    ip_version: int = 4
 
     def initialize(self):
         # Ensure only basic middleware are enabled.
@@ -78,11 +79,23 @@ class UDSClientMixin:
     def add_header(self, name: str, value: str):
         self.headers[name] = value
 
-    # Use "BEFORE" first client use
-    def add_middelware(self, middleware: str) -> None:
-        if middleware not in settings.MIDDLEWARE:
-            settings.MIDDLEWARE.append(middleware)
+    def set_user_agent(self, user_agent: typing.Optional[str] = None):
+        user_agent = user_agent or ''
+        # Add 'HTTP_USER_AGENT' header
+        self.headers['HTTP_USER_AGENT'] = user_agent
 
+    def enable_ipv4(self):
+        self.ip_version = 4
+
+    def enable_ipv6(self):
+        self.ip_version = 6
+
+    def append_remote_addr(self, kwargs: typing.Dict[str, typing.Any]) -> None:
+        if self.ip_version == 4:
+            kwargs['REMOTE_ADDR'] = '127.0.0.1'
+        elif self.ip_version == 6:
+            kwargs['REMOTE_ADDR'] = '::1'
+        
 
 class UDSClient(UDSClientMixin, Client):
     def __init__(
@@ -107,11 +120,12 @@ class UDSClient(UDSClientMixin, Client):
         return super().request(**request)
 
     def get(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', super().get(*args, **kwargs))
 
     def post(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', super().post(*args, **kwargs))
-
 
 
 class UDSAsyncClient(UDSClientMixin, AsyncClient):
@@ -137,18 +151,34 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         return await super().request(**request)
 
     async def get(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', await super().get(*args, **kwargs))
 
     async def post(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', await super().post(*args, **kwargs))
 
-
-class UDSTestCase(TestCase):
+class UDSTestCaseMixin:
     client_class: typing.Type = UDSClient
     async_client_class: typing.Type = UDSAsyncClient
 
     client: UDSClient
     async_client: UDSAsyncClient
+
+    @staticmethod
+    def add_middleware(middleware: str) -> None:
+        if middleware not in settings.MIDDLEWARE:
+            settings.MIDDLEWARE.append(middleware)
+
+    @staticmethod
+    def remove_middleware(middleware: str) -> None:
+        # Remove middleware from settings, if present
+        try:
+            settings.MIDDLEWARE.remove(middleware)
+        except ValueError:
+            pass  # Not present
+
+class UDSTestCase(UDSTestCaseMixin, TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -156,12 +186,7 @@ class UDSTestCase(TestCase):
         setupClass(cls)  # The one local to this module
 
 
-class UDSTransactionTestCase(TransactionTestCase):
-    client_class: typing.Type = UDSClient
-    async_client_class: typing.Type = UDSAsyncClient
-
-    client: UDSClient
-    async_client: UDSAsyncClient
+class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
