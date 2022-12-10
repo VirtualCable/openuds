@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,18 +26,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import multiprocessing
+import socket
 import time
 import logging
 import typing
 import io
+import asyncio
 import ssl
 import logging
 import typing
 
-import curio
 
 from . import config
 from . import consts
@@ -142,19 +143,28 @@ async def getServerStats(detailed: bool = False) -> None:
     # Context for local connection (ignores cert hostname)
     context = ssl.create_default_context()
     context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE  # For ServerStats, do not checks certificate
+    context.verify_mode = ssl.CERT_NONE  # For ServerStats, does not checks certificate
 
     try:
         host = cfg.listen_address if cfg.listen_address != '0.0.0.0' else 'localhost'
-        sock = await curio.open_connection(
-            host, cfg.listen_port, ssl=context, server_hostname='localhost'
-        )
-        tmpdata = io.BytesIO()
-        cmd = consts.COMMAND_STAT if detailed else consts.COMMAND_INFO
-        async with sock:
-            await sock.sendall(consts.HANDSHAKE_V1 + cmd + cfg.secret.encode())
+        reader: asyncio.StreamReader
+        writer: asyncio.StreamWriter
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect((host, cfg.listen_port))
+            # Send HANDSHAKE
+            sock.sendall(consts.HANDSHAKE_V1)
+            # Ugrade connection to TLS
+            reader, writer = await asyncio.open_connection(sock=sock, ssl=context, server_hostname=host)
+
+            tmpdata = io.BytesIO()
+            cmd = consts.COMMAND_STAT if detailed else consts.COMMAND_INFO
+            
+            writer.write(cmd + cfg.secret.encode())           
+            await writer.drain()
+
             while True:
-                chunk = await sock.recv(consts.BUFFER_SIZE)
+                chunk = await reader.read(consts.BUFFER_SIZE)
                 if not chunk:
                     break
                 tmpdata.write(chunk)

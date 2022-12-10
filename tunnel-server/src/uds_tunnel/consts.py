@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 DEBUG = True
 
@@ -51,10 +51,11 @@ BANDWIDTH_TIME = 10
 # Commands LENGTH (all same length)
 COMMAND_LENGTH = 4 
 
-VERSION = 'v1.0.0'
+VERSION = 'v2.0.0'
 
 # Valid commands
 COMMAND_OPEN = b'OPEN'
 COMMAND_TEST = b'TEST'
 COMMAND_STAT = b'STAT'  # full stats
 COMMAND_INFO = b'INFO'  # Basic stats, currently same as FULL
+
