@@ -226,7 +226,7 @@ class ServiceTwo(services.Service):
     deployedType = SampleUserDeploymentTwo
 
     # Gui, we will use here the EditableList field
-    names = gui.EditableList(label=_('List of names'))
+    names = gui.EditableListField(label=_('List of names'))
 
     def __init__(self, environment, parent, values=None):
         """

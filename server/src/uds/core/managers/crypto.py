@@ -145,7 +145,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         encoded = encryptor.update(toEncode) + encryptor.finalize()
 
         if base64:
-            encoded = codecs.encode(encoded, 'base64')  # Return as bytes
+            encoded = codecs.encode(encoded, 'base64').strip()  # Return as bytes
 
         return encoded
 

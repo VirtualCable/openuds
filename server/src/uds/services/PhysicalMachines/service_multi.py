@@ -68,7 +68,7 @@ class IPMachinesService(IPServiceBase):
         rdonly=False,
     )
 
-    ipList = gui.EditableList(
+    ipList = gui.EditableListField(
         label=_('List of servers'),
         tooltip=_('List of servers available for this service'),
     )

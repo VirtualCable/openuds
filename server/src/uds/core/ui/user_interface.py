@@ -39,13 +39,10 @@ import typing
 import logging
 import enum
 from collections import abc
-import yaml
 
+import yaml
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
-from numpy import isin
-from regex import B
-from yaml import safe_dump
 
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import deprecatedClassValue
@@ -367,7 +364,7 @@ class gui:
                     ),  # This property only affects in "modify" operations
                     'order': options.get('order', 0),
                     'tooltip': options.get('tooltip', ''),
-                    'value': options.get('value', ''),
+                    'value': options.get('value', defvalue),
                 }
             )
             if 'tab' in options:
@@ -594,19 +591,30 @@ class gui:
         def processValue(
             self, valueName: str, options: typing.Dict[str, typing.Any]
         ) -> None:
-            val = options.get(valueName, datetime.date.today())
+            try:
+                val = options.get(valueName, None)
 
-            if not val and valueName == 'defvalue':
-                val = datetime.date.today()
-            elif val == datetime.date.min:
-                val = datetime.date(2000, 1, 1)
-            elif val == datetime.date.max:
-                # val = datetime.date(2099, 12, 31)
+                if not val and valueName == 'defvalue':
+                    val = datetime.date.today()
+                elif isinstance(val, str):
+                    val = datetime.datetime.strptime(val, '%Y-%m-%d').date()
+                elif val == datetime.date.min:
+                    val = datetime.date(2000, 1, 1)
+                elif val == datetime.date.max:
+                    # val = datetime.date(2099, 12, 31)
+                    val = datetime.date.today()
+                elif not isinstance(val, datetime.date):
+                    val = datetime.date.today()
+            # Any error, use today
+            except Exception:
                 val = datetime.date.today()
 
             options[valueName] = val.strftime('%Y-%m-%d')
 
         def __init__(self, **options):
+            if 'value' not in options:
+                options['value'] = options['defvalue']
+
             for v in 'value', 'defvalue':
                 self.processValue(v, options)
 
@@ -932,7 +940,7 @@ class gui:
             """
             self._data['values'] = gui.convertToChoices(values)
 
-    class EditableList(InputField):
+    class EditableListField(InputField):
         """
         Editables list are lists of editable elements (i.e., a list of IPs, macs,
         names, etcc) treated as simple strings with no id
@@ -1120,7 +1128,7 @@ class UserInterface(metaclass=UserInterfaceType):
         logger.debug('Values Dict: %s', dic)
         return dic
 
-    def serializeForm(self) -> bytes:
+    def oldSerializeForm(self) -> bytes:
         """
         All values stored at form fields are serialized and returned as a single
         string
@@ -1170,8 +1178,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         return codecs.encode(FIELD_SEPARATOR.join(arr), 'zip')
 
-    # TODO: This method is being created, not to be used yet
-    def serializeFormTo(
+    def serializeForm(
         self, serializer: typing.Optional[typing.Callable[[typing.Any], str]] = None
     ) -> bytes:
         """New form serialization
@@ -1207,14 +1214,14 @@ class UserInterface(metaclass=UserInterfaceType):
             gui.InputField.Types.INFO: lambda x: None,
         }
         # Any unexpected type will raise an exception
-        arr = [(k, v.type, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
+        arr = [(k, v.type.name, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
 
         return codecs.encode(
             SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr).encode(),
             'zip',
         )
 
-    def unserializeFormFrom(
+    def unserializeForm(
         self, values: bytes, serializer: typing.Optional[typing.Callable[[str], typing.Any]] = None
     ) -> None:
         """New form unserialization
@@ -1234,19 +1241,32 @@ class UserInterface(metaclass=UserInterfaceType):
         if not values:
             return
 
-        values = codecs.decode(values, 'zip')
-        if not values:
+        tmp_values = codecs.decode(values, 'zip')
+        if not tmp_values:
             return
 
-        if not values.startswith(SERIALIZATION_HEADER):
+        if not tmp_values.startswith(SERIALIZATION_HEADER):
             # Unserialize with old method
-            self.unserializeForm(values)
+            self.oldUnserializeForm(values)
+            return
+
+        values = tmp_values
 
         version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
         # Currently, only 1 version is available, ignore it
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
         arr = unserialize(values.decode())
         
+        # Set all values to defaults ones
+        for k in self._gui:
+            if (
+                self._gui[k].isType(gui.InputField.Types.HIDDEN)
+                and self._gui[k].isSerializable() is False
+            ):
+                # logger.debug('Field {0} is not unserializable'.format(k))
+                continue
+            self._gui[k].value = self._gui[k].defValue
+
         converters: typing.Mapping[
             gui.InfoField.Types, typing.Callable[[str], typing.Any]
         ] = {
@@ -1271,12 +1291,12 @@ class UserInterface(metaclass=UserInterfaceType):
             if k not in self._gui:
                 logger.warning('Field %s not found in form', k)
                 continue
-            if t != self._gui[k].type:
+            if t != self._gui[k].type.name:
                 logger.warning('Field %s has different type than expected', k)
                 continue
-            self._gui[k].value = converters[t](v)
+            self._gui[k].value = converters[self._gui[k].type](v)
 
-    def unserializeForm(self, values: bytes) -> None:
+    def oldUnserializeForm(self, values: bytes) -> None:
         """
         This method unserializes the values previously obtained using
         :py:meth:`serializeForm`, and stores

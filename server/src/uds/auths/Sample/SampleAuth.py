@@ -118,7 +118,7 @@ class SampleAuth(auths.Authenticator):
     # : We will define a simple form where we will use a simple
     # : list editor to allow entering a few group names
 
-    groups = gui.EditableList(label=_('Groups'), values=['Gods', 'Daemons', 'Mortals'])
+    groups = gui.EditableListField(label=_('Groups'), values=['Gods', 'Daemons', 'Mortals'])
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         """

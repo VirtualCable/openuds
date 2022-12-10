@@ -39,10 +39,53 @@ from uds.core.ui.user_interface import (
 )
 import time
 
-from django.conf import settings
-
+from ...fixtures.user_interface import TestingUserInterface, DEFAULTS
 
 class UserinterfaceTest(UDSTestCase):
 
-    def test_userinterface(self):
+    # Helpers
+    def ensure_values_fine(self, ui: TestingUserInterface) -> None:
+        # Ensure that all values are fine for the ui fields
+        self.assertEqual(ui.str_field.value, DEFAULTS['str_field'], 'str_field')
+        self.assertEqual(ui.str_auto_field.value, DEFAULTS['str_auto_field'], 'str_auto_field')
+        self.assertEqual(ui.num_field.num(), DEFAULTS['num_field'], 'num_field')
+        self.assertEqual(ui.password_field.value, DEFAULTS['password_field'], 'password_field')
+        # Hidden field is not stored, so it's not checked
+        self.assertEqual(ui.choice_field.value, DEFAULTS['choice_field'], 'choice_field')
+        self.assertEqual(ui.multi_choice_field.value, DEFAULTS['multi_choice_field'], 'multi_choice_field')
+        self.assertEqual(ui.editable_list_field.value, DEFAULTS['editable_list_field'], 'editable_list_field')
+        self.assertEqual(ui.checkbox_field.value, DEFAULTS['checkbox_field'], 'checkbox_field')
+        self.assertEqual(ui.image_choice_field.value, DEFAULTS['image_choice_field'], 'image_choice_field')
+        self.assertEqual(ui.image_field.value, DEFAULTS['image_field'], 'image_field')
+        self.assertEqual(ui.date_field.value, DEFAULTS['date_field'], 'date_field')
+
+    def test_serialization(self):
         pass
+
+    def test_old_serialization(self):
+        # This test is to ensure that old serialized data can be loaded
+        # This data is from a
+        ui = TestingUserInterface()
+        data = ui.oldSerializeForm()
+        ui2 = TestingUserInterface()
+        ui2.oldUnserializeForm(data)
+
+        self.assertEqual(ui, ui2)
+        self.ensure_values_fine(ui2)
+
+        # Now unserialize old data with new method, (will internally call oldUnserializeForm)
+        ui3 = TestingUserInterface()
+        ui3.unserializeForm(data)
+
+        self.assertEqual(ui, ui3)
+        self.ensure_values_fine(ui3)
+
+    def test_new_serialization(self):
+        # This test is to ensure that new serialized data can be loaded
+        ui = TestingUserInterface()
+        data = ui.serializeForm()
+        ui2 = TestingUserInterface()
+        ui2.unserializeForm(data)
+
+        self.assertEqual(ui, ui2)
+        self.ensure_values_fine(ui2)
