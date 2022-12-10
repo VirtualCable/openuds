@@ -1,4 +1,4 @@
-import subprocess
+import subprocess  # nosec  No user input here
 import shutil
 import os
 import os.path
@@ -22,10 +22,10 @@ executable = None
 
 def fixResolution():
     import re
-    import subprocess
+    import subprocess  # nosec  No user input here
 
     results = str(
-        subprocess.Popen(
+        subprocess.Popen(   # nosec  No user input here
             ['system_profiler SPDisplaysDataType'], stdout=subprocess.PIPE, shell=True
         ).communicate()[0]
     )
@@ -92,7 +92,7 @@ if executable in (msrdc, msrdc_localized):
     # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
     tools.addTaskToWait(
-        subprocess.Popen(
+        subprocess.Popen(  # nosec  No user input here
             [
                 'open',
                 '-a',
@@ -110,4 +110,4 @@ elif executable == xfreerdp:
         xfparms = list(map(lambda x: x.replace('#WIDTH#', '1400').replace('#HEIGHT#', '800'), sp['as_new_xfreerdp_params']))  # type: ignore
 
     params = [os.path.expandvars(i) for i in [executable] + xfparms + ['/v:{}'.format(sp['address'])]]  # type: ignore
-    subprocess.Popen(params)
+    subprocess.Popen(params)  # nosec  No user input here

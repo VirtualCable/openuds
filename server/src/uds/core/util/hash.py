@@ -35,10 +35,12 @@ import typing
 try:
     # Try to use fast hashlib (if available)
     import xxhash
+
     hasher = xxhash.xxh3_64
 except ImportError:
     import hashlib
-    hasher = hashlib.md5  
+
+    hasher = hashlib.md5
 
 
 def hash_key(key: typing.Union[str, bytes]) -> str:

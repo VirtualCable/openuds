@@ -1,7 +1,6 @@
-# pylint: disable=import-error, no-name-in-module, too-many-format-args, undefined-variable, invalid-sequence-index
-import subprocess
-import shutil
+import subprocess  # nosec  No user input here
 import os
+import shutil
 import os.path
 
 from uds.tunnel import forward  # type: ignore
@@ -14,10 +13,10 @@ globals()['sp'] = sp  # type: ignore  # pylint: disable=undefined-variable
 
 def fixResolution():
     import re
-    import subprocess
+    import subprocess  # nosec  No user input here
 
     results = str(
-        subprocess.Popen(
+        subprocess.Popen(  # nosec  No user input here
             ['system_profiler SPDisplaysDataType'], stdout=subprocess.PIPE, shell=True
         ).communicate()[0]
     )
@@ -107,7 +106,7 @@ if executable in (msrdc, msrdc_localized):
     # tools.addTaskToWait(subprocess.Popen(['open', filename + '.rdp']))
     # Force MSRDP to be used with -a (thanks to Dani Torregrosa @danitorregrosa (https://github.com/danitorregrosa) )
     tools.addTaskToWait(
-        subprocess.Popen(
+        subprocess.Popen(  # nosec  No user input here
             [
                 'open',
                 '-a',
@@ -128,4 +127,4 @@ elif executable == xfreerdp:
         os.path.expandvars(i)
         for i in [executable] + xfparms + ['/v:{}'.format(address)]
     ]
-    subprocess.Popen(params)
+    subprocess.Popen(params)  # nosec  No user input here
