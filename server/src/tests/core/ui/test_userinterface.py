@@ -59,9 +59,6 @@ class UserinterfaceTest(UDSTestCase):
         self.assertEqual(ui.image_field.value, DEFAULTS['image_field'], 'image_field')
         self.assertEqual(ui.date_field.value, DEFAULTS['date_field'], 'date_field')
 
-    def test_serialization(self):
-        pass
-
     def test_old_serialization(self):
         # This test is to ensure that old serialized data can be loaded
         # This data is from a

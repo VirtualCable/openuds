@@ -1216,8 +1216,8 @@ class UserInterface(metaclass=UserInterfaceType):
         # Any unexpected type will raise an exception
         arr = [(k, v.type.name, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
 
-        return codecs.encode(
-            SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr).encode(),
+        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + codecs.encode(
+            serialize(arr).encode(),
             'zip',
         )
 
@@ -1241,20 +1241,17 @@ class UserInterface(metaclass=UserInterfaceType):
         if not values:
             return
 
-        tmp_values = codecs.decode(values, 'zip')
-        if not tmp_values:
-            return
-
-        if not tmp_values.startswith(SERIALIZATION_HEADER):
+        if not values.startswith(SERIALIZATION_HEADER):
             # Unserialize with old method
             self.oldUnserializeForm(values)
             return
-
-        values = tmp_values
-
+            
         version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
-        # Currently, only 1 version is available, ignore it
-        values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
+
+        values = codecs.decode(values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :], 'zip')
+        if not values:
+            return
+
         arr = unserialize(values.decode())
         
         # Set all values to defaults ones
