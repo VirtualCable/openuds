@@ -330,9 +330,9 @@ class gui:
             EDITABLE_LIST = 'editlist'
             CHECKBOX = 'checkbox'
             IMAGE_CHOICE = 'imgchoice'
+            IMAGE = 'image'
             DATE = 'date'
             INFO = 'dummy'
-            IMAGE = 'image'
 
             def __str__(self):
                 return self.value
@@ -1185,27 +1185,96 @@ class UserInterface(metaclass=UserInterfaceType):
                 return serializer(value)
             return yaml.safe_dump(value)
 
-        converters: typing.Mapping[
+        fw_converters: typing.Mapping[
             gui.InfoField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
         ] = {
-            gui.InputField.Types.HIDDEN: (
-                lambda x: None if not x.isSerializable() else x.value
-            ),
-            gui.InputField.Types.INFO: lambda x: None,
-            gui.InputField.Types.EDITABLE_LIST: lambda x: serialize(x.value),
-            gui.InputField.Types.MULTI_CHOICE: lambda x: serialize(x.value),
+            gui.InputField.Types.TEXT: lambda x: x.value,
+            gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x.value,
+            gui.InputField.Types.NUMERIC: lambda x: str(int(x.num())),
             gui.InputField.Types.PASSWORD: lambda x: (
                 cryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
-            gui.InputField.Types.NUMERIC: lambda x: str(int(x.num())),
-            gui.InputField.Types.CHECKBOX: lambda x: str(x.isTrue()),
+            gui.InputField.Types.HIDDEN: (
+                lambda x: None if not x.isSerializable() else x.value
+            ),
+            gui.InfoField.Types.CHOICE: lambda x: x.value,
+            gui.InputField.Types.MULTI_CHOICE: lambda x: serialize(x.value),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: serialize(x.value),
+            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
+            gui.InputField.Types.IMAGE_CHOICE: lambda x: x.value,
+            gui.InputField.Types.IMAGE: lambda x: x.value,
+            gui.InputField.Types.DATE: lambda x: x.value,
+            gui.InputField.Types.INFO: lambda x: None,
         }
-        arr = [(k, v.type, converters[v.type](v)) for k, v in self._gui.items()]
+        # Any unexpected type will raise an exception
+        arr = [(k, v.type, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
 
         return codecs.encode(
             SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr).encode(),
             'zip',
         )
+
+    def unserializeFormFrom(
+        self, values: bytes, serializer: typing.Optional[typing.Callable[[str], typing.Any]] = None
+    ) -> None:
+        """New form unserialization
+
+        Arguments:
+            values {bytes} -- serialized form (zipped)
+
+        Keyword Arguments:
+            serializer {typing.Optional[typing.Callable[[str], typing.Any]]} -- deserializer (default: {None})
+        """
+
+        def unserialize(value: str) -> typing.Any:
+            if serializer:
+                return serializer(value)
+            return yaml.safe_load(value)
+
+        if not values:
+            return
+
+        values = codecs.decode(values, 'zip')
+        if not values:
+            return
+
+        if not values.startswith(SERIALIZATION_HEADER):
+            # Unserialize with old method
+            self.unserializeForm(values)
+
+        version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
+        # Currently, only 1 version is available, ignore it
+        values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
+        arr = unserialize(values.decode())
+        
+        converters: typing.Mapping[
+            gui.InfoField.Types, typing.Callable[[str], typing.Any]
+        ] = {
+            gui.InputField.Types.TEXT: lambda x: x,
+            gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
+            gui.InputField.Types.NUMERIC: lambda x: int(x),
+            gui.InputField.Types.PASSWORD: lambda x: (
+                cryptoManager().AESDecrypt(x.encode('utf8'), UDSK, True).decode()
+            ),
+            gui.InputField.Types.HIDDEN: lambda x: None,
+            gui.InfoField.Types.CHOICE: lambda x: x,
+            gui.InputField.Types.MULTI_CHOICE: lambda x: unserialize(x),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: unserialize(x),
+            gui.InputField.Types.CHECKBOX: lambda x: x,
+            gui.InputField.Types.IMAGE_CHOICE: lambda x: x,
+            gui.InputField.Types.IMAGE: lambda x: x,
+            gui.InputField.Types.DATE: lambda x: x,
+            gui.InputField.Types.INFO: lambda x: None,
+        }
+
+        for k, t, v in arr:
+            if k not in self._gui:
+                logger.warning('Field %s not found in form', k)
+                continue
+            if t != self._gui[k].type:
+                logger.warning('Field %s has different type than expected', k)
+                continue
+            self._gui[k].value = converters[t](v)
 
     def unserializeForm(self, values: bytes) -> None:
         """
