@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import hashlib
 import multiprocessing
@@ -37,6 +37,7 @@ import typing
 from .consts import CONFIGFILE
 
 logger = logging.getLogger(__name__)
+
 
 class ConfigurationType(typing.NamedTuple):
     pidfile: str
@@ -51,7 +52,7 @@ class ConfigurationType(typing.NamedTuple):
     listen_port: int
 
     workers: int
-    
+
     ssl_certificate: str
     ssl_certificate_key: str
     ssl_ciphers: str
@@ -64,11 +65,24 @@ class ConfigurationType(typing.NamedTuple):
     allow: typing.Set[str]
 
     use_uvloop: bool
-    
 
-def read() -> ConfigurationType:
-    with open(CONFIGFILE, 'r') as f:
-        config_str = '[uds]\n' + f.read()
+
+def read_config_file(
+    cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None
+) -> str:
+    if cfg_file is None:
+        cfg_file = CONFIGFILE
+    if isinstance(cfg_file, str):
+        with open(cfg_file, 'r') as f:
+            return '[uds]\n' + f.read()
+    # path is in fact a file-like object
+    return '[uds]\n' + cfg_file.read()
+
+
+def read(
+    cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None
+) -> ConfigurationType:
+    config_str = read_config_file(cfg_file)
 
     cfg = configparser.ConfigParser()
     cfg.read_string(config_str)
@@ -97,7 +111,7 @@ def read() -> ConfigurationType:
             user=uds.get('user', ''),
             log_level=uds.get('loglevel', 'ERROR'),
             log_file=uds.get('logfile', ''),
-            log_size=int(logsize)*1024*1024,
+            log_size=int(logsize) * 1024 * 1024,
             log_number=int(uds.get('lognumber', '3')),
             listen_address=uds.get('address', '0.0.0.0'),
             listen_port=int(uds.get('port', '443')),
@@ -113,6 +127,10 @@ def read() -> ConfigurationType:
             use_uvloop=uds.get('use_uvloop', 'true').lower() == 'true',
         )
     except ValueError as e:
-        raise Exception(f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}')
+        raise Exception(
+            f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}'
+        )
     except KeyError as e:
-        raise Exception(f'Mandatory configuration parameter not found: {e.args[0]}. Please, revise {CONFIGFILE}')
+        raise Exception(
+            f'Mandatory configuration parameter not found: {e.args[0]}. Please, revise {CONFIGFILE}'
+        )

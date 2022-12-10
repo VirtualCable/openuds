@@ -1,9 +1,38 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2022 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
 import asyncio
 import typing
 import logging
 
-
-import requests
+import aiohttp
 
 from . import consts
 from . import config
@@ -64,7 +93,7 @@ class TunnelProtocol(asyncio.Protocol):
 
     def process_open(self):
         # Open Command has the ticket behind it
-        
+
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
             return  # Wait for more data to complete OPEN command
 
@@ -81,7 +110,7 @@ class TunnelProtocol(asyncio.Protocol):
 
         async def open_other_side() -> None:
             try:
-                result = await TunnelProtocol.getFromUds(
+                result = await TunnelProtocol.getTicketFromUDS(
                     self.owner.cfg, ticket, self.source
                 )
             except Exception as e:
@@ -246,7 +275,7 @@ class TunnelProtocol(asyncio.Protocol):
             logger.info('TERMINATED %s', self.pretty_source())
 
     @staticmethod
-    def _getUdsUrl(
+    async def _getUdsUrl(
         cfg: config.ConfigurationType,
         ticket: bytes,
         msg: str,
@@ -260,22 +289,18 @@ class TunnelProtocol(asyncio.Protocol):
                 url += '?' + '&'.join(
                     [f'{key}={value}' for key, value in queryParams.items()]
                 )
-            r = requests.get(
-                url,
-                headers={
-                    'content-type': 'application/json',
-                    'User-Agent': f'UDSTunnel/{consts.VERSION}',
-                },
-            )
-            if not r.ok:
-                raise Exception(r.content or 'Invalid Ticket (timed out)')
+            # Requests url with aiohttp
 
-            return r.json()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as r:
+                    if not r.ok:
+                        raise Exception(await r.text())
+                    return await r.json()
         except Exception as e:
             raise Exception(f'TICKET COMMS ERROR: {ticket.decode()} {msg} {e!s}')
 
     @staticmethod
-    async def getFromUds(
+    async def getTicketFromUDS(
         cfg: config.ConfigurationType, ticket: bytes, address: typing.Tuple[str, int]
     ) -> typing.MutableMapping[str, typing.Any]:
         # Sanity checks
@@ -291,17 +316,13 @@ class TunnelProtocol(asyncio.Protocol):
                 continue  # Correctus
             raise Exception(f'TICKET INVALID (char {i} at pos {n})')
 
-        return await asyncio.get_event_loop().run_in_executor(
-            None, TunnelProtocol._getUdsUrl, cfg, ticket, address[0]
-        )
+        return await TunnelProtocol._getUdsUrl(cfg, ticket, address[0])
 
     @staticmethod
     async def notifyEndToUds(
         cfg: config.ConfigurationType, ticket: bytes, counter: stats.Stats
     ) -> None:
-        await asyncio.get_event_loop().run_in_executor(
-            None,
-            TunnelProtocol._getUdsUrl,
+        await TunnelProtocol._getUdsUrl(
             cfg,
             ticket,
             'stop',

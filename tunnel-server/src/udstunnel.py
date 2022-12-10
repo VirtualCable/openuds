@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2022 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import os
 import pwd
@@ -185,15 +185,16 @@ def process_connection(
         client.close()
 
 
-def tunnel_main() -> None:
-    cfg = config.read()
+def tunnel_main(args: 'argparse.Namespace') -> None:
+    cfg = config.read(args.config)
 
     # Try to bind to port as running user
     # Wait for socket incoming connections and spread them
     socket.setdefaulttimeout(
         3.0
     )  # So we can check for stop from time to time and not block forever
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    af_inet = socket.AF_INET6 if args.ipv6 or ':' in cfg.listen_address else socket.AF_INET
+    sock = socket.socket(af_inet, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     # We will not reuse port, we only want a UDS tunnel server running on a port
@@ -294,10 +295,24 @@ def main() -> None:
         help='get current detailed stats from RUNNING tunnel',
         action='store_true',
     )
+    # Config file
+    parser.add_argument(
+        '-c',
+        '--config',
+        help=f'Config file to use (default: {consts.CONFIGFILE})',
+        default=consts.CONFIGFILE,
+    )
+    # If force ipv6
+    parser.add_argument(
+        '-6',
+        '--ipv6',
+        help='Force IPv6 for tunnel server',
+        action='store_true',
+    )
     args = parser.parse_args()
 
     if args.tunnel:
-        tunnel_main()
+        tunnel_main(args)
     elif args.rdp:
         pass
     elif args.detailed_stats:
