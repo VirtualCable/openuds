@@ -32,6 +32,7 @@ import time
 import logging
 import hashlib
 import typing
+import random
 import json
 
 from django.middleware import csrf
@@ -54,6 +55,7 @@ from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas
+from uds import models
 
 
 
@@ -127,8 +129,8 @@ def login(
             if loginResult.url:  # Redirection
                 return HttpResponseRedirect(loginResult.url)
 
-            if request.ip != '127.0.0.1':
-                time.sleep(2)  # On failure, wait a bit if not localhost
+            if request.ip not in ('127.0.0.1', '::1'):  # If not localhost, wait a bit
+                time.sleep(random.SystemRandom().randint(1600, 2400) / 1000)  # On failure, wait a bit if not localhost (random wait)
             # If error is numeric, redirect...
             if loginResult.errid:
                 return errors.errorView(request, loginResult.errid)
@@ -179,7 +181,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         return HttpResponseRedirect(reverse('page.index'))
 
     userHashValue: str = hashlib.sha3_256(
-        (request.user.name + (request.user.uuid or '') + mfaProvider.uuid).encode()
+        (request.user.name + (request.user.uuid or '') + mfaProvider.uuid + request.ip).encode()
     ).hexdigest()
 
     # Try to get cookie anc check it
@@ -336,7 +338,7 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
             return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
     except Exception as e:
         # fallback to error
-        pass
+        logger.warning('Error updating ticket: %s', e)
 
     # Invalid request
     return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')

@@ -36,10 +36,11 @@ import codecs
 import datetime
 import struct
 import re
-import random
 import string
 import logging
 import typing
+import secrets
+import time
 
 
 from cryptography import x509
@@ -134,9 +135,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             modes.CBC(b'udsinitvectoruds'),
             backend=default_backend(),
         )
-        rndStr = self.randomString(
-            16
-        ).encode()  # Same as block size of CBC (that is 16 here)
+        rndStr = secrets.token_bytes(16) # Same as block size of CBC (that is 16 here)
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
         toEncode = (
             struct.pack('>i', len(text)) + text + rndStr[: paddedLength - len(text) - 4]
@@ -255,9 +254,9 @@ class CryptoManager(metaclass=singleton.Singleton):
             return not hash
 
         if hash[:8] == '{SHA256}':
-            return hashlib.sha3_256(value).hexdigest() == hash[8:]
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash[8:])
         else:  # Old sha1
-            return hash == str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility, not used anymore but need to be supported
+            return secrets.compare_digest(hash, str(hashlib.sha1(value).hexdigest()))  # nosec: Old compatibility SHA1, not used anymore but need to be supported
 
     def uuid(self, obj: typing.Any = None) -> str:
         """
@@ -278,7 +277,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def randomString(self, length: int = 40, digits: bool = True) -> str:
         base = string.ascii_letters + (string.digits if digits else '')
-        return ''.join(random.SystemRandom().choices(base, k=length))
+        return ''.join(secrets.choice(base) for _ in range(length))
 
     def unique(self) -> str:
         return hashlib.sha3_256(
