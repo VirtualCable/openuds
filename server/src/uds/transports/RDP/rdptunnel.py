@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +143,7 @@ class TRDPTransport(BaseRDPTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, typing.Any],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -169,7 +170,7 @@ class TRDPTransport(BaseRDPTransport):
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
         r = RDPFile(
-            width == '-1' or height == '-1', width, height, depth, target=os['OS']
+            width == '-1' or height == '-1', width, height, depth, target=os.os
         )
         r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
         r.address = '{address}'
@@ -201,7 +202,7 @@ class TRDPTransport(BaseRDPTransport):
             OsDetector.KnownOS.Windows: 'windows',
             OsDetector.KnownOS.Linux: 'linux',
             OsDetector.KnownOS.Macintosh: 'macosx',
-        }.get(os['OS'])
+        }.get(os.os)
 
         if osName is None:
             return super().getUDSTransportScript(

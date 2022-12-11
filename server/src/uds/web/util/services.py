@@ -138,7 +138,7 @@ def getServicesData(
     nets = ''
     validTrans = ''
 
-    osType: 'KnownOS' = request.os['OS']
+    osType: 'KnownOS' = request.os.os
     logger.debug('OS: %s', osType)
 
     if request.user.isStaff():

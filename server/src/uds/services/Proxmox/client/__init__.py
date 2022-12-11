@@ -33,6 +33,7 @@
 import urllib3
 import urllib3.exceptions
 import urllib.parse
+import re
 import typing
 import logging
 
@@ -139,7 +140,7 @@ class ProxmoxClient:
             if response.status_code == 400:
                 try:
                     errMsg = 'Errors on request: {}'.format(response.json()['errors'])
-                except Exception:  # No joson or no errors
+                except Exception:  # nosec:  No json or no error info
                     pass
 
             raise ProxmoxError(errMsg)
@@ -467,9 +468,9 @@ class ProxmoxClient:
                         if i['vmid'] == vmId:
                             node = i['node']
                             break
-                    except Exception:
+                    except Exception:  # nosec: no need to log this
                         pass
-            except Exception:  # Error requesting pool, fallback to getVmInfo
+            except Exception:  # nosec: Error requesting pool, fallback to getVmInfo
                 pass
 
         return self.getVmInfo(vmId, node, **kwargs)

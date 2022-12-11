@@ -47,6 +47,7 @@ from uds.core.util import net
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.environment import Environment
     from uds import models
 
@@ -228,7 +229,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -262,7 +263,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -327,7 +328,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

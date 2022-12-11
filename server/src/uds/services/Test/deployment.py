@@ -74,7 +74,7 @@ class TestUserDeployment(services.UserDeployment):
     suggestedTime = 5
 
     def service(self) -> typing.Union['TestServiceNoCache', 'TestServiceCache']:
-        return typing.cast('ServiceTestNoCache', super().service())
+        return typing.cast('TestServiceNoCache', super().service())
 
     def getName(self) -> str:
         if not self.data.name:

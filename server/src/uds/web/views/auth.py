@@ -138,7 +138,7 @@ def authCallback_stage2(
         request.authorized = True
         if authenticator.getType().providesMfa() and authenticator.mfa:
             authInstance = authenticator.getInstance()
-            if authInstance.mfaIdentifier(user.name):
+            if authInstance.mfaIdentifier(result.user.name):
                 request.authorized = False   # We can ask for MFA so first disauthorize user
                 response = HttpResponseRedirect(
                     reverse('page.mfa')

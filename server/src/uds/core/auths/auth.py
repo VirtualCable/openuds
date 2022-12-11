@@ -249,9 +249,9 @@ def registerUser(
         events.addEvent(
             authenticator,
             events.ET_PLATFORM,
-            platform=request.os['OS'].value[0],
-            browser=request.os['Browser'],
-            version=request.os['Version'],
+            platform=request.os.os.name,
+            browser=request.os.browser,
+            version=request.os.version,
         )
         return AuthResult(user=usr)
 
@@ -431,7 +431,7 @@ def webLogin(
         user.name,
         password,
         get_language() or '',
-        request.os['OS'].value[0],
+        request.os.os.name,
         user.is_admin,
         user.staff_member,
         cookie,
@@ -510,7 +510,7 @@ def authLogLogin(
                 authenticator.name,
                 userName,
                 request.ip,
-                request.os['OS'].value[0],
+                request.os.os.name,
                 logStr,
                 request.META.get('HTTP_USER_AGENT', 'Undefined'),
             ]
@@ -521,7 +521,7 @@ def authLogLogin(
         authenticator,
         level,
         'user {} has {} from {} where os is {}'.format(
-            userName, logStr, request.ip, request.os['OS'].value[0]
+            userName, logStr, request.ip, request.os.os.name
         ),
         log.WEB,
     )
@@ -533,7 +533,7 @@ def authLogLogin(
             user,
             level,
             '{} from {} where OS is {}'.format(
-                logStr, request.ip, request.os['OS'].value[0]
+                logStr, request.ip, request.os.os.name
             ),
             log.WEB,
         )

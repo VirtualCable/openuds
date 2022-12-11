@@ -157,8 +157,7 @@ class MetaAssignedService(DetailHandler):
                 deployed_service__in=[i.pool for i in metaPool.members.all()],
             )[0]
         except Exception:
-            pass
-        raise self.invalidItemException()
+            raise self.invalidItemException()
 
     def getItems(self, parent: MetaPool, item: typing.Optional[str]):
         def assignedUserServicesForPools():
@@ -256,7 +255,7 @@ class MetaAssignedService(DetailHandler):
         user: User = User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            service.user.pretty_name, user.pretty_name, self._user.pretty_name
+            service.user.pretty_name if service.user else 'unknown', user.pretty_name, self._user.pretty_name
         )
 
         # If there is another service that has this same owner, raise an exception

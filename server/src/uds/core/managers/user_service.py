@@ -62,7 +62,7 @@ from uds.models.meta_pool import MetaPoolMember
 from uds.core import services, transports
 from uds.core.util import singleton
 from uds.core.util.stats import events
-from uds.web.util.errors import MAX_SERVICES_REACHED
+from uds.core.util.os_detector import DetectedOsInfo
 
 from .userservice import comms
 from .userservice.opchecker import UserServiceOpChecker
@@ -768,7 +768,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def getService(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,
         user: User,
-        os: typing.MutableMapping,
+        os: DetectedOsInfo,
         srcIp: str,
         idService: str,
         idTransport: typing.Optional[str],
@@ -812,8 +812,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if (
                     typeTrans
                     and t.validForIp(srcIp)
-                    and typeTrans.supportsOs(os['OS'])
-                    and t.validForOs(os['OS'])
+                    and typeTrans.supportsOs(os.os)
+                    and t.validForOs(os.os)
                 ):
                     idTransport = t.uuid
                     break
@@ -971,7 +971,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         self,
         user: User,
         srcIp: str,
-        os: typing.MutableMapping,
+        os: DetectedOsInfo,
         idMetaPool: str,
         idTransport: str,
         clientHostName: typing.Optional[str] = None,
@@ -1040,8 +1040,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     typeTrans
                     and t.getType()
                     and t.validForIp(srcIp)
-                    and typeTrans.supportsOs(os['OS'])
-                    and t.validForOs(os['OS'])
+                    and typeTrans.supportsOs(os.os)
+                    and t.validForOs(os.os)
                 ):
                     found = (pool, t)
                     break
@@ -1116,7 +1116,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             meta,
             log.WARN,
             "No user service accessible from device (ip {}, os: {})".format(
-                srcIp, os['OS']
+                srcIp, os.os.name
             ),
             log.SERVICE,
         )

@@ -46,6 +46,7 @@ from uds import models
 if typing.TYPE_CHECKING:
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -408,7 +409,7 @@ class HTML5RDPTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -456,7 +457,7 @@ class HTML5RDPTransport(transports.Transport):
             },
         }
 
-        if not password and self.security.value != 'rdp':
+        if not password and self.security.value != 'rdp':  # No password, but not rdp, so we need to use creds popup
             extra_params=f'&creds={username}@{domain}'
         else:
             extra_params=''

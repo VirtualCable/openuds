@@ -311,6 +311,9 @@ class ProxmoxProvider(
     def isAvailable(self) -> bool:
         return self.__getApi().test()
 
+    def getMacRange(self) -> str:
+        return self.macsRange.value
+
     @staticmethod
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         """

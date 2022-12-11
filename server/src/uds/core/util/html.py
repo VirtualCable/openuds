@@ -35,21 +35,11 @@ import typing
 
 from django.utils.translation import get_language
 from django.utils import formats
-from uds.core.util import os_detector as OsDetector
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
-    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
-
-_browsers: typing.Dict[str, typing.Tuple] = {
-    'ie': (OsDetector.IExplorer,),
-    'opera': (OsDetector.Opera,),
-    'firefox': (OsDetector.Firefox, OsDetector.Seamonkey),
-    'chrome': (OsDetector.Chrome, OsDetector.Chromium),
-    'safari': (OsDetector.Safari,),
-}
 
 
 def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
@@ -108,46 +98,3 @@ def extractKey(dictionary: typing.Dict, key: typing.Any, **kwargs) -> str:
         value = default
     return value
 
-
-def checkBrowser(request: 'ExtendedHttpRequest', browser: str) -> bool:
-    """
-    Known browsers right now:
-    ie[version]
-    ie<[version]
-    """
-    # Split brwosers we look for
-    needs_version = 0
-    needs = ''
-
-    for b, requires in _browsers.items():
-        if browser.startswith(b):
-            if request.os['Browser'] not in requires:
-                return False
-            browser = browser[len(b) :]  # remove "browser name" from string
-            break
-
-    browser += ' '  # So we ensure we have at least beowser[0]
-
-    if browser[0] == '<' or browser[0] == '>' or browser[0] == '=':
-        needs = browser[0]
-        needs_version = int(browser[1:])
-    else:
-        try:
-            needs = '='
-            needs_version = int(browser)
-        except Exception:
-            needs = ''
-            needs_version = 0
-
-    try:
-        version = int(request.os['Version'].split('.')[0])
-        if needs == '<':
-            return version < needs_version
-        if needs == '>':
-            return version > needs_version
-        if needs == '=':
-            return version == needs_version
-
-        return True
-    except Exception:
-        return False

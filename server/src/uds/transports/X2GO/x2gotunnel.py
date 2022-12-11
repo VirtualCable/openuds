@@ -46,6 +46,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
 
 
 logger = logging.getLogger(__name__)
@@ -117,7 +118,7 @@ class TX2GOTransport(BaseX2GOTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, typing.Any],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -158,28 +159,11 @@ class TX2GOTransport(BaseX2GOTransport):
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
-        # data
-        data = {
-            'os': os['OS'],
-            'ip': ip,
-            'port': 22,
-            'key': priv,
-            'width': width,
-            'height': height,
-            'printers': True,
-            'drives': self.exports.isTrue(),
-            'fullScreen': width == -1 or height == -1,
-            'this_server': request.build_absolute_uri('/'),
-            'xf': xf,
-        }
-
-        m = tools.DictAsObj(data)
-
         osName = {
             OsDetector.KnownOS.Windows: 'windows',
             OsDetector.KnownOS.Linux: 'linux',
             # OsDetector.Macintosh: 'macosx'
-        }.get(os['OS'])
+        }.get(os.os)
 
         if osName is None:
             return super().getUDSTransportScript(

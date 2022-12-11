@@ -106,7 +106,7 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
             logger.debug(
                 'Processing logout from OpenGnsys %s', userService.friendly_name
             )
-            actor_v3.Logout.process_logout(userService, 'OpenGnsys')
+            actor_v3.Logout.process_logout(userService, 'OpenGnsys', '')  # Close all sessions
 
     fnc: typing.Optional[typing.Callable[[], None]] = {
         'login': login,

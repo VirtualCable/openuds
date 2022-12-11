@@ -92,43 +92,6 @@ class StatsType:
 
 stats = StatsType()
 
-def _defaultDenyView(request) -> typing.Any:
-    from uds.web.util import errors
-    return errors.errorView(
-        request, errors.BROWSER_NOT_SUPPORTED
-    )
-
-# Decorator that protects pages that needs at least a browser version
-# Default is to deny IE < 9
-def denyBrowsers(
-    browsers: typing.Optional[typing.List[str]] = None,
-    errorResponse: typing.Callable = _defaultDenyView,
-) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
-    """
-    Decorator to set protection to access page
-    Look for samples at uds.core.web.views
-    """
-    from uds.core.util.html import checkBrowser
-
-    denied: typing.List[str] = browsers or ['ie<9']
-
-    def wrap(view_func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
-        @functools.wraps(view_func)
-        def _wrapped_view(request, *args, **kwargs) -> RT:
-            """
-            Wrapped function for decorator
-            """
-            for b in denied:
-                if checkBrowser(request, b):
-                    return errorResponse(request)
-
-            return view_func(request, *args, **kwargs)
-
-        return _wrapped_view
-
-    return wrap
-
-
 def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted

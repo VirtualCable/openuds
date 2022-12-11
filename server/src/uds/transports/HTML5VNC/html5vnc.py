@@ -48,6 +48,7 @@ from uds import models
 if typing.TYPE_CHECKING:
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -206,7 +207,7 @@ class HTML5VNCTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

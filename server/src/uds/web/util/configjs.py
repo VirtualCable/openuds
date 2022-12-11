@@ -160,7 +160,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         ],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
-        'os': request.os['OS'].value[0],
+        'os': request.os.os.name,
         'image_size': Image.MAX_IMAGE_SIZE,
         'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.getBool(),
         'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),

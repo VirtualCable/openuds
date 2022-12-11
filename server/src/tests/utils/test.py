@@ -107,7 +107,7 @@ class UDSClient(UDSClientMixin, Client):
         UDSClientMixin.initialize(self)
 
         # Instantiate the client and add basic user agent
-        super().__init__(enforce_csrf_checks, raise_request_exception)
+        super().__init__(enforce_csrf_checks, raise_request_exception)  # type: ignore  # Pyright Complains, but this is ok
 
         # and required UDS cookie
         self.cookies['uds'] = CryptoManager().randomString(48)

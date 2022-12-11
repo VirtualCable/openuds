@@ -702,7 +702,7 @@ class ModelHandler(BaseModelHandler):
     needs_staff = True
 
     # Which model does this manage, must be a django model ofc
-    model: typing.ClassVar[typing.Type[models.Model]]
+    model: 'typing.ClassVar[typing.Type[models.Model]]'
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -898,7 +898,6 @@ class ModelHandler(BaseModelHandler):
         except AttributeError:
             raise self.invalidMethodException()
 
-        raise Exception('Invalid code executed on processDetail')
 
     def getItems(
         self, *args, **kwargs

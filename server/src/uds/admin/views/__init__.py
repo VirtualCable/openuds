@@ -37,7 +37,6 @@ from django.template import RequestContext, loader
 from django.utils.translation import gettext as _
 
 from uds.core.auths.auth import webLoginRequired
-from uds.core.util.decorators import denyBrowsers
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +46,6 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
-@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def index(request):
     # Gets csrf token
@@ -62,7 +60,6 @@ def index(request):
     )
 
 
-@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def tmpl(request, template):
     try:
@@ -75,7 +72,6 @@ def tmpl(request, template):
     return HttpResponse(resp, content_type="text/plain")
 
 
-@denyBrowsers(browsers=['ie<10'])
 @webLoginRequired(admin=True)
 def sample(request):
     return render(request, 'uds/admin/sample.html')

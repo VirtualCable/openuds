@@ -132,6 +132,14 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 
     def validForOs(self, os: 'KnownOS') -> bool:
+        """If this transport is configured to be valid for the specified OS.
+
+        Args:
+            os (KnownOS): OS to check
+
+        Returns:
+            bool: True if this transport is valid for the specified OS, False otherwise
+        """
         return not self.allowed_oss or os.name in self.allowed_oss.split(',')
 
     def __str__(self) -> str:

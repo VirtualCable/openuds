@@ -31,9 +31,10 @@
 """
 import logging
 import datetime
-import pickle
+import pickle  # nosec, Used for backward compatibility
 import typing
 
+import yaml
 from django.utils.translation import gettext as _
 from django.db import transaction
 from uds.core.jobs.delayed_task import DelayedTask
@@ -80,9 +81,9 @@ class PublicationOldMachinesCleaner(DelayedTask):
                 in_use=False, state_date=now
             )
             servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
-        except Exception:
+        except Exception:  #  nosec: Removed publication, no problem at all, just continue
             pass
-            # Removed publication, no problem at all, just continue
+            
 
 
 class PublicationLauncher(DelayedTask):
@@ -115,7 +116,7 @@ class PublicationLauncher(DelayedTask):
             servicePool.current_pub_revision += 1
             servicePool.storeValue(
                 'toBeReplacedIn',
-                pickle.dumps(
+                yaml.safe_dump(  # nosec: Controled, not user input, just a datetime
                     now
                     + datetime.timedelta(
                         hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True)

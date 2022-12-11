@@ -71,8 +71,8 @@ def ensureResponseIsValid(
             )  # Extract any key, in case of error is expected to have only one top key so this will work
             msg = ': {message}'.format(**err)
             errMsg = errMsg + msg if errMsg else msg
-        except Exception:
-            pass  # If error geting error message, simply ignore it (will be loged on service log anyway)
+        except Exception:  # nosec: If error geting error message, simply ignore it (will be loged on service log anyway)
+            pass
         if errMsg is None:
             errMsg = 'Error checking response'
         logger.error('%s: %s', errMsg, response.content)
@@ -84,8 +84,8 @@ def getRecurringUrlJson(
     session: requests.Session,
     headers: typing.Dict[str, str],
     key: str,
-    params: typing.Dict[str, str] = None,
-    errMsg: str = None,
+    params: typing.Optional[typing.Mapping[str, str]] = None,
+    errMsg: typing.Optional[str] = None,
     timeout: int = 10,
 ) -> typing.Iterable[typing.Any]:
     counter = 0

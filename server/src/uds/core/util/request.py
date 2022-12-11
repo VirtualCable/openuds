@@ -34,7 +34,7 @@ import typing
 
 from django.http import HttpRequest
 
-from uds.core.util.tools import DictAsObj
+from uds.core.util.os_detector import DetectedOsInfo
 from uds.models import User
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_version: int
     ip_proxy: str
-    os: DictAsObj
+    os: 'DetectedOsInfo'
     user: typing.Optional[User]
     authorized: bool
     
