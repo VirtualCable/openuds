@@ -237,14 +237,27 @@ class CryptoManager(metaclass=singleton.Singleton):
         # Remove -----.*-----\n strings using regex
         return re.sub(r'(-----.*-----\n)', '', certificate)
 
+    def secret(self, length: int = 16) -> str:
+        """
+        Get a random secret string from config.SECRET_KEY
+        """
+        from django.conf import settings
+        return settings.SECRET_KEY[:length]
+
+    def salt(self, length: int = 16) -> str:
+        """
+        Get a random salt random string
+        """
+        return secrets.token_hex(length)
+
     def hash(self, value: typing.Union[str, bytes]) -> str:
         if isinstance(value, str):
             value = value.encode()
 
-        if not value:
-            return ''
+        salt = self.salt(8)  # 8 bytes = 16 chars
+        value = salt.encode() + value
 
-        return '{SHA256}' + str(hashlib.sha3_256(value).hexdigest())
+        return '{SHA256SALT}' + salt + str(hashlib.sha3_256(value).hexdigest())
 
     def checkHash(self, value: typing.Union[str, bytes], hash: str) -> bool:
         if isinstance(value, str):
@@ -255,6 +268,11 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         if hash[:8] == '{SHA256}':
             return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash[8:])
+        elif hash[:12] == '{SHA256SALT}':
+            # Extract 16 chars salt and hash
+            salt = hash[12:28].encode()
+            value = salt + value
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash[28:])
         else:  # Old sha1
             return secrets.compare_digest(hash, str(hashlib.sha1(value).hexdigest()))  # nosec: Old compatibility SHA1, not used anymore but need to be supported
 
