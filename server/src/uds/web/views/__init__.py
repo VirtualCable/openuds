@@ -44,7 +44,7 @@ from .service import (
 from .auth import authCallback, authCallback_stage2, authInfo, ticketAuth, customAuth
 from .download import download
 from .images import image
-from . import modern
+from . import main
 from . import custom
 
 logger = logging.getLogger(__name__)

@@ -82,17 +82,17 @@ urlpatterns = [
     ),
     # END COMPAT
     # Index
-    path(r'uds/page/services', uds.web.views.modern.index, name='page.index'),
+    path(r'uds/page/services', uds.web.views.main.index, name='page.index'),
     # Login/logout
-    path(r'uds/page/login', uds.web.views.modern.login, name='page.login'),
+    path(r'uds/page/login', uds.web.views.main.login, name='page.login'),
     re_path(
         r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$',
-        uds.web.views.modern.login,
+        uds.web.views.main.login,
         name='page.login.tag',
     ),
-    path(r'uds/page/logout', uds.web.views.modern.logout, name='page.logout'),
+    path(r'uds/page/logout', uds.web.views.main.logout, name='page.logout'),
     # MFA authentication
-    path(r'uds/page/mfa/', uds.web.views.modern.mfa, name='page.mfa'),
+    path(r'uds/page/mfa/', uds.web.views.main.mfa, name='page.mfa'),
     # Error URL (just a placeholder, calls index with data on url for angular)
     re_path(
         r'^uds/page/error/(?P<err>[a-zA-Z0-9=-]+)$',
@@ -102,7 +102,7 @@ urlpatterns = [
     # Download plugins URL  (just a placeholder, calls index with data on url for angular)
     path(
         r'uds/page/client-download',
-        uds.web.views.modern.index,
+        uds.web.views.main.index,
         name='page.client-download',
     ),
     # Federated authentication
@@ -129,16 +129,16 @@ urlpatterns = [
     ),
     path(
         r'uds/page/ticket/launcher',
-        uds.web.views.modern.ticketLauncher,
+        uds.web.views.main.ticketLauncher,
         name='page.ticket.launcher',
     ),
     # This must be the last, so any patition will be managed by client in fact
-    re_path(r'uds/page/.*', uds.web.views.modern.index, name='page.placeholder'),
+    re_path(r'uds/page/.*', uds.web.views.main.index, name='page.placeholder'),
     # Utility
     path(r'uds/utility/closer', uds.web.views.service.closer, name='utility.closer'),
     # Javascript
-    path(r'uds/utility/uds.js', uds.web.views.modern.js, name="utility.js"),
-    path(r'uds/adm/utility/uds.js', uds.web.views.modern.js, name="utility-adm.js"),
+    path(r'uds/utility/uds.js', uds.web.views.main.js, name="utility.js"),
+    path(r'uds/adm/utility/uds.js', uds.web.views.main.js, name="utility-adm.js"),
     # i18n
     re_path(
         r'^uds/utility/i18n/(?P<lang>[a-z_-]*).js$',
@@ -182,7 +182,7 @@ urlpatterns = [
     # Services list, ...
     path(
         r'uds/webapi/services',
-        uds.web.views.modern.servicesData,
+        uds.web.views.main.servicesData,
         name='webapi.services',
     ),
     # Transport own link processor
@@ -194,7 +194,7 @@ urlpatterns = [
     # Transport ticket update (for username/password on html5)
     re_path(
         r'^uds/webapi/trans/ticket/(?P<idTicket>[a-zA-Z0-9:-]+)/(?P<scrambler>[a-zA-Z0-9:-]+)$',
-        uds.web.views.modern.update_transport_ticket,
+        uds.web.views.main.update_transport_ticket,
         name='webapi.transport.UpdateTransportTicket',
     ),
     # Authenticators custom html

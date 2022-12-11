@@ -150,7 +150,6 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         logger.debug('User %s has logged in', userName)
         cache.remove(cacheKey)  # Valid login, remove cached tries
 
-        request.session['OS'] = os
         if form.cleaned_data['logouturl'] != '':
             logger.debug('The logoout url will be %s', form.cleaned_data['logouturl'])
             request.session['logouturl'] = form.cleaned_data['logouturl']

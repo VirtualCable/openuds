@@ -33,7 +33,7 @@ import typing
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.managers import downloadsManager
-from .modern import index
+from .main import index
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

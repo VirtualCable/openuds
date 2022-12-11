@@ -130,7 +130,6 @@ def authCallback_stage2(
         response = HttpResponseRedirect(reverse('page.index'))
 
         webLogin(request, response, result.user, '')  # Password is unavailable in this case
-        request.session['OS'] = os
         # Now we render an intermediate page, so we get Java support from user
         # It will only detect java, and them redirect to Java
 
