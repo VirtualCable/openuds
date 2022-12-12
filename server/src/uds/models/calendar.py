@@ -55,6 +55,7 @@ class Calendar(UUIDModel, TaggingMixin):
     objects: 'models.BaseManager[Calendar]'
     rules: 'models.QuerySet[CalendarRule]'
     calendaraction_set: 'models.QuerySet[CalendarAction]'
+    calendaraccess_set: 'models.QuerySet[CalendarAccess]'
 
     class Meta:
         """
