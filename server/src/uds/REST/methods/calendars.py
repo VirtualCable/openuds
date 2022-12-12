@@ -68,6 +68,9 @@ class Calendars(ModelHandler):
         },
         {'comments': {'title': _('Comments')}},
         {'modified': {'title': _('Modified'), 'type': 'datetime'}},
+        {'number_rules': {'title': _('Rules')}},
+        {'number_access': {'title': _('Pools with Accesses')}},
+        {'number_actions': {'title': _('Pools with Actions')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
@@ -78,6 +81,10 @@ class Calendars(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'modified': item.modified,
+            'number_rules': item.rules.count(), 
+            'number_access': item.calendaraccess_set.all().values('service_pool').distinct().count(),
+            'number_actions': item.calendaraction_set.all().values('service_pool').distinct().count(),
+
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
