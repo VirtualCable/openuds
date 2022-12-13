@@ -131,11 +131,11 @@ class Permissions(Handler):
 
         if la == 5 and self._args[3] == 'add':
             perm: permissions.PermissionType = {
-                '0': permissions.PermissionType.PERMISSION_NONE,
-                '1': permissions.PermissionType.PERMISSION_READ,
-                '2': permissions.PermissionType.PERMISSION_MANAGEMENT,
-                '3': permissions.PermissionType.PERMISSION_ALL,
-            }.get(self._params.get('perm', '0'), permissions.PermissionType.PERMISSION_NONE)
+                '0': permissions.PermissionType.NONE,
+                '1': permissions.PermissionType.READ,
+                '2': permissions.PermissionType.MANAGEMENT,
+                '3': permissions.PermissionType.ALL,
+            }.get(self._params.get('perm', '0'), permissions.PermissionType.NONE)
 
             cls = Permissions.getClass(self._args[0])
 

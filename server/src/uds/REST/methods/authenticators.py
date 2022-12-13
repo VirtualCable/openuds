@@ -192,7 +192,7 @@ class Authenticators(ModelHandler):
 
     # Custom "search" method
     def search(self, item: Authenticator) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, permissions.PermissionType.PERMISSION_READ)
+        self.ensureAccess(item, permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):

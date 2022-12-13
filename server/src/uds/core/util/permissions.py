@@ -46,6 +46,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def clean(obj: 'Model') -> None:
     models.Permissions.cleanPermissions(objtype.ObjectType.from_model(obj).type, obj.pk)
 
@@ -63,29 +64,31 @@ def getEffectivePermission(
 ) -> PermissionType:
     try:
         if user.is_admin:
-            return PermissionType.PERMISSION_ALL
+            return PermissionType.ALL
 
         # Just check permissions for staff members
         # root means for "object type" not for an object
         if root is False:
             return models.Permissions.getPermissions(
+                object_type=objtype.ObjectType.from_model(obj),
                 user=user,
-                groups=user.groups.all(),
-                object_type=objtype.ObjectType.from_model(obj).type,
                 object_id=obj.pk,
+                groups=user.groups.all(),
             )
 
         return models.Permissions.getPermissions(
-            user=user, groups=user.groups.all(), object_type=objtype.ObjectType.from_model(obj).type
+            object_type=objtype.ObjectType.from_model(obj),
+            user=user,
+            groups=user.groups.all(),
         )
     except Exception:
-        return PermissionType.PERMISSION_NONE
+        return PermissionType.NONE
 
 
 def addUserPermission(
     user: 'models.User',
     obj: 'Model',
-    permission: PermissionType = PermissionType.PERMISSION_READ,
+    permission: PermissionType = PermissionType.READ,
 ):
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
     models.Permissions.addPermission(
@@ -99,7 +102,7 @@ def addUserPermission(
 def addGroupPermission(
     group: 'models.Group',
     obj: 'Model',
-    permission: PermissionType = PermissionType.PERMISSION_READ,
+    permission: PermissionType = PermissionType.READ,
 ):
     models.Permissions.addPermission(
         group=group,
@@ -109,13 +112,13 @@ def addGroupPermission(
     )
 
 
-def checkPermissions(
+def hasAccess(
     user: 'models.User',
     obj: 'Model',
-    permission: PermissionType = PermissionType.PERMISSION_ALL,
+    permission: PermissionType = PermissionType.ALL,
     root: bool = False,
 ):
-    return getEffectivePermission(user, obj, root) >= permission
+    return getEffectivePermission(user, obj, root).includes(permission)
 
 
 def revokePermissionById(permUUID: str) -> None:

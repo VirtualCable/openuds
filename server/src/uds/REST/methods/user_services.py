@@ -442,8 +442,8 @@ class Publications(DetailHandler):
         changeLog = self._params['changelog'] if 'changelog' in self._params else None
 
         if (
-            permissions.checkPermissions(
-                self._user, parent, permissions.PermissionType.PERMISSION_MANAGEMENT
+            permissions.hasAccess(
+                self._user, parent, permissions.PermissionType.MANAGEMENT
             )
             is False
         ):
@@ -474,8 +474,8 @@ class Publications(DetailHandler):
         :param uuid: uuid of the publication
         """
         if (
-            permissions.checkPermissions(
-                self._user, parent, permissions.PermissionType.PERMISSION_MANAGEMENT
+            permissions.hasAccess(
+                self._user, parent, permissions.PermissionType.MANAGEMENT
             )
             is False
         ):

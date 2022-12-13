@@ -74,7 +74,7 @@ class TunnelTokens(ModelHandler):
             raise RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
-            self.model(), permissions.PermissionType.PERMISSION_ALL, root=True
+            self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:

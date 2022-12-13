@@ -644,7 +644,7 @@ class ServicesPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: ServicePool):
-        self.ensureAccess(item, permissions.PermissionType.PERMISSION_MANAGEMENT)
+        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         if fallback != '':

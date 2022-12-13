@@ -45,21 +45,29 @@ from .util import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from uds.models import User, Group
+    from uds.core.util import objtype
+
 
 class PermissionType(enum.IntEnum):
-    PERMISSION_NONE = 0
-    PERMISSION_READ = 32
-    PERMISSION_MANAGEMENT = 64
-    PERMISSION_ALL = 96
+    NONE = 0
+    READ = 32
+    MANAGEMENT = 64
+    ALL = 96
 
     def as_str(self) -> str:
         """Returns the permission as a string"""
         return {
-            PermissionType.PERMISSION_NONE: _('None'),
-            PermissionType.PERMISSION_READ: _('Read'),
-            PermissionType.PERMISSION_MANAGEMENT: _('Manage'),
-            PermissionType.PERMISSION_ALL: _('All'),
+            PermissionType.NONE: _('None'),
+            PermissionType.READ: _('Read'),
+            PermissionType.MANAGEMENT: _('Manage'),
+            PermissionType.ALL: _('All'),
         }.get(self, _('None'))
+
+    def includes(self, permission: 'PermissionType') -> bool:
+        """Returns if the permission includes the given permission"""
+        return self.value >= permission.value
 
 
 class Permissions(UUIDModel):
@@ -95,7 +103,7 @@ class Permissions(UUIDModel):
     object_id = models.IntegerField(default=None, db_index=True, null=True, blank=True)
 
     permission = models.SmallIntegerField(
-        default=PermissionType.PERMISSION_NONE, db_index=True
+        default=PermissionType.NONE, db_index=True
     )
 
     # "fake" declarations for type checking
@@ -122,7 +130,7 @@ class Permissions(UUIDModel):
 
         object_id = kwargs.get('object_id', None)
 
-        permission = kwargs.get('permission', PermissionType.PERMISSION_NONE)
+        permission = kwargs.get('permission', PermissionType.NONE)
 
         if user is not None:
             q = Q(user=user)
@@ -150,7 +158,12 @@ class Permissions(UUIDModel):
             )
 
     @staticmethod
-    def getPermissions(**kwargs) -> PermissionType:
+    def getPermissions(
+        object_type: 'objtype.ObjectType',
+        object_id: typing.Optional[int] = None,
+        user: typing.Optional['User'] = None,
+        groups: typing.Optional[typing.Iterable['Group']] = None,
+    ) -> PermissionType:
         """
         Retrieves the permission for a given object
         It's mandatory to include at least object_type param
@@ -160,23 +173,16 @@ class Permissions(UUIDModel):
         @param user: Optional, User (db object)
         @param groups: Optional List of db groups
         """
-        object_type = kwargs.get('object_type', None)
-        if object_type is None:
-            raise Exception('Needs at least the object_type field')
-
-        object_id = kwargs.get('object_id', None)
-
-        user = kwargs.get('user', None)
-        groups = kwargs.get('groups', [])
-
-        if user is None and not groups:
+        if not user and not groups:
             q = Q()
         else:
-            q = Q(user=user) | Q(group__in=groups)
+            q = Q(user=user)
+            if groups:
+                q |= Q(group__in=groups)
 
         try:
             perm: Permissions = Permissions.objects.filter(
-                Q(object_type=object_type),
+                Q(object_type=object_type.type),
                 Q(object_id=None) | Q(object_id=object_id),
                 q,
             ).order_by('-permission')[
@@ -185,7 +191,7 @@ class Permissions(UUIDModel):
             logger.debug('Got permission %s', perm)
             return PermissionType(perm.permission)
         except Exception:  # DoesNotExists
-            return PermissionType.PERMISSION_NONE
+            return PermissionType.NONE
 
     @staticmethod
     def enumeratePermissions(object_type, object_id) -> 'models.QuerySet[Permissions]':

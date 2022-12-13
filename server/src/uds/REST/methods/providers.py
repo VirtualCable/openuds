@@ -139,7 +139,7 @@ class Providers(ModelHandler):
         for s in Service.objects.all():
             try:
                 perm = permissions.getEffectivePermission(self._user, s)
-                if perm >= permissions.PermissionType.PERMISSION_READ:
+                if perm >= permissions.PermissionType.READ:
                     yield DetailServices.serviceToDict(s, perm, True)
             except Exception:
                 logger.exception('Passed service cause type is unknown')
@@ -151,7 +151,7 @@ class Providers(ModelHandler):
         try:
             service = Service.objects.get(uuid=self._args[1])
             perm = self.ensureAccess(
-                service.provider, permissions.PermissionType.PERMISSION_READ
+                service.provider, permissions.PermissionType.READ
             )  # Ensures that we can read this item
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
@@ -163,7 +163,7 @@ class Providers(ModelHandler):
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
-        self.ensureAccess(item, permissions.PermissionType.PERMISSION_MANAGEMENT)
+        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)
