@@ -1020,12 +1020,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
             found = None
             t: Transport
             if idTransport == 'meta':  # Autoselected:
-                q = pool.transports.all().order_by('priority')
+                q = pool.transports.all()
             elif idTransport[:6] == 'LABEL:':
                 q = pool.transports.filter(label=idTransport[6:])
             else:
                 q = pool.transports.filter(uuid=idTransport)
-            for t in q:
+            for t in q.order_by('priority'):
                 typeTrans = t.getType()
                 if (
                     typeTrans
