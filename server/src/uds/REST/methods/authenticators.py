@@ -225,6 +225,8 @@ class Authenticators(ModelHandler):
                 pass  # will set field to null
 
         fields['mfa_id'] = None
+        # If label has spaces, replace them with underscores
+        fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
 
 
 
