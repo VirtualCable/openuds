@@ -104,7 +104,12 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
         logger.debug('Behind a proxy is active')
 
     # Check if ip are ipv6 and set version field
-    request.ip_version = 6 if ':' in request.ip else 4
+    request.ip_version = 6 if '.' not in request.ip else 4
+
+    # If ipv4 ip, remove the ::ffff: prefix from ip and ip_proxy
+    if request.ip_version == 4:
+        request.ip = request.ip.replace('::ffff:', '')
+        request.ip_proxy = request.ip_proxy.replace('::ffff:', '')
 
     logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 

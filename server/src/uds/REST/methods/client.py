@@ -43,6 +43,7 @@ from uds.core.managers import cryptoManager, userServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION, REQUIRED_CLIENT_VERSION
+from uds.core.util.rest.tools import match
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -71,11 +72,15 @@ class Client(Handler):
     ) -> typing.Dict[str, typing.Any]:
         """
         Helper method to create a "result" set for actor response
-        :param result: Result value to return (can be None, in which case it is converted to empty string '')
-        :param error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
-        :param errorCode: Code of the error to return, if error is not None
-        :param retryable: If True, this operation can (and must) be retryed
-        :return: A dictionary, suitable for response to Caller
+
+        Args:
+            result: Result value to return (can be None, in which case it is converted to empty string '')
+            error: If present, This response represents an error. Result will contain an "Explanation" and error contains the error code
+            errorCode: Code of the error to return, if error is not None
+            retryable: If True, this operation can (and must) be retried
+
+        Returns:
+            A dictionary, suitable for REST response
         """
         result = result if result is not None else ''
         res = {'result': result}
@@ -103,43 +108,14 @@ class Client(Handler):
         """
         return Client.result(_('Correct'))
 
-    def get(self):
-        """
-        Processes get requests
-        """
-        logger.debug('Client args for GET: %s', self._args)
-
-        if not self._args:  # Gets version
-            return Client.result(
-                {
-                    'availableVersion': CLIENT_VERSION,
-                    'requiredVersion': REQUIRED_CLIENT_VERSION,
-                    'downloadUrl': self._request.build_absolute_uri(
-                        reverse('page.client-download')
-                    ),
-                }
-            )
-
-        if len(self._args) == 1:  # Simple test
-            return Client.result(_('Correct'))
-
+    def process(self, ticket: str, scrambler: str) -> typing.Dict[str, typing.Any]:
         userService: typing.Optional['UserService'] = None
-        try:
-            (
-                ticket,
-                scrambler,
-            ) = (
-                self._args
-            )  # If more than 2 args, raise an error
-            hostname = self._params['hostname']  # Or if hostname is not included...
-            srcIp = self._request.ip
+        hostname = self._params.get('hostname', '')  # Or if hostname is not included...
+        srcIp = self._request.ip
 
-            # Ip is optional,
-            if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool() is True:
-                srcIp = self._params.get('ip', srcIp)
-
-        except Exception:
-            raise RequestError('Invalid request')
+        # Ip is optional,
+        if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool() is True:
+            srcIp = self._params.get('ip', srcIp)
 
         logger.debug(
             'Got Ticket: %s, scrambled: %s, Hostname: %s, Ip: %s',
@@ -151,7 +127,7 @@ class Client(Handler):
 
         try:
             data = TicketStore.get(ticket)
-        except Exception:
+        except TicketStore.InvalidTicket:
             return Client.result(error=errors.ACCESS_DENIED)
 
         self._request.user = User.objects.get(uuid=data['user'])
@@ -223,5 +199,34 @@ class Client(Handler):
             return Client.result(error=str(e))
 
         finally:
+            # ensures that we mark the service as accessed by client
+            # so web interface can show can react to this
             if userService:
                 userService.setProperty('accessedByClient', '1')
+
+    def get(self) -> typing.Dict[str, typing.Any]:
+        """
+        Processes get requests
+        """
+        logger.debug('Client args for GET: %s', self._args)
+
+        def error() -> None:
+            raise RequestError('Invalid request')
+
+        def noargs() -> typing.Dict[str, typing.Any]:
+            return Client.result(
+                {
+                    'availableVersion': CLIENT_VERSION,
+                    'requiredVersion': REQUIRED_CLIENT_VERSION,
+                    'downloadUrl': self._request.build_absolute_uri(
+                        reverse('page.client-download')
+                    ),
+                }
+            )
+
+        return match(self._args,
+          error,  # In case of error, raises RequestError
+            ((), noargs),  # No args, return version
+            (('test',), self.test),  # Test request, returns "Correct"
+            (('<ticket>', '<crambler>',), self.process),  # Process request, needs ticket and scrambler
+        )
