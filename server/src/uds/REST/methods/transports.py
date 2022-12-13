@@ -177,7 +177,7 @@ class Transports(ModelHandler):
         # If label has spaces, replace them with underscores
         fields['label'] = fields['label'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
-        if not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
+        if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
             raise self.invalidRequestException(
                 _('Label must contain only letters, numbers, ":" and "-"')
             )
