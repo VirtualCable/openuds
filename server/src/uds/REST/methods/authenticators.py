@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import re
 import logging
 import typing
 
@@ -225,9 +226,12 @@ class Authenticators(ModelHandler):
                 pass  # will set field to null
 
         fields['mfa_id'] = None
-        # If label has spaces, replace them with underscores
-        fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
-
+        fields['small_name'] = fields['small_name'].strip().replace(' ', '-')
+        # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
+        if not re.match(r'^[a-zA-Z0-9:-]+$', fields['small_name']):
+            raise self.invalidRequestException(
+                _('Label must contain only letters, numbers, ":" and "-"')
+            )
 
 
     def deleteItem(self, item: Authenticator):

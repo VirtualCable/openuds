@@ -30,6 +30,7 @@
 '''
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import re
 import logging
 import typing
 
@@ -200,7 +201,12 @@ class Transports(ModelHandler):
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
         # If label has spaces, replace them with underscores
-        fields['label'] = fields['label'].strip().replace(' ', '_')
+        fields['label'] = fields['label'].strip().replace(' ', '-')
+        # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
+        if not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
+            raise self.invalidRequestException(
+                _('Label must contain only letters, numbers, ":" and "-"')
+            )
 
     def afterSave(self, item: Transport) -> None:
         try:
