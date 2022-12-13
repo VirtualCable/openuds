@@ -173,6 +173,8 @@ class Transports(ModelHandler):
 
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
+        # If label has spaces, replace them with underscores
+        fields['label'] = fields['label'].strip().replace(' ', '_')
 
     def afterSave(self, item: Transport) -> None:
         try:
