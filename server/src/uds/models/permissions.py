@@ -65,9 +65,25 @@ class PermissionType(enum.IntEnum):
             PermissionType.ALL: _('All'),
         }.get(self, _('None'))
 
+    @staticmethod
+    def from_str(value: str) -> 'PermissionType':
+        """Returns the permission from a string"""
+        value = value.lower()
+        if value in ('0', 'none'):
+            return PermissionType.NONE
+        if value in ('1', 'read'):
+            return PermissionType.READ
+        if value in ('2', 'manage', 'management'):
+            return PermissionType.MANAGEMENT
+        if value in ('3', 'all', 'rw', 'readwrite', 'read/write'):
+            return PermissionType.ALL
+        # Unknown value, return NONE
+        return PermissionType.NONE
+
     def includes(self, permission: 'PermissionType') -> bool:
         """Returns if the permission includes the given permission"""
         return self.value >= permission.value
+
 
 
 class Permissions(UUIDModel):

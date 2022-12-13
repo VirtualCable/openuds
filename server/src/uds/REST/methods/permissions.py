@@ -34,6 +34,7 @@ import logging
 import typing
 
 from uds.core.util import permissions
+from uds.core.util.rest.tools import match
 
 from uds import models
 
@@ -129,13 +130,39 @@ class Permissions(Handler):
 
         la = len(self._args)
 
+        perm = permissions.PermissionType.from_str(self._params.get('perm', '0'))
+
+        def add_user_permission(cls_param: str, obj_param: str, user_param: str) -> typing.List[typing.Dict]:
+            cls = Permissions.getClass(cls_param)
+            obj = cls.objects.get(uuid=obj_param)
+            user = models.User.objects.get(uuid=user_param)
+            permissions.addUserPermission(user, obj, perm)
+            return Permissions.permsToDict(permissions.getPermissions(obj))
+
+        def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> typing.List[typing.Dict]:
+            cls = Permissions.getClass(cls_param)
+            obj = cls.objects.get(uuid=obj_param)
+            group = models.Group.objects.get(uuid=group_param)
+            permissions.addGroupPermission(group, obj, perm)
+            return Permissions.permsToDict(permissions.getPermissions(obj))
+
+        def revoke() -> typing.List[typing.Dict]:
+            for permId in self._params.get('items', []):
+                permissions.revokePermissionById(permId)
+            return []
+
+        def no_match() -> None:
+            raise RequestError('Invalid request')
+
+        # match is a helper function that will match the args with the given patterns
+        return match(self._args,
+            no_match,
+            (('<cls>', '<obl>', 'users', 'add', '<user>'), add_user_permission),
+            (('<cls>', '<obl>', 'groups', 'add', '<group>'), add_group_permission),
+            (('revoke', ), revoke)
+        )
+
         if la == 5 and self._args[3] == 'add':
-            perm: permissions.PermissionType = {
-                '0': permissions.PermissionType.NONE,
-                '1': permissions.PermissionType.READ,
-                '2': permissions.PermissionType.MANAGEMENT,
-                '3': permissions.PermissionType.ALL,
-            }.get(self._params.get('perm', '0'), permissions.PermissionType.NONE)
 
             cls = Permissions.getClass(self._args[0])
 
