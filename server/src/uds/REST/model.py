@@ -247,7 +247,7 @@ class BaseModelHandler(Handler):
         return gui
 
     def ensureAccess(
-        self, obj: models.Model, permission: int, root: bool = False
+        self, obj: models.Model, permission: permissions.PermissionType, root: bool = False
     ) -> int:
         perm = permissions.getEffectivePermission(self._user, obj, root)
         if perm < permission:
@@ -773,7 +773,7 @@ class ModelHandler(BaseModelHandler):
 
     # log related
     def getLogs(self, item: models.Model) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, permissions.PERMISSION_READ)
+        self.ensureAccess(item, permissions.PermissionType.PERMISSION_READ)
         try:
             return log.getLogs(item)
         except Exception as e:
@@ -864,9 +864,9 @@ class ModelHandler(BaseModelHandler):
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
-                requiredPermission = permissions.PERMISSION_MANAGEMENT
+                requiredPermission = permissions.PermissionType.PERMISSION_MANAGEMENT
             else:
-                requiredPermission = permissions.PERMISSION_READ
+                requiredPermission = permissions.PermissionType.PERMISSION_READ
 
             if (
                 permissions.checkPermissions(self._user, item, requiredPermission)
@@ -931,7 +931,7 @@ class ModelHandler(BaseModelHandler):
                     permissions.checkPermissions(
                         typing.cast('User', self._user),
                         item,
-                        permissions.PERMISSION_READ,
+                        permissions.PermissionType.PERMISSION_READ,
                     )
                     is False
                 ):
@@ -1010,7 +1010,7 @@ class ModelHandler(BaseModelHandler):
             try:
                 val = self.model.objects.get(uuid=self._args[0].lower())
 
-                self.ensureAccess(val, permissions.PERMISSION_READ)
+                self.ensureAccess(val, permissions.PermissionType.PERMISSION_READ)
 
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
@@ -1076,7 +1076,7 @@ class ModelHandler(BaseModelHandler):
 
         # Here, self.model() indicates an "django model object with default params"
         self.ensureAccess(
-            self.model(), permissions.PERMISSION_ALL, root=True
+            self.model(), permissions.PermissionType.PERMISSION_ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
         try:
@@ -1172,7 +1172,7 @@ class ModelHandler(BaseModelHandler):
             raise RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
-            self.model(), permissions.PERMISSION_ALL, root=True
+            self.model(), permissions.PermissionType.PERMISSION_ALL, root=True
         )  # Must have write permissions to delete
 
         try:

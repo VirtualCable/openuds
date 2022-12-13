@@ -443,7 +443,7 @@ class Publications(DetailHandler):
 
         if (
             permissions.checkPermissions(
-                self._user, parent, permissions.PERMISSION_MANAGEMENT
+                self._user, parent, permissions.PermissionType.PERMISSION_MANAGEMENT
             )
             is False
         ):
@@ -475,7 +475,7 @@ class Publications(DetailHandler):
         """
         if (
             permissions.checkPermissions(
-                self._user, parent, permissions.PERMISSION_MANAGEMENT
+                self._user, parent, permissions.PermissionType.PERMISSION_MANAGEMENT
             )
             is False
         ):

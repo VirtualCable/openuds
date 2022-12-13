@@ -30,6 +30,8 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import enum
 import logging
 
 from django.utils.translation import gettext as _
@@ -41,8 +43,23 @@ from .user import User
 from .group import Group
 from .util import getSqlDatetime
 
-
 logger = logging.getLogger(__name__)
+
+
+class PermissionType(enum.IntEnum):
+    PERMISSION_NONE = 0
+    PERMISSION_READ = 32
+    PERMISSION_MANAGEMENT = 64
+    PERMISSION_ALL = 96
+
+    def as_str(self) -> str:
+        """Returns the permission as a string"""
+        return {
+            PermissionType.PERMISSION_NONE: _('None'),
+            PermissionType.PERMISSION_READ: _('Read'),
+            PermissionType.PERMISSION_MANAGEMENT: _('Manage'),
+            PermissionType.PERMISSION_ALL: _('All'),
+        }.get(self, _('None'))
 
 
 class Permissions(UUIDModel):
@@ -51,10 +68,6 @@ class Permissions(UUIDModel):
     """
 
     # Allowed permissions
-    PERMISSION_NONE = 0
-    PERMISSION_READ = 32
-    PERMISSION_MANAGEMENT = 64
-    PERMISSION_ALL = 96
 
     created = models.DateTimeField(db_index=True)
     ends = models.DateTimeField(
@@ -81,19 +94,12 @@ class Permissions(UUIDModel):
     object_type = models.SmallIntegerField(default=-1, db_index=True)
     object_id = models.IntegerField(default=None, db_index=True, null=True, blank=True)
 
-    permission = models.SmallIntegerField(default=PERMISSION_NONE, db_index=True)
+    permission = models.SmallIntegerField(
+        default=PermissionType.PERMISSION_NONE, db_index=True
+    )
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Permissions]'
-
-    @staticmethod
-    def permissionAsString(perm: int) -> str:
-        return {
-            Permissions.PERMISSION_NONE: _('None'),
-            Permissions.PERMISSION_READ: _('Read'),
-            Permissions.PERMISSION_MANAGEMENT: _('Manage'),
-            Permissions.PERMISSION_ALL: _('All'),
-        }.get(perm, _('None'))
 
     @staticmethod
     def addPermission(**kwargs) -> 'Permissions':
@@ -116,7 +122,7 @@ class Permissions(UUIDModel):
 
         object_id = kwargs.get('object_id', None)
 
-        permission = kwargs.get('permission', Permissions.PERMISSION_NONE)
+        permission = kwargs.get('permission', PermissionType.PERMISSION_NONE)
 
         if user is not None:
             q = Q(user=user)
@@ -144,7 +150,7 @@ class Permissions(UUIDModel):
             )
 
     @staticmethod
-    def getPermissions(**kwargs) -> int:
+    def getPermissions(**kwargs) -> PermissionType:
         """
         Retrieves the permission for a given object
         It's mandatory to include at least object_type param
@@ -177,9 +183,9 @@ class Permissions(UUIDModel):
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
             logger.debug('Got permission %s', perm)
-            return perm.permission
+            return PermissionType(perm.permission)
         except Exception:  # DoesNotExists
-            return Permissions.PERMISSION_NONE
+            return PermissionType.PERMISSION_NONE
 
     @staticmethod
     def enumeratePermissions(object_type, object_id) -> 'models.QuerySet[Permissions]':
@@ -204,7 +210,7 @@ class Permissions(UUIDModel):
 
     @property
     def permission_as_string(self) -> str:
-        return Permissions.permissionAsString(self.permission)
+        return PermissionType(self.permission).as_str()
 
     def __str__(self) -> str:
         return 'Permission {}, user {} group {} object_type {} object_id {} permission {}'.format(
@@ -213,5 +219,5 @@ class Permissions(UUIDModel):
             self.group,
             self.object_type,
             self.object_id,
-            Permissions.permissionAsString(self.permission),
+            PermissionType(self.permission).as_str(),
         )

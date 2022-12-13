@@ -88,6 +88,10 @@ class Permissions(Handler):
                 kind = 'user'
                 entity = perm.user
 
+            # If entity is None, it means that the permission is not valid anymore (user or group deleted on db manually?)
+            if not entity:
+                continue
+
             res.append(
                 {
                     'id': perm.uuid,
@@ -126,12 +130,12 @@ class Permissions(Handler):
         la = len(self._args)
 
         if la == 5 and self._args[3] == 'add':
-            perm: int = {
-                '0': permissions.PERMISSION_NONE,
-                '1': permissions.PERMISSION_READ,
-                '2': permissions.PERMISSION_MANAGEMENT,
-                '3': permissions.PERMISSION_ALL,
-            }.get(self._params.get('perm', '0'), permissions.PERMISSION_NONE)
+            perm: permissions.PermissionType = {
+                '0': permissions.PermissionType.PERMISSION_NONE,
+                '1': permissions.PermissionType.PERMISSION_READ,
+                '2': permissions.PermissionType.PERMISSION_MANAGEMENT,
+                '3': permissions.PermissionType.PERMISSION_ALL,
+            }.get(self._params.get('perm', '0'), permissions.PermissionType.PERMISSION_NONE)
 
             cls = Permissions.getClass(self._args[0])
 

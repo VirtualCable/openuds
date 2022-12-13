@@ -274,7 +274,7 @@ class MetaPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: MetaPool):
-        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
+        self.ensureAccess(item, permissions.PermissionType.PERMISSION_MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         logger.debug('Setting fallback of %s to %s', item.name, fallback)

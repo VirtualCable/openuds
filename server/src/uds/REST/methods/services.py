@@ -329,7 +329,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         for i in service.deployedServices.all():
             try:
                 self.ensureAccess(
-                    i, permissions.PERMISSION_READ
+                    i, permissions.PermissionType.PERMISSION_READ
                 )  # Ensures access before listing...
                 res.append(
                     {

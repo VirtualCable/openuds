@@ -85,5 +85,5 @@ class Accounts(ModelHandler):
         return ''
 
     def clear(self, item: Account):
-        self.ensureAccess(item, permissions.PERMISSION_MANAGEMENT)
+        self.ensureAccess(item, permissions.PermissionType.PERMISSION_MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

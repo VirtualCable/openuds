@@ -246,7 +246,7 @@ class ActionsCalendars(DetailHandler):
         logger.debug('Launching action')
         uuid = processUuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
-        self.ensureAccess(calendarAction, permissions.PERMISSION_MANAGEMENT)
+        self.ensureAccess(calendarAction, permissions.PermissionType.PERMISSION_MANAGEMENT)
         logStr = "Launched scheduled action \"{},{},{},{},{}\" by {}".format(
             calendarAction.calendar.name,
             calendarAction.action,

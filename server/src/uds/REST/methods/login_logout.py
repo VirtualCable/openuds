@@ -145,7 +145,7 @@ class Login(Handler):
                 'authSmallName', None
             )
             authName: typing.Optional[str] = self._params.get('auth', None)
-            platform: str = self._params.get('platform', self._request.os)
+            platform: str = self._params.get('platform', self._request.os.os.value[0])
 
             username: str
             password: str

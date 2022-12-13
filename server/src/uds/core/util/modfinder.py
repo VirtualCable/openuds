@@ -53,6 +53,11 @@ if typing.TYPE_CHECKING:
 
 
 def loadModulesUrls() -> typing.List[typing.Any]:
+    """Loads dipatcher modules urls to add to django urlpatterns
+
+    Returns:
+        typing.List[typing.Any]: List of urlpatterns to add to django urlpatterns
+    """
     logger.debug('Looking for dispatching modules')
     if not patterns:
         logger.debug('Looking for patterns')
@@ -69,7 +74,7 @@ def loadModulesUrls() -> typing.List[typing.Any]:
                     for up in urlpatterns:
                         patterns.append(up)
                 except Exception:
-                    logger.exception('Loading patterns')
+                    logger.error('No patterns found in %s', fullModName)
         except Exception:
             logger.exception('Processing dispatchers loading')
 
@@ -79,9 +84,19 @@ def loadModulesUrls() -> typing.List[typing.Any]:
 
 
 def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> None:
+    """Dinamycally import children of package
+
+    Args:
+        modName (str): Name of the module to import
+        packageName (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
+
+    Notes:
+        This function is used to dinamycally import all submodules inside a submodule (with optional package name).
+        
+    """
     # Dinamycally import children of this package.
     pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
-    if packageName:
+    if packageName:  # Append package name to path and module name
         pkgpath = os.path.join(pkgpath, packageName)
         modName = '{}.{}'.format(modName, packageName)
 
@@ -102,13 +117,24 @@ def dynamicLoadAndRegisterPackages(
     packageName: typing.Optional[str] = None,
     checker: typing.Optional[typing.Callable[[typing.Type[V]], bool]] = None,
 ) -> None:
+    '''  Loads all packages from a given package that are subclasses of the given type
+
+    Args:
+        adder (typing.Callable[[typing.Type[V]], None]): Function to use to add the objects, must support "insert" method
+        type_ (typing.Type[V]): Type of the objects to load
+        modName (str): Name of the package to load
+        packageName (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
+        checker (typing.Callable[[typing.Type[V]], bool], optional): Function to use to check if the class is registrable. Defaults to None.
+
+    Notes:
+        The checker function must return True if the class is registrable, False otherwise.
+
+        Example:
+            def checker(cls: MyBaseclass) -> bool:
+                # Will receive all classes that are subclasses of MyBaseclass
+                return cls.__name__.startswith('MyClass')
     '''
-    Loads all packages from a given package that are subclasses of the given type
-    param adder: Function to use to add the objects, must support "insert" method
-    param type_: Type of the objects to load
-    param modName: Name of the package to load
-    param checker: Function to use to check if the class is registrable
-    '''
+    # Ensures all modules under modName (and optionally packageName) are imported
     importModules(modName, packageName=packageName)
 
     checkFnc = checker or (lambda x: True)
@@ -119,10 +145,10 @@ def dynamicLoadAndRegisterPackages(
             clsSubCls = cls.__subclasses__()
 
             if clsSubCls:
-                process(clsSubCls)
+                process(clsSubCls)  # recursive add sub classes
 
             if not checkFnc(cls):
-                logger.debug('Node is a base, skipping: %s', cls.__module__)
+                logger.debug('Node is a not accepted, skipping: %s.%s', cls.__module__, cls.__name__)
                 continue
 
             logger.info('   - Registering %s.%s', cls.__module__, cls.__name__)
@@ -138,11 +164,14 @@ def dynamicLoadAndRegisterModules(
     type_: typing.Type[T],
     modName: str,
 ) -> None:
-    '''
-    Loads all modules from a given package that are subclasses of the given type
-    param factory: Factory to use to create the objects, must support "insert" method
-    param type_: Type of the objects to load
-    param modName: Name of the package to load
+    ''' Loads and registers all modules from a given package that are subclasses of the given type
+
+    This is an specialisation of dynamicLoadAndRegisterPackages that uses a ModuleFactory to register the modules
+
+    Args:
+        factory (ModuleFactory): Factory to use to create the objects, must support "insert" method
+        type_ (typing.Type[T]): Type of the objects to load
+        modName (str): Name of the package to load
     '''
     dynamicLoadAndRegisterPackages(
         factory.insert, type_, modName, checker=lambda x: not x.isBase

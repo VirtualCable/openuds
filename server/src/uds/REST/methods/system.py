@@ -188,7 +188,7 @@ class System(Handler):
                 raise AccessDenied()
             # Check permission for pool..
             if not permissions.checkPermissions(
-                self._user, typing.cast('Model', pool), permissions.PERMISSION_READ
+                self._user, typing.cast('Model', pool), permissions.PermissionType.PERMISSION_READ
             ):
                 raise AccessDenied()
             if self._args[0] == 'stats':

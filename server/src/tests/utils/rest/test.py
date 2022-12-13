@@ -114,7 +114,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
             username=user.name,
             password=user.name,
         )
-        self.assertEqual(response['result'], 'ok', 'Login failed')
+        self.assertEqual(response['result'], 'ok', f'Login failed: {response}')
         # Insert token into headers
         self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
         return response['token']

@@ -168,7 +168,7 @@ class Tickets(Handler):
             )  # Some machines needs password, depending on configuration
 
             groupIds: typing.List[str] = []
-            for groupName in tools.asList(self._params['groups']):
+            for groupName in tools.as_list(self._params['groups']):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid)
                 except Exception:
@@ -225,7 +225,6 @@ class Tickets(Handler):
                     # For metapool, transport is ignored..
 
                     servicePoolId = 'M' + pool.uuid
-                    transportId = 'meta'
 
                 except models.MetaPool.DoesNotExist:
                     pool = typing.cast(
@@ -244,9 +243,9 @@ class Tickets(Handler):
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')
-        except models.ServicePool.DoesNotExist:
+        except models.ServicePool.DoesNotExist:  # type: ignore   # this is fine, is not the same as models.Authenticator.DoesNotExist
             return Tickets.result(error='Service pool (or metapool) does not exists')
-        except models.Transport.DoesNotExist:
+        except models.Transport.DoesNotExist:  # type: ignore   # this is fine, is not the same as models.Authenticator.DoesNotExist
             return Tickets.result(error='Transport does not exists')
         except Exception as e:
             return Tickets.result(error=str(e))

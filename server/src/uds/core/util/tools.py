@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import sys
 import os
@@ -44,27 +44,6 @@ import django.template.defaultfilters as filters
 from uds.core import services
 
 
-class DictAsObj(dict):
-    """
-    Returns a mix between a dict and an obj
-    Can be accesses as .xxxx or ['xxx']
-    """
-
-    def __init__(
-        self, dct: typing.Optional[typing.Dict[str, typing.Any]] = None, **kwargs
-    ):
-        if dct:
-            self.__dict__.update(dct)
-        self.__dict__.update(kwargs)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __unicode__(self):
-        return ', '.join('{}={}'.format(v, self.__dict__[v]) for v in self.__dict__)
-
-
-# pylint: disable=protected-access
 class CaseInsensitiveDict(dict):
     @classmethod
     def _k(cls, key):
@@ -113,9 +92,15 @@ class CaseInsensitiveDict(dict):
             self.__setitem__(k, v)
 
 
-def asList(value: typing.Any) -> typing.List[typing.Any]:
-    if isinstance(value, list):
-        return value
+def as_list(value: typing.Any) -> typing.List[typing.Any]:
+    """If value is not a list, returns a list with value as only element
+
+    Args:
+        value (typing.Any): Value to convert to list
+
+    Returns:
+        typing.List[typing.Any]: List with value as only element
+    """
     if isinstance(value, (bytes, str, int, float)):
         return [value]
     try:
@@ -189,6 +174,7 @@ def checkValidBasename(baseName: str, length: int = -1) -> None:
         raise services.Service.ValidationException(
             gettext('The machine name can\'t be only numbers')
         )
+
 
 def removeControlCharacters(s: str) -> str:
     """
