@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import enum
 
 from uds import models
 
@@ -41,48 +42,57 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Constants for each type
-PROVIDER_TYPE = 1
-SERVICE_TYPE = 2
-OSMANAGER_TYPE = 3
-TRANSPORT_TYPE = 4
-NETWORK_TYPE = 5
-POOL_TYPE = 6
-USER_SERVICE_TYPE = 7
-AUTHENTICATOR_TYPE = 8
-USER_TYPE = 9
-GROUP_TYPE = 10
-STATS_COUNTER_TYPE = 11
-STATS_EVENTS_TYPE = 12
-CALENDAR_TYPE = 13
-CALENDAR_RULE_TYPE = 14
-PROXY_TYPE = 16
-METAPOOL_TYPE = 15
-ACCOUNT_TYPE = 16
-ACTOR_TOKEN_TYPE = 17
-TUNNEL_TOKEN_TYPE = 18
+class ObjectType(enum.Enum):
+    PROVIDER = (1, models.Provider)
+    SERVICE = (2, models.Service)
+    OSMANAGER = (3, models.OSManager)
+    TRANSPORT = (4, models.Transport)
+    NETWORK = (5, models.Network)
+    POOL = (6, models.ServicePool)
+    USER_SERVICE = (7, models.UserService)
+    AUTHENTICATOR = (8, models.Authenticator)
+    USER = (9, models.User)
+    GROUP = (10, models.Group)
+    STATS_COUNTER = (11, models.StatsCounters)
+    STATS_EVENTS = (12, models.StatsEvents)
+    CALENDAR = (13, models.Calendar)
+    CALENDAR_RULE = (14, models.CalendarRule)
+    # PROXY_TYPE = (15, models.Proxy)  has been removed
+    METAPOOL = (16, models.MetaPool)
+    ACCOUNT = (17, models.Account)
+    ACTOR_TOKEN = (18, models.ActorToken)
+    TUNNEL_TOKEN = (19, models.TunnelToken)
+    ACCOUNT_USAGE = (20, models.AccountUsage)
+    IMAGE = (21, models.Image)
+    LOG = (22, models.Log)
+    NOTIFICATION = (23, models.Notification)
+    TICKET_STORE = (24, models.TicketStore)
+    
 
-objTypeDict: typing.Dict[typing.Type['Model'], int] = {
-    models.Provider: PROVIDER_TYPE,
-    models.Service: SERVICE_TYPE,
-    models.OSManager: OSMANAGER_TYPE,
-    models.Transport: TRANSPORT_TYPE,
-    models.Network: NETWORK_TYPE,
-    models.ServicePool: POOL_TYPE,
-    models.UserService: USER_SERVICE_TYPE,
-    models.Authenticator: AUTHENTICATOR_TYPE,
-    models.User: USER_TYPE,
-    models.Group: GROUP_TYPE,
-    models.StatsCounters: STATS_COUNTER_TYPE,
-    models.StatsEvents: STATS_EVENTS_TYPE,
-    models.Calendar: CALENDAR_TYPE,
-    models.CalendarRule: CALENDAR_RULE_TYPE,
-    models.MetaPool: METAPOOL_TYPE,
-    models.Account: ACCOUNT_TYPE,
-    models.ActorToken: ACTOR_TOKEN_TYPE,
-    models.TunnelToken: TUNNEL_TOKEN_TYPE,
-}
+    @property
+    def model(self) -> typing.Type['Model']:
+        return self.value[1]
 
+    @property
+    def type(self) -> int:
+        """Returns the integer value of this object type
+        """
+        return self.value[0]
 
-def getObjectType(obj: 'Model') -> typing.Optional[int]:
-    return objTypeDict.get(type(obj))
+    @staticmethod
+    def from_model(model: 'Model') -> 'ObjectType':
+        for objType in ObjectType:
+            if objType.model == type(model):
+                return objType
+        raise ValueError('Invalid model type: {}'.format(model))
+
+    def __eq__(self, __o: object) -> bool:
+        """Compares with another ObjType, and includes int comparison
+
+        Args:
+            __o (object): Object to compare
+
+        Returns:
+            bool: True if equal, False otherwise
+        """
+        return super().__eq__(__o) or self.value[0] == __o

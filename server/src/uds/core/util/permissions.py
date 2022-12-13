@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2021 Virtual Cable S.L.U.
+# Copyright (c) 2014-2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,6 @@
 """
 import logging
 import typing
-import enum
 
 from uds import models
 from uds.models.permissions import PermissionType
@@ -48,13 +47,13 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 def clean(obj: 'Model') -> None:
-    models.Permissions.cleanPermissions(objtype.getObjectType(obj), obj.pk)
+    models.Permissions.cleanPermissions(objtype.ObjectType.from_model(obj).type, obj.pk)
 
 
 def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
     return list(
         models.Permissions.enumeratePermissions(
-            object_type=objtype.getObjectType(obj), object_id=obj.pk
+            object_type=objtype.ObjectType.from_model(obj).type, object_id=obj.pk
         )
     )
 
@@ -72,12 +71,12 @@ def getEffectivePermission(
             return models.Permissions.getPermissions(
                 user=user,
                 groups=user.groups.all(),
-                object_type=objtype.getObjectType(obj),
+                object_type=objtype.ObjectType.from_model(obj).type,
                 object_id=obj.pk,
             )
 
         return models.Permissions.getPermissions(
-            user=user, groups=user.groups.all(), object_type=objtype.getObjectType(obj)
+            user=user, groups=user.groups.all(), object_type=objtype.ObjectType.from_model(obj).type
         )
     except Exception:
         return PermissionType.PERMISSION_NONE
@@ -91,7 +90,7 @@ def addUserPermission(
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
     models.Permissions.addPermission(
         user=user,
-        object_type=objtype.getObjectType(obj),
+        object_type=objtype.ObjectType.from_model(obj).type,
         object_id=obj.pk,
         permission=permission,
     )
@@ -104,7 +103,7 @@ def addGroupPermission(
 ):
     models.Permissions.addPermission(
         group=group,
-        object_type=objtype.getObjectType(obj),
+        object_type=objtype.ObjectType.from_model(obj).type,
         object_id=obj.pk,
         permission=permission,
     )

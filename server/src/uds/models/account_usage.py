@@ -50,7 +50,6 @@ logger = logging.getLogger(__name__)
 class AccountUsage(UUIDModel):
     """
     AccountUsage storing on DB model
-    This is intended for small images (i will limit them to 128x128), so storing at db is fine
     """
 
     # "fake" declarations for type checking
