@@ -55,6 +55,8 @@ class Proxy:
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
         try:
             await self.proxy(source, context)
+        except asyncio.CancelledError:
+            pass  # Return on cancel
         except Exception as e:
             # get source ip address
             try:
@@ -69,11 +71,15 @@ class Proxy:
         # the protocol controller do the rest
 
         # Upgrade connection to SSL, and use asyncio to handle the rest
-        transport: 'asyncio.transports.Transport'
-        protocol: tunnel.TunnelProtocol
-        (transport, protocol) = await loop.connect_accepted_socket(  # type: ignore
-            lambda: tunnel.TunnelProtocol(self), source, ssl=context
-        )
+        try:
+            protocol: tunnel.TunnelProtocol
+            # (connect accepted loop not present on AbastractEventLoop definition < 3.10)
+            (_, protocol) = await loop.connect_accepted_socket(  # type: ignore
+                lambda: tunnel.TunnelProtocol(self), source, ssl=context
+            )
 
-        await protocol.finished
+            await protocol.finished
+        except asyncio.CancelledError:
+            pass  # Return on cancel
+
         return

@@ -28,54 +28,30 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import typing
 import hashlib
-import string
-import io
-import random
 
 from unittest import TestCase
 
-from uds_tunnel import config
-
 from . import fixtures
+
 
 class TestConfigFile(TestCase):
     def test_config_file(self) -> None:
         # Test in-memory configuration files ramdomly created
         for _ in range(100):
-            values: typing.Mapping[str, typing.Any] = {
-                'pidfile': f'/tmp/uds_tunnel_{random.randint(0, 100)}.pid',  # Random pid file
-                'user': f'user{random.randint(0, 100)}',  # Random user
-                'loglevel': random.choice(['DEBUG', 'INFO', 'WARNING', 'ERROR']),  # Random log level
-                'logfile': f'/tmp/uds_tunnel_{random.randint(0, 100)}.log',  # Random log file
-                'logsize': random.randint(0, 100),  # Random log size
-                'lognumber': random.randint(0, 100),  # Random log number
-                'address': f'{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}',  # Random address
-                'workers': random.randint(1, 100),  # Random workers, 0 will return as many as cpu cores
-                'ssl_certificate': f'/tmp/uds_tunnel_{random.randint(0, 100)}.crt',  # Random ssl certificate
-                'ssl_certificate_key': f'/tmp/uds_tunnel_{random.randint(0, 100)}.key',  # Random ssl certificate key
-                'ssl_ciphers': f'ciphers{random.randint(0, 100)}',  # Random ssl ciphers
-                'ssl_dhparam': f'/tmp/uds_tunnel_{random.randint(0, 100)}.dh',  # Random ssl dhparam
-                'uds_server': f'https://uds_server{random.randint(0, 100)}/some_path',  # Random uds server
-                'uds_token': f'uds_token{random.choices(string.ascii_uppercase + string.digits, k=32)}',  # Random uds token
-                'secret': f'secret{random.randint(0, 100)}',  # Random secret
-                'allow': f'{random.randint(0, 255)}.0.0.0',  # Random allow
+            values, cfg = fixtures.get_config()
 
-            }
             h = hashlib.sha256()
             h.update(values.get('secret', '').encode())
             secret = h.hexdigest()
-            # Generate an in-memory configuration file from fixtures.TEST_CONFIG
-            config_file = io.StringIO(fixtures.TEST_CONFIG.format(**values))
-            # Read it
-            cfg = config.read(config_file)
             # Ensure data is correct
             self.assertEqual(cfg.pidfile, values['pidfile'])
             self.assertEqual(cfg.user, values['user'])
             self.assertEqual(cfg.log_level, values['loglevel'])
             self.assertEqual(cfg.log_file, values['logfile'])
-            self.assertEqual(cfg.log_size, values['logsize'] * 1024 * 1024)  # Config file is in MB
+            self.assertEqual(
+                cfg.log_size, values['logsize'] * 1024 * 1024
+            )  # Config file is in MB
             self.assertEqual(cfg.log_number, values['lognumber'])
             self.assertEqual(cfg.listen_address, values['address'])
             self.assertEqual(cfg.workers, values['workers'])
@@ -85,8 +61,7 @@ class TestConfigFile(TestCase):
             self.assertEqual(cfg.ssl_dhparam, values['ssl_dhparam'])
             self.assertEqual(cfg.uds_server, values['uds_server'])
             self.assertEqual(cfg.uds_token, values['uds_token'])
+            self.assertEqual(cfg.uds_timeout, values['uds_timeout'])
             self.assertEqual(cfg.secret, secret)
             self.assertEqual(cfg.allow, {values['allow']})
-    
-
-            
+            self.assertEqual(cfg.uds_verify_ssl, values['uds_verify_ssl'])

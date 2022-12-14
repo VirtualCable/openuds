@@ -52,7 +52,7 @@ class TunnelProtocol(asyncio.Protocol):
     transport: 'asyncio.transports.Transport'
     other_side: 'TunnelProtocol'
     # Current state
-    runner: typing.Any  # In fact, typing.Callable[[bytes], None], but mypy complains on its check
+    runner: typing.Any  # In fact, typing.Callable[[bytes], None], but mypy complains on checking variables that are callables on classes
     # Command buffer
     cmd: bytes
     # Ticket
@@ -91,7 +91,7 @@ class TunnelProtocol(asyncio.Protocol):
         self.source = ('', 0)
         self.destination = ('', 0)
 
-    def process_open(self):
+    def process_open(self) -> None:
         # Open Command has the ticket behind it
 
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
@@ -275,7 +275,7 @@ class TunnelProtocol(asyncio.Protocol):
             logger.info('TERMINATED %s', self.pretty_source())
 
     @staticmethod
-    async def _getUdsUrl(
+    async def _readFromUDS(
         cfg: config.ConfigurationType,
         ticket: bytes,
         msg: str,
@@ -289,10 +289,14 @@ class TunnelProtocol(asyncio.Protocol):
                 url += '?' + '&'.join(
                     [f'{key}={value}' for key, value in queryParams.items()]
                 )
+            # Set options
+            options: typing.Dict[str, typing.Any] = {'timeout': cfg.uds_timeout}
+            if cfg.uds_verify_ssl is False:
+                options['ssl'] = False
             # Requests url with aiohttp
 
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as r:
+                async with session.get(url, **options) as r:
                     if not r.ok:
                         raise Exception(await r.text())
                     return await r.json()
@@ -305,7 +309,7 @@ class TunnelProtocol(asyncio.Protocol):
     ) -> typing.MutableMapping[str, typing.Any]:
         # Sanity checks
         if len(ticket) != consts.TICKET_LENGTH:
-            raise Exception(f'TICKET INVALID (len={len(ticket)})')
+            raise ValueError(f'TICKET INVALID (len={len(ticket)})')
 
         for n, i in enumerate(ticket.decode(errors='ignore')):
             if (
@@ -314,15 +318,15 @@ class TunnelProtocol(asyncio.Protocol):
                 or (i >= 'A' and i <= 'Z')
             ):
                 continue  # Correctus
-            raise Exception(f'TICKET INVALID (char {i} at pos {n})')
+            raise ValueError(f'TICKET INVALID (char {i} at pos {n})')
 
-        return await TunnelProtocol._getUdsUrl(cfg, ticket, address[0])
+        return await TunnelProtocol._readFromUDS(cfg, ticket, address[0])
 
     @staticmethod
     async def notifyEndToUds(
         cfg: config.ConfigurationType, ticket: bytes, counter: stats.Stats
     ) -> None:
-        await TunnelProtocol._getUdsUrl(
+        await TunnelProtocol._readFromUDS(
             cfg,
             ticket,
             'stop',
