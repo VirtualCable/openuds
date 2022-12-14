@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
+from uds.core.util.rest.tools import match
 from uds.REST import model
 from uds import reports
 
@@ -59,7 +60,7 @@ VALID_PARAMS = (
 # Enclosed methods under /actor path
 class Reports(model.BaseModelHandler):
     """
-    Processes actor requests
+    Processes reports requests
     """
 
     needs_admin = True  # By default, staff is lower level needed
@@ -67,15 +68,9 @@ class Reports(model.BaseModelHandler):
     table_title = _('Available reports')
     table_fields = [
         {'group': {'title': _('Group')}},
-        {
-            'name': {'title': _('Name')}
-        },  # Will process this field on client in fact, not sent by server
-        {
-            'description': {'title': _('Description')}
-        },  # Will process this field on client in fact, not sent by server
-        {
-            'mime_type': {'title': _('Generates')}
-        },  # Will process this field on client in fact, not sent by server
+        {'name': {'title': _('Name')}},
+        {'description': {'title': _('Description')}},
+        {'mime_type': {'title': _('Generates')}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'state', 'prefix': 'row-state-'}
@@ -93,26 +88,25 @@ class Reports(model.BaseModelHandler):
 
         return found
 
-    def get(self):
+    def get(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
-        nArgs = len(self._args)
 
-        if nArgs == 0:
-            return list(self.getItems())
+        def error() -> typing.NoReturn:
+            raise self.invalidRequestException()
 
-        if nArgs == 1:
-            if self._args[0] == model.OVERVIEW:
-                return list(self.getItems())
-            elif self._args[0] == model.TABLEINFO:
-                return self.processTableFields(
+        return match(
+            self._args,
+            error,
+            ((), lambda: list(self.getItems())),
+            ((model.OVERVIEW,), lambda: list(self.getItems())),
+            (
+                (model.TABLEINFO,),
+                lambda: self.processTableFields(
                     self.table_title, self.table_fields, self.table_row_style
-                )
-
-        if nArgs == 2:
-            if self._args[0] == model.GUI:
-                return self.getGui(self._args[1])
-
-        raise self.invalidRequestException()
+                ),
+            ),
+            ((model.GUI, '<report>'), lambda report: self.getGui(report)),
+        )
 
     def put(self):
         """

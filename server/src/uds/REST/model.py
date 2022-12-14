@@ -282,7 +282,7 @@ class BaseModelHandler(Handler):
         fields: typing.List[typing.Any],
         row_style: typing.MutableMapping[str, typing.Any],
         subtitle: typing.Optional[str] = None,
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> typing.Dict[str, typing.Any]:
         """
         Returns a dict containing the table fields description
         """
