@@ -47,7 +47,7 @@ T = typing.TypeVar('T', bound=typing.Any)
 # callback(sample, arg_2, argument)
 # And the literals will be ignored
 def match(
-    arg_list: typing.Tuple[str, ...],
+    arg_list: typing.Iterable[str],
     error: typing.Callable[..., typing.Any],
     *args: typing.Tuple[typing.Tuple[str, ...], typing.Callable[..., T]],
 ) -> typing.Any:
@@ -65,6 +65,7 @@ def match(
     callback(sample, arg_2, argument)
     And the literals will be ignored
     """
+    arg_list = list(arg_list)  # ensure it is a list
     for matcher in args:
         if len(arg_list) != len(matcher[0]):
             continue

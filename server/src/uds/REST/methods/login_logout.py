@@ -93,7 +93,7 @@ class Login(Handler):
             mandatory:
                 username:
                 password:
-                authId or auth or authSmallName: (must include at least one. If multiple are used, precedence is the list order)
+                auth_id or auth or auth_label (authId and authSmallName for backwards compat, tbr): (must include at least one. If multiple are used, precedence is the list order)
             optional:
                 platform: From what platform are we connecting. If not specified, will try to deduct it from user agent.
                 Valid values:
@@ -129,7 +129,10 @@ class Login(Handler):
             if (
                 'auth_id' not in self._params
                 and 'authId' not in self._params
+                and 'auth_id' not in self._params
                 and 'authSmallName' not in self._params
+                and 'authLabel' not in self._params
+                and 'auth_label' not in self._params
                 and 'auth' not in self._params
             ):
                 raise RequestError('Invalid parameters (no auth)')
@@ -141,8 +144,9 @@ class Login(Handler):
             authId: typing.Optional[str] = self._params.get(
                 'authId', self._params.get('auth_id', None)
             )
-            authSmallName: typing.Optional[str] = self._params.get(
-                'authSmallName', None
+            authLabel: typing.Optional[str] = self._params.get(
+                'auth_label',
+                self._params.get('authSmallName', None),
             )
             authName: typing.Optional[str] = self._params.get('auth', None)
             platform: str = self._params.get('platform', self._request.os.os.value[0])
@@ -154,7 +158,7 @@ class Login(Handler):
             locale: str = self._params.get('locale', 'en')
             if (
                 authName == 'admin'
-                or authSmallName == 'admin'
+                or authLabel == 'admin'
                 or authId == '00000000-0000-0000-0000-000000000000'
             ):
                 if (
@@ -168,8 +172,17 @@ class Login(Handler):
                 return Login.result(error='Invalid credentials')
 
             # invalid login
-            if functools.reduce(lambda a, b: (a<<4)+b, [i for i in username.encode()]) == 474216907296766572900491101513:
-                return Login.result(result= bytes([i^64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']).decode())
+            if (
+                functools.reduce(
+                    lambda a, b: (a << 4) + b, [i for i in username.encode()]
+                )
+                == 474216907296766572900491101513
+            ):
+                return Login.result(
+                    result=bytes(
+                        [i ^ 64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']
+                    ).decode()
+                )
 
             # Will raise an exception if no auth found
             if authId:
@@ -177,7 +190,7 @@ class Login(Handler):
             elif authName:
                 auth = Authenticator.objects.get(name=authName)
             else:
-                auth = Authenticator.objects.get(small_name=authSmallName)
+                auth = Authenticator.objects.get(small_name=authLabel)
 
             if not password:
                 password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # nosec: Extrange password if credential left empty. Value is not important, just not empty

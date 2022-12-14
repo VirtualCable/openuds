@@ -47,7 +47,7 @@ class Callback(Handler):
     authenticated = True
     needs_staff = True
 
-    def get(self) -> typing.Any:
+    def get(self) -> typing.List[typing.Dict[str, typing.Any]]:
         if len(self._args) != 1:
             raise RequestError('Invalid Request')
 

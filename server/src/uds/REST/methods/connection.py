@@ -40,8 +40,8 @@ from uds.REST import RequestError
 from uds.core.managers import userServiceManager
 from uds.core.managers import cryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.util.rest.tools import match
 from uds.web.util import errors, services
-
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ class Connection(Handler):
 
         return res
 
-    def serviceList(self):
+    def serviceList(self) -> typing.Dict[str, typing.Any]:
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
@@ -94,9 +94,8 @@ class Connection(Handler):
             )
         )
 
-    def connection(self, doNotCheck: bool = False):
-        idService = self._args[0]
-        idTransport = self._args[1]
+    def connection(self, idService: str, idTransport: str, skip: str = '') -> typing.Dict[str, typing.Any]:
+        doNotCheck = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck')
         try:
             (
                 ip,
@@ -131,13 +130,7 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def script(self):
-        # Could be one-liner, (... = ..[0:4]), but mypy complains so this is fine :)
-        idService = self._args[0]
-        idTransport = self._args[1]
-        scrambler = self._args[2]
-        hostname = self._args[3]
-
+    def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> typing.Dict[str, typing.Any]:
         try:
             res = userServiceManager().getService(
                 self._user, self._request.os, self._request.ip, idService, idTransport
@@ -179,48 +172,38 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def getTicketContent(self):
+    def getTicketContent(self, ticketId: str) -> typing.Dict[str, typing.Any]:
         return {}  # TODO: use this for something?
 
-    def getUdsLink(self):
+    def getUdsLink(self, idService: str, idTransport: str) -> typing.Dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
         self._request.user = self._user  # type: ignore
         self._request._cryptedpass = self._session['REST']['password']  # type: ignore
         self._request._scrambler = self._request.META['HTTP_SCRAMBLER']  # type: ignore
         linkInfo = services.enableService(
-            self._request, idService=self._args[0], idTransport=self._args[1]
+            self._request, idService=idService, idTransport=idTransport
         )
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])
 
-    def get(self):
+    def get(self) -> typing.Dict[str, typing.Any]:
         """
         Processes get requests
         """
         logger.debug('Connection args for GET: %s', self._args)
 
-        if not self._args:
-            # Return list of services/transports
-            return self.serviceList()
-        if len(self._args) == 1:
-            # Maybe we are requesting a ticket content?
-            return self.getTicketContent()
+        def error() -> typing.Dict[str, typing.Any]:
+            raise RequestError('Invalid Request')
 
-        if len(self._args) == 2:
-            # Return connection & validate access for service/transport
-            return self.connection()
+        return match(
+            self._args,
+            error,
+            ((), self.serviceList),
+            (('<ticketId>',), self.getTicketContent),
+            (('<idService>', '<idTransport>', 'udslink'), self.getUdsLink),
+            (('<idService>', '<idTransport>', '<skip>'), self.connection),
+            (('<idService>', '<idTransport>'), self.connection),
+            (('<idService>', '<idTransport>', '<scrambler>', '<hostname>'), self.script),
 
-        if len(self._args) == 3:
-            # /connection/idService/idTransport/skipChecking
-            if self._args[2] == 'skipChecking':
-                return self.connection(True)
-            # /connection/idService/idTransport/udslink
-            elif self._args[2] == 'udslink':
-                return self.getUdsLink()
-
-        if len(self._args) == 4:
-            # /connection/idService/idTransport/scrambler/hostname
-            return self.script()
-
-        raise RequestError('Invalid Request')
+        )
