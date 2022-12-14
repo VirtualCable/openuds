@@ -60,6 +60,8 @@ class ConfigurationType(typing.NamedTuple):
 
     uds_server: str
     uds_token: str
+    uds_timeout: int
+    uds_verify_ssl: bool
 
     secret: str
     allow: typing.Set[str]
@@ -122,13 +124,15 @@ def read(
             ssl_dhparam=uds.get('ssl_dhparam'),
             uds_server=uds_server,
             uds_token=uds.get('uds_token', 'unauthorized'),
+            uds_timeout=int(uds.get('uds_timeout', '10')),
+            uds_verify_ssl=uds.get('uds_verify_ssl', 'true').lower() == 'true',
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
             use_uvloop=uds.get('use_uvloop', 'true').lower() == 'true',
         )
     except ValueError as e:
         raise Exception(
-            f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise  {CONFIGFILE}'
+            f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise {CONFIGFILE}'
         )
     except KeyError as e:
         raise Exception(
