@@ -28,6 +28,7 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import typing
 import string
 import random
 import aiohttp
@@ -48,6 +49,11 @@ UDS_GET_TICKET_RESPONSE = {
 CALLER_HOST = ('host', 12345)
 REMOTE_HOST = ('127.0.0.1', 54876)
 
+def uds_response(_, ticket: bytes,  msg: str,  queryParams: typing.Optional[typing.Mapping[str, str]] = None) -> typing.Dict[str, typing.Any]:
+    if msg == 'stop':
+        return {}
+
+    return UDS_GET_TICKET_RESPONSE
 
 class TestTunnel(IsolatedAsyncioTestCase):
     async def test_get_ticket_from_uds(self) -> None:
@@ -58,7 +64,8 @@ class TestTunnel(IsolatedAsyncioTestCase):
             'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
             new_callable=tools.AsyncMock,
         ) as m:
-            m.return_value = UDS_GET_TICKET_RESPONSE
+            m.side_effect = uds_response
+            #m.return_value = UDS_GET_TICKET_RESPONSE
             for i in range(0, 100):
                 ticket = ''.join(
                     random.choices(
@@ -101,7 +108,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
             'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
             new_callable=tools.AsyncMock,
         ) as m:
-            m.return_value = {}
+            m.side_effect = uds_response
             counter = mock.MagicMock()
             counter.sent = 123456789
             counter.recv = 987654321

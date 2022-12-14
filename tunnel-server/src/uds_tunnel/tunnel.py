@@ -79,7 +79,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.runner = self.do_proxy
         else:
             self.other_side = self
-            self.stats_manager = stats.Stats(owner.ns)
+            self.stats_manager = stats.Stats(owner.args)
             self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
 
@@ -174,7 +174,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.transport.write(b'FORBIDDEN')
                 return
 
-            data = stats.GlobalStats.get_stats(self.owner.ns)
+            data = stats.GlobalStats.get_stats(self.owner.args)
 
             for v in data:
                 logger.debug('SENDING %s', v)

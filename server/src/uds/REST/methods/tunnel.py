@@ -59,7 +59,7 @@ class TunnelTicket(Handler):
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
         """
-        Processes get requests, currently none
+        Processes get requests
         """
         logger.debug(
             'Tunnel parameters for GET: %s (%s) from %s',

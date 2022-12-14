@@ -45,11 +45,11 @@ logger = logging.getLogger(__name__)
 
 class Proxy:
     cfg: 'config.ConfigurationType'
-    ns: 'Namespace'
+    args: 'Namespace'
 
-    def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
+    def __init__(self, cfg: 'config.ConfigurationType', args: 'Namespace') -> None:
         self.cfg = cfg
-        self.ns = ns
+        self.args = args
 
     # Method responsible of proxying requests
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
