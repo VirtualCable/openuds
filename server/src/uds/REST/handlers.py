@@ -383,3 +383,22 @@ class Handler:
             return getRootUser()
 
         return Authenticator.objects.get(pk=authId).users.get(name=username)
+
+    def getParam(self, *names: str) -> str:
+        """
+        Returns the first parameter found in the parameters (_params) list
+
+        Args:
+            *names: List of names to search
+
+        Example:
+            _params = {'username': 'uname_admin', 'name': 'name_admin'}
+            getParam('name') will return 'admin'
+            getParam('username', 'name') will return 'uname_admin'
+            getParam('name', 'username') will return 'name_admin'
+            getParam('other') will return ''
+        """
+        for name in names:
+            if name in self._params:
+                return self._params[name]
+        return ''

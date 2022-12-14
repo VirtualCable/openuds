@@ -47,17 +47,22 @@ logger = logging.getLogger(__name__)
 # Valid parameters accepted by ticket creation method
 VALID_PARAMS = (
     'authId',
+    'auth_id',
     'authTag',
+    'auth_tag',
     'authSmallName',
     'auth',
+    'auth_name',
     'username',
     'realname',
     'password',
     'groups',
-    'servicePool',
+    'servicePool'
+    'service_pool',
     'transport',  # Admited to be backwards compatible, but not used. Will be removed on a future release.
     'force',
     'userIp',
+    'user_ip',
 )
 
 
@@ -115,19 +120,22 @@ class Tickets(Handler):
         if len(self._args) != 1 or self._args[0] not in ('create',):
             raise RequestError('Invalid method')
 
-        authParameter: typing.Optional[str] = None
-        for i in ('authId', 'authTag', 'auth', 'authSmallName'):
-            if i in self._params:
-                authParameter = i
-                break
+        try:
+            for i in ('authId', 'auth_id', 'authTag', 'auth_tag', 'auth', 'auth_name', 'authSmallName'):
+                if i in self._params:
+                    raise StopIteration
 
-        if authParameter is None:
-            raise RequestError('Invalid parameters (no auth)')
-
-    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or ("authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
+            if 'username' in self._params and 'groups' in self._params:
+                raise StopIteration()
+            
+            raise RequestError('Invalid parameters (no auth or username/groups)')
+        except StopIteration:
+            pass # All ok
+        
+    # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "auth_id") or ("auth_tag" or "authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(
         self,
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    ):
         """
         Processes put requests, currently only under "create"
         """
@@ -136,21 +144,15 @@ class Tickets(Handler):
         # Check that call is correct (pamateters, args, ...)
         self._checkInput()
 
-        if 'username' not in self._params or 'groups' not in self._params:
-            raise RequestError('Invalid parameters')
-
-        force: bool = self._params.get('force', '0') in ('1', 'true', 'True', True)
-
-        userIp: typing.Optional[str] = self._params.get('userIp', None)
+        force: bool = self.getParam('force') in ('1', 'true', 'True', True)
 
         try:
             servicePoolId = None
 
-            authId = self._params.get('authId', None)
-            authName = self._params.get('auth', None)
-            authTag = self._params.get(
-                'authTag', self._params.get('authSmallName', None)
-            )
+            # First param is recommended, last ones are compatible with old versions
+            authId = self.getParam('auth_id', 'authId')
+            authName = self.getParam('auth_name', 'auth')
+            authTag = self.getParam('auth_tag', 'authTag', 'authSmallName')
 
             # Will raise an exception if no auth found
             if authId:
@@ -162,13 +164,12 @@ class Tickets(Handler):
             else:
                 auth = models.Authenticator.objects.get(small_name=authTag)
 
-            username: str = self._params['username']
-            password: str = self._params.get(
-                'password', ''
-            )  # Some machines needs password, depending on configuration
+            username: str = self.getParam('username')
+            password: str = self.getParam('password')
+            # Some machines needs password, depending on configuration
 
             groupIds: typing.List[str] = []
-            for groupName in tools.as_list(self._params['groups']):
+            for groupName in tools.as_list(self.getParam('groups')):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid)
                 except Exception:
@@ -191,13 +192,17 @@ class Tickets(Handler):
                     'Authenticator does not contain ANY of the requested groups and force is not used'
                 )
 
-            time = int(self._params.get('time', 60))
-            time = 60 if time < 1 else time
-            realname: str = self._params.get('realname', self._params['username'])
+            try:
+                time = int(self.getParam('time') or 60)
+                time = 60 if time < 1 else time
+            except Exception:
+                time = 60
+            realname: str = self.getParam('realname', 'username') or ''
 
-            if 'servicePool' in self._params:
+            poolUuid = self.getParam('servicePool')
+            if poolUuid:
                 # Check if is pool or metapool
-                poolUuid = processUuid(self._params['servicePool'])
+                poolUuid = processUuid(poolUuid)
                 pool: typing.Union[models.ServicePool, models.MetaPool]
 
                 try:
