@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-23 16:31+0100\n"
+"POT-Creation-Date: 2022-12-16 12:49+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster at dkmon dot com>, 2012\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -24,24 +24,24 @@ msgstr ""
 msgid "Accounts"
 msgstr "Contas"
 
-#: REST/methods/accounts.py:63 REST/methods/authenticators.py:67
+#: REST/methods/accounts.py:63 REST/methods/authenticators.py:68
 #: REST/methods/calendars.py:63 REST/methods/images.py:67
 #: REST/methods/meta_pools.py:81 REST/methods/mfas.py:56
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:55
 #: REST/methods/providers.py:71 REST/methods/proxies.py:60
 #: REST/methods/reports.py:69 REST/methods/services_pool_groups.py:71
-#: REST/methods/services_pools.py:136 REST/methods/transports.py:66
+#: REST/methods/services_pools.py:136 REST/methods/transports.py:67
 #: REST/methods/user_services.py:325 REST/methods/user_services.py:400
 #: REST/methods/users_groups.py:169 REST/model.py:149
 msgid "Name"
 msgstr "Nome"
 
-#: REST/methods/accounts.py:64 REST/methods/authenticators.py:69
+#: REST/methods/accounts.py:64 REST/methods/authenticators.py:70
 #: REST/methods/calendarrules.py:110 REST/methods/calendars.py:69
 #: REST/methods/meta_pools.py:82 REST/methods/mfas.py:58
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:73
 #: REST/methods/proxies.py:63 REST/methods/services.py:241
-#: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:68
+#: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:69
 #: REST/methods/user_services.py:402 REST/methods/users_groups.py:170
 #: REST/methods/users_groups.py:389 REST/model.py:173
 msgid "Comments"
@@ -51,12 +51,12 @@ msgstr "Comentários"
 msgid "Time mark"
 msgstr "Marca de tempo"
 
-#: REST/methods/accounts.py:66 REST/methods/authenticators.py:75
-#: REST/methods/calendars.py:71 REST/methods/meta_pools.py:89
+#: REST/methods/accounts.py:66 REST/methods/authenticators.py:76
+#: REST/methods/calendars.py:74 REST/methods/meta_pools.py:89
 #: REST/methods/mfas.py:59 REST/methods/networks.py:71
 #: REST/methods/osmanagers.py:59 REST/methods/providers.py:79
 #: REST/methods/proxies.py:64 REST/methods/services.py:250
-#: REST/methods/services_pools.py:145 REST/methods/transports.py:77
+#: REST/methods/services_pools.py:145 REST/methods/transports.py:78
 msgid "tags"
 msgstr "Tag"
 
@@ -163,40 +163,40 @@ msgstr "Nível de log"
 msgid "Token isued by {} from {}"
 msgstr "O token é usado por {} de {}"
 
-#: REST/methods/authenticators.py:64
+#: REST/methods/authenticators.py:65
 msgid "Authenticators"
 msgstr "Autenticadores"
 
-#: REST/methods/authenticators.py:66
+#: REST/methods/authenticators.py:67
 msgid "Id"
 msgstr "Identidade"
 
-#: REST/methods/authenticators.py:68 REST/methods/mfas.py:57
+#: REST/methods/authenticators.py:69 REST/methods/mfas.py:57
 #: REST/methods/osmanagers.py:56 REST/methods/providers.py:72
-#: REST/methods/services.py:242 REST/methods/transports.py:67
+#: REST/methods/services.py:242 REST/methods/transports.py:68
 #: REST/methods/user_services.py:401
 msgid "Type"
 msgstr "Tipo"
 
-#: REST/methods/authenticators.py:70 REST/methods/meta_service_pools.py:88
+#: REST/methods/authenticators.py:71 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:83 REST/methods/services_pool_groups.py:62
-#: REST/methods/transports.py:65 REST/methods/user_services.py:399
+#: REST/methods/transports.py:66 REST/methods/user_services.py:399
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "Prioridade"
 
-#: REST/methods/authenticators.py:71 REST/methods/authenticators.py:110
+#: REST/methods/authenticators.py:72 REST/methods/authenticators.py:111
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:193
 #: REST/methods/services_pools.py:141 REST/methods/services_pools.py:386
 msgid "Visible"
 msgstr "Visível"
 
-#: REST/methods/authenticators.py:72 REST/methods/meta_pools.py:88
-#: REST/methods/transports.py:164 REST/model.py:201
+#: REST/methods/authenticators.py:73 REST/methods/meta_pools.py:88
+#: REST/methods/transports.py:165 REST/model.py:201
 msgid "Label"
 msgstr "Rótulo"
 
-#: REST/methods/authenticators.py:73 core/util/stats/counters.py:252
+#: REST/methods/authenticators.py:74 core/util/stats/counters.py:252
 #: reports/stats/pools_performance.py:206
 #: reports/stats/pools_performance.py:269 reports/stats/user_access.py:239
 #: reports/stats/user_access.py:282 services/RDS_enterprise/provider.py:74
@@ -206,16 +206,16 @@ msgstr "Rótulo"
 msgid "Users"
 msgstr "Comercial"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
+#: REST/methods/authenticators.py:75 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "MFA"
 
-#: REST/methods/authenticators.py:112
+#: REST/methods/authenticators.py:113
 msgid "If active, authenticator will be visible for users"
 msgstr "Se ativo, o autenticador ficará visível para os usuários"
 
-#: REST/methods/authenticators.py:125 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:145
+#: REST/methods/authenticators.py:126 core/services/service.py:143
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
@@ -223,21 +223,25 @@ msgstr "Se ativo, o autenticador ficará visível para os usuários"
 msgid "None"
 msgstr "Nenhum"
 
-#: REST/methods/authenticators.py:132
+#: REST/methods/authenticators.py:133
 msgid "MFA Provider"
 msgstr "Provedor de MFA"
 
-#: REST/methods/authenticators.py:134
+#: REST/methods/authenticators.py:135
 msgid "MFA provider to use for this authenticator"
 msgstr "Provedor de MFA a ser usado para este autenticador"
 
-#: REST/methods/authenticators.py:195
+#: REST/methods/authenticators.py:196
 msgid "Too many results..."
 msgstr "Muitos resultados ..."
 
-#: REST/methods/authenticators.py:195
+#: REST/methods/authenticators.py:196
 msgid "Refine your query"
 msgstr "Refine sua consulta"
+
+#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "A etiqueta deve conter apenas letras, números, \":\" e \"-\""
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -275,6 +279,20 @@ msgstr "Calendários"
 #: REST/methods/calendars.py:70
 msgid "Modified"
 msgstr "Modificado"
+
+#: REST/methods/calendars.py:71
+msgid "Rules"
+msgstr "Regras"
+
+#: REST/methods/calendars.py:72
+#| msgid "Total Accesses"
+msgid "Pools with Accesses"
+msgstr "Piscinas com Acessos"
+
+#: REST/methods/calendars.py:73
+#| msgid "Logout Action"
+msgid "Pools with Actions"
+msgstr "Conjuntos com Ações"
 
 #: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
@@ -475,7 +493,7 @@ msgstr "Validade do código MFA"
 msgid "Time in minutes to allow MFA code to be used."
 msgstr "Tempo em minutos para permitir que o código MFA seja usado."
 
-#: REST/methods/networks.py:59 REST/methods/transports.py:114
+#: REST/methods/networks.py:59 REST/methods/transports.py:115
 msgid "Networks"
 msgstr "Redes"
 
@@ -598,7 +616,7 @@ msgstr "Verificar certificado"
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
-#: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:114
+#: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:78
 #: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:67
 #: services/VCloud_enterprise/provider.py:36
@@ -616,7 +634,7 @@ msgstr "Servidor (IP ou FQDN) que servirá como proxy."
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
-#: services/Nutanix_enterprise/provider.py:46
+#: services/Nutanix_enterprise/provider.py:48
 #: services/OpenGnsys/provider.py:101 services/OpenNebula/provider.py:82
 #: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:74
 #: services/RDS_enterprise/provider.py:111
@@ -744,8 +762,8 @@ msgstr "Está bem"
 msgid "Services Pool Groups"
 msgstr "Grupos de Piscina"
 
-#: REST/methods/services_pools.py:134 REST/methods/transports.py:71
-#: REST/methods/transports.py:152
+#: REST/methods/services_pools.py:134 REST/methods/transports.py:72
+#: REST/methods/transports.py:153
 msgid "Service Pools"
 msgstr "Piscinas de Serviço"
 
@@ -903,19 +921,19 @@ msgstr "Uso de Serviços"
 msgid "Service"
 msgstr "Serviço"
 
-#: REST/methods/transports.py:63
+#: REST/methods/transports.py:64
 msgid "Transports"
 msgstr "Transportes"
 
-#: REST/methods/transports.py:76
+#: REST/methods/transports.py:77
 msgid "Devices"
 msgstr "Devices"
 
-#: REST/methods/transports.py:97
+#: REST/methods/transports.py:98
 msgid "Network access"
 msgstr "Acesso à rede"
 
-#: REST/methods/transports.py:99
+#: REST/methods/transports.py:100
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
@@ -923,7 +941,7 @@ msgstr ""
 "Se marcado, o transporte será habilitado para as redes selecionadas. Se "
 "desmarcado, o transporte será desativado para redes selecionadas"
 
-#: REST/methods/transports.py:116
+#: REST/methods/transports.py:117
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
@@ -931,11 +949,11 @@ msgstr ""
 "Redes associadas a este transporte. Se Nenhuma rede for selecionada, "
 "significará \"todas as redes\""
 
-#: REST/methods/transports.py:134
+#: REST/methods/transports.py:135
 msgid "Allowed Devices"
 msgstr "Dispositivos Permitidos"
 
-#: REST/methods/transports.py:136
+#: REST/methods/transports.py:137
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
@@ -944,11 +962,11 @@ msgstr ""
 "permitido. Além disso, somente dispositivos compatíveis com valores "
 "selecionados serão permitidos"
 
-#: REST/methods/transports.py:153
+#: REST/methods/transports.py:154
 msgid "Currently assigned services pools"
 msgstr "Conjuntos de serviços atualmente atribuídos"
 
-#: REST/methods/transports.py:166
+#: REST/methods/transports.py:167
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr ""
 "Etiqueta de transporte Metapool (usado apenas no agrupamento de transportes "
@@ -1052,7 +1070,7 @@ msgstr "Usuários atuais"
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
-#: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
+#: services/Nutanix_enterprise/provider.py:56 services/OVirt/provider.py:121
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:97
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
@@ -1209,7 +1227,7 @@ msgstr ""
 #: services/HyperV_enterprise/legacy/provider.py:110
 #: services/HyperV_enterprise/provider.py:93
 #: services/NutanixPrism_enterprise/provider.py:61
-#: services/Nutanix_enterprise/provider.py:61 services/OVirt/provider.py:129
+#: services/Nutanix_enterprise/provider.py:63 services/OVirt/provider.py:129
 #: services/OpenGnsys/provider.py:125 services/OpenNebula/provider.py:105
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
@@ -1238,7 +1256,7 @@ msgstr "Senha do usuário ldap"
 #: services/HyperV_enterprise/legacy/provider.py:141
 #: services/HyperV_enterprise/provider.py:155
 #: services/NutanixPrism_enterprise/provider.py:90
-#: services/Nutanix_enterprise/provider.py:90 services/OVirt/provider.py:160
+#: services/Nutanix_enterprise/provider.py:92 services/OVirt/provider.py:160
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:136
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
 #: services/Proxmox/provider.py:124 services/VCloud_enterprise/provider.py:119
@@ -1667,6 +1685,7 @@ msgid "Username with read privileges on the base selected"
 msgstr "Nome de usuário com privilégios de leitura na base selecionada"
 
 #: auths/RegexLdap/authenticator.py:117 auths/SimpleLDAP/authenticator.py:107
+#: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "Base"
 
@@ -2481,8 +2500,8 @@ msgstr "Assunto do e-mail"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:193
-#: mfas/SMS/mfa.py:208 mfas/SMS/mfa.py:218
+#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:237
+#: mfas/SMS/mfa.py:252 mfas/SMS/mfa.py:262
 msgid "Config"
 msgstr "Configuração"
 
@@ -2506,35 +2525,33 @@ msgstr "Ativar HTML em e-mails"
 msgid "Policy for users without MFA support"
 msgstr "Política para usuários sem suporte a MFA"
 
-#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:185 mfas/SMS/mfa.py:200
+#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
 msgid "Action for SMS response error"
 msgstr "Ação para erro de resposta SMS"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "Permitir login do usuário"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
-#: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "Negar login de usuário"
 
 #: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
-#: mfas/SMS/mfa.py:190 mfas/SMS/mfa.py:205
 msgid "Allow user to login if it IP is in the networks list"
 msgstr "Permitir que o usuário faça login se o IP estiver na lista de redes"
 
 #: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
-#: mfas/SMS/mfa.py:191 mfas/SMS/mfa.py:206
 msgid "Deny user to login if it IP is in the networks list"
 msgstr "Negar o login do usuário se o IP estiver na lista de redes"
 
-#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
+#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:256
 msgid "SMS networks"
 msgstr "redes SMS"
 
-#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
+#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:260
 msgid "Networks for SMS authentication"
 msgstr "Redes para autenticação SMS"
 
@@ -2605,19 +2622,21 @@ msgstr "Erro de conexão Radius OTP"
 msgid "Invalid OTP code"
 msgstr "Código OTP inválido"
 
-#: mfas/SMS/mfa.py:53
-msgid "SMS Thought HTTP"
-msgstr "SMS Pensamento HTTP"
+#: mfas/SMS/mfa.py:97
+#| msgid "SMS Thought HTTP"
+msgid "SMS via HTTP"
+msgstr "SMS via HTTP"
 
-#: mfas/SMS/mfa.py:55
-msgid "Simple SMS sending MFA using HTTP"
-msgstr "MFA simples de envio de SMS usando HTTP"
+#: mfas/SMS/mfa.py:99
+#| msgid "Simple SMS sending MFA using HTTP"
+msgid "Simple SMS sending MFA using HTTP/HTTPS"
+msgstr "SMS simples enviando MFA usando HTTP/HTTPS"
 
-#: mfas/SMS/mfa.py:60
+#: mfas/SMS/mfa.py:104
 msgid "URL pattern for SMS sending"
 msgstr "Padrão de URL para envio de SMS"
 
-#: mfas/SMS/mfa.py:63
+#: mfas/SMS/mfa.py:107
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2629,16 +2648,16 @@ msgstr ""
 "{code} - o código para enviar * {phone/+phone} - o número de telefone * "
 "{username} - o nome de usuário * {justUsername} - o nome de usuário sem @...."
 
-#: mfas/SMS/mfa.py:71 mfas/SMS/mfa.py:82 mfas/SMS/mfa.py:91 mfas/SMS/mfa.py:109
-#: mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:136
+#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
+#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
 msgid "HTTP Server"
 msgstr "Servidor HTTP"
 
-#: mfas/SMS/mfa.py:75
+#: mfas/SMS/mfa.py:119
 msgid "Ignore certificate errors"
 msgstr "Ignorar erros de certificado"
 
-#: mfas/SMS/mfa.py:79
+#: mfas/SMS/mfa.py:123
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2646,19 +2665,19 @@ msgstr ""
 "Se marcado, o certificado do servidor será ignorado. Isso é útil se o "
 "servidor usar um certificado autoassinado."
 
-#: mfas/SMS/mfa.py:86
+#: mfas/SMS/mfa.py:130
 msgid "SMS sending method"
 msgstr "Método de envio de SMS"
 
-#: mfas/SMS/mfa.py:88 mfas/SMS/mfa.py:142
+#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
 msgid "Method for sending SMS"
 msgstr "Método de envio de SMS"
 
-#: mfas/SMS/mfa.py:97
+#: mfas/SMS/mfa.py:141
 msgid "Headers for SMS requests"
 msgstr "Cabeçalhos para solicitações de SMS"
 
-#: mfas/SMS/mfa.py:100
+#: mfas/SMS/mfa.py:144
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2672,11 +2691,11 @@ msgstr ""
 "{username} - o nome de usuário * {justUsername} - o nome de usuário sem "
 "@.... Os cabeçalhos estão em a forma de \"Cabeçalho: Valor\". (sem as aspas)"
 
-#: mfas/SMS/mfa.py:115
+#: mfas/SMS/mfa.py:159
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "Parâmetros para envio de SMS POST/PUT"
 
-#: mfas/SMS/mfa.py:118
+#: mfas/SMS/mfa.py:162
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2690,51 +2709,51 @@ msgstr ""
 "telefone * {username} - o nome de usuário * {justUsername} - o nome de "
 "usuário sem @...."
 
-#: mfas/SMS/mfa.py:130
+#: mfas/SMS/mfa.py:174
 msgid "SMS encoding"
 msgstr "Codificação de SMS"
 
-#: mfas/SMS/mfa.py:133
+#: mfas/SMS/mfa.py:177
 msgid "Encoding for SMS"
 msgstr "Codificação para SMS"
 
-#: mfas/SMS/mfa.py:140
+#: mfas/SMS/mfa.py:184
 msgid "SMS authentication method"
 msgstr "Método de autenticação SMS"
 
-#: mfas/SMS/mfa.py:146
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Basic Auth"
 msgstr "Autenticação básica HTTP"
 
-#: mfas/SMS/mfa.py:147
+#: mfas/SMS/mfa.py:191
 msgid "HTTP Digest Auth"
 msgstr "Autenticação de resumo HTTP"
 
-#: mfas/SMS/mfa.py:149 mfas/SMS/mfa.py:158 mfas/SMS/mfa.py:167
+#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
 msgid "HTTP Authentication"
 msgstr "Autenticação HTTP"
 
-#: mfas/SMS/mfa.py:154
+#: mfas/SMS/mfa.py:198
 msgid "SMS authentication user or token"
 msgstr "Usuário ou token de autenticação SMS"
 
-#: mfas/SMS/mfa.py:156
+#: mfas/SMS/mfa.py:200
 msgid "User or token for SMS authentication"
 msgstr "Usuário ou token para autenticação por SMS"
 
-#: mfas/SMS/mfa.py:163
+#: mfas/SMS/mfa.py:207
 msgid "SMS authentication password"
 msgstr "Senha de autenticação SMS"
 
-#: mfas/SMS/mfa.py:165
+#: mfas/SMS/mfa.py:209
 msgid "Password for SMS authentication"
 msgstr "Senha para autenticação SMS"
 
-#: mfas/SMS/mfa.py:172
+#: mfas/SMS/mfa.py:216
 msgid "SMS response OK regex"
 msgstr "Resposta SMS OK regex"
 
-#: mfas/SMS/mfa.py:175
+#: mfas/SMS/mfa.py:219
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2742,31 +2761,41 @@ msgstr ""
 "Regex para resposta SMS OK. Se estiver vazio, a resposta será considerada OK "
 "se o código de status for 200."
 
-#: mfas/SMS/mfa.py:178
+#: mfas/SMS/mfa.py:222
 msgid "HTTP Response"
 msgstr "Resposta HTTP"
 
-#: mfas/SMS/mfa.py:182
+#: mfas/SMS/mfa.py:226
 msgid "SMS response error action"
 msgstr "Ação de erro de resposta SMS"
 
-#: mfas/SMS/mfa.py:197
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#| msgid "Allow user to login if it IP is in the networks list"
+msgid "Allow user to login if its IP is in the networks list"
+msgstr "Permitir que o usuário faça login se seu IP estiver na lista de redes"
+
+#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
+#| msgid "Deny user to login if it IP is in the networks list"
+msgid "Deny user to login if its IP is in the networks list"
+msgstr "Negar o login do usuário se seu IP estiver na lista de redes"
+
+#: mfas/SMS/mfa.py:241
 msgid "User without MFA policy"
 msgstr "Usuário sem política de MFA"
 
-#: mfas/SMS/mfa.py:292
+#: mfas/SMS/mfa.py:336
 msgid "SMS sending failed"
 msgstr "Falha no envio de SMS"
 
-#: mfas/SMS/mfa.py:301
+#: mfas/SMS/mfa.py:345
 msgid "SMS response error"
 msgstr "Erro de resposta SMS"
 
-#: mfas/SMS/mfa.py:355 web/views/modern.py:297
+#: mfas/SMS/mfa.py:399 web/views/modern.py:297
 msgid "MFA Code"
 msgstr "Código MFA"
 
-#: mfas/SMS/mfa.py:358
+#: mfas/SMS/mfa.py:402
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr ""
 "Verifique seu telefone. Você receberá um SMS com o código de verificação"
@@ -3718,7 +3747,7 @@ msgstr "Obtido do usuário criado no AWS IAM para UDS Enteprise - Chaves"
 #: services/HyperV_enterprise/legacy/provider.py:118
 #: services/HyperV_enterprise/provider.py:101
 #: services/NutanixPrism_enterprise/provider.py:68
-#: services/Nutanix_enterprise/provider.py:68 services/OVirt/provider.py:137
+#: services/Nutanix_enterprise/provider.py:70 services/OVirt/provider.py:137
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:113
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
@@ -3732,7 +3761,7 @@ msgstr "Concorrência de criação"
 #: services/HyperV_enterprise/legacy/provider.py:123
 #: services/HyperV_enterprise/provider.py:106
 #: services/NutanixPrism_enterprise/provider.py:73
-#: services/Nutanix_enterprise/provider.py:73 services/OVirt/provider.py:142
+#: services/Nutanix_enterprise/provider.py:75 services/OVirt/provider.py:142
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:118
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
 #: services/Proxmox/provider.py:106 services/VCloud_enterprise/provider.py:101
@@ -3745,7 +3774,7 @@ msgstr "Número máximo de criações simultâneas de VMs"
 #: services/HyperV_enterprise/legacy/provider.py:129
 #: services/HyperV_enterprise/provider.py:113
 #: services/NutanixPrism_enterprise/provider.py:79
-#: services/Nutanix_enterprise/provider.py:79 services/OVirt/provider.py:148
+#: services/Nutanix_enterprise/provider.py:81 services/OVirt/provider.py:148
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:124
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
@@ -3759,7 +3788,7 @@ msgstr "Concorrência de remoção"
 #: services/HyperV_enterprise/legacy/provider.py:134
 #: services/HyperV_enterprise/provider.py:118
 #: services/NutanixPrism_enterprise/provider.py:84
-#: services/Nutanix_enterprise/provider.py:84 services/OVirt/provider.py:153
+#: services/Nutanix_enterprise/provider.py:86 services/OVirt/provider.py:153
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:129
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
 #: services/Proxmox/provider.py:117 services/VCloud_enterprise/provider.py:112
@@ -4083,7 +4112,7 @@ msgstr "Tempo limite em segundos de conexão ao HyperV"
 
 #: services/HyperV_enterprise/legacy/provider.py:150
 #: services/HyperV_enterprise/provider.py:125
-#: services/Nutanix_enterprise/provider.py:100 services/OVirt/provider.py:169
+#: services/Nutanix_enterprise/provider.py:102 services/OVirt/provider.py:169
 #: services/Proxmox/provider.py:147 services/Vmware_enterprise/provider.py:109
 #: services/Xen/provider.py:146
 msgid "Macs range"
@@ -4101,7 +4130,7 @@ msgstr "Teste de conexão bem sucedido"
 
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
-#: services/Nutanix_enterprise/provider.py:294 services/OVirt/provider.py:544
+#: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
 #: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "Conexão falhou. Verifique os parâmetros de conexão"
@@ -4324,11 +4353,9 @@ msgid "Use Full Clones"
 msgstr "Usar clones completos"
 
 #: services/HyperV_enterprise/service.py:136
-#| msgid ""
-#| "If checked, the name of the subnets will be used instead of the names of "
-#| "networks"
 msgid "If checked, full clones will be used instead of differential disks"
-msgstr "Se marcada, clones completos serão usados em vez de discos diferenciais"
+msgstr ""
+"Se marcada, clones completos serão usados em vez de discos diferenciais"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -4339,12 +4366,12 @@ msgid "Nutanix Prism Central based VM provider"
 msgstr "Provedor de VM baseado em Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:40
-#: services/Nutanix_enterprise/provider.py:40
+#: services/Nutanix_enterprise/provider.py:42
 msgid "Nutanix Acropolis Server IP or Hostname"
 msgstr "IP do servidor ou nome de host do Nutanix Acropolis"
 
 #: services/NutanixPrism_enterprise/provider.py:48
-#: services/Nutanix_enterprise/provider.py:48
+#: services/Nutanix_enterprise/provider.py:50
 msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Porta do servidor Nutanix Acropolis (padrão 9440)"
 
@@ -4357,12 +4384,12 @@ msgid "Password of the user of Nutanix  Prism Central"
 msgstr "Senha do usuário do Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:93
-#: services/Nutanix_enterprise/provider.py:93
+#: services/Nutanix_enterprise/provider.py:95
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "Tempo limite em segundos de conexão com a Nutanix"
 
 #: services/NutanixPrism_enterprise/provider.py:262
-#: services/Nutanix_enterprise/provider.py:292
+#: services/Nutanix_enterprise/provider.py:319
 msgid "Connection works fine"
 msgstr "Conexão funciona bem"
 
@@ -4448,25 +4475,38 @@ msgstr ""
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "Ambos os núcleos por VCPU e número de VCPUS são necessários"
 
-#: services/Nutanix_enterprise/provider.py:30
+#: services/Nutanix_enterprise/provider.py:32
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "Fornecedor de plataformas Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/provider.py:32
+#: services/Nutanix_enterprise/provider.py:34
 msgid "Nutanix based VM provider"
 msgstr "Fornecedor de VMs baseado em Nutanix"
 
-#: services/Nutanix_enterprise/provider.py:55
+#: services/Nutanix_enterprise/provider.py:57
 msgid "User with valid privileges on Nutanix Acropolis"
 msgstr "Usuário com privilégios válidos no Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/provider.py:62
+#: services/Nutanix_enterprise/provider.py:64
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "Senha do usuário do Nutanix Acropolis"
 
-#: services/Nutanix_enterprise/provider.py:104 services/OVirt/provider.py:173
+#: services/Nutanix_enterprise/provider.py:106 services/OVirt/provider.py:173
 msgid "Range of valid macs for UDS managed machines"
 msgstr "Intervalo de macs válidos para máquinas gerenciadas por UDS"
+
+#: services/Nutanix_enterprise/provider.py:112
+#| msgid "oVirt Version"
+msgid "API Version"
+msgstr "Versão da API"
+
+#: services/Nutanix_enterprise/provider.py:114
+msgid "Nutanix API version to use"
+msgstr "Versão da API da Nutanix a ser usada"
+
+#: services/Nutanix_enterprise/provider.py:119
+msgid "Latest"
+msgstr "Mais recentes"
 
 #: services/Nutanix_enterprise/service.py:31
 msgid "Nutanix Acropolis Service"
@@ -6533,7 +6573,6 @@ msgid "RDS protocol using HTML5 client for vApps"
 msgstr "Protocolo RDS usando cliente HTML5 para vApps"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:293
-#| msgid "Balancing"
 msgid "Load Balancing Info"
 msgstr "Informações de Balanceamento de Carga"
 
@@ -6546,7 +6585,6 @@ msgstr ""
 "branco. Verifique a documentação do seu balanceador."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:305
-#| msgid "Hostname"
 msgid "Gateway Hostname"
 msgstr "Nome do host do gateway"
 
@@ -6563,12 +6601,10 @@ msgid "Gateway Port"
 msgstr "porta de gateway"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:318
-#| msgid "Port of the VNC server."
 msgid "Port of the gateway server."
 msgstr "Porta do servidor de gateway."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:326
-#| msgid "Username"
 msgid "Gateway Username"
 msgstr "Nome de usuário do gateway"
 
@@ -6581,7 +6617,6 @@ msgstr ""
 "o nome de usuário será obtido dos parâmetros de conexão."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:337
-#| msgid "Password"
 msgid "Gateway Password"
 msgstr "Senha do Gateway"
 
@@ -6594,7 +6629,6 @@ msgstr ""
 "será retirada dos parâmetros de conexão."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:348
-#| msgid "Datastore Domain"
 msgid "Gateway Domain"
 msgstr "domínio de gateway"
 
