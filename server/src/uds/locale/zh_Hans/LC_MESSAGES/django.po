@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-23 16:31+0100\n"
+"POT-Creation-Date: 2022-12-16 12:49+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -22,24 +22,24 @@ msgstr ""
 msgid "Accounts"
 msgstr "帐号"
 
-#: REST/methods/accounts.py:63 REST/methods/authenticators.py:67
+#: REST/methods/accounts.py:63 REST/methods/authenticators.py:68
 #: REST/methods/calendars.py:63 REST/methods/images.py:67
 #: REST/methods/meta_pools.py:81 REST/methods/mfas.py:56
 #: REST/methods/networks.py:63 REST/methods/osmanagers.py:55
 #: REST/methods/providers.py:71 REST/methods/proxies.py:60
 #: REST/methods/reports.py:69 REST/methods/services_pool_groups.py:71
-#: REST/methods/services_pools.py:136 REST/methods/transports.py:66
+#: REST/methods/services_pools.py:136 REST/methods/transports.py:67
 #: REST/methods/user_services.py:325 REST/methods/user_services.py:400
 #: REST/methods/users_groups.py:169 REST/model.py:149
 msgid "Name"
 msgstr "名称"
 
-#: REST/methods/accounts.py:64 REST/methods/authenticators.py:69
+#: REST/methods/accounts.py:64 REST/methods/authenticators.py:70
 #: REST/methods/calendarrules.py:110 REST/methods/calendars.py:69
 #: REST/methods/meta_pools.py:82 REST/methods/mfas.py:58
 #: REST/methods/osmanagers.py:57 REST/methods/providers.py:73
 #: REST/methods/proxies.py:63 REST/methods/services.py:241
-#: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:68
+#: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:69
 #: REST/methods/user_services.py:402 REST/methods/users_groups.py:170
 #: REST/methods/users_groups.py:389 REST/model.py:173
 msgid "Comments"
@@ -49,12 +49,12 @@ msgstr "评论"
 msgid "Time mark"
 msgstr "时间标记"
 
-#: REST/methods/accounts.py:66 REST/methods/authenticators.py:75
-#: REST/methods/calendars.py:71 REST/methods/meta_pools.py:89
+#: REST/methods/accounts.py:66 REST/methods/authenticators.py:76
+#: REST/methods/calendars.py:74 REST/methods/meta_pools.py:89
 #: REST/methods/mfas.py:59 REST/methods/networks.py:71
 #: REST/methods/osmanagers.py:59 REST/methods/providers.py:79
 #: REST/methods/proxies.py:64 REST/methods/services.py:250
-#: REST/methods/services_pools.py:145 REST/methods/transports.py:77
+#: REST/methods/services_pools.py:145 REST/methods/transports.py:78
 msgid "tags"
 msgstr "标签"
 
@@ -161,40 +161,40 @@ msgstr "日志级别"
 msgid "Token isued by {} from {}"
 msgstr "{}从{}发来的令牌"
 
-#: REST/methods/authenticators.py:64
+#: REST/methods/authenticators.py:65
 msgid "Authenticators"
 msgstr "验证器"
 
-#: REST/methods/authenticators.py:66
+#: REST/methods/authenticators.py:67
 msgid "Id"
 msgstr "ID"
 
-#: REST/methods/authenticators.py:68 REST/methods/mfas.py:57
+#: REST/methods/authenticators.py:69 REST/methods/mfas.py:57
 #: REST/methods/osmanagers.py:56 REST/methods/providers.py:72
-#: REST/methods/services.py:242 REST/methods/transports.py:67
+#: REST/methods/services.py:242 REST/methods/transports.py:68
 #: REST/methods/user_services.py:401
 msgid "Type"
 msgstr "类型"
 
-#: REST/methods/authenticators.py:70 REST/methods/meta_service_pools.py:88
+#: REST/methods/authenticators.py:71 REST/methods/meta_service_pools.py:88
 #: REST/methods/op_calendars.py:83 REST/methods/services_pool_groups.py:62
-#: REST/methods/transports.py:65 REST/methods/user_services.py:399
+#: REST/methods/transports.py:66 REST/methods/user_services.py:399
 #: REST/model.py:185 models/meta_pool.py:73
 msgid "Priority"
 msgstr "优先"
 
-#: REST/methods/authenticators.py:71 REST/methods/authenticators.py:110
+#: REST/methods/authenticators.py:72 REST/methods/authenticators.py:111
 #: REST/methods/meta_pools.py:86 REST/methods/meta_pools.py:193
 #: REST/methods/services_pools.py:141 REST/methods/services_pools.py:386
 msgid "Visible"
 msgstr "可见"
 
-#: REST/methods/authenticators.py:72 REST/methods/meta_pools.py:88
-#: REST/methods/transports.py:164 REST/model.py:201
+#: REST/methods/authenticators.py:73 REST/methods/meta_pools.py:88
+#: REST/methods/transports.py:165 REST/model.py:201
 msgid "Label"
 msgstr "标签"
 
-#: REST/methods/authenticators.py:73 core/util/stats/counters.py:252
+#: REST/methods/authenticators.py:74 core/util/stats/counters.py:252
 #: reports/stats/pools_performance.py:206
 #: reports/stats/pools_performance.py:269 reports/stats/user_access.py:239
 #: reports/stats/user_access.py:282 services/RDS_enterprise/provider.py:74
@@ -204,16 +204,16 @@ msgstr "标签"
 msgid "Users"
 msgstr "用户"
 
-#: REST/methods/authenticators.py:74 core/ui/user_interface.py:106
+#: REST/methods/authenticators.py:75 core/ui/user_interface.py:106
 msgid "MFA"
 msgstr "外交部"
 
-#: REST/methods/authenticators.py:112
+#: REST/methods/authenticators.py:113
 msgid "If active, authenticator will be visible for users"
 msgstr "如果激活，验证器将对用户可见"
 
-#: REST/methods/authenticators.py:125 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:145
+#: REST/methods/authenticators.py:126 core/services/service.py:143
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
@@ -221,21 +221,25 @@ msgstr "如果激活，验证器将对用户可见"
 msgid "None"
 msgstr "没有"
 
-#: REST/methods/authenticators.py:132
+#: REST/methods/authenticators.py:133
 msgid "MFA Provider"
 msgstr "MFA 提供者"
 
-#: REST/methods/authenticators.py:134
+#: REST/methods/authenticators.py:135
 msgid "MFA provider to use for this authenticator"
 msgstr "用于此身份验证器的 MFA 提供程序"
 
-#: REST/methods/authenticators.py:195
+#: REST/methods/authenticators.py:196
 msgid "Too many results..."
 msgstr "结果太多......"
 
-#: REST/methods/authenticators.py:195
+#: REST/methods/authenticators.py:196
 msgid "Refine your query"
 msgstr "优化您的查询"
+
+#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "标签只能包含字母、数字、“:”和“-”"
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -273,6 +277,20 @@ msgstr "日历"
 #: REST/methods/calendars.py:70
 msgid "Modified"
 msgstr "改性"
+
+#: REST/methods/calendars.py:71
+msgid "Rules"
+msgstr "规则"
+
+#: REST/methods/calendars.py:72
+#| msgid "Total Accesses"
+msgid "Pools with Accesses"
+msgstr "具有访问权限的池"
+
+#: REST/methods/calendars.py:73
+#| msgid "Logout Action"
+msgid "Pools with Actions"
+msgstr "动作池"
 
 #: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
@@ -469,7 +487,7 @@ msgstr "MFA 代码有效性"
 msgid "Time in minutes to allow MFA code to be used."
 msgstr "允许使用 MFA 代码的时间（以分钟为单位）。"
 
-#: REST/methods/networks.py:59 REST/methods/transports.py:114
+#: REST/methods/networks.py:59 REST/methods/transports.py:115
 msgid "Networks"
 msgstr "网络"
 
@@ -589,7 +607,7 @@ msgstr "检查证书"
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
-#: services/Nutanix_enterprise/provider.py:39 services/OVirt/provider.py:114
+#: services/Nutanix_enterprise/provider.py:41 services/OVirt/provider.py:114
 #: services/OpenGnsys/provider.py:97 services/OpenNebula/provider.py:78
 #: services/OpenStack/provider_legacy.py:106 services/Proxmox/provider.py:67
 #: services/VCloud_enterprise/provider.py:36
@@ -607,7 +625,7 @@ msgstr "将充当代理的服务器（IP或FQDN）。"
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
-#: services/Nutanix_enterprise/provider.py:46
+#: services/Nutanix_enterprise/provider.py:48
 #: services/OpenGnsys/provider.py:101 services/OpenNebula/provider.py:82
 #: services/OpenStack/provider_legacy.py:110 services/Proxmox/provider.py:74
 #: services/RDS_enterprise/provider.py:111
@@ -731,8 +749,8 @@ msgstr "好"
 msgid "Services Pool Groups"
 msgstr "服务池组"
 
-#: REST/methods/services_pools.py:134 REST/methods/transports.py:71
-#: REST/methods/transports.py:152
+#: REST/methods/services_pools.py:134 REST/methods/transports.py:72
+#: REST/methods/transports.py:153
 msgid "Service Pools"
 msgstr "服务池"
 
@@ -885,45 +903,45 @@ msgstr "服务使用"
 msgid "Service"
 msgstr "服务"
 
-#: REST/methods/transports.py:63
+#: REST/methods/transports.py:64
 msgid "Transports"
 msgstr "运输"
 
-#: REST/methods/transports.py:76
+#: REST/methods/transports.py:77
 msgid "Devices"
 msgstr "设备"
 
-#: REST/methods/transports.py:97
+#: REST/methods/transports.py:98
 msgid "Network access"
 msgstr "网络访问"
 
-#: REST/methods/transports.py:99
+#: REST/methods/transports.py:100
 msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr "如果选中，将为所选网络启用传输。如果未选中，将禁用所选网络的传输"
 
-#: REST/methods/transports.py:116
+#: REST/methods/transports.py:117
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
 msgstr "与此传输相关的网络。如果没有选择网络，则表示“所有网络”"
 
-#: REST/methods/transports.py:134
+#: REST/methods/transports.py:135
 msgid "Allowed Devices"
 msgstr "允许的设备"
 
-#: REST/methods/transports.py:136
+#: REST/methods/transports.py:137
 msgid ""
 "If empty, any kind of device compatible with this transport will be allowed. "
 "Else, only devices compatible with selected values will be allowed"
 msgstr "如果为空，将允许任何与此传输兼容的设备。否则，只允许与所选值兼容的设备"
 
-#: REST/methods/transports.py:153
+#: REST/methods/transports.py:154
 msgid "Currently assigned services pools"
 msgstr "当前分配的服务池"
 
-#: REST/methods/transports.py:166
+#: REST/methods/transports.py:167
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr "元池传输标签（仅用于元池传输分组）"
 
@@ -1025,7 +1043,7 @@ msgstr "目前的用户"
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
-#: services/Nutanix_enterprise/provider.py:54 services/OVirt/provider.py:121
+#: services/Nutanix_enterprise/provider.py:56 services/OVirt/provider.py:121
 #: services/OpenGnsys/provider.py:118 services/OpenNebula/provider.py:97
 #: services/OpenStack/provider.py:127 services/OpenStack/provider_legacy.py:144
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
@@ -1177,7 +1195,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/HyperV_enterprise/legacy/provider.py:110
 #: services/HyperV_enterprise/provider.py:93
 #: services/NutanixPrism_enterprise/provider.py:61
-#: services/Nutanix_enterprise/provider.py:61 services/OVirt/provider.py:129
+#: services/Nutanix_enterprise/provider.py:63 services/OVirt/provider.py:129
 #: services/OpenGnsys/provider.py:125 services/OpenNebula/provider.py:105
 #: services/OpenStack/provider.py:135 services/OpenStack/provider_legacy.py:152
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
@@ -1206,7 +1224,7 @@ msgstr "ldap用户的密码"
 #: services/HyperV_enterprise/legacy/provider.py:141
 #: services/HyperV_enterprise/provider.py:155
 #: services/NutanixPrism_enterprise/provider.py:90
-#: services/Nutanix_enterprise/provider.py:90 services/OVirt/provider.py:160
+#: services/Nutanix_enterprise/provider.py:92 services/OVirt/provider.py:160
 #: services/OpenGnsys/provider.py:164 services/OpenNebula/provider.py:136
 #: services/OpenStack/provider.py:166 services/OpenStack/provider_legacy.py:183
 #: services/Proxmox/provider.py:124 services/VCloud_enterprise/provider.py:119
@@ -1614,6 +1632,7 @@ msgid "Username with read privileges on the base selected"
 msgstr "在所选基础上具有读取权限的用户名"
 
 #: auths/RegexLdap/authenticator.py:117 auths/SimpleLDAP/authenticator.py:107
+#: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "基础"
 
@@ -2383,8 +2402,8 @@ msgstr "电子邮件的主题"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:193
-#: mfas/SMS/mfa.py:208 mfas/SMS/mfa.py:218
+#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:237
+#: mfas/SMS/mfa.py:252 mfas/SMS/mfa.py:262
 msgid "Config"
 msgstr "配置"
 
@@ -2408,35 +2427,33 @@ msgstr "在电子邮件中启用 HTML"
 msgid "Policy for users without MFA support"
 msgstr "针对没有 MFA 支持的用户的策略"
 
-#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:185 mfas/SMS/mfa.py:200
+#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
 msgid "Action for SMS response error"
 msgstr "SMS 响应错误的操作"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:188 mfas/SMS/mfa.py:203
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "允许用户登录"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
-#: mfas/SMS/mfa.py:189 mfas/SMS/mfa.py:204
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "拒绝用户登录"
 
 #: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
-#: mfas/SMS/mfa.py:190 mfas/SMS/mfa.py:205
 msgid "Allow user to login if it IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则允许用户登录"
 
 #: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
-#: mfas/SMS/mfa.py:191 mfas/SMS/mfa.py:206
 msgid "Deny user to login if it IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
-#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:212
+#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:256
 msgid "SMS networks"
 msgstr "短信网络"
 
-#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:216
+#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:260
 msgid "Networks for SMS authentication"
 msgstr "用于 SMS 身份验证的网络"
 
@@ -2505,19 +2522,21 @@ msgstr "半径 OTP 连接错误"
 msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
-#: mfas/SMS/mfa.py:53
-msgid "SMS Thought HTTP"
-msgstr "短信思想HTTP"
+#: mfas/SMS/mfa.py:97
+#| msgid "SMS Thought HTTP"
+msgid "SMS via HTTP"
+msgstr "通过 HTTP 发送短信"
 
-#: mfas/SMS/mfa.py:55
-msgid "Simple SMS sending MFA using HTTP"
-msgstr "使用 HTTP 发送 MFA 的简单 SMS"
+#: mfas/SMS/mfa.py:99
+#| msgid "Simple SMS sending MFA using HTTP"
+msgid "Simple SMS sending MFA using HTTP/HTTPS"
+msgstr "使用 HTTP/HTTPS 发送 MFA 的简单短信"
 
-#: mfas/SMS/mfa.py:60
+#: mfas/SMS/mfa.py:104
 msgid "URL pattern for SMS sending"
 msgstr "SMS 发送的 URL 模式"
 
-#: mfas/SMS/mfa.py:63
+#: mfas/SMS/mfa.py:107
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2529,34 +2548,34 @@ msgstr ""
 "{phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@.... 的用户名"
 
-#: mfas/SMS/mfa.py:71 mfas/SMS/mfa.py:82 mfas/SMS/mfa.py:91 mfas/SMS/mfa.py:109
-#: mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:136
+#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
+#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
 msgid "HTTP Server"
 msgstr "HTTP 服务器"
 
-#: mfas/SMS/mfa.py:75
+#: mfas/SMS/mfa.py:119
 msgid "Ignore certificate errors"
 msgstr "忽略证书错误"
 
-#: mfas/SMS/mfa.py:79
+#: mfas/SMS/mfa.py:123
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
 msgstr "如果选中，服务器证书将被忽略。如果服务器使用自签名证书，这很有用。"
 
-#: mfas/SMS/mfa.py:86
+#: mfas/SMS/mfa.py:130
 msgid "SMS sending method"
 msgstr "短信发送方式"
 
-#: mfas/SMS/mfa.py:88 mfas/SMS/mfa.py:142
+#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
 msgid "Method for sending SMS"
 msgstr "发送短信的方法"
 
-#: mfas/SMS/mfa.py:97
+#: mfas/SMS/mfa.py:141
 msgid "Headers for SMS requests"
 msgstr "SMS 请求的标头"
 
-#: mfas/SMS/mfa.py:100
+#: mfas/SMS/mfa.py:144
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2569,11 +2588,11 @@ msgstr ""
 "+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 @.... 的用户"
 "名“标题：值”的形式。 （不带引号）"
 
-#: mfas/SMS/mfa.py:115
+#: mfas/SMS/mfa.py:159
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "SMS POST/PUT 发送参数"
 
-#: mfas/SMS/mfa.py:118
+#: mfas/SMS/mfa.py:162
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2586,82 +2605,92 @@ msgstr ""
 "* {phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@...."
 
-#: mfas/SMS/mfa.py:130
+#: mfas/SMS/mfa.py:174
 msgid "SMS encoding"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:133
+#: mfas/SMS/mfa.py:177
 msgid "Encoding for SMS"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:140
+#: mfas/SMS/mfa.py:184
 msgid "SMS authentication method"
 msgstr "短信认证方式"
 
-#: mfas/SMS/mfa.py:146
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Basic Auth"
 msgstr "HTTP 基本身份验证"
 
-#: mfas/SMS/mfa.py:147
+#: mfas/SMS/mfa.py:191
 msgid "HTTP Digest Auth"
 msgstr "HTTP摘要认证"
 
-#: mfas/SMS/mfa.py:149 mfas/SMS/mfa.py:158 mfas/SMS/mfa.py:167
+#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
 msgid "HTTP Authentication"
 msgstr "HTTP 身份验证"
 
-#: mfas/SMS/mfa.py:154
+#: mfas/SMS/mfa.py:198
 msgid "SMS authentication user or token"
 msgstr "短信认证用户或令牌"
 
-#: mfas/SMS/mfa.py:156
+#: mfas/SMS/mfa.py:200
 msgid "User or token for SMS authentication"
 msgstr "用于 SMS 身份验证的用户或令牌"
 
-#: mfas/SMS/mfa.py:163
+#: mfas/SMS/mfa.py:207
 msgid "SMS authentication password"
 msgstr "短信认证密码"
 
-#: mfas/SMS/mfa.py:165
+#: mfas/SMS/mfa.py:209
 msgid "Password for SMS authentication"
 msgstr "短信验证密码"
 
-#: mfas/SMS/mfa.py:172
+#: mfas/SMS/mfa.py:216
 msgid "SMS response OK regex"
 msgstr "短信回复 OK 正则表达式"
 
-#: mfas/SMS/mfa.py:175
+#: mfas/SMS/mfa.py:219
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
 msgstr ""
 "SMS 响应的正则表达式 OK。如果为空，则如果状态码为 200，则认为响应正常。"
 
-#: mfas/SMS/mfa.py:178
+#: mfas/SMS/mfa.py:222
 msgid "HTTP Response"
 msgstr "HTTP 响应"
 
-#: mfas/SMS/mfa.py:182
+#: mfas/SMS/mfa.py:226
 msgid "SMS response error action"
 msgstr "短信响应错误动作"
 
-#: mfas/SMS/mfa.py:197
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#| msgid "Allow user to login if it IP is in the networks list"
+msgid "Allow user to login if its IP is in the networks list"
+msgstr "如果用户的 IP 在网络列表中，则允许用户登录"
+
+#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
+#| msgid "Deny user to login if it IP is in the networks list"
+msgid "Deny user to login if its IP is in the networks list"
+msgstr "如果 IP 在网络列表中，则拒绝用户登录"
+
+#: mfas/SMS/mfa.py:241
 msgid "User without MFA policy"
 msgstr "没有 MFA 策略的用户"
 
-#: mfas/SMS/mfa.py:292
+#: mfas/SMS/mfa.py:336
 msgid "SMS sending failed"
 msgstr "短信发送失败"
 
-#: mfas/SMS/mfa.py:301
+#: mfas/SMS/mfa.py:345
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:355 web/views/modern.py:297
+#: mfas/SMS/mfa.py:399 web/views/modern.py:297
 msgid "MFA Code"
 msgstr "MFA 代码"
 
-#: mfas/SMS/mfa.py:358
+#: mfas/SMS/mfa.py:402
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "检查你的手机。您将收到一条带有验证码的短信"
 
@@ -3585,7 +3614,7 @@ msgstr "从在 AWS IAM 上为 UDS Enteprise 创建的用户获取 - 密钥"
 #: services/HyperV_enterprise/legacy/provider.py:118
 #: services/HyperV_enterprise/provider.py:101
 #: services/NutanixPrism_enterprise/provider.py:68
-#: services/Nutanix_enterprise/provider.py:68 services/OVirt/provider.py:137
+#: services/Nutanix_enterprise/provider.py:70 services/OVirt/provider.py:137
 #: services/OpenGnsys/provider.py:141 services/OpenNebula/provider.py:113
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
@@ -3599,7 +3628,7 @@ msgstr "创建并发"
 #: services/HyperV_enterprise/legacy/provider.py:123
 #: services/HyperV_enterprise/provider.py:106
 #: services/NutanixPrism_enterprise/provider.py:73
-#: services/Nutanix_enterprise/provider.py:73 services/OVirt/provider.py:142
+#: services/Nutanix_enterprise/provider.py:75 services/OVirt/provider.py:142
 #: services/OpenGnsys/provider.py:146 services/OpenNebula/provider.py:118
 #: services/OpenStack/provider.py:148 services/OpenStack/provider_legacy.py:165
 #: services/Proxmox/provider.py:106 services/VCloud_enterprise/provider.py:101
@@ -3612,7 +3641,7 @@ msgstr "最大并发创建VM的数量"
 #: services/HyperV_enterprise/legacy/provider.py:129
 #: services/HyperV_enterprise/provider.py:113
 #: services/NutanixPrism_enterprise/provider.py:79
-#: services/Nutanix_enterprise/provider.py:79 services/OVirt/provider.py:148
+#: services/Nutanix_enterprise/provider.py:81 services/OVirt/provider.py:148
 #: services/OpenGnsys/provider.py:152 services/OpenNebula/provider.py:124
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
@@ -3626,7 +3655,7 @@ msgstr "删除并发"
 #: services/HyperV_enterprise/legacy/provider.py:134
 #: services/HyperV_enterprise/provider.py:118
 #: services/NutanixPrism_enterprise/provider.py:84
-#: services/Nutanix_enterprise/provider.py:84 services/OVirt/provider.py:153
+#: services/Nutanix_enterprise/provider.py:86 services/OVirt/provider.py:153
 #: services/OpenGnsys/provider.py:157 services/OpenNebula/provider.py:129
 #: services/OpenStack/provider.py:159 services/OpenStack/provider_legacy.py:176
 #: services/Proxmox/provider.py:117 services/VCloud_enterprise/provider.py:112
@@ -3943,7 +3972,7 @@ msgstr "连接到HyperV的超时时间"
 
 #: services/HyperV_enterprise/legacy/provider.py:150
 #: services/HyperV_enterprise/provider.py:125
-#: services/Nutanix_enterprise/provider.py:100 services/OVirt/provider.py:169
+#: services/Nutanix_enterprise/provider.py:102 services/OVirt/provider.py:169
 #: services/Proxmox/provider.py:147 services/Vmware_enterprise/provider.py:109
 #: services/Xen/provider.py:146
 msgid "Macs range"
@@ -3961,7 +3990,7 @@ msgstr "连接测试成功"
 
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
-#: services/Nutanix_enterprise/provider.py:294 services/OVirt/provider.py:544
+#: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
 #: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
@@ -4173,9 +4202,6 @@ msgid "Use Full Clones"
 msgstr "使用完整克隆"
 
 #: services/HyperV_enterprise/service.py:136
-#| msgid ""
-#| "If checked, the name of the subnets will be used instead of the names of "
-#| "networks"
 msgid "If checked, full clones will be used instead of differential disks"
 msgstr "如果选中，将使用完整克隆而不是差异磁盘"
 
@@ -4188,12 +4214,12 @@ msgid "Nutanix Prism Central based VM provider"
 msgstr "基于 Nutanix Prism Central 的 VM 提供商"
 
 #: services/NutanixPrism_enterprise/provider.py:40
-#: services/Nutanix_enterprise/provider.py:40
+#: services/Nutanix_enterprise/provider.py:42
 msgid "Nutanix Acropolis Server IP or Hostname"
 msgstr "Nutanix Acropolis服务器IP或主机名"
 
 #: services/NutanixPrism_enterprise/provider.py:48
-#: services/Nutanix_enterprise/provider.py:48
+#: services/Nutanix_enterprise/provider.py:50
 msgid "Nutanix Acropolis server Port (default 9440)"
 msgstr "Nutanix Acropolis服务器端口（默认9440）"
 
@@ -4206,12 +4232,12 @@ msgid "Password of the user of Nutanix  Prism Central"
 msgstr "Nutanix Prism Central 用户密码"
 
 #: services/NutanixPrism_enterprise/provider.py:93
-#: services/Nutanix_enterprise/provider.py:93
+#: services/Nutanix_enterprise/provider.py:95
 msgid "Timeout in seconds of connection to Nutanix"
 msgstr "连接到Nutanix的超时时间"
 
 #: services/NutanixPrism_enterprise/provider.py:262
-#: services/Nutanix_enterprise/provider.py:292
+#: services/Nutanix_enterprise/provider.py:319
 msgid "Connection works fine"
 msgstr "连接工作正常"
 
@@ -4292,25 +4318,38 @@ msgstr ""
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "每个VCPU的内核数和VCPUS数都是必需的"
 
-#: services/Nutanix_enterprise/provider.py:30
+#: services/Nutanix_enterprise/provider.py:32
 msgid "Nutanix Acropolis Platform Provider"
 msgstr "Nutanix雅典卫城平台提供商"
 
-#: services/Nutanix_enterprise/provider.py:32
+#: services/Nutanix_enterprise/provider.py:34
 msgid "Nutanix based VM provider"
 msgstr "基于Nutanix的VM提供商"
 
-#: services/Nutanix_enterprise/provider.py:55
+#: services/Nutanix_enterprise/provider.py:57
 msgid "User with valid privileges on Nutanix Acropolis"
 msgstr "拥有Nutanix Acropolis有效权限的用户"
 
-#: services/Nutanix_enterprise/provider.py:62
+#: services/Nutanix_enterprise/provider.py:64
 msgid "Password of the user of Nutanix Acropolis"
 msgstr "Nutanix Acropolis用户的密码"
 
-#: services/Nutanix_enterprise/provider.py:104 services/OVirt/provider.py:173
+#: services/Nutanix_enterprise/provider.py:106 services/OVirt/provider.py:173
 msgid "Range of valid macs for UDS managed machines"
 msgstr "UDS托管计算机的有效mac范围"
+
+#: services/Nutanix_enterprise/provider.py:112
+#| msgid "oVirt Version"
+msgid "API Version"
+msgstr "接口版本"
+
+#: services/Nutanix_enterprise/provider.py:114
+msgid "Nutanix API version to use"
+msgstr "要使用的 Nutanix API 版本"
+
+#: services/Nutanix_enterprise/provider.py:119
+msgid "Latest"
+msgstr "最新的"
 
 #: services/Nutanix_enterprise/service.py:31
 msgid "Nutanix Acropolis Service"
@@ -6282,7 +6321,6 @@ msgid "RDS protocol using HTML5 client for vApps"
 msgstr "使用HTML5客户端进行vApp的RDS协议"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:293
-#| msgid "Balancing"
 msgid "Load Balancing Info"
 msgstr "负载平衡信息"
 
@@ -6293,7 +6331,6 @@ msgid ""
 msgstr "负载平衡信息。通常，此字段为空白。检查您的平衡器的文档。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:305
-#| msgid "Hostname"
 msgid "Gateway Hostname"
 msgstr "网关主机名"
 
@@ -6308,12 +6345,10 @@ msgid "Gateway Port"
 msgstr "网关端口"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:318
-#| msgid "Port of the VNC server."
 msgid "Port of the gateway server."
 msgstr "网关服务器的端口。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:326
-#| msgid "Username"
 msgid "Gateway Username"
 msgstr "网关用户名"
 
@@ -6324,7 +6359,6 @@ msgid ""
 msgstr "网关服务器的用户名。通常，这将是空白的，用户名将从连接参数中获取。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:337
-#| msgid "Password"
 msgid "Gateway Password"
 msgstr "网关密码"
 
@@ -6335,7 +6369,6 @@ msgid ""
 msgstr "网关服务器的密码。通常，这将是空白的，密码将从连接参数中获取。"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:348
-#| msgid "Datastore Domain"
 msgid "Gateway Domain"
 msgstr "网关域"
 
