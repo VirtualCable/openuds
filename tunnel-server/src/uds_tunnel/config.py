@@ -50,6 +50,7 @@ class ConfigurationType(typing.NamedTuple):
 
     listen_address: str
     listen_port: int
+    listen_ipv6: bool
 
     workers: int
 
@@ -117,9 +118,10 @@ def read(
             log_number=int(uds.get('lognumber', '3')),
             listen_address=uds.get('address', '0.0.0.0'),
             listen_port=int(uds.get('port', '443')),
+            listen_ipv6=uds.get('ipv6', 'false').lower() == 'true',
             workers=int(uds.get('workers', '0')) or multiprocessing.cpu_count(),
             ssl_certificate=uds['ssl_certificate'],
-            ssl_certificate_key=uds['ssl_certificate_key'],
+            ssl_certificate_key=uds.get('ssl_certificate_key', ''),
             ssl_ciphers=uds.get('ssl_ciphers'),
             ssl_dhparam=uds.get('ssl_dhparam'),
             uds_server=uds_server,

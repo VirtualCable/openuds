@@ -156,13 +156,16 @@ class Processes:
         ns: 'Namespace',
     ) -> None:
         if cfg.use_uvloop:
-            import uvloop
+            try:
+                import uvloop
 
-            if sys.version_info >= (3, 11):
-                with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:
-                    runner.run(proc(conn, cfg, ns))
-            else:
-                uvloop.install()
-                asyncio.run(proc(conn, cfg, ns))
+                if sys.version_info >= (3, 11):
+                    with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:
+                        runner.run(proc(conn, cfg, ns))
+                else:
+                    uvloop.install()
+                    asyncio.run(proc(conn, cfg, ns))
+            except ImportError:
+                logger.warning('uvloop not found, using default asyncio')
         else:
             asyncio.run(proc(conn, cfg, ns))

@@ -37,6 +37,7 @@ from unittest import mock
 
 from . import certs
 
+
 class AsyncMock(mock.MagicMock):
     async def __call__(self, *args, **kwargs):
         return super().__call__(*args, **kwargs)
@@ -44,42 +45,37 @@ class AsyncMock(mock.MagicMock):
 
 # simple async http server, will return 200 OK with the request path as body
 class AsyncHttpServer:
+    host: str
     port: int
     _server: typing.Optional[asyncio.AbstractServer]
     _response: typing.Optional[bytes]
     _ssl_ctx: typing.Optional[ssl.SSLContext]
+    _ssl_cert_file: typing.Optional[str]
 
     def __init__(
-        self, port: int, *, response: typing.Optional[bytes] = None, use_ssl: bool = False, 
+        self,
+        port: int,
+        *,
+        response: typing.Optional[bytes] = None,
+        use_ssl: bool = False,
         host: str = '127.0.0.1'  # ip
-    ):
+    ) -> None:
+        self.host = host
         self.port = port
         self._server = None
         self._response = response
         if use_ssl:
-            # First, create server cert and key on temp dir
-            tmpdir = tempfile.gettempdir()
-            cert, key, password = certs.selfSignedCert('127.0.0.1')
-            with open(f'{tmpdir}/tmp_cert.pem', 'w') as f:
-                f.write(key)
-                f.write(cert)
-            # Create SSL context
-            self._ssl_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            self._ssl_ctx.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
-            self._ssl_ctx.load_cert_chain(certfile=f'{tmpdir}/tmp_cert.pem', password=password)
-            self._ssl_ctx.check_hostname = False
-            self._ssl_ctx.set_ciphers(
-                'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384'
-            )
+            self._ssl_ctx, self._ssl_cert_file, pwd = certs.sslContext(host)
         else:
             self._ssl_ctx = None
+            self._ssl_cert_file = None
 
     # on end, remove certs
-    def __del__(self):
-        tmpdir = tempfile.gettempdir()
-        # os.remove(f'{tmpdir}/tmp_cert.pem')
+    def __del__(self) -> None:
+        if self._ssl_cert_file:
+            os.unlink(self._ssl_cert_file)
 
-    async def _handle(self, reader, writer):
+    async def _handle(self, reader, writer) -> None:
         data = await reader.read(2048)
         path: bytes = data.split()[1]
         if self._response is not None:
@@ -90,20 +86,69 @@ class AsyncHttpServer:
         )
         await writer.drain()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> 'AsyncHttpServer':
         if self._ssl_ctx is not None:
             self._server = await asyncio.start_server(
-                self._handle, '127.0.0.1', self.port, ssl=self._ssl_ctx
+                self._handle, self.host, self.port, ssl=self._ssl_ctx
             )
         else:
             self._server = await asyncio.start_server(
-                self._handle, '127.0.0.1', self.port
+                self._handle, self.host, self.port
             )
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         if self._server is not None:
             self._server.close()
             await self._server.wait_closed()
             self._server = None
 
+class AsyncTCPServer:
+    host: str
+    port: int
+    _server: typing.Optional[asyncio.AbstractServer]
+    _response: typing.Optional[bytes]
+    _callback: typing.Optional[typing.Callable[[bytes], None]]
+
+    def __init__(
+        self,
+        port: int,
+        *,
+        response: typing.Optional[bytes] = None,
+        host: str = '127.0.0.1',  # ip
+        callback: typing.Optional[typing.Callable[[bytes], None]] = None
+    ) -> None:
+        self.host = host
+        self.port = port
+        self._server = None
+        self._response = response
+        self._callback = callback
+
+        self.data = b''
+
+    async def _handle(self, reader, writer) -> None:
+        data = await reader.read(2048)
+        
+        if self._callback:
+            self._callback(data)
+
+        if self._response is not None:
+            data = self._response
+        else:
+            data = b'sample data'
+        writer.write(data)
+        await writer.drain()
+
+    async def __aenter__(self) -> 'AsyncTCPServer':
+        self._server = await asyncio.start_server(
+            self._handle, 
+            self.host,
+            self.port
+        )
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        if self._server is not None:
+            self._server.close()
+            await self._server.wait_closed()
+            self._server = None

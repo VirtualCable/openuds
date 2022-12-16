@@ -57,11 +57,11 @@ lognumber = {lognumber}
 # Listen address. Defaults to 0.0.0.0
 address = {address}
 
+# Listen port. Defaults to 443
+port = {port}
+
 # Number of workers. Defaults to  0 (means "as much as cores")
 workers = {workers}
-
-# Listening port
-port = 7777
 
 # SSL Related parameters. 
 ssl_certificate = {ssl_certificate}
@@ -89,6 +89,8 @@ secret = {secret}
 # Only use IPs, no networks allowed
 # defaults to localhost (change if listen address is different from 0.0.0.0)
 allow = {allow}
+
+use_uvloop = {use_uvloop}
 '''
 
 def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], config.ConfigurationType]:
@@ -100,6 +102,8 @@ def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], con
         'logsize': random.randint(0, 100),  # Random log size
         'lognumber': random.randint(0, 100),  # Random log number
         'address': f'{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}',  # Random address
+        'port': random.randint(0, 65535),  # Random port
+        'ipv6': random.choice([True, False]),  # Random ipv6
         'workers': random.randint(1, 100),  # Random workers, 0 will return as many as cpu cores
         'ssl_certificate': f'/tmp/uds_tunnel_{random.randint(0, 100)}.crt',  # Random ssl certificate
         'ssl_certificate_key': f'/tmp/uds_tunnel_{random.randint(0, 100)}.key',  # Random ssl certificate key
@@ -111,6 +115,7 @@ def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], con
         'uds_verify_ssl': random.choice([True, False]),  # Random verify uds ssl
         'secret': f'secret{random.randint(0, 100)}',  # Random secret
         'allow': f'{random.randint(0, 255)}.0.0.0',  # Random allow
+        'use_uvloop': random.choice([True, False]),  # Random use uvloop
     }
     values.update(overrides)
     config_file = io.StringIO(TEST_CONFIG.format(**values))

@@ -38,16 +38,29 @@ import threading
 import select
 import typing
 import logging
+import enum
 
 from . import tools
 
-HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
-BUFFER_SIZE = 1024 * 16  # Max buffer length
 DEBUG = True
-LISTEN_ADDRESS = '0.0.0.0' if DEBUG else '127.0.0.1'
+
+BUFFER_SIZE: typing.Final[int] = 1024 * 16  # Max buffer length
+LISTEN_ADDRESS: typing.Final[str] = '0.0.0.0' if DEBUG else '127.0.0.1'
+LISTEN_ADDRESS_V6: typing.Final[str] = '::' if DEBUG else '::1'
 
 # ForwarServer states
-TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
+class ForwardState(enum.IntEnum): 
+    TUNNEL_LISTENING = 0
+    TUNNEL_OPENING = 1
+    TUNNEL_PROCESSING = 2
+    TUNNEL_ERROR = 3
+
+# Some constants strings for protocol
+HANDSHAKE_V1: typing.Final[bytes] = b'\x5AMGB\xA5\x01\x00'
+CMD_TEST: typing.Final[bytes] = b'TEST'
+CMD_OPEN: typing.Final[bytes] = b'OPEN'
+
+RESPONSE_OK: typing.Final[bytes] = b'OK'
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +70,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
 
     remote: typing.Tuple[str, int]
+    remote_ipv6: bool
     ticket: str
     stop_flag: threading.Event
     can_stop: bool
@@ -64,7 +78,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     timer: typing.Optional[threading.Timer]
     check_certificate: bool
     current_connections: int
-    status: int
+    status: ForwardState
+
+    address_family = socket.AF_INET
 
     def __init__(
         self,
@@ -73,14 +89,21 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         timeout: int = 0,
         local_port: int = 0,
         check_certificate: bool = True,
+        ipv6_listen: bool = False,
+        ipv6_remote: bool = False,
     ) -> None:
 
         local_port = local_port or random.randrange(33000, 53000)
 
+        if ipv6_listen:
+            self.address_family = socket.AF_INET6
+
         super().__init__(
-            server_address=(LISTEN_ADDRESS, local_port), RequestHandlerClass=Handler
+            server_address=(LISTEN_ADDRESS if ipv6_listen else LISTEN_ADDRESS_V6, local_port),
+            RequestHandlerClass=Handler,
         )
         self.remote = remote
+        self.remote_ipv6 = ipv6_remote or ':' in remote[0]  # if ':' in remote address, it's ipv6 (port is [1])
         self.ticket = ticket
         # Negative values for timeout, means "accept always connections"
         # "but if no connection is stablished on timeout (positive)"
@@ -90,7 +113,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
 
-        self.status = TUNNEL_LISTENING
+        self.status = ForwardState.TUNNEL_LISTENING
         self.can_stop = False
 
         timeout = abs(timeout) or 60
@@ -109,7 +132,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             self.shutdown()
 
     def connect(self) -> ssl.SSLSocket:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rsocket:
+        with socket.socket(socket.AF_INET6 if self.remote_ipv6 else socket.AF_INET, socket.SOCK_STREAM) as rsocket:
             logger.info('CONNECT to %s', self.remote)
 
             rsocket.connect(self.remote)
@@ -134,16 +157,16 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             return context.wrap_socket(rsocket, server_hostname=self.remote[0])
 
     def check(self) -> bool:
-        if self.status == TUNNEL_ERROR:
+        if self.status == ForwardState.TUNNEL_ERROR:
             return False
 
         logger.debug('Checking tunnel availability')
 
         try:
             with self.connect() as ssl_socket:
-                ssl_socket.sendall(b'TEST')
+                ssl_socket.sendall(CMD_TEST)
                 resp = ssl_socket.recv(2)
-                if resp != b'OK':
+                if resp != RESPONSE_OK:
                     raise Exception({'Invalid  tunnelresponse: {resp}'})
                 logger.debug('Tunnel is available!')
                 return True
@@ -173,11 +196,11 @@ class Handler(socketserver.BaseRequestHandler):
 
     # server: ForwardServer
     def handle(self) -> None:
-        self.server.status = TUNNEL_OPENING
+        self.server.status = ForwardState.TUNNEL_OPENING
 
-        # If server processing is over time
+        # If server new connections processing are over time...
         if self.server.stoppable:
-            self.server.status = TUNNEL_ERROR
+            self.server.status = ForwardState.TUNNEL_ERROR
             logger.info('Rejected timedout connection')
             self.request.close()  # End connection without processing it
             return
@@ -189,10 +212,10 @@ class Handler(socketserver.BaseRequestHandler):
             logger.debug('Ticket %s', self.server.ticket)
             with self.server.connect() as ssl_socket:
                 # Send handhshake + command + ticket
-                ssl_socket.sendall(b'OPEN' + self.server.ticket.encode())
+                ssl_socket.sendall(CMD_OPEN + self.server.ticket.encode())
                 # Check response is OK
                 data = ssl_socket.recv(2)
-                if data != b'OK':
+                if data != RESPONSE_OK:
                     data += ssl_socket.recv(128)
                     raise Exception(
                         f'Error received: {data.decode(errors="ignore")}'
@@ -202,7 +225,7 @@ class Handler(socketserver.BaseRequestHandler):
                 self.process(remote=ssl_socket)
         except Exception as e:
             logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
-            self.server.status = TUNNEL_ERROR
+            self.server.status = ForwardState.TUNNEL_ERROR
             self.server.stop()
         finally:
             self.server.current_connections -= 1
@@ -212,7 +235,7 @@ class Handler(socketserver.BaseRequestHandler):
 
     # Processes data forwarding
     def process(self, remote: ssl.SSLSocket):
-        self.server.status = TUNNEL_PROCESSING
+        self.server.status = ForwardState.TUNNEL_PROCESSING
         logger.debug('Processing tunnel with ticket %s', self.server.ticket)
         # Process data until stop requested or connection closed
         try:

@@ -66,6 +66,8 @@ class TunnelProtocol(asyncio.Protocol):
     stats_manager: stats.Stats
     # counter
     counter: stats.StatsSingleCounter
+    # If there is a timeout task running
+    timeout_task: typing.Optional[asyncio.Task]
 
     def __init__(
         self, owner: 'proxy.Proxy', other_side: typing.Optional['TunnelProtocol'] = None
@@ -79,7 +81,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.runner = self.do_proxy
         else:
             self.other_side = self
-            self.stats_manager = stats.Stats(owner.args)
+            self.stats_manager = stats.Stats(owner.ns)
             self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
 
@@ -90,6 +92,10 @@ class TunnelProtocol(asyncio.Protocol):
         self.owner = owner
         self.source = ('', 0)
         self.destination = ('', 0)
+        self.timeout_task = None
+
+        # Set starting timeout task, se we dont get hunged on connections without data
+        self.set_timeout(consts.TIMEOUT_COMMAND)
 
     def process_open(self) -> None:
         # Open Command has the ticket behind it
@@ -106,7 +112,7 @@ class TunnelProtocol(asyncio.Protocol):
         # clean up the command
         self.cmd = b''
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         async def open_other_side() -> None:
             try:
@@ -115,7 +121,7 @@ class TunnelProtocol(asyncio.Protocol):
                 )
             except Exception as e:
                 logger.error('ERROR %s', e.args[0] if e.args else e)
-                self.transport.write(b'ERROR_TICKET')
+                self.transport.write(consts.RESPONSE_ERROR_TICKET)
                 self.transport.close()  # And force close
                 return
 
@@ -160,7 +166,7 @@ class TunnelProtocol(asyncio.Protocol):
             # Check valid source ip
             if self.transport.get_extra_info('peername')[0] not in self.owner.cfg.allow:
                 # Invalid source
-                self.transport.write(b'FORBIDDEN')
+                self.transport.write(consts.RESPONSE_FORBIDDEN)
                 return
 
             # Check password
@@ -171,10 +177,10 @@ class TunnelProtocol(asyncio.Protocol):
 
             if passwd.decode(errors='ignore') != self.owner.cfg.secret:
                 # Invalid password
-                self.transport.write(b'FORBIDDEN')
+                self.transport.write(consts.RESPONSE_FORBIDDEN)
                 return
 
-            data = stats.GlobalStats.get_stats(self.owner.args)
+            data = stats.GlobalStats.get_stats(self.owner.ns)
 
             for v in data:
                 logger.debug('SENDING %s', v)
@@ -184,8 +190,37 @@ class TunnelProtocol(asyncio.Protocol):
         finally:
             self.close_connection()
 
+    async def timeout(self, wait: int) -> None:
+        try:
+            await asyncio.sleep(wait)
+            logger.error('TIMEOUT FROM %s', self.pretty_source())
+            self.transport.write(consts.RESPONSE_ERROR_TIMEOUT)
+            self.close_connection()
+        except asyncio.CancelledError:
+            pass
+
+    def set_timeout(self, wait: int) -> None:
+        """Set a timeout for this connection.
+        If reached, the connection will be closed.
+
+        Args:
+            wait (int): Timeout in seconds
+
+        """
+        if self.timeout_task:
+            self.timeout_task.cancel()
+        self.timeout_task = asyncio.create_task(self.timeout(wait))
+
+    def clean_timeout(self) -> None:
+        """Clean the timeout task if any."""
+        if self.timeout_task:
+            self.timeout_task.cancel()
+            self.timeout_task = None
+
     def do_command(self, data: bytes) -> None:
+        self.clean_timeout()
         self.cmd += data
+        # Ensure we don't get a timeout
         if len(self.cmd) >= consts.COMMAND_LENGTH:
             logger.info('CONNECT FROM %s', self.pretty_source())
 
@@ -195,7 +230,7 @@ class TunnelProtocol(asyncio.Protocol):
                     self.process_open()
                 elif command == consts.COMMAND_TEST:
                     logger.info('COMMAND: TEST')
-                    self.transport.write(b'OK')
+                    self.transport.write(consts.RESPONSE_OK)
                     self.close_connection()
                     return
                 elif command in (consts.COMMAND_STAT, consts.COMMAND_INFO):
@@ -206,9 +241,11 @@ class TunnelProtocol(asyncio.Protocol):
                     raise Exception('Invalid command')
             except Exception:
                 logger.error('ERROR from %s', self.pretty_source())
-                self.transport.write(b'ERROR_COMMAND')
+                self.transport.write(consts.RESPONSE_ERROR_COMMAND)
                 self.close_connection()
                 return
+        else:
+            self.set_timeout(consts.TIMEOUT_COMMAND)
 
         # if not enough data to process command, wait for more
 

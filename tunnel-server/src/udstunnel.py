@@ -133,7 +133,11 @@ async def tunnel_proc_async(
 
         # Generate SSL context
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
+        
+        if cfg.ssl_certificate_key:
+            context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
+        else:
+            context.load_cert_chain(cfg.ssl_certificate)
 
         if cfg.ssl_ciphers:
             context.set_ciphers(cfg.ssl_ciphers)
@@ -155,7 +159,7 @@ async def tunnel_proc_async(
     # create task for server
     tasks.append(asyncio.create_task(run_server()))
 
-    while tasks:
+    while tasks and not do_stop:
         to_wait = tasks[:]  # Get a copy of the list, and clean the original
         # Wait for tasks to finish
         done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
@@ -164,6 +168,13 @@ async def tunnel_proc_async(
             tasks.remove(task)
             if task.exception():
                 logger.exception('TUNNEL ERROR')
+
+    # If any task is still running, cancel it
+    for task in tasks:
+        task.cancel()
+
+    # Wait for all tasks to finish
+    await asyncio.gather(*tasks, return_exceptions=True)
 
     logger.info('PROCESS %s stopped', os.getpid())
 

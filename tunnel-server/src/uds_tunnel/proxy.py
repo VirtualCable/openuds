@@ -45,11 +45,11 @@ logger = logging.getLogger(__name__)
 
 class Proxy:
     cfg: 'config.ConfigurationType'
-    args: 'Namespace'
+    ns: 'Namespace'
 
-    def __init__(self, cfg: 'config.ConfigurationType', args: 'Namespace') -> None:
+    def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
         self.cfg = cfg
-        self.args = args
+        self.ns = ns
 
     # Method responsible of proxying requests
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
@@ -66,14 +66,14 @@ class Proxy:
             logger.error('Proxy error from %s: %s', addr, e)
 
     async def proxy(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         # Handshake correct in this point, upgrade the connection to TSL and let
         # the protocol controller do the rest
 
         # Upgrade connection to SSL, and use asyncio to handle the rest
         try:
             protocol: tunnel.TunnelProtocol
-            # (connect accepted loop not present on AbastractEventLoop definition < 3.10)
+            # (connect accepted loop not present on AbastractEventLoop definition < 3.10), that's why we use ignore
             (_, protocol) = await loop.connect_accepted_socket(  # type: ignore
                 lambda: tunnel.TunnelProtocol(self), source, ssl=context
             )
