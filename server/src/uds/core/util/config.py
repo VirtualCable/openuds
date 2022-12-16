@@ -451,7 +451,7 @@ class GlobalConfig:
     )
     # Paranoid security
     ENFORCE_ZERO_TRUST: Config.Value = Config.section(SECURITY_SECTION).value(
-        'Enforze Zero-Trust Mode', '0', type=Config.BOOLEAN_FIELD
+        'Enforce Zero-Trust Mode', '0', type=Config.BOOLEAN_FIELD
     )
     # Time an admi session can be idle before being "logged out"
     # ADMIN_IDLE_TIME: Config.Value = Config.section(SECURITY_SECTION).value('adminIdleTime', '14400', type=Config.NUMERIC_FIELD)  # Defaults to 4 hous
