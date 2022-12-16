@@ -29,150 +29,28 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
-import string
 import random
-import aiohttp
 import asyncio
 import contextlib
 import socket
 import ssl
 import logging
-
+import multiprocessing
 from unittest import IsolatedAsyncioTestCase, mock
 
-from uds_tunnel import proxy, tunnel, consts
+from udstunnel import process_connection
+from uds_tunnel import tunnel, consts
 
 from . import fixtures
-from .utils import tools, certs
+from .utils import tools, certs, conf
 
 if typing.TYPE_CHECKING:
     from uds_tunnel import config
 
 logger = logging.getLogger(__name__)
 
-NOTIFY_TICKET = '0123456789cdef01456789abcdebcdef0123456789abcdef'
-UDS_GET_TICKET_RESPONSE = lambda host, port: {
-    'host': host,
-    'port': port,
-    'notify': NOTIFY_TICKET,
-}
-CALLER_HOST = ('host', 12345)
-REMOTE_HOST = ('127.0.0.1', 54876)
-
-
-def uds_response(
-    _,
-    ticket: bytes,
-    msg: str,
-    queryParams: typing.Optional[typing.Mapping[str, str]] = None,
-) -> typing.Dict[str, typing.Any]:
-    if msg == 'stop':
-        return {}
-
-    return UDS_GET_TICKET_RESPONSE(*REMOTE_HOST)
-
 
 class TestTunnel(IsolatedAsyncioTestCase):
-    async def test_get_ticket_from_uds_broker(self) -> None:
-        _, cfg = fixtures.get_config()
-        # Test some invalid tickets
-        # Valid ticket are consts.TICKET_LENGTH bytes long, and must be A-Z, a-z, 0-9
-        with mock.patch(
-            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
-            new_callable=tools.AsyncMock,
-        ) as m:
-            m.side_effect = uds_response
-            for i in range(0, 100):
-                ticket = ''.join(
-                    random.choices(
-                        string.ascii_letters + string.digits, k=i % consts.TICKET_LENGTH
-                    )
-                )
-
-                with self.assertRaises(ValueError):
-                    await tunnel.TunnelProtocol.getTicketFromUDS(
-                        cfg, ticket.encode(), CALLER_HOST
-                    )
-
-            ticket = NOTIFY_TICKET  # Samle ticket
-            for i in range(0, 100):
-                # Now some requests with valid tickets
-                # Ensure no exception is raised
-                ret_value = await tunnel.TunnelProtocol.getTicketFromUDS(
-                    cfg, ticket.encode(), CALLER_HOST
-                )
-                # Ensure data returned is correct {host, port, notify} from mock
-                self.assertEqual(ret_value, UDS_GET_TICKET_RESPONSE(*REMOTE_HOST))
-                # Ensure mock was called with correct parameters
-                print(m.call_args)
-                # Check calling parameters, first one is the config, second one is the ticket, third one is the caller host
-                # no kwargs are used
-                self.assertEqual(m.call_args[0][0], cfg)
-                self.assertEqual(
-                    m.call_args[0][1], NOTIFY_TICKET.encode()
-                )  # Same ticket, but bytes
-                self.assertEqual(m.call_args[0][2], CALLER_HOST[0])
-
-                print(ret_value)
-
-            # mock should have been called 100 times
-            self.assertEqual(m.call_count, 100)
-
-    async def test_notify_end_to_uds_broker(self) -> None:
-        _, cfg = fixtures.get_config()
-        with mock.patch(
-            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
-            new_callable=tools.AsyncMock,
-        ) as m:
-            m.side_effect = uds_response
-            counter = mock.MagicMock()
-            counter.sent = 123456789
-            counter.recv = 987654321
-
-            ticket = NOTIFY_TICKET.encode()
-            for i in range(0, 100):
-                await tunnel.TunnelProtocol.notifyEndToUds(cfg, ticket, counter)
-
-                self.assertEqual(m.call_args[0][0], cfg)
-                self.assertEqual(
-                    m.call_args[0][1], NOTIFY_TICKET.encode()
-                )  # Same ticket, but bytes
-                self.assertEqual(m.call_args[0][2], 'stop')
-                self.assertEqual(
-                    m.call_args[0][3],
-                    {'sent': str(counter.sent), 'recv': str(counter.recv)},
-                )
-
-            # mock should have been called 100 times
-            self.assertEqual(m.call_count, 100)
-
-    async def test_read_from_uds_broker(self) -> None:
-        # Generate a listening http server for testing UDS
-        # Tesst fine responses:
-        for use_ssl in (True, False):
-            async with tools.AsyncHttpServer(
-                port=13579, response=b'{"result":"ok"}', use_ssl=use_ssl
-            ) as server:
-                # Get server configuration, and ensure server is running fine
-                fake_uds_server = (
-                    f'http{"s" if use_ssl else ""}://127.0.0.1:{server.port}/'
-                )
-                _, cfg = fixtures.get_config(
-                    uds_server=fake_uds_server,
-                    uds_verify_ssl=False,
-                    listen_protocol='http',
-                )
-                self.assertEqual(
-                    await TestTunnel.get(fake_uds_server),
-                    '{"result":"ok"}',
-                )
-                # Now, tests _readFromUDS
-                for i in range(100):
-                    ret = await tunnel.TunnelProtocol._readFromUDS(
-                        cfg, NOTIFY_TICKET.encode(), 'test', {'param': 'value'}
-                    )
-                    self.assertEqual(ret, {'result': 'ok'})
-
     async def test_tunnel_invalid_command(self) -> None:
         # Test invalid handshake
         # data = b''
@@ -191,29 +69,85 @@ class TestTunnel(IsolatedAsyncioTestCase):
             consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
             logger.info(f'Testing invalid command with {bad_cmd!r}')
             async with TestTunnel.create_test_tunnel(lambda x: None) as cfg:
-                # Open connection to tunnel
-                async with TestTunnel.open_tunnel(cfg) as (reader, writer):
-                    # Send data
-                    writer.write(bad_cmd)
-                    await writer.drain()
-                    # Wait for response
-                    readed = await reader.read(1024)
-                    # Should return consts.ERROR_COMMAND or consts.ERROR_TIMEOUT
-                    if len(bad_cmd) < 4:
-                        self.assertEqual(readed, consts.RESPONSE_ERROR_TIMEOUT)
-                    else:
-                        self.assertEqual(readed, consts.RESPONSE_ERROR_COMMAND)
+                logger_mock = mock.MagicMock()
+                with mock.patch('uds_tunnel.tunnel.logger', logger_mock):
+                    # Open connection to tunnel
+                    async with TestTunnel.open_tunnel(cfg) as (reader, writer):
+                        # Send data
+                        writer.write(bad_cmd)
+                        await writer.drain()
+                        # Wait for response
+                        readed = await reader.read(1024)
+                        # Logger should have been called once with error
+                        logger_mock.error.assert_called_once()
+                        # last (first printed) info should have been connection info
+                        self.assertIn(
+                            'TERMINATED', logger_mock.info.call_args_list[-1][0][0]
+                        )
 
-    # Helpers
-    @staticmethod
-    async def get(url: str) -> str:
-        async with aiohttp.ClientSession() as session:
-            options = {
-                'ssl': False,
-            }
-            async with session.get(url, **options) as r:
-                r.raise_for_status()
-                return await r.text()
+                        if len(bad_cmd) < 4:
+                            # Response shout have been timeout
+                            self.assertEqual(readed, consts.RESPONSE_ERROR_TIMEOUT)
+                            # And logger should have been called with timeout
+                            self.assertIn('TIMEOUT', logger_mock.error.call_args[0][0])
+                            # Logger info with connection info
+                            logger_mock.info.assert_called_once()
+                        else:
+                            # Response shout have been command error
+                            self.assertEqual(readed, consts.RESPONSE_ERROR_COMMAND)
+                            # And logger should have been called with command error
+                            self.assertIn('ERROR', logger_mock.error.call_args[0][0])
+                            # Info should have been called with connection info and
+                            self.assertIn(
+                                'CONNECT FROM', logger_mock.info.call_args_list[0][0][0]
+                            )  # First call to info
+
+    def test_tunnel_invalid_handshake(self) -> None:
+        # Pipe for testing
+        own_conn, other_conn = multiprocessing.Pipe()
+
+        # Some random data to send on each test, all invalid
+        # 0 bytes will make timeout to be reached
+        for i in [i for i in range(10)] + [i for i in range(100, 10000, 100)]:
+            # Create a simple socket for testing
+            rsock, wsock = socket.socketpair()
+            # Set read timeout to 1 seconds
+            rsock.settimeout(1)
+
+            # Set timeout to 1 seconds
+            bad_handshake = bytes(random.randint(0, 255) for _ in range(i))
+            logger_mock = mock.MagicMock()
+            with mock.patch('udstunnel.logger', logger_mock):
+                wsock.sendall(bad_handshake)
+                process_connection(rsock, ('host', 'port'), own_conn)
+
+            # Check that logger has been called
+            logger_mock.error.assert_called_once()
+            # And ensure that error contains 'HANDSHAKE invalid'
+            self.assertIn('HANDSHAKE invalid', logger_mock.error.call_args[0][0])
+            # and host, port are the second parameter (tuple)
+            self.assertEqual(logger_mock.error.call_args[0][1], ('host', 'port'))
+
+    def test_valid_handshake(self) -> None:
+        # Pipe for testing
+        own_conn, other_conn = multiprocessing.Pipe()
+
+        # Create a simple socket for testing
+        rsock, wsock = socket.socketpair()
+        # Set read timeout to 1 seconds
+        rsock.settimeout(1)
+
+        # Patch logger to check that it's not called
+        logger_mock = mock.MagicMock()
+        with mock.patch('udstunnel.logger', logger_mock):
+            wsock.sendall(consts.HANDSHAKE_V1)
+            process_connection(rsock, ('host', 'port'), own_conn)
+
+        # Check that logger has not been called
+        logger_mock.error.assert_not_called()
+        # and that other_conn has received a ('host', 'port') tuple
+        # recv()[0] will be a copy of the socket, we don't care about it
+        self.assertEqual(other_conn.recv()[1], ('host', 'port'))
 
     @staticmethod
     async def create_tunnel_server(
@@ -237,12 +171,16 @@ class TestTunnel(IsolatedAsyncioTestCase):
             cfg.listen_address,
             cfg.listen_port,
             ssl=context,
-            family=socket.AF_INET6 if cfg.listen_ipv6 or ':' in cfg.listen_address else socket.AF_INET,
+            family=socket.AF_INET6
+            if cfg.listen_ipv6 or ':' in cfg.listen_address
+            else socket.AF_INET,
         )
 
     @staticmethod
     @contextlib.asynccontextmanager
-    async def create_test_tunnel(callback: typing.Callable[[bytes], None]) -> typing.AsyncGenerator['config.ConfigurationType', None]:
+    async def create_test_tunnel(
+        callback: typing.Callable[[bytes], None]
+    ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
         # Generate a listening server for testing tunnel
         # Prepare the end of the tunnel
         async with tools.AsyncTCPServer(port=54876, callback=callback) as server:
@@ -257,7 +195,9 @@ class TestTunnel(IsolatedAsyncioTestCase):
                     'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
                     new_callable=tools.AsyncMock,
                 ) as m:
-                    m.return_value = UDS_GET_TICKET_RESPONSE(server.host, server.port)
+                    m.return_value = conf.UDS_GET_TICKET_RESPONSE(
+                        server.host, server.port
+                    )
 
                     tunnel_server = await TestTunnel.create_tunnel_server(cfg, ssl_ctx)
                     yield cfg
@@ -268,9 +208,10 @@ class TestTunnel(IsolatedAsyncioTestCase):
     @contextlib.asynccontextmanager
     async def open_tunnel(
         cfg: 'config.ConfigurationType',
-    ) -> typing.AsyncGenerator[typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None]:
-        """ opens an ssl socket to the tunnel server
-        """
+    ) -> typing.AsyncGenerator[
+        typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None
+    ]:
+        """opens an ssl socket to the tunnel server"""
         if cfg.listen_ipv6 or ':' in cfg.listen_address:
             family = socket.AF_INET6
         else:
@@ -284,4 +225,3 @@ class TestTunnel(IsolatedAsyncioTestCase):
         yield reader, writer
         writer.close()
         await writer.wait_closed()
-

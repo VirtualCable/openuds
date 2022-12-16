@@ -32,7 +32,8 @@ import asyncio
 import os
 import ssl
 import typing
-import tempfile
+import socket
+import aiohttp
 from unittest import mock
 
 from . import certs
@@ -58,7 +59,7 @@ class AsyncHttpServer:
         *,
         response: typing.Optional[bytes] = None,
         use_ssl: bool = False,
-        host: str = '127.0.0.1'  # ip
+        host: str = '127.0.0.1',  # ip
     ) -> None:
         self.host = host
         self.port = port
@@ -88,8 +89,9 @@ class AsyncHttpServer:
 
     async def __aenter__(self) -> 'AsyncHttpServer':
         if self._ssl_ctx is not None:
+            family = socket.AF_INET6 if ':' in self.host else socket.AF_INET
             self._server = await asyncio.start_server(
-                self._handle, self.host, self.port, ssl=self._ssl_ctx
+                self._handle, self.host, self.port, ssl=self._ssl_ctx, family=family
             )
         else:
             self._server = await asyncio.start_server(
@@ -102,6 +104,7 @@ class AsyncHttpServer:
             self._server.close()
             await self._server.wait_closed()
             self._server = None
+
 
 class AsyncTCPServer:
     host: str
@@ -116,7 +119,7 @@ class AsyncTCPServer:
         *,
         response: typing.Optional[bytes] = None,
         host: str = '127.0.0.1',  # ip
-        callback: typing.Optional[typing.Callable[[bytes], None]] = None
+        callback: typing.Optional[typing.Callable[[bytes], None]] = None,
     ) -> None:
         self.host = host
         self.port = port
@@ -128,7 +131,7 @@ class AsyncTCPServer:
 
     async def _handle(self, reader, writer) -> None:
         data = await reader.read(2048)
-        
+
         if self._callback:
             self._callback(data)
 
@@ -140,11 +143,7 @@ class AsyncTCPServer:
         await writer.drain()
 
     async def __aenter__(self) -> 'AsyncTCPServer':
-        self._server = await asyncio.start_server(
-            self._handle, 
-            self.host,
-            self.port
-        )
+        self._server = await asyncio.start_server(self._handle, self.host, self.port)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -152,3 +151,13 @@ class AsyncTCPServer:
             self._server.close()
             await self._server.wait_closed()
             self._server = None
+
+
+async def get(url: str) -> str:
+    async with aiohttp.ClientSession() as session:
+        options = {
+            'ssl': False,
+        }
+        async with session.get(url, **options) as r:
+            r.raise_for_status()
+            return await r.text()

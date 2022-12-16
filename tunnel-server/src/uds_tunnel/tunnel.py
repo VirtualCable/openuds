@@ -218,12 +218,13 @@ class TunnelProtocol(asyncio.Protocol):
             self.timeout_task = None
 
     def do_command(self, data: bytes) -> None:
+        if self.cmd == b'':
+            logger.info('CONNECT FROM %s', self.pretty_source())
+
         self.clean_timeout()
         self.cmd += data
         # Ensure we don't get a timeout
         if len(self.cmd) >= consts.COMMAND_LENGTH:
-            logger.info('CONNECT FROM %s', self.pretty_source())
-
             command = self.cmd[: consts.COMMAND_LENGTH]
             try:
                 if command == consts.COMMAND_OPEN:
