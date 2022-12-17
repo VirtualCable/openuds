@@ -32,8 +32,12 @@ import typing
 
 DEBUG = True
 
-CONFIGFILE: typing.Final[str] = '/etc/udstunnel.conf' if not DEBUG else 'udstunnel.conf' 
-LOGFORMAT: typing.Final[str] = '%(levelname)s %(asctime)s %(message)s' if not DEBUG else '%(levelname)s %(asctime)s %(message)s'
+CONFIGFILE: typing.Final[str] = '/etc/udstunnel.conf' if not DEBUG else 'udstunnel.conf'
+LOGFORMAT: typing.Final[str] = (
+    '%(levelname)s %(asctime)s %(message)s'
+    if not DEBUG
+    else '%(levelname)s %(asctime)s %(message)s'
+)
 
 # MAX Length of read buffer for proxyed requests
 BUFFER_SIZE: typing.Final[int] = 1024 * 16
@@ -47,7 +51,7 @@ PASSWORD_LENGTH: typing.Final[int] = 64
 BANDWIDTH_TIME: typing.Final[int] = 10
 
 # Commands LENGTH (all same length)
-COMMAND_LENGTH: typing.Final[int] = 4 
+COMMAND_LENGTH: typing.Final[int] = 4
 
 VERSION: typing.Final[str] = 'v2.0.0'
 
@@ -64,6 +68,8 @@ RESPONSE_FORBIDDEN: typing.Final[bytes] = b'FORBIDDEN'
 
 RESPONSE_OK: typing.Final[bytes] = b'OK'
 
-
 # Timeout for command
 TIMEOUT_COMMAND: typing.Final[int] = 3
+
+# Backlog for listen socket
+BACKLOG = 1024

@@ -68,7 +68,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
             bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
             consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
             logger.info(f'Testing invalid command with {bad_cmd!r}')
-            async with TestTunnel.create_test_tunnel(lambda x: None) as cfg:
+            async with TestTunnel.create_test_tunnel(callback=lambda x: None) as cfg:
                 logger_mock = mock.MagicMock()
                 with mock.patch('uds_tunnel.tunnel.logger', logger_mock):
                     # Open connection to tunnel
@@ -103,6 +103,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
                             )  # First call to info
 
     def test_tunnel_invalid_handshake(self) -> None:
+        # Not async test, executed on main thread without event loop
         # Pipe for testing
         own_conn, other_conn = multiprocessing.Pipe()
 
@@ -129,6 +130,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
             self.assertEqual(logger_mock.error.call_args[0][1], ('host', 'port'))
 
     def test_valid_handshake(self) -> None:
+        # Not async test
         # Pipe for testing
         own_conn, other_conn = multiprocessing.Pipe()
 
@@ -179,7 +181,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
     @staticmethod
     @contextlib.asynccontextmanager
     async def create_test_tunnel(
-        callback: typing.Callable[[bytes], None]
+        *, callback: typing.Callable[[bytes], None]
     ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
         # Generate a listening server for testing tunnel
         # Prepare the end of the tunnel

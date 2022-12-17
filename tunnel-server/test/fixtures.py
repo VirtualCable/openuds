@@ -94,6 +94,7 @@ use_uvloop = {use_uvloop}
 '''
 
 def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], config.ConfigurationType]:
+    rand_number = random.randint(0, 100)
     values: typing.Dict[str, typing.Any] = {
         'pidfile': f'/tmp/uds_tunnel_{random.randint(0, 100)}.pid',  # Random pid file
         'user': f'user{random.randint(0, 100)}',  # Random user
@@ -105,11 +106,11 @@ def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], con
         'port': random.randint(0, 65535),  # Random port
         'ipv6': random.choice([True, False]),  # Random ipv6
         'workers': random.randint(1, 100),  # Random workers, 0 will return as many as cpu cores
-        'ssl_certificate': f'/tmp/uds_tunnel_{random.randint(0, 100)}.crt',  # Random ssl certificate
-        'ssl_certificate_key': f'/tmp/uds_tunnel_{random.randint(0, 100)}.key',  # Random ssl certificate key
+        'ssl_certificate': f'/tmp/uds_tunnel_{rand_number}.crt',  # Random ssl certificate
+        'ssl_certificate_key': f'/tmp/uds_tunnel_{rand_number}.key',  # Random ssl certificate key
         'ssl_ciphers': f'ciphers{random.randint(0, 100)}',  # Random ssl ciphers
-        'ssl_dhparam': f'/tmp/uds_tunnel_{random.randint(0, 100)}.dh',  # Random ssl dhparam
-        'uds_server': f'https://uds_server{random.randint(0, 100)}/some_path',  # Random uds server
+        'ssl_dhparam': f'/tmp/uds_tunnel_{rand_number}.dh',  # Random ssl dhparam
+        'uds_server': f'https://uds_server{rand_number}/some_path',  # Random uds server
         'uds_token': f'uds_token{"".join(random.choices(string.ascii_uppercase + string.digits, k=32))}',  # Random uds token
         'uds_timeout': random.randint(0, 100),  # Random uds timeout
         'uds_verify_ssl': random.choice([True, False]),  # Random verify uds ssl

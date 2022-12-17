@@ -59,7 +59,6 @@ if typing.TYPE_CHECKING:
     from multiprocessing.connection import Connection
     from multiprocessing.managers import Namespace
 
-BACKLOG = 1024
 
 logger = logging.getLogger(__name__)
 
@@ -107,10 +106,7 @@ async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
 ) -> None:
     
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:  # older python versions
-        loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
 
     tasks: typing.List[asyncio.Task] = []
 
@@ -216,7 +212,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
     #     logger.warning('socket.REUSEPORT not available')
     try:
         sock.bind((cfg.listen_address, cfg.listen_port))
-        sock.listen(BACKLOG)
+        sock.listen(consts.BACKLOG)
 
         # If running as root, and requested drop privileges after port bind
         if os.getuid() == 0 and cfg.user:
@@ -244,8 +240,12 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
         return
 
     # Setup signal handlers
-    signal.signal(signal.SIGINT, stop_signal)
-    signal.signal(signal.SIGTERM, stop_signal)
+    try:
+        signal.signal(signal.SIGINT, stop_signal)
+        signal.signal(signal.SIGTERM, stop_signal)
+    except Exception as e:
+        # Signal not available on threads, and testing uses threads
+        logger.warning('Signal not available: %s', e)
 
     stats_collector = stats.GlobalStats()
 
