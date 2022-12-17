@@ -32,7 +32,7 @@ import hashlib
 
 from unittest import TestCase
 
-from . import fixtures
+from .utils import fixtures
 
 
 class TestConfigFile(TestCase):

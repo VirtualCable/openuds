@@ -56,6 +56,7 @@ class ConfigurationType(typing.NamedTuple):
 
     ssl_certificate: str
     ssl_certificate_key: str
+    ssl_password: str
     ssl_ciphers: str
     ssl_dhparam: str
 
@@ -122,6 +123,7 @@ def read(
             workers=int(uds.get('workers', '0')) or multiprocessing.cpu_count(),
             ssl_certificate=uds['ssl_certificate'],
             ssl_certificate_key=uds.get('ssl_certificate_key', ''),
+            ssl_password=uds.get('ssl_password', ''),
             ssl_ciphers=uds.get('ssl_ciphers'),
             ssl_dhparam=uds.get('ssl_dhparam'),
             uds_server=uds_server,

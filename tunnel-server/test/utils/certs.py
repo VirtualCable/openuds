@@ -46,7 +46,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 
-def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
+def selfSignedCert(ip: str, use_password: bool = True) -> typing.Tuple[str, str, str]:
     key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -72,14 +72,16 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
         .add_extension(san, False)
         .sign(key, hashes.SHA256(), default_backend())
     )
-
+    args: typing.Dict[str, typing.Any] = {
+        'encoding': serialization.Encoding.PEM,
+        'format': serialization.PrivateFormat.TraditionalOpenSSL,
+    }
+    if use_password:
+        args['encryption_algorithm'] = serialization.BestAvailableEncryption(password.encode())
+    else:
+        args['encryption_algorithm'] = serialization.NoEncryption()
     return (
-        key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(
-                password.encode()
-            ),
+        key.private_bytes(**args
         ).decode(),
         cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
         password,

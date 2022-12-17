@@ -39,6 +39,8 @@ import ssl
 import socket
 import logging
 from concurrent.futures import ThreadPoolExecutor
+# event for stop notification
+import threading
 import typing
 
 try:
@@ -62,12 +64,12 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-do_stop = False
+running: threading.Event = threading.Event()
 
 
 def stop_signal(signum: int, frame: typing.Any) -> None:
-    global do_stop
-    do_stop = True
+    global running
+    running.clear()
     logger.debug('SIGNAL %s, frame: %s', signum, frame)
 
 
@@ -119,8 +121,13 @@ async def tunnel_proc_async(
                 ] = pipe.recv()
                 if msg:
                     return msg
+        except EOFError:
+            logger.debug('Parent process closed connection')
+            pipe.close()
+            return None, None
         except Exception:
             logger.exception('Receiving data from parent process')
+            pipe.close()
             return None, None
 
     async def run_server() -> None:
@@ -129,11 +136,15 @@ async def tunnel_proc_async(
 
         # Generate SSL context
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        
+        args: typing.Dict[str, typing.Any] = {
+            'certfile': cfg.ssl_certificate,
+        }
         if cfg.ssl_certificate_key:
-            context.load_cert_chain(cfg.ssl_certificate, cfg.ssl_certificate_key)
-        else:
-            context.load_cert_chain(cfg.ssl_certificate)
+            args['keyfile'] = cfg.ssl_certificate_key
+        if cfg.ssl_password:
+            args['password'] = cfg.ssl_password
+        
+        context.load_cert_chain(**args)
 
         if cfg.ssl_ciphers:
             context.set_ciphers(cfg.ssl_ciphers)
@@ -141,29 +152,37 @@ async def tunnel_proc_async(
         if cfg.ssl_dhparam:
             context.load_dh_params(cfg.ssl_dhparam)
 
-        while True:
-            address: typing.Optional[typing.Tuple[str, int]] = ('', 0)
-            try:
-                (sock, address) = await loop.run_in_executor(None, get_socket)
-                if not sock:
-                    break  # No more sockets, exit
-                logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
-                tasks.append(asyncio.create_task(tunneler(sock, context)))
-            except Exception:
-                logger.error('NEGOTIATION ERROR from %s', address[0] if address else 'unknown')
+        try:
+            while True:
+                address: typing.Optional[typing.Tuple[str, int]] = ('', 0)
+                try:
+                    (sock, address) = await loop.run_in_executor(None, get_socket)
+                    if not sock:
+                        break  # No more sockets, exit
+                    logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
+                    tasks.append(asyncio.create_task(tunneler(sock, context)))
+                except asyncio.CancelledError:
+                    raise
+                except Exception:
+                    logger.error('NEGOTIATION ERROR from %s', address[0] if address else 'unknown')
+        except asyncio.CancelledError:
+            pass  # Stop
 
     # create task for server
     tasks.append(asyncio.create_task(run_server()))
 
-    while tasks and not do_stop:
-        to_wait = tasks[:]  # Get a copy of the list, and clean the original
-        # Wait for tasks to finish
-        done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED)
-        # Remove finished tasks
-        for task in done:
-            tasks.remove(task)
-            if task.exception():
-                logger.exception('TUNNEL ERROR')
+    try:
+        while tasks and running.is_set():
+            to_wait = tasks[:]  # Get a copy of the list, and clean the original
+            # Wait for tasks to finish
+            done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED, timeout=2)
+            # Remove finished tasks
+            for task in done:
+                tasks.remove(task)
+                if task.exception():
+                    logger.exception('TUNNEL ERROR')
+    except asyncio.CancelledError:
+        running.clear()  # ensure we stop
 
     # If any task is still running, cancel it
     for task in tasks:
@@ -244,16 +263,18 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
         signal.signal(signal.SIGINT, stop_signal)
         signal.signal(signal.SIGTERM, stop_signal)
     except Exception as e:
-        # Signal not available on threads, and testing uses threads
+        # Signal not available on threads, and we use threads on tests, 
+        # so we will ignore this because on tests signals are not important
         logger.warning('Signal not available: %s', e)
 
     stats_collector = stats.GlobalStats()
 
     prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
+    running.set()
     with ThreadPoolExecutor(max_workers=256) as executor:
         try:
-            while not do_stop:
+            while running.is_set():
                 try:
                     client, addr = sock.accept()
                     logger.info('CONNECTION from %s', addr)

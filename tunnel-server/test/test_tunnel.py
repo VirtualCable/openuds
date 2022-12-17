@@ -30,10 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 import random
-import asyncio
-import contextlib
 import socket
-import ssl
 import logging
 import multiprocessing
 from unittest import IsolatedAsyncioTestCase, mock
@@ -41,11 +38,7 @@ from unittest import IsolatedAsyncioTestCase, mock
 from udstunnel import process_connection
 from uds_tunnel import tunnel, consts
 
-from . import fixtures
-from .utils import tools, certs, conf
-
-if typing.TYPE_CHECKING:
-    from uds_tunnel import config
+from .utils import tuntools
 
 logger = logging.getLogger(__name__)
 
@@ -63,16 +56,16 @@ class TestTunnel(IsolatedAsyncioTestCase):
 
         # Send invalid commands and see what happens
         # Commands are 4 bytes length, try with less and more invalid commands
+        consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
         for i in range(0, 100, 10):
             # Set timeout to 1 seconds
             bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
-            consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
             logger.info(f'Testing invalid command with {bad_cmd!r}')
-            async with TestTunnel.create_test_tunnel(callback=lambda x: None) as cfg:
+            async with tuntools.create_test_tunnel(callback=lambda x: None) as cfg:
                 logger_mock = mock.MagicMock()
                 with mock.patch('uds_tunnel.tunnel.logger', logger_mock):
                     # Open connection to tunnel
-                    async with TestTunnel.open_tunnel(cfg) as (reader, writer):
+                    async with tuntools.open_tunnel_client(cfg) as (reader, writer):
                         # Send data
                         writer.write(bad_cmd)
                         await writer.drain()
@@ -151,79 +144,3 @@ class TestTunnel(IsolatedAsyncioTestCase):
         # recv()[0] will be a copy of the socket, we don't care about it
         self.assertEqual(other_conn.recv()[1], ('host', 'port'))
 
-    @staticmethod
-    async def create_tunnel_server(
-        cfg: 'config.ConfigurationType', context: 'ssl.SSLContext'
-    ) -> 'asyncio.Server':
-        # Create fake proxy
-        proxy = mock.MagicMock()
-        proxy.cfg = cfg
-        proxy.ns = mock.MagicMock()
-        proxy.ns.current = 0
-        proxy.ns.total = 0
-        proxy.ns.sent = 0
-        proxy.ns.recv = 0
-        proxy.counter = 0
-
-        loop = asyncio.get_running_loop()
-
-        # Create an asyncio listen socket on cfg.listen_host:cfg.listen_port
-        return await loop.create_server(
-            lambda: tunnel.TunnelProtocol(proxy),
-            cfg.listen_address,
-            cfg.listen_port,
-            ssl=context,
-            family=socket.AF_INET6
-            if cfg.listen_ipv6 or ':' in cfg.listen_address
-            else socket.AF_INET,
-        )
-
-    @staticmethod
-    @contextlib.asynccontextmanager
-    async def create_test_tunnel(
-        *, callback: typing.Callable[[bytes], None]
-    ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
-        # Generate a listening server for testing tunnel
-        # Prepare the end of the tunnel
-        async with tools.AsyncTCPServer(port=54876, callback=callback) as server:
-            # Create a tunnel to localhost 13579
-            # SSl cert for tunnel server
-            with certs.ssl_context(server.host) as (ssl_ctx, _):
-                _, cfg = fixtures.get_config(
-                    address=server.host,
-                    port=7777,
-                )
-                with mock.patch(
-                    'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
-                    new_callable=tools.AsyncMock,
-                ) as m:
-                    m.return_value = conf.UDS_GET_TICKET_RESPONSE(
-                        server.host, server.port
-                    )
-
-                    tunnel_server = await TestTunnel.create_tunnel_server(cfg, ssl_ctx)
-                    yield cfg
-                    tunnel_server.close()
-                    await tunnel_server.wait_closed()
-
-    @staticmethod
-    @contextlib.asynccontextmanager
-    async def open_tunnel(
-        cfg: 'config.ConfigurationType',
-    ) -> typing.AsyncGenerator[
-        typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None
-    ]:
-        """opens an ssl socket to the tunnel server"""
-        if cfg.listen_ipv6 or ':' in cfg.listen_address:
-            family = socket.AF_INET6
-        else:
-            family = socket.AF_INET
-        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
-        reader, writer = await asyncio.open_connection(
-            cfg.listen_address, cfg.listen_port, ssl=context, family=family
-        )
-        yield reader, writer
-        writer.close()
-        await writer.wait_closed()

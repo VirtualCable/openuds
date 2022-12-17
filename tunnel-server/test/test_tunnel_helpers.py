@@ -37,7 +37,7 @@ from unittest import IsolatedAsyncioTestCase, mock
 
 from uds_tunnel import tunnel, consts
 
-from . import fixtures
+from .utils import fixtures
 from .utils import tools, conf
 
 logger = logging.getLogger(__name__)
