@@ -51,7 +51,6 @@ class Proxy:
     def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
         self.cfg = cfg
         self.ns = ns
-        self.finished = asyncio.Future()  # not done yet
 
     # Method responsible of proxying requests
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
@@ -71,6 +70,7 @@ class Proxy:
         loop = asyncio.get_running_loop()
         # Handshake correct in this point, upgrade the connection to TSL and let
         # the protocol controller do the rest
+        self.finished = loop.create_future()
 
         # Upgrade connection to SSL, and use asyncio to handle the rest
         try:

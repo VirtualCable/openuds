@@ -34,10 +34,9 @@ import io
 import logging
 import socket
 import ssl
-import tempfile
-import threading
-import random
+import os
 import typing
+import json
 from unittest import mock
 import multiprocessing
 
@@ -61,7 +60,7 @@ async def create_tunnel_proc(
     remote_host: str,
     remote_port: int,
     *,
-    workers: int = 1
+    response: typing.Optional[typing.Mapping[str, typing.Any]] = None
 ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
     # Create the ssl cert
     cert, key, password = certs.selfSignedCert(listen_host, use_password=False)
@@ -76,27 +75,34 @@ async def create_tunnel_proc(
         address=listen_host,
         port=listen_port,
         ipv6=':' in listen_host,
+        loglevel='DEBUG',
         ssl_certificate=cert_file,
         ssl_certificate_key='',
         ssl_password=password,
         ssl_ciphers='',
         ssl_dhparam='',
-        workers=workers,
     )
     args = mock.MagicMock()
     args.config = io.StringIO(fixtures.TEST_CONFIG.format(**values))
     args.ipv6 = ':' in listen_host
 
+    return_value: typing.Mapping[str, typing.Any]
+    # Ensure response 
+    if response is None:
+        response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)        
+
     with mock.patch(
         'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
         new_callable=tools.AsyncMock,
     ) as m:
-        m.return_value = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
+        m.return_value = response
 
         # Stats collector
         gs = stats.GlobalStats()
         # Pipe to send data to tunnel
         own_end, other_end = multiprocessing.Pipe()
+
+        udstunnel.setup_log(cfg)        
 
         # Set running flag
         udstunnel.running.set()
@@ -140,6 +146,18 @@ async def create_tunnel_proc(
             server.close()
             await server.wait_closed()
             logger.info('Server closed')
+
+            # Ensure log file are removed
+            rootlog = logging.getLogger()
+            for h in rootlog.handlers:
+                if isinstance(h, logging.FileHandler):
+                    h.close()
+                    # Remove the file if possible, do not fail
+                    try:
+                        os.unlink(h.baseFilename)
+                    except Exception:
+                        pass
+
 
 
 async def create_tunnel_server(

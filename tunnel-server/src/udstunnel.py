@@ -235,7 +235,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
 
         # If running as root, and requested drop privileges after port bind
         if os.getuid() == 0 and cfg.user:
-            logger.debug('Changing to  user %s', cfg.user)
+            logger.debug('Changing to user %s', cfg.user)
             pwu = pwd.getpwnam(cfg.user)
             # os.setgid(pwu.pw_gid)
             os.setuid(pwu.pw_uid)
@@ -271,7 +271,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
 
     prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
-    running.set()
+    running.set()  # Signal we are running
     with ThreadPoolExecutor(max_workers=256) as executor:
         try:
             while running.is_set():

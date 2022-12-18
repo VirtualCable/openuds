@@ -66,7 +66,7 @@ class TunnelProtocol(asyncio.Protocol):
     # counter
     counter: stats.StatsSingleCounter
     # If there is a timeout task running
-    timeout_task: typing.Optional[asyncio.Task]
+    timeout_task: typing.Optional[asyncio.Task] = None
 
     def __init__(
         self, owner: 'proxy.Proxy', other_side: typing.Optional['TunnelProtocol'] = None
@@ -83,6 +83,8 @@ class TunnelProtocol(asyncio.Protocol):
             self.stats_manager = stats.Stats(owner.ns)
             self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
+            # Set starting timeout task, se we dont get hunged on connections without data
+            self.set_timeout(consts.TIMEOUT_COMMAND)
 
         # transport is undefined until connection_made is called
         self.cmd = b''
@@ -90,15 +92,14 @@ class TunnelProtocol(asyncio.Protocol):
         self.owner = owner
         self.source = ('', 0)
         self.destination = ('', 0)
-        self.timeout_task = None
 
-        # Set starting timeout task, se we dont get hunged on connections without data
-        self.set_timeout(consts.TIMEOUT_COMMAND)
 
     def process_open(self) -> None:
         # Open Command has the ticket behind it
 
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
+            # Reactivate timeout, will be deactivated on do_command
+            self.set_timeout(consts.TIMEOUT_COMMAND)
             return  # Wait for more data to complete OPEN command
 
         # Ticket received, now process it with UDS
@@ -192,6 +193,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.close_connection()
 
     async def timeout(self, wait: int) -> None:
+        """ Timeout can only occur while waiting for a command."""
         try:
             await asyncio.sleep(wait)
             logger.error('TIMEOUT FROM %s', self.pretty_source())
@@ -213,7 +215,8 @@ class TunnelProtocol(asyncio.Protocol):
         self.timeout_task = asyncio.create_task(self.timeout(wait))
 
     def clean_timeout(self) -> None:
-        """Clean the timeout task if any."""
+        """Clean the timeout task if any.
+        """
         if self.timeout_task:
             self.timeout_task.cancel()
             self.timeout_task = None

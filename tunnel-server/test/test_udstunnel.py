@@ -31,12 +31,13 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import random
 import asyncio
+import string
 import logging
 from unittest import IsolatedAsyncioTestCase, mock
 
 from uds_tunnel import consts
 
-from .utils import tuntools
+from .utils import tuntools, tools
 
 logger = logging.getLogger(__name__)
 
@@ -49,25 +50,145 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
 
     async def test_tunnel_fail_cmd(self) -> None:
         consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
-        for i in range(0, 100, 10):
-            # Set timeout to 1 seconds
-            bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
-            logger.info(f'Testing invalid command with {bad_cmd!r}')
-            for host in ('127.0.0.1', '::1'):
-                # Remote is not really important in this tests, will fail before using it
-                async with tuntools.create_tunnel_proc(
-                    host, 7777, '127.0.0.1', 12345, workers=1
-                ) as cfg:
+        # Test on ipv4 and ipv6
+        for host in ('127.0.0.1', '::1'):
+            # Remote is not really important in this tests, will fail before using it
+            async with tuntools.create_tunnel_proc(
+                host,
+                7777,
+                '127.0.0.1',
+                12345,
+            ) as cfg:
+                for i in range(0, 8192, 128):
+                    # Set timeout to 1 seconds
+                    bad_cmd = bytes(
+                        random.randint(0, 255) for _ in range(i)
+                    )  # Some garbage
+                    logger.info(f'Testing invalid command with {bad_cmd!r}')
                     # On full, we need the handshake to be done, before connecting
-                    async with tuntools.open_tunnel_client(cfg, use_tunnel_handshake=True) as (creader, cwriter):
+                    # Our "test" server will simple "eat" the handshake, but we need to do it
+                    async with tuntools.open_tunnel_client(
+                        cfg, use_tunnel_handshake=True
+                    ) as (creader, cwriter):
                         cwriter.write(bad_cmd)
                         await cwriter.drain()
-                        # Read response              
+                        # Read response
                         data = await creader.read(1024)
                         # if len(bad_cmd) < consts.COMMAND_LENGTH, response will be RESPONSE_ERROR_TIMEOUT
                         if len(bad_cmd) >= consts.COMMAND_LENGTH:
                             self.assertEqual(data, consts.RESPONSE_ERROR_COMMAND)
                         else:
                             self.assertEqual(data, consts.RESPONSE_ERROR_TIMEOUT)
-                        
 
+    async def test_tunnel_test(self) -> None:
+        for host in ('127.0.0.1', '::1'):
+            # Remote is not really important in this tests, will return ok before using it (this is a TEST command, not OPEN)
+            async with tuntools.create_tunnel_proc(
+                host,
+                7777,
+                '127.0.0.1',
+                12345,
+            ) as cfg:
+                for i in range(10):  # Several times
+                    # On full, we need the handshake to be done, before connecting
+                    # Our "test" server will simple "eat" the handshake, but we need to do it
+                    async with tuntools.open_tunnel_client(
+                        cfg, use_tunnel_handshake=True
+                    ) as (creader, cwriter):
+                        cwriter.write(consts.COMMAND_TEST)
+                        await cwriter.drain()
+                        # Read response
+                        data = await creader.read(1024)
+                        self.assertEqual(data, consts.RESPONSE_OK)
+
+    async def test_tunnel_fail_open(self) -> None:
+        consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
+        for host in ('127.0.0.1', '::1'):
+            # Remote is NOT important in this tests
+            # create a remote server
+            async with tools.AsyncTCPServer(host=host, port=5445) as server:
+                async with tuntools.create_tunnel_proc(
+                    host,
+                    7777,
+                    server.host,
+                    server.port,
+                ) as cfg:
+                    for i in range(
+                        0, consts.TICKET_LENGTH - 1, 4
+                    ):  # All will fail. Any longer will be processed, and mock will return correct don't matter the ticket
+                        # Ticket must contain only letters and numbers
+                        ticket = ''.join(
+                            random.choice(string.ascii_letters + string.digits)
+                            for _ in range(i)
+                        ).encode()
+                        # On full, we need the handshake to be done, before connecting
+                        # Our "test" server will simple "eat" the handshake, but we need to do it
+                        async with tuntools.open_tunnel_client(
+                            cfg, use_tunnel_handshake=True
+                        ) as (creader, cwriter):
+                            cwriter.write(consts.COMMAND_OPEN)
+                            # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
+                            cwriter.write(ticket)
+
+                            await cwriter.drain()
+                            # Read response
+                            data = await creader.read(1024)
+                            self.assertEqual(data, consts.RESPONSE_ERROR_TIMEOUT)
+
+    async def test_tunnel_open(self) -> None:
+        for host in ('127.0.0.1', '::1'):
+            received: bytes = b''
+            callback_invoked: asyncio.Event = asyncio.Event()
+
+            def callback(data: bytes) -> None:
+                nonlocal received
+                received += data
+                # if data contains EOS marcker ('STREAM_END'), we are done
+                if b'STREAM_END' in data:
+                    callback_invoked.set()
+
+            # Remote is important in this tests
+            # create a remote server
+            async with tools.AsyncTCPServer(
+                host=host, port=5445, callback=callback
+            ) as server:
+                async with tuntools.create_tunnel_proc(
+                    host,
+                    7777,
+                    server.host,
+                    server.port,
+                ) as cfg:
+                    for i in range(10):
+                        # Create a random valid ticket
+                        ticket = ''.join(
+                            random.choice(string.ascii_letters + string.digits)
+                            for _ in range(consts.TICKET_LENGTH)
+                        ).encode()
+                        # On full, we need the handshake to be done, before connecting
+                        # Our "test" server will simple "eat" the handshake, but we need to do it
+                        async with tuntools.open_tunnel_client(
+                            cfg, use_tunnel_handshake=True
+                        ) as (creader, cwriter):
+                            cwriter.write(consts.COMMAND_OPEN)
+                            # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
+                            cwriter.write(ticket)
+
+                            await cwriter.drain()
+                            # Read response
+                            data = await creader.read(1024)
+                            self.assertEqual(data, consts.RESPONSE_OK)
+
+                            # Data sent will be received by server
+                            # One single write will ensure all data is on same packet
+                            test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(512)) + b'STREAM_END'
+                            # Clean received data
+                            received = b''
+                            # And reset event
+                            callback_invoked.clear()
+                            
+                            cwriter.write(test_str)
+                            await cwriter.drain()
+
+                            # Wait for callback to be invoked
+                            await callback_invoked.wait()
+                            self.assertEqual(received, test_str)
