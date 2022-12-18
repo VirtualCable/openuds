@@ -43,14 +43,15 @@ class ConfigurationType(typing.NamedTuple):
     pidfile: str
     user: str
 
-    log_level: str
-    log_file: str
-    log_size: int
-    log_number: int
+    loglevel: str
+    logfile: str
+    logsize: int
+    lognumber: int
 
     listen_address: str
     listen_port: int
-    listen_ipv6: bool
+    
+    ipv6: bool
 
     workers: int
 
@@ -113,13 +114,13 @@ def read(
         return ConfigurationType(
             pidfile=uds.get('pidfile', ''),
             user=uds.get('user', ''),
-            log_level=uds.get('loglevel', 'ERROR'),
-            log_file=uds.get('logfile', ''),
-            log_size=int(logsize) * 1024 * 1024,
-            log_number=int(uds.get('lognumber', '3')),
+            loglevel=uds.get('loglevel', 'ERROR'),
+            logfile=uds.get('logfile', ''),
+            logsize=int(logsize) * 1024 * 1024,
+            lognumber=int(uds.get('lognumber', '3')),
             listen_address=uds.get('address', '0.0.0.0'),
             listen_port=int(uds.get('port', '443')),
-            listen_ipv6=uds.get('ipv6', 'false').lower() == 'true',
+            ipv6=uds.get('ipv6', 'false').lower() == 'true',
             workers=int(uds.get('workers', '0')) or multiprocessing.cpu_count(),
             ssl_certificate=uds['ssl_certificate'],
             ssl_certificate_key=uds.get('ssl_certificate_key', ''),

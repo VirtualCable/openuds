@@ -41,27 +41,33 @@ from .utils import tuntools
 logger = logging.getLogger(__name__)
 
 
-class TestUDSTunnel(IsolatedAsyncioTestCase):
+class TestUDSTunnelApp(IsolatedAsyncioTestCase):
+    async def asyncSetUp(self) -> None:
+        # Disable logging os slow tests
+        logging.disable(logging.WARNING)
+        return await super().asyncSetUp()
 
-    async def test_tunnel_fail_cmd_full(self) -> None:
+    async def test_tunnel_fail_cmd(self) -> None:
         consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
         for i in range(0, 100, 10):
             # Set timeout to 1 seconds
             bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
             logger.info(f'Testing invalid command with {bad_cmd!r}')
-            async with tuntools.create_tunnel_proc(
-                '127.0.0.1', 7777, '127.0.0.1', 12345, workers=1
-            ) as cfg:
-                # On full, we need the handshake to be done, before connecting
-                async with tuntools.open_tunnel_client(cfg, use_tunnel_handshake=True) as (creader, cwriter):
-                    cwriter.write(bad_cmd)
-                    await cwriter.drain()
-                    # Read response              
-                    data = await creader.read(1024)
-                    # if len(bad_cmd) < consts.COMMAND_LENGTH, response will be RESPONSE_ERROR_TIMEOUT
-                    if len(bad_cmd) >= consts.COMMAND_LENGTH:
-                        self.assertEqual(data, consts.RESPONSE_ERROR_COMMAND)
-                    else:
-                        self.assertEqual(data, consts.RESPONSE_ERROR_TIMEOUT)
-                    
+            for host in ('127.0.0.1', '::1'):
+                # Remote is not really important in this tests, will fail before using it
+                async with tuntools.create_tunnel_proc(
+                    host, 7777, '127.0.0.1', 12345, workers=1
+                ) as cfg:
+                    # On full, we need the handshake to be done, before connecting
+                    async with tuntools.open_tunnel_client(cfg, use_tunnel_handshake=True) as (creader, cwriter):
+                        cwriter.write(bad_cmd)
+                        await cwriter.drain()
+                        # Read response              
+                        data = await creader.read(1024)
+                        # if len(bad_cmd) < consts.COMMAND_LENGTH, response will be RESPONSE_ERROR_TIMEOUT
+                        if len(bad_cmd) >= consts.COMMAND_LENGTH:
+                            self.assertEqual(data, consts.RESPONSE_ERROR_COMMAND)
+                        else:
+                            self.assertEqual(data, consts.RESPONSE_ERROR_TIMEOUT)
+                        
 

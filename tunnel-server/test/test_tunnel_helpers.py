@@ -41,7 +41,6 @@ from .utils import fixtures
 from .utils import tools, conf
 
 logger = logging.getLogger(__name__)
-logging.disable(logging.WARNING)
 
 def uds_response(
     _,
@@ -56,6 +55,11 @@ def uds_response(
 
 
 class TestTunnelHelpers(IsolatedAsyncioTestCase):
+    async def asyncSetUp(self) -> None:
+        # Disable logging os slow tests
+        logging.disable(logging.WARNING)
+        return await super().asyncSetUp()
+
     async def test_get_ticket_from_uds_broker(self) -> None:
         _, cfg = fixtures.get_config()
         # Test some invalid tickets

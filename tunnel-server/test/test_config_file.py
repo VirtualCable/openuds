@@ -43,25 +43,15 @@ class TestConfigFile(TestCase):
 
             h = hashlib.sha256()
             h.update(values.get('secret', '').encode())
-            secret = h.hexdigest()
+            # Adapt some values to config
+            values['secret'] = h.hexdigest()
+            values['allow'] = {values['allow']}  # convert to set
+            values['logsize'] = values['logsize'] * 1024 * 1024
+            values['listen_address'] = values['address']
+            values['listen_port'] = values['port']
+            
+            del values['address']
+            del values['port']
             # Ensure data is correct
-            self.assertEqual(cfg.pidfile, values['pidfile'])
-            self.assertEqual(cfg.user, values['user'])
-            self.assertEqual(cfg.log_level, values['loglevel'])
-            self.assertEqual(cfg.log_file, values['logfile'])
-            self.assertEqual(
-                cfg.log_size, values['logsize'] * 1024 * 1024
-            )  # Config file is in MB
-            self.assertEqual(cfg.log_number, values['lognumber'])
-            self.assertEqual(cfg.listen_address, values['address'])
-            self.assertEqual(cfg.workers, values['workers'])
-            self.assertEqual(cfg.ssl_certificate, values['ssl_certificate'])
-            self.assertEqual(cfg.ssl_certificate_key, values['ssl_certificate_key'])
-            self.assertEqual(cfg.ssl_ciphers, values['ssl_ciphers'])
-            self.assertEqual(cfg.ssl_dhparam, values['ssl_dhparam'])
-            self.assertEqual(cfg.uds_server, values['uds_server'])
-            self.assertEqual(cfg.uds_token, values['uds_token'])
-            self.assertEqual(cfg.uds_timeout, values['uds_timeout'])
-            self.assertEqual(cfg.secret, secret)
-            self.assertEqual(cfg.allow, {values['allow']})
-            self.assertEqual(cfg.uds_verify_ssl, values['uds_verify_ssl'])
+            for k, v in values.items():
+                self.assertEqual(getattr(cfg, k), v, f'Error in {k}')

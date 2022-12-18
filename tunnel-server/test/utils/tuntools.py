@@ -75,6 +75,7 @@ async def create_tunnel_proc(
     values, cfg = fixtures.get_config(
         address=listen_host,
         port=listen_port,
+        ipv6=':' in listen_host,
         ssl_certificate=cert_file,
         ssl_certificate_key='',
         ssl_password=password,
@@ -163,7 +164,7 @@ async def create_tunnel_server(
         cfg.listen_port,
         ssl=context,
         family=socket.AF_INET6
-        if cfg.listen_ipv6 or ':' in cfg.listen_address
+        if cfg.ipv6 or ':' in cfg.listen_address
         else socket.AF_INET,
     )
 
@@ -181,6 +182,7 @@ async def create_test_tunnel(
             _, cfg = fixtures.get_config(
                 address=server.host,
                 port=7777,
+                ipv6=':' in server.host,
             )
             with mock.patch(
                 'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
@@ -205,10 +207,7 @@ async def open_tunnel_client(
 ]:
     """opens an ssl socket to the tunnel server"""
     loop = asyncio.get_running_loop()
-    if cfg.listen_ipv6 or ':' in cfg.listen_address:
-        family = socket.AF_INET6
-    else:
-        family = socket.AF_INET
+    family = socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE

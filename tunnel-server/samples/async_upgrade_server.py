@@ -126,9 +126,7 @@ async def main():
     data = client.recv(4)
     print(data)
     # Upgrade connection to SSL, and use asyncio to handle the rest
-    transport: 'asyncio.transports.Transport'
-    protocol: TunnelProtocol
-    (transport, protocol) = await loop.connect_accepted_socket(  # type: ignore
+    (_, protocol) = await loop.connect_accepted_socket(  # type: ignore
         lambda: TunnelProtocol(), client, ssl=context
     )
 

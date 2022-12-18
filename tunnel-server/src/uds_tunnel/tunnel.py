@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import asyncio
 import typing
 import logging
+import socket
 
 import aiohttp
 
@@ -46,8 +47,6 @@ if typing.TYPE_CHECKING:
 
 # Protocol
 class TunnelProtocol(asyncio.Protocol):
-    # future to mark eof
-    finished: asyncio.Future
     # Transport and other side of tunnel
     transport: 'asyncio.transports.Transport'
     other_side: 'TunnelProtocol'
@@ -86,7 +85,6 @@ class TunnelProtocol(asyncio.Protocol):
             self.runner = self.do_command
 
         # transport is undefined until connection_made is called
-        self.finished = asyncio.Future()
         self.cmd = b''
         self.notify_ticket = b''
         self.owner = owner
@@ -136,10 +134,12 @@ class TunnelProtocol(asyncio.Protocol):
             )
 
             try:
+                family = socket.AF_INET6 if ':' in self.destination[0] or self.owner.cfg.ipv6 else socket.AF_INET
                 (_, protocol) = await loop.create_connection(
                     lambda: TunnelProtocol(self.owner, self),
                     self.destination[0],
                     self.destination[1],
+                    family=family,
                 )
                 self.other_side = typing.cast('TunnelProtocol', protocol)
 
@@ -151,6 +151,7 @@ class TunnelProtocol(asyncio.Protocol):
                 logger.error('Error opening connection: %s', e)
                 self.close_connection()
 
+        # add open other side to the loop
         loop.create_task(open_other_side())
         # From now, proxy connection
         self.runner = self.do_proxy
@@ -280,7 +281,9 @@ class TunnelProtocol(asyncio.Protocol):
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
         logger.debug('Connection closed : %s', exc)
-        self.finished.set_result(True)
+        # notify end to parent proxy
+        self.owner.finished.set_result(True)
+        # Ensure close other side if any
         if self.other_side is not self:
             self.other_side.transport.close()
         else:
@@ -288,12 +291,17 @@ class TunnelProtocol(asyncio.Protocol):
         self.notifyEnd()
 
     # helpers
+    @staticmethod
+    def pretty_address(address: typing.Tuple[str, int]) -> str:
+        if ':' in address[0]:
+            return '[' + address[0] + ']:' + str(address[1])
+        return address[0] + ':' + str(address[1])
     # source address, pretty format
     def pretty_source(self) -> str:
-        return self.source[0] + ':' + str(self.source[1])
+        return TunnelProtocol.pretty_address(self.source)
 
     def pretty_destination(self) -> str:
-        return self.destination[0] + ':' + str(self.destination[1])
+        return TunnelProtocol.pretty_address(self.destination)
 
     def close_connection(self):
         self.transport.close()

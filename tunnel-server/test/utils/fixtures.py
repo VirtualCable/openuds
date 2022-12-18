@@ -57,6 +57,9 @@ lognumber = {lognumber}
 # Listen address. Defaults to 0.0.0.0
 address = {address}
 
+# If enforce ipv6. Defaults to False
+ipv6 = {ipv6}
+
 # Listen port. Defaults to 443
 port = {port}
 
@@ -93,7 +96,7 @@ allow = {allow}
 use_uvloop = {use_uvloop}
 '''
 
-def get_config(**overrides) -> typing.Tuple[typing.Mapping[str, typing.Any], config.ConfigurationType]:
+def get_config(**overrides) -> typing.Tuple[typing.Dict[str, typing.Any], config.ConfigurationType]:
     rand_number = random.randint(0, 100)
     values: typing.Dict[str, typing.Any] = {
         'pidfile': f'/tmp/uds_tunnel_{random.randint(0, 100)}.pid',  # Random pid file

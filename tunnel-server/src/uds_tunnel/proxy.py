@@ -46,10 +46,12 @@ logger = logging.getLogger(__name__)
 class Proxy:
     cfg: 'config.ConfigurationType'
     ns: 'Namespace'
+    finished: asyncio.Future
 
     def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
         self.cfg = cfg
         self.ns = ns
+        self.finished = asyncio.Future()  # not done yet
 
     # Method responsible of proxying requests
     async def __call__(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
@@ -63,7 +65,7 @@ class Proxy:
                 addr = source.getpeername()
             except Exception:
                 addr = 'Unknown'
-            logger.error('Proxy error from %s: %s', addr, e)
+            logger.exception('Proxy error from %s: %s (%s--%s)', addr, e, source, context)
 
     async def proxy(self, source: socket.socket, context: 'ssl.SSLContext') -> None:
         loop = asyncio.get_running_loop()
@@ -72,13 +74,17 @@ class Proxy:
 
         # Upgrade connection to SSL, and use asyncio to handle the rest
         try:
-            protocol: tunnel.TunnelProtocol
+            def factory() -> tunnel.TunnelProtocol:
+                return tunnel.TunnelProtocol(self)
             # (connect accepted loop not present on AbastractEventLoop definition < 3.10), that's why we use ignore
-            (_, protocol) = await loop.connect_accepted_socket(  # type: ignore
-                lambda: tunnel.TunnelProtocol(self), source, ssl=context
+            await loop.connect_accepted_socket(  # type: ignore
+                factory, source, ssl=context
             )
 
-            await protocol.finished
+            # Wait for connection to be closed
+            await self.finished
+            
+            
         except asyncio.CancelledError:
             pass  # Return on cancel
 

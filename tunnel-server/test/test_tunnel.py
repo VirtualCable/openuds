@@ -44,6 +44,11 @@ logger = logging.getLogger(__name__)
 
 
 class TestTunnel(IsolatedAsyncioTestCase):
+    async def asyncSetUp(self) -> None:
+        # Disable logging os slow tests
+        logging.disable(logging.WARNING)
+        return await super().asyncSetUp()
+
     async def test_tunnel_invalid_command(self) -> None:
         # Test invalid handshake
         # data = b''
