@@ -52,6 +52,28 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+@contextlib.asynccontextmanager
+async def create_config_file(path: str, host: str, port: int) -> typing.AsyncGenerator[None, None]:
+    cert, key, password = certs.selfSignedCert(host, use_password=True)
+    # Create the certificate file on /tmp
+    cert_file = '/tmp/tunnel_full_cert.pem'
+    with open(cert_file, 'w') as f:
+        f.write(key)
+        f.write(cert)
+
+    # Create the certificate file on /tmp
+    cert_file = '/tmp/tunnel_full_cert.pem'
+    with open(cert_file, 'w') as f:
+        f.write(key)
+        f.write(cert)
+    
+    try:
+        yield
+    finally:
+        # pass
+
+
+
 
 @contextlib.asynccontextmanager
 async def create_tunnel_proc(
@@ -250,3 +272,7 @@ async def open_tunnel_client(
     finally:
         writer.close()
         await writer.wait_closed()
+
+async def app_runner(host: str, port: int) -> None:
+    # Execute udstunnel as application, using asyncio.create_subprocess_exec
+    # First, create the configuration file

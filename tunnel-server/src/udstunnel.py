@@ -343,9 +343,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.rdp:
-        pass
-    elif args.detailed_stats:
+    if args.tunnel:
+        tunnel_main(args)
+    if args.detailed_stats:
         asyncio.run(stats.getServerStats(True))
     elif args.stats:
         asyncio.run(stats.getServerStats(False))
