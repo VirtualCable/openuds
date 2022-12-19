@@ -28,34 +28,48 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import typing
+
 DEBUG = True
 
-if DEBUG:
-    CONFIGFILE = 'udstunnel.conf'
-    LOGFORMAT = '%(levelname)s %(asctime)s %(message)s'
-else:
-    CONFIGFILE = '/etc/udstunnel.conf'
-    LOGFORMAT = '%(levelname)s %(asctime)s %(message)s'
+CONFIGFILE: typing.Final[str] = '/etc/udstunnel.conf' if not DEBUG else 'udstunnel.conf'
+LOGFORMAT: typing.Final[str] = (
+    '%(levelname)s %(asctime)s %(message)s'
+    if not DEBUG
+    else '%(levelname)s %(asctime)s %(message)s'
+)
 
 # MAX Length of read buffer for proxyed requests
-BUFFER_SIZE = 1024 * 16
+BUFFER_SIZE: typing.Final[int] = 1024 * 16
 # Handshake for conversation start
-HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
+HANDSHAKE_V1: typing.Final[bytes] = b'\x5AMGB\xA5\x01\x00'
 # Ticket length
-TICKET_LENGTH = 48
+TICKET_LENGTH: typing.Final[int] = 48
 # Max Admin password length (stats basically right now)
-PASSWORD_LENGTH = 64
+PASSWORD_LENGTH: typing.Final[int] = 64
 # Bandwidth calc time lapse
-BANDWIDTH_TIME = 10
+BANDWIDTH_TIME: typing.Final[int] = 10
 
 # Commands LENGTH (all same length)
-COMMAND_LENGTH = 4 
+COMMAND_LENGTH: typing.Final[int] = 4
 
-VERSION = 'v2.0.0'
+VERSION: typing.Final[str] = 'v2.0.0'
 
 # Valid commands
-COMMAND_OPEN = b'OPEN'
-COMMAND_TEST = b'TEST'
-COMMAND_STAT = b'STAT'  # full stats
-COMMAND_INFO = b'INFO'  # Basic stats, currently same as FULL
+COMMAND_OPEN: typing.Final[bytes] = b'OPEN'
+COMMAND_TEST: typing.Final[bytes] = b'TEST'
+COMMAND_STAT: typing.Final[bytes] = b'STAT'  # full stats
+COMMAND_INFO: typing.Final[bytes] = b'INFO'  # Basic stats, currently same as FULL
 
+RESPONSE_ERROR_TICKET: typing.Final[bytes] = b'ERROR_TICKET'
+RESPONSE_ERROR_COMMAND: typing.Final[bytes] = b'ERROR_COMMAND'
+RESPONSE_ERROR_TIMEOUT: typing.Final[bytes] = b'TIMEOUT'
+RESPONSE_FORBIDDEN: typing.Final[bytes] = b'FORBIDDEN'
+
+RESPONSE_OK: typing.Final[bytes] = b'OK'
+
+# Timeout for command
+TIMEOUT_COMMAND: typing.Final[int] = 3
+
+# Backlog for listen socket
+BACKLOG = 1024

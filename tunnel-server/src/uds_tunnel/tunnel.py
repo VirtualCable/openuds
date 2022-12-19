@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import asyncio
 import typing
 import logging
+import socket
 
 import aiohttp
 
@@ -46,8 +47,6 @@ if typing.TYPE_CHECKING:
 
 # Protocol
 class TunnelProtocol(asyncio.Protocol):
-    # future to mark eof
-    finished: asyncio.Future
     # Transport and other side of tunnel
     transport: 'asyncio.transports.Transport'
     other_side: 'TunnelProtocol'
@@ -56,7 +55,7 @@ class TunnelProtocol(asyncio.Protocol):
     # Command buffer
     cmd: bytes
     # Ticket
-    notify_ticket: bytes
+    notify_ticket: bytes  # Only exists on "slave" transport (that is, tunnel from us to remote machine)
     # owner Proxy class
     owner: 'proxy.Proxy'
     # source of connection
@@ -66,6 +65,8 @@ class TunnelProtocol(asyncio.Protocol):
     stats_manager: stats.Stats
     # counter
     counter: stats.StatsSingleCounter
+    # If there is a timeout task running
+    timeout_task: typing.Optional[asyncio.Task] = None
 
     def __init__(
         self, owner: 'proxy.Proxy', other_side: typing.Optional['TunnelProtocol'] = None
@@ -82,19 +83,23 @@ class TunnelProtocol(asyncio.Protocol):
             self.stats_manager = stats.Stats(owner.ns)
             self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
+            # Set starting timeout task, se we dont get hunged on connections without data
+            self.set_timeout(consts.TIMEOUT_COMMAND)
 
         # transport is undefined until connection_made is called
-        self.finished = asyncio.Future()
         self.cmd = b''
         self.notify_ticket = b''
         self.owner = owner
         self.source = ('', 0)
         self.destination = ('', 0)
 
+
     def process_open(self) -> None:
         # Open Command has the ticket behind it
 
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
+            # Reactivate timeout, will be deactivated on do_command
+            self.set_timeout(consts.TIMEOUT_COMMAND)
             return  # Wait for more data to complete OPEN command
 
         # Ticket received, now process it with UDS
@@ -106,7 +111,7 @@ class TunnelProtocol(asyncio.Protocol):
         # clean up the command
         self.cmd = b''
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         async def open_other_side() -> None:
             try:
@@ -115,7 +120,7 @@ class TunnelProtocol(asyncio.Protocol):
                 )
             except Exception as e:
                 logger.error('ERROR %s', e.args[0] if e.args else e)
-                self.transport.write(b'ERROR_TICKET')
+                self.transport.write(consts.RESPONSE_ERROR_TICKET)
                 self.transport.close()  # And force close
                 return
 
@@ -130,10 +135,12 @@ class TunnelProtocol(asyncio.Protocol):
             )
 
             try:
+                family = socket.AF_INET6 if ':' in self.destination[0] or self.owner.cfg.ipv6 else socket.AF_INET
                 (_, protocol) = await loop.create_connection(
                     lambda: TunnelProtocol(self.owner, self),
                     self.destination[0],
                     self.destination[1],
+                    family=family,
                 )
                 self.other_side = typing.cast('TunnelProtocol', protocol)
 
@@ -145,6 +152,7 @@ class TunnelProtocol(asyncio.Protocol):
                 logger.error('Error opening connection: %s', e)
                 self.close_connection()
 
+        # add open other side to the loop
         loop.create_task(open_other_side())
         # From now, proxy connection
         self.runner = self.do_proxy
@@ -160,7 +168,7 @@ class TunnelProtocol(asyncio.Protocol):
             # Check valid source ip
             if self.transport.get_extra_info('peername')[0] not in self.owner.cfg.allow:
                 # Invalid source
-                self.transport.write(b'FORBIDDEN')
+                self.transport.write(consts.RESPONSE_FORBIDDEN)
                 return
 
             # Check password
@@ -171,7 +179,7 @@ class TunnelProtocol(asyncio.Protocol):
 
             if passwd.decode(errors='ignore') != self.owner.cfg.secret:
                 # Invalid password
-                self.transport.write(b'FORBIDDEN')
+                self.transport.write(consts.RESPONSE_FORBIDDEN)
                 return
 
             data = stats.GlobalStats.get_stats(self.owner.ns)
@@ -184,18 +192,50 @@ class TunnelProtocol(asyncio.Protocol):
         finally:
             self.close_connection()
 
+    async def timeout(self, wait: int) -> None:
+        """ Timeout can only occur while waiting for a command."""
+        try:
+            await asyncio.sleep(wait)
+            logger.error('TIMEOUT FROM %s', self.pretty_source())
+            self.transport.write(consts.RESPONSE_ERROR_TIMEOUT)
+            self.close_connection()
+        except asyncio.CancelledError:
+            pass
+
+    def set_timeout(self, wait: int) -> None:
+        """Set a timeout for this connection.
+        If reached, the connection will be closed.
+
+        Args:
+            wait (int): Timeout in seconds
+
+        """
+        if self.timeout_task:
+            self.timeout_task.cancel()
+        self.timeout_task = asyncio.create_task(self.timeout(wait))
+
+    def clean_timeout(self) -> None:
+        """Clean the timeout task if any.
+        """
+        if self.timeout_task:
+            self.timeout_task.cancel()
+            self.timeout_task = None
+
     def do_command(self, data: bytes) -> None:
-        self.cmd += data
-        if len(self.cmd) >= consts.COMMAND_LENGTH:
+        if self.cmd == b'':
             logger.info('CONNECT FROM %s', self.pretty_source())
 
+        self.clean_timeout()
+        self.cmd += data
+        # Ensure we don't get a timeout
+        if len(self.cmd) >= consts.COMMAND_LENGTH:
             command = self.cmd[: consts.COMMAND_LENGTH]
             try:
                 if command == consts.COMMAND_OPEN:
                     self.process_open()
                 elif command == consts.COMMAND_TEST:
                     logger.info('COMMAND: TEST')
-                    self.transport.write(b'OK')
+                    self.transport.write(consts.RESPONSE_OK)
                     self.close_connection()
                     return
                 elif command in (consts.COMMAND_STAT, consts.COMMAND_INFO):
@@ -206,9 +246,11 @@ class TunnelProtocol(asyncio.Protocol):
                     raise Exception('Invalid command')
             except Exception:
                 logger.error('ERROR from %s', self.pretty_source())
-                self.transport.write(b'ERROR_COMMAND')
+                self.transport.write(consts.RESPONSE_ERROR_COMMAND)
                 self.close_connection()
                 return
+        else:
+            self.set_timeout(consts.TIMEOUT_COMMAND)
 
         # if not enough data to process command, wait for more
 
@@ -221,6 +263,7 @@ class TunnelProtocol(asyncio.Protocol):
 
     def connection_made(self, transport: 'asyncio.transports.BaseTransport') -> None:
         logger.debug('Connection made: %s', transport.get_extra_info('peername'))
+        self.main = True  # This is the main connection
 
         # We know for sure that the transport is a Transport.
         self.transport = typing.cast('asyncio.transports.Transport', transport)
@@ -239,10 +282,12 @@ class TunnelProtocol(asyncio.Protocol):
                 )
             )
             self.notify_ticket = b''  # Clean up so no more notifications
+        else:  # No ticket, this is "main" connection (from client to us). Notify owner that we are done
+            self.owner.finished.set()
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
         logger.debug('Connection closed : %s', exc)
-        self.finished.set_result(True)
+        # Ensure close other side if any
         if self.other_side is not self:
             self.other_side.transport.close()
         else:
@@ -250,12 +295,17 @@ class TunnelProtocol(asyncio.Protocol):
         self.notifyEnd()
 
     # helpers
+    @staticmethod
+    def pretty_address(address: typing.Tuple[str, int]) -> str:
+        if ':' in address[0]:
+            return '[' + address[0] + ']:' + str(address[1])
+        return address[0] + ':' + str(address[1])
     # source address, pretty format
     def pretty_source(self) -> str:
-        return self.source[0] + ':' + str(self.source[1])
+        return TunnelProtocol.pretty_address(self.source)
 
     def pretty_destination(self) -> str:
-        return self.destination[0] + ':' + str(self.destination[1])
+        return TunnelProtocol.pretty_address(self.destination)
 
     def close_connection(self):
         self.transport.close()
