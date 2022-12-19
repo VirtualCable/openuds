@@ -106,7 +106,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
         for host in ('127.0.0.1', '::1'):
             # Remote is NOT important in this tests
             # create a remote server
-            async with tools.AsyncTCPServer(host=host, port=5445) as server:
+            async with tools.AsyncTCPServer(host=host, port=5444) as server:
                 async with tuntools.create_tunnel_proc(
                     host,
                     7777,
@@ -148,18 +148,18 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                     callback_invoked.set()
 
             # Remote is important in this tests
-            # create a remote server
+            # create a remote server, use a different port than the tunnel fail test, because tests may run in parallel
             async with tools.AsyncTCPServer(
                 host=host, port=5445, callback=callback
             ) as server:
                 async with tuntools.create_tunnel_proc(
                     host,
-                    7777,
+                    7778,
                     server.host,
                     server.port,
                 ) as cfg:
-                    for i in range(10):
-                        # Create a random valid ticket
+                    for i in range(1):
+                        # Create a random ticket with valid format
                         ticket = ''.join(
                             random.choice(string.ascii_letters + string.digits)
                             for _ in range(consts.TICKET_LENGTH)
@@ -180,7 +180,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
 
                             # Data sent will be received by server
                             # One single write will ensure all data is on same packet
-                            test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(512)) + b'STREAM_END'
+                            test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(8192)) + b'STREAM_END'
                             # Clean received data
                             received = b''
                             # And reset event

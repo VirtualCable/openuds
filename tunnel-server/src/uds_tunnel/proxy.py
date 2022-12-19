@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 class Proxy:
     cfg: 'config.ConfigurationType'
     ns: 'Namespace'
-    finished: asyncio.Future
+    finished: asyncio.Event
 
     def __init__(self, cfg: 'config.ConfigurationType', ns: 'Namespace') -> None:
         self.cfg = cfg
@@ -70,7 +70,7 @@ class Proxy:
         loop = asyncio.get_running_loop()
         # Handshake correct in this point, upgrade the connection to TSL and let
         # the protocol controller do the rest
-        self.finished = loop.create_future()
+        self.finished = asyncio.Event()
 
         # Upgrade connection to SSL, and use asyncio to handle the rest
         try:
@@ -82,7 +82,7 @@ class Proxy:
             )
 
             # Wait for connection to be closed
-            await self.finished
+            await self.finished.wait()
             
             
         except asyncio.CancelledError:

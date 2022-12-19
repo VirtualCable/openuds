@@ -130,17 +130,18 @@ class AsyncTCPServer:
         self.data = b''
 
     async def _handle(self, reader, writer) -> None:
-        data = await reader.read(2048)
+        while True:
+            data = await reader.read(2048)
+            if not data:
+                break
 
-        if self._callback:
-            self._callback(data)
+            if self._callback:
+                self._callback(data)
 
-        if self._response is not None:
-            data = self._response
-        else:
-            data = b'sample data'
-        writer.write(data)
-        await writer.drain()
+            if self._response is not None:
+                data = self._response
+                writer.write(data)
+                await writer.drain()
 
     async def __aenter__(self) -> 'AsyncTCPServer':
         self._server = await asyncio.start_server(self._handle, self.host, self.port)

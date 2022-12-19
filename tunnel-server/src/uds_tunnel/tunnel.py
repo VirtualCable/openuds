@@ -55,7 +55,7 @@ class TunnelProtocol(asyncio.Protocol):
     # Command buffer
     cmd: bytes
     # Ticket
-    notify_ticket: bytes
+    notify_ticket: bytes  # Only exists on "slave" transport (that is, tunnel from us to remote machine)
     # owner Proxy class
     owner: 'proxy.Proxy'
     # source of connection
@@ -263,6 +263,7 @@ class TunnelProtocol(asyncio.Protocol):
 
     def connection_made(self, transport: 'asyncio.transports.BaseTransport') -> None:
         logger.debug('Connection made: %s', transport.get_extra_info('peername'))
+        self.main = True  # This is the main connection
 
         # We know for sure that the transport is a Transport.
         self.transport = typing.cast('asyncio.transports.Transport', transport)
@@ -281,11 +282,11 @@ class TunnelProtocol(asyncio.Protocol):
                 )
             )
             self.notify_ticket = b''  # Clean up so no more notifications
+        else:  # No ticket, this is "main" connection (from client to us). Notify owner that we are done
+            self.owner.finished.set()
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
         logger.debug('Connection closed : %s', exc)
-        # notify end to parent proxy
-        self.owner.finished.set_result(True)
         # Ensure close other side if any
         if self.other_side is not self:
             self.other_side.transport.close()
