@@ -314,7 +314,7 @@ def main() -> None:
     group.add_argument(
         '-t', '--tunnel', help='Starts the tunnel server', action='store_true'
     )
-    group.add_argument('-r', '--rdp', help='RDP Tunnel for traffic accounting')
+    # group.add_argument('-r', '--rdp', help='RDP Tunnel for traffic accounting')
     group.add_argument(
         '-s',
         '--stats',
@@ -343,9 +343,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    if args.tunnel:
-        tunnel_main(args)
-    elif args.rdp:
+    if args.rdp:
         pass
     elif args.detailed_stats:
         asyncio.run(stats.getServerStats(True))
