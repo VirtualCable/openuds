@@ -42,7 +42,7 @@ from .utils import tuntools, tools
 logger = logging.getLogger(__name__)
 
 
-class TestUDSTunnelApp(IsolatedAsyncioTestCase):
+class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         # Disable logging os slow tests
         logging.disable(logging.WARNING)
@@ -152,43 +152,44 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             async with tools.AsyncTCPServer(
                 host=host, port=5445, callback=callback
             ) as server:
-                async with tuntools.create_tunnel_proc(
-                    host,
-                    7778,
-                    server.host,
-                    server.port,
-                ) as cfg:
-                    for i in range(1):
-                        # Create a random ticket with valid format
-                        ticket = ''.join(
-                            random.choice(string.ascii_letters + string.digits)
-                            for _ in range(consts.TICKET_LENGTH)
-                        ).encode()
-                        # On full, we need the handshake to be done, before connecting
-                        # Our "test" server will simple "eat" the handshake, but we need to do it
-                        async with tuntools.open_tunnel_client(
-                            cfg, use_tunnel_handshake=True
-                        ) as (creader, cwriter):
-                            cwriter.write(consts.COMMAND_OPEN)
-                            # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
-                            cwriter.write(ticket)
+                for tunnel_host in ('127.0.0.1', '::1'):
+                    async with tuntools.create_tunnel_proc(
+                        tunnel_host,
+                        7778,
+                        server.host,
+                        server.port,
+                    ) as cfg:
+                        for i in range(1):
+                            # Create a random ticket with valid format
+                            ticket = ''.join(
+                                random.choice(string.ascii_letters + string.digits)
+                                for _ in range(consts.TICKET_LENGTH)
+                            ).encode()
+                            # On full, we need the handshake to be done, before connecting
+                            # Our "test" server will simple "eat" the handshake, but we need to do it
+                            async with tuntools.open_tunnel_client(
+                                cfg, use_tunnel_handshake=True
+                            ) as (creader, cwriter):
+                                cwriter.write(consts.COMMAND_OPEN)
+                                # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
+                                cwriter.write(ticket)
 
-                            await cwriter.drain()
-                            # Read response
-                            data = await creader.read(1024)
-                            self.assertEqual(data, consts.RESPONSE_OK)
+                                await cwriter.drain()
+                                # Read response
+                                data = await creader.read(1024)
+                                self.assertEqual(data, consts.RESPONSE_OK, f'Tunnel host: {tunnel_host}, server host: {host}')
 
-                            # Data sent will be received by server
-                            # One single write will ensure all data is on same packet
-                            test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(8192)) + b'STREAM_END'
-                            # Clean received data
-                            received = b''
-                            # And reset event
-                            callback_invoked.clear()
-                            
-                            cwriter.write(test_str)
-                            await cwriter.drain()
+                                # Data sent will be received by server
+                                # One single write will ensure all data is on same packet
+                                test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(8192)) + b'STREAM_END'
+                                # Clean received data
+                                received = b''
+                                # And reset event
+                                callback_invoked.clear()
+                                
+                                cwriter.write(test_str)
+                                await cwriter.drain()
 
-                            # Wait for callback to be invoked
-                            await callback_invoked.wait()
-                            self.assertEqual(received, test_str)
+                                # Wait for callback to be invoked
+                                await callback_invoked.wait()
+                                self.assertEqual(received, test_str)

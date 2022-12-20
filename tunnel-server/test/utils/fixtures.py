@@ -69,6 +69,7 @@ workers = {workers}
 # SSL Related parameters. 
 ssl_certificate = {ssl_certificate}
 ssl_certificate_key = {ssl_certificate_key}
+ssl_password = {ssl_password}
 # ssl_ciphers and ssl_dhparam are optional.
 ssl_ciphers = {ssl_ciphers}
 ssl_dhparam = {ssl_dhparam}
@@ -111,6 +112,7 @@ def get_config(**overrides) -> typing.Tuple[typing.Dict[str, typing.Any], config
         'workers': random.randint(1, 100),  # Random workers, 0 will return as many as cpu cores
         'ssl_certificate': f'/tmp/uds_tunnel_{rand_number}.crt',  # Random ssl certificate
         'ssl_certificate_key': f'/tmp/uds_tunnel_{rand_number}.key',  # Random ssl certificate key
+        'ssl_password': f'password{random.randint(0, 100)}',  # Random ssl password
         'ssl_ciphers': f'ciphers{random.randint(0, 100)}',  # Random ssl ciphers
         'ssl_dhparam': f'/tmp/uds_tunnel_{rand_number}.dh',  # Random ssl dhparam
         'uds_server': f'https://uds_server{rand_number}/some_path',  # Random uds server

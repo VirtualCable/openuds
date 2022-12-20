@@ -68,7 +68,6 @@ running: threading.Event = threading.Event()
 
 
 def stop_signal(signum: int, frame: typing.Any) -> None:
-    global running
     running.clear()
     logger.debug('SIGNAL %s, frame: %s', signum, frame)
 
@@ -174,7 +173,7 @@ async def tunnel_proc_async(
     try:
         while tasks and running.is_set():
             to_wait = tasks[:]  # Get a copy of the list, and clean the original
-            # Wait for tasks to finish
+            # Wait for tasks to finish, stop every 2 seconds to check if we need to finish
             done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED, timeout=2)
             # Remove finished tasks
             for task in done:
@@ -219,7 +218,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
     socket.setdefaulttimeout(
         3.0
     )  # So we can check for stop from time to time and not block forever
-    af_inet = socket.AF_INET6 if args.ipv6 or ':' in cfg.listen_address else socket.AF_INET
+    af_inet = socket.AF_INET6 if args.ipv6 or cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
     sock = socket.socket(af_inet, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)

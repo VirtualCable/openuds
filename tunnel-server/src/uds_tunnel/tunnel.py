@@ -93,7 +93,6 @@ class TunnelProtocol(asyncio.Protocol):
         self.source = ('', 0)
         self.destination = ('', 0)
 
-
     def process_open(self) -> None:
         # Open Command has the ticket behind it
 
@@ -135,7 +134,12 @@ class TunnelProtocol(asyncio.Protocol):
             )
 
             try:
-                family = socket.AF_INET6 if ':' in self.destination[0] or self.owner.cfg.ipv6 else socket.AF_INET
+                family = (
+                    socket.AF_INET6
+                    if ':' in self.destination[0]
+                    or (self.owner.cfg.ipv6 and not '.' in self.destination[0])
+                    else socket.AF_INET
+                )
                 (_, protocol) = await loop.create_connection(
                     lambda: TunnelProtocol(self.owner, self),
                     self.destination[0],
@@ -193,7 +197,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.close_connection()
 
     async def timeout(self, wait: int) -> None:
-        """ Timeout can only occur while waiting for a command."""
+        """Timeout can only occur while waiting for a command."""
         try:
             await asyncio.sleep(wait)
             logger.error('TIMEOUT FROM %s', self.pretty_source())
@@ -215,8 +219,7 @@ class TunnelProtocol(asyncio.Protocol):
         self.timeout_task = asyncio.create_task(self.timeout(wait))
 
     def clean_timeout(self) -> None:
-        """Clean the timeout task if any.
-        """
+        """Clean the timeout task if any."""
         if self.timeout_task:
             self.timeout_task.cancel()
             self.timeout_task = None
@@ -300,6 +303,7 @@ class TunnelProtocol(asyncio.Protocol):
         if ':' in address[0]:
             return '[' + address[0] + ']:' + str(address[1])
         return address[0] + ':' + str(address[1])
+
     # source address, pretty format
     def pretty_source(self) -> str:
         return TunnelProtocol.pretty_address(self.source)

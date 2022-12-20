@@ -30,67 +30,39 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import asyncio
 import contextlib
-import io
+import os
 import logging
 import socket
 import ssl
 import os
 import typing
-import json
+import tempfile
 from unittest import mock
 import multiprocessing
 
 import udstunnel
-from uds_tunnel import consts, tunnel, stats
+from uds_tunnel import consts, tunnel, stats, config
 
 from . import certs, conf, fixtures, tools
-
-if typing.TYPE_CHECKING:
-    from uds_tunnel import config
-    from multiprocessing.connection import Connection
 
 
 logger = logging.getLogger(__name__)
 
-@contextlib.asynccontextmanager
-async def create_config_file(path: str, host: str, port: int) -> typing.AsyncGenerator[None, None]:
-    cert, key, password = certs.selfSignedCert(host, use_password=True)
+if typing.TYPE_CHECKING:
+    from asyncio.subprocess import Process
+
+
+@contextlib.contextmanager
+def create_config_file(
+    listen_host: str, listen_port: int
+) -> typing.Generator[str, None, None]:
+    cert, key, password = certs.selfSignedCert(listen_host, use_password=True)
     # Create the certificate file on /tmp
-    cert_file = '/tmp/tunnel_full_cert.pem'
-    with open(cert_file, 'w') as f:
+    cert_file: str = ''
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
         f.write(key)
         f.write(cert)
-
-    # Create the certificate file on /tmp
-    cert_file = '/tmp/tunnel_full_cert.pem'
-    with open(cert_file, 'w') as f:
-        f.write(key)
-        f.write(cert)
-    
-    try:
-        yield
-    finally:
-        # pass
-
-
-
-
-@contextlib.asynccontextmanager
-async def create_tunnel_proc(
-    listen_host: str,
-    listen_port: int,
-    remote_host: str,
-    remote_port: int,
-    *,
-    response: typing.Optional[typing.Mapping[str, typing.Any]] = None
-) -> typing.AsyncGenerator['config.ConfigurationType', None]:
-    # Create the ssl cert
-    cert, key, password = certs.selfSignedCert(listen_host, use_password=False)
-    # Create the certificate file on /tmp
-    cert_file = '/tmp/tunnel_full_cert.pem'
-    with open(cert_file, 'w') as f:
-        f.write(key)
-        f.write(cert)
+        cert_file = f.name
 
     # Config file for the tunnel, ignore readed
     values, cfg = fixtures.get_config(
@@ -104,82 +76,113 @@ async def create_tunnel_proc(
         ssl_ciphers='',
         ssl_dhparam='',
     )
-    args = mock.MagicMock()
-    args.config = io.StringIO(fixtures.TEST_CONFIG.format(**values))
-    args.ipv6 = ':' in listen_host
+    # Write config file
+    cfgfile: str = ''
+    with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        f.write(fixtures.TEST_CONFIG.format(**values))
+        cfgfile = f.name
 
-    return_value: typing.Mapping[str, typing.Any]
-    # Ensure response 
-    if response is None:
-        response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)        
+    try:
+        yield cfgfile
+    finally:
+        # Remove the files if they exists
+        for filename in (cfgfile, cert_file):
+            try:
+                os.remove(filename)
+            except Exception:
+                pass
 
-    with mock.patch(
-        'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
-        new_callable=tools.AsyncMock,
-    ) as m:
-        m.return_value = response
 
-        # Stats collector
-        gs = stats.GlobalStats()
-        # Pipe to send data to tunnel
-        own_end, other_end = multiprocessing.Pipe()
+@contextlib.asynccontextmanager
+async def create_tunnel_proc(
+    listen_host: str,
+    listen_port: int,
+    remote_host: str,
+    remote_port: int,
+    *,
+    response: typing.Optional[typing.Mapping[str, typing.Any]] = None
+) -> typing.AsyncGenerator['config.ConfigurationType', None]:
+    with create_config_file(listen_host, listen_port) as cfgfile:
+        args = mock.MagicMock()
+        # Config can be a file-like or a path
+        args.config = cfgfile
+        args.ipv6 = False  # got from config file
 
-        udstunnel.setup_log(cfg)        
+        # Load config here also for testing
+        cfg = config.read(cfgfile)
 
-        # Set running flag
-        udstunnel.running.set()
+        # Ensure response
+        if response is None:
+            response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
-        # Create the tunnel task
-        task = asyncio.create_task(udstunnel.tunnel_proc_async(other_end, cfg, gs.ns))
+        with mock.patch(
+            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
+            new_callable=tools.AsyncMock,
+        ) as m:
+            m.return_value = response
 
-        # Create a small asyncio server that reads the handshake,
-        # and sends the socket to the tunnel_proc_async using the pipe
-        # the pipe message will be typing.Tuple[socket.socket, typing.Tuple[str, int]]
-        # socket and address
-        async def client_connected_db(reader, writer):
-            # Read the handshake
-            data = await reader.read(1024)
-            # For testing, we ignore the handshake value
-            # Send the socket to the tunnel
-            own_end.send(
-                (
-                    writer.get_extra_info('socket').dup(),
-                    writer.get_extra_info('peername'),
-                )
+            # Stats collector
+            gs = stats.GlobalStats()
+            # Pipe to send data to tunnel
+            own_end, other_end = multiprocessing.Pipe()
+
+            udstunnel.setup_log(cfg)
+
+            # Set running flag
+            udstunnel.running.set()
+
+            # Create the tunnel task
+            task = asyncio.create_task(
+                udstunnel.tunnel_proc_async(other_end, cfg, gs.ns)
             )
-            # Close the socket
-            writer.close()
 
-        server = await asyncio.start_server(
-            client_connected_db,
-            listen_host,
-            listen_port,
-        )
-        try:
-            yield cfg
-        finally:
-            # Close the pipe (both ends)
-            own_end.close()
+            # Create a small asyncio server that reads the handshake,
+            # and sends the socket to the tunnel_proc_async using the pipe
+            # the pipe message will be typing.Tuple[socket.socket, typing.Tuple[str, int]]
+            # socket and address
+            async def client_connected_db(reader, writer):
+                # Read the handshake
+                data = await reader.read(1024)
+                # For testing, we ignore the handshake value
+                # Send the socket to the tunnel
+                own_end.send(
+                    (
+                        writer.get_extra_info('socket').dup(),
+                        writer.get_extra_info('peername'),
+                    )
+                )
+                # Close the socket
+                writer.close()
 
-            task.cancel()
-            # wait for the task to finish
-            await task
+            server = await asyncio.start_server(
+                client_connected_db,
+                listen_host,
+                listen_port,
+            )
+            try:
+                yield cfg
+            finally:
+                # Close the pipe (both ends)
+                own_end.close()
 
-            server.close()
-            await server.wait_closed()
-            logger.info('Server closed')
+                task.cancel()
+                # wait for the task to finish
+                await task
 
-            # Ensure log file are removed
-            rootlog = logging.getLogger()
-            for h in rootlog.handlers:
-                if isinstance(h, logging.FileHandler):
-                    h.close()
-                    # Remove the file if possible, do not fail
-                    try:
-                        os.unlink(h.baseFilename)
-                    except Exception:
-                        pass
+                server.close()
+                await server.wait_closed()
+                logger.info('Server closed')
 
+                # Ensure log file are removed
+                rootlog = logging.getLogger()
+                for h in rootlog.handlers:
+                    if isinstance(h, logging.FileHandler):
+                        h.close()
+                        # Remove the file if possible, do not fail
+                        try:
+                            os.unlink(h.baseFilename)
+                        except Exception:
+                            pass
 
 
 async def create_tunnel_server(
@@ -247,7 +250,9 @@ async def open_tunnel_client(
 ]:
     """opens an ssl socket to the tunnel server"""
     loop = asyncio.get_running_loop()
-    family = socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
+    family = (
+        socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
+    )
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE
@@ -273,6 +278,37 @@ async def open_tunnel_client(
         writer.close()
         await writer.wait_closed()
 
-async def app_runner(host: str, port: int) -> None:
+
+@contextlib.asynccontextmanager
+async def tunnel_app_runner(
+    host: typing.Optional[str] = None,
+    port: typing.Optional[int] = None,
+    *,
+    args: typing.Optional[typing.List[str]] = None
+) -> typing.AsyncGenerator['Process', None]:
+    # Ensure we are on src directory
+    if os.path.basename(os.getcwd()) != 'src':
+        os.chdir('src')
+
+    host = host or '127.0.0.1'
+    port = port or 7777
     # Execute udstunnel as application, using asyncio.create_subprocess_exec
     # First, create the configuration file
+    with create_config_file(host, port) as config_file:
+        args = args or ['-t', '-c', config_file]
+        process = await asyncio.create_subprocess_exec(
+            'python',
+            '-m',
+            'udstunnel',
+            *args,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        try:
+            yield process
+        finally:
+            # Ensure the process is terminated
+            if process.returncode is None:
+                process.terminate()
+                await process.wait()
