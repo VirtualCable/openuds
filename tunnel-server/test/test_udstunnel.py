@@ -55,9 +55,9 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
             # Remote is not really important in this tests, will fail before using it
             async with tuntools.create_tunnel_proc(
                 host,
-                7777,
+                7890,  # A port not used by any other test
                 '127.0.0.1',
-                12345,
+                13579,  # A port not used by any other test
             ) as cfg:
                 for i in range(0, 8192, 128):
                     # Set timeout to 1 seconds
@@ -85,9 +85,9 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
             # Remote is not really important in this tests, will return ok before using it (this is a TEST command, not OPEN)
             async with tuntools.create_tunnel_proc(
                 host,
-                7777,
+                7891,
                 '127.0.0.1',
-                12345,
+                13581,
             ) as cfg:
                 for i in range(10):  # Several times
                     # On full, we need the handshake to be done, before connecting
@@ -117,10 +117,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         0, consts.TICKET_LENGTH - 1, 4
                     ):  # All will fail. Any longer will be processed, and mock will return correct don't matter the ticket
                         # Ticket must contain only letters and numbers
-                        ticket = ''.join(
-                            random.choice(string.ascii_letters + string.digits)
-                            for _ in range(i)
-                        ).encode()
+                        ticket = tuntools.get_correct_ticket(i)
                         # On full, we need the handshake to be done, before connecting
                         # Our "test" server will simple "eat" the handshake, but we need to do it
                         async with tuntools.open_tunnel_client(
@@ -161,10 +158,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                     ) as cfg:
                         for i in range(1):
                             # Create a random ticket with valid format
-                            ticket = ''.join(
-                                random.choice(string.ascii_letters + string.digits)
-                                for _ in range(consts.TICKET_LENGTH)
-                            ).encode()
+                            ticket = tuntools.get_correct_ticket()
                             # On full, we need the handshake to be done, before connecting
                             # Our "test" server will simple "eat" the handshake, but we need to do it
                             async with tuntools.open_tunnel_client(
@@ -175,21 +169,53 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                                 cwriter.write(ticket)
 
                                 await cwriter.drain()
-                                # Read response
+                                # Read response, should be ok
                                 data = await creader.read(1024)
-                                self.assertEqual(data, consts.RESPONSE_OK, f'Tunnel host: {tunnel_host}, server host: {host}')
+                                self.assertEqual(
+                                    data,
+                                    consts.RESPONSE_OK,
+                                    f'Tunnel host: {tunnel_host}, server host: {host}',
+                                )
 
                                 # Data sent will be received by server
                                 # One single write will ensure all data is on same packet
-                                test_str = b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(8192)) + b'STREAM_END'
+                                test_str = (
+                                    b'Some Random Data'
+                                    + bytes(random.randint(0, 255) for _ in range(8192))
+                                    + b'STREAM_END'
+                                )
                                 # Clean received data
                                 received = b''
                                 # And reset event
                                 callback_invoked.clear()
-                                
+
                                 cwriter.write(test_str)
                                 await cwriter.drain()
 
                                 # Wait for callback to be invoked
                                 await callback_invoked.wait()
                                 self.assertEqual(received, test_str)
+
+    async def test_tunnel_no_remote(self) -> None:
+        for host in ('127.0.0.1', '::1'):
+            for tunnel_host in ('127.0.0.1', '::1'):
+                async with tuntools.create_tunnel_proc(
+                    tunnel_host,
+                    7888,
+                    host,
+                    17222,  # Any non used port will do the trick
+                ) as cfg:
+                    ticket = tuntools.get_correct_ticket()
+                    # On full, we need the handshake to be done, before connecting
+                    # Our "test" server will simple "eat" the handshake, but we need to do it
+                    async with tuntools.open_tunnel_client(
+                        cfg, use_tunnel_handshake=True
+                    ) as (creader, cwriter):
+                        cwriter.write(consts.COMMAND_OPEN)
+                        # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
+                        cwriter.write(ticket)
+
+                        await cwriter.drain()
+                        # Read response
+                        data = await creader.read(1024)
+                        self.assertEqual(data, b'', f'Tunnel host: {tunnel_host}, server host: {host}')

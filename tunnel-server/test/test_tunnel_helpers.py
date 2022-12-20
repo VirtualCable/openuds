@@ -65,7 +65,7 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
         # Test some invalid tickets
         # Valid ticket are consts.TICKET_LENGTH bytes long, and must be A-Z, a-z, 0-9
         with mock.patch(
-            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
+            'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
             new_callable=tools.AsyncMock,
         ) as m:
             m.side_effect = uds_response
@@ -77,7 +77,7 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
                 )
 
                 with self.assertRaises(ValueError):
-                    await tunnel.TunnelProtocol.getTicketFromUDS(
+                    await tunnel.TunnelProtocol.get_ticket_from_uds(
                         cfg, ticket.encode(), conf.CALLER_HOST
                     )
 
@@ -85,7 +85,7 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
             for i in range(0, 100):
                 # Now some requests with valid tickets
                 # Ensure no exception is raised
-                ret_value = await tunnel.TunnelProtocol.getTicketFromUDS(
+                ret_value = await tunnel.TunnelProtocol.get_ticket_from_uds(
                     cfg, ticket.encode(), conf.CALLER_HOST
                 )
                 # Ensure data returned is correct {host, port, notify} from mock
@@ -108,7 +108,7 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
     async def test_notify_end_to_uds_broker(self) -> None:
         _, cfg = fixtures.get_config()
         with mock.patch(
-            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
+            'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
             new_callable=tools.AsyncMock,
         ) as m:
             m.side_effect = uds_response
@@ -118,7 +118,7 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
 
             ticket = conf.NOTIFY_TICKET.encode()
             for i in range(0, 100):
-                await tunnel.TunnelProtocol.notifyEndToUds(cfg, ticket, counter)
+                await tunnel.TunnelProtocol.notify_end_to_uds(cfg, ticket, counter)
 
                 self.assertEqual(m.call_args[0][0], cfg)
                 self.assertEqual(
@@ -159,9 +159,9 @@ class TestTunnelHelpers(IsolatedAsyncioTestCase):
                         await tools.get(fake_uds_server),
                         '{"result":"ok"}',
                     )
-                    # Now, tests _readFromUDS
+                    # Now, tests _read_from_uds
                     for i in range(100):
-                        ret = await tunnel.TunnelProtocol._readFromUDS(
+                        ret = await tunnel.TunnelProtocol._read_from_uds(
                             cfg, conf.NOTIFY_TICKET.encode(), 'test', {'param': 'value'}
                         )
                         self.assertEqual(ret, {'result': 'ok'})

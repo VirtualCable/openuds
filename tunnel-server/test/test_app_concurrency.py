@@ -30,7 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 import asyncio
-import io
+import random
+import string
 import logging
 from unittest import IsolatedAsyncioTestCase, mock
 
@@ -38,7 +39,11 @@ from uds_tunnel import consts
 
 from .utils import tuntools, tools
 
+if typing.TYPE_CHECKING:
+    from uds_tunnel import config
+
 logger = logging.getLogger(__name__)
+
 
 class TestUDSTunnelApp(IsolatedAsyncioTestCase):
     async def test_run_app_help(self) -> None:
@@ -49,10 +54,49 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             self.assertEqual(process.returncode, 0, f'{stdout!r} {stderr!r}')
             self.assertEqual(stderr, b'')
             self.assertIn(b'usage: udstunnel', stdout)
-        
+
+    async def client_task(
+        self, cfg: 'config.ConfigurationType', host: str, port: int
+    ) -> None:
+        received: bytes = b''
+        callback_invoked: asyncio.Event = asyncio.Event()
+
+        def callback(data: bytes) -> None:
+            nonlocal received
+            received += data
+            # if data contains EOS marcker ('STREAM_END'), we are done
+            if b'STREAM_END' in data:
+                callback_invoked.set()
+
+        async with tools.AsyncTCPServer(
+            host=host, port=5445, callback=callback
+        ) as server:
+            # Create a random ticket with valid format
+            ticket = ''.join(
+                random.choice(string.ascii_letters + string.digits)
+                for _ in range(consts.TICKET_LENGTH)
+            ).encode()
+            # Open and send handshake
+            async with tuntools.open_tunnel_client(cfg, use_tunnel_handshake=True) as (
+                creader,
+                cwriter,
+            ):
+                # Now open command with ticket
+                cwriter.write(consts.COMMAND_OPEN)
+                # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
+                cwriter.write(ticket)
+
+                await cwriter.drain()
+                # Read response, should be ok
+                data = await creader.read(1024)
+                self.assertEqual(
+                    data,
+                    consts.RESPONSE_OK,
+                    f'Server host: {host}:{port} - Ticket: {ticket!r} - Response: {data!r}',
+                )
 
     async def test_run_app_serve(self) -> None:
         for host in ('127.0.0.1', '::1'):
             async with tuntools.tunnel_app_runner(host, 7777) as process:
-                print(process)
-        
+                # Create a "bunch" of servers and clients
+                pass

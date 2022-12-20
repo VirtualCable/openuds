@@ -30,21 +30,22 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import asyncio
 import contextlib
-import os
+import json
 import logging
+import multiprocessing
+import os
+import random
 import socket
 import ssl
-import os
-import typing
+import string
 import tempfile
+import typing
 from unittest import mock
-import multiprocessing
 
 import udstunnel
-from uds_tunnel import consts, tunnel, stats, config
+from uds_tunnel import config, consts, stats, tunnel
 
 from . import certs, conf, fixtures, tools
-
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +101,7 @@ async def create_tunnel_proc(
     remote_host: str,
     remote_port: int,
     *,
-    response: typing.Optional[typing.Mapping[str, typing.Any]] = None
+    response: typing.Optional[typing.Mapping[str, typing.Any]] = None,
 ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
     with create_config_file(listen_host, listen_port) as cfgfile:
         args = mock.MagicMock()
@@ -116,7 +117,7 @@ async def create_tunnel_proc(
             response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
         with mock.patch(
-            'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
+            'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
             new_callable=tools.AsyncMock,
         ) as m:
             m.return_value = response
@@ -214,21 +215,26 @@ async def create_tunnel_server(
 
 @contextlib.asynccontextmanager
 async def create_test_tunnel(
-    *, callback: typing.Callable[[bytes], None]
+    *,
+    callback: typing.Callable[[bytes], None],
+    port: typing.Optional[int] = None,
+    remote_port: typing.Optional[int] = None,
 ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
     # Generate a listening server for testing tunnel
     # Prepare the end of the tunnel
-    async with tools.AsyncTCPServer(port=54876, callback=callback) as server:
+    async with tools.AsyncTCPServer(
+        port=remote_port or 54876, callback=callback
+    ) as server:
         # Create a tunnel to localhost 13579
         # SSl cert for tunnel server
         with certs.ssl_context(server.host) as (ssl_ctx, _):
             _, cfg = fixtures.get_config(
                 address=server.host,
-                port=7777,
+                port=port or 7777,
                 ipv6=':' in server.host,
             )
             with mock.patch(
-                'uds_tunnel.tunnel.TunnelProtocol._readFromUDS',
+                'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
                 new_callable=tools.AsyncMock,
             ) as m:
                 m.return_value = conf.UDS_GET_TICKET_RESPONSE(server.host, server.port)
@@ -239,6 +245,26 @@ async def create_test_tunnel(
                 finally:
                     tunnel_server.close()
                     await tunnel_server.wait_closed()
+
+
+@contextlib.asynccontextmanager
+async def create_fake_broker_server(
+    response: typing.Mapping[str, typing.Any], port: int = 44443
+) -> typing.AsyncGenerator[None, None]:
+    # crate a fake broker server
+    # Ignores request, and sends response
+
+    resp: bytes = b'HTTP/1.1 200 OK\r\n\r\n' + json.dumps(response).encode()
+
+    def callback(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        writer.write(resp)
+        writer.close()
+
+    async with tools.AsyncTCPServer(port=port, response=resp) as server:
+        try:
+            yield
+        finally:
+            pass  # nothing to do
 
 
 @contextlib.asynccontextmanager
@@ -284,7 +310,7 @@ async def tunnel_app_runner(
     host: typing.Optional[str] = None,
     port: typing.Optional[int] = None,
     *,
-    args: typing.Optional[typing.List[str]] = None
+    args: typing.Optional[typing.List[str]] = None,
 ) -> typing.AsyncGenerator['Process', None]:
     # Ensure we are on src directory
     if os.path.basename(os.getcwd()) != 'src':
@@ -312,3 +338,10 @@ async def tunnel_app_runner(
             if process.returncode is None:
                 process.terminate()
                 await process.wait()
+
+
+def get_correct_ticket(length: int = consts.TICKET_LENGTH) -> bytes:
+    return ''.join(
+        random.choice(string.ascii_letters + string.digits)
+        for _ in range(length)
+    ).encode()

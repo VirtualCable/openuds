@@ -66,7 +66,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
             # Set timeout to 1 seconds
             bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
             logger.info(f'Testing invalid command with {bad_cmd!r}')
-            async with tuntools.create_test_tunnel(callback=lambda x: None) as cfg:
+            async with tuntools.create_test_tunnel(callback=lambda x: None, port=7770, remote_port=54555) as cfg:
                 logger_mock = mock.MagicMock()
                 with mock.patch('uds_tunnel.tunnel.logger', logger_mock):
                     # Open connection to tunnel

@@ -38,7 +38,6 @@ from unittest import mock
 
 from . import certs
 
-
 class AsyncMock(mock.MagicMock):
     async def __call__(self, *args, **kwargs):
         return super().__call__(*args, **kwargs)
@@ -111,7 +110,8 @@ class AsyncTCPServer:
     port: int
     _server: typing.Optional[asyncio.AbstractServer]
     _response: typing.Optional[bytes]
-    _callback: typing.Optional[typing.Callable[[bytes], None]]
+    _callback: typing.Optional[typing.Callable[[bytes], typing.Optional[bytes]]]
+    _processor: typing.Optional[typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], None]]
 
     def __init__(
         self,
@@ -119,26 +119,30 @@ class AsyncTCPServer:
         *,
         response: typing.Optional[bytes] = None,
         host: str = '127.0.0.1',  # ip
-        callback: typing.Optional[typing.Callable[[bytes], None]] = None,
+        callback: typing.Optional[typing.Callable[[bytes], typing.Optional[bytes]]] = None,
+        processor: typing.Optional[typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], None]] = None,
     ) -> None:
         self.host = host
         self.port = port
         self._server = None
         self._response = response
         self._callback = callback
+        self._processor = processor
 
         self.data = b''
 
     async def _handle(self, reader, writer) -> None:
+        if self._processor is not None:
+            self._processor(reader, writer)
+            return
         while True:
             data = await reader.read(2048)
             if not data:
                 break
 
-            if self._callback:
-                self._callback(data)
+            resp = self._callback(data) if self._callback else self._response
 
-            if self._response is not None:
+            if resp is not None:
                 data = self._response
                 writer.write(data)
                 await writer.drain()
