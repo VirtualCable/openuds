@@ -114,7 +114,7 @@ class TunnelProtocol(asyncio.Protocol):
 
         async def open_other_side() -> None:
             try:
-                result = await TunnelProtocol.getTicketFromUDS(
+                result = await TunnelProtocol.get_ticket_from_uds(
                     self.owner.cfg, ticket, self.source
                 )
             except Exception as e:
@@ -277,10 +277,10 @@ class TunnelProtocol(asyncio.Protocol):
         logger.debug('Data received: %s', len(data))
         self.runner(data)  # send data to current runner (command or proxy)
 
-    def notifyEnd(self):
+    def notify_end(self):
         if self.notify_ticket:
             asyncio.get_event_loop().create_task(
-                TunnelProtocol.notifyEndToUds(
+                TunnelProtocol.notify_end_to_uds(
                     self.owner.cfg, self.notify_ticket, self.stats_manager
                 )
             )
@@ -295,7 +295,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.other_side.transport.close()
         else:
             self.stats_manager.close()
-        self.notifyEnd()
+        self.notify_end()
 
     # helpers
     @staticmethod
@@ -324,12 +324,12 @@ class TunnelProtocol(asyncio.Protocol):
                 int(self.stats_manager.end - self.stats_manager.start),
             )
             # Notify end to uds
-            self.notifyEnd()
+            self.notify_end()
         else:
             logger.info('TERMINATED %s', self.pretty_source())
 
     @staticmethod
-    async def _readFromUDS(
+    async def _read_from_uds(
         cfg: config.ConfigurationType,
         ticket: bytes,
         msg: str,
@@ -358,7 +358,7 @@ class TunnelProtocol(asyncio.Protocol):
             raise Exception(f'TICKET COMMS ERROR: {ticket.decode()} {msg} {e!s}')
 
     @staticmethod
-    async def getTicketFromUDS(
+    async def get_ticket_from_uds(
         cfg: config.ConfigurationType, ticket: bytes, address: typing.Tuple[str, int]
     ) -> typing.MutableMapping[str, typing.Any]:
         # Sanity checks
@@ -374,13 +374,13 @@ class TunnelProtocol(asyncio.Protocol):
                 continue  # Correctus
             raise ValueError(f'TICKET INVALID (char {i} at pos {n})')
 
-        return await TunnelProtocol._readFromUDS(cfg, ticket, address[0])
+        return await TunnelProtocol._read_from_uds(cfg, ticket, address[0])
 
     @staticmethod
-    async def notifyEndToUds(
+    async def notify_end_to_uds(
         cfg: config.ConfigurationType, ticket: bytes, counter: stats.Stats
     ) -> None:
-        await TunnelProtocol._readFromUDS(
+        await TunnelProtocol._read_from_uds(
             cfg,
             ticket,
             'stop',
