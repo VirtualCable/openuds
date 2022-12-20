@@ -130,9 +130,6 @@ async def tunnel_proc_async(
             return None, None
 
     async def run_server() -> None:
-        # Instantiate a proxy redirector for this process (we only need one per process!!)
-        tunneler = proxy.Proxy(cfg, ns)
-
         # Generate SSL context
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         args: typing.Dict[str, typing.Any] = {
@@ -159,7 +156,8 @@ async def tunnel_proc_async(
                     if not sock:
                         break  # No more sockets, exit
                     logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
-                    tasks.append(asyncio.create_task(tunneler(sock, context)))
+                    # Due to proxy contains an "event" to stop, we need to create a new one for each connection
+                    tasks.append(asyncio.create_task(proxy.Proxy(cfg, ns)(sock, context)))
                 except asyncio.CancelledError:
                     raise
                 except Exception:
@@ -172,8 +170,8 @@ async def tunnel_proc_async(
 
     try:
         while tasks and running.is_set():
-            to_wait = tasks[:]  # Get a copy of the list, and clean the original
-            # Wait for tasks to finish, stop every 2 seconds to check if we need to finish
+            to_wait = tasks[:]  # Get a copy of the list
+            # Wait for "to_wait" tasks to finish, stop every 2 seconds to check if we need to stop
             done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED, timeout=2)
             # Remove finished tasks
             for task in done:
