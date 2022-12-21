@@ -31,13 +31,12 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import asyncio
 import random
-import string
 import logging
 from unittest import IsolatedAsyncioTestCase, mock
 
 from uds_tunnel import consts
 
-from .utils import tuntools, tools
+from .utils import tuntools, tools, conf
 
 if typing.TYPE_CHECKING:
     from uds_tunnel import config
@@ -55,9 +54,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             self.assertEqual(stderr, b'')
             self.assertIn(b'usage: udstunnel', stdout)
 
-    async def client_task(
-        self, cfg: 'config.ConfigurationType', host: str, port: int
-    ) -> None:
+    async def client_task(self, host: str, port: int) -> None:
         received: bytes = b''
         callback_invoked: asyncio.Event = asyncio.Event()
 
@@ -72,11 +69,14 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             host=host, port=5445, callback=callback
         ) as server:
             # Create a random ticket with valid format
-            ticket = ''.join(
-                random.choice(string.ascii_letters + string.digits)
-                for _ in range(consts.TICKET_LENGTH)
-            ).encode()
+            ticket = tuntools.get_correct_ticket()
             # Open and send handshake
+            # Fake config, only needed data for open_tunnel_client
+            cfg = mock.MagicMock()
+            cfg.ipv6 = ':' in host
+            cfg.listen_address = host
+            cfg.listen_port = port
+
             async with tuntools.open_tunnel_client(cfg, use_tunnel_handshake=True) as (
                 creader,
                 cwriter,
@@ -96,7 +96,30 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                 )
 
     async def test_run_app_serve(self) -> None:
+        return
+        port = random.randint(10000, 20000)
         for host in ('127.0.0.1', '::1'):
-            async with tuntools.tunnel_app_runner(host, 7777) as process:
-                # Create a "bunch" of servers and clients
-                pass
+            if ':' in host:
+                url = f'http://[{host}]:{port}/uds/rest'
+            else:
+                url = f'http://{host}:{port}/uds/rest'
+            # Create fake uds broker
+            async with tuntools.create_fake_broker_server(
+                host, port, response=conf.UDS_GET_TICKET_RESPONSE(host, port)
+            ) as broker:
+                async with tuntools.tunnel_app_runner(
+                    host, 7770, uds_server=url,
+                    logfile='/tmp/tunnel_test.log',
+                    loglevel='DEBUG',
+                ) as process:
+                    # Create a "bunch" of clients
+                    tasks = [
+                        asyncio.create_task(self.client_task(host, 7777))
+                        for _ in range(1)
+                    ]
+
+                    # Wait for all tasks to finish
+                    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+                    # If any exception was raised, raise it
+                    for task in tasks:
+                        task.result()

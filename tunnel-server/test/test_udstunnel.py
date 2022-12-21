@@ -58,7 +58,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 7890,  # A port not used by any other test
                 '127.0.0.1',
                 13579,  # A port not used by any other test
-            ) as cfg:
+            ) as (cfg, queue):
                 for i in range(0, 8192, 128):
                     # Set timeout to 1 seconds
                     bad_cmd = bytes(
@@ -88,7 +88,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 7891,
                 '127.0.0.1',
                 13581,
-            ) as cfg:
+            ) as (cfg, queue):
                 for i in range(10):  # Several times
                     # On full, we need the handshake to be done, before connecting
                     # Our "test" server will simple "eat" the handshake, but we need to do it
@@ -109,10 +109,10 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
             async with tools.AsyncTCPServer(host=host, port=5444) as server:
                 async with tuntools.create_tunnel_proc(
                     host,
-                    7777,
+                    7775,
                     server.host,
                     server.port,
-                ) as cfg:
+                ) as (cfg, queue):
                     for i in range(
                         0, consts.TICKET_LENGTH - 1, 4
                     ):  # All will fail. Any longer will be processed, and mock will return correct don't matter the ticket
@@ -155,8 +155,13 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         7778,
                         server.host,
                         server.port,
-                    ) as cfg:
-                        for i in range(1):
+                        use_fake_http_server=True,
+                    ) as (cfg, queue):
+                        # Ensure queue is not none but an asyncio.Queue
+                        if queue is None:
+                            raise AssertionError('Queue is None')
+                        
+                        for i in range(16):
                             # Create a random ticket with valid format
                             ticket = tuntools.get_correct_ticket()
                             # On full, we need the handshake to be done, before connecting
@@ -167,7 +172,6 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                                 cwriter.write(consts.COMMAND_OPEN)
                                 # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
                                 cwriter.write(ticket)
-
                                 await cwriter.drain()
                                 # Read response, should be ok
                                 data = await creader.read(1024)
@@ -176,6 +180,20 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                                     consts.RESPONSE_OK,
                                     f'Tunnel host: {tunnel_host}, server host: {host}',
                                 )
+                                # Queue should contain a new item, extract it
+                                queue_item = await queue.get()
+                                # Ensure it an http request (ends with \r\n\r\n)
+                                self.assertTrue(queue_item.endswith(b'\r\n\r\n'))
+                                # Extract URL and ensure it contains the correct data, that is
+                                # .../ticket/ip/uds_token
+                                # or .../notify_token/stop/uds_token
+                                if not b'stop' in queue_item:
+                                    should_be_url = f'/{tunnel_host}/{cfg.uds_token}'.encode()
+                                else:
+                                    should_be_url = f'/stop/{cfg.uds_token}'.encode()
+                                self.assertIn(should_be_url, queue_item)
+                                    
+                                # Ensure user agent is correct
 
                                 # Data sent will be received by server
                                 # One single write will ensure all data is on same packet
@@ -204,7 +222,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                     7888,
                     host,
                     17222,  # Any non used port will do the trick
-                ) as cfg:
+                ) as (cfg, _):
                     ticket = tuntools.get_correct_ticket()
                     # On full, we need the handshake to be done, before connecting
                     # Our "test" server will simple "eat" the handshake, but we need to do it

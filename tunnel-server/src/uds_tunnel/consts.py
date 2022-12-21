@@ -54,6 +54,7 @@ BANDWIDTH_TIME: typing.Final[int] = 10
 COMMAND_LENGTH: typing.Final[int] = 4
 
 VERSION: typing.Final[str] = 'v2.0.0'
+USER_AGENT: typing.Final[str] = f'UDSTunnel/{VERSION}'
 
 # Valid commands
 COMMAND_OPEN: typing.Final[bytes] = b'OPEN'

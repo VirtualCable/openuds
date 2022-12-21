@@ -38,6 +38,7 @@ from unittest import mock
 
 from . import certs
 
+
 class AsyncMock(mock.MagicMock):
     async def __call__(self, *args, **kwargs):
         return super().__call__(*args, **kwargs)
@@ -111,7 +112,9 @@ class AsyncTCPServer:
     _server: typing.Optional[asyncio.AbstractServer]
     _response: typing.Optional[bytes]
     _callback: typing.Optional[typing.Callable[[bytes], typing.Optional[bytes]]]
-    _processor: typing.Optional[typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], None]]
+    _processor: typing.Optional[
+        typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], typing.Awaitable[None]]
+    ]
 
     def __init__(
         self,
@@ -119,8 +122,12 @@ class AsyncTCPServer:
         *,
         response: typing.Optional[bytes] = None,
         host: str = '127.0.0.1',  # ip
-        callback: typing.Optional[typing.Callable[[bytes], typing.Optional[bytes]]] = None,
-        processor: typing.Optional[typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], None]] = None,
+        callback: typing.Optional[
+            typing.Callable[[bytes], typing.Optional[bytes]]
+        ] = None,
+        processor: typing.Optional[
+            typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], typing.Awaitable[None]]
+        ] = None,
     ) -> None:
         self.host = host
         self.port = port
@@ -133,7 +140,7 @@ class AsyncTCPServer:
 
     async def _handle(self, reader, writer) -> None:
         if self._processor is not None:
-            self._processor(reader, writer)
+            await self._processor(reader, writer)
             return
         while True:
             data = await reader.read(2048)
@@ -148,7 +155,13 @@ class AsyncTCPServer:
                 await writer.drain()
 
     async def __aenter__(self) -> 'AsyncTCPServer':
-        self._server = await asyncio.start_server(self._handle, self.host, self.port)
+        if ':' in self.host:
+            family = socket.AF_INET6
+        else:
+            family = socket.AF_INET
+        self._server = await asyncio.start_server(
+            self._handle, self.host, self.port, family=family
+        )
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -166,3 +179,13 @@ async def get(url: str) -> str:
         async with session.get(url, **options) as r:
             r.raise_for_status()
             return await r.text()
+
+
+async def wait_for_port(host: str, port: int) -> None:
+    while True:
+        try:
+            _, writer = await asyncio.open_connection(host, port)
+            writer.close()
+            return
+        except ConnectionRefusedError:
+            await asyncio.sleep(0.1)
