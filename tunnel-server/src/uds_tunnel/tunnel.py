@@ -175,8 +175,8 @@ class TunnelProtocol(asyncio.Protocol):
                 self.transport.write(consts.RESPONSE_FORBIDDEN)
                 return
 
-            # Check password
-            passwd = self.cmd[consts.COMMAND_LENGTH :]
+            # Check password, max length is consts.PASSWORD_LENGTH
+            passwd = self.cmd[consts.COMMAND_LENGTH : consts.PASSWORD_LENGTH + consts.COMMAND_LENGTH]
 
             # Clean up the command, only keep base part
             self.cmd = self.cmd[:4]
@@ -197,7 +197,7 @@ class TunnelProtocol(asyncio.Protocol):
             self.close_connection()
 
     async def timeout(self, wait: int) -> None:
-        """Timeout can only occur while waiting for a command."""
+        """Timeout can only occur while waiting for a command (or OPEN command ticket)."""
         try:
             await asyncio.sleep(wait)
             logger.error('TIMEOUT FROM %s', self.pretty_source())
@@ -349,7 +349,7 @@ class TunnelProtocol(asyncio.Protocol):
                 options['ssl'] = False
             # Requests url with aiohttp
 
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(headers={'User-Agent': consts.USER_AGENT}) as session:
                 async with session.get(url, **options) as r:
                     if not r.ok:
                         raise Exception(await r.text())
