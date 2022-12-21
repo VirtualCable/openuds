@@ -111,7 +111,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
             # Create a simple socket for testing
             rsock, wsock = socket.socketpair()
             # Set read timeout to 1 seconds
-            rsock.settimeout(1)
+            rsock.settimeout(3)
 
             # Set timeout to 1 seconds
             bad_handshake = bytes(random.randint(0, 255) for _ in range(i))
@@ -124,8 +124,6 @@ class TestTunnel(IsolatedAsyncioTestCase):
             logger_mock.error.assert_called_once()
             # And ensure that error contains 'HANDSHAKE invalid'
             self.assertIn('HANDSHAKE invalid', logger_mock.error.call_args[0][0])
-            # and host, port are the second parameter (tuple)
-            self.assertEqual(logger_mock.error.call_args[0][1], ('host', 'port'))
 
     def test_valid_handshake(self) -> None:
         # Not async test
@@ -135,7 +133,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
         # Create a simple socket for testing
         rsock, wsock = socket.socketpair()
         # Set read timeout to 1 seconds
-        rsock.settimeout(1)
+        rsock.settimeout(3)
 
         # Patch logger to check that it's not called
         logger_mock = mock.MagicMock()
