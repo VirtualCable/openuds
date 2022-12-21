@@ -130,7 +130,7 @@ async def create_tunnel_proc(
         use_fake_http_server (bool, optional): If True, a fake http server will be used instead of a mock. Defaults to False.
 
     Yields:
-        typing.AsyncGenerator[typing.Tuple[config.ConfigurationType, typing.Optional[asyncio.Queue[bytes]]], None]: A tuple with the configuration 
+        typing.AsyncGenerator[typing.Tuple[config.ConfigurationType, typing.Optional[asyncio.Queue[bytes]]], None]: A tuple with the configuration
             and a queue with the data received by the "fake_http_server" if used, or None if not used
     """
 
@@ -145,8 +145,12 @@ async def create_tunnel_proc(
         resp = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
         @contextlib.asynccontextmanager
-        async def provider() -> typing.AsyncGenerator[typing.Optional[asyncio.Queue[bytes]], None]:
-            async with create_fake_broker_server(listen_host, port, response=resp) as queue:
+        async def provider() -> typing.AsyncGenerator[
+            typing.Optional[asyncio.Queue[bytes]], None
+        ]:
+            async with create_fake_broker_server(
+                listen_host, port, response=resp
+            ) as queue:
                 try:
                     yield queue
                 finally:
@@ -155,7 +159,9 @@ async def create_tunnel_proc(
     else:
 
         @contextlib.asynccontextmanager
-        async def provider() -> typing.AsyncGenerator[typing.Optional[asyncio.Queue[bytes]], None]:
+        async def provider() -> typing.AsyncGenerator[
+            typing.Optional[asyncio.Queue[bytes]], None
+        ]:
             with mock.patch(
                 'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
                 new_callable=tools.AsyncMock,
@@ -187,8 +193,8 @@ async def create_tunnel_proc(
 
             udstunnel.setup_log(cfg)
 
-            # Set running flag
-            udstunnel.running.set()
+            # Clear the stop flag
+            udstunnel.do_stop.clear()
 
             # Create the tunnel task
             task = asyncio.create_task(
@@ -281,7 +287,7 @@ async def create_test_tunnel(
     # Generate a listening server for testing tunnel
     # Prepare the end of the tunnel
     async with tools.AsyncTCPServer(
-        port=remote_port or 54876, callback=callback
+        port=remote_port or 54876, callback=callback, name='create_test_tunnel'
     ) as server:
         # Create a tunnel to localhost 13579
         # SSl cert for tunnel server
@@ -307,30 +313,44 @@ async def create_test_tunnel(
 
 @contextlib.asynccontextmanager
 async def create_fake_broker_server(
-    host: str, port: int, *, response: typing.Mapping[str, typing.Any]
+    host: str,
+    port: int,
+    *,
+    response: typing.Union[
+        typing.Callable[[bytes], typing.Mapping[str, typing.Any]],
+        typing.Mapping[str, typing.Any],
+    ],
 ) -> typing.AsyncGenerator[asyncio.Queue[bytes], None]:
     # crate a fake broker server
     # Ignores request, and sends response
+    # if is a callable, it will be called to get the response and encode it as json
 
-    resp: bytes = (
-        b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n'
-        + json.dumps(response).encode()
-    )
-
-    # Future to content the server request
+    # to content the server request
     data: bytes = b''
     requests: asyncio.Queue[bytes] = asyncio.Queue()
 
     async def processor(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         nonlocal data
+        nonlocal response
+
         while readed := await reader.read(1024):
             data += readed
             # If data ends in \r\n\r\n, we have the full request
             if data.endswith(b'\r\n\r\n'):
                 requests.put_nowait(data)
-                data = b''  # reset data for next
                 break
 
+        if callable(response):
+            rr = response(data)
+        else:
+            rr = response
+
+        resp: bytes = (
+            b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n'
+            + json.dumps(rr).encode()
+        )
+
+        data = b''  # reset data for next
         # send response
         writer.write(resp)
         await writer.drain()
@@ -338,7 +358,7 @@ async def create_fake_broker_server(
         writer.close()
 
     async with tools.AsyncTCPServer(
-        host=host, port=port, response=resp, processor=processor
+        host=host, port=port, processor=processor, name='create_fake_broker_server'
     ) as server:
         try:
             yield requests
@@ -350,6 +370,7 @@ async def create_fake_broker_server(
 async def open_tunnel_client(
     cfg: 'config.ConfigurationType',
     use_tunnel_handshake: bool = False,
+    local_port: typing.Optional[int] = None,
 ) -> typing.AsyncGenerator[
     typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None
 ]:
@@ -369,6 +390,9 @@ async def open_tunnel_client(
     else:
         # Open the socket, send handshake and then upgrade to ssl, non blocking
         sock = socket.socket(family, socket.SOCK_STREAM)
+        if local_port:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind(('', local_port))
         # Set socket to non blocking
         sock.setblocking(False)
         await loop.sock_connect(sock, (cfg.listen_address, cfg.listen_port))
@@ -425,7 +449,15 @@ async def tunnel_app_runner(
                 await process.wait()
 
 
-def get_correct_ticket(length: int = consts.TICKET_LENGTH) -> bytes:
-    return ''.join(
-        random.choice(string.ascii_letters + string.digits) for _ in range(length)
-    ).encode()
+def get_correct_ticket(
+    length: int = consts.TICKET_LENGTH, *, prefix: typing.Optional[str] = None
+) -> bytes:
+    """Returns a ticket with the correct length"""
+    prefix = prefix or ''
+    return (
+        ''.join(
+            random.choice(string.ascii_letters + string.digits)
+            for _ in range(length - len(prefix))
+        ).encode()
+        + prefix.encode()
+    )

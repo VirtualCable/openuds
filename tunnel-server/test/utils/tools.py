@@ -34,10 +34,12 @@ import ssl
 import typing
 import socket
 import aiohttp
+import logging
 from unittest import mock
 
 from . import certs
 
+logger = logging.getLogger(__name__)
 
 class AsyncMock(mock.MagicMock):
     async def __call__(self, *args, **kwargs):
@@ -115,6 +117,7 @@ class AsyncTCPServer:
     _processor: typing.Optional[
         typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], typing.Awaitable[None]]
     ]
+    _name: str  # For debug purposes
 
     def __init__(
         self,
@@ -128,6 +131,7 @@ class AsyncTCPServer:
         processor: typing.Optional[
             typing.Callable[[asyncio.StreamReader, asyncio.StreamWriter], typing.Awaitable[None]]
         ] = None,
+        name: str = 'AsyncTCPServer',
     ) -> None:
         self.host = host
         self.port = port
@@ -135,15 +139,17 @@ class AsyncTCPServer:
         self._response = response
         self._callback = callback
         self._processor = processor
+        self._name = name
 
         self.data = b''
 
     async def _handle(self, reader, writer) -> None:
+        logger.debug('Handling connection for %s', self._name)
         if self._processor is not None:
             await self._processor(reader, writer)
             return
         while True:
-            data = await reader.read(2048)
+            data = await reader.read(4096)
             if not data:
                 break
 
