@@ -201,11 +201,11 @@ def process_connection(
         data = client.recv(len(consts.HANDSHAKE_V1))
 
         if data != consts.HANDSHAKE_V1:
-            raise Exception()  # Invalid handshake
+            raise Exception('Invalid data: {} ({})'.format( addr, data.hex()))  # Invalid handshake
         conn.send((client, addr))
         del client  # Ensure socket is controlled on child process
-    except Exception:
-        logger.error('HANDSHAKE invalid from %s (%s)', addr, data.hex())
+    except Exception as e:
+        logger.error('HANDSHAKE invalid (%s)', e)
         # Close Source and continue
         client.close()
 
@@ -270,7 +270,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
 
     prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
-    with ThreadPoolExecutor(max_workers=256) as executor:
+    with ThreadPoolExecutor(max_workers=16) as executor:
         try:
             while not do_stop.is_set():
                 try:
