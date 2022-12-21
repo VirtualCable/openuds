@@ -64,11 +64,11 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-running: threading.Event = threading.Event()
+do_stop: threading.Event = threading.Event()
 
 
 def stop_signal(signum: int, frame: typing.Any) -> None:
-    running.clear()
+    do_stop.set()
     logger.debug('SIGNAL %s, frame: %s', signum, frame)
 
 
@@ -169,7 +169,7 @@ async def tunnel_proc_async(
     tasks.append(asyncio.create_task(run_server()))
 
     try:
-        while tasks and running.is_set():
+        while tasks and not do_stop.is_set():
             to_wait = tasks[:]  # Get a copy of the list
             # Wait for "to_wait" tasks to finish, stop every 2 seconds to check if we need to stop
             done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED, timeout=2)
@@ -179,14 +179,16 @@ async def tunnel_proc_async(
                 if task.exception():
                     logger.exception('TUNNEL ERROR')
     except asyncio.CancelledError:
-        running.clear()  # ensure we stop
+        logger.info('Task cancelled')
+        do_stop.set()  # ensure we stop
 
+    logger.debug('Out of loop, stopping tasks: %s, running: %s', tasks, do_stop.is_set())
     # If any task is still running, cancel it
     for task in tasks:
         task.cancel()
 
     # Wait for all tasks to finish
-    await asyncio.gather(*tasks, return_exceptions=True)
+    await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
     logger.info('PROCESS %s stopped', os.getpid())
 
@@ -268,10 +270,9 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
 
     prcs = processes.Processes(tunnel_proc_async, cfg, stats_collector.ns)
 
-    running.set()  # Signal we are running
     with ThreadPoolExecutor(max_workers=256) as executor:
         try:
-            while running.is_set():
+            while not do_stop.is_set():
                 try:
                     client, addr = sock.accept()
                     logger.info('CONNECTION from %s', addr)

@@ -36,7 +36,7 @@ CONFIGFILE: typing.Final[str] = '/etc/udstunnel.conf' if not DEBUG else 'udstunn
 LOGFORMAT: typing.Final[str] = (
     '%(levelname)s %(asctime)s %(message)s'
     if not DEBUG
-    else '%(levelname)s %(asctime)s %(message)s'
+    else '%(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
 )
 
 # MAX Length of read buffer for proxyed requests
