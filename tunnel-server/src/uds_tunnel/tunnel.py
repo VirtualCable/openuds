@@ -73,6 +73,13 @@ class TunnelProtocol(asyncio.Protocol):
     ) -> None:
         # If no other side is given, we are the server part
         super().__init__()
+        # transport is undefined until connection_made is called
+        self.cmd = b''
+        self.notify_ticket = b''
+        self.owner = owner
+        self.source = ('', 0)
+        self.destination = ('', 0)
+        
         if other_side:
             self.other_side = other_side
             self.stats_manager = other_side.stats_manager
@@ -84,21 +91,15 @@ class TunnelProtocol(asyncio.Protocol):
             self.counter = self.stats_manager.as_sent_counter()
             self.runner = self.do_command
             # Set starting timeout task, se we dont get hunged on connections without data
-            self.set_timeout(consts.TIMEOUT_COMMAND)
+            self.set_timeout(self.owner.cfg.command_timeout)
 
-        # transport is undefined until connection_made is called
-        self.cmd = b''
-        self.notify_ticket = b''
-        self.owner = owner
-        self.source = ('', 0)
-        self.destination = ('', 0)
 
     def process_open(self) -> None:
         # Open Command has the ticket behind it
 
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
             # Reactivate timeout, will be deactivated on do_command
-            self.set_timeout(consts.TIMEOUT_COMMAND)
+            self.set_timeout(self.owner.cfg.command_timeout)
             return  # Wait for more data to complete OPEN command
 
         # Ticket received, now process it with UDS
@@ -253,7 +254,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.close_connection()
                 return
         else:
-            self.set_timeout(consts.TIMEOUT_COMMAND)
+            self.set_timeout(self.owner.cfg.command_timeout)
 
         # if not enough data to process command, wait for more
 
@@ -289,7 +290,6 @@ class TunnelProtocol(asyncio.Protocol):
             self.owner.finished.set()
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
-        logger.debug('Connection closed : %s', exc)
         # Ensure close other side if any
         if self.other_side is not self:
             self.other_side.transport.close()
