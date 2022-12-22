@@ -31,13 +31,12 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 import random
 import asyncio
-import string
 import logging
 from unittest import IsolatedAsyncioTestCase, mock
 
 from uds_tunnel import consts
 
-from .utils import tuntools, tools
+from .utils import tuntools, tools, conf
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +47,16 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
         logging.disable(logging.WARNING)
         return await super().asyncSetUp()
 
+    async def test_run_app_help(self) -> None:
+        # Executes the app with --help
+        async with tuntools.tunnel_app_runner(args=['--help']) as process:
+
+            stdout, stderr = await process.communicate()
+            self.assertEqual(process.returncode, 0, f'{stdout!r} {stderr!r}')
+            self.assertEqual(stderr, b'')
+            self.assertIn(b'usage: udstunnel', stdout)
+
     async def test_tunnel_fail_cmd(self) -> None:
-        consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
         # Test on ipv4 and ipv6
         for host in ('127.0.0.1', '::1'):
             # Remote is not really important in this tests, will fail before using it
@@ -58,6 +65,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 7890,  # A port not used by any other test
                 '127.0.0.1',
                 13579,  # A port not used by any other test
+                command_timeout=0.1,
             ) as (cfg, queue):
                 for i in range(0, 8192, 128):
                     # Set timeout to 1 seconds
@@ -102,7 +110,6 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         self.assertEqual(data, consts.RESPONSE_OK)
 
     async def test_tunnel_fail_open(self) -> None:
-        consts.TIMEOUT_COMMAND = 0.1  # type: ignore  # timeout is a final variable, but we need to change it for testing speed
         for host in ('127.0.0.1', '::1'):
             # Remote is NOT important in this tests
             # create a remote server
@@ -112,6 +119,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                     7775,
                     server.host,
                     server.port,
+                    command_timeout=0.1,
                 ) as (cfg, queue):
                     for i in range(
                         0, consts.TICKET_LENGTH - 1, 4
@@ -152,7 +160,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 for tunnel_host in ('127.0.0.1', '::1'):
                     async with tuntools.create_tunnel_proc(
                         tunnel_host,
-                        7778,
+                        7778,  # Not really used here
                         server.host,
                         server.port,
                         use_fake_http_server=True,

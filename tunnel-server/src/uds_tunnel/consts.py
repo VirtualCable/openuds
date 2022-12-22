@@ -69,8 +69,5 @@ RESPONSE_FORBIDDEN: typing.Final[bytes] = b'FORBIDDEN'
 
 RESPONSE_OK: typing.Final[bytes] = b'OK'
 
-# Timeout for command
-TIMEOUT_COMMAND: typing.Final[int] = 3
-
 # Backlog for listen socket
 BACKLOG = 1024

@@ -98,22 +98,29 @@ def create_config_file(
     finally:
         pass
         # Remove the files if they exists
-        # for filename in (cfgfile, cert_file):
-        #    try:
-        #        os.remove(filename)
-        #    except Exception:
-        #        pass
+        for filename in (cfgfile, cert_file):
+           try:
+               os.remove(filename)
+           except Exception:
+               pass
 
 
 @contextlib.asynccontextmanager
 async def create_tunnel_proc(
     listen_host: str,
     listen_port: int,
-    remote_host: str,
-    remote_port: int,
+    remote_host: str = '0.0.0.0',  # Not used if response is provided
+    remote_port: int = 0,          # Not used if response is provided
     *,
-    response: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    response: typing.Optional[
+        typing.Union[
+            typing.Callable[[bytes], typing.Mapping[str, typing.Any]],
+            typing.Mapping[str, typing.Any],
+        ]
+    ] = None,
     use_fake_http_server: bool = False,
+    # Configuration parameters
+    **kwargs,
 ) -> typing.AsyncGenerator[
     typing.Tuple['config.ConfigurationType', typing.Optional[asyncio.Queue[bytes]]],
     None,
@@ -126,7 +133,7 @@ async def create_tunnel_proc(
         listen_port (int): Port to listen on
         remote_host (str): Remote host to connect to
         remote_port (int): Remote port to connect to
-        response (typing.Optional[typing.Mapping[str, typing.Any]], optional): Response to send to the tunnel. Defaults to None.
+        response (typing.Optional[typing.Union[typing.Callable[[bytes], typing.Mapping[str, typing.Any]], typing.Mapping[str, typing.Any]]], optional): Response to send to the client. Defaults to None.
         use_fake_http_server (bool, optional): If True, a fake http server will be used instead of a mock. Defaults to False.
 
     Yields:
@@ -134,11 +141,16 @@ async def create_tunnel_proc(
             and a queue with the data received by the "fake_http_server" if used, or None if not used
     """
 
+    # Ensure response
+    if response is None:
+        response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
+
     port = random.randint(20000, 30000)
     hhost = f'[{listen_host}]' if ':' in listen_host else listen_host
     args = {
         'uds_server': f'http://{hhost}:{port}/uds/rest',
     }
+    args.update(kwargs)  # Add extra args
     # If use http server instead of mock
     # We will setup a different context provider
     if use_fake_http_server:
@@ -149,7 +161,7 @@ async def create_tunnel_proc(
             typing.Optional[asyncio.Queue[bytes]], None
         ]:
             async with create_fake_broker_server(
-                listen_host, port, response=resp
+                listen_host, port, response=response or resp
             ) as queue:
                 try:
                     yield queue
@@ -166,7 +178,10 @@ async def create_tunnel_proc(
                 'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
                 new_callable=tools.AsyncMock,
             ) as m:
-                m.return_value = response
+                if callable(response):
+                    m.side_effect = lambda cfg, ticket, *args, **kwargs: response(ticket)  # type: ignore
+                else:
+                    m.return_value = response
                 try:
                     yield None
                 finally:
@@ -180,10 +195,6 @@ async def create_tunnel_proc(
 
         # Load config here also for testing
         cfg = config.read(cfgfile)
-
-        # Ensure response
-        if response is None:
-            response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
         async with provider() as possible_queue:
             # Stats collector
@@ -283,6 +294,8 @@ async def create_test_tunnel(
     callback: typing.Callable[[bytes], None],
     port: typing.Optional[int] = None,
     remote_port: typing.Optional[int] = None,
+    # Configuration parameters
+    **kwargs: typing.Any,
 ) -> typing.AsyncGenerator['config.ConfigurationType', None]:
     # Generate a listening server for testing tunnel
     # Prepare the end of the tunnel
@@ -296,6 +309,7 @@ async def create_test_tunnel(
                 address=server.host,
                 port=port or 7771,
                 ipv6=':' in server.host,
+                **kwargs,
             )
             with mock.patch(
                 'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
@@ -316,9 +330,11 @@ async def create_fake_broker_server(
     host: str,
     port: int,
     *,
-    response: typing.Union[
-        typing.Callable[[bytes], typing.Mapping[str, typing.Any]],
-        typing.Mapping[str, typing.Any],
+    response: typing.Optional[
+        typing.Union[
+            typing.Callable[[bytes], typing.Mapping[str, typing.Any]],
+            typing.Mapping[str, typing.Any],
+        ]
     ],
 ) -> typing.AsyncGenerator[asyncio.Queue[bytes], None]:
     # crate a fake broker server
@@ -343,7 +359,7 @@ async def create_fake_broker_server(
         if callable(response):
             rr = response(data)
         else:
-            rr = response
+            rr = response or {}
 
         resp: bytes = (
             b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n'

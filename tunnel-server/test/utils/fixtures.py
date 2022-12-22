@@ -94,6 +94,10 @@ secret = {secret}
 # defaults to localhost (change if listen address is different from 0.0.0.0)
 allow = {allow}
 
+# Command timeout. Command reception on tunnel will timeout after this time (in seconds)
+# defaults to 3 seconds
+command_timeout = {command_timeout}
+
 use_uvloop = {use_uvloop}
 '''
 
@@ -121,6 +125,7 @@ def get_config(**overrides) -> typing.Tuple[typing.Dict[str, typing.Any], config
         'uds_verify_ssl': random.choice([True, False]),  # Random verify uds ssl
         'secret': f'secret{random.randint(0, 100)}',  # Random secret
         'allow': f'{random.randint(0, 255)}.0.0.0',  # Random allow
+        'command_timeout': random.randint(0, 100),  # Random command timeout
         'use_uvloop': random.choice([True, False]),  # Random use uvloop
     }
     values.update(overrides)

@@ -195,3 +195,8 @@ async def wait_for_port(host: str, port: int) -> None:
             return
         except ConnectionRefusedError:
             await asyncio.sleep(0.1)
+
+async def waitable_range(len: int, wait: float = 0.0001) -> typing.AsyncGenerator[int, None]:
+    for i in range(len):
+        await asyncio.sleep(wait)
+        yield i

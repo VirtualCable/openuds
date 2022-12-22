@@ -45,14 +45,6 @@ logger = logging.getLogger(__name__)
 
 
 class TestUDSTunnelApp(IsolatedAsyncioTestCase):
-    async def test_run_app_help(self) -> None:
-        # Executes the app with --help
-        async with tuntools.tunnel_app_runner(args=['--help']) as process:
-
-            stdout, stderr = await process.communicate()
-            self.assertEqual(process.returncode, 0, f'{stdout!r} {stderr!r}')
-            self.assertEqual(stderr, b'')
-            self.assertIn(b'usage: udstunnel', stdout)
 
     async def client_task(self, host: str, tunnel_port: int, remote_port: int) -> None:
         received: bytes = b''
@@ -118,8 +110,8 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                 await callback_invoked.wait()
                 self.assertEqual(received, test_str)
 
-    async def test_run_app_serve(self) -> None:
-        concurrent_tasks = 256
+    async def test_app_concurrency(self) -> None:
+        concurrent_tasks = 512
         fake_broker_port = 20000
         tunnel_server_port = fake_broker_port + 1
         remote_port = fake_broker_port + 2
@@ -154,13 +146,15 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                     logfile='/tmp/tunnel_test.log',
                     loglevel='DEBUG',
                     workers=4,
+                    command_timeout=16, # Increase command timeout because heavy load we will create
                 ) as process:
+
                     # Create a "bunch" of clients
                     tasks = [
                         asyncio.create_task(
                             self.client_task(host, tunnel_server_port, remote_port + i)
                         )
-                        for i in range(concurrent_tasks)
+                        async for i in tools.waitable_range(concurrent_tasks)
                     ]
 
                     # Wait for all tasks to finish
@@ -169,5 +163,54 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                     # If any exception was raised, raise it
                     for task in tasks:
                         task.result()
+                # Queue should have all requests (concurrent_tasks*2, one for open and one for close)
+                self.assertEqual(req_queue.qsize(), concurrent_tasks * 2)
+
+    async def test_tunnel_proc_concurrency(self) -> None:
+        concurrent_tasks = 512
+        fake_broker_port = 20000
+        tunnel_server_port = fake_broker_port + 1
+        remote_port = fake_broker_port + 2
+        # Extracts the port from an string that has bX0bwmbPORTbX0bwmb in it
+
+        req_queue: asyncio.Queue[bytes] = asyncio.Queue()
+
+        def extract_port(data: bytes) -> int:
+            req_queue.put_nowait(data)
+            if b'bX0bwmb' not in data:
+                return 12345  # No port, wil not be used because is an "stop" request
+            return int(data.split(b'bX0bwmb')[1])
+
+        for host in ('127.0.0.1', '::1'):
+            if ':' in host:
+                url = f'http://[{host}]:{fake_broker_port}/uds/rest'
+            else:
+                url = f'http://{host}:{fake_broker_port}/uds/rest'
+
+            req_queue = asyncio.Queue() # clear queue
+            # Use tunnel proc for testing
+            async with tuntools.create_tunnel_proc(
+                host,
+                tunnel_server_port,
+                response=lambda data: conf.UDS_GET_TICKET_RESPONSE(
+                    host, extract_port(data)
+                ),
+                command_timeout=16, # Increase command timeout because heavy load we will create
+            ) as (cfg, _):
+                # Create a "bunch" of clients
+                tasks = [
+                    asyncio.create_task(
+                        self.client_task(host, tunnel_server_port, remote_port + i)
+                    )
+                    async for i in tools.waitable_range(concurrent_tasks)
+                ]
+
+                # Wait for tasks to finish and check for exceptions
+                await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+
+                # If any exception was raised, raise it
+                for task in tasks:
+                    task.result()
+
                 # Queue should have all requests (concurrent_tasks*2, one for open and one for close)
                 self.assertEqual(req_queue.qsize(), concurrent_tasks * 2)

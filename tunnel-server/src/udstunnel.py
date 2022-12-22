@@ -102,6 +102,10 @@ def setup_log(cfg: config.ConfigurationType) -> None:
         handler.setFormatter(formatter)
         log.addHandler(handler)
 
+    # If debug, print config
+    if cfg.loglevel.lower() == 'debug':
+        logger.debug('Configuration: %s', cfg)
+
 
 async def tunnel_proc_async(
     pipe: 'Connection', cfg: config.ConfigurationType, ns: 'Namespace'
@@ -110,6 +114,10 @@ async def tunnel_proc_async(
     loop = asyncio.get_running_loop()
 
     tasks: typing.List[asyncio.Task] = []
+
+    def add_autoremovable_task(task: asyncio.Task) -> None:
+        tasks.append(task)
+        task.add_done_callback(tasks.remove)
 
     def get_socket() -> typing.Tuple[typing.Optional[socket.socket], typing.Optional[typing.Tuple[str, int]]]:
         try:
@@ -157,7 +165,7 @@ async def tunnel_proc_async(
                         break  # No more sockets, exit
                     logger.debug(f'CONNECTION from {address!r} (pid: {os.getpid()})')
                     # Due to proxy contains an "event" to stop, we need to create a new one for each connection
-                    tasks.append(asyncio.create_task(proxy.Proxy(cfg, ns)(sock, context)))
+                    add_autoremovable_task(asyncio.create_task(proxy.Proxy(cfg, ns)(sock, context)))
                 except asyncio.CancelledError:
                     raise
                 except Exception:
@@ -166,23 +174,20 @@ async def tunnel_proc_async(
             pass  # Stop
 
     # create task for server
-    tasks.append(asyncio.create_task(run_server()))
+    
+    add_autoremovable_task(asyncio.create_task(run_server()))
 
     try:
         while tasks and not do_stop.is_set():
             to_wait = tasks[:]  # Get a copy of the list
             # Wait for "to_wait" tasks to finish, stop every 2 seconds to check if we need to stop
             done, _ = await asyncio.wait(to_wait, return_when=asyncio.FIRST_COMPLETED, timeout=2)
-            # Remove finished tasks
-            for task in done:
-                tasks.remove(task)
-                if task.exception():
-                    logger.exception('TUNNEL ERROR')
     except asyncio.CancelledError:
         logger.info('Task cancelled')
         do_stop.set()  # ensure we stop
 
     logger.debug('Out of loop, stopping tasks: %s, running: %s', tasks, do_stop.is_set())
+
     # If any task is still running, cancel it
     for task in tasks:
         task.cancel()

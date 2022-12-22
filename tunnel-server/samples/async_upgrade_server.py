@@ -92,7 +92,6 @@ class TunnelProtocol(asyncio.Protocol):
             logger.error('Invalid state reached!')
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
-        logger.debug('Connection closed : %s', exc)
         self.finished.set_result(True)
         if self.other_side is not self:
             self.other_side.transport.close()
