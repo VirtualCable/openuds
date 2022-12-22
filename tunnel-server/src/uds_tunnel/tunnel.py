@@ -197,7 +197,7 @@ class TunnelProtocol(asyncio.Protocol):
         finally:
             self.close_connection()
 
-    async def timeout(self, wait: int) -> None:
+    async def timeout(self, wait: float) -> None:
         """Timeout can only occur while waiting for a command (or OPEN command ticket)."""
         try:
             await asyncio.sleep(wait)
@@ -207,7 +207,7 @@ class TunnelProtocol(asyncio.Protocol):
         except asyncio.CancelledError:
             pass
 
-    def set_timeout(self, wait: int) -> None:
+    def set_timeout(self, wait: float) -> None:
         """Set a timeout for this connection.
         If reached, the connection will be closed.
 

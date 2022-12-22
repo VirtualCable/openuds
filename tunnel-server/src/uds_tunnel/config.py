@@ -66,7 +66,7 @@ class ConfigurationType(typing.NamedTuple):
     uds_timeout: int
     uds_verify_ssl: bool
 
-    command_timeout: int
+    command_timeout: float
 
     secret: str
     allow: typing.Set[str]
@@ -140,7 +140,7 @@ def read(
             uds_token=uds.get('uds_token', 'unauthorized'),
             uds_timeout=int(uds.get('uds_timeout', '10')),
             uds_verify_ssl=uds.get('uds_verify_ssl', 'true').lower() == 'true',
-            command_timeout=int(uds.get('command_timeout', '3')),
+            command_timeout=float(uds.get('command_timeout', '3')),
             secret=secret,
             allow=set(uds.get('allow', '127.0.0.1').split(',')),
             use_uvloop=uds.get('use_uvloop', 'true').lower() == 'true',
