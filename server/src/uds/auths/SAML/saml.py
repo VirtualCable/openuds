@@ -668,7 +668,10 @@ class SAMLAuthenticator(auths.Authenticator):
         #         url=auth.redirect_to(req['post_data']['RelayState'])
         #     )
 
-        attributes = auth.get_attributes()
+        attributes = auth.get_attributes().copy()
+        # Append attributes by its friendly name
+        attributes.update(auth.get_friendlyname_attributes())
+
         if not attributes:
             raise auths.exceptions.AuthenticatorException(
                 gettext('No attributes returned from IdP')
