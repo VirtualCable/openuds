@@ -95,7 +95,7 @@ class UDSAppConfig(AppConfig):
 default_app_config = 'uds.UDSAppConfig'
 
 
-# Sets up several sqlite non existing methods
+# Sets up several sqlite non existing methodsm and some optimizations on sqlite
 @receiver(connection_created)
 def extend_sqlite(connection=None, **kwargs):
     if connection and connection.vendor == "sqlite":

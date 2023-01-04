@@ -31,7 +31,7 @@
 """
 import datetime
 import codecs
-import pickle  # nosec: This is e controled pickle loading
+import yaml
 import typing
 import logging
 
@@ -58,6 +58,19 @@ class Cache:
     _owner: str
     _bowner: bytes
 
+    @staticmethod
+    def _basic_serialize(value: typing.Any) -> str:
+        return codecs.encode(yaml.safe_dump(value).encode(), 'base64').decode()
+
+    @staticmethod
+    def _basic_deserialize(value: str) -> typing.Any:
+        return yaml.safe_load(codecs.decode(value.encode(), 'base64'))
+
+    _serializer: typing.ClassVar[typing.Callable[[typing.Any], str]] = _basic_serialize
+    _deserializer: typing.ClassVar[
+        typing.Callable[[str], typing.Any]
+    ] = _basic_deserialize
+
     def __init__(self, owner: typing.Union[str, bytes]):
         self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
         self._bowner = self._owner.encode('utf8')
@@ -82,11 +95,9 @@ class Cache:
 
             try:
                 # logger.debug('value: %s', c.value)
-                val = pickle.loads(  # nosec: This is e controled pickle loading
-                    typing.cast(bytes, codecs.decode(c.value.encode(), 'base64'))
-                )
+                val = Cache._deserializer(c.value)
             except Exception:  # If invalid, simple do no tuse it
-                logger.exception('Invalid pickle from cache. Removing it.')
+                # logger.exception('Invalid yaml from cache. Removing it.')
                 c.delete()
                 return defValue
 
@@ -141,7 +152,7 @@ class Cache:
         if validity is None:
             validity = Cache.DEFAULT_VALIDITY
         key = self.__getKey(skey)
-        strValue: str = codecs.encode(pickle.dumps(value), 'base64').decode()
+        strValue = Cache._serializer(value)
         now = getSqlDatetime()
         try:
             DBCache.objects.create(

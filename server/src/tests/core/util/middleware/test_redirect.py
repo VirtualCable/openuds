@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class RedirectMiddlewareTest(test.UDSTransactionTestCase):
     """
-    Test actor functionality
+    Test client functionality
     """
     def test_redirect(self):
         RedirectMiddlewareTest.add_middleware('uds.core.util.middleware.redirect.RedirectMiddleware')
@@ -70,11 +70,11 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
         # These urls will never redirect:
         for url in _NO_REDIRECT:
             # Append some random string to avoid cache and make a 404 occur
-            url = f'/{url}/{CryptoManager().randomString(32)}'
+            url = f'/{url}{("/" + CryptoManager().randomString(32)) if "test" not in url else ""}'
             response = self.client.get(url, secure=False)
-            # every url will return 404, except /uds/rest/client that will return 400 and wyse or servlet that will return 302
-            if url.startswith('/uds/rest/client'):
-                self.assertEqual(response.status_code, 400)
+            # every url will return 404, except /uds/rest/client/test that will return 200 and wyse or servlet that will return 302
+            if url.startswith('/uds/rest/client/test'):
+                self.assertEqual(response.status_code, 200)
             elif url.startswith('/wyse') or url.startswith('/servlet'):
                 self.assertEqual(response.status_code, 302)
             else:

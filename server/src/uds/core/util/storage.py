@@ -375,7 +375,7 @@ class Storage:
 
     def filter(
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
-    ) -> typing.Iterable[typing.Tuple[str, bytes, str]]:
+    ) -> typing.Iterable[typing.Tuple[str, bytes, 'str|None']]:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
@@ -391,7 +391,7 @@ class Storage:
 
     def filterPickle(
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
-    ) -> typing.Iterable[typing.Tuple[str, typing.Any, str]]:
+    ) -> typing.Iterable[typing.Tuple[str, typing.Any, 'str|None']]:
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])  # nosec: secure pickle load
 
