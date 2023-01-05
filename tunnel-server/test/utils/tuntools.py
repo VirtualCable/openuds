@@ -119,6 +119,7 @@ async def create_tunnel_proc(
         ]
     ] = None,
     use_fake_http_server: bool = False,
+    global_stats: typing.Optional[stats.GlobalStats] = None,
     # Configuration parameters
     **kwargs,
 ) -> typing.AsyncGenerator[
@@ -198,7 +199,7 @@ async def create_tunnel_proc(
 
         async with provider() as possible_queue:
             # Stats collector
-            gs = stats.GlobalStats()
+            global_stats = global_stats or stats.GlobalStats()  # If none provided, create a new one
             # Pipe to send data to tunnel
             own_end, other_end = multiprocessing.Pipe()
 
@@ -209,7 +210,7 @@ async def create_tunnel_proc(
 
             # Create the tunnel task
             task = asyncio.create_task(
-                udstunnel.tunnel_proc_async(other_end, cfg, gs.ns)
+                udstunnel.tunnel_proc_async(other_end, cfg, global_stats.ns)
             )
 
             # Create a small asyncio server that reads the handshake,

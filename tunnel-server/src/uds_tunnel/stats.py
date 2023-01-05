@@ -52,7 +52,7 @@ INTERVAL = 2  # Interval in seconds between stats update
 logger = logging.getLogger(__name__)
 
 class StatsSingleCounter:
-    def __init__(self, parent: 'Stats', for_receiving=True) -> None:
+    def __init__(self, parent: 'StatsManager', for_receiving=True) -> None:
         if for_receiving:
             self.adder = parent.add_recv
         else:
@@ -63,7 +63,7 @@ class StatsSingleCounter:
         return self
 
 
-class Stats:
+class StatsManager:
     ns: 'Namespace'
     last_sent: int
     sent: int
@@ -100,9 +100,11 @@ class Stats:
         self.sent += size
         self.update()
 
+    @property
     def as_sent_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, False)
 
+    @property
     def as_recv_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, True)
 

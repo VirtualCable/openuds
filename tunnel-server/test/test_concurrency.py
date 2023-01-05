@@ -34,7 +34,7 @@ import random
 import logging
 from unittest import IsolatedAsyncioTestCase, mock
 
-from uds_tunnel import consts
+from uds_tunnel import consts, stats
 
 from .utils import tuntools, tools, conf
 
@@ -43,9 +43,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
 class TestUDSTunnelApp(IsolatedAsyncioTestCase):
-
     async def client_task(self, host: str, tunnel_port: int, remote_port: int) -> None:
         received: bytes = b''
         callback_invoked: asyncio.Event = asyncio.Event()
@@ -55,14 +53,19 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             b'Some Random Data'
             + bytes(random.randint(0, 255) for _ in range(1024)) * 4
             + b'STREAM_END'
-        )
+        )  # length = 16 + 1024 * 4 + 10 = 4122
+        test_response = (
+            bytes(random.randint(48, 127) for _ in range(12))
+        )  # length = 12, random printable chars
 
-        def callback(data: bytes) -> None:
+        def callback(data: bytes) -> typing.Optional[bytes]:
             nonlocal received
             received += data
             # if data contains EOS marcker ('STREAM_END'), we are done
             if b'STREAM_END' in data:
                 callback_invoked.set()
+                return test_response
+            return None
 
         async with tools.AsyncTCPServer(
             host=host, port=remote_port, callback=callback, name='client_task'
@@ -103,6 +106,15 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
 
                 cwriter.write(test_str)
                 await cwriter.drain()
+
+                # Read response, should be just FAKE_OK_RESPONSE
+                data = await creader.read(1024)
+                logger.debug('Received response: %r', data)
+                self.assertEqual(
+                    data,
+                    test_response,
+                    f'Server host: {host}:{tunnel_port} - Ticket: {ticket!r} - Response: {data!r}',
+                )
                 # Close connection
                 cwriter.close()
 
@@ -146,7 +158,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                     logfile='/tmp/tunnel_test.log',
                     loglevel='DEBUG',
                     workers=4,
-                    command_timeout=16, # Increase command timeout because heavy load we will create
+                    command_timeout=16,  # Increase command timeout because heavy load we will create
                 ) as process:
 
                     # Create a "bunch" of clients
@@ -176,6 +188,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
         req_queue: asyncio.Queue[bytes] = asyncio.Queue()
 
         def extract_port(data: bytes) -> int:
+            logger.debug('Data: %r', data)
             req_queue.put_nowait(data)
             if b'bX0bwmb' not in data:
                 return 12345  # No port, wil not be used because is an "stop" request
@@ -187,15 +200,17 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             else:
                 url = f'http://{host}:{fake_broker_port}/uds/rest'
 
-            req_queue = asyncio.Queue() # clear queue
+            req_queue = asyncio.Queue()  # clear queue
             # Use tunnel proc for testing
+            stats_collector = stats.GlobalStats()
             async with tuntools.create_tunnel_proc(
                 host,
                 tunnel_server_port,
                 response=lambda data: conf.UDS_GET_TICKET_RESPONSE(
                     host, extract_port(data)
                 ),
-                command_timeout=16, # Increase command timeout because heavy load we will create
+                command_timeout=16,  # Increase command timeout because heavy load we will create,
+                global_stats=stats_collector,
             ) as (cfg, _):
                 # Create a "bunch" of clients
                 tasks = [
@@ -209,8 +224,12 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                 await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
 
                 # If any exception was raised, raise it
-                for task in tasks:
-                    task.result()
+                await asyncio.gather(*tasks, return_exceptions=True)
 
                 # Queue should have all requests (concurrent_tasks*2, one for open and one for close)
                 self.assertEqual(req_queue.qsize(), concurrent_tasks * 2)
+                
+            # Check stats
+            self.assertEqual(stats_collector.ns.recv, concurrent_tasks*12)
+            self.assertEqual(stats_collector.ns.sent, concurrent_tasks*4122)
+            self.assertEqual(stats_collector.ns.total, concurrent_tasks)

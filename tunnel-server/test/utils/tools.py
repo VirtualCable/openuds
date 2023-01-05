@@ -156,8 +156,7 @@ class AsyncTCPServer:
             resp = self._callback(data) if self._callback else self._response
 
             if resp is not None:
-                data = self._response
-                writer.write(data)
+                writer.write(resp)
                 await writer.drain()
 
     async def __aenter__(self) -> 'AsyncTCPServer':
