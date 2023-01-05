@@ -77,18 +77,12 @@ class TestTunnel(IsolatedAsyncioTestCase):
                         readed = await reader.read(1024)
                         # Logger should have been called once with error
                         logger_mock.error.assert_called_once()
-                        # last (first printed) info should have been connection info
-                        self.assertIn(
-                            'TERMINATED', logger_mock.info.call_args_list[-1][0][0]
-                        )
 
                         if len(bad_cmd) < 4:
                             # Response shout have been timeout
                             self.assertEqual(readed, consts.RESPONSE_ERROR_TIMEOUT)
                             # And logger should have been called with timeout
                             self.assertIn('TIMEOUT', logger_mock.error.call_args[0][0])
-                            # Logger info with connection info
-                            logger_mock.info.assert_called_once()
                         else:
                             # Response shout have been command error
                             self.assertEqual(readed, consts.RESPONSE_ERROR_COMMAND)

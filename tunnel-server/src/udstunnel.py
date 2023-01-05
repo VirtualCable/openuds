@@ -206,11 +206,11 @@ def process_connection(
         data = client.recv(len(consts.HANDSHAKE_V1))
 
         if data != consts.HANDSHAKE_V1:
-            raise Exception('Invalid data: {} ({})'.format( addr, data.hex()))  # Invalid handshake
+            raise Exception('Invalid data from {}: {}'.format(addr[0], data.hex()))  # Invalid handshake
         conn.send((client, addr))
         del client  # Ensure socket is controlled on child process
     except Exception as e:
-        logger.error('HANDSHAKE invalid (%s)', e)
+        logger.error('HANDSHAKE invalid from %s: %s', addr[0], e)
         # Close Source and continue
         client.close()
 
@@ -280,7 +280,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
             while not do_stop.is_set():
                 try:
                     client, addr = sock.accept()
-                    logger.info('CONNECTION from %s', addr)
+                    # logger.info('CONNECTION from %s', addr)
 
                     # Check if we have reached the max number of connections
                     # First part is checked on a thread, if HANDSHAKE is valid
