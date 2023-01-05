@@ -189,8 +189,10 @@ async def tunnel_proc_async(
     logger.debug('Out of loop, stopping tasks: %s, running: %s', tasks, do_stop.is_set())
 
     # If any task is still running, cancel it
-    for task in tasks:
-        task.cancel()
+    asyncio.gather(*tasks, return_exceptions=True).cancel()
+    
+    # for task in tasks:
+    #    task.cancel()
 
     # Wait for all tasks to finish
     await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
