@@ -283,7 +283,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.pretty_destination(),
                 self.stats_manager.sent,
                 self.stats_manager.recv,
-                int(self.stats_manager.end - self.stats_manager.start),
+                int(self.stats_manager.current_time - self.stats_manager.start_time),
             )
             # Notify end to uds, using a task becase we are not an async function
             asyncio.get_event_loop().create_task(

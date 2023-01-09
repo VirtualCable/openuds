@@ -70,8 +70,8 @@ class StatsManager:
     last_recv: int
     recv: int
     last: float
-    start: float  # timestamp
-    end: float    
+    start_time: float  # timestamp
+    end_time: float    
 
     def __init__(self, ns: 'Namespace'):
         self.ns = ns
@@ -80,8 +80,13 @@ class StatsManager:
         self.sent = self.last_sent = 0
         self.recv = self.last_recv = 0
         self.last = time.monotonic()
-        self.start = time.monotonic()
-        self.end = self.start
+        self.start_time = time.monotonic()
+        self.end_time = self.start_time
+
+    @property
+    def current_time(self) -> float:
+        return time.monotonic()
+
 
     def update(self, force: bool = False):
         now = time.monotonic()
@@ -111,7 +116,7 @@ class StatsManager:
     def close(self):
         self.update(True)
         self.ns.current -= 1
-        self.end = time.monotonic()
+        self.end_time = time.monotonic()
 
 # Stats collector thread
 class GlobalStats:
