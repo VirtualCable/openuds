@@ -99,4 +99,4 @@ class ServicePoolGroup(UUIDModel):
         Returns:
             [ServicePoolGroup]: Default ServicePoolGroup
         """
-        return ServicePoolGroup(name=_('General'), comments='', priority=-10000)
+        return ServicePoolGroup(uuid='', name=_('General'), comments='', priority=-10000)
