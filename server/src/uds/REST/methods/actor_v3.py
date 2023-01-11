@@ -57,6 +57,7 @@ from ..handlers import Handler, AccessDenied, RequestError
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
+    from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +78,7 @@ def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
     return list(set([i.upper() for i in idsList] + [i.lower() for i in idsList]))
 
 
-def checkBlockedIp(ip: str) -> None:
+def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
         return
     fails = cache.get(ip) or 0
@@ -148,13 +149,13 @@ class ActorV3Action(Handler):
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
-            checkBlockedIp(self._request.ip)
+            checkBlockedIp(self._request)
             result = self.action()
             logger.debug('Action result: %s', result)
             return result
         except (BlockAccess, KeyError):
             # For blocking attacks
-            incFailedIp(self._request.ip)
+            incFailedIp(self._request)
         except Exception as e:
             logger.exception('Posting %s: %s', self.__class__, e)
 
@@ -825,7 +826,7 @@ class Notify(ActorV3Action):
 
         try:
             # Check block manually
-            checkBlockedIp(self._request.ip)  # pylint: disable=protected-access
+            checkBlockedIp(self._request)  # pylint: disable=protected-access
             if 'action' == 'login':
                 Login.action(typing.cast(Login, self))
             else:
@@ -834,6 +835,6 @@ class Notify(ActorV3Action):
             return ActorV3Action.actorResult('ok')
         except UserService.DoesNotExist:
             # For blocking attacks
-            incFailedIp(self._request.ip)  # pylint: disable=protected-access
+            incFailedIp(self._request)  # pylint: disable=protected-access
 
         raise AccessDenied('Access denied')
