@@ -101,9 +101,19 @@ class Provider(services.ServiceProvider):
         tooltip=_('This fields contains a remote host'),
         required=True,
     )
+
+    # simple password field
+    passwdField = gui.PasswordField(
+        order=2,
+        length=32,
+        label=_('Password'),
+        tooltip=_('This is a password field'),
+        required=True,
+    )
+
     # : Name of your pet (sample, not really needed :-) )
     petName = gui.TextField(
-        order=2,
+        order=3,
         length=32,
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
@@ -114,7 +124,7 @@ class Provider(services.ServiceProvider):
     # : in Spain there is a well-known to say that something is very old,
     # : "Tiene mas años que matusalén"(is older than Methuselah)
     methAge = gui.NumericField(
-        order=3,
+        order=4,
         length=4,  # That is, max allowed value is 9999
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
@@ -124,14 +134,30 @@ class Provider(services.ServiceProvider):
 
     # : Is Methuselah istill alive?
     methAlive = gui.CheckBoxField(
-        order=4,
+        order=5,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
         defvalue=gui.TRUE,  # : By default, at new item, check this
     )
 
-    methText = gui.TextField(
+    # : Is Methuselah istill alive?
+    methAlive2 = gui.CheckBoxField(
         order=5,
+        label=_('Is Methuselah still alive BBBB?'),
+        tooltip=_('If you fail, this will not get saved BBBB'),
+        defvalue=gui.TRUE,  # : By default, at new item, check this
+    )
+
+    # : Is Methuselah istill alive?
+    methAlive3 = gui.CheckBoxField(
+        order=5,
+        label=_('Is Methuselah still alive CCCC?'),
+        tooltip=_('If you fail, this will not get saved CCCC'),
+        defvalue=gui.TRUE,  # : By default, at new item, check this
+    )
+
+    methText = gui.TextField(
+        order=6,
         length=512,
         multiline=5,
         label=_('Text area'),

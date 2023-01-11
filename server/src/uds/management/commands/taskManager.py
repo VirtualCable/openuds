@@ -93,7 +93,7 @@ class Command(BaseCommand):
     args = "None"
     help = "Executes the task manager as a daemon. No parameter show current status of task manager"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
             '--start',
             action='store_true',

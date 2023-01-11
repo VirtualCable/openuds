@@ -109,7 +109,8 @@ def authenticator_exporter(
     a = managed_object_exporter(authenticator)
     a['priority'] = authenticator.priority
     a['provider'] = authenticator.small_name
-    a['visible'] = authenticator.visible
+    a['visible'] = authenticator.state == models.Authenticator.VISIBLE
+    a['enabled'] = authenticator.state != models.Authenticator.DISABLED
     return a
 
 
@@ -165,7 +166,7 @@ def transport_exporter(transport: models.Transport) -> typing.Dict[str, typing.A
     t.update(
         {
             'priority': transport.priority,
-            'nets_positive': transport.nets_positive,
+            'net_filtering': transport.net_filtering,
             'allowed_oss': transport.allowed_oss,
             'label': transport.label,
             'networks': [n.uuid for n in transport.networks.all()],
@@ -266,7 +267,7 @@ class Command(BaseCommand):
             '--output',
             action='store',
             dest='output',
-            default='/tmp/export.yaml',
+            default='/tmp/export.yaml',  # nosec: This is a default value
             help='Output file name. Defaults to /tmp/export.yaml',
         )
 

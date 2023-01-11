@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = "Show current PUBLIC configuration of UDS broker (passwords are not shown)"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser) -> None:
         parser.add_argument(
             '--csv',
             action='store_true',
@@ -60,7 +60,7 @@ class Command(BaseCommand):
             help='Shows configuration in YAML format',
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         logger.debug("Show settings")
         config.GlobalConfig.initialize()
         try:
@@ -87,5 +87,6 @@ class Command(BaseCommand):
             if options['yaml']:
                 self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
         except Exception as e:
-            print('The command could not be processed: {}'.format(e))
+            self.stdout.write('The command could not be processed: {}'.format(e))
+            self.stdout.flush()
             logger.exception('Exception processing %s', args)

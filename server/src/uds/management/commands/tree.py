@@ -118,7 +118,7 @@ class Command(BaseCommand):
             help='Maximum elements exported for groups and user services',
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         logger.debug("Show Tree")
         # firt, genertate Provider-service-servicepool tree
         cntr = 0
@@ -184,7 +184,7 @@ class Command(BaseCommand):
                         totalUserServices += numberOfUserServices
 
                         # get publications
-                        publications = {}
+                        publications: typing.Dict[str, typing.Any] = {}
                         for publication in servicePool.publications.all():
                             # Get all changelogs for this publication
                             try:
@@ -197,10 +197,10 @@ class Command(BaseCommand):
                             except Exception:
                                 changelogs = []
 
-                            publications[publication.revision] = getSerializedFromModel(
+                            publications[str(publication.revision)] = getSerializedFromModel(
                                 publication, ['data']
                             )
-                            publications[publication.revision][
+                            publications[str(publication.revision)][
                                 'changelogs'
                             ] = changelogs
 
@@ -258,21 +258,21 @@ class Command(BaseCommand):
             tree[counter('PROVIDERS')] = providers
 
             # authenticators
-            authenticators = {}
+            authenticators: typing.Dict[str, typing.Any] = {}
             for authenticator in models.Authenticator.objects.all():
                 # Groups
-                groups = {}
+                grps: typing.Dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
-                    groups[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                    grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
                 authenticators[authenticator.name] = {
                     '_': getSerializedFromManagedObject(authenticator),
-                    'groups': groups,
+                    'groups': grps,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators
 
             # transports
-            transports = {}
+            transports: typing.Dict[str, typing.Any] = {}
             for transport in models.Transport.objects.all():
                 transports[transport.name] = getSerializedFromManagedObject(transport)
 
@@ -289,14 +289,14 @@ class Command(BaseCommand):
             tree[counter('NETWORKS')] = networks
 
             # os managers
-            osManagers = {}
+            osManagers: typing.Dict[str, typing.Any] = {}
             for osManager in models.OSManager.objects.all():
                 osManagers[osManager.name] = getSerializedFromManagedObject(osManager)
 
             tree[counter('OSMANAGERS')] = osManagers
 
             # calendars
-            calendars = {}
+            calendars: typing.Dict[str, typing.Any] = {}
             for calendar in models.Calendar.objects.all():
                 # calendar rules
                 rules = {}
@@ -313,14 +313,14 @@ class Command(BaseCommand):
             tree[counter('CALENDARS')] = calendars
 
             # Metapools
-            metapools = {}
+            metapools: typing.Dict[str, typing.Any] = {}
             for metapool in models.MetaPool.objects.all():
                 metapools[metapool.name] = getSerializedFromModel(metapool)
 
             tree[counter('METAPOOLS')] = metapools
 
             # accounts
-            accounts = {}
+            accounts: typing.Dict[str, typing.Any] = {}
             for account in models.Account.objects.all():
                 accounts[account.name] = {
                     '_': getSerializedFromModel(account),
@@ -355,7 +355,7 @@ class Command(BaseCommand):
             tree[counter('GALLERY')] = gallery
 
             # Actor tokens
-            actorTokens = {}
+            actorTokens: typing.Dict[str, typing.Any] = {}
             for actorToken in models.ActorToken.objects.all():
                 actorTokens[actorToken.hostname] = getSerializedFromModel(
                     actorToken, passwordFields=['token']
@@ -364,7 +364,7 @@ class Command(BaseCommand):
             tree[counter('ACTORTOKENS')] = actorTokens
 
             # Tunnel tokens
-            tunnelTokens = {}
+            tunnelTokens: typing.Dict[str, typing.Any] = {}
             for tunnelToken in models.TunnelToken.objects.all():
                 tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(
                     tunnelToken, passwordFields=['token']
@@ -375,5 +375,6 @@ class Command(BaseCommand):
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 
         except Exception as e:
-            print('The command could not be processed: {}'.format(e))
+            self.stdout.write('The command could not be processed: {}'.format(e))
+            self.stdout.flush()
             logger.exception('Exception processing %s', args)
