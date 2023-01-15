@@ -45,6 +45,7 @@ from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+from uds.core import Module
 
 from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
 
@@ -61,7 +62,6 @@ from .handlers import (
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import User
-    from uds.core import Module
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +72,9 @@ TABLEINFO: typing.Final[str] = 'tableinfo'
 GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
 
-OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
+OK: typing.Final[
+    str
+] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
 # Exception to "rethrow" on save error
 class SaveException(HandlerError):
@@ -247,7 +249,10 @@ class BaseModelHandler(Handler):
         return gui
 
     def ensureAccess(
-        self, obj: models.Model, permission: permissions.PermissionType, root: bool = False
+        self,
+        obj: models.Model,
+        permission: permissions.PermissionType,
+        root: bool = False,
     ) -> None:
         if not permissions.hasAccess(self._user, obj, permission, root):
             raise self.accessDenied()
@@ -866,10 +871,7 @@ class ModelHandler(BaseModelHandler):
             else:
                 requiredPermission = permissions.PermissionType.READ
 
-            if (
-                permissions.hasAccess(self._user, item, requiredPermission)
-                is False
-            ):
+            if permissions.hasAccess(self._user, item, requiredPermission) is False:
                 logger.debug(
                     'Permission for user %s does not comply with %s',
                     self._user,
@@ -895,7 +897,6 @@ class ModelHandler(BaseModelHandler):
             raise self.invalidMethodException()
         except AttributeError:
             raise self.invalidMethodException()
-
 
     def getItems(
         self, *args, **kwargs
@@ -1117,45 +1118,45 @@ class ModelHandler(BaseModelHandler):
                 ):  # Present, but list is empty (will be proccesed on "if" else)
                     item.tags.clear()
 
+            if not deleteOnError:
+                self.checkSave(
+                    item
+                )  # Will raise an exception if item can't be saved (only for modify operations..)
+
+            # Store associated object if requested (data_type)
+            try:
+                if isinstance(item, ManagedObjectModel):
+                    data_type: typing.Optional[str] = self._params.get(
+                        'data_type', self._params.get('type')
+                    )
+                    if data_type:
+                        item.data_type = data_type
+                        item.data = item.getInstance(self._params).serialize()
+
+                item.save()
+
+                res = self.item_as_dict(item)
+                self.fillIntanceFields(item, res)
+            except:
+                if deleteOnError:
+                    item.delete()
+                raise
+
+            self.afterSave(item)
+
+            return res
+
         except self.model.DoesNotExist:
             raise NotFound('Item not found')
         except IntegrityError:  # Duplicate key probably
             raise RequestError('Element already exists (duplicate key error)')
-        except SaveException as e:
+        except (SaveException, Module.ValidationException) as e:
             raise RequestError(str(e))
         except (RequestError, ResponseError):
             raise
         except Exception:
             logger.exception('Exception on put')
             raise RequestError('incorrect invocation to PUT')
-
-        if not deleteOnError:
-            self.checkSave(
-                item
-            )  # Will raise an exception if item can't be saved (only for modify operations..)
-
-        # Store associated object if requested (data_type)
-        try:
-            if isinstance(item, ManagedObjectModel):
-                data_type: typing.Optional[str] = self._params.get(
-                    'data_type', self._params.get('type')
-                )
-                if data_type:
-                    item.data_type = data_type
-                    item.data = item.getInstance(self._params).serialize()
-
-            item.save()
-
-            res = self.item_as_dict(item)
-            self.fillIntanceFields(item, res)
-        except:
-            if deleteOnError:
-                item.delete()
-            raise
-
-        self.afterSave(item)
-
-        return res
 
     def delete(self) -> typing.Any:
         """

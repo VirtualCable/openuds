@@ -47,6 +47,8 @@ from uds.core.environment import Environment
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util.state import State
+from uds.core.module import Module
+
 
 from uds.REST.model import DetailHandler
 from uds.REST import NotFound, ResponseError, RequestError, AccessDenied
@@ -192,7 +194,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     )
                 )
             raise RequestError(_('Element already exists (duplicate key error)'))
-        except services.Service.ValidationException as e:
+        except Module.ValidationException as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
