@@ -197,7 +197,7 @@ urlpatterns = [
         uds.web.views.main.update_transport_ticket,
         name='webapi.transport.UpdateTransportTicket',
     ),
-    # Authenticators custom html
+    # Authenticators custom js
     re_path(
         r'^uds/webapi/customAuth/(?P<idAuth>[a-zA-Z0-9:-]*)$',
         uds.web.views.customAuth,
