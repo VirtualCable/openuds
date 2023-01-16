@@ -250,6 +250,11 @@ class Authenticators(ModelHandler):
         fields['mfa_id'] = None
         # If label has spaces, replace them with underscores
         fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
+        # And ensure small_name chars are valid [a-zA-Z0-9:-]+
+        if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['small_name']):
+            raise self.invalidRequestException(
+                _('Label must contain only letters, numbers, ":" and "-"')
+            )
 
     def deleteItem(self, item: Authenticator):
         # For every user, remove assigned services (mark them for removal)
