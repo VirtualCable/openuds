@@ -60,7 +60,7 @@ def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
 
 
 def getEffectivePermission(
-    user: 'models.User', obj: 'Model', root: bool = False
+    user: 'models.User', obj: 'Model', for_type: bool = False
 ) -> PermissionType:
     try:
         if user.is_admin:
@@ -68,7 +68,7 @@ def getEffectivePermission(
 
         # Just check permissions for staff members
         # root means for "object type" not for an object
-        if root is False:
+        if for_type is False:
             return models.Permissions.getPermissions(
                 object_type=objtype.ObjectType.from_model(obj),
                 user=user,
@@ -116,9 +116,9 @@ def hasAccess(
     user: 'models.User',
     obj: 'Model',
     permission: PermissionType = PermissionType.ALL,
-    root: bool = False,
+    for_type: bool = False,
 ):
-    return getEffectivePermission(user, obj, root).includes(permission)
+    return getEffectivePermission(user, obj, for_type).includes(permission)
 
 
 def revokePermissionById(permUUID: str) -> None:

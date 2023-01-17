@@ -317,10 +317,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns:
             Nothing
         """
-        self.src_ip = ip[:15]
-        self.src_hostname = hostname[:65]
+        self.src_ip = ip[:MAX_IPV6_LENGTH]
+        self.src_hostname = hostname[:MAX_DNS_NAME_LENGTH]
 
-        if(self.src_ip != ip or self.src_hostname != hostname):
+        if(len(ip) > MAX_IPV6_LENGTH or len(hostname) > MAX_DNS_NAME_LENGTH):
             logger.info('Truncated connection source data to %s/%s', self.src_ip, self.src_hostname)
 
         self.save(update_fields=['src_ip', 'src_hostname'])
@@ -645,7 +645,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

@@ -150,9 +150,8 @@ class Providers(ModelHandler):
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            perm = self.ensureAccess(
-                service.provider, permissions.PermissionType.READ
-            )  # Ensures that we can read this item
+            self.ensureAccess(service.provider, permissions.PermissionType.READ)
+            perm = self.getPermissions(service.provider)
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
             # logger.exception('Exception')

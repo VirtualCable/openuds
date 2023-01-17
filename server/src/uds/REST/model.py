@@ -257,6 +257,11 @@ class BaseModelHandler(Handler):
         if not permissions.hasAccess(self._user, obj, permission, root):
             raise self.accessDenied()
 
+    def getPermissions(
+        self, obj: models.Model, root: bool = False
+    ) -> int:
+        return permissions.getEffectivePermission(self._user, obj, root)
+
     def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
         """
         Returns info about the type

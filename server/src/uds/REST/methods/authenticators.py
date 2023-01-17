@@ -69,9 +69,9 @@ class Authenticators(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
         {'comments': {'title': _('Comments')}},
-        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5em'}},
+        {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '5rem'}},
         {'small_name': {'title': _('Label')}},
-        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '5em'}},
+        {'users_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
         {
             'mfa_name': {
                 'title': _('MFA'),

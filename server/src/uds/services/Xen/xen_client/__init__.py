@@ -514,7 +514,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
         tags = self.VM.get_tags(vmId)
         try:
             del tags[tags.index(TAG_TEMPLATE)]
-        except Exception:
+        except Exception:  # nosec: ignored, maybe tag is not pressent
             pass
         tags.append(TAG_MACHINE)
         self.VM.set_tags(vmId, tags)
@@ -537,7 +537,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             tags = self.VM.get_tags(vmId)
             try:
                 del tags[tags.index(TAG_MACHINE)]
-            except Exception:
+            except Exception:  # nosec: ignored, maybe tag is not pressent
                 pass
             tags.append(TAG_TEMPLATE)
             self.VM.set_tags(vmId, tags)
@@ -545,8 +545,8 @@ class XenServer:  # pylint: disable=too-many-public-methods
             # Set multiplier
             try:
                 self.VM.set_HVM_shadow_multiplier(vmId, float(shadowMultiplier))
-            except Exception:
-                pass  # Can't set shadowMultiplier, nothing happens
+            except Exception:  # nosec: Can't set shadowMultiplier, nothing happens
+                pass  
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
