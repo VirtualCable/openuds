@@ -329,13 +329,17 @@ class XenServer:  # pylint: disable=too-many-public-methods
         try:
             vms = self.VM.get_all()
             for vm in vms:
-                # if self.VM.get_is_a_template(vm):  #  Sample set_tags, easy..
-                #     self.VM.set_tags(vm, ['template'])
-                #     continue
-                if self.VM.get_is_control_domain(vm) or self.VM.get_is_a_template(vm):
-                    continue
+                try:
+                    # if self.VM.get_is_a_template(vm):  #  Sample set_tags, easy..
+                    #     self.VM.set_tags(vm, ['template'])
+                    #     continue
+                    if self.VM.get_is_control_domain(vm) or self.VM.get_is_a_template(vm):
+                        continue
 
-                yield {'id': vm, 'name': self.VM.get_name_label(vm)}
+                    yield {'id': vm, 'name': self.VM.get_name_label(vm)}
+                except Exception as e:
+                    logger.warning('VM %s returned error %s', vm, str(e))
+                    continue
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
         except Exception as e:
