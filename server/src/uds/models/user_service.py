@@ -317,8 +317,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns:
             Nothing
         """
-        self.src_ip = ip
-        self.src_hostname = hostname
+        self.src_ip = ip[:15]
+        self.src_hostname = hostname[:65]
+
+        if(self.src_ip != ip or self.src_hostname != hostname):
+            logger.info('Truncated connection source data to %s/%s', self.src_ip, self.src_hostname)
+
         self.save(update_fields=['src_ip', 'src_hostname'])
 
     def getConnectionSource(self) -> typing.Tuple[str, str]:
