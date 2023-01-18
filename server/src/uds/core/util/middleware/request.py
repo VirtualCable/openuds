@@ -128,41 +128,33 @@ class GlobalRequestMiddleware:
         Returns the obtained IP, that always will be a valid ip address.
         """
         behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
-        try:
-            request.ip = request.META.get('REMOTE_ADDR', '')
-        except Exception:
-            request.ip = ''  # No remote addr?? ...
+        original_ip = request.META.get('REMOTE_ADDR', '')
 
         # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
         # We will accept only 2 proxies, the last ones
+        # And the only trusted address, counting with NGINX, will be PROXY if behind_proxy is True
         proxies = list(
             reversed(
                 [
-                    i.split('%')[0]
+                    i.split('%')[0].strip()
                     for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
                 ]
             )
         )
-        # proxies = list(reversed(['172.27.0.8', '172.27.0.128', '172.27.0.1']))
-        # proxies = list(reversed(['172.27.0.12', '172.27.0.1']))
-        # proxies = list(reversed(['172.27.0.12']))
-        # request.ip = ''
 
         logger.debug('Detected proxies: %s', proxies)
 
-        # Request.IP will be None in case of nginx & gunicorn using sockets, as we do
-        if not request.ip:
-            request.ip = proxies[0]  # Stores the ip
+        # IP will be empty in case of nginx & gunicorn using sockets, as we do
+        if not original_ip:
+            original_ip = proxies[0]  # Stores the ip
             proxies = proxies[1:]  # Remove from proxies list
 
-        logger.debug('Proxies: %s', proxies)
-
+        request.ip = original_ip
         request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
 
         if behind_proxy:
             request.ip = request.ip_proxy
-            request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
-            logger.debug('Behind a proxy is active')
+            request.ip_proxy = original_ip
 
         logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 
