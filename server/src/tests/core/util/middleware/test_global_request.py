@@ -30,10 +30,12 @@
 """
 import typing
 import logging
+from unittest import mock
 
 from django.urls import reverse
 
 from uds.core.util import config
+from uds.core.util.middleware import request
 from uds.core.auths.auth import AUTHORIZED_KEY
 
 from ....utils.web import test
@@ -165,3 +167,62 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         self.assertEqual(response.url, reverse('page.index'))
 
 
+    def test_detect_ips_no_proxy(self) -> None:
+        req = mock.Mock()
+        # Use an ipv4 and an ipv6 address
+        for ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
+            req.META = {
+                'REMOTE_ADDR': ip,
+            }
+            request._fill_ips(req)
+            self.assertEqual(req.ip, ip)
+            self.assertEqual(req.ip_proxy, ip)
+            self.assertEqual(req.ip_version, 4 if '.' in ip else 6)
+
+    def test_detect_ips_proxy(self) -> None:
+        config.GlobalConfig.BEHIND_PROXY.set(True)
+        req = mock.Mock()
+        # Use an ipv4 and an ipv6 address
+        for connect_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
+            for proxied_address in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
+                for with_nginx in [True, False]:
+                    # Remote address is not included by NGINX, it's on the X-Forwarded-For header
+                    if with_nginx is False:
+                        req.META = {
+                            'REMOTE_ADDR': connect_ip,
+                            'HTTP_X_FORWARDED_FOR': proxied_address,
+                        }
+                    else:
+                        req.META = {
+                            'HTTP_X_FORWARDED_FOR': "{},{}".format(proxied_address, connect_ip),
+                        }
+
+                    request._fill_ips(req)
+                    self.assertEqual(req.ip, proxied_address, "Failed for {}".format(req.META))
+                    self.assertEqual(req.ip_proxy, connect_ip, "Failed for {}".format(req.META))
+                    self.assertEqual(req.ip_version, 4 if '.' in proxied_address else 6, "Failed for {}".format(req.META))
+
+    def test_detect_ips_proxy_chained(self) -> None:
+        config.GlobalConfig.BEHIND_PROXY.set(True)
+        req = mock.Mock()
+        # Use an ipv4 and an ipv6 address
+        for connect_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
+            for proxied_untrusted_address_client in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
+                for proxied_nearest_address in ['192.168.201.201', '2001:db8:85a3:8d3:1319:8a2e:370:7350']:
+                    for with_nginx in [True, False]:
+                        x_forwarded_for = '{}, {}'.format(proxied_untrusted_address_client, proxied_nearest_address)
+                        if with_nginx is False:
+                            req.META = {
+                                'REMOTE_ADDR': connect_ip,
+                                'HTTP_X_FORWARDED_FOR': x_forwarded_for,
+                            }
+                        else:
+                            req.META = {
+                                'HTTP_X_FORWARDED_FOR': "{},{}".format(x_forwarded_for, connect_ip),
+                            }
+
+                        request._fill_ips(req)
+                        self.assertEqual(req.ip, proxied_nearest_address)
+                        self.assertEqual(req.ip_proxy, connect_ip)
+                        self.assertEqual(req.ip_version, 4 if '.' in proxied_nearest_address else 6) 
+    
