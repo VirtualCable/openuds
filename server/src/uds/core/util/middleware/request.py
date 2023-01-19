@@ -128,7 +128,7 @@ class GlobalRequestMiddleware:
         Returns the obtained IP, that always will be a valid ip address.
         """
         behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
-        original_ip = request.META.get('REMOTE_ADDR', '')
+        request.ip = request.META.get('REMOTE_ADDR', '')
 
         # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
         # We will accept only 2 proxies, the last ones
@@ -145,16 +145,15 @@ class GlobalRequestMiddleware:
         logger.debug('Detected proxies: %s', proxies)
 
         # IP will be empty in case of nginx & gunicorn using sockets, as we do
-        if not original_ip:
-            original_ip = proxies[0]  # Stores the ip
+        if not request.ip:
+            request.ip = proxies[0]  # Stores the ip
             proxies = proxies[1:]  # Remove from proxies list
 
-        request.ip = original_ip
         request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
 
         if behind_proxy:
             request.ip = request.ip_proxy
-            request.ip_proxy = original_ip
+            request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
 
         logger.debug('ip: %s, ip_proxy: %s', request.ip, request.ip_proxy)
 
