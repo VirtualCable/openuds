@@ -137,7 +137,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         self.assertIsNone(result['os'])
         self.assertIsNone(result['unique_id'])
 
-    def test_initialize_unmanaged(self):
+    def test_initialize_unmanaged(self) -> None:
         """
         Test actor initialize v3 for unmanaged actor
         """

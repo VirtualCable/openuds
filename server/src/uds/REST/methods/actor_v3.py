@@ -81,11 +81,11 @@ def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
 def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
         return
-    fails = cache.get(ip) or 0
+    fails = cache.get(request.ip) or 0
     if fails >= ALLOWED_FAILS:
         logger.info(
             'Access to actor from %s is blocked for %s seconds since last fail',
-            ip,
+            request.ip,
             GlobalConfig.LOGIN_BLOCK.getInt(),
         )
         # Sleep a while to try to minimize brute force attacks somehow
@@ -93,9 +93,9 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
         raise BlockAccess()
 
 
-def incFailedIp(ip: str) -> None:
-    fails = cache.get(ip, 0) + 1
-    cache.put(ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+def incFailedIp(request: 'ExtendedHttpRequest') -> None:
+    fails = cache.get(request.ip, 0) + 1
+    cache.put(request.ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
 
 
 # Decorator that clears failed counter for the IP if succeeds
@@ -106,14 +106,14 @@ def clearIfSuccess(func: typing.Callable) -> typing.Callable:
         result = func(
             *args, **kwargs
         )  # If raises any exception, it will be raised and we will not clear the counter
-        clearFailedIp(_self._request.ip)
+        clearFailedIp(_self._request)
         return result
 
     return wrapper
 
 
-def clearFailedIp(ip: str) -> None:
-    cache.remove(ip)
+def clearFailedIp(request: 'ExtendedHttpRequest') -> None:
+    cache.remove(request.ip)
 
 
 class ActorV3Action(Handler):
@@ -178,10 +178,10 @@ class Test(ActorV3Action):
                 ActorToken.objects.get(
                     token=self._params['token']
                 )  # Not assigned, because only needs check
-            clearFailedIp(self._request.ip)
+            clearFailedIp(self._request)
         except Exception:
             # Increase failed attempts
-            incFailedIp(self._request.ip)
+            incFailedIp(self._request)
             # And return test failed
             return ActorV3Action.actorResult('invalid token')
 
