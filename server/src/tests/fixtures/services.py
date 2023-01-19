@@ -157,20 +157,19 @@ def createOneCacheTestingUserService(
 
 def createCacheTestingUserServices(
     count: int = 1,
-    type_: typing.Union[
-        typing.Literal['managed'], typing.Literal['unmanaged']
-    ] = 'managed',
+    type_: typing.Literal['managed', 'unmanaged'] = 'managed',
+    user: typing.Optional['models.User'] = None,
+    groups: typing.Optional[typing.List['models.Group']] = None,
 ) -> typing.List[models.UserService]:
     from . import authenticators
 
-    auth = authenticators.createAuthenticator()
-    user_services: typing.List[models.UserService] = []
-    for _ in range(count):
+    if not user or not groups:
+        auth = authenticators.createAuthenticator()
         groups = authenticators.createGroups(auth, 3)
         user = authenticators.createUsers(auth, 1, groups=groups)[0]
+    user_services: typing.List[models.UserService] = []
+    for _ in range(count):
         user_services.append(
-            createOneCacheTestingUserService(
-                createProvider(), user, groups, type_
-            )
+            createOneCacheTestingUserService(createProvider(), user, groups, type_)
         )
     return user_services

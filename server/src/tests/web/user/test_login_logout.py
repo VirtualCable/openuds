@@ -77,7 +77,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         for user in users + admins + stafs:
             for group in random.sample(
                 groups,
-                random.randint(
+                random.randint(  # nosec: Simple test, no strong cryptograde is needed
                     1, len(groups)
                 ),  # nosec: Simple test, not strong cryptograde needed
             ):
