@@ -68,7 +68,7 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
     """
     behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
 
-    original_ip = request.META.get('REMOTE_ADDR', '')
+    request.ip = request.META.get('REMOTE_ADDR', '')
 
     # X-FORWARDED-FOR: CLIENT, FAR_PROXY, PROXY, NEAR_PROXY, NGINX
     # We will accept only 2 proxies, the last ones
@@ -83,16 +83,24 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
     )
 
     # Original IP will be empty in case of nginx & gunicorn using sockets, as we do
-    if not original_ip:
-        original_ip = proxies[0]  # Stores the ip
+    if not request.ip:
+        request.ip = proxies[0]  # Stores the ip
         proxies = proxies[1:]  # Remove from proxies list
 
-    request.ip = original_ip
     request.ip_proxy = proxies[0] if proxies and proxies[0] else request.ip
+
+    # Basically, behind_proxy will ignore the LAST proxy, and will use the previous one
+    # as proxy_ip (if exists)
+    # So, with behind_proxy = True, and X-FORWARDED-FOR is (CLIENT, PROXY1, PROXY2, PROXY3) we will have:
+    #   request.ip = PROXY2
+    #   request.ip_proxy = PROXY1
+    # If behind_proxy = False, we will have:
+    #   request.ip = PROXY3
+    #   request.ip_proxy = PROXY2
 
     if behind_proxy:
         request.ip = request.ip_proxy
-        request.ip_proxy = original_ip
+        request.ip_proxy = proxies[1] if len(proxies) > 1 else request.ip
 
     # Check if ip are ipv6 and set version field
     request.ip_version = 6 if '.' not in request.ip else 4

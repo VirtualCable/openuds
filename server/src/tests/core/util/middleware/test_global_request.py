@@ -183,46 +183,46 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         config.GlobalConfig.BEHIND_PROXY.set(True)
         req = mock.Mock()
         # Use an ipv4 and an ipv6 address
-        for connect_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
-            for proxied_address in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
+        for client_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
+            for proxy in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
                 for with_nginx in [True, False]:
                     # Remote address is not included by NGINX, it's on the X-Forwarded-For header
                     if with_nginx is False:
                         req.META = {
-                            'REMOTE_ADDR': connect_ip,
-                            'HTTP_X_FORWARDED_FOR': proxied_address,
+                            'REMOTE_ADDR': proxy,
+                            'HTTP_X_FORWARDED_FOR': client_ip,
                         }
                     else:
                         req.META = {
-                            'HTTP_X_FORWARDED_FOR': "{},{}".format(proxied_address, connect_ip),
+                            'HTTP_X_FORWARDED_FOR': "{},{}".format(client_ip, proxy),
                         }
 
                     request._fill_ips(req)
-                    self.assertEqual(req.ip, proxied_address, "Failed for {}".format(req.META))
-                    self.assertEqual(req.ip_proxy, connect_ip, "Failed for {}".format(req.META))
-                    self.assertEqual(req.ip_version, 4 if '.' in proxied_address else 6, "Failed for {}".format(req.META))
+                    self.assertEqual(req.ip, client_ip, "Failed for {}".format(req.META))
+                    self.assertEqual(req.ip_proxy, client_ip, "Failed for {}".format(req.META))
+                    self.assertEqual(req.ip_version, 4 if '.' in client_ip else 6, "Failed for {}".format(req.META))
 
     def test_detect_ips_proxy_chained(self) -> None:
         config.GlobalConfig.BEHIND_PROXY.set(True)
         req = mock.Mock()
         # Use an ipv4 and an ipv6 address
-        for connect_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
-            for proxied_untrusted_address_client in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
-                for proxied_nearest_address in ['192.168.201.201', '2001:db8:85a3:8d3:1319:8a2e:370:7350']:
+        for client_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
+            for first_proxy in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
+                for second_proxy in ['192.168.201.201', '2001:db8:85a3:8d3:1319:8a2e:370:7350']:
                     for with_nginx in [True, False]:
-                        x_forwarded_for = '{}, {}'.format(proxied_untrusted_address_client, proxied_nearest_address)
+                        x_forwarded_for = '{}, {}'.format(client_ip, first_proxy)
                         if with_nginx is False:
                             req.META = {
-                                'REMOTE_ADDR': connect_ip,
+                                'REMOTE_ADDR': client_ip,
                                 'HTTP_X_FORWARDED_FOR': x_forwarded_for,
                             }
                         else:
                             req.META = {
-                                'HTTP_X_FORWARDED_FOR': "{},{}".format(x_forwarded_for, connect_ip),
+                                'HTTP_X_FORWARDED_FOR': "{}, {}".format(x_forwarded_for, second_proxy),
                             }
 
                         request._fill_ips(req)
-                        self.assertEqual(req.ip, proxied_nearest_address)
-                        self.assertEqual(req.ip_proxy, connect_ip)
-                        self.assertEqual(req.ip_version, 4 if '.' in proxied_nearest_address else 6) 
+                        self.assertEqual(req.ip, first_proxy)
+                        self.assertEqual(req.ip_proxy, client_ip)
+                        self.assertEqual(req.ip_version, 4 if '.' in first_proxy else 6) 
     
