@@ -45,6 +45,8 @@ glob = {
     'transport_id': 1,
     'service_pool_id': 1,
     'user_service_id': 1,
+    'meta_pool_id': 1,
+    'service_pool_group_id': 1,
 }
 
 
@@ -62,18 +64,10 @@ def createProvider() -> models.Provider:
     return provider
 
 
-def createOneCacheTestingUserService(
-    provider: 'models.Provider',
-    user: 'models.User',
-    groups: typing.List['models.Group'],
-    type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
-) -> 'models.UserService':
-
+def createService(provider: models.Provider) -> models.Service:
     from uds.services.Test.service import TestServiceCache, TestServiceNoCache
-    from uds.osmanagers.Test import TestOSManager
-    from uds.transports.Test import TestTransport
 
-    service: 'models.Service' = provider.services.create(
+    service = provider.services.create(
         name='Service {}'.format(glob['service_id']),
         data_type=TestServiceCache.typeType,
         data=TestServiceCache(
@@ -83,25 +77,53 @@ def createOneCacheTestingUserService(
     )
     glob['service_id'] += 1  # In case we generate a some more services elsewhere
 
-    """
-    Creates several testing OS Managers
-    """
+    return service
+
+
+def createOsManager() -> models.OSManager:
+    from uds.osmanagers.Test import TestOSManager
 
     values: typing.Dict[str, typing.Any] = {
         'onLogout': 'remove',
         'idle': 300,
     }
-    osmanager: typing.Optional['models.OSManager'] = None
-    if type_ == 'managed':
-        osmanager = models.OSManager.objects.create(
-            name='OS Manager %d' % (glob['osmanager_id']),
-            comments='Comment for OS Manager %d' % (glob['osmanager_id']),
-            data_type=TestOSManager.typeType,
-            data=TestOSManager(
-                environment.Environment(str(glob['osmanager_id'])), values
-            ).serialize(),
+    osmanager = models.OSManager.objects.create(
+        name='OS Manager %d' % (glob['osmanager_id']),
+        comments='Comment for OS Manager %d' % (glob['osmanager_id']),
+        data_type=TestOSManager.typeType,
+        data=TestOSManager(
+            environment.Environment(str(glob['osmanager_id'])), values
+        ).serialize(),
+    )
+    glob['osmanager_id'] += 1
+
+    return osmanager
+
+
+def createServicePoolGroup(
+    image: typing.Optional[models.Image] = None,
+) -> models.ServicePoolGroup:
+    service_pool_group: 'models.ServicePoolGroup' = (
+        models.ServicePoolGroup.objects.create(
+            name='Service pool group %d' % (glob['service_pool_group_id']),
+            comments=f'Comment for service pool group {glob["service_pool_group_id"]}',
+            image=image,
         )
-        glob['osmanager_id'] += 1
+    )
+    glob['service_pool_group_id'] += 1
+
+    return service_pool_group
+
+
+def createServicePool(
+    service: models.Service,
+    osmanager: typing.Optional[models.OSManager] = None,
+    groups: typing.Optional[typing.List[models.Group]] = None,
+    transports: typing.Optional[typing.List[models.Transport]] = None,
+    servicePoolGroup: typing.Optional[models.ServicePoolGroup] = None,
+) -> models.ServicePool:
+    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
+    from uds.osmanagers.Test import TestOSManager
 
     service_pool: 'models.ServicePool' = service.deployedServices.create(
         name='Service pool %d' % (glob['service_pool_id']),
@@ -109,14 +131,36 @@ def createOneCacheTestingUserService(
         comments='Comment for service pool %d' % (glob['service_pool_id']),
         osmanager=osmanager,
     )
+    glob['service_pool_id'] += 1
 
+    for g in groups or []:
+        service_pool.assignedGroups.add(g)
+
+    for t in transports or []:
+        service_pool.transports.add(t)
+
+    if servicePoolGroup is not None:
+        service_pool.servicesPoolGroup = servicePoolGroup
+
+    return service_pool
+
+
+def createPublication(
+    service_pool: models.ServicePool,
+) -> models.ServicePoolPublication:
     publication: 'models.ServicePoolPublication' = service_pool.publications.create(
         publish_date=datetime.datetime.now(),
         state=states.publication.USABLE,
         state_date=datetime.datetime.now(),
         # Rest of fields are left as default
     )
-    glob['service_pool_id'] += 1
+    service_pool.publications.add(publication)
+
+    return publication
+
+
+def createTransport() -> models.Transport:
+    from uds.transports.Test import TestTransport
 
     values = {
         'testURL': 'http://www.udsenterprise.com',
@@ -131,14 +175,14 @@ def createOneCacheTestingUserService(
         ).serialize(),
     )
     glob['transport_id'] += 1
+    return transport
 
-    service_pool.publications.add(publication)
-    for g in groups:
-        service_pool.assignedGroups.add(g)
-    service_pool.transports.add(transport)
 
-    service_pool.transports.add(transport)
-
+def createUserService(
+    service_pool: models.ServicePool,
+    publication: models.ServicePoolPublication,
+    user: models.User,
+) -> models.UserService:
     user_service: 'models.UserService' = service_pool.userServices.create(
         friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
@@ -151,8 +195,63 @@ def createOneCacheTestingUserService(
         src_hostname=generators.random_string(32),
         src_ip=generators.random_ip(),
     )
-
+    glob['user_service_id'] += 1
     return user_service
+
+
+def createMetaPool(
+    service_pools: typing.List[models.ServicePool],
+    groups: typing.List[models.Group],
+    round_policy: int = models.MetaPool.ROUND_ROBIN_POOL,
+    transport_grouping: int = models.MetaPool.AUTO_TRANSPORT_SELECT,
+    ha_policy: int = models.MetaPool.HA_POLICY_ENABLED,
+) -> models.MetaPool:
+    meta_pool: 'models.MetaPool' = models.MetaPool.objects.create(
+        name='Meta pool %d' % (glob['meta_pool_id']),
+        short_name='meta%d' % (glob['meta_pool_id']),
+        comments='Comment for meta pool %d' % (glob['meta_pool_id']),
+        policy=round_policy,
+        transport_grouping=transport_grouping,
+        ha_policy=ha_policy,
+    )
+    glob['meta_pool_id'] += 1
+
+    for g in groups:
+        meta_pool.assignedGroups.add(g)
+
+    for priority, pool in enumerate(service_pools):
+        meta_pool.members.create(pool=pool, priority=priority, enabled=True)
+
+    return meta_pool
+
+
+def createOneCacheTestingUserService(
+    provider: 'models.Provider',
+    user: 'models.User',
+    groups: typing.List['models.Group'],
+    type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
+) -> 'models.UserService':
+
+    from uds.services.Test.service import TestServiceCache, TestServiceNoCache
+    from uds.osmanagers.Test import TestOSManager
+    from uds.transports.Test import TestTransport
+
+    service = createService(provider)
+
+    """
+    Creates several testing OS Managers
+    """
+
+    osmanager: typing.Optional['models.OSManager'] = (
+        None if type_ == 'unmanaged' else createOsManager()
+    )
+    transport: 'models.Transport' = createTransport()
+    service_pool: 'models.ServicePool' = createServicePool(
+        service, osmanager, groups, [transport]
+    )
+    publication: 'models.ServicePoolPublication' = createPublication(service_pool)
+
+    return createUserService(service_pool, publication, user)
 
 
 def createCacheTestingUserServices(

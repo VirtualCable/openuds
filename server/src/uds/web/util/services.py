@@ -65,6 +65,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def _serviceInfo(
     uuid: str,
     is_meta: bool,
@@ -278,10 +279,10 @@ def getServicesData(
                     uuid=meta.uuid,
                     is_meta=True,
                     name=meta.name,
-                    visual_name= meta.visual_name,
-                    description= meta.comments,
-                    group= group,
-                    transports= metaTransports,
+                    visual_name=meta.visual_name,
+                    description=meta.comments,
+                    group=group,
+                    transports=metaTransports,
                     image=meta.image,
                     show_transports=len(metaTransports) > 1,
                     allow_users_remove=meta.allow_users_remove,
@@ -350,7 +351,9 @@ def getServicesData(
         )
         # tbr = False
         if toBeReplacedDate:
-            toBeReplaced = formats.date_format(toBeReplacedDate, 'SHORT_DATETIME_FORMAT')
+            toBeReplaced = formats.date_format(
+                toBeReplacedDate, 'SHORT_DATETIME_FORMAT'
+            )
             toBeReplacedTxt = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
             ).format(toBeReplacedDate)
@@ -372,7 +375,7 @@ def getServicesData(
             )
 
         services.append(
-                _serviceInfo(
+            _serviceInfo(
                 uuid=sPool.uuid,
                 is_meta=False,
                 name=datator(sPool.name),
@@ -394,7 +397,7 @@ def getServicesData(
                 to_be_replaced=toBeReplaced,
                 to_be_replaced_text=toBeReplacedTxt,
                 custom_calendar_text=sPool.calendar_message,
-                )
+            )
         )
 
     # logger.debug('Services: %s', services)
