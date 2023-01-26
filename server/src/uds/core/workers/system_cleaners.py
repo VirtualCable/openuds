@@ -95,7 +95,7 @@ class AuditLogCleanup(Job):
         Cleans logs older than days
         """
         Log.objects.filter(
-            date__lt=getSqlDatetime()
+            created__lt=getSqlDatetime()
             - datetime.timedelta(
                 days=config.GlobalConfig.MAX_AUDIT_LOGS_DURATION.getInt()
             ),
