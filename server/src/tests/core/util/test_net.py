@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class NetTest(UDSTestCase):
-    def testNetworkFromStringIPv4(self):
+    def testNetworkFromStringIPv4(self) -> None:
         for n in (
             ('*', 0, 4294967295),
             ('192.168.0.1', 3232235521, 3232235521),
@@ -91,32 +91,32 @@ class NetTest(UDSTestCase):
                 'Incorrect network end value for {0}'.format(n[0]),
             )
 
-        for n in ('192.168.0', '192.168.0.5-192.168.0.3', 'no net'):
+        for n1 in ('192.168.0', '192.168.0.5-192.168.0.3', 'no net'):
             with self.assertRaises(ValueError):
-                net.networksFromString(n)
+                net.networksFromString(n1)
 
         self.assertEqual(net.ipToLong('192.168.0.5').ip, 3232235525)
         self.assertEqual(net.longToIp(3232235525, 4), '192.168.0.5')
-        for n in range(0, 255):
-            self.assertTrue(net.contains('192.168.0.0/24', '192.168.0.{}'.format(n)))
+        for n2 in range(0, 255):
+            self.assertTrue(net.contains('192.168.0.0/24', '192.168.0.{}'.format(n2)))
 
-        for n in range(4294):
+        for n3 in range(4294):
             self.assertTrue(
-                net.contains([net.NetworkType(0, 4294967295, 4)], n * 1000)
+                net.contains([net.NetworkType(0, 4294967295, 4)], n3 * 1000)
             )
             self.assertTrue(
-                net.contains(net.NetworkType(0, 4294967295, 4), n * 1000)
+                net.contains(net.NetworkType(0, 4294967295, 4), n3 * 1000)
             )
 
         # Test some ip conversions from long to ip and viceversa
-        for n in ('172', '192', '10'):
-            for n2 in range(0, 256, 17):
-                for n3 in range(0, 256, 13):
-                    for n4 in range(0, 256, 11):
-                        ip = '{0}.{1}.{2}.{3}'.format(n, n2, n3, n4)
+        for n4 in ('172', '192', '10'):
+            for n5 in range(0, 256, 17):
+                for n6 in range(0, 256, 13):
+                    for n7 in range(0, 256, 11):
+                        ip = '{0}.{1}.{2}.{3}'.format(n4, n5, n6, n7)
                         self.assertEqual(net.longToIp(net.ipToLong(ip).ip, 4), ip)
 
-    def testNetworkFromStringIPv6(self):
+    def testNetworkFromStringIPv6(self) -> None:
         # IPv6 only support standard notation, and '*', but not "netmask" or "range"
         for n in (
             (
@@ -189,7 +189,7 @@ class NetTest(UDSTestCase):
             )
 
         # iterate some ipv6 addresses
-        for n in (
+        for n6 in (
             '2001:db8::1',
             '2001:1::1',
             '2001:2:3::1',
@@ -198,4 +198,4 @@ class NetTest(UDSTestCase):
             '2001:2:3:4:5:6:0:1',
         ):
             # Ensure converting back to string ips works
-            self.assertEqual(net.longToIp(net.ipToLong(n).ip, 6), n)
+            self.assertEqual(net.longToIp(net.ipToLong(n6).ip, 6), n6)

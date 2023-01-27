@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 class SystemTest(rest.test.RESTTestCase):
     def test_overview(self):
         # If not logged in, will fail
-        response = self.client.get('/uds/rest/system/overview')
+        response = self.client.rest_get('system/overview')
         self.assertEqual(response.status_code, 403)
 
         # Login as admin
@@ -59,11 +59,12 @@ class SystemTest(rest.test.RESTTestCase):
         # rest.test.NUMBER_OF_ITEMS_TO_CREATE groups
         # 2 services (1 managed, 1 unmanaged), 2 service_pools (1 for each service), 2 user_services (1 for each service pool)
         # no meta_pools, and no restrained_services_pools
-        self.assertEqual(json['users'], rest.test.NUMBER_OF_ITEMS_TO_CREATE * 3)
+        self.assertEqual(json['users'], rest.test.NUMBER_OF_ITEMS_TO_CREATE * 3)  # 3 because will create admins, staff and plain users
         self.assertEqual(json['groups'], rest.test.NUMBER_OF_ITEMS_TO_CREATE)
-        self.assertEqual(json['services'], 2)
-        self.assertEqual(json['service_pools'], 2)
-        self.assertEqual(json['user_services'], 2)
+        count = len(self.user_services) + 2
+        self.assertEqual(json['services'], count)
+        self.assertEqual(json['service_pools'], count)
+        self.assertEqual(json['user_services'], count)
         self.assertEqual(json['meta_pools'], 0)
         self.assertEqual(json['restrained_services_pools'], 0)
 

@@ -129,7 +129,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 models.ServicePool(uuid='x'),
             )
             if found.uuid == 'x':
-                self.fail('User service not found in user_services list')
+                self.fail('Pool not found in user_services list')
 
             self.assertEqual(user_service['is_meta'], False)
             self.assertEqual(user_service['name'], found.name)
@@ -202,7 +202,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 models.MetaPool(uuid='x'),
             )
             if found.uuid == 'x':
-                self.fail('User service not found in user_services list')
+                self.fail('Meta pool not found in user_services list')
 
             self.assertEqual(user_service['is_meta'], True)
             self.assertEqual(user_service['name'], found.name)

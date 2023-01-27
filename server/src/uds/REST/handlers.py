@@ -181,8 +181,11 @@ class Handler:
 
             if self.needs_staff and not self.is_staff_member():
                 raise AccessDenied()
-
-            self._user = self.getUser()
+            try:
+                self._user = self.getUser()
+            except Exception as e:
+                # Maybe the user was deleted, so access is denied
+                raise AccessDenied() from e
         else:
             self._user = User()  # Empty user for non authenticated handlers
 

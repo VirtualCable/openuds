@@ -28,11 +28,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
 import logging
 import typing
 
 from uds import models
+from uds.core.util import log
 
 from .. import test, generators, rest, constants
 from ...fixtures import (
@@ -53,8 +53,13 @@ class RESTTestCase(test.UDSTransactionTestCase):
     staffs: typing.List[models.User]
     plain_users: typing.List[models.User]
 
+    users = property(lambda self: self.admins + self.staffs + self.plain_users)
+
+    provider: models.Provider
     user_service_managed: models.UserService
     user_service_unmanaged: models.UserService
+
+    user_services: typing.List[models.UserService]
 
     def setUp(self) -> None:
         # Set up data for REST Test cases
@@ -80,15 +85,19 @@ class RESTTestCase(test.UDSTransactionTestCase):
             self.auth, number_of_users=NUMBER_OF_ITEMS_TO_CREATE, groups=self.groups
         )
 
+        for user in self.users:
+            log.doLog(user, log.DEBUG, f'Debug Log for {user.name}')
+            log.doLog(user, log.INFO, f'Info Log for {user.name}')
+            log.doLog(user, log.WARNING, f'Warning Log for {user.name}')
+            log.doLog(user, log.ERROR, f'Error Log for {user.name}')
+
         self.provider = services_fixtures.createProvider()
 
-        self.user_service_managed = (
-            services_fixtures.createOneCacheTestingUserService(
-                self.provider,
-                self.admins[0],
-                self.groups,
-                'managed',
-            )
+        self.user_service_managed = services_fixtures.createOneCacheTestingUserService(
+            self.provider,
+            self.admins[0],
+            self.groups,
+            'managed',
         )
         self.user_service_unmanaged = (
             services_fixtures.createOneCacheTestingUserService(
@@ -98,6 +107,19 @@ class RESTTestCase(test.UDSTransactionTestCase):
                 'unmanaged',
             )
         )
+
+        self.user_services = []
+        for user in self.users:
+            self.user_services.append(
+                services_fixtures.createOneCacheTestingUserService(
+                    self.provider, user, self.groups, 'managed'
+                )
+            )
+            self.user_services.append(
+                services_fixtures.createOneCacheTestingUserService(
+                    self.provider, user, self.groups, 'unmanaged'
+                )
+            )
 
     def login(
         self, user: typing.Optional[models.User] = None, as_admin: bool = True
@@ -121,7 +143,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
 
 
 class RESTActorTestCase(RESTTestCase):
-    
+
     # Login as admin or staff and register an actor
     # Returns as a tuple the auth token and the actor registration result token:
     #   - The login auth token
@@ -138,7 +160,9 @@ class RESTActorTestCase(RESTTestCase):
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
         return token, response.json()['result']
 
-    def register_data(self, chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
+    def register_data(
+        self, chars: typing.Optional[str] = None
+    ) -> typing.Dict[str, str]:
         # Data for registration
         return {
             'username': generators.random_string(size=12, chars=chars)

@@ -32,6 +32,7 @@
 """
 
 import logging
+import io
 import typing
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -39,7 +40,7 @@ from matplotlib.figure import Figure
 from matplotlib import cm
 
 # This must be imported to allow 3d projections
-from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=unused-import
+from mpl_toolkits.mplot3d.axes3d import Axes3D  # pylint: disable=unused-import
 
 import numpy as np
 
@@ -47,8 +48,31 @@ logger = logging.getLogger(__name__)
 
 
 def barChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
 ) -> None:
+    """
+    Generates a bar chart and stores it on output
+
+    Args:
+        size: Size of the chart (width, height, dpi) in inches
+        data: Data to be used to generate the chart
+        output: Output stream to store the chart
+
+    Notes:
+        Data must be a dict with the following keys:
+            - x: List of x values
+            - y: List of dicts with the following keys:
+                - data: List of y values
+                - label: Label for the bar
+            - title: Title of the chart
+            - xlabel: Label for x axis
+            - ylabel: Label for y axis
+            - allTicks: If True, all x values will be shown as ticks
+            - xtickFnc: Function to be used to format x ticks labels
+
+    Returns:
+        None, writes the chart on output as png
+    """
     d = data['x']
     ind = np.arange(len(d))
     ys = data['y']
@@ -72,7 +96,7 @@ def barChart(
     if data.get('allTicks', True):
         axis.set_xticks(ind)
 
-    if 'xtickFnc' in data:
+    if 'xtickFnc' in data and data['xtickFnc']:
         axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
 
     axis.legend()
@@ -81,8 +105,31 @@ def barChart(
 
 
 def lineChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
 ) -> None:
+    """
+    Generates a line chart and stores it on output
+
+    Args:
+        size: Size of the chart (width, height, dpi) in inches
+        data: Data to be used to generate the chart
+        output: Output stream to store the chart
+
+    Notes:
+        Data must be a dict with the following keys:
+            - x: List of x valuesç
+            - y: List of dicts with the following keys:
+                - data: List of y values
+                - label: Label for the line
+            - title: Title of the chart
+            - xlabel: Label for x axis
+            - ylabel: Label for y axis
+            - allTicks: If True, all x values will be shown as ticks
+            - xtickFnc: Function to be used to format x ticks labels
+
+    Returns:
+        None, writes the chart on output as png
+    """
     x = data['x']
     y = data['y']
 
@@ -104,7 +151,7 @@ def lineChart(
     if data.get('allTicks', True):
         axis.set_xticks(x)
 
-    if 'xtickFnc' in data:
+    if 'xtickFnc' in data and data['xtickFnc']:
         axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
 
     axis.legend()
@@ -113,8 +160,33 @@ def lineChart(
 
 
 def surfaceChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping, output: typing.BinaryIO
+    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
 ) -> None:
+    """
+    Generates a surface chart and stores it on output
+
+    Args:
+        size: Size of the chart (width, height, dpi) in inches
+        data: Data to be used to generate the chart
+        output: Output stream to store the chart
+
+    Notes:
+        Data must be a dict with the following keys:
+            - x: List of x values
+            - y: List of y values
+            - z: List of z values, must be a bidimensional list
+            - wireframe: If True, a wireframe will be shown
+            - title: Title of the chart
+            - xlabel: Label for x axis
+            - ylabel: Label for y axis
+            - zlabel: Label for z axis
+            - allTicks: If True, all x values will be shown as ticks
+            - xtickFnc: Function to be used to format x ticks labels from x ticks
+            - ytickFnc: Function to be used to format y ticks labels form y ticks
+
+    Returns:
+        None, writes the chart on output as png
+    """
     x = data['x']
     y = data['y']
     z = data['z']
@@ -133,7 +205,7 @@ def surfaceChart(
     fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis = fig.add_subplot(111, projection='3d')
+    axis: typing.Any = fig.add_subplot(111, projection='3d')
     # axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     if data.get('wireframe', False):
@@ -154,9 +226,9 @@ def surfaceChart(
         axis.set_xticks(data['x'])
         axis.set_yticks(data['y'])
 
-    if 'xtickFnc' in data:
+    if 'xtickFnc' in data and data['xtickFnc']:
         axis.set_xticklabels([data['xtickFnc'](v) for v in axis.get_xticks()])
-    if 'ytickFnc' in data:
+    if 'xtickFnc' in data and data['ytickFnc']:
         axis.set_yticklabels([data['ytickFnc'](v) for v in axis.get_yticks()])
 
     fig.savefig(output, format='png', transparent=True)

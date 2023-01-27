@@ -41,6 +41,8 @@ from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
+REST_PATH = '/uds/rest/'
+
 
 class UDSHttpResponse(HttpResponse):
     """
@@ -95,14 +97,17 @@ class UDSClientMixin:
             kwargs['REMOTE_ADDR'] = '127.0.0.1'
         elif self.ip_version == 6:
             kwargs['REMOTE_ADDR'] = '::1'
-        
+
+    def compose_rest_url(self, method: str) -> str:
+        return f'{REST_PATH}/{method}'
+
 
 class UDSClient(UDSClientMixin, Client):
     def __init__(
         self,
         enforce_csrf_checks: bool = False,
         raise_request_exception: bool = True,
-        **defaults: typing.Any
+        **defaults: typing.Any,
     ):
         UDSClientMixin.initialize(self)
 
@@ -123,9 +128,33 @@ class UDSClient(UDSClientMixin, Client):
         self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', super().get(*args, **kwargs))
 
+    def rest_get(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return self.get(self.compose_rest_url(method), *args, **kwargs)
+
     def post(self, *args, **kwargs) -> 'UDSHttpResponse':
         self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', super().post(*args, **kwargs))
+
+    def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return self.post(self.compose_rest_url(method), *args, **kwargs)
+
+    def put(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
+        return typing.cast('UDSHttpResponse', super().put(*args, **kwargs))
+
+    def rest_put(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return self.put(self.compose_rest_url(method), *args, **kwargs)
+
+    def delete(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
+        return typing.cast('UDSHttpResponse', super().delete(*args, **kwargs))
+
+    def rest_delete(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return self.delete(self.compose_rest_url(method), *args, **kwargs)
 
 
 class UDSAsyncClient(UDSClientMixin, AsyncClient):
@@ -133,7 +162,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         self,
         enforce_csrf_checks: bool = False,
         raise_request_exception: bool = True,
-        **defaults: typing.Any
+        **defaults: typing.Any,
     ):
         UDSClientMixin.initialize(self)
 
@@ -154,9 +183,34 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', await super().get(*args, **kwargs))
 
+    async def rest_get(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return await self.get(self.compose_rest_url(method), *args, **kwargs)
+
     async def post(self, *args, **kwargs) -> 'UDSHttpResponse':
         self.append_remote_addr(kwargs)
         return typing.cast('UDSHttpResponse', await super().post(*args, **kwargs))
+
+    async def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return await self.post(self.compose_rest_url(method), *args, **kwargs)
+
+    async def put(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
+        return typing.cast('UDSHttpResponse', await super().put(*args, **kwargs))
+
+    async def rest_put(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return await self.put(self.compose_rest_url(method), *args, **kwargs)
+
+    async def delete(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.append_remote_addr(kwargs)
+        return typing.cast('UDSHttpResponse', await super().delete(*args, **kwargs))
+
+    async def rest_delete(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
+        # compose url
+        return await self.delete(self.compose_rest_url(method), *args, **kwargs)
+
 
 class UDSTestCaseMixin:
     client_class: typing.Type = UDSClient
@@ -178,8 +232,8 @@ class UDSTestCaseMixin:
         except ValueError:
             pass  # Not present
 
-class UDSTestCase(UDSTestCaseMixin, TestCase):
 
+class UDSTestCase(UDSTestCaseMixin, TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -187,7 +241,6 @@ class UDSTestCase(UDSTestCaseMixin, TestCase):
 
 
 class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
-
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
