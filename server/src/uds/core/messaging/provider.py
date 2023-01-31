@@ -47,6 +47,16 @@ class NotificationLevel(enum.IntEnum):
     ERROR = 2
     CRITICAL = 3
 
+    @staticmethod
+    def from_int(value: int) -> 'NotificationLevel':
+        """
+        Returns a NotificationLevel from an int value
+        """
+        try:
+            return NotificationLevel(value)
+        except ValueError:
+            return NotificationLevel.INFO
+
 
 class Notifier(Module):
     """

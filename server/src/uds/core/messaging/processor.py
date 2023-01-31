@@ -36,7 +36,7 @@ import typing
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification, getSqlDatetime
-from .provider import Notifier as NotificationProviderModule
+from .provider import Notifier as NotificationProviderModule, NotificationLevel
 from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
@@ -124,7 +124,12 @@ class MessageProcessorThread(BaseThread):
                         # if we are asked to stop, we don't try to send anymore
                         if not self.keepRunning:
                             break
-                        p.notify(n.group, n.identificator, n.level, n.message)
+                        p.notify(
+                            n.group,
+                            n.identificator,
+                            NotificationLevel.from_int(n.level),
+                            n.message,
+                        )
 
             for a in range(WAIT_TIME):
                 if not self.keepRunning:
