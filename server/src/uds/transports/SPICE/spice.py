@@ -67,6 +67,7 @@ class SPICETransport(BaseSpiceTransport):
     usbShare = BaseSpiceTransport.usbShare
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
+    sslConnection = BaseSpiceTransport.SSLConnection
 
     def getUDSTransportScript(
         self,
@@ -103,6 +104,7 @@ class SPICETransport(BaseSpiceTransport):
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
+        r.ssl = self.sslConnection.isTrue()
 
         osName = {
             OsDetector.KnownOS.Windows: 'windows',
