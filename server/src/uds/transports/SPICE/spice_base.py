@@ -111,7 +111,7 @@ class BaseSpiceTransport(transports.Transport):
         label=_('New USB Auto Sharing'),
         tooltip=_('Auto-redirect USB devices when plugged in.'),
         defvalue=gui.FALSE,
-        tab=gui.Tab.ADVANCED,
+        tab=gui.ADVANCED_TAB,
     )
     SSLConnection = gui.CheckBoxField(
         order=9,
