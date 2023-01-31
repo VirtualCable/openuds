@@ -111,7 +111,13 @@ class BaseSpiceTransport(transports.Transport):
         label=_('New USB Auto Sharing'),
         tooltip=_('Auto-redirect USB devices when plugged in.'),
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
+    )
+    SSLConnection = gui.CheckBoxField(
+        order=9,
+        label=_('SSL Connection'),
+        tooltip=_('If checked, SPICE protocol will required SSL connection.'),
+        defvalue=gui.FALSE,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
