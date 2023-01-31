@@ -104,7 +104,7 @@ class SPICETransport(BaseSpiceTransport):
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
         r.smartcard = self.smartCardRedirect.isTrue()
-        r.ssl = self.sslConnection.isTrue()
+        r.ssl_connection = self.sslConnection.isTrue()
 
         osName = {
             OsDetector.KnownOS.Windows: 'windows',

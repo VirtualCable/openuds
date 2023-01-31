@@ -104,7 +104,6 @@ class RemoteViewerFile:
         delete_file = '01'[self.delete_file]
         usb_auto_share = '01'[self.usb_auto_share]
         new_usb_auto_share = '01'[self.new_usb_auto_share]
-        ssl_connection = '01'[self.ssl_connection]
 
         ca = self.ca.strip().replace(
             '\n', '\\n'
@@ -127,7 +126,7 @@ class RemoteViewerFile:
             host_subject=self.host_subject if tls_port != '-1' else '',
             ca=ca if tls_port != '-1' else '',
             secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard'
-            if ssl_connection and tls_port != '-1'
+            if self.ssl_connection and tls_port != '-1'
             else '',
             proxy=self.proxy,
         )

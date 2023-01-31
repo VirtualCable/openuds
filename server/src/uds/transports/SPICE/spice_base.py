@@ -117,8 +117,9 @@ class BaseSpiceTransport(transports.Transport):
     SSLConnection = gui.CheckBoxField(
         order=9,
         label=_('SSL Connection'),
-        tooltip=_('If checked, SPICE protocol will required SSL connection.'),
-        defvalue=gui.FALSE,
+        tooltip=_('If checked, SPICE protocol will allow SSL connections.'),
+        defvalue=gui.TRUE,
+        tab=gui.ADVANCED_TAB,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
