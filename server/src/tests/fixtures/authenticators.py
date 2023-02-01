@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import random  # nosec: testing only
 
 from uds import models
 from uds.core.util import states
@@ -98,11 +99,11 @@ def createGroups(
     authenticator: models.Authenticator, number_of_groups: int = 1
 ) -> typing.List[models.Group]:
     """
-    Creates a testing authenticator
+    Creates a bunch of groups
     """
     groups = [
         authenticator.groups.create(
-            name='Group {}'.format(i),
+            name='group{}'.format(i),
             comments='Group {}'.format(i),
             is_meta=False,
         )
@@ -118,11 +119,11 @@ def createMetaGroups(
     authenticator: models.Authenticator, number_of_meta: int = 1
 ) -> typing.List[models.Group]:
     """
-    Creates a testing authenticator
+    Creates a bunch of meta groups
     """
     meta_groups = [
         authenticator.groups.create(
-            name='Meta group {}'.format(i),
+            name='meta-group{}'.format(i),
             comments='Meta group {}'.format(i),
             is_meta=True,
             meta_if_any=i % 2 == 0,
@@ -130,6 +131,14 @@ def createMetaGroups(
         for i in range(glob['group_id'], glob['group_id'] + number_of_meta)
     ]
 
+    # Add some groups to the meta groups
+    # Get all groups, and add random groups to each meta group
+    groups = list(authenticator.groups.all())
+    if groups:
+        for meta in meta_groups:
+            for group in random.sample(groups, random.randint(1, len(groups)//2)):  # nosec: testing only
+                meta.groups.add(group)
+        
     glob['group_id'] += number_of_meta
 
     return meta_groups

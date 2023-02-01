@@ -33,12 +33,11 @@ import functools
 import logging
 
 from uds import models
-from uds.REST.methods.users_groups import getPoolsForGroups
 from uds.core import VERSION
 from uds.core.managers import cryptoManager
 
 from ...utils import rest
-
+from ...fixtures import rest as rest_fixtures
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +46,7 @@ class UsersTest(rest.test.RESTActorTestCase):
     """
     Test users group rest api
     """
+
     def setUp(self) -> None:
         super().setUp()
         self.login()
@@ -65,15 +65,9 @@ class UsersTest(rest.test.RESTActorTestCase):
         user: typing.Mapping[str, typing.Any]
         for user in users:
             # Locate the user in the auth
-            number = int(user['name'][4:])
-            dbusr = self.auth.users.get(name=user['name'])
-            self.assertEqual(user['real_name'], dbusr.real_name)
-            self.assertEqual(user['comments'], dbusr.comments)
-            self.assertEqual(user['is_admin'], dbusr.is_admin)
-            self.assertEqual(user['staff_member'], dbusr.staff_member)
-            self.assertEqual(user['state'], dbusr.state)
-            self.assertEqual(user['id'], dbusr.uuid)
-            self.assertTrue(len(user['role']) > 0)
+            self.assertTrue(
+                rest_fixtures.assertUserIs(self.auth.users.get(name=user['name']), user)
+            )
 
     def test_users_tableinfo(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users/tableinfo'
@@ -114,14 +108,12 @@ class UsersTest(rest.test.RESTActorTestCase):
             response = self.client.rest_get(f'{url}/{i.uuid}')
             self.assertEqual(response.status_code, 200)
             user = response.json()
-            self.assertEqual(user['name'], i.name)
-            self.assertEqual(user['real_name'], i.real_name)
-            self.assertEqual(user['comments'], i.comments)
-            self.assertEqual(user['is_admin'], i.is_admin)
-            self.assertEqual(user['staff_member'], i.staff_member)
-            self.assertEqual(user['state'], i.state)
-            self.assertEqual(user['id'], i.uuid)
-            self.assertTrue(len(user['role']) > 0)
+            self.assertTrue(
+                rest_fixtures.assertUserIs(i, user),
+                'User {} {} is not correct'.format(
+                    i, models.User.objects.filter(uuid=i.uuid).values()[0]
+                ),
+            )
 
         # invalid user
         response = self.client.rest_get(f'{url}/invalid')
@@ -141,16 +133,9 @@ class UsersTest(rest.test.RESTActorTestCase):
 
     def test_user_create_edit(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users'
-        user_dct: typing.Dict[str, typing.Any] = {
-            'name': 'test',
-            'real_name': 'test real name',
-            'comments': 'test comments',
-            'state': 'A',
-            'is_admin': True,
-            'staff_member': True,
-            'groups': [self.groups[0].uuid, self.groups[1].uuid],
-        }
-
+        user_dct = rest_fixtures.createUser(
+            groups=[self.groups[0].uuid, self.groups[1].uuid]
+        )
         # Now, will work
         response = self.client.rest_put(
             url,
@@ -160,13 +145,7 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertEqual(user_dct['name'], dbusr.name)
-        self.assertEqual(user_dct['real_name'], dbusr.real_name)
-        self.assertEqual(user_dct['comments'], dbusr.comments)
-        self.assertEqual(user_dct['is_admin'], dbusr.is_admin)
-        self.assertEqual(user_dct['staff_member'], dbusr.staff_member)
-        self.assertEqual(user_dct['state'], dbusr.state)
-        self.assertEqual(user_dct['groups'], [i.uuid for i in dbusr.groups.all()])
+        self.assertTrue(rest_fixtures.assertUserIs(dbusr, user_dct))
 
         self.assertEqual(response.status_code, 200)
         # Returns nothing
@@ -179,17 +158,12 @@ class UsersTest(rest.test.RESTActorTestCase):
         )
         self.assertEqual(response.status_code, 400)
 
-        # Modify saved user
-        user_dct['name'] = 'test2'
-        user_dct['real_name'] = 'test real name 2'
-        user_dct['comments'] = 'test comments 2'
-        user_dct['state'] = 'D'
-        user_dct['is_admin'] = False
-        user_dct['staff_member'] = False
-        user_dct['groups'] = [self.groups[2].uuid]
-        user_dct['id'] = dbusr.uuid
-        user_dct['password'] = 'test'  # nosec: test password
-        user_dct['mfa_data'] = 'mfadata'
+        user_dct = rest_fixtures.createUser(  # nosec: test password, also, "fixme" means "create a random password" in this case
+            id=dbusr.uuid,
+            groups=[self.groups[2].uuid],
+            password='fixme',
+            mfa_data='mfadata',
+        )
 
         response = self.client.rest_put(
             url,
@@ -200,14 +174,9 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertEqual(user_dct['name'], dbusr.name)
-        self.assertEqual(user_dct['real_name'], dbusr.real_name)
-        self.assertEqual(user_dct['comments'], dbusr.comments)
-        self.assertEqual(user_dct['is_admin'], dbusr.is_admin)
-        self.assertEqual(user_dct['staff_member'], dbusr.staff_member)
-        self.assertEqual(user_dct['state'], dbusr.state)
-        self.assertEqual(user_dct['groups'], [i.uuid for i in dbusr.groups.all()])
-        self.assertEqual(cryptoManager().checkHash(user_dct['password'], dbusr.password), True)
+        self.assertTrue(
+            rest_fixtures.assertUserIs(dbusr, user_dct, compare_password=True)
+        )
 
     def test_user_delete(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users'
@@ -235,5 +204,3 @@ class UsersTest(rest.test.RESTActorTestCase):
         count = len(list(models.ServicePool.getDeployedServicesForGroups(groups)))
 
         self.assertEqual(len(response.json()), count)
-
-

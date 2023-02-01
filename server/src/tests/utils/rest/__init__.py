@@ -30,12 +30,15 @@
 """
 
 import logging
+import random
+import uuid
 import typing
 
 from django.test import SimpleTestCase
 from django.test.client import Client
 
 from . import test
+from .. import generators
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
 
@@ -77,7 +80,85 @@ def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
         content_type='application/json',
         **{AUTH_TOKEN_HEADER: auth_token}
     )
-    caller.assertEqual(response.status_code, 200, 'Logout Result: {}'.format(response.content))
-    caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout Result: {}'.format(response.content))
+    caller.assertEqual(
+        response.status_code, 200, 'Logout Result: {}'.format(response.content)
+    )
+    caller.assertEqual(
+        response.json(), {'result': 'ok'}, 'Logout Result: {}'.format(response.content)
+    )
 
 
+# Rest related utils for fixtures
+
+# Just a holder for a type, to indentify uuids
+class uuid_type:
+    pass
+
+
+RestFieldType = typing.Tuple[str, typing.Union[typing.Type, typing.Tuple[str, ...]]]
+RestFieldReference = typing.Final[typing.List[RestFieldType]]
+
+
+def random_value(
+    field_type: typing.Union[typing.Type, typing.Tuple[str, ...]],
+    value: typing.Any = None,
+) -> typing.Any:
+    if value is not None and value != 'fixme':
+        return value
+
+    if field_type in [str, typing.Optional[str]]:
+        return generators.random_utf8_string()
+    if field_type in [bool, typing.Optional[bool]]:
+        return random.choice([True, False])  # nosec
+    if field_type in [int, typing.Optional[int]]:
+        return generators.random_int()
+    if field_type in [uuid_type, typing.Optional[uuid_type]]:
+        return generators.random_uuid()
+    if isinstance(field_type, tuple):
+        return random.choice(field_type)  # nosec
+    if field_type == typing.List[str]:
+        return [generators.random_string() for _ in range(generators.random_int(1, 10))]
+    if field_type == typing.List[uuid_type]:
+        return [generators.random_uuid() for _ in range(generators.random_int(1, 10))]
+    if field_type == typing.List[int]:
+        return [generators.random_int() for _ in range(generators.random_int(1, 10))]
+    if field_type == typing.List[bool]:
+        return [random.choice([True, False]) for _ in range(generators.random_int(1, 10))]  # nosec
+    if field_type == typing.List[typing.Tuple[str, str]]:
+        return [(generators.random_utf8_string(), generators.random_utf8_string()) for _ in range(generators.random_int(1, 10))]
+    
+    return None
+
+
+class RestStruct:
+    def __init__(self, **kwargs) -> None:
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def as_dict(self, **kwargs) -> typing.Dict[str, typing.Any]:
+        # Use kwargs to override values
+        res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}
+        # Remove None values for optional fields
+        return {
+            k: v
+            for k, v in res.items()
+            if v is not None
+            or self.__annotations__[k]
+            not in (
+                typing.Optional[str],
+                typing.Optional[bool],
+                typing.Optional[int],
+                typing.Optional[uuid_type],
+            )
+        }
+
+    @classmethod
+    def random_create(cls, **kwargs) -> 'RestStruct':
+        # Use kwargs to override values
+        # Extract type from annotations
+        return cls(
+            **{
+                k: random_value(v, kwargs.get(k, None))
+                for k, v in cls.__annotations__.items()
+            }
+        )

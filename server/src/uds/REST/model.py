@@ -891,7 +891,7 @@ class ModelHandler(BaseModelHandler):
                 self._args[1]
             ]  # pylint: disable=unsubscriptable-object
             args = list(self._args[2:])
-            path = self._path + '/'.join(args[:2])
+            path = self._path + '/' + '/'.join(args[:2])
             detail = detailCls(
                 self, path, self._params, *args, parent=item, user=self._user
             )

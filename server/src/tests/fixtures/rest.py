@@ -31,3 +31,60 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 
 from uds import models
+from uds.core.auths.user import User as aUser
+from uds.core.managers import cryptoManager
+
+from ..utils import rest, ensure_data
+
+# User REST structure
+class UserRestStruct(rest.RestStruct):
+    id: rest.uuid_type
+    name: str
+    real_name: str
+    comments: str
+    state: str
+    is_admin: bool
+    staff_member: bool
+    groups: typing.List[rest.uuid_type]
+    mfa_data: typing.Optional[str]
+    password: typing.Optional[str]
+
+
+# Provide a "random" dictionary based on a
+def createUser(**kwargs) -> typing.Dict[str, typing.Any]:
+    return UserRestStruct.random_create(**kwargs).as_dict()
+
+
+def assertUserIs(
+    user: models.User, compare_to: typing.Mapping[str, typing.Any], compare_uuid=False, compare_password=False
+) -> bool:
+    ignore_fields = ['password', 'groups', 'mfa_data', 'last_access', 'role']
+
+    if not compare_uuid:
+        ignore_fields.append('id')
+
+    # If last_access is present, compare it here, because it's a datetime object
+    if 'last_access' in compare_to:
+        if int(user.last_access.timestamp()) != compare_to['last_access']:
+            return False
+
+    if ensure_data(user, compare_to, ignore_keys=ignore_fields):
+        # Compare groups
+        if 'groups' in compare_to:
+            if set(g.dbGroup().uuid for g in aUser(user).groups()) != set(
+                compare_to['groups']
+            ):
+                return False
+
+        # Compare mfa_data
+        if 'mfa_data' in compare_to:
+            if user.mfa_data != compare_to['mfa_data']:
+                return False
+            
+        # Compare password
+        if compare_password:
+            return cryptoManager().checkHash(compare_to['password'], user.password)
+
+        return True
+
+    return False

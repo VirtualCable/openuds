@@ -30,6 +30,7 @@
 """
 
 import random
+import uuid
 import typing
 
 from . import constants
@@ -42,6 +43,17 @@ def random_string(size: int = 6, chars: typing.Optional[str] = None) -> str:
         for _ in range(size)
     )
 
+def random_utf8_string(size: int = 6) -> str:
+    # Generate a random utf-8 string of length "length"
+    # some utf-8 non ascii chars are generated, but not all of them
+    return ''.join(random.choice(constants.UTF_CHARS) for _ in range(size))  # nosec
+
+
+def random_uuid() -> str:
+    return str(uuid.uuid4())
+
+def random_int(start: int = 0, end: int = 100000) -> int:
+    return random.randint(start, end)  # nosec
 
 def random_ip() -> str:
     return '.'.join(

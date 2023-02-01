@@ -348,8 +348,10 @@ class Groups(DetailHandler):
                         x.uuid for x in i.groups.all().order_by('name')
                     )
                 res.append(val)
-            if multi or not i:
+            if multi:
                 return res
+            if not i:
+                raise # Invalid item
             # Add pools field if 1 item only
             result = res[0]
             if i.is_meta:

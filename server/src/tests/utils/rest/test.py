@@ -48,12 +48,14 @@ NUMBER_OF_ITEMS_TO_CREATE = 4
 class RESTTestCase(test.UDSTransactionTestCase):
     # Authenticators related
     auth: models.Authenticator
-    groups: typing.List[models.Group]
+    simple_groups: typing.List[models.Group]
+    meta_groups: typing.List[models.Group]
     admins: typing.List[models.User]
     staffs: typing.List[models.User]
     plain_users: typing.List[models.User]
 
     users = property(lambda self: self.admins + self.staffs + self.plain_users)
+    groups = property(lambda self: self.simple_groups + self.meta_groups)
 
     provider: models.Provider
     user_service_managed: models.UserService
@@ -65,7 +67,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         # Set up data for REST Test cases
         # First, the authenticator related
         self.auth = authenticators_fixtures.createAuthenticator()
-        self.groups = authenticators_fixtures.createGroups(
+        self.simple_groups = authenticators_fixtures.createGroups(
+            self.auth, NUMBER_OF_ITEMS_TO_CREATE
+        )
+        self.meta_groups = authenticators_fixtures.createMetaGroups(
             self.auth, NUMBER_OF_ITEMS_TO_CREATE
         )
         # Create some users, one admin, one staff and one user

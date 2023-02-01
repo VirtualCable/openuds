@@ -60,7 +60,7 @@ class SystemTest(rest.test.RESTTestCase):
         # 2 services (1 managed, 1 unmanaged), 2 service_pools (1 for each service), 2 user_services (1 for each service pool)
         # no meta_pools, and no restrained_services_pools
         self.assertEqual(json['users'], rest.test.NUMBER_OF_ITEMS_TO_CREATE * 3)  # 3 because will create admins, staff and plain users
-        self.assertEqual(json['groups'], rest.test.NUMBER_OF_ITEMS_TO_CREATE)
+        self.assertEqual(json['groups'], rest.test.NUMBER_OF_ITEMS_TO_CREATE * 2)
         count = len(self.user_services) + 2
         self.assertEqual(json['services'], count)
         self.assertEqual(json['service_pools'], count)
