@@ -145,15 +145,15 @@ class UDSClient(UDSClientMixin, Client):
         return typing.cast('UDSHttpResponse', super().put(*args, **kwargs))
 
     def rest_put(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
-        # compose url
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return self.put(self.compose_rest_url(method), *args, **kwargs)
 
     def delete(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return typing.cast('UDSHttpResponse', super().delete(*args, **kwargs))
 
     def rest_delete(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
-        # compose url
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return self.delete(self.compose_rest_url(method), *args, **kwargs)
 
 
@@ -192,15 +192,15 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         return typing.cast('UDSHttpResponse', await super().post(*args, **kwargs))
 
     async def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
-        # compose url
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return await self.post(self.compose_rest_url(method), *args, **kwargs)
 
     async def put(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return typing.cast('UDSHttpResponse', await super().put(*args, **kwargs))
 
     async def rest_put(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
-        # compose url
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return await self.put(self.compose_rest_url(method), *args, **kwargs)
 
     async def delete(self, *args, **kwargs) -> 'UDSHttpResponse':

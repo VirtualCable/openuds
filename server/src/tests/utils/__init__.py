@@ -74,9 +74,6 @@ def compare_dicts(
         if v != actual[k]:
             errors.append((k, f'Value for key "{k}" is "{actual[k]}" instead of "{v}"'))
 
-    if errors:
-        logger.info('Errors found: %s', errors)
-
     return errors
 
 
@@ -95,6 +92,11 @@ def ensure_data(
         db_data['id'] = db_data['uuid']
         del db_data['uuid']
 
-    return not compare_dicts(
+    errors = compare_dicts(
         dct, db_data, ignore_keys=ignore_keys, ignore_values=ignore_values
     )
+    if errors:
+        logger.info('Errors found: %s', errors)
+        return False
+    
+    return True

@@ -31,13 +31,15 @@
 
 import logging
 import random
-import uuid
 import typing
 
 from django.test import SimpleTestCase
 from django.test.client import Client
 
+# Not used, alloes "rest.test" or "rest.assertions"
 from . import test
+from . import assertions
+
 from .. import generators
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER

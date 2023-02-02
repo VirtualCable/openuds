@@ -96,10 +96,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    transports = models.ManyToManyField(
+    transports: 'models.ManyToManyField[Transport, ServicePool]' = models.ManyToManyField(
         Transport, related_name='deployedServices', db_table='uds__ds_trans'
     )
-    assignedGroups = models.ManyToManyField(
+    assignedGroups: 'models.ManyToManyField[Group, ServicePool]' = models.ManyToManyField(
         Group, related_name='deployedServices', db_table='uds__ds_grps'
     )
     state = models.CharField(

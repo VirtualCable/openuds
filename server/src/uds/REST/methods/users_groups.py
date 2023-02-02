@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext as _
 from django.forms.models import model_to_dict
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.core.exceptions import ValidationError
 
 from uds.core.util.state import State
@@ -82,7 +82,9 @@ class Users(DetailHandler):
 
     def getItems(self, parent: Authenticator, item: typing.Optional[str]):
         # processes item to change uuid key for id
-        def uuid_to_id(iterable: typing.Iterable[typing.MutableMapping[str, typing.Any]]):
+        def uuid_to_id(
+            iterable: typing.Iterable[typing.MutableMapping[str, typing.Any]]
+        ):
             for v in iterable:
                 v['id'] = v['uuid']
                 del v['uuid']
@@ -94,18 +96,21 @@ class Users(DetailHandler):
             if item is None:
                 values = list(
                     uuid_to_id(
-                        (i for i in parent.users.all().values(
-                            'uuid',
-                            'name',
-                            'real_name',
-                            'comments',
-                            'state',
-                            'staff_member',
-                            'is_admin',
-                            'last_access',
-                            'parent',
-                            'mfa_data',
-                        ))
+                        (
+                            i
+                            for i in parent.users.all().values(
+                                'uuid',
+                                'name',
+                                'real_name',
+                                'comments',
+                                'state',
+                                'staff_member',
+                                'is_admin',
+                                'last_access',
+                                'parent',
+                                'mfa_data',
+                            )
+                        )
                     )
                 )
                 for res in values:
@@ -206,7 +211,7 @@ class Users(DetailHandler):
         if 'password' in self._params:
             valid_fields.append('password')
             self._params['password'] = cryptoManager().hash(self._params['password'])
-        
+
         if 'mfa_data' in self._params:
             valid_fields.append('mfa_data')
             self._params['mfa_data'] = self._params['mfa_data'].strip()
@@ -218,27 +223,29 @@ class Users(DetailHandler):
 
         user = None
         try:
-            auth = parent.getInstance()
-            if item is None:  # Create new
-                auth.createUser(
-                    fields
-                )  # this throws an exception if there is an error (for example, this auth can't create users)
-                user = parent.users.create(**fields)
-            else:
-                auth.modifyUser(fields)  # Notifies authenticator
-                user = parent.users.get(uuid=processUuid(item))
-                user.__dict__.update(fields)
+            with transaction.atomic():
+                auth = parent.getInstance()
+                if item is None:  # Create new
+                    auth.createUser(
+                        fields
+                    )  # this throws an exception if there is an error (for example, this auth can't create users)
+                    user = parent.users.create(**fields)
+                else:
+                    auth.modifyUser(fields)  # Notifies authenticator
+                    user = parent.users.get(uuid=processUuid(item))
+                    user.__dict__.update(fields)
+                    user.save()
 
-            logger.debug('User parent: %s', user.parent)
-            # If internal auth, threat it "special"
-            if auth.isExternalSource is False and not user.parent:
-                groups = self.readFieldsFromParams(['groups'])['groups']
-                logger.debug('Groups: %s', groups)
-                logger.debug('Got Groups %s', parent.groups.filter(uuid__in=groups))
-                user.groups.set(parent.groups.filter(uuid__in=groups))
-
-            user.save()
-
+                logger.debug('User parent: %s', user.parent)
+                # If internal auth, and not a child user, save groups
+                if not auth.isExternalSource and not user.parent:
+                    groups = self.readFieldsFromParams(['groups'])['groups']
+                    # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
+                    user.groups.set(
+                        g
+                        for g in parent.groups.filter(uuid__in=groups)
+                        if g.is_meta is False
+                    )
         except User.DoesNotExist:
             raise self.invalidItemException()
         except IntegrityError:  # Duplicate key probably
@@ -351,29 +358,18 @@ class Groups(DetailHandler):
             if multi:
                 return res
             if not i:
-                raise # Invalid item
+                raise  # Invalid item
             # Add pools field if 1 item only
             result = res[0]
-            if i.is_meta:
-                result[
-                    'pools'
-                ] = (
-                    []
-                )  # Meta groups do not have "assigned "pools, they get it from groups interaction
-            else:
-                result['pools'] = [v.uuid for v in i.deployedServices.all()]
+            result['pools'] = [v.uuid for v in getPoolsForGroups([i])]
             return result
         except Exception:
             logger.exception('REST groups')
             raise self.invalidItemException()
 
-    def getTitle(self, parent: str):
+    def getTitle(self, parent: Authenticator) -> str:
         try:
-            return _('Groups of {0}').format(
-                Authenticator.objects.get(
-                    uuid=processUuid(self._kwargs['parent_id'])
-                ).name
-            )
+            return _('Groups of {0}').format(parent.name)
         except Exception:
             return _('Current groups')
 
@@ -464,7 +460,8 @@ class Groups(DetailHandler):
                 group.__dict__.update(toSave)
 
             if is_meta:
-                group.groups.set(parent.groups.filter(uuid__in=self._params['groups']))
+                # Do not allow to add meta groups to meta groups
+                group.groups.set(i for i in parent.groups.filter(uuid__in=self._params['groups']) if i.is_meta is False)
 
             if pools:
                 # Update pools

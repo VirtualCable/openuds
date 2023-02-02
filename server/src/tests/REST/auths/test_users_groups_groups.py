@@ -33,10 +33,10 @@ import functools
 import logging
 
 from uds import models
-from uds.core import VERSION
 from uds.core.managers import cryptoManager
 
 from ...utils import rest
+from ...fixtures import rest as rest_fixtures
 
 
 logger = logging.getLogger(__name__)
@@ -66,16 +66,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
         for group in groups:
             # Locate the group in the auth
             dbgrp = self.auth.groups.get(name=group['name'])
-            self.assertEqual(dbgrp.uuid, group['id'])
-            self.assertEqual(dbgrp.comments, group['comments'])
-            self.assertEqual(dbgrp.state, group['state'])
-            self.assertEqual(dbgrp.is_meta, group['type'] == 'meta')
-            self.assertEqual(dbgrp.meta_if_any, group['meta_if_any'])
-            if dbgrp.is_meta:
-                self.assertEqual(
-                    sorted([x.uuid for x in dbgrp.groups.all()]),
-                    sorted(group['groups'])
-                )
+            self.assertTrue(rest.assertions.assertGroupIs(dbgrp, group, compare_uuid=True))
 
     def test_groups_tableinfo(self) -> None:
         url = f'authenticators/{self.auth.uuid}/groups/tableinfo'
@@ -113,15 +104,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
             response = self.client.rest_get(f'{url}/{i.uuid}')
             self.assertEqual(response.status_code, 200)
             group = response.json()
-
-            self.assertEqual(group['name'], i.name)
-            self.assertEqual(group['id'], i.uuid)
-            self.assertEqual(group['comments'], i.comments)
-            self.assertEqual(group['state'], i.state)
-            self.assertEqual(group['type'], 'meta' if i.is_meta else 'group')
-            self.assertEqual(group['meta_if_any'], i.meta_if_any)
-            if i.is_meta:
-                self.assertEqual(sorted(group['groups']), sorted([x.uuid for x in i.groups.all()]))
+            self.assertTrue(rest.assertions.assertGroupIs(i, group, compare_uuid=True))
 
         # invalid user
         response = self.client.rest_get(f'{url}/invalid')
@@ -129,6 +112,30 @@ class GroupsTest(rest.test.RESTActorTestCase):
 
 
     def test_group_create_edit(self) -> None:
+        url = f'authenticators/{self.auth.uuid}/groups'
+        # Normal group
+        group_dct = rest_fixtures.createGroup()
+        response = self.client.rest_put(
+            url,
+            group_dct,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        group = models.Group.objects.get(name=group_dct['name'])
+        self.assertTrue(rest.assertions.assertGroupIs(group, group_dct))
+
+        # Now, will fail because name is already in use
+        response = self.client.rest_put(
+            url,
+            group_dct,
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+        # Now a meta group, with some groups inside
+        groups = [self.simple_groups[0].uuid]
+
+        
         return
         url = f'authenticators/{self.auth.uuid}/users'
         user_dct: typing.Dict[str, typing.Any] = {

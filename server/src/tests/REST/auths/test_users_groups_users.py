@@ -28,13 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import time
 import typing
 import functools
 import logging
 
 from uds import models
-from uds.core import VERSION
-from uds.core.managers import cryptoManager
 
 from ...utils import rest
 from ...fixtures import rest as rest_fixtures
@@ -66,7 +65,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         for user in users:
             # Locate the user in the auth
             self.assertTrue(
-                rest_fixtures.assertUserIs(self.auth.users.get(name=user['name']), user)
+                rest.assertions.assertUserIs(self.auth.users.get(name=user['name']), user)
             )
 
     def test_users_tableinfo(self) -> None:
@@ -109,7 +108,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             self.assertEqual(response.status_code, 200)
             user = response.json()
             self.assertTrue(
-                rest_fixtures.assertUserIs(i, user),
+                rest.assertions.assertUserIs(i, user),
                 'User {} {} is not correct'.format(
                     i, models.User.objects.filter(uuid=i.uuid).values()[0]
                 ),
@@ -134,18 +133,20 @@ class UsersTest(rest.test.RESTActorTestCase):
     def test_user_create_edit(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users'
         user_dct = rest_fixtures.createUser(
-            groups=[self.groups[0].uuid, self.groups[1].uuid]
+            groups=[self.simple_groups[0].uuid, self.simple_groups[1].uuid, self.meta_groups[0].uuid]
         )
         # Now, will work
         response = self.client.rest_put(
             url,
             user_dct,
-            content_type='application/json',
         )
 
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertTrue(rest_fixtures.assertUserIs(dbusr, user_dct))
+
+        # Fix user_dct to remove it for comparison. Meta groups cannot be directly "assigned" to users
+        user_dct['groups'] = user_dct['groups'][:-1]
+        self.assertTrue(rest.assertions.assertUserIs(dbusr, user_dct))
 
         self.assertEqual(response.status_code, 200)
         # Returns nothing
@@ -160,7 +161,7 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         user_dct = rest_fixtures.createUser(  # nosec: test password, also, "fixme" means "create a random password" in this case
             id=dbusr.uuid,
-            groups=[self.groups[2].uuid],
+            groups=[self.simple_groups[2].uuid],
             password='fixme',
             mfa_data='mfadata',
         )
@@ -175,7 +176,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
         self.assertTrue(
-            rest_fixtures.assertUserIs(dbusr, user_dct, compare_password=True)
+            rest.assertions.assertUserIs(dbusr, user_dct, compare_password=True)
         )
 
     def test_user_delete(self) -> None:
