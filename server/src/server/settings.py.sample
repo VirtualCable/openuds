@@ -194,10 +194,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'uds.core.util.middleware.request.GlobalRequestMiddleware',
-    'uds.core.util.middleware.security.UDSSecurityMiddleware',
-    'uds.core.util.middleware.xua.XUACompatibleMiddleware',
-    'uds.core.util.middleware.redirect.RedirectMiddleware',
+    'uds.middleware.request.GlobalRequestMiddleware',
+    'uds.middleware.security.UDSSecurityMiddleware',
+    'uds.middleware.xua.XUACompatibleMiddleware',
+    'uds.middleware.redirect.RedirectMiddleware',
 ]
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -210,6 +210,8 @@ ROOT_URLCONF = 'server.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'server.wsgi.application'
+# and asgi
+ASGI_APPLICATION = 'server.asgi.application'
 
 INSTALLED_APPS = (
     # 'django.contrib.contenttypes', # Not used
