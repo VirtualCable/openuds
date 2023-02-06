@@ -73,7 +73,7 @@ class ServiceProvider(Module):
 
     Normally objects of classes deriving from this one, will be serialized, called,
     deserialized. This means that all that you want to ensure that is keeped inside
-    the class must be serialized and unserialized, because there is no warantee that
+    the class must be serialized and deserialized, because there is no warantee that
     the object will get two methods invoked without haven't been removed from memory
     and loaded again. One thing to have into account on this are Form Fields, that
     default implementation marshals and unmashals them, so if your case is that you

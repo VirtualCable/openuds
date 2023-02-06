@@ -40,27 +40,17 @@ import logging
 import enum
 from collections import abc
 
-import yaml
 from django.utils.translation import get_language, gettext as _, gettext_noop
 from django.conf import settings
 
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager, UDSK
 from uds.core.util.decorators import deprecatedClassValue
+from uds.core.util import serializer
 
 logger = logging.getLogger(__name__)
 
 # Old encryption key
 UDSB: typing.Final[bytes] = b'udsprotect'
-# New encription key, different on each installation
-UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new
-
-# Separators for fields
-MULTIVALUE_FIELD: typing.Final[bytes] = b'\001'
-OLD_PASSWORD_FIELD: typing.Final[bytes] = b'\004'
-PASSWORD_FIELD: typing.Final[bytes] = b'\005'
-
-FIELD_SEPARATOR: typing.Final[bytes] = b'\002'
-NAME_VALUE_SEPARATOR: typing.Final[bytes] = b'\003'
 
 SERIALIZATION_HEADER: typing.Final[bytes] = b'GUIZ'
 SERIALIZATION_VERSION: typing.Final[bytes] = b'\001'
@@ -468,7 +458,7 @@ class gui:
             """Serialize value to an string"""
             return str(self.value)
 
-        def unserialize(self, value) -> None:
+        def deserialize(self, value) -> None:
             """Unserialize value from an string"""
             self.value = value
 
@@ -719,10 +709,11 @@ class gui:
                   self.hidden.setDefValue(self.parent().serialize())
 
         """
+        _isSerializable: bool
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options, type=gui.InputField.Types.HIDDEN)
-            self._isSerializable: bool = options.get('serializable', '') != ''
+            self._isSerializable = options.get('serializable', '') != ''
 
         def isSerializable(self) -> bool:
             return self._isSerializable
@@ -1127,59 +1118,9 @@ class UserInterface(metaclass=UserInterfaceType):
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)
         return dic
-
-    def oldSerializeForm(self) -> bytes:
-        """
-        All values stored at form fields are serialized and returned as a single
-        string
-        Separating char is
-
-        The returned string is zipped and then converted to base 64
-
-        Note: Hidens are not serialized, they are ignored
-
-        """
-
-        # import inspect
-        # logger.debug('Caller is : {}'.format(inspect.stack()))
-
-        arr = []
-        val: typing.Any
-        for k, v in self._gui.items():
-            logger.debug('serializing Key: %s/%s', k, v.value)
-            if v.isType(gui.InputField.Types.HIDDEN) and v.isSerializable() is False:
-                # logger.debug('Field {0} is not serializable'.format(k))
-                continue
-            if v.isType(gui.InputField.Types.INFO):
-                # logger.debug('Field {} is a dummy field and will not be serialized')
-                continue
-            if v.isType(gui.InputField.Types.EDITABLE_LIST) or v.isType(
-                gui.InputField.Types.MULTI_CHOICE
-            ):
-                # logger.debug('Serializing value {0}'.format(v.value))
-                val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
-            elif v.isType(gui.InfoField.Types.PASSWORD):
-                val = PASSWORD_FIELD + cryptoManager().AESCrypt(
-                    v.value.encode('utf8'), UDSK, True
-                )
-            elif v.isType(gui.InputField.Types.NUMERIC):
-                val = str(int(v.num())).encode('utf8')
-            elif v.isType(gui.InputField.Types.CHECKBOX):
-                val = v.isTrue()
-            else:
-                val = v.value.encode('utf8')
-            if val is True:
-                val = gui.TRUE.encode('utf8')
-            elif val is False:
-                val = gui.FALSE.encode('utf8')
-
-            arr.append(k.encode('utf8') + NAME_VALUE_SEPARATOR + val)
-        logger.debug('Arr, >>%s<<', arr)
-
-        return codecs.encode(FIELD_SEPARATOR.join(arr), 'zip')
-
+    
     def serializeForm(
-        self, serializer: typing.Optional[typing.Callable[[typing.Any], str]] = None
+        self, opt_serializer: typing.Optional[typing.Callable[[typing.Any], bytes]] = None
     ) -> bytes:
         """New form serialization
 
@@ -1187,10 +1128,10 @@ class UserInterface(metaclass=UserInterfaceType):
             bytes -- serialized form (zipped)
         """
 
-        def serialize(value: typing.Any) -> str:
-            if serializer:
-                return serializer(value)
-            return yaml.safe_dump(value)
+        def serialize(value: typing.Any) -> bytes:
+            if opt_serializer:
+                return opt_serializer(value)
+            return serializer.serialize(value)
 
         fw_converters: typing.Mapping[
             gui.InfoField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
@@ -1199,14 +1140,14 @@ class UserInterface(metaclass=UserInterfaceType):
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x.value,
             gui.InputField.Types.NUMERIC: lambda x: str(int(x.num())),
             gui.InputField.Types.PASSWORD: lambda x: (
-                cryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
+                CryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
             gui.InputField.Types.HIDDEN: (
                 lambda x: None if not x.isSerializable() else x.value
             ),
             gui.InfoField.Types.CHOICE: lambda x: x.value,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: serialize(x.value),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: serialize(x.value),
+            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
             gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x.value,
             gui.InputField.Types.IMAGE: lambda x: x.value,
@@ -1216,13 +1157,9 @@ class UserInterface(metaclass=UserInterfaceType):
         # Any unexpected type will raise an exception
         arr = [(k, v.type.name, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
 
-        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + codecs.encode(
-            serialize(arr).encode(),
-            'zip',
-        )
-
-    def unserializeForm(
-        self, values: bytes, serializer: typing.Optional[typing.Callable[[str], typing.Any]] = None
+        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr)
+    def deserializeForm(
+        self, values: bytes, opt_deserializer: typing.Optional[typing.Callable[[bytes], typing.Any]] = None
     ) -> None:
         """New form unserialization
 
@@ -1233,26 +1170,28 @@ class UserInterface(metaclass=UserInterfaceType):
             serializer {typing.Optional[typing.Callable[[str], typing.Any]]} -- deserializer (default: {None})
         """
 
-        def unserialize(value: str) -> typing.Any:
-            if serializer:
-                return serializer(value)
-            return yaml.safe_load(value)
+        def deserialize(value: bytes) -> typing.Any:
+            if opt_deserializer:
+                return opt_deserializer(value)
+            return serializer.deserialize(value)
 
         if not values:
             return
 
         if not values.startswith(SERIALIZATION_HEADER):
             # Unserialize with old method
-            self.oldUnserializeForm(values)
+            self.oldDeserializeForm(values)
             return
             
+        # For future use
         version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
+        
+        values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
 
-        values = codecs.decode(values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :], 'zip')
         if not values:
             return
 
-        arr = unserialize(values.decode())
+        arr = deserialize(values)
         
         # Set all values to defaults ones
         for k in self._gui:
@@ -1271,12 +1210,12 @@ class UserInterface(metaclass=UserInterfaceType):
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
             gui.InputField.Types.NUMERIC: lambda x: int(x),
             gui.InputField.Types.PASSWORD: lambda x: (
-                cryptoManager().AESDecrypt(x.encode('utf8'), UDSK, True).decode()
+                CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
             ),
             gui.InputField.Types.HIDDEN: lambda x: None,
             gui.InfoField.Types.CHOICE: lambda x: x,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: unserialize(x),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: unserialize(x),
+            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
             gui.InputField.Types.CHECKBOX: lambda x: x,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x,
             gui.InputField.Types.IMAGE: lambda x: x,
@@ -1288,17 +1227,29 @@ class UserInterface(metaclass=UserInterfaceType):
             if k not in self._gui:
                 logger.warning('Field %s not found in form', k)
                 continue
-            if t != self._gui[k].type.name:
+            field_type = self._gui[k].type
+            if field_type not in converters:
+                logger.warning('Field %s has no converter', k)
+                continue
+            if t != field_type.name:
                 logger.warning('Field %s has different type than expected', k)
                 continue
-            self._gui[k].value = converters[self._gui[k].type](v)
+            self._gui[k].value = converters[field_type](v)
 
-    def oldUnserializeForm(self, values: bytes) -> None:
+    def oldDeserializeForm(self, values: bytes) -> None:
         """
-        This method unserializes the values previously obtained using
+        This method deserializes the values previously obtained using
         :py:meth:`serializeForm`, and stores
         the valid values form form fileds inside its corresponding field
         """
+        # Separators for fields, old implementation
+        MULTIVALUE_FIELD: typing.Final[bytes] = b'\001'
+        OLD_PASSWORD_FIELD: typing.Final[bytes] = b'\004'
+        PASSWORD_FIELD: typing.Final[bytes] = b'\005'
+
+        FIELD_SEPARATOR: typing.Final[bytes] = b'\002'
+        NAME_VALUE_SEPARATOR: typing.Final[bytes] = b'\003'
+
         if not values:  # Has nothing
             return
 
@@ -1327,9 +1278,9 @@ class UserInterface(metaclass=UserInterfaceType):
                                 v[1:]
                             )  # nosec: secure pickled by us for sure
                         elif v.startswith(OLD_PASSWORD_FIELD):
-                            val = cryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
+                            val = CryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
                         elif v.startswith(PASSWORD_FIELD):
-                            val = cryptoManager().AESDecrypt(v[1:], UDSK, True).decode()
+                            val = CryptoManager().AESDecrypt(v[1:], UDSK, True).decode()
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode
@@ -1364,3 +1315,4 @@ class UserInterface(metaclass=UserInterfaceType):
         ]
         logger.debug('theGui description: %s', res)
         return res
+

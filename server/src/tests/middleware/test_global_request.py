@@ -35,10 +35,10 @@ from unittest import mock
 from django.urls import reverse
 
 from uds.core.util import config
-from uds.core.util.middleware import request
+from uds.middleware import request
 from uds.core.auths.auth import AUTHORIZED_KEY
 
-from ....utils.web import test
+from ..utils.web import test
 
 
 if typing.TYPE_CHECKING:
@@ -54,7 +54,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
 
     def test_global_request_no_login_ipv4(self) -> None:
         GlobalRequestMiddlewareTest.add_middleware(
-            'uds.core.util.middleware.request.GlobalRequestMiddleware'
+            'uds.middleware.request.GlobalRequestMiddleware'
         )
         self.client.enable_ipv4()
 
@@ -76,7 +76,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
 
     def test_global_request_no_login_ipv6(self) -> None:
         GlobalRequestMiddlewareTest.add_middleware(
-            'uds.core.util.middleware.request.GlobalRequestMiddleware'
+            'uds.middleware.request.GlobalRequestMiddleware'
         )
         self.client.enable_ipv6()
 
@@ -98,7 +98,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
 
     def test_global_request_login_ipv4(self) -> None:
         GlobalRequestMiddlewareTest.add_middleware(
-            'uds.core.util.middleware.request.GlobalRequestMiddleware'
+            'uds.middleware.request.GlobalRequestMiddleware'
         )
         self.client.enable_ipv4()
 
@@ -122,7 +122,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
 
     def test_global_request_login_ipv6(self) -> None:
         GlobalRequestMiddlewareTest.add_middleware(
-            'uds.core.util.middleware.request.GlobalRequestMiddleware'
+            'uds.middleware.request.GlobalRequestMiddleware'
         )
         self.client.enable_ipv6()
 
@@ -146,7 +146,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
 
     def test_no_middleware(self) -> None:
         # Ensure GlobalRequestMiddleware is not present
-        GlobalRequestMiddlewareTest.remove_middleware('uds.core.util.middleware.request.GlobalRequestMiddleware')
+        GlobalRequestMiddlewareTest.remove_middleware('uds.middleware.request.GlobalRequestMiddleware')
         self.client.enable_ipv4()
 
         response = self.client.get('/', secure=False)

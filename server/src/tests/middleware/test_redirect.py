@@ -35,9 +35,9 @@ from django.urls import reverse
 
 from uds.core.util import config
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.middleware.redirect import _NO_REDIRECT
+from uds.middleware.redirect import _NO_REDIRECT
 
-from ....utils import test
+from ..utils import test
 
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
     Test client functionality
     """
     def test_redirect(self):
-        RedirectMiddlewareTest.add_middleware('uds.core.util.middleware.redirect.RedirectMiddleware')
+        RedirectMiddlewareTest.add_middleware('uds.middleware.redirect.RedirectMiddleware')
         config.GlobalConfig.REDIRECT_TO_HTTPS.set(True)
         response = self.client.get('/', secure=False)
         self.assertEqual(response.status_code, 302)

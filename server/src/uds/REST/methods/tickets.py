@@ -147,7 +147,7 @@ class Tickets(Handler):
         force: bool = self.getParam('force') in ('1', 'true', 'True', True)
 
         try:
-            servicePoolId = None
+            servicePoolId: typing.Optional[str] = None
 
             # First param is recommended, last ones are compatible with old versions
             authId = self.getParam('auth_id', 'authId')

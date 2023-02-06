@@ -62,7 +62,7 @@ class Publication(Environmentable, Serializable):
 
     Normally objects of classes deriving from this one, will be serialized, called,
     deserialized. This means that all that you want to ensure that is keeped inside
-    the class must be serialized and unserialized, because there is no warantee that
+    the class must be serialized and deserialized, because there is no warantee that
     the object will get two methods invoked without haven't been remoded from memory
     and loaded again, this means, IMPLEMENT marshal and unmarshal with all attributes
     that you want to keep.

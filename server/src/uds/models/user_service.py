@@ -234,7 +234,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         )
         if self.data != '' and self.data is not None:
             try:
-                us.unserialize(self.data)
+                us.deserialize(self.data)
             except Exception:
                 logger.exception(
                     'Error unserializing %s//%s : %s',

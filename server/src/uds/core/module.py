@@ -292,7 +292,7 @@ class Module(UserInterface, Environmentable, Serializable):
         By default and if not overriden by descendants, this method recovers
         data serialized using serializeForm
         """
-        self.unserializeForm(data)
+        self.deserializeForm(data)
 
     def check(self) -> str:
         """

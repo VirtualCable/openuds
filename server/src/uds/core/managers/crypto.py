@@ -40,7 +40,6 @@ import string
 import logging
 import typing
 import secrets
-import time
 
 
 from cryptography import x509
@@ -61,6 +60,9 @@ if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives.asymmetric.dsa import DSAPrivateKey
     from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
     from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
+
+
+UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new
 
 
 class CryptoManager(metaclass=singleton.Singleton):
@@ -161,6 +163,14 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         toDecode = decryptor.update(text) + decryptor.finalize()
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
+    
+    # Fast encription using django SECRET_KEY as key
+    def fastCrypt(self, data: bytes) -> bytes:
+        return self.AESCrypt(data, UDSK)
+        
+    # Fast decryption using django SECRET_KEY as key
+    def fastDecrypt(self, data: bytes) -> bytes:
+        return self.AESDecrypt(data, UDSK)
 
     def xor(
         self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]

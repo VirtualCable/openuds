@@ -581,7 +581,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def canRemoveServiceFromDeployedService(self, servicePool: ServicePool) -> bool:
         """
         checks if we can do a "remove" from a deployed service
-        serviceIsntance is just a helper, so if we already have unserialized deployedService
+        serviceIsntance is just a helper, so if we already have deserialized deployedService
         """
         removing = self.getUserServicesInStatesForProvider(
             servicePool.service.provider, [State.REMOVING]

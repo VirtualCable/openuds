@@ -76,10 +76,10 @@ class ManagedObjectModel(UUIDModel):
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """
-        # Only unserializes if this is not initialized via user interface and
+        # Only deserializes if this is not initialized via user interface and
         # data contains something
         if not values and self.data:
-            obj.unserialize(self.data)
+            obj.deserialize(self.data)
 
         self._cachedInstance = None  # Ensures returns correct value on getInstance
 

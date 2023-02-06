@@ -69,7 +69,7 @@ class UserDeployment(Environmentable, Serializable):
 
     Normally objects of classes deriving from this one, will be serialized, called,
     deserialized. This means that all that you want to ensure that is keeped inside
-    the class must be serialized and unserialized, because there is no warantee that
+    the class must be serialized and deserialized, because there is no warantee that
     the object will get two methods invoked without haven't been remoded from memory
     and loaded again, this means, IMPLEMENT marshal and unmarshal with all attributes
     that you want to keep.
@@ -225,7 +225,7 @@ class UserDeployment(Environmentable, Serializable):
 
         Returns:
 
-            Database object that got unserialized to obtain this object.
+            Database object that got deserialized to obtain this object.
         """
         return self._dbService
 

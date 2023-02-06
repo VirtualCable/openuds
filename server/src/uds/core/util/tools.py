@@ -109,7 +109,7 @@ def as_list(value: typing.Any) -> typing.List[typing.Any]:
         return [value]
 
 
-def packageRelativeFile(moduleName: str, fileName: str) -> str:
+def package_relative_file(moduleName: str, fileName: str) -> str:
     """
     Helper to get image path from relative to a module.
     This allows to keep images alongside report

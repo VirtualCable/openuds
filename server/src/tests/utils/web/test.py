@@ -34,7 +34,7 @@ import typing
 
 from uds import models
 
-from .. import test, generators, constants
+from .. import test
 from ...fixtures import authenticators as authenticators_fixtures, services as service_fixtures
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER

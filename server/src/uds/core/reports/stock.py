@@ -45,9 +45,9 @@ CSS = 'report.css'
 
 def getStockImagePath(stockImg: typing.Optional[str] = None) -> str:
     stockImg = stockImg or LOGO
-    return tools.packageRelativeFile(__name__, 'stock_images/' + stockImg)
+    return tools.package_relative_file(__name__, 'stock_images/' + stockImg)
 
 
 def getStockCssPath(css: typing.Optional[str] = None) -> str:
     css = css or CSS
-    return tools.packageRelativeFile(__name__, 'css/' + css)
+    return tools.package_relative_file(__name__, 'css/' + css)

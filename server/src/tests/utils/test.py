@@ -71,7 +71,7 @@ class UDSClientMixin:
             'django.middleware.common.CommonMiddleware',
             'django.middleware.csrf.CsrfViewMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware',
-            'uds.core.util.middleware.request.GlobalRequestMiddleware',
+            'uds.middleware.request.GlobalRequestMiddleware',
         ]
 
         # Update settings security options

@@ -24,7 +24,7 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
     provider: 'OVirtProvider' = OVirtProvider(env)
-    provider.unserialize(parameters['ov'])
+    provider.deserialize(parameters['ov'])
 
     # Obtains datacenter from cluster
     ci = provider.getClusterInfo(parameters['cluster'])

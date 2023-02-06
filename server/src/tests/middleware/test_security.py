@@ -33,9 +33,9 @@ import logging
 from django.urls import reverse
 
 from uds.core.util import config
-from uds.core.util.middleware.redirect import _NO_REDIRECT
+from uds.middleware.redirect import _NO_REDIRECT
 
-from ....utils import test
+from ..utils import test
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ class SecurityMiddlewareTest(test.UDSTransactionTestCase):
     Test actor functionality
     """
     def test_security(self) -> None:
-        SecurityMiddlewareTest.add_middleware('uds.core.util.middleware.security.UDSSecurityMiddleware')
+        SecurityMiddlewareTest.add_middleware('uds.middleware.security.UDSSecurityMiddleware')
         # No trusted sources
         config.GlobalConfig.TRUSTED_SOURCES.set('')
         # Without user agent, security middleware will return forbidden (403) if not Trusted IP

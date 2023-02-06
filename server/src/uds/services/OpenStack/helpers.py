@@ -52,7 +52,7 @@ def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, 
     else:
         provider = OpenStackProvider(env)
 
-    provider.unserialize(parameters['ov'])
+    provider.deserialize(parameters['ov'])
 
     if isinstance(provider, OpenStackProvider):
         useSubnetsName = provider.useSubnetsName.isTrue()

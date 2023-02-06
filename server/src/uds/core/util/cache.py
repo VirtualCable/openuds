@@ -31,7 +31,6 @@
 """
 import datetime
 import codecs
-import yaml
 import typing
 import logging
 
@@ -39,6 +38,7 @@ import logging
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
 from uds.models.util import getSqlDatetime
+from uds.core.util import serializer
 
 from .hash import hash_key
 
@@ -60,11 +60,11 @@ class Cache:
 
     @staticmethod
     def _basic_serialize(value: typing.Any) -> str:
-        return codecs.encode(yaml.safe_dump(value).encode(), 'base64').decode()
+        return codecs.encode(serializer.serialize(value), 'base64').decode()
 
     @staticmethod
     def _basic_deserialize(value: str) -> typing.Any:
-        return yaml.safe_load(codecs.decode(value.encode(), 'base64'))
+        return serializer.deserialize(codecs.decode(value.encode(), 'base64'))
 
     _serializer: typing.ClassVar[typing.Callable[[typing.Any], str]] = _basic_serialize
     _deserializer: typing.ClassVar[

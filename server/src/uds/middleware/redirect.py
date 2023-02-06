@@ -60,7 +60,7 @@ _NO_REDIRECT: typing.List[str] = [
 ]
 
 
-def registerException(path: str) -> None:
+def registerNoRedirectURL(path: str) -> None:
     _NO_REDIRECT.append(path)
 
 

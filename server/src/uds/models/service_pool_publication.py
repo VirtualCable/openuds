@@ -162,7 +162,7 @@ class ServicePoolPublication(UUIDModel):
         )
         # Only invokes deserialization if data has something. '' is nothing
         if self.data:
-            publication.unserialize(self.data)
+            publication.deserialize(self.data)
         return publication
 
     def updateData(self, publication):

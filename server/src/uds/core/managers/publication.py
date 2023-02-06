@@ -29,12 +29,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 import logging
 import datetime
-import pickle  # nosec, Used for backward compatibility
-import typing
 
-import yaml
+from uds.core.util.serializer import serialize
+
 from django.utils.translation import gettext as _
 from django.db import transaction
 from uds.core.jobs.delayed_task import DelayedTask
@@ -65,7 +65,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
         super().__init__()
         self._id = publicationId
 
-    def run(self):
+    def run(self) -> None:
         try:
             servicePoolPub: ServicePoolPublication = ServicePoolPublication.objects.get(
                 pk=self._id
@@ -95,7 +95,7 @@ class PublicationLauncher(DelayedTask):
         super().__init__()
         self._publicationId = publication.id
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Publishing')
         servicePoolPub: typing.Optional[ServicePoolPublication] = None
         try:
@@ -104,6 +104,8 @@ class PublicationLauncher(DelayedTask):
                 servicePoolPub = ServicePoolPublication.objects.select_for_update().get(
                     pk=self._publicationId
                 )
+                if not servicePoolPub:
+                    raise ServicePool.DoesNotExist()
                 if (
                     servicePoolPub.state != State.LAUNCHING
                 ):  # If not preparing (may has been canceled by user) just return
@@ -116,7 +118,7 @@ class PublicationLauncher(DelayedTask):
             servicePool.current_pub_revision += 1
             servicePool.storeValue(
                 'toBeReplacedIn',
-                yaml.safe_dump(  # nosec: Controled, not user input, just a datetime
+                serialize(
                     now
                     + datetime.timedelta(
                         hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True)
@@ -143,7 +145,7 @@ class PublicationFinishChecker(DelayedTask):
     This delayed task is responsible of checking if a publication is finished
     """
 
-    def __init__(self, publication: ServicePoolPublication):
+    def __init__(self, publication: ServicePoolPublication) -> None:
         super(PublicationFinishChecker, self).__init__()
         self._publishId = publication.id
         self._state = publication.state
@@ -218,7 +220,7 @@ class PublicationFinishChecker(DelayedTask):
     @staticmethod
     def checkLater(
         publication: ServicePoolPublication, publicationInstance: 'services.Publication'
-    ):
+    ) -> None:
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for ServicePoolPublication
@@ -230,7 +232,7 @@ class PublicationFinishChecker(DelayedTask):
             PUBTAG + str(publication.id),
         )
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Checking publication finished %s', self._publishId)
         try:
             publication: ServicePoolPublication = ServicePoolPublication.objects.get(

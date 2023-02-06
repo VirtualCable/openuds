@@ -76,7 +76,7 @@ class Serializable:
 
     def unmarshal(self, data: bytes) -> None:
         """
-        This is the method that must be overriden in order to unserialize an object.
+        This is the method that must be overriden in order to deserialize an object.
 
         The system will use in fact 'seralize' and 'deserialize' methods, but these are
         only convenients methods to "codify" serialized values.
@@ -103,7 +103,7 @@ class Serializable:
         """
         return base64.b64encode(self.marshal()).decode()
 
-    def unserialize(self, data: str) -> None:
+    def deserialize(self, data: str) -> None:
         """
         des-obfuscates the data and then de-serializes it via unmarshal method
         """

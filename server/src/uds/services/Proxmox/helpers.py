@@ -44,7 +44,7 @@ def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.An
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
     provider: ProxmoxProvider = ProxmoxProvider(env)
-    provider.unserialize(parameters['ov'])
+    provider.deserialize(parameters['ov'])
 
     # Obtains datacenter from cluster
     try:
