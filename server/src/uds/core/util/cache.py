@@ -96,8 +96,8 @@ class Cache:
             try:
                 # logger.debug('value: %s', c.value)
                 val = Cache._deserializer(c.value)
-            except Exception:  # If invalid, simple do no tuse it
-                # logger.exception('Invalid yaml from cache. Removing it.')
+            except Exception:  # If invalid, simple do not use it
+                # logger.exception('Invalid deserialization value from cache. Removing it.')
                 c.delete()
                 return defValue
 
