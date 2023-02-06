@@ -57,7 +57,7 @@ VALID_PARAMS = (
     'realname',
     'password',
     'groups',
-    'servicePool'
+    'servicePool',
     'service_pool',
     'transport',  # Admited to be backwards compatible, but not used. Will be removed on a future release.
     'force',
@@ -135,7 +135,7 @@ class Tickets(Handler):
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "auth_id") or ("auth_tag" or "authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(
         self,
-    ):
+    ) -> typing.Dict[str, typing.Any]:
         """
         Processes put requests, currently only under "create"
         """

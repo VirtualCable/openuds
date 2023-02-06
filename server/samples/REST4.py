@@ -30,18 +30,13 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-
-import json
-import sys
+import typing
+import asyncio
+import aiohttp
 import typing
 
-import requests
 
-rest_url = 'http://172.27.0.1:8000/uds/rest/'
-
-session = requests.Session()
-session.headers.update({'Content-Type': 'application/json'})
-
+REST_URL: typing.Final[str] = 'http://172.27.0.1:8000/uds/rest/'
 
 class RESTException(Exception):
     pass
@@ -57,18 +52,18 @@ class LogoutException(RESTException):
 
 # Hace login con el root, puede usarse cualquier autenticador y cualquier usuario, pero en la 1.5 solo está implementado poder hacer
 # este tipo de login con el usuario "root"
-def login():
+async def login(session: aiohttp.ClientSession) -> None:
     # parameters = '{ "auth": "admin", "username": "root", "password": "temporal" }'
     # parameters = '{ "auth": "interna", "username": "admin", "password": "temporal" }'
     parameters = {'auth': 'interna', 'username': 'admin', 'password': 'temporal'}
 
-    response = session.post(rest_url + 'auth/login', json=parameters)
+    response = await session.post(REST_URL + 'auth/login', json=parameters)
 
     if not response.ok:
         raise AuthException('Error logging in')
 
     # resp contiene las cabeceras, content el contenido de la respuesta (que es json), pero aún está en formato texto
-    res = response.json()
+    res = await response.json()
     print(res)
 
     if res['result'] != 'ok':  # Authentication error
@@ -77,8 +72,8 @@ def login():
     session.headers.update({'X-Auth-Token': res['token']})
 
 
-def logout():
-    response = session.get(rest_url + 'auth/logout')
+async def logout(session: aiohttp.ClientSession) -> None:
+    response = await session.get(REST_URL + 'auth/logout')
 
     if not response.ok:
         raise LogoutException('Error logging out')
@@ -102,15 +97,15 @@ def logout():
 # ]
 
 
-def request_pools() -> typing.List[typing.MutableMapping[str, typing.Any]]:
-    response = session.get(rest_url + 'servicespools/overview')
+async def request_pools(session: aiohttp.ClientSession) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    response = await session.get(REST_URL + 'servicespools/overview')
     if not response.ok:
         raise RESTException('Error requesting pools')
 
-    return response.json()
+    return await response.json()
 
-
-def request_ticket(
+async def request_ticket(
+    session: aiohttp.ClientSession,
     username: str,
     authSmallName: str,
     groups: typing.Union[typing.List[str], str],
@@ -130,30 +125,36 @@ def request_ticket(
         data['realname'] = realName
     if transport:
         data['transport'] = transport
-    response = session.put(
-        rest_url + 'tickets/create',
+    response = await session.put(
+        REST_URL + 'tickets/create',
         json=data
     )
     if not response.ok:
-        raise RESTException('Error requesting ticket')
+        raise RESTException('Error requesting ticket: %s (%s)' % (response.status, response.reason))
     
-    return response.json()
+    return await response.json()
 
 
-if __name__ == '__main__':
-    # request_pools()  # Not logged in, this will generate an error
-    login()  # Will raise an exception if error
-    #pools = request_pools()
-    #for i in pools:
-    #    print(i['id'], i['name'])
-    ticket = request_ticket(
-        username='adolfo',
-        authSmallName='172.27.0.1:8000',
-        groups=['adolfo', 'dkmaster'],
-        servicePool='5d045a19-54b5-541b-ba56-447b0622191c',
-        realName='Adolfo Gómez',
-        force=True
-    )
-    print(ticket)
+async def main():
+    async with aiohttp.ClientSession() as session:
+        # request_pools()  # Not logged in, this will generate an error
+        await login(session)  # Will raise an exception if error
+        #pools = request_pools()
+        #for i in pools:
+        #    print(i['id'], i['name'])
+        ticket = await request_ticket(
+            session=session,
+            username='adolfo',
+            authSmallName='172.27.0.1:8000',
+            groups=['adolfo', 'dkmaster'],
+            servicePool='6201b357-c4cd-5463-891e-71441a25faee',
+            realName='Adolfo Gómez',
+            force=True
+        )
+        print(ticket)
 
-    logout()
+        await logout(session)
+
+if __name__ == "__main__":
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(main())

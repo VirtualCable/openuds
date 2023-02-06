@@ -30,49 +30,43 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-from __future__ import unicode_literals
+import typing
+import requests
 
-from httplib2 import Http
-import json
+REST_URL: typing.Final[str] = 'http://172.27.0.1:8000/rest/'
 
-rest_url = 'http://172.27.0.1:8000/rest/'
-
-headers = {}
+# Global session
+session = requests.Session()
 
 # Hace login con el root, puede usarse cualquier autenticador y cualquier usuario, pero en la 1.5 solo está implementado poder hacer
 # este tipo de login con el usuario "root"
 def login():
-    global headers
-    h = Http()
-
+    
     # parameters = '{ "auth": "admin", "username": "root", "password": "temporal" }'
-    parameters = '{ "auth": "casa", "username": "172.27.0.1", "password": "" }'
+    parameters = { "auth": "casa", "username": "172.27.0.1", "password": "" }
 
-    resp, content = h.request(rest_url + 'auth/login', method='POST', body=parameters)
+    response = session.post(REST_URL + 'auth/login', parameters)
 
-    if resp['status'] != '200':  # Authentication error due to incorrect parameters, bad request, etc...
-        print "Authentication error"
+    if response.status_code // 100 != 2:  # Authentication error due to incorrect parameters, bad request, etc...
+        print("Authentication error")
         return -1
 
     # resp contiene las cabeceras, content el contenido de la respuesta (que es json), pero aún está en formato texto
-    res = json.loads(content)
-    print res
+    res = response.json()
+    print(res)
     if res['result'] != 'ok':  # Authentication error
-        print "Authentication error"
+        print("Authentication error")
         return -1
 
-    headers['X-Auth-Token'] = res['token']
+    session.headers['X-Auth-Token'] = res['token']
 
     return 0
 
 def logout():
-    global headers
-    h = Http()
+    response = session.get(REST_URL + 'auth/logout')
 
-    resp, content = h.request(rest_url + 'auth/logout', headers=headers)
-
-    if resp['status'] != '200':  # Logout error due to incorrect parameters, bad request, etc...
-        print "Error requesting logout"
+    if response.status_code // 100 != 2:  # error due to incorrect parameters, bad request, etc...
+        print("Error requesting logout %s" % response.status_code)
         return -1
 
     # Return value of logout method is nonsense (returns always done right now, but it's not important)
@@ -96,19 +90,18 @@ def logout():
 #        u'restrained': False}
 # ]
 
-def request_services():
-    h = Http()
-
-    resp, content = h.request(rest_url + 'connection', headers=headers)
-    if resp['status'] != '200':  # error due to incorrect parameters, bad request, etc...
-        print "Error requesting services"
-        print resp, content
+def request_services() -> typing.Dict[str, typing.Any]:
+    response = session.get(REST_URL + 'connection')
+    if response.status_code // 100 != 2:
+        print("Error requesting services %s" % response.status_code)
+        print(response.text)
         return {}
 
-    return json.loads(content)
+    return response.json()
 
 if __name__ == '__main__':
     if login() == 0:  # If we can log in, will get the pools correctly
         res = request_services()
-        print res
-        print logout()  # This will success
+        print(res)
+        print(logout())
+
