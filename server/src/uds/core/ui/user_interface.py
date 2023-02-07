@@ -269,15 +269,13 @@ class gui:
         def __init__(self, **options) -> None:
             # Added defaultValue as alias for defvalue
             defvalue = options.get('defvalue', options.get('defaultValue', options.get('defValue', '')))
-            if callable(defvalue):
-                defvalue = defvalue()
             self._data = {
                 'length': options.get(
                     'length', gui.InputField.DEFAULT_LENTGH
                 ),  # Length is not used on some kinds of fields, but present in all anyway
                 'required': options.get('required', False),
                 'label': options.get('label', ''),
-                'defvalue': str(defvalue),
+                'defvalue': str(defvalue) if not callable(defvalue) else defvalue,
                 'rdonly': options.get(
                     'rdonly', options.get('readOnly', options.get('readonly', False))
                 ),  # This property only affects in "modify" operations
@@ -321,6 +319,8 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
+            if callable(self._data['value']):
+                return self._data['value']()
             return (
                 self._data['value']
                 if self._data['value'] is not None
@@ -340,12 +340,6 @@ class gui:
             """
             self._data['value'] = value
 
-        def fix(self) -> None:
-            """
-            Fixes the value of this field, giving the oportunity on UserInterface instantiation to modify it
-            """
-            pass
-
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
             Returns the dictionary with the description of this item.
@@ -358,6 +352,11 @@ class gui:
             data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
                 data['tab'] = _(data['tab'])
+            # Check if value or defvalue is a callable
+            if callable(data['value']):
+                data['value'] = data['value']()
+            if callable(data['defvalue']):
+                data['defvalue'] = data['defvalue']()
             return data
 
         @property
@@ -365,7 +364,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            return self._data['defvalue']
+            return self._data['defvalue'] if not callable(self._data['defvalue']) else self._data['defvalue']()
 
         @defValue.setter
         def defValue(self, defValue: typing.Any) -> None:
@@ -516,30 +515,6 @@ class gui:
 
         """
 
-        def processValue(
-            self, valueName: str, val: typing.Any
-        ) -> typing.Any:
-            if not val and valueName.lower() == 'value':
-                return self._data['defvalue']
-            
-            if not val or val == 'today':
-                return datetime.date.today()
-            
-            if val == datetime.date.min:
-                return datetime.date(2000, 1, 1)
-            
-            if val == datetime.date.max:
-                # val = datetime.date(2099, 12, 31)
-                return datetime.date.today()
-            
-            if val == 'year_start':
-                return datetime.date(datetime.date.today().year, 1, 1)
-            
-            if val == 'year_end':
-                return datetime.date(datetime.date.today().year, 12, 31)
-            
-            return val
-
         def __init__(self, **options):
             super().__init__(**options)
             self._type(gui.InputField.DATE_TYPE)
@@ -585,11 +560,6 @@ class gui:
                 )
             )
         
-        def fix(self) -> None:
-            for v in 'defvalue', 'value':
-                self._data[v] = self.processValue(v, self._data[v])
-
-
     class PasswordField(InputField):
         """
         This represents a password field. It appears with "*" at input, so the contents is not displayed
@@ -1194,7 +1164,6 @@ class UserInterface(metaclass=UserInterfaceType):
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
 
         for key, val in theGui._gui.items():
-            val.fix()
             logger.debug('%s ### %s', key, val)
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
 
