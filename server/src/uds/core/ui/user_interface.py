@@ -416,6 +416,12 @@ class gui:
             """
             self._data['value'] = value
 
+        def fix(self) -> None:
+            """
+            Fixes the value of this field, giving the oportunity on UserInterface instantiation to modify it
+            """
+            pass
+
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
             Returns the dictionary with the description of this item.
@@ -648,6 +654,11 @@ class gui:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
                 )
             )
+        
+        def fix(self) -> None:
+            for v in 'defvalue', 'value':
+                self._data[v] = self.processValue(v, self._data[v])
+
 
 
     class PasswordField(InputField):
@@ -1010,6 +1021,7 @@ class UserInterfaceType(type):
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
+                _gui[attrName]._data = copy.deepcopy(attr._data)
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
         return typing.cast(
