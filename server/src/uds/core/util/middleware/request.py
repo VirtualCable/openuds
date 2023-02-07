@@ -133,7 +133,7 @@ class GlobalRequestMiddleware:
         proxies = list(
             reversed(
                 [
-                    i.split('%')[0]
+                    i.split('%')[0].strip()
                     for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
                 ]
             )
