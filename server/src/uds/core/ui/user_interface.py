@@ -584,36 +584,29 @@ class gui:
         The values of parameres are inherited from :py:class:`InputField`
         """
 
-        def processValue(
-            self, valueName: str, options: typing.Dict[str, typing.Any]
-        ) -> None:
-            try:
-                val = options.get(valueName, None)
+        def processValue(self, valueName: str, val: typing.Any) -> typing.Any:
+            if not val and valueName.lower() == 'value':
+                return self._data['defvalue']
 
-                if not val and valueName == 'defvalue':
-                    val = datetime.date.today()
-                elif isinstance(val, str):
-                    val = datetime.datetime.strptime(val, '%Y-%m-%d').date()
-                elif val == datetime.date.min:
-                    val = datetime.date(2000, 1, 1)
-                elif val == datetime.date.max:
-                    # val = datetime.date(2099, 12, 31)
-                    val = datetime.date.today()
-                elif not isinstance(val, datetime.date):
-                    val = datetime.date.today()
-            # Any error, use today
-            except Exception:
-                val = datetime.date.today()
+            if not val or val == 'today':
+                return datetime.date.today()
 
-            options[valueName] = val.strftime('%Y-%m-%d')
+            if val == datetime.date.min:
+                return datetime.date(2000, 1, 1)
+
+            if val == datetime.date.max:
+                # val = datetime.date(2099, 12, 31)
+                return datetime.date.today()
+
+            if val == 'year_start':
+                return datetime.date(datetime.date.today().year, 1, 1)
+
+            if val == 'year_end':
+                return datetime.date(datetime.date.today().year, 12, 31)
+
+            return val
 
         def __init__(self, **options):
-            if 'value' not in options:
-                options['value'] = options['defvalue']
-
-            for v in 'value', 'defvalue':
-                self.processValue(v, options)
-
             super().__init__(**options, type=gui.InputField.Types.DATE)
 
         def date(self, min: bool = True) -> datetime.date:
@@ -654,12 +647,10 @@ class gui:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
                 )
             )
-        
+
         def fix(self) -> None:
             for v in 'defvalue', 'value':
                 self._data[v] = self.processValue(v, self._data[v])
-
-
 
     class PasswordField(InputField):
         """
@@ -720,6 +711,7 @@ class gui:
                   self.hidden.setDefValue(self.parent().serialize())
 
         """
+
         _isSerializable: bool
 
         def __init__(self, **options) -> None:
@@ -1130,9 +1122,10 @@ class UserInterface(metaclass=UserInterfaceType):
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)
         return dic
-    
+
     def serializeForm(
-        self, opt_serializer: typing.Optional[typing.Callable[[typing.Any], bytes]] = None
+        self,
+        opt_serializer: typing.Optional[typing.Callable[[typing.Any], bytes]] = None,
     ) -> bytes:
         """New form serialization
 
@@ -1158,20 +1151,33 @@ class UserInterface(metaclass=UserInterfaceType):
                 lambda x: None if not x.isSerializable() else x.value
             ),
             gui.InfoField.Types.CHOICE: lambda x: x.value,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
+            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(
+                serialize(x.value), 'base64'
+            ).decode(),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(
+                serialize(x.value), 'base64'
+            ).decode(),
+            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE
+            if x.isTrue()
+            else gui.FALSE,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x.value,
             gui.InputField.Types.IMAGE: lambda x: x.value,
             gui.InputField.Types.DATE: lambda x: x.value,
             gui.InputField.Types.INFO: lambda x: None,
         }
         # Any unexpected type will raise an exception
-        arr = [(k, v.type.name, fw_converters[v.type](v)) for k, v in self._gui.items() if fw_converters[v.type](v) is not None]
+        arr = [
+            (k, v.type.name, fw_converters[v.type](v))
+            for k, v in self._gui.items()
+            if fw_converters[v.type](v) is not None
+        ]
 
         return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr)
+
     def deserializeForm(
-        self, values: bytes, opt_deserializer: typing.Optional[typing.Callable[[bytes], typing.Any]] = None
+        self,
+        values: bytes,
+        opt_deserializer: typing.Optional[typing.Callable[[bytes], typing.Any]] = None,
     ) -> None:
         """New form unserialization
 
@@ -1194,17 +1200,20 @@ class UserInterface(metaclass=UserInterfaceType):
             # Unserialize with old method
             self.oldDeserializeForm(values)
             return
-            
+
         # For future use
-        version = values[len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)]
-        
+        version = values[
+            len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER)
+            + len(SERIALIZATION_VERSION)
+        ]
+
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
 
         if not values:
             return
 
         arr = deserialize(values)
-        
+
         # Set all values to defaults ones
         for k in self._gui:
             if (
@@ -1226,8 +1235,12 @@ class UserInterface(metaclass=UserInterfaceType):
             ),
             gui.InputField.Types.HIDDEN: lambda x: None,
             gui.InfoField.Types.CHOICE: lambda x: x,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(
+                codecs.decode(x.encode(), 'base64')
+            ),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(
+                codecs.decode(x.encode(), 'base64')
+            ),
             gui.InputField.Types.CHECKBOX: lambda x: x,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x,
             gui.InputField.Types.IMAGE: lambda x: x,
@@ -1321,10 +1334,10 @@ class UserInterface(metaclass=UserInterfaceType):
         logger.debug('Active language for theGui translation: %s', get_language())
         self.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
-        res: typing.List[typing.MutableMapping[str, typing.Any]] = [
-            {'name': key, 'gui': val.guiDescription(), 'value': ''}
-            for key, val in self._gui.items()
-        ]
+        res: typing.List[typing.MutableMapping[str, typing.Any]] = []
+        for key, val in self._gui.items():
+            # call fix for every field in _gui, so we can "fix" values in case it is needed (i.e. date fields)
+            val.fix()
+            res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
         logger.debug('theGui description: %s', res)
         return res
-

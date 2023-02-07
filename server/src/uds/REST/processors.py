@@ -109,10 +109,10 @@ class ContentProcessor:
         if isinstance(obj, (list, tuple, types.GeneratorType)):
             return [ContentProcessor.procesForRender(v) for v in obj]
 
-        if isinstance(obj, (datetime.datetime,)):
+        if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
             return int(time.mktime(obj.timetuple()))
         
-        if isinstance(obj, (datetime.date,)):
+        if isinstance(obj, (datetime.date,)):   # Date as string
             return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
 
         if isinstance(obj, bytes):
