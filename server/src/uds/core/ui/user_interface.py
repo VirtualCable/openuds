@@ -397,6 +397,8 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
+            if callable(self._data['value']):
+                return self._data['value']()
             return (
                 self._data['value']
                 if self._data['value'] is not None
@@ -415,12 +417,6 @@ class gui:
             So we can override value setting at descendants
             """
             self._data['value'] = value
-
-        def fix(self) -> None:
-            """
-            Fixes the value of this field, giving the oportunity on UserInterface instantiation to modify it
-            """
-            pass
 
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
@@ -441,7 +437,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            return self._data['defvalue']
+            return self._data['defvalue'] if not callable(self._data['defvalue']) else self._data['defvalue']()
 
         @defValue.setter
         def defValue(self, defValue: typing.Any) -> None:

@@ -47,7 +47,7 @@ def start_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Starting date'),
         tooltip=_('Starting date for report'),
-        defvalue='year_start',
+        defvalue=lambda: datetime.date.today().replace(day=1, month=1),
         required=True,
     )
 
@@ -57,7 +57,7 @@ def single_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Date'),
         tooltip=_('Date for report'),
-        defvalue='today',
+        defvalue=lambda: datetime.date.today(),
         required=True,
     )
 
@@ -67,7 +67,7 @@ def end_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Ending date'),
         tooltip=_('ending date for report'),
-        defvalue='today',
+        defvalue=lambda: datetime.date.today()+datetime.timedelta(days=1),
         required=True,
     )
 
