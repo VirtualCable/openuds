@@ -5,15 +5,16 @@
 # Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
+# Javier Gomez <jgomez@virtualcable.es>, 2023
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -112,7 +113,7 @@ msgstr "un service"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:46
 msgid "service pool"
-msgstr "piscine de service"
+msgstr "Pool de service"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:47
 msgid "authenticator"
@@ -145,7 +146,7 @@ msgstr "calendrier"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:54
 msgid "pool group"
-msgstr "groupe de piscine"
+msgstr "groupe de Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:55
 msgid "Go to"
@@ -411,7 +412,7 @@ msgstr "Services utilisateur"
 #: static/admin/translations-fakejs.js:327
 #: static/admin/translations-fakejs.js:366
 msgid "Service pools"
-msgstr "Piscines de service"
+msgstr "Pool de service"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:3
 #: static/admin/translations-fakejs.js:7
@@ -516,7 +517,7 @@ msgstr "IP"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:263
 msgid "Services Pool"
-msgstr "Piscine de services"
+msgstr "Pool de services"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:251
 #: static/admin/translations-fakejs.js:264
@@ -535,7 +536,7 @@ msgstr "Groupes"
 #: static/admin/translations-fakejs.js:463
 #: static/admin/translations-fakejs.js:497
 msgid "Services Pools"
-msgstr "Services Piscines"
+msgstr "Services Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:240
 #: static/admin/translations-fakejs.js:343

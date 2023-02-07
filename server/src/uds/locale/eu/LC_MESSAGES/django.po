@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -285,12 +285,10 @@ msgid "Rules"
 msgstr "Arauak"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
 msgstr "Sarbidedun igerilekuak"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "Ekintzak dituzten igerilekuak"
 
@@ -1949,7 +1947,7 @@ msgstr "Errore bat gertatu da SAML erantzuna prozesatzen:"
 msgid "SAML response not authenticated"
 msgstr "SAML erantzuna ez da autentifikatu"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Ez da atributurik itzuli IdPtik"
 
@@ -2617,12 +2615,10 @@ msgid "Invalid OTP code"
 msgstr "OTP kodea baliogabea"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS HTTP bidez"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "SMS sinpleak MFA bidaltzen ditu HTTP/HTTPS erabiliz"
 
@@ -2764,12 +2760,10 @@ msgid "SMS response error action"
 msgstr "SMS erantzunaren errore ekintza"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr "Baimendu erabiltzaileari saioa hasteko bere IP sareen zerrendan badago"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr "Ukatu erabiltzaileari saioa hasteko bere IP sareen zerrendan badago"
 
@@ -4335,8 +4329,9 @@ msgstr ""
 "behar da (user @ domain edo DOMAIN \\ user)"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "HyperV lotutako klonea"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "HyperV Klona"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4489,7 +4484,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "UDS kudeatutako makinen baliozko makinak"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "API bertsioa"
 
@@ -5962,47 +5956,47 @@ msgstr "Itzala"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Itzal memoria biderkatzailea (erabili arretaz)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Gaztelera"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "English"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Frantses"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Aleman"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Portugesa"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Italiera"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Euskera"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Arabiera"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Errusiera"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "Katalan"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Txinera"
 
@@ -6785,7 +6779,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Tunnel zerbitzariaren eremuan HOSTALARI : PORTUA erabili behar da "
 
@@ -7155,6 +7149,16 @@ msgstr "USB Auto partekatzea berria"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Birbidali automatikoki USB gailuak konektatzean."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "SSL konexioa"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Hautatzen bada, SPICE protokoloak SSL konexioak ahalbidetuko ditu."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

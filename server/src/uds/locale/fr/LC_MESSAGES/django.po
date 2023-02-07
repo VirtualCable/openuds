@@ -5,13 +5,14 @@
 # Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
+# Javier Gomez <jgomez@virtualcable.es>, 2023
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster at dkmon dot com>, 2012\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -63,7 +64,7 @@ msgstr "Tags"
 
 #: REST/methods/accountsusage.py:92
 msgid "Pool name"
-msgstr "Nom de la piscine"
+msgstr "Nom de la pool"
 
 #: REST/methods/accountsusage.py:93 core/auths/authenticator.py:139
 msgid "User name"
@@ -227,11 +228,11 @@ msgstr "Aucun"
 
 #: REST/methods/authenticators.py:133
 msgid "MFA Provider"
-msgstr "Fournisseur MFA"
+msgstr "MFA Provider"
 
 #: REST/methods/authenticators.py:135
 msgid "MFA provider to use for this authenticator"
-msgstr "Fournisseur MFA à utiliser pour cet authentificateur"
+msgstr "MFA provider à utiliser pour cet authentificateur"
 
 #: REST/methods/authenticators.py:196
 msgid "Too many results..."
@@ -289,14 +290,12 @@ msgid "Rules"
 msgstr "Règles"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
-msgstr "Piscines avec accès"
+msgstr "Pool avec accès"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
-msgstr "Piscines avec actions"
+msgstr "Pool avec actions"
 
 #: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
@@ -396,7 +395,7 @@ msgstr "Politique de sélection des transports"
 
 #: REST/methods/meta_service_pools.py:84
 msgid "Service pools"
-msgstr "Piscines de service"
+msgstr "Pool de service"
 
 #: REST/methods/meta_service_pools.py:89
 msgid "Service Pool name"
@@ -577,11 +576,11 @@ msgstr "OS Manager"
 
 #: REST/methods/osmanagers.py:83
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr "Impossible de supprimer un gestionnaire d'OS avec services associés"
+msgstr "Impossible de supprimer un OS Manager avec services associés"
 
 #: REST/methods/providers.py:67
 msgid "Service providers"
-msgstr "Fournisseurs de services"
+msgstr "Service providers"
 
 #: REST/methods/providers.py:74 REST/methods/services_pools.py:137
 msgid "Status"
@@ -804,7 +803,7 @@ msgstr "OS Manager"
 
 #: REST/methods/services_pools.py:345
 msgid "OS Manager used as base of this service pool"
-msgstr "Gestionnaire de l'OS utilisé comme base de ce pool de service"
+msgstr "OS Manager utilisé comme base de ce pool de service"
 
 #: REST/methods/services_pools.py:353
 msgid "Allow removal by users"
@@ -919,7 +918,7 @@ msgstr "Service de base n'existe plus"
 
 #: REST/methods/services_pools.py:571
 msgid "This service requires an OS Manager"
-msgstr "Ce service nécessite un gestionnaire de système d'exploitation"
+msgstr "Ce service nécessite un OS Manager"
 
 #: REST/methods/services_usage.py:84 REST/methods/user_services.py:84
 #: REST/methods/user_services.py:85
@@ -978,7 +977,7 @@ msgstr ""
 
 #: REST/methods/transports.py:154
 msgid "Currently assigned services pools"
-msgstr "Actuellement affecté piscines services"
+msgstr "Actuellement affecté Pool services"
 
 #: REST/methods/transports.py:167
 msgid "Metapool transport label (only used on metapool transports grouping)"
@@ -1980,7 +1979,7 @@ msgstr "Erreur lors du traitement de la réponse SAML :"
 msgid "SAML response not authenticated"
 msgstr "Réponse SAML non authentifiée"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Aucun attribut renvoyé par l&#39;IdP"
 
@@ -2174,7 +2173,7 @@ msgstr "Aucune méthode de vérification fournie."
 
 #: core/osmanagers/osmanager.py:60
 msgid "Base OS Manager"
-msgstr "Gestionnaire d'OS Manager"
+msgstr "Base OS Manager"
 
 #: core/osmanagers/osmanager.py:62
 msgid "Base Manager"
@@ -2661,12 +2660,10 @@ msgid "Invalid OTP code"
 msgstr "Code OTP invalide"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS via HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Envoi de SMS simple MFA via HTTP/HTTPS"
 
@@ -2810,14 +2807,12 @@ msgid "SMS response error action"
 msgstr "Action d&#39;erreur de réponse SMS"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Autoriser l&#39;utilisateur à se connecter si son IP figure dans la liste "
 "des réseaux"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Refuser à l&#39;utilisateur de se connecter si son adresse IP figure dans la "
@@ -3082,7 +3077,7 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
-msgstr "Gestionnaire de système d'exploitation Linux"
+msgstr "OS Manager Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:55
 msgid "Os Manager to control Linux virtual machines"
@@ -3229,7 +3224,7 @@ msgstr "La longueur doit être comprise entre 1 et 6"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:61
 msgid "Windows Domain OS Manager"
-msgstr "Gestionnaire de système d'exploitation pour le domaine Windows"
+msgstr "OS Manager pour le domaine Windows"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:63
 msgid "Os Manager to control windows machines with domain."
@@ -3423,7 +3418,7 @@ msgstr "Intervalle pour les données du rapport"
 
 #: reports/auto/fields.py:103
 msgid "Service pool"
-msgstr "Piscine de service"
+msgstr "Pool de service"
 
 #: reports/auto/fields.py:103
 msgid "Service pool for report"
@@ -3711,7 +3706,7 @@ msgstr "Utilisation des Pools par le rapport de l'utilisateur"
 
 #: reports/stats/usage_by_pool.py:83
 msgid "ALL POOLS"
-msgstr "TOUTES LES PISCINES"
+msgstr "TOUTES LES POOL"
 
 #: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:16
@@ -3875,7 +3870,7 @@ msgstr "Région par défaut à utiliser pour la connexion à EC2"
 
 #: services/AWS_enterprise/provider.py:130
 msgid "AWS Platform Provider"
-msgstr "Fournisseur de plateforme AWS"
+msgstr "AWS Platform Provider"
 
 #: services/AWS_enterprise/provider.py:132
 msgid "Provides connection to Amazon Web Services platform"
@@ -4025,7 +4020,7 @@ msgstr "Obtenu à partir des abonnements"
 
 #: services/Azure_enterprise/provider.py:122
 msgid "Azure Platform Provider"
-msgstr "Fournisseur de la plateforme Azure"
+msgstr "Azure Platform Provider"
 
 #: services/Azure_enterprise/provider.py:124
 msgid "Provides connection to Azure Platform"
@@ -4038,7 +4033,7 @@ msgstr "Paramètres de connexion semble correct"
 
 #: services/Azure_enterprise/provider.py:462
 msgid "Azure Provider: "
-msgstr "Fournisseur d’Azur : "
+msgstr "Azure Provider: "
 
 #: services/Azure_enterprise/service.py:34
 msgid "Azure Clone Service"
@@ -4135,7 +4130,7 @@ msgstr "Vous devez sélectionner un réseau pour le service"
 
 #: services/HyperV_enterprise/legacy/provider.py:65
 msgid "HyperV LEGACY Platform Provider"
-msgstr "Fournisseur de plate-forme HyperV LEGACY"
+msgstr "HyperV LEGACY Platform Provider"
 
 #: services/HyperV_enterprise/legacy/provider.py:70
 msgid ""
@@ -4336,7 +4331,7 @@ msgstr "Mémoire pour les machines déployées à partir de ce service"
 
 #: services/HyperV_enterprise/provider.py:43
 msgid "HyperV Platform Provider"
-msgstr "Fournisseur de plate-forme HyperV"
+msgstr "HyperV Platform Provider"
 
 #: services/HyperV_enterprise/provider.py:47
 msgid "HyperV platform service provider with cluster support"
@@ -4404,8 +4399,9 @@ msgstr ""
 "utilisateur de domaine (utilisateur @ domaine ou DOMAINE \\ utilisateur"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "Clone lié HyperV"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "Clone HyperV"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4423,7 +4419,7 @@ msgstr ""
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
-msgstr "Fournisseur de plate-forme centrale Prism"
+msgstr "Prism Central Platform Provider"
 
 #: services/NutanixPrism_enterprise/provider.py:32
 msgid "Nutanix Prism Central based VM provider"
@@ -4459,7 +4455,7 @@ msgstr "Connexion fonctionne très bien"
 
 #: services/NutanixPrism_enterprise/service.py:32
 msgid "Prism Central Service"
-msgstr "Service central de prisme"
+msgstr "Service Prism Central"
 
 #: services/NutanixPrism_enterprise/service.py:34
 msgid "Nutanix Prism Central based service"
@@ -4544,7 +4540,7 @@ msgstr "Les cœurs par VCPU et le nombre de VCPUS sont requis"
 
 #: services/Nutanix_enterprise/provider.py:32
 msgid "Nutanix Acropolis Platform Provider"
-msgstr "Fournisseur de plates-formes Nutanix Acropolis"
+msgstr "Nutanix Acropolis Platform Provider"
 
 #: services/Nutanix_enterprise/provider.py:34
 msgid "Nutanix based VM provider"
@@ -4563,7 +4559,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Plage de macs valides pour les machines gérées par UDS"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "Version de l&#39;API"
 
@@ -4593,7 +4588,7 @@ msgstr ""
 
 #: services/OVirt/provider.py:80
 msgid "oVirt/RHEV Platform Provider"
-msgstr "Fournisseur de plate-forme oVirt/VEHR "
+msgstr "oVirt/RHEV Platform Provider"
 
 #: services/OVirt/provider.py:84
 msgid "oVirt platform service provider"
@@ -4681,7 +4676,7 @@ msgstr "Tous les laboratoires"
 
 #: services/OpenGnsys/provider.py:77
 msgid "OpenGnsys Platform Provider"
-msgstr "Fournisseur de la plateforme OpenGnsys"
+msgstr "OpenGnsys Platform Provider"
 
 #: services/OpenGnsys/provider.py:81
 msgid "OpenGnsys platform service provider (experimental)"
@@ -4809,7 +4804,7 @@ msgstr ""
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
-msgstr "Fournisseur de plates-formes de OpenNebula"
+msgstr "OpenNebula Platform Provider"
 
 #: services/OpenNebula/provider.py:62
 msgid "OpenNebula platform service provider"
@@ -4886,7 +4881,7 @@ msgstr ""
 
 #: services/OpenStack/provider.py:80
 msgid "OpenStack Platform Provider"
-msgstr "Fournisseur de plates-formes OpenStack"
+msgstr "OpenStack Platform Provider"
 
 #: services/OpenStack/provider.py:84
 msgid "OpenStack platform service provider"
@@ -4969,7 +4964,7 @@ msgstr "Test de connexion á OpenStack passée"
 
 #: services/OpenStack/provider_legacy.py:84
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "Fournisseur de plates-formes LEGACY OpenStack"
+msgstr "OpenStack LEGACY Platform Provider"
 
 #: services/OpenStack/provider_legacy.py:89
 msgid ""
@@ -5067,7 +5062,7 @@ msgstr "URL non valide dans la configuration avancée :"
 
 #: services/PhysicalMachines/provider.py:112
 msgid "Static IP Machines Provider"
-msgstr "Fournisseur de machines IP statiques"
+msgstr "Static IP Machines Provider"
 
 #: services/PhysicalMachines/provider.py:114
 msgid "Provides connection to machines by IP"
@@ -5179,7 +5174,7 @@ msgstr "(lié à {})"
 
 #: services/Proxmox/provider.py:60
 msgid "Proxmox Platform Provider"
-msgstr "Fournisseur de plate-forme Proxmox"
+msgstr "Proxmox Platform Provider"
 
 #: services/Proxmox/provider.py:62
 msgid "Proxmox platform service provider"
@@ -5276,11 +5271,11 @@ msgstr "désactivé"
 
 #: services/RDS_enterprise/provider.py:43
 msgid "RDS Platform Provider"
-msgstr "Fournisseur de plates-formes RDS"
+msgstr "RDS Platform Provider"
 
 #: services/RDS_enterprise/provider.py:45
 msgid "Microsoft RDS based provider"
-msgstr "Fournisseur basé sur Microsoft RDS "
+msgstr "Microsoft RDS based provider"
 
 #: services/RDS_enterprise/provider.py:54
 msgid "Server Checking"
@@ -5695,7 +5690,7 @@ msgstr "Sélectionnez votre version de vCloud"
 
 #: services/VCloud_enterprise/provider.py:130
 msgid "VCloud Director Platform Provider"
-msgstr "Fournisseur de plates-formes VCloud Director"
+msgstr "VCloud Director Platform Provider"
 
 #: services/VCloud_enterprise/provider.py:132
 msgid "Provides connection to vCloud Director platform"
@@ -5806,7 +5801,7 @@ msgstr ""
 
 #: services/Vmware_enterprise/provider.py:126
 msgid "VMWare VCenter Platform Provider"
-msgstr "Fournisseur de plates-formes VMWare VCenter"
+msgstr "VMWare VCenter Platform Provider"
 
 #: services/Vmware_enterprise/provider.py:128
 msgid "Provides connection to Virtual Center Services"
@@ -5983,7 +5978,7 @@ msgstr "Entrepôts de données où mettre des sauvegardes incrémentales"
 
 #: services/Xen/provider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "Fournisseur de plates-formes de XenServer/XCP-NG"
+msgstr "Xenserver/XCP-NG Platforms Provider"
 
 #: services/Xen/provider.py:83
 msgid "XenServer and XCP-NG platforms service provider"
@@ -6060,47 +6055,47 @@ msgstr "Ombre"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicateur de mémoire fantôme (à utiliser avec précaution)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Espanol"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Anglais"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Français"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Allemand"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Italien"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Basque"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Arabe"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Russe"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "Catalan"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Chinois"
 
@@ -6127,7 +6122,7 @@ msgstr "Utilisateur travaillant"
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
 msgid "Pools:"
-msgstr "Piscines:"
+msgstr "Pool:"
 
 #: templates/uds/reports/stats/pools-performance.html:14
 msgid "Start date:"
@@ -6891,7 +6886,7 @@ msgstr "Si activé, le certificat du serveur tunnel sera vérifié (recommandé)
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Devez utiliser HOST : PORT dans le champ serveur Tunnel"
 
@@ -7260,6 +7255,16 @@ msgstr "Nouvelle clé USB Auto partage"
 msgid "Auto-redirect USB devices when plugged in."
 msgstr ""
 "Redirection automatique des périphériques USB lorsqu’ils sont branchés."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "Connexion SSL"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Si coché, le protocole SPICE autorisera les connexions SSL."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

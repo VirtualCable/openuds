@@ -106,7 +106,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = ProxmoxDeployment
 
-    allowedProtocols = protocols.GENERIC  # + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
     servicesTypeProvided = (serviceTypes.VDI,)
 
     pool = gui.ChoiceField(

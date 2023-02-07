@@ -12,7 +12,7 @@
 # blafuente <blafuente@virtualcable.es>, 2014-2016
 # Javier Gomez <jgomez@virtualcable.es>, 2021
 # Javier <jgonzalez@virtualcable.es>, 2014
-# Javier Gomez <jgomez@virtualcable.es>, 2021-2022
+# Javier Gomez <jgomez@virtualcable.es>, 2021-2023
 # Javier <jgonzalez@virtualcable.es>, 2014,2018,2020,2022
 # Javier <jgonzalez@virtualcable.es>, 2014
 # Luis Fagundez <lframses@gmail.com>, 2018
@@ -22,9 +22,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2021-2023\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -299,14 +299,12 @@ msgid "Rules"
 msgstr "Normas"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
-msgstr "Piscinas con Accesos"
+msgstr "Pools con Accesos"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
-msgstr "Piscinas con Acciones"
+msgstr "Pools con Acciones"
 
 #: REST/methods/client.py:92
 msgid "Your service is being created. Please, wait while we complete it"
@@ -1973,7 +1971,7 @@ msgstr "Error al procesar la respuesta SAML:"
 msgid "SAML response not authenticated"
 msgstr "Respuesta SAML no autenticada"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Ningún atributo devuelto por IdP"
 
@@ -2540,7 +2538,7 @@ msgstr "Dirección de correo electrónico que se utilizará como remitente"
 
 #: mfas/Email/mfa.py:124
 msgid "Enable HTML"
-msgstr "Permitir HTML"
+msgstr "Habilitar HTML"
 
 #: mfas/Email/mfa.py:126
 msgid "Enable HTML in emails"
@@ -2592,7 +2590,7 @@ msgstr "Revisa tu correo. Recibirás un email con el código de verificación"
 
 #: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
 msgid "Radius OTP Challenge"
-msgstr "Desafío OTP de radio"
+msgstr "Desafío OTP de radius"
 
 #: mfas/Radius/mfa.py:88
 msgid "All users must send OTP"
@@ -2642,19 +2640,17 @@ msgstr "Por favor ingrese OTP"
 
 #: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
 msgid "Radius OTP connection error"
-msgstr "Error de conexión OTP de radio"
+msgstr "Error de conexión OTP de Radius"
 
 #: mfas/Radius/mfa.py:279
 msgid "Invalid OTP code"
 msgstr "Código OTP no válido"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS a través de HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Envío de SMS simple MFA usando HTTP/HTTPS"
 
@@ -2798,13 +2794,11 @@ msgid "SMS response error action"
 msgstr "Acción de error de respuesta de SMS"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Permitir que el usuario inicie sesión si su IP está en la lista de redes"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Denegar al usuario el inicio de sesión si su IP está en la lista de redes"
@@ -4371,8 +4365,9 @@ msgstr ""
 "(usuario @ dominio o DOMINIO\\usuario)"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "HyperV Linked Clone"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "Clon de HyperV"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4528,7 +4523,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Rango de macs válidas para máquinas administradas por UDS "
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "Versión API"
 
@@ -6006,47 +6000,47 @@ msgstr "Shadow"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicador de memoria (usar con cuidado)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Español"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Inglés"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Francés"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Alemán"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Italiano"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Euskera"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Árabe"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Ruso"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "Catalán"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Chino"
 
@@ -6620,15 +6614,15 @@ msgstr "Protocolo RDS utilizando a cliente de HTML5 para vApps"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:293
 msgid "Load Balancing Info"
-msgstr "Información de equilibrio de carga"
+msgstr "Información de balanceo de carga"
 
 #: transports/HTML5RDS_enterprise/html5rds.py:296
 msgid ""
 "Load Balancing Info. Normally, this field is blank. Check de documentation "
 "for your balancer."
 msgstr ""
-"Información de equilibrio de carga. Normalmente, este campo está en blanco. "
-"Consulta la documentación de tu balanceadora."
+"Información de balanceo de carga. Normalmente, este campo está en blanco. "
+"Consulta la documentación de tu balanceador."
 
 #: transports/HTML5RDS_enterprise/html5rds.py:305
 msgid "Gateway Hostname"
@@ -6836,7 +6830,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Debe utilizar HOST: PUERTO en el Campo Servidor de Túnel"
 
@@ -7204,6 +7198,16 @@ msgstr "Nuevo USB compartir Auto"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Auto-redirigir dispositivos USB enchufado."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "Conexión SSL"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Si está marcado, el protocolo SPICE permitirá conexiones SSL."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

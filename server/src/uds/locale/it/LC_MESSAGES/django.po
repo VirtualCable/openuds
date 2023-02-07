@@ -4,6 +4,7 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
+# Javier Gomez <jgomez@virtualcable.es>, 2023
 # Massimo Vignone, 2020
 # mvignone, 2020
 # mvignone, 2020
@@ -14,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2019\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
 "it/)\n"
 "Language: it\n"
@@ -291,12 +292,10 @@ msgid "Rules"
 msgstr "Regole"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
 msgstr "Piscine con accessi"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "Pool con azioni"
 
@@ -575,7 +574,7 @@ msgstr "Ultima esecuzione"
 
 #: REST/methods/osmanagers.py:53
 msgid "OS Managers"
-msgstr "Manager OS"
+msgstr " OS Manager"
 
 #: REST/methods/osmanagers.py:83
 msgid "Can't delete an OS Manager with services pools associated"
@@ -583,7 +582,7 @@ msgstr "Impossibile eliminare un OS Manager con Service Pool associati"
 
 #: REST/methods/providers.py:67
 msgid "Service providers"
-msgstr "Fornitori di servizi"
+msgstr "Service providers"
 
 #: REST/methods/providers.py:74 REST/methods/services_pools.py:137
 msgid "Status"
@@ -1963,7 +1962,7 @@ msgstr "Errore durante l&#39;elaborazione della risposta SAML:"
 msgid "SAML response not authenticated"
 msgstr "Risposta SAML non autenticata"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Nessun attributo restituito dall&#39;IdP"
 
@@ -2642,12 +2641,10 @@ msgid "Invalid OTP code"
 msgstr "Codice OTP non valido"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS via HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Semplice invio di SMS tramite MFA tramite HTTP/HTTPS"
 
@@ -2789,13 +2786,11 @@ msgid "SMS response error action"
 msgstr "Azione di errore di risposta SMS"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Consenti all&#39;utente di accedere se il suo IP è nell&#39;elenco delle reti"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Nega all&#39;utente l&#39;accesso se il suo IP è nell&#39;elenco delle reti"
@@ -3843,7 +3838,7 @@ msgstr "Regione predefinita da utilizzare per la connessione a EC2"
 
 #: services/AWS_enterprise/provider.py:130
 msgid "AWS Platform Provider"
-msgstr "Fornitore della piattaforma AWS"
+msgstr "AWS Platform Provider"
 
 #: services/AWS_enterprise/provider.py:132
 msgid "Provides connection to Amazon Web Services platform"
@@ -4366,8 +4361,9 @@ msgstr ""
 "(utente@dominio o DOMINIO\\utente"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "HyperV Linked Clone"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "Clona HyperV"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4407,7 +4403,7 @@ msgstr "Utente con privilegi validi su Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:62
 msgid "Password of the user of Nutanix  Prism Central"
-msgstr "Password dell&#39;utente di Nutanix Prism Central"
+msgstr "Password dell'utente di Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:93
 #: services/Nutanix_enterprise/provider.py:95
@@ -4523,7 +4519,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Intervallo di mac validi per le VM gestite da UDS"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "Versione dell&#39;API"
 
@@ -5998,47 +5993,47 @@ msgstr "Shadow"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Moltiplicatore di memoria shadow (usare con cura)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Inglese"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Francese"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Tedesco"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Portoghese"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Italiano"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Basco"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Arabo"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Russo"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "Catalano"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Cinese"
 
@@ -6752,7 +6747,7 @@ msgstr "Se impostato, la connessione sarà di sola lettura"
 #: transports/NICEDCV_enterprise/nicedcv.py:35
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:41
 msgid "NICE DCV"
-msgstr "NIZZA DCV"
+msgstr "NICE DCV"
 
 #: transports/NICEDCV_enterprise/nicedcv.py:37
 msgid "NICE DCV Protocol. Direct connection."
@@ -6830,7 +6825,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Occorre usare il formato HOST: PORT nel campo Tunnel Server"
 
@@ -6853,7 +6848,7 @@ msgstr "Dimensioni della finestra alla connessione"
 #: transports/NoMachine_enterprise/nomachine_transport.py:59
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:66
 msgid "NoMachine Protocol"
-msgstr "Nessun protocollo macchina"
+msgstr "NoMachine protocollo"
 
 #: transports/NoMachine_enterprise/nomachine_transport.py:61
 msgid "NoMachine Protocol Direct connection."
@@ -7202,6 +7197,16 @@ msgstr "Nuova condivisione automatica USB"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Reindirizzamento automatico dei dispositivi USB quando collegati."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "Connessione SSL"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Se selezionato, il protocollo SPICE consentirà le connessioni SSL."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

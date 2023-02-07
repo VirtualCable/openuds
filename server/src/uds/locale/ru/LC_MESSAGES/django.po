@@ -16,9 +16,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Александр Бурматов, 2022\n"
+"Last-Translator: Elena Mishina, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -150,7 +150,7 @@ msgstr "Источник"
 
 #: REST/methods/actor_token.py:57
 msgid "Hostname"
-msgstr "Hostname"
+msgstr "Узел"
 
 #: REST/methods/actor_token.py:58
 msgid "Pre-connect"
@@ -238,7 +238,7 @@ msgstr "Поставщик МФА"
 
 #: REST/methods/authenticators.py:135
 msgid "MFA provider to use for this authenticator"
-msgstr "Поставщик MFA, который будет использоваться для этого аутентификатора"
+msgstr "Поставщик МФА, который будет использоваться для этого аутентификатора"
 
 #: REST/methods/authenticators.py:196
 msgid "Too many results..."
@@ -294,12 +294,10 @@ msgid "Rules"
 msgstr "Правила"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
 msgstr "Пулы с доступами"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "Пулы с действиями"
 
@@ -363,7 +361,7 @@ msgstr "Привязанный образ"
 #: REST/methods/meta_pools.py:168 REST/methods/services_pool_groups.py:101
 #: REST/methods/services_pools.py:402
 msgid "Image assocciated with this service"
-msgstr "Образ привязанный с сервисом"
+msgstr "Изображение связанное с этим пулом услуг"
 
 #: REST/methods/meta_pools.py:182 REST/methods/services_pools.py:143
 #: REST/methods/services_pools.py:416
@@ -416,7 +414,7 @@ msgstr "Привязанные сервисы"
 #: REST/methods/meta_service_pools.py:194 REST/methods/user_services.py:137
 #: REST/methods/user_services.py:271
 msgid "Creation date"
-msgstr "Создать дату"
+msgstr "Дата создания"
 
 #: REST/methods/meta_service_pools.py:195 REST/methods/services_usage.py:125
 #: reports/stats/pool_users_summary.py:60
@@ -500,7 +498,7 @@ msgstr "Срок действия кода МФА"
 
 #: REST/methods/mfas.py:96
 msgid "Time in minutes to allow MFA code to be used."
-msgstr "Время в минутах, в течение которого можно использовать код MFA."
+msgstr "Время в минутах, в течение которого можно использовать код МФА."
 
 #: REST/methods/networks.py:59 REST/methods/transports.py:115
 msgid "Networks"
@@ -830,19 +828,19 @@ msgstr "Если активно, пользователю будет разре�
 
 #: REST/methods/services_pools.py:375
 msgid "Ignores unused"
-msgstr "Игнорирует неиспользуемые"
+msgstr "Игнорировать неиспользуемые"
 
 #: REST/methods/services_pools.py:377
 msgid ""
 "If the option is enabled, UDS will not attempt to detect and remove the user "
 "services assigned but not in use."
 msgstr ""
-"Если опция включена, UDS не будет пытаться обнаружить и удалить пользователя "
+"Если активно, UDS не будет пытаться обнаружить и удалить пользовательские "
 "услуги, назначенные, но не используемые."
 
 #: REST/methods/services_pools.py:387
 msgid "If active, transport will be visible for users"
-msgstr "Если активен, транспорт будет виден пользователям"
+msgstr "Если активно, транспорт будет виден пользователям"
 
 #: REST/methods/services_pools.py:390 REST/methods/services_pools.py:405
 #: REST/methods/services_pools.py:422 REST/methods/services_pools.py:433
@@ -900,7 +898,7 @@ msgstr "Показать транспорты"
 #: REST/methods/services_pools.py:486
 msgid "If active, alternative transports for user will be shown"
 msgstr ""
-"Если активен, для пользователя будут показаны альтернативные транспорты"
+"Если активно, для пользователя будут показаны альтернативные транспорты"
 
 #: REST/methods/services_pools.py:498
 msgid "Accounting"
@@ -948,16 +946,16 @@ msgid ""
 "If checked, the transport will be enabled for the selected networks. If "
 "unchecked, transport will be disabled for selected networks"
 msgstr ""
-"Если флаг установлен, то транспорт будет включен для выбранных сетей. Если "
-"флаг не установлен, транспорт будет выключен для выбранных сетей"
+"Если отмечено, транспорт будет включен для выбранных сетей. Если не "
+"отмечено, транспорт будет отключен для выбранных сетей"
 
 #: REST/methods/transports.py:117
 msgid ""
 "Networks associated with this transport. If No network selected, will mean "
 "\"all networks\""
 msgstr ""
-"Сети, ассоциированные с транспортом. Если сети не выбраны, это означает все "
-"сети"
+"Сети, ассоциированные с транспортом. Если сети не выбраны, это означает «все "
+"сети»"
 
 #: REST/methods/transports.py:135
 msgid "Allowed Devices"
@@ -969,7 +967,8 @@ msgid ""
 "Else, only devices compatible with selected values will be allowed"
 msgstr ""
 "Если пусто, будет разрешено использовать любое устройство, совместимое с "
-"этим транспортом"
+"этим транспортом. В противном случае будут разрешены только выбранные "
+"устройства, совместимые с этим транспортом."
 
 #: REST/methods/transports.py:154
 msgid "Currently assigned services pools"
@@ -978,8 +977,8 @@ msgstr "Текущие привязанные пулы услуг"
 #: REST/methods/transports.py:167
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr ""
-"Метка транспорта метапула (используется только при группировке транспорта "
-"метапула)"
+"Метка транспорта метапула (используется только при группировке транспорта в "
+"метапулы)"
 
 #: REST/methods/tunnel_token.py:49
 msgid "Tunnel tokens"
@@ -1066,7 +1065,7 @@ msgstr "Пользователь"
 #: REST/methods/users_groups.py:150
 #, python-brace-format
 msgid "Users of {0}"
-msgstr "Пользователей из {0}"
+msgstr "Пользователи {0}"
 
 #: REST/methods/users_groups.py:156
 msgid "Current users"
@@ -1137,7 +1136,7 @@ msgstr "UDS Метагруппа"
 
 #: REST/methods/users_groups.py:433
 msgid "Group name is required"
-msgstr "Требуется название группы"
+msgstr "Необходимо указать имя группы"
 
 #: REST/model.py:136
 msgid "Tags"
@@ -1200,7 +1199,7 @@ msgstr "запрошен шаблон, которого не существуе�
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:46
 msgid "Active Directory Server IP or Hostname"
-msgstr "IP адрес или имя сервера Active Directory "
+msgstr "IP-адрес или имя сервера Active Directory "
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:52
 #: osmanagers/WindowsOsManager/windows_domain.py:126
@@ -1325,7 +1324,7 @@ msgstr "Атрибут многофакторной идентификации"
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
-msgstr "Атрибут откуда извлечь код MFA"
+msgstr "Атрибут, из которого извлекается код МФА"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:140
 msgid "Active Directory Authenticator"
@@ -1594,7 +1593,7 @@ msgstr "IP аутентификатор"
 
 #: auths/IP/authenticator.py:73
 msgid "IP Range"
-msgstr "Диапазон IP адресов"
+msgstr "Диапазон IP-адресов"
 
 #: auths/IP/authenticator.py:122 auths/IP/authenticator.py:125
 msgid "All seems to be fine."
@@ -1960,7 +1959,7 @@ msgstr "Ошибка обработки ответа SAML:"
 msgid "SAML response not authenticated"
 msgstr "Ответ SAML не аутентифицирован"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "От IdP не возвращаются атрибуты"
 
@@ -2176,7 +2175,7 @@ msgstr "из"
 
 #: core/reports/report.py:120
 msgid "Printed in {now:%Y, %b %d} at {now:%H:%M}"
-msgstr "Напечатано в {сейчас:% Y,% b% d} в {сейчас:% H:% M}"
+msgstr "Напечатано {now:%Y, %b } в {now:%H:%M}"
 
 #: core/services/service.py:105 core/services/service.py:117
 msgid "Base Service"
@@ -2462,8 +2461,8 @@ msgid ""
 "SMTP Server hostname or IP address. If you are using a  non-standard port, "
 "add it after a colon, for example: smtp.gmail.com:587"
 msgstr ""
-"Имя хоста SMTP-сервера или IP-адрес. Если вы используете нестандартный порт, "
-"добавьте его после двоеточия, например: smtp.gmail.com:587."
+"IP-адрес или имя хоста SMTP-сервера. Если используется нестандартный порт, "
+"следует указать его после двоеточия, например: smtp.gmail.com:587."
 
 #: mfas/Email/mfa.py:70 mfas/Email/mfa.py:83 mfas/Email/mfa.py:92
 #: mfas/Email/mfa.py:101
@@ -2630,12 +2629,10 @@ msgid "Invalid OTP code"
 msgstr "Неверный OTP-код"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "СМС через HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Простая отправка SMS MFA с использованием HTTP/HTTPS"
 
@@ -2776,14 +2773,12 @@ msgid "SMS response error action"
 msgstr "Действие при ошибке ответа SMS"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Разрешить пользователю входить в систему, если его IP-адрес есть в списке "
 "сетей"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Запретить пользователю вход в систему, если его IP-адрес есть в списке сетей"
@@ -2965,11 +2960,11 @@ msgstr "Автоматический выбор"
 
 #: models/meta_pool.py:83
 msgid "Use only common transports"
-msgstr "Используйте только обычные транспорты"
+msgstr "Использовать только общие транспорты"
 
 #: models/meta_pool.py:84
 msgid "Group Transports by label"
-msgstr "Группировать транспорты по лейблу"
+msgstr "Группировать транспорты по метке"
 
 #: models/permissions.py:93
 msgid "Read"
@@ -3092,7 +3087,7 @@ msgstr ""
 #: osmanagers/LinuxOsManager/linux_osmanager.py:89
 #: osmanagers/WindowsOsManager/windows.py:80
 msgid "Calendar logout"
-msgstr "Выход из календаря"
+msgstr "Выход по календарю"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:92
 #: osmanagers/WindowsOsManager/windows.py:83
@@ -3100,8 +3095,8 @@ msgid ""
 "If checked, UDS will try to logout user when the calendar for his current "
 "access expires"
 msgstr ""
-"Если этот флажок установлен, UDS попытается выйти из системы, когда истечет "
-"срок действия календаря для его текущего доступа."
+"Если отмечено, UDS попытается завершить сессию пользователя, когда для его "
+"текущего сеанса истечет срок действия календаря"
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:53
 msgid "Linux Random Password OS Manager"
@@ -4351,8 +4346,9 @@ msgstr ""
 "(пользователь@домен или ДОМЕН\\пользователь)"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "Связанный клон HyperV"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "Клон HyperV"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4379,7 +4375,7 @@ msgstr "Поставщик виртуальных машин на базе Nutan
 #: services/NutanixPrism_enterprise/provider.py:40
 #: services/Nutanix_enterprise/provider.py:42
 msgid "Nutanix Acropolis Server IP or Hostname"
-msgstr "IP адрес или имя сервера Nutanix Acropolis"
+msgstr "IP-адрес или имя сервера Nutanix Acropolis"
 
 #: services/NutanixPrism_enterprise/provider.py:48
 #: services/Nutanix_enterprise/provider.py:50
@@ -4388,7 +4384,7 @@ msgstr "Порт сервера Nutanix Acropolis (по умолчанию 9440)
 
 #: services/NutanixPrism_enterprise/provider.py:55
 msgid "User with valid privileges on Nutanix Prism Central"
-msgstr "Пользователь с действующими правами на Nutanix Prism Central"
+msgstr "Пользователь с достаточными привилегиями на Nutanix Prism Central"
 
 #: services/NutanixPrism_enterprise/provider.py:62
 msgid "Password of the user of Nutanix  Prism Central"
@@ -4471,7 +4467,7 @@ msgstr "Если активен, найденные дубликаты vApps д�
 #: services/Nutanix_enterprise/service.py:134 services/Proxmox/service.py:127
 #: services/Vmware_enterprise/service_linked.py:121
 msgid "Try SOFT Shutdown first"
-msgstr "Сначала попробуйте SOFT Shutdown"
+msgstr "Сначала попробовать SOFT Shutdown"
 
 #: services/NutanixPrism_enterprise/service.py:142
 #: services/Nutanix_enterprise/service.py:138
@@ -4479,8 +4475,8 @@ msgid ""
 "If active, UDS will try to shutdown (soft) the machine using Nutanix ACPI. "
 "Will delay 30 seconds the power off of hanged machines."
 msgstr ""
-"Если он активен, UDS попытается (мягко) выключить машину с помощью Nutanix "
-"ACPI. Задержит на 30 секунд отключение повешенных машин."
+"Если активно, UDS попытается (мягко) выключить машину с помощью Nutanix "
+"ACPI. Задерживает отключение питания зависших машин на 30 секунд."
 
 #: services/NutanixPrism_enterprise/service.py:167
 #: services/Nutanix_enterprise/service.py:158
@@ -4510,7 +4506,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Диапазон действительных мак-адресов для управляемых UDS машин"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "Версия API"
 
@@ -4554,7 +4549,7 @@ msgstr "Версия сервера oVirt"
 
 #: services/OVirt/provider.py:116
 msgid "oVirt Server IP or Hostname"
-msgstr "IP адрес или имя сервера oVirt"
+msgstr "IP-адрес или имя сервера oVirt"
 
 #: services/OVirt/provider.py:123
 msgid "User with valid privileges on oVirt, (use \"user@domain\" form)"
@@ -4608,7 +4603,7 @@ msgstr "USB"
 
 #: services/OVirt/service.py:177
 msgid "Enable usb redirection for SPICE"
-msgstr "Включить USB пересылку в SPICE"
+msgstr "Включить перенаправление USB в SPICE"
 
 #: services/OVirt/service.py:191
 msgid "Display type (only for administration purposes)"
@@ -4856,7 +4851,7 @@ msgstr "Доменное имя (по умолчанию Default)"
 
 #: services/OpenStack/provider.py:129 services/OpenStack/provider_legacy.py:146
 msgid "User with valid privileges on OpenStack"
-msgstr "Пользователь с действующими правами в OpenStack"
+msgstr "Пользователь с достаточными привилегиями в OpenStack"
 
 #: services/OpenStack/provider.py:137 services/OpenStack/provider_legacy.py:154
 msgid "Password of the user of OpenStack"
@@ -5064,14 +5059,14 @@ msgstr ""
 
 #: services/PhysicalMachines/service_multi.py:112
 msgid "Lock machine by external access"
-msgstr "Заблокируйте машину внешним доступом"
+msgstr "Блокировка машины внешним доступом"
 
 #: services/PhysicalMachines/service_multi.py:113
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr ""
-"Если этот флажок установлен, UDS заблокирует машину, если к ней будет "
-"получен доступ извне UDS."
+"Если отмечено, UDS заблокирует машину, если доступ к ней будет "
+"осуществляться извне UDS."
 
 #: services/PhysicalMachines/service_multi.py:120
 msgid "Static Multiple IP"
@@ -5088,15 +5083,15 @@ msgstr "В списке серверов обнаружено недопусти
 #: services/PhysicalMachines/service_single.py:56
 #: services/PhysicalMachines/service_single.py:58
 msgid "Machine IP"
-msgstr "IP адрес машины"
+msgstr "IP-адрес машины"
 
 #: services/PhysicalMachines/service_single.py:63
 msgid "Static Single IP"
-msgstr "Статический одиночный IP адрес"
+msgstr "Статический одиночный IP-адрес"
 
 #: services/PhysicalMachines/service_single.py:65
 msgid "This service provides access to POWERED-ON Machine by IP"
-msgstr "Сервис предлоставляет доступ к включенным машинам по IP"
+msgstr "Сервис предоставляет доступ к включенным машинам по IP"
 
 #: services/PhysicalMachines/service_single.py:87
 msgid "Invalid server used: \"{}\""
@@ -5143,11 +5138,11 @@ msgstr "Тайм-аут подключения к Proxmox в секундах"
 
 #: services/Proxmox/provider.py:134
 msgid "Starting VmId"
-msgstr "Запуск VmId"
+msgstr "Начальный VmId"
 
 #: services/Proxmox/provider.py:139
 msgid "Starting machine id on proxmox"
-msgstr "Идентификатор стартовой машины на proxmox"
+msgstr "Начальный идентификатор машины на Proxmox"
 
 #: services/Proxmox/provider.py:152
 msgid ""
@@ -5196,8 +5191,8 @@ msgid ""
 "If active, UDS will try to shutdown (soft) the machine using VMWare Guest "
 "Tools. Will delay 30 seconds the power off of hanged machines."
 msgstr ""
-"Если активен, UDS попытается (мягко) выключить машину с помощью VMWare Guest "
-"Tools. Задержит на 30 секунд отключение повешенных машин."
+"Если активно, UDS попытается (мягко) выключить машину с помощью VMWare Guest "
+"Tools. Задерживает отключение питания зависших машин на 30 секунд.."
 
 #: services/Proxmox/service.py:152
 msgid "Storage for publications & machines."
@@ -5593,7 +5588,7 @@ msgstr "Тестировать службу с кэшем только 1 уро�
 
 #: services/VCloud_enterprise/provider.py:38
 msgid "vCloud Server IP or Hostname"
-msgstr "IP адрес или имя vCloud сервера"
+msgstr "IP-адрес или имя vCloud сервера"
 
 #: services/VCloud_enterprise/provider.py:46
 msgid "vCloud Server Port (usually 443)"
@@ -5609,7 +5604,7 @@ msgstr "Организация для использования vCloud"
 
 #: services/VCloud_enterprise/provider.py:60
 msgid "User with valid privileges on vCloud"
-msgstr "Пользователь с действующими правами в vCloud"
+msgstr "Пользователь с достаточными привилегиями в vCloud"
 
 #: services/VCloud_enterprise/provider.py:67
 msgid "Password of the user of vCloud"
@@ -5711,7 +5706,7 @@ msgstr "Порт сервера VMWare VCenter (обыно 443)"
 
 #: services/Vmware_enterprise/provider.py:62
 msgid "User with valid privileges on VC"
-msgstr "Пользователь с действующими правами на VC"
+msgstr "Пользователь с достаточными привилегиями на VC"
 
 #: services/Vmware_enterprise/provider.py:69
 msgid "Password of the user of the VC"
@@ -5913,11 +5908,11 @@ msgstr "Поставщик платформ услуг XenServer и XCP-NG"
 
 #: services/Xen/provider.py:102
 msgid "XenServer Server IP or Hostname"
-msgstr "IP адрес или имя сервера XenServer"
+msgstr "IP-адрес или имя сервера XenServer"
 
 #: services/Xen/provider.py:109
 msgid "User with valid privileges on XenServer"
-msgstr "Пользователь с действующими правами на XenServer"
+msgstr "Пользователь с достаточными привилегиями на XenServer"
 
 #: services/Xen/provider.py:117
 msgid "Password of the user of XenServer"
@@ -5943,7 +5938,7 @@ msgstr "Резервный хост"
 msgid ""
 "XenServer BACKUP IP or Hostname (used on connection failure to main server)"
 msgstr ""
-"XenServer BACKUP IP или имя хоста (используется при сбое подключения к "
+"IP-адрес или имя хоста XenServer BACKUP (используется при сбое подключения к "
 "основному серверу)"
 
 #: services/Xen/provider.py:487
@@ -5982,47 +5977,47 @@ msgstr "Тень"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Множитель теневой памяти (используйте с осторожностью)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Испанский"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Английский"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Французский"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Немецкий"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Португальский"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Итальянский"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Баскский"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Арабский"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Русский"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "Каталонский"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Китайский"
 
@@ -6162,8 +6157,8 @@ msgid ""
 "If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling "
 "instead of UDS Tunnel"
 msgstr ""
-"Если этот флажок установлен, UDS будет использовать Glyptodon Enterprise "
-"Tunnel для туннелирования HTML вместо туннеля UDS."
+"Если отмечено, UDS будет использовать Glyptodon Enterprise Tunnel для "
+"туннелирования HTML вместо туннеля UDS."
 
 #: transports/HTML5RDP/html5rdp.py:94
 #: transports/HTML5RDS_enterprise/html5rds.py:99
@@ -6783,8 +6778,8 @@ msgid ""
 "IP or Hostname of tunnel server sent to client device (\"public\" ip) and "
 "port. (use HOST:PORT format)"
 msgstr ""
-"IP адрес или имя туннельного сервера, отправленного на клиентское устройство "
-"(публичный IP адрес) и порт (используйте формат: HOST:PORT)"
+"IP-адрес или имя туннельного сервера, отправленного на клиентское устройство "
+"(публичный IP-адрес) и порт (используется формат: HOST:PORT)"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:57
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:83
@@ -6813,7 +6808,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Нужно использовать HOST:PORT в поле туннельного сервера"
 
@@ -7182,6 +7177,16 @@ msgstr "Новый USB автообмен"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Автоперенаправление USB устройств при подключении."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "SSL-соединение"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Если флажок установлен, протокол SPICE разрешает соединения SSL."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
