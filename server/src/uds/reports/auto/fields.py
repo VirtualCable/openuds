@@ -47,7 +47,7 @@ def start_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Starting date'),
         tooltip=_('Starting date for report'),
-        defvalue=datetime.date.min,
+        defvalue='year_start',
         required=True,
     )
 
@@ -57,7 +57,7 @@ def single_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Date'),
         tooltip=_('Date for report'),
-        defvalue=datetime.date.today(),
+        defvalue='today',
         required=True,
     )
 
@@ -67,7 +67,7 @@ def end_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Ending date'),
         tooltip=_('ending date for report'),
-        defvalue=datetime.date.max,
+        defvalue='today',
         required=True,
     )
 

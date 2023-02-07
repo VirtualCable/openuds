@@ -340,6 +340,12 @@ class gui:
             """
             self._data['value'] = value
 
+        def fix(self) -> None:
+            """
+            Fixes the value of this field, giving the oportunity on UserInterface instantiation to modify it
+            """
+            pass
+
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
             Returns the dictionary with the description of this item.
@@ -511,24 +517,30 @@ class gui:
         """
 
         def processValue(
-            self, valueName: str, options: typing.Dict[str, typing.Any]
-        ) -> None:
-            val = options.get(valueName, '')
-
-            if not val and valueName == 'defvalue':
-                val = datetime.date.today()
-            elif val == datetime.date.min:
-                val = datetime.date(2000, 1, 1)
-            elif val == datetime.date.max:
+            self, valueName: str, val: typing.Any
+        ) -> typing.Any:
+            if not val and valueName.lower() == 'value':
+                return self._data['defvalue']
+            
+            if not val or val == 'today':
+                return datetime.date.today()
+            
+            if val == datetime.date.min:
+                return datetime.date(2000, 1, 1)
+            
+            if val == datetime.date.max:
                 # val = datetime.date(2099, 12, 31)
-                val = datetime.date.today()
-
-            options[valueName] = val
+                return datetime.date.today()
+            
+            if val == 'year_start':
+                return datetime.date(datetime.date.today().year, 1, 1)
+            
+            if val == 'year_end':
+                return datetime.date(datetime.date.today().year, 12, 31)
+            
+            return val
 
         def __init__(self, **options):
-            for v in 'value', 'defvalue':
-                self.processValue(v, options)
-
             super().__init__(**options)
             self._type(gui.InputField.DATE_TYPE)
 
@@ -572,6 +584,11 @@ class gui:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
                 )
             )
+        
+        def fix(self) -> None:
+            for v in 'defvalue', 'value':
+                self._data[v] = self.processValue(v, self._data[v])
+
 
     class PasswordField(InputField):
         """
@@ -944,6 +961,7 @@ class UserInterfaceType(type):
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
+                _gui[attrName]._data = copy.deepcopy(attr._data)
             newClassDict[attrName] = attr
         newClassDict['_gui'] = _gui
         return typing.cast(
@@ -976,6 +994,7 @@ class UserInterface(metaclass=UserInterfaceType):
         self._gui = copy.deepcopy(
             self._gui
         )  # Ensure "gui" is our own instance, deep copied from base
+        # And for each element, invoke "fix"
         for key, val in self._gui.items():  # And refresh references to them
             setattr(self, key, val)
 
@@ -1175,6 +1194,7 @@ class UserInterface(metaclass=UserInterfaceType):
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
 
         for key, val in theGui._gui.items():
+            val.fix()
             logger.debug('%s ### %s', key, val)
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
 
