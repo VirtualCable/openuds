@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -283,12 +283,10 @@ msgid "Rules"
 msgstr "规则"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
 msgstr "具有访问权限的池"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "动作池"
 
@@ -1871,7 +1869,7 @@ msgstr "处理 SAML 响应时出错："
 msgid "SAML response not authenticated"
 msgstr "SAML 响应未通过身份验证"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "没有从 IdP 返回的属性"
 
@@ -2523,12 +2521,10 @@ msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "通过 HTTP 发送短信"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "使用 HTTP/HTTPS 发送 MFA 的简单短信"
 
@@ -2665,12 +2661,10 @@ msgid "SMS response error action"
 msgstr "短信响应错误动作"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr "如果用户的 IP 在网络列表中，则允许用户登录"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
@@ -4190,8 +4184,9 @@ msgid ""
 msgstr "对于群集，用户名必须是域用户名（user @ domain或DOMAIN \\ user"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "HyperV链接克隆"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "HyperV 克隆"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4339,7 +4334,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "UDS托管计算机的有效mac范围"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "接口版本"
 
@@ -5735,47 +5729,47 @@ msgstr "阴影"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "影子内存倍增器（谨慎使用）"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "英语"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "法国"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "德语"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "意大利"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "巴斯克"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "俄语"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "加泰罗尼亚"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "中文"
 
@@ -6520,7 +6514,7 @@ msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "必须在隧道服务器字段中使用HOST：PORT"
 
@@ -6863,6 +6857,16 @@ msgstr "新的USB自动共享"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "插入时自动重定向USB设备。"
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "SSL连接"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "如果选中，SPICE 协议将允许 SSL 连接。"
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

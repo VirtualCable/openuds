@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
 "Language-Team: German (http://www.transifex.com/openuds/openuds/language/"
@@ -286,12 +286,10 @@ msgid "Rules"
 msgstr "Regeln"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
 msgstr "Pools mit Zugängen"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "Pools mit Aktionen"
 
@@ -1966,7 +1964,7 @@ msgstr "Fehler bei der Verarbeitung der SAML-Antwort:"
 msgid "SAML response not authenticated"
 msgstr "SAML-Antwort nicht authentifiziert"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Keine Attribute vom IdP zurückgegeben"
 
@@ -2650,12 +2648,10 @@ msgid "Invalid OTP code"
 msgstr "Ungültiger OTP-Code"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS über HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Einfacher SMS-Versand mit MFA über HTTP/HTTPS"
 
@@ -2797,14 +2793,12 @@ msgid "SMS response error action"
 msgstr "SMS-Antwort-Fehleraktion"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Erlauben Sie dem Benutzer, sich anzumelden, wenn seine IP in der "
 "Netzwerkliste enthalten ist"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Benutzern die Anmeldung verweigern, wenn sich ihre IP in der Netzwerkliste "
@@ -4383,8 +4377,9 @@ msgstr ""
 "oder DOMAIN\\user)"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "HyperV-verknüpfter Klon"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "HyperV-Klon"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4539,7 +4534,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Gültige Macs für verwaltete UDS-Maschinen"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "API-Version"
 
@@ -6024,47 +6018,47 @@ msgstr "Schatten"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Schattenspeicher-Multiplikator (vorsichtig verwenden)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Englisch"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "Französisch"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "Deutsch"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "Italienisch"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "baskisch"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "Arabisch"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "Russisch"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "katalanisch"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -6859,7 +6853,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Muss HOST: PORT im Tunnelserverfeld verwenden"
 
@@ -7241,6 +7235,18 @@ msgstr "Neue automatische USB-Freigabe"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "USB-Geräte beim Anschließen automatisch umleiten."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "SSL-Verbindung"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr ""
+"Wenn diese Option aktiviert ist, lässt das SPICE-Protokoll SSL-Verbindungen "
+"zu."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

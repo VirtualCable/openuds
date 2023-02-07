@@ -4,13 +4,14 @@
 #
 # Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
+# Javier Gomez <jgomez@virtualcable.es>, 2023
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 12:49+0100\n"
+"POT-Creation-Date: 2023-02-07 16:41+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Adolfo Gómez <dkmaster at dkmon dot com>, 2012\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
 "Language: pt\n"
@@ -285,12 +286,10 @@ msgid "Rules"
 msgstr "Regras"
 
 #: REST/methods/calendars.py:72
-#| msgid "Total Accesses"
 msgid "Pools with Accesses"
-msgstr "Piscinas com Acessos"
+msgstr "Pools com Acessos"
 
 #: REST/methods/calendars.py:73
-#| msgid "Logout Action"
 msgid "Pools with Actions"
 msgstr "Conjuntos com Ações"
 
@@ -317,7 +316,7 @@ msgstr "Objeto de imagem"
 
 #: REST/methods/meta_pools.py:79
 msgid "Meta Pools"
-msgstr "Meta Piscinas"
+msgstr "Meta Pools"
 
 #: REST/methods/meta_pools.py:83 REST/methods/meta_pools.py:153
 msgid "Policy"
@@ -419,7 +418,7 @@ msgstr "Data de criação"
 #: templates/uds/reports/stats/pools-usage-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:17
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: REST/methods/meta_service_pools.py:197 REST/methods/services_usage.py:127
 #: REST/methods/tunnel_token.py:55 REST/methods/user_services.py:140
@@ -567,12 +566,11 @@ msgstr "Última execução"
 
 #: REST/methods/osmanagers.py:53
 msgid "OS Managers"
-msgstr "Gestores de SO"
+msgstr "OS Managers"
 
 #: REST/methods/osmanagers.py:83
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr ""
-"Não é possível excluir um gerenciador do SO com pools de serviços associados"
+msgstr "Não é possível excluir um OS Manager com pools de serviços associados"
 
 #: REST/methods/providers.py:67
 msgid "Service providers"
@@ -722,7 +720,7 @@ msgstr "Nome do Serviço"
 
 #: REST/methods/services.py:245
 msgid "Services Pools"
-msgstr "Piscinas de Serviços"
+msgstr "Pools de Serviços"
 
 #: REST/methods/services.py:252 REST/methods/services.py:315
 #: auths/AzureAD_enterprise/azure_ad.py:130
@@ -760,12 +758,12 @@ msgstr "Está bem"
 
 #: REST/methods/services_pool_groups.py:60
 msgid "Services Pool Groups"
-msgstr "Grupos de Piscina"
+msgstr "Grupos de pool de serviços"
 
 #: REST/methods/services_pools.py:134 REST/methods/transports.py:72
 #: REST/methods/transports.py:153
 msgid "Service Pools"
-msgstr "Piscinas de Serviço"
+msgstr "Pools de Serviço"
 
 #: REST/methods/services_pools.py:140
 msgid "Usage"
@@ -793,7 +791,7 @@ msgstr "Serviço usado como base desse pool de serviços"
 
 #: REST/methods/services_pools.py:344
 msgid "OS Manager"
-msgstr "Gerenciador de SO"
+msgstr "OS Manager"
 
 #: REST/methods/services_pools.py:345
 msgid "OS Manager used as base of this service pool"
@@ -906,7 +904,7 @@ msgstr "O serviço base não existe mais"
 
 #: REST/methods/services_pools.py:571
 msgid "This service requires an OS Manager"
-msgstr "Este serviço requer um gerenciador de sistema operacional"
+msgstr "Este serviço requer um OS Manager"
 
 #: REST/methods/services_usage.py:84 REST/methods/user_services.py:84
 #: REST/methods/user_services.py:85
@@ -1947,7 +1945,7 @@ msgstr "Erro ao processar a resposta SAML:"
 msgid "SAML response not authenticated"
 msgstr "Resposta SAML não autenticada"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:602
 msgid "No attributes returned from IdP"
 msgstr "Nenhum atributo retornado do IdP"
 
@@ -2139,7 +2137,7 @@ msgstr "Nenhum método de verificação fornecido."
 
 #: core/osmanagers/osmanager.py:60
 msgid "Base OS Manager"
-msgstr "Gerenciador do SO base"
+msgstr "OS Manager base"
 
 #: core/osmanagers/osmanager.py:62
 msgid "Base Manager"
@@ -2623,12 +2621,10 @@ msgid "Invalid OTP code"
 msgstr "Código OTP inválido"
 
 #: mfas/SMS/mfa.py:97
-#| msgid "SMS Thought HTTP"
 msgid "SMS via HTTP"
 msgstr "SMS via HTTP"
 
 #: mfas/SMS/mfa.py:99
-#| msgid "Simple SMS sending MFA using HTTP"
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "SMS simples enviando MFA usando HTTP/HTTPS"
 
@@ -2770,12 +2766,10 @@ msgid "SMS response error action"
 msgstr "Ação de erro de resposta SMS"
 
 #: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
-#| msgid "Allow user to login if it IP is in the networks list"
 msgid "Allow user to login if its IP is in the networks list"
 msgstr "Permitir que o usuário faça login se seu IP estiver na lista de redes"
 
 #: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
-#| msgid "Deny user to login if it IP is in the networks list"
 msgid "Deny user to login if its IP is in the networks list"
 msgstr "Negar o login do usuário se seu IP estiver na lista de redes"
 
@@ -3095,7 +3089,7 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:53
 msgid "Linux Random Password OS Manager"
-msgstr "Linux OS Aleatório Senha OS Manager"
+msgstr "Linux OS Manager Aleatório Senha"
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:56
 msgid "Os Manager to control linux machines, with user password set randomly."
@@ -3156,7 +3150,7 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows.py:45
 msgid "Windows Basic OS Manager"
-msgstr "Gerenciador de SO Básico do Windows"
+msgstr "OS Manager Básico do Windows"
 
 #: osmanagers/WindowsOsManager/windows.py:47
 msgid "Os Manager to control windows machines without domain."
@@ -3180,7 +3174,7 @@ msgstr "O comprimento deve ser entre 1 e 6"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:61
 msgid "Windows Domain OS Manager"
-msgstr "Gerenciador de SO do domínio do Windows"
+msgstr "OS Manager do domínio do Windows"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:63
 msgid "Os Manager to control windows machines with domain."
@@ -3320,7 +3314,7 @@ msgstr "Todos os parâmetros parecem funcionar bem."
 
 #: osmanagers/WindowsOsManager/windows_random.py:59
 msgid "Windows Random Password OS Manager"
-msgstr "Gerenciador de SO do Windows Random Password"
+msgstr "OS Manager do Windows Random Password"
 
 #: osmanagers/WindowsOsManager/windows_random.py:62
 msgid ""
@@ -3511,7 +3505,7 @@ msgstr "Gera um relatório com o resumo do uso dos usuários para um pool"
 
 #: reports/stats/pool_users_summary.py:60 reports/stats/usage_by_pool.py:59
 msgid "Pool for report"
-msgstr "Piscina para relatório"
+msgstr "Pools para relatório"
 
 #: reports/stats/pool_users_summary.py:153
 msgid "Users usage list for {}"
@@ -3537,7 +3531,7 @@ msgstr "Relatório de desempenho de pools por data"
 
 #: reports/stats/pools_performance.py:67 reports/stats/pools_usage_day.py:71
 msgid "Pools"
-msgstr "Piscinas"
+msgstr "Pools"
 
 #: reports/stats/pools_performance.py:67 reports/stats/pools_usage_day.py:71
 msgid "Pools for report"
@@ -3578,7 +3572,7 @@ msgstr "Intervalo de datas"
 
 #: reports/stats/pools_usage_day.py:58
 msgid "Pools usage on a day"
-msgstr "Uso de piscinas em um dia"
+msgstr "Uso de pools em um dia"
 
 #: reports/stats/pools_usage_day.py:59
 msgid "Pools usage counters for an specific day"
@@ -3659,7 +3653,7 @@ msgstr "Uso de pools pelo relatório do usuário"
 
 #: reports/stats/usage_by_pool.py:83
 msgid "ALL POOLS"
-msgstr "TODAS AS PISCINAS"
+msgstr "TODAS AS POOLS"
 
 #: reports/stats/usage_by_pool.py:173
 #: templates/uds/reports/stats/usage-by-pool.html:16
@@ -4341,8 +4335,9 @@ msgstr ""
 "(usuário @ domínio ou DOMAIN \\ user"
 
 #: services/HyperV_enterprise/service.py:59
-msgid "HyperV Linked Clone"
-msgstr "Clone vinculado ao HyperV"
+#| msgid "HyperV Linked Clone"
+msgid "HyperV Clone"
+msgstr "Clone HyperV"
 
 #: services/HyperV_enterprise/service.py:61
 msgid "Hyper Services based on templates and differential disks"
@@ -4496,7 +4491,6 @@ msgid "Range of valid macs for UDS managed machines"
 msgstr "Intervalo de macs válidos para máquinas gerenciadas por UDS"
 
 #: services/Nutanix_enterprise/provider.py:112
-#| msgid "oVirt Version"
 msgid "API Version"
 msgstr "Versão da API"
 
@@ -5965,47 +5959,47 @@ msgstr "Sombra"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicador de memória de sombra (use com cuidado)"
 
-#: temp_for_locales.py:99
+#: temp_for_locales.py:122
 msgid "Spanish"
 msgstr "espanhol"
 
-#: temp_for_locales.py:100
+#: temp_for_locales.py:123
 msgid "English"
 msgstr "Inglês"
 
-#: temp_for_locales.py:101
+#: temp_for_locales.py:124
 msgid "French"
 msgstr "francês"
 
-#: temp_for_locales.py:102
+#: temp_for_locales.py:125
 msgid "German"
 msgstr "alemão"
 
-#: temp_for_locales.py:103
+#: temp_for_locales.py:126
 msgid "Portuguese"
 msgstr "Português"
 
-#: temp_for_locales.py:104
+#: temp_for_locales.py:127
 msgid "Italian"
 msgstr "italiano"
 
-#: temp_for_locales.py:105
+#: temp_for_locales.py:128
 msgid "Basque"
 msgstr "Basco"
 
-#: temp_for_locales.py:106
+#: temp_for_locales.py:129
 msgid "Arabic"
 msgstr "árabe"
 
-#: temp_for_locales.py:107
+#: temp_for_locales.py:130
 msgid "Russian"
 msgstr "russo"
 
-#: temp_for_locales.py:108
+#: temp_for_locales.py:131
 msgid "Catalan"
 msgstr "catalão"
 
-#: temp_for_locales.py:109
+#: temp_for_locales.py:132
 msgid "Chinese"
 msgstr "chinês"
 
@@ -6032,7 +6026,7 @@ msgstr "Usuário trabalhando"
 #: templates/uds/reports/stats/pools-performance.html:13
 #: templates/uds/reports/stats/pools-usage-day.html:13
 msgid "Pools:"
-msgstr "Piscinas:"
+msgstr "Pools:"
 
 #: templates/uds/reports/stats/pools-performance.html:14
 msgid "Start date:"
@@ -6053,7 +6047,7 @@ msgstr "Usuários distintos por pool"
 
 #: templates/uds/reports/stats/pools-performance.html:23
 msgid "Accesses by pool"
-msgstr "Acessos por piscina"
+msgstr "Acessos por pool"
 
 #: templates/uds/reports/stats/pools-performance.html:28
 msgid "Users Accesses by pool/date"
@@ -6790,7 +6784,7 @@ msgstr ""
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
 #: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
-#: transports/SPICE/spice_tunnel.py:107 transports/X2GO/x2go_tunnel.py:116
+#: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Deve usar HOST: PORT no campo do servidor de encapsulamento"
 
@@ -7105,7 +7099,7 @@ msgstr "Acesso RDS usando RDP para vApps. Conexão em túnel."
 
 #: transports/SPICE/spice.py:55 transports/SPICE/spice_tunnel.py:60
 msgid "SPICE"
-msgstr "ESPECIARIA"
+msgstr "SPICE"
 
 #: transports/SPICE/spice.py:57
 msgid "SPICE Protocol. Direct connection."
@@ -7157,6 +7151,16 @@ msgstr "Novo compartilhamento automático de USB"
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
 msgstr "Auto-redirecionar dispositivos USB quando conectado."
+
+#: transports/SPICE/spice_base.py:118
+#| msgid "Connection Bar"
+msgid "SSL Connection"
+msgstr "Conexão SSL"
+
+#: transports/SPICE/spice_base.py:119
+#| msgid "If checked, SPICE protocol will allow smartcard redirection."
+msgid "If checked, SPICE protocol will allow SSL connections."
+msgstr "Se marcado, o protocolo SPICE permitirá conexões SSL."
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
