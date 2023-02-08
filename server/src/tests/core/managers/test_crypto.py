@@ -35,14 +35,30 @@ import datetime
 
 from django.conf import settings
 
-from uds.core.managers.crypto import CryptoManager
+from uds.core.managers import crypto
 from ...utils.test import UDSTestCase
 
+TEST_STRING = 'abcdefghijklπερισσότεροήλιγότερομεγάλοκείμενογιαχαρακτήρεςmnopqrstuvwxyz或多或少的字符长文本ABCD'
+CRYPTED_STRING = (
+    b'H\x85\xedtL\xca6\x8cmv4D\x1b\xbe-/4\xfc\xa8\xe9\x08\x96\x9dON\x7f\x94'
+    b'\x11`\x91(0JkC\xd6\xab\xe4\x95\xe3\x84\xd3\xd4\x10\xdeJm\x17\xb7O\x10T'
+    b'\xc9"j{\xf3\xc5\xa5\xd1R\xc5\x0c\xe4!_\x03\x1elQ2\x8d3\x17\r\x84\xc0>'
+    b'\x92z2.\xf81=\xed\xf6z\xc6\x057\xe1\xb8\x7f\xc6\xc2\x14>\x10\xa4\xec\x85'
+    b'3pdux\xbbB\xc8\xe7\x8f\x96\xc3\x9f\x07\xaa\x13\xf1\x0c\x7f\xf2\xe0d\x99'
+    b'\x12\xc6s\xa5\xd9^\xd2\xbb|=\x93=\xfb\xab>w\x04\x9cti\xb9\xcf@\\\xd5\x1c'
+    b'\xd9\x90\x04Y\x82 \xb5\xa2\xf1'    
+)
+
+
 class CryptoManagerTest(UDSTestCase):
-    manager: CryptoManager = CryptoManager()
+    manager = crypto.CryptoManager()
 
+    def setUp(self) -> None:
+        # Override UDSK
+        crypto.UDSK = b'1234567890123456'  # type: ignore  # UDSK is final
+        return super().setUp()
 
-    def test_RSA(self):
+    def test_RSA(self) -> None:
         testStr = 'Test string'
         cryptStr = self.manager.encrypt(testStr)
 
@@ -57,7 +73,7 @@ class CryptoManagerTest(UDSTestCase):
             'Decrypted test string failed!: {} vs {}'.format(decryptStr, testStr),
         )
 
-    def test_Xor(self):
+    def test_Xor(self) -> None:
         testStr1a = 'Test String more or less with strange chars €@"áéöüìùòàäñÑ@æßðđŋħ←↓→þøŧ¶€ł@łĸµn”“«»“”nµłĸŋđðßææ@ł€¶ŧ←↓→øþ'
         testStr1b = 'Test String 2 with some ł€¶ŧ←↓→øþ'
 
@@ -71,7 +87,7 @@ class CryptoManagerTest(UDSTestCase):
                 xorxor = self.manager.xor(xor, s2)
                 self.assertEqual(xorxor.decode('utf-8'), s1)
 
-    def test_Symcrypt(self):
+    def test_Symcrypt(self) -> None:
         testStr1a = 'Test String more or less with strange chars €@"áéöüìùòàäñÑ@æßðđŋħ←↓→þøŧ¶€ł@łĸµn”“«»“”nµłĸŋđðßææ@ł€¶ŧ←↓→øþ'
         testStr1b = 'Test String 2 with some ł€¶ŧ←↓→øþ'
 
@@ -85,15 +101,14 @@ class CryptoManagerTest(UDSTestCase):
                 symd = self.manager.symDecrpyt(sym, s2)
                 self.assertEqual(symd, s1)
 
-
-    def test_Certs(self):
+    def test_Certs(self) -> None:
         # Right now, only tests that these methods do not fails
         self.manager.loadPrivateKey(settings.RSA_KEY)
 
         self.manager.loadCertificate(settings.CERTIFICATE)
         self.manager.loadCertificate(settings.CERTIFICATE.encode('utf8'))
 
-    def test_Hash(self):
+    def test_Hash(self) -> None:
         testStr = 'Test String for hash'
         # knownHashValue = '4e1311c1378993b34430988f4836b8e6b8beb219'
 
@@ -101,7 +116,7 @@ class CryptoManagerTest(UDSTestCase):
             hashValue = self.manager.hash(testStr)
             self.assertIsInstance(hashValue, str, 'Returned hash must be an string')
 
-    def test_Uuid(self):
+    def test_Uuid(self) -> None:
         self.manager._counter = 0
         self.assertIsInstance(self.manager.uuid(), str)
         self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
@@ -120,3 +135,12 @@ class CryptoManagerTest(UDSTestCase):
             self.assertEqual(uuid, o[1])
 
         self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
+
+    def testFastCrypt(self) -> None:
+        # Fast crypt uses random padding text, so the last block can be different
+        self.assertEqual(
+            self.manager.fastCrypt(TEST_STRING.encode())[:-16], CRYPTED_STRING[:-16]
+        )
+
+    def testFastDecrypt(self) -> None:
+        self.assertEqual(self.manager.fastDecrypt(CRYPTED_STRING).decode(), TEST_STRING)

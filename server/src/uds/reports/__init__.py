@@ -56,6 +56,7 @@ def __loadModules() -> None:
     alreadyAdded: typing.Set[str] = set()
 
     def addReportCls(cls: typing.Type[reports.Report]) -> None:
+        alreadyAdded.add(cls.uuid)
         availableReports.append(cls)
 
     modfinder.dynamicLoadAndRegisterPackages(

@@ -114,7 +114,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     # If True, will allow selection of multiple "source" elements
     multiple: bool = False
 
-    def getModel(self) -> typing.Type[ReportAutoModel]:  # type: ignore
+    def getModel(self) -> typing.Type[ReportAutoModel]:
         data_source = self.data_source.split('.')[0]
 
         return reportAutoModelDct[data_source]

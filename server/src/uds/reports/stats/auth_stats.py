@@ -30,7 +30,6 @@
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import datetime
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _

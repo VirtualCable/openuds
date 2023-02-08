@@ -338,8 +338,6 @@ class gui:
             defvalue = options.get(
                 'defvalue', options.get('defaultValue', options.get('defValue', ''))
             )
-            if callable(defvalue):
-                defvalue = defvalue()
             self._data.update(
                 {
                     'length': options.get(
@@ -347,7 +345,7 @@ class gui:
                     ),  # Length is not used on some kinds of fields, but present in all anyway
                     'required': options.get('required', False),
                     'label': options.get('label', ''),
-                    'defvalue': str(defvalue),
+                    'defvalue': str(defvalue) if not callable(defvalue) else defvalue,
                     'rdonly': options.get(
                         'rdonly',
                         options.get('readOnly', options.get('readonly', False)),
@@ -430,6 +428,7 @@ class gui:
             data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
                 data['tab'] = _(data['tab'])  # Translates tab name
+            data['defvalue'] = self.defValue  # We need to translate default value
             return data
 
         @property
@@ -579,29 +578,6 @@ class gui:
 
         The values of parameres are inherited from :py:class:`InputField`
         """
-
-        def processValue(self, valueName: str, val: typing.Any) -> typing.Any:
-            if not val and valueName.lower() == 'value':
-                return self._data['defvalue']
-
-            if not val or val == 'today':
-                return datetime.date.today()
-
-            if val == datetime.date.min:
-                return datetime.date(2000, 1, 1)
-
-            if val == datetime.date.max:
-                # val = datetime.date(2099, 12, 31)
-                return datetime.date.today()
-
-            if val == 'year_start':
-                return datetime.date(datetime.date.today().year, 1, 1)
-
-            if val == 'year_end':
-                return datetime.date(datetime.date.today().year, 12, 31)
-
-            return val
-
         def __init__(self, **options):
             super().__init__(**options, type=gui.InputField.Types.DATE)
 
@@ -643,10 +619,6 @@ class gui:
                     datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
                 )
             )
-
-        def fix(self) -> None:
-            for v in 'defvalue', 'value':
-                self._data[v] = self.processValue(v, self._data[v])
 
     class PasswordField(InputField):
         """
@@ -1332,8 +1304,6 @@ class UserInterface(metaclass=UserInterfaceType):
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
-            # call fix for every field in _gui, so we can "fix" values in case it is needed (i.e. date fields)
-            val.fix()
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
         logger.debug('theGui description: %s', res)
         return res
