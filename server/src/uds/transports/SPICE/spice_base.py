@@ -136,6 +136,9 @@ class BaseSpiceTransport(transports.Transport):
 
             if con is None:
                 return False
+            
+            if 'proxy' in con:  # If we have a proxy, we can't check if it is available, return True
+                return True
 
             port, secure_port = con['port'] or -1, con['secure_port'] or -1
 
