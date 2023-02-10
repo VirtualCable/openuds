@@ -128,5 +128,5 @@ class RemoteViewerFile:
             secure_channel='secure-channels=main;inputs;cursor;playback;record;display;usbredir;smartcard'
             if self.ssl_connection and tls_port != '-1'
             else '',
-            proxy=self.proxy,
+            proxy=f'proxy={self.proxy}' if self.proxy else '',
         )
