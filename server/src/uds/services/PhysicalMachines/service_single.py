@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.core.ui import gui
 from uds.core.util import net
-from uds.core.services import types as serviceTypes
+from uds.core import services, exceptions
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -76,14 +76,14 @@ class IPSingleMachineService(IPServiceBase):
 
     deployedType = IPMachineDeployed
 
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (services.types.VDI,)
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
             return
 
         if not net.isValidHost(self.ip.value):
-            raise IPServiceBase.ValidationException(
+            raise exceptions.ValidationException(
                 gettext('Invalid server used: "{}"'.format(self.ip.value))
             )
 

@@ -38,7 +38,7 @@ from django.utils.translation import gettext as _
 
 from uds import models
 
-from uds.core import services
+from uds.core import exceptions
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
@@ -194,7 +194,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     )
                 )
             raise RequestError(_('Element already exists (duplicate key error)'))
-        except Module.ValidationException as e:
+        except exceptions.ValidationException as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)

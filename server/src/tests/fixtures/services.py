@@ -64,13 +64,19 @@ def createProvider() -> models.Provider:
     return provider
 
 
-def createService(provider: models.Provider) -> models.Service:
+def createService(
+    provider: models.Provider, useCachingVersion: bool = True
+) -> models.Service:
     from uds.services.Test.service import TestServiceCache, TestServiceNoCache
 
     service = provider.services.create(
         name='Service {}'.format(glob['service_id']),
         data_type=TestServiceCache.typeType,
         data=TestServiceCache(
+            environment.Environment(str(glob['service_id'])), provider.getInstance()
+        ).serialize()
+        if useCachingVersion
+        else TestServiceNoCache(
             environment.Environment(str(glob['service_id'])), provider.getInstance()
         ).serialize(),
         token=generators.random_string(16) + str(glob['service_id']),
@@ -231,7 +237,6 @@ def createOneCacheTestingUserService(
     groups: typing.List['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
-
     from uds.services.Test.service import TestServiceCache, TestServiceNoCache
     from uds.osmanagers.Test import TestOSManager
     from uds.transports.Test import TestTransport

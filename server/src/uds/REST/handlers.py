@@ -42,7 +42,7 @@ from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers import cryptoManager
 
-from . import log
+from .exceptions import AccessDenied
 
 
 # Not imported at runtime, just for type checking
@@ -52,42 +52,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 AUTH_TOKEN_HEADER: typing.Final[str] = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password
-
-
-class HandlerError(Exception):
-    """
-    Generic error for a REST handler
-    """
-
-
-class NotFound(HandlerError):
-    """
-    Item not found error
-    """
-
-
-class AccessDenied(HandlerError):
-    """
-    Access denied error
-    """
-
-
-class RequestError(HandlerError):
-    """
-    Request is invalid error
-    """
-
-
-class ResponseError(HandlerError):
-    """
-    Generic response error
-    """
-
-
-class NotSupportedError(HandlerError):
-    """
-    Some elements do not support some operations (as searching over an authenticator that does not supports it)
-    """
 
 
 class Handler:

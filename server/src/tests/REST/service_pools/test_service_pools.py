@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -25,24 +25,49 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
+import logging
+
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
+from uds import models
+
 
 logger = logging.getLogger(__name__)
 
-# Convenience imports, must be present before initializing handlers
-from .exceptions import (
-    AccessDenied,
-    HandlerError,
-    NotFound,
-    NotSupportedError,
-    RequestError,
-    ResponseError,
-)
-from .handlers import Handler
+from ...utils import rest
+from ...fixtures import rest as rest_fixtures
 
-from .dispatcher import Dispatcher, AUTH_TOKEN_HEADER
+class ServicePoolTest(rest.test.RESTTestCase):
+    def setUp(self) -> None:
+        # Override number of items to create
+        super().setUp()
+        self.login()
+
+    def test_invalid_servicepool(self) -> None:
+        url = f'servicespools/INVALID/overview'
+
+        response = self.client.rest_get(url)
+        self.assertEqual(response.status_code, 404)
+    
+    def test_service_pools(self) -> None:
+        url = f'servicespools/overview'
+
+        # Now, will work
+        response = self.client.rest_get(url)
+        self.assertEqual(response.status_code, 200)
+        # Get the list of service pools from DB
+        db_pools_len = models.ServicePool.objects.all().count()
+        re_pools: typing.List[typing.Dict[str, typing.Any]] = response.json()
+
+        self.assertIsInstance(re_pools, list)
+        self.assertEqual(db_pools_len, len(re_pools))
+
+        for service_pool in re_pools:
+            # Get from DB the service pool
+            db_pool = models.ServicePool.objects.get(uuid=service_pool['id'])
+            self.assertTrue(rest.assertions.assertServicePoolIs(db_pool, service_pool))
+

@@ -39,7 +39,7 @@ import ldap
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths
+from uds.core import auths, exceptions
 from uds.core.ui import gui
 from uds.core.util import ldaputil
 from uds.core.auths.auth import authLogLogin
@@ -250,7 +250,7 @@ class RegexLdap(auths.Authenticator):
                 try:
                     re.search(pattern, '')
                 except Exception:
-                    raise auths.Authenticator.ValidationException(
+                    raise exceptions.ValidationException(
                         'Invalid pattern in {0}: {1}'.format(fieldLabel, line)
                     )
 

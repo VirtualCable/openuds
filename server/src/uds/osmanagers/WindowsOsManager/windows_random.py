@@ -40,7 +40,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
-from uds.core import osmanagers
+from uds.core import exceptions
 from uds.core.util import log
 
 from .windows import WindowsOsManager
@@ -88,11 +88,11 @@ class WinRandomPassManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['userAccount'] == '':
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('Must provide an user account!!!')
                 )
             if values['password'] == '':
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('Must provide a password for the account!!!')
                 )
             self._userAccount = values['userAccount']

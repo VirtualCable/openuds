@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os
 import logging
 import typing
 
@@ -120,6 +119,15 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('If checked, SPICE protocol will allow SSL connections.'),
         defvalue=gui.TRUE,
         tab=gui.Tab.ADVANCED,
+    )
+
+    overridedProxy = gui.TextField(
+        order=10,
+        label=_('Proxy'),
+        tooltip=_('If not empty, this proxy will be used to connect to the service'),
+        required=False,
+        tab=gui.Tab.ADVANCED,
+        pattern=''
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

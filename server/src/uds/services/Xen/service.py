@@ -33,8 +33,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.services import Service, types as serviceTypes
-from uds.core.util import tools
+from uds.core import services, exceptions
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import XenPublication
@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
+class XenLinkedService(services.Service):  # pylint: disable=too-many-public-methods
     """
     Xen Linked clones service. This is based on creating a template from selected vm, and then use it to
 
@@ -101,7 +101,7 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = XenLinkedDeployment
 
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (services.types.VDI,)
 
     # Now the form part
     datastore = gui.ChoiceField(
@@ -189,10 +189,10 @@ class XenLinkedService(Service):  # pylint: disable=too-many-public-methods
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            tools.checkValidBasename(self.baseName.value, self.lenName.num())
+            validators.validateBasename(self.baseName.value, self.lenName.num())
 
             if int(self.memory.value) < 256:
-                raise Service.ValidationException(
+                raise exceptions.ValidationException(
                     _('The minimum allowed memory is 256 Mb')
                 )
 

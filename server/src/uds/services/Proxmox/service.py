@@ -186,7 +186,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
                 self.baseName.value, 15, asPattern=True
             )
             # if int(self.memory.value) < 128:
-            #     raise Service.ValidationException(_('The minimum allowed memory is 128 Mb'))
+            #     raise exceptions.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
     def initGui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization

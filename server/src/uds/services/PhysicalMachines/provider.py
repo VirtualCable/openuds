@@ -38,7 +38,7 @@ from django.utils.translation import gettext_noop as _
 
 import dns.resolver
 
-from uds.core import services
+from uds.core import services, exceptions
 from uds.core.ui.user_interface import gui
 from uds.core.util import net
 from uds.core.util import log
@@ -70,7 +70,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             values (Module.ValuesType): List of values on initialization (maybe None)
 
         Raises:
-            services.ServiceProvider.ValidationException
+            exceptions.ValidationException
         """
         if values is None:
             return
@@ -83,13 +83,13 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 config.read_string(self.config.value)
                 # Seems a valid configuration file, let's see if all se
             except Exception as e:
-                raise services.ServiceProvider.ValidationException(
+                raise exceptions.ValidationException(
                     _('Invalid advanced configuration: ') + str(e)
                 )
 
             for section in config.sections():
                 if section not in VALID_CONFIG_SECTIONS:
-                    raise services.ServiceProvider.ValidationException(
+                    raise exceptions.ValidationException(
                         _('Invalid section in advanced configuration: ') + section
                     )
 
@@ -99,12 +99,12 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 try:
                     net.networksFromString(key)  # Raises exception if net is invalid
                 except Exception:
-                    raise services.ServiceProvider.ValidationException(
+                    raise exceptions.ValidationException(
                         _('Invalid network in advanced configuration: ') + key
                     )
                 # Now check value is an url
                 if config['wol'][key][:4] != 'http':
-                    raise services.ServiceProvider.ValidationException(
+                    raise exceptions.ValidationException(
                         _('Invalid url in advanced configuration: ') + key
                     )
 
@@ -136,7 +136,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             # Try to resolve name...
             try:
                 # Prefer ipv4
-                res = dns.resolver.resolve(ip)
+                res: typing.Any = dns.resolver.resolve(ip)
                 ip = res[0].address
             except Exception:
                 # Try ipv6

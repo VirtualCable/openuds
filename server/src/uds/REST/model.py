@@ -45,12 +45,11 @@ from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core import Module
+from uds.core import Module, exceptions
 
 from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
 
-from .handlers import (
-    Handler,
+from .exceptions import (
     HandlerError,
     NotFound,
     RequestError,
@@ -58,6 +57,8 @@ from .handlers import (
     AccessDenied,
     NotSupportedError,
 )
+
+from .handlers import Handler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -898,10 +899,13 @@ class ModelHandler(BaseModelHandler):
             method = getattr(detail, self._operation)
 
             return method()
-        except KeyError:
+        except IndexError:
+            raise self.invalidItemException()
+        except (KeyError, AttributeError):
             raise self.invalidMethodException()
-        except AttributeError:
-            raise self.invalidMethodException()
+        except Exception as e:
+            logger.error('Exception processing detail: %s', e)
+            raise self.invalidRequestException()
 
     def getItems(
         self, *args, **kwargs
@@ -940,7 +944,7 @@ class ModelHandler(BaseModelHandler):
                     is False
                 ):
                     continue
-                if kwargs.get('overview', True):
+                if overview:
                     yield self.item_as_dict_overview(item)
                 else:
                     res = self.item_as_dict(item)
@@ -1155,7 +1159,7 @@ class ModelHandler(BaseModelHandler):
             raise NotFound('Item not found')
         except IntegrityError:  # Duplicate key probably
             raise RequestError('Element already exists (duplicate key error)')
-        except (SaveException, Module.ValidationException) as e:
+        except (SaveException, exceptions.ValidationException) as e:
             raise RequestError(str(e))
         except (RequestError, ResponseError):
             raise

@@ -13,7 +13,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
-from uds.core import osmanagers
+from uds.core import osmanagers, exceptions
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
 from uds.core.managers import userServiceManager
@@ -95,11 +95,11 @@ class WindowsOsManager(osmanagers.OSManager):
         try:
             length = int(length)
         except Exception:
-            raise osmanagers.OSManager.ValidationException(
+            raise exceptions.ValidationException(
                 _('Length must be numeric!!')
             )
         if length > 6 or length < 1:
-            raise osmanagers.OSManager.ValidationException(
+            raise exceptions.ValidationException(
                 _('Length must be betwen 1 and 6')
             )
         return length

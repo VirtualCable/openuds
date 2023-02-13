@@ -40,7 +40,7 @@ import logging
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
-from uds.core import mfas
+from uds.core import mfas, exceptions
 from uds.core.ui import gui
 from uds.core.util import validators, decorators
 
@@ -165,7 +165,7 @@ class EmailMFA(mfas.MFA):
         # if hostname is not valid, we will raise an exception
         hostname = self.hostname.cleanStr()
         if not hostname:
-            raise EmailMFA.ValidationException(_('Invalid SMTP hostname'))
+            raise exceptions.ValidationException(_('Invalid SMTP hostname'))
 
         # Now check is valid format
         if ':' in hostname:

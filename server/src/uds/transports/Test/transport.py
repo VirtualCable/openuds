@@ -36,11 +36,8 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
-
-from uds.core import transports
-
+from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
-from uds.core.managers import cryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
@@ -95,7 +92,7 @@ class TestTransport(transports.Transport):
             self.testURL.value.startswith('http://')
             or self.testURL.value.startswith('https://')
         ):
-            raise transports.Transport.ValidationException(
+            raise exceptions.ValidationException(
                 _('The url must be http or https')
             )
 

@@ -40,8 +40,12 @@ from .. import ensure_data
 
 logger = logging.getLogger(__name__)
 
+
 def assertUserIs(
-    user: models.User, compare_to: typing.Mapping[str, typing.Any], compare_uuid=False, compare_password=False
+    user: models.User,
+    compare_to: typing.Mapping[str, typing.Any],
+    compare_uuid=False,
+    compare_password=False,
 ) -> bool:
     ignore_fields = ['password', 'groups', 'mfa_data', 'last_access', 'role']
 
@@ -51,7 +55,11 @@ def assertUserIs(
     # If last_access is present, compare it here, because it's a datetime object
     if 'last_access' in compare_to:
         if int(user.last_access.timestamp()) != compare_to['last_access']:
-            logger.info('User last_access do not match: %s != %s', user.last_access.timestamp(), compare_to['last_access'])
+            logger.info(
+                'User last_access do not match: %s != %s',
+                user.last_access.timestamp(),
+                compare_to['last_access'],
+            )
             return False
 
     if ensure_data(user, compare_to, ignore_keys=ignore_fields):
@@ -61,24 +69,35 @@ def assertUserIs(
             compare_to_groups = set(compare_to['groups'])
             # Ensure groups are PART compare_to_groups
             if groups - compare_to_groups != set():
-                logger.info('User groups do not match: %s != %s', groups, compare_to_groups)
+                logger.info(
+                    'User groups do not match: %s != %s', groups, compare_to_groups
+                )
                 return False
 
         # Compare mfa_data
         if 'mfa_data' in compare_to:
             if user.mfa_data != compare_to['mfa_data']:
-                logger.info('User mfa_data do not match: %s != %s', user.mfa_data, compare_to['mfa_data'])
+                logger.info(
+                    'User mfa_data do not match: %s != %s',
+                    user.mfa_data,
+                    compare_to['mfa_data'],
+                )
                 return False
-            
+
         # Compare password
         if compare_password:
             if not cryptoManager().checkHash(compare_to['password'], user.password):
-                logger.info('User password do not match: %s != %s', user.password, compare_to['password'])
+                logger.info(
+                    'User password do not match: %s != %s',
+                    user.password,
+                    compare_to['password'],
+                )
                 return False
 
         return True
 
     return False
+
 
 def assertGroupIs(
     group: models.Group, compare_to: typing.Mapping[str, typing.Any], compare_uuid=False
@@ -89,26 +108,68 @@ def assertGroupIs(
         ignore_fields.append('id')
 
     if ensure_data(group, compare_to, ignore_keys=ignore_fields):
-   
         if group.is_meta:
             grps = set(i.uuid for i in group.groups.all())
             compare_to_groups = set(compare_to['groups'])
             if grps != compare_to_groups:
-                logger.info('Group groups do not match: %s != %s', grps, compare_to_groups)
+                logger.info(
+                    'Group groups do not match: %s != %s', grps, compare_to_groups
+                )
                 return False
 
         if 'type' in compare_to:
             if group.is_meta != (compare_to['type'] == 'meta'):
-                logger.info('Group type do not match: %s != %s', group.is_meta, compare_to['type'])
+                logger.info(
+                    'Group type do not match: %s != %s',
+                    group.is_meta,
+                    compare_to['type'],
+                )
                 return False
-            
+
         if 'pools' in compare_to:
             pools = set(i.uuid for i in group.deployedServices.all())
             compare_to_pools = set(compare_to['pools'])
             if pools != compare_to_pools:
-                logger.info('Group pools do not match: %s != %s', pools, compare_to_pools)
+                logger.info(
+                    'Group pools do not match: %s != %s', pools, compare_to_pools
+                )
                 return False
-            
+
+        return True
+
+    return False
+
+
+def assertServicePoolIs(
+    pool: models.ServicePool,
+    compare_to: typing.Mapping[str, typing.Any],
+    compare_uuid=False,
+) -> bool:
+    ignore_fields = [
+        'tags',
+        'parent',
+        'parent_type',
+        'thumb',
+        'account',
+        'service_id',
+        'provider_id',
+        'meta_member',
+        'user_services_count',
+        'user_services_in_preparation',
+        'restrained',
+        'permission',
+        'info',
+        'pool_group_id',
+        'pool_group_name',
+        'pool_group_thumb',
+        'usage',
+        'osmanager_id',
+    ]
+
+    if not compare_uuid:
+        ignore_fields.append('id')
+
+    if ensure_data(pool, compare_to, ignore_keys=ignore_fields):
         return True
 
     return False

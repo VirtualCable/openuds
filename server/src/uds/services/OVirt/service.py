@@ -37,8 +37,8 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.transports import protocols
-from uds.core.services import Service, types as serviceTypes
-from uds.core.util import tools
+from uds.core import services, exceptions
+from uds.core.util import validators
 from uds.core.ui import gui
 
 from .publication import OVirtPublication
@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
+class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-methods
     """
     oVirt Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -105,7 +105,7 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
     deployedType = OVirtLinkedDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (services.types.VDI,)
 
     # Now the form part
     cluster = gui.ChoiceField(
@@ -225,9 +225,9 @@ class OVirtLinkedService(Service):  # pylint: disable=too-many-public-methods
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            tools.checkValidBasename(self.baseName.value, self.lenName.num())
+            validators.validateBasename(self.baseName.value, self.lenName.num())
             if int(self.memory.value) < 256 or int(self.memoryGuaranteed.value) < 256:
-                raise Service.ValidationException(
+                raise exceptions.ValidationException(
                     _('The minimum allowed memory is 256 Mb')
                 )
             if int(self.memoryGuaranteed.value) > int(self.memory.value):

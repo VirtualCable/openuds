@@ -47,7 +47,7 @@ from django.utils.translation import gettext_noop as _, gettext
 
 from uds.models import getSqlDatetime
 from uds.core.ui import gui
-from uds.core import auths
+from uds.core import auths, exceptions
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import allowCache
 
@@ -324,7 +324,7 @@ class SAMLAuthenticator(auths.Authenticator):
             return
 
         if ' ' in values['name']:
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext(
                     'This kind of Authenticator does not support white spaces on field NAME'
                 )
@@ -338,7 +338,7 @@ class SAMLAuthenticator(auths.Authenticator):
             self.serverCertificate.value.startswith('-----BEGIN CERTIFICATE-----\n')
             is False
         ):
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext(
                     'Server certificate should be a valid PEM (PEM certificates starts with -----BEGIN CERTIFICATE-----)'
                 )
@@ -347,7 +347,7 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             cryptoManager().loadCertificate(self.serverCertificate.value)
         except Exception as e:
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext('Invalid server certificate. ') + str(e)
             )
 
@@ -357,7 +357,7 @@ class SAMLAuthenticator(auths.Authenticator):
             and self.privateKey.value.startswith('-----BEGIN PRIVATE KEY-----\n')
             is False
         ):
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext(
                     'Private key should be a valid PEM (PEM private keys starts with -----BEGIN RSA PRIVATE KEY-----'
                 )
@@ -366,7 +366,7 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             pk = cryptoManager().loadPrivateKey(self.privateKey.value)
         except Exception as e:
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext('Invalid private key. ') + str(e)
             )
 
@@ -385,7 +385,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 resp = requests.get(idpMetadata.split('\n')[0], verify=self.checkSSLCertificate.isTrue())
                 idpMetadata = resp.content.decode()
             except Exception as e:
-                raise auths.Authenticator.ValidationException(
+                raise exceptions.ValidationException(
                     gettext('Can\'t fetch url {0}: {1}').format(
                         self.idpMetadata.value, str(e)
                     )
@@ -398,7 +398,7 @@ class SAMLAuthenticator(auths.Authenticator):
             xml.sax.parseString(idpMetadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if fromUrl else '') + str(e)
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 gettext('XML does not seem valid for IDP Metadata ') + msg
             )
 
@@ -531,7 +531,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 try:
                     re.search(pattern, '')
                 except:
-                    raise auths.Authenticator.ValidationException(
+                    raise exceptions.ValidationException(
                         'Invalid pattern at {0}: {1}'.format(field.label, line)
                     )
 

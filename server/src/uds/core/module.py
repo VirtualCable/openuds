@@ -123,11 +123,6 @@ class Module(UserInterface, Environmentable, Serializable):
     # Not defined, but declared. If module is groupable, this value will contain to which group belongs
     group: typing.ClassVar[str]
 
-    class ValidationException(Exception):
-        """
-        Exception used to indicate that the params assigned are invalid
-        """
-
     @classmethod
     def name(cls: typing.Type['Module']) -> str:
         """

@@ -52,7 +52,8 @@ from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
 from uds.models.service import ServiceTokenAlias
 
-from ..handlers import Handler, AccessDenied, RequestError
+from ..handlers import Handler
+from ..exceptions import AccessDenied, RequestError
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

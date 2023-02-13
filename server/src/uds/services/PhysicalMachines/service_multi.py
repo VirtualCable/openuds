@@ -41,7 +41,7 @@ from uds.models import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import net
-from uds.core import services
+from uds.core import services, exceptions
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -151,7 +151,7 @@ class IPMachinesService(IPServiceBase):
             # Check that ips are valid
             for v in values['ipList']:
                 if not net.isValidHost(v.split(';')[0]):  # Get only IP/hostname
-                    raise IPServiceBase.ValidationException(
+                    raise exceptions.ValidationException(
                         gettext('Invalid value detected on servers list: "{}"').format(
                             v
                         )

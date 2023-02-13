@@ -537,7 +537,7 @@ class OVirtProvider(
         #    instance = Provider(env, data)
         #    logger.debug('Methuselah has {0} years and is {1} :-)'
         #                 .format(instance.methAge.value, instance.methAlive.value))
-        # except ServiceProvider.ValidationException as e:
+        # except exceptions.ValidationException as e:
         #    # If we say that meth is alive, instantiation will
         #    return [False, str(e)]
         # except Exception as e:

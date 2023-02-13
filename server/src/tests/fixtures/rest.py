@@ -32,6 +32,7 @@ import typing
 
 from ..utils import rest
 
+
 # User REST structure
 class UserRestStruct(rest.RestStruct):
     id: rest.uuid_type
@@ -45,6 +46,7 @@ class UserRestStruct(rest.RestStruct):
     mfa_data: typing.Optional[str]
     password: typing.Optional[str]
 
+
 # Group REST structure
 class GroupRestStruct(rest.RestStruct):
     id: rest.uuid_type
@@ -55,9 +57,45 @@ class GroupRestStruct(rest.RestStruct):
     is_meta: bool
     meta_if_any: bool
 
+
+# ServicePool REST structure
+class ServicePoolRestStruct(rest.RestStruct):
+    id: rest.uuid_type
+    name: str
+    short_name: str
+    tags: typing.List[str]
+    parent: str
+    parent_type: str
+    comments: str
+    state: str
+    thumb: str
+    account: str
+    account_id: rest.uuid_type
+    service_id: rest.uuid_type
+    provider_id: rest.uuid_type
+    image_id: rest.uuid_type
+    initial_srvs: int
+    cache_l1_srvs: int
+    cache_l2_srvs: int
+    max_srvs: int
+    show_transports: bool
+    visible: bool
+    allow_users_remove: bool
+    allow_users_reset: bool
+    ignores_unused: bool
+    fallbackAccess: str
+    meta_member: typing.List[typing.Dict[str, rest.uuid_type]]
+    calendar_message: str
+
+
 # Provide a "random" dictionary based on a
 def createUser(**kwargs) -> typing.Dict[str, typing.Any]:
     return UserRestStruct.random_create(**kwargs).as_dict()
 
+
 def createGroup(**kwargs) -> typing.Dict[str, typing.Any]:
     return GroupRestStruct.random_create(**kwargs).as_dict()
+
+
+def createServicePool(**kwargs) -> typing.Dict[str, typing.Any]:
+    return ServicePoolRestStruct.random_create(**kwargs).as_dict()

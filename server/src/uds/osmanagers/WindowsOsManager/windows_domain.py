@@ -41,7 +41,7 @@ import ldap
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers import cryptoManager
-from uds.core import osmanagers
+from uds.core import exceptions
 from uds.core.util import log
 from uds.core.util import ldaputil
 
@@ -146,21 +146,19 @@ class WinDomainOsManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['domain'] == '':
-                raise osmanagers.OSManager.ValidationException(
-                    _('Must provide a domain!')
-                )
+                raise exceptions.ValidationException(_('Must provide a domain!'))
             # if values['domain'].find('.') == -1:
-            #    raise osmanagers.OSManager.ValidationException(_('Must provide domain in FQDN'))
+            #    raise exceptions.ValidationException(_('Must provide domain in FQDN'))
             if values['account'] == '':
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('Must provide an account to add machines to domain!')
                 )
             if values['account'].find('\\') != -1:
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('DOM\\USER form is not allowed!')
                 )
             if values['password'] == '':
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('Must provide a password for the account!')
                 )
             self._domain = values['domain']
@@ -172,12 +170,12 @@ class WinDomainOsManager(WindowsOsManager):
             self._ssl = 'y' if values['ssl'] else 'n'
             self._removeOnExit = 'y' if values['removeOnExit'] else 'n'
         else:
-            self._domain = ""
-            self._ou = ""
-            self._account = ""
-            self._password = ""
-            self._group = ""
-            self._serverHint = ""
+            self._domain = ''
+            self._ou = ''
+            self._account = ''
+            self._password = ''  # nosec: no encoded password
+            self._group = ''
+            self._serverHint = ''
             self._removeOnExit = 'n'
             self._ssl = 'n'
 
@@ -191,10 +189,15 @@ class WinDomainOsManager(WindowsOsManager):
         if self._serverHint != '':
             yield (self._serverHint, 389)
 
+        server: typing.Any
+
+        def key(server: typing.Any) -> int:
+            return server.priority * 10000 + server.weight
+
         for server in reversed(
             sorted(
-                dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'),
-                key=lambda i: i.priority * 10000 + i.weight,
+                iter(dns.resolver.resolve('_ldap._tcp.' + self._domain, 'SRV')),
+                key=key,
             )
         ):
             yield (str(server.target)[:-1], server.port)

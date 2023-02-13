@@ -68,7 +68,7 @@ def replacePath(path: str) -> str:
                 uuid = path.split(f'/{type}/')[1].split('/')[0]
                 name = model.objects.get(uuid=uuid).name  # type: ignore
                 path = path.replace(uuid, f'[{name}]')
-            except Exception:
+            except Exception:   # nosec: intentionally broad exception
                 pass
 
     return path

@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core.auths.authenticator import AuthenticationResult, AuthenticationSuccess
 from uds.core.ui import gui
-from uds.core import auths
+from uds.core import auths, exceptions
 
 if typing.TYPE_CHECKING:
     from django.http import (
@@ -131,7 +131,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise auths.Authenticator.ValidationException(
+            raise exceptions.ValidationException(
                 _('We need more than two groups!')
             )
 

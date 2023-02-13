@@ -38,7 +38,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import osmanagers
+from uds.core import exceptions
 from uds.core.util import log
 
 from .linux_osmanager import LinuxOsManager
@@ -77,7 +77,7 @@ class LinuxRandomPassManager(LinuxOsManager):
         super(LinuxRandomPassManager, self).__init__(environment, values)
         if values is not None:
             if values['userAccount'] == '':
-                raise osmanagers.OSManager.ValidationException(
+                raise exceptions.ValidationException(
                     _('Must provide an user account!!!')
                 )
             self._userAccount = values['userAccount']

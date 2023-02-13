@@ -34,12 +34,9 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from django.http import HttpResponseRedirect
 
 from uds.core.ui import gui
-
-from uds.core import transports
-
+from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers import cryptoManager
 from uds import models
@@ -183,7 +180,7 @@ class HTML5VNCTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise transports.Transport.ValidationException(
+            raise exceptions.ValidationException(
                 _('The server must be http or https')
             )
 

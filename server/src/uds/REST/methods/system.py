@@ -145,7 +145,7 @@ class System(Handler):
     help_text = 'Provides system information. Must be admin to access this'
 
 
-    def get(self):
+    def get(self) -> typing.Any:
         logger.debug('args: %s', self._args)
         # Only allow admin user for global stats
         if len(self._args) == 1:

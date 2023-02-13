@@ -39,13 +39,14 @@ import typing
 import logging
 import enum
 from collections import abc
+import re
+
 
 from django.utils.translation import get_language, gettext as _, gettext_noop
-from django.conf import settings
 
 from uds.core.managers.crypto import CryptoManager, UDSK
 from uds.core.util.decorators import deprecatedClassValue
-from uds.core.util import serializer
+from uds.core.util import serializer, validators
 
 logger = logging.getLogger(__name__)
 
@@ -463,6 +464,12 @@ class gui:
             """Unserialize value from an string"""
             self.value = value
 
+        def validate(self) -> bool:
+            """
+            Validates the value of this field.
+            """
+            return True
+
     class TextField(InputField):
         """
         This represents a text field.
@@ -494,16 +501,52 @@ class gui:
                   tooltip = _('Other info'), rdonly = True)
 
         """
+        class PatternTypes:
+            IPV4 = 'ipv4'
+            IPV6 = 'ipv6'
+            MAC = 'mac'
+            URL = 'url'
+            EMAIL = 'email'
+            FQDN = 'fqdn'
+            HOSTNAME = 'hostname'
+            HOST = 'host'
+            PATH = 'path'
+            NONE = ''
 
         def __init__(self, **options) -> None:
             super().__init__(**options, type=gui.InputField.Types.TEXT)
-            multiline = int(options.get('multiline', 0))
-            if multiline > 8:
-                multiline = 8
-            self._data['multiline'] = multiline
+            self._data['multiline'] = min(max(int(options.get('multiline', 0)), 0), 8)
+            # Pattern to validate the value
+            # Can contain an regex or this special values: (empty string means no validation)
+            #   - 'ipv4'     # IPv4 address
+            #   - 'ipv6'     # IPv6 address
+            #   - 'mac'      # MAC address
+            #   - 'url'      # URL
+            #   - 'email'    # Email
+            #   - 'fqdn'     # Fully qualified domain name
+            #   - 'hostname' # Hostname (without domain)
+            #   - 'host'     # Hostname with or without domain or IP address
+            #   - 'path'     # Path (absolute or relative, Windows or Unix)
+            # Note:
+            #  Checks are performed on admin side, so they are not 100% reliable.
+            self._data['pattern'] = options.get('pattern', gui.TextField.PatternTypes.NONE)
 
         def cleanStr(self):
             return str(self.value).strip()
+        
+        def validate(self) -> bool:
+            return super().validate() and self._validatePattern()
+
+        def _validatePattern(self) -> bool:
+            if isinstance(self._data['pattern'], gui.TextField.PatternTypes):
+                 pattern: gui.TextField.PatternTypes = self._data['pattern']
+                 if pattern == gui.TextField.PatternTypes.IPV4:
+                    pass                     
+            elif isinstance(self._data['pattern'], str):
+                # It's a regex
+                return re.match(self._data['pattern'], self.value) is not None
+            return True  # No pattern, so it's valid
+            
 
     class TextAutocompleteField(TextField):
         """

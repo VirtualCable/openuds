@@ -32,6 +32,7 @@
 import logging
 import sys
 import typing
+import traceback
 
 from django import http
 from django.utils.decorators import method_decorator
@@ -43,15 +44,15 @@ from uds.core import VERSION, VERSION_STAMP
 from uds.core.util import modfinder
 
 from . import processors, log
-from .handlers import (
+from .exceptions import (
     AccessDenied,
-    Handler,
     HandlerError,
     NotFound,
     NotSupportedError,
     RequestError,
     ResponseError,
 )
+from .handlers import Handler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -203,7 +204,12 @@ class Dispatcher(View):
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
             log.log_operation(handler, 500, log.ERROR)
-            logger.exception('Error processing request')
+            # Get ecxeption backtrace
+            trace_back = traceback.format_exc()
+            logger.error('Exception processing request: %s', full_path)
+            for i in trace_back.splitlines():
+                logger.error(f'* {i}')
+
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod

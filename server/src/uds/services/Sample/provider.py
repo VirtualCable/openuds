@@ -37,7 +37,7 @@ import typing
 
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services
+from uds.core import services, exceptions
 from uds.core.ui import gui
 from .service import ServiceOne, ServiceTwo
 
@@ -181,7 +181,7 @@ class Provider(services.ServiceProvider):
         # values are only passed from administration client. Internals
         # instantiations are always empty.
         if values and self.methAlive.isTrue():
-            raise services.ServiceProvider.ValidationException(
+            raise exceptions.ValidationException(
                 _('Methuselah is not alive!!! :-)')
             )
 
@@ -222,7 +222,7 @@ class Provider(services.ServiceProvider):
                 instance.methAge.value,
                 instance.methAlive.value,
             )
-        except services.ServiceProvider.ValidationException as e:
+        except exceptions.ValidationException as e:
             # If we say that meth is alive, instantiation will
             return [False, str(e)]
         except Exception as e:

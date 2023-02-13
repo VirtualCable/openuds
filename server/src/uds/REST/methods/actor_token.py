@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _
 
 from uds.models import ActorToken
-from uds.REST.handlers import RequestError, NotFound
+from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
 from uds.core.util import permissions
 

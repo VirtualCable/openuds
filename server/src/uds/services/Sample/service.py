@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services
+from uds.core import services, exceptions
 from uds.core.ui import gui
 
 from .publication import SamplePublication
@@ -167,7 +167,7 @@ class ServiceOne(services.Service):
         # so we only need to validate params if values is not None
         if values:
             if self.colour.value == 'nonsense':
-                raise services.Service.ValidationException(
+                raise exceptions.ValidationException(
                     'The selected colour is invalid!!!'
                 )
 

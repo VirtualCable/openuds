@@ -39,7 +39,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import messaging
+from uds.core import messaging, exceptions
 from uds.core.ui import gui
 from uds.core.util import validators
 
@@ -147,7 +147,7 @@ class EmailNotifier(messaging.Notifier):
         # if hostname is not valid, we will raise an exception
         hostname = self.hostname.cleanStr()
         if not hostname:
-            raise messaging.Notifier.ValidationException(_('Invalid SMTP hostname'))
+            raise exceptions.ValidationException(_('Invalid SMTP hostname'))
 
         # Now check is valid format
         if ':' in hostname:
