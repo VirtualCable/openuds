@@ -469,6 +469,10 @@ class gui:
             """Unserialize value from an string"""
             self.value = value
 
+        @property
+        def required(self) -> bool:
+            return self._data['required']
+
         def validate(self) -> bool:
             """
             Validates the value of this field.
@@ -1044,7 +1048,6 @@ class UserInterfaceType(type):
     better place. This is done this way because we will "deepcopy" these fields
     later, and update references on class 'self' to the new copy. (so everyone has a different copy)
     """
-
     def __new__(
         cls: typing.Type['UserInterfaceType'],
         classname: str,
@@ -1078,6 +1081,10 @@ class UserInterface(metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
+    class ValidationFieldInfo(typing.NamedTuple):
+        field: str
+        error: str
+        
 
     # Class variable that will hold the gui fields description
     _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]]
@@ -1385,3 +1392,14 @@ class UserInterface(metaclass=UserInterfaceType):
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
         logger.debug('theGui description: %s', res)
         return res
+
+    def validate(self) -> typing.List[ValidationFieldInfo]:
+        errors: typing.List[UserInterface.ValidationFieldInfo] = []
+        for key, val in self._gui.items():
+            if val.required and not val.value:
+                errors.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
+            if not val.validate():
+                errors.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
+
+        return errors
+        
