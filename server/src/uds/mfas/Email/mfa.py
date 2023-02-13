@@ -173,9 +173,7 @@ class EmailMFA(mfas.MFA):
             self.hostname.value = '{}:{}'.format(host, port)
         else:
             host = self.hostname.cleanStr()
-            self.hostname.value = validators.validateHostname(
-                host, 128, asPattern=False
-            )
+            self.hostname.value = validators.validateFqdn(host)
 
         # now check from email and to email
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)

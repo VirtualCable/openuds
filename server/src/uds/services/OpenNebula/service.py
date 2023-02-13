@@ -150,8 +150,8 @@ class LiveService(Service):
         if not values:
             return
 
-        self.baseName.value = validators.validateHostname(
-            self.baseName.value, maxLength=15 - self.lenName.num(), asPattern=True
+        self.baseName.value = validators.validateBasename(
+            self.baseName.value, length=self.lenName.num()
         )
 
     def parent(self) -> 'OpenNebulaProvider':

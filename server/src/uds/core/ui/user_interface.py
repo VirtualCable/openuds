@@ -47,6 +47,7 @@ from django.utils.translation import get_language, gettext as _, gettext_noop
 from uds.core.managers.crypto import CryptoManager, UDSK
 from uds.core.util.decorators import deprecatedClassValue
 from uds.core.util import serializer, validators
+from uds.core import exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -437,7 +438,11 @@ class gui:
             """
             Returns the default value for this field
             """
-            return self._data['defvalue'] if not callable(self._data['defvalue']) else self._data['defvalue']()
+            return (
+                self._data['defvalue']
+                if not callable(self._data['defvalue'])
+                else self._data['defvalue']()
+            )
 
         @defValue.setter
         def defValue(self, defValue: typing.Any) -> None:
@@ -501,9 +506,11 @@ class gui:
                   tooltip = _('Other info'), rdonly = True)
 
         """
+
         class PatternTypes:
             IPV4 = 'ipv4'
             IPV6 = 'ipv6'
+            IP = 'ip'
             MAC = 'mac'
             URL = 'url'
             EMAIL = 'email'
@@ -520,6 +527,7 @@ class gui:
             # Can contain an regex or this special values: (empty string means no validation)
             #   - 'ipv4'     # IPv4 address
             #   - 'ipv6'     # IPv6 address
+            #   - 'ip'       # IPv4 or IPv6 address
             #   - 'mac'      # MAC address
             #   - 'url'      # URL
             #   - 'email'    # Email
@@ -529,24 +537,50 @@ class gui:
             #   - 'path'     # Path (absolute or relative, Windows or Unix)
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
-            self._data['pattern'] = options.get('pattern', gui.TextField.PatternTypes.NONE)
+            self._data['pattern'] = options.get(
+                'pattern', gui.TextField.PatternTypes.NONE
+            )
 
         def cleanStr(self):
             return str(self.value).strip()
-        
+
         def validate(self) -> bool:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
             if isinstance(self._data['pattern'], gui.TextField.PatternTypes):
-                 pattern: gui.TextField.PatternTypes = self._data['pattern']
-                 if pattern == gui.TextField.PatternTypes.IPV4:
-                    pass                     
+                try:
+                    pattern: gui.TextField.PatternTypes = self._data['pattern']
+                    if pattern == gui.TextField.PatternTypes.IPV4:
+                        validators.validateIpv4(self.value)
+                    elif pattern == gui.TextField.PatternTypes.IPV6:
+                        validators.validateIpv6(self.value)
+                    elif pattern == gui.TextField.PatternTypes.IP:
+                        validators.validateIpv4OrIpv6(self.value)
+                    elif pattern == gui.TextField.PatternTypes.MAC:
+                        validators.validateMac(self.value)
+                    elif pattern == gui.TextField.PatternTypes.URL:
+                        validators.validateUrl(self.value)
+                    elif pattern == gui.TextField.PatternTypes.EMAIL:
+                        validators.validateEmail(self.value)
+                    elif pattern == gui.TextField.PatternTypes.FQDN:
+                        validators.validateFqdn(self.value)
+                    elif pattern == gui.TextField.PatternTypes.HOSTNAME:
+                        validators.validateHostname(self.value)
+                    elif pattern == gui.TextField.PatternTypes.HOST:
+                        try:
+                            validators.validateHostname(self.value, allowDomain=True)
+                        except exceptions.ValidationException:
+                            validators.validateIpv4OrIpv6(self.value)
+                    elif pattern == gui.TextField.PatternTypes.PATH:
+                        validators.validatePath(self.value)
+                    return True
+                except exceptions.ValidationException:
+                    return False
             elif isinstance(self._data['pattern'], str):
                 # It's a regex
                 return re.match(self._data['pattern'], self.value) is not None
             return True  # No pattern, so it's valid
-            
 
     class TextAutocompleteField(TextField):
         """
@@ -621,6 +655,7 @@ class gui:
 
         The values of parameres are inherited from :py:class:`InputField`
         """
+
         def __init__(self, **options):
             super().__init__(**options, type=gui.InputField.Types.DATE)
 

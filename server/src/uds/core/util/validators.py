@@ -40,6 +40,8 @@ from uds.core import exceptions
 
 logger = logging.getLogger(__name__)
 
+url_validator = dj_validators.URLValidator(['http', 'https'])
+
 
 def validateNumeric(
     value: str,
@@ -85,19 +87,19 @@ def validateNumeric(
     return int(value)
 
 
-def validateHostname(hostname: str, maxLength: int, asPattern: bool) -> str:
+def validateHostname(hostname: str, maxLength: int = 64, allowDomain=False) -> str:
     if len(hostname) > maxLength:
         raise exceptions.ValidationException(
             _('{} exceeds maximum host name length.').format(hostname)
         )
 
-    if hostname[-1] == ".":
-        hostname = hostname[:-1]  # strip exactly one dot from the right, if present
+    if not allowDomain:
+        if '.' in hostname:
+            raise exceptions.ValidationException(
+                _('{} is not a valid hostname').format(hostname)
+            )
 
-    if asPattern:
-        allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}$', re.IGNORECASE)
-    else:
-        allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
+    allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
 
     if not all(allowed.match(x) for x in hostname.split(".")):
         raise exceptions.ValidationException(
@@ -106,19 +108,119 @@ def validateHostname(hostname: str, maxLength: int, asPattern: bool) -> str:
 
     return hostname
 
+
+def validateFqdn(fqdn: str, maxLength: int = 255) -> str:
+    return validateHostname(fqdn, maxLength, allowDomain=True)
+
+
 def validateUrl(url: str, maxLength: int = 1024) -> str:
     if len(url) > maxLength:
         raise exceptions.ValidationException(
             _('{} exceeds maximum url length.').format(url)
         )
-    
-    validator = dj_validators.URLValidator(['http', 'https'])
+
     try:
-        validator(url)
+        url_validator(url)
     except Exception as e:
         raise exceptions.ValidationException(str(e))
-    
+
     return url
+
+
+def validateIpv4(ipv4: str) -> str:
+    """
+    Validates that a ipv4 address is valid
+    :param ipv4: ipv4 address to validate
+    :param returnAsInteger: if True, returns value as integer, if not, as string
+    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    """
+    try:
+        dj_validators.validate_ipv4_address(ipv4)
+    except Exception:
+        raise exceptions.ValidationException(
+            _('{} is not a valid IPv4 address').format(ipv4)
+        )
+    return ipv4
+
+
+def validateIpv6(ipv6: str) -> str:
+    """
+    Validates that a ipv6 address is valid
+    :param ipv6: ipv6 address to validate
+    :param returnAsInteger: if True, returns value as integer, if not, as string
+    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    """
+    try:
+        dj_validators.validate_ipv6_address(ipv6)
+    except Exception:
+        raise exceptions.ValidationException(
+            _('{} is not a valid IPv6 address').format(ipv6)
+        )
+    return ipv6
+
+
+def validateIpv4OrIpv6(ipv4OrIpv6: str) -> str:
+    """
+    Validates that a ipv4 or ipv6 address is valid
+    :param ipv4OrIpv6: ipv4 or ipv6 address to validate
+    :param returnAsInteger: if True, returns value as integer, if not, as string
+    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    """
+    try:
+        dj_validators.validate_ipv46_address(ipv4OrIpv6)
+    except Exception:
+        raise exceptions.ValidationException(
+            _('{} is not a valid IPv4 or IPv6 address').format(ipv4OrIpv6)
+        )
+    return ipv4OrIpv6
+
+
+def validatePath(
+    path: str,
+    maxLength: int = 1024,
+    mustBeWindows: bool = False,
+    mustBeUnix: bool = False,
+) -> str:
+    """
+    Validates a path, if not "mustBe" is specified, it will be validated as either windows or unix.
+    Path must be absolute, and must not exceed maxLength
+    Args:
+        path (str): path to validate
+        maxLength (int, optional): max length of path. Defaults to 1024.
+        mustBeWindows (bool, optional): if True, path must be a windows path. Defaults to False.
+        mustBeUnix (bool, optional): if True, path must be a unix path. Defaults to False.
+
+    Raises:
+        exceptions.ValidationException: if path is not valid
+
+    Returns:
+        str: path
+    """
+    if len(path) > maxLength:
+        raise exceptions.ValidationException(
+            _('{} exceeds maximum path length.').format(path)
+        )
+
+    valid_for_windows = re.compile(r'^[a-zA-Z]:\\.*$')
+    valid_for_unix = re.compile(r'^/.*$')
+
+    if mustBeWindows:
+        if not valid_for_windows.match(path):
+            raise exceptions.ValidationException(
+                _('{} is not a valid windows path').format(path)
+            )
+    elif mustBeUnix:
+        if not valid_for_unix.match(path):
+            raise exceptions.ValidationException(
+                _('{} is not a valid unix path').format(path)
+            )
+    else:
+        if not valid_for_windows.match(path) and not valid_for_unix.match(path):
+            raise exceptions.ValidationException(
+                _('{} is not a valid path').format(path)
+            )
+
+    return path
 
 
 def validatePort(portStr: str) -> int:
@@ -171,9 +273,12 @@ def validateMac(mac: str) -> str:
     )  # In fact, it could be XX-XX-XX-XX-XX-XX, but we use - as range separator
 
     if macRE.match(mac) is None:
-        raise exceptions.ValidationException(_('{} is not a valid MAC address').format(mac))
+        raise exceptions.ValidationException(
+            _('{} is not a valid MAC address').format(mac)
+        )
 
     return mac
+
 
 def validateMacRange(macRange: str) -> str:
     """
@@ -207,7 +312,8 @@ def validateEmail(email: str) -> str:
 
     return email
 
-def validateBasename(baseName: str, length: int = -1) -> None:
+
+def validateBasename(baseName: str, length: int = -1) -> str:
     """ "Checks if the basename + length is valid for services. Raises an exception if not valid"
 
     Arguments:
@@ -240,3 +346,5 @@ def validateBasename(baseName: str, length: int = -1) -> None:
         raise exceptions.ValidationException(
             _('The machine name can\'t be only numbers')
         )
+
+    return baseName
