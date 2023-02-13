@@ -45,18 +45,11 @@ from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core import Module, exceptions
+from uds.core import Module, exceptions as g_exceptions
 
 from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
 
-from .exceptions import (
-    HandlerError,
-    NotFound,
-    RequestError,
-    ResponseError,
-    AccessDenied,
-    NotSupportedError,
-)
+from . import exceptions
 
 from .handlers import Handler
 
@@ -76,12 +69,6 @@ LOG: typing.Final[str] = 'log'
 OK: typing.Final[
     str
 ] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
-
-# Exception to "rethrow" on save error
-class SaveException(HandlerError):
-    """
-    Exception thrown if couldn't save
-    """
 
 
 class BaseModelHandler(Handler):
@@ -322,7 +309,7 @@ class BaseModelHandler(Handler):
                     args[key] = self._params[key]
                 # del self._params[key]
         except KeyError as e:
-            raise RequestError('needed parameter not found in data {0}'.format(e))
+            raise exceptions.RequestError('needed parameter not found in data {0}'.format(e))
 
         return args
 
@@ -342,7 +329,7 @@ class BaseModelHandler(Handler):
             for key, value in i.valuesDict().items():
                 if isinstance(value, str):
                     value = {"true": True, "false": False}.get(
-                        value, value
+                        value.lower(), value
                     )  # Translate "true" & "false" to True & False (booleans)
                 logger.debug('%s = %s', key, value)
                 res[key] = value
@@ -351,43 +338,43 @@ class BaseModelHandler(Handler):
     # Exceptions
     def invalidRequestException(
         self, message: typing.Optional[str] = None
-    ) -> HandlerError:
+    ) -> exceptions.HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
         """
         message = message or _('Invalid Request')
-        return RequestError('{} {}: {}'.format(message, self.__class__, self._args))
+        return exceptions.RequestError('{} {}: {}'.format(message, self.__class__, self._args))
 
     def invalidResponseException(
         self, message: typing.Optional[str] = None
-    ) -> HandlerError:
+    ) -> exceptions.HandlerError:
         message = 'Invalid response' if message is None else message
-        return ResponseError(message)
+        return exceptions.ResponseError(message)
 
-    def invalidMethodException(self) -> HandlerError:
+    def invalidMethodException(self) -> exceptions.HandlerError:
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        return RequestError(
+        return exceptions.RequestError(
             _('Method not found in {}: {}').format(self.__class__, self._args)
         )
 
     def invalidItemException(
         self, message: typing.Optional[str] = None
-    ) -> HandlerError:
+    ) -> exceptions.HandlerError:
         """
         Raises a NotFound exception, with location info
         """
         message = message or _('Item not found')
-        return NotFound(message)
+        return exceptions.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def accessDenied(self, message: typing.Optional[str] = None) -> HandlerError:
-        return AccessDenied(message or _('Access denied'))
+    def accessDenied(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+        return exceptions.AccessDenied(message or _('Access denied'))
 
-    def notSupported(self, message: typing.Optional[str] = None) -> HandlerError:
-        return NotSupportedError(message or _('Operation not supported'))
+    def notSupported(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+        return exceptions.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
     def success(self) -> str:
@@ -775,7 +762,7 @@ class ModelHandler(BaseModelHandler):
                 break
 
         if found is None:
-            raise NotFound('type not found')
+            raise exceptions.NotFound('type not found')
 
         logger.debug('Found type %s', found)
         return found
@@ -860,7 +847,7 @@ class ModelHandler(BaseModelHandler):
         except:
             logger.exception('Exception:')
             logger.info('Filtering expression %s is invalid!', self.fltr)
-            raise RequestError('Filtering expression {} is invalid'.format(self.fltr))
+            raise exceptions.RequestError('Filtering expression {} is invalid'.format(self.fltr))
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
@@ -903,6 +890,8 @@ class ModelHandler(BaseModelHandler):
             raise self.invalidItemException()
         except (KeyError, AttributeError):
             raise self.invalidMethodException()
+        except exceptions.HandlerError:
+            raise
         except Exception as e:
             logger.error('Exception processing detail: %s', e)
             raise self.invalidRequestException()
@@ -1156,16 +1145,16 @@ class ModelHandler(BaseModelHandler):
             return res
 
         except self.model.DoesNotExist:
-            raise NotFound('Item not found')
+            raise exceptions.NotFound('Item not found')
         except IntegrityError:  # Duplicate key probably
-            raise RequestError('Element already exists (duplicate key error)')
-        except (SaveException, exceptions.ValidationException) as e:
-            raise RequestError(str(e))
-        except (RequestError, ResponseError):
+            raise exceptions.RequestError('Element already exists (duplicate key error)')
+        except (exceptions.SaveException, g_exceptions.ValidationException) as e:
+            raise exceptions.RequestError(str(e))
+        except (exceptions.RequestError, exceptions.ResponseError):
             raise
         except Exception:
             logger.exception('Exception on put')
-            raise RequestError('incorrect invocation to PUT')
+            raise exceptions.RequestError('incorrect invocation to PUT')
 
     def delete(self) -> typing.Any:
         """
@@ -1176,7 +1165,7 @@ class ModelHandler(BaseModelHandler):
             return self.processDetail()
 
         if len(self._args) != 1:
-            raise RequestError('Delete need one and only one argument')
+            raise exceptions.RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
             self.model(), permissions.PermissionType.ALL, root=True
@@ -1187,7 +1176,7 @@ class ModelHandler(BaseModelHandler):
             self.checkDelete(item)
             self.deleteItem(item)
         except self.model.DoesNotExist:
-            raise NotFound('Element do not exists')
+            raise exceptions.NotFound('Element do not exists')
 
         return OK
 

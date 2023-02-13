@@ -40,7 +40,7 @@ from uds.core.util import net
 from uds.core.util import permissions
 from uds.core.ui import gui
 
-from uds.REST.model import ModelHandler, SaveException
+from ..model import ModelHandler
 
 logger = logging.getLogger(__name__)
 

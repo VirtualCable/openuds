@@ -66,3 +66,9 @@ class NotSupportedError(HandlerError):
     Some elements do not support some operations (as searching over an authenticator that does not supports it)
     """
 
+# Exception to "rethrow" on save error
+class SaveException(HandlerError):
+    """
+    Exception thrown if couldn't save
+    """
+
