@@ -76,14 +76,15 @@ class SPICETransport(BaseSpiceTransport):
         password: str,
         request: 'HttpRequest',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
-        userServiceInstance: typing.Any = userService.getInstance()
-
-        con = userServiceInstance.getConsoleConnection()
+        try:
+            userServiceInstance: typing.Any = userService.getInstance()
+            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
+        except Exception:
+            logger.exception('Error getting console connection data')
+            raise
 
         logger.debug('Connection data: %s', con)
 
-        # Spice connection
-        con = userServiceInstance.getConsoleConnection()
         port: str = con['port'] or '-1'
         secure_port: str = con['secure_port'] or '-1'
 
@@ -92,11 +93,11 @@ class SPICETransport(BaseSpiceTransport):
             port,
             secure_port,
             con['ticket']['value'],
-            self.serverCertificate.value,
+            self.serverCertificate.value.strip() or con.get('ca', ''),
             con['cert_subject'],
             fullscreen=self.fullScreen.isTrue(),
         )
-        r.proxy = con.get('proxy', None)
+        r.proxy = self.overridedProxy.value.strip() or con.get('proxy', None)
 
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()

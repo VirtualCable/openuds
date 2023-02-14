@@ -121,6 +121,14 @@ class BaseSpiceTransport(transports.Transport):
         tab=gui.ADVANCED_TAB,
     )
 
+    overridedProxy = gui.TextField(
+        order=10,
+        label=_('Override Proxy'),
+        tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
+        required=False,
+        tab=gui.ADVANCED_TAB,
+    )
+
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
