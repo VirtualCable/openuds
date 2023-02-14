@@ -36,7 +36,6 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports, exceptions
-from uds.core.util import os_detector as OsDetector
 from uds.core.util import validators
 from uds.models import TicketStore
 
@@ -48,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
+    from uds.core.util import os_detector
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +113,7 @@ class TSPICETransport(BaseSpiceTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'os_detector.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

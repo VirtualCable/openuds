@@ -112,7 +112,7 @@ class X2GOTransport(BaseX2GOTransport):
         sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
 
         try:
-            return self.getScript(os.os.os_name(), 'tunnel', sp)
+            return self.getScript(os.os.os_name(), 'direct', sp)
         except Exception:
             return super().getUDSTransportScript(
                 userService, transport, ip, os, user, password, request
