@@ -65,6 +65,7 @@ class SPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
     sslConnection = BaseSpiceTransport.SSLConnection
+    overridedProxy = BaseSpiceTransport.overridedProxy
 
     def getUDSTransportScript(
         self,
@@ -93,7 +94,7 @@ class SPICETransport(BaseSpiceTransport):
             port,
             secure_port,
             con['ticket']['value'],
-            self.serverCertificate.value.strip() or con.get('ca', ''),
+            con.get('ca', self.serverCertificate.value.strip()),
             con['cert_subject'],
             fullscreen=self.fullScreen.isTrue(),
         )

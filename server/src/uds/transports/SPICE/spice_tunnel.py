@@ -100,6 +100,7 @@ class TSPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
     sslConnection = BaseSpiceTransport.SSLConnection
+    overridedProxy = BaseSpiceTransport.overridedProxy
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -118,11 +119,13 @@ class TSPICETransport(BaseSpiceTransport):
         password: str,
         request: 'HttpRequest',
     ) -> typing.Tuple[str, str, typing.Mapping[str, typing.Any]]:
-        userServiceInstance: typing.Any = userService.getInstance()
-
-        # Spice connection
-        con = userServiceInstance.getConsoleConnection()
-
+       
+        try:
+            userServiceInstance: typing.Any = userService.getInstance()
+            con = userServiceInstance.getConsoleConnection()
+        except Exception:
+            logger.exception('Error getting console connection data')
+            raise
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
         # We MAY need two tickets, one for 'insecure' port an one for secure
