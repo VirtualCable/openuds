@@ -86,8 +86,6 @@ class SPICETransport(BaseSpiceTransport):
 
         logger.debug('Connection data: %s', con)
 
-        # Spice connection
-        con = userServiceInstance.getConsoleConnection()
         port: str = con['port'] or '-1'
         secure_port: str = con['secure_port'] or '-1'
 
@@ -96,7 +94,7 @@ class SPICETransport(BaseSpiceTransport):
             port,
             secure_port,
             con['ticket']['value'],
-            self.serverCertificate.value,
+            self.serverCertificate.value.strip() or con.get('ca', ''),
             con['cert_subject'],
             fullscreen=self.fullScreen.isTrue(),
         )

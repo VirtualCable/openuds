@@ -682,7 +682,11 @@ class ProxmoxClient:
             'port': res.get('port', None),
             'secure_port': res['tls-port'],
             'cert_subject': res['host-subject'],
-            'ticket': {'value': res['password'], 'expiry': ''},
+            'ticket': {
+                'value': res['password'],
+                'expiry': '',
+            },
+            'ca': res.get('ca', None),
         }
         # Sample data:
         # 'data': {'proxy': 'http://pvealone.dkmon.com:3128',
