@@ -90,7 +90,7 @@ class RDPFile:
         if self.target in (
             OsDetector.KnownOS.Windows,
             OsDetector.KnownOS.Linux,
-            OsDetector.KnownOS.Macintosh,
+            OsDetector.KnownOS.MacOS,
         ):
             return self.getGeneric()
         # Unknown target
@@ -120,7 +120,7 @@ class RDPFile:
                 params.append('/smartcard')
 
         if self.redirectAudio:
-            if self.alsa and self.target != OsDetector.KnownOS.Macintosh:
+            if self.alsa and self.target != OsDetector.KnownOS.MacOS:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
             else:
@@ -132,7 +132,7 @@ class RDPFile:
             params.append('/video')
 
         if self.redirectDrives != 'false':
-            if self.target in (OsDetector.KnownOS.Linux, OsDetector.KnownOS.Macintosh):
+            if self.target in (OsDetector.KnownOS.Linux, OsDetector.KnownOS.MacOS):
                 params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')
@@ -158,7 +158,7 @@ class RDPFile:
             params.append('/multimon')
 
         if self.fullScreen:
-            if self.target != OsDetector.KnownOS.Macintosh:
+            if self.target != OsDetector.KnownOS.MacOS:
                 params.append('/f')
             else:  # On mac, will fix this later...
                 params.append('/w:#WIDTH#')

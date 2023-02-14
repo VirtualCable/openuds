@@ -36,7 +36,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
 from uds.models import TicketStore
-from uds.core.util import os_detector as OsDetector
+from uds.core.util import os_detector
 from uds.core.util import validators
 
 from .rdp_base import BaseRDPTransport
@@ -48,7 +48,6 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +142,7 @@ class TRDPTransport(BaseRDPTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'os_detector.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -198,17 +197,6 @@ class TRDPTransport(BaseRDPTransport):
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
 
-        osName = {
-            OsDetector.KnownOS.Windows: 'windows',
-            OsDetector.KnownOS.Linux: 'linux',
-            OsDetector.KnownOS.Macintosh: 'macosx',
-        }.get(os.os)
-
-        if osName is None:
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
-
         sp: typing.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
             'tunPort': tunPort,
@@ -219,7 +207,7 @@ class TRDPTransport(BaseRDPTransport):
             'this_server': request.build_absolute_uri('/'),
         }
 
-        if osName == 'windows':
+        if os.os == os_detector.KnownOS.Windows:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -228,14 +216,14 @@ class TRDPTransport(BaseRDPTransport):
                     'as_file': r.as_file,
                 }
             )
-        elif osName == 'linux':
+        elif os.os == os_detector.KnownOS.Linux:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 }
             )
-        else:  # Mac
+        elif os.os == os_detector.KnownOS.MacOS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {
@@ -244,5 +232,15 @@ class TRDPTransport(BaseRDPTransport):
                     'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
                 }
             )
+        else:
+            logger.error(
+                'Os not valid for RDP Transport: %s',
+                request.META.get('HTTP_USER_AGENT', 'Unknown'),
+            )
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
-        return self.getScript(osName, 'tunnel', sp)
+
+        return self.getScript(os.os.os_name(), 'tunnel', sp)
+        

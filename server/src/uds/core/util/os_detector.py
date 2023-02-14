@@ -49,18 +49,20 @@ class KnownOS(enum.Enum):
     ChromeOS = ('CrOS',)
     WindowsPhone = ('Windows Phone',)
     Windows = ('Windows',)
-    Macintosh = ('Mac',)
+    MacOS = ('MacOsX',)
     Android = ('Android',)
     iPad = ('iPad',)  #
     iPhone = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate them
     WYSE = ('WYSE',)
     Unknown = ('Unknown',)
 
+    def os_name(self):
+        return self.value[0].lower()
 
 knownOss = tuple(os for os in KnownOS if os != KnownOS.Unknown)
 
 allOss = knownOss + (KnownOS.Unknown,)
-desktopOss = (KnownOS.Linux, KnownOS.Windows, KnownOS.Macintosh)
+desktopOss = (KnownOS.Linux, KnownOS.Windows, KnownOS.MacOS)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
 

@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.util import os_detector as OsDetector
+from uds.core.util import os_detector
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
 
@@ -43,7 +43,6 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import transports
     from uds.core.util.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +100,7 @@ class RDPTransport(BaseRDPTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'os_detector.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -147,21 +146,6 @@ class RDPTransport(BaseRDPTransport):
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
 
-        osName = {
-            OsDetector.KnownOS.Windows: 'windows',
-            OsDetector.KnownOS.Linux: 'linux',
-            OsDetector.KnownOS.Macintosh: 'macosx',
-        }.get(os.os)
-
-        if osName is None:
-            logger.error(
-                'Os not detected for RDP Transport: %s',
-                request.META.get('HTTP_USER_AGENT', 'Unknown'),
-            )
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
-
         sp: typing.MutableMapping[str, typing.Any] = {
             'password': password,
             'this_server': request.build_absolute_uri('/'),
@@ -170,7 +154,7 @@ class RDPTransport(BaseRDPTransport):
             'address': r.address,
         }
 
-        if osName == 'windows':
+        if os == os_detector.KnownOS.Windows:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -179,7 +163,7 @@ class RDPTransport(BaseRDPTransport):
                     'as_file': r.as_file,
                 }
             )
-        elif osName == 'linux':
+        elif os == os_detector.KnownOS.Linux:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
@@ -187,7 +171,7 @@ class RDPTransport(BaseRDPTransport):
                     'address': r.address,
                 }
             )
-        else:  # Mac
+        elif os == os_detector.KnownOS.MacOS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {
@@ -197,5 +181,13 @@ class RDPTransport(BaseRDPTransport):
                     'address': r.address,
                 }
             )
+        else:
+            logger.error(
+                'Os not valid for RDP Transport: %s',
+                request.META.get('HTTP_USER_AGENT', 'Unknown'),
+            )
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )
 
-        return self.getScript(osName, 'direct', sp)
+        return self.getScript(os.os.os_name(), 'direct', sp)

@@ -53,6 +53,7 @@ class X2GOTransport(BaseX2GOTransport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     isBase = False
 
     typeName = _('X2Go')
@@ -108,17 +109,11 @@ class X2GOTransport(BaseX2GOTransport):
             user=username,
         )
 
-        osName = {
-            OsDetector.KnownOS.Windows: 'windows',
-            OsDetector.KnownOS.Linux: 'linux',
-            # OsDetector.Macintosh: 'macosx'
-        }.get(os.os)
+        sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
 
-        if osName is None:
+        try:
+            return self.getScript(os.os.os_name(), 'tunnel', sp)
+        except Exception:
             return super().getUDSTransportScript(
                 userService, transport, ip, os, user, password, request
             )
-
-        sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
-
-        return self.getScript(osName, 'direct', sp)

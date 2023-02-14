@@ -159,17 +159,6 @@ class TX2GOTransport(BaseX2GOTransport):
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
-        osName = {
-            OsDetector.KnownOS.Windows: 'windows',
-            OsDetector.KnownOS.Linux: 'linux',
-            # OsDetector.Macintosh: 'macosx'
-        }.get(os.os)
-
-        if osName is None:
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
-
         sp = {
             'tunHost': tunHost,
             'tunPort': tunPort,
@@ -180,4 +169,9 @@ class TX2GOTransport(BaseX2GOTransport):
             'xf': xf,
         }
 
-        return self.getScript(osName, 'tunnel', sp)
+        try:
+            return self.getScript(os.os.os_name(), 'tunnel', sp)
+        except Exception:
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )

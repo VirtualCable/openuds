@@ -188,17 +188,6 @@ class TSPICETransport(BaseSpiceTransport):
         r.smartcard = self.smartCardRedirect.isTrue()
         r.ssl_connection = self.sslConnection.isTrue()
 
-        osName = {
-            OsDetector.KnownOS.Windows: 'windows',
-            OsDetector.KnownOS.Linux: 'linux',
-            OsDetector.KnownOS.Macintosh: 'macosx',
-        }.get(os.os)
-
-        if osName is None:
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
-
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')
 
@@ -213,4 +202,9 @@ class TSPICETransport(BaseSpiceTransport):
             'ticket_secure': ticket_secure,
         }
 
-        return self.getScript(osName, 'tunnel', sp)
+        try:
+            return self.getScript(os.os.os_name(), 'tunnel', sp)
+        except Exception:
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
+            )

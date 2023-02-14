@@ -100,7 +100,7 @@ class Login(Handler):
                     Linux = 'Linux'
                     WindowsPhone = 'Windows Phone'
                     Windows = 'Windows'
-                    Macintosh = 'Mac'
+                    Macintosh = 'MacOsX'
                     Android = 'Android'
                     iPad = 'iPad'
                     iPhone = 'iPhone'
