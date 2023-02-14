@@ -68,6 +68,7 @@ class SPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
     sslConnection = BaseSpiceTransport.SSLConnection
+    overridedProxy = BaseSpiceTransport.overridedProxy
 
     def getUDSTransportScript(
         self,
@@ -99,7 +100,7 @@ class SPICETransport(BaseSpiceTransport):
             con['cert_subject'],
             fullscreen=self.fullScreen.isTrue(),
         )
-        r.proxy = con.get('proxy', None)
+        r.proxy = self.overridedProxy.value.strip() or con.get('proxy', None)
 
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()

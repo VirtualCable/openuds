@@ -123,11 +123,11 @@ class BaseSpiceTransport(transports.Transport):
 
     overridedProxy = gui.TextField(
         order=10,
-        label=_('Proxy'),
-        tooltip=_('If not empty, this proxy will be used to connect to the service'),
+        label=_('Override Proxy'),
+        tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
         required=False,
         tab=gui.Tab.ADVANCED,
-        pattern=''
+        pattern=gui.TextField.PatternTypes.URL,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

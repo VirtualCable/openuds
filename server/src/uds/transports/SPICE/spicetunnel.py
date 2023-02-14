@@ -103,6 +103,7 @@ class TSPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
     sslConnection = BaseSpiceTransport.SSLConnection
+    overridedProxy = BaseSpiceTransport.overridedProxy
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -153,6 +154,7 @@ class TSPICETransport(BaseSpiceTransport):
                 fullscreen=self.fullScreen.isTrue(),
             )
         else:
+            con['proxy'] = self.overridedProxy.value.strip() or con['proxy']
             # extract host and port from proxy url
             host, port = con['proxy'].split('://')[1].split(':')[0:2]
             ticket = TicketStore.create_for_tunnel(
