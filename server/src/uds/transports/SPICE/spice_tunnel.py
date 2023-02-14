@@ -122,7 +122,7 @@ class TSPICETransport(BaseSpiceTransport):
        
         try:
             userServiceInstance: typing.Any = userService.getInstance()
-            con = userServiceInstance.getConsoleConnection()
+            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise
@@ -167,9 +167,9 @@ class TSPICETransport(BaseSpiceTransport):
             )
 
             r = RemoteViewerFile(
-                con.get('address'),
-                con.get('port',),
-                con.get('secure_port'),
+                con.get('address', ''),
+                con.get('port', ''),
+                con.get('secure_port', ''),
                 con['ticket']['value'],  # password
                 con.get('ca', self.serverCertificate.value.strip()),
                 con['cert_subject'],
