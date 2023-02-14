@@ -119,10 +119,12 @@ class TSPICETransport(BaseSpiceTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> transports.TransportScript:
-        userServiceInstance: typing.Any = userService.getInstance()
-
-        # Spice connection
-        con = userServiceInstance.getConsoleConnection()
+        try:
+            userServiceInstance: typing.Any = userService.getInstance()
+            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
+        except Exception:
+            logger.exception('Error getting console connection data')
+            raise
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
@@ -165,9 +167,9 @@ class TSPICETransport(BaseSpiceTransport):
             )
 
             r = RemoteViewerFile(
-                con.get('address'),
-                con.get('port',),
-                con.get('secure_port'),
+                con.get('address', ''),
+                con.get('port',''),
+                con.get('secure_port', ''),
                 con['ticket']['value'],  # password
                 con.get('ca', self.serverCertificate.value.strip()),
                 con['cert_subject'],

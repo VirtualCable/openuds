@@ -80,10 +80,13 @@ class SPICETransport(BaseSpiceTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
-        userServiceInstance: typing.Any = userService.getInstance()
-
-        con = userServiceInstance.getConsoleConnection()
-
+        try:
+            userServiceInstance: typing.Any = userService.getInstance()
+            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
+        except Exception:
+            logger.exception('Error getting console connection data')
+            raise
+        
         logger.debug('Connection data: %s', con)
 
         port: str = con['port'] or '-1'

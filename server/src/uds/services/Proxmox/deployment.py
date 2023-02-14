@@ -202,7 +202,7 @@ class ProxmoxDeployment(services.UserDeployment):
         if self._vmid != '':
             try:
                 self.service().resetMachine(int(self._vmid))
-            except Exception:
+            except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
     def getConsoleConnection(

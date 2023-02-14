@@ -176,7 +176,7 @@ class ProxmoxClient:
         try:
             result = requests.post(
                 self._getPath(path),
-                data=data,
+                data=list(data or []) or None,
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
                 verify=self._validateCert,
@@ -199,7 +199,7 @@ class ProxmoxClient:
         try:
             result = requests.delete(
                 self._getPath(path),
-                data=data,
+                data=list(data or []) or None,
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
                 verify=self._validateCert,
