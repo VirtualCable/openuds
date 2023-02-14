@@ -574,12 +574,12 @@ class gui:
                     elif pattern == gui.TextField.PatternTypes.HOST:
                         try:
                             validators.validateHostname(self.value, allowDomain=True)
-                        except exceptions.ValidationException:
+                        except exceptions.ValidationError:
                             validators.validateIpv4OrIpv6(self.value)
                     elif pattern == gui.TextField.PatternTypes.PATH:
                         validators.validatePath(self.value)
                     return True
-                except exceptions.ValidationException:
+                except exceptions.ValidationError:
                     return False
             elif isinstance(self._data['pattern'], str):
                 # It's a regex

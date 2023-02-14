@@ -180,7 +180,7 @@ class HTML5VNCTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationException(
+            raise exceptions.ValidationError(
                 _('The server must be http or https')
             )
 

@@ -319,7 +319,7 @@ class HTML5RDPTransport(transports.Transport):
         # Strip spaces and all trailing '/'
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationException(
+            raise exceptions.ValidationError(
                 _('The server must be http or https')
             )
         #if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':

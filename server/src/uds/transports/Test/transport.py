@@ -92,7 +92,7 @@ class TestTransport(transports.Transport):
             self.testURL.value.startswith('http://')
             or self.testURL.value.startswith('https://')
         ):
-            raise exceptions.ValidationException(
+            raise exceptions.ValidationError(
                 _('The url must be http or https')
             )
 

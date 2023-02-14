@@ -83,7 +83,7 @@ class IPSingleMachineService(IPServiceBase):
             return
 
         if not net.isValidHost(self.ip.value):
-            raise exceptions.ValidationException(
+            raise exceptions.ValidationError(
                 gettext('Invalid server used: "{}"'.format(self.ip.value))
             )
 

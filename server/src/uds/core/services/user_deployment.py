@@ -608,6 +608,29 @@ class UserDeployment(Environmentable, Serializable):
         """
         return None
 
+    def getConsoleConnection(
+        self,
+    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+        """
+        This method is invoked by any connection that needs special connection data
+        to connenct to it using, for example, SPICE protocol. (that currently is the only one)
+
+        Returns a dictionary with the data needed to connect to the console.
+
+        Required (as SPICE protocol):
+           type: type of connection ('spice', 'vnc', ...)
+           address: address to connect to
+           port: port to connect to
+           secure_port: secure port to connect to
+           cert_subject: certificate subject to use
+           ticket: ticket to use to connect (basically, this is the password)
+
+        Optional:
+           ca: certificate authority to use
+           proxy: proxy to use
+           monitors: number of monitors to use
+        """
+        return None
     def __str__(self):
         """
         Mainly used for debugging purposses

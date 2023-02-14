@@ -34,7 +34,10 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
 from uds.core.util import os_detector as OsDetector
+from uds.core import exceptions
+
 from .spice_base import BaseSpiceTransport
 from .remote_viewer_file import RemoteViewerFile
 
@@ -81,13 +84,15 @@ class SPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
         try:
-            userServiceInstance: typing.Any = userService.getInstance()
-            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
+            userServiceInstance = userService.getInstance()
+            con: typing.Optional[typing.MutableMapping[str, typing.Any]] = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise
         
         logger.debug('Connection data: %s', con)
+        if not con:
+            raise exceptions.TransportError('No console connection data')
 
         port: str = con['port'] or '-1'
         secure_port: str = con['secure_port'] or '-1'

@@ -131,7 +131,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise exceptions.ValidationException(
+            raise exceptions.ValidationError(
                 _('We need more than two groups!')
             )
 

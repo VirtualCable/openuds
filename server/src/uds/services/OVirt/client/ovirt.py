@@ -37,8 +37,8 @@ import ovirtsdk4 as ovirt
 # Sometimes, we import ovirtsdk4 but "types" does not get imported... event can't be found????
 # With this seems to work propertly
 try:
-    from ovirtsdk4 import types as ovirtTypes  # pylint: disable=unused-import
-except Exception:
+    from ovirtsdk4 import types as ovirtTypes
+except Exception:  # nosec just to bring on the types if they exist
     pass
 
 # Not imported at runtime, just for type checking
@@ -103,7 +103,7 @@ class Client:
         if Client.cached_api:
             try:
                 Client.cached_api.close()
-            except Exception:
+            except Exception:  # nosec: this is a "best effort" close
                 # Nothing happens, may it was already disconnected
                 pass
         try:

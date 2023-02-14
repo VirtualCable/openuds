@@ -165,7 +165,7 @@ class EmailMFA(mfas.MFA):
         # if hostname is not valid, we will raise an exception
         hostname = self.hostname.cleanStr()
         if not hostname:
-            raise exceptions.ValidationException(_('Invalid SMTP hostname'))
+            raise exceptions.ValidationError(_('Invalid SMTP hostname'))
 
         # Now check is valid format
         if ':' in hostname:

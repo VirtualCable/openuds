@@ -30,7 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle   # nosec: controled data
 import logging
 import typing
 
@@ -144,7 +144,7 @@ class ProxmoxDeployment(services.UserDeployment):
             self._task = vals[4].decode('utf8')
             self._vmid = vals[5].decode('utf8')
             self._reason = vals[6].decode('utf8')
-            self._queue = pickle.loads(vals[7])
+            self._queue = pickle.loads(vals[7])  # nosec: controled data
 
     def getName(self) -> str:
         if self._name == '':

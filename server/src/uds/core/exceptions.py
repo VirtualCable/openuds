@@ -39,9 +39,14 @@ class UDSException(Exception):
     """
     pass
     
-class ValidationException(UDSException):
+class ValidationError(UDSException):
     """
     Exception used to indicate that the params assigned are invalid
     """
     pass
 
+class TransportError(UDSException):
+    """
+    Exception used to indicate that the transport is not available
+    """
+    pass

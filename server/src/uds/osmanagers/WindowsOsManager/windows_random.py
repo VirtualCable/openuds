@@ -88,11 +88,11 @@ class WinRandomPassManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['userAccount'] == '':
-                raise exceptions.ValidationException(
+                raise exceptions.ValidationError(
                     _('Must provide an user account!!!')
                 )
             if values['password'] == '':
-                raise exceptions.ValidationException(
+                raise exceptions.ValidationError(
                     _('Must provide a password for the account!!!')
                 )
             self._userAccount = values['userAccount']

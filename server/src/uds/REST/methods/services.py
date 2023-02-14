@@ -194,7 +194,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     )
                 )
             raise RequestError(_('Element already exists (duplicate key error)'))
-        except exceptions.ValidationException as e:
+        except exceptions.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)

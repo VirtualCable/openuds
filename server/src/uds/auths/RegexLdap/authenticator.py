@@ -250,7 +250,7 @@ class RegexLdap(auths.Authenticator):
                 try:
                     re.search(pattern, '')
                 except Exception:
-                    raise exceptions.ValidationException(
+                    raise exceptions.ValidationError(
                         'Invalid pattern in {0}: {1}'.format(fieldLabel, line)
                     )
 

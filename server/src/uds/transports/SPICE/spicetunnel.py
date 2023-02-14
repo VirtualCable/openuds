@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import validators
 from uds.models import TicketStore
@@ -120,11 +120,16 @@ class TSPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> transports.TransportScript:
         try:
-            userServiceInstance: typing.Any = userService.getInstance()
-            con: typing.Dict[str, typing.Any] = userServiceInstance.getConsoleConnection()
+            userServiceInstance = userService.getInstance()
+            con = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise
+
+        if not con:
+            raise exceptions.TransportError(
+                _('No console connection data received'),
+            )
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
