@@ -221,11 +221,11 @@ class Authenticators(ModelHandler):
                     uuid=processUuid(fields['mfa_id'])
                 )
                 fields['mfa_id'] = mfa.id
-                return
             except MFA.DoesNotExist:
                 pass  # will set field to null
+        else:
+            fields['mfa_id'] = None
 
-        fields['mfa_id'] = None
         fields['small_name'] = fields['small_name'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['small_name']):
