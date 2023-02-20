@@ -102,7 +102,6 @@ class TSPICETransport(BaseSpiceTransport):
     autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
     smartCardRedirect = BaseSpiceTransport.smartCardRedirect
     sslConnection = BaseSpiceTransport.SSLConnection
-    overridedProxy = BaseSpiceTransport.overridedProxy
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -135,38 +134,17 @@ class TSPICETransport(BaseSpiceTransport):
         # We MAY need two tickets, one for 'insecure' port an one for secure
         ticket = ''
         ticket_secure = ''
-        if 'proxy' not in con:
-            if con['port']:
-                ticket = TicketStore.create_for_tunnel(
-                    userService=userService,
-                    port=int(con['port']),
-                    validity=self.tunnelWait.num() + 60,  # Ticket overtime
-                )
 
-            if con['secure_port']:
-                ticket_secure = TicketStore.create_for_tunnel(
-                    userService=userService,
-                    port=int(con['secure_port']),
-                    validity=self.tunnelWait.num() + 60,  # Ticket overtime
-                )
-
-            r = RemoteViewerFile(
-                '127.0.0.1',
-                '{port}',
-                '{secure_port}',
-                con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
-                con.get('ca', self.serverCertificate.value.strip()),
-                con['cert_subject'],
-                fullscreen=self.fullScreen.isTrue(),
+        if 'proxy' in con:
+            logger.exception('Proxied SPICE tunnels are not suppoorted')
+            return super().getUDSTransportScript(
+                userService, transport, ip, os, user, password, request
             )
-        else:
-            con['proxy'] = self.overridedProxy.value.strip() or con['proxy']
-            # extract host and port from proxy url
-            host, port = con['proxy'].split('://')[1].split(':')[0:2]
+
+        if con['port']:
             ticket = TicketStore.create_for_tunnel(
                 userService=userService,
-                host=host,
-                port=int(port),
+                port=int(con['port']),
                 validity=self.tunnelWait.num() + 60,  # Ticket overtime
             )
 
@@ -179,8 +157,16 @@ class TSPICETransport(BaseSpiceTransport):
                 con['cert_subject'],
                 fullscreen=self.fullScreen.isTrue(),
             )
-            # Set proxy to 127.0.0.1:{port}
-            r.proxy = con['proxy'].split('://')[0] + '://127.0.0.1:{port}'
+
+        r = RemoteViewerFile(
+            '127.0.0.1',
+            '{port}',
+            '{secure_port}',
+            con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
+            con.get('ca', self.serverCertificate.value.strip()),
+            con['cert_subject'],
+            fullscreen=self.fullScreen.isTrue(),
+        )
 
         r.usb_auto_share = self.usbShare.isTrue()
         r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
