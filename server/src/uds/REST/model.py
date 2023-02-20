@@ -300,10 +300,16 @@ class BaseModelHandler(Handler):
         :return: A dictionary containing all required fields
         """
         args: typing.Dict[str, str] = {}
+        default: typing.Optional[str]
         try:
             for key in fldList:
                 if ':' in key:  # optional field? get default if not present
                     k, default = key.split(':')[:2]
+                    # Convert "None" to None
+                    default = None if default == 'None' else default
+                    # If key is not present, and default = _, then it is not required skip it
+                    if default == '_' and k not in self._params:
+                        continue
                     args[k] = self._params.get(k, default)
                 else:
                     args[key] = self._params[key]
@@ -714,7 +720,9 @@ class ModelHandler(BaseModelHandler):
         typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]
     ] = None  # Dictionary containing detail routing
     # Fields that are going to be saved directly
-    # If a field is in the form "field:default" and field is not present in the request, default will be used
+    # * If a field is in the form "field:default" and field is not present in the request, default will be used
+    # * If the "default" is the string "None", then the default will be None
+    # * If the "default" is _ (underscore), then the field will be ignored (not saved) if not present in the request
     # Note that these fields has to be present in the model, and they can be "edited" in the beforeSave method
     save_fields: typing.ClassVar[typing.List[str]] = []
     # Put removable fields before updating
@@ -1064,6 +1072,10 @@ class ModelHandler(BaseModelHandler):
         Processes a PUT request
         """
         logger.debug('method PUT for %s, %s', self.__class__.__name__, self._args)
+        
+        # Append request to _params, may be needed by some classes
+        # I.e. to get the user IP, server name, etc..
+        self._params['_request'] = self._request
 
         deleteOnError = False
 
@@ -1135,7 +1147,8 @@ class ModelHandler(BaseModelHandler):
 
                 res = self.item_as_dict(item)
                 self.fillIntanceFields(item, res)
-            except:
+            except Exception as e:
+                logger.exception('Exception on put')
                 if deleteOnError:
                     item.delete()
                 raise

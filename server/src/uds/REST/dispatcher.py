@@ -128,7 +128,7 @@ class Dispatcher(View):
         # Path here has "remaining" path, that is, method part has been removed
         args = tuple(path)
 
-        handler = None
+        handler: typing.Optional[Handler] = None
 
         try:
             handler = cls(

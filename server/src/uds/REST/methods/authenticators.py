@@ -61,7 +61,7 @@ class Authenticators(ModelHandler):
     # Custom get method "search" that requires authenticator id
     custom_methods = [('search', True)]
     detail = {'users': Users, 'groups': Groups}
-    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id']
+    save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_']
 
     table_title = _('Authenticators')
     table_fields = [
@@ -243,11 +243,11 @@ class Authenticators(ModelHandler):
             try:
                 mfa = MFA.objects.get(uuid=processUuid(fields['mfa_id']))
                 fields['mfa_id'] = mfa.id
-                return
             except MFA.DoesNotExist:
                 pass  # will set field to null
+        else:
+            fields['mfa_id'] = None
 
-        fields['mfa_id'] = None
         # If label has spaces, replace them with underscores
         fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
