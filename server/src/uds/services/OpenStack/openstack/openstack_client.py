@@ -133,7 +133,6 @@ def authProjectRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., 
 
     return ensurer
 
-
 class Client:  # pylint: disable=too-many-public-methods
     PUBLIC = 'public'
     PRIVATE = 'private'
