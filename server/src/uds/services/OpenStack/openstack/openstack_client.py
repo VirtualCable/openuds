@@ -84,8 +84,8 @@ def getRecurringUrlJson(
     session: requests.Session,
     headers: typing.Dict[str, str],
     key: str,
-    params: typing.Dict[str, str] = None,
-    errMsg: str = None,
+    params: typing.Optional[typing.Mapping[str, str]] = None,
+    errMsg: typing.Optional[str] = None,
     timeout: int = 10,
 ) -> typing.Iterable[typing.Any]:
     counter = 0
@@ -132,7 +132,6 @@ def authProjectRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., 
         return func(obj, *args, **kwargs)
 
     return ensurer
-
 
 class Client:  # pylint: disable=too-many-public-methods
     PUBLIC = 'public'
