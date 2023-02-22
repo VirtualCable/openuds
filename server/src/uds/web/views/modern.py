@@ -47,6 +47,7 @@ from django.views.decorators.cache import never_cache
 from uds import models
 from uds.core import mfas
 from uds.core.auths import auth, exceptions
+from uds.core.util.config import GlobalConfig
 from uds.core.managers import cryptoManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -221,6 +222,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         )
         return errors.errorView(request, errors.ACCESS_DENIED)
 
+    tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
         form = MFAForm(request.POST)
         if form.is_valid():
@@ -253,6 +255,13 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
                 return response
             except exceptions.MFAError as e:
+                tries += 1
+                request.session['mfa_tries'] = tries
+                if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
+                    # Clean session
+                    request.session.flush()
+                    # Too many tries, redirect to login error page
+                    return errors.errorView(request, errors.ACCESS_DENIED)
                 logger.error('MFA error: %s', e)
                 return errors.errorView(request, errors.INVALID_MFA_CODE)
         else:
