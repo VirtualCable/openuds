@@ -266,6 +266,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             pass  # Will render again the page
     else:
         # Make MFA send a code
+        request.session['mfa_tries'] = 0  # Reset tries
         try:
             result = mfaInstance.process(
                 request,
