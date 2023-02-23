@@ -246,6 +246,11 @@ class User(UUIDModel):
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
         toDelete.getManager().removeUser(toDelete.name)
+
+        # If has mfa, remove related data
+        if toDelete.manager.mfa:
+            toDelete.manager.mfa.getInstance().resetData(toDelete)
+
         # Remove related stored values
         with storage.StorageAccess('manager' + str(toDelete.manager.uuid)) as store:
             for key in store.keys():

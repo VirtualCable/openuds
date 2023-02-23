@@ -286,16 +286,14 @@ class MFA(Module):
 
         raise exceptions.MFAError(err)
 
-    def reset_data(
+    def resetData(
         self,
-        request: 'ExtendedHttpRequest',
         userId: str,
     ) -> None:
         """
         This method allows to reset the MFA state of an user.
         Normally, this will do nothing, but for persistent MFA data (as Google Authenticator), this will remove the data.
         """
-
         pass
 
     @staticmethod
