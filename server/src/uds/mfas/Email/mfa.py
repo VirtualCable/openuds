@@ -236,6 +236,7 @@ class EmailMFA(mfas.MFA):
                 raise
 
     def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+        # If failed to send the code, we will raise the exception
         self.doSendCode(request, identifier, code,)
         return mfas.MFA.RESULT.OK
 

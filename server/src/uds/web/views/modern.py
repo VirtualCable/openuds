@@ -30,7 +30,6 @@
 """
 import time
 import logging
-import hashlib
 import typing
 import json
 
@@ -182,9 +181,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     if not mfaProvider:
         return HttpResponseRedirect(reverse('page.index'))
 
-    userHashValue: str = hashlib.sha3_256(
-        (request.user.name + (request.user.uuid or '') + mfaProvider.uuid).encode()
-    ).hexdigest()
+    userHashValue = mfas.MFA.getUserId(request.user)
 
     # Try to get cookie anc check it
     mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
