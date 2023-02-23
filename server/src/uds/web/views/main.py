@@ -30,7 +30,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import time
 import logging
-import hashlib
 import typing
 import random
 import json
@@ -47,6 +46,7 @@ from django.views.decorators.cache import never_cache
 
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
+from uds.core.util.config import GlobalConfig
 from uds.core.managers import cryptoManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
@@ -66,6 +66,7 @@ MFA_COOKIE_NAME = 'mfa_status'
 
 if typing.TYPE_CHECKING:
     pass
+
 
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
@@ -220,6 +221,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         )
         return errors.errorView(request, errors.ACCESS_DENIED)
 
+    tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
         form = MFAForm(request.POST)
         if form.is_valid():
@@ -252,6 +254,13 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
                 return response
             except exceptions.MFAError as e:
+                tries += 1
+                request.session['mfa_tries'] = tries
+                if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
+                    # Clean session
+                    request.session.flush()
+                    # Too many tries, redirect to login error page
+                    return errors.errorView(request, errors.ACCESS_DENIED)
                 logger.error('MFA error: %s', e)
                 return errors.errorView(request, errors.INVALID_MFA_CODE)
         else:
@@ -300,17 +309,22 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     }
     return index(request)  # Render index with MFA data
 
+
 @csrf_exempt
 @auth.denyNonAuthenticated
-def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str) -> HttpResponse:
+def update_transport_ticket(
+    request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str
+) -> HttpResponse:
     try:
         if request.method == 'POST':
             # Get request body as json
             data = json.loads(request.body)
 
             # Update username andd password in ticket
-            username = data.get('username', None) or None # None if not present
-            password = data.get('password', None) or None # If password is empty, set it to None
+            username = data.get('username', None) or None  # None if not present
+            password = (
+                data.get('password', None) or None
+            )  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
@@ -320,13 +334,14 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
                 if 'ticket-info' not in data:
                     return True
                 try:
-                    user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                    user = models.User.objects.get(
+                        uuid=data['ticket-info'].get('user', None)
+                    )
                     if request.user == user:
                         return True
                 except models.User.DoesNotExist:
                     pass
                 return False
-                
 
             models.TicketStore.update(
                 uuid=idTicket,
@@ -335,10 +350,14 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
                 password=password,
                 domain=domain,
             )
-            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
+            return HttpResponse(
+                '{"status": "OK"}', status=200, content_type='application/json'
+            )
     except Exception as e:
         # fallback to error
         logger.warning('Error updating ticket: %s', e)
 
     # Invalid request
-    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')
+    return HttpResponse(
+        '{"status": "Invalid Request"}', status=400, content_type='application/json'
+    )

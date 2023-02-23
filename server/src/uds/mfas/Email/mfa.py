@@ -132,7 +132,7 @@ class EmailMFA(mfas.MFA):
         label=_('Policy for users without MFA support'),
         order=31,
         defaultValue='0',
-        tooltip=_('Action for SMS response error'),
+        tooltip=_('Action for MFA response error'),
         required=True,
         values={
             '0': _('Allow user login'),
@@ -144,12 +144,12 @@ class EmailMFA(mfas.MFA):
     )
 
     networks = gui.MultiChoiceField(
-        label=_('SMS networks'),
+        label=_('Mail OTP Networks'),
         rdonly=False,
         rows=5,
         order=32,
-        tooltip=_('Networks for SMS authentication'),
-        required=True,
+        tooltip=_('Networks for Email OTP authentication'),
+        required=False,
         tab=_('Config'),
     )
 
