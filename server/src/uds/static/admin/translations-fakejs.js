@@ -268,7 +268,7 @@ gettext("Delete user");
 gettext("Delete group");
 gettext("Clean data");
 gettext("Clean related data (mfa, ...)?");
-gettext("Related data resete");
+gettext("Related data cleaned");
 gettext("dismiss");
 gettext("New Authenticator");
 gettext("Edit Authenticator");
