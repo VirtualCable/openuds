@@ -45,6 +45,7 @@ from uds.core.auths import exceptions
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
     from uds.core.util.request import ExtendedHttpRequest
+    from uds.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -194,7 +195,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (models.getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
 
     def process(
         self,
@@ -231,7 +232,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > models.getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -281,7 +282,7 @@ class MFA(Module):
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
-                    < models.getSqlDatetime()
+                    < getSqlDatetime()
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error

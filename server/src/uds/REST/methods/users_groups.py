@@ -78,7 +78,7 @@ def getPoolsForGroups(groups):
 
 class Users(DetailHandler):
 
-    custom_methods = ['servicesPools', 'userServices']
+    custom_methods = ['servicesPools', 'userServices', 'cleanRelated']
 
     def getItems(self, parent: Authenticator, item: typing.Optional[str]):
         # processes item to change uuid key for id
@@ -325,6 +325,12 @@ class Users(DetailHandler):
                 res.append(v)
 
         return res
+    
+    def cleanRelated(self, parent: Authenticator, item: str) -> typing.Dict:
+        uuid = processUuid(item)
+        user = parent.users.get(uuid=processUuid(uuid))
+        user.cleanRelated()
+        return {'status': 'ok'}
 
 
 class Groups(DetailHandler):
