@@ -3,14 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # , 2014
 # blafuente <blafuente@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://www.transifex.com/openuds/openuds/language/"
@@ -580,7 +583,7 @@ msgstr "Blocked"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:264
 msgid "Clean related (mfa,...)"
-msgstr ""
+msgstr "Clean related (mfa,...)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:267
 msgid "Delete user"
@@ -592,15 +595,17 @@ msgstr "Delete group"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:269
 msgid "Clean data"
-msgstr ""
+msgstr "Clean data"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:270
 msgid "Clean related data (mfa, ...)?"
-msgstr ""
+msgstr "Clean related data (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-msgid "Related data resete"
-msgstr ""
+#, fuzzy
+#| msgid "Related data resete"
+msgid "Related data cleaned"
+msgstr "Related data resete"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"

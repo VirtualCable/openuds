@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -13,11 +14,12 @@
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Александр Бурматов, 2022
 # Александр Бурматов, 2022
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -608,8 +610,9 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Очистить связанные данные (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-msgid "Related data resete"
-msgstr "Сброс связанных данных"
+#| msgid "Related data resete"
+msgid "Related data cleaned"
+msgstr "Связанные данные очищены"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"

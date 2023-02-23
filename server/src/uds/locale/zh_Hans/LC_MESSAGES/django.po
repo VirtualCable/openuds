@@ -3,13 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
 "zh/)\n"
 "Language: zh\n"
@@ -2427,7 +2428,6 @@ msgid "Policy for users without MFA support"
 msgstr "针对没有 MFA 支持的用户的策略"
 
 #: mfas/Email/mfa.py:136
-#| msgid "Action for SMS response error"
 msgid "Action for MFA response error"
 msgstr "针对 MFA 响应错误的操作"
 
@@ -2450,12 +2450,10 @@ msgid "Deny user to login if it IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
 #: mfas/Email/mfa.py:148
-#| msgid "Radius OTP networks"
 msgid "Mail OTP Networks"
 msgstr "邮件 OTP 网络"
 
 #: mfas/Email/mfa.py:152
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for Email OTP authentication"
 msgstr "电子邮件 OTP 身份验证网络"
 
@@ -2721,17 +2719,14 @@ msgid "This is a useless field, for sample and testing pourposes"
 msgstr "这是一个无用的领域，用于样品和测试用途"
 
 #: mfas/TOTP/mfa.py:60
-#| msgid "Base MFA"
 msgid "TOTP Based MFA"
 msgstr "基于 TOTP 的 MFA"
 
 #: mfas/TOTP/mfa.py:62
-#| msgid "Base Authenticator"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "基于 TOTP 的 MFA（Google 身份验证器等）"
 
 #: mfas/TOTP/mfa.py:68
-#| msgid "Issued by"
 msgid "Issuer"
 msgstr "发行人"
 
@@ -2748,12 +2743,10 @@ msgid "Number of valid codes before and after the current one"
 msgstr "当前码前后有效码数"
 
 #: mfas/TOTP/mfa.py:88
-#| msgid "Radius OTP networks"
 msgid "TOTP networks"
 msgstr "TOTP网络"
 
 #: mfas/TOTP/mfa.py:92
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for TOTP authentication choices"
 msgstr "TOTP 身份验证选择的网络"
 
@@ -2762,7 +2755,6 @@ msgid "Requre HOTP for users within networks"
 msgstr "要求网络内的用户使用 HOTP"
 
 #: mfas/TOTP/mfa.py:104
-#| msgid "Allow user login"
 msgid "Allow user login (no MFA)"
 msgstr "允许用户登录（无 MFA）"
 
@@ -2771,17 +2763,14 @@ msgid "Require user to login with MFA"
 msgstr "要求用户使用 MFA 登录"
 
 #: mfas/TOTP/mfa.py:147
-#| msgid "Authentication error"
 msgid "Authentication Code"
 msgstr "验证码"
 
 #: mfas/TOTP/mfa.py:171
-#| msgid "Invalid Multi-Factor Authentication code"
 msgid "Enter your authentication code"
 msgstr "输入您的验证码"
 
 #: mfas/TOTP/mfa.py:227
-#| msgid "Invalid MFA code"
 msgid "Invalid code"
 msgstr "无效的代码"
 
@@ -6947,7 +6936,6 @@ msgid "If checked, SPICE protocol will allow SSL connections."
 msgstr "如果选中，SPICE 协议将允许 SSL 连接。"
 
 #: transports/SPICE/spice_base.py:126
-#| msgid "Override Base"
 msgid "Override Proxy"
 msgstr "覆盖代理"
 
@@ -6955,7 +6943,9 @@ msgstr "覆盖代理"
 msgid ""
 "If not empty, this proxy will be used to connect to the service instead of "
 "the one provided by the hypervisor. Format: http://host:port"
-msgstr "如果不为空，则此代理将用于连接服务，而不是管理程序提供的代理。格式：http://主机:端口"
+msgstr ""
+"如果不为空，则此代理将用于连接服务，而不是管理程序提供的代理。格式：http://主"
+"机:端口"
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
