@@ -132,10 +132,9 @@ class TOTP_MFA(mfas.MFA):
         Returns:
             True if we need to ask for OTP
         """
-
         def checkIp() -> bool:
             return any(
-                i.ipInNetwork(request.ip)
+                i.contains(request.ip)
                 for i in models.Network.objects.filter(uuid__in=self.networks.value)
             )
 
