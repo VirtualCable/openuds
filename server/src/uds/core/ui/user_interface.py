@@ -1393,13 +1393,13 @@ class UserInterface(metaclass=UserInterfaceType):
         logger.debug('theGui description: %s', res)
         return res
 
-    def validate(self) -> typing.List[ValidationFieldInfo]:
-        errors: typing.List[UserInterface.ValidationFieldInfo] = []
+    def errors(self) -> typing.List[ValidationFieldInfo]:
+        found_erros: typing.List[UserInterface.ValidationFieldInfo] = []
         for key, val in self._gui.items():
             if val.required and not val.value:
-                errors.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
+                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
             if not val.validate():
-                errors.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
+                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
 
-        return errors
+        return found_erros
         
