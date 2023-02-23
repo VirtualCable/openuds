@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-07 16:41+0100\n"
+"POT-Creation-Date: 2023-02-23 21:38+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2021-2023\n"
 "Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
@@ -57,7 +57,7 @@ msgstr "Nombre"
 #: REST/methods/proxies.py:63 REST/methods/services.py:241
 #: REST/methods/services_pool_groups.py:72 REST/methods/transports.py:69
 #: REST/methods/user_services.py:402 REST/methods/users_groups.py:170
-#: REST/methods/users_groups.py:389 REST/model.py:173
+#: REST/methods/users_groups.py:395 REST/model.py:173
 msgid "Comments"
 msgstr "Comentarios"
 
@@ -229,7 +229,7 @@ msgid "If active, authenticator will be visible for users"
 msgstr "Si está activo, el autenticador será visible para los usuarios"
 
 #: REST/methods/authenticators.py:126 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:188
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
@@ -689,8 +689,8 @@ msgstr ""
 msgid "Available reports"
 msgstr "Informes disponibles"
 
-#: REST/methods/reports.py:67 REST/methods/users_groups.py:380
-#: REST/methods/users_groups.py:401
+#: REST/methods/reports.py:67 REST/methods/users_groups.py:386
+#: REST/methods/users_groups.py:407
 #: auths/ActiveDirectory_enterprise/authenticator.py:153
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:114
@@ -761,12 +761,12 @@ msgid "Advanced"
 msgstr "Avanzado"
 
 #: REST/methods/services.py:365 REST/methods/users_groups.py:301
-#: REST/methods/users_groups.py:507
+#: REST/methods/users_groups.py:513
 msgid "With errors"
 msgstr "Con errores"
 
 #: REST/methods/services.py:365 REST/methods/users_groups.py:301
-#: REST/methods/users_groups.py:507
+#: REST/methods/users_groups.py:513
 msgid "Ok"
 msgstr "Ok"
 
@@ -1105,7 +1105,7 @@ msgstr "Nombre de usuario"
 msgid "Role"
 msgstr "Rol"
 
-#: REST/methods/users_groups.py:173 REST/methods/users_groups.py:392
+#: REST/methods/users_groups.py:173 REST/methods/users_groups.py:398
 msgid "state"
 msgstr "estado"
 
@@ -1117,32 +1117,32 @@ msgstr "Último acceso"
 msgid "Username cannot be empty"
 msgstr "El nombre de usuario no puede estar vacío"
 
-#: REST/methods/users_groups.py:245 REST/methods/users_groups.py:473
+#: REST/methods/users_groups.py:245 REST/methods/users_groups.py:479
 msgid "User already exists (duplicate key error)"
 msgstr "Este usuario ya existe (error de clave duplicada)"
 
-#: REST/methods/users_groups.py:368
+#: REST/methods/users_groups.py:374
 #, python-brace-format
 msgid "Groups of {0}"
 msgstr "Grupos de {0}"
 
-#: REST/methods/users_groups.py:374
+#: REST/methods/users_groups.py:380
 msgid "Current groups"
 msgstr "Grupos actuales"
 
-#: REST/methods/users_groups.py:401
+#: REST/methods/users_groups.py:407
 msgid "UDS Group"
 msgstr "Grupo UDS"
 
-#: REST/methods/users_groups.py:402
+#: REST/methods/users_groups.py:408
 msgid "Meta group"
 msgstr "Metagrupo"
 
-#: REST/methods/users_groups.py:402
+#: REST/methods/users_groups.py:408
 msgid "UDS Meta Group"
 msgstr "Metagrupo UDS "
 
-#: REST/methods/users_groups.py:433
+#: REST/methods/users_groups.py:439
 msgid "Group name is required"
 msgstr "El nombre del grupo es obligatorio"
 
@@ -1344,14 +1344,14 @@ msgid "Authenticate against Active Directory"
 msgstr "Autenticar contra Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:647
+#: auths/ActiveDirectory_enterprise/authenticator.py:650
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "Debe especificar el nombre de usuario con este formato: "
 "NOMBREDEUSUARIO@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:520
-#: auths/ActiveDirectory_enterprise/authenticator.py:577
+#: auths/ActiveDirectory_enterprise/authenticator.py:523
+#: auths/ActiveDirectory_enterprise/authenticator.py:580
 #: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:293
 #: auths/EDirectory_enterprise/authenticator.py:324
@@ -1360,34 +1360,34 @@ msgstr ""
 msgid "Username not found"
 msgstr "Nombre de usuario no encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:559
+#: auths/ActiveDirectory_enterprise/authenticator.py:562
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Grupo no encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:604
-#: auths/ActiveDirectory_enterprise/authenticator.py:626
+#: auths/ActiveDirectory_enterprise/authenticator.py:607
+#: auths/ActiveDirectory_enterprise/authenticator.py:629
 #: auths/EDirectory_enterprise/authenticator.py:346
 #: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:658
+#: auths/ActiveDirectory_enterprise/authenticator.py:661
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Dominio parece incorrecto, por favor compruébelo"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:677
+#: auths/ActiveDirectory_enterprise/authenticator.py:680
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de usuario)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:700
+#: auths/ActiveDirectory_enterprise/authenticator.py:703
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:709
+#: auths/ActiveDirectory_enterprise/authenticator.py:712
 #: auths/EDirectory_enterprise/authenticator.py:469
 #: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -2144,11 +2144,11 @@ msgstr "El transporte solicitado {} no es válido para {}"
 msgid "The service is not accessible from this device"
 msgstr "El servicio no es accesible desde este dispositivo."
 
-#: core/mfas/mfa.py:61 core/mfas/mfa.py:73
+#: core/mfas/mfa.py:64 core/mfas/mfa.py:76
 msgid "Base MFA"
 msgstr "MFA base"
 
-#: core/mfas/mfa.py:193
+#: core/mfas/mfa.py:277
 msgid "Invalid MFA code"
 msgstr "Código MFA no válido"
 
@@ -2523,8 +2523,9 @@ msgstr "Asunto del correo electrónico"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:237
-#: mfas/SMS/mfa.py:252 mfas/SMS/mfa.py:262
+#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:236
+#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:85
+#: mfas/TOTP/mfa.py:94 mfas/TOTP/mfa.py:107
 msgid "Config"
 msgstr "Configuración"
 
@@ -2548,17 +2549,18 @@ msgstr "Habilitar HTML en correos electrónicos"
 msgid "Policy for users without MFA support"
 msgstr "Política para usuarios sin compatibilidad con MFA"
 
-#: mfas/Email/mfa.py:136 mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
-msgid "Action for SMS response error"
-msgstr "Acción para el error de respuesta de SMS"
+#: mfas/Email/mfa.py:136
+#| msgid "Action for SMS response error"
+msgid "Action for MFA response error"
+msgstr "Acción para el error de respuesta de MFA"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
+#: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
 msgid "Allow user login"
 msgstr "Permitir inicio de sesión de usuario"
 
 #: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
-#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Deny user login"
 msgstr "Denegar inicio de sesión de usuario"
 
@@ -2572,19 +2574,21 @@ msgid "Deny user to login if it IP is in the networks list"
 msgstr ""
 "Denegar al usuario el inicio de sesión si su IP está en la lista de redes"
 
-#: mfas/Email/mfa.py:148 mfas/SMS/mfa.py:256
-msgid "SMS networks"
-msgstr "Redes SMS"
+#: mfas/Email/mfa.py:148
+#| msgid "Radius OTP networks"
+msgid "Mail OTP Networks"
+msgstr "Redes OTP de correo"
 
-#: mfas/Email/mfa.py:152 mfas/SMS/mfa.py:260
-msgid "Networks for SMS authentication"
-msgstr "Redes para la autenticación de SMS"
+#: mfas/Email/mfa.py:152
+#| msgid "Networks for Radius OTP authentication"
+msgid "Networks for Email OTP authentication"
+msgstr "Redes para la autenticación OTP de correo electrónico"
 
 #: mfas/Email/mfa.py:169
 msgid "Invalid SMTP hostname"
 msgstr "Nombre de host SMTP no válido"
 
-#: mfas/Email/mfa.py:185
+#: mfas/Email/mfa.py:186
 msgid "Check your mail. You will receive an email with the verification code"
 msgstr "Revisa tu correo. Recibirás un email con el código de verificación"
 
@@ -2616,7 +2620,7 @@ msgstr "Acción para el error de comunicación del servidor OTP"
 
 #: mfas/Radius/mfa.py:121
 msgid "Radius OTP networks"
-msgstr "Redes OTP de radio"
+msgstr "Redes OTP de radius"
 
 #: mfas/Radius/mfa.py:125
 msgid "Networks for Radius OTP authentication"
@@ -2626,7 +2630,7 @@ msgstr "Redes para autenticación Radius OTP"
 msgid "User without defined OTP in server"
 msgstr "Usuario sin OTP definida en servidor"
 
-#: mfas/Radius/mfa.py:134
+#: mfas/Radius/mfa.py:134 mfas/TOTP/mfa.py:101
 msgid "Action for user without defined Radius Challenge"
 msgstr "Acción para usuario sin Radius Challenge definido"
 
@@ -2646,19 +2650,19 @@ msgstr "Error de conexión OTP de Radius"
 msgid "Invalid OTP code"
 msgstr "Código OTP no válido"
 
-#: mfas/SMS/mfa.py:97
+#: mfas/SMS/mfa.py:96
 msgid "SMS via HTTP"
 msgstr "SMS a través de HTTP"
 
-#: mfas/SMS/mfa.py:99
+#: mfas/SMS/mfa.py:98
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Envío de SMS simple MFA usando HTTP/HTTPS"
 
-#: mfas/SMS/mfa.py:104
+#: mfas/SMS/mfa.py:103
 msgid "URL pattern for SMS sending"
 msgstr "Patrón de URL para envío de SMS"
 
-#: mfas/SMS/mfa.py:107
+#: mfas/SMS/mfa.py:106
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2671,16 +2675,16 @@ msgstr ""
 "{username} - el nombre de usuario * {justUsername} - el nombre de usuario "
 "sin @...."
 
-#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
-#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
+#: mfas/SMS/mfa.py:114 mfas/SMS/mfa.py:125 mfas/SMS/mfa.py:134
+#: mfas/SMS/mfa.py:152 mfas/SMS/mfa.py:169 mfas/SMS/mfa.py:179
 msgid "HTTP Server"
 msgstr "Servidor HTTP"
 
-#: mfas/SMS/mfa.py:119
+#: mfas/SMS/mfa.py:118
 msgid "Ignore certificate errors"
 msgstr "Ignorar errores de certificado"
 
-#: mfas/SMS/mfa.py:123
+#: mfas/SMS/mfa.py:122
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2688,19 +2692,19 @@ msgstr ""
 "Si está marcado, se ignorará el certificado del servidor. Esto es útil si el "
 "servidor usa un certificado autofirmado."
 
-#: mfas/SMS/mfa.py:130
+#: mfas/SMS/mfa.py:129
 msgid "SMS sending method"
 msgstr "Método de envío de SMS"
 
-#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
+#: mfas/SMS/mfa.py:131 mfas/SMS/mfa.py:185
 msgid "Method for sending SMS"
 msgstr "Método para enviar SMS"
 
-#: mfas/SMS/mfa.py:141
+#: mfas/SMS/mfa.py:140
 msgid "Headers for SMS requests"
 msgstr "Encabezados para solicitudes de SMS"
 
-#: mfas/SMS/mfa.py:144
+#: mfas/SMS/mfa.py:143
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2715,11 +2719,11 @@ msgstr ""
 "usuario sin @.... Los encabezados están en la forma de \"Encabezado: Valor"
 "\". (sin las comillas)"
 
-#: mfas/SMS/mfa.py:159
+#: mfas/SMS/mfa.py:158
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "Parámetros para el envío de SMS POST/PUT"
 
-#: mfas/SMS/mfa.py:162
+#: mfas/SMS/mfa.py:161
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2733,51 +2737,51 @@ msgstr ""
 "teléfono * {username} - el nombre de usuario * {justUsername} - el nombre de "
 "usuario sin @...."
 
-#: mfas/SMS/mfa.py:174
+#: mfas/SMS/mfa.py:173
 msgid "SMS encoding"
 msgstr "Codificación de SMS"
 
-#: mfas/SMS/mfa.py:177
+#: mfas/SMS/mfa.py:176
 msgid "Encoding for SMS"
 msgstr "Codificación para SMS"
 
-#: mfas/SMS/mfa.py:184
+#: mfas/SMS/mfa.py:183
 msgid "SMS authentication method"
 msgstr "Método de autenticación por SMS"
 
-#: mfas/SMS/mfa.py:190
+#: mfas/SMS/mfa.py:189
 msgid "HTTP Basic Auth"
 msgstr "Autenticación básica HTTP"
 
-#: mfas/SMS/mfa.py:191
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Digest Auth"
 msgstr "Autenticación de resumen HTTP"
 
-#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
+#: mfas/SMS/mfa.py:192 mfas/SMS/mfa.py:201 mfas/SMS/mfa.py:210
 msgid "HTTP Authentication"
 msgstr "Autenticación HTTP"
 
-#: mfas/SMS/mfa.py:198
+#: mfas/SMS/mfa.py:197
 msgid "SMS authentication user or token"
 msgstr "Usuario o token de autenticación por SMS"
 
-#: mfas/SMS/mfa.py:200
+#: mfas/SMS/mfa.py:199
 msgid "User or token for SMS authentication"
 msgstr "Usuario o token para autenticación por SMS"
 
-#: mfas/SMS/mfa.py:207
+#: mfas/SMS/mfa.py:206
 msgid "SMS authentication password"
 msgstr "Contraseña de autenticación de SMS"
 
-#: mfas/SMS/mfa.py:209
+#: mfas/SMS/mfa.py:208
 msgid "Password for SMS authentication"
 msgstr "Contraseña para la autenticación por SMS"
 
-#: mfas/SMS/mfa.py:216
+#: mfas/SMS/mfa.py:215
 msgid "SMS response OK regex"
 msgstr "Respuesta de SMS OK expresión regular"
 
-#: mfas/SMS/mfa.py:219
+#: mfas/SMS/mfa.py:218
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2785,37 +2789,49 @@ msgstr ""
 "Regex para respuesta SMS OK. Si está vacío, la respuesta se considera "
 "correcta si el código de estado es 200."
 
-#: mfas/SMS/mfa.py:222
+#: mfas/SMS/mfa.py:221
 msgid "HTTP Response"
 msgstr "Respuesta HTTP"
 
-#: mfas/SMS/mfa.py:226
+#: mfas/SMS/mfa.py:225
 msgid "SMS response error action"
 msgstr "Acción de error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#: mfas/SMS/mfa.py:228 mfas/SMS/mfa.py:243
+msgid "Action for SMS response error"
+msgstr "Acción para el error de respuesta de SMS"
+
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Permitir que el usuario inicie sesión si su IP está en la lista de redes"
 
-#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Denegar al usuario el inicio de sesión si su IP está en la lista de redes"
 
-#: mfas/SMS/mfa.py:241
+#: mfas/SMS/mfa.py:240
 msgid "User without MFA policy"
 msgstr "Politica para usuario sin MFA"
 
-#: mfas/SMS/mfa.py:336
+#: mfas/SMS/mfa.py:255
+msgid "SMS networks"
+msgstr "Redes SMS"
+
+#: mfas/SMS/mfa.py:259
+msgid "Networks for SMS authentication"
+msgstr "Redes para la autenticación de SMS"
+
+#: mfas/SMS/mfa.py:335
 msgid "SMS sending failed"
 msgstr "Envío de SMS fallido"
 
-#: mfas/SMS/mfa.py:345
+#: mfas/SMS/mfa.py:344
 msgid "SMS response error"
 msgstr "Error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:399 web/views/modern.py:297
+#: mfas/SMS/mfa.py:398 web/views/modern.py:307
 msgid "MFA Code"
 msgstr "Código MFA"
 
@@ -2838,6 +2854,71 @@ msgstr "Ejemplo de campo inútil"
 #: mfas/Sample/mfa.py:56
 msgid "This is a useless field, for sample and testing pourposes"
 msgstr "Este es un campo inútil, para fines de muestra y prueba."
+
+#: mfas/TOTP/mfa.py:60
+#| msgid "Base MFA"
+msgid "TOTP Based MFA"
+msgstr "MFA basado en TOTP"
+
+#: mfas/TOTP/mfa.py:62
+#| msgid "Base Authenticator"
+msgid "TOTP Based MFA (Google Authenticator, etc)"
+msgstr "MFA basado en TOTP (Autenticador de Google, etc.)"
+
+#: mfas/TOTP/mfa.py:68
+#| msgid "Issued by"
+msgid "Issuer"
+msgstr "Editor"
+
+#: mfas/TOTP/mfa.py:71
+msgid "Issuer for OTP. Once it's created it can't be changed"
+msgstr "Emisor de OTP. Una vez creado, no se puede cambiar."
+
+#: mfas/TOTP/mfa.py:78
+msgid "Valid Window"
+msgstr "Ventana válida"
+
+#: mfas/TOTP/mfa.py:83
+msgid "Number of valid codes before and after the current one"
+msgstr "Número de códigos válidos antes y después del actual"
+
+#: mfas/TOTP/mfa.py:88
+#| msgid "Radius OTP networks"
+msgid "TOTP networks"
+msgstr "Redes TOTP"
+
+#: mfas/TOTP/mfa.py:92
+#| msgid "Networks for Radius OTP authentication"
+msgid "Networks for TOTP authentication choices"
+msgstr "Redes para opciones de autenticación TOTP"
+
+#: mfas/TOTP/mfa.py:98
+msgid "Requre HOTP for users within networks"
+msgstr "Requerir HOTP para usuarios dentro de redes"
+
+#: mfas/TOTP/mfa.py:104
+#| msgid "Allow user login"
+msgid "Allow user login (no MFA)"
+msgstr "Permitir inicio de sesión de usuario (sin MFA)"
+
+#: mfas/TOTP/mfa.py:105
+msgid "Require user to login with MFA"
+msgstr "Requerir que el usuario inicie sesión con MFA"
+
+#: mfas/TOTP/mfa.py:147
+#| msgid "Authentication error"
+msgid "Authentication Code"
+msgstr "Código de autenticación"
+
+#: mfas/TOTP/mfa.py:171
+#| msgid "Invalid Multi-Factor Authentication code"
+msgid "Enter your authentication code"
+msgstr "Ingrese su código de autenticación"
+
+#: mfas/TOTP/mfa.py:227
+#| msgid "Invalid MFA code"
+msgid "Invalid code"
+msgstr "Codigo invalido"
 
 #: models/calendar_action.py:63
 msgid "Publish"
@@ -4365,7 +4446,6 @@ msgstr ""
 "(usuario @ dominio o DOMINIO\\usuario)"
 
 #: services/HyperV_enterprise/service.py:59
-#| msgid "HyperV Linked Clone"
 msgid "HyperV Clone"
 msgstr "Clon de HyperV"
 
@@ -4825,11 +4905,11 @@ msgstr "Plantilla base"
 msgid "Service base template"
 msgstr "Plantilla de servicio base"
 
-#: services/OpenStack/openstack/openstack_client.py:773
+#: services/OpenStack/openstack/openstack_client.py:772
 msgid "Authentication error"
 msgstr "Error de autenticación"
 
-#: services/OpenStack/openstack/openstack_client.py:780
+#: services/OpenStack/openstack/openstack_client.py:779
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -7200,14 +7280,25 @@ msgid "Auto-redirect USB devices when plugged in."
 msgstr "Auto-redirigir dispositivos USB enchufado."
 
 #: transports/SPICE/spice_base.py:118
-#| msgid "Connection Bar"
 msgid "SSL Connection"
 msgstr "Conexión SSL"
 
 #: transports/SPICE/spice_base.py:119
-#| msgid "If checked, SPICE protocol will allow smartcard redirection."
 msgid "If checked, SPICE protocol will allow SSL connections."
 msgstr "Si está marcado, el protocolo SPICE permitirá conexiones SSL."
+
+#: transports/SPICE/spice_base.py:126
+#| msgid "Override Base"
+msgid "Override Proxy"
+msgstr "Anular proxy"
+
+#: transports/SPICE/spice_base.py:127
+msgid ""
+"If not empty, this proxy will be used to connect to the service instead of "
+"the one provided by the hypervisor. Format: http://host:port"
+msgstr ""
+"Si no está vacío, este proxy se utilizará para conectarse al servicio en "
+"lugar del proporcionado por el hipervisor. Formato: http://host:puerto"
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."
@@ -7486,10 +7577,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "El Autenticador no proporciona información"
 
-#: web/views/modern.py:288
+#: web/views/modern.py:298
 msgid "{} days"
 msgstr "{} días"
 
-#: web/views/modern.py:290
+#: web/views/modern.py:300
 msgid "{} hours"
 msgstr "{} horas"
