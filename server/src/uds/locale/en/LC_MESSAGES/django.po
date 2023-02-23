@@ -3,14 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Adolfo GÃ³mez <dkmaster at dkmon dot com>, 2012
+# Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # blafuente <blafuente@virtualcable.es>, 2014
+# Javier <jgonzalez@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://www.transifex.com/openuds/openuds/language/"
@@ -2491,10 +2494,8 @@ msgid "Policy for users without MFA support"
 msgstr "Policy for users without MFA support"
 
 #: mfas/Email/mfa.py:136
-#, fuzzy
-#| msgid "Action for SMS response error"
 msgid "Action for MFA response error"
-msgstr "Action for SMS response error"
+msgstr "Action for MFA response error"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
@@ -2515,16 +2516,12 @@ msgid "Deny user to login if it IP is in the networks list"
 msgstr "Deny user to login if it IP is in the networks list"
 
 #: mfas/Email/mfa.py:148
-#, fuzzy
-#| msgid "Radius OTP networks"
 msgid "Mail OTP Networks"
-msgstr "Radius OTP networks"
+msgstr "Mail OTP Networks"
 
 #: mfas/Email/mfa.py:152
-#, fuzzy
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for Email OTP authentication"
-msgstr "Networks for Radius OTP authentication"
+msgstr "Networks for Email OTP authentication"
 
 #: mfas/Email/mfa.py:169
 msgid "Invalid SMTP hostname"
@@ -2800,78 +2797,60 @@ msgid "This is a useless field, for sample and testing pourposes"
 msgstr "This is a useless field, for sample and testing pourposes"
 
 #: mfas/TOTP/mfa.py:60
-#, fuzzy
-#| msgid "Base MFA"
 msgid "TOTP Based MFA"
-msgstr "Base MFA"
+msgstr "TOTP Based MFA"
 
 #: mfas/TOTP/mfa.py:62
-#, fuzzy
-#| msgid "Base Authenticator"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
-msgstr "Base Authenticator"
+msgstr "TOTP Based MFA (Google Authenticator, etc)"
 
 #: mfas/TOTP/mfa.py:68
-#, fuzzy
-#| msgid "Issued by"
 msgid "Issuer"
-msgstr "Issued by"
+msgstr "Issuer"
 
 #: mfas/TOTP/mfa.py:71
 msgid "Issuer for OTP. Once it's created it can't be changed"
-msgstr ""
+msgstr "Issuer for OTP. Once it's created it can't be changed"
 
 #: mfas/TOTP/mfa.py:78
 msgid "Valid Window"
-msgstr ""
+msgstr "Valid Window"
 
 #: mfas/TOTP/mfa.py:83
 msgid "Number of valid codes before and after the current one"
-msgstr ""
+msgstr "Number of valid codes before and after the current one"
 
 #: mfas/TOTP/mfa.py:88
-#, fuzzy
-#| msgid "Radius OTP networks"
 msgid "TOTP networks"
-msgstr "Radius OTP networks"
+msgstr "TOTP networks"
 
 #: mfas/TOTP/mfa.py:92
-#, fuzzy
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for TOTP authentication choices"
-msgstr "Networks for Radius OTP authentication"
+msgstr "Networks for TOTP authentication choices"
 
 #: mfas/TOTP/mfa.py:98
 msgid "Requre HOTP for users within networks"
-msgstr ""
+msgstr "Requre HOTP for users within networks"
 
 #: mfas/TOTP/mfa.py:104
-#, fuzzy
-#| msgid "Allow user login"
 msgid "Allow user login (no MFA)"
-msgstr "Allow user login"
+msgstr "Allow user login (no MFA)"
 
 #: mfas/TOTP/mfa.py:105
 msgid "Require user to login with MFA"
-msgstr ""
+msgstr "Require user to login with MFA"
 
 #: mfas/TOTP/mfa.py:147
-#, fuzzy
-#| msgid "Authentication error"
 msgid "Authentication Code"
-msgstr "Authentication error"
+msgstr "Authentication Code"
 
 #: mfas/TOTP/mfa.py:171
-#, fuzzy
-#| msgid "Invalid Multi-Factor Authentication code"
 msgid "Enter your authentication code"
-msgstr "Invalid Multi-Factor Authentication code"
+msgstr "Enter your authentication code"
 
 #: mfas/TOTP/mfa.py:227
-#, fuzzy
-#| msgid "Invalid MFA code"
 msgid "Invalid code"
-msgstr "Invalid MFA code"
+msgstr "Invalid code"
 
 #: models/calendar_action.py:63
 msgid "Publish"
@@ -7146,16 +7125,16 @@ msgid "If checked, SPICE protocol will allow SSL connections."
 msgstr "If checked, SPICE protocol will allow SSL connections."
 
 #: transports/SPICE/spice_base.py:126
-#, fuzzy
-#| msgid "Override Base"
 msgid "Override Proxy"
-msgstr "Override Base"
+msgstr "Override Proxy"
 
 #: transports/SPICE/spice_base.py:127
 msgid ""
 "If not empty, this proxy will be used to connect to the service instead of "
 "the one provided by the hypervisor. Format: http://host:port"
 msgstr ""
+"If not empty, this proxy will be used to connect to the service instead of "
+"the one provided by the hypervisor. Format: http://host:port"
 
 #: transports/SPICE/spice_tunnel.py:62
 msgid "SPICE Protocol. Tunneled connection."

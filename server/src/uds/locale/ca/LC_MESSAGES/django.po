@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Javier <jgonzalez@virtualcable.es>, 2020
@@ -10,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -2530,7 +2531,6 @@ msgid "Policy for users without MFA support"
 msgstr "Política per a usuaris sense suport MFA"
 
 #: mfas/Email/mfa.py:136
-#| msgid "Action for SMS response error"
 msgid "Action for MFA response error"
 msgstr "Acció per error de resposta de MFA"
 
@@ -2557,12 +2557,10 @@ msgstr ""
 "xarxes"
 
 #: mfas/Email/mfa.py:148
-#| msgid "Radius OTP networks"
 msgid "Mail OTP Networks"
 msgstr "Correu Xarxes OTP"
 
 #: mfas/Email/mfa.py:152
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for Email OTP authentication"
 msgstr "Xarxes per a l&#39;autenticació OTP de correu electrònic"
 
@@ -2842,17 +2840,14 @@ msgid "This is a useless field, for sample and testing pourposes"
 msgstr "Aquest és un camp inútil, per a mostres i proves"
 
 #: mfas/TOTP/mfa.py:60
-#| msgid "Base MFA"
 msgid "TOTP Based MFA"
 msgstr "MFA basat en TOTP"
 
 #: mfas/TOTP/mfa.py:62
-#| msgid "Base Authenticator"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "MFA basat en TOTP (Google Authenticator, etc.)"
 
 #: mfas/TOTP/mfa.py:68
-#| msgid "Issued by"
 msgid "Issuer"
 msgstr "Emissor"
 
@@ -2869,12 +2864,10 @@ msgid "Number of valid codes before and after the current one"
 msgstr "Nombre de codis vàlids abans i després de l&#39;actual"
 
 #: mfas/TOTP/mfa.py:88
-#| msgid "Radius OTP networks"
 msgid "TOTP networks"
 msgstr "Xarxes TOTP"
 
 #: mfas/TOTP/mfa.py:92
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for TOTP authentication choices"
 msgstr "Xarxes per a opcions d&#39;autenticació TOTP"
 
@@ -2883,7 +2876,6 @@ msgid "Requre HOTP for users within networks"
 msgstr "Requereix HOTP per als usuaris dins de les xarxes"
 
 #: mfas/TOTP/mfa.py:104
-#| msgid "Allow user login"
 msgid "Allow user login (no MFA)"
 msgstr "Permet l&#39;inici de sessió de l&#39;usuari (sense MFA)"
 
@@ -2892,17 +2884,14 @@ msgid "Require user to login with MFA"
 msgstr "Requereix que l&#39;usuari iniciï sessió amb MFA"
 
 #: mfas/TOTP/mfa.py:147
-#| msgid "Authentication error"
 msgid "Authentication Code"
 msgstr "Codi d&#39;autenticació"
 
 #: mfas/TOTP/mfa.py:171
-#| msgid "Invalid Multi-Factor Authentication code"
 msgid "Enter your authentication code"
 msgstr "Introduïu el vostre codi d&#39;autenticació"
 
 #: mfas/TOTP/mfa.py:227
-#| msgid "Invalid MFA code"
 msgid "Invalid code"
 msgstr "Codi invàlid"
 
@@ -7293,7 +7282,6 @@ msgid "If checked, SPICE protocol will allow SSL connections."
 msgstr "Si està marcat, el protocol SPICE permetrà connexions SSL."
 
 #: transports/SPICE/spice_base.py:126
-#| msgid "Override Base"
 msgid "Override Proxy"
 msgstr "Anul·la el proxy"
 

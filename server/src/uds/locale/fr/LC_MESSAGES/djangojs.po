@@ -3,19 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Andrés Schumann <aschumann@virtualcable.es>, 2023
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Andrés Schumann <aschumann@virtualcable.es>, 2023\n"
+"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: French (http://www.transifex.com/openuds/openuds/language/"
 "fr/)\n"
 "Language: fr\n"
@@ -603,8 +605,9 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Nettoyer les données associées (mfa, ...) ?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-msgid "Related data resete"
-msgstr "Réinitialisation des données associées"
+#| msgid "Related data resete"
+msgid "Related data cleaned"
+msgstr "Données associées nettoyées"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"

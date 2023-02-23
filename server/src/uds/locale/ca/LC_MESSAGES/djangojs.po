@@ -3,13 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -598,8 +600,9 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Netejar dades relacionades (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-msgid "Related data resete"
-msgstr "Restabliment de dades relacionades"
+#| msgid "Related data resete"
+msgid "Related data cleaned"
+msgstr "S&#39;han netejat les dades relacionades"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"

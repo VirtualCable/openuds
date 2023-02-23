@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Javier <jgonzalez@virtualcable.es>, 2023
@@ -10,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:38+0100\n"
+"POT-Creation-Date: 2023-02-23 21:58+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
+"Last-Translator: Javier <jgonzalez@virtualcable.es>, 2023\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
 "Language: pt\n"
@@ -2526,7 +2527,6 @@ msgid "Policy for users without MFA support"
 msgstr "Política para usuários sem suporte a MFA"
 
 #: mfas/Email/mfa.py:136
-#| msgid "Action for SMS response error"
 msgid "Action for MFA response error"
 msgstr "Ação para erro de resposta MFA"
 
@@ -2549,12 +2549,10 @@ msgid "Deny user to login if it IP is in the networks list"
 msgstr "Negar o login do usuário se o IP estiver na lista de redes"
 
 #: mfas/Email/mfa.py:148
-#| msgid "Radius OTP networks"
 msgid "Mail OTP Networks"
 msgstr "Redes OTP de correio"
 
 #: mfas/Email/mfa.py:152
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for Email OTP authentication"
 msgstr "Redes para autenticação OTP de e-mail"
 
@@ -2828,17 +2826,14 @@ msgid "This is a useless field, for sample and testing pourposes"
 msgstr "Este é um campo inútil, para fins de amostragem e teste"
 
 #: mfas/TOTP/mfa.py:60
-#| msgid "Base MFA"
 msgid "TOTP Based MFA"
 msgstr "MFA baseado em TOTP"
 
 #: mfas/TOTP/mfa.py:62
-#| msgid "Base Authenticator"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "MFA baseado em TOTP (Google Authenticator, etc.)"
 
 #: mfas/TOTP/mfa.py:68
-#| msgid "Issued by"
 msgid "Issuer"
 msgstr "Emissor"
 
@@ -2855,12 +2850,10 @@ msgid "Number of valid codes before and after the current one"
 msgstr "Número de códigos válidos antes e depois do atual"
 
 #: mfas/TOTP/mfa.py:88
-#| msgid "Radius OTP networks"
 msgid "TOTP networks"
 msgstr "redes TOTP"
 
 #: mfas/TOTP/mfa.py:92
-#| msgid "Networks for Radius OTP authentication"
 msgid "Networks for TOTP authentication choices"
 msgstr "Redes para opções de autenticação TOTP"
 
@@ -2869,7 +2862,6 @@ msgid "Requre HOTP for users within networks"
 msgstr "Exigir HOTP para usuários dentro de redes"
 
 #: mfas/TOTP/mfa.py:104
-#| msgid "Allow user login"
 msgid "Allow user login (no MFA)"
 msgstr "Permitir login de usuário (sem MFA)"
 
@@ -2878,17 +2870,14 @@ msgid "Require user to login with MFA"
 msgstr "Exigir que o usuário faça login com MFA"
 
 #: mfas/TOTP/mfa.py:147
-#| msgid "Authentication error"
 msgid "Authentication Code"
 msgstr "Código de Autenticação"
 
 #: mfas/TOTP/mfa.py:171
-#| msgid "Invalid Multi-Factor Authentication code"
 msgid "Enter your authentication code"
 msgstr "Digite seu código de autenticação"
 
 #: mfas/TOTP/mfa.py:227
-#| msgid "Invalid MFA code"
 msgid "Invalid code"
 msgstr "Código inválido"
 
@@ -7242,7 +7231,6 @@ msgid "If checked, SPICE protocol will allow SSL connections."
 msgstr "Se marcado, o protocolo SPICE permitirá conexões SSL."
 
 #: transports/SPICE/spice_base.py:126
-#| msgid "Override Base"
 msgid "Override Proxy"
 msgstr "Substituir proxy"
 
