@@ -178,7 +178,7 @@ class EmailMFA(mfas.MFA):
         # now check from email and to email
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
 
-    def html(self, request: 'ExtendedHttpRequest') -> str:
+    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext(
             'Check your mail. You will receive an email with the verification code'
         )
