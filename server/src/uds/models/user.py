@@ -36,6 +36,7 @@ import typing
 from django.db import models
 from django.db.models import signals, Q, Count
 
+from uds.core import mfas
 from uds.core.util import log
 from uds.core.util import storage
 
@@ -230,6 +231,16 @@ class User(UUIDModel):
         return 'User {} (id:{}) from auth {}'.format(
             self.name, self.id, self.manager.name
         )
+    
+    def cleanRelated(self) -> None:
+        """
+        Cleans up all related external data, such as mfa data, etc
+        """
+        # If has mfa, remove related data
+        # If has mfa, remove related data
+        if self.manager.mfa:
+            self.manager.mfa.getInstance().resetData(mfas.MFA.getUserId(self))
+
 
     @staticmethod
     def beforeDelete(sender, **kwargs):
@@ -248,8 +259,7 @@ class User(UUIDModel):
         toDelete.getManager().removeUser(toDelete.name)
 
         # If has mfa, remove related data
-        if toDelete.manager.mfa:
-            toDelete.manager.mfa.getInstance().resetData(toDelete)
+        toDelete.cleanRelated()
 
         # Remove related stored values
         with storage.StorageAccess('manager' + str(toDelete.manager.uuid)) as store:
