@@ -300,7 +300,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             remember_device = _('{} hours').format(mfaProvider.remember_device)
 
     # Html from MFA provider
-    mfaHtml = mfaInstance.html(mfaUserId, request, request.user.name)
+    mfaHtml = mfaInstance.html(request, mfaUserId, request.user.name)
 
     # Redirect to index, but with MFA data
     request.session['mfa'] = {

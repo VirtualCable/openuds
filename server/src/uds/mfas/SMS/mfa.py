@@ -398,7 +398,7 @@ class SMSMFA(mfas.MFA):
         return gettext('MFA Code')
 
 
-    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext('Check your phone. You will receive an SMS with the verification code')
 
     def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:

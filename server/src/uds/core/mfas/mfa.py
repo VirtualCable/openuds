@@ -124,7 +124,7 @@ class MFA(Module):
         """
         return 'MFA Code'
 
-    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.

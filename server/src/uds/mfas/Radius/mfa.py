@@ -193,7 +193,7 @@ class RadiusOTP(mfas.MFA):
     def label(self) -> str:
         return gettext('OTP Code')
 
-    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         '''
         ToDo:
         - Maybe create a field in mfa definition to edit from admin panel ?

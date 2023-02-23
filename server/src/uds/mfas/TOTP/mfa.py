@@ -164,7 +164,7 @@ class TOTP_MFA(mfas.MFA):
             self._userData(userId)[0], issuer=self.issuer.value, name=username
         )
 
-    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
+    def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         # Get data from storage related to this user
         secret, qrShown = self._userData(userId)
         if qrShown:
