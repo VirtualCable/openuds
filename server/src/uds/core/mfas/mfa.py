@@ -300,6 +300,9 @@ class MFA(Module):
 
     @staticmethod
     def getUserId(user: models.User) -> str:
+        """
+        Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
+        """
         mfa = user.manager.mfa
         if not mfa:
             raise exceptions.MFAError('MFA is not enabled')

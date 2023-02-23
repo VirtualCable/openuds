@@ -181,13 +181,11 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     if not mfaProvider:
         return HttpResponseRedirect(reverse('page.index'))
 
-    userHashValue: str = hashlib.sha3_256(
-        (request.user.name + (request.user.uuid or '') + mfaProvider.uuid + request.ip).encode()
-    ).hexdigest()
+    userId = mfas.MFA.getUserId(request.user)
 
     # Try to get cookie anc check it
     mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
-    if mfaCookie == userHashValue:  # Cookie is valid, skip MFA setting authorization
+    if mfaCookie == userId:  # Cookie is valid, skip MFA setting authorization
         request.authorized = True
         return HttpResponseRedirect(reverse('page.index'))
 
@@ -229,7 +227,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             try:
                 mfaInstance.validate(
                     request,
-                    userHashValue,
+                    userId,
                     request.user.name,
                     mfaIdentifier,
                     code,
@@ -248,7 +246,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                 ):
                     response.set_cookie(
                         MFA_COOKIE_NAME,
-                        userHashValue,
+                        userId,
                         max_age=mfaProvider.remember_device * 60 * 60,
                     )
 
@@ -271,7 +269,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
         try:
             result = mfaInstance.process(
                 request,
-                userHashValue,
+                userId,
                 request.user.name,
                 mfaIdentifier,
                 validity=validity,
