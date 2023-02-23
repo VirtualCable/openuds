@@ -181,7 +181,8 @@ class EmailMFA(mfas.MFA):
         # now check from email and to email
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
 
-    def html(self, request: 'ExtendedHttpRequest') -> str:
+
+    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
         return gettext('Check your mail. You will receive an email with the verification code')
 
     @classmethod
@@ -208,7 +209,7 @@ class EmailMFA(mfas.MFA):
         else:
             return False
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def label(self) -> str:

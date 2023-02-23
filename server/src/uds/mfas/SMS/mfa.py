@@ -40,7 +40,6 @@ import requests.auth
 from uds import models
 from uds.core import mfas
 from uds.core.ui import gui
-from uds.core.util import net
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -326,7 +325,7 @@ class SMSMFA(mfas.MFA):
         else:
             return False
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
@@ -398,7 +397,8 @@ class SMSMFA(mfas.MFA):
     def label(self) -> str:
         return gettext('MFA Code')
 
-    def html(self, request: 'ExtendedHttpRequest') -> str:
+
+    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
         return gettext('Check your phone. You will receive an SMS with the verification code')
 
     def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
