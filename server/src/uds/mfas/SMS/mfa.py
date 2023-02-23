@@ -40,7 +40,6 @@ import requests.auth
 from uds import models
 from uds.core import mfas
 from uds.core.ui import gui
-from uds.core.util import net
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -329,7 +328,7 @@ class SMSMFA(mfas.MFA):
         else:
             return False
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def processResponse(

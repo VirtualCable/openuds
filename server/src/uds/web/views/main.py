@@ -191,10 +191,10 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
     # Obtain MFA data
     authInstance = request.user.manager.getInstance()
-    mfaInstance = mfaProvider.getInstance()
+    mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = min(mfaInstance.validity(), mfaProvider.validity) * 60
+    validity = min(mfaInstance.validity(), mfaProvider.validity*60)
     start_time = request.session.get('mfa_start_time', time.time())
 
     # If mfa process timed out, we need to start login again
@@ -206,18 +206,20 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     label = mfaInstance.label()
 
     if not mfaIdentifier:
-        if mfaInstance.emptyIndentifierAllowedToLogin(request):
+        if mfaInstance.emptyIndentifierAllowedToLogin(request) == True:
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
-        # Not allowed to login, redirect to login error page
-        logger.warning(
-            'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
-            request.user.name,
-            request.user.manager.name,
-            mfaProvider.name,
-        )
-        return errors.errorView(request, errors.ACCESS_DENIED)
+        elif mfaInstance.emptyIndentifierAllowedToLogin(request) == False:
+            # Not allowed to login, redirect to login error page
+            logger.warning(
+                'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
+                request.user.name,
+                request.user.manager.name,
+                mfaProvider.name,
+            )
+            return errors.errorView(request, errors.ACCESS_DENIED)
+        # Default, do nothing, and continue
 
     tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
@@ -231,7 +233,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     request.user.name,
                     mfaIdentifier,
                     code,
-                    validity=validity,
+                    validity=validity*60,
                 )
                 request.authorized = True
                 # Remove mfa_start_time from session
@@ -297,7 +299,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
             remember_device = _('{} hours').format(mfaProvider.remember_device)
 
     # Html from MFA provider
-    mfaHtml = mfaInstance.html(request)
+    mfaHtml = mfaInstance.html(mfaUserId, request, request.user.name)
 
     # Redirect to index, but with MFA data
     request.session['mfa'] = {

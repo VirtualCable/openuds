@@ -82,10 +82,12 @@ class MFA(Module):
     # : Cache time for the generated MFA code
     # : this means that the code will be valid for this time, and will not
     # : be resent to the user until the time expires.
-    # : This value is in minutes
+    # : This value is in second
     # : Note: This value is used by default "process" methos, but you can
     # : override it in your own implementation.
-    cacheTime: typing.ClassVar[int] = 5
+    # : Note: This value is only used in "validity" method, that is also overridable
+    # : by your own implementation, so its up to you to use it or not.
+    cacheTime: typing.ClassVar[int] = 5*60
 
     class RESULT(enum.IntEnum):
         """
@@ -122,10 +124,17 @@ class MFA(Module):
         """
         return 'MFA Code'
 
-    def html(self, request: 'ExtendedHttpRequest') -> str:
+    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.
+        
+        Args:
+            userId: Id of the user that is requesting the MFA code
+            request: Request object, so you can get more information
+
+        Returns:
+            HTML to be presented to the user along with the MFA code form
         """
         return ''
 
@@ -137,9 +146,13 @@ class MFA(Module):
         """
         return self.cacheTime
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
+        Returns:
+            True: If an user that has no "identifier" is allowed to login without MFA
+            False: If an user that has no "identifier" is not allowed to login without MFA
+            None: Process request, let the class decide if the user is allowed to login without MFA
         """
         return True
 
@@ -214,7 +227,7 @@ class MFA(Module):
         """
         # try to get the stored code
         data = self._getData(request, userId)
-        validity = validity if validity is not None else self.validity() * 60
+        validity = validity if validity is not None else self.validity()
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
@@ -264,7 +277,7 @@ class MFA(Module):
 
             data = self._getData(request, userId)
             if data and len(data) == 2:
-                validity = validity if validity is not None else self.validity() * 60
+                validity = validity if validity is not None else self.validity()
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
@@ -286,16 +299,14 @@ class MFA(Module):
 
         raise exceptions.MFAError(err)
 
-    def reset_data(
+    def resetData(
         self,
-        request: 'ExtendedHttpRequest',
         userId: str,
     ) -> None:
         """
         This method allows to reset the MFA state of an user.
         Normally, this will do nothing, but for persistent MFA data (as Google Authenticator), this will remove the data.
         """
-
         pass
 
     @staticmethod

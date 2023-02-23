@@ -211,7 +211,7 @@ class EmailMFA(mfas.MFA):
         else:
             return False
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def label(self) -> str:

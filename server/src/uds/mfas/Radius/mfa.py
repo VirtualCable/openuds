@@ -60,7 +60,7 @@ class RadiusOTP(mfas.MFA):
     typeType = 'RadiusOTP'
     typeDescription = _('Radius OTP Challenge')
     iconFile = 'radius.png'
-    cacheTime = 1  # In this MFA type there are not code generation nor sending... so ? 1 minute or too short ?
+    cacheTime = 1*60  # In this MFA type there are not code generation nor sending... so ? 1 minute or too short ?
 
     server = gui.TextField(
         length=64,
@@ -186,13 +186,13 @@ class RadiusOTP(mfas.MFA):
             return mfas.MFA.RESULT.OK
         raise Exception('User not allowed to login')
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> bool:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def label(self) -> str:
         return gettext('OTP Code')
 
-    def html(self, request: 'ExtendedHttpRequest') -> str:
+    def html(self, userId: str, request: 'ExtendedHttpRequest', username: str) -> str:
         '''
         ToDo:
         - Maybe create a field in mfa definition to edit from admin panel ?
