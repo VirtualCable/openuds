@@ -65,6 +65,7 @@ MFA_COOKIE_NAME = 'mfa_status'
 if typing.TYPE_CHECKING:
     pass
 
+
 @never_cache
 def index(request: HttpRequest) -> HttpResponse:
     # Gets csrf token
@@ -307,17 +308,22 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     }
     return index(request)  # Render index with MFA data
 
+
 @csrf_exempt
 @auth.denyNonAuthenticated
-def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str) -> HttpResponse:
+def update_transport_ticket(
+    request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str
+) -> HttpResponse:
     try:
         if request.method == 'POST':
             # Get request body as json
             data = json.loads(request.body)
 
             # Update username andd password in ticket
-            username = data.get('username', None) or None # None if not present
-            password = data.get('password', None) or None # If password is empty, set it to None
+            username = data.get('username', None) or None  # None if not present
+            password = (
+                data.get('password', None) or None
+            )  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
@@ -327,13 +333,14 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
                 if 'ticket-info' not in data:
                     return True
                 try:
-                    user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                    user = models.User.objects.get(
+                        uuid=data['ticket-info'].get('user', None)
+                    )
                     if request.user == user:
                         return True
                 except models.User.DoesNotExist:
                     pass
                 return False
-                
 
             models.TicketStore.update(
                 uuid=idTicket,
@@ -342,10 +349,14 @@ def update_transport_ticket(request: ExtendedHttpRequestWithUser, idTicket: str,
                 password=password,
                 domain=domain,
             )
-            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
+            return HttpResponse(
+                '{"status": "OK"}', status=200, content_type='application/json'
+            )
     except Exception as e:
         # fallback to error
         pass
 
     # Invalid request
-    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')
+    return HttpResponse(
+        '{"status": "Invalid Request"}', status=400, content_type='application/json'
+    )
