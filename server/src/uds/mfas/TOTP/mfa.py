@@ -91,16 +91,7 @@ class TOTP_MFA(mfas.MFA):
         rdonly=False,
         rows=5,
         order=32,
-        tooltip=_('Networks for TOTP authentication choices'),
-        required=False,
-        tab=_('Config'),
-    )
-
-    doNotAskForOTP = gui.CheckBoxField(
-        label=_('Require TOTP for users within networks'),
-        order=33,
-        tooltip=_('If checked, users within networks will not be asked for TOTP'),
-        defvalue=gui.FALSE,
+        tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
         tab=_('Config'),
     )
@@ -130,15 +121,11 @@ class TOTP_MFA(mfas.MFA):
         Returns:
             True if we need to ask for OTP
         """
-        def checkIp() -> bool:
-            return any(
-                i.contains(request.ip)
-                for i in models.Network.objects.filter(uuid__in=self.networks.value)
-            )
 
-        if self.doNotAskForOTP.isTrue():
-            return not checkIp()
-        return True
+        return not any(
+            i.ipInNetwork(request.ip)
+            for i in models.Network.objects.filter(uuid__in=self.networks.value)
+        )
 
     def label(self) -> str:
         return gettext('Authentication Code')
@@ -230,12 +217,13 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.num(),
-            for_time = models.getSqlDatetime()
+            code, valid_window=self.validWindow.num(), for_time=models.getSqlDatetime()
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 
-        self.cache.put(userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1))
+        self.cache.put(
+            userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1)
+        )
 
         if qrShown is False:
             self._saveUserData(
