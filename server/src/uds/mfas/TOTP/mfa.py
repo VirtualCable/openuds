@@ -50,6 +50,8 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+TOTP_INTERVAL = 30  # Seconds between codes
+
 
 class TOTP_MFA(mfas.MFA):
     '''
@@ -158,9 +160,15 @@ class TOTP_MFA(mfas.MFA):
     def _saveUserData(self, userId: str, data: typing.Tuple[str, bool]) -> None:
         self.storage.putPickle(userId, data)
 
+    def _removeUserData(self, userId: str) -> None:
+        self.storage.remove(userId)
+
     def getTOTP(self, userId: str, username: str) -> pyotp.TOTP:
         return pyotp.TOTP(
-            self._userData(userId)[0], issuer=self.issuer.value, name=username
+            self._userData(userId)[0],
+            issuer=self.issuer.value,
+            name=username,
+            interval=TOTP_INTERVAL,
         )
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
@@ -216,6 +224,11 @@ class TOTP_MFA(mfas.MFA):
         if self.askForOTP(request) is False:
             return
 
+        if self.cache.get(userId + code) is not None:
+            raise exceptions.MFAError(
+                gettext('Code is already used. Wait a minute and try again.')
+            )
+
         # Get data from storage related to this user
         secret, qrShown = self._userData(userId)
 
@@ -225,7 +238,12 @@ class TOTP_MFA(mfas.MFA):
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 
+        self.cache.put(userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1))
+
         if qrShown is False:
             self._saveUserData(
                 userId, (secret, True)
             )  # Update user data to show QR code only once
+
+    def resetData(self, userId: str) -> None:
+        self._removeUserData(userId)
