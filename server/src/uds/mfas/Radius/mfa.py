@@ -188,7 +188,7 @@ class RadiusOTP(mfas.MFA):
         raise Exception('User not allowed to login')
 
     def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return self.checkAction(self.allowLoginWithoutMFA.value, request)
+        return None
 
     def label(self) -> str:
         return gettext('OTP Code')
