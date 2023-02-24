@@ -78,7 +78,7 @@ class TOTP_MFA(mfas.MFA):
     validWindow = gui.NumericField(
         length=2,
         label=_('Valid Window'),
-        defvalue=0,
+        defvalue=1,
         minValue=0,
         maxValue=10,
         order=31,
@@ -235,7 +235,8 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.num()
+            code, valid_window=self.validWindow.num(),
+            for_time = models.getSqlDatetime()
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 
