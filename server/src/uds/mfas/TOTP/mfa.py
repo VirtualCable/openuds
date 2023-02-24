@@ -78,7 +78,7 @@ class TOTP_MFA(mfas.MFA):
     validWindow = gui.NumericField(
         length=2,
         label=_('Valid Window'),
-        defvalue=0,
+        defvalue=1,
         minValue=0,
         maxValue=10,
         order=31,
@@ -96,16 +96,12 @@ class TOTP_MFA(mfas.MFA):
         tab=_('Config'),
     )
 
-    doNotAskForOTP = gui.ChoiceField(
-        label=_('Requre HOTP for users within networks'),
+    doNotAskForOTP = gui.CheckBoxField(
+        label=_('Require TOTP for users within networks'),
         order=33,
-        defaultValue='0',
-        tooltip=_('Action for user without defined Radius Challenge'),
-        required=True,
-        values={
-            '0': _('Allow user login (no MFA)'),
-            '1': _('Require user to login with MFA'),
-        },
+        tooltip=_('If checked, users within networks will not be asked for TOTP'),
+        defvalue=gui.FALSE,
+        required=False,
         tab=_('Config'),
     )
 
@@ -140,7 +136,7 @@ class TOTP_MFA(mfas.MFA):
                 for i in models.Network.objects.filter(uuid__in=self.networks.value)
             )
 
-        if self.doNotAskForOTP.value == '0':
+        if self.doNotAskForOTP.isTrue():
             return not checkIp()
         return True
 
@@ -234,7 +230,8 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.num()
+            code, valid_window=self.validWindow.num(),
+            for_time = models.getSqlDatetime()
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 
