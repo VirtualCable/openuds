@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -19,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:58+0100\n"
+"POT-Creation-Date: 2023-02-24 15:20+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
@@ -610,7 +611,6 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Очистить связанные данные (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-#| msgid "Related data resete"
 msgid "Related data cleaned"
 msgstr "Связанные данные очищены"
 

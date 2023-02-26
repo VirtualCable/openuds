@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # , 2014
 # blafuente <blafuente@virtualcable.es>, 2014
 # Javier <jgonzalez@virtualcable.es>, 2014
@@ -13,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:58+0100\n"
+"POT-Creation-Date: 2023-02-24 15:20+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://www.transifex.com/openuds/openuds/language/"
@@ -602,10 +603,8 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Clean related data (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-#, fuzzy
-#| msgid "Related data resete"
 msgid "Related data cleaned"
-msgstr "Related data resete"
+msgstr "Related data cleaned"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"

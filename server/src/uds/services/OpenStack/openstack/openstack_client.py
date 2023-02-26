@@ -197,15 +197,23 @@ class Client:  # pylint: disable=too-many-public-methods
             if self._authUrl[-1] != '/':
                 self._authUrl += '/'
 
+
     def _getEndpointFor(
-        self, type_: str
+        self, *type_: str
     ) -> str:  # If no region is indicatad, first endpoint is returned
-        if not self._catalog:
-            raise Exception('No catalog for endpoints')
-        for i in filter(lambda v: v['type'] == type_, self._catalog):
-            for j in filter(lambda v: v['interface'] == self._access, i['endpoints']):
-                if not self._region or j['region'] == self._region:
-                    return j['url']
+        def inner_get(for_type: str) -> str:
+            if not self._catalog:
+                raise Exception('No catalog for endpoints')
+            for i in filter(lambda v: v['type'] == for_type, self._catalog):
+                for j in filter(lambda v: v['interface'] == self._access, i['endpoints']):
+                    if not self._region or j['region'] == self._region:
+                        return j['url']
+            raise Exception('No endpoint url found')
+        for t in type_:
+            try:
+                return inner_get(t)
+            except Exception:
+                pass
         raise Exception('No endpoint url found')
 
     def _requestHeaders(self) -> typing.Dict[str, str]:
@@ -317,7 +325,7 @@ class Client:  # pylint: disable=too-many-public-methods
     ) -> typing.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
-            self._getEndpointFor('compute') + path,
+            self._getEndpointFor('compute', 'compute_legacy') + path,
             self._session,
             headers=self._requestHeaders(),
             key='servers',
@@ -377,7 +385,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listAvailabilityZones(self) -> typing.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
-            self._getEndpointFor('compute') + '/os-availability-zone',
+            self._getEndpointFor('compute', 'compute_legacy') + '/os-availability-zone',
             self._session,
             headers=self._requestHeaders(),
             key='availabilityZoneInfo',
@@ -390,7 +398,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listFlavors(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute') + '/flavors',
+            self._getEndpointFor('compute', 'compute_legacy') + '/flavors',
             self._session,
             headers=self._requestHeaders(),
             key='flavors',
@@ -459,7 +467,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listSecurityGroups(self) -> typing.Iterable[typing.Any]:
         return getRecurringUrlJson(
-            self._getEndpointFor('compute') + '/os-security-groups',
+            self._getEndpointFor('compute', 'compute_legacy') + '/os-security-groups',
             self._session,
             headers=self._requestHeaders(),
             key='security_groups',
@@ -470,7 +478,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def getServer(self, serverId: str) -> typing.Dict[str, typing.Any]:
         r = self._session.get(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -633,7 +641,7 @@ class Client:  # pylint: disable=too-many-public-methods
         }
 
         r = self._session.post(
-            self._getEndpointFor('compute') + '/servers',
+            self._getEndpointFor('compute', 'compute_legacy') + '/servers',
             data=json.dumps(data),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -647,14 +655,14 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def deleteServer(self, serverId: str) -> None:
         # r = self._session.post(
-        #     self._getEndpointFor('compute') + '/servers/{server_id}/action'.format(server_id=serverId),
+        #     self._getEndpointFor('compute', , 'compute_legacy') + '/servers/{server_id}/action'.format(server_id=serverId),
         #     data='{"forceDelete": null}',
         #     headers=self._requestHeaders(),
         #     verify=VERIFY_SSL,
         #     timeout=self._timeout
         # )
         r = self._session.delete(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
             verify=VERIFY_SSL,
@@ -684,7 +692,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def startServer(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-start": null}',
             headers=self._requestHeaders(),
@@ -699,7 +707,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def stopServer(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-stop": null}',
             headers=self._requestHeaders(),
@@ -712,7 +720,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def suspendServer(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"suspend": null}',
             headers=self._requestHeaders(),
@@ -725,7 +733,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def resumeServer(self, serverId: str) -> None:
         r = self._session.post(
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"resume": null}',
             headers=self._requestHeaders(),
@@ -738,7 +746,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def resetServer(self, serverId: str) -> None:
         r = self._session.post(  # pylint: disable=unused-variable
-            self._getEndpointFor('compute')
+            self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"reboot":{"type":"HARD"}}',
             headers=self._requestHeaders(),
@@ -766,6 +774,9 @@ class Client:  # pylint: disable=too-many-public-methods
                     # Tries to authenticate
                     try:
                         self.authPassword()
+                        # Log some useful information
+                        logger.info('Openstack version: %s', v['id'])
+                        logger.info('Endpoints: %s', json.dumps(self._catalog, indent=4))
                         return True
                     except Exception:
                         logger.exception('Authenticating')

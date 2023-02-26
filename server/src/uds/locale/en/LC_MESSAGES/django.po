@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:58+0100\n"
+"POT-Creation-Date: 2023-02-24 15:20+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://www.transifex.com/openuds/openuds/language/"
@@ -2468,8 +2468,8 @@ msgstr "Subject of the email"
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
 #: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:236
-#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:85
-#: mfas/TOTP/mfa.py:94 mfas/TOTP/mfa.py:107
+#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:87
+#: mfas/TOTP/mfa.py:96
 msgid "Config"
 msgstr "Config"
 
@@ -2569,7 +2569,7 @@ msgstr "Networks for Radius OTP authentication"
 msgid "User without defined OTP in server"
 msgstr "User without defined OTP in server"
 
-#: mfas/Radius/mfa.py:134 mfas/TOTP/mfa.py:101
+#: mfas/Radius/mfa.py:134
 msgid "Action for user without defined Radius Challenge"
 msgstr "Action for user without defined Radius Challenge"
 
@@ -2796,59 +2796,51 @@ msgstr "Sample useless field"
 msgid "This is a useless field, for sample and testing pourposes"
 msgstr "This is a useless field, for sample and testing pourposes"
 
-#: mfas/TOTP/mfa.py:60
+#: mfas/TOTP/mfa.py:62
 msgid "TOTP Based MFA"
 msgstr "TOTP Based MFA"
 
-#: mfas/TOTP/mfa.py:62
+#: mfas/TOTP/mfa.py:64
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "TOTP Based MFA (Google Authenticator, etc)"
 
-#: mfas/TOTP/mfa.py:68
+#: mfas/TOTP/mfa.py:70
 msgid "Issuer"
 msgstr "Issuer"
 
-#: mfas/TOTP/mfa.py:71
+#: mfas/TOTP/mfa.py:73
 msgid "Issuer for OTP. Once it's created it can't be changed"
 msgstr "Issuer for OTP. Once it's created it can't be changed"
 
-#: mfas/TOTP/mfa.py:78
+#: mfas/TOTP/mfa.py:80
 msgid "Valid Window"
 msgstr "Valid Window"
 
-#: mfas/TOTP/mfa.py:83
+#: mfas/TOTP/mfa.py:85
 msgid "Number of valid codes before and after the current one"
 msgstr "Number of valid codes before and after the current one"
 
-#: mfas/TOTP/mfa.py:88
+#: mfas/TOTP/mfa.py:90
 msgid "TOTP networks"
 msgstr "TOTP networks"
 
-#: mfas/TOTP/mfa.py:92
-msgid "Networks for TOTP authentication choices"
-msgstr "Networks for TOTP authentication choices"
+#: mfas/TOTP/mfa.py:94
+msgid "Users within these networks will not be asked for OTP"
+msgstr ""
 
-#: mfas/TOTP/mfa.py:98
-msgid "Requre HOTP for users within networks"
-msgstr "Requre HOTP for users within networks"
-
-#: mfas/TOTP/mfa.py:104
-msgid "Allow user login (no MFA)"
-msgstr "Allow user login (no MFA)"
-
-#: mfas/TOTP/mfa.py:105
-msgid "Require user to login with MFA"
-msgstr "Require user to login with MFA"
-
-#: mfas/TOTP/mfa.py:147
+#: mfas/TOTP/mfa.py:131
 msgid "Authentication Code"
 msgstr "Authentication Code"
 
-#: mfas/TOTP/mfa.py:171
+#: mfas/TOTP/mfa.py:161
 msgid "Enter your authentication code"
 msgstr "Enter your authentication code"
 
-#: mfas/TOTP/mfa.py:227
+#: mfas/TOTP/mfa.py:212
+msgid "Code is already used. Wait a minute and try again."
+msgstr ""
+
+#: mfas/TOTP/mfa.py:222
 msgid "Invalid code"
 msgstr "Invalid code"
 
