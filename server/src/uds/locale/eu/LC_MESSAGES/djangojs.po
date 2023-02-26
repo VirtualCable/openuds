@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 # Naroa Uriarte <nuriarte@lanmedia.es>, 2017
@@ -15,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-23 21:58+0100\n"
+"POT-Creation-Date: 2023-02-24 15:20+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -604,7 +605,6 @@ msgid "Clean related data (mfa, ...)?"
 msgstr "Garbitu erlazionatutako datuak (mfa, ...)?"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:271
-#| msgid "Related data resete"
 msgid "Related data cleaned"
 msgstr "Garbitu dira erlazionatutako datuak"
 
