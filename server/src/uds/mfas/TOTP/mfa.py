@@ -164,7 +164,7 @@ class TOTP_MFA(mfas.MFA):
         uri = totp.provisioning_uri()
         img = qrcode.make(uri)
         imgByteStream = io.BytesIO()
-        img.save(imgByteStream, format='PNG')
+        img.save(imgByteStream, format='PNG')  # type: ignore  # pylance complains abot format, but it is ok
         # Convert to base64 to be used in html img tag
         imgByteArr = imgByteStream.getvalue()
         imgData = 'data:image/png;base64,' + base64.b64encode(imgByteArr).decode(
