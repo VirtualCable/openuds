@@ -176,10 +176,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     if (
         not request.user or request.authorized
     ):  # If no user, or user is already authorized, redirect to index
+        logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
     mfaProvider: typing.Optional['models.MFA'] = request.user.manager.mfa
     if not mfaProvider:
+        logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
 
     mfaUserId = mfas.MFA.getUserId(request.user)
@@ -187,6 +189,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     # Try to get cookie anc check it
     mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
     if mfaCookie == mfaUserId:  # Cookie is valid, skip MFA setting authorization
+        logger.debug('MFA: Cookie is valid, skipping MFA')
         request.authorized = True
         return HttpResponseRedirect(reverse('page.index'))
 
@@ -195,11 +198,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = min(mfaInstance.validity(), mfaProvider.validity*60)
+    validity = max(mfaInstance.validity(), mfaProvider.validity*60)
     start_time = request.session.get('mfa_start_time', time.time())
 
     # If mfa process timed out, we need to start login again
     if validity > 0 and time.time() - start_time > validity:
+        logger.debug('MFA: MFA process timed out')
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
 
@@ -255,6 +259,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
                 return response
             except exceptions.MFAError as e:
+                logger.error('MFA error: %s', e)
                 tries += 1
                 request.session['mfa_tries'] = tries
                 if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
@@ -262,7 +267,6 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     request.session.flush()
                     # Too many tries, redirect to login error page
                     return errors.errorView(request, errors.ACCESS_DENIED)
-                logger.error('MFA error: %s', e)
                 return errors.errorView(request, errors.INVALID_MFA_CODE)
         else:
             pass  # Will render again the page

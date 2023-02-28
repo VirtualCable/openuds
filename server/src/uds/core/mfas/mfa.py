@@ -88,7 +88,7 @@ class MFA(Module):
     # : override it in your own implementation.
     # : Note: This value is only used in "validity" method, that is also overridable
     # : by your own implementation, so its up to you to use it or not.
-    cacheTime: typing.ClassVar[int] = 5*60
+    cacheTime: typing.ClassVar[int] = 0
 
     class RESULT(enum.IntEnum):
         """
