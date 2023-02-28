@@ -122,7 +122,7 @@ class TOTP_MFA(mfas.MFA):
         """
 
         return not any(
-            i.ipInNetwork(request.ip)
+            request.ip in i
             for i in models.Network.objects.filter(uuid__in=self.networks.value)
         )
 

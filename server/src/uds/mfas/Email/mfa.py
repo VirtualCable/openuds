@@ -31,7 +31,6 @@
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from re import T
 import smtplib
 import ssl
 import typing

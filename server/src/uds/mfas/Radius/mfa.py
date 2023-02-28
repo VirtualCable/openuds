@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 @author: Daniel Torregrosa
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import typing

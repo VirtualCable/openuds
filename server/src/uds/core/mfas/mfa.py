@@ -177,7 +177,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (models.getSqlDatetime(), code))
 
     def process(
         self,
@@ -214,7 +214,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) > models.getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -264,7 +264,7 @@ class MFA(Module):
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
-                    < getSqlDatetime()
+                    < models.getSqlDatetime()
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
