@@ -198,11 +198,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = max(mfaInstance.validity(), mfaProvider.validity*60)
-    start_time = request.session.get('mfa_start_time', time.time())
+    validity = mfaProvider.validity*60
+    now = models.getSqlDatetimeAsUnix()
+    start_time = request.session.get('mfa_start_time', now)
 
     # If mfa process timed out, we need to start login again
-    if validity > 0 and time.time() - start_time > validity:
+    if validity > 0 and now - start_time > validity:
         logger.debug('MFA: MFA process timed out')
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
@@ -238,7 +239,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     request.user.name,
                     mfaIdentifier,
                     code,
-                    validity=validity*60,
+                    validity=validity,
                 )
                 request.authorized = True
                 # Remove mfa_start_time from session
@@ -288,7 +289,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
             # store on session the start time of the MFA process if not already stored
             if 'mfa_start_time' not in request.session:
-                request.session['mfa_start_time'] = time.time()
+                request.session['mfa_start_time'] = now
         except Exception as e:
             logger.error('Error processing MFA: %s', e)
             return errors.errorView(request, errors.UNKNOWN_ERROR)

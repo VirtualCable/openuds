@@ -80,16 +80,6 @@ class MFA(Module):
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
     iconFile: typing.ClassVar[str] = 'mfa.png'
 
-    # : Cache time for the generated MFA code
-    # : this means that the code will be valid for this time, and will not
-    # : be resent to the user until the time expires.
-    # : This value is in second
-    # : Note: This value is used by default "process" methos, but you can
-    # : override it in your own implementation.
-    # : Note: This value is only used in "validity" method, that is also overridable
-    # : by your own implementation, so its up to you to use it or not.
-    cacheTime: typing.ClassVar[int] = 0
-
     class RESULT(enum.IntEnum):
         """
         This enum is used to know if the MFA code was sent or not.
@@ -138,14 +128,6 @@ class MFA(Module):
             HTML to be presented to the user along with the MFA code form
         """
         return ''
-
-    def validity(self) -> int:
-        """
-        This method will be invoked from the MFA form, to know the validity in secods
-        of the MFA code.
-        If value is 0 or less, means the code is always valid.
-        """
-        return self.cacheTime
 
     def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         """
@@ -228,7 +210,7 @@ class MFA(Module):
         """
         # try to get the stored code
         data = self._getData(request, userId)
-        validity = validity if validity is not None else self.validity()
+        validity = validity if validity is not None else 0
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
@@ -278,7 +260,7 @@ class MFA(Module):
 
             data = self._getData(request, userId)
             if data and len(data) == 2:
-                validity = validity if validity is not None else self.validity()
+                validity = validity if validity is not None else 0
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
