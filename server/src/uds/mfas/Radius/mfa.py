@@ -60,7 +60,6 @@ class RadiusOTP(mfas.MFA):
     typeType = 'RadiusOTP'
     typeDescription = _('Radius OTP Challenge')
     iconFile = 'radius.png'
-    cacheTime = 1*60  # In this MFA type there are not code generation nor sending... so ? 1 minute or too short ?
 
     server = gui.TextField(
         length=64,

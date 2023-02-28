@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Daniel Torregrosa
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
@@ -63,7 +63,6 @@ class TOTP_MFA(mfas.MFA):
     typeType = 'TOTP_MFA'
     typeDescription = _('TOTP Based MFA (Google Authenticator, etc)')
     iconFile = 'totp.png'
-    cacheTime = 1  # In this MFA type there are not code generation nor sending... so ? 1 minute or too short ?
 
     issuer = gui.TextField(
         length=64,
