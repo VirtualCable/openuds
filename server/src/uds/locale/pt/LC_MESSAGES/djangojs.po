@@ -5,6 +5,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
@@ -13,9 +14,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 15:20+0100\n"
+"POT-Creation-Date: 2023-03-01 14:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
 "pt/)\n"
 "Language: pt\n"
@@ -115,7 +116,7 @@ msgstr "serviço"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:46
 msgid "service pool"
-msgstr "piscina de serviço"
+msgstr "Service Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:47
 msgid "authenticator"
@@ -140,7 +141,7 @@ msgstr "transporte"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:52
 msgid "OS manager"
-msgstr "Gestor de SO"
+msgstr "OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:53
 msgid "calendar"
@@ -393,7 +394,7 @@ msgstr "Ativo"
 #: static/admin/translations-fakejs.js:232
 #: static/admin/translations-fakejs.js:251
 msgid "Pool"
-msgstr "Piscina"
+msgstr "Pool"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:193
 #: static/admin/translations-fakejs.js:233
@@ -443,7 +444,7 @@ msgstr "Itens selecionados :"
 #: static/admin/translations-fakejs.js:263
 #: static/modern/translations-fakejs.js:39
 msgid "Information"
-msgstr "Em formação"
+msgstr "Informação"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:197
 msgid "New service"
@@ -520,7 +521,7 @@ msgstr "IP"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:258
 msgid "Services Pool"
-msgstr "Piscina de serviços"
+msgstr "Pool de serviços"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:246
 #: static/admin/translations-fakejs.js:259
@@ -608,11 +609,11 @@ msgstr "Dados relacionados limpos"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:86
 msgid "New OS Manager"
-msgstr "Novo gerenciador de SO"
+msgstr "Novo OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:87
 msgid "Edit OS Manager"
-msgstr "Editar Gerenciador do SO"
+msgstr "Editar OS Manager"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:88
 msgid "Delete OS Manager"
@@ -656,7 +657,7 @@ msgstr "Excluir proxy"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:186
 msgid "(This service does not requires an OS Manager)"
-msgstr "(Este serviço não requer um gerenciador de SO)"
+msgstr "(Este serviço não requer um OS Manager)"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:187
 msgid "New service Pool"
@@ -824,15 +825,15 @@ msgstr "Remover pool de membros"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:151
 msgid "New pool group"
-msgstr "Novo grupo de piscina"
+msgstr "Novo Pool grupo "
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:152
 msgid "Edit pool group"
-msgstr "Editar grupo de piscina"
+msgstr "Editar Pool grupo "
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:153
 msgid "Delete pool group"
-msgstr "Excluir grupo de piscina"
+msgstr "Excluir Pool grupo"
 
 #: static/admin/main.js:1 static/admin/translations-fakejs.js:139
 msgid "New calendar"
@@ -1106,7 +1107,7 @@ msgstr "Descartar e fechar"
 #: static/admin/translations-fakejs.js:290
 #: static/admin/translations-fakejs.js:455
 msgid "Save"
-msgstr "Salve "
+msgstr "Gravar "
 
 #: static/admin/translations-fakejs.js:291
 msgid "New user permission for"
@@ -1165,7 +1166,7 @@ msgstr "Detalhe"
 #: static/admin/translations-fakejs.js:317
 #: static/modern/translations-fakejs.js:47
 msgid "Close"
-msgstr "Perto"
+msgstr "Fechar"
 
 #: static/admin/translations-fakejs.js:320
 msgid "User mode"
@@ -1204,7 +1205,7 @@ msgstr "Multifator"
 
 #: static/admin/translations-fakejs.js:327
 msgid "Os Managers"
-msgstr "Os gerentes"
+msgstr "OS Manager"
 
 #: static/admin/translations-fakejs.js:328
 msgid "Connectivity"
@@ -1271,7 +1272,7 @@ msgstr "Configuração"
 
 #: static/admin/translations-fakejs.js:345
 msgid "Flush Cache"
-msgstr "Cache nivelado"
+msgstr "Limpar cache"
 
 #: static/admin/translations-fakejs.js:346
 msgid "Account usage"

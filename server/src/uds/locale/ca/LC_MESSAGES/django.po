@@ -4,6 +4,7 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Javier <jgonzalez@virtualcable.es>, 2020
@@ -11,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 15:20+0100\n"
+"POT-Creation-Date: 2023-03-01 14:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://www.transifex.com/openuds/openuds/language/"
@@ -612,7 +613,7 @@ msgstr "Comproveu el certificat"
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:67
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -630,7 +631,7 @@ msgstr "Servidor (IP o FQDN) que servirà de servidor proxy."
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
 #: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:74
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:73
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -1633,27 +1634,27 @@ msgstr "Tot sembla correcte a l'autenticador"
 msgid "Radius Authenticator"
 msgstr "Autenticador Radius"
 
-#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:69
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:68
 msgid "Radius Server IP or Hostname"
 msgstr "IP del servidor Radius o nom d’amfitrió"
 
-#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:77
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:76
 msgid "Radius authentication port (usually 1812)"
 msgstr "Port d'autenticació Radius (normalment 1812)"
 
-#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:82
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:81
 msgid "Secret"
 msgstr "Secret"
 
-#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:84
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:83
 msgid "Radius client secret"
 msgstr "Secret del client Radius"
 
-#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:98
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:97
 msgid "NAS Identifier"
 msgstr "Identificador NAS"
 
-#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:101
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:100
 msgid "NAS Identifier for Radius Server"
 msgstr "Identificador NAS del servidor Radius"
 
@@ -2131,7 +2132,7 @@ msgstr "El servei no és accessible des d'aquest dispositiu"
 msgid "Base MFA"
 msgstr "Base MFA"
 
-#: core/mfas/mfa.py:277
+#: core/mfas/mfa.py:259
 msgid "Invalid MFA code"
 msgstr "Codi MFA no vàlid"
 
@@ -2503,10 +2504,10 @@ msgid "Subject of the email"
 msgstr "Assumpte del correu electrònic"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
-#: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:236
-#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:87
-#: mfas/TOTP/mfa.py:96
+#: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
+#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
+#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "Config"
 
@@ -2526,63 +2527,107 @@ msgstr "Activa HTML"
 msgid "Enable HTML in emails"
 msgstr "Activa l&#39;HTML als correus electrònics"
 
-#: mfas/Email/mfa.py:133
+#: mfas/Email/mfa.py:132
 msgid "Policy for users without MFA support"
 msgstr "Política per a usuaris sense suport MFA"
 
-#: mfas/Email/mfa.py:136
+#: mfas/Email/mfa.py:135
 msgid "Action for MFA response error"
 msgstr "Acció per error de resposta de MFA"
 
-#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
 #: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
 msgid "Allow user login"
 msgstr "Permet l&#39;inici de sessió de l&#39;usuari"
 
-#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Deny user login"
 msgstr "Denegar l&#39;inici de sessió de l&#39;usuari"
 
-#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 msgid "Allow user to login if it IP is in the networks list"
 msgstr ""
 "Permet que l&#39;usuari iniciï sessió si la seva IP es troba a la llista de "
 "xarxes"
 
-#: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
 msgid "Deny user to login if it IP is in the networks list"
 msgstr ""
 "Denegueu que l&#39;usuari iniciï sessió si la seva IP és a la llista de "
 "xarxes"
 
-#: mfas/Email/mfa.py:148
+#: mfas/Email/mfa.py:147
 msgid "Mail OTP Networks"
 msgstr "Correu Xarxes OTP"
 
-#: mfas/Email/mfa.py:152
+#: mfas/Email/mfa.py:151
 msgid "Networks for Email OTP authentication"
 msgstr "Xarxes per a l&#39;autenticació OTP de correu electrònic"
 
+#: mfas/Email/mfa.py:158
+msgid "Mail text"
+msgstr "Text del correu"
+
+#: mfas/Email/mfa.py:161
+msgid "Text of the email. If empty, a default text will be used"
+msgstr ""
+"Text del correu electrònic. Si està buit, s&#39;utilitzarà un text "
+"predeterminat"
+
+#: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
+#, python-brace-format
+msgid "Allowed variables are: {code}, {username}, {ip}"
+msgstr "Les variables permeses són: {code}, {username}, {ip}"
+
 #: mfas/Email/mfa.py:169
+#| msgid "Enable HTML"
+msgid "Mail HTML"
+msgstr "Correu HTML"
+
+#: mfas/Email/mfa.py:172
+msgid "HTML of the email. If empty, a default HTML will be used"
+msgstr ""
+"HTML del correu electrònic. Si està buit, s&#39;utilitzarà un HTML "
+"predeterminat"
+
+#: mfas/Email/mfa.py:190
 msgid "Invalid SMTP hostname"
 msgstr "Nom d&#39;amfitrió SMTP no vàlid"
 
-#: mfas/Email/mfa.py:186
+#: mfas/Email/mfa.py:207
 msgid "Check your mail. You will receive an email with the verification code"
 msgstr ""
 "Comproveu el vostre correu. Rebràs un correu electrònic amb el codi de "
 "verificació"
 
+#: mfas/Email/mfa.py:261
+#, python-brace-format
+msgid ""
+"A login attemt has been made from {ip} to.\n"
+"To continue, provide the verification code {code}"
+msgstr ""
+"S&#39;ha fet un intent d&#39;inici de sessió des de {ip} a. Per continuar, "
+"proporciona el codi de verificació {code}"
+
+#: mfas/Email/mfa.py:264
+#, python-brace-format
+msgid ""
+"<p>A login attemt has been made from <b>{ip}</b>.</p><p>To continue, provide "
+"the verification code <b>{code}</b></p>"
+msgstr ""
+"<p>S&#39;ha fet un intent d&#39;inici de sessió des de <b>{ip}</b> .</p><p> "
+"Per continuar, proporciona el codi de verificació <b>{code}</b></p>"
+
 #: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
 msgid "Radius OTP Challenge"
 msgstr "Repte Radius OTP"
 
-#: mfas/Radius/mfa.py:88
+#: mfas/Radius/mfa.py:87
 msgid "All users must send OTP"
 msgstr "Tots els usuaris han d&#39;enviar OTP"
 
-#: mfas/Radius/mfa.py:92
+#: mfas/Radius/mfa.py:91
 msgid ""
 "If unchecked, an authentication step is needed in order to know if this user "
 "must enter OTP. If checked, all users must enter OTP, so authentication step "
@@ -2592,43 +2637,43 @@ msgstr ""
 "ha d&#39;introduir OTP. Si està marcat, tots els usuaris han d&#39;introduir "
 "OTP, de manera que es salta el pas d&#39;autenticació."
 
-#: mfas/Radius/mfa.py:106
+#: mfas/Radius/mfa.py:105
 msgid "Radius OTP communication error action"
 msgstr "Acció d&#39;error de comunicació de Radius OTP"
 
-#: mfas/Radius/mfa.py:109
+#: mfas/Radius/mfa.py:108
 msgid "Action for OTP server communication error"
 msgstr "Acció per error de comunicació del servidor OTP"
 
-#: mfas/Radius/mfa.py:121
+#: mfas/Radius/mfa.py:120
 msgid "Radius OTP networks"
 msgstr "Xarxes Radius OTP"
 
-#: mfas/Radius/mfa.py:125
+#: mfas/Radius/mfa.py:124
 msgid "Networks for Radius OTP authentication"
 msgstr "Xarxes per a l&#39;autenticació Radius OTP"
 
-#: mfas/Radius/mfa.py:131
+#: mfas/Radius/mfa.py:130
 msgid "User without defined OTP in server"
 msgstr "Usuari sense OTP definit al servidor"
 
-#: mfas/Radius/mfa.py:134
+#: mfas/Radius/mfa.py:133
 msgid "Action for user without defined Radius Challenge"
 msgstr "Acció per a l&#39;usuari sense Radius Challenge definit"
 
-#: mfas/Radius/mfa.py:194
+#: mfas/Radius/mfa.py:193
 msgid "OTP Code"
 msgstr "Codi OTP"
 
-#: mfas/Radius/mfa.py:202
+#: mfas/Radius/mfa.py:201
 msgid "Please enter OTP"
 msgstr "Introduïu OTP"
 
-#: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
+#: mfas/Radius/mfa.py:229 mfas/Radius/mfa.py:291
 msgid "Radius OTP connection error"
 msgstr "Error de connexió de Radius OTP"
 
-#: mfas/Radius/mfa.py:279
+#: mfas/Radius/mfa.py:278
 msgid "Invalid OTP code"
 msgstr "Codi OTP no vàlid"
 
@@ -2815,7 +2860,7 @@ msgstr "S&#39;ha produït un error en l&#39;enviament de SMS"
 msgid "SMS response error"
 msgstr "Error de resposta SMS"
 
-#: mfas/SMS/mfa.py:398 web/views/modern.py:307
+#: mfas/SMS/mfa.py:398 web/views/modern.py:312
 msgid "MFA Code"
 msgstr "Codi MFA"
 
@@ -2847,43 +2892,43 @@ msgstr "MFA basat en TOTP"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "MFA basat en TOTP (Google Authenticator, etc.)"
 
-#: mfas/TOTP/mfa.py:70
+#: mfas/TOTP/mfa.py:69
 msgid "Issuer"
 msgstr "Emissor"
 
-#: mfas/TOTP/mfa.py:73
+#: mfas/TOTP/mfa.py:72
 msgid "Issuer for OTP. Once it's created it can't be changed"
 msgstr "Emissor per a OTP. Un cop creat, no es pot canviar"
 
-#: mfas/TOTP/mfa.py:80
+#: mfas/TOTP/mfa.py:79
 msgid "Valid Window"
 msgstr "Finestra vàlida"
 
-#: mfas/TOTP/mfa.py:85
+#: mfas/TOTP/mfa.py:84
 msgid "Number of valid codes before and after the current one"
 msgstr "Nombre de codis vàlids abans i després de l&#39;actual"
 
-#: mfas/TOTP/mfa.py:90
+#: mfas/TOTP/mfa.py:89
 msgid "TOTP networks"
 msgstr "Xarxes TOTP"
 
-#: mfas/TOTP/mfa.py:94
+#: mfas/TOTP/mfa.py:93
 msgid "Users within these networks will not be asked for OTP"
 msgstr "Els usuaris d&#39;aquestes xarxes no se&#39;ls demanarà OTP"
 
-#: mfas/TOTP/mfa.py:131
+#: mfas/TOTP/mfa.py:130
 msgid "Authentication Code"
 msgstr "Codi d&#39;autenticació"
 
-#: mfas/TOTP/mfa.py:161
+#: mfas/TOTP/mfa.py:160
 msgid "Enter your authentication code"
 msgstr "Introduïu el vostre codi d&#39;autenticació"
 
-#: mfas/TOTP/mfa.py:212
+#: mfas/TOTP/mfa.py:211
 msgid "Code is already used. Wait a minute and try again."
 msgstr "El codi ja s&#39;utilitza. Espereu un minut i torneu-ho a provar."
 
-#: mfas/TOTP/mfa.py:222
+#: mfas/TOTP/mfa.py:221
 msgid "Invalid code"
 msgstr "Codi invàlid"
 
@@ -4880,11 +4925,11 @@ msgstr "Plantilla base"
 msgid "Service base template"
 msgstr "Plantilla base de servei"
 
-#: services/OpenStack/openstack/openstack_client.py:772
+#: services/OpenStack/openstack/openstack_client.py:783
 msgid "Authentication error"
 msgstr "Error d'autenticació"
 
-#: services/OpenStack/openstack/openstack_client.py:779
+#: services/OpenStack/openstack/openstack_client.py:790
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -7562,10 +7607,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
-#: web/views/modern.py:298
+#: web/views/modern.py:303
 msgid "{} days"
 msgstr "{} dies"
 
-#: web/views/modern.py:300
+#: web/views/modern.py:305
 msgid "{} hours"
 msgstr "{} hores"
