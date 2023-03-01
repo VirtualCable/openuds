@@ -4,11 +4,12 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
 # Elena Mishina, 2022
-# Elena Mishina, 2022
+# Elena Mishina, 2022-2023
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Maxim Stepanov <msteapnov@sharxdc.ru>, 2021
 # Александр Бурматов, 2022
@@ -17,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 15:20+0100\n"
+"POT-Creation-Date: 2023-03-01 14:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Александр Бурматов, 2022\n"
+"Last-Translator: Elena Mishina, 2022-2023\n"
 "Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -619,7 +620,7 @@ msgstr "Проверить сертификат"
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:67
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -637,7 +638,7 @@ msgstr "Сервер (IP или FQDN), который будет служить 
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
 #: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:74
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:73
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -1636,27 +1637,27 @@ msgstr "Все хорошо для аутентификатора."
 msgid "Radius Authenticator"
 msgstr "Радиус аутентификатор"
 
-#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:69
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:68
 msgid "Radius Server IP or Hostname"
 msgstr "IP-адрес или имя хоста Radius Server"
 
-#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:77
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:76
 msgid "Radius authentication port (usually 1812)"
 msgstr "Порт аутентификации Radius (обычно 1812)"
 
-#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:82
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:81
 msgid "Secret"
 msgstr "Секрет"
 
-#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:84
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:83
 msgid "Radius client secret"
 msgstr "Секрет клиента Radius"
 
-#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:98
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:97
 msgid "NAS Identifier"
 msgstr "Идентификатор NAS"
 
-#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:101
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:100
 msgid "NAS Identifier for Radius Server"
 msgstr "Идентификатор NAS для Radius Server"
 
@@ -2134,7 +2135,7 @@ msgstr "Сервис недоступен с этого устройства"
 msgid "Base MFA"
 msgstr "База МФА"
 
-#: core/mfas/mfa.py:277
+#: core/mfas/mfa.py:259
 msgid "Invalid MFA code"
 msgstr "Неверный код МФА"
 
@@ -2504,10 +2505,10 @@ msgid "Subject of the email"
 msgstr "Тема письма"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
-#: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:236
-#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:87
-#: mfas/TOTP/mfa.py:96
+#: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
+#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
+#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "Конфигурация"
 
@@ -2528,59 +2529,101 @@ msgstr "Включить HTML"
 msgid "Enable HTML in emails"
 msgstr "Включить HTML в электронных письмах"
 
-#: mfas/Email/mfa.py:133
+#: mfas/Email/mfa.py:132
 msgid "Policy for users without MFA support"
 msgstr "Политика для пользователей без поддержки MFA"
 
-#: mfas/Email/mfa.py:136
+#: mfas/Email/mfa.py:135
 msgid "Action for MFA response error"
-msgstr "Действия при ошибке ответа MFA"
+msgstr "Действие при ошибке ответа МФА"
 
-#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
 #: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
 msgid "Allow user login"
 msgstr "Разрешить вход пользователя"
 
-#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Deny user login"
 msgstr "Запретить вход пользователя"
 
-#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 msgid "Allow user to login if it IP is in the networks list"
 msgstr ""
 "Разрешить пользователю вход в систему, если его IP-адрес есть в списке сетей"
 
-#: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
 msgid "Deny user to login if it IP is in the networks list"
 msgstr ""
 "Запретить пользователю вход в систему, если его IP-адрес есть в списке сетей"
 
-#: mfas/Email/mfa.py:148
+#: mfas/Email/mfa.py:147
 msgid "Mail OTP Networks"
 msgstr "Почтовые сети OTP"
 
-#: mfas/Email/mfa.py:152
+#: mfas/Email/mfa.py:151
 msgid "Networks for Email OTP authentication"
 msgstr "Сети для проверки подлинности электронной почты OTP"
 
+#: mfas/Email/mfa.py:158
+msgid "Mail text"
+msgstr "Текст сообщения"
+
+#: mfas/Email/mfa.py:161
+msgid "Text of the email. If empty, a default text will be used"
+msgstr ""
+"Текст электронного письма. Если пусто, будет использоваться текст по "
+"умолчанию"
+
+#: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
+#, python-brace-format
+msgid "Allowed variables are: {code}, {username}, {ip}"
+msgstr "Допустимые переменные: {code}, {username}, {ip}."
+
 #: mfas/Email/mfa.py:169
+#| msgid "Enable HTML"
+msgid "Mail HTML"
+msgstr "Почтовый HTML"
+
+#: mfas/Email/mfa.py:172
+msgid "HTML of the email. If empty, a default HTML will be used"
+msgstr "HTML письма. Если пусто, будет использоваться HTML по умолчанию."
+
+#: mfas/Email/mfa.py:190
 msgid "Invalid SMTP hostname"
 msgstr "Недопустимое имя хоста SMTP"
 
-#: mfas/Email/mfa.py:186
+#: mfas/Email/mfa.py:207
 msgid "Check your mail. You will receive an email with the verification code"
 msgstr "Проверь почту. Вы получите электронное письмо с кодом подтверждения"
+
+#: mfas/Email/mfa.py:261
+#, python-brace-format
+msgid ""
+"A login attemt has been made from {ip} to.\n"
+"To continue, provide the verification code {code}"
+msgstr ""
+"Была предпринята попытка входа с {ip} на. Чтобы продолжить, введите код "
+"подтверждения {code}"
+
+#: mfas/Email/mfa.py:264
+#, python-brace-format
+msgid ""
+"<p>A login attemt has been made from <b>{ip}</b>.</p><p>To continue, provide "
+"the verification code <b>{code}</b></p>"
+msgstr ""
+"<p>Была сделана попытка входа с <b>{ip}</b> .</p><p> Чтобы продолжить, "
+"введите код подтверждения <b>{code}</b></p>"
 
 #: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
 msgid "Radius OTP Challenge"
 msgstr "Радиус OTP Challenge"
 
-#: mfas/Radius/mfa.py:88
+#: mfas/Radius/mfa.py:87
 msgid "All users must send OTP"
 msgstr "Все пользователи должны отправлять OTP"
 
-#: mfas/Radius/mfa.py:92
+#: mfas/Radius/mfa.py:91
 msgid ""
 "If unchecked, an authentication step is needed in order to know if this user "
 "must enter OTP. If checked, all users must enter OTP, so authentication step "
@@ -2590,43 +2633,43 @@ msgstr ""
 "узнать, должен ли этот пользователь вводить OTP. Если флажок установлен, все "
 "пользователи должны вводить OTP, поэтому шаг аутентификации пропускается."
 
-#: mfas/Radius/mfa.py:106
+#: mfas/Radius/mfa.py:105
 msgid "Radius OTP communication error action"
 msgstr "Действие при ошибке связи Radius OTP"
 
-#: mfas/Radius/mfa.py:109
+#: mfas/Radius/mfa.py:108
 msgid "Action for OTP server communication error"
 msgstr "Действия при ошибке связи с сервером OTP"
 
-#: mfas/Radius/mfa.py:121
+#: mfas/Radius/mfa.py:120
 msgid "Radius OTP networks"
 msgstr "Радиусные OTP-сети"
 
-#: mfas/Radius/mfa.py:125
+#: mfas/Radius/mfa.py:124
 msgid "Networks for Radius OTP authentication"
 msgstr "Сети для OTP-аутентификации Radius"
 
-#: mfas/Radius/mfa.py:131
+#: mfas/Radius/mfa.py:130
 msgid "User without defined OTP in server"
 msgstr "Пользователь без определенного OTP на сервере"
 
-#: mfas/Radius/mfa.py:134
+#: mfas/Radius/mfa.py:133
 msgid "Action for user without defined Radius Challenge"
 msgstr "Действие для пользователя без определенного Radius Challenge"
 
-#: mfas/Radius/mfa.py:194
+#: mfas/Radius/mfa.py:193
 msgid "OTP Code"
 msgstr "OTP-код"
 
-#: mfas/Radius/mfa.py:202
+#: mfas/Radius/mfa.py:201
 msgid "Please enter OTP"
 msgstr "Пожалуйста, введите одноразовый код"
 
-#: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
+#: mfas/Radius/mfa.py:229 mfas/Radius/mfa.py:291
 msgid "Radius OTP connection error"
 msgstr "Ошибка подключения Radius OTP"
 
-#: mfas/Radius/mfa.py:279
+#: mfas/Radius/mfa.py:278
 msgid "Invalid OTP code"
 msgstr "Неверный OTP-код"
 
@@ -2809,7 +2852,7 @@ msgstr "Отправка СМС не удалась"
 msgid "SMS response error"
 msgstr "Ошибка ответа на смс"
 
-#: mfas/SMS/mfa.py:398 web/views/modern.py:307
+#: mfas/SMS/mfa.py:398 web/views/modern.py:312
 msgid "MFA Code"
 msgstr "Код МФА"
 
@@ -2835,49 +2878,50 @@ msgstr "Это бесполезное поле для выборки и тест
 
 #: mfas/TOTP/mfa.py:62
 msgid "TOTP Based MFA"
-msgstr "МИД на основе TOTP"
+msgstr "МФА на основе TOTP"
 
 #: mfas/TOTP/mfa.py:64
 msgid "TOTP Based MFA (Google Authenticator, etc)"
-msgstr "MFA на основе TOTP (Google Authenticator и т. д.)"
+msgstr "МФА на основе TOTP (Google Authenticator и т. д.)"
 
-#: mfas/TOTP/mfa.py:70
+#: mfas/TOTP/mfa.py:69
 msgid "Issuer"
 msgstr "Эмитент"
 
-#: mfas/TOTP/mfa.py:73
+#: mfas/TOTP/mfa.py:72
 msgid "Issuer for OTP. Once it's created it can't be changed"
 msgstr "Эмитент OTP. После того, как он создан, его нельзя изменить"
 
-#: mfas/TOTP/mfa.py:80
+#: mfas/TOTP/mfa.py:79
 msgid "Valid Window"
 msgstr "Действительное окно"
 
-#: mfas/TOTP/mfa.py:85
+#: mfas/TOTP/mfa.py:84
 msgid "Number of valid codes before and after the current one"
 msgstr "Количество действующих кодов до и после текущего"
 
-#: mfas/TOTP/mfa.py:90
+#: mfas/TOTP/mfa.py:89
 msgid "TOTP networks"
 msgstr "TOTP-сети"
 
-#: mfas/TOTP/mfa.py:94
+#: mfas/TOTP/mfa.py:93
 msgid "Users within these networks will not be asked for OTP"
-msgstr "У пользователей в этих сетях не будет запрашиваться одноразовый пароль."
+msgstr ""
+"У пользователей из этих сетей не будет запрашиваться одноразовый пароль"
 
-#: mfas/TOTP/mfa.py:131
+#: mfas/TOTP/mfa.py:130
 msgid "Authentication Code"
 msgstr "Код аутентификации"
 
-#: mfas/TOTP/mfa.py:161
+#: mfas/TOTP/mfa.py:160
 msgid "Enter your authentication code"
 msgstr "Введите код аутентификации"
 
-#: mfas/TOTP/mfa.py:212
+#: mfas/TOTP/mfa.py:211
 msgid "Code is already used. Wait a minute and try again."
 msgstr "Код уже используется. Подождите минуту и повторите попытку."
 
-#: mfas/TOTP/mfa.py:222
+#: mfas/TOTP/mfa.py:221
 msgid "Invalid code"
 msgstr "Неверный код"
 
@@ -4866,11 +4910,11 @@ msgstr "Базовый шаблон"
 msgid "Service base template"
 msgstr "Шаблон для развертывания образов"
 
-#: services/OpenStack/openstack/openstack_client.py:772
+#: services/OpenStack/openstack/openstack_client.py:783
 msgid "Authentication error"
 msgstr "Ошибка аутентификации"
 
-#: services/OpenStack/openstack/openstack_client.py:779
+#: services/OpenStack/openstack/openstack_client.py:790
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -7533,10 +7577,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Аутентификатор не предоставляет информацию"
 
-#: web/views/modern.py:298
+#: web/views/modern.py:303
 msgid "{} days"
 msgstr "{} дней"
 
-#: web/views/modern.py:300
+#: web/views/modern.py:305
 msgid "{} hours"
 msgstr "{} часы"

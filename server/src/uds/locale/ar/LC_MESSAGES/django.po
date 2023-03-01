@@ -4,12 +4,13 @@
 #
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-24 15:20+0100\n"
+"POT-Creation-Date: 2023-03-01 14:51+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
@@ -608,7 +609,7 @@ msgstr "تحقق من الشهادة"
 #: auths/ActiveDirectory_enterprise/authenticator.py:44
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:67
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -626,7 +627,7 @@ msgstr "الخادم (IP أو FQDN) الذي سيعمل بمثابة وكيل."
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
 #: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:74
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:73
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -1605,27 +1606,27 @@ msgstr "كل شيء يبدو بشكل جيد في المصادق."
 msgid "Radius Authenticator"
 msgstr "Radius Authenticator"
 
-#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:69
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:68
 msgid "Radius Server IP or Hostname"
 msgstr "Radius Server IP أو اسم المضيف"
 
-#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:77
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:76
 msgid "Radius authentication port (usually 1812)"
 msgstr "منفذ مصادقة نصف قطر (عادة 1812)"
 
-#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:82
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:81
 msgid "Secret"
 msgstr "سر"
 
-#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:84
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:83
 msgid "Radius client secret"
 msgstr "سر عميل Radius"
 
-#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:98
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:97
 msgid "NAS Identifier"
 msgstr "معرف NAS"
 
-#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:101
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:100
 msgid "NAS Identifier for Radius Server"
 msgstr "معرف NAS لخادم Radius"
 
@@ -2088,7 +2089,7 @@ msgstr "لا يمكن الوصول إلى الخدمة من هذا الجهاز"
 msgid "Base MFA"
 msgstr "قاعدة MFA"
 
-#: core/mfas/mfa.py:277
+#: core/mfas/mfa.py:259
 msgid "Invalid MFA code"
 msgstr "رمز MFA غير صالح"
 
@@ -2455,10 +2456,10 @@ msgid "Subject of the email"
 msgstr "موضوع البريد الإلكتروني"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
-#: mfas/Email/mfa.py:144 mfas/Email/mfa.py:154 mfas/Radius/mfa.py:117
-#: mfas/Radius/mfa.py:127 mfas/Radius/mfa.py:142 mfas/SMS/mfa.py:236
-#: mfas/SMS/mfa.py:251 mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:87
-#: mfas/TOTP/mfa.py:96
+#: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
+#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
+#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "التكوين"
 
@@ -2478,57 +2479,97 @@ msgstr "تمكين HTML"
 msgid "Enable HTML in emails"
 msgstr "تمكين HTML في رسائل البريد الإلكتروني"
 
-#: mfas/Email/mfa.py:133
+#: mfas/Email/mfa.py:132
 msgid "Policy for users without MFA support"
 msgstr "سياسة للمستخدمين الذين ليس لديهم دعم MFA"
 
-#: mfas/Email/mfa.py:136
+#: mfas/Email/mfa.py:135
 msgid "Action for MFA response error"
 msgstr "الإجراء الخاص بخطأ استجابة MFA"
 
-#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
 #: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
 msgid "Allow user login"
 msgstr "السماح بتسجيل دخول المستخدم"
 
-#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
 #: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Deny user login"
 msgstr "رفض تسجيل دخول المستخدم"
 
-#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
 msgid "Allow user to login if it IP is in the networks list"
 msgstr "اسمح للمستخدم بتسجيل الدخول إذا كان IP موجودًا في قائمة الشبكات"
 
-#: mfas/Email/mfa.py:142 mfas/Radius/mfa.py:115 mfas/Radius/mfa.py:140
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
 msgid "Deny user to login if it IP is in the networks list"
 msgstr "رفض المستخدم لتسجيل الدخول إذا كان IP موجودًا في قائمة الشبكات"
 
-#: mfas/Email/mfa.py:148
+#: mfas/Email/mfa.py:147
 msgid "Mail OTP Networks"
 msgstr "شبكات البريد OTP"
 
-#: mfas/Email/mfa.py:152
+#: mfas/Email/mfa.py:151
 msgid "Networks for Email OTP authentication"
 msgstr "شبكات لمصادقة البريد الإلكتروني OTP"
 
+#: mfas/Email/mfa.py:158
+msgid "Mail text"
+msgstr "نص البريد"
+
+#: mfas/Email/mfa.py:161
+msgid "Text of the email. If empty, a default text will be used"
+msgstr "نص البريد الإلكتروني. إذا كان فارغًا ، فسيتم استخدام نص افتراضي"
+
+#: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
+#, python-brace-format
+msgid "Allowed variables are: {code}, {username}, {ip}"
+msgstr "المتغيرات المسموح بها هي: {code} ، {username} ، {ip}"
+
 #: mfas/Email/mfa.py:169
+#| msgid "Enable HTML"
+msgid "Mail HTML"
+msgstr "بريد HTML"
+
+#: mfas/Email/mfa.py:172
+msgid "HTML of the email. If empty, a default HTML will be used"
+msgstr "HTML للبريد الإلكتروني. إذا كانت فارغة ، فسيتم استخدام HTML افتراضي"
+
+#: mfas/Email/mfa.py:190
 msgid "Invalid SMTP hostname"
 msgstr "اسم مضيف SMTP غير صالح"
 
-#: mfas/Email/mfa.py:186
+#: mfas/Email/mfa.py:207
 msgid "Check your mail. You will receive an email with the verification code"
 msgstr "راجع بريدك. سوف تتلقى رسالة بريد إلكتروني مع رمز التحقق"
+
+#: mfas/Email/mfa.py:261
+#, python-brace-format
+msgid ""
+"A login attemt has been made from {ip} to.\n"
+"To continue, provide the verification code {code}"
+msgstr ""
+"تم إجراء محاولة تسجيل دخول من {ip} إلى. للمتابعة ، قدم رمز التحقق {code}"
+
+#: mfas/Email/mfa.py:264
+#, python-brace-format
+msgid ""
+"<p>A login attemt has been made from <b>{ip}</b>.</p><p>To continue, provide "
+"the verification code <b>{code}</b></p>"
+msgstr ""
+"<p style=\";text-align:right;direction:rtl\">تم إجراء محاولة تسجيل دخول من "
+"<b>{ip}</b> .</p><p style=\";text-align:right;direction:rtl\"> للمتابعة ، "
+"قدم رمز التحقق <b>{code}</b></p>"
 
 #: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
 msgid "Radius OTP Challenge"
 msgstr "تحدي Radius OTP"
 
-#: mfas/Radius/mfa.py:88
+#: mfas/Radius/mfa.py:87
 msgid "All users must send OTP"
 msgstr "يجب على جميع المستخدمين إرسال OTP"
 
-#: mfas/Radius/mfa.py:92
+#: mfas/Radius/mfa.py:91
 msgid ""
 "If unchecked, an authentication step is needed in order to know if this user "
 "must enter OTP. If checked, all users must enter OTP, so authentication step "
@@ -2538,43 +2579,43 @@ msgstr ""
 "على هذا المستخدم إدخال OTP. إذا تم تحديده ، يجب على جميع المستخدمين إدخال "
 "OTP ، لذلك يتم تخطي خطوة المصادقة."
 
-#: mfas/Radius/mfa.py:106
+#: mfas/Radius/mfa.py:105
 msgid "Radius OTP communication error action"
 msgstr "إجراء خطأ اتصال Radius OTP"
 
-#: mfas/Radius/mfa.py:109
+#: mfas/Radius/mfa.py:108
 msgid "Action for OTP server communication error"
 msgstr "الإجراء الخاص بخطأ اتصال خادم OTP"
 
-#: mfas/Radius/mfa.py:121
+#: mfas/Radius/mfa.py:120
 msgid "Radius OTP networks"
 msgstr "شبكات Radius OTP"
 
-#: mfas/Radius/mfa.py:125
+#: mfas/Radius/mfa.py:124
 msgid "Networks for Radius OTP authentication"
 msgstr "شبكات لمصادقة Radius OTP"
 
-#: mfas/Radius/mfa.py:131
+#: mfas/Radius/mfa.py:130
 msgid "User without defined OTP in server"
 msgstr "مستخدم بدون كلمة مرور محددة في الخادم"
 
-#: mfas/Radius/mfa.py:134
+#: mfas/Radius/mfa.py:133
 msgid "Action for user without defined Radius Challenge"
 msgstr "إجراء للمستخدم بدون تحدي نصف القطر المحدد"
 
-#: mfas/Radius/mfa.py:194
+#: mfas/Radius/mfa.py:193
 msgid "OTP Code"
 msgstr "رمز OTP"
 
-#: mfas/Radius/mfa.py:202
+#: mfas/Radius/mfa.py:201
 msgid "Please enter OTP"
 msgstr "الرجاء إدخال OTP"
 
-#: mfas/Radius/mfa.py:230 mfas/Radius/mfa.py:292
+#: mfas/Radius/mfa.py:229 mfas/Radius/mfa.py:291
 msgid "Radius OTP connection error"
 msgstr "خطأ في اتصال Radius OTP"
 
-#: mfas/Radius/mfa.py:279
+#: mfas/Radius/mfa.py:278
 msgid "Invalid OTP code"
 msgstr "رمز OTP غير صحيح"
 
@@ -2757,7 +2798,7 @@ msgstr "فشل إرسال الرسائل القصيرة"
 msgid "SMS response error"
 msgstr "خطأ في استجابة الرسائل القصيرة"
 
-#: mfas/SMS/mfa.py:398 web/views/modern.py:307
+#: mfas/SMS/mfa.py:398 web/views/modern.py:312
 msgid "MFA Code"
 msgstr "كود وزارة الخارجية"
 
@@ -2789,43 +2830,43 @@ msgstr "TOTP القائم على MFA"
 msgid "TOTP Based MFA (Google Authenticator, etc)"
 msgstr "TOTP Based MFA (Google Authenticator ، إلخ)"
 
-#: mfas/TOTP/mfa.py:70
+#: mfas/TOTP/mfa.py:69
 msgid "Issuer"
 msgstr "المُصدر"
 
-#: mfas/TOTP/mfa.py:73
+#: mfas/TOTP/mfa.py:72
 msgid "Issuer for OTP. Once it's created it can't be changed"
 msgstr "مُصدر لـ OTP. بمجرد إنشائه لا يمكن تغييره"
 
-#: mfas/TOTP/mfa.py:80
+#: mfas/TOTP/mfa.py:79
 msgid "Valid Window"
 msgstr "نافذة صالحة"
 
-#: mfas/TOTP/mfa.py:85
+#: mfas/TOTP/mfa.py:84
 msgid "Number of valid codes before and after the current one"
 msgstr "عدد الرموز الصالحة قبل وبعد الرمز الحالي"
 
-#: mfas/TOTP/mfa.py:90
+#: mfas/TOTP/mfa.py:89
 msgid "TOTP networks"
 msgstr "شبكات TOTP"
 
-#: mfas/TOTP/mfa.py:94
+#: mfas/TOTP/mfa.py:93
 msgid "Users within these networks will not be asked for OTP"
 msgstr "لن يُطلب من المستخدمين داخل هذه الشبكات كلمة المرور لمرة واحدة"
 
-#: mfas/TOTP/mfa.py:131
+#: mfas/TOTP/mfa.py:130
 msgid "Authentication Code"
 msgstr "رمز الدخول"
 
-#: mfas/TOTP/mfa.py:161
+#: mfas/TOTP/mfa.py:160
 msgid "Enter your authentication code"
 msgstr "أدخل رمز المصادقة الخاص بك"
 
-#: mfas/TOTP/mfa.py:212
+#: mfas/TOTP/mfa.py:211
 msgid "Code is already used. Wait a minute and try again."
 msgstr "الرمز مستخدم بالفعل. انتظر دقيقة وحاول مرة أخرى."
 
-#: mfas/TOTP/mfa.py:222
+#: mfas/TOTP/mfa.py:221
 msgid "Invalid code"
 msgstr "الرمز غير صحيح"
 
@@ -4781,11 +4822,11 @@ msgstr "قالب قاعدة."
 msgid "Service base template"
 msgstr "قالب قاعدة الخدمة."
 
-#: services/OpenStack/openstack/openstack_client.py:772
+#: services/OpenStack/openstack/openstack_client.py:783
 msgid "Authentication error"
 msgstr "خطأ مصادقة"
 
-#: services/OpenStack/openstack/openstack_client.py:779
+#: services/OpenStack/openstack/openstack_client.py:790
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -7373,10 +7414,10 @@ msgstr "جاري إنشاء الخدمة الخاصة بك ، يرجى الان�
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"
 
-#: web/views/modern.py:298
+#: web/views/modern.py:303
 msgid "{} days"
 msgstr "{} أيام"
 
-#: web/views/modern.py:300
+#: web/views/modern.py:305
 msgid "{} hours"
 msgstr "{} ساعات"
