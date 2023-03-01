@@ -152,6 +152,28 @@ class EmailMFA(mfas.MFA):
         tab=_('Config'),
     )
 
+    mailTxt = gui.TextField(
+        length=1024,
+        label=_('Mail text'),
+        order=33,
+        multiline=4,
+        tooltip=_('Text of the email. If empty, a default text will be used') + '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        required=True,
+        defvalue='',
+        tab=_('Config'),
+    )
+
+    mailHtml = gui.TextField(
+        length=1024,
+        label=_('Mail HTML'),
+        order=34,
+        multiline=4,
+        tooltip=_('HTML of the email. If empty, a default HTML will be used')+ '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        required=False,
+        defvalue='',
+        tab=_('Config'),
+    )
+
     def initialize(self, values: 'Module.ValuesType' = None):
         """
         We will use the "autosave" feature for form fields
@@ -210,7 +232,9 @@ class EmailMFA(mfas.MFA):
         else:
             return False
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(
+        self, request: 'ExtendedHttpRequest'
+    ) -> typing.Optional[bool]:
         return self.checkAction(self.allowLoginWithoutMFA.value, request)
 
     def label(self) -> str:
