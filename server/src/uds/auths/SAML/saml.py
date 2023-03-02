@@ -495,6 +495,9 @@ class SAMLAuthenticator(auths.Authenticator):
                 'wantAssertionsEncrypted': self.wantAssertionsEncrypted.isTrue(),
                 'wantNameIdEncrypted': self.wantNameIdEncrypted.isTrue(),
                 'requestedAuthnContext': self.requestedAuthnContext.isTrue(),
+                "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+                "digestAlgorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
+                "rejectDeprecatedAlgorithm": True,
             },
             'organization': {
                 'en-US': {
