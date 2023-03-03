@@ -73,7 +73,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
     _queue: typing.List[int] = []
 
     # : Recheck every this seconds by default (for task methods)
-    suggestedTime = 20
+    suggestedTime = 5
 
     def initialize(self) -> None:
         self._name = ''
