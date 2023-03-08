@@ -31,6 +31,7 @@
 """
 
 import urllib3
+import urllib3.exceptions
 import urllib.parse
 import typing
 import logging
