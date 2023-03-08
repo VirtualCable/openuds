@@ -64,9 +64,9 @@ ifeq ($(DISTRO),i686)
 	cat udsclient-appimage-x86_64.recipe | sed -e s/"version: 0.0.0"/"version: $(VERSION)"/g | sed -e s/amd64/i386/g | sed -e s/x86_64/i686/g > appimage.recipe
 endif
 # Ensure all working folders are "clean"
-	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
+	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir appimage-build AppDir
 
-	appimage-builder --recipe appimage.recipe
+	appimage-builder --recipe appimage.recipe --appdir /tmp/UDSClientDir
 # Now create dist and move appimage
 	rm -rf $(DESTDIR)
 	mkdir -p $(DESTDIR)
@@ -79,7 +79,7 @@ endif
 	tar czvf ../udsclient3-$(DISTRO)-$(VERSION).tar.gz -C $(DESTDIR) .
 
 # cleanup
-	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir
+	-rm -rf appimage appimage-builder-cache /tmp/UDSClientDir appimage-build AppDir
 
 build-igel:
 	rm -rf $(DESTDIR)

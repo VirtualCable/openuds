@@ -51,9 +51,9 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '3.5.0'
-
+#CLIENT_VERSION = UDS_VERSION
+REQUIRED_CLIENT_VERSION = '3.5.1'
+CLIENT_VERSION = REQUIRED_CLIENT_VERSION
 
 
 # Enclosed methods under /client path

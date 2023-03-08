@@ -1,18 +1,17 @@
 version: 1
 script:
   # Remove any previous build
-  - rm -rf /tmp/UDSClientDir  | true
+  - rm -rf $TARGET_APPDIR | true
   # Make usr and icons dirs
-  - mkdir -p /tmp/UDSClientDir/usr/src
+  - mkdir -p $TARGET_APPDIR/usr/src
   # Copy the python application code into the UDSClientDir
-  - cp ../src/UDS*.py /tmp/UDSClientDir/usr/src
-  - cp -r ../src/uds /tmp/UDSClientDir/usr/src
+  - cp ../src/UDS*.py $TARGET_APPDIR/usr/src
+  - cp -r ../src/uds $TARGET_APPDIR/usr/src
   # Remove __pycache__ and .mypy if exists
-  - rm /tmp/UDSClientDir/usr/src/.mypy_cache -rf 2>&1 > /dev/null
-  - rm /tmp/UDSClientDir/usr/src/uds/.mypy_cache -rf 2>&1 > /dev/null
-  - rm /tmp/UDSClientDir/usr/src/__pycache__ -rf 2>&1 > /dev/null
-  - rm /tmp/UDSClientDir/usr/src/uds/__pycache__ -rf 2>&1 > /dev/null
-
+  - rm $TARGET_APPDIR/usr/src/.mypy_cache -rf 2>&1 > /dev/null
+  - rm $TARGET_APPDIR/usr/src/uds/.mypy_cache -rf 2>&1 > /dev/null
+  - rm $TARGET_APPDIR/usr/src/__pycache__ -rf 2>&1 > /dev/null
+  - rm $TARGET_APPDIR/usr/src/uds/__pycache__ -rf 2>&1 > /dev/null
 AppDir:
   # On /tmp, that is an ext4 filesystem. On btrfs squashfs complains with "Unrecognised xattr prefix btrfs.compression"
   path: /tmp/UDSClientDir
@@ -57,6 +56,6 @@ AppDir:
       PYTHONPATH: '${APPDIR}/usr/lib/python3.9/site-packages'
 
 AppImage:
-  update-information: None
-  sign-key: None
+  # update-information: None
+  sign-key: 592AF43A64B8559137FA2458AA4ECFEE784E6BA7
   arch: x86_64
