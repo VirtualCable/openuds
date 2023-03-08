@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '3.5.0'
+REQUIRED_CLIENT_VERSION = '3.6.0'
 
 
 
