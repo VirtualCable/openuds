@@ -150,10 +150,7 @@ class RestApi:
         params = None
 
         if self._serverVersion <= OLD_METHOD_VERSION:
-            script = bz2.decompress(base64.b64decode(data['result']))
-            # This fixes uds 2.2 "write" string on binary streams on some transport
-            script = script.replace(b'stdin.write("', b'stdin.write(b"')
-            script = script.replace(b'version)', b'version.decode("utf-8"))')
+            raise Exception('Server version is too old. Please, update it')
         else:
             res = data['result']
             # We have three elements on result:
