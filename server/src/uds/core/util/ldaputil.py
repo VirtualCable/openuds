@@ -32,6 +32,8 @@
 """
 import logging
 import typing
+import tempfile
+import os.path
 
 import ldap.filter
 
@@ -69,6 +71,7 @@ def connection(
     timeout: int = 3,
     debug: bool = False,
     verify_ssl: bool = False,
+    certificate: typing.Optional[str] = None,  # Content of the certificate, not the file itself
 ) -> typing.Any:
     """
     Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
@@ -80,8 +83,6 @@ def connection(
     logger.debug('Login in to %s as user %s', host, username)
     l = None
     password = passwd.encode('utf-8') if isinstance(passwd, str) else passwd
-
-    logger.debug('Cipher suite: %s', ldap.get_option(ldap.OPT_X_TLS_CIPHER_SUITE))  # type: ignore
 
     try:
         if debug:
@@ -100,9 +101,13 @@ def connection(
         l.protocol_version = ldap.VERSION3  # type: ignore
 
         if ssl:
-            l.set_option(ldap.OPT_X_TLS_CACERTDIR, '/etc/ssl/certs')  # type: ignore
-
-            logger.debug('Ca cert folder: %s', l.get_option(ldap.OPT_X_TLS_CACERTDIR))  # type: ignore
+            if certificate is not None and verify_ssl:  # If not verify_ssl, we don't need the certificate
+                # Create a semi-temporary ca file, with the content of the certificate
+                # The name is from the host, so we can ovwerwrite it if needed
+                cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
+                with open(cert_filename, 'w') as f:
+                    f.write(certificate)
+                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename) # type: ignore
 
             if not verify_ssl:
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
