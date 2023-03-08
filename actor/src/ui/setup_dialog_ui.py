@@ -192,6 +192,7 @@ class Ui_UdsActorSetupDialog(object):
 
         self.retranslateUi(UdsActorSetupDialog)
         self.tabWidget.setCurrentIndex(0)
+        self.validateCertificate.setCurrentIndex(1)
         self.logLevelComboBox.setCurrentIndex(1)
         self.closeButton.clicked.connect(UdsActorSetupDialog.finish)
         self.registerButton.clicked.connect(UdsActorSetupDialog.registerWithUDS)
