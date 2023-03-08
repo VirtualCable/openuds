@@ -147,9 +147,9 @@ class Ui_UdsActorSetupDialog(object):
         self.host.setWhatsThis(_translate("UdsActorSetupDialog", "Enter here the UDS Broker Addres using either its IP address or its FQDN address"))
         self.label_serviceToken.setText(_translate("UdsActorSetupDialog", "Service Token"))
         self.serviceToken.setToolTip(_translate("UdsActorSetupDialog", "UDS Service Token"))
-        self.serviceToken.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.</p></body></html>"))
+        self.serviceToken.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Token of the service on UDS platform</p><p>This token can be obtainend from the service configuration on UDS.</p></body></html>"))
         self.label_loglevel.setText(_translate("UdsActorSetupDialog", "Log Level"))
         self.label_restrictNet.setText(_translate("UdsActorSetupDialog", "Restrict Net"))
-        self.restrictNet.setToolTip(_translate("UdsActorSetupDialog", "UDS user with administration rights (Will not be stored on template)"))
-        self.restrictNet.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Administrator user on UDS Server.</p><p>Note: This credential will not be stored on client. Will be used to obtain an unique token for this image.</p></body></html>"))
+        self.restrictNet.setToolTip(_translate("UdsActorSetupDialog", "Restrict valid detection of network interfaces to this network."))
+        self.restrictNet.setWhatsThis(_translate("UdsActorSetupDialog", "<html><head/><body><p>Restrics valid detection of network interfaces.</p><p>Note: Use this field only in case of several network interfaces, so UDS knows which one is the interface where the user will be connected..</p></body></html>"))
 from ui import uds_rc

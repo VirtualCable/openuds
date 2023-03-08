@@ -159,7 +159,11 @@ class HTTPServerThread(threading.Thread):
         # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        # context.options = ssl.CERT_NONE
+        # Disable TLSv1.0 and TLSv1.1, disable TLSv1.2, use only TLSv1.3
+        context.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_TLSv1_2
+
+        context.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-CCM:DHE-RSA-AES256-SHA256')
+
         context.load_cert_chain(certfile=self._certFile, password=password)
         self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
 

@@ -224,6 +224,9 @@
         <property name="whatsThis">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select the security for communications with UDS Broker.&lt;/p&gt;&lt;p&gt;The recommended method of communication is &lt;span style=&quot; font-weight:600;&quot;&gt;Use SSL&lt;/span&gt;, but selection needs to be acording to your broker configuration.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
         <item>
          <property name="text">
           <string>Ignore certificate</string>

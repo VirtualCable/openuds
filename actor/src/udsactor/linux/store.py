@@ -66,7 +66,7 @@ def readConfig() -> types.ActorConfigurationType:
         return types.ActorConfigurationType(
             actorType=uds.get('type', types.MANAGED),
             host=uds.get('host', ''),
-            validateCertificate=uds.getboolean('validate', fallback=False),
+            validateCertificate=uds.getboolean('validate', fallback=True),
             master_token=uds.get('master_token', None),
             own_token=uds.get('own_token', None),
             restrict_net=uds.get('restrict_net', None),
