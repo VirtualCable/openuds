@@ -31,7 +31,7 @@
 '''
 from __future__ import unicode_literals
 
-VERSION = '3.5.0'
+VERSION = '3.5.1'
 
 __title__ = 'udclient'
 __version__ = VERSION
