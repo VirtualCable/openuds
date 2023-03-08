@@ -42,10 +42,19 @@ from .. import rest
 from .public import PublicProvider
 from .local import LocalProvider
 
+DEFAULT_CIPHERS = (
+    'ECDHE-RSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-AES256-CCM'
+    ':DHE-RSA-AES256-SHA256'
+)
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from ..service import CommonService
     from .handler import Handler
+
 
 class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = 'HTTP/1.0'
@@ -54,7 +63,12 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
     _service: typing.Optional['CommonService'] = None
 
-    def sendJsonResponse(self, result: typing.Optional[typing.Any] = None, error: typing.Optional[str] = None, code: int = 200) -> None:
+    def sendJsonResponse(
+        self,
+        result: typing.Optional[typing.Any] = None,
+        error: typing.Optional[str] = None,
+        code: int = 200,
+    ) -> None:
         data = json.dumps({'result': result, 'error': error})
         self.send_response(code)
         self.send_header('Content-type', 'application/json')
@@ -75,7 +89,9 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
         handlerType: typing.Optional[typing.Type['Handler']] = None
 
-        if len(path) == 3 and path[0] == 'actor' and path[1] == self._service._secret:  # pylint: disable=protected-access
+        if (
+            len(path) == 3 and path[0] == 'actor' and path[1] == self._service._secret
+        ):  # pylint: disable=protected-access
             # public method
             handlerType = PublicProvider
         elif len(path) == 2 and path[0] == 'ui':
@@ -88,12 +104,18 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
             return
 
         try:
-            result = getattr(handlerType(self._service, method, params), method + '_' + path[-1])()  # last part of path is method
+            result = getattr(
+                handlerType(self._service, method, params), method + '_' + path[-1]
+            )()  # last part of path is method
         except AttributeError:
             self.sendJsonResponse(error='Method not found', code=404)
             return
         except Exception as e:
-            logger.error('Got exception executing {} {}: {}'.format(method, '/'.join(path), str(e)))
+            logger.error(
+                'Got exception executing {} {}: {}'.format(
+                    method, '/'.join(path), str(e)
+                )
+            )
             self.sendJsonResponse(error=str(e), code=500)
             return
 
@@ -101,7 +123,10 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         try:
-            params = {v.split('=')[0]: v.split('=')[1] for v in self.path.split('?')[1].split('&')}
+            params = {
+                v.split('=')[0]: v.split('=')[1]
+                for v in self.path.split('?')[1].split('&')
+            }
         except Exception:
             params = {}
 
@@ -113,7 +138,9 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
             content = self.rfile.read(length)
             params: typing.MutableMapping[str, str] = json.loads(content)
         except Exception as e:
-            logger.error('Got exception executing POST {}: {}'.format(self.path, str(e)))
+            logger.error(
+                'Got exception executing POST {}: {}'.format(self.path, str(e))
+            )
             self.sendJsonResponse(error='Invalid parameters', code=400)
             return
 
@@ -124,6 +151,7 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):  # pylint: disable=redefined-builtin
         logger.debug(format, *args)
+
 
 class HTTPServerThread(threading.Thread):
     _server: typing.Optional[http.server.HTTPServer]
@@ -153,16 +181,21 @@ class HTTPServerThread(threading.Thread):
     def run(self):
         HTTPServerHandler._service = self._service  # pylint: disable=protected-access
 
-        self._certFile, password = certs.saveCertificate(self._service._certificate)  # pylint: disable=protected-access
+        self._certFile, password = certs.saveCertificate(
+            self._service._certificate
+        )  # pylint: disable=protected-access
 
-        self._server = http.server.HTTPServer(('0.0.0.0', rest.LISTEN_PORT), HTTPServerHandler)
+        self._server = http.server.HTTPServer(
+            ('0.0.0.0', rest.LISTEN_PORT), HTTPServerHandler
+        )
         # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         # Disable TLSv1.0 and TLSv1.1, disable TLSv1.2, use only TLSv1.3
-        context.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_TLSv1_2
+        context.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
 
-        context.set_ciphers('ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-CCM:DHE-RSA-AES256-SHA256')
+        # If a configures ciphers are provided, use them, otherwise use the default ones
+        context.set_ciphers(self._service._certificate.ciphers or DEFAULT_CIPHERS)
 
         context.load_cert_chain(certfile=self._certFile, password=password)
         self._server.socket = context.wrap_socket(self._server.socket, server_side=True)
