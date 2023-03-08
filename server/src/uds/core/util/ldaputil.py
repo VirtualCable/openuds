@@ -42,7 +42,6 @@ logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
 
-
 class LDAPError(Exception):
     @staticmethod
     def reraise(e: typing.Any):
@@ -69,6 +68,7 @@ def connection(
     ssl: bool = False,
     timeout: int = 3,
     debug: bool = False,
+    verify_ssl: bool = False,
 ) -> typing.Any:
     """
     Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
@@ -81,10 +81,12 @@ def connection(
     l = None
     password = passwd.encode('utf-8') if isinstance(passwd, str) else passwd
 
+    logger.debug('Cipher suite: %s', ldap.get_option(ldap.OPT_X_TLS_CIPHER_SUITE))  # type: ignore
+
     try:
         if debug:
-            ldap.set_option(ldap.OPT_DEBUG_LEVEL, 9)  # type: ignore
-        ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
+            ldap.set_option(ldap.OPT_DEBUG_LEVEL, 8191)  # type: ignore
+
         schema = 'ldaps' if ssl else 'ldap'
         if port == -1:
             port = 636 if ssl else 389
@@ -97,9 +99,18 @@ def connection(
         l.network_timeout = int(timeout)
         l.protocol_version = ldap.VERSION3  # type: ignore
 
+        if ssl:
+            l.set_option(ldap.OPT_X_TLS_CACERTDIR, '/etc/ssl/certs')  # type: ignore
+
+            logger.debug('Ca cert folder: %s', l.get_option(ldap.OPT_X_TLS_CACERTDIR))  # type: ignore
+
+            if not verify_ssl:
+                l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
+            l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+
         l.simple_bind_s(who=username, cred=password)
-    except ldap.SERVER_DOWN:  # type: ignore
-        raise LDAPError(_('Can\'t contact LDAP server'))
+    except ldap.SERVER_DOWN as e:  # type: ignore
+        raise LDAPError(_('Can\'t contact LDAP server') + ': {}'.format(e))
     except ldap.LDAPError as e:  # type: ignore
         LDAPError.reraise(e)
     except Exception as e:
