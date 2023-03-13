@@ -253,7 +253,7 @@ class Authenticators(ModelHandler):
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['small_name']):
             raise self.invalidRequestException(
-                _('Label must contain only letters, numbers, ":" and "-"')
+                _('Label must contain only letters, numbers, or symbols: - : .')
             )
 
     def deleteItem(self, item: Authenticator):

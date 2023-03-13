@@ -72,3 +72,4 @@ class CertificateInfoType(typing.NamedTuple):
     private_key: str
     server_certificate: str
     password: str
+    ciphers: str

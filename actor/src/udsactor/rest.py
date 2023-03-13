@@ -284,6 +284,7 @@ class UDSServerApi(UDSApi):
             private_key=result['private_key'],
             server_certificate=result['server_certificate'],
             password=result['password'],
+            ciphers=result.get('ciphers', ''),
         )
 
     def notifyIpChange(
@@ -296,6 +297,7 @@ class UDSServerApi(UDSApi):
             private_key=result['private_key'],
             server_certificate=result['server_certificate'],
             password=result['password'],
+            ciphers=result.get('ciphers', ''),
         )
 
     def notifyUnmanagedCallback(
@@ -317,6 +319,7 @@ class UDSServerApi(UDSApi):
             private_key=result['private_key'],
             server_certificate=result['server_certificate'],
             password=result['password'],
+            ciphers=result.get('ciphers', ''),
         )
 
     def login(
