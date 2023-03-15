@@ -5,11 +5,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 14:51+0100\n"
+"POT-Creation-Date: 2023-03-15 04:01+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -239,9 +240,10 @@ msgstr "结果太多......"
 msgid "Refine your query"
 msgstr "优化您的查询"
 
-#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
-msgid "Label must contain only letters, numbers, \":\" and \"-\""
-msgstr "标签只能包含字母、数字、“:”和“-”"
+#: REST/methods/authenticators.py:233
+#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgid "Label must contain only letters, numbers, or symbols: - : ."
+msgstr "标签必须仅包含字母、数字或符号：- : 。"
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -668,7 +670,7 @@ msgstr "可用报告"
 
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
-#: auths/ActiveDirectory_enterprise/authenticator.py:153
+#: auths/ActiveDirectory_enterprise/authenticator.py:174
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
@@ -945,6 +947,10 @@ msgstr "当前分配的服务池"
 msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr "元池传输标签（仅用于元池传输分组）"
 
+#: REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "标签只能包含字母、数字、“:”和“-”"
+
 #: REST/methods/tunnel_token.py:49
 msgid "Tunnel tokens"
 msgstr "隧道令牌"
@@ -1037,7 +1043,7 @@ msgid "Current users"
 msgstr "目前的用户"
 
 #: REST/methods/users_groups.py:162
-#: auths/ActiveDirectory_enterprise/authenticator.py:151
+#: auths/ActiveDirectory_enterprise/authenticator.py:172
 #: auths/EDirectory_enterprise/authenticator.py:112
 #: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
@@ -1185,7 +1191,7 @@ msgid ""
 msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM表单）"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
@@ -1217,6 +1223,38 @@ msgid "Password of the ldap user"
 msgstr "ldap用户的密码"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
+msgid "Override Base"
+msgstr "覆盖基础"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:91
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr "如果不为空，将使用此值覆盖AD搜索库（格式：dc = ...，dc = ...）"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:99
+msgid "Default domain"
+msgstr "默认域"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:102
+msgid ""
+"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
+"does not use UPN (user@domain) as login, this domain will be appended."
+msgstr ""
+"如果不为空，则兼容性为“Windows 2000 及更高版本”且用户未使用 UPN "
+"(user@domain) 作为登录名，将附加此域。"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:111
+msgid "Backup server"
+msgstr "备份服务器"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:114
+msgid ""
+"If not empty, this host will be used in case main host server is not "
+"reachable"
+msgstr "如果不为空，则在无法访问主主机服务器的情况下将使用此主机"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:123
 #: auths/EDirectory_enterprise/authenticator.py:85
 #: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
@@ -1232,71 +1270,67 @@ msgstr "ldap用户的密码"
 msgid "Timeout"
 msgstr "超时"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:91
+#: auths/ActiveDirectory_enterprise/authenticator.py:126
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "连接到Active Directory的超时（以秒为单位）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
-msgid "Override Base"
-msgstr "覆盖基础"
+#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: services/Vmware_enterprise/provider.py:121
+msgid "Verify SSL"
+msgstr "验证 SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:100
+#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: services/Vmware_enterprise/provider.py:125
 msgid ""
-"If not empty, will override AD search base with this value (format: dc=..., "
-"dc=...)"
-msgstr "如果不为空，将使用此值覆盖AD搜索库（格式：dc = ...，dc = ...）"
+"If checked, SSL verification will be enforced. If not, SSL verification will "
+"be disabled"
+msgstr "如果选中，将强制执行 SSL 验证。否则，SSL 验证将被禁用"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:108
-msgid "Default domain"
-msgstr "默认域"
+#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+msgid "Certificate"
+msgstr "证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:111
-msgid ""
-"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use UPN (user@domain) as login, this domain will be appended."
-msgstr ""
-"如果不为空，则兼容性为“Windows 2000 及更高版本”且用户未使用 UPN "
-"(user@domain) 作为登录名，将附加此域。"
+#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#| msgid "Force SSL certificate verification"
+msgid "Certificate to use for SSL verification"
+msgstr "用于 SSL 验证的证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:120
-msgid "Backup server"
-msgstr "备份服务器"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:123
-msgid ""
-"If not empty, this host will be used in case main host server is not "
-"reachable"
-msgstr "如果不为空，则在无法访问主主机服务器的情况下将使用此主机"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:95
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "MFA 属性"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:97
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "从哪里提取 MFA 代码的属性"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:140
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid "Active Directory Authenticator"
 msgstr "Active Directory身份验证器"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:142
+#: auths/ActiveDirectory_enterprise/authenticator.py:163
 msgid "Authenticate against Active Directory"
 msgstr "针对Active Directory进行身份验证"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:213
+#: auths/ActiveDirectory_enterprise/authenticator.py:688
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:523
-#: auths/ActiveDirectory_enterprise/authenticator.py:580
+#: auths/ActiveDirectory_enterprise/authenticator.py:356
+msgid ""
+"Could not connect to any AD server. Check your configuration (server, ssl "
+"certificates, ...)."
+msgstr "无法连接到任何 AD 服务器。检查您的配置（服务器、ssl 证书等）。"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:561
+#: auths/ActiveDirectory_enterprise/authenticator.py:618
 #: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:293
 #: auths/EDirectory_enterprise/authenticator.py:324
@@ -1305,34 +1339,34 @@ msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 msgid "Username not found"
 msgstr "找不到用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:562
+#: auths/ActiveDirectory_enterprise/authenticator.py:600
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "未找到组"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:607
-#: auths/ActiveDirectory_enterprise/authenticator.py:629
+#: auths/ActiveDirectory_enterprise/authenticator.py:645
+#: auths/ActiveDirectory_enterprise/authenticator.py:667
 #: auths/EDirectory_enterprise/authenticator.py:346
 #: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "结果太多，更具体"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:661
+#: auths/ActiveDirectory_enterprise/authenticator.py:699
 msgid "Domain seems to be incorrect, please check it"
 msgstr "域似乎不正确，请检查它"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:680
+#: auths/ActiveDirectory_enterprise/authenticator.py:718
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "服务器似乎不是Active Directory（它没有用户对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:703
+#: auths/ActiveDirectory_enterprise/authenticator.py:741
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "服务器似乎不是Active Directory（它没有组对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:712
+#: auths/ActiveDirectory_enterprise/authenticator.py:750
 #: auths/EDirectory_enterprise/authenticator.py:469
 #: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1432,7 +1466,7 @@ msgstr "SAML身份验证器不支持字段NAME上的空格"
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "连接错误："
 
@@ -1735,10 +1769,6 @@ msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
 #: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
-msgstr "证书"
-
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
-msgid "Certificate"
 msgstr "证书"
 
 #: auths/SAML_enterprise/saml.py:132
@@ -2098,7 +2128,7 @@ msgstr "证书"
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/util/ldaputil.py:102
+#: core/util/ldaputil.py:118
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
@@ -2472,7 +2502,6 @@ msgid "Allowed variables are: {code}, {username}, {ip}"
 msgstr "允许的变量是：{code}、{username}、{ip}"
 
 #: mfas/Email/mfa.py:169
-#| msgid "Enable HTML"
 msgid "Mail HTML"
 msgstr "邮件 HTML"
 
@@ -2500,7 +2529,8 @@ msgstr "从 {ip} 到已进行登录尝试。要继续，请提供验证码 {code
 msgid ""
 "<p>A login attemt has been made from <b>{ip}</b>.</p><p>To continue, provide "
 "the verification code <b>{code}</b></p>"
-msgstr "<p>已从<b>{ip}</b>进行登录尝试。</p><p>要继续，请提供验证码<b>{code}</b></p>"
+msgstr ""
+"<p>已从<b>{ip}</b>进行登录尝试。</p><p>要继续，请提供验证码<b>{code}</b></p>"
 
 #: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
 msgid "Radius OTP Challenge"
@@ -3712,7 +3742,7 @@ msgstr "从在 AWS IAM 上为 UDS Enteprise 创建的用户获取 - 密钥"
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
-#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:194 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "创建并发"
 
@@ -3739,7 +3769,7 @@ msgstr "最大并发创建VM的数量"
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
-#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:200 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "删除并发"
 
@@ -4084,7 +4114,7 @@ msgstr "连接测试成功"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -5590,15 +5620,15 @@ msgstr ""
 "已创建计算机的有效mac范围。必须在00：50：56：00：00：00-00：50：56：3F：FF："
 "FF内"
 
-#: services/Vmware_enterprise/provider.py:126
+#: services/Vmware_enterprise/provider.py:136
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter平台提供商"
 
-#: services/Vmware_enterprise/provider.py:128
+#: services/Vmware_enterprise/provider.py:138
 msgid "Provides connection to Virtual Center Services"
 msgstr "提供与Virtual Center Services的连接"
 
-#: services/Vmware_enterprise/provider.py:287
+#: services/Vmware_enterprise/provider.py:306
 msgid "Connection params ok"
 msgstr "连接参数确定"
 
@@ -5827,47 +5857,47 @@ msgstr "阴影"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "影子内存倍增器（谨慎使用）"
 
-#: temp_for_locales.py:122
+#: temp_for_locales.py:125
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: temp_for_locales.py:123
+#: temp_for_locales.py:126
 msgid "English"
 msgstr "英语"
 
-#: temp_for_locales.py:124
+#: temp_for_locales.py:127
 msgid "French"
 msgstr "法国"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:128
 msgid "German"
 msgstr "德语"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:129
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:130
 msgid "Italian"
 msgstr "意大利"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:131
 msgid "Basque"
 msgstr "巴斯克"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:132
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:133
 msgid "Russian"
 msgstr "俄语"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:134
 msgid "Catalan"
 msgstr "加泰罗尼亚"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:135
 msgid "Chinese"
 msgstr "中文"
 

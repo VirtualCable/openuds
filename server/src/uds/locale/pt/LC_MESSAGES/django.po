@@ -5,6 +5,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Javier <jgonzalez@virtualcable.es>, 2023
@@ -12,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 14:51+0100\n"
+"POT-Creation-Date: 2023-03-15 04:01+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: Portuguese (http://www.transifex.com/openuds/openuds/language/"
@@ -26,7 +27,7 @@ msgstr ""
 
 #: REST/methods/accounts.py:61
 msgid "Accounts"
-msgstr "Contas"
+msgstr "Contabilidade"
 
 #: REST/methods/accounts.py:63 REST/methods/authenticators.py:68
 #: REST/methods/calendars.py:63 REST/methods/images.py:67
@@ -208,7 +209,7 @@ msgstr "Rótulo"
 #: templates/uds/reports/stats/pools-performance.html:35
 #: templates/uds/reports/stats/user-access.html:35
 msgid "Users"
-msgstr "Comercial"
+msgstr "Utilizadores"
 
 #: REST/methods/authenticators.py:75 core/ui/user_interface.py:106
 msgid "MFA"
@@ -243,9 +244,10 @@ msgstr "Muitos resultados ..."
 msgid "Refine your query"
 msgstr "Refine sua consulta"
 
-#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
-msgid "Label must contain only letters, numbers, \":\" and \"-\""
-msgstr "A etiqueta deve conter apenas letras, números, \":\" e \"-\""
+#: REST/methods/authenticators.py:233
+#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgid "Label must contain only letters, numbers, or symbols: - : ."
+msgstr "A etiqueta deve conter apenas letras, números ou símbolos: - : ."
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -569,11 +571,12 @@ msgstr "Última execução"
 
 #: REST/methods/osmanagers.py:53
 msgid "OS Managers"
-msgstr "OS Managers"
+msgstr "Gestores de S.O."
 
 #: REST/methods/osmanagers.py:83
 msgid "Can't delete an OS Manager with services pools associated"
-msgstr "Não é possível excluir um OS Manager com pools de serviços associados"
+msgstr ""
+"Não é possível excluir um Gestor de S.O. com pools de serviços associados"
 
 #: REST/methods/providers.py:67
 msgid "Service providers"
@@ -680,7 +683,7 @@ msgstr "Relatórios disponíveis"
 
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
-#: auths/ActiveDirectory_enterprise/authenticator.py:153
+#: auths/ActiveDirectory_enterprise/authenticator.py:174
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
@@ -757,7 +760,7 @@ msgstr "Com erros"
 #: REST/methods/services.py:365 REST/methods/users_groups.py:301
 #: REST/methods/users_groups.py:513
 msgid "Ok"
-msgstr "Está bem"
+msgstr "Ok"
 
 #: REST/methods/services_pool_groups.py:60
 msgid "Services Pool Groups"
@@ -770,7 +773,7 @@ msgstr "Pools de Serviço"
 
 #: REST/methods/services_pools.py:140
 msgid "Usage"
-msgstr "Uso"
+msgstr "Utilização"
 
 #: REST/methods/services_pools.py:142
 msgid "Shows transports"
@@ -794,11 +797,11 @@ msgstr "Serviço usado como base desse pool de serviços"
 
 #: REST/methods/services_pools.py:344
 msgid "OS Manager"
-msgstr "OS Manager"
+msgstr "Gestor de S.O."
 
 #: REST/methods/services_pools.py:345
 msgid "OS Manager used as base of this service pool"
-msgstr "OS Manager usado como base desse pool de serviços"
+msgstr "Gestor de S.O. usado como base desse pool de serviços"
 
 #: REST/methods/services_pools.py:353
 msgid "Allow removal by users"
@@ -907,7 +910,7 @@ msgstr "O serviço base não existe mais"
 
 #: REST/methods/services_pools.py:571
 msgid "This service requires an OS Manager"
-msgstr "Este serviço requer um OS Manager"
+msgstr "Este serviço requer um Gestor de S.O."
 
 #: REST/methods/services_usage.py:84 REST/methods/user_services.py:84
 #: REST/methods/user_services.py:85
@@ -972,6 +975,10 @@ msgid "Metapool transport label (only used on metapool transports grouping)"
 msgstr ""
 "Etiqueta de transporte Metapool (usado apenas no agrupamento de transportes "
 "metapool)"
+
+#: REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "A etiqueta deve conter apenas letras, números, \":\" e \"-\""
 
 #: REST/methods/tunnel_token.py:49
 msgid "Tunnel tokens"
@@ -1065,7 +1072,7 @@ msgid "Current users"
 msgstr "Usuários atuais"
 
 #: REST/methods/users_groups.py:162
-#: auths/ActiveDirectory_enterprise/authenticator.py:151
+#: auths/ActiveDirectory_enterprise/authenticator.py:172
 #: auths/EDirectory_enterprise/authenticator.py:112
 #: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
@@ -1218,7 +1225,7 @@ msgstr ""
 "formulário USER@DOMAIN.DOM para isso)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
@@ -1250,6 +1257,43 @@ msgid "Password of the ldap user"
 msgstr "Senha do usuário ldap"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
+msgid "Override Base"
+msgstr "Base de Substituição"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:91
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr ""
+"Se não estiver vazio, substituirá a base de pesquisa do AD por esse valor "
+"(formato: dc = ..., dc = ...)"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:99
+msgid "Default domain"
+msgstr "Domínio padrão"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:102
+msgid ""
+"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
+"does not use UPN (user@domain) as login, this domain will be appended."
+msgstr ""
+"Se não estiver vazio, a compatibilidade é \"Windows 2000 e posterior\" e o "
+"usuário não usa UPN (usuário @ domínio) como login, este domínio será "
+"anexado."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:111
+msgid "Backup server"
+msgstr "Servidor de backup"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:114
+msgid ""
+"If not empty, this host will be used in case main host server is not "
+"reachable"
+msgstr ""
+"Se não estiver vazio, este host será usado caso o servidor host principal "
+"não esteja acessível"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:123
 #: auths/EDirectory_enterprise/authenticator.py:85
 #: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
@@ -1263,78 +1307,73 @@ msgstr "Senha do usuário ldap"
 #: services/Proxmox/provider.py:124 services/VCloud_enterprise/provider.py:119
 #: services/Vmware_enterprise/provider.py:99
 msgid "Timeout"
-msgstr "Tempo esgotado"
+msgstr "Tempo limite"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:91
+#: auths/ActiveDirectory_enterprise/authenticator.py:126
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Tempo limite em segundos de conexão ao Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
-msgid "Override Base"
-msgstr "Base de Substituição"
+#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: services/Vmware_enterprise/provider.py:121
+msgid "Verify SSL"
+msgstr "Verificar SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:100
+#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: services/Vmware_enterprise/provider.py:125
 msgid ""
-"If not empty, will override AD search base with this value (format: dc=..., "
-"dc=...)"
+"If checked, SSL verification will be enforced. If not, SSL verification will "
+"be disabled"
 msgstr ""
-"Se não estiver vazio, substituirá a base de pesquisa do AD por esse valor "
-"(formato: dc = ..., dc = ...)"
+"Se marcada, a verificação SSL será aplicada. Caso contrário, a verificação "
+"SSL será desativada"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:108
-msgid "Default domain"
-msgstr "Domínio padrão"
+#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+msgid "Certificate"
+msgstr "Certificado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:111
-msgid ""
-"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use UPN (user@domain) as login, this domain will be appended."
-msgstr ""
-"Se não estiver vazio, a compatibilidade é \"Windows 2000 e posterior\" e o "
-"usuário não usa UPN (usuário @ domínio) como login, este domínio será "
-"anexado."
+#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#| msgid "Force SSL certificate verification"
+msgid "Certificate to use for SSL verification"
+msgstr "Certificado a ser usado para verificação SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:120
-msgid "Backup server"
-msgstr "Servidor de backup"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:123
-msgid ""
-"If not empty, this host will be used in case main host server is not "
-"reachable"
-msgstr ""
-"Se não estiver vazio, este host será usado caso o servidor host principal "
-"não esteja acessível"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:95
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "Atributo MFA"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:97
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atributo de onde extrair o código MFA"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:140
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid "Active Directory Authenticator"
 msgstr "Autenticador do Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:142
+#: auths/ActiveDirectory_enterprise/authenticator.py:163
 msgid "Authenticate against Active Directory"
 msgstr "Autenticar-se contra o Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:213
+#: auths/ActiveDirectory_enterprise/authenticator.py:688
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Deve especificar o nome de usuário no formulário USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:523
-#: auths/ActiveDirectory_enterprise/authenticator.py:580
+#: auths/ActiveDirectory_enterprise/authenticator.py:356
+msgid ""
+"Could not connect to any AD server. Check your configuration (server, ssl "
+"certificates, ...)."
+msgstr ""
+"Não foi possível conectar a nenhum servidor AD. Verifique sua configuração ("
+"servidor, certificados SSL, ...)."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:561
+#: auths/ActiveDirectory_enterprise/authenticator.py:618
 #: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:293
 #: auths/EDirectory_enterprise/authenticator.py:324
@@ -1343,35 +1382,35 @@ msgstr "Deve especificar o nome de usuário no formulário USERNAME@DOMAIN.DOM"
 msgid "Username not found"
 msgstr "Nome de usuário não encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:562
+#: auths/ActiveDirectory_enterprise/authenticator.py:600
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Grupo não encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:607
-#: auths/ActiveDirectory_enterprise/authenticator.py:629
+#: auths/ActiveDirectory_enterprise/authenticator.py:645
+#: auths/ActiveDirectory_enterprise/authenticator.py:667
 #: auths/EDirectory_enterprise/authenticator.py:346
 #: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "Muitos resultados, sejam mais específicos"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:661
+#: auths/ActiveDirectory_enterprise/authenticator.py:699
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Domínio parece estar incorreto, por favor, verifique"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:680
+#: auths/ActiveDirectory_enterprise/authenticator.py:718
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 "Servidor não parece um Active Directory (ele não tem objetos de usuário)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:703
+#: auths/ActiveDirectory_enterprise/authenticator.py:741
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor não parece um Active Directory (ele não tem objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:712
+#: auths/ActiveDirectory_enterprise/authenticator.py:750
 #: auths/EDirectory_enterprise/authenticator.py:469
 #: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1476,7 +1515,7 @@ msgstr "O autenticador SAML não suporta espaços em branco no campo NAME"
 msgid "Authenticator exception:"
 msgstr "Exceção do autenticador:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "Erro de conexão:"
 
@@ -1802,10 +1841,6 @@ msgstr ""
 #: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "Certificados"
-
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
-msgid "Certificate"
-msgstr "Certificado"
 
 #: auths/SAML_enterprise/saml.py:132
 msgid ""
@@ -2140,7 +2175,7 @@ msgstr "Nenhum método de verificação fornecido."
 
 #: core/osmanagers/osmanager.py:60
 msgid "Base OS Manager"
-msgstr "OS Manager base"
+msgstr "Gestor de S.O. base"
 
 #: core/osmanagers/osmanager.py:62
 msgid "Base Manager"
@@ -2190,7 +2225,7 @@ msgstr "Credenciais"
 msgid "Tunnel"
 msgstr "Túnel"
 
-#: core/util/ldaputil.py:102
+#: core/util/ldaputil.py:118
 msgid "Can't contact LDAP server"
 msgstr "Não é possível entrar em contato com o servidor LDAP"
 
@@ -2571,7 +2606,6 @@ msgid "Allowed variables are: {code}, {username}, {ip}"
 msgstr "As variáveis permitidas são: {code}, {username}, {ip}"
 
 #: mfas/Email/mfa.py:169
-#| msgid "Enable HTML"
 msgid "Mail HTML"
 msgstr "HTML de e-mail"
 
@@ -2674,7 +2708,7 @@ msgstr "SMS simples enviando MFA usando HTTP/HTTPS"
 
 #: mfas/SMS/mfa.py:103
 msgid "URL pattern for SMS sending"
-msgstr "Padrão de URL para envio de SMS"
+msgstr "Endereço URL para envio de SMS"
 
 #: mfas/SMS/mfa.py:106
 msgid ""
@@ -2684,7 +2718,7 @@ msgid ""
 "* {username} - the username\n"
 "* {justUsername} - the username without @...."
 msgstr ""
-"Padrão de URL para envio de SMS. Ele pode conter as seguintes variáveis: * "
+"Endereço URL para envio de SMS. Ele pode conter as seguintes variáveis: * "
 "{code} - o código para enviar * {phone/+phone} - o número de telefone * "
 "{username} - o nome de usuário * {justUsername} - o nome de usuário sem @...."
 
@@ -3133,11 +3167,11 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:53
 msgid "Linux OS Manager"
-msgstr "Os Manager do SO Linux"
+msgstr "Gestor do SO Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:55
 msgid "Os Manager to control Linux virtual machines"
-msgstr "Os Manager para controlar máquinas virtuais Linux"
+msgstr "Gestor de S.O.  para controlar máquinas virtuais Linux"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:61
 #: osmanagers/WindowsOsManager/windows.py:52
@@ -3193,12 +3227,12 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:53
 msgid "Linux Random Password OS Manager"
-msgstr "Linux OS Manager Aleatório Senha"
+msgstr "Linux OS Manager Random Password"
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:56
 msgid "Os Manager to control linux machines, with user password set randomly."
 msgstr ""
-"Os Manager para controlar máquinas linux, com senha de usuário definida "
+"Gestor de S.O. para controlar máquinas linux, com senha de usuário definida "
 "aleatoriamente."
 
 #: osmanagers/LinuxOsManager/linux_randompass_osmanager.py:63
@@ -3223,11 +3257,11 @@ msgstr "RDS UDS Actor (para aplicativos remotos no Windows Server)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:32
 msgid "RDS OS Manager"
-msgstr "RDS OS Manager"
+msgstr "Gestor de RDS "
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:34
 msgid "Os Manager to control RDS provided services"
-msgstr "Os Manager para controlar os serviços prestados pelo RDS"
+msgstr "Gestor de S.O. para controlar os serviços prestados pelo RDS"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:41
 msgid "Max. session time"
@@ -3254,11 +3288,11 @@ msgstr ""
 
 #: osmanagers/WindowsOsManager/windows.py:45
 msgid "Windows Basic OS Manager"
-msgstr "OS Manager Básico do Windows"
+msgstr "Gestor de S.O. Básico do Windows"
 
 #: osmanagers/WindowsOsManager/windows.py:47
 msgid "Os Manager to control windows machines without domain."
-msgstr "Os Manager para controlar máquinas Windows sem domínio."
+msgstr "Gestor de S.O. para controlar máquinas Windows sem domínio."
 
 #: osmanagers/WindowsOsManager/windows.py:74
 msgid ""
@@ -3278,11 +3312,11 @@ msgstr "O comprimento deve ser entre 1 e 6"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:61
 msgid "Windows Domain OS Manager"
-msgstr "OS Manager do domínio do Windows"
+msgstr "Gestor de S.O. do domínio do Windows"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:63
 msgid "Os Manager to control windows machines with domain."
-msgstr "Os Manager para controlar máquinas Windows com domínio."
+msgstr "Gestor de S.O. para controlar máquinas Windows com domínio."
 
 #: osmanagers/WindowsOsManager/windows_domain.py:69
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
@@ -3418,14 +3452,14 @@ msgstr "Todos os parâmetros parecem funcionar bem."
 
 #: osmanagers/WindowsOsManager/windows_random.py:59
 msgid "Windows Random Password OS Manager"
-msgstr "OS Manager do Windows Random Password"
+msgstr "Gestor de S.O. do Windows Random Password"
 
 #: osmanagers/WindowsOsManager/windows_random.py:62
 msgid ""
 "Os Manager to control windows machines, with user password set randomly."
 msgstr ""
-"Os Manager para controlar máquinas Windows, com a senha do usuário definida "
-"aleatoriamente."
+"Gestor de S.O.  para controlar máquinas Windows, com a senha do usuário "
+"definida aleatoriamente."
 
 #: osmanagers/WindowsOsManager/windows_random.py:78
 msgid "Current (template) password of the user account"
@@ -3850,7 +3884,7 @@ msgstr "Obtido do usuário criado no AWS IAM para UDS Enteprise - Chaves"
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
-#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:194 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "Concorrência de criação"
 
@@ -3877,7 +3911,7 @@ msgstr "Número máximo de criações simultâneas de VMs"
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
-#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:200 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "Concorrência de remoção"
 
@@ -3918,7 +3952,7 @@ msgstr "Região padrão a ser usada para conectar ao EC2"
 
 #: services/AWS_enterprise/provider.py:130
 msgid "AWS Platform Provider"
-msgstr "Provedor de plataforma AWS"
+msgstr "Fornecedor de plataforma AWS"
 
 #: services/AWS_enterprise/provider.py:132
 msgid "Provides connection to Amazon Web Services platform"
@@ -4066,7 +4100,7 @@ msgstr "Obtido de assinaturas"
 
 #: services/Azure_enterprise/provider.py:122
 msgid "Azure Platform Provider"
-msgstr "Provedor de plataformas do Azure"
+msgstr "Fornecedor de plataformas do Azure"
 
 #: services/Azure_enterprise/provider.py:124
 msgid "Provides connection to Azure Platform"
@@ -4229,7 +4263,7 @@ msgstr "Teste de conexão bem sucedido"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
 msgid "Connection failed. Check connection params"
 msgstr "Conexão falhou. Verifique os parâmetros de conexão"
 
@@ -4372,7 +4406,7 @@ msgstr "Memória para máquinas implantadas deste serviço"
 
 #: services/HyperV_enterprise/provider.py:43
 msgid "HyperV Platform Provider"
-msgstr "Provedor de plataforma HyperV"
+msgstr "Fornecedor de plataforma HyperV"
 
 #: services/HyperV_enterprise/provider.py:47
 msgid "HyperV platform service provider with cluster support"
@@ -4384,7 +4418,7 @@ msgstr "Servidor HyperV ou IP ou FQDN do cluster HyperV"
 
 #: services/HyperV_enterprise/provider.py:70 services/OVirt/service.py:112
 msgid "Cluster"
-msgstr "Grupo"
+msgstr "Cluster"
 
 #: services/HyperV_enterprise/provider.py:73
 msgid "If you are using a clustered HyperV server, enable this option."
@@ -4575,7 +4609,7 @@ msgstr "Ambos os núcleos por VCPU e número de VCPUS são necessários"
 
 #: services/Nutanix_enterprise/provider.py:32
 msgid "Nutanix Acropolis Platform Provider"
-msgstr "Provedor de plataformas Nutanix Acropolis"
+msgstr "Fornecedor de plataformas Nutanix Acropolis"
 
 #: services/Nutanix_enterprise/provider.py:34
 msgid "Nutanix based VM provider"
@@ -4621,7 +4655,7 @@ msgstr "Rede para as máquinas (cada máquina criada será anexada a esta rede)"
 
 #: services/OVirt/provider.py:80
 msgid "oVirt/RHEV Platform Provider"
-msgstr "Provedor de Plataforma oVirt / RHEV"
+msgstr "Fornecedor de Plataforma oVirt / RHEV"
 
 #: services/OVirt/provider.py:84
 msgid "oVirt platform service provider"
@@ -4707,7 +4741,7 @@ msgstr "Todos os laboratórios"
 
 #: services/OpenGnsys/provider.py:77
 msgid "OpenGnsys Platform Provider"
-msgstr "Provedor de Plataforma OpenGnsys"
+msgstr "Fornecedor de Plataforma OpenGnsys"
 
 #: services/OpenGnsys/provider.py:81
 msgid "OpenGnsys platform service provider (experimental)"
@@ -4828,7 +4862,7 @@ msgstr "Número máximo de serviços permitidos (0 ou menos significa sem limite
 
 #: services/OpenNebula/provider.py:58
 msgid "OpenNebula Platform Provider"
-msgstr "Provedor da Plataforma OpenNebula"
+msgstr "Fornecedor da Plataforma OpenNebula"
 
 #: services/OpenNebula/provider.py:62
 msgid "OpenNebula platform service provider"
@@ -4904,7 +4938,7 @@ msgstr ""
 
 #: services/OpenStack/provider.py:80
 msgid "OpenStack Platform Provider"
-msgstr "Provedor da Plataforma OpenStack"
+msgstr "Fornecedor da Plataforma OpenStack"
 
 #: services/OpenStack/provider.py:84
 msgid "OpenStack platform service provider"
@@ -4984,7 +5018,7 @@ msgstr "Conexão de teste do OpenStack passada"
 
 #: services/OpenStack/provider_legacy.py:84
 msgid "OpenStack LEGACY Platform Provider"
-msgstr "Provedor da Plataforma OpenStack LEGACY"
+msgstr "Fornecedor da Plataforma OpenStack LEGACY"
 
 #: services/OpenStack/provider_legacy.py:89
 msgid ""
@@ -5082,7 +5116,7 @@ msgstr "URL inválido na configuração avançada:"
 
 #: services/PhysicalMachines/provider.py:112
 msgid "Static IP Machines Provider"
-msgstr "Provedor de máquinas IP estáticas"
+msgstr "Fornecedor de máquinas IP estático"
 
 #: services/PhysicalMachines/provider.py:114
 msgid "Provides connection to machines by IP"
@@ -5190,11 +5224,11 @@ msgstr "(ligado a {})"
 
 #: services/Proxmox/provider.py:60
 msgid "Proxmox Platform Provider"
-msgstr "Provedor de plataforma Proxmox"
+msgstr "Fornecedor de plataforma Proxmox"
 
 #: services/Proxmox/provider.py:62
 msgid "Proxmox platform service provider"
-msgstr "Provedor de serviços da plataforma Proxmox"
+msgstr "Fornecedor de serviços da plataforma Proxmox"
 
 #: services/Proxmox/provider.py:69
 msgid "Proxmox Server IP or Hostname"
@@ -5287,11 +5321,11 @@ msgstr "Desativado"
 
 #: services/RDS_enterprise/provider.py:43
 msgid "RDS Platform Provider"
-msgstr "Provedor de Plataforma RDS"
+msgstr "Fornecedor de Plataforma RDS"
 
 #: services/RDS_enterprise/provider.py:45
 msgid "Microsoft RDS based provider"
-msgstr "Provedor baseado em Microsoft RDS"
+msgstr "Fornecedor baseado em Microsoft RDS"
 
 #: services/RDS_enterprise/provider.py:54
 msgid "Server Checking"
@@ -5307,7 +5341,7 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:76
 #: services/RDS_enterprise/provider.py:86
 msgid "User mapping"
-msgstr "Mapeamento de usuários"
+msgstr "Mapeamento de Utilizadores"
 
 #: services/RDS_enterprise/provider.py:68
 msgid ""
@@ -5357,7 +5391,7 @@ msgstr ""
 #: services/RDS_enterprise/provider.py:162
 #: services/RDS_enterprise/provider.py:170
 msgid "AD User management"
-msgstr "Gerenciamento de usuários do AD"
+msgstr "Gestão de usuários do AD"
 
 #: services/RDS_enterprise/provider.py:103
 msgid "AD Server"
@@ -5373,18 +5407,18 @@ msgstr "Porta AD LDAPS (o padrão é 636)"
 
 #: services/RDS_enterprise/provider.py:120
 msgid "AD server OU for created users"
-msgstr "UO do servidor AD para usuários criados"
+msgstr "OU do servidor AD para usuários criados"
 
 #: services/RDS_enterprise/provider.py:121
 msgid "AD Server branch where users will be created by UDS"
-msgstr "Filial do servidor AD onde os usuários serão criados pelo UDS"
+msgstr "AD DN do servidor AD onde os usuários serão criados pelo UDS"
 
 #: services/RDS_enterprise/provider.py:130
 msgid ""
 "Username with privileges to create/delete accounts. Use USER@DOMAIN.XXX form."
 msgstr ""
-"Nome de usuário com privilégios para criar / excluir contas. Use o "
-"formulário USER@DOMAIN.XXX."
+"Nome de usuário com privilégios para criar / excluir contas. Use o Formato "
+"UPN USER@DOMAIN.XXX."
 
 #: services/RDS_enterprise/provider.py:139
 msgid "Password of the user with privileges"
@@ -5547,7 +5581,7 @@ msgstr "Serviço de desktop de sessão completa da plataforma RDS"
 
 #: services/Sample/provider.py:75
 msgid "Sample Provider"
-msgstr "Provedor de Amostra"
+msgstr "Fornecedor de Amostra"
 
 #: services/Sample/provider.py:79
 msgid "Sample (and dummy) service provider"
@@ -5700,7 +5734,7 @@ msgstr "Selecione sua versão do vCloud"
 
 #: services/VCloud_enterprise/provider.py:130
 msgid "VCloud Director Platform Provider"
-msgstr "Provedor de plataforma do VCloud Director"
+msgstr "Fornecedor de plataforma do VCloud Director"
 
 #: services/VCloud_enterprise/provider.py:132
 msgid "Provides connection to vCloud Director platform"
@@ -5808,15 +5842,15 @@ msgstr ""
 "Intervalo de macs válidos para máquinas criadas. Deve estar dentro das "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/provider.py:126
+#: services/Vmware_enterprise/provider.py:136
 msgid "VMWare VCenter Platform Provider"
-msgstr "Provedor de plataforma VMWare VCenter"
+msgstr "Fornecedor de plataforma VMWare VCenter"
 
-#: services/Vmware_enterprise/provider.py:128
+#: services/Vmware_enterprise/provider.py:138
 msgid "Provides connection to Virtual Center Services"
 msgstr "Fornece conexão com os serviços do Virtual Center"
 
-#: services/Vmware_enterprise/provider.py:287
+#: services/Vmware_enterprise/provider.py:306
 msgid "Connection params ok"
 msgstr "Params de conexão ok"
 
@@ -5985,11 +6019,11 @@ msgstr "Datastores onde colocar incrementais"
 
 #: services/Xen/provider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
-msgstr "Provedor de plataformas Xenserver / XCP-NG"
+msgstr "Fornecedor de plataformas Xenserver / XCP-NG"
 
 #: services/Xen/provider.py:83
 msgid "XenServer and XCP-NG platforms service provider"
-msgstr "Provedor de serviços de plataformas XenServer e XCP-NG"
+msgstr "Fornecedor de serviços de plataformas XenServer e XCP-NG"
 
 #: services/Xen/provider.py:102
 msgid "XenServer Server IP or Hostname"
@@ -6062,47 +6096,47 @@ msgstr "Sombra"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Multiplicador de memória de sombra (use com cuidado)"
 
-#: temp_for_locales.py:122
+#: temp_for_locales.py:125
 msgid "Spanish"
 msgstr "espanhol"
 
-#: temp_for_locales.py:123
+#: temp_for_locales.py:126
 msgid "English"
 msgstr "Inglês"
 
-#: temp_for_locales.py:124
+#: temp_for_locales.py:127
 msgid "French"
 msgstr "francês"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:128
 msgid "German"
 msgstr "alemão"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:129
 msgid "Portuguese"
 msgstr "Português"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:130
 msgid "Italian"
 msgstr "italiano"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:131
 msgid "Basque"
 msgstr "Basco"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:132
 msgid "Arabic"
 msgstr "árabe"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:133
 msgid "Russian"
 msgstr "russo"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:134
 msgid "Catalan"
 msgstr "catalão"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:135
 msgid "Chinese"
 msgstr "chinês"
 
@@ -6421,7 +6455,7 @@ msgstr "Ativar compartilhamento de arquivos"
 #: transports/HTML5RDP/html5rdp.py:186
 #: transports/HTML5RDS_enterprise/html5rds.py:179
 msgid "Clipboard"
-msgstr "Prancheta"
+msgstr "Área de transferência  "
 
 #: transports/HTML5RDP/html5rdp.py:188
 #: transports/HTML5RDS_enterprise/html5rds.py:181
@@ -6976,7 +7010,7 @@ msgstr "Se marcado, este transporte permitirá o uso de impressoras de usuário"
 
 #: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
-msgstr "Diretiva de unidades locais"
+msgstr "Mapeamento de drives locais"
 
 #: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
@@ -6984,7 +7018,7 @@ msgstr "Diretiva de redirecionamento de unidades locais"
 
 #: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
-msgstr "Forçar acionamentos"
+msgstr "Forçar mapeamento de drives"
 
 #: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
 msgid ""
@@ -7249,7 +7283,7 @@ msgstr "Se marcado, o redirecionamento de USB será permitido."
 
 #: transports/SPICE/spice_base.py:111
 msgid "New USB Auto Sharing"
-msgstr "Novo compartilhamento automático de USB"
+msgstr "Novo Mapeamento automático de USB"
 
 #: transports/SPICE/spice_base.py:112
 msgid "Auto-redirect USB devices when plugged in."
@@ -7289,12 +7323,12 @@ msgstr "Inicia um URL personalizado UDS externo"
 
 #: transports/URL/url_custom.py:73
 msgid "URL Pattern"
-msgstr "Padrão de URL"
+msgstr "Endereço URL"
 
 #: transports/URL/url_custom.py:75
 msgid "URL Pattern to open (i.e. https://_IP_/test?user=_USER_"
 msgstr ""
-"Padrão de URL a abrir (por exemplo, https: // _ IP_ / test? User = _USER_"
+"Endereço URL a abrir (por exemplo, https: // _ IP_ / test? User = _USER_"
 
 #: transports/URL/url_custom.py:85
 msgid ""
