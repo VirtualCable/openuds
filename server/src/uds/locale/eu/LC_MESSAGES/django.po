@@ -5,13 +5,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 14:51+0100\n"
+"POT-Creation-Date: 2023-03-15 04:01+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://www.transifex.com/openuds/openuds/language/"
@@ -241,9 +242,10 @@ msgstr "Emaitz gehiegi ..."
 msgid "Refine your query"
 msgstr "Zure kontsulta hobetu"
 
-#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
-msgid "Label must contain only letters, numbers, \":\" and \"-\""
-msgstr "Etiketak letrak, zenbakiak, \":\" eta \"-\" bakarrik izan behar ditu"
+#: REST/methods/authenticators.py:233
+#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgid "Label must contain only letters, numbers, or symbols: - : ."
+msgstr "Etiketak letrak, zenbakiak edo ikurrak soilik izan behar ditu: - : ."
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -681,7 +683,7 @@ msgstr "Txosten erabilgarriak"
 
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
-#: auths/ActiveDirectory_enterprise/authenticator.py:153
+#: auths/ActiveDirectory_enterprise/authenticator.py:174
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
@@ -975,6 +977,10 @@ msgstr ""
 "Metapool garraioaren etiketa (metapool garraioen taldekatzeetan soilik "
 "erabiltzen da)"
 
+#: REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "Etiketak letrak, zenbakiak, \":\" eta \"-\" bakarrik izan behar ditu"
+
 #: REST/methods/tunnel_token.py:49
 msgid "Tunnel tokens"
 msgstr "Tuneleko tokenak"
@@ -1067,7 +1073,7 @@ msgid "Current users"
 msgstr "Momentuko erabiltzaileak"
 
 #: REST/methods/users_groups.py:162
-#: auths/ActiveDirectory_enterprise/authenticator.py:151
+#: auths/ActiveDirectory_enterprise/authenticator.py:172
 #: auths/EDirectory_enterprise/authenticator.py:112
 #: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
@@ -1218,7 +1224,7 @@ msgstr ""
 "USER@DOMAIN.DOM)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
@@ -1250,6 +1256,43 @@ msgid "Password of the ldap user"
 msgstr "LDAP erabiltzailearen pasahitza"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
+msgid "Override Base"
+msgstr "Gainidatzi Base"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:91
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr ""
+"Ez bada hutsik, AD bilaketa-oinarria gainidatziko du balio honekin "
+"(formatua: dc = ..., dc = ...)"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:99
+msgid "Default domain"
+msgstr "Domeinu lehenetsia"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:102
+msgid ""
+"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
+"does not use UPN (user@domain) as login, this domain will be appended."
+msgstr ""
+"Hutsik ez badago, bateragarritasuna \"Windows 2000 eta berriagoa\" da eta "
+"erabiltzaileak ez du UPN (user @ domain) erabiltzen saio-hasiera gisa, "
+"domeinu hau erantsiko da."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:111
+msgid "Backup server"
+msgstr "Babeskopia zerbitzaria"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:114
+msgid ""
+"If not empty, this host will be used in case main host server is not "
+"reachable"
+msgstr ""
+"Hutsik ez badago, ostalari hau erabiliko da ostalari zerbitzari nagusia "
+"heltzen ez bada"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:123
 #: auths/EDirectory_enterprise/authenticator.py:85
 #: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
@@ -1265,76 +1308,71 @@ msgstr "LDAP erabiltzailearen pasahitza"
 msgid "Timeout"
 msgstr "Demboraz kampo"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:91
+#: auths/ActiveDirectory_enterprise/authenticator.py:126
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Denbora-muga, Active Directory-en konexioaren segundotan"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
-msgid "Override Base"
-msgstr "Gainidatzi Base"
+#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: services/Vmware_enterprise/provider.py:121
+msgid "Verify SSL"
+msgstr "Egiaztatu SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:100
+#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: services/Vmware_enterprise/provider.py:125
 msgid ""
-"If not empty, will override AD search base with this value (format: dc=..., "
-"dc=...)"
+"If checked, SSL verification will be enforced. If not, SSL verification will "
+"be disabled"
 msgstr ""
-"Ez bada hutsik, AD bilaketa-oinarria gainidatziko du balio honekin "
-"(formatua: dc = ..., dc = ...)"
+"Hautatzen bada, SSL egiaztapena ezarriko da. Hala ez bada, SSL egiaztapena "
+"desgaitu egingo da"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:108
-msgid "Default domain"
-msgstr "Domeinu lehenetsia"
+#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+msgid "Certificate"
+msgstr "Ziurtagiria"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:111
-msgid ""
-"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use UPN (user@domain) as login, this domain will be appended."
-msgstr ""
-"Hutsik ez badago, bateragarritasuna \"Windows 2000 eta berriagoa\" da eta "
-"erabiltzaileak ez du UPN (user @ domain) erabiltzen saio-hasiera gisa, "
-"domeinu hau erantsiko da."
+#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#| msgid "Force SSL certificate verification"
+msgid "Certificate to use for SSL verification"
+msgstr "SSL egiaztatzeko erabili beharreko ziurtagiria"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:120
-msgid "Backup server"
-msgstr "Babeskopia zerbitzaria"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:123
-msgid ""
-"If not empty, this host will be used in case main host server is not "
-"reachable"
-msgstr ""
-"Hutsik ez badago, ostalari hau erabiliko da ostalari zerbitzari nagusia "
-"heltzen ez bada"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:95
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "MFA atributua"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:97
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atributua nondik atera MFA kodea"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:140
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid "Active Directory Authenticator"
 msgstr "Active Directory autentikatzailea"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:142
+#: auths/ActiveDirectory_enterprise/authenticator.py:163
 msgid "Authenticate against Active Directory"
 msgstr "Active Directory-aren kontra autentikatu"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:213
+#: auths/ActiveDirectory_enterprise/authenticator.py:688
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Erabiltzailea USERNAME@DOMAIN.DOM formatuan jarri behar da "
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:523
-#: auths/ActiveDirectory_enterprise/authenticator.py:580
+#: auths/ActiveDirectory_enterprise/authenticator.py:356
+msgid ""
+"Could not connect to any AD server. Check your configuration (server, ssl "
+"certificates, ...)."
+msgstr ""
+"Ezin izan da AD zerbitzari batera konektatu. Egiaztatu zure konfigurazioa ("
+"zerbitzaria, ssl ziurtagiriak, ...)."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:561
+#: auths/ActiveDirectory_enterprise/authenticator.py:618
 #: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:293
 #: auths/EDirectory_enterprise/authenticator.py:324
@@ -1343,38 +1381,38 @@ msgstr "Erabiltzailea USERNAME@DOMAIN.DOM formatuan jarri behar da "
 msgid "Username not found"
 msgstr "Erabiltzaile ez da aurkitu"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:562
+#: auths/ActiveDirectory_enterprise/authenticator.py:600
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Ez da aurkitu talderik"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:607
-#: auths/ActiveDirectory_enterprise/authenticator.py:629
+#: auths/ActiveDirectory_enterprise/authenticator.py:645
+#: auths/ActiveDirectory_enterprise/authenticator.py:667
 #: auths/EDirectory_enterprise/authenticator.py:346
 #: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "konkretuagoa izan, emaitz gehiegi daude eta."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:661
+#: auths/ActiveDirectory_enterprise/authenticator.py:699
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Domeinua txarto omen dago, egiazta ezazu."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:680
+#: auths/ActiveDirectory_enterprise/authenticator.py:718
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile "
 "objeturik)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:703
+#: auths/ActiveDirectory_enterprise/authenticator.py:741
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
 "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde "
 "objeturik)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:712
+#: auths/ActiveDirectory_enterprise/authenticator.py:750
 #: auths/EDirectory_enterprise/authenticator.py:469
 #: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1476,7 +1514,7 @@ msgstr "SAML autetikatzaileak ez du NAME eremuan espaziorik onartzen"
 msgid "Authenticator exception:"
 msgstr "Autentikatzaile salbuespena:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "Konexioaren errorea:"
 
@@ -1806,10 +1844,6 @@ msgstr ""
 #: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "Ziurtagiriak"
-
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
-msgid "Certificate"
-msgstr "Ziurtagiria"
 
 #: auths/SAML_enterprise/saml.py:132
 msgid ""
@@ -2186,7 +2220,7 @@ msgstr "Egiaztagiria"
 msgid "Tunnel"
 msgstr "Tunela"
 
-#: core/util/ldaputil.py:102
+#: core/util/ldaputil.py:118
 msgid "Can't contact LDAP server"
 msgstr "Ezin da LDAP zerbitzariarekin kontaktatu"
 
@@ -2566,7 +2600,6 @@ msgid "Allowed variables are: {code}, {username}, {ip}"
 msgstr "Onartutako aldagaiak hauek dira: {code}, {username}, {ip}"
 
 #: mfas/Email/mfa.py:169
-#| msgid "Enable HTML"
 msgid "Mail HTML"
 msgstr "Posta HTML"
 
@@ -3848,7 +3881,7 @@ msgstr ""
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
-#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:194 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "Sorkuntza konkurrentzia"
 
@@ -3875,7 +3908,7 @@ msgstr "VMak aldi berean sortzeko gehienezko kopurua"
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
-#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:200 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "Kentzea"
 
@@ -4226,7 +4259,7 @@ msgstr "Konexioaren proba arrakastatsua"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
 msgid "Connection failed. Check connection params"
 msgstr "Konexioa huts egin du. Egiaztatu konexioaren parametak"
 
@@ -5807,15 +5840,15 @@ msgstr ""
 "Sortutako makinen makina baliotsuen gama. Barruan egon behar du 00: 50: 56: "
 "00: 00: 00-00: 50: 56: 3F: FF: FF"
 
-#: services/Vmware_enterprise/provider.py:126
+#: services/Vmware_enterprise/provider.py:136
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter Plataforma hornitzailea"
 
-#: services/Vmware_enterprise/provider.py:128
+#: services/Vmware_enterprise/provider.py:138
 msgid "Provides connection to Virtual Center Services"
 msgstr "Virtual Center zerbitzuetarako konexioa eskaintzen du"
 
-#: services/Vmware_enterprise/provider.py:287
+#: services/Vmware_enterprise/provider.py:306
 msgid "Connection params ok"
 msgstr "Konexio parametroak ondo daude"
 
@@ -6061,47 +6094,47 @@ msgstr "Itzala"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Itzal memoria biderkatzailea (erabili arretaz)"
 
-#: temp_for_locales.py:122
+#: temp_for_locales.py:125
 msgid "Spanish"
 msgstr "Gaztelera"
 
-#: temp_for_locales.py:123
+#: temp_for_locales.py:126
 msgid "English"
 msgstr "English"
 
-#: temp_for_locales.py:124
+#: temp_for_locales.py:127
 msgid "French"
 msgstr "Frantses"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:128
 msgid "German"
 msgstr "Aleman"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:129
 msgid "Portuguese"
 msgstr "Portugesa"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:130
 msgid "Italian"
 msgstr "Italiera"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:131
 msgid "Basque"
 msgstr "Euskera"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:132
 msgid "Arabic"
 msgstr "Arabiera"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:133
 msgid "Russian"
 msgstr "Errusiera"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:134
 msgid "Catalan"
 msgstr "Katalan"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:135
 msgid "Chinese"
 msgstr "Txinera"
 

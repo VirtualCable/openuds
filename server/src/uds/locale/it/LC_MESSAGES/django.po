@@ -5,6 +5,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Massimo Vignone, 2020
@@ -17,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-01 14:51+0100\n"
+"POT-Creation-Date: 2023-03-15 04:01+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2019\n"
 "Language-Team: Italian (http://www.transifex.com/openuds/openuds/language/"
@@ -248,9 +249,10 @@ msgstr "Troppi risultati ..."
 msgid "Refine your query"
 msgstr "Affina la tua richiesta"
 
-#: REST/methods/authenticators.py:233 REST/methods/transports.py:208
-msgid "Label must contain only letters, numbers, \":\" and \"-\""
-msgstr "L&#39;etichetta deve contenere solo lettere, numeri, \":\" e \"-\""
+#: REST/methods/authenticators.py:233
+#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgid "Label must contain only letters, numbers, or symbols: - : ."
+msgstr "L&#39;etichetta deve contenere solo lettere, numeri o simboli: - : ."
 
 #: REST/methods/calendarrules.py:98
 msgid "Rule name"
@@ -687,7 +689,7 @@ msgstr "Rapporti disponibili"
 
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
-#: auths/ActiveDirectory_enterprise/authenticator.py:153
+#: auths/ActiveDirectory_enterprise/authenticator.py:174
 #: auths/AzureAD_enterprise/azure_ad.py:95
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
@@ -983,6 +985,10 @@ msgstr ""
 "Etichetta di trasporto Metapool (utilizzata solo nel raggruppamento di "
 "trasporti metapool)"
 
+#: REST/methods/transports.py:208
+msgid "Label must contain only letters, numbers, \":\" and \"-\""
+msgstr "L&#39;etichetta deve contenere solo lettere, numeri, \":\" e \"-\""
+
 #: REST/methods/tunnel_token.py:49
 msgid "Tunnel tokens"
 msgstr "Gettoni tunnel"
@@ -1075,7 +1081,7 @@ msgid "Current users"
 msgstr "Utenti attuali"
 
 #: REST/methods/users_groups.py:162
-#: auths/ActiveDirectory_enterprise/authenticator.py:151
+#: auths/ActiveDirectory_enterprise/authenticator.py:172
 #: auths/EDirectory_enterprise/authenticator.py:112
 #: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
@@ -1230,7 +1236,7 @@ msgstr ""
 "formato USER@DOMAIN.DOM)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
@@ -1262,6 +1268,43 @@ msgid "Password of the ldap user"
 msgstr "Password dell'utente ldap"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:88
+msgid "Override Base"
+msgstr "Sostituisci Base"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:91
+msgid ""
+"If not empty, will override AD search base with this value (format: dc=..., "
+"dc=...)"
+msgstr ""
+"Se non vuoto, sovrascriverà la base di ricerca di AD con questo valore "
+"(formato: dc = ..., dc = ...)"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:99
+msgid "Default domain"
+msgstr "Dominio predefinito"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:102
+msgid ""
+"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
+"does not use UPN (user@domain) as login, this domain will be appended."
+msgstr ""
+"Se non è vuoto, la compatibilità è \"Windows 2000 e versioni successive\" e "
+"l&#39;utente non utilizza UPN (user@domain) come login, questo dominio verrà "
+"aggiunto."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:111
+msgid "Backup server"
+msgstr "Server di backup"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:114
+msgid ""
+"If not empty, this host will be used in case main host server is not "
+"reachable"
+msgstr ""
+"Se non è vuoto, questo host verrà utilizzato nel caso in cui il server host "
+"principale non sia raggiungibile"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:123
 #: auths/EDirectory_enterprise/authenticator.py:85
 #: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
@@ -1277,77 +1320,72 @@ msgstr "Password dell'utente ldap"
 msgid "Timeout"
 msgstr "TImeout"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:91
+#: auths/ActiveDirectory_enterprise/authenticator.py:126
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Timeout in secondi per la connessione ad Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
-msgid "Override Base"
-msgstr "Sostituisci Base"
+#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: services/Vmware_enterprise/provider.py:121
+msgid "Verify SSL"
+msgstr "Verifica SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:100
+#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: services/Vmware_enterprise/provider.py:125
 msgid ""
-"If not empty, will override AD search base with this value (format: dc=..., "
-"dc=...)"
+"If checked, SSL verification will be enforced. If not, SSL verification will "
+"be disabled"
 msgstr ""
-"Se non vuoto, sovrascriverà la base di ricerca di AD con questo valore "
-"(formato: dc = ..., dc = ...)"
+"Se selezionato, verrà applicata la verifica SSL. In caso contrario, la "
+"verifica SSL sarà disabilitata"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:108
-msgid "Default domain"
-msgstr "Dominio predefinito"
+#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+msgid "Certificate"
+msgstr "Certificato"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:111
-msgid ""
-"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use UPN (user@domain) as login, this domain will be appended."
-msgstr ""
-"Se non è vuoto, la compatibilità è \"Windows 2000 e versioni successive\" e "
-"l&#39;utente non utilizza UPN (user@domain) come login, questo dominio verrà "
-"aggiunto."
+#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#| msgid "Force SSL certificate verification"
+msgid "Certificate to use for SSL verification"
+msgstr "Certificato da utilizzare per la verifica SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:120
-msgid "Backup server"
-msgstr "Server di backup"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:123
-msgid ""
-"If not empty, this host will be used in case main host server is not "
-"reachable"
-msgstr ""
-"Se non è vuoto, questo host verrà utilizzato nel caso in cui il server host "
-"principale non sia raggiungibile"
-
-#: auths/ActiveDirectory_enterprise/authenticator.py:133
+#: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:95
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
 #: auths/SAML_enterprise/saml.py:207
 msgid "MFA attribute"
 msgstr "Attributo MFA"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:135
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:97
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
 #: auths/SAML_enterprise/saml.py:209
 msgid "Attribute from where to extract the MFA code"
 msgstr "Attributo da cui estrarre il codice MFA"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:140
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid "Active Directory Authenticator"
 msgstr "Autenticatore Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:142
+#: auths/ActiveDirectory_enterprise/authenticator.py:163
 msgid "Authenticate against Active Directory"
 msgstr "Autentica con Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:187
-#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:213
+#: auths/ActiveDirectory_enterprise/authenticator.py:688
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "È necessario specificare il nome utente nel formato USERNAME@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:523
-#: auths/ActiveDirectory_enterprise/authenticator.py:580
+#: auths/ActiveDirectory_enterprise/authenticator.py:356
+msgid ""
+"Could not connect to any AD server. Check your configuration (server, ssl "
+"certificates, ...)."
+msgstr ""
+"Impossibile connettersi a nessun server AD. Controlla la tua configurazione ("
+"server, certificati ssl, ...)."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:561
+#: auths/ActiveDirectory_enterprise/authenticator.py:618
 #: auths/AzureAD_enterprise/azure_ad.py:315
 #: auths/EDirectory_enterprise/authenticator.py:293
 #: auths/EDirectory_enterprise/authenticator.py:324
@@ -1356,34 +1394,34 @@ msgstr ""
 msgid "Username not found"
 msgstr "Nome utente non trovato"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:562
+#: auths/ActiveDirectory_enterprise/authenticator.py:600
 #: auths/SimpleLDAP/authenticator.py:468
 msgid "Group not found"
 msgstr "Gruppo non trovato"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:607
-#: auths/ActiveDirectory_enterprise/authenticator.py:629
+#: auths/ActiveDirectory_enterprise/authenticator.py:645
+#: auths/ActiveDirectory_enterprise/authenticator.py:667
 #: auths/EDirectory_enterprise/authenticator.py:346
 #: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
 #: auths/SimpleLDAP/authenticator.py:523
 msgid "Too many results, be more specific"
 msgstr "Troppi risultati, essere più specifici"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:661
+#: auths/ActiveDirectory_enterprise/authenticator.py:699
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Il dominio sembra essere errato, per favore controllalo"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:680
+#: auths/ActiveDirectory_enterprise/authenticator.py:718
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Il server non sembra un Active Directory (non ha oggetti utente)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:703
+#: auths/ActiveDirectory_enterprise/authenticator.py:741
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Il server non sembra un Active Directory (non ha oggetti di gruppo)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:712
+#: auths/ActiveDirectory_enterprise/authenticator.py:750
 #: auths/EDirectory_enterprise/authenticator.py:469
 #: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1486,7 +1524,7 @@ msgstr "Autenticatore SAML, spazi non supportati nel campo Nome"
 msgid "Authenticator exception:"
 msgstr "Eccezione dell'autenticatore:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:49
+#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "Errore di connessione:"
 
@@ -1819,10 +1857,6 @@ msgstr ""
 #: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "Certificati"
-
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
-msgid "Certificate"
-msgstr "Certificato"
 
 #: auths/SAML_enterprise/saml.py:132
 msgid ""
@@ -2209,7 +2243,7 @@ msgstr "Credenziali"
 msgid "Tunnel"
 msgstr "Tunnel"
 
-#: core/util/ldaputil.py:102
+#: core/util/ldaputil.py:118
 msgid "Can't contact LDAP server"
 msgstr "Impossibile contattare il server LDAP"
 
@@ -2590,7 +2624,6 @@ msgid "Allowed variables are: {code}, {username}, {ip}"
 msgstr "Le variabili consentite sono: {code}, {username}, {ip}"
 
 #: mfas/Email/mfa.py:169
-#| msgid "Enable HTML"
 msgid "Mail HTML"
 msgstr "Posta HTML"
 
@@ -3874,7 +3907,7 @@ msgstr "Ottenuto dall&#39;utente creato su AWS IAM per UDS Enterprise - Chiavi"
 #: services/OpenStack/provider.py:143 services/OpenStack/provider_legacy.py:160
 #: services/Proxmox/provider.py:101 services/VCloud_enterprise/provider.py:96
 #: services/Vmware_enterprise/provider.py:76
-#: services/Vmware_enterprise/provider.py:182 services/Xen/provider.py:123
+#: services/Vmware_enterprise/provider.py:194 services/Xen/provider.py:123
 msgid "Creation concurrency"
 msgstr "Concorrenza di creazione"
 
@@ -3901,7 +3934,7 @@ msgstr "Numero massimo di VM create contemporaneamente"
 #: services/OpenStack/provider.py:154 services/OpenStack/provider_legacy.py:171
 #: services/Proxmox/provider.py:112 services/VCloud_enterprise/provider.py:107
 #: services/Vmware_enterprise/provider.py:87
-#: services/Vmware_enterprise/provider.py:188 services/Xen/provider.py:134
+#: services/Vmware_enterprise/provider.py:200 services/Xen/provider.py:134
 msgid "Removal concurrency"
 msgstr "Concorrenza di rimozione"
 
@@ -4256,7 +4289,7 @@ msgstr "Test di connessione riuscito"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:291
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
 msgid "Connection failed. Check connection params"
 msgstr "Connessione fallita. Controllare i parametri di connessione"
 
@@ -5840,15 +5873,15 @@ msgstr ""
 "Intervallo di mac validi per le VM create. Deve essere all'interno di "
 "00:50:56:00:00:00-00:50:56:3F:FF:FF"
 
-#: services/Vmware_enterprise/provider.py:126
+#: services/Vmware_enterprise/provider.py:136
 msgid "VMWare VCenter Platform Provider"
 msgstr "VMWare VCenter Platform Provider"
 
-#: services/Vmware_enterprise/provider.py:128
+#: services/Vmware_enterprise/provider.py:138
 msgid "Provides connection to Virtual Center Services"
 msgstr "Fornisce la connessione ai Virtual Center Services"
 
-#: services/Vmware_enterprise/provider.py:287
+#: services/Vmware_enterprise/provider.py:306
 msgid "Connection params ok"
 msgstr "Parametri di connessione validi"
 
@@ -6096,47 +6129,47 @@ msgstr "Shadow"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Moltiplicatore di memoria shadow (usare con cura)"
 
-#: temp_for_locales.py:122
+#: temp_for_locales.py:125
 msgid "Spanish"
 msgstr "Spagnolo"
 
-#: temp_for_locales.py:123
+#: temp_for_locales.py:126
 msgid "English"
 msgstr "Inglese"
 
-#: temp_for_locales.py:124
+#: temp_for_locales.py:127
 msgid "French"
 msgstr "Francese"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:128
 msgid "German"
 msgstr "Tedesco"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:129
 msgid "Portuguese"
 msgstr "Portoghese"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:130
 msgid "Italian"
 msgstr "Italiano"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:131
 msgid "Basque"
 msgstr "Basco"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:132
 msgid "Arabic"
 msgstr "Arabo"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:133
 msgid "Russian"
 msgstr "Russo"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:134
 msgid "Catalan"
 msgstr "Catalano"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:135
 msgid "Chinese"
 msgstr "Cinese"
 
