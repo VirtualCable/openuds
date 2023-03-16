@@ -95,6 +95,7 @@ class HTML5SSHTransport(transports.Transport):
     sshPrivateKey = gui.TextField(
         label=_('SSH Private Key'),
         order=22,
+        multiline=4,
         tooltip=_(
             'Private key for SSH authentication. If not provided, password authentication is used.'
         ),
@@ -117,18 +118,39 @@ class HTML5SSHTransport(transports.Transport):
         ),
         tab=gui.PARAMETERS_TAB,
     )
+    enableFileSharing = gui.ChoiceField(
+        label=_('File Sharing'),
+        order=31,
+        tooltip=_('File upload/download redirection policy'),
+        defvalue='false',
+        values=[
+            {'id': 'false', 'text': _('Disable file sharing')},
+            {'id': 'down', 'text': _('Allow download only')},
+            {'id': 'up', 'text': _('Allow upload only')},
+            {'id': 'true', 'text': _('Enable file sharing')},
+        ],
+        tab=gui.PARAMETERS_TAB,
+    )
+    fileSharingRoot = gui.TextField(
+        label=_('File Sharing Root'),
+        order=32,
+        tooltip=_(
+            'Root path for file sharing. If not provided, root directory will be used.'
+        ),
+        tab=gui.PARAMETERS_TAB,
+    )
     sshPort = gui.NumericField(
         length=40,
         label=_('SSH Server port'),
         defvalue='22',
-        order=22,
+        order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
         tab=gui.PARAMETERS_TAB,
     )
     sshHostKey = gui.TextField(
         label=_('SSH Host Key'),
-        order=41,
+        order=34,
         tooltip=_(
             'Host key of the SSH server. If not provided, no verification of host identity is done.'
         ),
@@ -138,7 +160,7 @@ class HTML5SSHTransport(transports.Transport):
         length=3,
         label=_('Server Keep Alive'),
         defvalue='30',
-        order=42,
+        order=35,
         tooltip=_(
             'Time in seconds between keep alive messages sent to server. If not provided, no keep alive messages are sent.'
         ),
@@ -239,6 +261,19 @@ class HTML5SSHTransport(transports.Transport):
         ):
             if i[1].value.strip():
                 params[i[0]] = i[1].value.strip()
+
+        # Filesharing using guacamole sftp
+        if self.enableFileSharing.value != 'false':
+            params['enable-sftp'] = 'true'
+            
+            if self.fileSharingRoot.value.strip():
+                params['sftp-root-directory'] = self.fileSharingRoot.value.strip()
+
+            if self.enableFileSharing.value not in ('down', 'true'):
+                 params['sftp-disable-download'] = 'true'
+            
+            if self.enableFileSharing.value not in ('up', 'true'):
+                    params['sftp-disable-upload'] = 'true'
 
         logger.debug('SSH Params: %s', params)
 
