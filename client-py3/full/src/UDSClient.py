@@ -151,6 +151,8 @@ class UDSClient(QtWidgets.QMainWindow):
             return
         except Exception as e:
             self.showError(e)
+            self.closeWindow()
+            return
 
         self.getTransportData()
 
