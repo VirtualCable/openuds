@@ -629,7 +629,7 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options, type=gui.InputField.Types.NUMERIC)
             self._data['minValue'] = int(
-                options.get('minValue', options.get('minvalue', '987654321'))
+                options.get('minValue', options.get('minvalue', '-987654321'))
             )
             self._data['maxValue'] = int(
                 options.get('maxValue', options.get('maxvalue', '987654321'))
