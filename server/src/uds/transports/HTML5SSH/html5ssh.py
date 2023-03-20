@@ -33,11 +33,11 @@
 import logging
 import typing
 
-from django.utils.translation import ugettext_noop as _
+from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
 
-from uds.core import transports
+from uds.core import transports, exceptions
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers import cryptoManager
@@ -46,7 +46,8 @@ from uds import models
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import Module
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
+    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -210,7 +211,7 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise transports.Transport.ValidationException(
+            raise exceptions.ValidationError(
                 _('The server must be http or https')
             )
 
@@ -229,15 +230,15 @@ class HTML5SSHTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getLink(  # pylint: disable=too-many-locals
+    def getLink(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: typing.Dict[str, str],
+        os: 'DetectedOsInfo',
         user: 'models.User',
         password: str,
-        request: 'HttpRequest',
+        request: 'ExtendedHttpRequestWithUser',
     ) -> str:
         # Build params dict
         params = {

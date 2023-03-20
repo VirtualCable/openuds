@@ -7,7 +7,7 @@ DO_NOT_REPEAT = cfg.Config.section('Messaging').value(
     'Uniqueness',
     '10',
     help=_('Number of seconds to ignore repeated messages'),
-    type=cfg.Config.NUMERIC_FIELD,
+    type=cfg.Config.FieldType.NUMERIC,
 )
 
 # Ensure that we have a default value for this on startup
