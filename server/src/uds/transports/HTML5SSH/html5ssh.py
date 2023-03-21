@@ -83,13 +83,13 @@ class HTML5SSHTransport(transports.Transport):
     username = gui.TextField(
         label=_('Username'),
         order=20,
-        tooltip=_('Username for VNC connection authentication.'),
+        tooltip=_('Username for SSH connection authentication.'),
         tab=gui.CREDENTIALS_TAB,
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
-        tooltip=_('Password for VNC connection authentication'),
+        tooltip=_('Password for SSH connection authentication'),
         tab=gui.CREDENTIALS_TAB,
     )
     sshPrivateKey = gui.TextField(
