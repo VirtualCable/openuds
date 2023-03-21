@@ -3,6 +3,8 @@ import random
 from datetime import datetime, timedelta
 import ipaddress
 import typing
+import ssl
+
 
 from cryptography import x509
 from cryptography.x509.oid import NameOID
@@ -10,7 +12,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-
+import certifi
 
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     key = rsa.generate_private_key(
@@ -50,3 +52,11 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
         cert.public_bytes(encoding=serialization.Encoding.PEM).decode(),
         password,
     )
+
+def createSslContext(verify: bool = True) -> ssl.SSLContext:
+    if verify:
+        sslContext = ssl.create_default_context(cafile=certifi.where())
+    else:
+        sslContext = ssl._create_unverified_context()  # pylint: disable=protected-access
+    
+    return sslContext
