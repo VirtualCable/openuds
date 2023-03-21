@@ -127,6 +127,8 @@ class RestApi:
                 raise InvalidVersion(downloadUrl)
 
             return self._serverVersion
+        except InvalidVersion:
+            raise
         except Exception as e:
             raise UDSException(e)
 
