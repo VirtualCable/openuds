@@ -328,6 +328,12 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             ) = vals[14:17]
             self._verifySsl = gui.strToBool(verifySsl)
 
+    def mfaStorageKey(self, username: str) -> str:
+        return 'mfa_' + str(self.dbAuthenticator().uuid) + username
+
+    def mfaIdentifier(self, username: str) -> str:
+        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+
     def __connection(
         self
     ):
@@ -371,13 +377,17 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
+        attributes = [i for i in self._userNameAttr.split(',') + [self._userIdAttr]]
+        if self._mfaAttr:
+            attributes = attributes + [self._mfaAttr]
+
         return ldaputil.getFirst(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
             field=self._userIdAttr,
             value=username,
-            attributes=[i for i in self._userNameAttr.split(',') + [self._userIdAttr]],
+            attributes=attributes,
             sizeLimit=LDAP_RESULT_LIMIT,
         )
 
@@ -472,6 +482,13 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     getRequest(), self.dbAuthenticator(), username, 'Invalid password'
                 )
                 return False
+
+            # store the user mfa attribute if it is set
+            if self._mfaAttr:
+                self.storage.putPickle(
+                    self.mfaStorageKey(username),
+                    user[self._mfaAttr][0],
+                )
 
             groupsManager.validate(self.__getGroups(user))
 
