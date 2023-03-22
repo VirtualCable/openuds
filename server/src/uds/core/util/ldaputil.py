@@ -109,8 +109,10 @@ def connection(
         l.network_timeout = int(timeout)
         l.protocol_version = ldap.VERSION3  # type: ignore
 
+        certificate = (certificate or '').strip()
+
         if ssl:
-            if certificate is not None and verify_ssl:  # If not verify_ssl, we don't need the certificate
+            if certificate and verify_ssl:  # If not verify_ssl, we don't need the certificate
                 # Create a semi-temporary ca file, with the content of the certificate
                 # The name is from the host, so we can ovwerwrite it if needed
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')

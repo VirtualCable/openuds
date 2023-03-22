@@ -96,15 +96,35 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=3,
         label=_('Timeout'),
         defvalue='10',
-        order=6,
+        order=10,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
         minValue=1,
+        tab=gui.Tab.ADVANCED,
     )
+    verifySsl = gui.CheckBoxField(
+        label=_('Verify SSL'),
+        defvalue=True,
+        order=11,
+        tooltip=_(
+            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
+        ),
+        tab=gui.Tab.ADVANCED,
+    )
+    certificate = gui.TextField(
+        length=8192,
+        multiline=4,
+        label=_('Certificate'),
+        order=12,
+        tooltip=_('Certificate to use for SSL verification'),
+        required=False,
+        tab=gui.Tab.ADVANCED,
+    )
+
     ldapBase = gui.TextField(
         length=64,
         label=_('Base'),
-        order=7,
+        order=30,
         tooltip=_('Common search base (used for "users" and "groups")'),
         required=True,
         tab=_('Ldap info'),
@@ -113,7 +133,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('User class'),
         defvalue='posixAccount',
-        order=8,
+        order=31,
         tooltip=_('Class for LDAP users (normally posixAccount)'),
         required=True,
         tab=_('Ldap info'),
@@ -122,7 +142,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('User Id Attr'),
         defvalue='uid',
-        order=9,
+        order=32,
         tooltip=_('Attribute that contains the user id'),
         required=True,
         tab=_('Ldap info'),
@@ -131,7 +151,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('User Name Attr'),
         defvalue='uid',
-        order=10,
+        order=33,
         tooltip=_(
             'Attributes that contains the user name (list of comma separated values)'
         ),
@@ -142,7 +162,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('Group class'),
         defvalue='posixGroup',
-        order=11,
+        order=34,
         tooltip=_('Class for LDAP groups (normally poxisGroup)'),
         required=True,
         tab=_('Ldap info'),
@@ -151,7 +171,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('Group Id Attr'),
         defvalue='cn',
-        order=12,
+        order=35,
         tooltip=_('Attribute that contains the group id'),
         required=True,
         tab=_('Ldap info'),
@@ -160,11 +180,21 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         length=64,
         label=_('Group membership attr'),
         defvalue='memberUid',
-        order=13,
+        order=36,
         tooltip=_('Attribute of the group that contains the users belonging to it'),
         required=True,
         tab=_('Ldap info'),
     )
+    mfaAttr = gui.TextField(
+        length=2048,
+        multiline=2,
+        label=_('MFA attribute'),
+        order=13,
+        tooltip=_('Attribute from where to extract the MFA code'),
+        required=False,
+        tab=gui.MFA_TAB,
+    )
+
 
     typeName = _('SimpleLDAP (DEPRECATED)')
     typeType = 'SimpleLdapAuthenticator'
@@ -196,6 +226,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     _groupIdAttr: str = ''
     _memberAttr: str = ''
     _userNameAttr: str = ''
+    _mfaAttr: str = ''
+    _verifySsl: bool = True
+    _certificate: str = ''
+
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if values:
@@ -214,6 +248,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._userNameAttr = values['userNameAttr'].replace(
                 ' ', ''
             )  # Removes white spaces
+            self._mfaAttr = values['mfaAttr']
+            self._verifySsl = gui.toBool(values['verifySsl'])
+            self._certificate = values['certificate']
 
     def valuesDict(self) -> gui.ValuesDictType:
         return {
@@ -230,12 +267,15 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             'groupIdAttr': self._groupIdAttr,
             'memberAttr': self._memberAttr,
             'userNameAttr': self._userNameAttr,
+            'mfaAttr': self._mfaAttr,
+            'verifySsl': gui.fromBool(self._verifySsl),
+            'certificate': self._certificate,
         }
 
     def marshal(self) -> bytes:
         return '\t'.join(
             [
-                'v1',
+                'v2',
                 self._host,
                 self._port,
                 gui.fromBool(self._ssl),
@@ -249,41 +289,59 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 self._groupIdAttr,
                 self._memberAttr,
                 self._userNameAttr,
+                self._mfaAttr,
+                gui.boolToStr(self._verifySsl),
+                self._certificate.strip(),
             ]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes):
         vals = data.decode('utf8').split('\t')
-        if vals[0] == 'v1':
-            logger.debug("Data: %s", vals[1:])
+        self._verifySsl = False  # Backward compatibility
+        self._mfaAttr = ''  # Backward compatibility
+        self._certificate = ''  # Backward compatibility
+
+        logger.debug("Data: %s", vals[1:])
+        (
+            self._host,
+            self._port,
+            ssl,
+            self._username,
+            self._password,
+            self._timeout,
+            self._ldapBase,
+            self._userClass,
+            self._groupClass,
+            self._userIdAttr,
+            self._groupIdAttr,
+            self._memberAttr,
+            self._userNameAttr,
+        ) = vals[1:14]
+        self._ssl = gui.strToBool(ssl)
+
+        if vals[0]  == 'v2':
             (
-                self._host,
-                self._port,
-                ssl,
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._groupClass,
-                self._userIdAttr,
-                self._groupIdAttr,
-                self._memberAttr,
-                self._userNameAttr,
-            ) = vals[1:]
-            self._ssl = gui.toBool(ssl)
+                self._mfaAttr,
+                verifySsl,
+                self._certificate
+            ) = vals[14:17]
+            self._verifySsl = gui.strToBool(verifySsl)
+
+    def mfaStorageKey(self, username: str) -> str:
+        return 'mfa_' + str(self.dbAuthenticator().uuid) + username
+
+    def mfaIdentifier(self, username: str) -> str:
+        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def __connection(
-        self,
-        username: typing.Optional[str] = None,
-        password: typing.Optional[str] = None,
+        self
     ):
         """
         Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
         @return: Connection established
         @raise exception: If connection could not be established
         """
-        if self._connection is None:  # We want this method also to check credentials
+        if self._connection is None:  # We are not connected
             self._connection = ldaputil.connection(
                 self._username,
                 self._password,
@@ -292,6 +350,8 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 ssl=self._ssl,
                 timeout=int(self._timeout),
                 debug=False,
+                verify_ssl=self._verifySsl,
+                certificate=self._certificate,
             )
 
         return self._connection
@@ -305,6 +365,8 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             ssl=self._ssl,
             timeout=int(self._timeout),
             debug=False,
+            verify_ssl=self._verifySsl,
+            certificate=self._certificate,
         )
 
     def __getUser(self, username: str) -> typing.Optional[ldaputil.LDAPResultType]:
@@ -314,13 +376,17 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
+        attributes = [i for i in self._userNameAttr.split(',') + [self._userIdAttr]]
+        if self._mfaAttr:
+            attributes = attributes + [self._mfaAttr]
+
         return ldaputil.getFirst(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
             field=self._userIdAttr,
             value=username,
-            attributes=[i for i in self._userNameAttr.split(',') + [self._userIdAttr]],
+            attributes=attributes,
             sizeLimit=LDAP_RESULT_LIMIT,
         )
 
@@ -415,6 +481,13 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     request, self.dbAuthenticator(), username, 'Invalid password'
                 )
                 return auths.FAILED_AUTH
+
+            # store the user mfa attribute if it is set
+            if self._mfaAttr:
+                self.storage.putPickle(
+                    self.mfaStorageKey(username),
+                    user[self._mfaAttr][0],
+                )
 
             groupsManager.validate(self.__getGroups(user))
 
