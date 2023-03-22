@@ -106,16 +106,34 @@ class RegexLdap(auths.Authenticator):
         length=3,
         label=_('Timeout'),
         defvalue='10',
-        order=6,
+        order=10,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
         minValue=1,
+        tab=gui.ADVANCED_TAB,
     )
-
+    verifySsl = gui.CheckBoxField(
+        label=_('Verify SSL'),
+        defvalue=True,
+        order=11,
+        tooltip=_(
+            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
+        ),
+        tab=gui.ADVANCED_TAB,
+    )
+    certificate = gui.TextField(
+        length=8192,
+        multiline=4,
+        label=_('Certificate'),
+        order=12,
+        tooltip=_('Certificate to use for SSL verification'),
+        required=False,
+        tab=gui.ADVANCED_TAB,
+    )
     ldapBase = gui.TextField(
         length=64,
         label=_('Base'),
-        order=7,
+        order=20,
         tooltip=_('Common search base (used for "users" and "groups")'),
         required=True,
         tab=_('Ldap info'),
@@ -124,7 +142,7 @@ class RegexLdap(auths.Authenticator):
         length=64,
         label=_('User class'),
         defvalue='posixAccount',
-        order=8,
+        order=21,
         tooltip=_('Class for LDAP users (normally posixAccount)'),
         required=True,
         tab=_('Ldap info'),
@@ -133,7 +151,7 @@ class RegexLdap(auths.Authenticator):
         length=64,
         label=_('User Id Attr'),
         defvalue='uid',
-        order=9,
+        order=22,
         tooltip=_('Attribute that contains the user id'),
         required=True,
         tab=_('Ldap info'),
@@ -143,7 +161,7 @@ class RegexLdap(auths.Authenticator):
         label=_('User Name Attr'),
         multiline=2,
         defvalue='uid',
-        order=10,
+        order=23,
         tooltip=_(
             'Attributes that contains the user name attributes or attribute patterns (one for each line)'
         ),
@@ -155,7 +173,7 @@ class RegexLdap(auths.Authenticator):
         label=_('Group Name Attr'),
         multiline=2,
         defvalue='cn',
-        order=11,
+        order=24,
         tooltip=_(
             'Attribute that contains the group name attributes or attribute patterns (one for each line)'
         ),
@@ -168,7 +186,7 @@ class RegexLdap(auths.Authenticator):
         length=64,
         label=_('Alt. class'),
         defvalue='',
-        order=20,
+        order=25,
         tooltip=_(
             'Class for LDAP objects that will be also checked for groups retrieval (normally empty)'
         ),
@@ -180,7 +198,7 @@ class RegexLdap(auths.Authenticator):
         length=2048,
         multiline=2,
         label=_('MFA attribute'),
-        order=13,
+        order=30,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
         tab=gui.MFA_TAB,
@@ -216,14 +234,10 @@ class RegexLdap(auths.Authenticator):
     _userNameAttr: str = ''
     _altClass: str = ''
     _mfaAttr: str = ''
+    _verifySsl: bool = True
+    _certificate: str = ''
 
-    def __init__(
-        self,
-        dbAuth: 'models.Authenticator',
-        environment: 'Environment',
-        values: typing.Optional[typing.Dict[str, str]],
-    ):
-        super().__init__(dbAuth, environment, values)
+    def initialize(self, values: typing.Optional[typing.Dict[str, str]]) -> None:
         if values:
             self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
             self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
@@ -243,6 +257,8 @@ class RegexLdap(auths.Authenticator):
             self._userNameAttr = values['userNameAttr']
             self._altClass = values['altClass']
             self._mfaAttr = values['mfaAttr']
+            self._verifySsl = gui.strToBool(values['verifySsl'])
+            self._certificate = values['certificate']
 
     def __validateField(self, field: str, fieldLabel: str) -> None:
         """
@@ -309,7 +325,7 @@ class RegexLdap(auths.Authenticator):
         return res
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbAuthenticator().uuid + username
+        return 'mfa_' + self.dbAuthenticator().uuid + username  # type: ignore
 
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
@@ -329,12 +345,14 @@ class RegexLdap(auths.Authenticator):
             'userNameAttr': self._userNameAttr,
             'altClass': self._altClass,
             'mfaAttr': self._mfaAttr,
+            'verifySsl': gui.boolToStr(self._verifySsl),
+            'certificate': self._certificate,
         }
 
     def marshal(self) -> bytes:
         return '\t'.join(
             [
-                'v4',
+                'v5',
                 self._host,
                 self._port,
                 gui.boolToStr(self._ssl),
@@ -348,81 +366,66 @@ class RegexLdap(auths.Authenticator):
                 self._userNameAttr,
                 self._altClass,
                 self._mfaAttr,
+                gui.boolToStr(self._verifySsl),
+                self._certificate.strip(),
             ]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
+
+        self._verifySsl = False # Backward compatibility
+        self._mfaAttr = '' # Backward compatibility
+        self._certificate = '' # Backward compatibility
+
+        # Common
+        logger.debug('Common: %s', vals[1:11])
+        (
+            self._host,
+            self._port,
+            ssl,
+            self._username,
+            self._password,
+            self._timeout,
+            self._ldapBase,
+            self._userClass,
+            self._userIdAttr,
+            self._groupNameAttr,
+        ) = vals[1:11]
+        self._ssl = gui.strToBool(ssl)
+
         if vals[0] == 'v1':
-            logger.debug("Data: %s", vals[1:])
-            (
-                self._host,
-                self._port,
-                ssl,
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._userIdAttr,
-                self._groupNameAttr,
-                _regex,
-                self._userNameAttr,
-            ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            logger.debug("Data: %s", vals[11:])
+            _regex, self._userNameAttr = vals[11:]
             self._groupNameAttr = self._groupNameAttr + '=' + _regex
             self._userNameAttr = '\n'.join(self._userNameAttr.split(','))
         elif vals[0] == 'v2':
             logger.debug("Data v2: %s", vals[1:])
-            (
-                self._host,
-                self._port,
-                ssl,
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._userIdAttr,
-                self._groupNameAttr,
-                self._userNameAttr,
-            ) = vals[1:]
+            self._userNameAttr = vals[11]
             self._ssl = gui.strToBool(ssl)
         elif vals[0] == 'v3':
             logger.debug("Data v3: %s", vals[1:])
             (
-                self._host,
-                self._port,
-                ssl,
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._userIdAttr,
-                self._groupNameAttr,
                 self._userNameAttr,
                 self._altClass,
-            ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            ) = vals[11:]
         elif vals[0] == 'v4':
             logger.debug("Data v4: %s", vals[1:])
             (
-                self._host,
-                self._port,
-                ssl,
-                self._username,
-                self._password,
-                self._timeout,
-                self._ldapBase,
-                self._userClass,
-                self._userIdAttr,
-                self._groupNameAttr,
                 self._userNameAttr,
                 self._altClass,
                 self._mfaAttr,
-            ) = vals[1:]
-            self._ssl = gui.strToBool(ssl)
+            ) = vals[11:]
+        elif vals[0] == 'v5':
+            logger.debug("Data v5: %s", vals[1:])
+            (
+                self._userNameAttr,
+                self._altClass,
+                self._mfaAttr,
+                verifySsl,
+                self._certificate,
+            ) = vals[11:]
+            self._verifySsl = gui.strToBool(verifySsl)
 
     def __connection(self) -> typing.Any:
         """
@@ -430,7 +433,7 @@ class RegexLdap(auths.Authenticator):
         @return: Connection established
         @raise exception: If connection could not be established
         """
-        if self._connection is None:  # We want this method also to check credentials
+        if self._connection is None: # If connection is not established, try to connect
             self._connection = ldaputil.connection(
                 self._username,
                 self._password,
