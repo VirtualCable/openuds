@@ -308,7 +308,6 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=_('Metadata'),
     )
 
-
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -366,9 +365,7 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             pk = cryptoManager().loadPrivateKey(self.privateKey.value)
         except Exception as e:
-            raise exceptions.ValidationError(
-                gettext('Invalid private key. ') + str(e)
-            )
+            raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
 
         request: 'ExtendedHttpRequest' = values['_request']
 
@@ -382,7 +379,9 @@ class SAMLAuthenticator(auths.Authenticator):
         if idpMetadata.startswith('http://') or idpMetadata.startswith('https://'):
             logger.debug('idp Metadata is an URL: %s', idpMetadata)
             try:
-                resp = requests.get(idpMetadata.split('\n')[0], verify=self.checkSSLCertificate.isTrue())
+                resp = requests.get(
+                    idpMetadata.split('\n')[0], verify=self.checkSSLCertificate.isTrue()
+                )
                 idpMetadata = resp.content.decode()
             except Exception as e:
                 raise exceptions.ValidationError(
@@ -446,7 +445,10 @@ class SAMLAuthenticator(auths.Authenticator):
     def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
             try:
-                resp = requests.get(self.idpMetadata.value.split('\n')[0], verify=self.checkSSLCertificate.isTrue())
+                resp = requests.get(
+                    self.idpMetadata.value.split('\n')[0],
+                    verify=self.checkSSLCertificate.isTrue(),
+                )
                 val = resp.content.decode()
             except Exception as e:
                 logger.error('Error fetching idp metadata: %s', e)
@@ -483,8 +485,13 @@ class SAMLAuthenticator(auths.Authenticator):
             },
             'idp': self.getIdpMetadataDict()['idp'],
             'security': {
-                'metadataCacheDuration': self.metadataCacheDuration.int_value if self.metadataCacheDuration.int_value > 0 else None,
-                'metadataValidUntil': getSqlDatetime() + datetime.timedelta(seconds=self.metadataValidityDuration.int_value) if self.metadataCacheDuration.int_value > 0 else None,
+                'metadataCacheDuration': self.metadataCacheDuration.int_value
+                if self.metadataCacheDuration.int_value > 0
+                else None,
+                'metadataValidUntil': getSqlDatetime()
+                + datetime.timedelta(seconds=self.metadataValidityDuration.int_value)
+                if self.metadataCacheDuration.int_value > 0
+                else None,
                 'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
                 'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
                 'logoutRequestSigned': self.logoutRequestSigned.isTrue(),
@@ -589,7 +596,6 @@ class SAMLAuthenticator(auths.Authenticator):
         req: typing.Dict[str, typing.Any],
         request: 'ExtendedHttpRequestWithUser',
     ) -> auths.AuthenticationResult:
-
         # Convert HTTP-POST to HTTP-REDIRECT on SAMLResponse, for just in case...
         if 'SAMLResponse' in req['post_data']:
             if isinstance(req['post_data']['SAMLResponse'], list):
@@ -613,10 +619,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
-            url=url
-            or auths.AuthenticationInternalUrl.getUrl(
-                auths.AuthenticationInternalUrl.LOGIN
-            ),
+            url=url or auths.AuthenticationInternalUrl.LOGIN.getUrl(),
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements

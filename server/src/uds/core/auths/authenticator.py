@@ -72,12 +72,11 @@ class AuthenticationInternalUrl(enum.Enum):
 
     LOGIN = 'page.login'
 
-    @staticmethod
-    def getUrl(internalUrl: 'AuthenticationInternalUrl') -> str:
+    def getUrl(self) -> str:
         """
         Returns the url for the given internal url
         """
-        return reverse(internalUrl.value)
+        return reverse(self.value)
 
 class AuthenticationResult(typing.NamedTuple):
     success: AuthenticationSuccess

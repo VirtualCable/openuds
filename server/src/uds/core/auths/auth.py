@@ -358,9 +358,6 @@ def authenticateViaCallback(
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
     if result.success == auths.AuthenticationSuccess.REDIRECT:
-        # Some STANDARD redirect URLS
-        if result.url == auths.AuthenticationInternalUrl.LOGIN.value:
-            return AuthResult(url=reverse('page.login'))
         return AuthResult(url=result.url)
 
     if result.username:
