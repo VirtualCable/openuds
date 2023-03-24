@@ -14,6 +14,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 import certifi
 
+
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     key = rsa.generate_private_key(
         public_exponent=65537,
@@ -53,10 +54,42 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
         password,
     )
 
+
 def createSslContext(verify: bool = True) -> ssl.SSLContext:
     if verify:
         sslContext = ssl.create_default_context(cafile=certifi.where())
     else:
-        sslContext = ssl._create_unverified_context()  # pylint: disable=protected-access
-    
+        sslContext = (
+            ssl._create_unverified_context()
+        )  # pylint: disable=protected-access
+
     return sslContext
+
+
+def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
+    """
+    Checks if a certificate and a private key match.
+    Borh must be in PEM format.
+    """
+    try:
+        public_cert = (
+            x509.load_pem_x509_certificate(cert.encode(), default_backend())
+            .public_key()
+            .public_bytes(
+                format=serialization.PublicFormat.PKCS1,
+                encoding=serialization.Encoding.PEM,
+            )
+        )
+        public_key = (
+            serialization.load_pem_private_key(
+                key.encode(), password=None, backend=default_backend()
+            )
+            .public_key()
+            .public_bytes(
+                format=serialization.PublicFormat.PKCS1,
+                encoding=serialization.Encoding.PEM,
+            )
+        )
+        return public_cert == public_key
+    except Exception:
+        return False
