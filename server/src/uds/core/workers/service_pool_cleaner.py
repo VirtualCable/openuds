@@ -41,6 +41,8 @@ from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
 
+MAX_REMOVING_TIME = 3600 * 24 * 1  # 2 days, in seconds
+
 
 class DeployedServiceInfoItemsCleaner(Job):
     frecuency = 3607
@@ -49,7 +51,7 @@ class DeployedServiceInfoItemsCleaner(Job):
     )  # Request run cache "info" cleaner every configured seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Info Cleaner'
 
-    def run(self):
+    def run(self) -> None:
         removeFrom = getSqlDatetime() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.getInt()
         )
@@ -65,10 +67,10 @@ class DeployedServiceRemover(Job):
     )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Cleaner'
 
-    def startRemovalOf(self, servicePool: ServicePool):
+    def startRemovalOf(self, servicePool: ServicePool) -> None:
         if (
             servicePool.service is None
-        ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone "touched.. ;)")
+        ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone hand-changed something.. ;)")
             logger.error('Found service pool %s without service', servicePool.name)
             servicePool.delete()  # Just remove it "a las bravas", the best we can do
             return
@@ -88,15 +90,19 @@ class DeployedServiceRemover(Job):
             userService.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
         servicePool.state = State.REMOVING
+        servicePool.state_date = getSqlDatetime()  # Now
         servicePool.name += ' (removed)'
-        servicePool.save()
+        servicePool.save(update_fields=['state', 'state_date', 'name'])
 
-    def continueRemovalOf(self, servicePool: ServicePool):
-        # Recheck that there is no publication created in "bad moment"
+    def continueRemovalOf(self, servicePool: ServicePool) -> None:
+        # get current time
+        now = getSqlDatetime()
+
+        # Recheck that there is no publication created just after "startRemovalOf"
         try:
             for pub in servicePool.publications.filter(state=State.PREPARING):
                 pub.cancel()
-        except Exception:
+        except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         try:
@@ -107,7 +113,7 @@ class DeployedServiceRemover(Job):
             for userService in uServices:
                 logger.debug('Canceling %s', userService)
                 userService.cancel()
-        except Exception:
+        except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         # First, we remove all publications and user services in "info_state"
@@ -116,9 +122,7 @@ class DeployedServiceRemover(Job):
                 state__in=State.INFO_STATES
             ).delete()
 
-        # Mark usable user services as removable
-        now = getSqlDatetime()
-
+        # Mark usable user services as removable, as batch
         with transaction.atomic():
             servicePool.userServices.select_for_update().filter(
                 state=State.USABLE
@@ -139,15 +143,36 @@ class DeployedServiceRemover(Job):
                         state__in=State.INFO_STATES
                     ).delete()
                     if servicePool.publications.count() == 0:
-                        servicePool.removed()  # Mark it as removed, clean later from database
+                        servicePool.removed()  # Mark it as removed, let model decide what to do
             except Exception:
                 logger.exception('Cought unexpected exception at continueRemovalOf: ')
 
-    def run(self):
+    def forceRemovalOf(self, servicePool: ServicePool) -> None:
+        # Simple remove all publications and user services, without checking anything
+        # Log userServices forcet to remove
+        logger.warning(
+            'Service %s has been in removing state for too long, forcing removal',
+            servicePool.name,
+        )
+        for userService in servicePool.userServices.all():
+            logger.warning('Force removing user service %s', userService)
+            userService.delete()
+        servicePool.userServices.all().delete()
+        for publication in servicePool.publications.all():
+            logger.warning('Force removing publication %s', publication)
+            publication.delete()
+
+        servicePool.removed()  # Mark it as removed, let model decide what to do
+
+    def run(self) -> None:
         # First check if there is someone in "removable" estate
+        # Remove older ones first
         removableServicePools: typing.Iterable[
             ServicePool
-        ] = ServicePool.objects.filter(state=State.REMOVABLE)[:10]
+        ] = ServicePool.objects.filter(state=State.REMOVABLE).order_by('state_date')[
+            :10
+        ]
+
         for servicePool in removableServicePools:
             try:
                 # Skips checking deployed services in maintenance mode
@@ -162,9 +187,20 @@ class DeployedServiceRemover(Job):
 
         removingServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(
             state=State.REMOVING
-        )[:10]
+        ).order_by('state_date')[:10]
+        # Check if they have been removing for a long time.
+        # Note. if year is 1972, it comes from a previous version, set state_date to now
+        # If in time and not in maintenance mode, continue removing
         for servicePool in removingServicePools:
             try:
+                if servicePool.state_date.year == 1972:
+                    servicePool.state_date = getSqlDatetime()
+                    servicePool.save(update_fields=['state_date'])
+                if servicePool.state_date < getSqlDatetime() - timedelta(
+                    seconds=MAX_REMOVING_TIME
+                ):
+                    self.forceRemovalOf(servicePool)  # Force removal
+
                 # Skips checking deployed services in maintenance mode
                 if servicePool.isInMaintenance() is False:
                     self.continueRemovalOf(servicePool)
