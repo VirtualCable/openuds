@@ -99,7 +99,7 @@ class DeployedServiceRemover(Job):
         try:
             for pub in servicePool.publications.filter(state=State.PREPARING):
                 pub.cancel()
-        except Exception:
+        except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         try:
@@ -110,7 +110,7 @@ class DeployedServiceRemover(Job):
             for userService in uServices:
                 logger.debug('Canceling %s', userService)
                 userService.cancel()
-        except Exception:
+        except Exception:  # nosec: Dont care if we fail here, we will try again later
             pass
 
         # First, we remove all publications and user services in "info_state"

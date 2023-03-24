@@ -290,7 +290,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 self._memberAttr,
                 self._userNameAttr,
                 self._mfaAttr,
-                gui.boolToStr(self._verifySsl),
+                gui.fromBool(self._verifySsl),
                 self._certificate.strip(),
             ]
         ).encode('utf8')
@@ -317,7 +317,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._memberAttr,
             self._userNameAttr,
         ) = vals[1:14]
-        self._ssl = gui.strToBool(ssl)
+        self._ssl = gui.toBool(ssl)
 
         if vals[0]  == 'v2':
             (
@@ -325,7 +325,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 verifySsl,
                 self._certificate
             ) = vals[14:17]
-            self._verifySsl = gui.strToBool(verifySsl)
+            self._verifySsl = gui.toBool(verifySsl)
 
     def mfaStorageKey(self, username: str) -> str:
         return 'mfa_' + str(self.dbAuthenticator().uuid) + username

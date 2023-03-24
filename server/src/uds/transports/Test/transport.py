@@ -51,14 +51,13 @@ logger = logging.getLogger(__name__)
 
 class TestTransport(transports.Transport):
     """
-    Provides access via RDP to service.
-    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
+    Simpe testing transport. Currently a copy of URLCustomTransport
     """
 
-    typeName = _('URL Launcher')
-    typeType = 'URLTransport'
-    typeDescription = _('Launchs an external UDS customized URL')
-    iconFile = 'url.png'
+    typeName = _('Test Transport')
+    typeType = 'TestTransport'
+    typeDescription = _('Test Transport')
+    iconFile = 'transport.png'
 
     ownLink = True
     supportedOss = OsDetector.allOss

@@ -36,6 +36,7 @@ from django.views.i18n import JavaScriptCatalog
 from django.views.generic.base import RedirectView
 
 from uds import REST
+from uds.core.auths.authenticator import AuthenticationInternalUrl
 import uds.web.views
 import uds.admin.views
 
@@ -84,7 +85,7 @@ urlpatterns = [
     # Index
     path(r'uds/page/services', uds.web.views.main.index, name='page.index'),
     # Login/logout
-    path(r'uds/page/login', uds.web.views.main.login, name='page.login'),
+    path(r'uds/page/login', uds.web.views.main.login, name=AuthenticationInternalUrl.LOGIN.value),
     re_path(
         r'^uds/page/login/(?P<tag>[a-zA-Z0-9-]+)$',
         uds.web.views.main.login,

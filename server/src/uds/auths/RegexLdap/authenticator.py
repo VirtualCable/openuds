@@ -255,7 +255,7 @@ class RegexLdap(auths.Authenticator):
             self._userNameAttr = values['userNameAttr']
             self._altClass = values['altClass']
             self._mfaAttr = values['mfaAttr']
-            self._verifySsl = gui.strToBool(values['verifySsl'])
+            self._verifySsl = gui.toBool(values['verifySsl'])
             self._certificate = values['certificate']
 
     def __validateField(self, field: str, fieldLabel: str) -> None:
@@ -388,7 +388,7 @@ class RegexLdap(auths.Authenticator):
             self._userIdAttr,
             self._groupNameAttr,
         ) = vals[1:11]
-        self._ssl = gui.strToBool(ssl)
+        self._ssl = gui.toBool(ssl)
 
         if vals[0] == 'v1':
             logger.debug("Data: %s", vals[11:])
@@ -421,7 +421,7 @@ class RegexLdap(auths.Authenticator):
                 verifySsl,
                 self._certificate,
             ) = vals[11:]
-            self._verifySsl = gui.strToBool(verifySsl)
+            self._verifySsl = gui.toBool(verifySsl)
 
     def __connection(self) -> typing.Any:
         """
