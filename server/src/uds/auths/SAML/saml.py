@@ -50,6 +50,7 @@ from uds.core.ui import gui
 from uds.core import auths, exceptions
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import allowCache
+from uds.core.util import certs
 
 from . import config
 
@@ -201,6 +202,15 @@ class SAMLAuthenticator(auths.Authenticator):
         defvalue=False,
         order=11,
         tooltip=_('If set, enable lowercase url encoding so ADFS can work correctly'),
+        tab=gui.Tab.ADVANCED,
+    )
+    mfaAttr = gui.TextField(
+        length=2048,
+        multiline=2,
+        label=_('MFA attribute'),
+        order=12,
+        tooltip=_('Attribute from where to extract the MFA code'),
+        required=False,
         tab=gui.Tab.ADVANCED,
     )
 
@@ -367,6 +377,11 @@ class SAMLAuthenticator(auths.Authenticator):
         except Exception as e:
             raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
 
+        if not certs.checkCertificateMatchPrivateKey(cert=self.serverCertificate.value, key=self.privateKey.value):
+            raise exceptions.ValidationError(
+                gettext('Certificate and private key do not match')
+            )
+
         request: 'ExtendedHttpRequest' = values['_request']
 
         if self.entityID.value == '':
@@ -440,7 +455,7 @@ class SAMLAuthenticator(auths.Authenticator):
     @allowCache(
         cachePrefix='idpm',
         cachingKeyFnc=CACHING_KEY_FNC,
-        cacheTimeout=3600,  # 1 hour
+        cacheTimeout=3600*24*365,  # 1 year
     )
     def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
@@ -590,6 +605,15 @@ class SAMLAuthenticator(auths.Authenticator):
             else info
         )
         return info, content_type  # 'application/samlmetadata+xml')
+
+    def mfaStorageKey(self, username: str) -> str:
+        return 'mfa_' + self.dbAuthenticator().uuid + username  # type: ignore
+
+    def mfaClean(self, username: str):
+        self.storage.remove(self.mfaStorageKey(username))
+
+    def mfaIdentifier(self, username: str) -> str:
+        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def logoutFromCallback(
         self,
