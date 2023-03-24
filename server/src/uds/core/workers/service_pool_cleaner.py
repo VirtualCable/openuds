@@ -159,7 +159,7 @@ class DeployedServiceRemover(Job):
             userService.delete()
         servicePool.userServices.all().delete()
         for publication in servicePool.publications.all():
-            logger.warning('Force removing publication %s', publication)
+            logger.warning('Force removing %s', publication)
             publication.delete()
 
         servicePool.removed()  # Mark it as removed, let model decide what to do
