@@ -308,7 +308,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         'values': [gui.choiceItem(-1, '')]
                         + gui.sortedChoices(
                             [
-                                gui.choiceItem(v.uuid, v.name)
+                                gui.choiceItem(v.uuid, v.name)  # type: ignore
                                 for v in models.Proxy.objects.all()
                             ]
                         ),

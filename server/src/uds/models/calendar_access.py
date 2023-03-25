@@ -47,10 +47,10 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAccess(UUIDModel):
-    calendar: 'models.ForeignKey[CalendarAccess, Calendar]' = models.ForeignKey(
+    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(
         Calendar, on_delete=models.CASCADE
     )
-    service_pool: 'models.ForeignKey[CalendarAccess, ServicePool]' = models.ForeignKey(
+    service_pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
         ServicePool, related_name='calendarAccess', on_delete=models.CASCADE
     )
     access = models.CharField(max_length=8, default=states.action.DENY)

@@ -110,7 +110,7 @@ class Transports(ModelHandler):
                 'value': [],
                 'values': sorted(
                     [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
-                    key=lambda x: x['text'].lower(),
+                    key=lambda x: x['text'].lower(),  # type: ignore
                 ),
                 'label': ugettext('Networks'),
                 'tooltip': ugettext(
@@ -148,7 +148,7 @@ class Transports(ModelHandler):
                 'values': [
                     {'id': x.uuid, 'text': x.name}
                     for x in ServicePool.objects.all().order_by('name')
-                    if transport.protocol in x.service.getType().allowedProtocols
+                    if transport.protocol in x.service.getType().allowedProtocols  # type: ignore
                 ],
                 'label': ugettext('Service Pools'),
                 'tooltip': ugettext('Currently assigned services pools'),

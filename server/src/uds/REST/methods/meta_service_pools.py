@@ -256,7 +256,7 @@ class MetaAssignedService(DetailHandler):
         user: User = User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            service.user.pretty_name, user.pretty_name, self._user.pretty_name
+            service.user.pretty_name, user.pretty_name, self._user.pretty_name  # type: ignore
         )
 
         # If there is another service that has this same owner, raise an exception

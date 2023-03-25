@@ -141,7 +141,7 @@ class Actor(Handler):
         except Exception:
             return Actor.result({})
 
-    def get(self):  # pylint: disable=too-many-return-statements
+    def get(self) -> typing.Any:  # pylint: disable=too-many-return-statements
         """
         Processes get requests
         """
@@ -186,7 +186,7 @@ class Actor(Handler):
         raise RequestError('Invalid request')
 
     # Must be invoked as '/rest/actor/UUID/[message], with message data in post body
-    def post(self):  # pylint: disable=too-many-branches
+    def post(self) -> typing.Any:  # pylint: disable=too-many-branches
         """
         Processes post requests
         """

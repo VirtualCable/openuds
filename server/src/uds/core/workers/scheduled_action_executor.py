@@ -43,7 +43,7 @@ class ScheduledAction(Job):
     frecuency = 29  # Frecuncy for this job
     friendly_name = 'Scheduled action runner'
 
-    def run(self):
+    def run(self) -> None:
         configuredAction: CalendarAction
         for configuredAction in CalendarAction.objects.filter(
             service_pool__service__provider__maintenance_mode=False,  # Avoid maintenance

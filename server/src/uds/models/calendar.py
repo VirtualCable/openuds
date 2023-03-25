@@ -65,12 +65,9 @@ class Calendar(UUIDModel, TaggingMixin):
         db_table = 'uds_calendar'
         app_label = 'uds'
 
+    # Override default save to add uuid
     def save(
-        self,
-        force_insert: bool = False,
-        force_update: bool = False,
-        using: bool = None,
-        update_fields: bool = None,
+        self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         logger.debug('Saving calendar')
 

@@ -127,7 +127,7 @@ class Tickets(Handler):
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or ("authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(
         self,
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    ) -> typing.Any:
         """
         Processes put requests, currently only under "create"
         """
@@ -170,7 +170,7 @@ class Tickets(Handler):
             groupIds: typing.List[str] = []
             for groupName in tools.asList(self._params['groups']):
                 try:
-                    groupIds.append(auth.groups.get(name=groupName).uuid)
+                    groupIds.append(auth.groups.get(name=groupName).uuid or '')
                 except Exception:
                     logger.info(
                         'Group %s from ticket does not exists on auth %s, forced creation: %s',
@@ -183,7 +183,7 @@ class Tickets(Handler):
                             auth.groups.create(
                                 name=groupName,
                                 comments='Autocreated form ticket by using force paratemeter',
-                            ).uuid
+                            ).uuid or ''
                         )
 
             if not groupIds:  # No valid group in groups names
@@ -224,7 +224,7 @@ class Tickets(Handler):
 
                     # For metapool, transport is ignored..
 
-                    servicePoolId = 'M' + pool.uuid
+                    servicePoolId = 'M' + pool.uuid  # type: ignore
                     transportId = 'meta'
 
                 except models.MetaPool.DoesNotExist:
@@ -240,7 +240,7 @@ class Tickets(Handler):
                         ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
-                    servicePoolId = 'F' + pool.uuid
+                    servicePoolId = 'F' + pool.uuid  # type: ignore
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')

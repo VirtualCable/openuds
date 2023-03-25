@@ -73,7 +73,7 @@ def getSqlDatetime() -> datetime:
             else 'SELECT CURRENT_TIMESTAMP'
         )
         cursor.execute(sentence)
-        date = cursor.fetchone()[0]
+        date = (cursor.fetchone() or (datetime.now(),))[0]
     else:
         date = (
             datetime.now()

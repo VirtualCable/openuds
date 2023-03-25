@@ -208,7 +208,7 @@ class AssignedService(DetailHandler):
         user = models.User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            userService.user.pretty_name, user.pretty_name, self._user.pretty_name
+            userService.user.pretty_name, user.pretty_name, self._user.pretty_name  # type: ignore
         )
 
         # If there is another service that has this same owner, raise an exception

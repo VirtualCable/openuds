@@ -266,10 +266,10 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: 'models.ForeignKey["MetaPoolMember", ServicePool]' = models.ForeignKey(
+    pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
         ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE
     )
-    meta_pool: 'models.ForeignKey["MetaPoolMember", MetaPool]' = models.ForeignKey(
+    meta_pool: 'models.ForeignKey[MetaPool]' = models.ForeignKey(
         MetaPool, related_name='members', on_delete=models.CASCADE
     )
     priority = models.PositiveIntegerField(default=0)

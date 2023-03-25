@@ -92,10 +92,10 @@ class Permissions(Handler):
                 {
                     'id': perm.uuid,
                     'type': kind,
-                    'auth': entity.manager.uuid,
-                    'auth_name': entity.manager.name,
-                    'entity_id': entity.uuid,
-                    'entity_name': entity.name,
+                    'auth': entity.manager.uuid,  # type: ignore
+                    'auth_name': entity.manager.name,  # type: ignore
+                    'entity_id': entity.uuid,  # type: ignore
+                    'entity_name': entity.name,  # type: ignore
                     'perm': perm.permission,
                     'perm_name': perm.permission_as_string,
                 }
@@ -103,7 +103,7 @@ class Permissions(Handler):
 
         return sorted(res, key=lambda v: v['auth_name'] + v['entity_name'])
 
-    def get(self):
+    def get(self) -> typing.Any:
         """
         Processes get requests
         """

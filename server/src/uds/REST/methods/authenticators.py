@@ -126,7 +126,7 @@ class Authenticators(ModelHandler):
                             'values': [gui.choiceItem('', _('None'))]
                             + gui.sortedChoices(
                                 [
-                                    gui.choiceItem(v.uuid, v.name)
+                                    gui.choiceItem(v.uuid, v.name)  # type: ignore
                                     for v in MFA.objects.all()
                                 ]
                             ),

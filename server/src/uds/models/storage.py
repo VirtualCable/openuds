@@ -62,5 +62,4 @@ class Storage(models.Model):
 
     def __str__(self) -> str:
         return '{} {}  > str= {}, {}'.format(
-            self.owner, self.key, self.data, '/'.join([self.attr1])
-        )
+            self.owner, self.key, self.data, self.attr1)

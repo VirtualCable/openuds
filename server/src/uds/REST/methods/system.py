@@ -112,7 +112,7 @@ class System(Handler):
     needs_admin = False
     needs_staff = True
 
-    def get(self):
+    def get(self) -> typing.Any:
         logger.debug('args: %s', self._args)
         # Only allow admin user for global stats
         if len(self._args) == 1:

@@ -65,9 +65,9 @@ class Login(Handler):
     @staticmethod
     def result(
         result: str = 'error',
-        token: str = None,
-        scrambler: str = None,
-        error: str = None,
+        token: typing.Optional[str] = None,
+        scrambler: typing.Optional[str] = None,
+        error: typing.Optional[str] = None,
     ) -> typing.MutableMapping[str, typing.Any]:
         res = {
             'result': result,
@@ -229,7 +229,7 @@ class Auths(Handler):
     path = 'auth'
     authenticated = False  # By default, all handlers needs authentication
 
-    def auths(self):
+    def auths(self) -> typing.Iterator[typing.Dict[str, typing.Any]]:
         paramAll: bool = self._params.get('all', 'false') == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():

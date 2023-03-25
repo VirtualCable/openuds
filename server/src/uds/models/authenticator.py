@@ -162,7 +162,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         if (
             user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()
         ) and realName != user.real_name:
-            user.real_name = realName
+            user.real_name = realName or ''
             user.save(update_fields=['real_name'])
 
         return user

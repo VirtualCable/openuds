@@ -62,7 +62,7 @@ class AccountUsage(UUIDModel):
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service: 'models.OneToOneField[AccountUsage, UserService]' = (
+    user_service: 'models.OneToOneField[UserService|None]' = (
         models.OneToOneField(
             UserService,
             null=True,
@@ -71,7 +71,7 @@ class AccountUsage(UUIDModel):
             on_delete=models.SET_NULL,
         )
     )
-    account: 'models.ForeignKey[AccountUsage, Account]' = models.ForeignKey(
+    account: 'models.ForeignKey[Account]' = models.ForeignKey(
         Account, related_name='usages', on_delete=models.CASCADE
     )
 
@@ -87,7 +87,7 @@ class AccountUsage(UUIDModel):
     def elapsed_seconds(self) -> int:
         if NEVER in (self.end, self.start):
             return 0
-        return (self.end - self.start).total_seconds()
+        return int((self.end - self.start).total_seconds())
 
     @property
     def elapsed_seconds_timemark(self) -> int:
@@ -101,7 +101,7 @@ class AccountUsage(UUIDModel):
         if end < start:
             return 0
 
-        return (end - start).total_seconds()
+        return int((end - start).total_seconds())
 
     @property
     def elapsed(self) -> str:

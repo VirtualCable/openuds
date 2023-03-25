@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 class ServicePoolPublicationChangelog(models.Model):
     # This should be "servicePool"
-    publication: 'models.ForeignKey[ServicePoolPublicationChangelog, ServicePool]' = (
+    publication: 'models.ForeignKey[ServicePool]' = (
         models.ForeignKey(
             ServicePool, on_delete=models.CASCADE, related_name='changelog'
         )
@@ -86,7 +86,7 @@ class ServicePoolPublication(UUIDModel):
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
 
-    deployed_service: 'models.ForeignKey[ServicePoolPublication, ServicePool]' = (
+    deployed_service: 'models.ForeignKey[ServicePool]' = (
         models.ForeignKey(
             ServicePool, on_delete=models.CASCADE, related_name='publications'
         )
@@ -139,7 +139,7 @@ class ServicePoolPublication(UUIDModel):
 
         Raises:
         """
-        serviceInstance = self.deployed_service.service.getInstance()
+        serviceInstance = self.deployed_service.service.getInstance()  # type: ignore
         osManager = self.deployed_service.osmanager
         osManagerInstance = osManager.getInstance() if osManager else None
 

@@ -105,7 +105,7 @@ class Client(Handler):
         """
         return Client.result(_('Correct'))
 
-    def get(self):  # pylint: disable=too-many-locals
+    def get(self) -> typing.Any:  # pylint: disable=too-many-locals
         """
         Processes get requests
         """

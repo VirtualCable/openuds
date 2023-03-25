@@ -183,7 +183,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         # We get the service instance, publication instance and osmanager instance
         servicePool = self.deployed_service
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.getInstance()  # type: ignore
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             osmanagerInstance = None
         else:
@@ -360,7 +360,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         :note: This method MUST be invoked by transport before using credentials passed to getJavascript.
         """
         servicePool = self.deployed_service
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.getInstance()  # type: ignore
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
 
@@ -565,7 +565,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service.getType().publicationType is None
+            self.deployed_service.service.getType().publicationType is None  # type: ignore
             or self.publication == self.deployed_service.activePublication()
         )
 

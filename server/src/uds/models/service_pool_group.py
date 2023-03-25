@@ -54,7 +54,7 @@ class ServicePoolGroup(UUIDModel):
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
-    image: 'models.ForeignKey[ServicePoolGroup, Image]' = models.ForeignKey(
+    image: 'models.ForeignKey[Image|None]' = models.ForeignKey(
         Image,
         null=True,
         blank=True,
@@ -75,7 +75,7 @@ class ServicePoolGroup(UUIDModel):
 
     def __str__(self) -> str:
         return 'Service Pool group {}({}): {}'.format(
-            self.name, self.comments, self.image.name
+            self.name, self.comments, self.image.name  # type: ignore
         )
 
     @property

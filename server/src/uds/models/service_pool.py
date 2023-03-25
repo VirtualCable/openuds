@@ -290,7 +290,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return self.service.isInMaintenance() if self.service else True
 
     def isVisible(self) -> bool:
-        return self.visible
+        return self.visible  # type: ignore
 
     def isUsable(self) -> bool:
         return (
@@ -497,7 +497,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         if (
             self.activePublication() is None
-            and self.service.getType().publicationType is not None
+            and self.service.getType().publicationType is not None  # type: ignore
         ):
             raise InvalidServiceException()
 
@@ -602,7 +602,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         for servicePool in query:
             if (
                 typing.cast(typing.Any, servicePool).pubs_active
-                or servicePool.service.data_type in servicesNotNeedingPub
+                or servicePool.service.data_type in servicesNotNeedingPub  # type: ignore
             ):
                 yield servicePool
 
@@ -662,7 +662,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0:
-            maxs = self.service.getInstance().maxDeployed
+            maxs = self.service.getInstance().maxDeployed  # type: ignore
 
         if maxs <= 0:
             return 0
@@ -677,12 +677,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return 100 * cachedValue // maxs
 
     def testServer(self, host, port, timeout=4) -> bool:
-        return self.service.testServer(host, port, timeout)
+        return self.service.testServer(host, port, timeout)  # type: ignore
 
     # parent accessors
     @property
     def proxy(self) -> typing.Optional['Proxy']:
-        return self.service.proxy
+        return self.service.proxy  # type: ignore
 
     # Utility for logging
     def log(self, message: str, level: int = log.INFO) -> None:
