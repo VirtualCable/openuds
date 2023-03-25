@@ -38,8 +38,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds import models
 from uds.core import Module
+from uds.models.util import getSqlDatetime
 from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
@@ -119,7 +119,7 @@ class MFA(Module):
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.
-        
+
         Args:
             userId: Id of the user that is requesting the MFA code
             request: Request object, so you can get more information
@@ -129,7 +129,9 @@ class MFA(Module):
         """
         return ''
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(
+        self, request: 'ExtendedHttpRequest'
+    ) -> typing.Optional[bool]:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
         Returns:
@@ -177,7 +179,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (models.getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
 
     def process(
         self,
@@ -214,7 +216,10 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > models.getSqlDatetime():
+                if (
+                    data[0] + datetime.timedelta(seconds=validity)
+                    > models.getSqlDatetime()
+                ):
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -264,7 +269,7 @@ class MFA(Module):
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
-                    < models.getSqlDatetime()
+                    < getSqlDatetime()
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
@@ -293,14 +298,14 @@ class MFA(Module):
         pass
 
     @staticmethod
-    def getUserId(user: models.User) -> str:
+    def getUserId(user: 'User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
         """
         mfa = user.manager.mfa
         if not mfa:
             raise exceptions.MFAError('MFA is not enabled')
-        
+
         return hashlib.sha3_256(
             (user.name + (user.uuid or '') + mfa.uuid).encode()
         ).hexdigest()
