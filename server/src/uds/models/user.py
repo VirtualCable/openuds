@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 from django.db.models import Count, Q, signals
-from uds.core import auths
+from uds.core import auths, mfas
 from uds.core.util import log, storage
 
 from .authenticator import Authenticator
