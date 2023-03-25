@@ -180,7 +180,7 @@ def getServicesData(
             {
                 'id': idd(i),
                 'name': i.name,
-                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),
+                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),  # type: ignore
                 'priority': i.priority,
             }
             for i in transports
@@ -204,9 +204,9 @@ def getServicesData(
                 # if first pool, get all its transports and check that are valid
                 for t in transportIterator(member):
                     if inAll is None:
-                        tmpSet.add(t.uuid)
+                        tmpSet.add(t.uuid)  # type: ignore
                     elif t.uuid in inAll:  # For subsequent, reduce...
-                        tmpSet.add(t.uuid)
+                        tmpSet.add(t.uuid)  # type: ignore
 
                 inAll = tmpSet
             # tmpSet has ALL common transports
@@ -250,7 +250,7 @@ def getServicesData(
                                 'id': 'meta',
                                 'name': 'meta',
                                 'link': html.udsAccessLink(
-                                    request, 'M' + meta.uuid, None
+                                    request, 'M' + meta.uuid, None  # type: ignore
                                 ),
                                 'priority': 0,
                             }
@@ -318,9 +318,9 @@ def getServicesData(
                 and t.validForOs(osType)
             ):
                 if typeTrans.ownLink:
-                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))
+                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
-                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)
+                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
                 trans.append(
                     {'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority}
                 )
@@ -453,10 +453,10 @@ def enableService(
         error = ''  # No error
 
         if typeTrans.ownLink:
-            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))
+            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))  # type: ignore
         else:
             data = {
-                'service': 'A' + userService.uuid,
+                'service': 'A' + userService.uuid,  # type: ignore
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password,

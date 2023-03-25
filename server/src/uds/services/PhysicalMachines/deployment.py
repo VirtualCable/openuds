@@ -80,7 +80,7 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
             try:
                 # Prefer ipv4 first
                 res = dns.resolver.resolve(ip)
-                ip = res[0].address
+                ip = res[0].address  # type: ignore  # If no address, it will raise an exception
             except Exception:
                 # If not found, try ipv6
                 try:
