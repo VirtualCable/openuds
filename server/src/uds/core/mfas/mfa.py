@@ -218,7 +218,7 @@ class MFA(Module):
                 # if we have a stored code, check if it's still valid
                 if (
                     data[0] + datetime.timedelta(seconds=validity)
-                    > models.getSqlDatetime()
+                    > getSqlDatetime()
                 ):
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
