@@ -80,7 +80,7 @@ class OGDeployment(UserDeployment):
     def initialize(self) -> None:
         self._queue = []
         dbs = self.dbservice()
-        self._uuid = dbs.uuid if dbs else ''
+        self._uuid = dbs.uuid if dbs and dbs.uuid else ''
 
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())

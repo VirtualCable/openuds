@@ -274,11 +274,11 @@ def ticketAuth(
             transportInstance = transport.getInstance()
             if transportInstance.ownLink is True:
                 link = reverse(
-                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)
+                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore
                 )
             else:
                 link = html.udsAccessLink(
-                    request, 'A' + userService.uuid, transport.uuid
+                    request, 'A' + userService.uuid, transport.uuid  # type: ignore
                 )
 
             request.session['launch'] = link

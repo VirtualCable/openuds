@@ -54,7 +54,7 @@ def __init__():
     from uds.core import osmanagers
 
     # Dinamycally import children of this package. 
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)  # type: ignore
 
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         # __import__(name, globals(), locals(), [], 1)

@@ -689,7 +689,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         log.doLog(self, level, message, log.INTERNAL)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

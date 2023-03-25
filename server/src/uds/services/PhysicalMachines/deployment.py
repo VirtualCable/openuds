@@ -79,7 +79,7 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
             # Try to resolve name...
             try:
                 res = dns.resolver.resolve(ip)
-                ip = res[0].address
+                ip = res[0].address  # type: ignore  # If no address, it will raise an exception
             except Exception:
                 self.service().parent().doLog(
                     log.WARN, f'User service could not resolve Name {ip}.'

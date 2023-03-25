@@ -193,7 +193,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         for server in reversed(
             sorted(
-                dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'),
+                dns.resolver.query('_ldap._tcp.' + self._domain, 'SRV'),  # type: ignore
                 key=lambda i: i.priority * 10000 + i.weight,
             )
         ):

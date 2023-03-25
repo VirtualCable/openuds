@@ -59,7 +59,7 @@ def __init__():
     from uds.core import services
 
     # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)  # type: ignore
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         # __import__('uds.services.' + name, globals(), locals(), [])
         importlib.import_module('.' + name, __name__)  # import module
