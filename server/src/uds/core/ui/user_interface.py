@@ -1246,7 +1246,7 @@ class UserInterface(metaclass=UserInterfaceType):
         def deserialize(value: bytes) -> typing.Any:
             if opt_deserializer:
                 return opt_deserializer(value)
-            return serializer.deserialize(value)
+            return serializer.deserialize(value) or []
 
         if not values:
             return

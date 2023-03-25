@@ -67,4 +67,7 @@ def deserialize(data: typing.Optional[bytes]) -> typing.Any:
         return pickle.loads(lzma.decompress(DESERIALIZERS[data[0:2]](data[2:])))  # nosec:  Secured by encryption
     else:
         # Old version, try to unpickle it
-        return pickle.loads(data)  # nosec:  Backward compatibility
+        try:
+            return pickle.loads(data)  # nosec:  Backward compatibility
+        except Exception:
+            return None

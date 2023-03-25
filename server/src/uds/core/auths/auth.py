@@ -73,6 +73,7 @@ EXPIRY_KEY = 'ek'
 AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
 UDS_COOKIE_LENGTH = 48
+IP_KEY = 'session_ip'
 
 RT = typing.TypeVar('RT')
 
@@ -413,6 +414,8 @@ def webLogin(
     request.authorized = (
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
+    # Store request ip in session
+    request.session[IP_KEY] = request.ip
     # If Enabled zero trust, do not cache credentials
     if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
         password = ''  # nosec: clear password if zero trust is enabled
