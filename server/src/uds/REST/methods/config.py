@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
-    def get(self):
+    def get(self) -> typing.Any:
         cfg: CfgConfig.Value
 
         return CfgConfig.getConfigValues(self.is_admin())

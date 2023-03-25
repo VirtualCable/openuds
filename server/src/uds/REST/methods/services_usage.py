@@ -77,8 +77,8 @@ class ServicesUsage(DetailHandler):
             'friendly_name': item.friendly_name,
             'owner': owner,
             'owner_info': owner_info,
-            'service': item.deployed_service.service.name,
-            'service_id': item.deployed_service.service.uuid,
+            'service': item.deployed_service.service.name,  # type: ignore
+            'service_id': item.deployed_service.service.uuid,  # type: ignore
             'pool': item.deployed_service.name,
             'pool_id': item.deployed_service.uuid,
             'ip': props.get('ip', _('unknown')),

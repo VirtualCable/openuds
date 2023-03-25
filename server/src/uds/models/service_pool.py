@@ -282,7 +282,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return self.service.isInMaintenance() if self.service else True
 
     def isVisible(self) -> bool:
-        return self.visible
+        return self.visible  # type: ignore
 
     def isUsable(self) -> bool:
         return (

@@ -171,7 +171,7 @@ class Tickets(Handler):
             groupIds: typing.List[str] = []
             for groupName in tools.as_list(self.getParam('groups')):
                 try:
-                    groupIds.append(auth.groups.get(name=groupName).uuid)
+                    groupIds.append(auth.groups.get(name=groupName).uuid or '')
                 except Exception:
                     logger.info(
                         'Group %s from ticket does not exists on auth %s, forced creation: %s',
@@ -184,7 +184,7 @@ class Tickets(Handler):
                             auth.groups.create(
                                 name=groupName,
                                 comments='Autocreated form ticket by using force paratemeter',
-                            ).uuid
+                            ).uuid or ''
                         )
 
             if not groupIds:  # No valid group in groups names
@@ -244,7 +244,7 @@ class Tickets(Handler):
                         ):
                             pool.assignedGroups.add(auth.groups.get(uuid=addGrp))
 
-                    servicePoolId = 'F' + pool.uuid
+                    servicePoolId = 'F' + pool.uuid  # type: ignore
 
         except models.Authenticator.DoesNotExist:
             return Tickets.result(error='Authenticator does not exists')

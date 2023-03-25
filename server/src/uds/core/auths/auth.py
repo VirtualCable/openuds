@@ -94,7 +94,7 @@ def getUDSCookie(
     if 'uds' not in request.COOKIES:
         cookie = cryptoManager().randomString(UDS_COOKIE_LENGTH)
         if response is not None:
-            response.set_cookie('uds', cookie, samesite='Lax')
+            response.set_cookie('uds', cookie, samesite='Lax', httponly=GlobalConfig.ENHANCED_SECURITY.getBool())
         request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds'][:UDS_COOKIE_LENGTH]

@@ -233,8 +233,8 @@ class ServicesPools(ModelHandler):
             'name': item.name,
             'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
-            'parent': item.service.name,
-            'parent_type': item.service.data_type,
+            'parent': item.service.name,  # type: ignore
+            'parent_type': item.service.data_type,  # type: ignore
             'comments': item.comments,
             'state': state,
             'thumb': item.image.thumb64
@@ -242,8 +242,8 @@ class ServicesPools(ModelHandler):
             else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
             'account_id': item.account.uuid if item.account is not None else None,
-            'service_id': item.service.uuid,
-            'provider_id': item.service.provider.uuid,
+            'service_id': item.service.uuid,  # type: ignore
+            'provider_id': item.service.provider.uuid,  # type: ignore
             'image_id': item.image.uuid if item.image is not None else None,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
@@ -297,7 +297,7 @@ class ServicesPools(ModelHandler):
             val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
             val['permission'] = permissions.getEffectivePermission(self._user, item)
-            val['info'] = Services.serviceInfo(item.service)
+            val['info'] = Services.serviceInfo(item.service)  # type: ignore
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
@@ -325,7 +325,7 @@ class ServicesPools(ModelHandler):
                 'values': [gui.choiceItem('', '')]
                 + gui.sortedChoices(
                     [
-                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)
+                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
                         for v in Service.objects.all()
                     ]
                 ),
@@ -339,7 +339,7 @@ class ServicesPools(ModelHandler):
                 'name': 'osmanager_id',
                 'values': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]
+                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
                 ),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
@@ -394,7 +394,7 @@ class ServicesPools(ModelHandler):
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in Image.objects.all()
                     ]
                 ),
@@ -409,7 +409,7 @@ class ServicesPools(ModelHandler):
                 'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
@@ -493,7 +493,7 @@ class ServicesPools(ModelHandler):
                 'name': 'account_id',
                 'values': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]
+                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
@@ -659,7 +659,7 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item: ServicePool) -> typing.Any:
         validActions: typing.Tuple[typing.Dict, ...] = ()
-        itemInfo = item.service.getType()
+        itemInfo = item.service.getType()  # type: ignore
         if itemInfo.usesCache is True:
             validActions += (
                 CALENDAR_ACTION_INITIAL,
@@ -691,7 +691,7 @@ class ServicesPools(ModelHandler):
         return validActions
 
     def listAssignables(self, item: ServicePool) -> typing.Any:
-        service = item.service.getInstance()
+        service = item.service.getInstance()  # type: ignore
         return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
 
     def createFromAssignable(self, item: ServicePool) -> typing.Any:
