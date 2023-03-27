@@ -249,7 +249,6 @@ class Dispatcher(View):
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
         """
         logger.info('Initializing REST Handlers')
-
         # Our parent module "REST", because we are in "dispatcher"
         modName = __name__[:__name__.rfind('.')]
 
