@@ -641,6 +641,10 @@ class SAMLAuthenticator(auths.Authenticator):
                 gettext('Error processing SLO: ') + str(errors)
             )
 
+        # Remove MFA related data
+        if request.user:
+            self.mfaClean(request.user.name)
+
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
             url=url or auths.AuthenticationInternalUrl.LOGIN.getUrl(),
@@ -721,7 +725,17 @@ class SAMLAuthenticator(auths.Authenticator):
         # store groups for this username at storage, so we can check it at a later stage
         self.storage.putPickle(username, [realName, groups])
 
+        # store also the mfa identifier field value, in case we have provided it
+        if self.mfaAttr.value.strip():
+            self.storage.putPickle(
+                self.mfaStorageKey(username),
+                ''.join(self.processField(self.mfaAttr.value, attributes)),
+            )  # in case multipel values is returned, join them
+        else:
+            self.storage.remove(self.mfaStorageKey(username))
+
         # Now we check validity of user
+
         gm.validate(groups)
 
         return auths.AuthenticationResult(
@@ -741,6 +755,9 @@ class SAMLAuthenticator(auths.Authenticator):
         auth = OneLogin_Saml2_Auth(req, settings)
 
         saml = request.session.get('SAML', {})
+
+        # Remove MFA related data
+        self.mfaClean(username)
 
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
