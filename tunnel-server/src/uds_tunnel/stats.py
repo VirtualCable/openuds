@@ -105,6 +105,10 @@ class StatsManager:
         self.sent += size
         self.update()
 
+    def decrement_connections(self):
+        self.ns.current -= 1
+        self.ns.total -= 1
+
     @property
     def as_sent_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, False)
