@@ -66,7 +66,7 @@ VALID_PARAMS = (
 )
 
 
-# Enclosed methods under /actor path
+# Enclosed methods under /tickets path
 class Tickets(Handler):
     """
     Processes tickets access requests.
@@ -184,7 +184,8 @@ class Tickets(Handler):
                             auth.groups.create(
                                 name=groupName,
                                 comments='Autocreated form ticket by using force paratemeter',
-                            ).uuid or ''
+                            ).uuid
+                            or ''
                         )
 
             if not groupIds:  # No valid group in groups names
