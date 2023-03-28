@@ -164,6 +164,7 @@ class TunnelProtocol(asyncio.Protocol):
         self.runner = self.do_proxy
 
     def process_stats(self, full: bool) -> None:
+        self.stats_manager.decrement_connections()  # This connection does not count, it's just "stats"
         # if pasword is not already received, wait for it
         if len(self.cmd) < consts.PASSWORD_LENGTH + consts.COMMAND_LENGTH:
             return
