@@ -155,6 +155,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.transport.resume_reading()
                 # send OK to client
                 self.transport.write(b'OK')
+                self.stats_manager.increment_connections() # Increment connections counters
             except Exception as e:
                 logger.error('Error opening connection: %s', e)
                 self.close_connection()
@@ -169,7 +170,6 @@ class TunnelProtocol(asyncio.Protocol):
         if len(self.cmd) < consts.PASSWORD_LENGTH + consts.COMMAND_LENGTH:
             return
 
-        self.stats_manager.decrement_connections()  # This connection does not count, it's just "stats"
         # Clean timeout now, we have received all data
         self.clean_timeout()
         logger.info('COMMAND: %s', self.cmd[: consts.COMMAND_LENGTH].decode())

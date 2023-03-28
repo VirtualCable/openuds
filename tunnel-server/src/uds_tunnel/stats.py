@@ -75,8 +75,6 @@ class StatsManager:
 
     def __init__(self, ns: 'Namespace'):
         self.ns = ns
-        self.ns.current += 1
-        self.ns.total += 1
         self.sent = self.last_sent = 0
         self.recv = self.last_recv = 0
         self.last = time.monotonic()
@@ -106,8 +104,14 @@ class StatsManager:
         self.update()
 
     def decrement_connections(self):
+        # Decrement current runing connections
         self.ns.current -= 1
-        self.ns.total -= 1
+
+    def increment_connections(self):
+        # Increment current runing connections
+        # Also, increment total connections
+        self.ns.current += 1
+        self.ns.total += 1
 
     @property
     def as_sent_counter(self) -> 'StatsSingleCounter':
@@ -119,7 +123,7 @@ class StatsManager:
 
     def close(self):
         self.update(True)
-        self.ns.current -= 1
+        self.decrement_connections()
         self.end_time = time.monotonic()
 
 # Stats collector thread
