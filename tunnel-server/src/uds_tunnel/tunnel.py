@@ -100,9 +100,10 @@ class TunnelProtocol(asyncio.Protocol):
         # Open Command has the ticket behind it
 
         if len(self.cmd) < consts.TICKET_LENGTH + consts.COMMAND_LENGTH:
-            # Reactivate timeout, will be deactivated on do_command
-            self.set_timeout(self.owner.cfg.command_timeout)
             return  # Wait for more data to complete OPEN command
+
+        # Clean timeout now, we have received all data
+        self.clean_timeout()
 
         # Ticket received, now process it with UDS
         ticket = self.cmd[consts.COMMAND_LENGTH :]
@@ -164,11 +165,13 @@ class TunnelProtocol(asyncio.Protocol):
         self.runner = self.do_proxy
 
     def process_stats(self, full: bool) -> None:
-        self.stats_manager.decrement_connections()  # This connection does not count, it's just "stats"
         # if pasword is not already received, wait for it
         if len(self.cmd) < consts.PASSWORD_LENGTH + consts.COMMAND_LENGTH:
             return
 
+        self.stats_manager.decrement_connections()  # This connection does not count, it's just "stats"
+        # Clean timeout now, we have received all data
+        self.clean_timeout()
         logger.info('COMMAND: %s', self.cmd[: consts.COMMAND_LENGTH].decode())
 
         # Check valid source ip
@@ -226,8 +229,7 @@ class TunnelProtocol(asyncio.Protocol):
         if self.cmd == b'':
             logger.info('CONNECT FROM %s', self.pretty_source())
 
-        # Ensure we don't get a timeout
-        self.clean_timeout()
+        # We have at most self.owner.cfg.command_timeout seconds to receive the command and the ticket if needed
         self.cmd += data
 
         if len(self.cmd) >= consts.COMMAND_LENGTH:
@@ -255,8 +257,6 @@ class TunnelProtocol(asyncio.Protocol):
                 self.transport.write(consts.RESPONSE_ERROR_COMMAND)
                 self.close_connection()
                 return
-        else:
-            self.set_timeout(self.owner.cfg.command_timeout)
 
         # if not enough data to process command, wait for more
 
