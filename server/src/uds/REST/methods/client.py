@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 #CLIENT_VERSION = UDS_VERSION
-REQUIRED_CLIENT_VERSION = '3.5.1'
+REQUIRED_CLIENT_VERSION = '3.6.0'
 CLIENT_VERSION = REQUIRED_CLIENT_VERSION
 
 
@@ -116,9 +116,7 @@ class Client(Handler):
                 {
                     'availableVersion': CLIENT_VERSION,
                     'requiredVersion': REQUIRED_CLIENT_VERSION,
-                    'downloadUrl': self._request.build_absolute_uri(
-                        reverse('page.client-download')
-                    ),
+                    'downloadUrl': 'A new version of UDS Client is required.\nPlease, download it from Client Download section.',
                 }
             )
 
@@ -134,6 +132,11 @@ class Client(Handler):
                 self._args
             )  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
             hostname = self._params['hostname']  # Or if hostname is not included...
+
+            version = self._params.get('version', '0.0.0')
+            if version < '3.6.0':
+                return Client.result(error='Client version not supported.\n Please, upgrade it.')
+
             srcIp = self._request.ip
 
             # Ip is optional,

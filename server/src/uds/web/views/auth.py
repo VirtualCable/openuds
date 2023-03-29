@@ -136,7 +136,7 @@ def authCallback_stage2(
         return response
     except auths.exceptions.Redirect as e:
         return HttpResponseRedirect(
-            request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/'
+            request.build_absolute_uri(str(e)) if e.args and e.args[0] != '/' else '/'
         )
     except auths.exceptions.Logout as e:
         return webLogout(
