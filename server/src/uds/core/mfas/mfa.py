@@ -228,6 +228,7 @@ class MFA(Module):
         logger.debug('Generated OTP is %s', code)
 
         # Send the code to the user
+        # May raise an exception if the code was not sent and is required to be sent
         result = self.sendCode(request, userId, username, identifier, code)
 
         # Store the code in the database, own storage space, if no exception was raised
