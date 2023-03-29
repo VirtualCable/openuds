@@ -428,8 +428,13 @@ class SAMLAuthenticator(auths.Authenticator):
     ) -> typing.Dict[str, typing.Any]:
         manageUrlObj = urlparse(self.manageUrl.value)
         script_path = manageUrlObj.path
+
         # If callback parameters are passed, we use them
         if params:
+            # TODO: Remove next 3 lines, just for testing and debugging
+            # params['http_host'] = '172.27.0.1'
+            # params['server_port'] = '8000'
+            # params['https'] = False
             return {
                 'https': ['off', 'on'][params.get('https', False)],
                 'http_host': params['http_host'],
@@ -530,6 +535,11 @@ class SAMLAuthenticator(auths.Authenticator):
             },
         }
 
+    @allowCache(
+        cachePrefix='spm',
+        cachingKeyFnc=CACHING_KEY_FNC,
+        cacheTimeout=3600,  # 1 hour
+    )
     def getSpMetadata(self) -> str:
         saml_settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
         metadata = saml_settings.get_sp_metadata()
@@ -627,16 +637,22 @@ class SAMLAuthenticator(auths.Authenticator):
             else:
                 req['get_data']['SAMLResponse'] = req['post_data']['SAMLResponse']
 
+        logoutRequestId = request.session.get('samlLogoutRequestId', None)
+
+        # Cleanup session & session cookie        
+        request.session.flush()
+
         settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
         auth = OneLogin_Saml2_Auth(req, settings)
 
-        dscb = lambda: request.session.flush()
-
-        url = auth.process_slo(delete_session_cb=dscb)
+        url = auth.process_slo(request_id=logoutRequestId)
 
         errors = auth.get_errors()
 
         if errors:
+            logger.debug('Error on SLO: %s', auth.get_last_response_xml())
+            logger.debug('post_data: %s', req['post_data'])
+            logger.info('Errors processing logout request: %s', errors)
             raise auths.exceptions.AuthenticatorException(
                 gettext('Error processing SLO: ') + str(errors)
             )
@@ -713,7 +729,9 @@ class SAMLAuthenticator(auths.Authenticator):
         logger.debug("Attributes: %s", attributes)
 
         # Now that we have attributes, we can extract values from this, map groups, etc...
-        username = ''.join(self.processField(self.userNameAttr.value, attributes))
+        username = ''.join(
+            self.processField(self.userNameAttr.value, attributes)
+        )  # in case of multiple values is returned, join them
         logger.debug('Username: %s', username)
 
         groups = self.processField(self.groupNameAttr.value, attributes)
@@ -756,8 +774,14 @@ class SAMLAuthenticator(auths.Authenticator):
 
         saml = request.session.get('SAML', {})
 
+        # Clear user data from session
+        request.session.clear()
+
         # Remove MFA related data
         self.mfaClean(username)
+
+        if not saml:
+            return auths.SUCCESS_AUTH
 
         return auths.AuthenticationResult(
             success=auths.AuthenticationSuccess.REDIRECT,
