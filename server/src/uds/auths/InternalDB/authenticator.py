@@ -108,7 +108,7 @@ class InternalDBAuth(auths.Authenticator):
     def mfaIdentifier(self, username: str) -> str:
         try:
             return self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfa_data
-        finally:
+        except Exception:  # User not found
             return ''
 
     def transformUsername(self, username: str) -> str:

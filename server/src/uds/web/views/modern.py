@@ -212,11 +212,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     label = mfaInstance.label()
 
     if not mfaIdentifier:
-        if mfaInstance.emptyIndentifierAllowedToLogin(request) == True:
+        emtpyIdentifiedAllowed = mfaInstance.emptyIndentifierAllowedToLogin(request)
+        if emtpyIdentifiedAllowed == True:
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
-        elif mfaInstance.emptyIndentifierAllowedToLogin(request) == False:
+        elif emtpyIdentifiedAllowed == False:
             # Not allowed to login, redirect to login error page
             logger.warning(
                 'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
