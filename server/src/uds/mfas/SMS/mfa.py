@@ -175,7 +175,7 @@ class SMSMFA(mfas.MFA):
         order=5,
         tooltip=_('Encoding for SMS'),
         required=True,
-        values=('utf-8', 'iso-8859-1'),
+        values=('utf-8', 'utf-16', 'iso-8859-1'),
         tab=_('HTTP Server'),
     )
 
@@ -331,8 +331,10 @@ class SMSMFA(mfas.MFA):
     def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
         if not response.ok:
-            if self.responseErrorAction.value == '1':
+            logger.warning('SMS sending failed: code: %s, content: %s', response.status_code, response.text)
+            if not self.checkAction(self.responseErrorAction.value, request):
                 raise Exception(_('SMS sending failed'))
+            return mfas.MFA.RESULT.ALLOWED  # Allow login, NO MFA code was sent
         elif self.responseOkRegex.value.strip():
             logger.debug('Checking response OK regex: %s: (%s)', self.responseOkRegex.value, re.search(self.responseOkRegex.value, response.text))
             if not re.search(self.responseOkRegex.value, response.text or ''):

@@ -226,7 +226,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                 mfaProvider.name,
             )
             return errors.errorView(request, errors.ACCESS_DENIED)
-        # Default, do nothing, and continue
+        # None, the authenticator will decide what to do if mfaIdentifier is empty
 
     tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
@@ -241,13 +241,16 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     mfaIdentifier,
                     code,
                     validity=validity,
-                )
+                )  # Will raise MFAError if code is not valid
                 request.authorized = True
-                # Remove mfa_start_time from session
-                if 'mfa_start_time' in request.session:
-                    del request.session['mfa_start_time']
+                # Remove mfa_start_time and mfa from session
+                for i in ('mfa_start_time', 'mfa'):
+                    if i in request.session:
+                        del request.session[i]
 
+                # Redirect to index by default
                 response = HttpResponseRedirect(reverse('page.index'))
+
                 # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
                 if (
                     mfaProvider.remember_device > 0

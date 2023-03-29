@@ -119,7 +119,7 @@ class MFA(Module):
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.
-        
+
         Args:
             userId: Id of the user that is requesting the MFA code
             request: Request object, so you can get more information
@@ -129,7 +129,9 @@ class MFA(Module):
         """
         return ''
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(
+        self, request: 'ExtendedHttpRequest'
+    ) -> typing.Optional[bool]:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
         Returns:
@@ -224,10 +226,14 @@ class MFA(Module):
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
         logger.debug('Generated OTP is %s', code)
-        # Store the code in the database, own storage space
-        self._putData(request, userId, code)
+
         # Send the code to the user
-        return self.sendCode(request, userId, username, identifier, code)
+        result = self.sendCode(request, userId, username, identifier, code)
+
+        # Store the code in the database, own storage space, if no exception was raised
+        self._putData(request, userId, code)
+
+        return result
 
     def validate(
         self,
@@ -297,7 +303,7 @@ class MFA(Module):
         mfa = user.manager.mfa
         if not mfa:
             raise exceptions.MFAError('MFA is not enabled')
-        
+
         return hashlib.sha3_256(
             (user.name + (user.uuid or '') + mfa.uuid).encode()
         ).hexdigest()
