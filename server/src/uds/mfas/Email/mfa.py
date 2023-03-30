@@ -158,7 +158,7 @@ class EmailMFA(mfas.MFA):
         label=_('Mail text'),
         order=33,
         multiline=4,
-        tooltip=_('Text of the email. If empty, a default text will be used') + '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        tooltip=_('Text of the email. If empty, a default text will be used') + '\n' + _('Allowed variables are: ') + '{code}, {username}, {justUsername}. {ip}',
         required=True,
         defvalue='',
         tab=_('Config'),
@@ -169,7 +169,7 @@ class EmailMFA(mfas.MFA):
         label=_('Mail HTML'),
         order=34,
         multiline=4,
-        tooltip=_('HTML of the email. If empty, a default HTML will be used')+ '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        tooltip=_('HTML of the email. If empty, a default HTML will be used')+ '\n' + _('Allowed variables are: ') + '{code}, {username}, {justUsername}, {ip}',
         required=False,
         defvalue='',
         tab=_('Config'),
@@ -266,7 +266,7 @@ class EmailMFA(mfas.MFA):
                 username = request.user.name if request.user else ''
                 msg.attach(
                     MIMEText(
-                        text.format(ip=request.ip, code=code, username=username),
+                        text.format(ip=request.ip, code=code, username=username, justUsername=username.split('@')[0]),
                         'plain',
                     )
                 )
@@ -274,7 +274,7 @@ class EmailMFA(mfas.MFA):
                 if self.enableHTML.value:
                     msg.attach(
                         MIMEText(
-                            html.format(ip=request.ip, code=code, username=username),
+                            html.format(ip=request.ip, code=code, username=username, justUsername=username.split('@')[0]),
                             'html',
                         )
                     )

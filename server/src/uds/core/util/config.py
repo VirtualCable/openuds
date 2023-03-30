@@ -436,7 +436,7 @@ class GlobalConfig:
     )
     # Redirect HTTP to HTTPS
     REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value(
-        'redirectToHttps', '0', type=Config.BOOLEAN_FIELD
+        'redirectToHttps', '1', type=Config.BOOLEAN_FIELD
     )
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
