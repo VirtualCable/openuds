@@ -6,11 +6,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-15 04:01+0100\n"
+"POT-Creation-Date: 2023-03-30 15:34+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
@@ -241,7 +242,6 @@ msgid "Refine your query"
 msgstr "优化您的查询"
 
 #: REST/methods/authenticators.py:233
-#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
 msgid "Label must contain only letters, numbers, or symbols: - : ."
 msgstr "标签必须仅包含字母、数字或符号：- : 。"
 
@@ -672,9 +672,9 @@ msgstr "可用报告"
 #: REST/methods/users_groups.py:407
 #: auths/ActiveDirectory_enterprise/authenticator.py:174
 #: auths/AzureAD_enterprise/azure_ad.py:95
-#: auths/EDirectory_enterprise/authenticator.py:114
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
-#: auths/SAML_enterprise/saml.py:109 auths/SimpleLDAP/authenticator.py:182
+#: auths/EDirectory_enterprise/authenticator.py:133
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
+#: auths/SAML_enterprise/saml.py:110 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "组"
@@ -728,7 +728,7 @@ msgstr "防火墙后面的服务代理"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
+#: auths/RegexLdap/authenticator.py:194 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -1026,7 +1026,7 @@ msgstr "工作人员"
 #: auths/AzureAD_enterprise/azure_ad.py:94
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:106 reports/lists/audit.py:120
+#: auths/SAML_enterprise/saml.py:107 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1044,8 +1044,8 @@ msgstr "目前的用户"
 
 #: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:172
-#: auths/EDirectory_enterprise/authenticator.py:112
-#: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
+#: auths/EDirectory_enterprise/authenticator.py:131
+#: auths/RegexLdap/authenticator.py:217 auths/SimpleLDAP/authenticator.py:210
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
@@ -1055,7 +1055,8 @@ msgstr "目前的用户"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5VNC/html5vnc.py:87
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
@@ -1193,8 +1194,8 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
-#: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
+#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:221
+#: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:214
 #: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:76
@@ -1207,7 +1208,8 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5SSH/html5ssh.py:90
+#: transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -1275,11 +1277,15 @@ msgid "Timeout in seconds of connection to Active Directory"
 msgstr "连接到Active Directory的超时（以秒为单位）"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: auths/EDirectory_enterprise/authenticator.py:94
+#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:107
 #: services/Vmware_enterprise/provider.py:121
 msgid "Verify SSL"
 msgstr "验证 SSL"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: auths/EDirectory_enterprise/authenticator.py:98
+#: auths/RegexLdap/authenticator.py:120 auths/SimpleLDAP/authenticator.py:111
 #: services/Vmware_enterprise/provider.py:125
 msgid ""
 "If checked, SSL verification will be enforced. If not, SSL verification will "
@@ -1287,26 +1293,29 @@ msgid ""
 msgstr "如果选中，将强制执行 SSL 验证。否则，SSL 验证将被禁用"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:144
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+#: auths/EDirectory_enterprise/authenticator.py:105
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:130
+#: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "证书"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:146
-#| msgid "Force SSL certificate verification"
+#: auths/EDirectory_enterprise/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:129 auths/SimpleLDAP/authenticator.py:120
 msgid "Certificate to use for SSL verification"
 msgstr "用于 SSL 验证的证书"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:154
-#: auths/EDirectory_enterprise/authenticator.py:95
-#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
-#: auths/SAML_enterprise/saml.py:207
+#: auths/EDirectory_enterprise/authenticator.py:114
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
+#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "MFA 属性"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:156
-#: auths/EDirectory_enterprise/authenticator.py:97
-#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
-#: auths/SAML_enterprise/saml.py:209
+#: auths/EDirectory_enterprise/authenticator.py:116
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
+#: auths/SAML_enterprise/saml.py:210 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "从哪里提取 MFA 代码的属性"
 
@@ -1319,56 +1328,56 @@ msgid "Authenticate against Active Directory"
 msgstr "针对Active Directory进行身份验证"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:213
-#: auths/ActiveDirectory_enterprise/authenticator.py:688
+#: auths/ActiveDirectory_enterprise/authenticator.py:693
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:356
+#: auths/ActiveDirectory_enterprise/authenticator.py:361
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
 msgstr "无法连接到任何 AD 服务器。检查您的配置（服务器、ssl 证书等）。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:561
-#: auths/ActiveDirectory_enterprise/authenticator.py:618
+#: auths/ActiveDirectory_enterprise/authenticator.py:566
+#: auths/ActiveDirectory_enterprise/authenticator.py:623
 #: auths/AzureAD_enterprise/azure_ad.py:315
-#: auths/EDirectory_enterprise/authenticator.py:293
-#: auths/EDirectory_enterprise/authenticator.py:324
-#: auths/RegexLdap/authenticator.py:586 auths/RegexLdap/authenticator.py:617
-#: auths/SimpleLDAP/authenticator.py:435 auths/SimpleLDAP/authenticator.py:478
+#: auths/EDirectory_enterprise/authenticator.py:316
+#: auths/EDirectory_enterprise/authenticator.py:347
+#: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
+#: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "找不到用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:600
-#: auths/SimpleLDAP/authenticator.py:468
+#: auths/ActiveDirectory_enterprise/authenticator.py:605
+#: auths/SimpleLDAP/authenticator.py:541
 msgid "Group not found"
 msgstr "未找到组"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:645
-#: auths/ActiveDirectory_enterprise/authenticator.py:667
-#: auths/EDirectory_enterprise/authenticator.py:346
-#: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
-#: auths/SimpleLDAP/authenticator.py:523
+#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:672
+#: auths/EDirectory_enterprise/authenticator.py:369
+#: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
+#: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "结果太多，更具体"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:699
+#: auths/ActiveDirectory_enterprise/authenticator.py:704
 msgid "Domain seems to be incorrect, please check it"
 msgstr "域似乎不正确，请检查它"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:718
+#: auths/ActiveDirectory_enterprise/authenticator.py:723
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "服务器似乎不是Active Directory（它没有用户对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:741
+#: auths/ActiveDirectory_enterprise/authenticator.py:746
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "服务器似乎不是Active Directory（它没有组对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:750
-#: auths/EDirectory_enterprise/authenticator.py:469
-#: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
+#: auths/ActiveDirectory_enterprise/authenticator.py:755
+#: auths/EDirectory_enterprise/authenticator.py:492
+#: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "连接参数似乎正确，测试成功执行"
 
@@ -1497,40 +1506,40 @@ msgstr "具有eDirectory读取权限的用户名"
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "连接到LDAP的超时（以秒为单位）"
 
-#: auths/EDirectory_enterprise/authenticator.py:102
+#: auths/EDirectory_enterprise/authenticator.py:121
 msgid "eDirectory Authenticator"
 msgstr "eDirectory身份验证器"
 
-#: auths/EDirectory_enterprise/authenticator.py:104
+#: auths/EDirectory_enterprise/authenticator.py:123
 msgid "Authenticate against eDirectory"
 msgstr "针对eDirectory进行身份验证"
 
-#: auths/EDirectory_enterprise/authenticator.py:364
+#: auths/EDirectory_enterprise/authenticator.py:387
 msgid "Edirectory connection error: {}"
 msgstr "电子目录连接错误：{}"
 
-#: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:668 auths/SimpleLDAP/authenticator.py:548
+#: auths/EDirectory_enterprise/authenticator.py:392
+#: auths/RegexLdap/authenticator.py:671 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "Ldap搜索库不正确"
 
-#: auths/EDirectory_enterprise/authenticator.py:387
-#: auths/RegexLdap/authenticator.py:686 auths/SimpleLDAP/authenticator.py:556
+#: auths/EDirectory_enterprise/authenticator.py:410
+#: auths/RegexLdap/authenticator.py:689 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr "Ldap用户类似乎不正确（该类没有找到用户）"
 
-#: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/SimpleLDAP/authenticator.py:602
+#: auths/EDirectory_enterprise/authenticator.py:433
+#: auths/SimpleLDAP/authenticator.py:675
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
 msgstr "Ldap用户标识属性似乎不正确（该属性找不到用户）"
 
-#: auths/EDirectory_enterprise/authenticator.py:433
+#: auths/EDirectory_enterprise/authenticator.py:456
 msgid "Expected group attribute "
 msgstr "预期的组属性"
 
-#: auths/EDirectory_enterprise/authenticator.py:460
+#: auths/EDirectory_enterprise/authenticator.py:483
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（Ldap是eDirectory？）"
@@ -1665,243 +1674,247 @@ msgstr "Ldap服务器主机"
 msgid "Username with read privileges on the base selected"
 msgstr "在所选基础上具有读取权限的用户名"
 
-#: auths/RegexLdap/authenticator.py:117 auths/SimpleLDAP/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:135 auths/SimpleLDAP/authenticator.py:127
 #: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "基础"
 
-#: auths/RegexLdap/authenticator.py:119 auths/SimpleLDAP/authenticator.py:109
+#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:129
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "通用搜索库（用于“用户”和“组”）"
 
-#: auths/RegexLdap/authenticator.py:121 auths/RegexLdap/authenticator.py:130
-#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:151
-#: auths/RegexLdap/authenticator.py:163 auths/SimpleLDAP/authenticator.py:111
-#: auths/SimpleLDAP/authenticator.py:120 auths/SimpleLDAP/authenticator.py:129
+#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:148
+#: auths/RegexLdap/authenticator.py:157 auths/RegexLdap/authenticator.py:169
+#: auths/RegexLdap/authenticator.py:181 auths/SimpleLDAP/authenticator.py:131
 #: auths/SimpleLDAP/authenticator.py:140 auths/SimpleLDAP/authenticator.py:149
-#: auths/SimpleLDAP/authenticator.py:158 auths/SimpleLDAP/authenticator.py:167
+#: auths/SimpleLDAP/authenticator.py:160 auths/SimpleLDAP/authenticator.py:169
+#: auths/SimpleLDAP/authenticator.py:178 auths/SimpleLDAP/authenticator.py:187
 msgid "Ldap info"
 msgstr "Ldap信息"
 
-#: auths/RegexLdap/authenticator.py:125 auths/SimpleLDAP/authenticator.py:115
+#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:135
 msgid "User class"
 msgstr "用户类"
 
-#: auths/RegexLdap/authenticator.py:128 auths/SimpleLDAP/authenticator.py:118
+#: auths/RegexLdap/authenticator.py:146 auths/SimpleLDAP/authenticator.py:138
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "LDAP用户的类（通常为posixAccount）"
 
-#: auths/RegexLdap/authenticator.py:134 auths/SimpleLDAP/authenticator.py:124
+#: auths/RegexLdap/authenticator.py:152 auths/SimpleLDAP/authenticator.py:144
 msgid "User Id Attr"
 msgstr "用户ID Attr"
 
-#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:127
+#: auths/RegexLdap/authenticator.py:155 auths/SimpleLDAP/authenticator.py:147
 msgid "Attribute that contains the user id"
 msgstr "包含用户标识的属性"
 
-#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:133
+#: auths/RegexLdap/authenticator.py:161 auths/SimpleLDAP/authenticator.py:153
 msgid "User Name Attr"
 msgstr "用户名Attr"
 
-#: auths/RegexLdap/authenticator.py:148
+#: auths/RegexLdap/authenticator.py:166
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr "包含用户名属性或属性模式的属性（每行一个）"
 
-#: auths/RegexLdap/authenticator.py:155
+#: auths/RegexLdap/authenticator.py:173
 msgid "Group Name Attr"
 msgstr "集团名称Attr"
 
-#: auths/RegexLdap/authenticator.py:160
+#: auths/RegexLdap/authenticator.py:178
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
 msgstr "包含组名属性或属性模式的属性（每行一个）"
 
-#: auths/RegexLdap/authenticator.py:169
+#: auths/RegexLdap/authenticator.py:187
 msgid "Alt. class"
 msgstr "Alt键。类"
 
-#: auths/RegexLdap/authenticator.py:173
+#: auths/RegexLdap/authenticator.py:191
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
 msgstr "LDAP对象的类，也将检查组检索（通常为空）"
 
-#: auths/RegexLdap/authenticator.py:189
+#: auths/RegexLdap/authenticator.py:207
 msgid "Regex LDAP Authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
-#: auths/RegexLdap/authenticator.py:191
+#: auths/RegexLdap/authenticator.py:209
 msgid "Regular Expressions LDAP authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
-#: auths/RegexLdap/authenticator.py:711
+#: auths/RegexLdap/authenticator.py:714
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr "Ldap用户ID attr可能是错误的（找不到具有这两个条件的任何用户）"
 
-#: auths/RegexLdap/authenticator.py:740 auths/SimpleLDAP/authenticator.py:625
+#: auths/RegexLdap/authenticator.py:743 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
 msgstr "Ldap组id属性似乎不正确（该属性找不到任何组）"
 
-#: auths/SAML_enterprise/saml.py:76
+#: auths/SAML_enterprise/saml.py:77
 msgid "SAML Authenticator"
 msgstr "SAML身份验证器"
 
-#: auths/SAML_enterprise/saml.py:88
+#: auths/SAML_enterprise/saml.py:89
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML（v2.0）身份验证器"
 
-#: auths/SAML_enterprise/saml.py:118
+#: auths/SAML_enterprise/saml.py:119
 msgid "Private key"
 msgstr "私钥"
 
-#: auths/SAML_enterprise/saml.py:121
+#: auths/SAML_enterprise/saml.py:122
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
+#: auths/SAML_enterprise/saml.py:125 auths/SAML_enterprise/saml.py:136
 msgid "Certificates"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:133
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr "用于签名和登记的公钥（前一个私钥的公共部分），由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:140
+#: auths/SAML_enterprise/saml.py:141
 msgid "IDP Metadata"
 msgstr "IDP元数据"
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:144
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "您可以在此处输入URL或IDP元数据或元数据本身（xml）"
 
-#: auths/SAML_enterprise/saml.py:146 auths/SAML_enterprise/saml.py:155
+#: auths/SAML_enterprise/saml.py:147 auths/SAML_enterprise/saml.py:156
 msgid "Metadata"
 msgstr "元数据"
 
-#: auths/SAML_enterprise/saml.py:150
+#: auths/SAML_enterprise/saml.py:151
 msgid "Entity ID"
 msgstr "实体ID"
 
-#: auths/SAML_enterprise/saml.py:153
+#: auths/SAML_enterprise/saml.py:154
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP的ID。如果留空，则会从服务器URL自动生成"
 
-#: auths/SAML_enterprise/saml.py:161
+#: auths/SAML_enterprise/saml.py:162
 msgid "User name attrs"
 msgstr "用户名attrs"
 
-#: auths/SAML_enterprise/saml.py:163
+#: auths/SAML_enterprise/saml.py:164
 msgid "Fields from where to extract user name"
 msgstr "从哪里提取用户名的字段"
 
-#: auths/SAML_enterprise/saml.py:165 auths/SAML_enterprise/saml.py:175
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:166 auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:186
 msgid "Attributes"
 msgstr "属性"
 
-#: auths/SAML_enterprise/saml.py:171
+#: auths/SAML_enterprise/saml.py:172
 msgid "Group name attrs"
 msgstr "集团名称attrs"
 
-#: auths/SAML_enterprise/saml.py:173
+#: auths/SAML_enterprise/saml.py:174
 msgid "Fields from where to extract the groups"
 msgstr "从哪里提取组的字段"
 
-#: auths/SAML_enterprise/saml.py:181
+#: auths/SAML_enterprise/saml.py:182
 msgid "Real name attrs"
 msgstr "真名牌"
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:184
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:189
+#: auths/SAML_enterprise/saml.py:190
 msgid "Global logout"
 msgstr "全局注销"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:193
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "如果设置，从 UDS 注销将触发 SAML 注销"
 
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:198
 msgid "ADFS compatibility"
 msgstr "ADFS 兼容性"
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:201
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "如果设置，则启用小写 url 编码，以便 ADFS 可以正常工作"
 
-#: auths/SAML_enterprise/saml.py:231
+#: auths/SAML_enterprise/saml.py:232
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "这种 Authenticator 不支持字段 NAME 上的空格"
 
-#: auths/SAML_enterprise/saml.py:245
+#: auths/SAML_enterprise/saml.py:246
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:253
+#: auths/SAML_enterprise/saml.py:254
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:264
+#: auths/SAML_enterprise/saml.py:265
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:272
+#: auths/SAML_enterprise/saml.py:273
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:291
+#: auths/SAML_enterprise/saml.py:278
+msgid "Certificate and private key do not match"
+msgstr "证书和私钥不匹配"
+
+#: auths/SAML_enterprise/saml.py:297
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:302
+#: auths/SAML_enterprise/saml.py:308
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:304
+#: auths/SAML_enterprise/saml.py:310
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:357
+#: auths/SAML_enterprise/saml.py:368
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
-#: auths/SAML_enterprise/saml.py:424
+#: auths/SAML_enterprise/saml.py:435
 msgid "Error validating SP metadata: "
 msgstr "验证 SP 元数据时出错："
 
-#: auths/SAML_enterprise/saml.py:528
+#: auths/SAML_enterprise/saml.py:544
 msgid "Error processing SLO: "
 msgstr "处理 SLO 时出错："
 
-#: auths/SAML_enterprise/saml.py:558
+#: auths/SAML_enterprise/saml.py:574
 msgid "Error processing SAML response: "
 msgstr "处理 SAML 响应时出错："
 
-#: auths/SAML_enterprise/saml.py:571
+#: auths/SAML_enterprise/saml.py:587
 msgid "SAML response not authenticated"
 msgstr "SAML 响应未通过身份验证"
 
-#: auths/SAML_enterprise/saml.py:602
+#: auths/SAML_enterprise/saml.py:618
 msgid "No attributes returned from IdP"
 msgstr "没有从 IdP 返回的属性"
 
@@ -1937,59 +1950,59 @@ msgstr "Ldap服务器IP或主机名"
 msgid "Ldap User"
 msgstr "Ldap用户"
 
-#: auths/SimpleLDAP/authenticator.py:137
+#: auths/SimpleLDAP/authenticator.py:157
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr "包含用户名的属性（逗号分隔值列表）"
 
-#: auths/SimpleLDAP/authenticator.py:144
+#: auths/SimpleLDAP/authenticator.py:164
 msgid "Group class"
 msgstr "小组课"
 
-#: auths/SimpleLDAP/authenticator.py:147
+#: auths/SimpleLDAP/authenticator.py:167
 msgid "Class for LDAP groups (normally poxisGroup)"
 msgstr "LDAP组的类（通常是poxisGroup）"
 
-#: auths/SimpleLDAP/authenticator.py:153
+#: auths/SimpleLDAP/authenticator.py:173
 msgid "Group Id Attr"
 msgstr "Group Id Attr"
 
-#: auths/SimpleLDAP/authenticator.py:156
+#: auths/SimpleLDAP/authenticator.py:176
 msgid "Attribute that contains the group id"
 msgstr "包含组ID的属性"
 
-#: auths/SimpleLDAP/authenticator.py:162
+#: auths/SimpleLDAP/authenticator.py:182
 msgid "Group membership attr"
 msgstr "集团成员资格attr"
 
-#: auths/SimpleLDAP/authenticator.py:165
+#: auths/SimpleLDAP/authenticator.py:185
 msgid "Attribute of the group that contains the users belonging to it"
 msgstr "包含属于它的用户的组的属性"
 
-#: auths/SimpleLDAP/authenticator.py:170
+#: auths/SimpleLDAP/authenticator.py:200
 msgid "SimpleLDAP (DEPRECATED)"
 msgstr "SimpleLDAP（不建议使用）"
 
-#: auths/SimpleLDAP/authenticator.py:172
+#: auths/SimpleLDAP/authenticator.py:202
 msgid "Simple LDAP authenticator (DEPRECATED)"
 msgstr "简单LDAP身份验证器（不推荐使用）"
 
-#: auths/SimpleLDAP/authenticator.py:579
+#: auths/SimpleLDAP/authenticator.py:652
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr "Ldap组类似乎不正确（该类没有找到组）"
 
-#: auths/SimpleLDAP/authenticator.py:650
+#: auths/SimpleLDAP/authenticator.py:723
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
 msgstr "Ldap用户类或用户ID attr可能是错误的（找不到具有这两个条件的任何用户）"
 
-#: auths/SimpleLDAP/authenticator.py:669
+#: auths/SimpleLDAP/authenticator.py:742
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
 msgstr "Ldap组类或组ID attr可能是错误的（找不到具有这两个条件的任何组）"
 
-#: auths/SimpleLDAP/authenticator.py:679
+#: auths/SimpleLDAP/authenticator.py:752
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "找不到指定了成员资格属性的任何组"
 
@@ -2064,7 +2077,7 @@ msgstr "无法从此设备访问该服务"
 msgid "Base MFA"
 msgstr "基础 MFA"
 
-#: core/mfas/mfa.py:259
+#: core/mfas/mfa.py:266
 msgid "Invalid MFA code"
 msgstr "无效的 MFA 代码"
 
@@ -2128,7 +2141,7 @@ msgstr "证书"
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/util/ldaputil.py:118
+#: core/util/ldaputil.py:120
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
@@ -2497,9 +2510,9 @@ msgid "Text of the email. If empty, a default text will be used"
 msgstr "电子邮件的文本。如果为空，将使用默认文本"
 
 #: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
-#, python-brace-format
-msgid "Allowed variables are: {code}, {username}, {ip}"
-msgstr "允许的变量是：{code}、{username}、{ip}"
+#| msgid "Allowed variables are: {code}, {username}, {ip}"
+msgid "Allowed variables are: "
+msgstr "允许的变量是："
 
 #: mfas/Email/mfa.py:169
 msgid "Mail HTML"
@@ -2753,19 +2766,19 @@ msgstr "短信网络"
 msgid "Networks for SMS authentication"
 msgstr "用于 SMS 身份验证的网络"
 
-#: mfas/SMS/mfa.py:335
+#: mfas/SMS/mfa.py:336
 msgid "SMS sending failed"
 msgstr "短信发送失败"
 
-#: mfas/SMS/mfa.py:344
+#: mfas/SMS/mfa.py:346
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:398 web/views/modern.py:312
+#: mfas/SMS/mfa.py:400 web/views/modern.py:316
 msgid "MFA Code"
 msgstr "MFA 代码"
 
-#: mfas/SMS/mfa.py:402
+#: mfas/SMS/mfa.py:404
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "检查你的手机。您将收到一条带有验证码的短信"
 
@@ -4114,7 +4127,7 @@ msgstr "连接测试成功"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:312
 msgid "Connection failed. Check connection params"
 msgstr "连接失败。检查连接参数"
 
@@ -4308,8 +4321,8 @@ msgstr "连接到HyperV的超时时间（以秒为单位）。 （将此值保�
 
 #: services/HyperV_enterprise/provider.py:187
 msgid ""
-"For clusters, username must be a domain user name (user@domain or DOMAIN"
-"\\user"
+"For clusters, username must be a domain user name (user@domain or "
+"DOMAIN\\user"
 msgstr "对于群集，用户名必须是域用户名（user @ domain或DOMAIN \\ user"
 
 #: services/HyperV_enterprise/service.py:59
@@ -4384,8 +4397,8 @@ msgstr "选择项目"
 #: services/NutanixPrism_enterprise/service.py:83
 #: services/Nutanix_enterprise/service.py:69
 msgid ""
-"Memory assigned to machines. (Zero value means \"keep original machine memory"
-"\")"
+"Memory assigned to machines. (Zero value means \"keep original machine "
+"memory\")"
 msgstr "分配给机器的内存。 （零值表示“保留原始机器内存”）"
 
 #: services/NutanixPrism_enterprise/service.py:90
@@ -5628,7 +5641,7 @@ msgstr "VMWare VCenter平台提供商"
 msgid "Provides connection to Virtual Center Services"
 msgstr "提供与Virtual Center Services的连接"
 
-#: services/Vmware_enterprise/provider.py:306
+#: services/Vmware_enterprise/provider.py:308
 msgid "Connection params ok"
 msgstr "连接参数确定"
 
@@ -6012,13 +6025,13 @@ msgstr "使用HTML5客户端的RDP协议"
 
 #: transports/HTML5RDP/html5rdp.py:73
 #: transports/HTML5RDS_enterprise/html5rds.py:80
-#: transports/HTML5VNC/html5vnc.py:75
+#: transports/HTML5SSH/html5ssh.py:72 transports/HTML5VNC/html5vnc.py:75
 msgid "Tunnel Server"
 msgstr "隧道服务器"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6089,8 +6102,8 @@ msgstr "如果选中，则域部分将始终清空（例如，需要连接到xrd
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
 #: transports/RDS_enterprise/rds_base.py:62
 msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
+"If not empty, this domain will be always used as credential (used as "
+"DOMAIN\\user)"
 msgstr "如果不为空，则此域将始终用作凭据（用作DOMAIN \\ user）"
 
 #: transports/HTML5RDP/html5rdp.py:128
@@ -6168,31 +6181,37 @@ msgstr "如果选中，打印将被重定向到远程会话（如果客户端浏
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File Sharing"
 msgstr "文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
+#: transports/HTML5SSH/html5ssh.py:124
 msgid "File upload/download redirection policy"
 msgstr "文件上传/下载重定向策略"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Disable file sharing"
 msgstr "禁用文件共享"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Allow download only"
 msgstr "只允许下载"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
+#: transports/HTML5SSH/html5ssh.py:129
 msgid "Allow upload only"
 msgstr "只允许上传"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
+#: transports/HTML5SSH/html5ssh.py:130
 msgid "Enable file sharing"
 msgstr "启用文件共享"
 
@@ -6329,13 +6348,13 @@ msgstr "故障安全"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "机票有效期"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6345,31 +6364,32 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
+#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "强制新的HTML窗口"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr "选择Windows行为以获取HTML5上的新连接"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr "在同一窗口中打开每个连接，但保留UDS窗口。"
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "强制在新窗口中打开每个连接。"
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "覆盖UDS窗口并将其替换为连接。"
 
@@ -6430,7 +6450,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:365
-#: transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
 
@@ -6507,6 +6527,99 @@ msgid ""
 msgstr ""
 "仅在安全级别（在“参数”选项卡上）设置为“RDP”时，才允许空凭据（在“凭据”选项卡"
 "上）"
+
+#: transports/HTML5SSH/html5ssh.py:61
+#| msgid "HTML5 RDP"
+msgid "HTML5 SSH"
+msgstr "HTML5 SSH"
+
+#: transports/HTML5SSH/html5ssh.py:63
+#| msgid "RDP protocol using HTML5 client"
+msgid "SSH protocol using HTML5 client"
+msgstr "使用 HTML5 客户端的 SSH 协议"
+
+#: transports/HTML5SSH/html5ssh.py:86
+#| msgid "Username for VNC connection authentication."
+msgid "Username for SSH connection authentication."
+msgstr "SSH 连接认证的用户名。"
+
+#: transports/HTML5SSH/html5ssh.py:92
+#| msgid "Password for VNC connection authentication"
+msgid "Password for SSH connection authentication"
+msgstr "SSH连接认证密码"
+
+#: transports/HTML5SSH/html5ssh.py:96
+#| msgid "Private key"
+msgid "SSH Private Key"
+msgstr "SSH 私钥"
+
+#: transports/HTML5SSH/html5ssh.py:100
+msgid ""
+"Private key for SSH authentication. If not provided, password authentication "
+"is used."
+msgstr "SSH 身份验证的私钥。如果未提供，则使用密码身份验证。"
+
+#: transports/HTML5SSH/html5ssh.py:105
+msgid "SSH Private Key Passphrase"
+msgstr "SSH 私钥密码"
+
+#: transports/HTML5SSH/html5ssh.py:108
+msgid ""
+"Passphrase for SSH private key if it is required. If not provided, but it is "
+"needed, user will be prompted for it."
+msgstr "SSH 私钥的密码（如果需要）。如果未提供，但需要，系统将提示用户输入。"
+
+#: transports/HTML5SSH/html5ssh.py:114
+msgid "SSH Command"
+msgstr "SSH 命令"
+
+#: transports/HTML5SSH/html5ssh.py:117
+msgid ""
+"Command to execute on the remote server. If not provided, an interactive "
+"shell will be executed."
+msgstr "在远程服务器上执行的命令。如果未提供，将执行交互式 shell。"
+
+#: transports/HTML5SSH/html5ssh.py:135
+#| msgid "File Sharing"
+msgid "File Sharing Root"
+msgstr "文件共享根"
+
+#: transports/HTML5SSH/html5ssh.py:138
+msgid ""
+"Root path for file sharing. If not provided, root directory will be used."
+msgstr "文件共享的根路径。如果未提供，将使用根目录。"
+
+#: transports/HTML5SSH/html5ssh.py:144
+#| msgid "VNC Server port"
+msgid "SSH Server port"
+msgstr "SSH 服务器端口"
+
+#: transports/HTML5SSH/html5ssh.py:147
+#| msgid "Port of the VNC server."
+msgid "Port of the SSH server."
+msgstr "SSH 服务器的端口。"
+
+#: transports/HTML5SSH/html5ssh.py:152
+#| msgid "Src Host"
+msgid "SSH Host Key"
+msgstr "SSH 主机密钥"
+
+#: transports/HTML5SSH/html5ssh.py:155
+msgid ""
+"Host key of the SSH server. If not provided, no verification of host "
+"identity is done."
+msgstr "SSH 服务器的主机密钥。如果未提供，则不会验证主机身份。"
+
+#: transports/HTML5SSH/html5ssh.py:161
+msgid "Server Keep Alive"
+msgstr "服务器保持活动"
+
+#: transports/HTML5SSH/html5ssh.py:165
+msgid ""
+"Time in seconds between keep alive messages sent to server. If not provided, "
+"no keep alive messages are sent."
+msgstr "发送到服务器的保持活动消息之间的时间（以秒为单位）。如果未提供，则不会发送保"
+"持活动消息。"
 
 #: transports/HTML5VNC/html5vnc.py:64
 msgid "HTML5 VNC Experimental"
@@ -7263,10 +7376,10 @@ msgstr "我们正在创建您的服务，请等待几秒钟。）"
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
-#: web/views/modern.py:303
+#: web/views/modern.py:307
 msgid "{} days"
 msgstr "{} 天"
 
-#: web/views/modern.py:305
+#: web/views/modern.py:309
 msgid "{} hours"
 msgstr "{} 小时"

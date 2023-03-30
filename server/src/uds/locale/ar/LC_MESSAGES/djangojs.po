@@ -5,6 +5,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016-2018
 # Víctor Alonso <valonso@virtualcable.net>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020
@@ -13,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-15 04:01+0100\n"
+"POT-Creation-Date: 2023-03-30 15:34+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Arabic (http://www.transifex.com/openuds/openuds/language/"
