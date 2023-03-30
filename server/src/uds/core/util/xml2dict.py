@@ -32,10 +32,10 @@
 import typing
 
 from collections import defaultdict
-from xml.etree import cElementTree
+import defusedxml.ElementTree as ET
 
 if typing.TYPE_CHECKING:
-    from xml.etree.cElementTree import Element
+    from xml.etree.cElementTree import Element  # nosec: Only type checking
 
 
 def etree_to_dict(t: 'Element') -> typing.Mapping[str, typing.Any]:
@@ -63,4 +63,4 @@ def etree_to_dict(t: 'Element') -> typing.Mapping[str, typing.Any]:
 
 
 def parse(xml_string: str) -> typing.Mapping[str, typing.Any]:
-    return etree_to_dict(cElementTree.XML(xml_string))
+    return etree_to_dict(ET.XML(xml_string))

@@ -32,6 +32,8 @@
 """
 import typing
 
+hasher: typing.Any
+
 try:
     # Try to use fast hashlib (if available)
     import xxhash

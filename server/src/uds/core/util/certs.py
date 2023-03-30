@@ -60,7 +60,7 @@ def createSslContext(verify: bool = True) -> ssl.SSLContext:
         sslContext = ssl.create_default_context(cafile=certifi.where())
     else:
         sslContext = (
-            ssl._create_unverified_context()
+            ssl._create_unverified_context()  # nosec: we are creating a context required to be insecure
         )  # pylint: disable=protected-access
 
     return sslContext

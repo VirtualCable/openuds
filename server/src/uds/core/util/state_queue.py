@@ -84,5 +84,5 @@ class StateQueue:
     def remove(self, state: typing.Any):
         try:
             self._queue.remove(state)
-        except Exception:
+        except Exception:  # nosec: Fine to ignore exception here
             pass  # If state not in queue, nothing happens

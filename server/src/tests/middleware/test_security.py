@@ -33,7 +33,6 @@ import logging
 from django.urls import reverse
 
 from uds.core.util import config
-from uds.middleware.redirect import _NO_REDIRECT
 
 from ..utils import test
 

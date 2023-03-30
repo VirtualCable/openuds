@@ -31,7 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import codecs
-import pickle
+import pickle  # nosec: This is fine, we are not loading untrusted data
 import logging
 import typing
 
@@ -105,7 +105,7 @@ class AutoAttributes(Serializable):
             return
         # We keep original data (maybe incomplete)
         if data[:2] == b'v1':
-            self.attrs = pickle.loads(data[2:])
+            self.attrs = pickle.loads(data[2:])  # nosec: pickle is used to load data from trusted source
             return
         # We try to load as v0
         try:
@@ -117,9 +117,9 @@ class AutoAttributes(Serializable):
             k, v = pair.split(b'\1')
             # logger.debug('k: %s  ---   v: %s', k, v)
             try:
-                self.attrs[k.decode()] = pickle.loads(v)
+                self.attrs[k.decode()] = pickle.loads(v)  # nosec: pickle is used to load data from trusted source
             except Exception:  # Old encoding on python2, set encoding for loading
-                self.attrs[k.decode()] = pickle.loads(v, encoding='utf8')
+                self.attrs[k.decode()] = pickle.loads(v, encoding='utf8')  # nosec: pickle is used to load data from trusted source
 
     def __repr__(self) -> str:
         return (

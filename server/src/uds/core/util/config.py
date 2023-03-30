@@ -148,9 +148,7 @@ class Config:
                         section=self._section.name(), key=self._key
                     )
                     self._data = readed.value
-                    self._crypt = [self._crypt, True][
-                        readed.crypt
-                    ]  # True has "higher" precedende than False
+                    self._crypt = readed.crypt or self._crypt
                     self._longText = readed.long
                     if self._type != -1 and self._type != readed.field_type:
                         readed.field_type = self._type
@@ -507,7 +505,7 @@ class GlobalConfig:
     # Redirect HTTP to HTTPS
     REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value(
         'redirectToHttps',
-        '0',
+        '1',
         type=Config.FieldType.BOOLEAN,
         help=_('Redirect HTTP to HTTPS on connection to UDS'),
     )

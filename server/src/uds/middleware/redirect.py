@@ -44,46 +44,17 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
-
-_NO_REDIRECT: typing.List[str] = [
-    'rest',
-    'pam',
-    'guacamole',
-    # For new paths
-    # 'uds/rest',  # REST must be HTTPS if redirect is enabled
-    'uds/pam',
-    'uds/guacamole',
-    # Test client can be http
-    'uds/rest/client/test',
-    # And also the tunnel
-    'uds/rest/tunnel',
-]
-
-
-def registerNoRedirectURL(path: str) -> None:
-    _NO_REDIRECT.append(path)
-
-
 def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
-    if GlobalConfig.REDIRECT_TO_HTTPS.getBool() is False or request.is_secure():
-        return None
+    if request.is_secure():
+       return None
 
-    full_path = request.get_full_path()
-    redirect = True
-    for nr in _NO_REDIRECT:
-        if full_path.startswith('/' + nr):
-            redirect = False
-            break
+    if request.method == 'POST':  # No post redirects
+        url = reverse('page.login')
+    else:
+        url = request.build_absolute_uri(request.get_full_path())
+    url = url.replace('http://', 'https://')
 
-    if redirect:
-        if request.method == 'POST':
-            url = reverse('page.login')
-        else:
-            url = request.build_absolute_uri(full_path)
-        url = url.replace('http://', 'https://')
-
-        return HttpResponseRedirect(url)
-    return None
+    return HttpResponseRedirect(url)
 
 
 # Compatibility with old middleware, so we can use it in settings.py as it was
