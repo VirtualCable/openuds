@@ -184,6 +184,9 @@ class RestApi:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
+        # Disable SSLv2, SSLv3, TLSv1, TLSv1.1
+        ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+
         # If we have the certificates file, we use it
         if tools.getCaCertsFile() is not None:
             ctx.load_verify_locations(tools.getCaCertsFile())
