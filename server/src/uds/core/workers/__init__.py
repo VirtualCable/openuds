@@ -48,8 +48,8 @@ def initialize() -> None:
     from uds.core.managers import taskManager
 
     # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(sys.modules[__name__].__file__)
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
+    pkgpath = os.path.dirname(sys.modules[__name__].__file__)  # type: ignore
+    for _, name, _ in pkgutil.iter_modules([pkgpath]):  # type: ignore
         logger.debug('Importing worker %s', name)
         # __import__(name, globals(), locals(), [], 1)
         importlib.import_module('.' + name, __name__)  # import module

@@ -38,7 +38,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
@@ -66,7 +66,7 @@ def transportOwnLink(
 
     # For type checkers to "be happy"
     try:
-        res = userServiceManager().getService(
+        res = UserServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport
         )
         ip, userService, iads, trans, itrans = res
@@ -162,12 +162,12 @@ def userServiceStatus(
     userService: typing.Optional['UserService'] = None
     status = 'running'
     # If service exists (meta or not)
-    if userServiceManager().isMetaService(idService):
-        userService = userServiceManager().locateMetaService(
+    if UserServiceManager().isMetaService(idService):
+        userService = UserServiceManager().locateMetaService(
             user=request.user, idService=idService
         )
     else:
-        userService = userServiceManager().locateUserService(
+        userService = UserServiceManager().locateUserService(
             user=request.user, idService=idService, create=False
         )
     if userService:
@@ -196,11 +196,11 @@ def userServiceStatus(
 def action(
     request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
 ) -> HttpResponse:
-    userService = userServiceManager().locateMetaService(
+    userService = UserServiceManager().locateMetaService(
         request.user, idService
     )
     if not userService:
-        userService = userServiceManager().locateUserService(
+        userService = UserServiceManager().locateUserService(
             request.user, idService, create=False
         )
 
@@ -220,12 +220,12 @@ def action(
                 ),
                 log.WEB,
             )
-            userServiceManager().requestLogoff(userService)
+            UserServiceManager().requestLogoff(userService)
             userService.release()
         elif (
             actionString == 'reset'
             and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.getType().canReset
+            and userService.deployed_service.service.getType().canReset  # type: ignore
         ):
             rebuild = True
             log.doLog(
@@ -236,8 +236,8 @@ def action(
                 ),
                 log.WEB,
             )
-            # userServiceManager().requestLogoff(userService)
-            userServiceManager().reset(userService)
+            # UserServiceManager().requestLogoff(userService)
+            UserServiceManager().reset(userService)
             
 
     if rebuild:

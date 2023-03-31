@@ -95,7 +95,7 @@ class ServiceCacheUpdater(Job):
         for servicePool in servicePoolsNeedingCaching:
             servicePool.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
-            spServiceInstance = servicePool.service.getInstance()
+            spServiceInstance = servicePool.service.getInstance()  # type: ignore
 
             if (
                 servicePool.activePublication() is None
@@ -146,7 +146,7 @@ class ServiceCacheUpdater(Job):
             )
             inAssigned: int = (
                 servicePool.assignedUserServices()
-                .filter(userServiceManager().getStateFilter(servicePool.service))
+                .filter(userServiceManager().getStateFilter(servicePool.service))  # type: ignore
                 .count()
             )
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider

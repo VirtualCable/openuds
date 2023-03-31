@@ -621,7 +621,7 @@ class gui:
 
         """
 
-        def __init__(self, **options):
+        def __init__(self, **options) -> None:
             super().__init__(**options)
             self._isSerializable: bool = options.get('serializable', '') != ''
             self._type(gui.InputField.HIDDEN_TYPE)
