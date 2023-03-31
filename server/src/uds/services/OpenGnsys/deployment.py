@@ -29,7 +29,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
@@ -121,7 +121,7 @@ class OGDeployment(UserDeployment):
             self._machineId = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
             self._stamp = int(vals[6].decode('utf8'))
-            self._queue = pickle.loads(vals[7])
+            self._queue = pickle.loads(vals[7])  # nosec: not insecure, we are loading our own data
 
     def getName(self) -> str:
         return self._name
@@ -237,8 +237,8 @@ class OGDeployment(UserDeployment):
         if self._machineId:
             try:
                 self.service().unreserve(self._machineId)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning('Error unreserving machine: $s', e)
 
         self._queue = [opError]
         self._reason = str(reason)

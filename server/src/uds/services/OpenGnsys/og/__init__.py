@@ -48,8 +48,10 @@ if typing.TYPE_CHECKING:
 # Fake part
 FAKE = False
 CACHE_VALIDITY = 180
+TIMEOUT = 10
 
 RT = typing.TypeVar('RT')
+
 
 # Decorator
 def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
@@ -75,7 +77,7 @@ def ensureResponseIsValid(
             err = response.content.decode()
         if 'Database error' in err:
             err = 'Database error: Please, check OpenGnsys fields length on remotepc table (loginurl and logouturl)'
-            
+
         errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
         logger.error('%s: %s', errMsg, response.content)
         raise Exception(errMsg)
@@ -136,6 +138,7 @@ class OpenGnsysClient:
                     data=json.dumps(data),
                     headers=self.headers,
                     verify=self.verifyCert,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )
@@ -146,7 +149,10 @@ class OpenGnsysClient:
         if not FAKE:
             return ensureResponseIsValid(
                 requests.get(
-                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                    self._ogUrl(path),
+                    headers=self.headers,
+                    verify=self.verifyCert,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )
@@ -157,7 +163,10 @@ class OpenGnsysClient:
         if not FAKE:
             return ensureResponseIsValid(
                 requests.delete(
-                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                    self._ogUrl(path),
+                    headers=self.headers,
+                    verify=self.verifyCert,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )

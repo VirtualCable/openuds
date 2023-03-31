@@ -123,6 +123,9 @@ def connection(
             if not verify_ssl:
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
             l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+            # Disable TLS1 and TLS1.1
+            # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
+            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
 
         l.simple_bind_s(who=username, cred=password)
     except ldap.SERVER_DOWN as e:  # type: ignore

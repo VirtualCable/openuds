@@ -511,7 +511,7 @@ class gui:
 
         """
 
-        class PatternTypes:
+        class PatternType(enum.Enum):
             IPV4 = 'ipv4'
             IPV6 = 'ipv6'
             IP = 'ip'
@@ -528,7 +528,7 @@ class gui:
             super().__init__(**options, type=gui.InputField.Types.TEXT)
             self._data['multiline'] = min(max(int(options.get('multiline', 0)), 0), 8)
             # Pattern to validate the value
-            # Can contain an regex or this special values: (empty string means no validation)
+            # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
             #   - 'ipv6'     # IPv6 address
             #   - 'ip'       # IPv4 or IPv6 address
@@ -542,8 +542,10 @@ class gui:
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
             self._data['pattern'] = options.get(
-                'pattern', gui.TextField.PatternTypes.NONE
+                'pattern', gui.TextField.PatternType.NONE
             )
+            if isinstance(self._data['pattern'], str):
+                self._data['pattern'] = gui.TextField.PatternType(self._data['pattern'])
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -552,31 +554,31 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            if isinstance(self._data['pattern'], gui.TextField.PatternTypes):
+            if isinstance(self._data['pattern'], gui.TextField.PatternType):
                 try:
-                    pattern: gui.TextField.PatternTypes = self._data['pattern']
-                    if pattern == gui.TextField.PatternTypes.IPV4:
+                    pattern: gui.TextField.PatternType = self._data['pattern']
+                    if pattern == gui.TextField.PatternType.IPV4:
                         validators.validateIpv4(self.value)
-                    elif pattern == gui.TextField.PatternTypes.IPV6:
+                    elif pattern == gui.TextField.PatternType.IPV6:
                         validators.validateIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.IP:
+                    elif pattern == gui.TextField.PatternType.IP:
                         validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.MAC:
+                    elif pattern == gui.TextField.PatternType.MAC:
                         validators.validateMac(self.value)
-                    elif pattern == gui.TextField.PatternTypes.URL:
+                    elif pattern == gui.TextField.PatternType.URL:
                         validators.validateUrl(self.value)
-                    elif pattern == gui.TextField.PatternTypes.EMAIL:
+                    elif pattern == gui.TextField.PatternType.EMAIL:
                         validators.validateEmail(self.value)
-                    elif pattern == gui.TextField.PatternTypes.FQDN:
+                    elif pattern == gui.TextField.PatternType.FQDN:
                         validators.validateFqdn(self.value)
-                    elif pattern == gui.TextField.PatternTypes.HOSTNAME:
+                    elif pattern == gui.TextField.PatternType.HOSTNAME:
                         validators.validateHostname(self.value)
-                    elif pattern == gui.TextField.PatternTypes.HOST:
+                    elif pattern == gui.TextField.PatternType.HOST:
                         try:
                             validators.validateHostname(self.value, allowDomain=True)
                         except exceptions.ValidationError:
                             validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.PATH:
+                    elif pattern == gui.TextField.PatternType.PATH:
                         validators.validatePath(self.value)
                     return True
                 except exceptions.ValidationError:

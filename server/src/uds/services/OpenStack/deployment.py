@@ -30,7 +30,7 @@
 """
 .. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
@@ -113,7 +113,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])
+            self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
 
     def getName(self) -> str:
         if self._name == '':

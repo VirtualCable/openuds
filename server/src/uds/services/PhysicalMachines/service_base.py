@@ -71,13 +71,15 @@ class IPServiceBase(services.Service):
     def unassignMachine(self, ip: str) -> None:
         raise NotADirectoryError('unassignMachine')
 
-    def wakeup(self, ip: str, mac: typing.Optional[str], verify_ssl: bool = False) -> None:
+    def wakeup(
+        self, ip: str, mac: typing.Optional[str], verify_ssl: bool = False
+    ) -> None:
         if mac:
             wolurl = self.parent().wolURL(ip, mac)
             if wolurl:
                 logger.info('Launching WOL: %s', wolurl)
                 try:
-                    requests.get(wolurl, verify=verify_ssl)
+                    requests.get(wolurl, verify=verify_ssl, timeout=5)
                     # logger.debug('Result: %s', result)
                 except Exception as e:
                     logger.error('Error on WOL: %s', e)

@@ -48,7 +48,9 @@ logger = logging.getLogger(__name__)
 
 
 def barChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
+    size: typing.Tuple[float, float, int],
+    data: typing.Mapping[str, typing.Any],
+    output: io.BytesIO,
 ) -> None:
     """
     Generates a bar chart and stores it on output
@@ -81,7 +83,7 @@ def barChart(
     fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis = fig.add_subplot(111)
+    axis = fig.add_subplot(1, 1, 1)  # type: ignore
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     bottom = np.zeros(len(ys[0]['data']))
@@ -105,7 +107,9 @@ def barChart(
 
 
 def lineChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
+    size: typing.Tuple[float, float, int],
+    data: typing.Mapping[str, typing.Any],
+    output: io.BytesIO,
 ) -> None:
     """
     Generates a line chart and stores it on output
@@ -136,7 +140,7 @@ def lineChart(
     fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis = fig.add_subplot(111)
+    axis = fig.add_subplot(111)  # type: ignore
     axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     for i in y:
@@ -160,7 +164,9 @@ def lineChart(
 
 
 def surfaceChart(
-    size: typing.Tuple[float, float, int], data: typing.Mapping[str, typing.Any], output: io.BytesIO
+    size: typing.Tuple[float, float, int],
+    data: typing.Mapping[str, typing.Any],
+    output: io.BytesIO,
 ) -> None:
     """
     Generates a surface chart and stores it on output
@@ -205,7 +211,7 @@ def surfaceChart(
     fig: Figure = Figure(figsize=(size[0], size[1]), dpi=size[2])  # type: ignore
     FigureCanvas(fig)  # Stores canvas on fig.canvas
 
-    axis: typing.Any = fig.add_subplot(111, projection='3d')
+    axis: typing.Any = fig.add_subplot(1, 1, 1, projection='3d')  # type: ignore
     # axis.grid(color='r', linestyle='dotted', linewidth=0.1, alpha=0.5)
 
     if data.get('wireframe', False):

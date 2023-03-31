@@ -193,10 +193,11 @@ class OGProvider(ServiceProvider):
                 if self.udsServerAccessUrl.value.strip() == '':
                     self.udsServerAccessUrl.value = request.build_absolute_uri('/')
 
+                # Ensure that url ends with /
                 if self.udsServerAccessUrl.value[-1] != '/':
                     self.udsServerAccessUrl.value += '/'
-            except Exception:
-                pass
+            except Exception as e:
+                self.udsServerAccessUrl.value = ''
 
     @property
     def endpoint(self) -> str:
