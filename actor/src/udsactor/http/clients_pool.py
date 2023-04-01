@@ -37,9 +37,9 @@ import requests
 from ..log import logger
 
 # For avoid proxy on localhost connections
-NO_PROXY = {
-    'http': None,
-    'https': None,
+NO_PROXY: typing.Dict[str, str] = {
+    'http': '',
+    'https': '',
 }
 
 class UDSActorClientPool:

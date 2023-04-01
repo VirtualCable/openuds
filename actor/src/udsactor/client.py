@@ -239,7 +239,7 @@ class UDSActorClient(threading.Thread):  # pylint: disable=too-many-instance-att
         pixmap: 'QPixmap' = self._qApp.primaryScreen().grabWindow(0)  # type: ignore
         ba = QByteArray()
         buffer = QBuffer(ba)
-        buffer.open(QIODevice.WriteOnly)
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
         pixmap.save(buffer, 'PNG')
         buffer.close()
         scrBase64 = bytes(ba.toBase64()).decode()    # type: ignore  # there are problems with Pylance and connects on PyQt5... :)
