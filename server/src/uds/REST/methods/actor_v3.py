@@ -46,7 +46,7 @@ from uds.models import (
 # from uds.core import VERSION
 from uds.core.managers import userServiceManager, cryptoManager
 from uds.core import osmanagers
-from uds.core.util import log, certs
+from uds.core.util import log, security
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
@@ -418,7 +418,7 @@ class BaseReadyChange(ActorV3Action):
                 userServiceManager().notifyReadyFromOsManager(userService, '')
 
         # Generates a certificate and send it to client.
-        privateKey, cert, password = certs.selfSignedCert(self._params['ip'])
+        privateKey, cert, password = security.selfSignedCert(self._params['ip'])
         # Store certificate with userService
         userService.setProperty('cert', cert)
         userService.setProperty('priv', privateKey)
@@ -781,7 +781,7 @@ class Unmanaged(ActorV3Action):
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client.
-        privateKey, certificate, password = certs.selfSignedCert(ip)
+        privateKey, certificate, password = security.selfSignedCert(ip)
         cert: typing.Dict[str, str] = {
             'private_key': privateKey,
             'server_certificate': certificate,

@@ -44,9 +44,6 @@ from .local import LocalProvider
 
 DEFAULT_CIPHERS = (
     'ECDHE-RSA-AES256-GCM-SHA384'
-    ':ECDHE-ECDSA-AES256-GCM-SHA384'
-    ':ECDHE-ECDSA-AES256-CCM'
-    ':DHE-RSA-AES256-SHA256'
 )
 
 # Not imported at runtime, just for type checking

@@ -13,7 +13,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 import certifi
-
+import requests
+import requests.adapters
 
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     key = rsa.generate_private_key(
@@ -55,14 +56,17 @@ def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     )
 
 
-def createSslContext(verify: bool = True) -> ssl.SSLContext:
+def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     if verify:
-        sslContext = ssl.create_default_context(cafile=certifi.where())
+        sslContext = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
     else:
         sslContext = (
             ssl._create_unverified_context()  # nosec: we are creating a context required to be insecure
         )  # pylint: disable=protected-access
 
+    # Disable TLS1.0 and TLS1.1
+    sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
+    sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
     return sslContext
 
 
@@ -93,3 +97,21 @@ def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
         return public_cert == public_key
     except Exception:
         return False
+
+def secureRequestsSession(verify: bool = True) -> 'requests.Session':
+    class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
+        def init_poolmanager(self, *args, **kwargs) -> None:
+            sslContext = createClientSslContext(verify=verify)
+            
+            ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+
+            # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
+            kwargs["ssl_context"] = sslContext
+
+            return super().init_poolmanager(*args, **kwargs)
+
+    session = requests.Session()
+    session.mount("https://", UDSHTTPAdapter())
+
+    return session
+
