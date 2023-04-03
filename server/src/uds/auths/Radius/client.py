@@ -229,7 +229,7 @@ class RadiusClient:
         return RadiusResult()
 
     def authenticate_challenge(
-        self, username: str, password: str = '', otp: str = '', state: bytes = b''
+        self, username: str, password: str = '', otp: str = '', state: bytes = b''  # nosec: not a password, just an empty string
     ) -> RadiusResult:
         '''
         wrapper for above 3 functions: authenticate_only, challenge_only, authenticate_and_challenge

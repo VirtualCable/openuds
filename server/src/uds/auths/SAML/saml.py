@@ -50,7 +50,7 @@ from uds.core.ui import gui
 from uds.core import auths, exceptions
 from uds.core.managers import cryptoManager
 from uds.core.util.decorators import allowCache
-from uds.core.util import certs
+from uds.core.util import security
 
 from . import config
 
@@ -377,7 +377,9 @@ class SAMLAuthenticator(auths.Authenticator):
         except Exception as e:
             raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
 
-        if not certs.checkCertificateMatchPrivateKey(cert=self.serverCertificate.value, key=self.privateKey.value):
+        if not security.checkCertificateMatchPrivateKey(
+            cert=self.serverCertificate.value, key=self.privateKey.value
+        ):
             raise exceptions.ValidationError(
                 gettext('Certificate and private key do not match')
             )
@@ -395,7 +397,9 @@ class SAMLAuthenticator(auths.Authenticator):
             logger.debug('idp Metadata is an URL: %s', idpMetadata)
             try:
                 resp = requests.get(
-                    idpMetadata.split('\n')[0], verify=self.checkSSLCertificate.isTrue()
+                    idpMetadata.split('\n')[0],
+                    verify=self.checkSSLCertificate.isTrue(),
+                    timeout=10,
                 )
                 idpMetadata = resp.content.decode()
             except Exception as e:
@@ -460,7 +464,7 @@ class SAMLAuthenticator(auths.Authenticator):
     @allowCache(
         cachePrefix='idpm',
         cachingKeyFnc=CACHING_KEY_FNC,
-        cacheTimeout=3600*24*365,  # 1 year
+        cacheTimeout=3600 * 24 * 365,  # 1 year
     )
     def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
@@ -468,6 +472,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 resp = requests.get(
                     self.idpMetadata.value.split('\n')[0],
                     verify=self.checkSSLCertificate.isTrue(),
+                    timeout=10,
                 )
                 val = resp.content.decode()
             except Exception as e:
@@ -639,7 +644,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         logoutRequestId = request.session.get('samlLogoutRequestId', None)
 
-        # Cleanup session & session cookie        
+        # Cleanup session & session cookie
         request.session.flush()
 
         settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())
