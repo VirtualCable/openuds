@@ -60,12 +60,12 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     if verify:
         sslContext = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
     else:
-        sslContext = (
-            ssl._create_unverified_context()  # nosec: we are creating a context required to be insecure
-        )  # pylint: disable=protected-access
+        sslContext = ssl._create_unverified_context(purpose=ssl.Purpose.SERVER_AUTH, check_hostname=False)
+
 
     # Disable TLS1.0 and TLS1.1
-    sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
+    # Redundant, only use minimum_version
+    # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
     sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
     return sslContext
 

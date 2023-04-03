@@ -116,8 +116,6 @@ class UDSApi:  # pylint: disable=too-few-public-methods
         )
         # Disable SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2
         context.minimum_version = ssl.TLSVersion.TLSv1_3
-        # Set cipher
-        context.set_ciphers("ECDHE-RSA-AES256-GCM-SHA384")
 
         # Configure session security
         class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
