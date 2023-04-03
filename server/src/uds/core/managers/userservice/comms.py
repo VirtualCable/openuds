@@ -35,7 +35,7 @@ import tempfile
 import logging
 import typing
 
-import requests
+from uds.core.util.security import secureRequestsSession
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -91,7 +91,7 @@ def _requestActor(
         else:
             verify: typing.Union[bool, str]
             cert = userService.getProperty('cert')
-            # cert = ''  # Untils more tests, keep as previous....  TODO: Fix this when fully tested
+            # cert = ''  # Uncomment to test without cert
             if cert:
                 # Generate temp file, and delete it after
                 verify = tempfile.mktemp('udscrt')
@@ -99,10 +99,11 @@ def _requestActor(
                     f.write(cert.encode())  # Save cert
             else:
                 verify = False
+            session = secureRequestsSession(verify=bool(cert))
             if data is None:
-                r = requests.get(url, verify=verify, timeout=TIMEOUT)
+                r = session.get(url, verify=verify, timeout=TIMEOUT)
             else:
-                r = requests.post(
+                r = session.post(
                     url,
                     data=json.dumps(data),
                     headers={'content-type': 'application/json'},
