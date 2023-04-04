@@ -33,7 +33,7 @@ import logging
 import typing
 
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect
 
 from uds.core.util.config import GlobalConfig
 
@@ -48,13 +48,7 @@ def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse
     if request.is_secure():
        return None
 
-    if request.method == 'POST':  # No post redirects
-        url = reverse('page.login')
-    else:
-        url = request.build_absolute_uri(request.get_full_path())
-    url = url.replace('http://', 'https://')
-
-    return HttpResponseRedirect(url)
+    return HttpResponsePermanentRedirect(reverse('page.login'))
 
 
 # Compatibility with old middleware, so we can use it in settings.py as it was
