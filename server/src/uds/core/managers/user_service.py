@@ -199,7 +199,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Creates a new cache for the deployed service publication at level indicated
         """
-        logger.debug(
+        logger.info(
             'Creating a new cache element at level %s for publication %s',
             cacheLevel,
             publication,
@@ -225,7 +225,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         if servicePool.service.getType().publicationType is not None:
             publication = servicePool.activePublication()
-            logger.debug(
+            logger.info(
                 'Creating a new assigned element for user %s por publication %s',
                 user,
                 publication,
@@ -239,7 +239,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     )
                 )
         else:
-            logger.debug('Creating a new assigned element for user %s', user)
+            logger.info('Creating a new assigned element for user %s', user)
             assigned = self.__createAssignedAtDbForNoPublication(servicePool, user)
 
         assignedInstance = assigned.getInstance()
@@ -323,7 +323,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         @return: the Uservice canceling
         """
         userService.refresh_from_db()
-        logger.debug('Canceling userService %s creation', userService)
+        logger.info('Canceling userService %s creation', userService)
 
         if userService.isPreparing() is False:
             logger.info(
@@ -356,7 +356,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         with transaction.atomic():
             userService = UserService.objects.select_for_update().get(id=userService.id)
-            logger.debug('Removing userService %a', userService)
+            logger.info('Removing userService %a', userService)
             if (
                 userService.isUsable() is False
                 and State.isRemovable(userService.state) is False
