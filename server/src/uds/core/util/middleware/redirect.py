@@ -29,7 +29,7 @@ import logging
 import typing
 
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponsePermanentRedirect
 from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class RedirectMiddleware:
                 url = request.build_absolute_uri(full_path)
             url = url.replace('http://', 'https://')
 
-            return HttpResponseRedirect(url)
+            return HttpResponsePermanentRedirect(url)
         return self.get_response(request)
 
     @staticmethod
