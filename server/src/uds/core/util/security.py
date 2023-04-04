@@ -110,6 +110,10 @@ def secureRequestsSession(verify: bool = True) -> 'requests.Session':
 
             return super().init_poolmanager(*args, **kwargs)
 
+        def cert_verify(self, conn, url, _, cert):  # pylint: disable=unused-argument
+            # Overridden to do nothing
+            return super().cert_verify(conn, url, verify, cert)
+
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
 

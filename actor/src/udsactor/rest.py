@@ -123,6 +123,10 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 kwargs["ssl_context"] = context
 
                 return super().init_poolmanager(*args, **kwargs)
+            
+            def cert_verify(self, conn, url, verify, cert):  # pylint: disable=unused-argument
+                # Overridden to do nothing
+                return super().cert_verify(conn, url, validateCert, cert)
 
         self._session = requests.Session()
         self._session.mount("https://", UDSHTTPAdapter())
@@ -199,7 +203,7 @@ class UDSServerApi(UDSApi):
                         priority=v['priority'],
                         isCustom=v['isCustom'],
                     )
-        except Exception:
+        except Exception as e:
             pass
 
     def register(
