@@ -234,6 +234,7 @@ WORKERSFILE = 'workers.log'
 AUTHFILE = 'auth.log'
 USEFILE = 'use.log'
 TRACEFILE = 'trace.log'
+OPERATIONSFILE = 'operations.log'
 LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
 ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
 
@@ -246,11 +247,20 @@ LOGGING = {
         }
     },
     'formatters': {
-        'verbose': {
+        'database': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(lineno)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
+        'uds': {
+            'format': 'uds[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
+        'services': {
+            'format': 'uds-s[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
+        'workers': {
+            'format': 'uds-w[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
         },
         'database': {'format': '%(levelname)s %(asctime)s Database %(message)s'},
         'auth': {'format': '%(asctime)s %(message)s'},
@@ -262,6 +272,14 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
         },
+        # Sample logging to syslog
+        #'file': {
+        #    'level': 'DEBUG',
+        #    'class': 'logging.handlers.SysLogHandler',
+        #    'formatter': 'uds',
+        #    'facility': 'local0',
+        #    'address': '/dev/log',
+        #},
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -275,7 +293,7 @@ LOGGING = {
         'database': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
+            'formatter': 'database',
             'filename': LOGDIR + '/' + 'sql.log',
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
@@ -332,6 +350,16 @@ LOGGING = {
             'backupCount': 3,
             'encoding': 'utf-8',
         },
+        'operationsFile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'trace',
+            'filename': LOGDIR + '/' + OPERATIONSFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8',
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -374,6 +402,12 @@ LOGGING = {
             'propagate': True,
             'level': 'ERROR',
         },
+        # Disable matplotlib (used by reports) logging (too verbose)
+        'matplotlib': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'ERROR',
+        },
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
@@ -409,6 +443,12 @@ LOGGING = {
         # Custom tracing
         'traceLog': {
             'handlers': ['traceFile'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Custom operations
+        'operationsLog': {
+            'handlers': ['operationsFile'],
             'level': 'INFO',
             'propagate': False,
         },

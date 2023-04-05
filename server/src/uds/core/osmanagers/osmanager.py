@@ -38,7 +38,7 @@ from uds.core.util.state import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core.util.config import GlobalConfig
-from uds.core import Module
+from uds.core.module import Module
 
 STORAGE_KEY = 'osmk'
 

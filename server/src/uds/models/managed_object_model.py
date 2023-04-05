@@ -36,7 +36,7 @@ import typing
 from django.db import models
 
 from uds.core.environment import Environment
-from uds.core import Module
+from uds.core.module import Module
 
 from .uuid_model import UUIDModel
 

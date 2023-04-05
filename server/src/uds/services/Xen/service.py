@@ -43,7 +43,7 @@ from .deployment import XenLinkedDeployment
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import XenProvider
-    from uds.core import Module
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

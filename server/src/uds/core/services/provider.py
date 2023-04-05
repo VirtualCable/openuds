@@ -33,7 +33,7 @@
 import logging
 import typing
 
-from uds.core import Module
+from uds.core.module import Module
 from uds.core.environment import Environment
 
 from uds.core.util import log

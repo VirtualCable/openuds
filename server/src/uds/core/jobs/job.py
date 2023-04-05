@@ -31,7 +31,7 @@
 import logging
 import typing
 
-from uds.core import Environmentable
+from uds.core.environment import Environmentable
 from uds.core.util.config import Config
 
 

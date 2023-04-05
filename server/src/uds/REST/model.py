@@ -45,7 +45,8 @@ from uds.core.ui import gui as uiGui
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core import Module, exceptions as g_exceptions
+from uds.core.module import Module
+from uds.core import exceptions as g_exceptions
 
 from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
 

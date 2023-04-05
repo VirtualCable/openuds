@@ -46,7 +46,7 @@ from .deployment import LiveDeployment
 if typing.TYPE_CHECKING:
     from . import on
     from .provider import OpenNebulaProvider
-    from uds.core import Module
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

@@ -72,7 +72,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
-
+operationsLogger = logging.getLogger('operationsLog')
 
 class UserServiceManager(metaclass=singleton.Singleton):
     def __init__(self):
@@ -126,7 +126,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return False
 
         if self.getExistingUserServices(service) >= (serviceInstance.maxDeployed or 1):
-            logger.debug('Maximum number of user services reached for this service: {}'.format(service.name))
+            operationsLogger.info('Maximum number of user services reached for service: {}'.format(service.name))
             return True
 
         return False
@@ -200,7 +200,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Creates a new cache for the deployed service publication at level indicated
         """
-        logger.info(
+        operationsLogger.info(
             'Creating a new cache element at level %s for publication %s',
             cacheLevel,
             publication,
@@ -219,20 +219,21 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # First, honor maxPreparingServices
         if self.canGrowServicePool(servicePool) is False:
             # Cannot create new
-            logger.info(
+            operationsLogger.info(
                 'Too many preparing services. Creation of assigned service denied by max preparing services parameter. (login storm with insufficient cache?).'
             )
             raise ServiceNotReadyError()
 
         if servicePool.service.getType().publicationType is not None:
             publication = servicePool.activePublication()
-            logger.info(
-                'Creating a new assigned element for user %s por publication %s',
-                user,
-                publication,
-            )
             if publication:
                 assigned = self._createAssignedAtDb(publication, user)
+                operationsLogger.info(
+                    'Creating a new assigned element for user %s for publication %s on pool %s',
+                    user.pretty_name,
+                    publication.revision,
+                    servicePool.name,
+                )
             else:
                 raise Exception(
                     'Invalid publication creating service assignation: {} {}'.format(
@@ -240,7 +241,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     )
                 )
         else:
-            logger.debug('Creating a new assigned element for user %s', user)
+            operationsLogger.info('Creating a new assigned element for user %s on pool %s', user.pretty_name, servicePool.name)
             assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
         assignedInstance = assigned.getInstance()
@@ -262,14 +263,15 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         if servicePool.service.getType().publicationType is not None:
             publication = servicePool.activePublication()
-            logger.debug(
-                'Creating an assigned element from assignable %s for user %s por publication %s',
-                user,
-                assignableId,
-                publication,
-            )
             if publication:
                 assigned = self._createAssignedAtDb(publication, user)
+                operationsLogger.info(
+                    'Creating an assigned element from assignable %s for user %s for publication %s on pool %s',
+                    assignableId,
+                    user.pretty_name,
+                    publication.revision,
+                    servicePool.name,
+                )
             else:
                 raise Exception(
                     'Invalid publication creating service assignation: {} {}'.format(
@@ -277,10 +279,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     )
                 )
         else:
-            logger.debug(
-                'Creating an assigned element from assignable %s for user %s',
+            operationsLogger.info(
+                'Creating an assigned element from assignable %s for user %s on pool %s',
                 assignableId,
-                user,
+                user.pretty_name,
+                servicePool.name,
             )
             assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
@@ -324,14 +327,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
         @return: the Uservice canceling
         """
         userService.refresh_from_db()
-        logger.info('Canceling userService %s creation', userService)
 
         if userService.isPreparing() is False:
-            logger.info(
+            logger.debug(
                 'Cancel requested for a non running operation, performing removal instead'
             )
             return self.remove(userService)
 
+        operationsLogger.info('Canceling userService %s', userService.name)
         userServiceInstance = userService.getInstance()
 
         if (
@@ -357,7 +360,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         with transaction.atomic():
             userService = UserService.objects.select_for_update().get(id=userService.id)
-            logger.info('Removing userService %a', userService)
+            operationsLogger.info('Removing userService %a', userService.name)
             if (
                 userService.isUsable() is False
                 and State.isRemovable(userService.state) is False
@@ -643,7 +646,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if not userService.deployed_service.service.getType().canReset:
             return
 
-        logger.debug('Reseting %s', userService)
+        operationsLogger.info('Reseting %s', userService)
 
         userServiceInstance = userService.getInstance()
         try:

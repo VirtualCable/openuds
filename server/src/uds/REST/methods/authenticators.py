@@ -50,7 +50,7 @@ from .users_groups import Users, Groups
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db import models
-    from uds.core import Module
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 

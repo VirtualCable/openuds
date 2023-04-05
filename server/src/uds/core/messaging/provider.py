@@ -33,7 +33,7 @@ import enum
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import Module
+from uds.core.module import Module
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment

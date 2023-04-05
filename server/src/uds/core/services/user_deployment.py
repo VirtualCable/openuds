@@ -32,8 +32,8 @@
 """
 import typing
 
-from uds.core import Environmentable
-from uds.core import Serializable
+from uds.core.environment import Environmentable
+from uds.core.serializable import Serializable
 from uds.core.util.state import State
 from uds.core.util import log
 

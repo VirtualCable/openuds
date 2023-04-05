@@ -47,7 +47,7 @@ from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
 
     from . import client
     from .provider import ProxmoxProvider

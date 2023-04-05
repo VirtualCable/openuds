@@ -45,7 +45,7 @@ from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
 

@@ -35,7 +35,7 @@ import typing
 import logging
 
 from django.utils.translation import gettext_noop as _
-from uds.core import Module
+from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util.state import State
 from uds.core.util import log

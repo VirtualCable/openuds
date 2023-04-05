@@ -34,11 +34,6 @@ This package contains all core-related code for UDS
 """
 import time
 
-# Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from .environment import Environmentable
-from .serializable import Serializable
-from .module import Module
-
 
 VERSION = '4.x.x-DEVEL'
 VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))

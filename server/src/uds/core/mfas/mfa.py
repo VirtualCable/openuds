@@ -38,7 +38,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import Module
+from uds.core.module import Module
 from uds.models.util import getSqlDatetime
 from uds.core.auths import exceptions
 

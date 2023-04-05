@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import logging.handlers
 import typing
 
 from uds.core.managers import logManager
@@ -171,3 +172,8 @@ def clearLogs(wichObject: 'Model') -> None:
     Clears the logs associated with the object using the logManager
     """
     return logManager().clearLogs(wichObject)
+
+class UDSLogHandler(logging.handlers.RotatingFileHandler):
+    def emit(self, record: logging.LogRecord) -> None:
+        # Currently, simply call to parent
+        return super().emit(record)

@@ -32,8 +32,8 @@
 """
 import typing
 
-from uds.core import Environmentable
-from uds.core import Serializable
+from uds.core.environment import Environmentable
+from uds.core.serializable import Serializable
 
 if typing.TYPE_CHECKING:
     from uds.core import services

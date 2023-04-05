@@ -40,7 +40,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.util import os_detector as OsDetector
-from uds.core import Module
+from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util import net
 

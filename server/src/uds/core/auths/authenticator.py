@@ -39,7 +39,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from django.urls import reverse
 
-from uds.core import Module
+from uds.core.module import Module
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
