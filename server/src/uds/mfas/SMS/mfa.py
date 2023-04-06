@@ -299,10 +299,6 @@ class SMSMFA(mfas.MFA):
             )
         # Any other value means no authentication
 
-        # If set ignoreCertificateErrors, do it
-        if self.ignoreCertificateErrors.isTrue():
-            session.verify = False
-
         # Add headers. Headers are in the form of "Header: Value". (without the quotes)
         if self.headersParameters.value.strip():
             for header in self.headersParameters.value.split('\n'):
