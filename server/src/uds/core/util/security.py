@@ -19,6 +19,10 @@ import requests.adapters
 KEY_SIZE = 4096
 SECRET_SIZE = 32
 
+# Ensure that we do not get warnings about self signed certificates and so
+requests.packages.urllib3.disable_warnings()  # type: ignore
+
+
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
@@ -83,7 +87,7 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     # Next line is deprecated in Python 3.7
     # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
     sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
-    sslContext.maximum_version = ssl.TLSVersion.TLSv1_3
+    sslContext.maximum_version = ssl.TLSVersion.MAXIMUM_SUPPORTED
     return sslContext
 
 
@@ -118,7 +122,18 @@ def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
         # Even if the key or certificate is not valid, we only want a True if they match, False otherwise
         return False
 
-def secureRequestsSession(verify: bool = True) -> 'requests.Session':
+def secureRequestsSession(*, verify: bool = True) -> 'requests.Session':
+    '''
+    Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
+    This is intended to be used for requests that need to be secure, but not necessarily verified.
+    Removes the support for TLS1.0 and TLS1.1, and disables SSLv2 and SSLv3. (done in @createClientSslContext)
+
+    Args:
+        verify: If True, the server certificate will be verified. (Default: True)
+
+    Returns:
+        A requests.Session object.
+    '''
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args, **kwargs) -> None:
             sslContext = createClientSslContext(verify=verify)

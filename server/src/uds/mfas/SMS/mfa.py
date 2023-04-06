@@ -34,12 +34,13 @@ import re
 import logging
 
 from django.utils.translation import gettext_noop as _, gettext
-import requests
+
 import requests.auth
 
 from uds import models
 from uds.core import mfas
 from uds.core.ui import gui
+from uds.core.util import security
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -283,7 +284,7 @@ class SMSMFA(mfas.MFA):
         return url
 
     def getSession(self) -> requests.Session:
-        session = requests.Session()
+        session = security.secureRequestsSession(verify=self.ignoreCertificateErrors.isTrue())
         # 0 means no authentication
         if self.authenticationMethod.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(
@@ -296,11 +297,7 @@ class SMSMFA(mfas.MFA):
                 self.authenticationPassword.value,
             )
         # Any other value means no authentication
-
-        # If set ignoreCertificateErrors, do it
-        if self.ignoreCertificateErrors.isTrue():
-            session.verify = False
-        
+       
         # Add headers. Headers are in the form of "Header: Value". (without the quotes)
         if self.headersParameters.value.strip():
             for header in self.headersParameters.value.split('\n'):
