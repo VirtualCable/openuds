@@ -30,11 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import requests
 import logging
 import typing
 
-
+from uds.core.util import security
 from uds.core import services
 
 logger = logging.getLogger(__name__)
@@ -77,7 +76,7 @@ class IPServiceBase(services.Service):
             if wolurl:
                 logger.info('Launching WOL: %s', wolurl)
                 try:
-                    requests.get(wolurl, verify=False)
+                    security.secureRequestsSession(verify=False).get(wolurl)
                     # logger.debug('Result: %s', result)
                 except Exception as e:
                     logger.error('Error on WOL: %s', e)
