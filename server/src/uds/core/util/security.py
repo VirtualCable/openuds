@@ -80,9 +80,10 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
         sslContext.verify_mode = ssl.CERT_NONE
 
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
-    # Redundant in fact, i think... :)
-    sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
+    # Next line is deprecated in Python 3.7
+    # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
     sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
+    sslContext.maximum_version = ssl.TLSVersion.TLSv1_3
     return sslContext
 
 
