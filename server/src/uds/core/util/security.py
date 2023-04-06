@@ -19,8 +19,12 @@ import requests.adapters
 KEY_SIZE = 4096
 SECRET_SIZE = 32
 
-# Ensure that we do not get warnings about self signed certificates and so
-requests.packages.urllib3.disable_warnings()  # type: ignore
+try:
+    # Ensure that we do not get warnings about self signed certificates and so
+    import requests.packages.urllib3  # type: ignore
+    requests.packages.urllib3.disable_warnings()  # @UndefinedVariable
+except:
+    pass
 
 
 def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:

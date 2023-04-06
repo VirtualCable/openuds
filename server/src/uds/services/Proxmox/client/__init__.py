@@ -41,6 +41,8 @@ import requests
 
 from . import types
 
+
+from uds.core.util import security
 from uds.core.util.decorators import allowCache, ensureConected
 
 # DEFAULT_PORT = 8006
@@ -128,7 +130,7 @@ class ProxmoxClient:
         }
 
     @staticmethod
-    def checkError(response: requests.Response) -> typing.Any:
+    def checkError(response: 'requests.Response') -> typing.Any:
         if not response.ok:
             errMsg = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
@@ -152,11 +154,10 @@ class ProxmoxClient:
 
     def _get(self, path: str) -> typing.Any:
         try:
-            result = requests.get(
+            result = security.secureRequestsSession(verify=self._validateCert).get(
                 self._getPath(path),
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
-                verify=self._validateCert,
                 timeout=self._timeout,
             )
 
@@ -174,12 +175,11 @@ class ProxmoxClient:
         data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
-            result = requests.post(
+            result = security.secureRequestsSession(verify=self._validateCert).post(
                 self._getPath(path),
                 data=list(data or []) or None,
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
-                verify=self._validateCert,
                 timeout=self._timeout,
             )
 
@@ -197,12 +197,11 @@ class ProxmoxClient:
         data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
-            result = requests.delete(
+            result = security.secureRequestsSession(verify=self._validateCert).delete(
                 self._getPath(path),
                 data=list(data or []) or None,
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
-                verify=self._validateCert,
                 timeout=self._timeout,
             )
 
@@ -230,11 +229,10 @@ class ProxmoxClient:
                 return
 
         try:
-            result = requests.post(
+            result = security.secureRequestsSession(verify=self._validateCert).post(
                 url=self._getPath('access/ticket'),
                 data=self._credentials,
                 headers=self.headers,
-                verify=self._validateCert,
                 timeout=self._timeout,
             )
             if not result.ok:
