@@ -3,6 +3,7 @@ import random
 from datetime import datetime, timedelta
 import ipaddress
 import typing
+import logging
 import ssl
 
 from django.conf import settings
@@ -17,8 +18,12 @@ import certifi
 import requests
 import requests.adapters
 
+logger = logging.getLogger(__name__)
+
 KEY_SIZE = 4096
 SECRET_SIZE = 32
+
+
 
 try:
     # Ensure that we do not get warnings about self signed certificates and so
@@ -86,7 +91,7 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     sslContext = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
     if not verify:
         sslContext.check_hostname = False
-        sslContext.verify_mode = ssl.CERT_NONE
+        sslContext.verify_mode = ssl.VerifyMode.CERT_NONE
 
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
     # Next line is deprecated in Python 3.7
@@ -135,7 +140,7 @@ def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
         # Even if the key or certificate is not valid, we only want a True if they match, False otherwise
         return False
 
-def secureRequestsSession(*, verify: bool = True) -> 'requests.Session':
+def secureRequestsSession(*, verify: typing.Union[str, bool] = True) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -149,11 +154,10 @@ def secureRequestsSession(*, verify: bool = True) -> 'requests.Session':
     '''
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args, **kwargs) -> None:
-            sslContext = createClientSslContext(verify=verify)
-            
-            # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
-            kwargs["ssl_context"] = sslContext
+            kwargs["ssl_context"] = createClientSslContext(verify=verify is True)
 
+
+            # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.    
             return super().init_poolmanager(*args, **kwargs)
 
         def cert_verify(self, conn, url, lverify, cert) -> None:
@@ -173,6 +177,11 @@ def secureRequestsSession(*, verify: bool = True) -> 'requests.Session':
             # if not, use verify value
             if not isinstance(lverify, str):
                 lverify = verify
+
+            # logger.info('Connection info: %s', conn)
+            # for k, v in conn.__dict__.items():
+            #     logger.info('Connection info: %s = %s', k, v)
+
 
             super().cert_verify(conn, url, lverify, cert)
 

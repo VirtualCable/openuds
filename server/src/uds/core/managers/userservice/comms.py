@@ -90,7 +90,7 @@ def _requestActor(
             r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
         else:
             verify: typing.Union[bool, str]
-            cert = userService.getProperty('cert')
+            cert = userService.getProperty('cert') or ''
             # cert = ''  # Uncomment to test without cert
             if cert:
                 # Generate temp file, and delete it after
@@ -99,7 +99,7 @@ def _requestActor(
                     f.write(cert.encode())  # Save cert
             else:
                 verify = False
-            session = secureRequestsSession(verify=bool(cert))
+            session = secureRequestsSession(verify=cert)
             if data is None:
                 r = session.get(url, verify=verify, timeout=TIMEOUT)
             else:
