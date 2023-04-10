@@ -55,6 +55,7 @@ class ConfigurationType(typing.NamedTuple):
 
     workers: int
 
+    ssl_min_tls_version: str  # Valid values are 1.2, 1.3 (1.0 and 1.1 are not supported)
     ssl_certificate: str
     ssl_certificate_key: str
     ssl_password: str
@@ -131,6 +132,7 @@ def read(
             listen_port=int(uds.get('port', '443')),
             ipv6=uds.get('ipv6', 'false').lower() == 'true',
             workers=int(uds.get('workers', '0')) or multiprocessing.cpu_count(),
+            ssl_min_tls_version=uds.get('ssl_min_tls_version', '1.2'),
             ssl_certificate=uds['ssl_certificate'],
             ssl_certificate_key=uds.get('ssl_certificate_key', ''),
             ssl_password=uds.get('ssl_password', ''),
