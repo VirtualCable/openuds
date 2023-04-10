@@ -5,6 +5,7 @@ import ipaddress
 import typing
 import ssl
 
+from django.conf import settings
 
 from cryptography import x509
 from cryptography.x509.oid import NameOID
@@ -90,8 +91,16 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     # Disable TLS1.0 and TLS1.1, SSLv2 and SSLv3 are disabled by default
     # Next line is deprecated in Python 3.7
     # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
-    sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
+    if hasattr(settings, 'SECURE_MIN_TLS_VERSION') and settings.SECURE_MIN_TLS_VERSION:
+        # format is "1.0, 1.1, 1.2 or 1.3", convert to ssl.TLSVersion.TLSv1_0, ssl.TLSVersion.TLSv1_1, ssl.TLSVersion.TLSv1_2 or ssl.TLSVersion.TLSv1_3
+        sslContext.minimum_version = getattr(ssl.TLSVersion, 'TLSv' + settings.SECURE_MIN_TLS_VERSION.replace('.', '_'))
+    else:
+        sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
+
     sslContext.maximum_version = ssl.TLSVersion.MAXIMUM_SUPPORTED
+    if hasattr(settings, 'SECURE_CIPHERS') and settings.SECURE_CIPHERS:
+        sslContext.set_ciphers(settings.SECURE_CIPHERS)
+
     return sslContext
 
 
@@ -147,9 +156,25 @@ def secureRequestsSession(*, verify: bool = True) -> 'requests.Session':
 
             return super().init_poolmanager(*args, **kwargs)
 
-        def cert_verify(self, conn, url, _, cert):
-            # Overridden to disable cert verification if verify is False
-            return super().cert_verify(conn, url, verify, cert)
+        def cert_verify(self, conn, url, lverify, cert) -> None:
+            """Verify a SSL certificate. This method should not be called from user
+            code, and is only exposed for use when subclassing the
+            :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+            :param conn: The urllib3 connection object associated with the cert.
+            :param url: The requested URL.
+            :param verify: Either a boolean, in which case it controls whether we verify
+                the server's TLS certificate, or a string, in which case it must be a path
+                to a CA bundle to use
+            :param cert: The SSL certificate to verify.
+            """
+
+            # If lverify is an string, use it even if verify is False
+            # if not, use verify value
+            if not isinstance(lverify, str):
+                lverify = verify
+
+            super().cert_verify(conn, url, lverify, cert)
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())

@@ -150,6 +150,11 @@ async def tunnel_proc_async(
         
         context.load_cert_chain(**args)
 
+        # Set min version from string (1.2 or 1.3) as ssl.TLSVersion.TLSv1_2 or ssl.TLSVersion.TLSv1_3
+        if cfg.ssl_min_tls_version in ('1.2', '1.3'):
+            context.minimum_version = getattr(ssl.TLSVersion, f'TLSv1_{cfg.ssl_min_tls_version.split(".")[1]}')
+        # Any other value will be ignored
+
         if cfg.ssl_ciphers:
             context.set_ciphers(cfg.ssl_ciphers)
 
