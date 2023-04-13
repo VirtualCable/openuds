@@ -148,14 +148,12 @@ class TSPICETransport(BaseSpiceTransport):
                 validity=self.tunnelWait.num() + 60,  # Ticket overtime
             )
 
-            r = RemoteViewerFile(
-                con.get('address', ''),
-                con.get('port',''),
-                con.get('secure_port', ''),
-                con['ticket']['value'],  # password
-                con.get('ca', self.serverCertificate.value.strip()),
-                con['cert_subject'],
-                fullscreen=self.fullScreen.isTrue(),
+        if con['secure_port']:
+            ticket_secure = TicketStore.create_for_tunnel(
+                userService=userService,
+                port=int(con['secure_port']),
+                host=con['address'],
+                validity=self.tunnelWait.num() + 60,  # Ticket overtime
             )
 
         r = RemoteViewerFile(
