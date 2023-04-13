@@ -30,6 +30,7 @@ if not os.path.isfile(remoteViewer):
 theFile = sp['as_file_ns']  # type: ignore
 fs = None
 if sp['ticket']:  # type: ignore
+    theFile = sp['as_file']
     # Open tunnel
     fs = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
