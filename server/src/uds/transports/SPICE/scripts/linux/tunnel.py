@@ -38,6 +38,7 @@ if sp['ticket']:  # type: ignore
 fss = None
 if sp['ticket_secure']:  # type: ignore
     # Open tunnel
+    theFile = sp['as_file']
     fss = forward(remote=(sp['tunHost'], int(sp['tunPort'])), ticket=sp['ticket_secure'], timeout=sp['tunWait'], check_certificate=sp['tunChk'])  # type: ignore
 
     # Check that tunnel works..
