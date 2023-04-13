@@ -143,6 +143,7 @@ class TSPICETransport(BaseSpiceTransport):
             ticket = TicketStore.create_for_tunnel(
                 userService=userService,
                 port=int(con['port']),
+                host=con['address'],
                 validity=self.tunnelWait.num() + 60,  # Ticket overtime
             )
 
@@ -150,6 +151,7 @@ class TSPICETransport(BaseSpiceTransport):
             ticket_secure = TicketStore.create_for_tunnel(
                 userService=userService,
                 port=int(con['secure_port']),
+                host=con['address'],
                 validity=self.tunnelWait.num() + 60,  # Ticket overtime
             )
 
