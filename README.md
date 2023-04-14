@@ -1,9 +1,18 @@
 ![UDS Logo](https://www.udsenterprise.com/static//img/logoUDSNav.png)
 
-The main repository has been moved to https://github.com/VirtualCable/openuds
+The main repository has been transfered to https://github.com/VirtualCable/openuds
 
-Please, update your installation to new location as this one will not be updated, because the development will be done on the new location.
+OpenUDS
+=======
 
-Thank you very much, and sorry for the inconvenience!
+OpenUDS (Universal Desktop Services) is a multiplatform connection broker for:
+- VDI: Windows and Linux virtual desktops administration and deployment
+- App virtualization
+- Desktop services consolidation
 
+This is an Open Source Source project, initiated by Spanish Company ​Virtualcable and released Open Source with the help of several Spanish Universities.
+
+Please fell free to contribute to this project.
+
+**Note: Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch.**
 
