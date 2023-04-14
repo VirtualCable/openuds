@@ -75,7 +75,6 @@ class MessageProcessorThread(BaseThread):
 
     def run(self):
         while self.keepRunning:
-
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
             for n in Notification.getPersistentQuerySet().all():

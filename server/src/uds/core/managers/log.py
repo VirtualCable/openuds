@@ -93,6 +93,7 @@ class LogManager(metaclass=singleton.Singleton):
         message: str,
         source: str,
         avoidDuplicates: bool,
+        keepLogSize: bool = True,
     ):
         """
         Logs a message associated to owner
@@ -102,7 +103,7 @@ class LogManager(metaclass=singleton.Singleton):
 
         qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
         # First, ensure we do not have more than requested logs, and we can put one more log item
-        if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
+        if keepLogSize and qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
             for i in qs.order_by(
                 '-created',
             )[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :]:
