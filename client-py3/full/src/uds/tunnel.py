@@ -143,6 +143,8 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
+            context.minimum_version = ssl.TLSVersion.TLSv1_3
+
             if tools.getCaCertsFile() is not None:
                 context.load_verify_locations(
                     tools.getCaCertsFile()
