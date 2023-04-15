@@ -33,6 +33,7 @@ import typing
 
 from django.urls import reverse
 
+from uds import models
 from uds.core.util.config import GlobalConfig
 
 from ...utils.web import test
@@ -40,8 +41,6 @@ from ...fixtures import authenticators as fixtures_authenticators
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
-
-from uds import models
 
 
 class WebLoginLogoutTest(test.WEBTestCase):

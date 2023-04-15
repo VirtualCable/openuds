@@ -24,12 +24,13 @@ KEY_SIZE = 4096
 SECRET_SIZE = 32
 
 
-
 try:
     # Ensure that we do not get warnings about self signed certificates and so
     import requests.packages.urllib3  # type: ignore
-    requests.packages.urllib3.disable_warnings()  # @UndefinedVariable
-except:
+
+    requests.packages.urllib3.disable_warnings()  # type: ignore  # pylint: disable=no-member
+except Exception:  # nosec: simple check for disabling warnings,
+    # Igonre if we cannot disable warnings
     pass
 
 
@@ -88,7 +89,9 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     Returns:
         A SSLContext object.
     """
-    sslContext = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
+    sslContext = ssl.create_default_context(
+        purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where()
+    )
     if not verify:
         sslContext.check_hostname = False
         sslContext.verify_mode = ssl.VerifyMode.CERT_NONE
@@ -98,7 +101,9 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     # sslContext.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3
     if hasattr(settings, 'SECURE_MIN_TLS_VERSION') and settings.SECURE_MIN_TLS_VERSION:
         # format is "1.0, 1.1, 1.2 or 1.3", convert to ssl.TLSVersion.TLSv1_0, ssl.TLSVersion.TLSv1_1, ssl.TLSVersion.TLSv1_2 or ssl.TLSVersion.TLSv1_3
-        sslContext.minimum_version = getattr(ssl.TLSVersion, 'TLSv' + settings.SECURE_MIN_TLS_VERSION.replace('.', '_'))
+        sslContext.minimum_version = getattr(
+            ssl.TLSVersion, 'TLSv' + settings.SECURE_MIN_TLS_VERSION.replace('.', '_')
+        )
     else:
         sslContext.minimum_version = ssl.TLSVersion.TLSv1_2
 
@@ -140,7 +145,10 @@ def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
         # Even if the key or certificate is not valid, we only want a True if they match, False otherwise
         return False
 
-def secureRequestsSession(*, verify: typing.Union[str, bool] = True) -> 'requests.Session':
+
+def secureRequestsSession(
+    *, verify: typing.Union[str, bool] = True
+) -> 'requests.Session':
     '''
     Generates a requests.Session object with a custom adapter that uses a custom SSLContext.
     This is intended to be used for requests that need to be secure, but not necessarily verified.
@@ -152,41 +160,34 @@ def secureRequestsSession(*, verify: typing.Union[str, bool] = True) -> 'request
     Returns:
         A requests.Session object.
     '''
+
+    # Copy verify value
+    lverify = verify
+
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args, **kwargs) -> None:
             kwargs["ssl_context"] = createClientSslContext(verify=verify is True)
 
-
-            # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.    
+            # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             return super().init_poolmanager(*args, **kwargs)
 
-        def cert_verify(self, conn, url, lverify, cert) -> None:
+        def cert_verify(self, conn, url, verify, cert) -> None:
             """Verify a SSL certificate. This method should not be called from user
-            code, and is only exposed for use when subclassing the
-            :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
-
-            :param conn: The urllib3 connection object associated with the cert.
-            :param url: The requested URL.
-            :param verify: Either a boolean, in which case it controls whether we verify
-                the server's TLS certificate, or a string, in which case it must be a path
-                to a CA bundle to use
-            :param cert: The SSL certificate to verify.
+            code, and is only exposed for use when subclassing the HTTPAdapter class
             """
 
             # If lverify is an string, use it even if verify is False
             # if not, use verify value
-            if not isinstance(lverify, str):
-                lverify = verify
+            if not isinstance(verify, str):
+                verify = lverify
 
             # logger.info('Connection info: %s', conn)
             # for k, v in conn.__dict__.items():
             #     logger.info('Connection info: %s = %s', k, v)
 
-
-            super().cert_verify(conn, url, lverify, cert)
+            super().cert_verify(conn, url, verify, cert)
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
 
     return session
-

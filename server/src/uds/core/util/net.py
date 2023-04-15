@@ -35,11 +35,12 @@ import socket
 import logging
 import typing
 import ipaddress
-import enum
+
 
 class IpType(typing.NamedTuple):
     ip: int
     version: typing.Literal[4, 6, 0]  # 0 is only used for invalid detected ip
+
 
 class NetworkType(typing.NamedTuple):
     start: int
@@ -73,10 +74,11 @@ def ipToLong(ip: str) -> IpType:
     try:
         if ':' in ip and '.' not in ip:
             return IpType(int(ipaddress.IPv6Address(ip)), 6)
-        else:  # ipv4
-            if ':' in ip and '.' in ip:
-                ip = ip.split(':')[-1]  # Last part of ipv6 address
-            return IpType(int(ipaddress.IPv4Address(ip)), 4)
+        if ':' in ip and '.' in ip:
+            ip = ip.split(':')[
+                -1
+            ]  # Last part of ipv6 address is ipv4 address (has dots and colons, so we can't use ipaddress)
+        return IpType(int(ipaddress.IPv4Address(ip)), 4)
     except Exception as e:
         logger.error('Ivalid value: %s (%s)', ip, e)
         return IpType(0, 0)  # Invalid values will map to "0.0.0.0" --> 0
@@ -88,11 +90,10 @@ def longToIp(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
     """
     if n > 2**32 or version == 6:
         return str(ipaddress.IPv6Address(n).compressed)
-    else:
-        return str(ipaddress.IPv4Address(n))
+    return str(ipaddress.IPv4Address(n))
 
 
-def networkFromStringIPv4(strNets: str, version: typing.Literal[0, 4, 6] = 0) -> NetworkType:
+def networkFromStringIPv4(strNets: str) -> NetworkType:
     '''
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
@@ -185,17 +186,17 @@ def networkFromStringIPv4(strNets: str, version: typing.Literal[0, 4, 6] = 0) ->
         raise Exception()
     except Exception as e:
         logger.error('Invalid network found: %s %s', strNets, e)
-        raise ValueError(inputString)
+        raise ValueError(inputString) from e
 
 
-def networkFromStringIPv6(strNets: str, version: typing.Literal[0, 4, 6] = 0) -> NetworkType:
+def networkFromStringIPv6(strNets: str) -> NetworkType:
     '''
     returns a named tuple with networks start and network end
     '''
     logger.debug('Getting network from %s', strNets)
 
     # if '*' or '::*', return the whole IPv6 range
-    if strNets == '*' or strNets == '::*':
+    if strNets in ('*', '::*'):
         return NetworkType(0, 2**128 - 1, 6)
 
     try:
@@ -204,7 +205,7 @@ def networkFromStringIPv6(strNets: str, version: typing.Literal[0, 4, 6] = 0) ->
         return NetworkType(int(net.network_address), int(net.broadcast_address), 6)
     except Exception as e:
         logger.error('Invalid network found: %s %s', strNets, e)
-        raise ValueError(strNets)
+        raise ValueError(strNets) from e
 
 
 def networkFromString(
@@ -212,12 +213,12 @@ def networkFromString(
     version: typing.Literal[0, 4, 6] = 0,
 ) -> NetworkType:
     if not ':' in strNets and version != 6:
-        return networkFromStringIPv4(strNets, version)
-    else:  # ':' in strNets or version == 6:
-        # If is in fact an IPv4 address, return None network, this will not be used
-        if '.' in strNets:
-            return NetworkType(0, 0, 0)
-        return networkFromStringIPv6(strNets, version)
+        return networkFromStringIPv4(strNets)
+    # ':' in strNets or version == 6:
+    # If is in fact an IPv4 address, return None network, this will not be used
+    if '.' in strNets:
+        return NetworkType(0, 0, 0)
+    return networkFromStringIPv6(strNets)
 
 
 def networksFromString(
@@ -260,7 +261,7 @@ def isValidIp(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
     # Using ipaddress module
     try:
         addr = ipaddress.ip_address(value)
-        return version == 0 or addr.version == version
+        return version in (0, addr.version)  # Must be the same version or 0
     except ValueError:
         return False
 

@@ -148,9 +148,9 @@ class UniqueIDGenerator:
 
     def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
         self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(
-            owner=toUidGen._owner,
-            basename=toUidGen._baseName,
-            stamp=getSqlDatetimeAsUnix(),  # pylint: disable=protected-access
+            owner=toUidGen._owner,  # pylint: disable=protected-access
+            basename=toUidGen._baseName,  # pylint: disable=protected-access
+            stamp=getSqlDatetimeAsUnix(),
         )
         return True
 

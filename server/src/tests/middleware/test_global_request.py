@@ -59,17 +59,17 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         self.client.enable_ipv4()
 
         response = self.client.get('/', secure=False)
-        request = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
+        req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = False, not logged in
-        self.assertEqual(request.session.get(AUTHORIZED_KEY), False)
+        self.assertEqual(req.session.get(AUTHORIZED_KEY), False)
 
         # Ensure ip, and ip_proxy are set and both are the same, 127.0.0.1
-        self.assertEqual(request.ip, '127.0.0.1')
-        self.assertEqual(request.ip_proxy, '127.0.0.1')
-        self.assertEqual(request.ip_version, 4)
+        self.assertEqual(req.ip, '127.0.0.1')
+        self.assertEqual(req.ip_proxy, '127.0.0.1')
+        self.assertEqual(req.ip_version, 4)
 
         # Ensure user is not set
-        self.assertEqual(request.user, None)
+        self.assertEqual(req.user, None)
         # And redirects to index
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
@@ -81,17 +81,17 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         self.client.enable_ipv6()
 
         response = self.client.get('/', secure=False)
-        request = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
+        req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = False, not logged in
-        self.assertEqual(request.session.get(AUTHORIZED_KEY), False)
-        
+        self.assertEqual(req.session.get(AUTHORIZED_KEY), False)
+
         # Ensure ip, and ip_proxy are set and both are the same,
-        self.assertEqual(request.ip, '::1')
-        self.assertEqual(request.ip_proxy, '::1')
-        self.assertEqual(request.ip_version, 6)
+        self.assertEqual(req.ip, '::1')
+        self.assertEqual(req.ip_proxy, '::1')
+        self.assertEqual(req.ip_version, 6)
 
         # Ensure user is not set
-        self.assertEqual(request.user, None)
+        self.assertEqual(req.user, None)
         # And redirects to index
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
@@ -105,17 +105,17 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         user = self.login(as_admin=False)
 
         response = self.client.get('/', secure=False)
-        request = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
+        req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = True, logged in
-        self.assertEqual(request.session.get(AUTHORIZED_KEY), True)
+        self.assertEqual(req.session.get(AUTHORIZED_KEY), True)
 
         # Ensure ip, and ip_proxy are set and both are the same,
-        self.assertEqual(request.ip, '127.0.0.1')
-        self.assertEqual(request.ip_proxy, '127.0.0.1')
-        self.assertEqual(request.ip_version, 4)
+        self.assertEqual(req.ip, '127.0.0.1')
+        self.assertEqual(req.ip_proxy, '127.0.0.1')
+        self.assertEqual(req.ip_version, 4)
 
         # Ensure user is correct
-        self.assertEqual(request.user.uuid, user.uuid)
+        self.assertEqual(req.user.uuid, user.uuid)
         # And redirects to index
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
@@ -129,43 +129,44 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         user = self.login(as_admin=False)
 
         response = self.client.get('/', secure=False)
-        request = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
+        req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = True, logged in
-        self.assertEqual(request.session.get(AUTHORIZED_KEY), True)
+        self.assertEqual(req.session.get(AUTHORIZED_KEY), True)
 
         # Ensure ip, and ip_proxy are set and both are the same,
-        self.assertEqual(request.ip, '::1')
-        self.assertEqual(request.ip_proxy, '::1')
-        self.assertEqual(request.ip_version, 6)
+        self.assertEqual(req.ip, '::1')
+        self.assertEqual(req.ip_proxy, '::1')
+        self.assertEqual(req.ip_version, 6)
 
         # Ensure user is correct
-        self.assertEqual(request.user.uuid, user.uuid)
+        self.assertEqual(req.user.uuid, user.uuid)
         # And redirects to index
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
 
     def test_no_middleware(self) -> None:
         # Ensure GlobalRequestMiddleware is not present
-        GlobalRequestMiddlewareTest.remove_middleware('uds.middleware.request.GlobalRequestMiddleware')
+        GlobalRequestMiddlewareTest.remove_middleware(
+            'uds.middleware.request.GlobalRequestMiddleware'
+        )
         self.client.enable_ipv4()
 
         response = self.client.get('/', secure=False)
-        request = response.wsgi_request
+        req = response.wsgi_request
         # session[AUTHORIZED_KEY] is not present
-        self.assertEqual(AUTHORIZED_KEY in request.session, False)
+        self.assertEqual(AUTHORIZED_KEY in req.session, False)
 
         # ip is not present, nor ip_proxy or ip_version
-        self.assertEqual(hasattr(request, 'ip'), False)
-        self.assertEqual(hasattr(request, 'ip_proxy'), False)
-        self.assertEqual(hasattr(request, 'ip_version'), False)
-    
+        self.assertEqual(hasattr(req, 'ip'), False)
+        self.assertEqual(hasattr(req, 'ip_proxy'), False)
+        self.assertEqual(hasattr(req, 'ip_version'), False)
+
         # Also, user is not present
-        self.assertEqual(hasattr(request, 'user'), False)
+        self.assertEqual(hasattr(req, 'user'), False)
 
         # And redirects to index
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
-
 
     def test_detect_ips_no_proxy(self) -> None:
         req = mock.Mock()
@@ -174,7 +175,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
             req.META = {
                 'REMOTE_ADDR': ip,
             }
-            request._fill_ips(req)
+            request._fill_ips(req)  # pylint: disable=protected-access
             self.assertEqual(req.ip, ip)
             self.assertEqual(req.ip_proxy, ip)
             self.assertEqual(req.ip_version, 4 if '.' in ip else 6)
@@ -193,22 +194,34 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
                             'HTTP_X_FORWARDED_FOR': client_ip,
                         }
                     else:
-                        req.META = {
-                            'HTTP_X_FORWARDED_FOR': "{},{}".format(client_ip, proxy),
-                        }
+                        req.META = {'HTTP_X_FORWARDED_FOR': f'{client_ip},{proxy}'}
 
-                    request._fill_ips(req)
-                    self.assertEqual(req.ip, client_ip, "Failed for {}".format(req.META))
-                    self.assertEqual(req.ip_proxy, client_ip, "Failed for {}".format(req.META))
-                    self.assertEqual(req.ip_version, 4 if '.' in client_ip else 6, "Failed for {}".format(req.META))
+                    request._fill_ips(req)  # pylint: disable=protected-access
+                    self.assertEqual(
+                        req.ip, client_ip, "Failed for {}".format(req.META)
+                    )
+                    self.assertEqual(
+                        req.ip_proxy, client_ip, "Failed for {}".format(req.META)
+                    )
+                    self.assertEqual(
+                        req.ip_version,
+                        4 if '.' in client_ip else 6,
+                        "Failed for {}".format(req.META),
+                    )
 
     def test_detect_ips_proxy_chained(self) -> None:
         config.GlobalConfig.BEHIND_PROXY.set(True)
         req = mock.Mock()
         # Use an ipv4 and an ipv6 address
         for client_ip in ['192.168.128.128', '2001:db8:85a3:8d3:1319:8a2e:370:7348']:
-            for first_proxy in ['192.168.200.200', '2001:db8:85a3:8d3:1319:8a2e:370:7349']:
-                for second_proxy in ['192.168.201.201', '2001:db8:85a3:8d3:1319:8a2e:370:7350']:
+            for first_proxy in [
+                '192.168.200.200',
+                '2001:db8:85a3:8d3:1319:8a2e:370:7349',
+            ]:
+                for second_proxy in [
+                    '192.168.201.201',
+                    '2001:db8:85a3:8d3:1319:8a2e:370:7350',
+                ]:
                     for with_nginx in [True, False]:
                         x_forwarded_for = '{}, {}'.format(client_ip, first_proxy)
                         if with_nginx is False:
@@ -218,11 +231,12 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
                             }
                         else:
                             req.META = {
-                                'HTTP_X_FORWARDED_FOR': "{}, {}".format(x_forwarded_for, second_proxy),
+                                'HTTP_X_FORWARDED_FOR': "{}, {}".format(
+                                    x_forwarded_for, second_proxy
+                                ),
                             }
 
                         request._fill_ips(req)
                         self.assertEqual(req.ip, first_proxy)
                         self.assertEqual(req.ip_proxy, client_ip)
-                        self.assertEqual(req.ip_version, 4 if '.' in first_proxy else 6) 
-    
+                        self.assertEqual(req.ip_version, 4 if '.' in first_proxy else 6)

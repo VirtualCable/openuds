@@ -28,12 +28,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
 
 from django.urls import reverse
 
-from uds.core.util import config
 from uds.core.managers.crypto import CryptoManager
 
 from ..utils import test
@@ -48,10 +46,11 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
     """
     def test_redirect(self):
         RedirectMiddlewareTest.add_middleware('uds.middleware.redirect.RedirectMiddleware')
+        page = 'https://testserver' + reverse('page.index')
         response = self.client.get('/', secure=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, 'https://testserver/')
-        # Try secure, will redirect to index
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response.url, page)
+        # Try secure, will redirect to index, not absulute url
         response = self.client.get('/', secure=True)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
@@ -60,7 +59,7 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
         for _ in range(32):
             url = f'/{CryptoManager().randomString(32)}'
             response = self.client.get(url, secure=False)
-            self.assertEqual(response.status_code, 302)
-            self.assertEqual(response.url, f'https://testserver{url}')
+            self.assertEqual(response.status_code, 301)
+            self.assertEqual(response.url, page)
             response = self.client.get(url, secure=True)
             self.assertEqual(response.status_code, 404) # Not found
