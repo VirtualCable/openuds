@@ -52,8 +52,6 @@ if typing.TYPE_CHECKING:
     from uds.core import services
     from uds.models import (
         OSManager,
-        ServicePool,
-        ServicePoolPublication,
         UserServiceProperty,
         UserServiceSession,
         AccountUsage,
@@ -137,7 +135,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Simple accessor to deployed service name plus unique name
         """
-        return "{}\\{}".format(self.deployed_service.name, self.friendly_name)
+        return f'{self.deployed_service.name}\\{self.friendly_name}'
 
     @property
     def destroy_after(self) -> bool:
@@ -173,7 +171,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
         return Environment.getEnvForTableElement(
-            self._meta.verbose_name,  # type: ignore
+            self._meta.verbose_name,  # type: ignore  # pylint: disable=no-member
             self.id,
             {
                 'mac': unique.UniqueMacGenerator,
@@ -221,9 +219,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
             )
         if serviceInstance.deployedType is None:
             raise Exception(
-                'Class {0} needs deployedType but it is not defined!!!'.format(
-                    serviceInstance.__class__.__name__
-                )
+                f'Class {serviceInstance.__class__.__name__} needs deployedType but it is not defined!!!'
             )
         us = serviceInstance.deployedType(
             self.getEnvironment(),
@@ -440,7 +436,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
-        from uds.core.managers import userServiceManager
+        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
 
         self.in_use = inUse
         self.in_use_date = getSqlDatetime()
@@ -498,8 +494,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
                 session.close()
             except Exception:  # Does not exists, log it and ignore it
                 logger.warning(
-                    'Session %s does not exists for user deployed service %s'
-                    % (sessionId, self.id)
+                    'Session %s does not exists for user deployed service', self.id
                 )
 
     def isUsable(self) -> bool:
@@ -519,7 +514,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns if this service is ready (not preparing or marked for removal)
         """
         # Call to isReady of the instance
-        from uds.core.managers import userServiceManager
+        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
 
         return userServiceManager().isReady(self)
 
@@ -542,7 +537,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
-        from uds.core.managers import userServiceManager
+        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
 
         userServiceManager().cancel(self)
 
@@ -568,7 +563,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Args:
             cacheLevel: New cache level to put object in
         """
-        from uds.core.managers import userServiceManager
+        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
 
         userServiceManager().moveToLevel(self, cacheLevel)
 
@@ -634,18 +629,14 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         return self.deployed_service.testServer(host, port, timeout)
 
     def __str__(self):
-        return "User service {}, unique_id {}, cache_level {}, user {}, name {}, state {}:{}".format(
-            self.name,
-            self.unique_id,
-            self.cache_level,
-            self.user,
-            self.friendly_name,
-            State.toString(self.state),
-            State.toString(self.os_state),
+        return (
+            f'User service {self.name}, unique_id {self.unique_id},'
+            f' cache_level {self.cache_level}, user {self.user},'
+            f' name {self.friendly_name}, state {State.toString(self.state)}:{State.toString(self.os_state)}'
         )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

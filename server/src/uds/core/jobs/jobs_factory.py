@@ -47,9 +47,9 @@ class JobsFactory(factory.Factory['Job']):
         """
         Ensures that uds core workers are correctly registered in database and in factory
         """
-        from uds.models import Scheduler, getSqlDatetime
-        from uds.core.util.state import State
-        from uds.core import workers
+        from uds.models import Scheduler, getSqlDatetime  # pylint: disable=import-outside-toplevel
+        from uds.core.util.state import State             # pylint: disable=import-outside-toplevel
+        from uds.core import workers                      # pylint: disable=import-outside-toplevel
 
         try:
             logger.debug('Ensuring that jobs are registered inside database')

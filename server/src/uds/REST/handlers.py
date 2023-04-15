@@ -112,9 +112,7 @@ class Handler:
             self.needs_admin or self.needs_staff
         ) and not self.authenticated:  # If needs_admin, must also be authenticated
             raise Exception(
-                'class {} is not authenticated but has needs_admin or needs_staff set!!'.format(
-                    self.__class__
-                )
+                f'class {self.__class__} is not authenticated but has needs_admin or needs_staff set!!'
             )
 
         self._request = request
@@ -314,7 +312,7 @@ class Handler:
             return net.contains(
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
             )
-        except Exception as e:
+        except Exception:
             logger.warning(
                 'Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(),

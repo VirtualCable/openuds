@@ -39,7 +39,6 @@ from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import transaction
 from uds.core.services.exceptions import OperationException
-from uds.core.util.config import GlobalConfig
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.core.services.exceptions import (
@@ -58,7 +57,6 @@ from uds.models import (
     User,
     ServicePoolPublication,
 )
-from uds.models.meta_pool import MetaPoolMember
 from uds.core import services, transports
 from uds.core.util import singleton
 from uds.core.util.stats import events
@@ -73,6 +71,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 operationsLogger = logging.getLogger('operationsLog')
+
 
 class UserServiceManager(metaclass=singleton.Singleton):
     def __init__(self):
@@ -89,9 +88,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def getStateFilter(service: 'models.Service') -> Q:
-        if service.oldMaxAccountingMethod:  # If no limits and accounting method is not old one
+        if (
+            service.oldMaxAccountingMethod
+        ):  # If no limits and accounting method is not old one
             # Valid states are: PREPARING, USABLE
-            states = [State.PREPARING, State.USABLE] 
+            states = [State.PREPARING, State.USABLE]
         else:  # New accounting method selected
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
@@ -126,7 +127,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return False
 
         if self.getExistingUserServices(service) >= (serviceInstance.maxDeployed or 1):
-            operationsLogger.info('Maximum number of user services reached for service: {}'.format(service.name))
+            operationsLogger.info(
+                'Maximum number of user services reached for service: %s', service.name
+            )
             return True
 
         return False
@@ -236,12 +239,14 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 )
             else:
                 raise Exception(
-                    'Invalid publication creating service assignation: {} {}'.format(
-                        servicePool, user
-                    )
+                    f'Invalid publication creating service assignation: {servicePool.name} {user.pretty_name}'
                 )
         else:
-            operationsLogger.info('Creating a new assigned element for user %s on pool %s', user.pretty_name, servicePool.name)
+            operationsLogger.info(
+                'Creating a new assigned element for user %s on pool %s',
+                user.pretty_name,
+                servicePool.name,
+            )
             assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
         assignedInstance = assigned.getInstance()
@@ -274,9 +279,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 )
             else:
                 raise Exception(
-                    'Invalid publication creating service assignation: {} {}'.format(
-                        servicePool, user
-                    )
+                    f'Invalid publication creating service assignation: {servicePool.name} {user.pretty_name}'
                 )
         else:
             operationsLogger.info(
@@ -562,7 +565,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 log.doLog(
                     servicePool,
                     log.WARN,
-                    'Max number of services reached: {}'.format(servicePool.max_srvs),
+                    f'Max number of services reached: {servicePool.max_srvs}',
                     log.INTERNAL,
                 )
                 raise MaxServicesReachedError()
@@ -591,8 +594,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = servicePool.service.getInstance()
         if (
-            serviceInstance.isAvailable() and
-            removing >= serviceInstance.parent().getMaxRemovingServices()
+            serviceInstance.isAvailable()
+            and removing >= serviceInstance.parent().getMaxRemovingServices()
             and serviceInstance.parent().getIgnoreLimits() is False
         ):
             return False
@@ -626,7 +629,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         try:
             state = userServiceInstance.setReady()
         except Exception as e:
-            logger.warn('Could not check readyness of %s: %s', userService, e)
+            logger.warning('Could not check readyness of %s: %s', userService, e)
             return False
 
         logger.debug('State: %s', state)
@@ -823,8 +826,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         try:
             transport: Transport = Transport.objects.get(uuid=idTransport)
-        except Exception:
-            raise InvalidServiceException()
+        except Exception as e:
+            raise InvalidServiceException() from e
 
         # Ensures that the transport is allowed for this service
         if userService.deployed_service.transports.filter(id=transport.id).count() == 0:
@@ -852,7 +855,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             log.doLog(
                 userService,
                 log.INFO,
-                "User {0} from {1} has initiated access".format(user.name, srcIp),
+                f"User {user.pretty_name} from {srcIp} has initiated access",
                 log.WEB,
             )
             # If ready, show transport for this service, if also ready ofc
@@ -868,9 +871,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 log.doLog(
                     userService,
                     log.WARN,
-                    "User service is not accessible due to invalid UUID (ip {0})".format(
-                        ip
-                    ),
+                    f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
                     log.TRANSPORT,
                 )
                 logger.debug('UUID check failed for user service %s', userService)
@@ -924,9 +925,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             log.doLog(
                 userService,
                 log.WARN,
-                "User {} from {} tried to access, but service was not ready".format(
-                    user.name, srcIp
-                ),
+                f'User {user.pretty_name} from {srcIp} tried to access, but service was not ready',
                 log.WEB,
             )
 
@@ -1007,13 +1006,21 @@ class UserServiceManager(metaclass=singleton.Singleton):
             sortPools = [(p.pool.usage(), p.pool) for p in poolMembers]
         else:
             sortPools = [
-                (random.randint(0, 10000), p.pool) for p in poolMembers  # nosec: just a suffle, not a crypto (to get a round robin-like behavior)
+                (
+                    random.randint(
+                        0, 10000
+                    ),  # nosec: just a suffle, not a crypto (to get a round robin-like behavior)
+                    p.pool,
+                )
+                for p in poolMembers
             ]  # Just shuffle them
 
         # Sort pools related to policy now, and xtract only pools, not sort keys
         # split resuult in two lists, 100% full and not 100% full
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
-        sortedPools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
+        sortedPools = sorted(
+            sortPools, key=operator.itemgetter(0)
+        )  # sort by priority (first element)
         pools: typing.List[ServicePool] = [
             p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
         ]
@@ -1064,7 +1071,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             # If already assigned, and HA is enabled, check if it is accessible
             if meta.ha_policy == MetaPool.HA_POLICY_ENABLED:
                 # Check that servide is accessible
-                if not alreadyAssigned.deployed_service.service.getInstance().isAvailable():  # Not available, mark for removal
+                if (
+                    not alreadyAssigned.deployed_service.service.getInstance().isAvailable()
+                ):  # Not available, mark for removal
                     alreadyAssigned.release()
                 raise Exception()  # And process a new access
 
@@ -1118,9 +1127,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         log.doLog(
             meta,
             log.WARN,
-            "No user service accessible from device (ip {}, os: {})".format(
-                srcIp, os.os.name
-            ),
+            f'No user service accessible from device (ip {srcIp}, os: {os.os.name})',
             log.SERVICE,
         )
         raise InvalidServiceException(

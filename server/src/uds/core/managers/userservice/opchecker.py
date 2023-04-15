@@ -101,7 +101,7 @@ class StateUpdater:
         try:
             executor()
         except Exception as e:
-            self.setError('Exception: {}'.format(e))
+            self.setError(f'Exception: {e}')
 
         logger.debug('Executor for %s done', self.userService.friendly_name)
 
@@ -196,16 +196,12 @@ class UpdateFromCanceling(StateUpdater):
 class UpdateFromOther(StateUpdater):
     def finish(self):
         self.setError(
-            'Unknown running transition from {}'.format(
-                State.toString(self.userService.state)
-            )
+            f'Unknown running transition from {State.toString(self.userService.state)}'
         )
 
     def running(self):
         self.setError(
-            'Unknown running transition from {}'.format(
-                State.toString(self.userService.state)
-            )
+            f'Unknown running transition from {State.toString(self.userService.state)}'
         )
 
 
@@ -267,7 +263,7 @@ class UserServiceOpChecker(DelayedTask):
 
         except Exception as e:
             logger.exception('Checking service state')
-            log.doLog(userService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
+            log.doLog(userService, log.ERROR, f'Exception: {e}', log.INTERNAL)
             userService.setState(State.ERROR)
             userService.save(update_fields=['data'])
 
@@ -300,7 +296,7 @@ class UserServiceOpChecker(DelayedTask):
             logger.debug("uService instance class: %s", ci.__class__)
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
-        except UserService.DoesNotExist as e:
+        except UserService.DoesNotExist as e:  # pylint: disable=no-member
             logger.error(
                 'User service not found (erased from database?) %s : %s', e.__class__, e
             )
@@ -308,7 +304,7 @@ class UserServiceOpChecker(DelayedTask):
             # Exception caught, mark service as errored
             logger.exception("Error %s, %s :", e.__class__, e)
             if uService:
-                log.doLog(uService, log.ERROR, 'Exception: {}'.format(e), log.INTERNAL)
+                log.doLog(uService, log.ERROR, f'Exception: {e}', log.INTERNAL)
                 try:
                     uService.setState(State.ERROR)
                     uService.save(update_fields=['data'])

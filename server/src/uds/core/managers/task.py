@@ -75,14 +75,13 @@ class TaskManager(metaclass=singleton.Singleton):
     def __init__(self):
         self.keepRunning = True
         self.threads = []
-        pass
 
     @staticmethod
     def manager() -> 'TaskManager':
         return TaskManager()
 
     @staticmethod
-    def sigTerm(sigNum, frame):
+    def sigTerm(sigNum, frame):  # pylint: disable=unused-argument
         """
         This method will ensure that we finish correctly current running task before exiting.
         If we need to stop cause something went wrong (that should not happen), we must send sigterm, wait a while (10-20 secs) and after that send sigkill
@@ -102,12 +101,12 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Registering sheduled tasks")
 
         # Simply import this to make workers "auto import themself"
-        from uds.core import workers  # @UnusedImport pylint: disable=unused-import
+        from uds.core import workers  # pylint: disable=unused-import, import-outside-toplevel
 
     def addOtherTasks(self) -> None:
         logger.info("Registering other tasks")
 
-        from uds.core.messaging.processor import MessageProcessorThread
+        from uds.core.messaging.processor import MessageProcessorThread  # pylint: disable=import-outside-toplevel
 
         thread = MessageProcessorThread()
         thread.start()

@@ -71,7 +71,7 @@ class DelayedTask(Environmentable):
         """
         Utility method that allows to register a Delayedtask
         """
-        from .delayed_task_runner import DelayedTaskRunner
+        from .delayed_task_runner import DelayedTaskRunner  # pylint: disable=import-outside-toplevel
 
         if check and DelayedTaskRunner.runner().checkExists(tag):
             return

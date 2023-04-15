@@ -186,8 +186,8 @@ class Scheduler:
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
             # logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
             raise DatabaseError(
-                'Database access problems. Retrying connection ({})'.format(e)
-            )
+                f'Database access problems. Retrying connection ({e})'
+            ) from e
 
     @staticmethod
     def releaseOwnShedules() -> None:

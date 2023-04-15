@@ -45,6 +45,6 @@ def factory() -> 'JobsFactory':
     """
     Returns a singleton to a jobs factory
     """
-    from .jobs_factory import JobsFactory  # pylint: disable=redefined-outer-name
+    from .jobs_factory import JobsFactory  # pylint: disable=import-outside-toplevel
 
     return JobsFactory()

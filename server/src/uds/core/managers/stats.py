@@ -239,7 +239,6 @@ class StatsManager(metaclass=singleton.Singleton):
             # Append to numpy array
             yield last
             stamp += intervalType.seconds()
-            
 
     def cleanupCounters(self):
         """

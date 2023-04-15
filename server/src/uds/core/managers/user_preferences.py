@@ -35,8 +35,6 @@
 import logging
 import typing
 
-from django.utils.translation import gettext as _
-
 logger = logging.getLogger(__name__)
 
 class CommonPrefs:
