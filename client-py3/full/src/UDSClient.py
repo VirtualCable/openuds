@@ -178,6 +178,7 @@ class UDSClient(QtWidgets.QMainWindow):
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
         except Exception as e:
+            logger.exception('Error getting transport data')
             self.showError(e)
 
     def start(self):
