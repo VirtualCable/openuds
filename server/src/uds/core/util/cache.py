@@ -107,10 +107,9 @@ class Cache:
             Cache.misses += 1
             # logger.debug('key not found: %s', skey)
             return defValue
-        except Exception as e:
+        except Exception:
             logger.exception('Error getting cache key: %s', skey)
             Cache.misses += 1
-            # logger.debug('Cache inaccesible: %s:%s', skey, e)
             return defValue
 
     def __getitem__(self, key: typing.Union[str, bytes]) -> typing.Any:

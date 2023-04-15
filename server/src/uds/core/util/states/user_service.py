@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2021 Virtual Cable S.L.U.
+# Copyright (c) 2015-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -41,4 +41,4 @@ from .common import (
     REMOVED,
     INFO_STATES,
     VALID_STATES,
-)  # @UnusedImport
+)

@@ -93,7 +93,7 @@ class Client(Handler):
                 # error += ' (code {0:04X})'.format(errorCode)
                 error = _(
                     'Your service is being created. Please, wait while we complete it'
-                ) + ' ({}%)'.format(int(errorCode * 25))
+                ) + f' ({int(errorCode)*25}%)'
 
             res['error'] = error
             res['retryable'] = '1' if retryable else '0'

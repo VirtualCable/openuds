@@ -67,6 +67,7 @@ CounterClass = typing.TypeVar(
 
 OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR = range(4)
 
+
 # Helpers
 def _get_Id(obj):
     return obj.id if obj.id != -1 else None
@@ -244,7 +245,7 @@ def getAcumCounters(
         since=since,
         points=points,
     )
-    
+
 
 # Data initialization
 def _initializeData() -> None:

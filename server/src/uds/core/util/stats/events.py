@@ -63,7 +63,7 @@ if typing.TYPE_CHECKING:
     # Os Manager
     ET_OSMANAGER_INIT,
     ET_OSMANAGER_READY,
-    ET_OSMANAGER_RELEASE
+    ET_OSMANAGER_RELEASE,
 ) = range(11)
 
 # Events names
@@ -81,20 +81,14 @@ EVENT_NAMES: typing.Mapping[int, str] = {
     ET_OSMANAGER_RELEASE: 'OS Manager release',
 }
 
-(
-    OT_PROVIDER,
-    OT_SERVICE,
-    OT_SERVICEPOOL,
-    OT_AUTHENTICATOR,
-    OT_OSMANAGER
-) = range(5)
+(OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR, OT_OSMANAGER) = range(5)
 
 TYPES_NAMES: typing.Mapping[int, str] = {
     OT_PROVIDER: 'Provider',
     OT_SERVICE: 'Service',
     OT_SERVICEPOOL: 'Deployed',
     OT_AUTHENTICATOR: 'Authenticator',
-    OT_OSMANAGER: 'OS Manager'
+    OT_OSMANAGER: 'OS Manager',
 }
 
 MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
@@ -102,7 +96,7 @@ MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
     Authenticator: OT_AUTHENTICATOR,
-    OSManager: OT_OSMANAGER
+    OSManager: OT_OSMANAGER,
 }
 
 # Events data (fld1, fld2, fld3, fld4):
@@ -154,21 +148,22 @@ MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
 # OT_OSMANAGER_RELEASE: -> On OsManager
 #     (servicepool_uuid, '', userservice_uuid)
 
+
 # Helpers
 # get owner by type and id
 def getOwner(ownerType: int, ownerId: int) -> typing.Optional['models.Model']:
     if ownerType == OT_PROVIDER:
         return Provider.objects.get(pk=ownerId)
-    elif ownerType == OT_SERVICE:
+    if ownerType == OT_SERVICE:
         return Service.objects.get(pk=ownerId)
-    elif ownerType == OT_SERVICEPOOL:
+    if ownerType == OT_SERVICEPOOL:
         return ServicePool.objects.get(pk=ownerId)
-    elif ownerType == OT_AUTHENTICATOR:
+    if ownerType == OT_AUTHENTICATOR:
         return Authenticator.objects.get(pk=ownerId)
-    elif ownerType == OT_OSMANAGER:
+    if ownerType == OT_OSMANAGER:
         return OSManager.objects.get(pk=ownerId)
-    else:
-        return None
+    return None
+
 
 class EventTupleType(typing.NamedTuple):
     stamp: datetime.datetime
@@ -188,11 +183,12 @@ class EventTupleType(typing.NamedTuple):
     def __str__(self) -> str:
         # Convert Event type to string first
         eventName = EVENT_NAMES[self.event_type]
-        return '{} {} {} {} {} {}'.format(self.stamp, eventName, self.fld1, self.fld2, self.fld3, self.fld4 )
+        return (
+            f'{self.stamp} {eventName} {self.fld1} {self.fld2} {self.fld3} {self.fld4}'
+        )
 
 
 EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
-
 
 
 def addEvent(obj: EventClass, eventType: int, **kwargs) -> bool:
@@ -237,7 +233,11 @@ def getEvents(
         owner_id = obj.pk
 
     for i in StatsManager.manager().getEvents(
-        MODEL_TO_EVENT[objType], eventType, owner_id=owner_id, since=kwargs.get('since'), to=kwargs.get('to')
+        MODEL_TO_EVENT[objType],
+        eventType,
+        owner_id=owner_id,
+        since=kwargs.get('since'),
+        to=kwargs.get('to'),
     ):
         yield EventTupleType(
             datetime.datetime.fromtimestamp(i.stamp),
@@ -247,8 +247,9 @@ def getEvents(
             i.fld4,
             i.event_type,
         )
- 
- # tail the events table
+
+
+# tail the events table
 def tailEvents(sleepTime: int = 2) -> typing.Generator[EventTupleType, None, None]:
     fromId = None
     while True:
@@ -263,4 +264,3 @@ def tailEvents(sleepTime: int = 2) -> typing.Generator[EventTupleType, None, Non
             )
             fromId = i.pk if i.pk > (fromId or 0) else fromId
         time.sleep(sleepTime)
-

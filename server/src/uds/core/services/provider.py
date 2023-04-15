@@ -37,7 +37,6 @@ from uds.core.module import Module
 from uds.core.environment import Environment
 
 from uds.core.util import log
-from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
 
 # Not imported at runtime, just for type checking
@@ -213,7 +212,7 @@ class ServiceProvider(Module):
         """
         Logs a message with requested level associated with this service
         """
-        from uds.models import Provider as DBProvider
+        from uds.models import Provider as DBProvider  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
             log.doLog(

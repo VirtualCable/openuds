@@ -216,11 +216,16 @@ def surfaceChart(
 
     if data.get('wireframe', False):
         axis.plot_wireframe(
-            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore
+            x,
+            y,
+            z,
+            rstride=1,
+            cstride=1,
+            cmap=cm.coolwarm,  # pylint: disable=no-member  # type: ignore
         )
     else:
         axis.plot_surface(
-            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore
+            x, y, z, rstride=1, cstride=1, cmap=cm.coolwarm  # type: ignore  # pylint: disable=no-member
         )
 
     axis.set_title(data.get('title', ''))

@@ -1021,12 +1021,15 @@ class UserServiceManager(metaclass=singleton.Singleton):
         sortedPools = sorted(
             sortPools, key=operator.itemgetter(0)
         )  # sort by priority (first element)
-        pools: typing.List[ServicePool] = [
-            p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
-        ]
-        poolsFull: typing.List[ServicePool] = [
-            p[1] for p in sortedPools if p[1].usage() == 100 and p[1].isUsable()
-        ]
+        pools: typing.List[ServicePool] = []
+        poolsFull: typing.List[ServicePool] = []
+        for p in sortedPools:
+            if not p[1].isUsable():
+                continue
+            if p[1].usage() == 100:
+                poolsFull.append(p[1])
+            else:
+                pools.append(p[1])
 
         logger.debug('Pools: %s/%s', pools, poolsFull)
 

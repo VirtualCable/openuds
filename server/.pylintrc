@@ -11,7 +11,7 @@ clear-cache-post-run=no
 
 # Load and enable all available extensions. Use --list-extensions to see a list
 # all available extensions.
-#enable-all-extensions=
+enable-all-extensions=yes
 
 # In error mode, messages with a category besides ERROR or FATAL are
 # suppressed, and no reports are done by default. Error mode is compatible with
@@ -278,34 +278,34 @@ exclude-too-few-public-methods=
 ignored-parents=
 
 # Maximum number of arguments for function / method.
-max-args=5
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=7
+max-attributes=12
 
 # Maximum number of boolean expressions in an if statement (see R0916).
 max-bool-expr=5
 
 # Maximum number of branch for function / method body.
-max-branches=20
+max-branches=24
 
 # Maximum number of locals for function / method body.
-max-locals=15
+max-locals=24
 
 # Maximum number of parents for a class (see R0901).
 max-parents=7
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=20
+max-public-methods=32
 
 # Maximum number of return / yield for function / method body.
 max-returns=6
 
 # Maximum number of statements in function / method body.
-max-statements=50
+max-statements=64
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=1
 
 
 [EXCEPTIONS]
@@ -428,7 +428,8 @@ disable=raw-checker-failed,
         broad-except,
         no-name-in-module,  # Too many false positives... :(
         import-error,
-        too-many-lines
+        too-many-lines,
+        redefined-builtin,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

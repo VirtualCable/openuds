@@ -459,10 +459,10 @@ def webPassword(request: HttpRequest) -> str:
         return cryptoManager().symDecrpyt(
             passkey, getUDSCookie(request)
         )  # recover as original unicode string
-    else:  # No session, get from _session instead, this is an "client" REST request
-        return cryptoManager().symDecrpyt(
-            getattr(request, '_cryptedpass'), getattr(request, '_scrambler')
-        )
+    # No session, get from _session instead, this is an "client" REST request
+    return cryptoManager().symDecrpyt(
+        getattr(request, '_cryptedpass'), getattr(request, '_scrambler')
+    )
 
 
 def webLogout(

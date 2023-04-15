@@ -33,10 +33,11 @@
 import typing
 import logging
 
+from uds.core.util import factory
+
 from .provider import ServiceProvider
 from .service import Service
 
-from uds.core.util import factory
 
 logger = logging.getLogger(__name__)
 

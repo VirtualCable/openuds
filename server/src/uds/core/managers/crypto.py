@@ -85,7 +85,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         while len(key) < length:
             key += key  # Dup key
 
-        kl: typing.List[int] = [v for v in key]
+        kl: typing.List[int] = list(key)
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]
@@ -279,17 +279,18 @@ class CryptoManager(metaclass=singleton.Singleton):
             return secrets.compare_digest(
                 hashlib.sha3_256(value).hexdigest(), hashValue[8:]
             )
-        elif hashValue[:12] == '{SHA256SALT}':
+        if hashValue[:12] == '{SHA256SALT}':
             # Extract 16 chars salt and hash
             salt = hashValue[12:28].encode()
             value = salt + value
             return secrets.compare_digest(
                 hashlib.sha3_256(value).hexdigest(), hashValue[28:]
             )
-        else:  # Old sha1
-            return secrets.compare_digest(
-                hashValue, str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility SHA1, not used anymore but need to be supported
-            )  # nosec: Old compatibility SHA1, not used anymore but need to be supported
+
+        # Old sha1
+        return secrets.compare_digest(
+            hashValue, str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility SHA1, not used anymore but need to be supported
+        )  # nosec: Old compatibility SHA1, not used anymore but need to be supported
 
     def uuid(self, obj: typing.Any = None) -> str:
         """

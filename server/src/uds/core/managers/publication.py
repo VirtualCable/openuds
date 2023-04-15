@@ -149,7 +149,7 @@ class PublicationFinishChecker(DelayedTask):
     """
 
     def __init__(self, publication: ServicePoolPublication) -> None:
-        super(PublicationFinishChecker, self).__init__()
+        super().__init__()
         self._publishId = publication.id
         self._state = publication.state
 

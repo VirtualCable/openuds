@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
 
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
@@ -300,7 +300,6 @@ class MFA(Module):
         This method allows to reset the MFA state of an user.
         Normally, this will do nothing, but for persistent MFA data (as Google Authenticator), this will remove the data.
         """
-        pass
 
     @staticmethod
     def getUserId(user: 'User') -> str:

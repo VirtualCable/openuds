@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
 
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
@@ -281,9 +281,7 @@ class Service(Module):
         name returned is unique :-)
         """
         raise Exception(
-            'The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(
-                self.__class__.__name__
-            )
+            f'The class {self.__class__.__name__} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'
         )
 
     def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
@@ -313,7 +311,9 @@ class Service(Module):
         return []
 
     def assignFromAssignables(
-        self, assignableId: str, user: 'models.User', userDeployment: UserDeployment
+        self, assignableId: str,
+        user: 'models.User',
+        userDeployment: UserDeployment
     ) -> str:
         """
         Assigns from it internal assignable list to an user
@@ -398,7 +398,7 @@ class Service(Module):
         """
         Logs a message with requested level associated with this service
         """
-        from uds.models import Service as DBService
+        from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
             log.doLog(

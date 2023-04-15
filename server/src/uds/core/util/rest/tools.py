@@ -37,6 +37,7 @@ logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=typing.Any)
 
+
 # We want to write something like this:
 # (('<arg>', '<arg2>', 'literal', '<other_arg>', '<other_arg2>', 'literal2', ...), callback)
 # Where callback is a function that will be called with the arguments in the order they are
@@ -71,19 +72,26 @@ def match(
             continue
 
         # Check if all the arguments match
-        match = True
+        doMatch = True
         for i, arg in enumerate(arg_list):
             if matcher[0][i].startswith('<') and matcher[0][i].endswith('>'):
                 continue
 
             if arg != matcher[0][i]:
-                match = False
+                doMatch = False
                 break
 
-        if match:
+        if doMatch:
             # All the arguments match, call the callback
-            return matcher[1](*[arg for i, arg in enumerate(arg_list) if matcher[0][i].startswith('<') and matcher[0][i].endswith('>')])
+            return matcher[1](
+                *[
+                    arg
+                    for i, arg in enumerate(arg_list)
+                    if matcher[0][i].startswith('<') and matcher[0][i].endswith('>')
+                ]
+            )
 
     logger.warning('No match found for %s with %s', arg_list, args)
     # Invoke error callback
     error()
+    return None  # In fact, error is expected to raise an exception, so this is never reached

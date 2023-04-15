@@ -271,7 +271,9 @@ class UserDeployment(Environmentable, Serializable):
         """
         raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
+    def notifyReadyFromOsManager(
+        self, data: typing.Any  # pylint: disable=unused-argument
+    ) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -388,9 +390,7 @@ class UserDeployment(Environmentable, Serializable):
                this method.
         """
         raise Exception(
-            'Base deploy for cache invoked! for class {0}'.format(
-                self.__class__.__name__
-            )
+            f'Base deploy for cache invoked! for class {self.__class__.__name__}'
         )
 
     def deployForUser(self, user: 'models.User') -> str:
@@ -427,9 +427,7 @@ class UserDeployment(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'Base deploy for user invoked! for class {0}'.format(
-                self.__class__.__name__
-            )
+            f'Base deploy for user invoked! for class {self.__class__.__name__}'
         )
 
     def checkState(self) -> str:
@@ -456,7 +454,7 @@ class UserDeployment(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'Base check state invoked! for class {0}'.format(self.__class__.__name__)
+            f'Base check state invoked! for class {self.__class__.__name__}'
         )
 
     def finish(self) -> None:
@@ -473,7 +471,7 @@ class UserDeployment(Environmentable, Serializable):
                nothing)
         """
 
-    def moveToCache(self, newLevel: int) -> str:
+    def moveToCache(self, newLevel: int) -> str:  # pylint: disable=unused-argument
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
@@ -564,7 +562,7 @@ class UserDeployment(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'destroy method for class {0} not provided!'.format(self.__class__.__name__)
+            f'destroy method for class {self.__class__.__name__} not provided!'
         )
 
     def cancel(self) -> str:
@@ -631,6 +629,7 @@ class UserDeployment(Environmentable, Serializable):
            monitors: number of monitors to use
         """
         return None
+
     def __str__(self):
         """
         Mainly used for debugging purposses

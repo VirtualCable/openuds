@@ -64,7 +64,7 @@ class JobThread(threading.Thread):
     _freq: int
 
     def __init__(self, jobInstance: 'Job', dbJob: DBScheduler) -> None:
-        super(JobThread, self).__init__()
+        super().__init__()
         self._jobInstance = jobInstance
         self._dbJobId = dbJob.id
         self._freq = dbJob.frecuency

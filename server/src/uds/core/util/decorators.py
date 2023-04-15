@@ -247,7 +247,7 @@ def allowCache(
                 keyFnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8')
             )
             # compute cache key
-            cacheKey = '{}-{}'.format(cachePrefix, keyHash.hexdigest())
+            cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
 
             cache = getattr(args[0], 'cache', None) or Cache('functionCache')
 

@@ -55,7 +55,7 @@ ONE_DAY = 3600 * 24
 
 class CalendarChecker:
     __slots__ = ('calendar',)
-    
+
     calendar: Calendar
 
     # For performance checking
@@ -225,13 +225,12 @@ class CalendarChecker:
         return next_event
 
     def debug(self) -> str:
-        return "Calendar checker for {}".format(self.calendar)
+        return f'Calendar checker for {self.calendar}'
 
     @staticmethod
     def _cacheKey(key: str) -> str:
         # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
         # Simple, fastest algorihm is to use md5
-        h = hashlib.md5()  # nosec  Thisis just a simpele cache key, no need to use a more secure algorithm
-        h.update(key.encode('utf-8'))
-        return h.hexdigest()
-
+        return hashlib.md5(
+            key.encode('utf-8')
+        ).hexdigest()  # nosec  simple fast algorithm for cache keys

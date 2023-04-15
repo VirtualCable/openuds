@@ -150,10 +150,10 @@ class Config:
                     self._data = readed.value
                     self._crypt = readed.crypt or self._crypt
                     self._longText = readed.long
-                    if self._type != -1 and self._type != readed.field_type:
+                    if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
                         readed.save(update_fields=['field_type'])
-                    if self._help != '' and self._help != readed.help:
+                    if self._help not in ('', readed.help):
                         readed.help = self._help
                         readed.save(
                             update_fields=['help']
@@ -169,9 +169,7 @@ class Config:
                 self._data = self._default
             except Exception as e:
                 logger.info(
-                    'Error accessing db config {0}.{1}'.format(
-                        self._section.name(), self._key
-                    )
+                    'Error accessing db config %s.%s', self._section.name(), self._key
                 )
                 logger.exception(e)
                 self._data = self._default
@@ -273,7 +271,7 @@ class Config:
                 self._data = value
 
         def __str__(self) -> str:
-            return '{}.{}'.format(self._section.name(), self._key)
+            return f'{self._section.name()}.{self._key}'
 
     @staticmethod
     def section(sectionName):
@@ -314,7 +312,10 @@ class Config:
             cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
-            if checkType and cfg.field_type in (Config.FieldType.READ, Config.FieldType.HIDDEN):
+            if checkType and cfg.field_type in (
+                Config.FieldType.READ,
+                Config.FieldType.HIDDEN,
+            ):
                 return False  # Skip non writable elements
 
             if cfg.crypt:
@@ -565,14 +566,18 @@ class GlobalConfig:
         'statsAccumFrequency',
         '14400',
         type=Config.FieldType.NUMERIC,
-        help=_('Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'),
+        help=_(
+            'Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'
+        ),
     )
     # Statisctis accumulation chunk size, in days
     STATS_ACCUM_MAX_CHUNK_TIME = Config.section(GLOBAL_SECTION).value(
         'statsAccumMaxChunkTime',
         '7',
         type=Config.FieldType.NUMERIC,
-        help=_('Maximum number of time to accumulate on one run. Default is 7 (1 week)'),
+        help=_(
+            'Maximum number of time to accumulate on one run. Default is 7 (1 week)'
+        ),
     )
 
     # If disallow login showing authenticatiors
@@ -716,7 +721,10 @@ class GlobalConfig:
         help=_('Custom CSS styles applied to the user accesible site'),
     )
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value(
-        'Site information', '', type=Config.FieldType.LONGTEXT, help=_('Site information')
+        'Site information',
+        '',
+        type=Config.FieldType.LONGTEXT,
+        help=_('Site information'),
     )
     SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value(
         'Show Filter on Top',
@@ -781,7 +789,9 @@ class GlobalConfig:
                 for v in GlobalConfig.__dict__.values():
                     if isinstance(v, Config.Value):
                         v.get()
-                        logger.debug('Initialized global config value %s=%s', v.key(), v.get())
+                        logger.debug(
+                            'Initialized global config value %s=%s', v.key(), v.get()
+                        )
 
                 for c in _getLater:
                     logger.debug('Get later: %s', c)
