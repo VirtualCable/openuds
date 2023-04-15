@@ -38,10 +38,12 @@ from uds.core.module import Module
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
 
+
 class NotificationLevel(enum.IntEnum):
     """
     Notifier levels
     """
+
     INFO = 0
     WARNING = 1
     ERROR = 2
@@ -63,6 +65,7 @@ class Notifier(Module):
     this class provides an abstraction of a notifier system for administrator defined events
     This class will be responsible os sendig emails, messaging notifications, etc.. to administrators
     """
+
     # informational related data
     # : Name of type, used at administration interface to identify this
     # : notifier type (e.g. "Email", "SMS", etc.)
@@ -108,7 +111,9 @@ class Notifier(Module):
         Default implementation does nothing
         """
 
-    def notify(self, group: str, identificator: str, level: NotificationLevel,  message: str) -> None:
+    def notify(
+        self, group: str, identificator: str, level: NotificationLevel, message: str
+    ) -> None:
         """
         This method will be invoked from UDS to notify an event to this notifier.
         This method will be invoked in real time, so ensure this method does not block or
@@ -117,6 +122,4 @@ class Notifier(Module):
         :param level: Level of event
         :param message: Message to be shown
         :return: None
-        """ 
-        pass
-
+        """

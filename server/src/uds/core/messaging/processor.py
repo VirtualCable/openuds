@@ -130,7 +130,7 @@ class MessageProcessorThread(BaseThread):
                             n.message,
                         )
 
-            for a in range(WAIT_TIME):
+            for _ in range(WAIT_TIME):
                 if not self.keepRunning:
                     break
                 time.sleep(1)
