@@ -55,7 +55,7 @@ class MessageProcessorThread(BaseThread):
 
     def __init__(self):
         super().__init__()
-        self.setName('MessageProcessorThread')
+        self.name = 'MessageProcessorThread'
         self._cached_providers = None
         self._cached_stamp = 0.0
 
