@@ -46,41 +46,41 @@ if typing.TYPE_CHECKING:
 
 
 def cryptoManager() -> 'CryptoManager':
-    from .crypto import CryptoManager
+    from .crypto import CryptoManager  # pylint: disable=import-outside-toplevel
 
     return CryptoManager.manager()
 
 
 def taskManager() -> 'TaskManager':
-    from .task import TaskManager
+    from .task import TaskManager  # pylint: disable=import-outside-toplevel
 
     return TaskManager()
 
 
 def downloadsManager() -> 'DownloadsManager':
-    from .downloads import DownloadsManager
+    from .downloads import DownloadsManager  # pylint: disable=import-outside-toplevel
 
     return DownloadsManager()
 
 
 def logManager() -> 'LogManager':
-    from .log import LogManager
+    from .log import LogManager  # pylint: disable=import-outside-toplevel
 
     return LogManager()
 
 
 def userServiceManager() -> 'UserServiceManager':
-    from .user_service import UserServiceManager
+    from .user_service import UserServiceManager  # pylint: disable=import-outside-toplevel
 
     return UserServiceManager()
 
 
 def publicationManager() -> 'PublicationManager':
-    from .publication import PublicationManager
+    from .publication import PublicationManager  # pylint: disable=import-outside-toplevel
 
     return PublicationManager()
 
 def notificationsManager() -> 'NotificationsManager':
-    from .notifications import NotificationsManager
+    from .notifications import NotificationsManager  # pylint: disable=import-outside-toplevel
 
     return NotificationsManager()

@@ -187,7 +187,7 @@ class InternalDBAuth(auths.Authenticator):
         pass
 
     @staticmethod
-    def test(env, data):
+    def test(env, data):  # pylint: disable=unused-argument
         return [True, _("Internal structures seems ok")]
 
     def check(self):

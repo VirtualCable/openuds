@@ -36,6 +36,6 @@ import time
 
 
 VERSION = '4.x.x-DEVEL'
-VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))
+VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
 # Minimal uds client version required to connect to this server
-REQUIRED_CLIENT_VERSION = '3.5.0'
+REQUIRED_CLIENT_VERSION = '3.6.0'

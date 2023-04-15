@@ -124,27 +124,27 @@ class gui:
     # : For backward compatibility, will be removed in future versions
     # For now, will log a warning if used
     @deprecatedClassValue('gui.Tab.ADVANCED')
-    def ADVANCED_TAB(cls) -> str:
+    def ADVANCED_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.ADVANCED)
 
     @deprecatedClassValue('gui.Tab.PARAMETERS')
-    def PARAMETERS_TAB(cls) -> str:
+    def PARAMETERS_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.PARAMETERS)
 
     @deprecatedClassValue('gui.Tab.CREDENTIALS')
-    def CREDENTIALS_TAB(cls) -> str:
+    def CREDENTIALS_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.CREDENTIALS)
 
     @deprecatedClassValue('gui.Tab.TUNNEL')
-    def TUNNEL_TAB(cls) -> str:
+    def TUNNEL_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.TUNNEL)
 
     @deprecatedClassValue('gui.Tab.DISPLAY')
-    def DISPLAY_TAB(cls) -> str:
+    def DISPLAY_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.DISPLAY)
 
     @deprecatedClassValue('gui.Tab.MFA')
-    def MFA_TAB(cls) -> str:
+    def MFA_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.MFA)
 
     # : Static Callbacks simple registry
@@ -196,7 +196,7 @@ class gui:
         ) -> 'gui.ChoiceType':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
-                    raise ValueError('Invalid choice dict: {}'.format(val))
+                    raise ValueError(f'Invalid choice dict: {val}')
                 return gui.choiceItem(val['id'], val['text'])
             # If val is not a dict, and it has not 'id' and 'text', raise an exception
             return gui.choiceItem(val, val)
@@ -214,7 +214,7 @@ class gui:
             return [choiceFromValue(v) for v in vals]
 
         # This should never happen
-        raise RuntimeError('Invalid type for convertToChoices: {}'.format(type(vals)))
+        raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
     def convertToList(
@@ -588,6 +588,9 @@ class gui:
                 return re.match(self._data['pattern'], self.value) is not None
             return True  # No pattern, so it's valid
 
+        def __str__(self):
+            return str(self.value)
+
     class TextAutocompleteField(TextField):
         """
         This represents a text field that holds autocomplete values.
@@ -667,7 +670,7 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options, type=gui.InputField.Types.DATE)
 
-        def date(self, min: bool = True) -> datetime.date:
+        def date(self, useMin: bool = True) -> datetime.date:
             """
             Returns the date this object represents
 
@@ -682,9 +685,9 @@ class gui:
                     self.value, '%Y-%m-%d'
                 ).date()  # ISO Format
             except Exception:
-                return datetime.date.min if min else datetime.date.max
+                return datetime.date.min if useMin else datetime.date.max
 
-        def datetime(self, min: bool = True) -> datetime.datetime:
+        def datetime(self, useMin: bool = True) -> datetime.datetime:
             """
             Returns the date this object represents
 
@@ -697,7 +700,7 @@ class gui:
             try:
                 return datetime.datetime.strptime(self.value, '%Y-%m-%d')  # ISO Format
             except Exception:
-                return datetime.datetime.min if min else datetime.datetime.max
+                return datetime.datetime.min if useMin else datetime.datetime.max
 
         def stamp(self) -> int:
             return int(
@@ -1052,8 +1055,9 @@ class UserInterfaceType(type):
     better place. This is done this way because we will "deepcopy" these fields
     later, and update references on class 'self' to the new copy. (so everyone has a different copy)
     """
+
     def __new__(
-        cls: typing.Type['UserInterfaceType'],
+        mcs: typing.Type['UserInterfaceType'],
         classname: str,
         bases: typing.Tuple[type, ...],
         namespace: typing.Dict[str, typing.Any],
@@ -1070,7 +1074,7 @@ class UserInterfaceType(type):
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
         return typing.cast(
-            'UserInterfaceType', type.__new__(cls, classname, bases, newClassDict)
+            'UserInterfaceType', type.__new__(mcs, classname, bases, newClassDict)
         )
 
 
@@ -1085,10 +1089,10 @@ class UserInterface(metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
+
     class ValidationFieldInfo(typing.NamedTuple):
         field: str
         error: str
-        
 
     # Class variable that will hold the gui fields description
     _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]]
@@ -1258,8 +1262,8 @@ class UserInterface(metaclass=UserInterfaceType):
             self.oldDeserializeForm(values)
             return
 
-        # For future use
-        version = values[
+        # For future use, right now we only have one version
+        version = values[  # pylint: disable=unused-variable
             len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER)
             + len(SERIALIZATION_VERSION)
         ]
@@ -1286,7 +1290,7 @@ class UserInterface(metaclass=UserInterfaceType):
         ] = {
             gui.InputField.Types.TEXT: lambda x: x,
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
-            gui.InputField.Types.NUMERIC: lambda x: int(x),
+            gui.InputField.Types.NUMERIC: int,
             gui.InputField.Types.PASSWORD: lambda x: (
                 CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
             ),
@@ -1369,7 +1373,7 @@ class UserInterface(metaclass=UserInterfaceType):
                             if isinstance(val, bytes):
                                 val = val.decode('utf8')
                     except Exception:
-                        logger.exception('Pickling {} from {}'.format(k, self))
+                        logger.exception('Pickling %s from %s', k, self)
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
@@ -1401,9 +1405,12 @@ class UserInterface(metaclass=UserInterfaceType):
         found_erros: typing.List[UserInterface.ValidationFieldInfo] = []
         for key, val in self._gui.items():
             if val.required and not val.value:
-                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
+                found_erros.append(
+                    UserInterface.ValidationFieldInfo(key, 'Field is required')
+                )
             if not val.validate():
-                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
+                found_erros.append(
+                    UserInterface.ValidationFieldInfo(key, 'Field is not valid')
+                )
 
         return found_erros
-        

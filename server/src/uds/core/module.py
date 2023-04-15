@@ -207,7 +207,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return codecs.encode(cls.icon(), 'base64').decode()
 
     @staticmethod
-    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:
+    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:  # pylint: disable=unused-argument
         """
         Test if the connection data is ok.
 

@@ -100,7 +100,7 @@ class IPAuth(auths.Authenticator):
     def authenticate(
         self,
         username: str,
-        credentials: str,
+        credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
@@ -123,7 +123,7 @@ class IPAuth(auths.Authenticator):
     def internalAuthenticate(
         self,
         username: str,
-        credentials: str,
+        credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
@@ -137,8 +137,8 @@ class IPAuth(auths.Authenticator):
         return auths.FAILED_AUTH
 
     @staticmethod
-    def test(env, data):
-        return _("All seems to be fine.")
+    def test(env, data):  # pylint: disable=unused-argument
+        return [True, _("Internal structures seems ok")]
 
     def check(self):
         return _("All seems to be fine.")
@@ -154,11 +154,9 @@ class IPAuth(auths.Authenticator):
             return ('function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
                     '    document.getElementById(element).value = value;\n'
                     '}}\n'
-                    'setVal("id_user", "{ip}");\n'
-                    'setVal("id_password", "{passwd}");\n'
-                    'document.getElementById("loginform").submit();\n').format(  
-                ip=ip, passwd=''
-            )
+                    f'setVal("id_user", "{ip}");\n'
+                    'setVal("id_password", "");\n'
+                    'document.getElementById("loginform").submit();\n')
 
         return 'alert("invalid authhenticator"); window.location.reload();'
 

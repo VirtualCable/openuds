@@ -31,22 +31,20 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import typing
 
 class UDSException(Exception):
     """
     Base class for all UDS exceptions
     """
-    pass
-    
+
+
 class ValidationError(UDSException):
     """
     Exception used to indicate that the params assigned are invalid
     """
-    pass
+
 
 class TransportError(UDSException):
     """
     Exception used to indicate that the transport is not available
     """
-    pass

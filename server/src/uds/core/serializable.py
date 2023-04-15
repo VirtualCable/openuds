@@ -32,8 +32,6 @@
 """
 import base64
 import pickle  # nosec: Safe pickle usage
-import gzip
-import typing
 
 
 class Serializable:

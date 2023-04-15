@@ -207,9 +207,6 @@ class RadiusClient:
 
         if reply.code == pyrad.packet.AccessChallenge:
             state = typing.cast(typing.List[bytes], reply.get('State') or [b''])[0]
-            replyMessage = typing.cast(
-                typing.List[bytes], reply.get('Reply-Message') or ['']
-            )[0]
             return self.challenge_only(username, otp, state=state)
 
         # user/pwd accepted: but this user does not have challenge data

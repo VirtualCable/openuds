@@ -209,7 +209,7 @@ class RadiusAuth(auths.Authenticator):
             connection.authenticate(
                 cryptoManager().randomString(10), cryptoManager().randomString(10)
             )
-        except client.RadiusAuthenticationError as e:
+        except client.RadiusAuthenticationError:
             pass
         except Exception:
             logger.exception('Connecting')

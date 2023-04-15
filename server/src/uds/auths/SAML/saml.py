@@ -34,12 +34,12 @@ import re
 from urllib.parse import urlparse
 import xml.sax  # nosec: used to parse trusted xml provided only by administrators
 import datetime
-import requests
 import logging
 import typing
 
+import requests
+
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
-from onelogin.saml2.utils import OneLogin_Saml2_Utils
 from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
@@ -373,7 +373,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         try:
-            pk = cryptoManager().loadPrivateKey(self.privateKey.value)
+            cryptoManager().loadPrivateKey(self.privateKey.value)
         except Exception as e:
             raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
 
@@ -428,14 +428,14 @@ class SAMLAuthenticator(auths.Authenticator):
     def getReqFromRequest(
         self,
         request: 'ExtendedHttpRequest',
-        params: typing.Dict[str, typing.Any] = {},
+        params: typing.Optional[typing.Dict[str, typing.Any]] = None,
     ) -> typing.Dict[str, typing.Any]:
         manageUrlObj = urlparse(self.manageUrl.value)
         script_path = manageUrlObj.path
 
         # If callback parameters are passed, we use them
         if params:
-            # TODO: Remove next 3 lines, just for testing and debugging
+            # Remove next 3 lines, just for testing and debugging
             # params['http_host'] = '172.27.0.1'
             # params['server_port'] = '8000'
             # params['https'] = False
@@ -466,7 +466,7 @@ class SAMLAuthenticator(auths.Authenticator):
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600 * 24 * 365,  # 1 year
     )
-    def getIdpMetadataDict(self, **kwargs) -> typing.Dict[str, typing.Any]:
+    def getIdpMetadataDict(self) -> typing.Dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
             try:
                 resp = requests.get(
@@ -570,10 +570,10 @@ class SAMLAuthenticator(auths.Authenticator):
                     pattern = '(' + pattern + ')'
                 try:
                     re.search(pattern, '')
-                except:
+                except Exception as e:
                     raise exceptions.ValidationError(
-                        'Invalid pattern at {0}: {1}'.format(field.label, line)
-                    )
+                        f'Invalid pattern at {field.label}: {line}'
+                    ) from e
 
     def processField(
         self, field: str, attributes: typing.Dict[str, typing.List]
@@ -818,7 +818,7 @@ class SAMLAuthenticator(auths.Authenticator):
         req = self.getReqFromRequest(request)
         auth = OneLogin_Saml2_Auth(req, self.oneLoginSettings())
 
-        return 'window.location="{0}";'.format(auth.login())
+        return f'window.location="{auth.login()}";'
 
     def removeUser(self, username):
         """

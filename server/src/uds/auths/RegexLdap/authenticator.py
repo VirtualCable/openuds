@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=no-member
 
 #
 # Copyright (c) 2012-2022 Virtual Cable S.L.U.
@@ -269,10 +269,10 @@ class RegexLdap(auths.Authenticator):
                     pattern = '(' + pattern + ')'
                 try:
                     re.search(pattern, '')
-                except Exception:
+                except Exception as e:
                     raise exceptions.ValidationError(
-                        'Invalid pattern in {0}: {1}'.format(fieldLabel, line)
-                    )
+                        f'Invalid pattern in {fieldLabel}: {line}'
+                    ) from e
 
     def __getAttrsFromField(self, field: str) -> typing.List[str]:
         res = []
@@ -486,9 +486,7 @@ class RegexLdap(auths.Authenticator):
             for usr in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter='(&(objectClass={})({}={}))'.format(
-                    self._altClass, self._userIdAttr, ldaputil.escape(username)
-                ),
+                ldapFilter=f'(&(objectClass={self._altClass})({self._userIdAttr}={ldaputil.escape(username)}))',
                 attrList=attributes,
                 sizeLimit=LDAP_RESULT_LIMIT,
             ):
@@ -555,7 +553,7 @@ class RegexLdap(auths.Authenticator):
                 self.__connectAs(
                     usr['dn'], credentials
                 )  # Will raise an exception if it can't connect
-            except:
+            except Exception:
                 authLogLogin(
                     request, self.dbAuthenticator(), username, 'Invalid password'
                 )
@@ -627,9 +625,7 @@ class RegexLdap(auths.Authenticator):
             for r in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter='(&(&(objectClass={})({}={}*)))'.format(
-                    self._userClass, self._userIdAttr, ldaputil.escape(pattern)
-                ),
+                ldapFilter=f'(&(&(objectClass={self._userClass})({self._userIdAttr}={ldaputil.escape(pattern)}*)))',
                 attrList=None,  # All attrs
                 sizeLimit=LDAP_RESULT_LIMIT,
             ):
@@ -642,11 +638,11 @@ class RegexLdap(auths.Authenticator):
                 )
             logger.debug(res)
             return res
-        except Exception:
+        except Exception as e:
             logger.exception("Exception: ")
             raise auths.exceptions.AuthenticatorException(
                 _('Too many results, be more specific')
-            )
+            ) from e
 
     @staticmethod
     def test(env, data):
@@ -676,7 +672,7 @@ class RegexLdap(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                        filterstr='(objectClass=%s)' % self._userClass,
+                        filterstr=f'(objectClass={self._userClass})',
                         sizelimit=1,
                     )
                 )
@@ -700,8 +696,7 @@ class RegexLdap(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                        filterstr='(&(objectClass=%s)(%s=*))'
-                        % (self._userClass, self._userIdAttr),
+                        filterstr=f'(&(objectClass={self._userClass})({self._userIdAttr}=*))',
                         sizelimit=1,
                     )
                 )
@@ -728,7 +723,7 @@ class RegexLdap(auths.Authenticator):
                         con.search_ext_s(
                             base=self._ldapBase,
                             scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                            filterstr='(%s=*)' % vals,
+                            filterstr=f'({vals}=*)',
                             sizelimit=1,
                         )
                     )
@@ -759,15 +754,8 @@ class RegexLdap(auths.Authenticator):
         ]
 
     def __str__(self):
-        return "Ldap Auth: {}:{}@{}:{}, base = {}, userClass = {}, userIdAttr = {}, groupNameAttr = {}, userName attr = {}, altClass={}".format(
-            self._username,
-            self._password,
-            self._host,
-            self._port,
-            self._ldapBase,
-            self._userClass,
-            self._userIdAttr,
-            self._groupNameAttr,
-            self._userNameAttr,
-            self._altClass,
+        return (
+            f'Ldap Auth: {self._username}:{self._password}@{self._host}:{self._port},'
+            f' base = {self._ldapBase}, userClass = {self._userClass}, userIdAttr = {self._userIdAttr},'
+            f' groupNameAttr = {self._groupNameAttr}, userName attr = {self._userNameAttr}, altClass={self._altClass}'
         )
