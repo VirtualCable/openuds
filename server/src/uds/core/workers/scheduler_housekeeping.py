@@ -57,14 +57,13 @@ class SchedulerHousekeeping(Job):
         Look for "hanged" scheduler tasks and reschedule them
         """
         since = getSqlDatetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
-        for i in range(3):  # Retry three times in case of lockout error
+        for _ in range(3):  # Retry three times in case of lockout error
             try:
                 with transaction.atomic():
                     Scheduler.objects.select_for_update(skip_locked=True).filter(
                         last_execution__lt=since, state=State.RUNNING
                     ).update(owner_server='', state=State.FOR_EXECUTE)
                 break
-            except Exception as e:
+            except Exception:
                 logger.info('Retrying Scheduler cleanup transaction')
                 time.sleep(1)
-

@@ -32,8 +32,6 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _
-
 from uds import models
 from uds.core.util.state import State
 from uds.core.util.stats import counters
@@ -172,7 +170,7 @@ class StatsAccumulator(Job):
     def run(self):
         try:
             StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.getInt())
-        except Exception as e:
+        except Exception:
             logger.exception('Compressing counters')
 
         logger.debug('Done statistics compression')

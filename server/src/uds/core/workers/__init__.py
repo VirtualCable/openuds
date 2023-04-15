@@ -43,8 +43,8 @@ def initialize() -> None:
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    from uds.core import jobs
-    from uds.core.managers import taskManager
+    from uds.core import jobs  # pylint: disable=import-outside-toplevel
+    from uds.core.managers import taskManager  # pylint: disable=import-outside-toplevel
 
     def registerer(cls: typing.Type[jobs.Job]) -> None:
         if cls.__module__.startswith('uds.core.workers'):

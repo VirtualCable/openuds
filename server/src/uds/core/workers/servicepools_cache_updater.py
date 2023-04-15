@@ -209,7 +209,11 @@ class ServiceCacheUpdater(Job):
         return servicesPools
 
     def growL1Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ) -> None:
         """
         This method tries to enlarge L1 cache.
@@ -268,7 +272,11 @@ class ServiceCacheUpdater(Job):
             logger.exception('Exception')
 
     def growL2Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,  # pylint: disable=unused-argument
+        assigned: int,  # pylint: disable=unused-argument
     ) -> None:
         """
         Tries to grow L2 cache of service.
@@ -293,7 +301,11 @@ class ServiceCacheUpdater(Job):
             # TODO: When alerts are ready, notify this
 
     def reduceL1Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
@@ -334,7 +346,11 @@ class ServiceCacheUpdater(Job):
         cache.removeOrCancel()
 
     def reduceL2Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ):
         logger.debug(
             "Reducing L2 cache erasing a service in cache for %s", servicePool.name
@@ -350,7 +366,7 @@ class ServiceCacheUpdater(Job):
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
-            cache: UserService = cacheItems[0]  # type: ignore  # Slicing is not supported by pylance right now
+            cache: UserService = cacheItems[0]
             cache.removeOrCancel()
 
     def run(self) -> None:

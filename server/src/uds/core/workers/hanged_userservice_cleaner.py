@@ -105,9 +105,7 @@ class HangedCleaner(Job):
                     log.doLog(
                         servicePool,
                         log.ERROR,
-                        'User service {} hanged on removal. Restarting removal.'.format(
-                            us.friendly_name
-                        ),
+                        f'User service {us.friendly_name} hanged on removal. Restarting removal.',
                     )
                     us.release()  # Mark it again as removable, and let's see
                 else:
@@ -120,8 +118,6 @@ class HangedCleaner(Job):
                     log.doLog(
                         servicePool,
                         log.ERROR,
-                        'Removing user service {} because it seems to be hanged'.format(
-                            us.friendly_name
-                        ),
+                        f'Removing user service {us.friendly_name} because it seems to be hanged'
                     )
                     us.releaseOrCancel()

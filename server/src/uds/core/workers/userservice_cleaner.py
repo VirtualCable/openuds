@@ -78,7 +78,7 @@ class UserServiceRemover(Job):
         # This configuration value is cached at startup, so it is not updated until next reload
         removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
         manager = managers.userServiceManager()
-        
+
         with transaction.atomic():
             removeFrom = getSqlDatetime() - timedelta(
                 seconds=10
@@ -89,7 +89,9 @@ class UserServiceRemover(Job):
                 state=State.REMOVABLE,
                 state_date__lt=removeFrom,
                 deployed_service__service__provider__maintenance_mode=False,
-            ).iterator(chunk_size=removeAtOnce)
+            ).iterator(
+                chunk_size=removeAtOnce
+            )
 
         # We remove at once, but we limit the number of items to remove
 
