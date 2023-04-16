@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
 
 from django.core.management.base import BaseCommand
@@ -63,5 +62,5 @@ class Command(BaseCommand):
                 ):  # If not exists, try to store value without any special parameters
                     Config.section(mod).value(name, value).get()
         except Exception as e:
-            self.stderr.write('The command could not be processed: {}'.format(e))
+            self.stderr.write(f'The command could not be processed: {e}')
             logger.exception('Exception processing %s', args)

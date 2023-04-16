@@ -87,6 +87,6 @@ class Command(BaseCommand):
             if options['yaml']:
                 self.stdout.write(yaml.safe_dump(writer, default_flow_style=False))
         except Exception as e:
-            self.stdout.write('The command could not be processed: {}'.format(e))
+            self.stdout.write(f'The command could not be processed: {e}')
             self.stdout.flush()
             logger.exception('Exception processing %s', args)

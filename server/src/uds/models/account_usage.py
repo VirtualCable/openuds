@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
+# pylint: disable=no-member  # pylint complais a lot about members of models...
 class AccountUsage(UUIDModel):
     """
     AccountUsage storing on DB model
@@ -74,7 +74,7 @@ class AccountUsage(UUIDModel):
         Account, related_name='usages', on_delete=models.CASCADE
     )
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -111,6 +111,4 @@ class AccountUsage(UUIDModel):
         return secondsToTimeString(self.elapsed_seconds_timemark)
 
     def __str__(self):
-        return 'AccountUsage id {}, pool {}, name {}, start {}, end {}'.format(
-            self.id, self.pool_name, self.user_name, self.start, self.end
-        )
+        return f'AccountUsage id {self.id}, pool {self.pool_name}, name {self.user_name}, start {self.start}, end {self.end}'

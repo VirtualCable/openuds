@@ -40,7 +40,13 @@ from uds.core import mfas
 from uds.core.ui import gui
 
 from uds.auths.Radius import client
-from uds.auths.Radius.client import NOT_CHECKED, INCORRECT, CORRECT, NOT_NEEDED, NEEDED
+from uds.auths.Radius.client import (
+    # NOT_CHECKED,
+    INCORRECT,
+    CORRECT,
+    NOT_NEEDED,
+    # NEEDED
+)
 from uds.core.auths.auth import webPassword
 from uds.core.auths import exceptions
 
@@ -108,12 +114,7 @@ class RadiusOTP(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for OTP server communication error'),
         required=True,
-        values={
-            '0': _('Allow user login'),
-            '1': _('Deny user login'),
-            '2': _('Allow user to login if it IP is in the networks list'),
-            '3': _('Deny user to login if it IP is in the networks list'),
-        },
+        values=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -133,12 +134,7 @@ class RadiusOTP(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for user without defined Radius Challenge'),
         required=True,
-        values={
-            '0': _('Allow user login'),
-            '1': _('Deny user login'),
-            '2': _('Allow user to login if it IP is in the networks list'),
-            '3': _('Deny user to login if it IP is in the networks list'),
-        },
+        values=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -163,30 +159,16 @@ class RadiusOTP(mfas.MFA):
             nasIdentifier=self.nasIdentifier.value,
         )
 
-    def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
-        def checkIp() -> bool:
-            return any(
-                i.contains(request.ip)
-                for i in models.Network.objects.filter(uuid__in=self.networks.value)
-            )
-
-        if action == '0':
-            return True
-        elif action == '1':
-            return False
-        elif action == '2':
-            return checkIp()
-        elif action == '3':
-            return not checkIp()
-        else:
-            return False
-
-    def checkResult(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
-        if self.checkAction(action, request):
+    def checkResult(
+        self, action: str, request: 'ExtendedHttpRequest'
+    ) -> mfas.MFA.RESULT:
+        if mfas.LoginAllowed.checkAction(action, request, self.networks.value):
             return mfas.MFA.RESULT.OK
         raise Exception('User not allowed to login')
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(
+        self, request: 'ExtendedHttpRequest'
+    ) -> typing.Optional[bool]:
         return None
 
     def label(self) -> str:
@@ -225,8 +207,8 @@ class RadiusOTP(mfas.MFA):
             logger.error(
                 "Exception found connecting to Radius OTP %s: %s", e.__class__, e
             )
-            if not self.checkAction(self.responseErrorAction.value, request):
-                raise Exception(_('Radius OTP connection error'))
+            if not mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
+                raise Exception(_('Radius OTP connection error')) from e
             logger.warning(
                 "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",
                 username,
@@ -287,8 +269,8 @@ class RadiusOTP(mfas.MFA):
                 logger.error(
                     "Exception found connecting to Radius OTP %s: %s", e.__class__, e
                 )
-                if not self.checkAction(self.responseErrorAction.value, request):
-                    raise Exception(_('Radius OTP connection error'))
+                if mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
+                    raise Exception(_('Radius OTP connection error')) from e
                 logger.warning(
                     "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",
                     username,

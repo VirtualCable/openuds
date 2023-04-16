@@ -74,7 +74,7 @@ class Environment:
         from uds.core.util.storage import Storage  # pylint: disable=import-outside-toplevel
 
         if idGenerators is None:
-            idGenerators = dict()
+            idGenerators = {}
         self._key = uniqueKey
         self._cache = Cache(uniqueKey)
         self._storage = Storage(uniqueKey)

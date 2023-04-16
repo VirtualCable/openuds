@@ -34,6 +34,7 @@ import typing
 
 from django.urls import reverse
 from django.http import HttpResponsePermanentRedirect
+from django.conf import settings
 
 from . import builder
 
@@ -43,7 +44,7 @@ if typing.TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
 def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
-    if request.is_secure():
+    if request.is_secure() or settings.DEBUG:
         return None
 
     return HttpResponsePermanentRedirect(request.build_absolute_uri(reverse('page.index')).replace('http://', 'https://', 1))

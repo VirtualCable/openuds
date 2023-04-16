@@ -92,7 +92,7 @@ class Account(UUIDModel, TaggingMixin):
         tmp.save()
         return tmp
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -101,4 +101,4 @@ class Account(UUIDModel, TaggingMixin):
         app_label = 'uds'
 
     def __str__(self):
-        return 'Account id {}, name {}'.format(self.id, self.name)
+        return f'Account id {self.id}, name {self.name}'

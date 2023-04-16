@@ -47,7 +47,12 @@ CONTENT_TYPE = 'text/plain'
 
 
 @auth.trustedSourceRequired
-def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResponse:
+def opengnsys(
+    request: HttpRequest,  # pylint: disable=unused-argument
+    msg: str,
+    token: str,
+    uuid: str,
+) -> HttpResponse:
     logger.debug('Received opengnsys message %s, token %s, uuid %s', msg, token, uuid)
 
     def getUserService() -> typing.Optional[UserService]:
@@ -63,7 +68,7 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
                 uuid,
             )
             # Sleep a while in case of error?
-        except Exception as e:
+        except Exception:
             # Any exception will stop process
             logger.warning(
                 'OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid
@@ -106,7 +111,9 @@ def opengnsys(request: HttpRequest, msg: str, token: str, uuid: str) -> HttpResp
             logger.debug(
                 'Processing logout from OpenGnsys %s', userService.friendly_name
             )
-            actor_v3.Logout.process_logout(userService, 'OpenGnsys', '')  # Close all sessions
+            actor_v3.Logout.process_logout(
+                userService, 'OpenGnsys', ''
+            )  # Close all sessions
 
     fnc: typing.Optional[typing.Callable[[], None]] = {
         'login': login,

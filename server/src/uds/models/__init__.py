@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-import
 
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 

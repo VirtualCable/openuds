@@ -95,7 +95,7 @@ class EventFS(types.UDSFSInterface):
             ):  # Return days of month as indicated on path
                 month = int(path[1])
                 return ['.', '..'] + [
-                    '{:02d}'.format(x)
+                    f'{x:02d}'
                     for x in range(1, EventFS.number_of_days(year, month) + 1)
                 ]
 

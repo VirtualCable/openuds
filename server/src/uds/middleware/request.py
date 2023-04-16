@@ -47,7 +47,7 @@ from uds.core.auths.auth import (
 )
 from uds.models import User
 
-from . import builder 
+from . import builder
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse

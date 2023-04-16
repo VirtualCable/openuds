@@ -77,12 +77,12 @@ def build_middleware(
                 )
 
             return async_middleware
-        else:
 
-            def sync_middleware(request: 'ExtendedHttpRequest') -> 'HttpResponse':
-                response = request_processor(request)
-                return response_processor(request, response or get_response(request))
+        # Sync middleware
+        def sync_middleware(request: 'ExtendedHttpRequest') -> 'HttpResponse':
+            response = request_processor(request)
+            return response_processor(request, response or get_response(request))
 
-            return sync_middleware
+        return sync_middleware
 
     return middleware

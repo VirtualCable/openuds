@@ -33,15 +33,15 @@ import re
 import logging
 import typing
 
-logger = logging.getLogger(__name__)
 
 from django.http import HttpResponseForbidden
 
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import isTrustedSource, IP_KEY
 
-
 from . import builder
+
+logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
@@ -66,7 +66,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
             request.path,
         )
         return HttpResponseForbidden(content='Forbbiden', content_type='text/plain')
-    
+
     if GlobalConfig.ENHANCED_SECURITY.getBool():
         # Check that ip stored in session is the same as the one that is requesting if user is logged in
         session_ip = request.session.get(IP_KEY, None)
@@ -79,12 +79,13 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
                 request.session.get('ip', None),
             )
             return HttpResponseForbidden(content='Forbbiden', content_type='text/plain')
-        
+
     return None
 
 
 def _process_response(
-    request: 'ExtendedHttpRequest', response: 'HttpResponse'
+    request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
+    response: 'HttpResponse',
 ) -> 'HttpResponse':
     if GlobalConfig.ENHANCED_SECURITY.getBool():
         # Legacy browser support for X-XSS-Protection

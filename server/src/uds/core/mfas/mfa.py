@@ -37,10 +37,11 @@ import hashlib
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _
+from django.utils.translation import gettext_noop as _, gettext
 from uds.core.module import Module
 from uds.models.util import getSqlDatetime
 from uds.core.auths import exceptions
+from uds.models.network import Network
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -48,6 +49,54 @@ if typing.TYPE_CHECKING:
     from uds.models import User
 
 logger = logging.getLogger(__name__)
+
+
+class LoginAllowed(enum.StrEnum):
+    """
+    This enum is used to know if the MFA code was sent or not.
+    """
+
+    ALLOWED = '0'
+    DENIED = '1'
+    ALLOWED_IF_IN_NETWORKS = '2'
+    DENIED_IF_IN_NETWORKS = '3'
+
+    @staticmethod
+    def checkAction(
+        action: 'LoginAllowed|str',
+        request: 'ExtendedHttpRequest',
+        networks: typing.Optional[typing.Iterable[str]] = None,
+    ) -> bool:
+        def checkIp() -> bool:
+            if networks is None:
+                return True  # No network restrictions, so we allow
+            return any(
+                i.contains(request.ip)
+                for i in Network.objects.filter(uuid__in=list(networks))
+            )
+
+        if isinstance(action, str):
+            action = LoginAllowed(action)
+
+        return {
+            LoginAllowed.ALLOWED: True,
+            LoginAllowed.DENIED: False,
+            LoginAllowed.ALLOWED_IF_IN_NETWORKS: checkIp(),
+            LoginAllowed.DENIED_IF_IN_NETWORKS: not checkIp(),
+        }.get(action, False)
+
+    @staticmethod
+    def valuesForSelect() -> typing.Mapping[str, str]:
+        return {
+            LoginAllowed.ALLOWED.value: gettext('Allow user login'),
+            LoginAllowed.DENIED.value: gettext('Deny user login'),
+            LoginAllowed.ALLOWED_IF_IN_NETWORKS.value: gettext(
+                'Allow user to login if it IP is in the networks list'
+            ),
+            LoginAllowed.DENIED_IF_IN_NETWORKS.value: gettext(
+                'Deny user to login if it IP is in the networks list'
+            ),
+        }
 
 
 class MFA(Module):
@@ -155,8 +204,8 @@ class MFA(Module):
         If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
-
-        raise NotImplementedError('sendCode method not implemented')
+        logger.error('MFA.sendCode not implemented')
+        raise exceptions.MFAError('MFA.sendCode not implemented')
 
     def _getData(
         self, request: 'ExtendedHttpRequest', userId: str
@@ -216,10 +265,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if (
-                    data[0] + datetime.timedelta(seconds=validity)
-                    > getSqlDatetime()
-                ):
+                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -232,6 +278,7 @@ class MFA(Module):
 
         # Send the code to the user
         # May raise an exception if the code was not sent and is required to be sent
+        # pylint: disable=assignment-from-no-return
         result = self.sendCode(request, userId, username, identifier, code)
 
         # Store the code in the database, own storage space, if no exception was raised

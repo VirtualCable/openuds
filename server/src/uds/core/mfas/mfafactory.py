@@ -30,32 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
 
-from uds.core.util import singleton
+from uds.core.util import factory
 
 if typing.TYPE_CHECKING:
     from .mfa import MFA
 
-logger = logging.getLogger(__name__)
 
-
-class MFAsFactory(metaclass=singleton.Singleton):
-    _factory: typing.Optional['MFAsFactory'] = None
-    _mfas: typing.MutableMapping[str, typing.Type['MFA']] = {}
-
-    @staticmethod
-    def factory() -> 'MFAsFactory':
-        return MFAsFactory()
-
-    def providers(self) -> typing.Mapping[str, typing.Type['MFA']]:
-        return self._mfas
-
-    def insert(self, type_: typing.Type['MFA']) -> None:
-        logger.debug('Adding Multi Factor Auth %s as %s', type_.type(), type_)
-        typeName = type_.type().lower()
-        self._mfas[typeName] = type_
-
-    def lookup(self, typeName: str) -> typing.Optional[typing.Type['MFA']]:
-        return self._mfas.get(typeName.lower(), None)
+class MFAsFactory(factory.ModuleFactory['MFA']):
+    pass

@@ -28,17 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS os managers related interfaces and classes
-
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .mfa import MFA
+from .mfa import MFA, LoginAllowed
+from .mfafactory import MFAsFactory
 
 
-def factory():
+def factory() -> MFAsFactory:
     """
     Returns factory for register/access to authenticators
     """
-    from .mfafactory import MFAsFactory
-
-    return MFAsFactory.factory()
+    return MFAsFactory()
