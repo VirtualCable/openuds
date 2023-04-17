@@ -44,7 +44,7 @@ from PyQt5.QtCore import QSettings
 from uds.rest import RestApi, RetryException, InvalidVersion
 
 # Just to ensure there are available on runtime
-from uds.forward import forward as ssh_forward # type: ignore  # pylint: disable=unused-import
+from uds.forward import forward as ssh_forward  # type: ignore  # pylint: disable=unused-import
 from uds.tunnel import forward as tunnel_forwards  # type: ignore  # pylint: disable=unused-import
 
 from uds.log import logger
@@ -55,7 +55,6 @@ from UDSWindow import Ui_MainWindow
 
 
 class UDSClient(QtWidgets.QMainWindow):
-
     ticket: str = ''
     scrambler: str = ''
     withError = False
@@ -168,7 +167,9 @@ class UDSClient(QtWidgets.QMainWindow):
             # self.hide()
             self.closeWindow()
 
-            exec(script, globals(), {'parent': self, 'sp': params})  # pylint: disable=exec-used
+            exec(
+                script, globals(), {'parent': self, 'sp': params}
+            )  # pylint: disable=exec-used
 
             # Execute the waiting tasks...
             threading.Thread(target=endScript).start()
@@ -177,7 +178,7 @@ class UDSClient(QtWidgets.QMainWindow):
             self.ui.info.setText(str(e) + ', retrying access...')
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception('Error getting transport data')
             self.showError(e)
 
@@ -195,27 +196,27 @@ def endScript():
     try:
         # Remove early stage files...
         tools.unlinkFiles(early=True)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug('Unlinking files on early stage: %s', e)
 
     # After running script, wait for stuff
     try:
         logger.debug('Wating for tasks to finish...')
         tools.waitForTasks()
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug('Watiting for tasks to finish: %s', e)
 
     try:
         logger.debug('Unlinking files')
         tools.unlinkFiles(early=False)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug('Unlinking files on later stage: %s', e)
 
     # Removing
     try:
         logger.debug('Executing threads before exit')
         tools.execBeforeExit()
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug('execBeforeExit: %s', e)
 
     logger.debug('endScript done')
@@ -306,7 +307,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             + '\n\nPlease, retry again in a while.',
             QtWidgets.QMessageBox.Ok,
         )
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         # logger.exception('Got exception on getTransportData')
         QtWidgets.QMessageBox.critical(
             None,  # type: ignore
@@ -363,7 +364,7 @@ def main(args: typing.List[str]):
             )
             sys.exit(1)
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
-            raise Exception()
+            raise Exception('Not supported protocol')
 
         ssl = uri[3] == 's'
         host, ticket, scrambler = uri.split('//')[1].split('/')  # type: ignore
@@ -404,7 +405,7 @@ def main(args: typing.List[str]):
         exitVal = app.exec()
         logger.debug('Execution finished correctly')
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.exception('Got an exception executing client:')
         exitVal = 128
         QtWidgets.QMessageBox.critical(
@@ -413,6 +414,7 @@ def main(args: typing.List[str]):
 
     logger.debug('Exiting')
     sys.exit(exitVal)
+
 
 if __name__ == "__main__":
     main(sys.argv)
