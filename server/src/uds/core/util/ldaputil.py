@@ -25,7 +25,7 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -118,6 +118,7 @@ def connection(
             l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
 
             l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+
             
         l.simple_bind_s(who=username, cred=password)
     except ldap.SERVER_DOWN as e:  # type: ignore

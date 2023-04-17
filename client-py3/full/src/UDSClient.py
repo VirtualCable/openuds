@@ -363,14 +363,12 @@ def main(args: typing.List[str]):
                 QtWidgets.QMessageBox.Ok,
             )
             sys.exit(1)
-        if uri[:6] != 'uds://' and uri[:7] != 'udss://':
-            raise Exception('Not supported protocol')
+        if uri[:7] != 'udss://':
+            raise Exception('Not supported protocol')  # Just shows "about" dialog
 
-        ssl = uri[3] == 's'
         host, ticket, scrambler = uri.split('//')[1].split('/')  # type: ignore
         logger.debug(
-            'ssl:%s, host:%s, ticket:%s, scrambler:%s',
-            ssl,
+            'host:%s, ticket:%s, scrambler:%s',
             host,
             ticket,
             scrambler,
@@ -387,7 +385,7 @@ def main(args: typing.List[str]):
 
     # Setup REST api endpoint
     api = RestApi(
-        '{}://{}/uds/rest/client'.format(['http', 'https'][ssl], host), sslError
+        f'https://{host}/uds/rest/client', sslError
     )
 
     try:
