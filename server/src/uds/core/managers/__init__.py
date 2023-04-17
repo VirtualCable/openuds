@@ -30,7 +30,7 @@
 """
 UDS managers (downloads, users preferences, publications, ...)
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 

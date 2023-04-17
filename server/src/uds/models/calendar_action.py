@@ -29,7 +29,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import json
@@ -254,7 +254,7 @@ class CalendarAction(UUIDModel):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[CalendarAction]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -272,13 +272,13 @@ class CalendarAction(UUIDModel):
             ca = CALENDAR_ACTION_DICT.get(self.action)
 
             if ca is None:
-                raise Exception('{} not in action dict'.format(self.action))
+                raise Exception(f'Action {self.action} not found')
 
             params = json.loads(self.params)
             res = []
             for p in ca['params']:
                 val = params[p['name']]
-                pp = '{}='.format(p['name'])
+                pp = f'{p["name"]}='
                 # Transport
                 if p['type'] == 'transport':
                     try:
@@ -328,57 +328,51 @@ class CalendarAction(UUIDModel):
             v = int(params[field])
             return v if v >= 0 else 0
 
-        executed = False
-        if CALENDAR_ACTION_CACHE_L1['id'] == self.action:
+        # Actions related to calendar actions
+        def set_l1_cache() -> None:
             self.service_pool.cache_l1_srvs = numVal('size')
-            executed = True
-        elif CALENDAR_ACTION_CACHE_L2['id'] == self.action:
+
+        def set_l2_cache() -> None:
             self.service_pool.cache_l2_srvs = numVal('size')
-            executed = True
-        elif CALENDAR_ACTION_INITIAL['id'] == self.action:
+
+        def set_initial() -> None:
             self.service_pool.initial_srvs = numVal('size')
-            executed = True
-        elif CALENDAR_ACTION_MAX['id'] == self.action:
+
+        def set_max() -> None:
             self.service_pool.max_srvs = numVal('size')
-            executed = True
-        elif CALENDAR_ACTION_PUBLISH['id'] == self.action:
-            self.service_pool.publish(changeLog='Scheduled publication action')
+
+        def publish() -> None:
+            nonlocal saveServicePool
+            self.service_pool.publish()
             saveServicePool = False
-            executed = True
-        elif CALENDAR_ACTION_IGNORE_UNUSED['id'] == self.action:
+
+        def ignores_unused() -> None:
             self.service_pool.ignores_unused = params['state'] in ('true', '1', True)
-            executed = True
-        elif CALENDAR_ACTION_REMOVE_USERSERVICES['id'] == self.action:
+
+        def remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
             for userService in self.service_pool.assignedUserServices().filter(
                 state=state.State.USABLE
             ):
                 userService.remove()
-            saveServicePool = False
-            executed = True
-        elif CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id'] == self.action:
+
+        def remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
             since = getSqlDatetime() - datetime.timedelta(hours=numVal('hours'))
             for userService in self.service_pool.assignedUserServices().filter(
                 state_date__lt=since, state=state.State.USABLE
             ):
                 userService.remove()
-            saveServicePool = False
-            executed = True
-        elif CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id'] == self.action:
+
+        def del_all_transport() -> None:
             # 2.- Remove all transports
             self.service_pool.transports.clear()
-            saveServicePool = False
-            executed = True
-        elif CALENDAR_ACTION_DEL_ALL_GROUPS['id'] == self.action:
+
+        def del_all_groups() -> None:
             # 3.- Remove all groups
             self.service_pool.assignedGroups.clear()
-            saveServicePool = False
-            executed = True
-        elif self.action in [
-            CALENDAR_ACTION_CLEAN_CACHE_L1['id'],
-            CALENDAR_ACTION_CLEAN_CACHE_L2['id'],
-        ]:
+
+        def clear_cache() -> None:
             # 4.- Remove all cache_l1_srvs
             for i in self.service_pool.cachedUserServices().filter(
                 managers.userServiceManager().getCacheStateFilter(
@@ -389,92 +383,89 @@ class CalendarAction(UUIDModel):
                 )
             ):
                 i.remove()
-            saveServicePool = False
-            executed = True
-        elif CALENDAR_ACTION_CLEAN_CACHE_L2['id'] == self.action:
-            # 5.- Remove all cache_l2_srvs
-            for i in self.service_pool.cachedUserServices().filter(
-                managers.userServiceManager().getCacheStateFilter(
-                    self.service_pool, services.UserDeployment.L2_CACHE
-                )
-            ):
-                i.remove()
-            saveServicePool = False
-            executed = True
-        elif self.action in [
-            CALENDAR_ACTION_ADD_TRANSPORT['id'],
-            CALENDAR_ACTION_DEL_TRANSPORT['id'],
-            CALENDAR_ACTION_ADD_GROUP['id'],
-            CALENDAR_ACTION_DEL_GROUP['id'],
-        ]:  # Add/remove transport or group
-            saveServicePool = False
-            caTransports = (
-                CALENDAR_ACTION_ADD_TRANSPORT['id'],
-                CALENDAR_ACTION_DEL_TRANSPORT['id'],
-            )
-            caGroups = (
-                CALENDAR_ACTION_ADD_GROUP['id'],
-                CALENDAR_ACTION_DEL_GROUP['id'],
-            )
-            if self.action in caTransports:
-                try:
-                    t = Transport.objects.get(uuid=params['transport'])
-                    if self.action == caTransports[0]:
-                        self.service_pool.transports.add(t)
-                    else:
-                        self.service_pool.transports.remove(t)
-                    executed = True
-                except Exception:
-                    self.service_pool.log(
-                        'Scheduled action not executed because transport is not available anymore'
-                    )
-            elif self.action in caGroups:
-                try:
-                    auth, grp = params['group'].split('@')
-                    grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
-                    if self.action == caGroups[0]:
-                        self.service_pool.assignedGroups.add(grp)
-                    else:
-                        self.service_pool.assignedGroups.remove(grp)
-                    executed = True
-                except Exception:
-                    self.service_pool.log(
-                        'Scheduled action not executed because group is not available anymore'
-                    )
-        else:
-            self.service_pool.log(
-                'Scheduled action not executed because is not supported: {}'.format(
-                    self.action
-                )
-            )
 
-        if executed:
+        def add_del_transport() -> None:
             try:
+                t = Transport.objects.get(uuid=params['transport'])
+                if self.action == CALENDAR_ACTION_ADD_TRANSPORT['id']:
+                    self.service_pool.transports.add(t)
+                else:
+                    self.service_pool.transports.remove(t)
+            except Exception:
                 self.service_pool.log(
-                    'Executed action {} [{}]'.format(
-                        CALENDAR_ACTION_DICT.get(self.action, {})['description'],
-                        self.prettyParams,
-                    ),
+                    'Scheduled action not executed because transport is not available anymore'
+                )
+
+        def add_del_group() -> None:
+            try:
+                auth, grp = params['group'].split('@')
+                grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
+                if self.action == CALENDAR_ACTION_ADD_GROUP['id']:
+                    self.service_pool.assignedGroups.add(grp)
+                else:
+                    self.service_pool.assignedGroups.remove(grp)
+            except Exception:
+                self.service_pool.log(
+                    'Scheduled action not executed because group is not available anymore'
+                )
+
+        actions: typing.Mapping[str, typing.Tuple[typing.Callable[[], None], bool]] = {
+            # Id, actions (lambda), saveServicePool (bool)
+            CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
+            CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),
+            CALENDAR_ACTION_INITIAL['id']: (set_initial, True),
+            CALENDAR_ACTION_MAX['id']: (set_max, True),
+            CALENDAR_ACTION_PUBLISH['id']: (publish, False),
+            CALENDAR_ACTION_IGNORE_UNUSED['id']: (ignores_unused, True),
+            CALENDAR_ACTION_REMOVE_USERSERVICES['id']: (remove_userservices, False),
+            CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id']: (
+                remove_stuck_userservice,
+                False,
+            ),
+            CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id']: (del_all_transport, False),
+            CALENDAR_ACTION_DEL_ALL_GROUPS['id']: (del_all_groups, False),
+            CALENDAR_ACTION_CLEAN_CACHE_L1['id']: (clear_cache, False),
+            CALENDAR_ACTION_CLEAN_CACHE_L2['id']: (clear_cache, False),
+            CALENDAR_ACTION_ADD_TRANSPORT['id']: (
+                add_del_transport,
+                False,
+            ),
+            CALENDAR_ACTION_DEL_TRANSPORT['id']: (
+                add_del_transport,
+                False,
+            ),
+            CALENDAR_ACTION_ADD_GROUP['id']: (add_del_group, False),
+            CALENDAR_ACTION_DEL_GROUP['id']: (add_del_group, False),
+        }
+
+        fncAction, saveServicePool = actions.get(self.action, (None, False))
+
+        if fncAction:
+            try:
+                fncAction()
+
+                if saveServicePool:
+                    self.service_pool.save()
+
+                self.service_pool.log(
+                    f'Executed action {CALENDAR_ACTION_DICT.get(self.action, {}).get("description", self.action)} [{self.prettyParams}]',
                     level=log.INFO,
                 )
             except Exception:
-                # Avoid invalid ACTIONS errors on log
                 self.service_pool.log(
-                    'Action {} is not a valid scheduled action! please, remove it from your list.'.format(
-                        self.action
-                    )
+                    f'Error executing scheduled action {CALENDAR_ACTION_DICT.get(self.action, {}).get("description", self.action)} [{self.prettyParams}]'
                 )
+                logger.exception('Error executing scheduled action')
+        else:
+            self.service_pool.log(
+                f'Scheduled action not executed because is not supported: {self.action}'
+            )
 
         # On save, will regenerate nextExecution
         if save:
             self.save()
 
-        if saveServicePool:
-            self.service_pool.save()
-
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         lastExecution = self.last_execution or getSqlDatetime()
         possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(
             checkFrom=lastExecution - self.offset, startEvent=self.at_start
@@ -484,13 +475,12 @@ class CalendarAction(UUIDModel):
         else:
             self.next_execution = None
 
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'Calendar of {}, last_execution = {}, next execution = {}, action = {}, params = {}'.format(
-            self.service_pool.name,
-            self.last_execution,
-            self.next_execution,
-            self.action,
-            self.params,
+        return (
+            f'Calendar of {self.service_pool.name},'
+            f' last_execution = {self.last_execution},'
+            f' next execution = {self.next_execution},'
+            f' action = {self.action}, params = {self.params}'
         )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016-2020 Virtual Cable S.L.U.
+# Copyright (c) 2016-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -57,7 +57,7 @@ class Calendar(UUIDModel, TaggingMixin):
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     calendaraccess_set: 'models.manager.RelatedManager[CalendarAccess]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -85,6 +85,4 @@ class Calendar(UUIDModel, TaggingMixin):
         return res
 
     def __str__(self):
-        return 'Calendar "{}" modified on {} with {} rules'.format(
-            self.name, self.modified, self.rules.count()
-        )
+        return f'Calendar "{self.name}" modified on {self.modified}, rules: {self.rules.count()}'

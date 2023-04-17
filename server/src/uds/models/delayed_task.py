@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -61,7 +61,7 @@ class DelayedTask(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[DelayedTask]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -69,6 +69,4 @@ class DelayedTask(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return "Run Queue task {0} owned by {3},inserted at {1} and with {2} seconds delay".format(
-            self.type, self.insert_date, self.execution_delay, self.execution_time
-        )
+        return f'Run Queue task {self.type} owned by {self.execution_time},inserted at {self.insert_date} and with {self.execution_delay} seconds delay'

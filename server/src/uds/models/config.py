@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -55,7 +55,7 @@ class Config(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Config]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -68,4 +68,4 @@ class Config(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return "Config {} = {}".format(self.key, self.value)
+        return f'Config {self.key} = {self.value}'

@@ -30,9 +30,9 @@ def update_network_model(apps, schema_editor):  # pylint: disable=unused-argumen
             # Store the net_start and net_end on new fields "start" and "end", that are strings
             # to allow us to store ipv6 addresses
             # pylint: disable=protected-access
-            net.start = uds.models.network.Network._hexlify(net.net_start)
+            net.start = uds.models.network.Network.hexlify(net.net_start)
             # pylint: disable=protected-access
-            net.end = uds.models.network.Network._hexlify(net.net_end)
+            net.end = uds.models.network.Network.hexlify(net.net_end)
             net.version = 4  # Previous versions only supported ipv4
             net.save()
     except Exception as e:

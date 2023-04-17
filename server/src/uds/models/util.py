@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -55,7 +55,7 @@ class UnsavedForeignKey(models.ForeignKey):
     """
 
     # Allows pointing to an unsaved object
-    allow_unsaved_instance_assignment = True
+    # allow_unsaved_instance_assignment = True
 
 
 def getSqlDatetime() -> datetime:

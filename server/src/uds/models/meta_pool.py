@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2018-2020 Virtual Cable S.L.U.
+# Copyright (c) 2018-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import operator
@@ -133,7 +133,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
     members: 'models.QuerySet["MetaPoolMember"]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -196,9 +196,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         logger.debug(
             'SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name
         )
-        if self.short_name.strip():
-            return self.short_name
-        return self.name
+        sn = str(self.short_name).strip()
+        return sn if sn else self.name
 
     @staticmethod
     def getForGroups(
@@ -245,12 +244,11 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                     ),
                 )
             )
-        # TODO: May we can include some other filters?
-
+        # May we can include some other filters?
         return meta
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs):  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -259,7 +257,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 
@@ -270,9 +268,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         clean(toDelete)
 
     def __str__(self):
-        return 'Meta pool: {}, no. pools: {}, visible: {}, policy: {}'.format(
-            self.name, self.members.all().count(), self.visible, self.policy
-        )
+        return f'Meta pool: {self.name}, no. pools: {self.members.all().count()}, visible: {self.visible}, policy: {self.policy}'
 
 
 # Connects a pre deletion signal
@@ -289,7 +285,7 @@ class MetaPoolMember(UUIDModel):
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -298,6 +294,4 @@ class MetaPoolMember(UUIDModel):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{}/{} {} {}'.format(
-            self.pool.name, self.meta_pool.name, self.priority, self.enabled
-        )
+        return f'Meta pool member: {self.pool.name}/{self.meta_pool.name}, priority: {self.priority}, enabled: {self.enabled}'

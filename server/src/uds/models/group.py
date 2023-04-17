@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -51,6 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=no-member
 class Group(UUIDModel):
     """
     This class represents a group, associated with one authenticator
@@ -73,7 +74,7 @@ class Group(UUIDModel):
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     permissions: 'models.manager.RelatedManager[Permissions]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -101,16 +102,12 @@ class Group(UUIDModel):
 
     def __str__(self) -> str:
         if self.is_meta:
-            return "Meta group {}(id:{}) with groups {}".format(
-                self.name, self.id, list(self.groups.all())
-            )
+            return f'Meta group {self.name}(id:{self.id}) with groups {list(self.groups.all())}'
 
-        return "Group {}(id:{}) from auth {}".format(
-            self.name, self.id, self.manager.name
-        )
+        return f'Group {self.name}(id:{self.id}) from auth {self.manager.name}'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

@@ -30,7 +30,7 @@
 Provides useful functions for authenticating, used by web interface.
 
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
 import typing

@@ -38,7 +38,7 @@ To create a new service module, you will need to follow this steps:
 
 The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import logging

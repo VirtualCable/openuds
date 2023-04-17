@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -65,7 +65,7 @@ class Log(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Log]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -78,11 +78,7 @@ class Log(models.Model):
         return logStrFromLevel(self.level)
 
     def __str__(self) -> str:
-        return "Log of {}({}): {} - {} - {} - {}".format(
-            self.owner_type,
-            self.owner_id,
-            self.created,
-            self.source,
-            self.level,
-            self.data,
+        return (
+            f'Log of {self.owner_type}({self.owner_id}):'
+            f' {self.created} - {self.source} - {self.level} - {self.data}'
         )

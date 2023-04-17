@@ -30,7 +30,7 @@
 """
 UDS Service modules interfaces and classes.
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from . import exceptions
 from . import types

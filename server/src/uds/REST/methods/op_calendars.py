@@ -71,9 +71,9 @@ class AccessCalendars(DetailHandler):
             return AccessCalendars.as_dict(
                 parent.calendarAccess.get(uuid=processUuid(item))
             )
-        except Exception:
+        except Exception as e:
             logger.exception('err: %s', item)
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: 'ServicePool'):
         return _('Access restrictions by calendar')
@@ -96,8 +96,10 @@ class AccessCalendars(DetailHandler):
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
                 raise Exception()
-        except Exception:
-            raise self.invalidRequestException(_('Invalid parameters on request'))
+        except Exception as e:
+            raise self.invalidRequestException(
+                _('Invalid parameters on request')
+            ) from e
         priority = int(self._params['priority'])
 
         if uuid is not None:
@@ -115,18 +117,13 @@ class AccessCalendars(DetailHandler):
         log.doLog(
             parent,
             log.INFO,
-            "Added access calendar {}/{} by {}".format(
-                calendar.name, access, self._user.pretty_name
-            ),
+            f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
             log.ADMIN,
         )
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
-        logStr = "Removed access calendar {} by {}".format(
-            calendarAccess.calendar.name, self._user.pretty_name
-        )
-
+        logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
 
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
@@ -167,8 +164,8 @@ class ActionsCalendars(DetailHandler):
                 ]
             i = parent.calendaraction_set.get(uuid=processUuid(item))
             return ActionsCalendars.as_dict(i)
-        except Exception:
-            raise self.invalidItemException()
+        except Exception as e:
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: 'ServicePool'):
         return _('Scheduled actions')
@@ -197,13 +194,10 @@ class ActionsCalendars(DetailHandler):
         params = json.dumps(self._params['params'])
 
         # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
-        logStr = "Added scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendar.name,
-            action,
-            eventsOffset,
-            atStart and 'Start' or 'End',
-            params,
-            self._user.pretty_name,
+        logStr = (
+            f'{"Added" if uuid is None else "Updated"} scheduled action '
+            f'{calendar.name},{action},{eventsOffset},{"start" if atStart else "end"},{params} '
+            f'by {self._user.pretty_name}'
         )
 
         if uuid is not None:
@@ -229,13 +223,11 @@ class ActionsCalendars(DetailHandler):
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
-        logStr = "Removed scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendarAction.calendar.name,
-            calendarAction.action,
-            calendarAction.events_offset,
-            calendarAction.at_start and 'Start' or 'End',
-            calendarAction.params,
-            self._user.pretty_name,
+        logStr = (
+            f'Removed scheduled action "{calendarAction.calendar.name},'
+            f'{calendarAction.action},{calendarAction.events_offset},'
+            f'{calendarAction.at_start and "Start" or "End"},'
+            f'{calendarAction.params}" by {self._user.pretty_name}'
         )
 
         calendarAction.delete()
@@ -247,17 +239,15 @@ class ActionsCalendars(DetailHandler):
         uuid = processUuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
         self.ensureAccess(calendarAction, permissions.PermissionType.MANAGEMENT)
-        logStr = "Launched scheduled action \"{},{},{},{},{}\" by {}".format(
-            calendarAction.calendar.name,
-            calendarAction.action,
-            calendarAction.events_offset,
-            calendarAction.at_start and 'Start' or 'End',
-            calendarAction.params,
-            self._user.pretty_name,
+
+        logStr = (
+            f'Launched scheduled action "{calendarAction.calendar.name},'
+            f'{calendarAction.action},{calendarAction.events_offset},'
+            f'{calendarAction.at_start and "Start" or "End"},'
+            f'{calendarAction.params}" by {self._user.pretty_name}'
         )
 
-        calendarAction.execute()
-
         log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        calendarAction.execute()
 
         return self.success()

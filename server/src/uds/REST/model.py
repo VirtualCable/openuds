@@ -71,7 +71,7 @@ OK: typing.Final[
     str
 ] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
-
+# pylint: disable=unused-argument
 class BaseModelHandler(Handler):
     """
     Base Handler for Master & Detail Handlers
@@ -246,12 +246,12 @@ class BaseModelHandler(Handler):
         if not permissions.hasAccess(self._user, obj, permission, root):
             raise self.accessDenied()
 
-    def getPermissions(
-        self, obj: models.Model, root: bool = False
-    ) -> int:
+    def getPermissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.getEffectivePermission(self._user, obj, root)
 
-    def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
+    def typeInfo(
+        self, type_: typing.Type['Module']  # pylint: disable=unused-argument
+    ) -> typing.Dict[str, typing.Any]:
         """
         Returns info about the type
         In fact, right now, it returns an empty dict, that will be extended by typeAsDict
@@ -316,7 +316,7 @@ class BaseModelHandler(Handler):
                     args[key] = self._params[key]
                 # del self._params[key]
         except KeyError as e:
-            raise exceptions.RequestError('needed parameter not found in data {0}'.format(e))
+            raise exceptions.RequestError(f'needed parameter not found in data {e}')
 
         return args
 
@@ -351,7 +351,7 @@ class BaseModelHandler(Handler):
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
         """
         message = message or _('Invalid Request')
-        return exceptions.RequestError('{} {}: {}'.format(message, self.__class__, self._args))
+        return exceptions.RequestError(f'{message} {self.__class__}: {self._args}')
 
     def invalidResponseException(
         self, message: typing.Optional[str] = None
@@ -377,10 +377,14 @@ class BaseModelHandler(Handler):
         return exceptions.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def accessDenied(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def accessDenied(
+        self, message: typing.Optional[str] = None
+    ) -> exceptions.HandlerError:
         return exceptions.AccessDenied(message or _('Access denied'))
 
-    def notSupported(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def notSupported(
+        self, message: typing.Optional[str] = None
+    ) -> exceptions.HandlerError:
         return exceptions.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
@@ -391,7 +395,7 @@ class BaseModelHandler(Handler):
         logger.debug('Returning success on %s %s', self.__class__, self._args)
         return OK
 
-    def test(self, type_: str):
+    def test(self, type_: str) -> None:  # pylint: disable=unused-argument
         """
         Invokes a test for an item
         """
@@ -440,7 +444,7 @@ class DetailHandler(BaseModelHandler):
         path: str,
         params: typing.Any,
         *args: str,
-        **kwargs: typing.Any
+        **kwargs: typing.Any,
     ):  # pylint: disable=super-init-not-called
         """
         Detail Handlers in fact "disabled" handler most initialization, that is no needed because
@@ -473,9 +477,8 @@ class DetailHandler(BaseModelHandler):
 
         return None
 
-    def get(
-        self,
-    ) -> typing.Any:  # pylint: disable=too-many-branches,too-many-return-statements
+    # pylint: disable=too-many-branches,too-many-return-statements
+    def get(self) -> typing.Any:
         """
         Processes GET method for a detail Handler
         """
@@ -596,7 +599,7 @@ class DetailHandler(BaseModelHandler):
         #     return []
         # return {}  # Returns one item
         raise NotImplementedError(
-            'Must provide an getItems method for {} class'.format(self.__class__)
+            f'Must provide an getItems method for {self.__class__} class'
         )
 
     # Default save
@@ -853,10 +856,12 @@ class ModelHandler(BaseModelHandler):
 
             logger.debug('After filtering: %s', res)
             return res
-        except:
+        except Exception as e:
             logger.exception('Exception:')
             logger.info('Filtering expression %s is invalid!', self.fltr)
-            raise exceptions.RequestError('Filtering expression {} is invalid'.format(self.fltr))
+            raise exceptions.RequestError(
+                f'Filtering expression {self.fltr} is invalid'
+            ) from e
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
@@ -884,9 +889,8 @@ class ModelHandler(BaseModelHandler):
             if not self.detail:
                 raise self.invalidRequestException()
 
-            detailCls = self.detail[
-                self._args[1]
-            ]  # pylint: disable=unsubscriptable-object
+            # pylint: disable=unsubscriptable-object
+            detailCls = self.detail[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/' + '/'.join(args[:2])
             detail = detailCls(
@@ -895,15 +899,15 @@ class ModelHandler(BaseModelHandler):
             method = getattr(detail, self._operation)
 
             return method()
-        except IndexError:
-            raise self.invalidItemException()
-        except (KeyError, AttributeError):
-            raise self.invalidMethodException()
+        except IndexError as e:
+            raise self.invalidItemException() from e
+        except (KeyError, AttributeError) as e:
+            raise self.invalidMethodException() from e
         except exceptions.HandlerError:
             raise
         except Exception as e:
             logger.error('Exception processing detail: %s', e)
-            raise self.invalidRequestException()
+            raise self.invalidRequestException() from e
 
     def getItems(
         self, *args, **kwargs
@@ -951,7 +955,6 @@ class ModelHandler(BaseModelHandler):
             except Exception as e:  # maybe an exception is thrown to skip an item
                 logger.debug('Got exception processing item from model: %s', e)
                 # logger.exception('Exception getting item from {0}'.format(self.model))
-                pass
 
     def get(self) -> typing.Any:
         """
@@ -961,6 +964,7 @@ class ModelHandler(BaseModelHandler):
         self.extractFilter()
         return self.doFilter(self.doGet())
 
+    #  pylint: disable=too-many-return-statements
     def doGet(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         nArgs = len(self._args)
@@ -992,8 +996,8 @@ class ModelHandler(BaseModelHandler):
                 operation = None
                 try:
                     operation = getattr(self, self._args[0])
-                except Exception:
-                    raise self.invalidMethodException()
+                except Exception as e:
+                    raise self.invalidMethodException() from e
 
                 return operation()
 
@@ -1021,9 +1025,9 @@ class ModelHandler(BaseModelHandler):
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
                 return res
-            except Exception:
+            except Exception as e:
                 logger.exception('Got Exception looking for item')
-                raise self.invalidItemException()
+                raise self.invalidItemException() from e
 
         # nArgs > 1
         # Request type info or gui, or detail
@@ -1047,8 +1051,8 @@ class ModelHandler(BaseModelHandler):
                     uuid=self._args[0].lower()
                 )  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
                 return self.getLogs(item)
-            except Exception:
-                raise self.invalidItemException()
+            except Exception as e:
+                raise self.invalidItemException() from e
 
         # If has detail and is requesting detail
         if self.detail is not None:
@@ -1073,7 +1077,7 @@ class ModelHandler(BaseModelHandler):
         Processes a PUT request
         """
         logger.debug('method PUT for %s, %s', self.__class__.__name__, self._args)
-        
+
         # Append request to _params, may be needed by some classes
         # I.e. to get the user IP, server name, etc..
         self._params['_request'] = self._request
@@ -1148,7 +1152,7 @@ class ModelHandler(BaseModelHandler):
 
                 res = self.item_as_dict(item)
                 self.fillIntanceFields(item, res)
-            except Exception as e:
+            except Exception:
                 logger.exception('Exception on put')
                 if deleteOnError:
                     item.delete()
@@ -1159,16 +1163,18 @@ class ModelHandler(BaseModelHandler):
             return res
 
         except self.model.DoesNotExist:
-            raise exceptions.NotFound('Item not found')
+            raise exceptions.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
-            raise exceptions.RequestError('Element already exists (duplicate key error)')
+            raise exceptions.RequestError(
+                'Element already exists (duplicate key error)'
+            ) from None
         except (exceptions.SaveException, g_exceptions.ValidationError) as e:
-            raise exceptions.RequestError(str(e))
+            raise exceptions.RequestError(str(e)) from e
         except (exceptions.RequestError, exceptions.ResponseError):
             raise
-        except Exception:
+        except Exception as e:
             logger.exception('Exception on put')
-            raise exceptions.RequestError('incorrect invocation to PUT')
+            raise exceptions.RequestError('incorrect invocation to PUT') from e
 
     def delete(self) -> typing.Any:
         """
@@ -1190,7 +1196,7 @@ class ModelHandler(BaseModelHandler):
             self.checkDelete(item)
             self.deleteItem(item)
         except self.model.DoesNotExist:
-            raise exceptions.NotFound('Element do not exists')
+            raise exceptions.NotFound('Element do not exists') from None
 
         return OK
 

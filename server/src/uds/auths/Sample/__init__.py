@@ -32,7 +32,7 @@
 Sample authenticator. We import here the module, and uds.auths module will
 take care of registering it as provider
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from .SampleAuth import SampleAuth
 

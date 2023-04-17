@@ -28,12 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import datetime
 import logging
-import hashlib
 import typing
 
 from django.db import models
@@ -97,6 +96,7 @@ weekdays: typing.Tuple[rules.weekday, ...] = (
 )
 
 
+# pylint: disable=no-member  # For some reason, pylint does not properly detect the ForeignKey, etc..
 class CalendarRule(UUIDModel):
     name = models.CharField(max_length=128)
     comments = models.CharField(max_length=256)
@@ -114,10 +114,7 @@ class CalendarRule(UUIDModel):
         Calendar, related_name='rules', on_delete=models.CASCADE
     )
 
-    # "fake" declarations for type checking
-    # objects: 'models.manager.Manager["CalendarRule"]'
-
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -172,23 +169,14 @@ class CalendarRule(UUIDModel):
     def duration_as_minutes(self) -> int:
         return dunit_to_mins.get(self.duration_unit, 1) * self.duration
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         logger.debug('Saving...')
         self.calendar.modified = getSqlDatetime()
 
-        res = super().save(force_insert, force_update, using, update_fields)
+        res = super().save(*args, **kwargs)
         # Ensure saves associated calendar, so next execution of actions is updated with rule values
         self.calendar.save()
         return res
 
     def __str__(self):
-        return 'Rule {0}: {1}-{2}, {3}, Interval: {4}, duration: {5}'.format(
-            self.name,
-            self.start,
-            self.end,
-            self.frequency,
-            self.interval,
-            self.duration,
-        )
+        return f'Rule {self.name}: {self.start}-{self.end}, {self.frequency}, Interval: {self.interval}, duration: {self.duration}'

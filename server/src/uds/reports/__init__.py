@@ -36,7 +36,7 @@ To create a new rwpoer module, you will need to follow this steps:
 
 The registration of modules is done locating subclases of :py:class:`uds.core.reports.Report`
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing

@@ -30,7 +30,7 @@
 """
 UDS jobs related modules
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 from .job import Job

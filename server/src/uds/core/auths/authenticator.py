@@ -30,7 +30,7 @@
 """
 Base module for all authenticators
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 import logging
