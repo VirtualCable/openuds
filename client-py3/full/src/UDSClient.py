@@ -41,11 +41,11 @@ import typing
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QSettings
 
-from uds.rest import RestApi, RetryException, InvalidVersion, UDSException
+from uds.rest import RestApi, RetryException, InvalidVersion
 
 # Just to ensure there are available on runtime
-from uds.forward import forward as ssh_forward # type: ignore
-from uds.tunnel import forward as tunnel_forwards  # type: ignore
+from uds.forward import forward as ssh_forward # type: ignore  # pylint: disable=unused-import
+from uds.tunnel import forward as tunnel_forwards  # type: ignore  # pylint: disable=unused-import
 
 from uds.log import logger
 from uds import tools
@@ -149,7 +149,7 @@ class UDSClient(QtWidgets.QMainWindow):
             webbrowser.open(e.downloadUrl)
             self.closeWindow()
             return
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-exception-caught
             self.showError(e)
             self.closeWindow()
             return
@@ -168,7 +168,7 @@ class UDSClient(QtWidgets.QMainWindow):
             # self.hide()
             self.closeWindow()
 
-            exec(script, globals(), {'parent': self, 'sp': params})
+            exec(script, globals(), {'parent': self, 'sp': params})  # pylint: disable=exec-used
 
             # Execute the waiting tasks...
             threading.Thread(target=endScript).start()
@@ -353,6 +353,15 @@ def main(args: typing.List[str]):
             sys.exit(0)
 
         logger.debug('URI: %s', uri)
+        # Shows error if using http (uds:// ) version, not supported anymore
+        if uri[:6] == 'uds://':
+            QtWidgets.QMessageBox.critical(
+                None,  # type: ignore
+                'Notice',
+                f'UDS Client Version {VERSION} does not support HTTP protocol Anymore.',
+                QtWidgets.QMessageBox.Ok,
+            )
+            sys.exit(1)
         if uri[:6] != 'uds://' and uri[:7] != 'udss://':
             raise Exception()
 
@@ -365,12 +374,12 @@ def main(args: typing.List[str]):
             ticket,
             scrambler,
         )
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         logger.debug('Detected execution without valid URI, exiting')
         QtWidgets.QMessageBox.critical(
             None,  # type: ignore
             'Notice',
-            'UDS Client Version {}'.format(VERSION),
+            f'UDS Client Version {VERSION}',
             QtWidgets.QMessageBox.Ok,
         )
         sys.exit(1)
