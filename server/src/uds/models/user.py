@@ -51,6 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=no-member
 class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
@@ -83,7 +84,7 @@ class User(UUIDModel):
     userServices: 'models.manager.RelatedManager[UserService]'
     permissions: 'models.manager.RelatedManager[Permissions]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -204,10 +205,8 @@ class User(UUIDModel):
             return store[str(self.uuid) + '_' + key]
 
     def __str__(self):
-        return 'User {} (id:{}) from auth {}'.format(
-            self.name, self.id, self.manager.name
-        )
-    
+        return f'{self.pretty_name} (id:{self.id})'
+
     def cleanRelated(self) -> None:
         """
         Cleans up all related external data, such as mfa data, etc
@@ -217,9 +216,8 @@ class User(UUIDModel):
         if self.manager.mfa:
             self.manager.mfa.getInstance().resetData(mfas.MFA.getUserId(self))
 
-
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

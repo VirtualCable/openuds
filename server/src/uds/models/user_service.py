@@ -59,7 +59,9 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
+
+# pylint: disable=too-many-instance-attributes,too-many-public-methods
+class UserService(UUIDModel):
     """
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. ServicePool is the container (the group) of this elements.
@@ -74,12 +76,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     # so we need to store the publication id here (or the revision, but we need to store something)
     # storing the id simplifies the queries
     publication: 'models.ForeignKey[ServicePoolPublication | None]' = models.ForeignKey(
-            ServicePoolPublication,
-            on_delete=models.CASCADE,
-            null=True,
-            blank=True,
-            related_name='userServices',
-        )
+        ServicePoolPublication,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='userServices',
+    )
 
     unique_id = models.CharField(
         max_length=128, default='', db_index=True
@@ -110,7 +112,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     )  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
     src_hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
-    src_ip = models.CharField(max_length=MAX_IPV6_LENGTH, default='')  # Source IP of the user connecting to the service. Max length is 45 chars (ipv6)
+    src_ip = models.CharField(
+        max_length=MAX_IPV6_LENGTH, default=''
+    )  # Source IP of the user connecting to the service. Max length is 45 chars (ipv6)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["UserService"]'
@@ -118,7 +122,7 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
     sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -316,8 +320,12 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         self.src_ip = ip[:MAX_IPV6_LENGTH]
         self.src_hostname = hostname[:MAX_DNS_NAME_LENGTH]
 
-        if(len(ip) > MAX_IPV6_LENGTH or len(hostname) > MAX_DNS_NAME_LENGTH):
-            logger.info('Truncated connection source data to %s/%s', self.src_ip, self.src_hostname)
+        if len(ip) > MAX_IPV6_LENGTH or len(hostname) > MAX_DNS_NAME_LENGTH:
+            logger.info(
+                'Truncated connection source data to %s/%s',
+                self.src_ip,
+                self.src_hostname,
+            )
 
         self.save(update_fields=['src_ip', 'src_hostname'])
 
@@ -330,7 +338,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return (self.src_ip or '0.0.0.0', self.src_hostname or 'unknown')  # nosec: no binding address
+        return (
+            self.src_ip or '0.0.0.0',  # nosec: not a binding address
+            self.src_hostname or 'unknown',
+        )
 
     def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
@@ -436,7 +447,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
 
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
-        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers import userServiceManager
 
         self.in_use = inUse
         self.in_use_date = getSqlDatetime()
@@ -513,9 +525,10 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Returns if this service is ready (not preparing or marked for removal)
         """
-        # Call to isReady of the instance
-        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers import userServiceManager
 
+        # Call to isReady of the instance
         return userServiceManager().isReady(self)
 
     def isInMaintenance(self) -> bool:
@@ -537,7 +550,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         """
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
-        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers import userServiceManager
 
         userServiceManager().cancel(self)
 
@@ -563,7 +577,8 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Args:
             cacheLevel: New cache level to put object in
         """
-        from uds.core.managers import userServiceManager  # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers import userServiceManager
 
         userServiceManager().moveToLevel(self, cacheLevel)
 
@@ -617,9 +632,9 @@ class UserService(UUIDModel):  # pylint: disable=too-many-public-methods
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            (self.deployed_service.service and self.deployed_service.service.getType().publicationType is None)
-            or self.publication == self.deployed_service.activePublication()
-        )
+            self.deployed_service.service
+            and self.deployed_service.service.getType().publicationType is None
+        ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging
     def log(self, message: str, level: int = log.INFO) -> None:

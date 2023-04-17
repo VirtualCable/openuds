@@ -82,7 +82,7 @@ class StatsCountersAccum(models.Model):
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[StatsCountersAccum]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -215,7 +215,7 @@ class StatsCountersAccum(models.Model):
                 sum=models.Sum('v_sum'),
             )
 
-        """Stores accumulated data in StatsCountersAccum"""
+        # Stores accumulated data in StatsCountersAccum
         # Acummulate data, only register if there is data
         accumulated: typing.List[StatsCountersAccum] = [
             StatsCountersAccum(

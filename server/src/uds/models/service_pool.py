@@ -159,7 +159,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     changelog: 'models.manager.RelatedManager[ServicePoolPublicationChangelog]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """

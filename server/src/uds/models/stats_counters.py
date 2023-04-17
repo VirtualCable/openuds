@@ -53,7 +53,7 @@ class StatsCounters(models.Model):
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[StatsCounters]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """

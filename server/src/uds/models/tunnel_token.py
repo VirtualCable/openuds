@@ -52,7 +52,7 @@ class TunnelToken(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[TunnelToken]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
         constraints = [
             models.UniqueConstraint(fields=['ip', 'hostname'], name='tt_ip_hostname')
@@ -73,6 +73,4 @@ class TunnelToken(models.Model):
         return False
 
     def __str__(self):
-        return '<TunnelToken {} created on {} by {} from {}/{}>'.format(
-            self.token, self.stamp, self.username, self.ip, self.hostname
-        )
+        return f'<TunnelToken {self.token} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
