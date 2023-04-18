@@ -55,7 +55,7 @@ public class UDSModule extends AbstractModule {
      *     If the guacamole.properties file cannot be read.
      */
     public UDSModule() throws GuacamoleException {
-        this.environment = new LocalEnvironment();
+        this.environment = LocalEnvironment.getInstance();
     }
 
     @Override

@@ -7,9 +7,9 @@
     <groupId>org.openuds.server</groupId>
     <artifactId>guacamole-auth-uds</artifactId>
     <packaging>jar</packaging>
-    <version>2.5.0</version>
+    <version>4.0.0</version>
     <name>UDS Integration Extension for Apache Guacamole</name>
-    <url>https://github.com/dkmstr/openuds</url>
+    <url>https://github.com/VirtualCable/openuds</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,14 +18,13 @@
     <build>
         <plugins>
 
-            <!-- Compile using Java 1.8 -->
+            <!-- Compile using Java 11 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
                         <arg>-Werror</arg>
@@ -38,7 +37,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
                 <executions>
                     <execution>
                         <id>unpack-dependencies</id>
@@ -70,15 +68,15 @@
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
             <scope>provided</scope>
+            <version>1.1.1</version>
         </dependency>
 
         <!-- Guacamole extension API -->
         <dependency>
             <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-ext</artifactId>
-            <version>1.2.0</version>
+            <version>1.5.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -86,7 +84,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <version>5.1.0</version>
         </dependency>
 
     </dependencies>
