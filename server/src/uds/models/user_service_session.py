@@ -34,7 +34,7 @@ import logging
 
 from django.db import models
 
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from .user_service import UserService
 from .util import getSqlDatetime
 
@@ -46,7 +46,7 @@ def _session_id_generator() -> str:
     """
     Generates a new session id
     """
-    return cryptoManager().unique()
+    return CryptoManager().unique()
 
 
 class UserServiceSession(models.Model):  # pylint: disable=too-many-public-methods

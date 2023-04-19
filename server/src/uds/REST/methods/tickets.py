@@ -38,7 +38,7 @@ import typing
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds import models
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util.model import processUuid
 from uds.core.util import tools
 
@@ -121,17 +121,25 @@ class Tickets(Handler):
             raise RequestError('Invalid method')
 
         try:
-            for i in ('authId', 'auth_id', 'authTag', 'auth_tag', 'auth', 'auth_name', 'authSmallName'):
+            for i in (
+                'authId',
+                'auth_id',
+                'authTag',
+                'auth_tag',
+                'auth',
+                'auth_name',
+                'authSmallName',
+            ):
                 if i in self._params:
                     raise StopIteration
 
             if 'username' in self._params and 'groups' in self._params:
                 raise StopIteration()
-            
+
             raise RequestError('Invalid parameters (no auth or username/groups)')
         except StopIteration:
-            pass # All ok
-        
+            pass  # All ok
+
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "auth_id") or ("auth_tag" or "authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(
         self,
@@ -258,7 +266,7 @@ class Tickets(Handler):
 
         data = {
             'username': username,
-            'password': cryptoManager().encrypt(password),
+            'password': CryptoManager().encrypt(password),
             'realname': realname,
             'groups': groupIds,
             'auth': auth.uuid,

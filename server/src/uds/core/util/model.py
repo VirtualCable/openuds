@@ -28,14 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import typing
 
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 
 def generateUuid(obj: typing.Any = None) -> str:
     """
     Generates a ramdom uuid for models default
     """
-    return cryptoManager().uuid(obj=obj).lower()
+    return CryptoManager().uuid(obj=obj).lower()
 
 
 def processUuid(uuid: str) -> str:

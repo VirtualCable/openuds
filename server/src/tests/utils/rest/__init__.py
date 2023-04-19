@@ -36,13 +36,14 @@ import typing
 from django.test import SimpleTestCase
 from django.test.client import Client
 
-# Not used, alloes "rest.test" or "rest.assertions"
-from . import test
-from . import assertions
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+
+# Not used, allows "rest.test" or "rest.assertions"
+from . import test  # pylint: disable=unused-import
+from . import assertions  # pylint: disable=unused-import
 
 from .. import generators
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 # Calls REST login
 def login(
@@ -67,7 +68,7 @@ def login(
     caller.assertEqual(
         response.status_code,
         expectedResponseCode,
-        'Login from {}'.format(errorMessage or caller.__class__.__name__),
+        f'Login from {errorMessage or caller.__class__.__name__}',
     )
 
     if response.status_code == 200:
@@ -83,16 +84,18 @@ def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
         **{AUTH_TOKEN_HEADER: auth_token}
     )
     caller.assertEqual(
-        response.status_code, 200, 'Logout Result: {}'.format(response.content)
+        response.status_code, 200, f'Logout Result: {response.content}'
     )
     caller.assertEqual(
-        response.json(), {'result': 'ok'}, 'Logout Result: {}'.format(response.content)
+        response.json(), {'result': 'ok'}, 'Logout Result: {response.content}'
     )
 
 
 # Rest related utils for fixtures
 
+
 # Just a holder for a type, to indentify uuids
+# pylint: disable=too-few-public-methods
 class uuid_type:
     pass
 
@@ -100,7 +103,7 @@ class uuid_type:
 RestFieldType = typing.Tuple[str, typing.Union[typing.Type, typing.Tuple[str, ...]]]
 RestFieldReference = typing.Final[typing.List[RestFieldType]]
 
-
+# pylint: disable=too-many-return-statements
 def random_value(
     field_type: typing.Union[typing.Type, typing.Tuple[str, ...]],
     value: typing.Any = None,
@@ -125,10 +128,15 @@ def random_value(
     if field_type == typing.List[int]:
         return [generators.random_int() for _ in range(generators.random_int(1, 10))]
     if field_type == typing.List[bool]:
-        return [random.choice([True, False]) for _ in range(generators.random_int(1, 10))]  # nosec
+        return [
+            random.choice([True, False]) for _ in range(generators.random_int(1, 10))  # nosec: test values
+        ]
     if field_type == typing.List[typing.Tuple[str, str]]:
-        return [(generators.random_utf8_string(), generators.random_utf8_string()) for _ in range(generators.random_int(1, 10))]
-    
+        return [
+            (generators.random_utf8_string(), generators.random_utf8_string())
+            for _ in range(generators.random_int(1, 10))
+        ]
+
     return None
 
 
@@ -139,13 +147,13 @@ class RestStruct:
 
     def as_dict(self, **kwargs) -> typing.Dict[str, typing.Any]:
         # Use kwargs to override values
-        res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}
+        res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}  # pylint: disable=no-member
         # Remove None values for optional fields
         return {
             k: v
             for k, v in res.items()
             if v is not None
-            or self.__annotations__[k]
+            or self.__annotations__[k]  # pylint: disable=no-member
             not in (
                 typing.Optional[str],
                 typing.Optional[bool],

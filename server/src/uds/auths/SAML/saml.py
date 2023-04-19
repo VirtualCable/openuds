@@ -48,7 +48,7 @@ from django.utils.translation import gettext_noop as _, gettext
 from uds.models import getSqlDatetime
 from uds.core.ui import gui
 from uds.core import auths, exceptions
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util.decorators import allowCache
 from uds.core.util import security
 
@@ -354,7 +354,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         try:
-            cryptoManager().loadCertificate(self.serverCertificate.value)
+            CryptoManager().loadCertificate(self.serverCertificate.value)
         except Exception as e:
             raise exceptions.ValidationError(
                 gettext('Invalid server certificate. ') + str(e)
@@ -373,7 +373,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         try:
-            cryptoManager().loadPrivateKey(self.privateKey.value)
+            CryptoManager().loadPrivateKey(self.privateKey.value)
         except Exception as e:
             raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
 
@@ -555,8 +555,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
         if isinstance(metadata, str):
             return metadata
-        else:
-            return typing.cast(bytes, metadata).decode()
+        return typing.cast(bytes, metadata).decode()
 
     def validateField(self, field: gui.TextField):
         """

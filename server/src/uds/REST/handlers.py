@@ -40,7 +40,7 @@ from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import getRootUser
 from uds.core.util import net
 from uds.models import Authenticator, User
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 from .exceptions import AccessDenied
 
@@ -237,7 +237,7 @@ class Handler:
 
         # crypt password and convert to base64
         passwd = codecs.encode(
-            cryptoManager().symCrypt(password, scrambler), 'base64'
+            CryptoManager().symCrypt(password, scrambler), 'base64'
         ).decode()
 
         session['REST'] = {

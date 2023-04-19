@@ -44,7 +44,7 @@ from uds.core.auths.user import User as aUser
 from uds.core.util import log
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.REST import RequestError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
@@ -208,7 +208,7 @@ class Users(DetailHandler):
 
         if 'password' in self._params:
             valid_fields.append('password')
-            self._params['password'] = cryptoManager().hash(self._params['password'])
+            self._params['password'] = CryptoManager().hash(self._params['password'])
 
         if 'mfa_data' in self._params:
             valid_fields.append('mfa_data')
@@ -252,8 +252,8 @@ class Users(DetailHandler):
             raise RequestError(str(e)) from e
         except ValidationError as e:
             raise RequestError(str(e.message)) from e
-        except RequestError:
-            raise
+        except RequestError:  # pylint: disable=try-except-raise
+            raise  # Re-raise
         except Exception as e:
             logger.exception('Saving user')
             raise self.invalidRequestException() from e
@@ -484,8 +484,8 @@ class Groups(DetailHandler):
             raise RequestError(_('User already exists (duplicate key error)')) from None
         except AuthenticatorException as e:
             raise RequestError(str(e)) from e
-        except RequestError:
-            raise
+        except RequestError:  # pylint: disable=try-except-raise
+            raise  # Re-raise
         except Exception as e:
             logger.exception('Saving group')
             raise self.invalidRequestException() from e

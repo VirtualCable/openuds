@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=no-member
 
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
@@ -40,7 +40,7 @@ import ldap
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core import exceptions
 from uds.core.util import log
 from uds.core.util import ldaputil
@@ -234,7 +234,7 @@ class WinDomainOsManager(WindowsOsManager):
                     debug=False,
                 )
             except Exception as e:
-                _str = 'Error: {}'.format(e)
+                _str = f'Error: {e}'
 
         raise ldaputil.LDAPError(_str)
 
@@ -247,9 +247,7 @@ class WinDomainOsManager(WindowsOsManager):
                 ldaputil.getAsDict(
                     ldapConnection,
                     base,
-                    "(&(objectClass=group)(|(cn={0})(sAMAccountName={0})))".format(
-                        group
-                    ),
+                    f'(&(objectClass=group)(|(cn={group})(sAMAccountName={group})))',
                     ['dn'],
                     sizeLimit=50,
                 )
@@ -268,9 +266,7 @@ class WinDomainOsManager(WindowsOsManager):
         # else:
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
 
-        fltr = '(&(objectClass=computer)(sAMAccountName={}$))'.format(
-            ldaputil.escape(machineName)
-        )
+        fltr = f'(&(objectClass=computer)(sAMAccountName={ldaputil.escape(machineName)}$))'
         obj: typing.Optional[typing.MutableMapping[str, typing.Any]]
         try:
             obj = next(
@@ -314,9 +310,7 @@ class WinDomainOsManager(WindowsOsManager):
                 log.doLog(
                     userService,
                     log.WARN,
-                    "Could not remove machine from domain (_ldap._tcp.{0} not found)".format(
-                        self._domain
-                    ),
+                    f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
                     log.OSMANAGER,
                 )
             except ldap.ALREADY_EXISTS:  # type: ignore  # (valid)
@@ -325,13 +319,9 @@ class WinDomainOsManager(WindowsOsManager):
                 break
             except ldaputil.LDAPError:
                 logger.exception('Ldap Exception caught')
-                error = "Could not add machine (invalid credentials? for {0})".format(
-                    self._account
-                )
+                error = f'Could not add machine (invalid credentials? for {self._account})'
             except Exception as e:
-                error = "Could not add machine {} to group {}: {}".format(
-                    userService.friendly_name, self._group, e
-                )
+                error = f'Could not add machine {userService.friendly_name} to group {self._group}: {e}'
                 # logger.exception('Ldap Exception caught')
 
         if error:
@@ -362,9 +352,7 @@ class WinDomainOsManager(WindowsOsManager):
             log.doLog(
                 userService,
                 log.WARN,
-                "Could not remove machine from domain (_ldap._tcp.{} not found)".format(
-                    self._domain
-                ),
+                f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
                 log.OSMANAGER,
             )
             return
@@ -373,7 +361,7 @@ class WinDomainOsManager(WindowsOsManager):
             log.doLog(
                 userService,
                 log.WARN,
-                "Could not remove machine from domain ({})".format(e),
+                f'Could not remove machine from domain ({e})',
                 log.OSMANAGER,
             )
             return
@@ -382,7 +370,7 @@ class WinDomainOsManager(WindowsOsManager):
             log.doLog(
                 userService,
                 log.WARN,
-                "Could not remove machine from domain ({})".format(e),
+                f'Could not remove machine from domain ({e})',
                 log.OSMANAGER,
             )
             return
@@ -391,9 +379,7 @@ class WinDomainOsManager(WindowsOsManager):
             res = self.__getMachine(ldapConnection, userService.friendly_name)
             if res is None:
                 raise Exception(
-                    'Machine {} not found on AD (permissions?)'.format(
-                        userService.friendly_name
-                    )
+                    f'Machine {userService.friendly_name} not found on AD (permissions?)'
                 )
             ldaputil.recursive_delete(ldapConnection, res)
         except IndexError:
@@ -497,7 +483,7 @@ class WinDomainOsManager(WindowsOsManager):
                 self._domain,
                 self._ou,
                 self._account,
-                cryptoManager().encrypt(self._password),
+                CryptoManager().encrypt(self._password),
                 base,
                 self._group,
                 self._serverHint,
@@ -512,7 +498,7 @@ class WinDomainOsManager(WindowsOsManager):
             self._domain = values[1]
             self._ou = values[2]
             self._account = values[3]
-            self._password = cryptoManager().decrypt(values[4])
+            self._password = CryptoManager().decrypt(values[4])
 
         if values[0] in ('v2', 'v3', 'v4'):
             self._group = values[6]

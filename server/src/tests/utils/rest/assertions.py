@@ -32,8 +32,7 @@ import logging
 import typing
 
 from uds import models
-from uds.core.auths.user import User as aUser
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 from .. import ensure_data
 
@@ -86,7 +85,7 @@ def assertUserIs(
 
         # Compare password
         if compare_password:
-            if not cryptoManager().checkHash(compare_to['password'], user.password):
+            if not CryptoManager().checkHash(compare_to['password'], user.password):
                 logger.info(
                     'User password do not match: %s != %s',
                     user.password,

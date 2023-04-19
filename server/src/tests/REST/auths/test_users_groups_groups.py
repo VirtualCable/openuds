@@ -33,7 +33,6 @@ import functools
 import logging
 
 from uds import models
-from uds.core.managers import cryptoManager
 
 from ...utils import rest
 from ...fixtures import rest as rest_fixtures
@@ -46,6 +45,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
     """
     Test users group rest api
     """
+
     def setUp(self) -> None:
         # Override number of items to create
         rest.test.NUMBER_OF_ITEMS_TO_CREATE = 16
@@ -66,7 +66,9 @@ class GroupsTest(rest.test.RESTActorTestCase):
         for group in groups:
             # Locate the group in the auth
             dbgrp = self.auth.groups.get(name=group['name'])
-            self.assertTrue(rest.assertions.assertGroupIs(dbgrp, group, compare_uuid=True))
+            self.assertTrue(
+                rest.assertions.assertGroupIs(dbgrp, group, compare_uuid=True)
+            )
 
     def test_groups_tableinfo(self) -> None:
         url = f'authenticators/{self.auth.uuid}/groups/tableinfo'
@@ -110,7 +112,6 @@ class GroupsTest(rest.test.RESTActorTestCase):
         response = self.client.rest_get(f'{url}/invalid')
         self.assertEqual(response.status_code, 404)
 
-
     def test_group_create_edit(self) -> None:
         url = f'authenticators/{self.auth.uuid}/groups'
         # Normal group
@@ -133,75 +134,12 @@ class GroupsTest(rest.test.RESTActorTestCase):
         self.assertEqual(response.status_code, 400)
 
         # Now a meta group, with some groups inside
-        groups = [self.simple_groups[0].uuid]
-
-        
-        return
-        url = f'authenticators/{self.auth.uuid}/users'
-        user_dct: typing.Dict[str, typing.Any] = {
-            'name': 'test',
-            'real_name': 'test real name',
-            'comments': 'test comments',
-            'state': 'A',
-            'is_admin': True,
-            'staff_member': True,
-            'groups': [self.groups[0].uuid, self.groups[1].uuid],
-        }
-
-        # Now, will work
-        response = self.client.rest_put(
-            url,
-            user_dct,
-            content_type='application/json',
+        # groups = [self.simple_groups[0].uuid]
+        group_dct = rest_fixtures.createGroup(
+            meta=True, groups=[self.simple_groups[0].uuid, self.simple_groups[1].uuid]
         )
-
-        # Get user from database and ensure values are correct
-        dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertEqual(user_dct['name'], dbusr.name)
-        self.assertEqual(user_dct['real_name'], dbusr.real_name)
-        self.assertEqual(user_dct['comments'], dbusr.comments)
-        self.assertEqual(user_dct['is_admin'], dbusr.is_admin)
-        self.assertEqual(user_dct['staff_member'], dbusr.staff_member)
-        self.assertEqual(user_dct['state'], dbusr.state)
-        self.assertEqual(user_dct['groups'], [i.uuid for i in dbusr.groups.all()])
-
-        self.assertEqual(response.status_code, 200)
-        # Returns nothing
-
-        # Now, will fail because name is already in use
-        response = self.client.rest_put(
-            url,
-            user_dct,
-            content_type='application/json',
-        )
-        self.assertEqual(response.status_code, 400)
-
-        # Modify saved user
-        user_dct['name'] = 'test2'
-        user_dct['real_name'] = 'test real name 2'
-        user_dct['comments'] = 'test comments 2'
-        user_dct['state'] = 'D'
-        user_dct['is_admin'] = False
-        user_dct['staff_member'] = False
-        user_dct['groups'] = [self.groups[2].uuid]
-        user_dct['id'] = dbusr.uuid
-        user_dct['password'] = 'test'  # nosec: test password
-        user_dct['mfa_data'] = 'mfadata'
 
         response = self.client.rest_put(
             url,
-            user_dct,
-            content_type='application/json',
+            group_dct,
         )
-        self.assertEqual(response.status_code, 200)
-
-        # Get user from database and ensure values are correct
-        dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertEqual(user_dct['name'], dbusr.name)
-        self.assertEqual(user_dct['real_name'], dbusr.real_name)
-        self.assertEqual(user_dct['comments'], dbusr.comments)
-        self.assertEqual(user_dct['is_admin'], dbusr.is_admin)
-        self.assertEqual(user_dct['staff_member'], dbusr.staff_member)
-        self.assertEqual(user_dct['state'], dbusr.state)
-        self.assertEqual(user_dct['groups'], [i.uuid for i in dbusr.groups.all()])
-        self.assertEqual(cryptoManager().checkHash(user_dct['password'], dbusr.password), True)

@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 from .uuid_model import UUIDModel
 from .util import getSqlDatetime
@@ -90,7 +90,7 @@ class TicketStore(UUIDModel):
     @staticmethod
     def generateUuid() -> str:
         return (
-            cryptoManager().randomString(40).lower()
+            CryptoManager().randomString(40).lower()
         )  # Temporary fix lower() for compat with 3.0
 
     @staticmethod
@@ -111,7 +111,7 @@ class TicketStore(UUIDModel):
         if secure:
             if not owner:
                 raise ValueError('Tried to use a secure ticket without owner')
-            data = cryptoManager().AESCrypt(data, owner.encode())
+            data = CryptoManager().AESCrypt(data, owner.encode())
             owner = SECURED  # So data is REALLY encrypted
 
         return (
@@ -150,7 +150,7 @@ class TicketStore(UUIDModel):
             data: bytes = t.data
 
             if secure:  # Owner has already been tested and it's not emtpy
-                data = cryptoManager().AESDecrypt(
+                data = CryptoManager().AESDecrypt(
                     data, typing.cast(str, owner).encode()
                 )
 
@@ -191,7 +191,7 @@ class TicketStore(UUIDModel):
             if secure:  # Owner has already been tested and it's not emtpy
                 if not owner:
                     raise ValueError('Tried to use a secure ticket without owner')
-                data = cryptoManager().AESDecrypt(
+                data = CryptoManager().AESDecrypt(
                     data, typing.cast(str, owner).encode()
                 )
 
@@ -212,7 +212,7 @@ class TicketStore(UUIDModel):
             if secure:
                 if not owner:
                     raise ValueError('Tried to use a secure ticket without owner')
-                data = cryptoManager().AESCrypt(data, owner.encode())
+                data = CryptoManager().AESCrypt(data, owner.encode())
             t.data = data
             t.save(update_fields=['data'])
         except TicketStore.DoesNotExist:
@@ -242,7 +242,7 @@ class TicketStore(UUIDModel):
         extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
         validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
     ) -> str:
-        owner = cryptoManager().randomString(length=8)
+        owner = CryptoManager().randomString(length=8)
         if not userService.user:
             raise ValueError('User is not set in userService')
         data = {

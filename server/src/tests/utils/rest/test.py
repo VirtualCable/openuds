@@ -28,11 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
 
 from uds import models
 from uds.core.util import log
+
+from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 from .. import test, generators, rest, constants
 from ...fixtures import (
@@ -40,7 +41,6 @@ from ...fixtures import (
     services as services_fixtures,
 )
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 NUMBER_OF_ITEMS_TO_CREATE = 4
 

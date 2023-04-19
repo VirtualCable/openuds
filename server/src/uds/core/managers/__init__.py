@@ -40,15 +40,8 @@ if typing.TYPE_CHECKING:
     from .task import TaskManager
     from .downloads import DownloadsManager
     from .log import LogManager
-    from .user_service import UserServiceManager
     from .publication import PublicationManager
     from .notifications import NotificationsManager
-
-
-def cryptoManager() -> 'CryptoManager':
-    from .crypto import CryptoManager  # pylint: disable=import-outside-toplevel
-
-    return CryptoManager.manager()
 
 
 def taskManager() -> 'TaskManager':
@@ -67,13 +60,6 @@ def logManager() -> 'LogManager':
     from .log import LogManager  # pylint: disable=import-outside-toplevel
 
     return LogManager()
-
-
-def userServiceManager() -> 'UserServiceManager':
-    from .user_service import UserServiceManager  # pylint: disable=import-outside-toplevel
-
-    return UserServiceManager()
-
 
 def publicationManager() -> 'PublicationManager':
     from .publication import PublicationManager  # pylint: disable=import-outside-toplevel

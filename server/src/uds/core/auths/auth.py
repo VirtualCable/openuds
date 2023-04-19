@@ -54,7 +54,7 @@ from uds.core.util import net
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.auths import Authenticator as AuthenticatorInstance, SUCCESS_AUTH
 
 from uds import models
@@ -92,7 +92,7 @@ def getUDSCookie(
     Generates a random cookie for uds, used, for example, to encript things
     """
     if 'uds' not in request.COOKIES:
-        cookie = cryptoManager().randomString(UDS_COOKIE_LENGTH)
+        cookie = CryptoManager().randomString(UDS_COOKIE_LENGTH)
         if response is not None:
             response.set_cookie(
                 'uds',
@@ -429,7 +429,7 @@ def webLogin(
 
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = codecs.encode(
-        cryptoManager().symCrypt(password, cookie), "base64"
+        CryptoManager().symCrypt(password, cookie), "base64"
     ).decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
@@ -456,11 +456,11 @@ def webPassword(request: HttpRequest) -> str:
     """
     if hasattr(request, 'session'):
         passkey = codecs.decode(request.session.get(PASS_KEY, '').encode(), 'base64')
-        return cryptoManager().symDecrpyt(
+        return CryptoManager().symDecrpyt(
             passkey, getUDSCookie(request)
         )  # recover as original unicode string
     # No session, get from _session instead, this is an "client" REST request
-    return cryptoManager().symDecrpyt(
+    return CryptoManager().symDecrpyt(
         getattr(request, '_cryptedpass'), getattr(request, '_scrambler')
     )
 

@@ -39,7 +39,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core import exceptions
 from uds.core.util import log
 
@@ -99,7 +99,7 @@ class WinRandomPassManager(WindowsOsManager):
             self._password = values['password']
         else:
             self._userAccount = ''
-            self._password = ""
+            self._password = ''  # nosec: not a password (empty)
 
     def processUserPassword(
         self, userService: 'UserService', username: str, password: str
@@ -129,7 +129,7 @@ class WinRandomPassManager(WindowsOsManager):
             log.doLog(
                 userService,
                 log.INFO,
-                "Password set to \"{}\"".format(randomPass),
+                f'Password set to "{randomPass}"',
                 log.OSMANAGER,
             )
         return randomPass
@@ -151,14 +151,14 @@ class WinRandomPassManager(WindowsOsManager):
         '''
         base = codecs.encode(super().marshal(), 'hex').decode()
         return '\t'.join(
-            ['v1', self._userAccount, cryptoManager().encrypt(self._password), base]
+            ['v1', self._userAccount, CryptoManager().encrypt(self._password), base]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         values = data.decode('utf8').split('\t')
         if values[0] == 'v1':
             self._userAccount = values[1]
-            self._password = cryptoManager().decrypt(values[2])
+            self._password = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
     def valuesDict(self) -> gui.ValuesDictType:

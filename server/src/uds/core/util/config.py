@@ -37,7 +37,7 @@ import enum
 from django.apps import apps
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models.config import Config as DBConfig
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ class Config:
             if crypt is False or not default:
                 self._default = default
             else:
-                self._default = cryptoManager().encrypt(default)
+                self._default = CryptoManager().encrypt(default)
 
             self._help = kwargs.get('help', '')
 
@@ -163,7 +163,7 @@ class Config:
             except DBConfig.DoesNotExist:
                 # Not found, so we create it
                 if self._default and self._crypt:
-                    self.set(cryptoManager().decrypt(self._default))
+                    self.set(CryptoManager().decrypt(self._default))
                 elif not self._crypt:
                     self.set(self._default)
                 self._data = self._default
@@ -175,7 +175,7 @@ class Config:
                 self._data = self._default
 
             if self._crypt:
-                return cryptoManager().decrypt(typing.cast(str, self._data))
+                return CryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
         def setParams(self, params: typing.Any) -> None:
@@ -238,7 +238,7 @@ class Config:
                 value = str(value)
 
             if self._crypt:
-                value = cryptoManager().encrypt(value)
+                value = CryptoManager().encrypt(value)
 
             logger.debug(
                 'Saving config %s.%s as %s', self._section.name(), self._key, value
@@ -319,7 +319,7 @@ class Config:
                 return False  # Skip non writable elements
 
             if cfg.crypt:
-                value = cryptoManager().encrypt(value)
+                value = CryptoManager().encrypt(value)
             cfg.value = value
             cfg.save()
             logger.debug('Updated value for %s.%s to %s', section, key, value)
@@ -696,7 +696,7 @@ class GlobalConfig:
     # Global UDS ID (common for all servers on the same cluster)
     UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value(
         'UDS ID',
-        cryptoManager().uuid(),
+        CryptoManager().uuid(),
         type=Config.FieldType.READ,
         help=_('Global UDS ID (common for all servers on the same cluster)'),
     )

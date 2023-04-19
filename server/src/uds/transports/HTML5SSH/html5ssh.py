@@ -40,7 +40,7 @@ from uds.core.ui import gui
 from uds.core import transports, exceptions
 
 from uds.core.util import os_detector as OsDetector
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
@@ -66,6 +66,7 @@ class HTML5SSHTransport(transports.Transport):
 
     ownLink = True
     supportedOss = OsDetector.allOss
+    # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
     protocol = transports.protocols.SSH
     group = transports.TUNNELED_GROUP
 
@@ -211,9 +212,7 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationError(
-                _('The server must be http or https')
-            )
+            raise exceptions.ValidationError(_('The server must be http or https'))
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -266,19 +265,19 @@ class HTML5SSHTransport(transports.Transport):
         # Filesharing using guacamole sftp
         if self.enableFileSharing.value != 'false':
             params['enable-sftp'] = 'true'
-            
+
             if self.fileSharingRoot.value.strip():
                 params['sftp-root-directory'] = self.fileSharingRoot.value.strip()
 
             if self.enableFileSharing.value not in ('down', 'true'):
-                 params['sftp-disable-download'] = 'true'
-            
+                params['sftp-disable-download'] = 'true'
+
             if self.enableFileSharing.value not in ('up', 'true'):
-                    params['sftp-disable-upload'] = 'true'
+                params['sftp-disable-upload'] = 'true'
 
         logger.debug('SSH Params: %s', params)
 
-        scrambler = cryptoManager().randomString(32)
+        scrambler = CryptoManager().randomString(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''
@@ -289,7 +288,5 @@ class HTML5SSHTransport(transports.Transport):
         onw = onw.format(hash(transport.name))
 
         return str(
-            "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value, ticket, scrambler, onw
-            )
+            f'{self.guacamoleServer.value}/guacamole/#/?data={ticket}.{scrambler}{onw}'
         )

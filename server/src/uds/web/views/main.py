@@ -47,7 +47,7 @@ from django.views.decorators.cache import never_cache
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -338,7 +338,7 @@ def update_transport_ticket(
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
-                password = cryptoManager().symCrypt(password, scrambler)
+                password = CryptoManager().symCrypt(password, scrambler)
 
             def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' not in data:

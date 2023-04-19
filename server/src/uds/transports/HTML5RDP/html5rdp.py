@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=no-member  # For some reason, pylint does not detect the Tab member of gui
 
 #
 # Copyright (c) 2012-2022 Virtual Cable S.L.U.
@@ -39,7 +39,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
@@ -319,10 +319,8 @@ class HTML5RDPTransport(transports.Transport):
         # Strip spaces and all trailing '/'
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationError(
-                _('The server must be http or https')
-            )
-        #if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
+            raise exceptions.ValidationError(_('The server must be http or https'))
+        # if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
         #    raise exceptions.ValidationException(
         #        _(
         #            'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
@@ -379,8 +377,6 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
         username = proc[0]
 
-        azureAd = False
-
         if self.fixedDomain.value != '':
             domain = self.fixedDomain.value
 
@@ -409,10 +405,10 @@ class HTML5RDPTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'DetectedOsInfo',  # pylint: disable=unused-argument
         user: 'models.User',
         password: str,
-        request: 'ExtendedHttpRequestWithUser',
+        request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
         credsInfo = self.getConnectionInfo(userService, user, password)
         username, password, domain = (
@@ -421,10 +417,11 @@ class HTML5RDPTransport(transports.Transport):
             credsInfo['domain'],
         )
 
-        scrambler = cryptoManager().randomString(32)
-        passwordCrypted = cryptoManager().symCrypt(password, scrambler)
+        scrambler = CryptoManager().randomString(32)
+        passwordCrypted = CryptoManager().symCrypt(password, scrambler)
 
-        as_txt = lambda x: 'true' if x else 'false'
+        def as_txt(txt: typing.Any) -> str:
+            return 'true' if txt else 'false'
 
         # Build params dict
         params = {
@@ -442,7 +439,7 @@ class HTML5RDPTransport(transports.Transport):
             'disable-upload': as_txt(
                 self.enableFileSharing.value not in ('true', 'up')
             ),
-            'drive-path': '/share/{}'.format(user.uuid),
+            'drive-path': f'/share/{user.uuid}',
             'drive-name': 'UDSfs',
             'disable-copy': as_txt(
                 self.enableClipboard.value in ('dis-copy', 'disabled')
@@ -457,13 +454,19 @@ class HTML5RDPTransport(transports.Transport):
             },
         }
 
-        if not password and self.security.value != 'rdp':  # No password, but not rdp, so we need to use creds popup
-            extra_params=f'&creds={username}@{domain}'
+        if (
+            not password and self.security.value != 'rdp'
+        ):  # No password, but not rdp, so we need to use creds popup
+            extra_params = f'&creds={username}@{domain}'
         else:
-            extra_params=''
+            extra_params = ''
 
+        # pylint: disable=using-constant-test
         if False:  # Future imp
-            sanitize = lambda x: re.sub("[^a-zA-Z0-9_-]", "_", x)
+            # sanitize = lambda x: re.sub("[^a-zA-Z0-9_-]", "_", x)
+            def sanitize(text: str) -> str:
+                return re.sub("[^a-zA-Z0-9_-]", "_", text)
+
             params['recording-path'] = (
                 '/share/recording/'
                 + sanitize(user.manager.name)
@@ -502,9 +505,9 @@ class HTML5RDPTransport(transports.Transport):
 
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
-        onw = '&o_n_w={}'.format(transport.uuid)
+        onw = f'&o_n_w={transport.uuid}'
         if self.forceNewWindow.value == gui.TRUE:
-            onw = '&o_n_w={}'.format(userService.deployed_service.uuid)
+            onw = f'&o_n_w={userService.deployed_service.uuid}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'
         path = (
@@ -517,12 +520,5 @@ class HTML5RDPTransport(transports.Transport):
             path = path[:-1]
 
         return str(
-            "{server}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}".format(
-                server=self.guacamoleServer.value,
-                path=path,
-                ticket=ticket,
-                scrambler=scrambler,
-                onw=onw,
-                extra_params=extra_params,
-            )
+            f'{self.guacamoleServer.value}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
         )
