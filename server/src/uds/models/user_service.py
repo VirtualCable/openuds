@@ -448,7 +448,7 @@ class UserService(UUIDModel):
         :note: If the state is Fase (set to not in use), a check for removal of this deployed service is launched.
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers import userServiceManager
+        from uds.core.managers.user_service import UserServiceManager
 
         self.in_use = inUse
         self.in_use_date = getSqlDatetime()
@@ -462,7 +462,7 @@ class UserService(UUIDModel):
 
         if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
-            userServiceManager().checkForRemoval(self)
+            UserServiceManager().checkForRemoval(self)
 
     def startUsageAccounting(self) -> None:
         # 1.- If do not have any account associated, do nothing
@@ -526,10 +526,10 @@ class UserService(UUIDModel):
         Returns if this service is ready (not preparing or marked for removal)
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers import userServiceManager
+        from uds.core.managers.user_service import UserServiceManager
 
         # Call to isReady of the instance
-        return userServiceManager().isReady(self)
+        return UserServiceManager().isReady(self)
 
     def isInMaintenance(self) -> bool:
         return self.deployed_service.isInMaintenance()
@@ -551,9 +551,9 @@ class UserService(UUIDModel):
         Asks the UserServiceManager to cancel the current operation of this user deployed service.
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers import userServiceManager
+        from uds.core.managers.user_service import UserServiceManager
 
-        userServiceManager().cancel(self)
+        UserServiceManager().cancel(self)
 
     def removeOrCancel(self) -> None:
         """
@@ -578,9 +578,9 @@ class UserService(UUIDModel):
             cacheLevel: New cache level to put object in
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.managers import userServiceManager
+        from uds.core.managers.user_service import UserServiceManager
 
-        userServiceManager().moveToLevel(self, cacheLevel)
+        UserServiceManager().moveToLevel(self, cacheLevel)
 
     def getProperty(
         self, propName: str, default: typing.Optional[str] = None

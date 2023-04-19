@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.db import transaction
-from uds.core import managers
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.config import GlobalConfig
 from uds.models import UserService, getSqlDatetime
 from uds.core.util.state import State
@@ -77,7 +77,7 @@ class UserServiceRemover(Job):
         # USER_SERVICE_REMOVAL_LIMIT is the maximum number of items to remove at once
         # This configuration value is cached at startup, so it is not updated until next reload
         removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
-        manager = managers.userServiceManager()
+        manager = UserServiceManager()
 
         with transaction.atomic():
             removeFrom = getSqlDatetime() - timedelta(

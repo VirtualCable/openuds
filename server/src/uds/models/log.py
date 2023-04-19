@@ -33,8 +33,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 
 from django.db import models
-from uds.core.util.log import logStrFromLevel
-
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +73,9 @@ class Log(models.Model):
 
     @property
     def level_str(self) -> str:
+        # pylint: disable=import-outside-toplevel
+        from uds.core.util.log import logStrFromLevel
+
         return logStrFromLevel(self.level)
 
     def __str__(self) -> str:

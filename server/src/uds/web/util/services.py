@@ -46,7 +46,8 @@ from uds.models import (
 )
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
-from uds.core.managers import cryptoManager, userServiceManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import (
     ServiceNotReadyError,
     MaxServicesReachedError,
@@ -66,6 +67,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-arguments
 def _serviceInfo(
     uuid: str,
     is_meta: bool,
@@ -106,6 +108,7 @@ def _serviceInfo(
     }
 
 
+# pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
 ) -> typing.Dict[
@@ -172,10 +175,11 @@ def getServicesData(
                 )
 
     def buildMetaTransports(
-        transports: typing.Iterable[Transport],
-        isLabel: bool,
+        transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
     ) -> typing.List[typing.Mapping[str, typing.Any]]:
-        idd = lambda i: i.uuid if not isLabel else 'LABEL:' + i.label
+        def idd(i):
+            return i.uuid if not isLabel else 'LABEL:' + i.label
+
         return [
             {
                 'id': idd(i),
@@ -211,7 +215,7 @@ def getServicesData(
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                Transport.objects.filter(uuid__in=inAll or []), isLabel=False
+                Transport.objects.filter(uuid__in=inAll or []), isLabel=False, meta=meta
             )
         elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
             ltrans: typing.MutableMapping[str, Transport] = {}
@@ -231,7 +235,7 @@ def getServicesData(
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True
+                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True, meta=meta
             )
         else:
             for member in meta.members.all():
@@ -258,7 +262,7 @@ def getServicesData(
                         break
 
                 # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
-                #     assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
+                #     assignedUserService = UserServiceManager().getExistingAssignationForUser(pool, request.user)
                 #     if assignedUserService:
                 #         in_use = assignedUserService.in_use
 
@@ -332,7 +336,7 @@ def getServicesData(
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
         in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
-        #     ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
+        #     ads = UserServiceManager().getExistingAssignationForUser(svr, request.user)
         #     if ads:
         #         in_use = ads.in_use
 
@@ -366,6 +370,7 @@ def getServicesData(
         # if sPool.service.getType().usesCache is False:
         #    maxDeployed = sPool.service.getInstance().maxDeployed
 
+        # pylint: disable=cell-var-from-loop
         def datator(x) -> str:
             return (
                 x.replace('{use}', use_percent)
@@ -438,11 +443,11 @@ def enableService(
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = userServiceManager().getService(
+        res = UserServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport, doTest=False
         )
-        scrambler = cryptoManager().randomString(32)
-        password = cryptoManager().symCrypt(webPassword(request), scrambler)
+        scrambler = CryptoManager().randomString(32)
+        password = CryptoManager().symCrypt(webPassword(request), scrambler)
 
         userService, trans = res[1], res[3]
 
@@ -470,7 +475,7 @@ def enableService(
         # error += ' (code {0:04X})'.format(e.code)
         error = gettext(
             'Your service is being created, please, wait for a few seconds while we complete it.)'
-        ) + '({}%)'.format(int(e.code * 25))
+        ) + f'({e.code*25}%)'
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)

@@ -32,8 +32,6 @@ import json
 import logging
 import typing
 
-from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
@@ -45,7 +43,6 @@ from uds.models import Transport, Image
 from uds.core.util import log
 from uds.core.services.exceptions import ServiceNotReadyError
 
-from uds.web.util import errors
 from uds.web.util import services
 
 # Not imported at runtime, just for type checking
@@ -91,10 +88,7 @@ def transportOwnLink(
 
     return HttpResponse(content=json.dumps(response), content_type='application/json')
 
-    # Will never reach this
-    return errors.errorView(request, errors.UNKNOWN_ERROR)
-
-
+# pylint: disable=unused-argument
 @cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
     try:

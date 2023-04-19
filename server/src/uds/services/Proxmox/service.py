@@ -200,7 +200,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         self.machine.setValues(
             [
                 gui.choiceItem(
-                    str(m.vmid), '{}\\{} ({})'.format(m.node, m.name or m.vmid, m.vmid)
+                    str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})'
                 )
                 for m in self.parent().listMachines()
                 if m.name and m.name[:3] != 'UDS'

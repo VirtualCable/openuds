@@ -43,7 +43,7 @@ from django.db import models
 from uds.core.util import calendar
 from uds.core.util import log
 from uds.core.util import state
-from uds.core import managers
+from uds.core.managers.user_service import UserServiceManager
 from uds.core import services
 
 from .calendar import Calendar
@@ -375,7 +375,7 @@ class CalendarAction(UUIDModel):
         def clear_cache() -> None:
             # 4.- Remove all cache_l1_srvs
             for i in self.service_pool.cachedUserServices().filter(
-                managers.userServiceManager().getCacheStateFilter(
+                UserServiceManager().getCacheStateFilter(
                     self.service_pool,
                     services.UserDeployment.L1_CACHE
                     if self.action == CALENDAR_ACTION_CLEAN_CACHE_L1['id']

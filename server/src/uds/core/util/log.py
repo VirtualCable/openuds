@@ -34,8 +34,6 @@ import logging
 import logging.handlers
 import typing
 
-from uds.core.managers import logManager
-
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -49,7 +47,7 @@ OTHER, DEBUG, INFO, WARNING, ERROR, CRITICAL = (
 )  # @UndefinedVariable
 
 WARN = WARNING
-FATAL  = CRITICAL
+FATAL = CRITICAL
 
 # Logging sources
 INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE, REST = (
@@ -149,8 +147,11 @@ def doLog(
     source: str = UNKNOWN,
     avoidDuplicates: bool = True,
 ) -> None:
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
+
     logger.debug('%s %s %s', wichObject, level, message)
-    logManager().doLog(wichObject, level, message, source, avoidDuplicates)
+    LogManager().doLog(wichObject, level, message, source, avoidDuplicates)
 
 
 def getLogs(
@@ -159,21 +160,34 @@ def getLogs(
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
     from uds.core.util.config import GlobalConfig
 
     if limit is None:
         limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
 
-    return logManager().getLogs(wichObject, limit)
+    return LogManager().getLogs(wichObject, limit)
 
 
 def clearLogs(wichObject: 'Model') -> None:
     """
     Clears the logs associated with the object using the logManager
     """
-    return logManager().clearLogs(wichObject)
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
+
+    return LogManager().clearLogs(wichObject)
+
 
 class UDSLogHandler(logging.handlers.RotatingFileHandler):
+    """
+    Custom log handler that will log to database before calling to RotatingFileHandler
+    """
+
     def emit(self, record: logging.LogRecord) -> None:
         # Currently, simply call to parent
+        msg = self.format(record)  # pylint: disable=unused-variable
+
+        # TODO: Log message on database and continue as a RotatingFileHandler
         return super().emit(record)

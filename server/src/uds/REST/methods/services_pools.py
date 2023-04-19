@@ -63,7 +63,7 @@ from uds.models.calendar_action import (
     CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
 )
 
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
@@ -225,8 +225,8 @@ class ServicesPools(ModelHandler):
         state = item.state
         if item.isInMaintenance():
             state = State.MAINTENANCE
-        # This needs a lot of queries, and really does not shows anything important i think...
-        # elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
+        # This needs a lot of queries, and really does not apport anything important to the report
+        # elif UserServiceManager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
         val = {
             'id': item.uuid,
@@ -506,16 +506,17 @@ class ServicesPools(ModelHandler):
 
         return g
 
-    def beforeSave(
-        self, fields: typing.Dict[str, typing.Any]
-    ) -> None:  # pylint: disable=too-many-branches,too-many-statements
+    # pylint: disable=too-many-statements
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             try:
                 service = Service.objects.get(uuid=processUuid(fields['service_id']))
                 fields['service_id'] = service.id
-            except:
-                raise RequestError(gettext('Base service does not exist anymore'))
+            except Exception:
+                raise RequestError(
+                    gettext('Base service does not exist anymore')
+                ) from None
 
             try:
                 serviceType = service.getType()
@@ -551,7 +552,9 @@ class ServicesPools(ModelHandler):
                     ):
                         fields[k] = 0
                 else:  # uses cache, adjust values
-                    fields['max_srvs'] = int(fields['max_srvs']) or 1  # ensure max_srvs is at least 1
+                    fields['max_srvs'] = (
+                        int(fields['max_srvs']) or 1
+                    )  # ensure max_srvs is at least 1
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
@@ -565,10 +568,10 @@ class ServicesPools(ModelHandler):
                         fields['cache_l1_srvs'] = min(
                             fields['cache_l1_srvs'], serviceType.maxDeployed
                         )
-
-
-            except Exception:
-                raise RequestError(gettext('This service requires an OS Manager'))
+            except Exception as e:
+                raise RequestError(
+                    gettext('This service requires an OS Manager')
+                ) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -618,14 +621,14 @@ class ServicesPools(ModelHandler):
         except (RequestError, ResponseError):
             raise
         except Exception as e:
-            raise RequestError(str(e))
+            raise RequestError(str(e)) from e
 
     def afterSave(self, item: ServicePool) -> None:
         if self._params.get('publish_on_save', False) is True:
             try:
                 item.publish()
-            except Exception as e:  
-                logger.error('Could not publish service pool %s: %s',item.name, e)
+            except Exception as e:
+                logger.error('Could not publish service pool %s: %s', item.name, e)
 
     def deleteItem(self, item: ServicePool) -> None:
         try:
@@ -679,7 +682,7 @@ class ServicesPools(ModelHandler):
             CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
             CALENDAR_ACTION_ADD_GROUP,
             CALENDAR_ACTION_DEL_GROUP,
-            CALENDAR_ACTION_DEL_ALL_GROUPS
+            CALENDAR_ACTION_DEL_ALL_GROUPS,
         )
 
         # Advanced actions
@@ -699,7 +702,7 @@ class ServicesPools(ModelHandler):
             return self.invalidRequestException('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
-        userServiceManager().createFromAssignable(
+        UserServiceManager().createFromAssignable(
             item,
             User.objects.get(uuid=processUuid(self._params['user_id'])),
             self._params['assignable_id'],

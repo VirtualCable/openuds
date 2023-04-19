@@ -44,7 +44,8 @@ from uds.models import (
 )
 
 # from uds.core import VERSION
-from uds.core.managers import userServiceManager, cryptoManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core import osmanagers
 from uds.core.util import log, security
 from uds.core.util.state import State
@@ -107,7 +108,7 @@ def clearIfSuccess(func: typing.Callable) -> typing.Callable:
         result = func(
             *args, **kwargs
         )  # If raises any exception, it will be raised and we will not clear the counter
-        clearFailedIp(_self._request)
+        clearFailedIp(_self._request)  # pylint: disable=protected-access
         return result
 
     return wrapper
@@ -357,7 +358,7 @@ class Initialize(ActorV3Action):
             if service and not alias_token:  # Is a service managed by UDS
                 # Create a new alias for it, and save
                 alias_token = (
-                    cryptoManager().randomString(40)
+                    CryptoManager().randomString(40)
                 )  # fix alias with new token
                 service.aliases.create(alias=alias_token)
 
@@ -366,7 +367,7 @@ class Initialize(ActorV3Action):
                 userService.uuid, userService.unique_id, osData, alias_token
             )
         except (ActorToken.DoesNotExist, Service.DoesNotExist):
-            raise BlockAccess()
+            raise BlockAccess() from None
 
 
 class BaseReadyChange(ActorV3Action):
@@ -415,7 +416,7 @@ class BaseReadyChange(ActorV3Action):
 
             if osManager:
                 osManager.toReady(userService)
-                userServiceManager().notifyReadyFromOsManager(userService, '')
+                UserServiceManager().notifyReadyFromOsManager(userService, '')
 
         # Generates a certificate and send it to client.
         privateKey, cert, password = security.selfSignedCert(self._params['ip'])

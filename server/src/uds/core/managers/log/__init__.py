@@ -31,55 +31,22 @@
 """
 import traceback
 import logging
-import enum
 import typing
 
-from uds import models
-
-from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
+from uds.models.util import getSqlDatetime
+from uds.models.log import Log
+
+from .objects import MODEL_TO_TYPE, LogObjectType
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
+    from uds import models
 
 
 logger = logging.getLogger(__name__)
 
-
-class LogObjectType(enum.IntEnum):
-    USERSERVICE = 0
-    PUBLICATION = 1
-    SERVICEPOOL = 2
-    SERVICE = 3
-    PROVIDER = 4
-    USER = 5
-    GROUP = 6
-    AUTHENTICATOR = 7
-    METAPOOL = 8
-    SYSLOG = 9
-
-    def get_max_elements(self) -> int:
-        """
-        if True, this type of log will be limited by number of log entries
-        """
-        if self == LogObjectType.SYSLOG:
-            return GlobalConfig.SYSLOG_MAX_ELEMENTS.getInt()
-        return GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
-
-
-# Dict for translations
-MODEL_TO_TYPE: typing.Mapping[typing.Type['Model'], LogObjectType] = {
-    models.UserService: LogObjectType.USERSERVICE,
-    models.ServicePoolPublication: LogObjectType.PUBLICATION,
-    models.ServicePool: LogObjectType.SERVICEPOOL,
-    models.Service: LogObjectType.SERVICE,
-    models.Provider: LogObjectType.PROVIDER,
-    models.User: LogObjectType.USER,
-    models.Group: LogObjectType.GROUP,
-    models.Authenticator: LogObjectType.AUTHENTICATOR,
-    models.MetaPool: LogObjectType.METAPOOL,
-}
 
 
 class LogManager(metaclass=singleton.Singleton):
@@ -109,7 +76,7 @@ class LogManager(metaclass=singleton.Singleton):
         # Ensure message fits on space
         message = str(message)[:255]
 
-        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
+        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         # First, ensure we do not have more than requested logs, and we can put one more log item
         max_elements = owner_type.get_max_elements()
         current_elements = qs.count()
@@ -120,7 +87,7 @@ class LogManager(metaclass=singleton.Singleton):
                 x.delete()
 
         if avoidDuplicates:
-            lg: typing.Optional[models.Log] = models.Log.objects.filter(
+            lg: typing.Optional['Log'] = Log.objects.filter(
                 owner_id=owner_id, owner_type=owner_type.value
             ).last()
             if lg and lg.data == message:
@@ -129,10 +96,10 @@ class LogManager(metaclass=singleton.Singleton):
 
         # now, we add new log
         try:
-            models.Log.objects.create(
+            Log.objects.create(
                 owner_type=owner_type.value,
                 owner_id=owner_id,
-                created=models.getSqlDatetime(),
+                created=getSqlDatetime(),
                 source=source,
                 level=level,
                 data=message,
@@ -147,7 +114,7 @@ class LogManager(metaclass=singleton.Singleton):
         """
         Get all logs associated with an user service, ordered by date
         """
-        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
+        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         return [
             {'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data}
             for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
@@ -157,7 +124,7 @@ class LogManager(metaclass=singleton.Singleton):
         """
         Clears ALL logs related to user service
         """
-        models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
+        Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
     def doLog(
         self,
@@ -199,7 +166,7 @@ class LogManager(metaclass=singleton.Singleton):
             )
 
     def getLogs(
-        self, wichObject: typing.Optional['Model'], limit: int
+        self, wichObject: typing.Optional['Model'], limit: int = -1
     ) -> typing.List[typing.Dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
@@ -213,7 +180,7 @@ class LogManager(metaclass=singleton.Singleton):
         logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
         if owner_type:  # 0 is valid owner type
-            return self.__getLogs(owner_type, getattr(wichObject, 'id', -1), limit)
+            return self.__getLogs(owner_type, getattr(wichObject, 'id', -1), limit if limit != -1 else owner_type.get_max_elements())
 
         logger.debug(
             'Requested getLogs for a type of object not covered: %s', wichObject

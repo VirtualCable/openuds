@@ -37,8 +37,8 @@ from uds.core.util.request import ExtendedHttpRequestWithUser
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.core.managers import userServiceManager
-from uds.core.managers import cryptoManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util.rest.tools import match
 from uds.web.util import errors, services
@@ -103,7 +103,7 @@ class Connection(Handler):
                 _,  # iads,
                 _, #trans,
                 itrans,
-            ) = userServiceManager().getService(  # pylint: disable=unused-variable
+            ) = UserServiceManager().getService(  # pylint: disable=unused-variable
                 self._user,
                 self._request.os,
                 self._request.ip,
@@ -132,7 +132,7 @@ class Connection(Handler):
 
     def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> typing.Dict[str, typing.Any]:
         try:
-            res = userServiceManager().getService(
+            res = UserServiceManager().getService(
                 self._user, self._request.os, self._request.ip, idService, idTransport
             )
             logger.debug('Res: %s', res)
@@ -143,7 +143,7 @@ class Connection(Handler):
                 transport,
                 transportInstance,
             ) = res  # pylint: disable=unused-variable
-            password = cryptoManager().symDecrpyt(self.getValue('password'), scrambler)
+            password = CryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(
                 self._request.ip, hostname

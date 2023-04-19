@@ -39,7 +39,8 @@ from uds.REST import RequestError
 from uds.models import TicketStore
 from uds.models import User
 from uds.web.util import errors
-from uds.core.managers import cryptoManager, userServiceManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core import VERSION as UDS_VERSION, REQUIRED_CLIENT_VERSION
@@ -140,7 +141,7 @@ class Client(Handler):
                 userServiceInstance,
                 transport,
                 transportInstance,
-            ) = userServiceManager().getService(
+            ) = UserServiceManager().getService(
                 self._request.user,
                 self._request.os,
                 self._request.ip,
@@ -156,7 +157,7 @@ class Client(Handler):
                 transport,
                 transportInstance,
             )
-            password = cryptoManager().symDecrpyt(data['password'], scrambler)
+            password = CryptoManager().symDecrpyt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
             if not ip:

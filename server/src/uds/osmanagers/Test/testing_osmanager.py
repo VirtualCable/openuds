@@ -40,7 +40,6 @@ from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.core.managers import userServiceManager
 
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService

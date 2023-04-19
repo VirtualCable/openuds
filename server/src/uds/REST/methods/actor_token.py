@@ -64,13 +64,13 @@ class ActorTokens(ModelHandler):
     def item_as_dict(self, item: ActorToken) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.token,
-            'name': _('Token isued by {} from {}').format(
+            'name': str(_('Token isued by {} from {}')).format(
                 item.username, item.hostname or item.ip
             ),
             'stamp': item.stamp,
             'username': item.username,
             'ip': item.ip,
-            'host': '{} - {}'.format(item.ip, item.mac),
+            'host': f'{item.ip} - {item.mac}',
             'hostname': item.hostname,
             'pre_command': item.pre_command,
             'post_command': item.post_command,
@@ -92,6 +92,6 @@ class ActorTokens(ModelHandler):
         try:
             self.model.objects.get(token=self._args[0]).delete()
         except self.model.DoesNotExist:
-            raise NotFound('Element do not exists')
+            raise NotFound('Element do not exists') from None
 
         return OK
