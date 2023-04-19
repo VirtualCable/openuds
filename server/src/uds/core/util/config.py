@@ -535,6 +535,15 @@ class GlobalConfig:
         type=Config.FieldType.NUMERIC,
         help=_('Maximum logs per every log-capable administration element'),
     )
+    # Maximum logs per every log-capable administration element
+    SYSLOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Max logs for UDS logs',
+        '10000',
+        type=Config.FieldType.NUMERIC,
+        help=_('Maximum logs entries to keep in database for UDS logs (0 = unlimited, use with care)'),
+    )
+
+
     # Time to restrain a user service in case it gives some errors at some point
     RESTRAINT_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
         'restrainTime',
