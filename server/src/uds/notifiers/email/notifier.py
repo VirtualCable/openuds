@@ -163,7 +163,7 @@ class EmailNotifier(messaging.Notifier):
 
         # Done
 
-    def notify(self, group: str, identificator: str, level: messaging.NotificationLevel, message: str) -> None:
+    def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:

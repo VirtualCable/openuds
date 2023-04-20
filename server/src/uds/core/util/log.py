@@ -45,12 +45,13 @@ if typing.TYPE_CHECKING:
 
 useLogger = logging.getLogger('useLog')
 
-# Patter for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
+# Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
 DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(
     r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *'
 )
-
+# Pattern for removing the LOGLEVEL from the log line beginning
+LOGLEVEL_PATTERN: typing.Final[re.Pattern] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
 
 class LogLevel(enum.IntEnum):
     OTHER = 10000
@@ -201,9 +202,12 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 msg = self.format(record)
                 # Remove date and time from message, as it will be stored on database
                 msg = DATETIME_PATTERN.sub('', msg)
+                # Remove log level from message, as it will be stored on database
+                msg = LOGLEVEL_PATTERN.sub('', msg)
                 identificator = os.path.basename(self.baseFilename)
                 if record.levelno >= logging.WARNING:
-                    NotificationsManager().notify('log', identificator, logLevel, msg)
+                    # Remove traceback from message, as it will be stored on database
+                    NotificationsManager().notify('log', identificator, logLevel, msg.splitlines()[0])
                 doLog(None, logLevel, msg, LogSource.LOGS, False, identificator)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass

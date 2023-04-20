@@ -36,7 +36,7 @@ import typing
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification, getSqlDatetime
-from .provider import Notifier as NotificationProviderModule, NotificationLevel
+from .provider import Notifier as NotificationProviderModule, LogLevel
 from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
@@ -85,7 +85,7 @@ class MessageProcessorThread(BaseThread):
                     group=n.group,
                     identificator=n.identificator,
                     stamp__gt=getSqlDatetime()
-                    - datetime.timedelta(DO_NOT_REPEAT.getInt()),
+                    - datetime.timedelta(seconds=DO_NOT_REPEAT.getInt()),
                 ).exists():
                     # Remove it from the persistent db
                     n.deletePersistent()
@@ -113,10 +113,10 @@ class MessageProcessorThread(BaseThread):
                         logger.error('Error saving notification %s to persistent DB', n)
                         continue
                     # Process notificators, but this is kept on db with processed flat as True
-                    logger.warning(
-                        'Could not save notification %s to main DB, trying notificators',
-                        n,
-                    )
+                    # logger.warning(
+                    #     'Could not save notification %s to main DB, trying notificators',
+                    #    n,
+                    #)
 
                 if notify:
                     for p in (i[1] for i in self.providers if i[0] >= n.level):
@@ -126,7 +126,7 @@ class MessageProcessorThread(BaseThread):
                         p.notify(
                             n.group,
                             n.identificator,
-                            NotificationLevel.from_int(n.level),
+                            LogLevel.fromInt(n.level),
                             n.message,
                         )
 

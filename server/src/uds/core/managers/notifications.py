@@ -63,9 +63,9 @@ class NotificationsManager(metaclass=singleton.Singleton):
         message: str,
         *args
     ) -> None:
-        logger.debug(
-            'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
-        )
+        #logger.debug(
+        #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
+        #)
         # Format the string
         try:
             message = message % args

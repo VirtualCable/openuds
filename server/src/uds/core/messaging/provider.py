@@ -29,35 +29,15 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import enum
+
 
 from django.utils.translation import gettext_noop as _
 
+from uds.core.util.log import LogLevel
 from uds.core.module import Module
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
-
-
-class NotificationLevel(enum.IntEnum):
-    """
-    Notifier levels
-    """
-
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    CRITICAL = 3
-
-    @staticmethod
-    def from_int(value: int) -> 'NotificationLevel':
-        """
-        Returns a NotificationLevel from an int value
-        """
-        try:
-            return NotificationLevel(value)
-        except ValueError:
-            return NotificationLevel.INFO
 
 
 class Notifier(Module):
@@ -112,7 +92,7 @@ class Notifier(Module):
         """
 
     def notify(
-        self, group: str, identificator: str, level: NotificationLevel, message: str
+        self, group: str, identificator: str, level: LogLevel, message: str
     ) -> None:
         """
         This method will be invoked from UDS to notify an event to this notifier.

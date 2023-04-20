@@ -95,14 +95,3 @@ def getSqlDatetimeAsUnix() -> int:
     """
     return int(mktime(getSqlDatetime().timetuple()))
 
-
-def getSqlFnc(fncName: str) -> str:
-    """Convert different sql functions for different platforms
-
-    i.e. CEIL --> CEILING on mssql
-
-    """
-    if connection.vendor == 'microsoft':
-        return {'CEIL': 'CEILING'}.get(fncName, fncName)
-
-    return fncName

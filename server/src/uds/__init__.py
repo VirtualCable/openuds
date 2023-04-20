@@ -130,4 +130,3 @@ def extend_sqlite(connection=None, **kwargs) -> None:
         cursor.execute('PRAGMA mmap_size=67108864')
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
-        connection.connection.create_function("CEIL", 1, math.ceil)

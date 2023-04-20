@@ -127,9 +127,6 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return False
 
         if self.getExistingUserServices(service) >= (serviceInstance.maxDeployed or 1):
-            operationsLogger.info(
-                'Maximum number of user services reached for service: %s', service.name
-            )
             return True
 
         return False
@@ -564,7 +561,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
                 log.doLog(
                     servicePool,
-                    log.WARN,
+                    log.LogLevel.WARNING,
                     f'Max number of services reached: {servicePool.max_srvs}',
                     log.LogSource.INTERNAL,
                 )
@@ -870,7 +867,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 serviceNotReadyCode = 0x0004
                 log.doLog(
                     userService,
-                    log.WARN,
+                    log.LogLevel.WARNING,
                     f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
                     log.LogSource.TRANSPORT,
                 )
@@ -913,7 +910,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     message = transportInstance.getCustomAvailableErrorMsg(
                         userService, ip
                     )
-                    log.doLog(userService, log.WARN, message, log.LogSource.TRANSPORT)
+                    log.doLog(userService, log.LogLevel.WARNING, message, log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
                         userService,
@@ -924,7 +921,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         else:
             log.doLog(
                 userService,
-                log.WARN,
+                log.LogLevel.WARNING,
                 f'User {user.pretty_name} from {srcIp} tried to access, but service was not ready',
                 log.LogSource.WEB,
             )
@@ -1129,7 +1126,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         log.doLog(
             meta,
-            log.WARN,
+            log.LogLevel.WARNING,
             f'No user service accessible from device (ip {srcIp}, os: {os.os.name})',
             log.LogSource.SERVICE,
         )

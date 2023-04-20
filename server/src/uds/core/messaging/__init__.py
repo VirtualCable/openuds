@@ -29,7 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .provider import Notifier, NotificationLevel
+from .provider import Notifier, LogLevel
 from .msgfactory import NotifierFactory
 
 from . import config

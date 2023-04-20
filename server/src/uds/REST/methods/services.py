@@ -42,12 +42,10 @@ from uds.core import exceptions
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
-from uds.core.util.config import GlobalConfig
 from uds.core.environment import Environment
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util.state import State
-from uds.core.module import Module
 
 
 from uds.REST.model import DetailHandler
@@ -128,9 +126,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             k = parent.services.get(uuid=processUuid(item))
             val = Services.serviceToDict(k, perm, full=True)
             return self.fillIntanceFields(k, val)
-        except Exception:
-            logger.exception('itemId %s', item)
-            raise self.invalidItemException()
+        except Exception as e:
+            logger.error('Error getting services for %s: %s', parent, e)
+            raise self.invalidItemException() from e
 
     def getRowStyle(self, parent: 'Provider') -> typing.Dict[str, typing.Any]:
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
@@ -184,27 +182,27 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
             service.save()
         except models.Service.DoesNotExist:
-            raise self.invalidItemException()
-        except IntegrityError:  # Duplicate key probably
+            raise self.invalidItemException() from None
+        except IntegrityError as e:  # Duplicate key probably
             if service and service.token and not item:
                 service.delete()
                 raise RequestError(
                     _(
                         'Service token seems to be in use by other service. Please, select a new one.'
                     )
-                )
-            raise RequestError(_('Element already exists (duplicate key error)'))
+                ) from e
+            raise RequestError(_('Element already exists (duplicate key error)')) from e
         except exceptions.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._deleteIncompleteService(service)
-            raise RequestError(_('Input error: {0}'.format(e)))
+            raise RequestError(_('Input error: {0}'.format(e))) from e
         except Exception as e:
             if not item and service:
                 self._deleteIncompleteService(service)
             logger.exception('Saving Service')
-            raise RequestError('incorrect invocation to PUT: {0}'.format(e))
+            raise RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
 
     def deleteItem(self, parent: 'Provider', item: str) -> None:
         try:
@@ -214,7 +212,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 return
         except Exception:
             logger.exception('Deleting service')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
 
         raise RequestError('Item has associated deployed services')
 
@@ -284,7 +282,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             parentInstance = parent.getInstance()
             serviceType = parentInstance.getServiceByType(forType)
             if not serviceType:
-                raise self.invalidItemException('Gui for {} not found'.format(forType))
+                raise self.invalidItemException(f'Gui for {forType} not found')
 
             service = serviceType(
                 Environment.getTempEnv(), parentInstance
@@ -314,7 +312,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         except Exception as e:
             logger.exception('getGui')
-            raise ResponseError(str(e))
+            raise ResponseError(str(e)) from e
 
     def getLogs(self, parent: 'Provider', item: str) -> typing.List[typing.Any]:
         try:
@@ -322,7 +320,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.debug('Getting logs for %s', item)
             return log.getLogs(service)
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
 
     def servicesPools(self, parent: 'Provider', item: str) -> typing.Any:
         service = parent.services.get(uuid=processUuid(item))
