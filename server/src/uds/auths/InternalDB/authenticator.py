@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -108,12 +108,13 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfa_data
+            self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
         except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''
 
     def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
+        username = username.lower()
         if self.differentForEachHost.isTrue():
             newUsername = (
                 (request.ip_proxy if self.acceptProxy.isTrue() else request.ip)
@@ -147,6 +148,7 @@ class InternalDBAuth(auths.Authenticator):
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
+        username = username.lower()
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:
