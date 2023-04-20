@@ -169,7 +169,7 @@ class InternalDBAuth(auths.Authenticator):
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         dbAuth = self.dbAuthenticator()
         try:
-            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
+            user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
             return
 
@@ -178,7 +178,7 @@ class InternalDBAuth(auths.Authenticator):
     def getRealName(self, username: str) -> str:
         # Return the real name of the user, if it is set
         try:
-            user = self.dbAuthenticator().users.get(name=username, state=State.ACTIVE)
+            user = self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE)
             return user.real_name or username
         except Exception:
             return super().getRealName(username)
