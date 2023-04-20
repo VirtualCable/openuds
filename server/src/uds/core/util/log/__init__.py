@@ -33,6 +33,7 @@
 import logging
 import logging.handlers
 import typing
+import enum
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -41,64 +42,48 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
-# Logging levels
-OTHER, DEBUG, INFO, WARNING, ERROR, CRITICAL = (
-    10000 * (x + 1) for x in range(6)
-)  # @UndefinedVariable
+class LogLevel(enum.IntEnum):
+    OTHER = 10000
+    DEBUG = 20000
+    INFO = 30000
+    WARNING = 40000
+    # Alias WARN
+    WARN = 40000
+    ERROR = 50000
+    CRITICAL = 60000
+    # Alias FATAL
+    FATAL = 60000
 
-WARN = WARNING
-FATAL = CRITICAL
+    def __str__(self) -> str:
+        return self.name
 
-# Logging sources
-INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE, REST = (
-    'internal',
-    'actor',
-    'transport',
-    'osmanager',
-    'unknown',
-    'web',
-    'admin',
-    'service',
-    'rest',
-)
+    def __repr__(self) -> str:
+        return self.name
 
-OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = (
-    'OTHER',
-    'DEBUG',
-    'INFO',
-    'WARN',
-    'ERROR',
-    'FATAL',
-)
+    @classmethod
+    def fromStr(cls: typing.Type['LogLevel'], level: str) -> 'LogLevel':
+        try:
+            return cls[level.upper()]
+        except KeyError:
+            return cls.OTHER
 
-# Names for defined log levels
-__nameLevels = {
-    DEBUGSTR: DEBUG,
-    INFOSTR: INFO,
-    WARNSTR: WARN,
-    ERRORSTR: ERROR,
-    FATALSTR: FATAL,
-    OTHERSTR: OTHER,
-}
+    @classmethod
+    def fromInt(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+        try:
+            return cls(level)
+        except ValueError:
+            return cls.OTHER
 
-# Reverse dict of names
-__valueLevels = {v: k for k, v in __nameLevels.items()}
-
-# Global log owner types:
-OWNER_TYPE_GLOBAL = -1
-OWNER_TYPE_AUDIT = -2
-
-
-def logLevelFromStr(level: str) -> int:
-    """
-    Gets the numeric log level from an string.
-    """
-    return __nameLevels.get(level.upper(), OTHER)
-
-
-def logStrFromLevel(level: int) -> str:
-    return __valueLevels.get(level, 'OTHER')
-
+class LogSource(enum.StrEnum):
+    INTERNAL = 'internal'
+    ACTOR = 'actor'
+    TRANSPORT = 'transport'
+    OSMANAGER = 'osmanager'
+    UNKNOWN = 'unknown'
+    WEB = 'web'
+    ADMIN = 'admin'
+    SERVICE = 'service'
+    REST = 'rest'
 
 def useLog(
     type_: str,
@@ -141,10 +126,10 @@ def useLog(
 
 
 def doLog(
-    wichObject: 'Model',
-    level: int,
+    wichObject: typing.Optional['Model'],
+    level: LogLevel,
     message: str,
-    source: str = UNKNOWN,
+    source: LogSource = LogSource.UNKNOWN,
     avoidDuplicates: bool = True,
 ) -> None:
     # pylint: disable=import-outside-toplevel
@@ -155,22 +140,18 @@ def doLog(
 
 
 def getLogs(
-    wichObject: 'Model', limit: typing.Optional[int] = None
+    wichObject: typing.Optional['Model'], limit: int = -1
 ) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
-    from uds.core.util.config import GlobalConfig
-
-    if limit is None:
-        limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
 
     return LogManager().getLogs(wichObject, limit)
 
 
-def clearLogs(wichObject: 'Model') -> None:
+def clearLogs(wichObject: typing.Optional['Model']) -> None:
     """
     Clears the logs associated with the object using the logManager
     """

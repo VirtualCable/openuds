@@ -402,7 +402,7 @@ class Service(Module):
 
         if self.getUuid():
             log.doLog(
-                DBService.objects.get(uuid=self.getUuid()), level, message, log.SERVICE
+                DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE
             )
 
     @classmethod

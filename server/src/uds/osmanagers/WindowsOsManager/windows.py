@@ -140,7 +140,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def getName(self, userService: 'UserService') -> str:
         return userService.getName()
 
-    def doLog(self, userService: 'UserService', data: str, origin=log.OSMANAGER):
+    def doLog(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
         try:
             msg, levelStr = data.split('\t')
@@ -148,13 +148,13 @@ class WindowsOsManager(osmanagers.OSManager):
                 level = int(levelStr)
             except Exception:
                 logger.debug('Do not understand level %s', levelStr)
-                level = log.INFO
+                level = log.LogLevel.INFO
 
             log.doLog(userService, level, msg, origin)
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
             log.doLog(
-                userService, log.ERROR, "do not understand {0}".format(data), origin
+                userService, log.LogLevel.ERROR, "do not understand {0}".format(data), origin
             )
 
     def actorData(
@@ -191,9 +191,9 @@ class WindowsOsManager(osmanagers.OSManager):
         if self.isRemovableOnLogout(userService):
             log.doLog(
                 userService,
-                log.INFO,
+                log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             userService.remove()
 

@@ -27,9 +27,8 @@ class LogObjectType(enum.IntEnum):
         from uds.core.util.config import GlobalConfig  # pylint: disable=import-outside-toplevel
 
         if self == LogObjectType.SYSLOG:
-            return GlobalConfig.SYSLOG_MAX_ELEMENTS.getInt()
-        return GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
-
+            return GlobalConfig.GENERAL_LOG_MAX_ELEMENTS.getInt()
+        return GlobalConfig.INDIVIDIAL_LOG_MAX_ELEMENTS.getInt()
 
 # Dict for translations
 MODEL_TO_TYPE: typing.Mapping[typing.Type['Model'], LogObjectType] = {

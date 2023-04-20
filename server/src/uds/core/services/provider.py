@@ -216,7 +216,7 @@ class ServiceProvider(Module):
 
         if self.getUuid():
             log.doLog(
-                DBProvider.objects.get(uuid=self.getUuid()), level, message, log.SERVICE
+                DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE
             )
 
     def __str__(self):

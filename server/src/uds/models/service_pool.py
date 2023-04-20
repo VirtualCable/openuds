@@ -699,8 +699,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return bool(self.service) and self.service.testServer(host, port, timeout)
 
     # Utility for logging
-    def log(self, message: str, level: int = log.INFO) -> None:
-        log.doLog(self, level, message, log.INTERNAL)
+    def log(self, message: str, level: int = log.LogLevel.INFO) -> None:
+        log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod
     def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument

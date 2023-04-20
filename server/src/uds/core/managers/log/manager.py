@@ -48,7 +48,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class LogManager(metaclass=singleton.Singleton):
     """
     Manager for logging (at database) events
@@ -61,7 +60,7 @@ class LogManager(metaclass=singleton.Singleton):
     def manager() -> 'LogManager':
         return LogManager()  # Singleton pattern will return always the same instance
 
-    def __log(
+    def _log(
         self,
         owner_type: LogObjectType,
         owner_id: int,
@@ -83,7 +82,9 @@ class LogManager(metaclass=singleton.Singleton):
         # If max_elements is greater than 0, database contains equals or more than max_elements, we will delete the oldest ones to ensure we have max_elements - 1
         if 0 < max_elements <= current_elements:
             # We will delete the oldest ones
-            for x in qs.order_by('created', 'id')[:current_elements - max_elements + 1]:
+            for x in qs.order_by('created', 'id')[
+                : current_elements - max_elements + 1
+            ]:
                 x.delete()
 
         if avoidDuplicates:
@@ -108,7 +109,7 @@ class LogManager(metaclass=singleton.Singleton):
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 
-    def __getLogs(
+    def _getLogs(
         self, owner_type: LogObjectType, owner_id: int, limit: int
     ) -> typing.List[typing.Dict]:
         """
@@ -120,7 +121,7 @@ class LogManager(metaclass=singleton.Singleton):
             for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
         ]
 
-    def __clearLogs(self, owner_type: LogObjectType, owner_id: int):
+    def _clearLogs(self, owner_type: LogObjectType, owner_id: int):
         """
         Clears ALL logs related to user service
         """
@@ -148,7 +149,7 @@ class LogManager(metaclass=singleton.Singleton):
 
         if owner_type is not None:
             try:
-                self.__log(
+                self._log(
                     owner_type, objectId, level, message, source, avoidDuplicates
                 )
             except Exception:
@@ -180,7 +181,11 @@ class LogManager(metaclass=singleton.Singleton):
         logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
         if owner_type:  # 0 is valid owner type
-            return self.__getLogs(owner_type, getattr(wichObject, 'id', -1), limit if limit != -1 else owner_type.get_max_elements())
+            return self._getLogs(
+                owner_type,
+                getattr(wichObject, 'id', -1),
+                limit if limit != -1 else owner_type.get_max_elements(),
+            )
 
         logger.debug(
             'Requested getLogs for a type of object not covered: %s', wichObject
@@ -200,7 +205,7 @@ class LogManager(metaclass=singleton.Singleton):
             else LogObjectType.SYSLOG
         )
         if owner_type:
-            self.__clearLogs(owner_type, getattr(wichObject, 'id', -1))
+            self._clearLogs(owner_type, getattr(wichObject, 'id', -1))
         else:
             logger.debug(
                 'Requested clearLogs for a type of object not covered: %s: %s',

@@ -134,7 +134,7 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.getName()
 
-    def doLog(self, service, data, origin=log.OSMANAGER):
+    def doLog(self, service, data, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
         try:
             msg, level = data.split('\t')
@@ -142,10 +142,10 @@ class LinuxOsManager(osmanagers.OSManager):
                 level = int(level)
             except Exception:
                 logger.debug('Do not understand level %s', level)
-                level = log.INFO
+                level = log.LogLevel.INFO
             log.doLog(service, level, msg, origin)
         except Exception:
-            log.doLog(service, log.ERROR, "do not understand {0}".format(data), origin)
+            log.doLog(service, log.LogLevel.ERROR, "do not understand {0}".format(data), origin)
 
     def actorData(
         self, userService: 'UserService'
@@ -160,9 +160,9 @@ class LinuxOsManager(osmanagers.OSManager):
         if self.isRemovableOnLogout(userService):
             log.doLog(
                 userService,
-                log.INFO,
+                log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             userService.remove()
 

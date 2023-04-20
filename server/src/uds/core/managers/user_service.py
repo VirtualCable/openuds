@@ -566,7 +566,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     servicePool,
                     log.WARN,
                     f'Max number of services reached: {servicePool.max_srvs}',
-                    log.INTERNAL,
+                    log.LogSource.INTERNAL,
                 )
                 raise MaxServicesReachedError()
 
@@ -854,9 +854,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             serviceNotReadyCode = 0x0002
             log.doLog(
                 userService,
-                log.INFO,
+                log.LogLevel.INFO,
                 f"User {user.pretty_name} from {srcIp} has initiated access",
-                log.WEB,
+                log.LogSource.WEB,
             )
             # If ready, show transport for this service, if also ready ofc
             userServiceInstance = userService.getInstance()
@@ -872,7 +872,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     userService,
                     log.WARN,
                     f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
-                    log.TRANSPORT,
+                    log.LogSource.TRANSPORT,
                 )
                 logger.debug('UUID check failed for user service %s', userService)
             else:
@@ -889,7 +889,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     transportInstance = transport.getInstance()
                     if transportInstance.isAvailableFor(userService, ip):
                         # userService.setConnectionSource(srcIp, 'unknown')
-                        log.doLog(userService, log.INFO, "User service ready", log.WEB)
+                        log.doLog(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
                         self.notifyPreconnect(
                             userService,
                             transportInstance.processedUser(userService, user),
@@ -913,7 +913,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     message = transportInstance.getCustomAvailableErrorMsg(
                         userService, ip
                     )
-                    log.doLog(userService, log.WARN, message, log.TRANSPORT)
+                    log.doLog(userService, log.WARN, message, log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
                         userService,
@@ -926,7 +926,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 userService,
                 log.WARN,
                 f'User {user.pretty_name} from {srcIp} tried to access, but service was not ready',
-                log.WEB,
+                log.LogSource.WEB,
             )
 
         traceLogger.error(
@@ -1131,7 +1131,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             meta,
             log.WARN,
             f'No user service accessible from device (ip {srcIp}, os: {os.os.name})',
-            log.SERVICE,
+            log.LogSource.SERVICE,
         )
         raise InvalidServiceException(
             _('The service is not accessible from this device')

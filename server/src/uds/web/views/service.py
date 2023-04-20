@@ -210,11 +210,11 @@ def action(
             rebuild = True
             log.doLog(
                 userService.deployed_service,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Removing User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.WEB,
+                log.LogSource.WEB,
             )
             UserServiceManager().requestLogoff(userService)
             userService.release()
@@ -226,11 +226,11 @@ def action(
             rebuild = True
             log.doLog(
                 userService.deployed_service,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Reseting User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.WEB,
+                log.LogSource.WEB,
             )
             # UserServiceManager().requestLogoff(userService)
             UserServiceManager().reset(userService)

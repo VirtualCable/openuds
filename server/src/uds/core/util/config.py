@@ -529,18 +529,18 @@ class GlobalConfig:
         ),
     )
     # Maximum logs per every log-capable administration element
-    MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value(
+    INDIVIDIAL_LOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
         'maxLogPerElement',
         '100',
         type=Config.FieldType.NUMERIC,
         help=_('Maximum logs per every log-capable administration element'),
     )
     # Maximum logs per every log-capable administration element
-    SYSLOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
-        'Max logs for UDS logs',
-        '10000',
+    GENERAL_LOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Max entries for general UDS logs',
+        '32000',
         type=Config.FieldType.NUMERIC,
-        help=_('Maximum logs entries to keep in database for UDS logs (0 = unlimited, use with care)'),
+        help=_('Maximum logs entries for general UDS logs (0 = unlimited, use with care)'),
     )
 
 

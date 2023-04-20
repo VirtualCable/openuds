@@ -251,9 +251,9 @@ class OSManager(Module):
 
         log.doLog(
             userService,
-            log.INFO,
+            log.LogLevel.INFO,
             f'User {userName} has logged in',
-            log.OSMANAGER,
+            log.LogSource.OSMANAGER,
         )
 
         log.useLog(
@@ -316,9 +316,9 @@ class OSManager(Module):
 
         log.doLog(
             userService,
-            log.INFO,
+            log.LogLevel.INFO,
             f'User {userName} has logged out',
-            log.OSMANAGER,
+            log.LogSource.OSMANAGER,
         )
 
         log.useLog(

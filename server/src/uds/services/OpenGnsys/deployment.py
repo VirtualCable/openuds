@@ -228,7 +228,7 @@ class OGDeployment(UserDeployment):
             State.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._machineId:
             try:
@@ -311,7 +311,7 @@ class OGDeployment(UserDeployment):
         self._stamp = getSqlDatetimeAsUnix()
 
         self.doLog(
-            log.INFO,
+            log.LogLevel.INFO,
             f'Reserved machine {self._name}: id: {self._machineId}, mac: {self._mac}, ip: {self._ip}',
         )
 

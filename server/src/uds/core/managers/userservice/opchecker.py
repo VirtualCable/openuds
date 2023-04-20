@@ -67,7 +67,7 @@ class StateUpdater:
         logger.error('Got error on processor: %s', msg)
         self.save(State.ERROR)
         if msg is not None:
-            log.doLog(self.userService, log.ERROR, msg, log.INTERNAL)
+            log.doLog(self.userService, log.LogLevel.ERROR, msg, log.LogSource.INTERNAL)
 
     def save(self, newState: typing.Optional[str] = None):
         if newState:
@@ -263,7 +263,7 @@ class UserServiceOpChecker(DelayedTask):
 
         except Exception as e:
             logger.exception('Checking service state')
-            log.doLog(userService, log.ERROR, f'Exception: {e}', log.INTERNAL)
+            log.doLog(userService, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
             userService.setState(State.ERROR)
             userService.save(update_fields=['data'])
 
@@ -304,7 +304,7 @@ class UserServiceOpChecker(DelayedTask):
             # Exception caught, mark service as errored
             logger.exception("Error %s, %s :", e.__class__, e)
             if uService:
-                log.doLog(uService, log.ERROR, f'Exception: {e}', log.INTERNAL)
+                log.doLog(uService, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
                 try:
                     uService.setState(State.ERROR)
                     uService.save(update_fields=['data'])

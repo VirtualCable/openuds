@@ -101,9 +101,9 @@ class LinuxRandomPassManager(LinuxOsManager):
             service.storeValue('linOsRandomPass', randomPass)
             log.doLog(
                 service,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Password set to \"{}\"".format(randomPass),
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
 
         return randomPass

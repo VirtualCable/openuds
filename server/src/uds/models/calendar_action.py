@@ -449,7 +449,7 @@ class CalendarAction(UUIDModel):
 
                 self.service_pool.log(
                     f'Executed action {CALENDAR_ACTION_DICT.get(self.action, {}).get("description", self.action)} [{self.prettyParams}]',
-                    level=log.INFO,
+                    level=log.LogLevel.INFO,
                 )
             except Exception:
                 self.service_pool.log(

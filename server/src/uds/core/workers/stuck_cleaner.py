@@ -95,7 +95,7 @@ class StuckCleaner(Job):
                 logger.debug('Found stuck user service %s', stuck)
                 log.doLog(
                     servicePool,
-                    log.ERROR,
+                    log.LogLevel.ERROR,
                     f'User service {stuck.name} has been hard removed because it\'s stuck',
                 )
                 # stuck.setState(State.ERROR)

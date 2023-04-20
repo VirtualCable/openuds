@@ -311,7 +311,7 @@ class WinDomainOsManager(WindowsOsManager):
                     userService,
                     log.WARN,
                     f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
-                    log.OSMANAGER,
+                    log.LogSource.OSMANAGER,
                 )
             except ldap.ALREADY_EXISTS:  # type: ignore  # (valid)
                 # Already added this machine to this group, pass
@@ -325,7 +325,7 @@ class WinDomainOsManager(WindowsOsManager):
                 # logger.exception('Ldap Exception caught')
 
         if error:
-            log.doLog(userService, log.WARN, error, log.OSMANAGER)
+            log.doLog(userService, log.WARN, error, log.LogSource.OSMANAGER)
             logger.error(error)
 
     def release(self, userService: 'UserService') -> None:
@@ -339,9 +339,9 @@ class WinDomainOsManager(WindowsOsManager):
             # logger.info('Releasing from a not FQDN domain is not supported')
             log.doLog(
                 userService,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Removing a domain machine form a non FQDN domain is not supported.",
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             return
 
@@ -353,7 +353,7 @@ class WinDomainOsManager(WindowsOsManager):
                 userService,
                 log.WARN,
                 f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             return
         except ldaputil.LDAPError as e:
@@ -362,7 +362,7 @@ class WinDomainOsManager(WindowsOsManager):
                 userService,
                 log.WARN,
                 f'Could not remove machine from domain ({e})',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             return
         except Exception as e:
@@ -371,7 +371,7 @@ class WinDomainOsManager(WindowsOsManager):
                 userService,
                 log.WARN,
                 f'Could not remove machine from domain ({e})',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             return
 

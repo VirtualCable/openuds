@@ -525,12 +525,12 @@ def authLogLogin(
             ]
         )
     )
-    level = log.INFO if logStr == 'Logged in' else log.ERROR
+    level = log.LogLevel.INFO if logStr == 'Logged in' else log.LogLevel.ERROR
     log.doLog(
         authenticator,
         level,
         f'user {userName} has {logStr} from {request.ip} where os is {request.os.os.name}',
-        log.WEB,
+        log.LogSource.WEB,
     )
 
     try:
@@ -540,7 +540,7 @@ def authLogLogin(
             user,
             level,
             f'{logStr} from {request.ip} where OS is {request.os.os.name}',
-            log.WEB,
+            log.LogSource.WEB,
         )
     except models.User.DoesNotExist:  # pylint: disable=no-member
         pass
@@ -550,8 +550,8 @@ def authLogLogout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
         log.doLog(
             request.user.manager,
-            log.INFO,
+            log.LogLevel.INFO,
             f'user {request.user.name} has logged out from {request.ip}',
-            log.WEB,
+            log.LogSource.WEB,
         )
-        log.doLog(request.user, log.INFO, f'has logged out from {request.ip}', log.WEB)
+        log.doLog(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)

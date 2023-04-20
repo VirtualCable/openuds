@@ -234,7 +234,7 @@ class UserDeployment(Environmentable, Serializable):
         Logs a message with requested level associated with this user deployment
         """
         if self._dbService:
-            log.doLog(self._dbService, level, message, log.SERVICE)
+            log.doLog(self._dbService, level, message, log.LogSource.SERVICE)
 
     def macGenerator(self) -> 'UniqueMacGenerator':
         """

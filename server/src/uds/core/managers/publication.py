@@ -344,7 +344,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                     publication.deployed_service,
                     log.WARN,
                     'Forced cancel on publication, you must check uncleaned resources manually',
-                    log.ADMIN,
+                    log.LogSource.ADMIN,
                 )
                 publication.setState(State.CANCELED)
                 publication.save()

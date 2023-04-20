@@ -66,7 +66,7 @@ class ServiceCacheUpdater(Job):
             servicePool,
             log.WARN,
             'Service Pool is restrained due to excesive errors',
-            log.INTERNAL,
+            log.LogSource.INTERNAL,
         )
         logger.info('%s is restrained, will check this later', servicePool.name)
 
@@ -259,9 +259,9 @@ class ServiceCacheUpdater(Job):
         except MaxServicesReachedError:
             log.doLog(
                 servicePool,
-                log.ERROR,
+                log.LogLevel.ERROR,
                 'Max number of services reached for this service',
-                log.INTERNAL,
+                log.LogSource.INTERNAL,
             )
             logger.warning(
                 'Max user services reached for %s: %s. Cache not created',

@@ -682,7 +682,7 @@ class Log(ActorV3Action):
             userService,
             int(self._params['level']) + 10000,
             self._params['message'],
-            log.ACTOR,
+            log.LogSource.ACTOR,
         )
 
         return ActorV3Action.actorResult('ok')

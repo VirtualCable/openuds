@@ -191,7 +191,7 @@ class AssignedService(DetailHandler):
         else:
             raise self.invalidItemException(_('Item is not removable'))
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
@@ -219,7 +219,7 @@ class AssignedService(DetailHandler):
         userService.save()
 
         # Log change
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=processUuid(item))
@@ -340,9 +340,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.add(group)
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Added group {group.pretty_name} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
@@ -350,9 +350,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.remove(group)
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Removed group {group.pretty_name} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
 
@@ -399,9 +399,9 @@ class Transports(DetailHandler):
         parent.transports.add(transport)
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Added transport {transport.name} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
@@ -411,9 +411,9 @@ class Transports(DetailHandler):
         parent.transports.remove(transport)
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Removed transport {transport.name} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
 
@@ -447,9 +447,9 @@ class Publications(DetailHandler):
 
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Initiated publication v{parent.current_pub_revision} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
         return self.success()
@@ -478,9 +478,9 @@ class Publications(DetailHandler):
 
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'Canceled publication v{parent.current_pub_revision} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
         return self.success()

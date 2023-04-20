@@ -102,8 +102,8 @@ class TunnelTicket(Handler):
                 now = models.getSqlDatetimeAsUnix()
                 totalTime = now - extra.get('b', now - 1)
                 msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
-                log.doLog(user.manager, log.INFO, msg)
-                log.doLog(userService, log.INFO, msg)
+                log.doLog(user.manager, log.LogLevel.INFO, msg)
+                log.doLog(userService, log.LogLevel.INFO, msg)
 
                 # Try to log Close event
                 try:
@@ -131,8 +131,8 @@ class TunnelTicket(Handler):
                     tunnel=self._args[0],
                 )
                 msg = f'User {user.name} started tunnel {self._args[0][:8]}... to {host}:{port} from {self._args[1]}.'
-                log.doLog(user.manager, log.INFO, msg)
-                log.doLog(userService, log.INFO, msg)
+                log.doLog(user.manager, log.LogLevel.INFO, msg)
+                log.doLog(userService, log.LogLevel.INFO, msg)
                 # Generate new, notify only, ticket
                 notifyTicket = models.TicketStore.create_for_tunnel(
                     userService=userService,

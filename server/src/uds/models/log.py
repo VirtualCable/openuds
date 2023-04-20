@@ -58,6 +58,7 @@ class Log(models.Model):
     created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)
     level = models.PositiveIntegerField(default=0, db_index=True)
+    name = models.CharField(max_length=64, default='')  # If syslog, log name, else empty
     data = models.CharField(max_length=4096, default='')
 
     # "fake" declarations for type checking
@@ -74,9 +75,9 @@ class Log(models.Model):
     @property
     def level_str(self) -> str:
         # pylint: disable=import-outside-toplevel
-        from uds.core.util.log import logStrFromLevel
+        from uds.core.util.log import LogLevel
 
-        return logStrFromLevel(self.level)
+        return LogLevel.fromInt(self.level).name
 
     def __str__(self) -> str:
         return (

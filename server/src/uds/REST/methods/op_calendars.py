@@ -116,9 +116,9 @@ class AccessCalendars(DetailHandler):
 
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
@@ -126,7 +126,7 @@ class AccessCalendars(DetailHandler):
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
 
 class ActionsCalendars(DetailHandler):
@@ -219,7 +219,7 @@ class ActionsCalendars(DetailHandler):
                 params=params,
             )
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def deleteItem(self, parent: 'ServicePool', item: str) -> None:
         calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
@@ -232,7 +232,7 @@ class ActionsCalendars(DetailHandler):
 
         calendarAction.delete()
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def execute(self, parent: 'ServicePool', item: str):
         logger.debug('Launching action')
@@ -247,7 +247,7 @@ class ActionsCalendars(DetailHandler):
             f'{calendarAction.params}" by {self._user.pretty_name}'
         )
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
         calendarAction.execute()
 
         return self.success()

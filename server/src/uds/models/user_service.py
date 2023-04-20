@@ -637,8 +637,8 @@ class UserService(UUIDModel):
         ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging
-    def log(self, message: str, level: int = log.INFO) -> None:
-        log.doLog(self, level, message, log.INTERNAL)
+    def log(self, message: str, level: int = log.LogLevel.INFO) -> None:
+        log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     def testServer(self, host, port, timeout=4) -> bool:
         return self.deployed_service.testServer(host, port, timeout)
