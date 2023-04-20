@@ -79,20 +79,20 @@ class HTML5SSHTransport(transports.Transport):
         defvalue='https://',
         length=64,
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     username = gui.TextField(
         label=_('Username'),
         order=20,
         tooltip=_('Username for SSH connection authentication.'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for SSH connection authentication'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     sshPrivateKey = gui.TextField(
         label=_('SSH Private Key'),
@@ -109,7 +109,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
 
     sshCommand = gui.TextField(
@@ -118,7 +118,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Command to execute on the remote server. If not provided, an interactive shell will be executed.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enableFileSharing = gui.ChoiceField(
         label=_('File Sharing'),
@@ -131,7 +131,7 @@ class HTML5SSHTransport(transports.Transport):
             {'id': 'up', 'text': _('Allow upload only')},
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     fileSharingRoot = gui.TextField(
         label=_('File Sharing Root'),
@@ -139,7 +139,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Root path for file sharing. If not provided, root directory will be used.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     sshPort = gui.NumericField(
         length=40,
@@ -148,7 +148,7 @@ class HTML5SSHTransport(transports.Transport):
         order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     sshHostKey = gui.TextField(
         label=_('SSH Host Key'),
@@ -156,7 +156,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Host key of the SSH server. If not provided, no verification of host identity is done.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     serverKeepAlive = gui.NumericField(
         length=3,
@@ -168,7 +168,7 @@ class HTML5SSHTransport(transports.Transport):
         ),
         required=True,
         minValue=0,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     ticketValidity = gui.NumericField(
@@ -181,7 +181,7 @@ class HTML5SSHTransport(transports.Transport):
         ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     forceNewWindow = gui.ChoiceField(
         order=91,
@@ -202,7 +202,7 @@ class HTML5SSHTransport(transports.Transport):
             ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -231,13 +231,13 @@ class HTML5SSHTransport(transports.Transport):
 
     def getLink(
         self,
-        userService: 'models.UserService',
+        userService: 'models.UserService',  # pylint: disable=unused-argument
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
-        user: 'models.User',
-        password: str,
-        request: 'ExtendedHttpRequestWithUser',
+        os: 'DetectedOsInfo',  # pylint: disable=unused-argument
+        user: 'models.User',  # pylint: disable=unused-argument
+        password: str,  # pylint: disable=unused-argument
+        request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
         # Build params dict
         params = {

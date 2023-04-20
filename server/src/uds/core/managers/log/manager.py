@@ -29,8 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import traceback
-import logging
+# import traceback
 import typing
 
 from uds.core.util import singleton
@@ -43,9 +42,6 @@ from .objects import MODEL_TO_TYPE, LogObjectType
 if typing.TYPE_CHECKING:
     from django.db.models import Model
     from uds import models
-
-
-logger = logging.getLogger(__name__)
 
 
 class LogManager(metaclass=singleton.Singleton):
@@ -68,12 +64,13 @@ class LogManager(metaclass=singleton.Singleton):
         message: str,
         source: str,
         avoidDuplicates: bool,
+        logName: str
     ):
         """
         Logs a message associated to owner
         """
         # Ensure message fits on space
-        message = str(message)[:255]
+        message = str(message)[:4096]
 
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         # First, ensure we do not have more than requested logs, and we can put one more log item
@@ -104,6 +101,7 @@ class LogManager(metaclass=singleton.Singleton):
                 source=source,
                 level=level,
                 data=message,
+                name=logName,
             )
         except Exception:  # nosec
             # Some objects will not get logged, such as System administrator objects, but this is fine
@@ -134,6 +132,7 @@ class LogManager(metaclass=singleton.Singleton):
         message: str,
         source: str,
         avoidDuplicates: bool = True,
+        logName: typing.Optional[str] = None,
     ):
         """
         Do the logging for the requested object.
@@ -146,25 +145,15 @@ class LogManager(metaclass=singleton.Singleton):
             else LogObjectType.SYSLOG
         )
         objectId = getattr(wichObject, 'id', -1)
+        logName = logName or ''
 
         if owner_type is not None:
             try:
                 self._log(
-                    owner_type, objectId, level, message, source, avoidDuplicates
+                    owner_type, objectId, level, message, source, avoidDuplicates, logName
                 )
-            except Exception:
-                logger.error(
-                    'Error logging: %s:%s %s - %s %s',
-                    owner_type,
-                    objectId,
-                    level,
-                    message,
-                    source,
-                )
-        else:
-            logger.debug(
-                'Requested doLog for a type of object not covered: %s', wichObject
-            )
+            except Exception:  # nosec
+                pass  # Can not log,
 
     def getLogs(
         self, wichObject: typing.Optional['Model'], limit: int = -1
@@ -178,7 +167,6 @@ class LogManager(metaclass=singleton.Singleton):
             if wichObject
             else LogObjectType.SYSLOG
         )
-        logger.debug('Getting log: %s -> %s', wichObject, owner_type)
 
         if owner_type:  # 0 is valid owner type
             return self._getLogs(
@@ -187,9 +175,6 @@ class LogManager(metaclass=singleton.Singleton):
                 limit if limit != -1 else owner_type.get_max_elements(),
             )
 
-        logger.debug(
-            'Requested getLogs for a type of object not covered: %s', wichObject
-        )
         return []
 
     def clearLogs(self, wichObject: typing.Optional['Model']):
@@ -206,11 +191,11 @@ class LogManager(metaclass=singleton.Singleton):
         )
         if owner_type:
             self._clearLogs(owner_type, getattr(wichObject, 'id', -1))
-        else:
-            logger.debug(
-                'Requested clearLogs for a type of object not covered: %s: %s',
-                type(wichObject),
-                wichObject,
-            )
-            for line in traceback.format_stack(limit=5):
-                logger.debug('>> %s', line)
+        #else:
+            # logger.debug(
+            #    'Requested clearLogs for a type of object not covered: %s: %s',
+            #    type(wichObject),
+            #    wichObject,
+            #)
+            #for line in traceback.format_stack(limit=5):
+            #    logger.debug('>> %s', line)

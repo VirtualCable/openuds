@@ -480,11 +480,6 @@ class SAMLAuthenticator(auths.Authenticator):
                 raise auths.exceptions.AuthenticatorException(
                     gettext('Can\'t access idp metadata')
                 )
-            self.cache.put(
-                'idpMetadata',
-                val,
-                config.IDP_METADATA_CACHE.getInt(True),
-            )
         else:
             val = self.idpMetadata.value
 

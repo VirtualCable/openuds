@@ -30,17 +30,25 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
 import logging
 import logging.handlers
 import typing
 import enum
+import re
+
+from django.apps import apps
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
-logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
+
+# Patter for look for date and time in this format: 2023-04-20 04:03:08,776
+# This is the format used by python logging module
+DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})')
+
 
 class LogLevel(enum.IntEnum):
     OTHER = 10000
@@ -74,6 +82,7 @@ class LogLevel(enum.IntEnum):
         except ValueError:
             return cls.OTHER
 
+
 class LogSource(enum.StrEnum):
     INTERNAL = 'internal'
     ACTOR = 'actor'
@@ -84,6 +93,8 @@ class LogSource(enum.StrEnum):
     ADMIN = 'admin'
     SERVICE = 'service'
     REST = 'rest'
+    LOGS = 'logs'
+
 
 def useLog(
     type_: str,
@@ -124,6 +135,8 @@ def useLog(
         )
     )
 
+    # Will be stored on database by UDSLogHandler
+
 
 def doLog(
     wichObject: typing.Optional['Model'],
@@ -131,12 +144,12 @@ def doLog(
     message: str,
     source: LogSource = LogSource.UNKNOWN,
     avoidDuplicates: bool = True,
+    logName: typing.Optional[str] = None,
 ) -> None:
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    logger.debug('%s %s %s', wichObject, level, message)
-    LogManager().doLog(wichObject, level, message, source, avoidDuplicates)
+    LogManager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
 
 
 def getLogs(
@@ -166,9 +179,27 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
     Custom log handler that will log to database before calling to RotatingFileHandler
     """
 
-    def emit(self, record: logging.LogRecord) -> None:
-        # Currently, simply call to parent
-        msg = self.format(record)  # pylint: disable=unused-variable
+    # Protects from recursive calls
+    emiting: typing.ClassVar[bool] = False
 
-        # TODO: Log message on database and continue as a RotatingFileHandler
+    def emit(self, record: logging.LogRecord) -> None:
+        if apps.ready and record.levelno > logging.INFO and not UDSLogHandler.emiting:
+            try:
+                UDSLogHandler.emiting = True
+                msg = self.format(record)
+                # Remove date and time from message, as it will be stored on database
+                msg = DATETIME_PATTERN.sub('', msg)
+                doLog(
+                    None,
+                    LogLevel.fromInt(record.levelno * 1000),
+                    msg,
+                    LogSource.LOGS,
+                    False,
+                    os.path.basename(self.baseFilename)
+                )
+            except Exception:  # nosec: If cannot log, just ignore it
+                pass
+            finally:
+                UDSLogHandler.emiting = False
+
         return super().emit(record)

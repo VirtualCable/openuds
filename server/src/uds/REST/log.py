@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
 UUID_REPLACER = (
     ('providers', models.Provider),
     ('services', models.Service),
+    ('servicespools', models.ServicePool),
     ('users', models.User),
     ('groups', models.Group),
 )
@@ -92,7 +93,7 @@ def logOperation(
     doLog(
         None,
         level=level,
-        message=f'{handler.request.ip} {username}: [{handler.request.method}/{response_code}] {path}'[
+        message=f'{handler.request.ip}[{username}]: [{handler.request.method}/{response_code}] {path}'[
             :4096
         ],
         source=LogSource.REST,
