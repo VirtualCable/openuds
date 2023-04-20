@@ -73,7 +73,7 @@ def getSqlDatetime() -> datetime:
     if connection.vendor in ('mysql', 'microsoft'):
         cursor = connection.cursor()
         sentence = (
-            'SELECT NOW()'
+            'SELECT CURRENT_TIMESTAMP(4)'
             if connection.vendor == 'mysql'
             else 'SELECT CURRENT_TIMESTAMP'
         )

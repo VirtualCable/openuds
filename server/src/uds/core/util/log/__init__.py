@@ -45,9 +45,9 @@ if typing.TYPE_CHECKING:
 
 useLogger = logging.getLogger('useLog')
 
-# Patter for look for date and time in this format: 2023-04-20 04:03:08,776
+# Patter for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
-DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})')
+DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
 
 
 class LogLevel(enum.IntEnum):
@@ -183,7 +183,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
     emiting: typing.ClassVar[bool] = False
 
     def emit(self, record: logging.LogRecord) -> None:
-        if apps.ready and record.levelno > logging.INFO and not UDSLogHandler.emiting:
+        if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
                 UDSLogHandler.emiting = True
                 msg = self.format(record)
