@@ -47,7 +47,9 @@ useLogger = logging.getLogger('useLog')
 
 # Patter for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
-DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
+DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(
+    r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *'
+)
 
 
 class LogLevel(enum.IntEnum):
@@ -81,6 +83,11 @@ class LogLevel(enum.IntEnum):
             return cls(level)
         except ValueError:
             return cls.OTHER
+
+    # Return all Log levels as tuples of (level value, level name)
+    @staticmethod
+    def all() -> typing.List[typing.Tuple[int, str]]:
+        return [(level.value, level.name) for level in LogLevel]
 
 
 class LogSource(enum.StrEnum):
@@ -183,20 +190,21 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
     emiting: typing.ClassVar[bool] = False
 
     def emit(self, record: logging.LogRecord) -> None:
+        # To avoid circular imports
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers.notifications import NotificationsManager
+
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
+                logLevel = LogLevel.fromInt(record.levelno * 1000)
                 UDSLogHandler.emiting = True
                 msg = self.format(record)
                 # Remove date and time from message, as it will be stored on database
                 msg = DATETIME_PATTERN.sub('', msg)
-                doLog(
-                    None,
-                    LogLevel.fromInt(record.levelno * 1000),
-                    msg,
-                    LogSource.LOGS,
-                    False,
-                    os.path.basename(self.baseFilename)
-                )
+                identificator = os.path.basename(self.baseFilename)
+                if record.levelno >= logging.WARNING:
+                    NotificationsManager().notify('log', identificator, logLevel, msg)
+                doLog(None, logLevel, msg, LogSource.LOGS, False, identificator)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass
             finally:

@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds.core.util import singleton
-from uds.models.notifications import Notification, NotificationLevel
+from uds.models.notifications import Notification, LogLevel
 
 if typing.TYPE_CHECKING:
     from ..messaging import provider
@@ -59,7 +59,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
         self,
         group: str,
         identificator: str,
-        level: NotificationLevel,
+        level: LogLevel,
         message: str,
         *args
     ) -> None:

@@ -28,12 +28,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from enum import IntEnum
 import logging
 import typing
 
 from django.db import models, transaction
 
+from uds.core.util.log import LogLevel
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -42,22 +42,6 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from uds.core.messaging import Notifier as NotificationProviderModule
-
-
-class NotificationLevel(IntEnum):
-    """
-    Notification Levels
-    """
-
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    CRITICAL = 3
-
-    # Return all notification levels as tuples of (level value, level name)
-    @staticmethod
-    def all() -> typing.List[typing.Tuple[int, str]]:
-        return [(level.value, level.name) for level in NotificationLevel]
 
 
 # This model will be available on local "persistent" storage and also on configured database
@@ -103,7 +87,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
-    level = models.PositiveSmallIntegerField(default=NotificationLevel.ERROR)
+    level = models.PositiveSmallIntegerField(default=LogLevel.ERROR)
 
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[Notifier]'

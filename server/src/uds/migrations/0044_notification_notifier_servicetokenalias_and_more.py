@@ -97,7 +97,7 @@ class Migration(migrations.Migration):
                 (
                     "level",
                     models.PositiveSmallIntegerField(
-                        default=uds.models.notifications.NotificationLevel["ERROR"]
+                        default=uds.models.notifications.LogLevel["ERROR"]
                     ),
                 ),
             ],

@@ -146,7 +146,7 @@ class TaskManager(metaclass=singleton.Singleton):
             self.threads.append(thread)
             time.sleep(0.5)  # Wait a bit before next delayed task runner is started
 
-        # Add other tasks
+        # Add any other tasks (Such as message processor)
         self.addOtherTasks()
 
         # Debugging stuff

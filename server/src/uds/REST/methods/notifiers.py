@@ -35,11 +35,10 @@ import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.core.environment import Environment
-from uds.models import Notifier, NotificationLevel
+from uds.models import Notifier, LogLevel
 from uds.core import messaging
 from uds.core.ui import gui
 from uds.core.util import permissions
-from uds.core.managers import notifications
 
 from uds.REST.model import ModelHandler
 
@@ -86,7 +85,7 @@ class Notifiers(ModelHandler):
         for field in [
             {
                 'name': 'level',
-                'values': [gui.choiceItem(i[0], i[1]) for i in NotificationLevel.all()],
+                'values': [gui.choiceItem(i[0], i[1]) for i in LogLevel.all()],
                 'label': gettext('Level'),
                 'tooltip': gettext('Level of notifications'),
                 'type': gui.InputField.Types.CHOICE,

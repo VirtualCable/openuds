@@ -111,7 +111,7 @@ from .actor_token import ActorToken
 from .tunnel_token import TunnelToken
 
 # Notifications & Alerts
-from .notifications import Notification, Notifier, NotificationLevel
+from .notifications import Notification, Notifier, LogLevel
 # Multi factor authentication
 from .mfa import MFA
 
