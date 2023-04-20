@@ -107,11 +107,12 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            return self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfa_data
+            return self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
         except Exception:  # User not found
             return ''
 
     def transformUsername(self, username: str) -> str:
+        username = username.lower()
         if self.differentForEachHost.isTrue():
             newUsername = self.getIp() + '-' + username
             # Duplicate basic user into username.
@@ -137,6 +138,7 @@ class InternalDBAuth(auths.Authenticator):
     def authenticate(
         self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
     ) -> bool:
+        username = username.lower()
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:
@@ -158,7 +160,7 @@ class InternalDBAuth(auths.Authenticator):
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         dbAuth = self.dbAuthenticator()
         try:
-            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
+            user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
             return
 
@@ -167,7 +169,7 @@ class InternalDBAuth(auths.Authenticator):
     def getRealName(self, username: str) -> str:
         # Return the real name of the user, if it is set
         try:
-            user = self.dbAuthenticator().users.get(name=username, state=State.ACTIVE)
+            user = self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE)
             return user.real_name or username
         except Exception:
             return super().getRealName(username)
