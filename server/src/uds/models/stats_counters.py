@@ -36,8 +36,6 @@ import logging
 
 from django.db import models
 
-from .util import getSqlFnc
-
 logger = logging.getLogger(__name__)
 
 
@@ -117,7 +115,7 @@ class StatsCounters(models.Model):
             max_intervals = max(min(max_intervals, count), 2)
             interval = int(to - since) / max_intervals
 
-        floor = getSqlFnc('FLOOR')
+        floor = 'FLOOR'
         if interval > 0:
             q = q.extra(  # nosec: SQL injection is not possible here
                 select={
