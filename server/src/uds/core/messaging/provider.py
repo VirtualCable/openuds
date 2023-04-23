@@ -91,9 +91,7 @@ class Notifier(Module):
         Default implementation does nothing
         """
 
-    def notify(
-        self, group: str, identificator: str, level: LogLevel, message: str
-    ) -> None:
+    def notify(self, group: str, identificator: str, level: LogLevel, message: str) -> None:
         """
         This method will be invoked from UDS to notify an event to this notifier.
         This method will be invoked in real time, so ensure this method does not block or

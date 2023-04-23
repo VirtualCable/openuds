@@ -51,21 +51,12 @@ class NotificationsManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def manager() -> 'NotificationsManager':
-        return (
-            NotificationsManager()
-        )  # Singleton pattern will return always the same instance
+        return NotificationsManager()  # Singleton pattern will return always the same instance
 
-    def notify(
-        self,
-        group: str,
-        identificator: str,
-        level: LogLevel,
-        message: str,
-        *args
-    ) -> None:
-        #logger.debug(
+    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
+        # logger.debug(
         #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
-        #)
+        # )
         # Format the string
         try:
             message = message % args
@@ -74,9 +65,7 @@ class NotificationsManager(metaclass=singleton.Singleton):
         # Store the notification on local persistent storage
         # Will be processed by UDS backend
         with Notification.atomicPersistent():
-            notify = Notification(
-                group=group, identificator=identificator, level=level, message=message
-            )
+            notify = Notification(group=group, identificator=identificator, level=level, message=message)
             Notification.savePersistent(notify)
 
     def registerGroup(self, group: str) -> None:
