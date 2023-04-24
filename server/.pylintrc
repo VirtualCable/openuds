@@ -560,6 +560,7 @@ generated-members= .*.objects
                    .*.DoesNotExist.*
                    .+service,
                    .+osmanager,
+                   ldap\..+,
 
 # Tells whether to warn about missing members when the owner of the attribute
 # is inferred to be None.

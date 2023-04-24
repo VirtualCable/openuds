@@ -37,13 +37,13 @@ from django.db.models import Model
 
 from uds.core.managers.stats import StatsManager, AccumStat
 from uds.models import (
-    NEVER,
     Provider,
     Service,
     ServicePool,
     Authenticator,
     StatsCountersAccum,
 )
+from uds.models.consts import NEVER
 
 
 logger = logging.getLogger(__name__)

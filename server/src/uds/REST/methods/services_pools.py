@@ -44,8 +44,9 @@ from uds.models import (
     ServicePoolGroup,
     Account,
     User,
-    getSqlDatetime,
 )
+from uds.models.util import getSqlDatetime
+
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -157,9 +158,7 @@ class ServicesPools(ModelHandler):
 
     def getItems(self, *args, **kwargs):
         # Optimized query, due that there is a lot of info needed for theee
-        d = getSqlDatetime() - datetime.timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         return super().getItems(
             overview=kwargs.get('overview', True),
             query=(
@@ -180,11 +179,7 @@ class ServicesPools(ModelHandler):
                         filter=~Q(userServices__state__in=State.INFO_STATES),
                     )
                 )
-                .annotate(
-                    preparing_count=Count(
-                        'userServices', filter=Q(userServices__state=State.PREPARING)
-                    )
-                )
+                .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
                 .annotate(
                     error_count=Count(
                         'userServices',
@@ -237,9 +232,7 @@ class ServicesPools(ModelHandler):
             'parent_type': item.service.data_type,  # type: ignore
             'comments': item.comments,
             'state': state,
-            'thumb': item.image.thumb64
-            if item.image is not None
-            else DEFAULT_THUMB_BASE64,
+            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
             'account_id': item.account.uuid if item.account is not None else None,
             'service_id': item.service.uuid,  # type: ignore
@@ -256,8 +249,7 @@ class ServicesPools(ModelHandler):
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
             'meta_member': [
-                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name}
-                for i in item.memberOfMeta.all()
+                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
             ],
             'calendar_message': item.calendar_message,
         }
@@ -270,12 +262,8 @@ class ServicesPools(ModelHandler):
                 restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()  # type: ignore
                 usage_count = item.usage_count  # type: ignore
             else:
-                valid_count = item.userServices.exclude(
-                    state__in=State.INFO_STATES
-                ).count()
-                preparing_count = item.userServices.filter(
-                    state=State.PREPARING
-                ).count()
+                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
+                preparing_count = item.userServices.filter(state=State.PREPARING).count()
                 restrained = item.isRestrained()
                 usage_count = -1
 
@@ -289,9 +277,7 @@ class ServicesPools(ModelHandler):
                     poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
             val['state'] = state
-            val['thumb'] = (
-                item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
-            )
+            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
             val['user_services_count'] = valid_count
             val['user_services_in_preparation'] = preparing_count
             val['tags'] = [tag.tag for tag in item.tags.all()]
@@ -313,9 +299,7 @@ class ServicesPools(ModelHandler):
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
-            raise ResponseError(
-                gettext('Create at least a service before creating a new service pool')
-            )
+            raise ResponseError(gettext('Create at least a service before creating a new service pool'))
 
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
@@ -362,9 +346,7 @@ class ServicesPools(ModelHandler):
                 'name': 'allow_users_reset',
                 'value': False,
                 'label': gettext('Allow reset by users'),
-                'tooltip': gettext(
-                    'If active, the user will be allowed to reset the service'
-                ),
+                'tooltip': gettext('If active, the user will be allowed to reset the service'),
                 'type': gui.InputField.Types.CHECKBOX,
                 'order': 112,
                 'tab': gettext('Advanced'),
@@ -393,10 +375,7 @@ class ServicesPools(ModelHandler):
                 'name': 'image_id',
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
-                    [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
-                        for v in Image.objects.all()
-                    ]
+                    [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -414,9 +393,7 @@ class ServicesPools(ModelHandler):
                     ]
                 ),
                 'label': gettext('Pool group'),
-                'tooltip': gettext(
-                    'Pool group for this pool (for pool classify on display)'
-                ),
+                'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
                 'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 121,
                 'tab': gettext('Display'),
@@ -447,9 +424,7 @@ class ServicesPools(ModelHandler):
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Services to keep in cache'),
-                'tooltip': gettext(
-                    'Services kept in cache for improved user service assignation'
-                ),
+                'tooltip': gettext('Services kept in cache for improved user service assignation'),
                 'type': gui.InputField.Types.NUMERIC,
                 'order': 131,
                 'tab': gettext('Availability'),
@@ -459,9 +434,7 @@ class ServicesPools(ModelHandler):
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Services to keep in L2 cache'),
-                'tooltip': gettext(
-                    'Services kept in cache of level2 for improved service generation'
-                ),
+                'tooltip': gettext('Services kept in cache of level2 for improved service generation'),
                 'type': gui.InputField.Types.NUMERIC,
                 'order': 132,
                 'tab': gettext('Availability'),
@@ -482,9 +455,7 @@ class ServicesPools(ModelHandler):
                 'name': 'show_transports',
                 'value': True,
                 'label': gettext('Show transports'),
-                'tooltip': gettext(
-                    'If active, alternative transports for user will be shown'
-                ),
+                'tooltip': gettext('If active, alternative transports for user will be shown'),
                 'type': gui.InputField.Types.CHECKBOX,
                 'tab': gettext('Advanced'),
                 'order': 130,
@@ -514,9 +485,7 @@ class ServicesPools(ModelHandler):
                 service = Service.objects.get(uuid=processUuid(fields['service_id']))
                 fields['service_id'] = service.id
             except Exception:
-                raise RequestError(
-                    gettext('Base service does not exist anymore')
-                ) from None
+                raise RequestError(gettext('Base service does not exist anymore')) from None
 
             try:
                 serviceType = service.getType()
@@ -528,9 +497,7 @@ class ServicesPools(ModelHandler):
                     self._params['allow_users_reset'] = False
 
                 if serviceType.needsManager is True:
-                    osmanager = OSManager.objects.get(
-                        uuid=processUuid(fields['osmanager_id'])
-                    )
+                    osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
@@ -552,26 +519,16 @@ class ServicesPools(ModelHandler):
                     ):
                         fields[k] = 0
                 else:  # uses cache, adjust values
-                    fields['max_srvs'] = (
-                        int(fields['max_srvs']) or 1
-                    )  # ensure max_srvs is at least 1
+                    fields['max_srvs'] = int(fields['max_srvs']) or 1  # ensure max_srvs is at least 1
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
                     if serviceType.maxDeployed != -1:
-                        fields['max_srvs'] = min(
-                            (fields['max_srvs'], serviceType.maxDeployed)
-                        )
-                        fields['initial_srvs'] = min(
-                            fields['initial_srvs'], serviceType.maxDeployed
-                        )
-                        fields['cache_l1_srvs'] = min(
-                            fields['cache_l1_srvs'], serviceType.maxDeployed
-                        )
+                        fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxDeployed))
+                        fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxDeployed)
+                        fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxDeployed)
             except Exception as e:
-                raise RequestError(
-                    gettext('This service requires an OS Manager')
-                ) from e
+                raise RequestError(gettext('This service requires an OS Manager')) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -589,9 +546,7 @@ class ServicesPools(ModelHandler):
 
             if accountId != '-1':
                 try:
-                    fields['account_id'] = Account.objects.get(
-                        uuid=processUuid(accountId)
-                    ).id
+                    fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
                 except Exception:
                     logger.exception('Getting account ID')
 

@@ -52,7 +52,7 @@ from .image import Image
 from .service_pool_group import ServicePoolGroup
 from .account import Account
 
-from .util import NEVER
+from .consts import NEVER
 from .util import getSqlDatetime
 
 
@@ -699,7 +699,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return bool(self.service) and self.service.testServer(host, port, timeout)
 
     # Utility for logging
-    def log(self, message: str, level: int = log.LogLevel.INFO) -> None:
+    def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
         log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod

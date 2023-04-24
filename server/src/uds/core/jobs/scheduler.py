@@ -40,7 +40,8 @@ from datetime import timedelta
 from django.db import transaction, DatabaseError, connections
 from django.db.models import Q
 
-from uds.models import Scheduler as DBScheduler, getSqlDatetime
+from uds.models import Scheduler as DBScheduler
+from uds.models.util import getSqlDatetime
 from uds.core.util.state import State
 from .jobs_factory import JobsFactory
 

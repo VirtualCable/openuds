@@ -30,7 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from django.db import models
 
-from .util import MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
+from .consts import MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
 
 
 class ActorToken(models.Model):

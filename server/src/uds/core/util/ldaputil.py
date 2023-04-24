@@ -25,7 +25,7 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
@@ -80,9 +80,7 @@ def connection(
     timeout: int = 3,
     debug: bool = False,
     verify_ssl: bool = False,
-    certificate: typing.Optional[
-        str
-    ] = None,  # Content of the certificate, not the file itself
+    certificate: typing.Optional[str] = None,  # Content of the certificate, not the file itself
 ) -> typing.Any:
     """
     Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
@@ -114,14 +112,10 @@ def connection(
         certificate = (certificate or '').strip()
 
         if ssl:
-            if (
-                certificate and verify_ssl
-            ):  # If not verify_ssl, we don't need the certificate
+            if certificate and verify_ssl:  # If not verify_ssl, we don't need the certificate
                 # Create a semi-temporary ca file, with the content of the certificate
                 # The name is from the host, so we can ovwerwrite it if needed
-                cert_filename = os.path.join(
-                    tempfile.gettempdir(), f'ldap-cert-{host}.pem'
-                )
+                cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
                 with open(cert_filename, 'w', encoding='utf8') as f:
                     f.write(certificate)
                 l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # type: ignore
@@ -162,7 +156,7 @@ def getAsDict(
     logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
     if attrList:
-        attrList = list(attrList)   # Ensures iterable is a list
+        attrList = list(attrList)  # Ensures iterable is a list
 
     res = None
     try:

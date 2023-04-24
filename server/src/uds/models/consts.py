@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
@@ -27,44 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from datetime import timedelta
-import time
-import logging
+import typing
+from datetime import datetime
+from time import mktime
 
-from django.db import transaction
+NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
 
-from uds.models import Scheduler
-from uds.models.util import getSqlDatetime
-from uds.core.util.state import State
-from uds.core.jobs import Job
-
-logger = logging.getLogger(__name__)
-
-MAX_EXECUTION_MINUTES = 15  # Minutes
-
-
-class SchedulerHousekeeping(Job):
-    """
-    Ensures no task is executed for more than 15 minutes
-    """
-
-    frecuency = 301  # Frecuncy for this job
-    friendly_name = 'Scheduler house keeping'
-
-    def run(self) -> None:
-        """
-        Look for "hanged" scheduler tasks and reschedule them
-        """
-        since = getSqlDatetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
-        for _ in range(3):  # Retry three times in case of lockout error
-            try:
-                with transaction.atomic():
-                    Scheduler.objects.select_for_update(skip_locked=True).filter(
-                        last_execution__lt=since, state=State.RUNNING
-                    ).update(owner_server='', state=State.FOR_EXECUTE)
-                break
-            except Exception:
-                logger.info('Retrying Scheduler cleanup transaction')
-                time.sleep(1)
+# Max ip v6 string length representation, allowing ipv4 mapped addresses
+MAX_IPV6_LENGTH: typing.Final[int] = 45
+MAX_DNS_NAME_LENGTH: typing.Final[int] = 255

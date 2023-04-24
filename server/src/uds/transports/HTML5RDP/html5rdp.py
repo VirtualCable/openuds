@@ -41,6 +41,7 @@ from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers.crypto import CryptoManager
 from uds import models
+from uds.models.util import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -473,7 +474,7 @@ class HTML5RDPTransport(transports.Transport):
                 + '_'
                 + sanitize(user.name)
                 + '/'
-                + models.getSqlDatetime().strftime('%Y%m%d-%H%M')
+                + getSqlDatetime().strftime('%Y%m%d-%H%M')
             )
             params['create-recording-path'] = 'true'
 

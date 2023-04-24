@@ -33,7 +33,7 @@ import typing
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 
-from .util import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
+from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
 
 
 class TunnelToken(models.Model):

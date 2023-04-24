@@ -30,10 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
-
-# Utility imports
-from .util import getSqlDatetime, getSqlDatetimeAsUnix, NEVER, NEVER_UNIX
 
 # Imports all models so they are available for migrations, etc..
 from .managed_object_model import ManagedObjectModel
@@ -114,5 +110,3 @@ from .tunnel_token import TunnelToken
 from .notifications import Notification, Notifier, LogLevel
 # Multi factor authentication
 from .mfa import MFA
-
-logger = logging.getLogger(__name__)

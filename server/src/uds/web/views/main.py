@@ -42,8 +42,6 @@ from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from django.views.decorators.cache import never_cache
-
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
@@ -56,6 +54,7 @@ from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas
 from uds import models
+from uds.models.util import getSqlDatetimeAsUnix
 
 
 
@@ -121,7 +120,7 @@ def login(
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
             if loginResult.user.manager.getType().providesMfa() and loginResult.user.manager.mfa:
-                authInstance = loginResult.user.manager.getInstance()
+                # authInstance = loginResult.user.manager.getInstance()
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -198,7 +197,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
     # Get validity duration
     validity = mfaProvider.validity*60
-    now = models.getSqlDatetimeAsUnix()
+    now = getSqlDatetimeAsUnix()
     start_time = request.session.get('mfa_start_time', now)
 
     # If mfa process timed out, we need to start login again
@@ -212,11 +211,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
     if not mfaIdentifier:
         emtpyIdentifiedAllowed = mfaInstance.emptyIndentifierAllowedToLogin(request)
-        if emtpyIdentifiedAllowed == True:
+        # can be True, False or None
+        if emtpyIdentifiedAllowed is True:
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
-        elif emtpyIdentifiedAllowed == False:
+        if emtpyIdentifiedAllowed is False:
             # Not allowed to login, redirect to login error page
             logger.warning(
                 'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',

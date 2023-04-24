@@ -33,7 +33,8 @@ import typing
 
 from uds.core import jobs
 
-from uds.models import Provider, getSqlDatetimeAsUnix
+from uds.models import Provider
+from uds.models.util import getSqlDatetimeAsUnix
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from . import provider

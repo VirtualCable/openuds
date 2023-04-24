@@ -42,8 +42,8 @@ from uds.models import (
     ServicePoolGroup,
     MetaPool,
     TicketStore,
-    getSqlDatetime,
 )
+from uds.models.util import getSqlDatetime
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
 from uds.core.managers.user_service import UserServiceManager
@@ -111,9 +111,7 @@ def _serviceInfo(
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
-) -> typing.Dict[
-    str, typing.Any
-]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+) -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
 
     Arguments:
@@ -170,9 +168,7 @@ def getServicesData(
                 ):
                     yield t
             except Exception as e:
-                logger.warning(
-                    'Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e
-                )
+                logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
 
     def buildMetaTransports(
         transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
@@ -199,9 +195,7 @@ def getServicesData(
 
         inAll: typing.Optional[typing.Set[str]] = None
         tmpSet: typing.Set[str]
-        if (
-            meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT
-        ):  # If meta.use_common_transports
+        if meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT:  # If meta.use_common_transports
             # only keep transports that are in ALL members
             for member in meta.members.all().order_by('priority'):
                 tmpSet = set()
@@ -253,9 +247,7 @@ def getServicesData(
                             {
                                 'id': 'meta',
                                 'name': 'meta',
-                                'link': html.udsAccessLink(
-                                    request, 'M' + meta.uuid, None  # type: ignore
-                                ),
+                                'link': html.udsAccessLink(request, 'M' + meta.uuid, None),  # type: ignore
                                 'priority': 0,
                             }
                         ]
@@ -273,9 +265,7 @@ def getServicesData(
         # If no usable pools, this is not visible
         if metaTransports:
             group: typing.MutableMapping[str, typing.Any] = (
-                meta.servicesPoolGroup.as_dict
-                if meta.servicesPoolGroup
-                else ServicePoolGroup.default().as_dict
+                meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
             )
 
             services.append(
@@ -315,19 +305,12 @@ def getServicesData(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
             typeTrans = t.getType()
-            if (
-                typeTrans
-                and t.validForIp(request.ip)
-                and typeTrans.supportsOs(osType)
-                and t.validForOs(osType)
-            ):
+            if typeTrans and t.validForIp(request.ip) and typeTrans.supportsOs(osType) and t.validForOs(osType):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
                     link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
-                trans.append(
-                    {'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority}
-                )
+                trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
 
         # If empty transports, do not include it on list
         if not trans:
@@ -341,9 +324,7 @@ def getServicesData(
         #         in_use = ads.in_use
 
         group = (
-            sPool.servicesPoolGroup.as_dict
-            if sPool.servicesPoolGroup
-            else ServicePoolGroup.default().as_dict
+            sPool.servicesPoolGroup.as_dict if sPool.servicesPoolGroup else ServicePoolGroup.default().as_dict
         )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
@@ -355,9 +336,7 @@ def getServicesData(
         )
         # tbr = False
         if toBeReplacedDate:
-            toBeReplaced = formats.date_format(
-                toBeReplacedDate, 'SHORT_DATETIME_FORMAT'
-            )
+            toBeReplaced = formats.date_format(toBeReplacedDate, 'SHORT_DATETIME_FORMAT')
             toBeReplacedTxt = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
             ).format(toBeReplacedDate)
@@ -385,9 +364,7 @@ def getServicesData(
                 is_meta=False,
                 name=datator(sPool.name),
                 visual_name=datator(
-                    sPool.visual_name.replace('{use}', use_percent).replace(
-                        '{total}', maxDeployed
-                    )
+                    sPool.visual_name.replace('{use}', use_percent).replace('{total}', maxDeployed)
                 ),
                 description=sPool.comments,
                 group=group,
@@ -408,9 +385,7 @@ def getServicesData(
     # logger.debug('Services: %s', services)
 
     # Sort services and remove services with no transports...
-    services = [
-        s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']
-    ]
+    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]
 
     autorun = False
     if (
@@ -473,9 +448,10 @@ def enableService(
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
         # error += ' (code {0:04X})'.format(e.code)
-        error = gettext(
-            'Your service is being created, please, wait for a few seconds while we complete it.)'
-        ) + f'({e.code*25}%)'
+        error = (
+            gettext('Your service is being created, please, wait for a few seconds while we complete it.)')
+            + f'({e.code*25}%)'
+        )
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)

@@ -30,22 +30,76 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
-from datetime import datetime
+import logging
+from threading import Lock
+import datetime
 from time import mktime
 
 from django.db import connection, models
 
+from . import consts
+
+# pylint: disable=unused-import   # For compat with old code
+
 logger = logging.getLogger(__name__)
 
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
+CACHE_TIME_TIMEOUT = 60 # Every 60 second, refresh the time from database (to avoid drifts)
 
-# Max ip v6 string length representation, allowing ipv4 mapped addresses
-MAX_IPV6_LENGTH: typing.Final = 45
-MAX_DNS_NAME_LENGTH: typing.Final = 255
 
+# pylint: disable=too-few-public-methods
+class TimeTrack:
+    """
+    Reduces the queries to database to get the current time
+    keeping it cached for CACHE_TIME_TIMEOUT seconds (and adjusting it based on local time)
+    """
+    lock: typing.ClassVar[Lock] = Lock()
+    last_check: typing.ClassVar[datetime.datetime] = consts.NEVER
+    cached_time: typing.ClassVar[datetime.datetime] = consts.NEVER
+    hits: typing.ClassVar[int] = 0
+    misses: typing.ClassVar[int] = 0
+
+    @staticmethod
+    def _fetchSqlDatetime() -> datetime.datetime:
+        """Returns the current date/time of the database server.
+
+        We use this time as method to keep all operations betwen different servers in sync.
+
+        We support get database datetime for:
+        * mysql
+        * sqlite
+
+        Returns:
+            datetime: Current datetime of the database server
+        """
+        if connection.vendor in ('mysql', 'microsoft'):
+            cursor = connection.cursor()
+            sentence = (
+                'SELECT CURRENT_TIMESTAMP(4)' if connection.vendor == 'mysql' else 'SELECT CURRENT_TIMESTAMP'
+            )
+            cursor.execute(sentence)
+            date = (cursor.fetchone() or [datetime.datetime.now()])[0]
+        else:
+            date = (
+                datetime.datetime.now()
+            )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
+
+        return date
+
+    @staticmethod
+    def getSqlDatetime() -> datetime.datetime:
+        now = datetime.datetime.now()
+        with TimeTrack.lock:
+            if now - TimeTrack.last_check > datetime.timedelta(seconds=CACHE_TIME_TIMEOUT):
+                TimeTrack.last_check = now
+                TimeTrack.misses += 1
+                TimeTrack.cached_time = TimeTrack._fetchSqlDatetime()
+            else:
+                TimeTrack.hits += 1
+        return TimeTrack.cached_time + (now - TimeTrack.last_check)
+
+
+# pylint: disable=too-few-public-methods
 class UnsavedForeignKey(models.ForeignKey):
     """
     From 1.8 of django, we need to point to "saved" objects.
@@ -58,33 +112,9 @@ class UnsavedForeignKey(models.ForeignKey):
     # allow_unsaved_instance_assignment = True
 
 
-def getSqlDatetime() -> datetime:
-    """Returns the current date/time of the database server.
-
-    We use this time as method to keep all operations betwen different servers in sync.
-
-    We support get database datetime for:
-      * mysql
-      * sqlite
-
-    Returns:
-        datetime: Current datetime of the database server
-    """
-    if connection.vendor in ('mysql', 'microsoft'):
-        cursor = connection.cursor()
-        sentence = (
-            'SELECT CURRENT_TIMESTAMP(4)'
-            if connection.vendor == 'mysql'
-            else 'SELECT CURRENT_TIMESTAMP'
-        )
-        cursor.execute(sentence)
-        date = (cursor.fetchone() or [datetime.now()])[0]
-    else:
-        date = (
-            datetime.now()
-        )  # If not know how to get database datetime, returns local datetime (this is fine for sqlite, which is local)
-
-    return date
+def getSqlDatetime() -> datetime.datetime:
+    """Returns the current date/time of the database server."""
+    return TimeTrack.getSqlDatetime()
 
 
 def getSqlDatetimeAsUnix() -> int:
@@ -94,4 +124,3 @@ def getSqlDatetimeAsUnix() -> int:
         int: Unix timestamp
     """
     return int(mktime(getSqlDatetime().timetuple()))
-

@@ -36,7 +36,7 @@ from django.db import models
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
 from .util import getSqlDatetime
-from .util import NEVER
+from .consts import NEVER
 
 logger = logging.getLogger(__name__)
 

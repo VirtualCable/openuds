@@ -54,8 +54,6 @@ logger = logging.getLogger(__name__)
 CLIENT_VERSION = UDS_VERSION
 
 
-
-
 # Enclosed methods under /client path
 class Client(Handler):
     """
@@ -92,9 +90,10 @@ class Client(Handler):
             if errorCode != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
-                error = _(
-                    'Your service is being created. Please, wait while we complete it'
-                ) + f' ({int(errorCode)*25}%)'
+                error = (
+                    _('Your service is being created. Please, wait while we complete it')
+                    + f' ({int(errorCode)*25}%)'
+                )
 
             res['error'] = error
             res['retryable'] = '1' if retryable else '0'
@@ -112,7 +111,11 @@ class Client(Handler):
     def process(self, ticket: str, scrambler: str) -> typing.Dict[str, typing.Any]:
         userService: typing.Optional['UserService'] = None
         hostname = self._params.get('hostname', '')  # Or if hostname is not included...
+        version = self._params.get('version', '0.0.0')
         srcIp = self._request.ip
+
+        if version < REQUIRED_CLIENT_VERSION:
+            return Client.result(error='Client version not supported.\n Please, upgrade it.')
 
         # Ip is optional,
         if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool() is True:
@@ -167,7 +170,7 @@ class Client(Handler):
             if not transportInstance:
                 raise Exception('No transport instance!!!')
 
-            transport_script =transportInstance.getEncodedTransportScript(
+            transport_script = transportInstance.getEncodedTransportScript(
                 userService,
                 transport,
                 ip,
@@ -189,12 +192,8 @@ class Client(Handler):
             )
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            TicketStore.revalidate(
-                ticket, 20
-            )  # Retry will be in at most 5 seconds, so 20 is fine :)
-            return Client.result(
-                error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
-            )
+            TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
+            return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))
@@ -219,15 +218,20 @@ class Client(Handler):
                 {
                     'availableVersion': CLIENT_VERSION,
                     'requiredVersion': REQUIRED_CLIENT_VERSION,
-                    'downloadUrl': self._request.build_absolute_uri(
-                        reverse('page.client-download')
-                    ),
+                    'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
             )
 
-        return match(self._args,
-          error,  # In case of error, raises RequestError
+        return match(
+            self._args,
+            error,  # In case of error, raises RequestError
             ((), noargs),  # No args, return version
             (('test',), self.test),  # Test request, returns "Correct"
-            (('<ticket>', '<crambler>',), self.process),  # Process request, needs ticket and scrambler
+            (
+                (
+                    '<ticket>',
+                    '<crambler>',
+                ),
+                self.process,
+            ),  # Process request, needs ticket and scrambler
         )

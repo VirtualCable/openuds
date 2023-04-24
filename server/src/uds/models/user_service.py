@@ -44,7 +44,8 @@ from uds.models.uuid_model import UUIDModel
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
-from uds.models.util import NEVER, getSqlDatetime, MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
+from uds.models.util import getSqlDatetime
+from uds.models.consts import NEVER, MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -637,7 +638,7 @@ class UserService(UUIDModel):
         ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging
-    def log(self, message: str, level: int = log.LogLevel.INFO) -> None:
+    def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
         log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     def testServer(self, host, port, timeout=4) -> bool:

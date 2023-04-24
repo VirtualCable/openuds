@@ -40,7 +40,6 @@ import bitarray
 
 from django.core.cache import caches
 
-from uds.models.util import NEVER
 from uds.models.util import getSqlDatetime
 
 from uds.models.calendar import Calendar

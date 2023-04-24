@@ -41,7 +41,7 @@ from uds.core.util.state import State
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
-from .util import NEVER
+from .consts import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

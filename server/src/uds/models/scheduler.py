@@ -39,7 +39,7 @@ from uds.core.util.state import State
 from uds.core.environment import Environment
 from uds.core import jobs
 
-from .util import NEVER, MAX_DNS_NAME_LENGTH
+from .consts import NEVER, MAX_DNS_NAME_LENGTH
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ class Scheduler(models.Model):
         return None
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to remove environment for sheduled task
         """

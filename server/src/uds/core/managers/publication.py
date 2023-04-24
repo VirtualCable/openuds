@@ -44,7 +44,8 @@ from uds.core.services.exceptions import PublishException
 from uds.core.util.state import State
 from uds.core.util import log
 
-from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
+from uds.models import ServicePoolPublication, ServicePool
+from uds.models.util import getSqlDatetime
 
 from uds.core.util import singleton
 
@@ -342,7 +343,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                 logger.info('Double cancel invoked for a publication')
                 log.doLog(
                     publication.deployed_service,
-                    log.WARN,
+                    log.LogLevel.WARNING,
                     'Forced cancel on publication, you must check uncleaned resources manually',
                     log.LogSource.ADMIN,
                 )

@@ -36,7 +36,8 @@ import typing
 from django.db import transaction
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.config import GlobalConfig
-from uds.models import UserService, getSqlDatetime
+from uds.models import UserService
+from uds.models.util import getSqlDatetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 
