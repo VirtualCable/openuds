@@ -134,6 +134,11 @@ class Client(Handler):
                 self._args
             )  # If more than 2 args, got an error.  pylint: disable=unbalanced-tuple-unpacking
             hostname = self._params['hostname']  # Or if hostname is not included...
+
+            version = self._params.get('version', '0.0.0')
+            if version < '3.6.0':
+                return Client.result(error='Client version not supported.\n Please, upgrade it.')
+
             srcIp = self._request.ip
 
             # Ip is optional,
