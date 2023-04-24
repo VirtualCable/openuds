@@ -39,6 +39,8 @@ import re
 
 from django.apps import apps
 
+from systemd import journal
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -195,16 +197,22 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.notifications import NotificationsManager
 
-        if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
-            try:
-                logLevel = LogLevel.fromInt(record.levelno * 1000)
-                UDSLogHandler.emiting = True
-                msg = self.format(record)
-                # Remove date and time from message, as it will be stored on database
-                msg = DATETIME_PATTERN.sub('', msg)
+        def getMsg(*, removeLevel: bool) -> str:
+            msg = self.format(record)
+            # Remove date and time from message, as it will be stored on database
+            msg = DATETIME_PATTERN.sub('', msg)
+            if removeLevel:
                 # Remove log level from message, as it will be stored on database
                 msg = LOGLEVEL_PATTERN.sub('', msg)
+            return msg
+
+        if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
+            try:
+                # Convert to own loglevel, basically multiplying by 1000
+                logLevel = LogLevel.fromInt(record.levelno * 1000)
+                UDSLogHandler.emiting = True
                 identificator = os.path.basename(self.baseFilename)
+                msg = getMsg(removeLevel=True)
                 if record.levelno >= logging.WARNING:
                     # Remove traceback from message, as it will be stored on database
                     NotificationsManager().notify('log', identificator, logLevel, msg.splitlines()[0])
@@ -213,5 +221,21 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 pass
             finally:
                 UDSLogHandler.emiting = False
+
+        # Send warning and error messages to systemd journal
+        if record.levelno >= logging.WARNING:
+            msg = getMsg(removeLevel=False)
+            # Send to systemd journaling, transforming identificator and priority
+            identificator = 'UDS-' + os.path.basename(self.baseFilename).split('.')[0]
+            # convert syslog level to systemd priority
+            # Systemd priority levels are:
+            #  "emerg" (0), "alert" (1), "crit" (2), "err" (3),
+            #  "warning" (4), "notice" (5), "info" (6), "debug" (7)
+            # Log levels are:
+            # "CRITICAL" (50), "ERROR" (40), "WARNING" (30), "INFO" (20), "DEBUG" (10), "NOTSET" (0)
+            # Note, priority will be always 4 (WARNING), 3(ERROR), or 2(CRITICAL)
+            priority = 4 if record.levelno == logging.WARNING else 3 if record.levelno == logging.ERROR else 2
+
+            journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)
 
         return super().emit(record)

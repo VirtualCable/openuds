@@ -302,7 +302,7 @@ LOGGING = {
         #},
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + LOGFILE,
             'mode': 'a',
@@ -322,7 +322,7 @@ LOGGING = {
         },
         'servicesFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + SERVICESFILE,
             'mode': 'a',
@@ -332,7 +332,7 @@ LOGGING = {
         },
         'workersFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + WORKERSFILE,
             'mode': 'a',
@@ -342,7 +342,7 @@ LOGGING = {
         },
         'authFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'auth',
             'filename': LOGDIR + '/' + AUTHFILE,
             'mode': 'a',
@@ -352,7 +352,7 @@ LOGGING = {
         },
         'useFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'use',
             'filename': LOGDIR + '/' + USEFILE,
             'mode': 'a',
@@ -362,7 +362,7 @@ LOGGING = {
         },
         'traceFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'trace',
             'filename': LOGDIR + '/' + TRACEFILE,
             'mode': 'a',
@@ -372,7 +372,7 @@ LOGGING = {
         },
         'operationsFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'trace',
             'filename': LOGDIR + '/' + OPERATIONSFILE,
             'mode': 'a',

@@ -138,8 +138,8 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         if toDelete.data:
             try:
                 s = toDelete.getInstance()
-                s.destroy()
-                s.env.clearRelatedData()
+                s.destroy()  # Invokes the destruction of "related own data"
+                s.env.clearRelatedData()  # Clears related data, such as storage, cache, etc...
             except Exception as e:
                 logger.error(
                     'Error processing deletion of notifier %s: %s (forced deletion)',
@@ -147,7 +147,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
                     e,
                 )
 
-        logger.debug('Before delete mfa provider %s', toDelete)
+        logger.debug('Before delete notification provider %s', toDelete)
 
 
 # : Connects a pre deletion signal to OS Manager
