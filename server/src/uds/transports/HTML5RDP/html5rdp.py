@@ -380,6 +380,11 @@ class HTML5RDPTransport(transports.Transport):
         username = proc[0]
 
         azureAd = False
+        if self.fixedDomain.value != '':
+            if self.fixedDomain.value.lower() == 'azuread':
+                azureAd = True
+            else:
+                domain = self.fixedDomain.value
 
         if self.fixedDomain.value != '':
             domain = self.fixedDomain.value
@@ -393,6 +398,10 @@ class HTML5RDPTransport(transports.Transport):
         if '.' in domain:  # FQDN domain form
             username = username + '@' + domain
             domain = ''
+
+        # If AzureAD, include it on username
+        if azureAd:
+            username = 'AzureAD\\' + username
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
