@@ -35,7 +35,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from . import exceptions
 from . import types
 
-from .user_deployment import UserDeployment
+from .user_service import UserDeployment
 from .publication import Publication
 from .service import Service
 from .provider import ServiceProvider

@@ -135,7 +135,7 @@ class StatsCounters(models.Model):
             q = q[: kwargs['limit']]
 
         for i in q.values('group_by_stamp', 'value'):
-            yield (i['group_by_stamp'], i['value'])
+            yield (int(i['group_by_stamp']), i['value'])
 
     def __str__(self):
         return f'{datetime.datetime.fromtimestamp(self.stamp)} - {self.owner_id}:{self.owner_type}:{self.counter_type} {self.value}'

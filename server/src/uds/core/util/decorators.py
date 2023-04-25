@@ -130,6 +130,14 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 
 def deprecatedClassValue(newVarName: str) -> typing.Callable:
+    """
+    Decorator to make a class value deprecated and warn about it
+
+    Example:
+        @deprecatedClassValue('other.varname')
+        def varname(self):  # It's like a property
+            return self._varname  # Returns old value
+    """
     class innerDeprecated:
         fget: typing.Callable
         new_var_name: str

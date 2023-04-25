@@ -149,9 +149,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._service = kwargs[
-            'service'
-        ]  # Raises an exception if service is not included. Parent
+        self._service = kwargs['service']  # Raises an exception if service is not included. Parent
         self._publication = kwargs.get('publication', None)
         self._osmanager = kwargs.get('osmanager', None)
         self._dbService = kwargs.get('dbservice', None)
@@ -229,7 +227,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._dbService
 
-    def doLog(self, level: int, message: str) -> None:
+    def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this user deployment
         """
@@ -271,9 +269,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def notifyReadyFromOsManager(
-        self, data: typing.Any  # pylint: disable=unused-argument
-    ) -> str:
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:  # pylint: disable=unused-argument
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -389,9 +385,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception(
-            f'Base deploy for cache invoked! for class {self.__class__.__name__}'
-        )
+        raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
 
     def deployForUser(self, user: 'models.User') -> str:
         """
@@ -426,9 +420,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'Base deploy for user invoked! for class {self.__class__.__name__}'
-        )
+        raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
     def checkState(self) -> str:
         """
@@ -453,9 +445,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'Base check state invoked! for class {self.__class__.__name__}'
-        )
+        raise NotImplementedError(f'Base check state invoked! for class {self.__class__.__name__}')
 
     def finish(self) -> None:
         """
@@ -561,9 +551,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'destroy method for class {self.__class__.__name__} not provided!'
-        )
+        raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
     def cancel(self) -> str:
         """

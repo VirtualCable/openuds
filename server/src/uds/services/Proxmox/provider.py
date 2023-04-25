@@ -154,7 +154,7 @@ class ProxmoxProvider(
             'Range of valid macs for created machines. Any value accepted by Proxmox is valid here.'
         ),
         required=True,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
 

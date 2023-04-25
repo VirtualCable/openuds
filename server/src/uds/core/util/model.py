@@ -89,7 +89,10 @@ class TimeTrack:
     def getSqlDatetime() -> datetime.datetime:
         now = datetime.datetime.now()
         with TimeTrack.lock:
-            if now - TimeTrack.last_check > datetime.timedelta(seconds=CACHE_TIME_TIMEOUT):
+            diff = now - TimeTrack.last_check
+            # If in last_check is in the future, or more than CACHE_TIME_TIMEOUT seconds ago, we need to refresh
+            # Future is possible if we have a clock update, or a big drift
+            if diff > datetime.timedelta(seconds=CACHE_TIME_TIMEOUT) or diff < datetime.timedelta(seconds=0):
                 TimeTrack.last_check = now
                 TimeTrack.misses += 1
                 TimeTrack.cached_time = TimeTrack._fetchSqlDatetime()
@@ -112,7 +115,9 @@ class UnsavedForeignKey(models.ForeignKey):
 
 
 def getSqlDatetime() -> datetime.datetime:
-    """Returns the current date/time of the database server."""
+    """Returns the current date/time of the database server.
+    Has been updated to use TimeTrack, which reduces the queries to database to get the current time
+    """
     return TimeTrack.getSqlDatetime()
 
 

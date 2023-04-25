@@ -42,7 +42,7 @@ from uds.core.util import log
 
 from . import types
 from .publication import Publication
-from .user_deployment import UserDeployment
+from .user_service import UserDeployment
 
 if typing.TYPE_CHECKING:
     from uds.core import services
@@ -394,7 +394,7 @@ class Service(Module):
             self.storage.delete('__nfo_' + id)
         return value
 
-    def doLog(self, level: int, message: str) -> None:
+    def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
