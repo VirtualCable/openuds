@@ -391,6 +391,10 @@ class HTML5RDPTransport(transports.Transport):
             username = username + '@' + domain
             domain = ''
 
+        # If AzureAD, include it on username
+        if azureAd:
+            username = 'AzureAD\\' + username
+
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 

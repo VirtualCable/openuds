@@ -408,6 +408,10 @@ class BaseRDPTransport(transports.Transport):
         if '\\' in username:
             domain, username = username.split('\\')
 
+        # If AzureAD, include it on username
+        if azureAd:
+            username = 'AzureAD\\' + username
+
         return {
             'protocol': self.protocol,
             'username': username,
