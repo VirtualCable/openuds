@@ -35,7 +35,7 @@ import logging
 
 from django.db import models, transaction
 
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

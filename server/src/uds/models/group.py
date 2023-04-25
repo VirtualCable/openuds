@@ -41,7 +41,7 @@ from uds.core.util import log
 from .uuid_model import UUIDModel
 from .authenticator import Authenticator
 from .user import User
-from .util import UnsavedForeignKey, getSqlDatetime
+from ..core.util.model import UnsavedForeignKey, getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

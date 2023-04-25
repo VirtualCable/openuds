@@ -44,7 +44,7 @@ from uds.core.util.calendar import CalendarChecker
 
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 from .image import Image
 from .service_pool_group import ServicePoolGroup

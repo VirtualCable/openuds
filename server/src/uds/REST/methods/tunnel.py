@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds import models
-from uds.models.util import getSqlDatetimeAsUnix, getSqlDatetime
+from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource

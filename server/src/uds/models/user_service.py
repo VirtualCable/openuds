@@ -44,7 +44,7 @@ from uds.models.uuid_model import UUIDModel
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.models.consts import NEVER, MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
 
 # Not imported at runtime, just for type checking

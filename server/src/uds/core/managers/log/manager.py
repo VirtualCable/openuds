@@ -33,7 +33,7 @@
 import typing
 
 from uds.core.util import singleton
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.models.log import Log
 
 from .objects import MODEL_TO_TYPE, LogObjectType

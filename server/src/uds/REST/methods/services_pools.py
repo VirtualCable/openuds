@@ -45,7 +45,7 @@ from uds.models import (
     Account,
     User,
 )
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,

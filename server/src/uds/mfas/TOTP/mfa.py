@@ -39,7 +39,7 @@ import qrcode
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core import mfas
 from uds.core.ui import gui
 

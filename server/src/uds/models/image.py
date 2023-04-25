@@ -41,7 +41,7 @@ from django.http import HttpResponse
 
 
 from .uuid_model import UUIDModel
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

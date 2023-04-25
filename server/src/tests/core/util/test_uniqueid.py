@@ -37,7 +37,7 @@ from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.unique_name_generator import UniqueNameGenerator
 
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 from ...utils.test import UDSTestCase
 

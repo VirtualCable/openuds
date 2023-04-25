@@ -36,7 +36,7 @@ import typing
 from uds.core.managers import publicationManager
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePoolPublication
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.services.exceptions import PublishException
 from uds.core.util.state import State
 from uds.core.jobs import Job

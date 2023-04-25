@@ -54,7 +54,7 @@ from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas
 from uds import models
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 
 

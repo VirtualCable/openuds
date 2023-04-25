@@ -41,7 +41,7 @@ from django.db.models import Q
 from .uuid_model import UUIDModel
 from .user import User
 from .group import Group
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 

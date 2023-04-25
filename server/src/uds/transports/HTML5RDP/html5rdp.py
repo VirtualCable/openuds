@@ -41,7 +41,7 @@ from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers.crypto import CryptoManager
 from uds import models
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

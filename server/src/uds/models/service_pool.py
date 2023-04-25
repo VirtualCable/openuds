@@ -53,7 +53,7 @@ from .service_pool_group import ServicePoolGroup
 from .account import Account
 
 from .consts import NEVER
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 # Not imported at runtime, just for type checking

@@ -38,7 +38,7 @@ from uds.core import services
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 from .jobs import ProxmoxDeferredRemoval
 from . import client

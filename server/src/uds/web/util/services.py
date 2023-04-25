@@ -43,7 +43,7 @@ from uds.models import (
     MetaPool,
     TicketStore,
 )
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
 from uds.core.managers.user_service import UserServiceManager

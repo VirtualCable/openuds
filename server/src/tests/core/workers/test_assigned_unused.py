@@ -33,7 +33,7 @@ import typing
 import datetime
 
 from uds import models
-from uds.models import util
+from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
 from uds.core.util.state import State
@@ -64,7 +64,7 @@ class AssignedAndUnusedTest(UDSTestCase):
         # Set half the userServices to a long-ago state, should be removed
         for i, us in enumerate(self.userServices):
             if i%2 == 0:
-                us.state_date = util.getSqlDatetime() - datetime.timedelta(seconds=602)
+                us.state_date = model.getSqlDatetime() - datetime.timedelta(seconds=602)
                 us.save(update_fields=['state_date'])
         cleaner.run()
         self.assertEqual(models.UserService.objects.filter(state=State.REMOVABLE).count(), count + len(self.userServices)//2)

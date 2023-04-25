@@ -5,7 +5,6 @@ import django.db.models.deletion
 import uds.core.util.model
 import uds.models.notifications
 import uds.models.user_service_session
-import uds.models.util
 
 
 # Remove ServicePools with null service field
@@ -141,7 +140,7 @@ class Migration(migrations.Migration):
                         max_length=128,
                     ),
                 ),
-                ("start", models.DateTimeField(default=uds.models.util.getSqlDatetime)),
+                ("start", models.DateTimeField(default=uds.core.util.model.getSqlDatetime)),
                 ("end", models.DateTimeField(blank=True, null=True)),
             ],
             options={

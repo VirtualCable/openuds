@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext, gettext_lazy as _
 from django.db import transaction
 
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import net

@@ -42,7 +42,7 @@ from django.db import transaction, OperationalError
 from django.db.models import Q
 
 from uds.models import DelayedTask as DBDelayedTask
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.environment import Environment
 from uds.core.util import singleton
 

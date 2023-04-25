@@ -36,7 +36,7 @@ import typing
 
 from uds.core import jobs
 from uds import models
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 from .provider import OGProvider
 from .service import OGService

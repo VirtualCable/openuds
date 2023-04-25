@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds import models
-from uds.models import util
+from uds.core.util import model
 from uds.core.util.state import State
 from uds.core.util.stats import counters
 from uds.core.managers.stats import StatsManager
@@ -58,7 +58,7 @@ class DeployedServiceStatsCollector(Job):
         servicePoolsToCheck: typing.Iterable[
             models.ServicePool
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
-        stamp = util.getSqlDatetime()
+        stamp = model.getSqlDatetime()
         # Global counters
         totalAssigned, totalInUse, totalCached = 0, 0, 0
         for servicePool in servicePoolsToCheck:

@@ -38,7 +38,7 @@ from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
 
 from uds.models.unique_id import UniqueId
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 if typing.TYPE_CHECKING:
     from django.db import models

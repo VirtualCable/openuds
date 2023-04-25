@@ -36,7 +36,7 @@ from django.db import models
 
 from uds.core.managers.crypto import CryptoManager
 from .user_service import UserService
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)

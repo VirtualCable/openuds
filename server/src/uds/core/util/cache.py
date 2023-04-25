@@ -37,7 +37,7 @@ import logging
 
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.util import serializer
 
 from .hash import hash_key

@@ -37,7 +37,7 @@ import typing
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
 from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
-from uds.models.util import getSqlDatetime, getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
 
 if typing.TYPE_CHECKING:
     from django.db import models

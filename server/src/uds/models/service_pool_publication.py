@@ -42,7 +42,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 
 from .service_pool import ServicePool
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 from .uuid_model import UUIDModel
 
 

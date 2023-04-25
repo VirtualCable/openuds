@@ -56,7 +56,7 @@ from uds.models import (
     User,
     ServicePoolPublication,
 )
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core import services, transports
 from uds.core.util import singleton
 from uds.core.util.stats import events

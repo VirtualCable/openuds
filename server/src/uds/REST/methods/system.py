@@ -37,7 +37,7 @@ import logging
 import typing
 
 from uds import models
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 from uds.core.util.model import processUuid
 from uds.core.util.stats import counters

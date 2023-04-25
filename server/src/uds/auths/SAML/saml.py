@@ -45,7 +45,7 @@ from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from django.utils.translation import gettext_noop as _, gettext
 
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.ui import gui
 from uds.core import auths, exceptions
 from uds.core.managers.crypto import CryptoManager

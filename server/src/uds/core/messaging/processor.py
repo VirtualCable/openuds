@@ -36,7 +36,7 @@ import typing
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from .provider import Notifier as NotificationProviderModule, LogLevel
 from .config import DO_NOT_REPEAT
 

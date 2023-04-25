@@ -41,7 +41,7 @@ from uds.models import (
     TicketStore,
 )
 
-from uds.models.util import getSqlDatetimeAsUnix, getSqlDatetime
+from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 
 
 # from uds.core import VERSION

@@ -38,7 +38,7 @@ from uds.core.jobs import Job
 from uds.core.util.config import GlobalConfig
 from uds.core.util.state import State
 from uds.models import ServicePool
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 

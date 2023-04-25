@@ -45,7 +45,7 @@ from uds.core.util.state import State
 from uds.core.util import log
 
 from uds.models import ServicePoolPublication, ServicePool
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 from uds.core.util import singleton
 

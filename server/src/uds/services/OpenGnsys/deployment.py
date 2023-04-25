@@ -37,7 +37,7 @@ from uds.core.services import UserDeployment
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

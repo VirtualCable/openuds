@@ -38,7 +38,7 @@ from django.db import models
 from uds.core.managers.crypto import CryptoManager
 
 from .uuid_model import UUIDModel
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 from .user import User
 from .user_service import UserService
