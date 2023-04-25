@@ -378,8 +378,12 @@ class HTML5RDPTransport(transports.Transport):
             domain = ''
         username = proc[0]
 
+        azureAd = False
         if self.fixedDomain.value != '':
-            domain = self.fixedDomain.value
+            if self.fixedDomain.value.lower() == 'azuread':
+                azureAd = True
+            else:
+                domain = self.fixedDomain.value
 
         if self.useEmptyCreds.isTrue():
             username, password, domain = '', '', ''
