@@ -101,7 +101,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Private key for SSH authentication. If not provided, password authentication is used.'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     sshPassphrase = gui.PasswordField(
         label=_('SSH Private Key Passphrase'),

@@ -190,7 +190,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.MFA_TAB,
+        tab=gui.Tab.MFA,
     )
 
     typeName = _('SimpleLDAP (DEPRECATED)')
