@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 LDAP_RESULT_LIMIT = 100
 
-
+# pylint: disable=too-many-instance-attributes
 class SimpleLDAPAuthenticator(auths.Authenticator):
     host = gui.TextField(
         length=64,
@@ -366,7 +366,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
-        attributes = [i for i in self._userNameAttr.split(',') + [self._userIdAttr]]
+        attributes = self._userNameAttr.split(',') + [self._userIdAttr]
         if self._mfaAttr:
             attributes = attributes + [self._mfaAttr]
 
