@@ -49,11 +49,10 @@ useLogger = logging.getLogger('useLog')
 
 # Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
 # This is the format used by python logging module
-DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(
-    r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *'
-)
+DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
 # Pattern for removing the LOGLEVEL from the log line beginning
 LOGLEVEL_PATTERN: typing.Final[re.Pattern] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
+
 
 class LogLevel(enum.IntEnum):
     OTHER = 10000
@@ -162,9 +161,7 @@ def doLog(
     LogManager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
 
 
-def getLogs(
-    wichObject: typing.Optional['Model'], limit: int = -1
-) -> typing.List[typing.Dict]:
+def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
@@ -193,7 +190,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
     emiting: typing.ClassVar[bool] = False
 
     def emit(self, record: logging.LogRecord) -> None:
-        # To avoid circular imports
+        # To avoid circular imports and loading manager before apps are ready
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.notifications import NotificationsManager
 
@@ -206,6 +203,10 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 msg = LOGLEVEL_PATTERN.sub('', msg)
             return msg
 
+        def notify(msg: str, identificator: str, logLevel: LogLevel) -> None:
+
+            NotificationsManager().notify('log', identificator, logLevel, msg)
+
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
                 # Convert to own loglevel, basically multiplying by 1000
@@ -215,7 +216,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 msg = getMsg(removeLevel=True)
                 if record.levelno >= logging.WARNING:
                     # Remove traceback from message, as it will be stored on database
-                    NotificationsManager().notify('log', identificator, logLevel, msg.splitlines()[0])
+                    notify(msg.splitlines()[0], identificator, logLevel)
                 doLog(None, logLevel, msg, LogSource.LOGS, False, identificator)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass

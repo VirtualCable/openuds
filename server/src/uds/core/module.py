@@ -39,7 +39,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core.ui import UserInterface
+from uds.core.ui.user_interface import UserInterface
 
 from .serializable import Serializable
 from .environment import Environment, Environmentable

@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds.core.util import singleton
-from uds.models.notifications import Notification, LogLevel
+from uds.core.util.log import LogLevel
 
 if typing.TYPE_CHECKING:
     from ..messaging import provider
@@ -54,6 +54,8 @@ class NotificationsManager(metaclass=singleton.Singleton):
         return NotificationsManager()  # Singleton pattern will return always the same instance
 
     def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
+        from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
+
         # logger.debug(
         #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
         # )
