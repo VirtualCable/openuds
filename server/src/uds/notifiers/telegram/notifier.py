@@ -137,7 +137,13 @@ class TelegramNotifier(messaging.Notifier):
         # Done
 
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
-        pass
+        telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
+        logger.debug('Sending telegram message: %s', telegramMsg)
+        # load chatIds
+        chatIds = self.storage.getPickle('chatIds') or []
+        t = telegram.Telegram(self.accessToken.value, self.botname.value)
+        for chatId in chatIds:
+            t.sendMessage(chatId, telegramMsg)
 
     def subscribeUser(self, chatId: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
