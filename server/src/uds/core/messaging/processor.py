@@ -78,15 +78,18 @@ class MessageProcessorThread(BaseThread):
         while self.keepRunning:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
+            sinceSkip = getSqlDatetime() - datetime.timedelta(
+                seconds=DO_NOT_REPEAT.getInt()
+            )
             for n in Notification.getPersistentQuerySet().all():
                 # If there are any other notification simmilar to this on default db, skip it
-                # Simmilar means that group and identificator are present and it has less than DO_NOT_REPEAT seconds
+                # Simmilar means that group, identificator and message are already been logged less than DO_NOT_REPEAT seconds ago
                 # from last time
                 if Notification.objects.filter(
                     group=n.group,
                     identificator=n.identificator,
-                    stamp__gt=getSqlDatetime()
-                    - datetime.timedelta(seconds=DO_NOT_REPEAT.getInt()),
+                    message=n.message,
+                    stamp__gt=sinceSkip,
                 ).exists():
                     # Remove it from the persistent db
                     n.deletePersistent()
@@ -94,10 +97,11 @@ class MessageProcessorThread(BaseThread):
                 # Try to insert into Main DB
                 notify = (
                     not n.processed
-                )  # If it was already processed, the only thing left is to add to maind DB and remove it from persistent
+                )  # If it was already processed, the only thing left to do is to add to main DB and remove it from persistent
                 pk = n.pk
                 n.processed = True
                 try:
+                    # Trick to save it to main DB
                     n.pk = None
                     n.save(using='default')
                     # Delete from Persistent DB, first restore PK

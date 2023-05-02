@@ -628,6 +628,7 @@ class gui:
               # with tooltip "Port (usually 443)" and order 1
               num = gui.NumericField(length=5, label = _('Port'),
                   defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
+                  minVAlue = 1024, maxValue = 65535,
                   required = True)
         """
 
