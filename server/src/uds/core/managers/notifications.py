@@ -69,15 +69,3 @@ class NotificationsManager(metaclass=singleton.Singleton):
         with Notification.atomicPersistent():
             notify = Notification(group=group, identificator=identificator, level=level, message=message)
             Notification.savePersistent(notify)
-
-    def registerGroup(self, group: str) -> None:
-        """
-        Registers a new group.
-        This is used to group notifications
-        """
-
-    def registerIdentificator(self, group: str, identificator: str) -> None:
-        """
-        Registers a new identificator.
-        This is used to identify notifications
-        """
