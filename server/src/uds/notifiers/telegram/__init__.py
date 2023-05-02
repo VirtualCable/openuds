@@ -1,2 +1,2 @@
 # Make notifiers available to the UDS system.
-from .notifier import EmailNotifier
+from .notifier import TelegramNotifier

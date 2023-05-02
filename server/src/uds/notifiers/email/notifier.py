@@ -50,6 +50,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class EmailNotifier(messaging.Notifier):
     """
     Email notifier
@@ -152,7 +153,7 @@ class EmailNotifier(messaging.Notifier):
         # Now check is valid format
         if ':' in hostname:
             host, port = validators.validateHostPortPair(hostname)
-            self.hostname.value = '{}:{}'.format(host, port)
+            self.hostname.value = f'{host}:{port}'
         else:
             host = self.hostname.cleanStr()
             self.hostname.value = validators.validateFqdn(host)
@@ -169,7 +170,7 @@ class EmailNotifier(messaging.Notifier):
             try:
                 # Create message container
                 msg = MIMEMultipart('alternative')
-                msg['Subject'] = '{} - {}'.format(group, identificator)
+                msg['Subject'] = f'{group} - {identificator}'
                 msg['From'] = self.fromEmail.value
                 msg['To'] = self.toEmail.value
 
@@ -180,12 +181,10 @@ class EmailNotifier(messaging.Notifier):
 
                 if self.enableHTML.value:
                     msg.attach(part2)
-                
+
                 smtp.sendmail(self.fromEmail.value, self.toEmail.value, msg.as_string())
             except smtplib.SMTPException as e:
-                logger.error('Error sending email: {}'.format(e))
-
-
+                logger.error('Error sending email: %s', e)
 
     def login(self) -> smtplib.SMTP:
         """
@@ -204,7 +203,10 @@ class EmailNotifier(messaging.Notifier):
             context.verify_mode = ssl.CERT_NONE
             if self.security.value == 'tls':
                 if port:
-                    smtp = smtplib.SMTP(host, port,)
+                    smtp = smtplib.SMTP(
+                        host,
+                        port,
+                    )
                 else:
                     smtp = smtplib.SMTP(host)
                 smtp.starttls(context=context)
@@ -221,5 +223,5 @@ class EmailNotifier(messaging.Notifier):
 
         if self.username.value and self.password.value:
             smtp.login(self.username.value, self.password.value)
-        
+
         return smtp
