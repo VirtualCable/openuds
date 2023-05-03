@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2011-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -125,8 +125,7 @@ class RDPFile:
                 params.append('/microphone:sys:alsa')
             else:
                 params.append('/sound')
-                # Mac does not redirect microphone by default, seems to "cause problems"
-                # params.append('/microphone')
+                params.append('/microphone')
 
         if self.multimedia:
             params.append('/video')
