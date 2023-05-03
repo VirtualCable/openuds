@@ -35,6 +35,7 @@ import os
 import datetime
 import unicodedata
 import typing
+import contextlib
 
 from django.utils import formats
 from django.utils.translation import gettext
@@ -149,3 +150,15 @@ def removeControlCharacters(s: str) -> str:
         str -- string without control characters
     """
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")
+
+
+@contextlib.contextmanager
+def ignoreExceptions():
+    """
+    Ignores exceptions of type exceptions
+    """
+    try:
+        yield
+    except Exception:  # nosec: want to catch all exceptions
+        pass
+    

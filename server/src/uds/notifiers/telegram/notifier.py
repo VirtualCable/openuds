@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import datetime
+import secrets
 import typing
 
 from django.utils.translation import gettext_noop as _
@@ -39,6 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import messaging, exceptions
 from uds.core.ui import gui
 from uds.core.util.model import getSqlDatetime
+from uds.core.util.tools import ignoreExceptions
 
 from . import telegram
 
@@ -122,19 +124,15 @@ class TelegramNotifier(messaging.Notifier):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        botname = self.botname.cleanStr()
-        if not botname:
-            raise exceptions.ValidationError(_('Invalid bot name'))
+        for i in (self.botname, self.accessToken, self.secret):
+            s = i.cleanStr()
+            if not s:
+                raise exceptions.ValidationError(_('Invalid value for {}').format(i.label))
+            i.value = s
 
-        self.botname.value = botname
-
-        accessToken = self.accessToken.cleanStr()
-        if not accessToken:
-            raise exceptions.ValidationError(_('Invalid access token'))
-
-        self.accessToken.value = accessToken
-
-        # Done
+    def initGui(self) -> None:
+        self.secret.defValue = self.secret.defValue or secrets.token_urlsafe(8)
+        return super().initGui()
 
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
@@ -164,36 +162,42 @@ class TelegramNotifier(messaging.Notifier):
             logger.info('User %s unsubscribed from notifications', chatId)
 
     def retrieveMessages(self) -> None:
+        if not self.accessToken.value.strip():
+            return  # no access token, no messages
         # Time of last retrieve
         lastCheck: typing.Optional[datetime.datetime] = self.storage.getPickle('lastCheck')
+        now = getSqlDatetime()
 
         # If last check is not set, we will set it to now
         if lastCheck is None:
-            lastCheck = getSqlDatetime()
+            lastCheck = now - datetime.timedelta(seconds=self.checkDelay.num() + 1)
             self.storage.putPickle('lastCheck', lastCheck)
 
         # If not enough time has passed, we will not check
-        if lastCheck + datetime.timedelta(seconds=self.checkDelay.num()) > getSqlDatetime():
+        if lastCheck + datetime.timedelta(seconds=self.checkDelay.num()) > now:
             return
 
         # Update last check
-        self.storage.putPickle('lastCheck', lastCheck)
+        self.storage.putPickle('lastCheck', now)
 
         lastOffset = self.storage.getPickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
-        for update in t.getUpdates():
-            # Process update
-            message = update.text.strip()
-            if message.split(' ')[0] in ('/join', '/subscribe'):
-                try:
-                    secret = message.split(' ')[1]
-                    if secret != self.secret.value:
-                        raise Exception()
-                except Exception:
-                    logger.warning(
-                        'Invalid subscribe command received from telegram bot (invalid secret: %s)', message
-                    )
-                self.subscribeUser(update.chat.id)
-            elif message in ('/leave', '/unsubscribe'):
-                self.unsubscriteUser(update.chat.id)
-        self.storage.putPickle('lastOffset', t.lastOffset)
+        with ignoreExceptions():  # Any failure will be ignored and next update will be processed
+            for update in t.getUpdates():
+                # Process update
+                message = update.text.strip()
+                if message.split(' ')[0] in ('/join', '/subscribe'):
+                    try:
+                        secret = message.split(' ')[1]
+                        if secret != self.secret.value:
+                            raise Exception()
+                    except Exception:
+                        logger.warning(
+                            'Invalid subscribe command received from telegram bot (invalid secret: %s)', message
+                        )
+                    self.subscribeUser(update.chat.id)
+                    t.sendMessage(update.chat.id, _('You have been subscribed to notifications'))
+                elif message in ('/leave', '/unsubscribe'):
+                    self.unsubscriteUser(update.chat.id)
+                    t.sendMessage(update.chat.id, _('You have been unsubscribed from notifications'))
+            self.storage.putPickle('lastOffset', t.lastOffset)

@@ -78,13 +78,13 @@ class Telegram:
         )
         return response.json()
 
-    def sendMessage(self, chat_id: str, text: str) -> typing.Dict[str, typing.Any]:
+    def sendMessage(self, chat_id: int, text: str) -> typing.Dict[str, typing.Any]:
         return self.request('sendMessage', {'chat_id': chat_id, 'text': text})
 
     def getUpdates(self, offset: int = 0, timeout: int = 0) -> typing.Iterable[Message]:
         self.lastOffset = offset or self.lastOffset
-        res = self.request('getUpdates', {'offset': offset, 'timeout': timeout}, stream=True)
-        if res['ok']:
+        res = self.request('getUpdates', {'offset': self.lastOffset, 'timeout': timeout}, stream=True)
+        if res['ok'] and res['result']:  # if ok and there are results
             # Update the offset
             self.lastOffset = res['result'][-1]['update_id'] + 1
             for update in res['result']:

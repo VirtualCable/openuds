@@ -59,12 +59,8 @@ class LogLevel(enum.IntEnum):
     DEBUG = 20000
     INFO = 30000
     WARNING = 40000
-    # Alias WARN
-    WARN = 40000
     ERROR = 50000
     CRITICAL = 60000
-    # Alias FATAL
-    FATAL = 60000
 
     def __str__(self) -> str:
         return self.name
@@ -91,6 +87,10 @@ class LogLevel(enum.IntEnum):
     def all() -> typing.List[typing.Tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel]
 
+    # Rteturns "interesting" log levels
+    @staticmethod
+    def interesting() -> typing.List[typing.Tuple[int, str]]:
+        return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
 
 class LogSource(enum.StrEnum):
     INTERNAL = 'internal'
