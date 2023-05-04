@@ -67,6 +67,10 @@ class TunnelProtocol(asyncio.Protocol):
     source: typing.Tuple[str, int]
     # and destination
     destination: typing.Tuple[str, int]
+    # tls version used
+    tls_version: str
+    # cipher used
+    tls_cipher: str
 
     # Counters & stats related
     stats_manager: stats.StatsManager
@@ -85,6 +89,8 @@ class TunnelProtocol(asyncio.Protocol):
         self.owner = owner
         self.source = ('', 0)
         self.destination = ('', 0)
+        self.tls_version = ''
+        self.tls_cipher = ''
         
         # If other_side is given, we are the client part (that is, the tunnel from us to remote machine)
         # In this case, only do_proxy is used
@@ -227,7 +233,7 @@ class TunnelProtocol(asyncio.Protocol):
 
     def do_command(self, data: bytes) -> None:
         if self.cmd == b'':
-            logger.info('CONNECT FROM %s', self.pretty_source())
+            logger.info('CONNECT FROM %s (%s/%s)', self.pretty_source(), self.tls_version, self.tls_cipher)
 
         # We have at most self.owner.cfg.command_timeout seconds to receive the command and the ticket if needed
         self.cmd += data
@@ -309,11 +315,9 @@ class TunnelProtocol(asyncio.Protocol):
 
         # Try to get the cipher used to show it in the logs
         try:
-            cipher, tls_version, bits = transport.get_extra_info('cipher')[:3]
-            if cipher:
-                logger.info('TLS FOR %s: %s (%s)', self.pretty_source(), tls_version, cipher)
+            self.tls_cipher, self.tls_version = transport.get_extra_info('cipher')[:2]
         except Exception:  # nosec, ingore if not TLS (but should not happen)
-            logger.info('TLS FOR %s: NONE', self.pretty_source())
+            self.tls_cipher, self.tls_version = 'None', 'None'
 
         self.cmd = b''
 
