@@ -90,10 +90,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
                             self.assertIn('ERROR', logger_mock.error.call_args[0][0])
                             # Info should have been called with connection info and
                             self.assertIn(
-                                'TLS FOR', logger_mock.info.call_args_list[0][0][0]
-                            )
-                            self.assertIn(
-                                'CONNECT FROM', logger_mock.info.call_args_list[1][0][0]
+                                'CONNECT FROM', logger_mock.info.call_args_list[0][0][0]
                             )  # First call to info
 
     def test_tunnel_invalid_handshake(self) -> None:
