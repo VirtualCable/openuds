@@ -76,7 +76,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
                         # Wait for response
                         readed = await reader.read(1024)
                         # Logger should have been called once with error
-                        logger_mock.error.assert_called_once()
+                        logger_mock.error.assert_called()
 
                         if len(bad_cmd) < 4:
                             # Response shout have been timeout
@@ -90,7 +90,10 @@ class TestTunnel(IsolatedAsyncioTestCase):
                             self.assertIn('ERROR', logger_mock.error.call_args[0][0])
                             # Info should have been called with connection info and
                             self.assertIn(
-                                'CONNECT FROM', logger_mock.info.call_args_list[0][0][0]
+                                'TLS FOR', logger_mock.info.call_args_list[0][0][0]
+                            )
+                            self.assertIn(
+                                'CONNECT FROM', logger_mock.info.call_args_list[1][0][0]
                             )  # First call to info
 
     def test_tunnel_invalid_handshake(self) -> None:

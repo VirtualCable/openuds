@@ -34,6 +34,7 @@ import logging
 import datetime
 import secrets
 import typing
+import time
 
 from django.utils.translation import gettext_noop as _
 
@@ -141,7 +142,10 @@ class TelegramNotifier(messaging.Notifier):
         chatIds = self.storage.getPickle('chatIds') or []
         t = telegram.Telegram(self.accessToken.value, self.botname.value)
         for chatId in chatIds:
-            t.sendMessage(chatId, telegramMsg)
+            with ignoreExceptions():
+                t.sendMessage(chatId, telegramMsg)
+                # Wait a bit, so we don't send more than 10 messages per second
+                time.sleep(0.1)
 
     def subscribeUser(self, chatId: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
@@ -182,22 +186,23 @@ class TelegramNotifier(messaging.Notifier):
 
         lastOffset = self.storage.getPickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
-        with ignoreExceptions():  # Any failure will be ignored and next update will be processed
+        with ignoreExceptions():  # In case getUpdates fails, ignore it
             for update in t.getUpdates():
                 # Process update
-                message = update.text.strip()
-                if message.split(' ')[0] in ('/join', '/subscribe'):
-                    try:
-                        secret = message.split(' ')[1]
-                        if secret != self.secret.value:
-                            raise Exception()
-                    except Exception:
-                        logger.warning(
-                            'Invalid subscribe command received from telegram bot (invalid secret: %s)', message
-                        )
-                    self.subscribeUser(update.chat.id)
-                    t.sendMessage(update.chat.id, _('You have been subscribed to notifications'))
-                elif message in ('/leave', '/unsubscribe'):
-                    self.unsubscriteUser(update.chat.id)
-                    t.sendMessage(update.chat.id, _('You have been unsubscribed from notifications'))
+                with ignoreExceptions():    # Any failure will be ignored and next update will be processed
+                    message = update.text.strip()
+                    if message.split(' ')[0] in ('/join', '/subscribe'):
+                        try:
+                            secret = message.split(' ')[1]
+                            if secret != self.secret.value:
+                                raise Exception()
+                        except Exception:
+                            logger.warning(
+                                'Invalid subscribe command received from telegram bot (invalid secret: %s)', message
+                            )
+                        self.subscribeUser(update.chat.id)
+                        t.sendMessage(update.chat.id, _('You have been subscribed to notifications'))
+                    elif message in ('/leave', '/unsubscribe'):
+                        self.unsubscriteUser(update.chat.id)
+                        t.sendMessage(update.chat.id, _('You have been unsubscribed from notifications'))
             self.storage.putPickle('lastOffset', t.lastOffset)
