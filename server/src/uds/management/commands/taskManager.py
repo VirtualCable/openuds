@@ -173,4 +173,4 @@ class Command(BaseCommand):
                     f'Task manager found running (pid file exists: {pid})\n'
                 )
             else:
-                self.stdout.write("Task manager not foud (pid file do not exits)\n")
+                self.stdout.write("Task manager not found (pid file do not exits)\n")
