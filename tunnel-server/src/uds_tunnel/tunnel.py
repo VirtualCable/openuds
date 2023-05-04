@@ -302,7 +302,13 @@ class TunnelProtocol(asyncio.Protocol):
 
     def connection_made(self, transport: 'asyncio.transports.BaseTransport') -> None:
         logger.debug('Connection made: %s', transport.get_extra_info('peername'))
-
+        # Try to get the cipher used to show it in the logs
+        try:
+            cipher, tls_version, bits = transport.get_extra_info('cipher')[:3]
+            if cipher:
+                logger.info('TLS FOR %s: %s (%s)', self.pretty_source(), tls_version, cipher)
+        except Exception:
+            pass
         # We know for sure that the transport is a Transport.
         self.transport = typing.cast('asyncio.transports.Transport', transport)
         self.cmd = b''
