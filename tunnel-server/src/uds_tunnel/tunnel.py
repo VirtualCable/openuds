@@ -238,6 +238,7 @@ class TunnelProtocol(asyncio.Protocol):
                 if command == consts.COMMAND_OPEN:
                     self.process_open()
                 elif command == consts.COMMAND_TEST:
+                    self.clean_timeout()  # Stop timeout
                     logger.info('COMMAND: TEST')
                     self.transport.write(consts.RESPONSE_OK)
                     self.close_connection()
