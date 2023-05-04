@@ -301,6 +301,9 @@ class TunnelProtocol(asyncio.Protocol):
         self.owner.finished.set()
 
     def connection_made(self, transport: 'asyncio.transports.BaseTransport') -> None:
+        # We know for sure that the transport is a Transport.
+        self.transport = typing.cast('asyncio.transports.Transport', transport)
+        # Get source
         self.source = self.transport.get_extra_info('peername')
         logger.debug('Connection made: %s', self.source)
 
@@ -312,8 +315,6 @@ class TunnelProtocol(asyncio.Protocol):
         except Exception:  # nosec, ingore if not TLS (but should not happen)
             logger.info('TLS FOR %s: NONE', self.pretty_source())
 
-        # We know for sure that the transport is a Transport.
-        self.transport = typing.cast('asyncio.transports.Transport', transport)
         self.cmd = b''
 
     def data_received(self, data: bytes):
