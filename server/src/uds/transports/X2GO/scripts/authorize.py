@@ -1,14 +1,11 @@
-# may be executed on old python version
+# may be executed on old python versions? (should not, but keep compat for a while more)
+# pylint: disable=all
 from __future__ import unicode_literals
 
 import sys
 import os
 import errno
 import pwd
-
-USER = '__USER__'
-KEY = '__KEY__'
-
 
 def logError(err):
     print(err)
@@ -20,14 +17,16 @@ def updateAuthorizedKeys(user, pubKey):
         logError('Not a linux platform')
         return
 
+    userInfo = pwd.getpwnam(user)
+
     # Create .ssh on user home
-    home = os.path.expanduser('~{}'.format(user))
+    home = userInfo.pw_dir.rstrip('/')
 
     if not os.path.exists(home):  # User not found, nothing done
         logError('Home folder for user {} not found'.format(user))
         return
 
-    uid = pwd.getpwnam(user).pw_uid
+    uid = userInfo.pw_uid
 
     sshFolder = '{}/.ssh'.format(home)
     if not os.path.exists(sshFolder):
@@ -61,4 +60,5 @@ def updateAuthorizedKeys(user, pubKey):
     # Done
 
 
-updateAuthorizedKeys(USER, KEY)
+# __USER__ and __KEY__ will be replaced by the real values, they are placeholders (and must be left as is)
+updateAuthorizedKeys('__USER__', '__KEY__')

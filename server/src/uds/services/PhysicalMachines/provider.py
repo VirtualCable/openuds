@@ -101,7 +101,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 except Exception:
                     raise exceptions.ValidationError(
                         _('Invalid network in advanced configuration: ') + key
-                    )
+                    ) from None
                 # Now check value is an url
                 if config['wol'][key][:4] != 'http':
                     raise exceptions.ValidationError(
@@ -114,8 +114,8 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     typeDescription = _('Provides connection to machines by IP')
     iconFile = 'provider.png'
 
-    from .service_multi import IPMachinesService
-    from .service_single import IPSingleMachineService
+    from .service_multi import IPMachinesService  # pylint: disable=import-outside-toplevel
+    from .service_single import IPSingleMachineService  # pylint: disable=import-outside-toplevel
 
     offers = [IPMachinesService, IPSingleMachineService]
 
@@ -144,7 +144,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                     res = dns.resolver.resolve(ip, 'AAAA')
                     ip = res[0].address
                 except Exception as e:
-                    self.doLog(log.WARN, f'Name {ip} could not be resolved')
+                    self.doLog(log.LogLevel.WARNING, f'Name {ip} could not be resolved')
                     logger.warning('Name %s could not be resolved (%s)', ip, e)
                     return ''
 
