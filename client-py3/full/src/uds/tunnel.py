@@ -77,6 +77,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     timeout: int
     timer: typing.Optional[threading.Timer]
     check_certificate: bool
+    keep_listening: bool
     current_connections: int
     status: ForwardState
 
@@ -110,6 +111,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         # "stop the listener"
         self.timeout = int(time.time()) + timeout if timeout > 0 else 0
         self.check_certificate = check_certificate
+        self.keep_listening = keep_listening
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
 
@@ -156,7 +158,13 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 context.verify_mode = ssl.CERT_NONE
                 logger.warning('Certificate checking is disabled!')
 
-            return context.wrap_socket(rsocket, server_hostname=self.remote[0])
+            ssl_socket = context.wrap_socket(rsocket, server_hostname=self.remote[0])
+
+            # If we have a payload, send it
+            if self.initial_payload:
+                ssl_socket.sendall(self.initial_payload)
+
+            return ssl_socket
 
     def check(self) -> bool:
         if self.status == ForwardState.TUNNEL_ERROR:
@@ -275,6 +283,8 @@ def forward(
     timeout: int = 0,
     local_port: int = 0,
     check_certificate=True,
+    keep_listening=False,
+    initial_payload: typing.Optional[bytes] = None,
 ) -> ForwardServer:
 
     fs = ForwardServer(
@@ -283,6 +293,8 @@ def forward(
         timeout=timeout,
         local_port=local_port,
         check_certificate=check_certificate,
+        keep_listening=keep_listening,
+        initial_payload=initial_payload,
     )
     # Starts a new thread
     threading.Thread(target=_run, args=(fs,)).start()
