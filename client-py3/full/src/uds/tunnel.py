@@ -253,7 +253,7 @@ def forward(
     timeout: int = 0,
     local_port: int = 0,
     check_certificate=True,
-    keep_listening=False,
+    keep_listening=True,
     initial_payload: typing.Optional[bytes] = None,
 ) -> ForwardServer:
     fs = ForwardServer(
