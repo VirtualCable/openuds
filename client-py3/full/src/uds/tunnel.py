@@ -48,12 +48,14 @@ BUFFER_SIZE: typing.Final[int] = 1024 * 16  # Max buffer length
 LISTEN_ADDRESS: typing.Final[str] = '0.0.0.0' if DEBUG else '127.0.0.1'
 LISTEN_ADDRESS_V6: typing.Final[str] = '::' if DEBUG else '::1'
 
+
 # ForwarServer states
-class ForwardState(enum.IntEnum): 
+class ForwardState(enum.IntEnum):
     TUNNEL_LISTENING = 0
     TUNNEL_OPENING = 1
     TUNNEL_PROCESSING = 2
     TUNNEL_ERROR = 3
+
 
 # Some constants strings for protocol
 HANDSHAKE_V1: typing.Final[bytes] = b'\x5AMGB\xA5\x01\x00'
@@ -80,6 +82,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     keep_listening: bool
     current_connections: int
     status: ForwardState
+    initial_payload: typing.Optional[bytes]
 
     address_family = socket.AF_INET
 
@@ -90,17 +93,18 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         timeout: int = 0,
         local_port: int = 0,
         check_certificate: bool = True,
+        keep_listening: bool = False,
+        initial_payload: typing.Optional[bytes] = None,
         ipv6_listen: bool = False,
         ipv6_remote: bool = False,
     ) -> None:
-
         local_port = local_port or random.randrange(33000, 53000)
 
         if ipv6_listen:
             self.address_family = socket.AF_INET6
 
         super().__init__(
-            server_address=(LISTEN_ADDRESS if ipv6_listen else LISTEN_ADDRESS_V6, local_port),
+            server_address=(LISTEN_ADDRESS_V6 if ipv6_listen else LISTEN_ADDRESS, local_port),
             RequestHandlerClass=Handler,
         )
         self.remote = remote
@@ -114,14 +118,13 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.keep_listening = keep_listening
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
+        self.initial_payload = initial_payload
 
         self.status = ForwardState.TUNNEL_LISTENING
         self.can_stop = False
 
         timeout = abs(timeout) or 60
-        self.timer = threading.Timer(
-            abs(timeout), ForwardServer.__checkStarted, args=(self,)
-        )
+        self.timer = threading.Timer(abs(timeout), ForwardServer.__checkStarted, args=(self,))
         self.timer.start()
 
     def stop(self) -> None:
@@ -134,7 +137,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             self.shutdown()
 
     def connect(self) -> ssl.SSLSocket:
-        with socket.socket(socket.AF_INET6 if self.remote_ipv6 else socket.AF_INET, socket.SOCK_STREAM) as rsocket:
+        with socket.socket(
+            socket.AF_INET6 if self.remote_ipv6 else socket.AF_INET, socket.SOCK_STREAM
+        ) as rsocket:
             logger.info('CONNECT to %s', self.remote)
 
             rsocket.connect(self.remote)
@@ -148,9 +153,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             context.minimum_version = ssl.TLSVersion.TLSv1_3
 
             if tools.getCaCertsFile() is not None:
-                context.load_verify_locations(
-                    tools.getCaCertsFile()
-                )  # Load certifi certificates
+                context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:
@@ -158,13 +161,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 context.verify_mode = ssl.CERT_NONE
                 logger.warning('Certificate checking is disabled!')
 
-            ssl_socket = context.wrap_socket(rsocket, server_hostname=self.remote[0])
-
-            # If we have a payload, send it
-            if self.initial_payload:
-                ssl_socket.sendall(self.initial_payload)
-
-            return ssl_socket
+            return context.wrap_socket(rsocket, server_hostname=self.remote[0])
 
     def check(self) -> bool:
         if self.status == ForwardState.TUNNEL_ERROR:
@@ -181,9 +178,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 logger.debug('Tunnel is available!')
                 return True
         except Exception as e:
-            logger.error(
-                'Error connecting to tunnel server %s: %s', self.server_address, e
-            )
+            logger.error('Error connecting to tunnel server %s: %s', self.server_address, e)
         return False
 
     @property
@@ -206,10 +201,11 @@ class Handler(socketserver.BaseRequestHandler):
 
     # server: ForwardServer
     def handle(self) -> None:
-        self.server.status = ForwardState.TUNNEL_OPENING
+        if self.server.status == ForwardState.TUNNEL_LISTENING:
+            self.server.status = ForwardState.TUNNEL_OPENING  # Only update state on first connection
 
         # If server new connections processing are over time...
-        if self.server.stoppable:
+        if self.server.stoppable and not self.server.keep_listening:
             self.server.status = ForwardState.TUNNEL_ERROR
             logger.info('Rejected timedout connection')
             self.request.close()  # End connection without processing it
@@ -227,11 +223,14 @@ class Handler(socketserver.BaseRequestHandler):
                 data = ssl_socket.recv(2)
                 if data != RESPONSE_OK:
                     data += ssl_socket.recv(128)
-                    raise Exception(
-                        f'Error received: {data.decode(errors="ignore")}'
-                    )  # Notify error
+                    raise Exception(f'Error received: {data.decode(errors="ignore")}')  # Notify error
 
                 # All is fine, now we can tunnel data
+
+                # If we have a payload, send it
+                if self.server.initial_payload:
+                    ssl_socket.sendall(self.server.initial_payload)
+
                 self.process(remote=ssl_socket)
         except Exception as e:
             logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
@@ -286,7 +285,6 @@ def forward(
     keep_listening=False,
     initial_payload: typing.Optional[bytes] = None,
 ) -> ForwardServer:
-
     fs = ForwardServer(
         remote=remote,
         ticket=ticket,
@@ -309,9 +307,7 @@ if __name__ == "__main__":
     log.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(levelname)s - %(message)s'
-    )  # Basic log format, nice for syslog
+    formatter = logging.Formatter('%(levelname)s - %(message)s')  # Basic log format, nice for syslog
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
