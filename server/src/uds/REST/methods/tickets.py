@@ -58,6 +58,7 @@ VALID_PARAMS = (
     'transport',  # Admited to be backwards compatible, but not used. Will be removed on a future release.
     'force',
     'userIp',
+    'time',
 )
 
 
