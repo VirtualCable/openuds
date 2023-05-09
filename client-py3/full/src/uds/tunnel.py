@@ -78,12 +78,9 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         keep_listening: bool = False,
         initial_payload: typing.Optional[bytes] = None,
     ) -> None:
-
         local_port = local_port or random.randrange(33000, 53000)
 
-        super().__init__(
-            server_address=(LISTEN_ADDRESS, local_port), RequestHandlerClass=Handler
-        )
+        super().__init__(server_address=(LISTEN_ADDRESS, local_port), RequestHandlerClass=Handler)
         self.remote = remote
         self.ticket = ticket
         # Negative values for timeout, means "accept always connections"
@@ -101,9 +98,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.can_stop = False
 
         timeout = abs(timeout) or 60
-        self.timer = threading.Timer(
-            abs(timeout), ForwardServer.__checkStarted, args=(self,)
-        )
+        self.timer = threading.Timer(abs(timeout), ForwardServer.__checkStarted, args=(self,))
         self.timer.start()
 
     def stop(self) -> None:
@@ -130,9 +125,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
             context.minimum_version = ssl.TLSVersion.TLSv1_3
 
             if tools.getCaCertsFile() is not None:
-                context.load_verify_locations(
-                    tools.getCaCertsFile()
-                )  # Load certifi certificates
+                context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
 
             # If ignore remote certificate
             if self.check_certificate is False:
@@ -140,13 +133,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 context.verify_mode = ssl.CERT_NONE
                 logger.warning('Certificate checking is disabled!')
 
-            ssl_socket = context.wrap_socket(rsocket, server_hostname=self.remote[0])
-
-            # If we have a payload, send it
-            if self.initial_payload:
-                ssl_socket.sendall(self.initial_payload)
-
-            return ssl_socket
+            return context.wrap_socket(rsocket, server_hostname=self.remote[0])
 
     def check(self) -> bool:
         if self.status == TUNNEL_ERROR:
@@ -163,9 +150,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
                 logger.debug('Tunnel is available!')
                 return True
         except Exception as e:
-            logger.error(
-                'Error connecting to tunnel server %s: %s', self.server_address, e
-            )
+            logger.error('Error connecting to tunnel server %s: %s', self.server_address, e)
         return False
 
     @property
@@ -209,11 +194,14 @@ class Handler(socketserver.BaseRequestHandler):
                 data = ssl_socket.recv(2)
                 if data != b'OK':
                     data += ssl_socket.recv(128)
-                    raise Exception(
-                        f'Error received: {data.decode(errors="ignore")}'
-                    )  # Notify error
+                    raise Exception(f'Error received: {data.decode(errors="ignore")}')  # Notify error
 
                 # All is fine, now we can tunnel data
+
+                # If we have a payload, send it
+                if self.server.initial_payload:
+                    ssl_socket.sendall(self.server.initial_payload)
+
                 self.process(remote=ssl_socket)
         except Exception as e:
             logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
@@ -268,7 +256,6 @@ def forward(
     keep_listening=False,
     initial_payload: typing.Optional[bytes] = None,
 ) -> ForwardServer:
-
     fs = ForwardServer(
         remote=remote,
         ticket=ticket,
@@ -291,9 +278,7 @@ if __name__ == "__main__":
     log.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter(
-        '%(levelname)s - %(message)s'
-    )  # Basic log format, nice for syslog
+    formatter = logging.Formatter('%(levelname)s - %(message)s')  # Basic log format, nice for syslog
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
