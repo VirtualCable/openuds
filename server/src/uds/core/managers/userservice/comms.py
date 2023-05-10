@@ -67,6 +67,8 @@ def _requestActor(
     """
     url = userService.getCommsUrl()
     if not url:
+        # Maybe service knows how to do it
+
         # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
         raise NoActorComms(
             f'No notification urls for {userService.friendly_name}'
