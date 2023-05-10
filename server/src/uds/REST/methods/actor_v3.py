@@ -33,6 +33,7 @@ import time
 import logging
 import typing
 import functools
+import enum
 
 from uds.models import (
     ActorToken,
@@ -74,6 +75,16 @@ cache = Cache('actorv3')
 
 class BlockAccess(Exception):
     pass
+
+
+class NotifyActionType(enum.StrEnum):
+    LOGIN = 'login'
+    LOGOUT = 'logout'
+    DATA = 'data'
+
+    @staticmethod
+    def valid_names() -> typing.List[str]:
+        return [e.value for e in NotifyActionType]
 
 
 # Helpers
@@ -173,6 +184,46 @@ class ActorV3Action(Handler):
             logger.exception('Posting %s: %s', self.__class__, e)
 
         raise AccessDenied('Access denied')
+
+    # Some helpers
+    def notifyService(self, action: NotifyActionType) -> None:
+        try:
+            # If unmanaged, use Service locator
+            service: 'services.Service' = Service.objects.get(token=self._params['token']).getInstance()
+
+            # We have a valid service, now we can make notifications
+
+            # Build the possible ids and make initial filter to match service
+            idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
+
+            # ensure idsLists has upper and lower versions for case sensitive databases
+            idsList = fixIdsList(idsList)
+
+            validId: typing.Optional[str] = service.getValidId(idsList)
+
+            is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
+
+            # Must be valid
+            if action in (NotifyActionType.LOGIN, NotifyActionType.LOGOUT):
+                if not validId:  # For login/logout, we need a valid id
+                    raise Exception()
+                # Notify Service that someone logged in/out
+
+                if action == NotifyActionType.LOGIN:
+                    # Try to guess if this is a remote session
+                    service.processLogin(validId, remote_login=is_remote)
+                elif action == NotifyActionType.LOGOUT:
+                    service.processLogout(validId, remote_login=is_remote)
+            elif action == NotifyActionType.DATA:
+                service.notifyData(validId, self._params['data'])
+            else:
+                raise Exception('Invalid action')
+            
+            # All right, service notified..
+        except Exception as e:
+            # Log error and continue
+            logger.error('Error notifying service: %s (%s)', e, self._params)
+            raise BlockAccess() from None
 
 
 class Test(ActorV3Action):
@@ -501,47 +552,7 @@ class Version(ActorV3Action):
         return ActorV3Action.actorResult()
 
 
-class LoginLogout(ActorV3Action):
-    name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
-
-    def notifyService(self, isLogin: bool) -> None:
-        try:
-            # If unmanaged, use Service locator
-            service: 'services.Service' = Service.objects.get(token=self._params['token']).getInstance()
-
-            # We have a valid service, now we can make notifications
-
-            # Build the possible ids and make initial filter to match service
-            idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
-
-            # ensure idsLists has upper and lower versions for case sensitive databases
-            idsList = fixIdsList(idsList)
-
-            validId: typing.Optional[str] = service.getValidId(idsList)
-
-            # Must be valid
-            if not validId:
-                raise Exception()
-
-            # Recover Id Info from service and validId
-            # idInfo = service.recoverIdInfo(validId)
-
-            # Notify Service that someone logged in/out
-            is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
-            if isLogin:
-                # Try to guess if this is a remote session
-                service.processLogin(validId, remote_login=is_remote)
-            else:
-                service.processLogout(validId, remote_login=is_remote)
-
-            # All right, service notified..
-        except Exception as e:
-            # Log error and continue
-            logger.error('Error notifying service: %s (%s)', e, self._params)
-            raise BlockAccess() from None
-
-
-class Login(LoginLogout):
+class Login(ActorV3Action):
     """
     Notifies user logged id
     """
@@ -597,7 +608,7 @@ class Login(LoginLogout):
         ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(isLogin=True)
+            self.notifyService(action=NotifyActionType.LOGIN)
 
         return ActorV3Action.actorResult(
             {
@@ -610,7 +621,7 @@ class Login(LoginLogout):
         )
 
 
-class Logout(LoginLogout):
+class Logout(ActorV3Action):
     """
     Notifies user logged out
     """
@@ -653,7 +664,7 @@ class Logout(LoginLogout):
         ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(isLogin=False)  # Logout notification
+            self.notifyService(NotifyActionType.LOGOUT)  # Logout notification
             return ActorV3Action.actorResult(
                 'notified'
             )  # Result is that we have not processed the logout in fact, but notified the service
@@ -761,7 +772,7 @@ class Unmanaged(ActorV3Action):
         # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
-            ip = next(x['ip'] for x in self._params['id'] if validId in  (x['ip'], x['mac']))
+            ip = next(x['ip'] for x in self._params['id'] if validId in (x['ip'], x['mac']))
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
@@ -802,21 +813,22 @@ class Notify(ActorV3Action):
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        if (
-            'action' not in self._params
-            or 'token' not in self._params
-            or self._params['action'] not in ('login', 'logout')
-        ):
-            # Requested login or logout
-            raise RequestError('Invalid parameters')
+        try:
+            action = NotifyActionType(self._params['action'])
+            token = self._params['token']  # pylint: disable=unused-variable  # Just to check it exists
+        except Exception as e:
+            # Requested login, logout or whatever
+            raise RequestError('Invalid parameters') from e
 
         try:
             # Check block manually
             checkBlockedIp(self._request)  # pylint: disable=protected-access
-            if self._params['action'] == 'login':
+            if action == NotifyActionType.LOGIN:
                 Login.action(typing.cast(Login, self))
-            else:
+            elif action == NotifyActionType.LOGOUT:
                 Logout.action(typing.cast(Logout, self))
+            elif action == NotifyActionType.DATA:
+                self.notifyService(action)
 
             return ActorV3Action.actorResult('ok')
         except UserService.DoesNotExist:

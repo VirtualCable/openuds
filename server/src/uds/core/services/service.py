@@ -139,9 +139,7 @@ class Service(Module):
     usesCache = False
 
     # : Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.usesCache
-    cacheTooltip = _(
-        'None'
-    )  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If user deployments can be cached (see :py:attr:.usesCache), may he also can provide a secondary cache,
     # : that is no more that user deployments that are "almost ready" to be used, but preperably consumes less
@@ -150,9 +148,7 @@ class Service(Module):
     usesCache_L2 = False  # : If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
 
     # : Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.usesCache_L2
-    cacheTooltip_L2 = _(
-        'None'
-    )  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip_L2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
     needsManager: bool = False
@@ -270,9 +266,7 @@ class Service(Module):
 
         # Keep untouched if maxServices is not present
 
-    def requestServicesForAssignation(
-        self, **kwargs
-    ) -> typing.Iterable[UserDeployment]:
+    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable[UserDeployment]:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -311,9 +305,7 @@ class Service(Module):
         return []
 
     def assignFromAssignables(
-        self, assignableId: str,
-        user: 'models.User',
-        userDeployment: UserDeployment
+        self, assignableId: str, user: 'models.User', userDeployment: UserDeployment
     ) -> str:
         """
         Assigns from it internal assignable list to an user
@@ -384,6 +376,18 @@ class Service(Module):
         """
         return
 
+    def notifyData(self, id: typing.Optional[str], data: str) -> None:
+        """
+        Processes a custom data notification, that must be interpreted by the service itself.
+        This allows "token actors" to communicate with service directly, what is needed for
+        some kind of services (like LinuxApps)
+
+        Args:
+            id (typing.Optional[str]): Id validated through "getValidId". May be None if not validated (or not provided)
+            data (str): Data to process
+        """
+        return
+
     def storeIdInfo(self, id: str, data: typing.Any) -> None:
         self.storage.putPickle('__nfo_' + id, data)
 
@@ -401,9 +405,7 @@ class Service(Module):
         from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
-            log.doLog(
-                DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE
-            )
+            log.doLog(DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
 
     @classmethod
     def canAssign(cls) -> bool:
