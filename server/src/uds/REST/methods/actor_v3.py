@@ -761,7 +761,7 @@ class Unmanaged(ActorV3Action):
         # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
-            ip = next(x['ip'] for x in self._params['id'] if x['ip'] == validId or x['mac'] == validId)
+            ip = next(x['ip'] for x in self._params['id'] if validId in  (x['ip'], x['mac']))
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
@@ -813,7 +813,7 @@ class Notify(ActorV3Action):
         try:
             # Check block manually
             checkBlockedIp(self._request)  # pylint: disable=protected-access
-            if 'action' == 'login':
+            if self._params['action'] == 'login':
                 Login.action(typing.cast(Login, self))
             else:
                 Logout.action(typing.cast(Logout, self))
