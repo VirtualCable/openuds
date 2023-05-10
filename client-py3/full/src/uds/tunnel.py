@@ -64,8 +64,10 @@ CMD_OPEN: typing.Final[bytes] = b'OPEN'
 
 RESPONSE_OK: typing.Final[bytes] = b'OK'
 
+
 logger = logging.getLogger(__name__)
 
+PayLoadType = typing.Optional[typing.Tuple[typing.Optional[bytes], typing.Optional[bytes]]]
 
 class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
@@ -229,7 +231,13 @@ class Handler(socketserver.BaseRequestHandler):
 
                 # If we have a payload, send it
                 if self.server.initial_payload:
-                    ssl_socket.sendall(self.server.initial_payload)
+                    to_send, to_receive = self.server.initial_payload
+                    if to_send: # To send
+                        ssl_socket.sendall(to_send)
+                    if to_receive:
+                        temp = ssl_socket.recv(len(to_receive))
+                        if temp != to_receive:
+                            raise Exception(f'Invalid response: {temp!s} != {to_receive!s}')
 
                 self.process(remote=ssl_socket)
         except Exception as e:
@@ -283,7 +291,7 @@ def forward(
     local_port: int = 0,
     check_certificate=True,
     keep_listening=True,
-    initial_payload: typing.Optional[bytes] = None,
+    initial_payload: PayLoadType = None,
 ) -> ForwardServer:
     fs = ForwardServer(
         remote=remote,
