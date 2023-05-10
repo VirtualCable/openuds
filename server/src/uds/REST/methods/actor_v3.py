@@ -78,6 +78,16 @@ class BlockAccess(Exception):
 
 # Helpers
 def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
+    """
+    Params:
+        idsList: List of ids to fix
+
+    Returns:
+        List of ids with both upper and lower case
+
+    Comment:
+        Due to database case sensitiveness, we need to check for both upper and lower case
+    """
     return list(set([i.upper() for i in idsList] + [i.lower() for i in idsList]))
 
 
@@ -201,6 +211,8 @@ class Register(ActorV3Action):
         - run_once_command: comand to run just once after the actor is started. The actor will stop after this.
           The command is responsible to restart the actor.
         - log_level: log level for the actor
+        - certificate: server certificate used to connect to the actor [optional, only for some kind of actors like LinuxApps]
+        - comms_url: url to connect to the actor [optional, only for some kind of actors like LinuxApps]
 
     """
 
@@ -223,24 +235,34 @@ class Register(ActorV3Action):
             actorToken.post_command = self._params['post_command']
             actorToken.runonce_command = self._params['run_once_command']
             actorToken.log_level = self._params['log_level']
+            if 'certificate' in self._params:
+                actorToken.certificate = self._params['certificate']
+            if 'comms_url' in self._params:
+                actorToken.comms_url = self._params['comms_url']
             actorToken.stamp = getSqlDatetime()
             actorToken.save()
             logger.info('Registered actor %s', self._params)
         except Exception:  # Not found, create a new token
-            actorToken = ActorToken.objects.create(
-                username=self._user.pretty_name,
-                ip_from=self._request.ip,
-                ip=self._params['ip'],
-                ip_version=self._request.ip_version,
-                hostname=self._params['hostname'],
-                mac=self._params['mac'],
-                pre_command=self._params['pre_command'],
-                post_command=self._params['post_command'],
-                runonce_command=self._params['run_once_command'],
-                log_level=self._params['log_level'],
-                token=secrets.token_urlsafe(36),
-                stamp=getSqlDatetime(),
-            )
+            kwargs = {
+                'username': self._user.pretty_name,
+                'ip_from': self._request.ip,
+                'ip': self._params['ip'],
+                'ip_version': self._request.ip_version,
+                'hostname': self._params['hostname'],
+                'mac': self._params['mac'],
+                'pre_command': self._params['pre_command'],
+                'post_command': self._params['post_command'],
+                'runonce_command': self._params['run_once_command'],
+                'log_level': self._params['log_level'],
+                'token': secrets.token_urlsafe(36),
+                'stamp': getSqlDatetime(),
+            }
+            if 'certificate' in self._params:
+                kwargs['certificate'] = self._params['certificate']
+            if 'comms_url' in self._params:
+                kwargs['comms_url'] = self._params['comms_url']
+
+            actorToken = ActorToken.objects.create(**kwargs)
         return ActorV3Action.actorResult(actorToken.token)
 
 
@@ -292,7 +314,10 @@ class Initialize(ActorV3Action):
         alias_token: typing.Optional[str] = None
 
         def initialization_result(
-            own_token: typing.Optional[str], unique_id: typing.Optional[str], os: typing.Any, alias_token: typing.Optional[str]
+            own_token: typing.Optional[str],
+            unique_id: typing.Optional[str],
+            os: typing.Any,
+            alias_token: typing.Optional[str],
         ) -> typing.MutableMapping[str, typing.Any]:
             return ActorV3Action.actorResult(
                 {

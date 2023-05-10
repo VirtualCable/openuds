@@ -152,14 +152,24 @@ async def tunnel_proc_async(
 
         # Set min version from string (1.2 or 1.3) as ssl.TLSVersion.TLSv1_2 or ssl.TLSVersion.TLSv1_3
         if cfg.ssl_min_tls_version in ('1.2', '1.3'):
-            context.minimum_version = getattr(ssl.TLSVersion, f'TLSv1_{cfg.ssl_min_tls_version.split(".")[1]}')
+            try:
+                context.minimum_version = getattr(ssl.TLSVersion, f'TLSv1_{cfg.ssl_min_tls_version.split(".")[1]}')
+            except Exception as e:
+                logger.exception('Setting min tls version failed: %s. Using defaults', e)
+                context.minimum_version = ssl.TLSVersion.TLSv1_2
         # Any other value will be ignored
 
         if cfg.ssl_ciphers:
-            context.set_ciphers(cfg.ssl_ciphers)
+            try:
+                context.set_ciphers(cfg.ssl_ciphers)
+            except Exception as e:
+                logger.exception('Setting ciphers failed: %s. Using defaults', e)
 
         if cfg.ssl_dhparam:
-            context.load_dh_params(cfg.ssl_dhparam)
+            try:
+                context.load_dh_params(cfg.ssl_dhparam)
+            except Exception as e:
+                logger.exception('Loading dhparams failed: %s. Using defaults', e)
 
         try:
             while True:
