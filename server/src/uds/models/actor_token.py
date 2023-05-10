@@ -53,9 +53,8 @@ class ActorToken(models.Model):
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
-    # New fields for 4.0, optional certificate and comms_url
-    certificate = models.TextField(blank=True, default='')
-    comms_url = models.CharField(max_length=255, blank=True, default='')
+    # New fields for 4.0, optional "custom" data, to be interpreted by specific code (i.e. AppLinux services)
+    custom = models.TextField(blank=True, default='')
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'

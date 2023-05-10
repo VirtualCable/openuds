@@ -211,8 +211,7 @@ class Register(ActorV3Action):
         - run_once_command: comand to run just once after the actor is started. The actor will stop after this.
           The command is responsible to restart the actor.
         - log_level: log level for the actor
-        - certificate: server certificate used to connect to the actor [optional, only for some kind of actors like LinuxApps]
-        - comms_url: url to connect to the actor [optional, only for some kind of actors like LinuxApps]
+        - custom: Custom actor data (i.e. cetificate and comms_url for LinxApps, maybe other for other services)
 
     """
 
@@ -235,10 +234,8 @@ class Register(ActorV3Action):
             actorToken.post_command = self._params['post_command']
             actorToken.runonce_command = self._params['run_once_command']
             actorToken.log_level = self._params['log_level']
-            if 'certificate' in self._params:
-                actorToken.certificate = self._params['certificate']
-            if 'comms_url' in self._params:
-                actorToken.comms_url = self._params['comms_url']
+            if 'custom' in self._params:
+                actorToken.custom = self._params['certificate']
             actorToken.stamp = getSqlDatetime()
             actorToken.save()
             logger.info('Registered actor %s', self._params)
@@ -257,10 +254,8 @@ class Register(ActorV3Action):
                 'token': secrets.token_urlsafe(36),
                 'stamp': getSqlDatetime(),
             }
-            if 'certificate' in self._params:
-                kwargs['certificate'] = self._params['certificate']
-            if 'comms_url' in self._params:
-                kwargs['comms_url'] = self._params['comms_url']
+            if 'custom' in self._params:
+                kwargs['custom'] = self._params['custom']
 
             actorToken = ActorToken.objects.create(**kwargs)
         return ActorV3Action.actorResult(actorToken.token)
