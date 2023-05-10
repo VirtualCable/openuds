@@ -735,7 +735,7 @@ class Notify(ActorV3Action):
         try:
             # Check block manually
             checkBlockedIp(self._request)  # pylint: disable=protected-access
-            if 'action' == 'login':
+            if self._params['action'] == 'login':
                 Login.action(typing.cast(Login, self))
             else:
                 Logout.action(typing.cast(Logout, self))
