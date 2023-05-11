@@ -94,8 +94,14 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         keep_listening: bool = False,
         ipv6_listen: bool = False,
         ipv6_remote: bool = False,
-    ) -> None:
-        
+    ) -> None:       
+        # Negative values for timeout, means "accept always connections"
+        # "but if no connection is stablished on timeout (positive)"
+        # "stop the listener"
+        # Note that this is for backwards compatibility, better use "keep_listening"
+        if timeout < 0:
+            keep_listening = True
+            timeout = abs(timeout)
 
         if ipv6_listen:
             self.address_family = socket.AF_INET6
@@ -118,7 +124,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.can_stop = False
 
         timeout = timeout or 60
-        self.timer = threading.Timer(abs(timeout), ForwardServer.__checkStarted, args=(self,))
+        self.timer = threading.Timer(timeout, ForwardServer.__checkStarted, args=(self,))
         self.timer.start()
 
     def stop(self) -> None:
