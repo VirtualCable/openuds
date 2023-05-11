@@ -82,6 +82,13 @@ class LogLevel(enum.IntEnum):
         except ValueError:
             return cls.OTHER
 
+    @classmethod
+    def fromActorLevel(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+        """
+        Returns the log level for actor log level
+        """
+        return [cls.DEBUG, cls.INFO, cls.ERROR, cls.CRITICAL][level % 4]
+
     # Return all Log levels as tuples of (level value, level name)
     @staticmethod
     def all() -> typing.List[typing.Tuple[int, str]]:
@@ -91,6 +98,7 @@ class LogLevel(enum.IntEnum):
     @staticmethod
     def interesting() -> typing.List[typing.Tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
+
 
 class LogSource(enum.StrEnum):
     INTERNAL = 'internal'
@@ -204,7 +212,6 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
             return msg
 
         def notify(msg: str, identificator: str, logLevel: LogLevel) -> None:
-
             NotificationsManager().notify('log', identificator, logLevel, msg)
 
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:

@@ -353,6 +353,7 @@ class Config:
                 'longText': cfg.isLongText(),
                 'type': cfg.getType(),
                 'params': cfg.getParams(),
+                help: cfg.getHelp(),
             }
         logger.debug('Configuration: %s', res)
         return res

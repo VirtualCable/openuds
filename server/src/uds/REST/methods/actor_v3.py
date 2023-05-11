@@ -53,6 +53,7 @@ from uds.core.util import log, security
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
+from uds.core import exceptions
 from uds.models.service import ServiceTokenAlias
 
 from ..handlers import Handler
@@ -73,7 +74,7 @@ UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
 cache = Cache('actorv3')
 
 
-class BlockAccess(Exception):
+class BlockAccess(exceptions.UDSException):
     pass
 
 
@@ -218,7 +219,7 @@ class ActorV3Action(Handler):
                 service.notifyData(validId, self._params['data'])
             else:
                 raise Exception('Invalid action')
-            
+
             # All right, service notified..
         except Exception as e:
             # Log error and continue

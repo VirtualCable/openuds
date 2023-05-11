@@ -39,6 +39,7 @@ from uds.models import ActorToken
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
 from uds.core.util import permissions
+from uds.core.util.log import LogLevel
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ class ActorTokens(ModelHandler):
             'pre_command': item.pre_command,
             'post_command': item.post_command,
             'runonce_command': item.runonce_command,
-            'log_level': ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level % 4],
+            'log_level': LogLevel.fromActorLevel(item.log_level).name  # ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level % 4],
         }
 
     def delete(self) -> str:

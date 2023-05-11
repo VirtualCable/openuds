@@ -53,7 +53,7 @@ class ActorToken(models.Model):
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
-    # New fields for 4.0, optional "custom" data, to be interpreted by specific code (i.e. AppLinux services)
+    # New fields for 4.0, optional "custom" data, to be interpreted by specific code
     custom = models.TextField(blank=True, default='')
 
     class Meta:  # pylint: disable=too-few-public-methods
