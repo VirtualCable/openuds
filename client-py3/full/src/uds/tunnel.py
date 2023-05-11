@@ -32,8 +32,6 @@ import socket
 import socketserver
 import ssl
 import threading
-import time
-import random
 import threading
 import select
 import typing
@@ -78,7 +76,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     ticket: str
     stop_flag: threading.Event
     can_stop: bool
-    timeout: int
     timer: typing.Optional[threading.Timer]
     check_certificate: bool
     keep_listening: bool
@@ -112,10 +109,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.remote = remote
         self.remote_ipv6 = ipv6_remote or ':' in remote[0]  # if ':' in remote address, it's ipv6 (port is [1])
         self.ticket = ticket
-        # Negative values for timeout, means "accept always connections"
-        # "but if no connection is stablished on timeout (positive)"
-        # "stop the listener"
-        self.timeout = int(time.time()) + timeout if timeout > 0 else 0
         self.check_certificate = check_certificate
         self.keep_listening = keep_listening
         self.stop_flag = threading.Event()  # False initial
@@ -124,7 +117,7 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.status = ForwardState.TUNNEL_LISTENING
         self.can_stop = False
 
-        timeout = abs(timeout) or 60
+        timeout = timeout or 60
         self.timer = threading.Timer(abs(timeout), ForwardServer.__checkStarted, args=(self,))
         self.timer.start()
 
@@ -185,10 +178,14 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     @property
     def stoppable(self) -> bool:
         logger.debug('Is stoppable: %s', self.can_stop)
-        return self.can_stop or (self.timeout != 0 and int(time.time()) > self.timeout)
+        return self.can_stop
 
     @staticmethod
     def __checkStarted(fs: 'ForwardServer') -> None:
+        # As soon as the timer is fired, the server can be stopped
+        # This means that:
+        #  * If not connections are stablished, the server will be stopped
+        #  * If no "keep_listening" is set, the server will not allow any new connections
         logger.debug('New connection limit reached')
         fs.timer = None
         fs.can_stop = True
@@ -264,10 +261,9 @@ class Handler(socketserver.BaseRequestHandler):
 
 def _run(server: ForwardServer) -> None:
     logger.debug(
-        'Starting forwarder: %s -> %s, timeout: %d',
+        'Starting forwarder: %s -> %s',
         server.server_address,
         server.remote,
-        server.timeout,
     )
     server.serve_forever()
     logger.debug('Stoped forwarder %s -> %s', server.server_address, server.remote)
