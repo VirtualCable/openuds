@@ -84,7 +84,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     keep_listening: bool
     current_connections: int
     status: ForwardState
-    initial_payload: typing.Optional[bytes]
 
     address_family = socket.AF_INET
 
@@ -96,7 +95,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         local_port: int = 0,
         check_certificate: bool = True,
         keep_listening: bool = False,
-        initial_payload: typing.Optional[bytes] = None,
         ipv6_listen: bool = False,
         ipv6_remote: bool = False,
     ) -> None:
@@ -120,7 +118,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.keep_listening = keep_listening
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
-        self.initial_payload = initial_payload
 
         self.status = ForwardState.TUNNEL_LISTENING
         self.can_stop = False
@@ -281,7 +278,6 @@ def forward(
     local_port: int = 0,
     check_certificate=True,
     keep_listening=True,
-    initial_payload: PayLoadType = None,
 ) -> ForwardServer:
     fs = ForwardServer(
         remote=remote,
