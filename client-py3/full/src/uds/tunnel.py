@@ -92,21 +92,23 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         remote: typing.Tuple[str, int],
         ticket: str,
         timeout: int = 0,
-        local_port: int = 0,
+        local_port: int = 0,  # Use first available listen port if not specified
         check_certificate: bool = True,
         keep_listening: bool = False,
         ipv6_listen: bool = False,
         ipv6_remote: bool = False,
     ) -> None:
-        local_port = local_port or random.randrange(33000, 53000)
+        
 
         if ipv6_listen:
             self.address_family = socket.AF_INET6
 
+        # Binds and activate the server, so if local_port is 0, it will be assigned
         super().__init__(
             server_address=(LISTEN_ADDRESS_V6 if ipv6_listen else LISTEN_ADDRESS, local_port),
             RequestHandlerClass=Handler,
         )
+        
         self.remote = remote
         self.remote_ipv6 = ipv6_remote or ':' in remote[0]  # if ':' in remote address, it's ipv6 (port is [1])
         self.ticket = ticket
@@ -309,7 +311,8 @@ if __name__ == "__main__":
     fs = forward(
         ('172.27.0.1', 7777),
         ticket,
-        local_port=49999,
+        local_port=0,
         timeout=-20,
         check_certificate=False,
     )
+    print('Listening on port', fs.server_address)
