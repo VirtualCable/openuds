@@ -9,6 +9,7 @@ fi
 echo "Installing UDSClient Portable..."
 
 cp UDSClient-0.0.0-x86_64.AppImage /usr/bin
+chmod 755 /usr/bin/UDSClient-0.0.0-x86_64.AppImage
 cp UDSClient.desktop /usr/share/applications
 update-desktop-database
 
