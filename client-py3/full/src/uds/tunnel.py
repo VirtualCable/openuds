@@ -68,7 +68,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
     keep_listening: bool
     current_connections: int
     status: int
-    initial_payload: PayLoadType
 
     def __init__(
         self,
@@ -78,7 +77,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         local_port: int = 0,
         check_certificate: bool = True,
         keep_listening: bool = False,
-        initial_payload: PayLoadType = None,
     ) -> None:
         local_port = local_port or random.randrange(33000, 53000)
 
@@ -93,8 +91,6 @@ class ForwardServer(socketserver.ThreadingTCPServer):
         self.keep_listening = keep_listening
         self.stop_flag = threading.Event()  # False initial
         self.current_connections = 0
-
-        self.initial_payload = initial_payload
 
         self.status = TUNNEL_LISTENING
         self.can_stop = False
@@ -200,16 +196,6 @@ class Handler(socketserver.BaseRequestHandler):
 
                 # All is fine, now we can tunnel data
 
-                # If we have a payload, send it
-                if self.server.initial_payload:
-                    to_send, to_receive = self.server.initial_payload
-                    if to_send: # To send
-                        ssl_socket.sendall(to_send)
-                    if to_receive:
-                        temp = ssl_socket.recv(len(to_receive))
-                        if temp != to_receive:
-                            raise Exception(f'Invalid response: {temp!s} != {to_receive!s}')
-
                 self.process(remote=ssl_socket)
         except Exception as e:
             logger.error(f'Error connecting to {self.server.remote!s}: {e!s}')
@@ -271,7 +257,6 @@ def forward(
         local_port=local_port,
         check_certificate=check_certificate,
         keep_listening=keep_listening,
-        initial_payload=initial_payload,
     )
     # Starts a new thread
     threading.Thread(target=_run, args=(fs,)).start()
