@@ -208,7 +208,10 @@ class TunnelProtocol(asyncio.Protocol):
         try:
             await asyncio.sleep(wait)
             logger.error('TIMEOUT FROM %s', self.pretty_source())
-            self.transport.write(consts.RESPONSE_ERROR_TIMEOUT)
+            try:
+                self.transport.write(consts.RESPONSE_ERROR_TIMEOUT)
+            except Exception:  # nosec: Transport not available, ignore
+                pass
             self.close_connection()
         except asyncio.CancelledError:
             pass
