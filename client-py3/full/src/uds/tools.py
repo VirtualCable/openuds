@@ -267,3 +267,6 @@ def getCaCertsFile() -> typing.Optional[str]:
                 return path
 
     return None
+
+def isMac() -> bool:
+    return 'darwin' in sys.platform

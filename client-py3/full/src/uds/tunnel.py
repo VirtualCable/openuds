@@ -119,7 +119,8 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
-            context.minimum_version = ssl.TLSVersion.TLSv1_3
+            # On macs, seems to have problems with TLSv1.3, so we force TLSv1.2
+            context.minimum_version = ssl.TLSVersion.TLSv1_2 if tools.isMac() else ssl.TLSVersion.TLSv1_3
 
             if tools.getCaCertsFile() is not None:
                 context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
@@ -279,10 +280,19 @@ if __name__ == "__main__":
     ticket = 'mffqg7q4s61fvx0ck2pe0zke6k0c5ipb34clhbkbs4dasb4g'
 
     fs = forward(
-        ('172.27.0.1', 7777),
+        ('demoaslan.udsenterprise.com', 11443),
         ticket,
         local_port=0,
         timeout=-20,
         check_certificate=False,
     )
     print('Listening on port', fs.server_address)
+    import socket
+    # Open a socket to local fs.server_address and send some random data
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(fs.server_address)
+        s.sendall(b'Hello world!')
+        data = s.recv(1024)
+        print('Received', repr(data))
+    fs.stop()
+    
