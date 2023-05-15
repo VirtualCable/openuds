@@ -50,7 +50,7 @@ class ConfigurationType(typing.NamedTuple):
 
     listen_address: str
     listen_port: int
-    
+
     ipv6: bool
 
     workers: int
@@ -77,26 +77,21 @@ class ConfigurationType(typing.NamedTuple):
     def __str__(self) -> str:
         return 'Configuration: \n' + '\n'.join(
             f'{k}={v}'
-            for k, v in self._asdict().items()
+            for k, v in self._asdict().items()  # pylint: disable=no-member  # python >=3.8 has _asdict
         )
 
 
-
-def read_config_file(
-    cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None
-) -> str:
+def read_config_file(cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None) -> str:
     if cfg_file is None:
         cfg_file = CONFIGFILE
     if isinstance(cfg_file, str):
-        with open(cfg_file, 'r') as f:
+        with open(cfg_file, 'r', encoding='utf-8') as f:
             return '[uds]\n' + f.read()
     # path is in fact a file-like object
     return '[uds]\n' + cfg_file.read()
 
 
-def read(
-    cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None
-) -> ConfigurationType:
+def read(cfg_file: typing.Optional[typing.Union[typing.TextIO, str]] = None) -> ConfigurationType:
     config_str = read_config_file(cfg_file)
 
     cfg = configparser.ConfigParser()
@@ -150,8 +145,8 @@ def read(
     except ValueError as e:
         raise Exception(
             f'Mandatory configuration file in incorrect format: {e.args[0]}. Please, revise {CONFIGFILE}'
-        )
+        ) from None
     except KeyError as e:
         raise Exception(
             f'Mandatory configuration parameter not found: {e.args[0]}. Please, revise {CONFIGFILE}'
-        )
+        ) from None

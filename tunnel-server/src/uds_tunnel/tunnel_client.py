@@ -1,10 +1,3 @@
-"""
- Copyright (c) 2023 Adolfo Gómez García <dkmaster@dkmon.com>
- 
- This software is released under the MIT License.
- https://opensource.org/licenses/MIT
-"""
-
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
@@ -39,8 +32,6 @@ import asyncio
 import typing
 import logging
 
-from . import consts, config
-
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
@@ -71,7 +62,7 @@ class TunnelClientProtocol(asyncio.Protocol):
         self.transport = typing.cast('asyncio.transports.Transport', transport)
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
-        # Ensure close other side if not server_side
+        # Ensure close other side
         try:
             self.receiver.close_connection()
         except Exception:

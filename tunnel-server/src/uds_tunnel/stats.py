@@ -36,8 +36,6 @@ import typing
 import io
 import asyncio
 import ssl
-import logging
-import typing
 
 
 from . import config
@@ -50,6 +48,7 @@ if typing.TYPE_CHECKING:
 INTERVAL = 2  # Interval in seconds between stats update
 
 logger = logging.getLogger(__name__)
+
 
 class StatsSingleCounter:
     def __init__(self, parent: 'StatsManager', for_receiving=True) -> None:
@@ -69,9 +68,9 @@ class StatsManager:
     sent: int
     last_recv: int
     recv: int
-    last: float
-    start_time: float  # timestamp
-    end_time: float    
+    last: float  # timestamp, from time.monotonic()
+    start_time: float  # timestamp, from time.monotonic()
+    end_time: float  # timestamp, from time.monotonic()
 
     def __init__(self, ns: 'Namespace'):
         self.ns = ns
@@ -84,7 +83,6 @@ class StatsManager:
     @property
     def current_time(self) -> float:
         return time.monotonic()
-
 
     def update(self, force: bool = False):
         now = time.monotonic()
@@ -126,6 +124,7 @@ class StatsManager:
         self.decrement_connections()
         self.end_time = time.monotonic()
 
+
 # Stats collector thread
 class GlobalStats:
     manager: 'SyncManager'
@@ -151,6 +150,7 @@ class GlobalStats:
     def get_stats(ns: 'Namespace') -> typing.Iterable[str]:
         yield ';'.join([str(ns.current), str(ns.total), str(ns.sent), str(ns.recv)])
 
+
 # Stats processor, invoked from command line
 async def getServerStats(detailed: bool = False) -> None:
     cfg = config.read()
@@ -174,8 +174,8 @@ async def getServerStats(detailed: bool = False) -> None:
 
             tmpdata = io.BytesIO()
             cmd = consts.COMMAND_STAT if detailed else consts.COMMAND_INFO
-            
-            writer.write(cmd + cfg.secret.encode())           
+
+            writer.write(cmd + cfg.secret.encode())
             await writer.drain()
 
             while True:
