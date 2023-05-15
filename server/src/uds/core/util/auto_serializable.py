@@ -95,7 +95,6 @@ def fernet_key(crypt_key: bytes) -> str:
     Note: if password is not set, this will raise an exception
     """
     # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
-    # First, with seed + password, generate a 32 bytes key based on seed + password
     return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
 
 # pylint: disable=unnecessary-dunder-call

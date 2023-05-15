@@ -37,7 +37,6 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
-from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +56,7 @@ def single_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Date'),
         tooltip=_('Date for report'),
-        defvalue=lambda: datetime.date.today(),
+        defvalue=datetime.date.today,
         required=True,
     )
 
@@ -67,7 +66,7 @@ def end_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Ending date'),
         tooltip=_('ending date for report'),
-        defvalue=lambda: datetime.date.today()+datetime.timedelta(days=1),
+        defvalue=lambda: datetime.date.today() + datetime.timedelta(days=1),
         required=True,
     )
 
@@ -113,7 +112,6 @@ def source_field(
 
 def source_field_data(
     model: typing.Any,
-    data_source: str,
     field: typing.Union[gui.ChoiceField, gui.MultiChoiceField],
 ) -> None:
     dataList: typing.List[gui.ChoiceType] = [

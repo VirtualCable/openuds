@@ -108,18 +108,18 @@ class TestOSManager(osmanagers.OSManager):
         """
         return userService.getName()
 
-    def doLog(self, service, data, origin=log.LogSource.OSMANAGER):
+    def doLog(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
         # Stores a log associated with this service
         try:
-            msg, level = data.split('\t')
+            msg, slevel = data.split('\t')
             try:
-                level = int(level)
+                level = log.LogLevel.fromStr(slevel)
             except Exception:
-                logger.debug('Do not understand level %s', level)
+                logger.debug('Do not understand level %s', slevel)
                 level = log.LogLevel.INFO
             log.doLog(service, level, msg, origin)
         except Exception:
-            log.doLog(service, log.LogLevel.ERROR, "do not understand {0}".format(data), origin)
+            log.doLog(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
     def actorData(
         self, userService: 'UserService'

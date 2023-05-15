@@ -74,7 +74,7 @@ class LinuxRandomPassManager(LinuxOsManager):
     _userAccount: str
 
     def __init__(self, environment, values):
-        super(LinuxRandomPassManager, self).__init__(environment, values)
+        super().__init__(environment, values)
         if values is not None:
             if values['userAccount'] == '':
                 raise exceptions.ValidationError(
@@ -91,7 +91,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             return (username, userService.recoverValue('linOsRandomPass'))
         return username, password
 
-    def genPassword(self, service):
+    def genPassword(self, service: 'UserService') -> str:
         randomPass = service.recoverValue('linOsRandomPass')
         if randomPass is None:
             randomPass = ''.join(
@@ -102,7 +102,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             log.doLog(
                 service,
                 log.LogLevel.INFO,
-                "Password set to \"{}\"".format(randomPass),
+                f'Password set to "{randomPass}"',
                 log.LogSource.OSMANAGER,
             )
 
@@ -134,7 +134,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             self._userAccount = values[1].decode()
             LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
-    def valuesDict(self):
+    def valuesDict(self) -> gui.ValuesDictType:
         dic = LinuxOsManager.valuesDict(self)
         dic['userAccount'] = self._userAccount
         return dic

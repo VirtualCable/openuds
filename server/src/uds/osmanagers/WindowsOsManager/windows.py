@@ -96,7 +96,7 @@ class WindowsOsManager(osmanagers.OSManager):
         except Exception:
             raise exceptions.ValidationError(
                 _('Length must be numeric!!')
-            )
+            ) from None
         if length > 6 or length < 1:
             raise exceptions.ValidationError(
                 _('Length must be betwen 1 and 6')
@@ -107,7 +107,7 @@ class WindowsOsManager(osmanagers.OSManager):
         self.processUnusedMachines = self._onLogout == 'remove'
 
     def __init__(self, environment, values):
-        super(WindowsOsManager, self).__init__(environment, values)
+        super().__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
@@ -145,7 +145,7 @@ class WindowsOsManager(osmanagers.OSManager):
         try:
             msg, levelStr = data.split('\t')
             try:
-                level = int(levelStr)
+                level = log.LogLevel.fromStr(levelStr)
             except Exception:
                 logger.debug('Do not understand level %s', levelStr)
                 level = log.LogLevel.INFO
@@ -154,7 +154,7 @@ class WindowsOsManager(osmanagers.OSManager):
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
             log.doLog(
-                userService, log.LogLevel.ERROR, "do not understand {0}".format(data), origin
+                userService, log.LogLevel.ERROR, f'do not understand {data}', origin
             )
 
     def actorData(

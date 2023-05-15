@@ -41,13 +41,13 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core.ui import gui
 from uds.core.util import log
+from uds.core.managers.log.objects import LogObjectType
 from uds.models import Log
 
 from .base import ListReport
 
 
 logger = logging.getLogger(__name__)
-
 
 
 class ListReportAuditCSV(ListReport):
@@ -80,16 +80,21 @@ class ListReportAuditCSV(ListReport):
     def genData(self) -> typing.Generator[typing.Tuple, None, None]:
         # Xtract user method, response_code and request from data
         # the format is "user: [method/response_code] request"
-        rx = re.compile(r'(?P<ip>[^ ]*) (?P<user>.*?): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)')
+        rx = re.compile(
+            r'(?P<ip>[^ ]*) (?P<user>.*?): \[(?P<method>[^/]*)/(?P<response_code>[^\]]*)\] (?P<request>.*)'
+        )
 
         start = self.startDate.datetime().replace(hour=0, minute=0, second=0, microsecond=0)
         end = self.endDate.datetime().replace(hour=23, minute=59, second=59, microsecond=999999)
         for i in Log.objects.filter(
-            created__gte=start, created__lte=end, owner_id=0, owner_type=log.OWNER_TYPE_AUDIT, 
+            created__gte=start,
+            created__lte=end,
+            source=log.LogSource.REST,
+            owner_type=LogObjectType.SYSLOG,
         ).order_by('-created'):
             # extract user, method, response_code and request from data field
             m = rx.match(i.data)
-            
+
             if m is not None:
                 # Convert response code to an string if 200, else, to an error
                 response_code = {
@@ -117,7 +122,15 @@ class ListReportAuditCSV(ListReport):
         writer = csv.writer(output)
 
         writer.writerow(
-            [gettext('Date'), gettext('Level'), gettext('IP'), gettext('User'), gettext('Method'), gettext('Response code'), gettext('Request')]
+            [
+                gettext('Date'),
+                gettext('Level'),
+                gettext('IP'),
+                gettext('User'),
+                gettext('Method'),
+                gettext('Response code'),
+                gettext('Request'),
+            ]
         )
 
         for l in self.genData():

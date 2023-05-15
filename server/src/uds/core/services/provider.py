@@ -208,7 +208,7 @@ class ServiceProvider(Module):
         val = getattr(val, 'value', val)
         return val is True or val == gui.TRUE
 
-    def doLog(self, level: int, message: str) -> None:
+    def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """

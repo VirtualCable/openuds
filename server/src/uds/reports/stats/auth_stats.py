@@ -34,7 +34,6 @@ import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
 
-from uds.core.ui import gui
 from uds.core.util.stats import counters
 
 from .base import StatsReportAuto
@@ -68,8 +67,6 @@ class AuthenticatorsStats(StatsReportAuto):
             # Will show a.name on every change...
             stats.append({'date': a.name, 'users': None})
 
-            services = 0
-            userServices = 0
             for i in self.getIntervalsList():
                 start = i[0]
                 end = i[1]

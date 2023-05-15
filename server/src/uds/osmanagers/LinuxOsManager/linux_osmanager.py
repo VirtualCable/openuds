@@ -94,11 +94,11 @@ class LinuxOsManager(osmanagers.OSManager):
         defvalue=gui.TRUE,
     )
 
-    def __setProcessUnusedMachines(self):
+    def __setProcessUnusedMachines(self) -> None:
         self.processUnusedMachines = self._onLogout == 'remove'
 
-    def __init__(self, environment, values):
-        super(LinuxOsManager, self).__init__(environment, values)
+    def __init__(self, environment, values) -> None:
+        super().__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
@@ -128,31 +128,31 @@ class LinuxOsManager(osmanagers.OSManager):
 
         return False
 
-    def getName(self, service):
+    def getName(self, service: 'UserService') -> str:
         """
         gets name from deployed
         """
         return service.getName()
 
-    def doLog(self, service, data, origin=log.LogSource.OSMANAGER):
+    def doLog(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
         # Stores a log associated with this service
         try:
-            msg, level = data.split('\t')
+            msg, slevel = data.split('\t')
             try:
-                level = int(level)
+                level = log.LogLevel.fromStr(slevel)
             except Exception:
-                logger.debug('Do not understand level %s', level)
+                logger.debug('Do not understand level %s', slevel)
                 level = log.LogLevel.INFO
             log.doLog(service, level, msg, origin)
         except Exception:
-            log.doLog(service, log.LogLevel.ERROR, "do not understand {0}".format(data), origin)
+            log.doLog(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
     def actorData(
         self, userService: 'UserService'
     ) -> typing.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.getName()}
 
-    def processUnused(self, userService):
+    def processUnused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
@@ -166,14 +166,14 @@ class LinuxOsManager(osmanagers.OSManager):
             )
             userService.remove()
 
-    def isPersistent(self):
+    def isPersistent(self) -> bool:
         return self._onLogout == 'keep-always'
 
     def checkState(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 
-    def maxIdle(self):
+    def maxIdle(self) -> typing.Optional[int]:
         """
         On production environments, will return no idle for non removable machines
         """
@@ -192,7 +192,7 @@ class LinuxOsManager(osmanagers.OSManager):
             ['v3', self._onLogout, str(self._idle), gui.fromBool(self._deadLine)]
         ).encode('utf8')
 
-    def unmarshal(self, data: bytes):
+    def unmarshal(self, data: bytes) -> None:
         values = data.decode('utf8').split('\t')
         self._idle = -1
         self._deadLine = True
