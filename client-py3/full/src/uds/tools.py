@@ -44,10 +44,16 @@ import typing
 
 import certifi
 
+# For signature checking
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import utils, padding
+
 try:
     import psutil
 except ImportError:
     psutil = None
+
 
 from .log import logger
 
@@ -76,9 +82,7 @@ nVgtClKcDDlSaBsO875WDR0CAwEAAQ==
 
 def saveTempFile(content: str, filename: typing.Optional[str] = None) -> str:
     if filename is None:
-        filename = ''.join(
-            random.choice(string.ascii_lowercase + string.digits) for _ in range(16)
-        )
+        filename = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(16))
         filename = filename + '.uds'
 
     filename = os.path.join(tempfile.gettempdir(), filename)
@@ -108,9 +112,7 @@ def testServer(host: str, port: typing.Union[str, int], timeOut: int = 4) -> boo
     return True
 
 
-def findApp(
-    appName: str, extraPath: typing.Optional[str] = None
-) -> typing.Optional[str]:
+def findApp(appName: str, extraPath: typing.Optional[str] = None) -> typing.Optional[str]:
     searchPath = os.environ['PATH'].split(os.pathsep)
     if extraPath:
         searchPath += list(extraPath)
@@ -139,9 +141,7 @@ def addFileToUnlink(filename: str, early: bool = False) -> None:
     '''
     Adds a file to the wait-and-unlink list
     '''
-    logger.debug(
-        'Added file %s to unlink on %s stage', filename, 'early' if early else 'later'
-    )
+    logger.debug('Added file %s to unlink on %s stage', filename, 'early' if early else 'later')
     _unlinkFiles.append((filename, early))
 
 
@@ -195,9 +195,7 @@ def waitForTasks() -> None:
                         psutil.process_iter(attrs=('ppid',)),
                     )
                 )
-                logger.debug(
-                    'Waiting for subprocesses... %s, %s', task.pid, subProcesses
-                )
+                logger.debug('Waiting for subprocesses... %s, %s', task.pid, subProcesses)
                 for i in subProcesses:
                     logger.debug('Found %s', i)
                     i.wait()
@@ -224,14 +222,7 @@ def verifySignature(script: bytes, signature: bytes) -> bool:
     param: signature String signature to be verified
     return: Boolean. True if the signature is valid; False otherwise.
     '''
-    # For signature checking
-    from cryptography.hazmat.backends import default_backend
-    from cryptography.hazmat.primitives import serialization, hashes
-    from cryptography.hazmat.primitives.asymmetric import utils, padding
-
-    public_key = serialization.load_pem_public_key(
-        data=PUBLIC_KEY, backend=default_backend()
-    )
+    public_key = serialization.load_pem_public_key(data=PUBLIC_KEY, backend=default_backend())
 
     try:
         public_key.verify(  # type: ignore
@@ -261,12 +252,17 @@ def getCaCertsFile() -> typing.Optional[str]:
 
     # Check if "standard" paths are valid for linux systems
     if 'linux' in sys.platform:
-        for path in ('/etc/pki/tls/certs/ca-bundle.crt', '/etc/ssl/certs/ca-certificates.crt', '/etc/ssl/ca-bundle.pem'):
+        for path in (
+            '/etc/pki/tls/certs/ca-bundle.crt',
+            '/etc/ssl/certs/ca-certificates.crt',
+            '/etc/ssl/ca-bundle.pem',
+        ):
             if os.path.exists(path):
                 logger.info('Found certifi path: %s', path)
                 return path
 
     return None
+
 
 def isMac() -> bool:
     return 'darwin' in sys.platform
