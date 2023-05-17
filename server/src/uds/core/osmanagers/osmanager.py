@@ -117,6 +117,12 @@ class OSManager(Module):
               'ou': 'ou'   # or '' if default ou
               'username': 'userwithaddmachineperms@domain.xxxx'
               'password': 'passwordForTheUserWithPerms',
+              'clientSoftware': 'sssd' or 'winbind' or 'automatically' if linux os manager,
+              'serverSoftware': 'active-directory' or 'ipa' if linux os manager,
+              'membershipSoftware': 'samba' or 'adcli' or 'automatically' if linux os manager,
+              'ssl': 'n' or 'y' if linux os manager,
+              'automaticIdMapping': 'n' or 'y' if linux os manager,
+              'isPersistent': 'n' or 'y' if linux os manager,
           }
         * rename vm, do NOT ADD to AD, and change password for an user
           {
