@@ -43,12 +43,14 @@ logger = logging.getLogger(__name__)
 
 
 def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
-    if request.is_secure():
-        proto = 'udss'
-    else:
-        proto = 'uds'
+    # Removed http support, so only udss:// links are generated
 
-    return f'{proto}://{request.build_absolute_uri("/")}{ticket}/{scrambler}'
+    # If we have a scheme, remove it
+    rels = request.build_absolute_uri("/").split("://", maxsplit=1)
+    rel = rels[1] if len(rels) > 1 else rels[0]
+
+    # Ensure that build_absolute_uri returns a valid url without scheme
+    return f'udss://{rel}{ticket}/{scrambler}'
 
 
 def udsAccessLink(
@@ -67,10 +69,7 @@ def parseDate(dateToParse) -> datetime.date:
         date_format = '%d/%m/%Y'
     else:
         date_format = (
-            formats.get_format('SHORT_DATE_FORMAT')
-            .replace('Y', '%Y')
-            .replace('m', '%m')
-            .replace('d', '%d')
+            formats.get_format('SHORT_DATE_FORMAT').replace('Y', '%Y').replace('m', '%m').replace('d', '%d')
         )  # pylint: disable=maybe-no-member
 
     return datetime.datetime.strptime(dateToParse, date_format).date()
