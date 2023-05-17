@@ -88,29 +88,29 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_('Username for SSH connection authentication.'),
         tab=gui.Tab.CREDENTIALS,
     )
-    password = gui.PasswordField(
-        label=_('Password'),
-        order=21,
-        tooltip=_('Password for SSH connection authentication'),
-        tab=gui.Tab.CREDENTIALS,
-    )
-    sshPrivateKey = gui.TextField(
-        label=_('SSH Private Key'),
-        order=22,
-        multiline=4,
-        tooltip=_(
-            'Private key for SSH authentication. If not provided, password authentication is used.'
-        ),
-        tab=gui.Tab.CREDENTIALS,
-    )
-    sshPassphrase = gui.PasswordField(
-        label=_('SSH Private Key Passphrase'),
-        order=23,
-        tooltip=_(
-            'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
-        ),
-        tab=gui.Tab.CREDENTIALS,
-    )
+    # password = gui.PasswordField(
+    #     label=_('Password'),
+    #     order=21,
+    #     tooltip=_('Password for SSH connection authentication'),
+    #     tab=gui.Tab.CREDENTIALS,
+    # )
+    # sshPrivateKey = gui.TextField(
+    #     label=_('SSH Private Key'),
+    #     order=22,
+    #     multiline=4,
+    #     tooltip=_(
+    #         'Private key for SSH authentication. If not provided, password authentication is used.'
+    #     ),
+    #     tab=gui.Tab.CREDENTIALS,
+    # )
+    # sshPassphrase = gui.PasswordField(
+    #     label=_('SSH Private Key Passphrase'),
+    #     order=23,
+    #     tooltip=_(
+    #         'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
+    #     ),
+    #     tab=gui.Tab.CREDENTIALS,
+    # )
 
     sshCommand = gui.TextField(
         label=_('SSH Command'),

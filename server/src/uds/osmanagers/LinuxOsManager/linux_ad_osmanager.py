@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -38,12 +38,14 @@ from django.utils.translation import gettext_noop as _, gettext_lazy
 
 from uds.core.ui import gui
 from uds.core import exceptions
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 from .linux_osmanager import LinuxOsManager
 
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
+    from uds.core.environment import Environment
+    from uds.core.module import Module
 
 
 logger = logging.getLogger(__name__)
@@ -59,9 +61,7 @@ class LinuxOsADManager(LinuxOsManager):
         length=64,
         label=_('Domain'),
         order=1,
-        tooltip=_(
-            'Domain to join machines to (use FQDN form, Netbios name not supported for most operations)'
-        ),
+        tooltip=_('Domain to join machines to (use FQDN form, Netbios name not supported for most operations)'),
         required=True,
     )
     account = gui.TextField(
@@ -95,7 +95,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'sssd', 'text': gettext_lazy('SSSD')},
             {'id': 'winbind', 'text': gettext_lazy('Winbind')},
         ],
-        tab=_('Advanced'),
+        tab=gui.Tab.ADVANCED,
         defvalue='automatically',
     )
     membershipSoftware = gui.ChoiceField(
@@ -107,7 +107,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'samba', 'text': gettext_lazy('Samba')},
             {'id': 'adcli', 'text': gettext_lazy('adcli')},
         ],
-        tab=_('Advanced'),
+        tab=gui.Tab.ADVANCED,
         defvalue='automatically',
     )
     removeOnExit = gui.CheckBoxField(
@@ -116,21 +116,21 @@ class LinuxOsADManager(LinuxOsManager):
         tooltip=_(
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
-        tab=_('Advanced'),
+        tab=gui.Tab.ADVANCED,
         defvalue=gui.TRUE,
     )
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
-        tab=_('Advanced'),
+        tab=gui.Tab.ADVANCED,
         defvalue=gui.TRUE,
     )
     automaticIdMapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),
-        tab=_('Advanced'),
+        tab=gui.Tab.ADVANCED,
         defvalue=gui.TRUE,
     )
 
@@ -150,19 +150,15 @@ class LinuxOsADManager(LinuxOsManager):
     _serverSoftware: str
     _membershipSoftware: str
 
-    def __init__(self, environment, values):
-        super(LinuxOsADManager, self).__init__(environment, values)
+    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
+        super().__init__(environment, values)
         if values:
             if values['domain'] == '':
                 raise exceptions.ValidationError(_('Must provide a domain!'))
             if values['account'] == '':
-                raise exceptions.ValidationError(
-                    _('Must provide an account to add machines to domain!')
-                )
+                raise exceptions.ValidationError(_('Must provide an account to add machines to domain!'))
             if values['password'] == '':
-                raise exceptions.ValidationError(
-                    _('Must provide a password for the account!')
-                )
+                raise exceptions.ValidationError(_('Must provide a password for the account!'))
             self._domain = values['domain']
             self._account = values['account']
             self._password = values['password']
@@ -185,9 +181,7 @@ class LinuxOsADManager(LinuxOsManager):
             self._ssl = 'n'
             self._automaticIdMapping = 'n'
 
-    def actorData(
-        self, userService: 'UserService'
-    ) -> typing.MutableMapping[str, typing.Any]:
+    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userService.getName(),
@@ -213,7 +207,7 @@ class LinuxOsADManager(LinuxOsManager):
                 'v1',
                 self._domain,
                 self._account,
-                cryptoManager().encrypt(self._password),
+                CryptoManager().encrypt(self._password),
                 self._ou,
                 self._clientSoftware,
                 self._serverSoftware,
@@ -230,7 +224,7 @@ class LinuxOsADManager(LinuxOsManager):
         if values[0] in ('v1'):
             self._domain = values[1]
             self._account = values[2]
-            self._password = cryptoManager().decrypt(values[3])
+            self._password = CryptoManager().decrypt(values[3])
             self._ou = values[4]
             self._clientSoftware = values[5]
             self._serverSoftware = values[6]

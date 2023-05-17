@@ -44,6 +44,7 @@ from uds.core.util import log
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +98,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def __setProcessUnusedMachines(self) -> None:
         self.processUnusedMachines = self._onLogout == 'remove'
 
-    def __init__(self, environment, values) -> None:
+    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
