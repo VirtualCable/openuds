@@ -253,9 +253,9 @@ class HTML5SSHTransport(transports.Transport):
         # Add optional parameters (strings only)
         for i in (
             ('username', self.username),
-            ('password', self.password),
-            ('private-key', self.sshPrivateKey),
-            ('passphrase', self.sshPassphrase),
+            # ('password', self.password),
+            # ('private-key', self.sshPrivateKey),
+            # ('passphrase', self.sshPassphrase),
             ('command', self.sshCommand),
             ('host-key', self.sshHostKey),
         ):

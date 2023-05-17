@@ -195,7 +195,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     typeName = _('SimpleLDAP (DEPRECATED)')
     typeType = 'SimpleLdapAuthenticator'
-    typeDescription = _('Simple LDAP authenticator (DEPRECATED)')
+    typeDescription = _('Simple LDAP authenticator')
     iconFile = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
