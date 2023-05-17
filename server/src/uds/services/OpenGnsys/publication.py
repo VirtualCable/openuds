@@ -27,14 +27,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
 from uds.core.services import Publication
 from uds.core.util.state import State
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

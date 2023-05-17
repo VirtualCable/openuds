@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-import
 
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,12 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
-
-# Utility imports
-from .util import getSqlDatetime, getSqlDatetimeAsUnix, NEVER, NEVER_UNIX
 
 # Imports all models so they are available for migrations, etc..
 from .managed_object_model import ManagedObjectModel
@@ -111,8 +107,6 @@ from .actor_token import ActorToken
 from .tunnel_token import TunnelToken
 
 # Notifications & Alerts
-from .notifications import Notification, Notifier, NotificationLevel
+from .notifications import Notification, Notifier, LogLevel
 # Multi factor authentication
 from .mfa import MFA
-
-logger = logging.getLogger(__name__)

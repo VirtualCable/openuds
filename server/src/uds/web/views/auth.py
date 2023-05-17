@@ -38,7 +38,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
-import uds.web.util.errors as errors
+from uds.web.util import errors
 from uds.core import auths
 from uds.core.auths.auth import (
     webLogin,
@@ -47,9 +47,9 @@ from uds.core.auths.auth import (
     authLogLogin,
     getUDSCookie,
 )
-from uds.core.managers import userServiceManager, cryptoManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core.util import os_detector as OsDetector
 from uds.core.util import html
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
@@ -116,14 +116,14 @@ def authCallback_stage2(
 
         result = authenticateViaCallback(authenticator, params, request)
 
-        os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
+        # os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
 
         if result.url:
             raise auths.exceptions.Redirect(result.url)
 
         if result.user is None:
             authLogLogin(
-                request, authenticator, '{0}'.format(params), 'Invalid at auth callback'
+                request, authenticator, f'{params}', 'Invalid at auth callback'
             )
             raise auths.exceptions.InvalidUserException()
 
@@ -222,10 +222,10 @@ def ticketAuth(
             auth = data['auth']
             realname = data['realname']
             poolUuid = data['servicePool']
-            password = cryptoManager().decrypt(data['password'])
+            password = CryptoManager().decrypt(data['password'])
         except Exception:
             logger.error('Ticket stored is not valid')
-            raise auths.exceptions.InvalidUserException()
+            raise auths.exceptions.InvalidUserException() from  None
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
@@ -264,7 +264,7 @@ def ticketAuth(
         # Check if servicePool is part of the ticket
         if poolUuid:
             # Request service, with transport = None so it is automatic
-            res = userServiceManager().getService(
+            res = UserServiceManager().getService(
                 request.user, request.os, request.ip, poolUuid, None, False
             )
             _, userService, _, transport, _ = res
@@ -272,11 +272,11 @@ def ticketAuth(
             transportInstance = transport.getInstance()
             if transportInstance.ownLink is True:
                 link = reverse(
-                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)
+                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore
                 )
             else:
                 link = html.udsAccessLink(
-                    request, 'A' + userService.uuid, transport.uuid
+                    request, 'A' + userService.uuid, transport.uuid  # type: ignore
                 )
 
             request.session['launch'] = link
@@ -287,7 +287,7 @@ def ticketAuth(
         # Now ensure uds cookie is at response
         getUDSCookie(request, response, True)
         return response
-    except ServiceNotReadyError as e:
+    except ServiceNotReadyError:
         return errors.errorView(request, errors.SERVICE_NOT_READY)
     except TicketStore.InvalidTicket:
         return errors.errorView(request, errors.RELOAD_NOT_SUPPORTED)

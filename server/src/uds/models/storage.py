@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -53,7 +53,7 @@ class Storage(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Storage]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -61,6 +61,4 @@ class Storage(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{} {}  > str= {}, {}'.format(
-            self.owner, self.key, self.data, '/'.join([self.attr1 or ''])
-        )
+        return f'{self.owner} {self.key}  > str= {self.data}, {self.attr1 or ""}'

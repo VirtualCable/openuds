@@ -59,6 +59,7 @@ from cryptography import fernet
 from django.conf import settings
 
 
+# pylint: disable=too-few-public-methods
 class _Unassigned:
     pass
 
@@ -94,10 +95,9 @@ def fernet_key(crypt_key: bytes) -> str:
     Note: if password is not set, this will raise an exception
     """
     # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
-    # First, with seed + password, generate a 32 bytes key based on seed + password
     return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
 
-
+# pylint: disable=unnecessary-dunder-call
 class _SerializableField(typing.Generic[T]):
     name: str
     type: typing.Type[T]
@@ -110,10 +110,9 @@ class _SerializableField(typing.Generic[T]):
     def _default(self) -> T:
         if isinstance(self.default, _Unassigned):
             return self.type()
-        elif callable(self.default):
+        if callable(self.default):
             return self.default()
-        else:
-            return self.default
+        return self.default
 
     def __get__(
         self,
@@ -309,13 +308,12 @@ class PasswordField(StringField):
 class _FieldNameSetter(type):
     """Simply adds the name of the field in the class to the field object"""
 
-    def __new__(cls, name, bases, attrs):
-        fields = dict()
+    def __new__(mcs, name, bases, attrs):
         for k, v in attrs.items():
             if isinstance(v, _SerializableField):
                 v.name = k
 
-        return super().__new__(cls, name, bases, attrs)
+        return super().__new__(mcs, name, bases, attrs)
 
 
 class AutoSerializable(metaclass=_FieldNameSetter):
@@ -346,8 +344,6 @@ class AutoSerializable(metaclass=_FieldNameSetter):
         """
         return bytes(a ^ b for a, b in zip(data, itertools.cycle(header)))
 
-        return data
-
     def unprocess_data(self, header: bytes, data: bytes) -> bytes:
         """Process data after unmarshalling
 
@@ -367,7 +363,7 @@ class AutoSerializable(metaclass=_FieldNameSetter):
     def marshal(self) -> bytes:
         # Iterate over own members and extract fields
         fields = {}
-        for k, v in self.__class__.__dict__.items():
+        for _, v in self.__class__.__dict__.items():
             if isinstance(v, _SerializableField):
                 fields[v.name] = (str(v.__class__.__name__), v.marshal(self))
 
@@ -435,16 +431,17 @@ class AutoSerializable(metaclass=_FieldNameSetter):
             # Remove from data
             data = data[8 + name_len + type_name_len + data_len :]
 
-        for k, v in self.__class__.__dict__.items():
+        for _, v in self.__class__.__dict__.items():
             if isinstance(v, _SerializableField):
                 if v.name in fields and fields[v.name][0] == str(v.__class__.__name__):
                     v.unmarshal(self, fields[v.name][1])
                 else:
                     if not v.name in fields:
-                        logger.warning(f"Field {v.name} not found in unmarshalled data")
+                        logger.warning('Field %s not found in unmarshalled data', v.name)
                     else:
                         logger.warning(
-                            f"Field {v.name} has wrong type in unmarshalled data (should be {fields[v.name][0]} and is {v.__class__.name}"
+                            'Field %s has wrong type in unmarshalled data (should be %s and is %s',
+                            v.name, fields[v.name][0], v.__class__.__name__,
                         )
 
     def __eq__(self, other: typing.Any) -> bool:

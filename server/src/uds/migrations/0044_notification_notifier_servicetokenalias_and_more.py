@@ -5,37 +5,40 @@ import django.db.models.deletion
 import uds.core.util.model
 import uds.models.notifications
 import uds.models.user_service_session
-import uds.models.util
 
 
 # Remove ServicePools with null service field
-def remove_null_service_pools(apps, schema_editor):
+def remove_null_service_pools(apps, schema_editor):  # pylint: disable=unused-argument
     ServicePool = apps.get_model('uds', 'ServicePool')
     ServicePool.objects.filter(service__isnull=True).delete()
 
+
 # No-Op backwards migration
-def nop(apps, schema_editor):  # pragma: no cover
+def nop(apps, schema_editor):  # pylint: disable=unused-argument
     pass
 
 
 # Python update network fields to allow ipv6
-# We will 
-def update_network_model(apps, schema_editor):
-    import uds.models.network
+# We will
+def update_network_model(apps, schema_editor):  # pylint: disable=unused-argument
+    import uds.models.network  # pylint: disable=import-outside-toplevel,redefined-outer-name
+
     Network = apps.get_model('uds', 'Network')
     try:
         for net in Network.objects.all():
             # Store the net_start and net_end on new fields "start" and "end", that are strings
             # to allow us to store ipv6 addresses
-            net.start = uds.models.network.Network._hexlify(net.net_start)
-            net.end = uds.models.network.Network._hexlify(net.net_end)
+            # pylint: disable=protected-access
+            net.start = uds.models.network.Network.hexlify(net.net_start)
+            # pylint: disable=protected-access
+            net.end = uds.models.network.Network.hexlify(net.net_end)
             net.version = 4  # Previous versions only supported ipv4
             net.save()
     except Exception as e:
-        print('Error updating network model: {}'.format(e))
+        print(f'Error updating network model: {e}')
+
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("uds", "0043_auto_20220704_2120"),
     ]
@@ -93,7 +96,7 @@ class Migration(migrations.Migration):
                 (
                     "level",
                     models.PositiveSmallIntegerField(
-                        default=uds.models.notifications.NotificationLevel["ERROR"]
+                        default=uds.models.notifications.LogLevel["ERROR"]
                     ),
                 ),
             ],
@@ -133,11 +136,11 @@ class Migration(migrations.Migration):
                     models.CharField(
                         blank=True,
                         db_index=True,
-                        default=uds.models.user_service_session._session_id_generator,
+                        default=uds.models.user_service_session._session_id_generator,  # pylint: disable=protected-access
                         max_length=128,
                     ),
                 ),
-                ("start", models.DateTimeField(default=uds.models.util.getSqlDatetime)),
+                ("start", models.DateTimeField(default=uds.core.util.model.getSqlDatetime)),
                 ("end", models.DateTimeField(blank=True, null=True)),
             ],
             options={

@@ -38,7 +38,7 @@ import typing
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse, Http404
 
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util import singleton
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
         @param path: path to file
         @params zip: If download as zip
         """
-        _id = cryptoManager().uuid(name)
+        _id = CryptoManager().uuid(name)
         self._downloadables[_id] = {
             'name': name,
             'comment': comment,
@@ -106,7 +106,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
         memory at once. The FileWrapper will turn the file object into an
         iterator for chunks of 8KB.
         """
-        wrapper = FileWrapper(open(filename, 'rb'))
+        wrapper = FileWrapper(open(filename, 'rb'))  # pylint: disable=consider-using-with
         response = HttpResponse(wrapper, content_type=mime)
         response['Content-Length'] = os.path.getsize(filename)
         response['Content-Disposition'] = 'attachment; filename=' + name

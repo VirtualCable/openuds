@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,13 +27,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
 from django.db import models
-from django.db.models import signals
 
 from uds.core import auths
 from uds.core import environment
@@ -42,7 +41,7 @@ from uds.core.util.state import State
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
-from .util import NEVER
+from .consts import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,6 +56,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     This class represents an Authenticator inside the platform.
     Sample authenticators are LDAP, Active Directory, SAML, ...
     """
+
     # Constants for Visibility
     VISIBLE = 'v'
     HIDDEN = 'h'
@@ -82,7 +82,13 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     networks: 'models.manager.RelatedManager[Network]'
     # MFA associated to this authenticator. Can be null
-    mfa = models.ForeignKey('MFA', on_delete=models.SET_NULL, null=True, blank=True, related_name='authenticators')
+    mfa = models.ForeignKey(
+        'MFA',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='authenticators',
+    )
 
     class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
@@ -175,7 +181,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         if (
             user.real_name.strip() == '' or user.name.strip() == user.real_name.strip()
         ) and realName != user.real_name:
-            user.real_name = realName
+            user.real_name = realName or ''
             user.save(update_fields=['real_name'])
 
         return user
@@ -227,9 +233,13 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         ip, version = net.ipToLong(ipStr)
         # Allow
         if self.net_filtering == Authenticator.ALLOW:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip, version=version).exists()
+            return self.networks.filter(
+                net_start__lte=ip, net_end__gte=ip, version=version
+            ).exists()
         # Deny, must not be in any network
-        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
+        return (
+            self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
+        )
 
     @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':
@@ -244,7 +254,10 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
         """
-        from uds.core.util.config import GlobalConfig
+        # pylint: disable=import-outside-toplevel
+        from uds.core.util.config import (
+            GlobalConfig,
+        )
 
         if tag is not None:
             authsList = Authenticator.objects.filter(small_name=tag).order_by(
@@ -264,7 +277,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
                 yield auth
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -273,7 +286,10 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        # pylint: disable=import-outside-toplevel
+        from uds.core.util.permissions import (
+            clean,
+        )
 
         toDelete = kwargs['instance']
 
@@ -290,7 +306,6 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         # Clears related permissions
         clean(toDelete)
-
 
     # returns CSV header
     @staticmethod
@@ -315,9 +330,8 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             ]
         )
 
-
     def __str__(self):
-        return u"{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return f'{self.name} of type {self.data_type} (id:{self.id})'
 
 
 # Connects a pre deletion signal to Authenticator

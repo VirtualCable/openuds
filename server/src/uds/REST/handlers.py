@@ -40,7 +40,7 @@ from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import getRootUser
 from uds.core.util import net
 from uds.models import Authenticator, User
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 from .exceptions import AccessDenied
 
@@ -51,7 +51,9 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-AUTH_TOKEN_HEADER: typing.Final[str] = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password
+AUTH_TOKEN_HEADER: typing.Final[
+    str
+] = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password
 
 
 class Handler:
@@ -102,9 +104,8 @@ class Handler:
         method: str,
         params: typing.MutableMapping[str, typing.Any],
         *args: str,
-        **kwargs
+        **kwargs,
     ):
-
         logger.debug(
             'Data: %s %s %s', self.__class__, self.needs_admin, self.authenticated
         )
@@ -112,9 +113,7 @@ class Handler:
             self.needs_admin or self.needs_staff
         ) and not self.authenticated:  # If needs_admin, must also be authenticated
             raise Exception(
-                'class {} is not authenticated but has needs_admin or needs_staff set!!'.format(
-                    self.__class__
-                )
+                f'class {self.__class__} is not authenticated but has needs_admin or needs_staff set!!'
             )
 
         self._request = request
@@ -153,7 +152,6 @@ class Handler:
         else:
             self._user = User()  # Empty user for non authenticated handlers
 
-
     def headers(self) -> typing.Dict[str, str]:
         """
         Returns the headers of the REST request (all)
@@ -184,6 +182,27 @@ class Handler:
             del self._headers[header]
         except Exception:  # nosec: intentionally ingoring exception
             pass  # If not found, just ignore it
+
+    @property
+    def request(self) -> 'ExtendedHttpRequestWithUser':
+        """
+        Returns the request object
+        """
+        return self._request
+
+    @property
+    def params(self) -> typing.Any:
+        """
+        Returns the params object
+        """
+        return self._params
+
+    @property
+    def args(self) -> typing.Tuple[str, ...]:
+        """
+        Returns the args object
+        """
+        return self._args
 
     # Auth related
     def getAuthToken(self) -> typing.Optional[str]:
@@ -217,7 +236,9 @@ class Handler:
             staff_member = True  # Make admins also staff members :-)
 
         # crypt password and convert to base64
-        passwd = codecs.encode(cryptoManager().symCrypt(password, scrambler), 'base64').decode()
+        passwd = codecs.encode(
+            CryptoManager().symCrypt(password, scrambler), 'base64'
+        ).decode()
 
         session['REST'] = {
             'auth': id_auth,
@@ -314,7 +335,7 @@ class Handler:
             return net.contains(
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
             )
-        except Exception as e:
+        except Exception:
             logger.warning(
                 'Error checking truted ADMIN source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(),

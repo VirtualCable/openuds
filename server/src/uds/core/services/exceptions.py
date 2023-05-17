@@ -28,17 +28,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+
+from uds.core.exceptions import UDSException
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService, Transport
 
 
-class ServiceException(Exception):
-    def __init__(self, *args, **kwargs):
-        super(ServiceException, self).__init__(*args)
+class ServiceException(UDSException):
+    """
+    Base class for all service exceptions
+    """
 
 
 class UnsupportedException(ServiceException):

@@ -72,7 +72,7 @@ class Processes:
         self.cfg = cfg
         self.ns = ns
 
-        for i in range(cfg.workers):
+        for _ in range(cfg.workers):
             self.add_child_pid()
 
     def add_child_pid(self):
@@ -157,7 +157,7 @@ class Processes:
     ) -> None:
         if cfg.use_uvloop:
             try:
-                import uvloop
+                import uvloop  # pylint: disable=import-outside-toplevel
 
                 if sys.version_info >= (3, 11):
                     with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:

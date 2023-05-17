@@ -37,6 +37,7 @@ import logging
 import typing
 
 from uds import models
+from uds.core.util.model import getSqlDatetime
 
 from uds.core.util.model import processUuid
 from uds.core.util.stats import counters
@@ -71,7 +72,7 @@ def getServicesPoolsCounters(
             + str(POINTS)
             + str(since_days)
         )
-        to = models.getSqlDatetime()
+        to = getSqlDatetime()
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
 
         cachedValue: typing.Optional[bytes] = cache.get(cacheKey)
@@ -103,9 +104,9 @@ def getServicesPoolsCounters(
         # return [{'stamp': since + datetime.timedelta(hours=i*10), 'value': i*i*counter_type//4} for i in range(300)]
 
         return val
-    except:
-        logger.exception('exception')
-        raise ResponseError('can\'t create stats for objects!!!')
+    except Exception as e:
+        logger.exception('getServicesPoolsCounters')
+        raise ResponseError('can\'t create stats for objects!!!') from e
 
 
 class System(Handler):

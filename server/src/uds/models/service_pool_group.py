@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -44,13 +44,12 @@ from .image import Image
 
 logger = logging.getLogger(__name__)
 
-
+# pylint: disable=no-member
 class ServicePoolGroup(UUIDModel):
     """
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
 
-    # pylint: disable=model-missing-unicode
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
@@ -65,7 +64,7 @@ class ServicePoolGroup(UUIDModel):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[ServicePoolGroup]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -74,9 +73,7 @@ class ServicePoolGroup(UUIDModel):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return 'Service Pool group {}({}): {}'.format(
-            self.name, self.comments, self.image.name if self.image else ''
-        )
+        return f'Service Pool group {self.name}({self.comments}): {self.image.name if self.image else ""}'
 
     @property
     def as_dict(self) -> typing.MutableMapping[str, typing.Any]:

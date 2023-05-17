@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -35,8 +35,8 @@ from django.db import models
 
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
-from .util import getSqlDatetime
-from .util import NEVER
+from ..core.util.model import getSqlDatetime
+from .consts import NEVER
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class Account(UUIDModel, TaggingMixin):
         tmp.save()
         return tmp
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -101,4 +101,4 @@ class Account(UUIDModel, TaggingMixin):
         app_label = 'uds'
 
     def __str__(self):
-        return 'Account id {}, name {}'.format(self.id, self.name)
+        return f'Account id {self.id}, name {self.name}'

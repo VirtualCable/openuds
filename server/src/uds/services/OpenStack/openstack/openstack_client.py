@@ -28,21 +28,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import json
 import typing
 
-import requests
-
 # import dateutil.parser
 
 from django.utils.translation import gettext as _
 
+from uds.core.util import security
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    pass
+    import requests
 
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ VERIFY_SSL = False
 
 # Helpers
 def ensureResponseIsValid(
-    response: requests.Response, errMsg: typing.Optional[str] = None
+    response: 'requests.Response', errMsg: typing.Optional[str] = None
 ) -> None:
     if response.ok is False:
         try:
@@ -81,7 +81,7 @@ def ensureResponseIsValid(
 
 def getRecurringUrlJson(
     url: str,
-    session: requests.Session,
+    session: 'requests.Session',
     headers: typing.Dict[str, str],
     key: str,
     params: typing.Optional[typing.Mapping[str, str]] = None,
@@ -93,7 +93,7 @@ def getRecurringUrlJson(
         counter += 1
         logger.debug('Requesting url #%s: %s / %s', counter, url, params)
         r = session.get(
-            url, params=params, headers=headers, verify=VERIFY_SSL, timeout=timeout
+            url, params=params, headers=headers, timeout=timeout
         )
 
         ensureResponseIsValid(r, errMsg)
@@ -154,7 +154,7 @@ class Client:  # pylint: disable=too-many-public-methods
     _project: typing.Optional[str]
     _region: typing.Optional[str]
     _timeout: int
-    _session: requests.Session
+    _session: 'requests.Session'
 
     # Legacyversion is True for versions <= Ocata
     def __init__(
@@ -171,7 +171,7 @@ class Client:  # pylint: disable=too-many-public-methods
         access: typing.Optional[str] = None,
         proxies: typing.Optional[typing.MutableMapping[str, str]] = None,
     ):
-        self._session = requests.Session()
+        self._session = security.secureRequestsSession(verify=VERIFY_SSL)
         if proxies:
             self._session.proxies = proxies
 
@@ -260,7 +260,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._authUrl + 'v3/auth/tokens',
             data=json.dumps(data),
             headers={'content-type': 'application/json'},
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -481,7 +480,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
         ensureResponseIsValid(r, 'Get Server information')
@@ -493,7 +491,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor(self._volume)
             + '/volumes/{volume_id}'.format(volume_id=volumeId),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -511,7 +508,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor(self._volume)
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -538,7 +534,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             data=json.dumps(data),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -566,7 +561,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor(self._volume) + '/snapshots',
             data=json.dumps(data),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -594,7 +588,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor(self._volume) + '/volumes',
             data=json.dumps(data),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -644,7 +637,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor('compute', 'compute_legacy') + '/servers',
             data=json.dumps(data),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -658,14 +650,12 @@ class Client:  # pylint: disable=too-many-public-methods
         #     self._getEndpointFor('compute', , 'compute_legacy') + '/servers/{server_id}/action'.format(server_id=serverId),
         #     data='{"forceDelete": null}',
         #     headers=self._requestHeaders(),
-        #     verify=VERIFY_SSL,
         #     timeout=self._timeout
         # )
         r = self._session.delete(
             self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -681,7 +671,6 @@ class Client:  # pylint: disable=too-many-public-methods
             self._getEndpointFor(self._volume)
             + '/snapshots/{snapshot_id}'.format(snapshot_id=snapshotId),
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -696,7 +685,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-start": null}',
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -711,7 +699,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"os-stop": null}',
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -724,7 +711,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"suspend": null}',
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -737,7 +723,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"resume": null}',
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -750,7 +735,6 @@ class Client:  # pylint: disable=too-many-public-methods
             + '/servers/{server_id}/action'.format(server_id=serverId),
             data='{"reboot":{"type":"HARD"}}',
             headers=self._requestHeaders(),
-            verify=VERIFY_SSL,
             timeout=self._timeout,
         )
 
@@ -762,7 +746,7 @@ class Client:  # pylint: disable=too-many-public-methods
         # We need api version 3.2 or greater
         try:
             r = self._session.get(
-                self._authUrl, verify=VERIFY_SSL, headers=self._requestHeaders()
+                self._authUrl, headers=self._requestHeaders()
             )
         except Exception:
             logger.exception('Testing')

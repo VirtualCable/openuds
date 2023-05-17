@@ -33,8 +33,6 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _
-
 import dns.resolver
 
 from uds.core import services
@@ -80,15 +78,15 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
             try:
                 # Prefer ipv4 first
                 res = dns.resolver.resolve(ip)
-                ip = res[0].address
+                ip = typing.cast(str, res[0].address)  # type: ignore  # If no address, it will raise an exception
             except Exception:
                 # If not found, try ipv6
                 try:
                     res = dns.resolver.resolve(ip, 'AAAA')
-                    ip = res[0].address
+                    ip = typing.cast(str, res[0].address)  # type: ignore  # If no address, it will raise an exception
                 except Exception as e:
                     self.service().parent().doLog(
-                        log.WARN, f'User service could not resolve Name {ip} ({e}).'
+                        log.LogLevel.WARNING, f'User service could not resolve Name {ip} ({e}).'
                     )
 
         return ip

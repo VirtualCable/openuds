@@ -45,17 +45,17 @@ from .windows_domain import WinDomainOsManager
 from .windows_random import WinRandomPassManager
 
 managers.downloadsManager().registerDownloadable(
-    'UDSActorSetup-{version}.exe'.format(version=VERSION),
+    f'UDSActorSetup-{VERSION}.exe',
     _('UDS Actor for windows machines'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/UDSActorSetup-{version}.exe'.format(version=VERSION),
+    + f'/files/UDSActorSetup-{VERSION}.exe',
     'application/x-msdos-program',
 )
 
 managers.downloadsManager().registerDownloadable(
-    'UDSActorUnmanagedSetup-{version}.exe'.format(version=VERSION),
+    f'UDSActorUnmanagedSetup-{VERSION}.exe',
     _('UDS Actor for Unmanaged windows machines. Used ONLY for static machines.'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/UDSActorUnmanagedSetup-{version}.exe'.format(version=VERSION),
+    + f'/files/UDSActorUnmanagedSetup-{VERSION}.exe',
     'application/x-msdos-program',
 )

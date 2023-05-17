@@ -33,12 +33,13 @@
 import logging
 import typing
 
+# from django.utils.translation import gettext as _
+
 from uds import models
 from uds.models.permissions import PermissionType
 
 from uds.core.util import objtype
 
-from django.utils.translation import gettext as _
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

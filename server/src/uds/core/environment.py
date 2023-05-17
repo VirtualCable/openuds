@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
@@ -70,11 +70,11 @@ class Environment:
             {'mac' : UniqueMacGenerator, 'name' : UniqueNameGenerator } as argument.
         """
         # Avoid circular imports
-        from uds.core.util.cache import Cache
-        from uds.core.util.storage import Storage
+        from uds.core.util.cache import Cache  # pylint: disable=import-outside-toplevel
+        from uds.core.util.storage import Storage  # pylint: disable=import-outside-toplevel
 
         if idGenerators is None:
-            idGenerators = dict()
+            idGenerators = {}
         self._key = uniqueKey
         self._cache = Cache(uniqueKey)
         self._storage = Storage(uniqueKey)
@@ -105,7 +105,7 @@ class Environment:
         @return: Generator for that id, or None if no generator for that id is found
         """
         if not self._idGenerators or generatorId not in self._idGenerators:
-            raise Exception('No generator found for {}'.format(generatorId))
+            raise Exception(f'No generator found for {generatorId}')
         return self._idGenerators[generatorId]
 
     @property

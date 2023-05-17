@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+# pylint: disable=no-member   # ldap module gives errors to pylint
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
@@ -51,9 +50,8 @@ logger = logging.getLogger(__name__)
 
 LDAP_RESULT_LIMIT = 100
 
-
+# pylint: disable=too-many-instance-attributes
 class SimpleLDAPAuthenticator(auths.Authenticator):
-
     host = gui.TextField(
         length=64,
         label=_('Host'),
@@ -192,13 +190,12 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.MFA_TAB,
+        tab=gui.Tab.MFA,
     )
 
-
-    typeName = _('SimpleLDAP (DEPRECATED)')
+    typeName = _('SimpleLDAP')
     typeType = 'SimpleLdapAuthenticator'
-    typeDescription = _('Simple LDAP authenticator (DEPRECATED)')
+    typeDescription = _('Simple LDAP authenticator')
     iconFile = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
@@ -229,7 +226,6 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     _mfaAttr: str = ''
     _verifySsl: bool = True
     _certificate: str = ''
-
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if values:
@@ -319,12 +315,8 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         ) = vals[1:14]
         self._ssl = gui.toBool(ssl)
 
-        if vals[0]  == 'v2':
-            (
-                self._mfaAttr,
-                verifySsl,
-                self._certificate
-            ) = vals[14:17]
+        if vals[0] == 'v2':
+            (self._mfaAttr, verifySsl, self._certificate) = vals[14:17]
             self._verifySsl = gui.toBool(verifySsl)
 
     def mfaStorageKey(self, username: str) -> str:
@@ -333,9 +325,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
-    def __connection(
-        self
-    ):
+    def __connection(self):
         """
         Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
         @return: Connection established
@@ -376,7 +366,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @return: None if username is not found, an dictionary of LDAP entry attributes if found.
         @note: Active directory users contains the groups it belongs to in "memberOf" attribute
         """
-        attributes = [i for i in self._userNameAttr.split(',') + [self._userIdAttr]]
+        attributes = self._userNameAttr.split(',') + [self._userIdAttr]
         if self._mfaAttr:
             attributes = attributes + [self._mfaAttr]
 
@@ -410,13 +400,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         try:
             groups: typing.List[str] = []
 
-            filter_ = '(&(objectClass=%s)(|(%s=%s)(%s=%s)))' % (
-                self._groupClass,
-                self._memberAttr,
-                user['_id'],
-                self._memberAttr,
-                user['dn'],
-            )
+            filter_ = f'(&(objectClass={self._groupClass})(|({self._memberAttr}={user["_id"]})({self._memberAttr}={user["dn"]})))'
             for d in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
@@ -450,7 +434,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         ).strip()
 
     def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager', request: 'ExtendedHttpRequest'
+        self,
+        username: str,
+        credentials: str,
+        groupsManager: 'auths.GroupsManager',
+        request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
         '''
         Must authenticate the user.
@@ -466,9 +454,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             user = self.__getUser(username)
 
             if user is None:
-                authLogLogin(
-                    request, self.dbAuthenticator(), username, 'Invalid user'
-                )
+                authLogLogin(request, self.dbAuthenticator(), username, 'Invalid user')
                 return auths.FAILED_AUTH
 
             try:
@@ -476,7 +462,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 self.__connectAs(
                     user['dn'], credentials
                 )  # Will raise an exception if it can't connect
-            except:
+            except Exception:
                 authLogLogin(
                     request, self.dbAuthenticator(), username, 'Invalid password'
                 )
@@ -556,8 +542,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             for r in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter='(&(objectClass=%s)(%s=%s*))'
-                % (self._userClass, self._userIdAttr, pattern),
+                ldapFilter=f'(&(objectClass={self._userClass})({self._userIdAttr}={pattern}*))',
                 attrList=[self._userIdAttr, self._userNameAttr],
                 sizeLimit=LDAP_RESULT_LIMIT,
             ):
@@ -569,11 +554,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 )
 
             return res
-        except Exception:
+        except Exception as e:
             logger.exception("Exception: ")
             raise auths.exceptions.AuthenticatorException(
                 _('Too many results, be more specific')
-            )
+            ) from e
 
     def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         try:
@@ -581,19 +566,18 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             for r in ldaputil.getAsDict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter='(&(objectClass=%s)(%s=%s*))'
-                % (self._groupClass, self._groupIdAttr, pattern),
+                ldapFilter=f'(&(objectClass={self._groupClass})({self._groupIdAttr}={pattern}*))',
                 attrList=[self._groupIdAttr, 'memberOf', 'description'],
                 sizeLimit=LDAP_RESULT_LIMIT,
             ):
                 res.append({'id': r[self._groupIdAttr][0], 'name': r['description'][0]})
 
             return res
-        except Exception:
+        except Exception as e:
             logger.exception("Exception: ")
             raise auths.exceptions.AuthenticatorException(
                 _('Too many results, be more specific')
-            )
+            ) from e
 
     @staticmethod
     def test(env, data) -> typing.List[typing.Any]:
@@ -620,7 +604,17 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return [False, _('Ldap search base is incorrect')]
 
         try:
-            if len(con.search_ext_s(base=self._ldapBase, scope=ldap.SCOPE_SUBTREE, filterstr='(objectClass=%s)' % self._userClass, sizelimit=1)) == 1:  # type: ignore  # SCOPE.. exists on LDAP after load
+            if (
+                len(
+                    con.search_ext_s(
+                        base=self._ldapBase,
+                        scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
+                        filterstr=f'(objectClass={self._userClass})',
+                        sizelimit=1,
+                    )
+                )
+                == 1
+            ):
                 raise Exception()
             return [
                 False,
@@ -628,7 +622,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user class seems to be incorrect (no user found by that class)'
                 ),
             ]
-        except Exception as e:  # nosec: Flow control
+        except Exception:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -638,7 +632,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr='(objectClass=%s)' % self._groupClass,
+                        filterstr=f'(objectClass={self._groupClass})',
                         sizelimit=1,
                     )
                 )
@@ -651,7 +645,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap group class seems to be incorrect (no group found by that class)'
                 ),
             ]
-        except Exception as e:  # nosec: Flow control
+        except Exception:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -661,7 +655,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr='(%s=*)' % self._userIdAttr,
+                        filterstr=f'({self._userIdAttr}=*)',
                         sizelimit=1,
                     )
                 )
@@ -674,7 +668,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user id attribute seems to be incorrect (no user found by that attribute)'
                 ),
             ]
-        except Exception as e:  # nosec: Flow control
+        except Exception:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -684,7 +678,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr='(%s=*)' % self._groupIdAttr,
+                        filterstr=f'({self._groupIdAttr}=*)',
                         sizelimit=1,
                     )
                 )
@@ -697,7 +691,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap group id attribute seems to be incorrect (no group found by that attribute)'
                 ),
             ]
-        except Exception as e:  # nosec: Flow control
+        except Exception:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -708,8 +702,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                        filterstr='(&(objectClass=%s)(%s=*))'
-                        % (self._userClass, self._userIdAttr),
+                        filterstr=f'(&(objectClass={self._userClass})({self._userIdAttr}=*))',
                         sizelimit=1,
                     )
                 )
@@ -722,7 +715,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     'Ldap user class or user id attr is probably wrong (can\'t find any user with both conditions)'
                 ),
             ]
-        except Exception as e:  # nosec: Flow control
+        except Exception:  # nosec: Flow control
             # If found 1 or more, all right
             pass
 
@@ -731,8 +724,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             res = con.search_ext_s(
                 base=self._ldapBase,
                 scope=ldap.SCOPE_SUBTREE,  # type: ignore  # SCOPE.. exists on LDAP after load
-                filterstr='(&(objectClass=%s)(%s=*))'
-                % (self._groupClass, self._groupIdAttr),
+                filterstr=f'(&(objectClass={self._groupClass})({self._groupIdAttr}=*))',
                 attrlist=[self._memberAttr],
             )
             if not res:
@@ -759,16 +751,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         ]
 
     def __str__(self):
-        return "Ldap Auth: {0}:{1}@{2}:{3}, base = {4}, userClass = {5}, groupClass = {6}, userIdAttr = {7}, groupIdAttr = {8}, memberAttr = {9}, userName attr = {10}".format(
-            self._username,
-            self._password,
-            self._host,
-            self._port,
-            self._ldapBase,
-            self._userClass,
-            self._groupClass,
-            self._userIdAttr,
-            self._groupIdAttr,
-            self._memberAttr,
-            self._userNameAttr,
+        return (
+            f'Ldap Auth: {self._username}:{self._password}@{self._host}:{self._port}, '
+            f'base = {self._ldapBase}, userClass = {self._userClass}, groupClass = {self._groupClass}, '
+            f'userIdAttr = {self._userIdAttr}, groupIdAttr = {self._groupIdAttr}, '
+            f'memberAttr = {self._memberAttr}, userName attr = {self._userNameAttr}'
         )

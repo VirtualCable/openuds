@@ -36,12 +36,13 @@ import random
 from uds import models
 from uds.core.util.stats import counters
 
-from ...utils.test import UDSTestCase
-from ...fixtures import stats_counters as fixtures_stats_counters
 
 from uds.core.workers import stats_collector
 from uds.core.environment import Environment
 from uds.core.util import config
+
+from ...utils.test import UDSTestCase
+from ...fixtures import stats_counters as fixtures_stats_counters
 
 
 START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0)
@@ -62,11 +63,13 @@ class StatsFunction:
 
     def __call__(self, i: int, number_per_hour: int) -> int:
         self.counter += 1
-        return self.counter * self.multiplier * 100 + random.randint(0, 100)  # nosec: just testing values, lower 2 digits are random
+        return self.counter * self.multiplier * 100 + random.randint(
+            0, 100
+        )  # nosec: just testing values, lower 2 digits are random
 
 
 class StatsAcummulatorTest(UDSTestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         # In fact, real data will not be assigned to Userservices, but it's ok for testing
         for pool_id in range(NUMBER_OF_POOLS):
             fixtures_stats_counters.create_stats_interval_total(
@@ -83,12 +86,10 @@ class StatsAcummulatorTest(UDSTestCase):
         config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.set(DAYS // 2 + 1)
         stats_collector.StatsAccumulator.setup()
 
-    def test_stats_accumulator(self):
+    def test_stats_accumulator(self) -> None:
         # Ensure first that we have correct number of base stats
         base_stats = models.StatsCounters.objects.all()
-        total_base_stats = (
-            DAYS * 24 * NUMBER_PER_HOUR * NUMBER_OF_POOLS * len(COUNTERS_TYPES)
-        )  # All stats
+        total_base_stats = DAYS * 24 * NUMBER_PER_HOUR * NUMBER_OF_POOLS * len(COUNTERS_TYPES)  # All stats
         self.assertEqual(base_stats.count(), total_base_stats)
 
         optimizer = stats_collector.StatsAccumulator(Environment.getTempEnv())
@@ -138,23 +139,16 @@ class StatsAcummulatorTest(UDSTestCase):
             self.assertEqual(stat.v_count, len(d[stamp]))
 
         # Recalculate sum of stats, now from StatsCountersAccum (dayly)
-        data_d: typing.Dict[
-            str, typing.Dict[int, typing.List[typing.Dict[str, int]]]
-        ] = {}
+        data_d: typing.Dict[str, typing.Dict[int, typing.List[typing.Dict[str, int]]]] = {}
         for i in hour_stats.order_by('owner_id', 'counter_type', 'stamp'):
-            stamp = (
-                i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24
-            )  # Round to day and to next day
-            d = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
-            d.setdefault(stamp, []).append(
-                {'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min}
-            )
-            pass
+            stamp = i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24  # Round to day and to next day
+            dd = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
+            dd.setdefault(stamp, []).append({'sum': i.v_sum, 'count': i.v_count, 'max': i.v_max, 'min': i.v_min})
 
         for i in day_stats.order_by('owner_id', 'stamp'):
             stamp = i.stamp  # already rounded to day
-            d = data_d[f'{i.owner_id:03d}{i.counter_type}']
-            self.assertEqual(i.v_sum, sum([x['sum'] for x in d[stamp]]))
-            self.assertEqual(i.v_max, max([x['max'] for x in d[stamp]]))
-            self.assertEqual(i.v_min, min([x['min'] for x in d[stamp]]))
-            self.assertEqual(i.v_count, sum([x['count'] for x in d[stamp]]))
+            dd = data_d[f'{i.owner_id:03d}{i.counter_type}']
+            self.assertEqual(i.v_sum, sum(x['sum'] for x in dd[stamp]))
+            self.assertEqual(i.v_max, max(x['max'] for x in dd[stamp]))
+            self.assertEqual(i.v_min, min(x['min'] for x in dd[stamp]))
+            self.assertEqual(i.v_count, sum(x['count'] for x in dd[stamp]))

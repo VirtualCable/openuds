@@ -110,12 +110,12 @@ class MetaServicesPool(DetailHandler):
 
         log.doLog(
             parent,
-            log.INFO,
+            log.LogLevel.INFO,
             ("Added" if uuid is None else "Modified")
             + " meta pool member {}/{}/{} by {}".format(
                 pool.name, priority, enabled, self._user.pretty_name
             ),
-            log.ADMIN,
+            log.LogSource.ADMIN,
         )
 
         return self.success()
@@ -128,7 +128,7 @@ class MetaServicesPool(DetailHandler):
 
         member.delete()
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
 
 class MetaAssignedService(DetailHandler):
@@ -243,7 +243,7 @@ class MetaAssignedService(DetailHandler):
         else:
             raise self.invalidItemException(_('Item is not removable'))
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
@@ -276,4 +276,4 @@ class MetaAssignedService(DetailHandler):
         service.save()
 
         # Log change
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)

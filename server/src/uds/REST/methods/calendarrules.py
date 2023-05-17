@@ -39,7 +39,7 @@ from django.db import IntegrityError
 
 
 from uds.models.calendar_rule import freqs, CalendarRule
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
@@ -59,7 +59,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def ruleToDict(item: CalendarRule, perm: int):
+    def ruleToDict(item: CalendarRule, perm: int) -> typing.Dict[str, typing.Any]:
         """
         Convert a calRule db item to a dict for a rest response
         :param item: Rule item (db)
@@ -80,18 +80,17 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Calendar', item: typing.Optional[str]):
+    def getItems(self, parent: 'Calendar', item: typing.Optional[str]) -> typing.Any:
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
             if item is None:
                 return [CalendarRules.ruleToDict(k, perm) for k in parent.rules.all()]
-            else:
-                k = parent.rules.get(uuid=processUuid(item))
-                return CalendarRules.ruleToDict(k, perm)
-        except Exception:
+            k = parent.rules.get(uuid=processUuid(item))
+            return CalendarRules.ruleToDict(k, perm)
+        except Exception as e:
             logger.exception('itemId %s', item)
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getFields(self, parent: 'Calendar') -> typing.List[typing.Any]:
         return [
@@ -144,12 +143,12 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 calRule.__dict__.update(fields)
                 calRule.save()
         except CalendarRule.DoesNotExist:
-            raise self.invalidItemException()
-        except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('Element already exists (duplicate key error)'))
+            raise self.invalidItemException() from None
+        except IntegrityError as e:  # Duplicate key probably
+            raise RequestError(_('Element already exists (duplicate key error)')) from e
         except Exception as e:
             logger.exception('Saving calendar')
-            raise RequestError('incorrect invocation to PUT: {0}'.format(e))
+            raise RequestError(f'incorrect invocation to PUT: {e}') from e
 
     def deleteItem(self, parent: 'Calendar', item: str) -> None:
         logger.debug('Deleting rule %s from %s', item, parent)
@@ -158,9 +157,9 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             calRule.calendar.modified = getSqlDatetime()
             calRule.calendar.save()
             calRule.delete()
-        except Exception:
+        except Exception as e:
             logger.exception('Exception')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: 'Calendar') -> str:
         try:

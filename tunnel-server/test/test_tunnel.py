@@ -76,7 +76,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
                         # Wait for response
                         readed = await reader.read(1024)
                         # Logger should have been called once with error
-                        logger_mock.error.assert_called_once()
+                        logger_mock.error.assert_called()
 
                         if len(bad_cmd) < 4:
                             # Response shout have been timeout

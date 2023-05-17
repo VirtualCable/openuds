@@ -29,7 +29,7 @@
 """
 Created on Jun 22, 2012
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -47,7 +47,7 @@ from . import og
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)
@@ -193,10 +193,11 @@ class OGProvider(ServiceProvider):
                 if self.udsServerAccessUrl.value.strip() == '':
                     self.udsServerAccessUrl.value = request.build_absolute_uri('/')
 
+                # Ensure that url ends with /
                 if self.udsServerAccessUrl.value[-1] != '/':
                     self.udsServerAccessUrl.value += '/'
-            except Exception:
-                pass
+            except Exception as e:
+                self.udsServerAccessUrl.value = ''
 
     @property
     def endpoint(self) -> str:

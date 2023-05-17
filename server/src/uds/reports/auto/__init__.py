@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
@@ -60,16 +60,13 @@ reportAutoModelDct: typing.Mapping[str, typing.Type[ReportAutoModel]] = {  # typ
 
 
 class ReportAutoType(UserInterfaceType):
-    def __new__(cls, name, bases, attrs) -> 'ReportAutoType':
+    def __new__(mcs, name, bases, attrs) -> 'ReportAutoType':
         # Add gui for elements...
         order = 1
 
         # Check what source
         if attrs.get('data_source'):
-
-            attrs['source'] = fields.source_field(
-                order, attrs['data_source'], attrs['multiple']
-            )
+            attrs['source'] = fields.source_field(order, attrs['data_source'], attrs['multiple'])
             order += 1
 
             # Check if date must be added
@@ -88,11 +85,9 @@ class ReportAutoType(UserInterfaceType):
                 attrs['interval'] = fields.intervals_field(order)
                 order += 1
 
-        return typing.cast(
-            'ReportAutoType', UserInterfaceType.__new__(cls, name, bases, attrs)
-        )
+        return typing.cast('ReportAutoType', UserInterfaceType.__new__(mcs, name, bases, attrs))
 
-
+# pylint: disable=abstract-method
 class ReportAuto(Report, metaclass=ReportAutoType):
     # Variables that will be overwriten on new class creation
     source: typing.ClassVar[typing.Union[gui.MultiChoiceField, gui.ChoiceField]]
@@ -115,23 +110,19 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     multiple: bool = False
 
     def getModel(self) -> typing.Type[ReportAutoModel]:
-        data_source = self.data_source.split('.')[0]
+        data_source = self.data_source.split('.', maxsplit=1)[0]
 
         return reportAutoModelDct[data_source]
 
     def initGui(self):
         # Fills datasource
-        fields.source_field_data(self.getModel(), self.data_source, self.source)
+        fields.source_field_data(self.getModel(), self.source)
         logger.debug('Source field data: %s', self.source)
 
     def getModelItems(self) -> typing.Iterable[ReportAutoModel]:
         model = self.getModel()
 
-        filters = (
-            [self.source.value]
-            if isinstance(self.source, gui.ChoiceField)
-            else self.source.value
-        )
+        filters = [self.source.value] if isinstance(self.source, gui.ChoiceField) else self.source.value
 
         if '0-0-0-0' in filters:
             items = model.objects.all()
@@ -141,9 +132,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         return items
 
     def getIntervalInHours(self):
-        return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[
-            self.interval.value
-        ]
+        return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[self.interval.value]
 
     def getIntervalsList(self) -> typing.List[typing.Tuple[datetime.datetime, datetime.datetime]]:
         intervals: typing.List[typing.Tuple[datetime.datetime, datetime.datetime]] = []
@@ -164,33 +153,29 @@ class ReportAuto(Report, metaclass=ReportAutoType):
                 next = (start + datetime.timedelta(days=32)).replace(day=1)
                 intervals.append((start, next))
                 start = next
-            
-        logger.info('Intervals: {0}'.format(intervals))
-        return intervals
 
+        logger.debug('Intervals: %s', intervals)
+        return intervals
 
     def adjustDate(self, d: datetime.date, isEndingDate: bool) -> datetime.date:
         if self.interval.value in ('hour', 'day'):
             return d
-        elif self.interval.value == 'week':
+        if self.interval.value == 'week':
             return (d - datetime.timedelta(days=d.weekday())).replace()
-        elif self.interval.value == 'month':
+        if self.interval.value == 'month':
             if not isEndingDate:
                 return d.replace(day=1)
-            else:
-                return (d + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
-        else:
-            return d
+            return (d + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
+        return d
 
     def formatDatetimeAsString(self, d: datetime.date) -> str:
         if self.interval.value in ('hour', 'day'):
             return d.strftime('%Y-%b-%d %H:%M:%S')
-        elif self.interval.value == 'week':
+        if self.interval.value == 'week':
             return d.strftime('%Y-%b-%d')
-        elif self.interval.value == 'month':
+        if self.interval.value == 'month':
             return d.strftime('%Y-%b')
-        else:
-            return d.strftime('%Y-%b-%d %H:%M:%S')
+        return d.strftime('%Y-%b-%d %H:%M:%S')
 
     def startingDate(self) -> datetime.date:
         return self.adjustDate(self.date_start.date(), False)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2021 Virtual Cable S.L.U.
+# Copyright (c) 2015-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,4 +32,4 @@
 """
 
 # pylint: disable=unused-import
-from .common import FOR_EXECUTE  # @UnusedImport
+from .common import FOR_EXECUTE

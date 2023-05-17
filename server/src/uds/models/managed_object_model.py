@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -36,7 +36,7 @@ import typing
 from django.db import models
 
 from uds.core.environment import Environment
-from uds.core import Module
+from uds.core.module import Module
 
 from .uuid_model import UUIDModel
 
@@ -57,7 +57,7 @@ class ManagedObjectModel(UUIDModel):
 
     _cachedInstance: typing.Optional[Module] = None
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Defines this is an abstract class
         """
@@ -68,7 +68,7 @@ class ManagedObjectModel(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
 
     def deserialize(
         self, obj: Module, values: typing.Optional[typing.Mapping[str, str]]
@@ -119,7 +119,7 @@ class ManagedObjectModel(UUIDModel):
         Must be overriden!!!
         """
         raise NotImplementedError(
-            'getType has not been implemented for {}'.format(self.__class__)
+            f'getType has not been implemented for {self.__class__.__name__}'
         )
 
     def isOfType(self, type_: str) -> bool:

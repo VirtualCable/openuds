@@ -173,7 +173,7 @@ class MetaPools(ModelHandler):
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in Image.objects.all()
                     ]
                 ),
@@ -188,7 +188,7 @@ class MetaPools(ModelHandler):
                 'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),

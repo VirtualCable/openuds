@@ -32,16 +32,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import sys
 import os
-import re
 import datetime
 import unicodedata
 import typing
+import contextlib
 
 from django.utils import formats
 from django.utils.translation import gettext
 import django.template.defaultfilters as filters
-
-from uds.core import exceptions
 
 
 class CaseInsensitiveDict(dict):
@@ -50,46 +48,46 @@ class CaseInsensitiveDict(dict):
         return key.lower() if isinstance(key, str) else key
 
     def __init__(self, *args, **kwargs):
-        super(CaseInsensitiveDict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._convert_keys()
 
     def __getitem__(self, key):
-        return super(CaseInsensitiveDict, self).__getitem__(self.__class__._k(key))
+        return super().__getitem__(self.__class__._k(key))
 
     def __setitem__(self, key, value):
-        super(CaseInsensitiveDict, self).__setitem__(self.__class__._k(key), value)
+        super().__setitem__(self.__class__._k(key), value)
 
     def __delitem__(self, key):
-        return super(CaseInsensitiveDict, self).__delitem__(self.__class__._k(key))
+        return super().__delitem__(self.__class__._k(key))
 
     def __contains__(self, key):
-        return super(CaseInsensitiveDict, self).__contains__(self.__class__._k(key))
+        return super().__contains__(self.__class__._k(key))
 
     def pop(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).pop(
-            self.__class__._k(key), *args, **kwargs
+        return super().pop(
+            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
         )
 
     def get(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).get(
-            self.__class__._k(key), *args, **kwargs
+        return super().get(
+            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
         )
 
     def setdefault(self, key, *args, **kwargs):
-        return super(CaseInsensitiveDict, self).setdefault(
-            self.__class__._k(key), *args, **kwargs
+        return super().setdefault(
+            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
         )
 
     def update(self, E=None, **F):
         if E is None:
             E = {}
-        super(CaseInsensitiveDict, self).update(self.__class__(E))
-        super(CaseInsensitiveDict, self).update(self.__class__(**F))
+        super().update(self.__class__(E))
+        super().update(self.__class__(**F))
 
     def _convert_keys(self):
         for k in list(self.keys()):
-            v = super(CaseInsensitiveDict, self).pop(k)
-            self.__setitem__(k, v)
+            v = super().pop(k)
+            self.__setitem__(k, v)  # pylint: disable=unnecessary-dunder-call
 
 
 def as_list(value: typing.Any) -> typing.List[typing.Any]:
@@ -104,7 +102,7 @@ def as_list(value: typing.Any) -> typing.List[typing.Any]:
     if isinstance(value, (bytes, str, int, float)):
         return [value]
     try:
-        return [v for v in value]
+        return list(value)
     except Exception:
         return [value]
 
@@ -152,3 +150,15 @@ def removeControlCharacters(s: str) -> str:
         str -- string without control characters
     """
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")
+
+
+@contextlib.contextmanager
+def ignoreExceptions():
+    """
+    Ignores exceptions of type exceptions
+    """
+    try:
+        yield
+    except Exception:  # nosec: want to catch all exceptions
+        pass
+    

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -77,15 +77,15 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
             We only need to get info from this, not access specific data (class specific info)
         """
         # We only need to get info from this, not access specific data (class specific info)
-        from uds.core import mfas
+        from uds.core import mfas  # pylint: disable=import-outside-toplevel
 
         return mfas.factory().lookup(self.data_type) or mfas.MFA
 
     def __str__(self) -> str:
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return f'MFA {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

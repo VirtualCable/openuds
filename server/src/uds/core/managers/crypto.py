@@ -85,7 +85,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         while len(key) < length:
             key += key  # Dup key
 
-        kl: typing.List[int] = [v for v in key]
+        kl: typing.List[int] = list(key)
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]
@@ -137,7 +137,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             modes.CBC(b'udsinitvectoruds'),
             backend=default_backend(),
         )
-        rndStr = secrets.token_bytes(16) # Same as block size of CBC (that is 16 here)
+        rndStr = secrets.token_bytes(16)  # Same as block size of CBC (that is 16 here)
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
         toEncode = (
             struct.pack('>i', len(text)) + text + rndStr[: paddedLength - len(text) - 4]
@@ -163,11 +163,11 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         toDecode = decryptor.update(text) + decryptor.finalize()
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
-    
+
     # Fast encription using django SECRET_KEY as key
     def fastCrypt(self, data: bytes) -> bytes:
         return self.AESCrypt(data, UDSK)
-        
+
     # Fast decryption using django SECRET_KEY as key
     def fastDecrypt(self, data: bytes) -> bytes:
         return self.AESDecrypt(data, UDSK)
@@ -240,8 +240,8 @@ class CryptoManager(metaclass=singleton.Singleton):
         # If invalid certificate, will raise an exception
         try:
             return x509.load_pem_x509_certificate(certificate, default_backend())
-        except Exception:
-            raise Exception('Invalid certificate')
+        except Exception as e:
+            raise Exception('Invalid certificate') from e
 
     def certificateString(self, certificate: str) -> str:
         # Remove -----.*-----\n strings using regex
@@ -251,7 +251,6 @@ class CryptoManager(metaclass=singleton.Singleton):
         """
         Get a random secret string from config.SECRET_KEY
         """
-        from django.conf import settings
         return settings.SECRET_KEY[:length]
 
     def salt(self, length: int = 16) -> str:
@@ -269,22 +268,29 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         return '{SHA256SALT}' + salt + str(hashlib.sha3_256(value).hexdigest())
 
-    def checkHash(self, value: typing.Union[str, bytes], hash: str) -> bool:
+    def checkHash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
         if isinstance(value, str):
             value = value.encode()
 
         if not value:
-            return not hash
+            return not hashValue
 
-        if hash[:8] == '{SHA256}':
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash[8:])
-        elif hash[:12] == '{SHA256SALT}':
+        if hashValue[:8] == '{SHA256}':
+            return secrets.compare_digest(
+                hashlib.sha3_256(value).hexdigest(), hashValue[8:]
+            )
+        if hashValue[:12] == '{SHA256SALT}':
             # Extract 16 chars salt and hash
-            salt = hash[12:28].encode()
+            salt = hashValue[12:28].encode()
             value = salt + value
-            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hash[28:])
-        else:  # Old sha1
-            return secrets.compare_digest(hash, str(hashlib.sha1(value).hexdigest()))  # nosec: Old compatibility SHA1, not used anymore but need to be supported
+            return secrets.compare_digest(
+                hashlib.sha3_256(value).hexdigest(), hashValue[28:]
+            )
+
+        # Old sha1
+        return secrets.compare_digest(
+            hashValue, str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility SHA1, not used anymore but need to be supported
+        )  # nosec: Old compatibility SHA1, not used anymore but need to be supported
 
     def uuid(self, obj: typing.Any = None) -> str:
         """
@@ -297,7 +303,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To binary
         else:
-            obj = '{}'.format(obj)
+            obj = str(obj)
 
         return str(
             uuid.uuid5(self._namespace, obj)
@@ -309,8 +315,8 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def unique(self) -> str:
         return hashlib.sha3_256(
-                (
-                    self.randomString(24, True)
-                    + datetime.datetime.now().strftime('%H%M%S%f')
-                ).encode()
-            ).hexdigest()
+            (
+                self.randomString(24, True)
+                + datetime.datetime.now().strftime('%H%M%S%f')
+            ).encode()
+        ).hexdigest()

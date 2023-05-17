@@ -26,36 +26,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-import enum
+
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import Module
+from uds.core.util.log import LogLevel
+from uds.core.module import Module
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
-
-class NotificationLevel(enum.IntEnum):
-    """
-    Notifier levels
-    """
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    CRITICAL = 3
-
-    @staticmethod
-    def from_int(value: int) -> 'NotificationLevel':
-        """
-        Returns a NotificationLevel from an int value
-        """
-        try:
-            return NotificationLevel(value)
-        except ValueError:
-            return NotificationLevel.INFO
 
 
 class Notifier(Module):
@@ -63,6 +45,7 @@ class Notifier(Module):
     this class provides an abstraction of a notifier system for administrator defined events
     This class will be responsible os sendig emails, messaging notifications, etc.. to administrators
     """
+
     # informational related data
     # : Name of type, used at administration interface to identify this
     # : notifier type (e.g. "Email", "SMS", etc.)
@@ -108,7 +91,7 @@ class Notifier(Module):
         Default implementation does nothing
         """
 
-    def notify(self, group: str, identificator: str, level: NotificationLevel,  message: str) -> None:
+    def notify(self, group: str, identificator: str, level: LogLevel, message: str) -> None:
         """
         This method will be invoked from UDS to notify an event to this notifier.
         This method will be invoked in real time, so ensure this method does not block or
@@ -117,6 +100,4 @@ class Notifier(Module):
         :param level: Level of event
         :param message: Message to be shown
         :return: None
-        """ 
-        pass
-
+        """

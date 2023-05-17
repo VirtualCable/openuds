@@ -37,8 +37,8 @@ from uds.core.util.request import ExtendedHttpRequestWithUser
 
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.core.managers import userServiceManager
-from uds.core.managers import cryptoManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util.rest.tools import match
 from uds.web.util import errors, services
@@ -76,7 +76,7 @@ class Connection(Handler):
                 error = errors.errorString(error)
             error = str(error)  # Ensure error is an string
             if errorCode != 0:
-                error += ' (code {0:04X})'.format(errorCode)
+                error += f' (code {errorCode:04X})'
             res['error'] = error
 
         res['retryable'] = '1' if retryable else '0'
@@ -100,10 +100,10 @@ class Connection(Handler):
             (
                 ip,
                 userService,
-                iads,
-                trans,
+                _,  # iads,
+                _, #trans,
                 itrans,
-            ) = userServiceManager().getService(  # pylint: disable=unused-variable
+            ) = UserServiceManager().getService(  # pylint: disable=unused-variable
                 self._user,
                 self._request.os,
                 self._request.ip,
@@ -132,18 +132,18 @@ class Connection(Handler):
 
     def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> typing.Dict[str, typing.Any]:
         try:
-            res = userServiceManager().getService(
+            res = UserServiceManager().getService(
                 self._user, self._request.os, self._request.ip, idService, idTransport
             )
             logger.debug('Res: %s', res)
             (
                 ip,
                 userService,
-                userServiceInstance,
+                _,  # userServiceInstance,
                 transport,
                 transportInstance,
             ) = res  # pylint: disable=unused-variable
-            password = cryptoManager().symDecrpyt(self.getValue('password'), scrambler)
+            password = CryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(
                 self._request.ip, hostname
@@ -172,14 +172,14 @@ class Connection(Handler):
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def getTicketContent(self, ticketId: str) -> typing.Dict[str, typing.Any]:
-        return {}  # TODO: use this for something?
+    def getTicketContent(self, ticketId: str) -> typing.Dict[str, typing.Any]:  # pylint: disable=unused-argument
+        return {}
 
     def getUdsLink(self, idService: str, idTransport: str) -> typing.Dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
         self._request.user = self._user  # type: ignore
-        self._request._cryptedpass = self._session['REST']['password']  # type: ignore
-        self._request._scrambler = self._request.META['HTTP_SCRAMBLER']  # type: ignore
+        setattr(self._request, '_cryptedpass', self._session['REST']['password'])  # type: ignore  # pylint: disable=protected-access
+        setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])  # type: ignore  # pylint: disable=protected-access
         linkInfo = services.enableService(
             self._request, idService=idService, idTransport=idTransport
         )

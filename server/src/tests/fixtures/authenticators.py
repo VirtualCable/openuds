@@ -36,10 +36,8 @@ from uds.core.util import states
 from uds.core.managers.crypto import CryptoManager
 
 # Counters so we can reinvoke the same method and generate new data
-glob = {
-    'user_id': 0,
-    'group_id': 0
-}
+glob = {'user_id': 0, 'group_id': 0}
+
 
 def createAuthenticator(
     authenticator: typing.Optional[models.Authenticator] = None,
@@ -48,6 +46,7 @@ def createAuthenticator(
     Creates a testing authenticator
     """
     if authenticator is None:
+        # pylint: disable=import-outside-toplevel
         from uds.auths.InternalDB.authenticator import InternalDBAuth
 
         authenticator = models.Authenticator()
@@ -74,10 +73,10 @@ def createUsers(
     """
     users = [
         authenticator.users.create(
-            name='user{}'.format(i),
-            password=CryptoManager().hash('user{}'.format(i)),
-            real_name='Real name {}'.format(i),
-            comments='User {}'.format(i),
+            name=f'user{i}',
+            password=CryptoManager().hash(f'user{i}'),
+            real_name=f'Real name {i}',
+            comments=f'User {i}',
             staff_member=is_staff or is_admin,
             is_admin=is_admin,
             state=states.common.ACTIVE if enabled else states.common.BLOCKED,
@@ -103,8 +102,8 @@ def createGroups(
     """
     groups = [
         authenticator.groups.create(
-            name='group{}'.format(i),
-            comments='Group {}'.format(i),
+            name=f'group{i}',
+            comments=f'Group {i}',
             is_meta=False,
         )
         for i in range(glob['group_id'], glob['group_id'] + number_of_groups)
@@ -123,8 +122,8 @@ def createMetaGroups(
     """
     meta_groups = [
         authenticator.groups.create(
-            name='meta-group{}'.format(i),
-            comments='Meta group {}'.format(i),
+            name=f'meta-group{i}',
+            comments=f'Meta group {i}',
             is_meta=True,
             meta_if_any=i % 2 == 0,
         )
@@ -136,9 +135,11 @@ def createMetaGroups(
     groups = list(authenticator.groups.all())
     if groups:
         for meta in meta_groups:
-            for group in random.sample(groups, random.randint(1, len(groups)//2)):  # nosec: testing only
+            for group in random.sample(
+                groups, random.randint(1, len(groups) // 2)  # nosec: testing only
+            ):
                 meta.groups.add(group)
-        
+
     glob['group_id'] += number_of_meta
 
     return meta_groups

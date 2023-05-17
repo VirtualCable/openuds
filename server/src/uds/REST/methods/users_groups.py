@@ -44,7 +44,7 @@ from uds.core.auths.user import User as aUser
 from uds.core.util import log
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.REST import RequestError
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 
@@ -77,7 +77,6 @@ def getPoolsForGroups(groups):
 
 
 class Users(DetailHandler):
-
     custom_methods = ['servicesPools', 'userServices', 'cleanRelated']
 
     def getItems(self, parent: Authenticator, item: typing.Optional[str]):
@@ -120,35 +119,34 @@ class Users(DetailHandler):
                         or _('User')
                     )
                 return values
-            else:
-                u = parent.users.get(uuid=processUuid(item))
-                res = model_to_dict(
-                    u,
-                    fields=(
-                        'name',
-                        'real_name',
-                        'comments',
-                        'state',
-                        'staff_member',
-                        'is_admin',
-                        'last_access',
-                        'parent',
-                        'mfa_data',
-                    ),
-                )
-                res['id'] = u.uuid
-                res['role'] = (
-                    res['staff_member']
-                    and (res['is_admin'] and _('Admin') or _('Staff member'))
-                    or _('User')
-                )
-                usr = aUser(u)
-                res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
-                logger.debug('Item: %s', res)
-                return res
-        except Exception:
+            u = parent.users.get(uuid=processUuid(item))
+            res = model_to_dict(
+                u,
+                fields=(
+                    'name',
+                    'real_name',
+                    'comments',
+                    'state',
+                    'staff_member',
+                    'is_admin',
+                    'last_access',
+                    'parent',
+                    'mfa_data',
+                ),
+            )
+            res['id'] = u.uuid
+            res['role'] = (
+                res['staff_member']
+                and (res['is_admin'] and _('Admin') or _('Staff member'))
+                or _('User')
+            )
+            usr = aUser(u)
+            res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
+            logger.debug('Item: %s', res)
+            return res
+        except Exception as e:
             logger.exception('En users')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent):
         try:
@@ -191,7 +189,7 @@ class Users(DetailHandler):
         try:
             user = parent.users.get(uuid=processUuid(item))
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
 
         return log.getLogs(user)
 
@@ -210,7 +208,7 @@ class Users(DetailHandler):
 
         if 'password' in self._params:
             valid_fields.append('password')
-            self._params['password'] = cryptoManager().hash(self._params['password'])
+            self._params['password'] = CryptoManager().hash(self._params['password'])
 
         if 'mfa_data' in self._params:
             valid_fields.append('mfa_data')
@@ -247,18 +245,18 @@ class Users(DetailHandler):
                         if g.is_meta is False
                     )
         except User.DoesNotExist:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
         except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('User already exists (duplicate key error)'))
+            raise RequestError(_('User already exists (duplicate key error)')) from None
         except AuthenticatorException as e:
-            raise RequestError(str(e))
+            raise RequestError(str(e)) from e
         except ValidationError as e:
-            raise RequestError(str(e.message))
-        except RequestError:
-            raise
-        except Exception:
+            raise RequestError(str(e.message)) from e
+        except RequestError:  # pylint: disable=try-except-raise
+            raise  # Re-raise
+        except Exception as e:
             logger.exception('Saving user')
-            raise self.invalidRequestException()
+            raise self.invalidRequestException() from e
 
         return self.getItems(parent, user.uuid)
 
@@ -266,9 +264,12 @@ class Users(DetailHandler):
         try:
             user = parent.users.get(uuid=processUuid(item))
             if not self._user.is_admin and (user.is_admin or user.staff_member):
-                logger.warn('Removal of user {} denied due to insufficients rights')
+                logger.warning(
+                    'Removal of user %s denied due to insufficients rights',
+                    user.pretty_name,
+                )
                 raise self.invalidItemException(
-                    'Removal of user {} denied due to insufficients rights'
+                    f'Removal of user {user.pretty_name} denied due to insufficients rights'
                 )
 
             assignedUserService: 'UserService'
@@ -285,9 +286,9 @@ class Users(DetailHandler):
                         logger.exception('Saving user on removing error')
 
             user.delete()
-        except Exception:
+        except Exception as e:
             logger.exception('Removing user')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
         return 'deleted'
 
@@ -325,7 +326,7 @@ class Users(DetailHandler):
                 res.append(v)
 
         return res
-    
+
     def cleanRelated(self, parent: Authenticator, item: str) -> typing.Dict:
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
@@ -334,7 +335,6 @@ class Users(DetailHandler):
 
 
 class Groups(DetailHandler):
-
     custom_methods = ['servicesPools', 'users']
 
     def getItems(self, parent: Authenticator, item: typing.Optional[str]):
@@ -364,14 +364,14 @@ class Groups(DetailHandler):
             if multi:
                 return res
             if not i:
-                raise  # Invalid item
+                raise Exception('Item not found')
             # Add pools field if 1 item only
             result = res[0]
             result['pools'] = [v.uuid for v in getPoolsForGroups([i])]
             return result
-        except Exception:
+        except Exception as e:
             logger.exception('REST groups')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: Authenticator) -> str:
         try:
@@ -409,12 +409,12 @@ class Groups(DetailHandler):
         }
         types = [
             {
-                'name': tDct[t]['name'],
-                'type': t,
-                'description': tDct[t]['description'],
+                'name': v['name'],
+                'type': k,
+                'description': v['description'],
                 'icon': '',
             }
-            for t in tDct
+            for k, v in tDct.items()
         ]
 
         if forType is None:
@@ -423,7 +423,7 @@ class Groups(DetailHandler):
         try:
             return next(filter(lambda x: x['type'] == forType, types))
         except Exception:
-            raise self.invalidRequestException()
+            raise self.invalidRequestException() from None
 
     def saveItem(self, parent: Authenticator, item: typing.Optional[str]) -> None:
         group = None  # Avoid warning on reference before assignment
@@ -467,7 +467,11 @@ class Groups(DetailHandler):
 
             if is_meta:
                 # Do not allow to add meta groups to meta groups
-                group.groups.set(i for i in parent.groups.filter(uuid__in=self._params['groups']) if i.is_meta is False)
+                group.groups.set(
+                    i
+                    for i in parent.groups.filter(uuid__in=self._params['groups'])
+                    if i.is_meta is False
+                )
 
             if pools:
                 # Update pools
@@ -475,16 +479,16 @@ class Groups(DetailHandler):
 
             group.save()
         except Group.DoesNotExist:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
         except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('User already exists (duplicate key error)'))
+            raise RequestError(_('User already exists (duplicate key error)')) from None
         except AuthenticatorException as e:
-            raise RequestError(str(e))
-        except RequestError:
-            raise
-        except Exception:
+            raise RequestError(str(e)) from e
+        except RequestError:  # pylint: disable=try-except-raise
+            raise  # Re-raise
+        except Exception as e:
             logger.exception('Saving group')
-            raise self.invalidRequestException()
+            raise self.invalidRequestException() from e
 
     def deleteItem(self, parent: Authenticator, item: str) -> None:
         try:
@@ -492,7 +496,7 @@ class Groups(DetailHandler):
 
             group.delete()
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
 
     def servicesPools(
         self, parent: Authenticator, item: str
@@ -532,11 +536,10 @@ class Groups(DetailHandler):
                 'last_access': user.last_access,
             }
 
-        res: typing.List[typing.Mapping[str, typing.Any]] = []
         if group.is_meta:
             # Get all users for everygroup and
             groups = getGroupsFromMeta((group,))
-            tmpSet = None
+            tmpSet: typing.Optional[typing.Set] = None
             for g in groups:
                 gSet = set((i for i in g.users.all()))
                 if tmpSet is None:
@@ -549,12 +552,9 @@ class Groups(DetailHandler):
 
                         if not tmpSet:
                             break  # If already empty, stop
-            users = list(tmpSet) if tmpSet else list()
+            users = list(tmpSet or {}) if tmpSet else []
             tmpSet = None
         else:
             users = group.users.all()
 
-        for i in users:
-            res.append(info(i))
-
-        return res
+        return [info(i) for i in users]

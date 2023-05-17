@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
@@ -81,7 +81,7 @@ class Tag(UUIDModel):
     servicepool_set: 'models.manager.RelatedManager[ServicePool]'
     transport_set: 'models.manager.RelatedManager[Transport]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -91,14 +91,14 @@ class Tag(UUIDModel):
 
     @property
     def vtag(self) -> str:
-        return self.tag.capitalize()
+        return str(self.tag).capitalize()
 
     def __str__(self) -> str:
-        return 'Tag: {} {}'.format(self.uuid, self.tag)
+        return f'Tag: {self.uuid} {self.tag}'
 
 
 class TaggingMixin(models.Model):
     tags = models.ManyToManyField(Tag)
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         abstract = True

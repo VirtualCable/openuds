@@ -26,7 +26,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import re
@@ -47,7 +47,7 @@ from .publication import ProxmoxPublication
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
 
     from . import client
     from .provider import ProxmoxProvider
@@ -200,7 +200,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         self.machine.setValues(
             [
                 gui.choiceItem(
-                    str(m.vmid), '{}\\{} ({})'.format(m.node, m.name or m.vmid, m.vmid)
+                    str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})'
                 )
                 for m in self.parent().listMachines()
                 if m.name and m.name[:3] != 'UDS'

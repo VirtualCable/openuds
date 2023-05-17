@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import io
 import codecs
@@ -41,7 +41,7 @@ from django.http import HttpResponse
 
 
 from .uuid_model import UUIDModel
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class Image(UUIDModel):
     metaPools: 'models.manager.RelatedManager[MetaPool]'
     servicesPoolsGroup: 'models.manager.RelatedManager[ServicePoolGroup]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -94,13 +94,13 @@ class Image(UUIDModel):
         return codecs.decode(data64.encode(), 'base64')
 
     @staticmethod
-    def resizeAndConvert(image: PIL.Image.Image, size: typing.Tuple[int, int]) -> typing.Tuple[int, int, bytes]:
+    def resizeAndConvert(
+        image: PIL.Image.Image, size: typing.Tuple[int, int]
+    ) -> typing.Tuple[int, int, bytes]:
         """
         Resizes an image to the given size
         """
-        image.thumbnail(
-            size=Image.MAX_IMAGE_SIZE, resample=PIL.Image.LANCZOS, reducing_gap=3.0
-        )
+        image.thumbnail(size=size, resample=PIL.Image.LANCZOS, reducing_gap=3.0)
         output = io.BytesIO()
         image.save(output, 'png')
         return (image.width, image.height, output.getvalue())
@@ -110,7 +110,9 @@ class Image(UUIDModel):
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
-        except Exception:  # Image data is incorrect, replace as a simple transparent image
+        except (
+            Exception
+        ):  # Image data is incorrect, replace as a simple transparent image
             image = PIL.Image.new('RGBA', (128, 128))
 
         # Max image size, keeping aspect and using antialias
@@ -187,13 +189,9 @@ class Image(UUIDModel):
     def thumbnailResponse(self) -> HttpResponse:
         return HttpResponse(self.thumb, content_type='image/png')
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs):
         self.stamp = getSqlDatetime()
-        return super().save(force_insert, force_update, using, update_fields)
+        return super().save(*args, **kwargs)
 
     def __str__(self):
-        return 'Image id: {}, name: {}, size: {}, length: {} bytes, thumb length: {} bytes'.format(
-            self.id, self.name, self.size, len(self.data), len(self.thumb)
-        )
+        return f'Image Id: {self.id}, Name: {self.name}, Size: {self.size}, Length: {len(self.data)} bytes, Thumb length: {len(self.thumb)} bytes'

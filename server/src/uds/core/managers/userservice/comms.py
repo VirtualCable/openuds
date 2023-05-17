@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import os
 import json
@@ -35,7 +35,7 @@ import tempfile
 import logging
 import typing
 
-import requests
+from uds.core.util.security import secureRequestsSession
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -67,9 +67,11 @@ def _requestActor(
     """
     url = userService.getCommsUrl()
     if not url:
+        # Maybe service knows how to do it
+
         # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
         raise NoActorComms(
-            'No notification urls for {}'.format(userService.friendly_name)
+            f'No notification urls for {userService.friendly_name}'
         )
 
     minVersion = minVersion or '3.5.0'
@@ -79,41 +81,38 @@ def _requestActor(
             'Pool %s has old actors (%s)', userService.deployed_service.name, version
         )
         raise OldActorVersion(
-            'Old actor version {} for {}'.format(version, userService.friendly_name)
+            f'Old actor version {version} for {userService.friendly_name}'.format(version, userService.friendly_name)
         )
 
     url += '/' + method
 
-    proxy = userService.deployed_service.proxy
     try:
-        if proxy:
-            r = proxy.doProxyRequest(url=url, data=data, timeout=TIMEOUT)
+        verify: typing.Union[bool, str]
+        cert = userService.getProperty('cert') or ''
+        # cert = ''  # Uncomment to test without cert
+        if cert:
+            # Generate temp file, and delete it after
+            with tempfile.NamedTemporaryFile('wb', delete=False) as f:
+                f.write(cert.encode())  # Save cert
+                verify = f.name
         else:
-            verify: typing.Union[bool, str]
-            cert = userService.getProperty('cert')
-            # cert = ''  # Untils more tests, keep as previous....  TODO: Fix this when fully tested
-            if cert:
-                # Generate temp file, and delete it after
-                verify = tempfile.mktemp('udscrt')
-                with open(verify, 'wb') as f:
-                    f.write(cert.encode())  # Save cert
-            else:
-                verify = False
-            if data is None:
-                r = requests.get(url, verify=verify, timeout=TIMEOUT)
-            else:
-                r = requests.post(
-                    url,
-                    data=json.dumps(data),
-                    headers={'content-type': 'application/json'},
-                    verify=verify,
-                    timeout=TIMEOUT,
-                )
-            if verify:
-                try:
-                    os.remove(typing.cast(str, verify))
-                except Exception:
-                    logger.exception('removing verify')
+            verify = False
+        session = secureRequestsSession(verify=cert)
+        if data is None:
+            r = session.get(url, verify=verify, timeout=TIMEOUT)
+        else:
+            r = session.post(
+                url,
+                data=json.dumps(data),
+                headers={'content-type': 'application/json'},
+                verify=verify,
+                timeout=TIMEOUT,
+            )
+        if verify:
+            try:
+                os.remove(typing.cast(str, verify))
+            except Exception:
+                logger.exception('removing verify')
         js = r.json()
 
         if version >= '3.0.0':

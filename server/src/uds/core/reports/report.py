@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import codecs
 import datetime
@@ -48,14 +48,20 @@ logger = logging.getLogger(__name__)
 
 
 class Report(UserInterface):
-    mime_type: typing.ClassVar[str] = 'application/pdf'  # Report returns pdfs by default, but could be anything else
+    mime_type: typing.ClassVar[
+        str
+    ] = 'application/pdf'  # Report returns pdfs by default, but could be anything else
     name: typing.ClassVar[str] = _('Base Report')  # Report name
     group: typing.ClassVar[str] = ''  # So we can "group" reports by kind?
-    encoded: typing.ClassVar[bool] = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
+    encoded: typing.ClassVar[
+        bool
+    ] = True  # If the report is mean to be encoded (binary reports as PDFs == True, text reports must be False so utf-8 is correctly threated
     uuid: typing.ClassVar[str] = ''
 
     description: str = _('Base report')  # Report description
-    filename: str = 'file.pdf'  # Filename that will be returned as 'hint' on rest report request
+    filename: str = (
+        'file.pdf'  # Filename that will be returned as 'hint' on rest report request
+    )
 
     @classmethod
     def translated_name(cls):
@@ -81,35 +87,42 @@ class Report(UserInterface):
     @classmethod
     def getUuid(cls):
         if cls.uuid is None:
-            raise Exception('Class does not includes an uuid!!!: {}'.format(cls))
+            raise Exception(f'Class does not includes an uuid!!!: {cls}')
         return cls.uuid
 
     @staticmethod
-    def asPDF(html: str, header: typing.Optional[str] = None, water: typing.Optional[str] = None, images: typing.Optional[typing.Dict[str, bytes]] = None) -> bytes:
+    def asPDF(
+        html: str,
+        header: typing.Optional[str] = None,
+        water: typing.Optional[str] = None,
+        images: typing.Optional[typing.Dict[str, bytes]] = None,
+    ) -> bytes:
         """
         Renders an html as PDF.
         Uses the "report.css" as stylesheet
         """
 
         # url fetcher for weasyprint
-        def report_fetcher(url: str, timeout=10, ssl_context=None) -> typing.Dict:
+        def report_fetcher(
+            url: str, timeout=10, ssl_context=None  # pylint: disable=unused-argument
+        ) -> typing.Dict:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
                 imagePath = stock.getStockImagePath(url[8:])
                 with open(imagePath, 'rb') as f:
                     image = f.read()
-                return dict(string=image, mime_type='image/png')
+                return {'string': image, 'mime_type': 'image/png'}
 
             if url.startswith('image://'):
                 img: typing.Optional[bytes] = b''  # Empty image
                 if images:
                     img = images.get(url[8:])
                     logger.debug('Getting image %s? %s', url[8:], img is not None)
-                return dict(string=img, mime_type='image/png')
+                return {'string': img, 'mime_type': 'image/png'}
 
             return default_url_fetcher(url)
 
-        with open(stock.getStockCssPath('report.css'), 'r') as f:
+        with open(stock.getStockCssPath('report.css'), 'r', encoding='utf-8') as f:
             css = f.read()
 
         css = (
@@ -117,13 +130,20 @@ class Report(UserInterface):
             .replace('{page}', _('Page'))
             .replace('{of}', _('of'))
             .replace('{water}', water or 'UDS Report')
-            .replace('{printed}', _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(now=datetime.datetime.now()))
+            .replace(
+                '{printed}',
+                _('Printed in {now:%Y, %b %d} at {now:%H:%M}').format(
+                    now=datetime.datetime.now()
+                ),
+            )
         )
 
         h = HTML(string=html, url_fetcher=report_fetcher)
         c = CSS(string=css)
 
-        return typing.cast(bytes, h.write_pdf(stylesheets=[c]))  # Return a new bytes object
+        return typing.cast(
+            bytes, h.write_pdf(stylesheets=[c])
+        )  # Return a new bytes object
 
     @staticmethod
     def templateAsPDF(templateName, dct, header=None, water=None, images=None) -> bytes:
@@ -184,4 +204,4 @@ class Report(UserInterface):
         return typing.cast(str, data)
 
     def __str__(self):
-        return 'Report {} with uuid {}'.format(self.name, self.uuid)
+        return f'Report {self.name} with uuid {self.uuid}'

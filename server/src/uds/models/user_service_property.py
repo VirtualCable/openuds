@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -55,7 +55,7 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[UserServiceProperty]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -69,6 +69,4 @@ class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-meth
         ]
 
     def __str__(self) -> str:
-        return "Property of {}. {}={}".format(
-            self.user_service.pk, self.name, self.value
-        )
+        return f'Property of {self.user_service.pk}. {self.name}={self.value}'

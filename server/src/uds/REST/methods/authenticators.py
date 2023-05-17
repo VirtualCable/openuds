@@ -50,7 +50,7 @@ from .users_groups import Users, Groups
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db import models
-    from uds.core import Module
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +154,7 @@ class Authenticators(ModelHandler):
             raise Exception()  # Not found
         except Exception as e:
             logger.info('Type not found: %s', e)
-            raise NotFound('type not found')
+            raise NotFound('type not found') from e
 
     def item_as_dict(self, item: Authenticator) -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
@@ -214,19 +214,16 @@ class Authenticators(ModelHandler):
 
             if type_ == 'user':
                 return list(auth.searchUsers(term))[:limit]
-            else:
-                return list(auth.searchGroups(term))[:limit]
+            return list(auth.searchGroups(term))[:limit]
         except Exception as e:
             logger.exception('Too many results: %s', e)
             return [{'id': _('Too many results...'), 'name': _('Refine your query')}]
             # self.invalidResponseException('{}'.format(e))
 
     def test(self, type_: str):
-        from uds.core.environment import Environment
-
         authType = auths.factory().lookup(type_)
         if not authType:
-            raise self.invalidRequestException('Invalid type: {}'.format(type_))
+            raise self.invalidRequestException(f'Invalid type: {type_}')
 
         dct = self._params.copy()
         dct['_request'] = self._request

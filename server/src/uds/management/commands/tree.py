@@ -32,10 +32,11 @@
 """
 import logging
 import typing
+
 import yaml
-import collections
 
 from django.core.management.base import BaseCommand
+
 from uds.core.util import log
 from uds import models
 from uds.core.util.state import State
@@ -85,7 +86,7 @@ def getSerializedFromModel(
     removableFields = removableFields or []
     passwordFields = passwordFields or []
     try:
-        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]  # type: ignore
+        values = mod._meta.managers[0].filter(pk=mod.pk).values()[0]  # type: ignore  # pylint: disable=protected-access
         for i in ['uuid', 'id'] + removableFields:
             if i in values:
                 del values[i]
@@ -118,6 +119,7 @@ class Command(BaseCommand):
             help='Maximum elements exported for groups and user services',
         )
 
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     def handle(self, *args, **options) -> None:
         logger.debug("Show Tree")
         # firt, genertate Provider-service-servicepool tree
@@ -134,14 +136,13 @@ class Command(BaseCommand):
         try:
             providers = {}
             for provider in models.Provider.objects.all():
-
                 services = {}
                 totalServices = 0
                 totalServicePools = 0
                 totalUserServices = 0
                 for service in provider.services.all():
                     servicePools = {}
-                    numberOfServicePools = 0   
+                    numberOfServicePools = 0
                     numberOfUserServices = 0
                     for servicePool in service.deployedServices.all():
                         # get assigned user services with ERROR status
@@ -151,12 +152,7 @@ class Command(BaseCommand):
                             fltr = fltr.filter(state=State.ERROR)
                         for item in fltr[:max_items]:  # at most max_items items
                             logs = [
-                                '{}: {} [{}] - {}'.format(
-                                    l['date'],
-                                    log.logStrFromLevel(l['level']),
-                                    l['source'],
-                                    l['message'],
-                                )
+                                f'{l["date"]}: {log.LogLevel.fromStr(l["level"])} [{l["source"]}] - {l["message"]}'
                                 for l in log.getLogs(item)
                             ]
                             userServices[item.friendly_name] = {
@@ -197,9 +193,9 @@ class Command(BaseCommand):
                             except Exception:
                                 changelogs = []
 
-                            publications[str(publication.revision)] = getSerializedFromModel(
-                                publication, ['data']
-                            )
+                            publications[
+                                str(publication.revision)
+                            ] = getSerializedFromModel(publication, ['data'])
                             publications[str(publication.revision)][
                                 'changelogs'
                             ] = changelogs
@@ -242,7 +238,9 @@ class Command(BaseCommand):
                     numberOfServicePools = len(servicePools)
                     totalServicePools += numberOfServicePools
 
-                    services[f'{service.name} ({numberOfServicePools}, {numberOfUserServices})'] = {
+                    services[
+                        f'{service.name} ({numberOfServicePools}, {numberOfUserServices})'
+                    ] = {
                         '_': getSerializedFromManagedObject(service),
                         'servicePools': servicePools,
                     }
@@ -262,8 +260,12 @@ class Command(BaseCommand):
             for authenticator in models.Authenticator.objects.all():
                 # Groups
                 grps: typing.Dict[str, typing.Any] = {}
-                for group in authenticator.groups.all()[:max_items]:  # at most max_items items
-                    grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                for group in authenticator.groups.all()[
+                    :max_items
+                ]:  # at most max_items items
+                    grps[group.name] = getSerializedFromModel(
+                        group, ['manager_id', 'name']
+                    )
                 authenticators[authenticator.name] = {
                     '_': getSerializedFromManagedObject(authenticator),
                     'groups': grps,
@@ -375,6 +377,6 @@ class Command(BaseCommand):
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 
         except Exception as e:
-            self.stdout.write('The command could not be processed: {}'.format(e))
+            self.stdout.write(f'The command could not be processed: {e}')
             self.stdout.flush()
             logger.exception('Exception processing %s', args)

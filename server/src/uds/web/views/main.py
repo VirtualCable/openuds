@@ -42,12 +42,10 @@ from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from django.views.decorators.cache import never_cache
-
 from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -56,6 +54,7 @@ from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas
 from uds import models
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 
 
@@ -121,7 +120,7 @@ def login(
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
             if loginResult.user.manager.getType().providesMfa() and loginResult.user.manager.mfa:
-                authInstance = loginResult.user.manager.getInstance()
+                # authInstance = loginResult.user.manager.getInstance()
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -198,7 +197,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
 
     # Get validity duration
     validity = mfaProvider.validity*60
-    now = models.getSqlDatetimeAsUnix()
+    now = getSqlDatetimeAsUnix()
     start_time = request.session.get('mfa_start_time', now)
 
     # If mfa process timed out, we need to start login again
@@ -211,11 +210,13 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     label = mfaInstance.label()
 
     if not mfaIdentifier:
-        if mfaInstance.emptyIndentifierAllowedToLogin(request) == True:
+        emtpyIdentifiedAllowed = mfaInstance.emptyIndentifierAllowedToLogin(request)
+        # can be True, False or None
+        if emtpyIdentifiedAllowed is True:
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
-        elif mfaInstance.emptyIndentifierAllowedToLogin(request) == False:
+        if emtpyIdentifiedAllowed is False:
             # Not allowed to login, redirect to login error page
             logger.warning(
                 'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
@@ -224,7 +225,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                 mfaProvider.name,
             )
             return errors.errorView(request, errors.ACCESS_DENIED)
-        # Default, do nothing, and continue
+        # None, the authenticator will decide what to do if mfaIdentifier is empty
 
     tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
@@ -239,13 +240,16 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                     mfaIdentifier,
                     code,
                     validity=validity,
-                )
+                )  # Will raise MFAError if code is not valid
                 request.authorized = True
-                # Remove mfa_start_time from session
-                if 'mfa_start_time' in request.session:
-                    del request.session['mfa_start_time']
+                # Remove mfa_start_time and mfa from session
+                for i in ('mfa_start_time', 'mfa'):
+                    if i in request.session:
+                        del request.session[i]
 
+                # Redirect to index by default
                 response = HttpResponseRedirect(reverse('page.index'))
+
                 # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
                 if (
                     mfaProvider.remember_device > 0
@@ -334,7 +338,7 @@ def update_transport_ticket(
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
-                password = cryptoManager().symCrypt(password, scrambler)
+                password = CryptoManager().symCrypt(password, scrambler)
 
             def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' not in data:

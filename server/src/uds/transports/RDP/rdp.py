@@ -122,7 +122,7 @@ class RDPTransport(BaseRDPTransport):
             width == '-1' or height == '-1', width, height, depth, target=os.os
         )
         r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
-        r.address = '{}:{}'.format(ip, self.rdpPort.value)
+        r.address = f'{ip}:{self.rdpPort.num()}'
         r.username = username
         r.password = password
         r.domain = domain

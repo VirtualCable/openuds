@@ -30,7 +30,7 @@
 """
 UDS managers (downloads, users preferences, publications, ...)
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
@@ -40,47 +40,33 @@ if typing.TYPE_CHECKING:
     from .task import TaskManager
     from .downloads import DownloadsManager
     from .log import LogManager
-    from .user_service import UserServiceManager
     from .publication import PublicationManager
     from .notifications import NotificationsManager
 
 
-def cryptoManager() -> 'CryptoManager':
-    from .crypto import CryptoManager
-
-    return CryptoManager.manager()
-
-
 def taskManager() -> 'TaskManager':
-    from .task import TaskManager
+    from .task import TaskManager  # pylint: disable=import-outside-toplevel
 
     return TaskManager()
 
 
 def downloadsManager() -> 'DownloadsManager':
-    from .downloads import DownloadsManager
+    from .downloads import DownloadsManager  # pylint: disable=import-outside-toplevel
 
     return DownloadsManager()
 
 
 def logManager() -> 'LogManager':
-    from .log import LogManager
+    from .log import LogManager  # pylint: disable=import-outside-toplevel
 
     return LogManager()
 
-
-def userServiceManager() -> 'UserServiceManager':
-    from .user_service import UserServiceManager
-
-    return UserServiceManager()
-
-
 def publicationManager() -> 'PublicationManager':
-    from .publication import PublicationManager
+    from .publication import PublicationManager  # pylint: disable=import-outside-toplevel
 
     return PublicationManager()
 
 def notificationsManager() -> 'NotificationsManager':
-    from .notifications import NotificationsManager
+    from .notifications import NotificationsManager  # pylint: disable=import-outside-toplevel
 
     return NotificationsManager()

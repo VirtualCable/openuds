@@ -65,16 +65,14 @@ def validateNumeric(
         numeric = int(value)
         if minValue is not None and numeric < minValue:
             raise exceptions.ValidationError(
-                _(
-                    '{0} must be greater than or equal to {1}'.format(
-                        fieldName, minValue
-                    )
+                _('{0} must be greater than or equal to {1}').format(
+                    fieldName, minValue
                 )
             )
 
         if maxValue is not None and numeric > maxValue:
             raise exceptions.ValidationError(
-                _('{0} must be lower than or equal to {1}'.format(fieldName, maxValue))
+                _('{0} must be lower than or equal to {1}').format(fieldName, maxValue)
             )
 
         value = str(numeric)
@@ -82,7 +80,7 @@ def validateNumeric(
     except ValueError:
         raise exceptions.ValidationError(
             _('{0} contains invalid characters').format(fieldName)
-        )
+        ) from None
 
     return int(value)
 
@@ -139,7 +137,7 @@ def validateIpv4(ipv4: str) -> str:
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid IPv4 address').format(ipv4)
-        )
+        ) from None
     return ipv4
 
 
@@ -155,7 +153,7 @@ def validateIpv6(ipv6: str) -> str:
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid IPv6 address').format(ipv6)
-        )
+        ) from None
     return ipv6
 
 
@@ -171,7 +169,7 @@ def validateIpv4OrIpv6(ipv4OrIpv6: str) -> str:
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid IPv4 or IPv6 address').format(ipv4OrIpv6)
-        )
+        ) from None
     return ipv4OrIpv6
 
 
@@ -216,9 +214,7 @@ def validatePath(
             )
     else:
         if not valid_for_windows.match(path) and not valid_for_unix.match(path):
-            raise exceptions.ValidationError(
-                _('{} is not a valid path').format(path)
-            )
+            raise exceptions.ValidationError(_('{} is not a valid path').format(path))
 
     return path
 
@@ -246,7 +242,7 @@ def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid host:port pair').format(hostPortPair)
-        )
+        ) from None
 
 
 def validateTimeout(timeOutStr: str) -> int:
@@ -273,9 +269,7 @@ def validateMac(mac: str) -> str:
     )  # In fact, it could be XX-XX-XX-XX-XX-XX, but we use - as range separator
 
     if macRE.match(mac) is None:
-        raise exceptions.ValidationError(
-            _('{} is not a valid MAC address').format(mac)
-        )
+        raise exceptions.ValidationError(_('{} is not a valid MAC address').format(mac))
 
     return mac
 
@@ -293,7 +287,7 @@ def validateMacRange(macRange: str) -> str:
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid MAC range').format(macRange)
-        )
+        ) from None
 
     return macRange
 
@@ -343,8 +337,6 @@ def validateBasename(baseName: str, length: int = -1) -> str:
         )
 
     if baseName.isdigit():
-        raise exceptions.ValidationError(
-            _('The machine name can\'t be only numbers')
-        )
+        raise exceptions.ValidationError(_('The machine name can\'t be only numbers'))
 
     return baseName

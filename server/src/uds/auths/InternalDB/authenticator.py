@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -41,7 +41,7 @@ import dns.reversename
 from django.utils.translation import gettext_noop as _
 from uds.core import auths
 from uds.core.ui import gui
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util.state import State
 from uds.core.auths.auth import authLogLogin
 
@@ -108,12 +108,13 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            self.dbAuthenticator().users.get(name=username, state=State.ACTIVE).mfa_data
+            self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
         except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''
 
     def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
+        username = username.lower()
         if self.differentForEachHost.isTrue():
             newUsername = (
                 (request.ip_proxy if self.acceptProxy.isTrue() else request.ip)
@@ -147,6 +148,7 @@ class InternalDBAuth(auths.Authenticator):
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
+        username = username.lower()
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
         try:
@@ -159,7 +161,7 @@ class InternalDBAuth(auths.Authenticator):
             return auths.FAILED_AUTH
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
-        if cryptoManager().checkHash(credentials, user.password):
+        if CryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
             return auths.SUCCESS_AUTH
 
@@ -169,7 +171,7 @@ class InternalDBAuth(auths.Authenticator):
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         dbAuth = self.dbAuthenticator()
         try:
-            user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
+            user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
             return
 
@@ -178,7 +180,7 @@ class InternalDBAuth(auths.Authenticator):
     def getRealName(self, username: str) -> str:
         # Return the real name of the user, if it is set
         try:
-            user = self.dbAuthenticator().users.get(name=username, state=State.ACTIVE)
+            user = self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE)
             return user.real_name or username
         except Exception:
             return super().getRealName(username)
@@ -187,7 +189,7 @@ class InternalDBAuth(auths.Authenticator):
         pass
 
     @staticmethod
-    def test(env, data):
+    def test(env, data):  # pylint: disable=unused-argument
         return [True, _("Internal structures seems ok")]
 
     def check(self):

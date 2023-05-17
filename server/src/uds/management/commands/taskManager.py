@@ -65,7 +65,7 @@ def become_daemon(
         if os.fork() > 0:
             sys.exit(0)  # kill off parent
     except OSError as e:
-        sys.stderr.write("fork #1 failed: (%d) %s\n" % (e.errno, e.strerror))
+        sys.stderr.write(f'fork #1 failed: ({e.errno}) {e.strerror}')
         sys.exit(1)
     os.setsid()
     os.chdir(our_home_dir)
@@ -76,12 +76,12 @@ def become_daemon(
         if os.fork() > 0:
             os._exit(0)  # pylint: disable=protected-access
     except OSError as e:
-        sys.stderr.write("fork #2 failed: (%d) %s\n" % (e.errno, e.strerror))
+        sys.stderr.write(f'fork #2 failed: ({e.errno}) {e.strerror}')
         os._exit(1)  # pylint: disable=protected-access
 
-    si = open('/dev/null', 'r')
-    so = open(out_log, 'a+', 1)
-    se = open(err_log, 'a+', 1)
+    si = open('/dev/null', 'r', encoding='utf-8')  # pylint: disable=consider-using-with
+    so = open(out_log, 'a+', 1, encoding='utf-8')  # pylint: disable=consider-using-with
+    se = open(err_log, 'a+', 1, encoding='utf-8')  # pylint: disable=consider-using-with
     os.dup2(si.fileno(), sys.stdin.fileno())
     os.dup2(so.fileno(), sys.stdout.fileno())
     os.dup2(se.fileno(), sys.stderr.fileno())
@@ -136,7 +136,7 @@ class Command(BaseCommand):
 
         pid: int = 0
         try:
-            pid = int(open(getPidFile(), 'r').readline())
+            pid = int(open(getPidFile(), 'r', encoding='utf8').readline())  # pylint: disable=consider-using-with
         except Exception:
             pid = 0
 
@@ -161,7 +161,8 @@ class Command(BaseCommand):
                 )
                 pid = os.getpid()
 
-                open(getPidFile(), 'w+').write('{}\n'.format(pid))
+                with open(getPidFile(), 'w+', encoding='utf8') as f:
+                    f.write(f'{pid}\n')
 
             manager = taskManager()
             manager.run()
@@ -169,7 +170,7 @@ class Command(BaseCommand):
         if not start and not stop:
             if pid:
                 self.stdout.write(
-                    "Task manager found running (pid file exists: {0})\n".format(pid)
+                    f'Task manager found running (pid file exists: {pid})\n'
                 )
             else:
-                self.stdout.write("Task manager not foud (pid file do not exits)\n")
+                self.stdout.write("Task manager not found (pid file do not exits)\n")

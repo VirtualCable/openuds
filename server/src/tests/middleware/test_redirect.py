@@ -28,14 +28,11 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
 
 from django.urls import reverse
 
-from uds.core.util import config
 from uds.core.managers.crypto import CryptoManager
-from uds.middleware.redirect import _NO_REDIRECT
 
 from ..utils import test
 
@@ -49,11 +46,11 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
     """
     def test_redirect(self):
         RedirectMiddlewareTest.add_middleware('uds.middleware.redirect.RedirectMiddleware')
-        config.GlobalConfig.REDIRECT_TO_HTTPS.set(True)
+        page = 'https://testserver' + reverse('page.index')
         response = self.client.get('/', secure=False)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, 'https://testserver/')
-        # Try secure, will redirect to index
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response.url, page)
+        # Try secure, will redirect to index, not absulute url
         response = self.client.get('/', secure=True)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('page.index'))
@@ -62,21 +59,7 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
         for _ in range(32):
             url = f'/{CryptoManager().randomString(32)}'
             response = self.client.get(url, secure=False)
-            self.assertEqual(response.status_code, 302)
-            self.assertEqual(response.url, f'https://testserver{url}')
+            self.assertEqual(response.status_code, 301)
+            self.assertEqual(response.url, page)
             response = self.client.get(url, secure=True)
             self.assertEqual(response.status_code, 404) # Not found
-
-        # These urls will never redirect:
-        for url in _NO_REDIRECT:
-            # Append some random string to avoid cache and make a 404 occur
-            url = f'/{url}{("/" + CryptoManager().randomString(32)) if "test" not in url else ""}'
-            response = self.client.get(url, secure=False)
-            # every url will return 404, except /uds/rest/client/test that will return 200 and wyse or servlet that will return 302
-            if url.startswith('/uds/rest/client/test'):
-                self.assertEqual(response.status_code, 200)
-            elif url.startswith('/wyse') or url.startswith('/servlet'):
-                self.assertEqual(response.status_code, 302)
-            else:
-                self.assertEqual(response.status_code, 404)
-

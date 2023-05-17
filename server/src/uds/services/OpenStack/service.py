@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 from uds.core.transports import protocols
 from uds.core.services import Service, types as serviceTypes
-from uds.core.util import tools
+from uds.core.util import tools, validators
 from uds.core.ui import gui
 
 from .publication import LivePublication
@@ -210,7 +210,7 @@ class LiveService(Service):
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            tools.checkValidBasename(self.baseName.value, self.lenName.num())
+            validators.validateBasename(self.baseName.value, self.lenName.num())
 
         # self.ov.value = self.parent().serialize()
         # self.ev.value = self.parent().env.key

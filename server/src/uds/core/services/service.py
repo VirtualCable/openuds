@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
 
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
@@ -28,21 +28,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import typing
 import logging
 
 from django.utils.translation import gettext_noop as _
-from uds.core import Module
+from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util.state import State
 from uds.core.util import log
 
 from . import types
 from .publication import Publication
-from .user_deployment import UserDeployment
+from .user_service import UserDeployment
 
 if typing.TYPE_CHECKING:
     from uds.core import services
@@ -139,9 +139,7 @@ class Service(Module):
     usesCache = False
 
     # : Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.usesCache
-    cacheTooltip = _(
-        'None'
-    )  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If user deployments can be cached (see :py:attr:.usesCache), may he also can provide a secondary cache,
     # : that is no more that user deployments that are "almost ready" to be used, but preperably consumes less
@@ -150,9 +148,7 @@ class Service(Module):
     usesCache_L2 = False  # : If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
 
     # : Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.usesCache_L2
-    cacheTooltip_L2 = _(
-        'None'
-    )  # : Tooltip shown to user when this item is pointed at admin interface
+    cacheTooltip_L2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
     needsManager: bool = False
@@ -270,9 +266,7 @@ class Service(Module):
 
         # Keep untouched if maxServices is not present
 
-    def requestServicesForAssignation(
-        self, **kwargs
-    ) -> typing.Iterable[UserDeployment]:
+    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable[UserDeployment]:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -281,9 +275,7 @@ class Service(Module):
         name returned is unique :-)
         """
         raise Exception(
-            'The class {0} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'.format(
-                self.__class__.__name__
-            )
+            f'The class {self.__class__.__name__} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'
         )
 
     def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
@@ -384,6 +376,18 @@ class Service(Module):
         """
         return
 
+    def notifyData(self, id: typing.Optional[str], data: str) -> None:
+        """
+        Processes a custom data notification, that must be interpreted by the service itself.
+        This allows "token actors" to communicate with service directly, what is needed for
+        some kind of services (like LinuxApps)
+
+        Args:
+            id (typing.Optional[str]): Id validated through "getValidId". May be None if not validated (or not provided)
+            data (str): Data to process
+        """
+        return
+
     def storeIdInfo(self, id: str, data: typing.Any) -> None:
         self.storage.putPickle('__nfo_' + id, data)
 
@@ -394,16 +398,14 @@ class Service(Module):
             self.storage.delete('__nfo_' + id)
         return value
 
-    def doLog(self, level: int, message: str) -> None:
+    def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
-        from uds.models import Service as DBService
+        from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
-            log.doLog(
-                DBService.objects.get(uuid=self.getUuid()), level, message, log.SERVICE
-            )
+            log.doLog(DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
 
     @classmethod
     def canAssign(cls) -> bool:

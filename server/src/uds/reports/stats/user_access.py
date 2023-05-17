@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import csv
 import io
@@ -200,7 +200,7 @@ class StatsReportLogin(StatsReport):
                 _('Sunday'),
             ][l],
             'xlabel': _('Day of week'),
-            'y': [{'label': 'Users', 'data': [v for v in dataWeek]}],
+            'y': [{'label': 'Users', 'data': list(dataWeek)}],
             'ylabel': 'Users',
         }
 
@@ -211,7 +211,7 @@ class StatsReportLogin(StatsReport):
             'title': _('Users Access (by hour)'),
             'x': X,
             'xlabel': _('Hour'),
-            'y': [{'label': 'Users', 'data': [v for v in dataHour]}],
+            'y': [{'label': 'Users', 'data': list(dataHour)}],
             'ylabel': 'Users',
         }
 

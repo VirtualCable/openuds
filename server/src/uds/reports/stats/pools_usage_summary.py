@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import io
 import csv
@@ -60,7 +60,7 @@ class PoolsUsageSummary(UsageByPool):
     ) -> typing.Tuple[
         typing.ValuesView[typing.MutableMapping[str, typing.Any]], int, int, int
     ]:
-        orig, poolNames = super().getData()
+        orig, poolNames = super().getData()  # pylint: disable=unused-variable  # Keep name for reference
 
         pools: typing.Dict[str, typing.Dict] = {}
         totalTime: int = 0
@@ -88,8 +88,8 @@ class PoolsUsageSummary(UsageByPool):
 
         logger.debug('Pools %s', pools)
         # Remove unique users, and keep only counts...
-        for pn in pools:
-            pools[pn]['users'] = len(pools[pn]['users'])
+        for _, pn in pools.items():
+            pn['users'] = len(pn['users'])
 
         return pools.values(), totalTime, totalCount or 1, len(uniqueUsers)
 

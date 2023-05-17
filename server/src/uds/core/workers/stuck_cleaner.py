@@ -35,7 +35,8 @@ import typing
 
 from django.db.models import Q, Count
 
-from uds.models import ServicePool, UserService, getSqlDatetime
+from uds.models import ServicePool, UserService
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
@@ -84,7 +85,7 @@ class StuckCleaner(Job):
         # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
         def stuckUserServices(servicePool: ServicePool) -> typing.Iterable[UserService]:
             q = servicePool.userServices.filter(state_date__lt=since_state)
-            # Get all that are not in valid or info states, AND the ones that are "PREPARING" with 
+            # Get all that are not in valid or info states, AND the ones that are "PREPARING" with
             # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)
             yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
             yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
@@ -95,10 +96,8 @@ class StuckCleaner(Job):
                 logger.debug('Found stuck user service %s', stuck)
                 log.doLog(
                     servicePool,
-                    log.ERROR,
-                    'User service {} has been hard removed because it\'s stuck'.format(
-                        stuck.name
-                    ),
+                    log.LogLevel.ERROR,
+                    f'User service {stuck.name} has been hard removed because it\'s stuck',
                 )
                 # stuck.setState(State.ERROR)
                 stuck.delete()

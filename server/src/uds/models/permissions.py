@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import enum
@@ -41,7 +41,7 @@ from django.db.models import Q
 from .uuid_model import UUIDModel
 from .user import User
 from .group import Group
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,6 @@ class PermissionType(enum.IntEnum):
         return self.value >= permission.value
 
 
-
 class Permissions(UUIDModel):
     """
     An OS Manager represents a manager for responding requests for agents inside services.
@@ -118,9 +117,7 @@ class Permissions(UUIDModel):
     object_type = models.SmallIntegerField(default=-1, db_index=True)
     object_id = models.IntegerField(default=None, db_index=True, null=True, blank=True)
 
-    permission = models.SmallIntegerField(
-        default=PermissionType.NONE, db_index=True
-    )
+    permission = models.SmallIntegerField(default=PermissionType.NONE, db_index=True)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Permissions]'
@@ -235,11 +232,8 @@ class Permissions(UUIDModel):
         return PermissionType(self.permission).as_str()
 
     def __str__(self) -> str:
-        return 'Permission {}, user {} group {} object_type {} object_id {} permission {}'.format(
-            self.uuid,
-            self.user,
-            self.group,
-            self.object_type,
-            self.object_id,
-            PermissionType(self.permission).as_str(),
+        return (
+            f'Permission {self.uuid}, user {self.user} group {self.group} '
+            f'object_type {self.object_type} object_id {self.object_id} '
+            f'permission {PermissionType(self.permission).as_str()}'
         )

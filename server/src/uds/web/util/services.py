@@ -42,11 +42,12 @@ from uds.models import (
     ServicePoolGroup,
     MetaPool,
     TicketStore,
-    getSqlDatetime,
 )
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.config import GlobalConfig
 from uds.core.util import html
-from uds.core.managers import cryptoManager, userServiceManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import (
     ServiceNotReadyError,
     MaxServicesReachedError,
@@ -66,6 +67,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-arguments
 def _serviceInfo(
     uuid: str,
     is_meta: bool,
@@ -106,11 +108,10 @@ def _serviceInfo(
     }
 
 
+# pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
-) -> typing.Dict[
-    str, typing.Any
-]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+) -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
 
     Arguments:
@@ -167,20 +168,19 @@ def getServicesData(
                 ):
                     yield t
             except Exception as e:
-                logger.warning(
-                    'Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e
-                )
+                logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
 
     def buildMetaTransports(
-        transports: typing.Iterable[Transport],
-        isLabel: bool,
+        transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
     ) -> typing.List[typing.Mapping[str, typing.Any]]:
-        idd = lambda i: i.uuid if not isLabel else 'LABEL:' + i.label
+        def idd(i):
+            return i.uuid if not isLabel else 'LABEL:' + i.label
+
         return [
             {
                 'id': idd(i),
                 'name': i.name,
-                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),
+                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),  # type: ignore
                 'priority': i.priority,
             }
             for i in transports
@@ -195,23 +195,21 @@ def getServicesData(
 
         inAll: typing.Optional[typing.Set[str]] = None
         tmpSet: typing.Set[str]
-        if (
-            meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT
-        ):  # If meta.use_common_transports
+        if meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT:  # If meta.use_common_transports
             # only keep transports that are in ALL members
             for member in meta.members.all().order_by('priority'):
                 tmpSet = set()
                 # if first pool, get all its transports and check that are valid
                 for t in transportIterator(member):
                     if inAll is None:
-                        tmpSet.add(t.uuid)
+                        tmpSet.add(t.uuid)  # type: ignore
                     elif t.uuid in inAll:  # For subsequent, reduce...
-                        tmpSet.add(t.uuid)
+                        tmpSet.add(t.uuid)  # type: ignore
 
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                Transport.objects.filter(uuid__in=inAll or []), isLabel=False
+                Transport.objects.filter(uuid__in=inAll or []), isLabel=False, meta=meta
             )
         elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
             ltrans: typing.MutableMapping[str, Transport] = {}
@@ -231,7 +229,7 @@ def getServicesData(
                 inAll = tmpSet
             # tmpSet has ALL common transports
             metaTransports = buildMetaTransports(
-                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True
+                (v for k, v in ltrans.items() if k in (inAll or set())), isLabel=True, meta=meta
             )
         else:
             for member in meta.members.all():
@@ -249,16 +247,14 @@ def getServicesData(
                             {
                                 'id': 'meta',
                                 'name': 'meta',
-                                'link': html.udsAccessLink(
-                                    request, 'M' + meta.uuid, None
-                                ),
+                                'link': html.udsAccessLink(request, 'M' + meta.uuid, None),  # type: ignore
                                 'priority': 0,
                             }
                         ]
                         break
 
                 # if not in_use and meta.number_in_use:  # Only look for assignation on possible used
-                #     assignedUserService = userServiceManager().getExistingAssignationForUser(pool, request.user)
+                #     assignedUserService = UserServiceManager().getExistingAssignationForUser(pool, request.user)
                 #     if assignedUserService:
                 #         in_use = assignedUserService.in_use
 
@@ -269,9 +265,7 @@ def getServicesData(
         # If no usable pools, this is not visible
         if metaTransports:
             group: typing.MutableMapping[str, typing.Any] = (
-                meta.servicesPoolGroup.as_dict
-                if meta.servicesPoolGroup
-                else ServicePoolGroup.default().as_dict
+                meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
             )
 
             services.append(
@@ -311,19 +305,12 @@ def getServicesData(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
             typeTrans = t.getType()
-            if (
-                typeTrans
-                and t.validForIp(request.ip)
-                and typeTrans.supportsOs(osType)
-                and t.validForOs(osType)
-            ):
+            if typeTrans and t.validForIp(request.ip) and typeTrans.supportsOs(osType) and t.validForOs(osType):
                 if typeTrans.ownLink:
-                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))
+                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
-                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)
-                trans.append(
-                    {'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority}
-                )
+                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
+                trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
 
         # If empty transports, do not include it on list
         if not trans:
@@ -332,14 +319,12 @@ def getServicesData(
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
         in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
-        #     ads = userServiceManager().getExistingAssignationForUser(svr, request.user)
+        #     ads = UserServiceManager().getExistingAssignationForUser(svr, request.user)
         #     if ads:
         #         in_use = ads.in_use
 
         group = (
-            sPool.servicesPoolGroup.as_dict
-            if sPool.servicesPoolGroup
-            else ServicePoolGroup.default().as_dict
+            sPool.servicesPoolGroup.as_dict if sPool.servicesPoolGroup else ServicePoolGroup.default().as_dict
         )
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
@@ -351,9 +336,7 @@ def getServicesData(
         )
         # tbr = False
         if toBeReplacedDate:
-            toBeReplaced = formats.date_format(
-                toBeReplacedDate, 'SHORT_DATETIME_FORMAT'
-            )
+            toBeReplaced = formats.date_format(toBeReplacedDate, 'SHORT_DATETIME_FORMAT')
             toBeReplacedTxt = gettext(
                 'This service is about to be replaced by a new version. Please, close the session before {} and save all your work to avoid loosing it.'
             ).format(toBeReplacedDate)
@@ -366,6 +349,7 @@ def getServicesData(
         # if sPool.service.getType().usesCache is False:
         #    maxDeployed = sPool.service.getInstance().maxDeployed
 
+        # pylint: disable=cell-var-from-loop
         def datator(x) -> str:
             return (
                 x.replace('{use}', use_percent)
@@ -380,9 +364,7 @@ def getServicesData(
                 is_meta=False,
                 name=datator(sPool.name),
                 visual_name=datator(
-                    sPool.visual_name.replace('{use}', use_percent).replace(
-                        '{total}', maxDeployed
-                    )
+                    sPool.visual_name.replace('{use}', use_percent).replace('{total}', maxDeployed)
                 ),
                 description=sPool.comments,
                 group=group,
@@ -403,9 +385,7 @@ def getServicesData(
     # logger.debug('Services: %s', services)
 
     # Sort services and remove services with no transports...
-    services = [
-        s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']
-    ]
+    services = [s for s in sorted(services, key=lambda s: s['name'].upper()) if s['transports']]
 
     autorun = False
     if (
@@ -438,11 +418,11 @@ def enableService(
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = userServiceManager().getService(
+        res = UserServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport, doTest=False
         )
-        scrambler = cryptoManager().randomString(32)
-        password = cryptoManager().symCrypt(webPassword(request), scrambler)
+        scrambler = CryptoManager().randomString(32)
+        password = CryptoManager().symCrypt(webPassword(request), scrambler)
 
         userService, trans = res[1], res[3]
 
@@ -453,10 +433,10 @@ def enableService(
         error = ''  # No error
 
         if typeTrans.ownLink:
-            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))
+            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))  # type: ignore
         else:
             data = {
-                'service': 'A' + userService.uuid,
+                'service': 'A' + userService.uuid,  # type: ignore
                 'transport': trans.uuid,
                 'user': request.user.uuid,
                 'password': password,
@@ -468,9 +448,10 @@ def enableService(
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while
         # error += ' (code {0:04X})'.format(e.code)
-        error = gettext(
-            'Your service is being created, please, wait for a few seconds while we complete it.)'
-        ) + '({}%)'.format(int(e.code * 25))
+        error = (
+            gettext('Your service is being created, please, wait for a few seconds while we complete it.)')
+            + f'({e.code*25}%)'
+        )
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
         error = errors.errorString(errors.MAX_SERVICES_REACHED)

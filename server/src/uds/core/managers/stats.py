@@ -36,9 +36,8 @@ import typing
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
-from uds.models import StatsCounters, StatsCountersAccum
-from uds.models import getSqlDatetime, getSqlDatetimeAsUnix
-from uds.models import StatsEvents
+from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
+from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
 
 if typing.TYPE_CHECKING:
     from django.db import models
@@ -52,9 +51,7 @@ FLDS_EQUIV: typing.Mapping[str, typing.Iterable[str]] = {
     'fld4': ('uniqueid', 'tunnel'),
 }
 
-REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {
-    i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases
-}
+REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases}
 
 
 class AccumStat(typing.NamedTuple):
@@ -83,15 +80,10 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def __doCleanup(
         self,
-        model: typing.Type[
-            typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']
-        ],
+        model: typing.Type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
         minTime = time.mktime(
-            (
-                getSqlDatetime()
-                - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())
-            ).timetuple()
+            (getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple()
         )
         model.objects.filter(stamp__lt=minTime).delete()
 
@@ -124,9 +116,7 @@ class StatsManager(metaclass=singleton.Singleton):
             stamp = typing.cast(datetime.datetime, getSqlDatetime())
 
         # To Unix epoch
-        stampInt = int(
-            time.mktime(stamp.timetuple())
-        )  # pylint: disable=maybe-no-member
+        stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
             StatsCounters.objects.create(
@@ -138,9 +128,7 @@ class StatsManager(metaclass=singleton.Singleton):
             )
             return True
         except Exception:
-            logger.error(
-                'Exception handling counter stats saving (maybe database is full?)'
-            )
+            logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
 
     def getCounters(
@@ -198,9 +186,7 @@ class StatsManager(metaclass=singleton.Singleton):
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
-            since = getSqlDatetime() - datetime.timedelta(
-                seconds=intervalType.seconds() * points
-            )
+            since = getSqlDatetime() - datetime.timedelta(seconds=intervalType.seconds() * points)
 
         if isinstance(since, datetime.datetime):
             since = int(since.timestamp())
@@ -239,7 +225,6 @@ class StatsManager(metaclass=singleton.Singleton):
             # Append to numpy array
             yield last
             stamp += intervalType.seconds()
-            
 
     def cleanupCounters(self):
         """
@@ -276,9 +261,7 @@ class StatsManager(metaclass=singleton.Singleton):
             stamp = getSqlDatetimeAsUnix()
         else:
             # To Unix epoch
-            stamp = int(
-                time.mktime(stamp.timetuple())
-            )  # pylint: disable=maybe-no-member
+            stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
 
         try:
 
@@ -308,9 +291,7 @@ class StatsManager(metaclass=singleton.Singleton):
             )
             return True
         except Exception:
-            logger.exception(
-                'Exception handling event stats saving (maybe database is full?)'
-            )
+            logger.exception('Exception handling event stats saving (maybe database is full?)')
         return False
 
     def getEvents(
@@ -336,10 +317,7 @@ class StatsManager(metaclass=singleton.Singleton):
         return StatsEvents.get_stats(ownerType, eventType, **kwargs)
 
     def tailEvents(
-        self,
-        *,
-        fromId: typing.Optional[str] = None,
-        number: typing.Optional[int] = None
+        self, *, fromId: typing.Optional[str] = None, number: typing.Optional[int] = None
     ) -> 'models.QuerySet[StatsEvents]':
         # If number is not specified, we return five last events
         number = number or 5

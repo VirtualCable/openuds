@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
 import codecs
@@ -124,27 +124,27 @@ class gui:
     # : For backward compatibility, will be removed in future versions
     # For now, will log a warning if used
     @deprecatedClassValue('gui.Tab.ADVANCED')
-    def ADVANCED_TAB(cls) -> str:
+    def ADVANCED_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.ADVANCED)
 
     @deprecatedClassValue('gui.Tab.PARAMETERS')
-    def PARAMETERS_TAB(cls) -> str:
+    def PARAMETERS_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.PARAMETERS)
 
     @deprecatedClassValue('gui.Tab.CREDENTIALS')
-    def CREDENTIALS_TAB(cls) -> str:
+    def CREDENTIALS_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.CREDENTIALS)
 
     @deprecatedClassValue('gui.Tab.TUNNEL')
-    def TUNNEL_TAB(cls) -> str:
+    def TUNNEL_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.TUNNEL)
 
     @deprecatedClassValue('gui.Tab.DISPLAY')
-    def DISPLAY_TAB(cls) -> str:
+    def DISPLAY_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.DISPLAY)
 
     @deprecatedClassValue('gui.Tab.MFA')
-    def MFA_TAB(cls) -> str:
+    def MFA_TAB(cls) -> str:  # pylint: disable=no-self-argument
         return str(gui.Tab.MFA)
 
     # : Static Callbacks simple registry
@@ -196,7 +196,7 @@ class gui:
         ) -> 'gui.ChoiceType':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
-                    raise ValueError('Invalid choice dict: {}'.format(val))
+                    raise ValueError(f'Invalid choice dict: {val}')
                 return gui.choiceItem(val['id'], val['text'])
             # If val is not a dict, and it has not 'id' and 'text', raise an exception
             return gui.choiceItem(val, val)
@@ -214,7 +214,7 @@ class gui:
             return [choiceFromValue(v) for v in vals]
 
         # This should never happen
-        raise RuntimeError('Invalid type for convertToChoices: {}'.format(type(vals)))
+        raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
     def convertToList(
@@ -511,7 +511,7 @@ class gui:
 
         """
 
-        class PatternTypes:
+        class PatternType(enum.Enum):
             IPV4 = 'ipv4'
             IPV6 = 'ipv6'
             IP = 'ip'
@@ -528,7 +528,7 @@ class gui:
             super().__init__(**options, type=gui.InputField.Types.TEXT)
             self._data['multiline'] = min(max(int(options.get('multiline', 0)), 0), 8)
             # Pattern to validate the value
-            # Can contain an regex or this special values: (empty string means no validation)
+            # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
             #   - 'ipv6'     # IPv6 address
             #   - 'ip'       # IPv4 or IPv6 address
@@ -542,8 +542,10 @@ class gui:
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
             self._data['pattern'] = options.get(
-                'pattern', gui.TextField.PatternTypes.NONE
+                'pattern', gui.TextField.PatternType.NONE
             )
+            if isinstance(self._data['pattern'], str):
+                self._data['pattern'] = gui.TextField.PatternType(self._data['pattern'])
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -552,31 +554,31 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            if isinstance(self._data['pattern'], gui.TextField.PatternTypes):
+            if isinstance(self._data['pattern'], gui.TextField.PatternType):
                 try:
-                    pattern: gui.TextField.PatternTypes = self._data['pattern']
-                    if pattern == gui.TextField.PatternTypes.IPV4:
+                    pattern: gui.TextField.PatternType = self._data['pattern']
+                    if pattern == gui.TextField.PatternType.IPV4:
                         validators.validateIpv4(self.value)
-                    elif pattern == gui.TextField.PatternTypes.IPV6:
+                    elif pattern == gui.TextField.PatternType.IPV6:
                         validators.validateIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.IP:
+                    elif pattern == gui.TextField.PatternType.IP:
                         validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.MAC:
+                    elif pattern == gui.TextField.PatternType.MAC:
                         validators.validateMac(self.value)
-                    elif pattern == gui.TextField.PatternTypes.URL:
+                    elif pattern == gui.TextField.PatternType.URL:
                         validators.validateUrl(self.value)
-                    elif pattern == gui.TextField.PatternTypes.EMAIL:
+                    elif pattern == gui.TextField.PatternType.EMAIL:
                         validators.validateEmail(self.value)
-                    elif pattern == gui.TextField.PatternTypes.FQDN:
+                    elif pattern == gui.TextField.PatternType.FQDN:
                         validators.validateFqdn(self.value)
-                    elif pattern == gui.TextField.PatternTypes.HOSTNAME:
+                    elif pattern == gui.TextField.PatternType.HOSTNAME:
                         validators.validateHostname(self.value)
-                    elif pattern == gui.TextField.PatternTypes.HOST:
+                    elif pattern == gui.TextField.PatternType.HOST:
                         try:
                             validators.validateHostname(self.value, allowDomain=True)
                         except exceptions.ValidationError:
                             validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternTypes.PATH:
+                    elif pattern == gui.TextField.PatternType.PATH:
                         validators.validatePath(self.value)
                     return True
                 except exceptions.ValidationError:
@@ -585,6 +587,9 @@ class gui:
                 # It's a regex
                 return re.match(self._data['pattern'], self.value) is not None
             return True  # No pattern, so it's valid
+
+        def __str__(self):
+            return str(self.value)
 
     class TextAutocompleteField(TextField):
         """
@@ -623,6 +628,7 @@ class gui:
               # with tooltip "Port (usually 443)" and order 1
               num = gui.NumericField(length=5, label = _('Port'),
                   defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
+                  minVAlue = 1024, maxValue = 65535,
                   required = True)
         """
 
@@ -665,7 +671,7 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options, type=gui.InputField.Types.DATE)
 
-        def date(self, min: bool = True) -> datetime.date:
+        def date(self, useMin: bool = True) -> datetime.date:
             """
             Returns the date this object represents
 
@@ -680,9 +686,9 @@ class gui:
                     self.value, '%Y-%m-%d'
                 ).date()  # ISO Format
             except Exception:
-                return datetime.date.min if min else datetime.date.max
+                return datetime.date.min if useMin else datetime.date.max
 
-        def datetime(self, min: bool = True) -> datetime.datetime:
+        def datetime(self, useMin: bool = True) -> datetime.datetime:
             """
             Returns the date this object represents
 
@@ -695,7 +701,7 @@ class gui:
             try:
                 return datetime.datetime.strptime(self.value, '%Y-%m-%d')  # ISO Format
             except Exception:
-                return datetime.datetime.min if min else datetime.datetime.max
+                return datetime.datetime.min if useMin else datetime.datetime.max
 
         def stamp(self) -> int:
             return int(
@@ -1050,8 +1056,9 @@ class UserInterfaceType(type):
     better place. This is done this way because we will "deepcopy" these fields
     later, and update references on class 'self' to the new copy. (so everyone has a different copy)
     """
+
     def __new__(
-        cls: typing.Type['UserInterfaceType'],
+        mcs: typing.Type['UserInterfaceType'],
         classname: str,
         bases: typing.Tuple[type, ...],
         namespace: typing.Dict[str, typing.Any],
@@ -1068,7 +1075,7 @@ class UserInterfaceType(type):
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
         return typing.cast(
-            'UserInterfaceType', type.__new__(cls, classname, bases, newClassDict)
+            'UserInterfaceType', type.__new__(mcs, classname, bases, newClassDict)
         )
 
 
@@ -1083,10 +1090,10 @@ class UserInterface(metaclass=UserInterfaceType):
     By default, the values passed to this class constructor are used to fill
     the gui form fields values.
     """
+
     class ValidationFieldInfo(typing.NamedTuple):
         field: str
         error: str
-        
 
     # Class variable that will hold the gui fields description
     _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]]
@@ -1246,7 +1253,7 @@ class UserInterface(metaclass=UserInterfaceType):
         def deserialize(value: bytes) -> typing.Any:
             if opt_deserializer:
                 return opt_deserializer(value)
-            return serializer.deserialize(value)
+            return serializer.deserialize(value) or []
 
         if not values:
             return
@@ -1256,8 +1263,8 @@ class UserInterface(metaclass=UserInterfaceType):
             self.oldDeserializeForm(values)
             return
 
-        # For future use
-        version = values[
+        # For future use, right now we only have one version
+        version = values[  # pylint: disable=unused-variable
             len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER)
             + len(SERIALIZATION_VERSION)
         ]
@@ -1284,7 +1291,7 @@ class UserInterface(metaclass=UserInterfaceType):
         ] = {
             gui.InputField.Types.TEXT: lambda x: x,
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
-            gui.InputField.Types.NUMERIC: lambda x: int(x),
+            gui.InputField.Types.NUMERIC: int,
             gui.InputField.Types.PASSWORD: lambda x: (
                 CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
             ),
@@ -1367,7 +1374,7 @@ class UserInterface(metaclass=UserInterfaceType):
                             if isinstance(val, bytes):
                                 val = val.decode('utf8')
                     except Exception:
-                        logger.exception('Pickling {} from {}'.format(k, self))
+                        logger.exception('Pickling %s from %s', k, self)
                         val = ''
                     self._gui[k].value = val
                 # logger.debug('Value for {0}:{1}'.format(k, val))
@@ -1399,9 +1406,12 @@ class UserInterface(metaclass=UserInterfaceType):
         found_erros: typing.List[UserInterface.ValidationFieldInfo] = []
         for key, val in self._gui.items():
             if val.required and not val.value:
-                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
+                found_erros.append(
+                    UserInterface.ValidationFieldInfo(key, 'Field is required')
+                )
             if not val.validate():
-                found_erros.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
+                found_erros.append(
+                    UserInterface.ValidationFieldInfo(key, 'Field is not valid')
+                )
 
         return found_erros
-        

@@ -32,9 +32,8 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _
-
 from uds import models
+from uds.core.util import model
 from uds.core.util.state import State
 from uds.core.util.stats import counters
 from uds.core.managers.stats import StatsManager
@@ -59,7 +58,7 @@ class DeployedServiceStatsCollector(Job):
         servicePoolsToCheck: typing.Iterable[
             models.ServicePool
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
-        stamp = models.getSqlDatetime()
+        stamp = model.getSqlDatetime()
         # Global counters
         totalAssigned, totalInUse, totalCached = 0, 0, 0
         for servicePool in servicePoolsToCheck:
@@ -172,7 +171,7 @@ class StatsAccumulator(Job):
     def run(self):
         try:
             StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.getInt())
-        except Exception as e:
+        except Exception:
             logger.exception('Compressing counters')
 
         logger.debug('Done statistics compression')

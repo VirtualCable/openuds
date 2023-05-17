@@ -39,7 +39,7 @@ from uds import models
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log, permissions
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.REST.model import DetailHandler
 from uds.REST import ResponseError
 
@@ -125,9 +125,9 @@ class AssignedService(DetailHandler):
             return AssignedService.itemToDict(
                 parent.assignedUserServices().get(processUuid(uuid=processUuid(item)))
             )
-        except Exception:
+        except Exception as e:
             logger.exception('getItems')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: models.ServicePool) -> str:
         return _('Assigned services')
@@ -164,8 +164,8 @@ class AssignedService(DetailHandler):
             )
             logger.debug('Getting logs for %s', userService)
             return log.getLogs(userService)
-        except Exception:
-            raise self.invalidItemException()
+        except Exception as e:
+            raise self.invalidItemException() from e
 
     # This is also used by CachedService, so we use "userServices" directly and is valid for both
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
@@ -173,20 +173,14 @@ class AssignedService(DetailHandler):
             userService: models.UserService = parent.userServices.get(
                 uuid=processUuid(item)
             )
-        except Exception:
+        except Exception as e:
             logger.exception('deleteItem')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
         if userService.user:
-            logStr = 'Deleted assigned service {} to user {} by {}'.format(
-                userService.friendly_name,
-                userService.user.pretty_name,
-                self._user.pretty_name,
-            )
+            logStr = f'Deleted assigned service {userService.friendly_name} to user {userService.user.pretty_name} by {self._user.pretty_name}'
         else:
-            logStr = 'Deleted cached service {} by {}'.format(
-                userService.friendly_name, self._user.pretty_name
-            )
+            logStr = f'Deleted cached service {userService.friendly_name} by {self._user.pretty_name}'
 
         if userService.state in (State.USABLE, State.REMOVING):
             userService.remove()
@@ -197,7 +191,7 @@ class AssignedService(DetailHandler):
         else:
             raise self.invalidItemException(_('Item is not removable'))
 
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
@@ -207,9 +201,7 @@ class AssignedService(DetailHandler):
         userService = parent.userServices.get(uuid=processUuid(item))
         user = models.User.objects.get(uuid=processUuid(fields['user_id']))
 
-        logStr = 'Changing ownership of service from {} to {} by {}'.format(
-            userService.user, user.pretty_name, self._user.pretty_name
-        )
+        logStr = f'Changed ownership of service {userService.friendly_name} from {userService.user} to {user.pretty_name} by {self._user.pretty_name}'
 
         # If there is another service that has this same owner, raise an exception
         if (
@@ -220,20 +212,18 @@ class AssignedService(DetailHandler):
             > 0
         ):
             raise self.invalidResponseException(
-                'There is already another user service assigned to {}'.format(
-                    user.pretty_name
-                )
+                f'There is already another user service assigned to {user.pretty_name}'
             )
 
         userService.user = user  # type: ignore
         userService.save()
 
         # Log change
-        log.doLog(parent, log.INFO, logStr, log.ADMIN)
+        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=processUuid(item))
-        userServiceManager().reset(userService)
+        UserServiceManager().reset(userService)
 
 
 class CachedService(AssignedService):
@@ -259,9 +249,9 @@ class CachedService(AssignedService):
                 uuid=processUuid(item)
             )
             return AssignedService.itemToDict(cachedService, True)
-        except Exception:
+        except Exception as e:
             logger.exception('getItems')
-            raise self.invalidItemException()
+            raise self.invalidItemException() from e
 
     def getTitle(self, parent: models.ServicePool) -> str:
         return _('Cached services')
@@ -290,7 +280,7 @@ class CachedService(AssignedService):
             logger.debug('Getting logs for %s', item)
             return log.getLogs(userService)
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalidItemException() from None
 
 
 class Groups(DetailHandler):
@@ -350,9 +340,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.add(group)
         log.doLog(
             parent,
-            log.INFO,
-            "Added group {} by {}".format(group.pretty_name, self._user.pretty_name),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Added group {group.pretty_name} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
@@ -360,9 +350,9 @@ class Groups(DetailHandler):
         parent.assignedGroups.remove(group)
         log.doLog(
             parent,
-            log.INFO,
-            "Removed group {} by {}".format(group.pretty_name, self._user.pretty_name),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Removed group {group.pretty_name} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
 
@@ -409,9 +399,9 @@ class Transports(DetailHandler):
         parent.transports.add(transport)
         log.doLog(
             parent,
-            log.INFO,
-            "Added transport {} by {}".format(transport.name, self._user.pretty_name),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Added transport {transport.name} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
@@ -421,9 +411,9 @@ class Transports(DetailHandler):
         parent.transports.remove(transport)
         log.doLog(
             parent,
-            log.INFO,
-            "Removed transport {} by {}".format(transport.name, self._user.pretty_name),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Removed transport {transport.name} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
 
@@ -457,11 +447,9 @@ class Publications(DetailHandler):
 
         log.doLog(
             parent,
-            log.INFO,
-            "Initated publication v{} by {}".format(
-                parent.current_pub_revision, self._user.pretty_name
-            ),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Initiated publication v{parent.current_pub_revision} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
         return self.success()
@@ -486,15 +474,13 @@ class Publications(DetailHandler):
             ds = models.ServicePoolPublication.objects.get(uuid=processUuid(uuid))
             ds.cancel()
         except Exception as e:
-            raise ResponseError("{}".format(e))
+            raise ResponseError(str(e)) from e
 
         log.doLog(
             parent,
-            log.INFO,
-            "Canceled publication v{} by {}".format(
-                parent.current_pub_revision, self._user.pretty_name
-            ),
-            log.ADMIN,
+            log.LogLevel.INFO,
+            f'Canceled publication v{parent.current_pub_revision} by {self._user.pretty_name}',
+            log.LogSource.ADMIN,
         )
 
         return self.success()

@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
+
 #
 # Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
@@ -29,17 +30,16 @@
 """
 Base module for all authenticators
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 import logging
-from re import A
 import typing
 
 from django.utils.translation import gettext_noop as _
 from django.urls import reverse
 
-from uds.core import Module
+from uds.core.module import Module
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -65,6 +65,7 @@ class AuthenticationSuccess(enum.IntEnum):
     OK = 1
     REDIRECT = 2
 
+
 class AuthenticationInternalUrl(enum.Enum):
     """
     Enumeration for authentication success
@@ -77,6 +78,7 @@ class AuthenticationInternalUrl(enum.Enum):
         Returns the url for the given internal url
         """
         return reverse(self.value)
+
 
 class AuthenticationResult(typing.NamedTuple):
     success: AuthenticationSuccess
@@ -186,8 +188,8 @@ class Authenticator(Module):
     # : If this authenticators casues a temporal block of an user on repeated login failures
     blockUserOnLoginFailures: typing.ClassVar[bool] = True
 
-    from .user import User
-    from .group import Group
+    from .user import User  # pylint: disable=import-outside-toplevel
+    from .group import Group  # pylint: disable=import-outside-toplevel
 
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
@@ -213,10 +215,12 @@ class Authenticator(Module):
         @param environment: Environment for the authenticator
         @param values: Values passed to element
         """
-        from uds.models import Authenticator as AuthenticatorModel
-        
+        from uds.models import (  # pylint: disable=import-outside-toplevel
+            Authenticator as AuthenticatorModel,
+        )
+
         self._dbAuth = dbAuth or AuthenticatorModel()  # Fake dbAuth if not provided
-        super(Authenticator, self).__init__(environment, values)
+        super().__init__(environment, values)
         self.initialize(values)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -249,9 +253,9 @@ class Authenticator(Module):
 
         user param is a database user object
         """
-        from uds.core.auths.groups_manager import (
+        from uds.core.auths.groups_manager import (  # pylint: disable=import-outside-toplevel
             GroupsManager,
-        )  # pylint: disable=redefined-outer-name
+        )
 
         if self.isExternalSource:
             groupsManager = GroupsManager(self._dbAuth)
@@ -268,7 +272,7 @@ class Authenticator(Module):
         This method will allow us to know where to do redirection in case
         we need to use callback for authentication
         """
-        from .auth import authCallbackUrl
+        from .auth import authCallbackUrl  # pylint: disable=import-outside-toplevel
 
         return authCallbackUrl(self.dbAuthenticator())
 
@@ -276,7 +280,7 @@ class Authenticator(Module):
         """
         Helper method to return info url for this authenticator
         """
-        from .auth import authInfoUrl
+        from .auth import authInfoUrl  # pylint: disable=import-outside-toplevel
 
         return authInfoUrl(self.dbAuthenticator())
 
@@ -394,18 +398,26 @@ class Authenticator(Module):
         """
         return FAILED_AUTH
 
-    def isAccesibleFrom(self, request: 'HttpRequest'):
+    def isAccesibleFrom(self, request: 'HttpRequest') -> bool:
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
-        from uds.core.util.request import ExtendedHttpRequest
-        from uds.models import Authenticator as dbAuth
+        from uds.core.util.request import (  # pylint: disable=import-outside-toplevel
+            ExtendedHttpRequest,
+        )
+        from uds.models import (  # pylint: disable=import-outside-toplevel
+            Authenticator as dbAuth,
+        )
 
         return self._dbAuth.state != dbAuth.DISABLED and self._dbAuth.validForIp(
             typing.cast('ExtendedHttpRequest', request).ip
         )
 
-    def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
+    def transformUsername(
+        self,
+        username: str,
+        request: 'ExtendedHttpRequest',
+    ) -> str:
         """
         On login, this method get called so we can "transform" provided user name.
 
@@ -462,7 +474,11 @@ class Authenticator(Module):
         """
         return self.authenticate(username, credentials, groupsManager, request)
 
-    def logout(self, request: 'ExtendedHttpRequest', username: str) -> AuthenticationResult:
+    def logout(
+        self,
+        request: 'ExtendedHttpRequest',
+        username: str,
+    ) -> AuthenticationResult:
         """
         Invoked whenever an user logs out.
 
@@ -491,7 +507,10 @@ class Authenticator(Module):
         return SUCCESS_AUTH
 
     def webLogoutHook(
-        self, username: str, request: 'HttpRequest', response: 'HttpResponse'
+        self,
+        username: str,
+        request: 'HttpRequest',
+        response: 'HttpResponse',
     ) -> None:
         '''
         Invoked on web logout of an user

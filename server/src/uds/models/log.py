@@ -28,13 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
 from django.db import models
-from uds.core.util.log import logStrFromLevel
-
 
 logger = logging.getLogger(__name__)
 
@@ -60,12 +58,13 @@ class Log(models.Model):
     created = models.DateTimeField(db_index=True)
     source = models.CharField(max_length=16, default='internal', db_index=True)
     level = models.PositiveIntegerField(default=0, db_index=True)
+    name = models.CharField(max_length=64, default='')  # If syslog, log name, else empty
     data = models.CharField(max_length=4096, default='')
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Log]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -75,14 +74,13 @@ class Log(models.Model):
 
     @property
     def level_str(self) -> str:
-        return logStrFromLevel(self.level)
+        # pylint: disable=import-outside-toplevel
+        from uds.core.util.log import LogLevel
+
+        return LogLevel.fromInt(self.level).name
 
     def __str__(self) -> str:
-        return "Log of {}({}): {} - {} - {} - {}".format(
-            self.owner_type,
-            self.owner_id,
-            self.created,
-            self.source,
-            self.level,
-            self.data,
+        return (
+            f'Log of {self.owner_type}({self.owner_id}):'
+            f' {self.created} - {self.source} - {self.level} - {self.data}'
         )

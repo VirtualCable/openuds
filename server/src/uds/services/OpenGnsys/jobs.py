@@ -28,23 +28,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _
-
 from uds.core import jobs
 from uds import models
+from uds.core.util.model import getSqlDatetime
 
 from .provider import OGProvider
 from .service import OGService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ class OpenGnsysMaintainer(jobs.Job):
             service: models.Service
             for service in provider.services.all():
                 instance: OGService = typing.cast(OGService, service.getInstance())
-                since = models.getSqlDatetime() - datetime.timedelta(
+                since = getSqlDatetime() - datetime.timedelta(
                     hours=instance.maxReservationTime.num() - 8
                 )  # If less than 8 hours of reservation...
                 # Now mark for removal every CACHED service that is about to expire its reservation on OpenGnsys

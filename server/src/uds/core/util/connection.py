@@ -30,11 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import logging
-import socket
 
-logger = logging.getLogger(__name__)
-
-# import Alias
+# Import alias
+# pylint: disable=unused-import
 from .net import testConnection as testServer

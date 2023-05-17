@@ -34,7 +34,8 @@ import logging
 
 from django.db.models import Q, Count
 from uds.core.util.config import GlobalConfig
-from uds.models import ServicePool, UserService, getSqlDatetime
+from uds.models import ServicePool, UserService
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
@@ -98,30 +99,26 @@ class HangedCleaner(Job):
                 ):  # Removing too long, remark it as removable
                     log.doLog(
                         us,
-                        log.ERROR,
+                        log.LogLevel.ERROR,
                         'User Service hanged on removal process. Restarting removal.',
-                        log.INTERNAL,
+                        log.LogSource.INTERNAL,
                     )
                     log.doLog(
                         servicePool,
-                        log.ERROR,
-                        'User service {} hanged on removal. Restarting removal.'.format(
-                            us.friendly_name
-                        ),
+                        log.LogLevel.ERROR,
+                        f'User service {us.friendly_name} hanged on removal. Restarting removal.',
                     )
                     us.release()  # Mark it again as removable, and let's see
                 else:
                     log.doLog(
                         us,
-                        log.ERROR,
+                        log.LogLevel.ERROR,
                         'User Service seems to be hanged. Removing it.',
-                        log.INTERNAL,
+                        log.LogSource.INTERNAL,
                     )
                     log.doLog(
                         servicePool,
-                        log.ERROR,
-                        'Removing user service {} because it seems to be hanged'.format(
-                            us.friendly_name
-                        ),
+                        log.LogLevel.ERROR,
+                        f'Removing user service {us.friendly_name} because it seems to be hanged'
                     )
                     us.releaseOrCancel()

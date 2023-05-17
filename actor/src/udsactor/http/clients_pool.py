@@ -37,9 +37,9 @@ from udsactor import tools, types
 from udsactor.log import logger
 
 # For avoid proxy on localhost connections
-NO_PROXY = {
-    'http': None,
-    'https': None,
+NO_PROXY: typing.Dict[str, str] = {
+    'http': '',
+    'https': '',
 }
 
 

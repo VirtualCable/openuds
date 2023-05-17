@@ -50,17 +50,17 @@ class UniqueMacGenerator(UniqueIDGenerator):
     def __toMac(self, seq: int) -> str:
         if seq == -1:  # No mor macs available
             return '00:00:00:00:00:00'
-        return re.sub(r"(..)", r"\1:", "%0*X" % (12, seq))[:-1]
+        return re.sub(r"(..)", r"\1:", f'{seq:012X}')[:-1]
 
     # noinspection PyMethodOverriding
-    def get(self, macRange: str) -> str:  # type: ignore
+    def get(self, macRange: str) -> str:  # type: ignore  # pylint: disable=arguments-differ
         firstMac, lastMac = macRange.split('-')
         return self.__toMac(super().get(self.__toInt(firstMac), self.__toInt(lastMac)))
 
-    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore
+    def transfer(self, mac: str, toUMgen: 'UniqueMacGenerator'):  # type: ignore  # pylint: disable=arguments-renamed
         super().transfer(self.__toInt(mac), toUMgen)
 
-    def free(self, mac: str) -> None:
+    def free(self, mac: str) -> None:  # type: ignore  # pylint: disable=arguments-renamed
         super().free(self.__toInt(mac))
 
     # Release is inherited, no mod needed

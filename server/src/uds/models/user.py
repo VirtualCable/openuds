@@ -28,18 +28,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
 from django.db import models
 from django.db.models import Count, Q, signals
-from uds.core import auths
+from uds.core import auths, mfas
 from uds.core.util import log, storage
 
 from .authenticator import Authenticator
-from .util import NEVER, UnsavedForeignKey, getSqlDatetime
+from .consts import NEVER
+from ..core.util.model import UnsavedForeignKey, getSqlDatetime
 from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
@@ -51,6 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=no-member
 class User(UUIDModel):
     """
     This class represents a single user, associated with one authenticator
@@ -83,7 +85,7 @@ class User(UUIDModel):
     userServices: 'models.manager.RelatedManager[UserService]'
     permissions: 'models.manager.RelatedManager[Permissions]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -204,10 +206,8 @@ class User(UUIDModel):
             return store[str(self.uuid) + '_' + key]
 
     def __str__(self):
-        return 'User {} (id:{}) from auth {}'.format(
-            self.name, self.id, self.manager.name
-        )
-    
+        return f'{self.pretty_name} (id:{self.id})'
+
     def cleanRelated(self) -> None:
         """
         Cleans up all related external data, such as mfa data, etc
@@ -217,9 +217,8 @@ class User(UUIDModel):
         if self.manager.mfa:
             self.manager.mfa.getInstance().resetData(mfas.MFA.getUserId(self))
 
-
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

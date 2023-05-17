@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
@@ -52,8 +52,8 @@ from .image import Image
 from .service_pool_group import ServicePoolGroup
 from .account import Account
 
-from .util import NEVER
-from .util import getSqlDatetime
+from .consts import NEVER
+from ..core.util.model import getSqlDatetime
 
 
 # Not imported at runtime, just for type checking
@@ -70,6 +70,7 @@ if typing.TYPE_CHECKING:
     )
 
 logger = logging.getLogger(__name__)
+
 
 # pylint: disable=too-many-public-methods
 class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
@@ -92,11 +93,15 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    transports: 'models.ManyToManyField[Transport, ServicePool]' = models.ManyToManyField(
-        Transport, related_name='deployedServices', db_table='uds__ds_trans'
+    transports: 'models.ManyToManyField[Transport, ServicePool]' = (
+        models.ManyToManyField(
+            Transport, related_name='deployedServices', db_table='uds__ds_trans'
+        )
     )
-    assignedGroups: 'models.ManyToManyField[Group, ServicePool]' = models.ManyToManyField(
-        Group, related_name='deployedServices', db_table='uds__ds_grps'
+    assignedGroups: 'models.ManyToManyField[Group, ServicePool]' = (
+        models.ManyToManyField(
+            Group, related_name='deployedServices', db_table='uds__ds_grps'
+        )
     )
     state = models.CharField(
         max_length=1, default=states.servicePool.ACTIVE, db_index=True
@@ -154,7 +159,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     changelog: 'models.manager.RelatedManager[ServicePoolPublicationChangelog]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -200,11 +205,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @staticmethod
     def getRestrainedsQuerySet() -> 'models.QuerySet[ServicePool]':
-        from uds.models.user_service import (
+        from uds.models.user_service import (  # pylint: disable=import-outside-toplevel
             UserService,
-        )  # pylint: disable=redefined-outer-name
-        from uds.core.util.config import GlobalConfig
-        from django.db.models import Count
+        )
+        from uds.core.util.config import (  # pylint: disable=import-outside-toplevel
+            GlobalConfig,
+        )
+        from django.db.models import Count  # pylint: disable=import-outside-toplevel
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return (
@@ -260,7 +267,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         The time that a service is in restrain mode is 20 minutes by default (1200 secs), but it can be modified
         at globalconfig variables
         """
-        from uds.core.util.config import GlobalConfig
+        from uds.core.util.config import (  # pylint: disable=import-outside-toplevel
+            GlobalConfig,
+        )
 
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
@@ -282,7 +291,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return self.service.isInMaintenance() if self.service else True
 
     def isVisible(self) -> bool:
-        return self.visible
+        return self.visible  # type: ignore
 
     def isUsable(self) -> bool:
         return (
@@ -315,7 +324,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 ret = self.recoverValue('toBeReplacedIn')
                 if ret:
                     return serializer.deserialize(ret)
-                
+
         except Exception:  # nosec: We don't want to fail if there is any exception
             # logger.exception('Recovering publication death line')
             pass
@@ -364,11 +373,15 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 ac.access == states.action.ALLOW
                 and self.fallbackAccess == states.action.DENY
             ):
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
+                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(
+                    chkDateTime, False
+                )
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
             elif ac.access == states.action.DENY:  # DENY
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
+                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(
+                    chkDateTime, True
+                )
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
 
@@ -482,9 +495,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Ensures that at least a group of groups (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
         """
-        from uds.core import auths
+        from uds.core import auths  # pylint: disable=import-outside-toplevel
 
-        if not set(groups) & set(self.assignedGroups.all()):
+        if not set(groups) & set(
+            self.assignedGroups.all()  # pylint: disable=no-member
+        ):  # pylint: disable=no-member
             raise auths.exceptions.InvalidUserException()
 
     def validatePublication(self) -> None:
@@ -500,7 +515,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             raise InvalidServiceException()
 
     def validateTransport(self, transport) -> None:
-        if self.transports.filter(id=transport.id).count() == 0:
+        if (
+            self.transports.filter(id=transport.id).count()    # pylint: disable=no-member
+            == 0  # pylint: disable=no-member
+        ):  # pylint: disable=no-member
             raise InvalidServiceException()
 
     def validateUser(self, user: 'User') -> None:
@@ -536,7 +554,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Returns:
             List of accesible deployed services
         """
-        from uds.core import services
+        from uds.core import services  # pylint: disable=import-outside-toplevel
 
         servicesNotNeedingPub = [
             t.type() for t in services.factory().servicesThatDoNotNeedPublication()
@@ -608,7 +626,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
-        from uds.core.managers import publicationManager
+        from uds.core.managers import (  # pylint: disable=import-outside-toplevel
+            publicationManager,
+        )
 
         publicationManager().publish(self, changeLog)
 
@@ -679,11 +699,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return bool(self.service) and self.service.testServer(host, port, timeout)
 
     # Utility for logging
-    def log(self, message: str, level: int = log.INFO) -> None:
-        log.doLog(self, level, message, log.INTERNAL)
+    def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
+        log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -692,7 +712,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        from uds.core.util.permissions import (    # pylint: disable=import-outside-toplevel
+            clean,
+        )
 
         toDelete: 'ServicePool' = kwargs['instance']
 
@@ -735,13 +757,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         )
 
     def __str__(self):
-        return 'Service pool {}({}) with {} as initial, {} as L1 cache, {} as L2 cache, {} as max'.format(
-            self.name,
-            self.id,
-            self.initial_srvs,
-            self.cache_l1_srvs,
-            self.cache_l2_srvs,
-            self.max_srvs,
+        return (
+            f'Service pool {self.name}({self.id}) with {self.initial_srvs}'
+            f' as initial, {self.cache_l1_srvs} as L1 cache, {self.cache_l2_srvs}'
+            f' as L2 cache, {self.max_srvs} as max'
         )
 
 

@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os
 import logging
 import typing
 
@@ -38,14 +37,6 @@ from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports
 from uds.models import UserService
-
-# TODO: implement this finally?
-def createADUser():
-    try:
-        from . import AD  # type: ignore
-    except ImportError:
-        return
-
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -359,8 +350,7 @@ class BaseRDPTransport(transports.Transport):
             if self.testServer(userService, ip, self.rdpPort.num()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
-            else:
-                self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
+            self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
     def processedUser(
@@ -417,6 +407,10 @@ class BaseRDPTransport(transports.Transport):
         # Recover domain name if needed
         if '\\' in username:
             domain, username = username.split('\\')
+
+        # If AzureAD, include it on username
+        if azureAd:
+            username = 'AzureAD\\' + username
 
         return {
             'protocol': self.protocol,

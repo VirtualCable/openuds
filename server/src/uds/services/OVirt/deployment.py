@@ -28,14 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
 from uds.core import services
-from uds.core import managers
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -135,7 +135,9 @@ class OVirtLinkedDeployment(services.UserDeployment):
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])
+            self._queue = pickle.loads(
+                vals[6]
+            )  # nosec: not insecure, we are loading our own data
 
     def getName(self) -> str:
         if self._name == '':
@@ -216,7 +218,7 @@ class OVirtLinkedDeployment(services.UserDeployment):
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            self.doLog(log.LogLevel.ERROR, f'Error on setReady: {e}')
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return State.FINISHED
@@ -233,19 +235,22 @@ class OVirtLinkedDeployment(services.UserDeployment):
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(self, username: str, password: str, domain: str = '') -> None:
-        script = '''import sys
+    def desktopLogin(
+        self,
+        username: str,
+        password: str,
+        domain: str = '',  # pylint: disable=unused-argument
+    ) -> None:
+        script = f'''import sys
 if sys.platform == 'win32':
     from uds import operations
     operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)
-'''.format(
-            username=username, password=password
-        )
+'''
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         dbService = self.dbservice()
         if dbService:
-            managers.userServiceManager().sendScript(dbService, script)
+            UserServiceManager().sendScript(dbService, script)
 
     def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
@@ -273,7 +278,6 @@ if sys.platform == 'win32':
         return self.__executeQueue()
 
     def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
-
         if forLevel2 is False:
             self._queue = [opCreate, opChangeMac, opStart, opFinish]
         else:
@@ -322,9 +326,6 @@ if sys.platform == 'win32':
     def __pushFrontOp(self, op: int):
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op: int):
-        self._queue.append(op)
-
     def __error(self, reason: typing.Union[str, Exception]) -> str:
         """
         Internal method to set object as error state
@@ -334,7 +335,7 @@ if sys.platform == 'win32':
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
             OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)
@@ -369,7 +370,7 @@ if sys.platform == 'win32':
 
             if execFnc is None:
                 return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
+                    f'Unknown operation found at execution queue ({op})'
                 )
 
             execFnc()
@@ -446,7 +447,7 @@ if sys.platform == 'win32':
         if state in UP_STATES:  # Already started, return
             return State.RUNNING
 
-        if state != 'down' and state != 'suspended':
+        if state not in ('down', 'suspended'):
             self.__pushFrontOp(
                 opRetry
             )  # Will call "check Retry", that will finish inmediatly and again call this one
@@ -466,7 +467,7 @@ if sys.platform == 'win32':
         if state == 'down':  # Already stoped, return
             return State.RUNNING
 
-        if state != 'up' and state != 'suspended':
+        if state not in ('up', 'suspended'):
             self.__pushFrontOp(
                 opRetry
             )  # Will call "check Retry", that will finish inmediatly and again call this one
@@ -576,7 +577,7 @@ if sys.platform == 'win32':
 
             if chkFnc is None:
                 return self.__error(
-                    'Unknown operation found at check queue ({0})'.format(op)
+                    f'Unknown operation found at check queue ({op})'
                 )
 
             state = chkFnc()
@@ -629,7 +630,7 @@ if sys.platform == 'win32':
         if op == opError:
             return self.__error('Machine is already in error state!')
 
-        if op == opFinish or op == opWait:
+        if op in (opFinish, opWait):
             self._queue = [opStop, opRemove, opFinish]
             return self.__executeQueue()
 

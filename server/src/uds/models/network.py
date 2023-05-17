@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -72,7 +72,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[Network]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
@@ -81,14 +81,15 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
 
     @staticmethod
-    def _hexlify(number: int) -> str:
+    def hexlify(number: int) -> str:
         """
         Converts a number to hex, but with 32 chars, and with leading zeros
         """
-        return '{:032x}'.format(number)
+        # return f'{number:032x}'
+        return hex(number)[2:].zfill(32)
 
     @staticmethod
-    def _unhexlify(number: str) -> int:
+    def unhexlify(number: str) -> int:
         """
         Converts a hex string to a number
         """
@@ -100,7 +101,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
         ipInt, version = net.ipToLong(ip)
-        hex_value = Network._hexlify(ipInt)
+        hex_value = Network.hexlify(ipInt)
         # hexlify is used to convert to hex, and then decode to convert to string
         return Network.objects.filter(
             version=version,
@@ -127,8 +128,8 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         nr = net.networkFromString(netRange)
         return Network.objects.create(
             name=name,
-            start=Network._hexlify(nr.start),
-            end=Network._hexlify(nr.end),
+            start=Network.hexlify(nr.start),
+            end=Network.hexlify(nr.end),
             net_string=netRange,
             version=nr.version,
         )
@@ -138,31 +139,31 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         Returns the network start as an integer
         """
-        return Network._unhexlify(self.start)
+        return Network.unhexlify(self.start)
 
     @net_start.setter
     def net_start(self, value: int) -> None:
         """
         Sets the network start
         """
-        self.start = Network._hexlify(value)
+        self.start = Network.hexlify(value)
 
     @property
     def net_end(self) -> int:
         """
         Returns the network end as an integer
         """
-        return Network._unhexlify(self.end)
+        return Network.unhexlify(self.end)
 
     @net_end.setter
     def net_end(self, value: int) -> None:
         """
         Sets the network end
         """
-        self.end = Network._hexlify(value)
+        self.end = Network.hexlify(value)
 
     @property
-    def netStart(self) -> str:
+    def str_net_start(self) -> str:
         """
         Property to access the quad dotted format of the stored network start
 
@@ -172,7 +173,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return net.longToIp(self.net_start)
 
     @property
-    def netEnd(self) -> str:
+    def str_net_end(self) -> str:
         """
         Property to access the quad dotted format of the stored network end
 
@@ -198,23 +199,17 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         Overrides save to update the start, end and version fields
         """
         rng = net.networkFromString(self.net_string)
-        self.start = Network._hexlify(rng.start)
-        self.end = Network._hexlify(rng.end)
+        self.start = Network.hexlify(rng.start)
+        self.end = Network.hexlify(rng.end)
         self.version = rng.version
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return u'Network {} ({}) from {} to {} ({})'.format(
-            self.name,
-            self.net_string,
-            net.longToIp(self.net_start),
-            net.longToIp(self.net_end),
-            self.version,
-        )
+        return f'Network {self.name} ({self.net_string}) from {self.str_net_start} to {self.str_net_end} ({self.version})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
-        from uds.core.util.permissions import clean
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 

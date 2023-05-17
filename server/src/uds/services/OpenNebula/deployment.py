@@ -28,9 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
@@ -105,7 +105,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])
+            self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
 
     def getName(self) -> str:
         if self._name == '':
@@ -141,7 +141,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.doLog(log.ERROR, 'Error on setReady: {}'.format(e))
+            self.doLog(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return State.FINISHED
@@ -242,7 +242,7 @@ class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._vmid:  # Powers off & delete it
             try:

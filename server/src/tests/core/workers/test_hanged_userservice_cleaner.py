@@ -33,6 +33,7 @@ import datetime
 import typing
 
 from uds import models
+from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
 from uds.core.util.state import State
@@ -75,7 +76,7 @@ class HangedCleanerTest(UDSTestCase):
                 us.state = State.USABLE
                 us.os_state = State.USABLE
 
-            us.state_date = models.getSqlDatetime() - datetime.timedelta(
+            us.state_date = model.getSqlDatetime() - datetime.timedelta(
                 seconds=MAX_INIT + 1
             )
             us.save(update_fields=['state', 'os_state', 'state_date'])

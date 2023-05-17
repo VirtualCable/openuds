@@ -32,6 +32,8 @@
 """
 import typing
 
+hasher: typing.Any
+
 try:
     # Try to use fast hashlib (if available)
     import xxhash
@@ -48,6 +50,6 @@ def hash_key(key: typing.Union[str, bytes]) -> str:
     Returns a hash of the given key
     """
     if isinstance(key, str):
-        return hasher(key.encode('utf-8')).hexdigest()
+        key = key.encode('utf-8')
 
     return hasher(key).hexdigest()

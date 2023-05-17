@@ -36,8 +36,6 @@ import typing
 import io
 import asyncio
 import ssl
-import logging
-import typing
 
 
 from . import config
@@ -50,6 +48,7 @@ if typing.TYPE_CHECKING:
 INTERVAL = 2  # Interval in seconds between stats update
 
 logger = logging.getLogger(__name__)
+
 
 class StatsSingleCounter:
     def __init__(self, parent: 'StatsManager', for_receiving=True) -> None:
@@ -69,14 +68,12 @@ class StatsManager:
     sent: int
     last_recv: int
     recv: int
-    last: float
-    start_time: float  # timestamp
-    end_time: float    
+    last: float  # timestamp, from time.monotonic()
+    start_time: float  # timestamp, from time.monotonic()
+    end_time: float  # timestamp, from time.monotonic()
 
     def __init__(self, ns: 'Namespace'):
         self.ns = ns
-        self.ns.current += 1
-        self.ns.total += 1
         self.sent = self.last_sent = 0
         self.recv = self.last_recv = 0
         self.last = time.monotonic()
@@ -86,7 +83,6 @@ class StatsManager:
     @property
     def current_time(self) -> float:
         return time.monotonic()
-
 
     def update(self, force: bool = False):
         now = time.monotonic()
@@ -105,6 +101,16 @@ class StatsManager:
         self.sent += size
         self.update()
 
+    def decrement_connections(self):
+        # Decrement current runing connections
+        self.ns.current -= 1
+
+    def increment_connections(self):
+        # Increment current runing connections
+        # Also, increment total connections
+        self.ns.current += 1
+        self.ns.total += 1
+
     @property
     def as_sent_counter(self) -> 'StatsSingleCounter':
         return StatsSingleCounter(self, False)
@@ -115,8 +121,9 @@ class StatsManager:
 
     def close(self):
         self.update(True)
-        self.ns.current -= 1
+        self.decrement_connections()
         self.end_time = time.monotonic()
+
 
 # Stats collector thread
 class GlobalStats:
@@ -143,6 +150,7 @@ class GlobalStats:
     def get_stats(ns: 'Namespace') -> typing.Iterable[str]:
         yield ';'.join([str(ns.current), str(ns.total), str(ns.sent), str(ns.recv)])
 
+
 # Stats processor, invoked from command line
 async def getServerStats(detailed: bool = False) -> None:
     cfg = config.read()
@@ -166,8 +174,8 @@ async def getServerStats(detailed: bool = False) -> None:
 
             tmpdata = io.BytesIO()
             cmd = consts.COMMAND_STAT if detailed else consts.COMMAND_INFO
-            
-            writer.write(cmd + cfg.secret.encode())           
+
+            writer.write(cmd + cfg.secret.encode())
             await writer.drain()
 
             while True:

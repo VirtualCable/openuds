@@ -33,10 +33,10 @@ import typing
 import logging
 import datetime
 
-from uds.core.util.serializer import serialize
-
 from django.utils.translation import gettext as _
 from django.db import transaction
+
+from uds.core.util.serializer import serialize
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.config import GlobalConfig
@@ -44,7 +44,8 @@ from uds.core.services.exceptions import PublishException
 from uds.core.util.state import State
 from uds.core.util import log
 
-from uds.models import ServicePoolPublication, getSqlDatetime, ServicePool
+from uds.models import ServicePoolPublication, ServicePool
+from uds.core.util.model import getSqlDatetime
 
 from uds.core.util import singleton
 
@@ -81,9 +82,10 @@ class PublicationOldMachinesCleaner(DelayedTask):
                 in_use=False, state_date=now
             )
             servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
-        except Exception:  #  nosec: Removed publication, no problem at all, just continue
+        except (
+            Exception
+        ):  #  nosec: Removed publication, no problem at all, just continue
             pass
-            
 
 
 class PublicationLauncher(DelayedTask):
@@ -127,7 +129,9 @@ class PublicationLauncher(DelayedTask):
             )
             servicePool.save()
             PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
-        except ServicePoolPublication.DoesNotExist:  # Deployed service publication has been removed from database, this is ok, just ignore it
+        except (
+            ServicePoolPublication.DoesNotExist
+        ):  # Deployed service publication has been removed from database, this is ok, just ignore it
             pass
         except Exception:
             logger.exception("Exception launching publication")
@@ -146,7 +150,7 @@ class PublicationFinishChecker(DelayedTask):
     """
 
     def __init__(self, publication: ServicePoolPublication) -> None:
-        super(PublicationFinishChecker, self).__init__()
+        super().__init__()
         self._publishId = publication.id
         self._state = publication.state
 
@@ -321,7 +325,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                     publication.delete()
                 except Exception:
                     logger.info('Could not delete %s', publication)
-            raise PublishException(str(e))
+            raise PublishException(str(e)) from e
 
     def cancel(
         self, publication: ServicePoolPublication
@@ -339,9 +343,9 @@ class PublicationManager(metaclass=singleton.Singleton):
                 logger.info('Double cancel invoked for a publication')
                 log.doLog(
                     publication.deployed_service,
-                    log.WARN,
+                    log.LogLevel.WARNING,
                     'Forced cancel on publication, you must check uncleaned resources manually',
-                    log.ADMIN,
+                    log.LogSource.ADMIN,
                 )
                 publication.setState(State.CANCELED)
                 publication.save()
@@ -363,7 +367,7 @@ class PublicationManager(metaclass=singleton.Singleton):
             )
             return publication
         except Exception as e:
-            raise PublishException(str(e))
+            raise PublishException(str(e)) from e
 
     def unpublish(
         self, servicePoolPub: ServicePoolPublication
@@ -389,4 +393,4 @@ class PublicationManager(metaclass=singleton.Singleton):
                 servicePoolPub, pubInstance, state
             )
         except Exception as e:
-            raise PublishException(str(e))
+            raise PublishException(str(e)) from e

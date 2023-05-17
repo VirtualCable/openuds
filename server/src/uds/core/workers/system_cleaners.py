@@ -32,20 +32,17 @@
 """
 from importlib import import_module
 import logging
-import datetime
 import typing
 
 from django.conf import settings
 from uds.core.util.cache import Cache
 from uds.core.jobs import Job
-from uds.models import TicketStore, Log, getSqlDatetime
-from uds.core.util import config, log
+from uds.models import TicketStore
 
 logger = logging.getLogger(__name__)
 
 
 class CacheCleaner(Job):
-
     frecuency = 3600 * 24  # Once a day
     friendly_name = 'Utility Cache Cleaner'
 
@@ -56,7 +53,6 @@ class CacheCleaner(Job):
 
 
 class TicketStoreCleaner(Job):
-
     frecuency = 60  # every minute (60 seconds)
     friendly_name = 'Ticket Storage Cleaner'
 
@@ -84,20 +80,3 @@ class SessionsCleaner(Job):
             pass  # No problem if no cleanup
 
         logger.debug('Done session cleanup')
-
-
-class AuditLogCleanup(Job):
-    frecuency = 60 * 60 * 24  # Once a day
-    friendly_name = 'Audit Log Cleanup'
-
-    def run(self) -> None:
-        """
-        Cleans logs older than days
-        """
-        Log.objects.filter(
-            created__lt=getSqlDatetime()
-            - datetime.timedelta(
-                days=config.GlobalConfig.MAX_AUDIT_LOGS_DURATION.getInt()
-            ),
-            owner_type=log.OWNER_TYPE_AUDIT,
-        ).delete()

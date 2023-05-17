@@ -37,13 +37,13 @@ from django.db.models import Model
 
 from uds.core.managers.stats import StatsManager, AccumStat
 from uds.models import (
-    NEVER,
     Provider,
     Service,
     ServicePool,
     Authenticator,
     StatsCountersAccum,
 )
+from uds.models.consts import NEVER
 
 
 logger = logging.getLogger(__name__)
@@ -66,6 +66,7 @@ CounterClass = typing.TypeVar(
 ) = range(8)
 
 OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR = range(4)
+
 
 # Helpers
 def _get_Id(obj):
@@ -244,7 +245,7 @@ def getAcumCounters(
         since=since,
         points=points,
     )
-    
+
 
 # Data initialization
 def _initializeData() -> None:

@@ -38,12 +38,12 @@ To create a new service module, you will need to follow this steps:
 
 The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import logging
 
-from  uds.core.util import modfinder
+from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
@@ -53,12 +53,11 @@ def __loadModules():
     This imports all packages that are descendant of this package, and, after that,
     it register all subclases of service provider as
     """
-    from uds.core import services
-    
+    from uds.core import services  # pylint: disable=import-outside-toplevel
+
     modfinder.dynamicLoadAndRegisterModules(
-        services.factory(),
-        services.ServiceProvider,
-        __name__
+        services.factory(), services.ServiceProvider, __name__
     )
+
 
 __loadModules()

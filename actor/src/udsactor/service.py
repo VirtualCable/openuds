@@ -90,7 +90,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         self._clientsPool = clients_pool.UDSActorClientPool()
         self._certificate = (
             cert.defaultCertificate
-        )  # For being used on "unmanaged" hosts only
+        )  # For being used on "unmanaged" hosts only, and prior to first login
         self._http = None
 
         # Initialzies loglevel and serviceLogger

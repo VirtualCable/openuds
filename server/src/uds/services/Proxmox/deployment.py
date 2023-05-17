@@ -28,17 +28,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle   # nosec: controled data
+import pickle  # nosec: controled data
 import logging
 import typing
 
 from uds.core import services
-from uds.core import managers
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.models import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 from .jobs import ProxmoxDeferredRemoval
 from . import client
@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from .service import ProxmoxLinkedService
     from .publication import ProxmoxPublication
-    
+
 logger = logging.getLogger(__name__)
 
 (
@@ -186,7 +186,7 @@ class ProxmoxDeployment(services.UserDeployment):
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
-            return self.__error('Machine not found: {}'.format(e))
+            return self.__error(f'Machine not found: {e}')
 
         if vmInfo.status == 'stopped':
             self._queue = [opStart, opFinish]
@@ -210,20 +210,23 @@ class ProxmoxDeployment(services.UserDeployment):
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
-    def desktopLogin(self, username: str, password: str, domain: str = '') -> None:
-        script = '''import sys
+    def desktopLogin(
+        self,
+        username: str,
+        password: str,
+        domain: str = '',  # pylint: disable=unused-argument
+    ) -> None:
+        script = f'''import sys
 if sys.platform == 'win32':
     from uds import operations
     operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", struct.pack('!IsIs', 1, '{username}'.encode('utf8'), 2, '{password}'.encode('utf8')), True)
-'''.format(
-            username=username, password=password
-        )
+'''
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         dbService = self.dbservice()
         if dbService:
             try:
-                managers.userServiceManager().sendScript(dbService, script)
+                UserServiceManager().sendScript(dbService, script)
             except Exception as e:
                 logger.info('Exception sending loggin to %s: %s', dbService, e)
 
@@ -253,7 +256,6 @@ if sys.platform == 'win32':
         return self.__executeQueue()
 
     def __initQueueForDeploy(self, forLevel2: bool = False) -> None:
-
         if forLevel2 is False:
             self._queue = [opCreate, opGetMac, opStart, opFinish]
         else:
@@ -282,9 +284,6 @@ if sys.platform == 'win32':
     def __pushFrontOp(self, op: int):
         self._queue.insert(0, op)
 
-    def __pushBackOp(self, op: int):
-        self._queue.append(op)
-
     def __retryLater(self) -> str:
         self.__pushFrontOp(opRetry)
         return State.RUNNING
@@ -298,7 +297,7 @@ if sys.platform == 'win32':
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
             ProxmoxDeferredRemoval.remove(self.service().parent(), int(self._vmid))
@@ -334,7 +333,7 @@ if sys.platform == 'win32':
 
             if execFnc is None:
                 return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
+                    f'Unknown operation found at execution queue ({op})'
                 )
 
             execFnc()
@@ -387,15 +386,14 @@ if sys.platform == 'win32':
         """
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
-        except Exception:
-            raise Exception('Machine not found on remove machine')
+        except Exception as e:
+            raise Exception('Machine not found on remove machine') from e
 
         if vmInfo.status != 'stopped':
             logger.debug('Info status: %s', vmInfo)
             self._queue = [opStop, opRemove, opFinish]
             return self.__executeQueue()
-        else:
-            self.__setTask(self.service().removeMachine(int(self._vmid)))
+        self.__setTask(self.service().removeMachine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -404,8 +402,8 @@ if sys.platform == 'win32':
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except client.ProxmoxConnectionError:
             return self.__retryLater()
-        except Exception:
-            raise Exception('Machine not found on start machine')
+        except Exception as e:
+            raise Exception('Machine not found on start machine') from e
 
         if vmInfo.status == 'stopped':
             self.__setTask(self.service().startMachine(int(self._vmid)))
@@ -415,8 +413,8 @@ if sys.platform == 'win32':
     def __stopMachine(self) -> str:
         try:
             vmInfo = self.service().getMachineInfo(int(self._vmid))
-        except Exception:
-            raise Exception('Machine not found on stop machine')
+        except Exception as e:
+            raise Exception('Machine not found on stop machine') from e
 
         if vmInfo.status != 'stopped':
             logger.debug('Stopping machine %s', vmInfo)
@@ -429,8 +427,8 @@ if sys.platform == 'win32':
             vmInfo = self.service().getMachineInfo(int(self._vmid))
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
-        except Exception:
-            raise Exception('Machine not found on suspend machine')
+        except Exception as e:
+            raise Exception('Machine not found on suspend machine') from e
 
         if vmInfo.status != 'stopped':
             self.__setTask(self.service().shutdownMachine(int(self._vmid)))
@@ -463,7 +461,7 @@ if sys.platform == 'win32':
             self.service().setVmMac(int(self._vmid), self.getUniqueId())
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')
-            raise Exception('Error setting MAC and HA on proxmox: {}'.format(e))
+            raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
         return State.RUNNING
 
     # Check methods
@@ -534,7 +532,7 @@ if sys.platform == 'win32':
         if getSqlDatetimeAsUnix() - shutdown_start > GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop')
             self.doLog(
-                log.ERROR,
+                log.LogLevel.ERROR,
                 f'Could not shutdown machine using soft power off in time ({GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally
@@ -589,7 +587,7 @@ if sys.platform == 'win32':
 
             if chkFnc is None:
                 return self.__error(
-                    'Unknown operation found at check queue ({0})'.format(op)
+                    f'Unknown operation found at check queue ({op})'
                 )
 
             state = chkFnc()
@@ -645,7 +643,7 @@ if sys.platform == 'win32':
         lst = [] if not self.service().tryGracelyShutdown() else [opGracelyStop]
         queue = lst + [opStop, opRemove, opFinish]
 
-        if op == opFinish or op == opWait:
+        if op in (opFinish, opWait):
             self._queue[:] = queue
             return self.__executeQueue()
 

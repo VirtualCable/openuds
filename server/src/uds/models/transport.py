@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -62,7 +62,6 @@ class Transport(ManagedObjectModel, TaggingMixin):
     ALLOW = 'a'
     DENY = 'd'
 
-    # pylint: disable=model-missing-unicode
     priority = models.IntegerField(default=0, db_index=True)
     net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
     # We store allowed oss as a comma-separated list
@@ -76,7 +75,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     networks: 'models.manager.RelatedManager[Network]'
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
@@ -140,13 +139,13 @@ class Transport(ManagedObjectModel, TaggingMixin):
         Returns:
             bool: True if this transport is valid for the specified OS, False otherwise
         """
-        return not self.allowed_oss or os.name in self.allowed_oss.split(',')
+        return not self.allowed_oss or os.name in str(self.allowed_oss).split(',')
 
     def __str__(self) -> str:
-        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
+        return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -155,7 +154,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 

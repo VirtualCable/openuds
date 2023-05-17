@@ -28,12 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import typing
 
-from uds.core import Environmentable
-from uds.core import Serializable
+from uds.core.environment import Environmentable
+from uds.core.serializable import Serializable
 
 if typing.TYPE_CHECKING:
     from uds.core import services
@@ -158,6 +159,7 @@ class Publication(Environmentable, Serializable):
     def getUuid(self) -> str:
         return self._uuid
 
+    @abc.abstractmethod
     def publish(self) -> str:
         """
         This method is invoked whenever the administrator requests a new publication.
@@ -192,11 +194,10 @@ class Publication(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'publish method for class {0} not provided! '.format(
-                self.__class__.__name__
-            )
+            f'publish method for class {self.__class__.__name__} not provided! '
         )
 
+    @abc.abstractmethod
     def checkState(self) -> str:
         """
         This is a task method. As that, the expected return values are
@@ -222,9 +223,7 @@ class Publication(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'checkState method for class {0} not provided!!!'.format(
-                self.__class__.__name__
-            )
+            f'checkState method for class {self.__class__.__name__} not provided!!!'
         )
 
     def finish(self) -> None:
@@ -251,6 +250,7 @@ class Publication(Environmentable, Serializable):
         """
         return 'unknown'
 
+    @abc.abstractmethod
     def destroy(self) -> str:
         """
         This is a task method. As that, the expected return values are
@@ -270,9 +270,10 @@ class Publication(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'destroy method for class {0} not provided!'.format(self.__class__.__name__)
+            f'destroy method for class {self.__class__.__name__} not provided!'
         )
 
+    @abc.abstractmethod
     def cancel(self) -> str:
         """
         This is a task method. As that, the expected return values are
@@ -292,11 +293,11 @@ class Publication(Environmentable, Serializable):
                this method.
         """
         raise NotImplementedError(
-            'cancel method for class {0} not provided!'.format(self.__class__.__name__)
+            f'cancel method for class {self.__class__.__name__} not provided!'
         )
 
     def __str__(self):
         """
         String method, mainly used for debugging purposes
         """
-        return "Base Publication"
+        return 'Base Publication'

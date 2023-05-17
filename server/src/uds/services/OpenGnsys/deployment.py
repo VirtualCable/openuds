@@ -27,17 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
 from uds.core.services import UserDeployment
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.models.util import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -80,7 +80,7 @@ class OGDeployment(UserDeployment):
     def initialize(self) -> None:
         self._queue = []
         dbs = self.dbservice()
-        self._uuid = dbs.uuid if dbs else ''
+        self._uuid = dbs.uuid if dbs and dbs.uuid else ''
 
     def service(self) -> 'OGService':
         return typing.cast('OGService', super().service())
@@ -121,7 +121,9 @@ class OGDeployment(UserDeployment):
             self._machineId = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
             self._stamp = int(vals[6].decode('utf8'))
-            self._queue = pickle.loads(vals[7])
+            self._queue = pickle.loads(
+                vals[7]
+            )  # nosec: not insecure, we are loading our own data
 
     def getName(self) -> str:
         return self._name
@@ -166,7 +168,7 @@ class OGDeployment(UserDeployment):
             return self.__executeQueue()
 
         except Exception as e:
-            return self.__error('Error setting ready state: {}'.format(e))
+            return self.__error(f'Error setting ready state: {e}')
 
     def deployForUser(self, user: 'models.User') -> str:
         """
@@ -197,7 +199,7 @@ class OGDeployment(UserDeployment):
             status = self.service().status(self._machineId)
         except Exception as e:
             logger.exception('Exception at checkMachineReady')
-            return self.__error('Error checking machine: {}'.format(e))
+            return self.__error(f'Error checking machine: {e}')
 
         # possible status are ("off", "oglive", "busy", "linux", "windows", "macos" o "unknown").
         if status['status'] in ("linux", "windows", "macos"):
@@ -218,12 +220,6 @@ class OGDeployment(UserDeployment):
         res = self._queue.pop(0)
         return res
 
-    def __pushFrontOp(self, op: int) -> None:
-        self._queue.insert(0, op)
-
-    def __pushBackOp(self, op: int) -> None:
-        self._queue.append(op)
-
     def __error(self, reason: typing.Any) -> str:
         """
         Internal method to set object as error state
@@ -232,13 +228,13 @@ class OGDeployment(UserDeployment):
             State.ERROR, so we can do "return self.__error(reason)"
         """
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._machineId:
             try:
                 self.service().unreserve(self._machineId)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning('Error unreserving machine: %s', e)
 
         self._queue = [opError]
         self._reason = str(reason)
@@ -266,7 +262,7 @@ class OGDeployment(UserDeployment):
 
             if execFnc is None:
                 return self.__error(
-                    'Unknown operation found at execution queue ({0})'.format(op)
+                    f'Unknown operation found at execution queue ({op})'
                 )
 
             execFnc()
@@ -292,7 +288,7 @@ class OGDeployment(UserDeployment):
         Deploys a machine from template for user/cache
         """
         r: typing.Any = None
-        token = cryptoManager().randomString(32)
+        token = CryptoManager().randomString(32)
         try:
             r = self.service().reserve()
             self.service().notifyEvents(r['id'], token, self._uuid)
@@ -306,7 +302,7 @@ class OGDeployment(UserDeployment):
                     # Error unreserving reserved machine on creation
                     logger.error('Error unreserving errored machine: %s', ei)
 
-            raise Exception('Error creating reservation: {}'.format(e))
+            raise Exception(f'Error creating reservation: {e}') from e
 
         self._machineId = r['id']
         self._name = r['name']
@@ -315,7 +311,7 @@ class OGDeployment(UserDeployment):
         self._stamp = getSqlDatetimeAsUnix()
 
         self.doLog(
-            log.INFO,
+            log.LogLevel.INFO,
             f'Reserved machine {self._name}: id: {self._machineId}, mac: {self._mac}, ip: {self._ip}',
         )
 
@@ -389,7 +385,7 @@ class OGDeployment(UserDeployment):
 
             if chkFnc is None:
                 return self.__error(
-                    'Unknown operation found at check queue ({0})'.format(op)
+                    f'Unknown operation found at check queue ({op})'
                 )
 
             state = chkFnc()

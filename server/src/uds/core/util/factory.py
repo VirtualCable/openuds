@@ -1,19 +1,21 @@
 import typing
+import logging
 
 from uds.core.util import singleton
 from uds.core import module
 
-import logging
 
 logger = logging.getLogger(__name__)
 
 T = typing.TypeVar('T', bound=module.Module)
 V = typing.TypeVar('V')
 
+
 class Factory(typing.Generic[V], metaclass=singleton.Singleton):
     '''
     Generic factory class.
     '''
+
     _objects: typing.MutableMapping[str, typing.Type[V]]
 
     def __init__(self) -> None:
@@ -46,11 +48,11 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
     __getitem__ = get
 
 
-
 class ModuleFactory(Factory[T]):
     '''
     Module Factory class.
     '''
+
     def providers(self) -> typing.Mapping[str, typing.Type[T]]:
         '''
         Returns all providers.

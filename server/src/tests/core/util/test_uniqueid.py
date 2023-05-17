@@ -32,13 +32,14 @@
 """
 import time
 
-from ...utils.test import UDSTestCase
-from django.conf import settings
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.unique_name_generator import UniqueNameGenerator
-from uds.models import getSqlDatetimeAsUnix
+
+from uds.core.util.model import getSqlDatetimeAsUnix
+
+from ...utils.test import UDSTestCase
 
 
 NUM_THREADS = 8
@@ -73,7 +74,7 @@ class UniqueIdTest(UDSTestCase):
         self.assertEqual(self.uidGen.get(), 40)
 
     def test_release_unique_id(self):
-        for x in range(100):
+        for _ in range(100):
             self.uidGen.get()
 
         self.assertEqual(self.uidGen.get(), 100)
@@ -99,20 +100,20 @@ class UniqueIdTest(UDSTestCase):
             self.assertEqual(self.uidGen.get(), i)
 
         # from NUM to NUM*2-1 (both included) are still there, so we should get 200
-        self.assertEqual(self.uidGen.get(), NUM*2)
-        self.assertEqual(self.uidGen.get(), NUM*2+1)
+        self.assertEqual(self.uidGen.get(), NUM * 2)
+        self.assertEqual(self.uidGen.get(), NUM * 2 + 1)
 
     def test_gid(self):
         for x in range(100):
-            self.assertEqual(self.ugidGen.get(), 'uds{:08d}'.format(x))
+            self.assertEqual(self.ugidGen.get(), f'uds{x:08d}')
 
     def test_gid_basename(self):
         self.ugidGen.setBaseName('mar')
         for x in range(100):
-            self.assertEqual(self.ugidGen.get(), 'mar{:08d}'.format(x))
+            self.assertEqual(self.ugidGen.get(), f'mar{x:08d}')
 
     def test_mac(self):
-        start, end = TEST_MAC_RANGE.split('-')
+        start, end = TEST_MAC_RANGE.split('-')  # pylint: disable=unused-variable
 
         self.assertEqual(self.macGen.get(TEST_MAC_RANGE), start)
 
@@ -150,7 +151,7 @@ class UniqueIdTest(UDSTestCase):
             for x in range(20):
                 name = self.nameGen.get('test', length=length)
                 lst.append(name)
-                self.assertEqual(name, 'test{:0{width}d}'.format(num, width=length))
+                self.assertEqual(name, f'test{num:0{length}d}'.format(num, width=length))
                 num += 1
 
         for x in lst:
@@ -159,7 +160,7 @@ class UniqueIdTest(UDSTestCase):
         self.assertEqual(self.nameGen.get('test', length=1), 'test0')
 
     def test_name_full(self):
-        for x in range(10):
+        for _ in range(10):
             self.nameGen.get('test', length=1)
 
         with self.assertRaises(KeyError):

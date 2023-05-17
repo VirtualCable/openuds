@@ -1,10 +1,10 @@
 Source: udsclient3
 Section: admin
 Priority: optional
-Maintainer: Adolfo Gómez García <agomez@virtualcable.es>
+Maintainer: Adolfo Gómez García <agomez@virtualcable.net>
 Build-Depends: debhelper (>= 7), po-debconf
 Standards-Version: 3.9.2
-Homepage: http://www.virtualcable.es
+Homepage: http://www.udsenterprise.com
 
 Package: udsclient3
 Section: admin

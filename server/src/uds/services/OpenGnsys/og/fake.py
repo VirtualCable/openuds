@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import copy
 import random
@@ -142,8 +142,8 @@ def post(
         ou=1, image=2
     ):
         res = copy.deepcopy(RESERVE)
-        res['name'] += str(random.randint(5000, 100000))
-        res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))
+        res['name'] += str(random.randint(5000, 100000))  # nosec: for testing pourposes
+        res['mac'] = ''.join(random.choice('0123456789ABCDEF') for _ in range(12))  # nosec: for testing pourposes
         res['ip'] = '1.2.3.4'
         return res
 
@@ -169,7 +169,7 @@ def get(
     if path == urls.IMAGES.format(ou=2):
         return []
     if path[-6:] == 'status':
-        rnd = random.randint(0, 100)
+        rnd = random.randint(0, 100)  # nosec: for testing pourposes
         if rnd < 25:
             return STATUS_READY_LINUX
         return STATUS_OFF

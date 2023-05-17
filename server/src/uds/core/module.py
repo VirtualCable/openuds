@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import sys
 import os.path
@@ -39,7 +39,7 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core.ui import UserInterface
+from uds.core.ui.user_interface import UserInterface
 
 from .serializable import Serializable
 from .environment import Environment, Environmentable
@@ -207,7 +207,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return codecs.encode(cls.icon(), 'base64').decode()
 
     @staticmethod
-    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:
+    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:  # pylint: disable=unused-argument
         """
         Test if the connection data is ok.
 

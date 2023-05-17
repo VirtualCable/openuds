@@ -34,7 +34,6 @@ import typing
 import json
 
 
-from django.contrib.sessions.serializers import JSONSerializer
 class SessionSerializer:
     """
     Serializer for django sessions.
@@ -43,7 +42,8 @@ class SessionSerializer:
         """
         Serialize data for storage in a session.
         """
-        return json.dumps(data).encode()
+        return json.dumps(data, separators=(',', ':')).encode()
+
 
     def loads(self, data: bytes) -> typing.Dict[str, typing.Any]:
         """

@@ -51,6 +51,19 @@ from .log import logger
 # Server before this version uses "unsigned" scripts
 OLD_METHOD_VERSION = '2.4.0'
 
+SECURE_CIPHERS = (
+    'TLS_AES_256_GCM_SHA384'
+    ':TLS_CHACHA20_POLY1305_SHA256'
+    ':TLS_AES_128_GCM_SHA256'
+    ':ECDHE-RSA-AES256-GCM-SHA384'
+    ':ECDHE-RSA-AES128-GCM-SHA256'
+    ':ECDHE-RSA-CHACHA20-POLY1305'
+    ':ECDHE-ECDSA-AES128-GCM-SHA256'
+    ':ECDHE-ECDSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-AES128-SHA256'
+    ':ECDHE-ECDSA-CHACHA20-POLY1305'
+)
+
 # Callback for error on cert
 # parameters are hostname, serial
 # If returns True, ignores error
@@ -71,7 +84,6 @@ class InvalidVersion(UDSException):
     def __init__(self, downloadUrl: str) -> None:
         super().__init__(downloadUrl)
         self.downloadUrl = downloadUrl
-
 
 class RestApi:
 
@@ -184,6 +196,10 @@ class RestApi:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
+        # Disable SSLv2, SSLv3, TLSv1, TLSv1.1
+        ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+        ctx.set_ciphers(SECURE_CIPHERS)
+
         # If we have the certificates file, we use it
         if tools.getCaCertsFile() is not None:
             ctx.load_verify_locations(tools.getCaCertsFile())

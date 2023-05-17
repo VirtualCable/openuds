@@ -28,12 +28,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-from uds.core import Environmentable
-from uds.core import Serializable
+from uds.core.environment import Environmentable
+from uds.core.serializable import Serializable
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -149,9 +149,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._service = kwargs[
-            'service'
-        ]  # Raises an exception if service is not included. Parent
+        self._service = kwargs['service']  # Raises an exception if service is not included. Parent
         self._publication = kwargs.get('publication', None)
         self._osmanager = kwargs.get('osmanager', None)
         self._dbService = kwargs.get('dbservice', None)
@@ -229,12 +227,12 @@ class UserDeployment(Environmentable, Serializable):
         """
         return self._dbService
 
-    def doLog(self, level: int, message: str) -> None:
+    def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this user deployment
         """
         if self._dbService:
-            log.doLog(self._dbService, level, message, log.SERVICE)
+            log.doLog(self._dbService, level, message, log.LogSource.SERVICE)
 
     def macGenerator(self) -> 'UniqueMacGenerator':
         """
@@ -271,7 +269,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
+    def notifyReadyFromOsManager(self, data: typing.Any) -> str:  # pylint: disable=unused-argument
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -387,11 +385,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise Exception(
-            'Base deploy for cache invoked! for class {0}'.format(
-                self.__class__.__name__
-            )
-        )
+        raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
 
     def deployForUser(self, user: 'models.User') -> str:
         """
@@ -426,11 +420,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            'Base deploy for user invoked! for class {0}'.format(
-                self.__class__.__name__
-            )
-        )
+        raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
     def checkState(self) -> str:
         """
@@ -455,9 +445,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            'Base check state invoked! for class {0}'.format(self.__class__.__name__)
-        )
+        raise NotImplementedError(f'Base check state invoked! for class {self.__class__.__name__}')
 
     def finish(self) -> None:
         """
@@ -473,7 +461,7 @@ class UserDeployment(Environmentable, Serializable):
                nothing)
         """
 
-    def moveToCache(self, newLevel: int) -> str:
+    def moveToCache(self, newLevel: int) -> str:  # pylint: disable=unused-argument
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
@@ -563,9 +551,7 @@ class UserDeployment(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            'destroy method for class {0} not provided!'.format(self.__class__.__name__)
-        )
+        raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
     def cancel(self) -> str:
         """
@@ -631,6 +617,7 @@ class UserDeployment(Environmentable, Serializable):
            monitors: number of monitors to use
         """
         return None
+
     def __str__(self):
         """
         Mainly used for debugging purposses

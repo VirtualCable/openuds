@@ -3,6 +3,7 @@
 Settings file for uds server (Django)
 '''
 import os
+import sys
 import django
 
 # calculated paths for django and the site
@@ -57,20 +58,23 @@ TIME_ZONE = 'Europe/Madrid'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en'
 
-ugettext = lambda s: s
+# Override for gettext so we can use the same syntax as in django
+# and we can translate it later with our own function
+def gettext(s):
+    return s
 
 LANGUAGES = (
-    ('es', ugettext('Spanish')),
-    ('en', ugettext('English')),
-    ('fr', ugettext('French')),
-    ('de', ugettext('German')),
-    ('pt', ugettext('Portuguese')),
-    ('it', ugettext('Italian')),
-    ('ar', ugettext('Arabic')),
-    ('eu', ugettext('Basque')),
-    ('ar', ugettext('Arabian')),
-    ('ca', ugettext('Catalan')),
-    ('zh-hans', ugettext('Chinese')),
+    ('es', gettext('Spanish')),
+    ('en', gettext('English')),
+    ('fr', gettext('French')),
+    ('de', gettext('German')),
+    ('pt', gettext('Portuguese')),
+    ('it', gettext('Italian')),
+    ('ar', gettext('Arabic')),
+    ('eu', gettext('Basque')),
+    ('ar', gettext('Arabian')),
+    ('ca', gettext('Catalan')),
+    ('zh-hans', gettext('Chinese')),
 )
 
 LANGUAGE_COOKIE_NAME = 'uds_lang'
@@ -159,9 +163,26 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o750
 FILE_UPLOAD_MAX_MEMORY_SIZE = 512 * 1024  # 512 Kb
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)kk3kk5_j8rie2*'
+SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)kk3kk5_j8rie2*'  # nosec: sample key, Remember to change it on production!!
 # This is a very long string, an RSA KEY (this can be changed, but if u loose it, all encription will be lost)
 RSA_KEY = '-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC0qe1GlriQbHFYdKYRPBFDSS8Ne/TEKI2mtPKJf36XZTy6rIyH\nvUpT1gMScVjHjOISLNJQqktyv0G+ZGzLDmfkCUBev6JBlFwNeX3Dv/97Q0BsEzJX\noYHiDANUkuB30ukmGvG0sg1v4ccl+xs2Su6pFSc5bGINBcQ5tO0ZI6Q1nQIDAQAB\nAoGBAKA7Octqb+T/mQOX6ZXNjY38wXOXJb44LXHWeGnEnvUNf/Aci0L0epCidfUM\nfG33oKX4BMwwTVxHDrsa/HaXn0FZtbQeBVywZqMqWpkfL/Ho8XJ8Rsq8OfElrwek\nOCPXgxMzQYxoNHw8V97k5qhfupQ+h878BseN367xSyQ8plahAkEAuPgAi6aobwZ5\nFZhx/+6rmQ8sM8FOuzzm6bclrvfuRAUFa9+kMM2K48NAneAtLPphofqI8wDPCYgQ\nTl7O96GXVQJBAPoKtWIMuBHJXKCdUNOISmeEvEzJMPKduvyqnUYv17tM0JTV0uzO\nuDpJoNIwVPq5c3LJaORKeCZnt3dBrdH1FSkCQQC3DK+1hIvhvB0uUvxWlIL7aTmM\nSny47Y9zsc04N6JzbCiuVdeueGs/9eXHl6f9gBgI7eCD48QAocfJVygphqA1AkEA\nrvzZjcIK+9+pJHqUO0XxlFrPkQloaRK77uHUaW9IEjui6dZu4+2T/q7SjubmQgWR\nZy7Pap03UuFZA2wCoqJbaQJAUG0FVrnyUORUnMQvdDjAWps2sXoPvA8sbQY1W8dh\nR2k4TCFl2wD7LutvsdgdkiH0gWdh5tc1c4dRmSX1eQ27nA==\n-----END RSA PRIVATE KEY-----'
+
+# Trusted cyphers
+SECURE_CIPHERS = (
+    'TLS_AES_256_GCM_SHA384'
+    ':TLS_CHACHA20_POLY1305_SHA256'
+    ':TLS_AES_128_GCM_SHA256'
+    ':ECDHE-RSA-AES256-GCM-SHA384'
+    ':ECDHE-RSA-AES128-GCM-SHA256'
+    ':ECDHE-RSA-CHACHA20-POLY1305'
+    ':ECDHE-ECDSA-AES128-GCM-SHA256'
+    ':ECDHE-ECDSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-AES128-SHA256'
+    ':ECDHE-ECDSA-CHACHA20-POLY1305'
+)
+# Min TLS version
+SECURE_MIN_TLS_VERSION = '1.2'
+
 
 TEMPLATES = [
     {
@@ -234,7 +255,8 @@ WORKERSFILE = 'workers.log'
 AUTHFILE = 'auth.log'
 USEFILE = 'use.log'
 TRACEFILE = 'trace.log'
-LOGLEVEL = DEBUG and 'DEBUG' or 'INFO'
+OPERATIONSFILE = 'operations.log'
+LOGLEVEL = 'DEBUG' if DEBUG else 'INFO'
 ROTATINGSIZE = 32 * 1024 * 1024  # 32 Megabytes before rotating files
 
 LOGGING = {
@@ -246,13 +268,21 @@ LOGGING = {
         }
     },
     'formatters': {
-        'verbose': {
+        'database': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
         'simple': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(funcName)s %(lineno)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
         },
-        'database': {'format': '%(levelname)s %(asctime)s Database %(message)s'},
+        'uds': {
+            'format': 'uds[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
+        'services': {
+            'format': 'uds-s[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
+        'workers': {
+            'format': 'uds-w[%(process)-5s]: %(levelname)s %(asctime)s %(name)s:%(funcName)s %(lineno)d %(message)s'
+        },
         'auth': {'format': '%(asctime)s %(message)s'},
         'use': {'format': '%(asctime)s %(message)s'},
         'trace': {'format': '%(levelname)s %(asctime)s %(message)s'},
@@ -262,9 +292,17 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
         },
+        # Sample logging to syslog
+        #'file': {
+        #    'level': 'DEBUG',
+        #    'class': 'logging.handlers.SysLogHandler',
+        #    'formatter': 'uds',
+        #    'facility': 'local0',
+        #    'address': '/dev/log',
+        #},
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + LOGFILE,
             'mode': 'a',
@@ -275,7 +313,7 @@ LOGGING = {
         'database': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
+            'formatter': 'database',
             'filename': LOGDIR + '/' + 'sql.log',
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
@@ -284,7 +322,7 @@ LOGGING = {
         },
         'servicesFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + SERVICESFILE,
             'mode': 'a',
@@ -294,7 +332,7 @@ LOGGING = {
         },
         'workersFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'simple',
             'filename': LOGDIR + '/' + WORKERSFILE,
             'mode': 'a',
@@ -304,7 +342,7 @@ LOGGING = {
         },
         'authFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'auth',
             'filename': LOGDIR + '/' + AUTHFILE,
             'mode': 'a',
@@ -314,7 +352,7 @@ LOGGING = {
         },
         'useFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'use',
             'filename': LOGDIR + '/' + USEFILE,
             'mode': 'a',
@@ -324,9 +362,19 @@ LOGGING = {
         },
         'traceFile': {
             'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'uds.core.util.log.UDSLogHandler',
             'formatter': 'trace',
             'filename': LOGDIR + '/' + TRACEFILE,
+            'mode': 'a',
+            'maxBytes': ROTATINGSIZE,
+            'backupCount': 3,
+            'encoding': 'utf-8',
+        },
+        'operationsFile': {
+            'level': 'DEBUG',
+            'class': 'uds.core.util.log.UDSLogHandler',
+            'formatter': 'trace',
+            'filename': LOGDIR + '/' + OPERATIONSFILE,
             'mode': 'a',
             'maxBytes': ROTATINGSIZE,
             'backupCount': 3,
@@ -374,6 +422,12 @@ LOGGING = {
             'propagate': True,
             'level': 'ERROR',
         },
+        # Disable matplotlib (used by reports) logging (too verbose)
+        'matplotlib': {
+            'handlers': ['null'],
+            'propagate': True,
+            'level': 'ERROR',
+        },
         'uds': {
             'handlers': ['file'],
             'level': LOGLEVEL,
@@ -409,6 +463,12 @@ LOGGING = {
         # Custom tracing
         'traceLog': {
             'handlers': ['traceFile'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Custom operations
+        'operationsLog': {
+            'handlers': ['operationsFile'],
             'level': 'INFO',
             'propagate': False,
         },

@@ -33,6 +33,7 @@ import typing
 
 from django.urls import reverse
 
+from uds import models
 from uds.core.util.config import GlobalConfig
 
 from ...utils.web import test
@@ -40,8 +41,6 @@ from ...fixtures import authenticators as fixtures_authenticators
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
-
-from uds import models
 
 
 class WebLoginLogoutTest(test.WEBTestCase):
@@ -98,7 +97,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
             # Ensures a couple of logs are created for every operation
             # Except for root, that has no user associated on db
             if up[0] is not root and up[1] is not rootpass:  # root user is last one
-                self.assertEqual(models.Log.objects.count(), num * 4)
+                # 5 = 4 audit logs + 1 system log (auth.log)
+                self.assertEqual(models.Log.objects.count(), num * 5)
 
         # Ensure web login for super user is disabled and that the root login fails
         GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(False)
@@ -122,7 +122,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login(user.name, user.name, user.manager.uuid)
         self.assertInvalidLogin(response)
 
-        self.assertEqual(models.Log.objects.count(), 2)
+        self.assertEqual(models.Log.objects.count(), 4)
 
         user = fixtures_authenticators.createUsers(
             fixtures_authenticators.createAuthenticator(),
@@ -132,7 +132,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login(user.name, user.name, user.manager.uuid, False)
         self.assertInvalidLogin(response)
 
-        self.assertEqual(models.Log.objects.count(), 4)
+        self.assertEqual(models.Log.objects.count(), 8)
 
         user = fixtures_authenticators.createUsers(
             fixtures_authenticators.createAuthenticator(),
@@ -142,7 +142,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login(user.name, user.name, user.manager.uuid)
         self.assertInvalidLogin(response)
 
-        self.assertEqual(models.Log.objects.count(), 6)
+        self.assertEqual(models.Log.objects.count(), 12)
 
     def test_login_invalid_user(self):
         user = fixtures_authenticators.createUsers(
@@ -153,7 +153,8 @@ class WebLoginLogoutTest(test.WEBTestCase):
         self.assertInvalidLogin(response)
 
         # Invalid password log & access denied, in auth and user log
-        self.assertEqual(models.Log.objects.count(), 4)
+        # + 2 system logs (auth.log), one for each failed login
+        self.assertEqual(models.Log.objects.count(), 6)
 
         user = fixtures_authenticators.createUsers(
             fixtures_authenticators.createAuthenticator(),
@@ -163,7 +164,7 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login(user.name, 'wrong password', user.manager.uuid)
         self.assertInvalidLogin(response)
 
-        self.assertEqual(models.Log.objects.count(), 8)
+        self.assertEqual(models.Log.objects.count(), 12)
 
         user = fixtures_authenticators.createUsers(
             fixtures_authenticators.createAuthenticator(),
@@ -173,4 +174,4 @@ class WebLoginLogoutTest(test.WEBTestCase):
         response = self.do_login(user.name, 'wrong password', user.manager.uuid)
         self.assertInvalidLogin(response)
 
-        self.assertEqual(models.Log.objects.count(), 12)
+        self.assertEqual(models.Log.objects.count(), 18)

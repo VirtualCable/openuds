@@ -36,7 +36,6 @@ import traceback
 
 from django import http
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
@@ -92,7 +91,9 @@ class Dispatcher(View):
         service = Dispatcher.services
         full_path_lst: typing.List[str] = []
         # Guess content type from content type header (post) or ".xxx" to method
-        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
+        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(
+            ';'
+        )[0]
 
         while path:
             clean_path = path[0]
@@ -112,13 +113,15 @@ class Dispatcher(View):
         logger.debug("REST request: %s (%s)", full_path, content_type)
 
         # Here, service points to the path and the value of '' is the handler
-        cls: typing.Optional[typing.Type[Handler]] = service['']  # Get "root" class, that is stored on
+        cls: typing.Optional[typing.Type[Handler]] = service[
+            ''
+        ]  # Get "root" class, that is stored on
         if not cls:
             return http.HttpResponseNotFound(
                 'Method not found', content_type="text/plain"
             )
 
-        processor = processors.available_processors_mime_dict .get(
+        processor = processors.available_processors_mime_dict.get(
             content_type, processors.default_processor
         )(request)
 
@@ -144,9 +147,9 @@ class Dispatcher(View):
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
 
-            log.log_operation(handler, 500, log.ERROR)
+            log.logOperation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseServerError(
-                'Invalid parameters invoking {0}: {1}'.format(full_path, e),
+                f'Invalid parameters invoking {full_path}: {e}',
                 content_type="text/plain",
             )
         except AttributeError:
@@ -154,17 +157,17 @@ class Dispatcher(View):
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
-            log.log_operation(handler, 405, log.ERROR)
+            log.logOperation(handler, 405, log.LogLevel.ERROR)
             return http.HttpResponseNotAllowed(
                 allowedMethods, content_type="text/plain"
             )
         except AccessDenied:
-            log.log_operation(handler, 403, log.ERROR)
+            log.logOperation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden(
                 'access denied', content_type="text/plain"
             )
         except Exception:
-            log.log_operation(handler, 500, log.ERROR)
+            log.logOperation(handler, 500, log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
             return http.HttpResponseServerError(
@@ -174,7 +177,7 @@ class Dispatcher(View):
         # Invokes the handler's operation, add headers to response and returns
         try:
             response = operation()
-            
+
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
                 response = processor.getResponse(response)
             # Set response headers
@@ -182,33 +185,33 @@ class Dispatcher(View):
             for k, val in handler.headers().items():
                 response[k] = val
 
-            log.log_operation(handler, response.status_code, log.INFO)
+            log.logOperation(handler, response.status_code, log.LogLevel.INFO)
             return response
         except RequestError as e:
-            log.log_operation(handler, 400, log.ERROR)
+            log.logOperation(handler, 400, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except ResponseError as e:
-            log.log_operation(handler, 500, log.ERROR)
+            log.logOperation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseServerError(str(e), content_type="text/plain")
         except NotSupportedError as e:
-            log.log_operation(handler, 501, log.ERROR)
+            log.logOperation(handler, 501, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except AccessDenied as e:
-            log.log_operation(handler, 403, log.ERROR)
+            log.logOperation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden(str(e), content_type="text/plain")
         except NotFound as e:
-            log.log_operation(handler, 404, log.ERROR)
+            log.logOperation(handler, 404, log.LogLevel.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
         except HandlerError as e:
-            log.log_operation(handler, 500, log.ERROR)
+            log.logOperation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
-            log.log_operation(handler, 500, log.ERROR)
+            log.logOperation(handler, 500, log.LogLevel.ERROR)
             # Get ecxeption backtrace
             trace_back = traceback.format_exc()
             logger.error('Exception processing request: %s', full_path)
             for i in trace_back.splitlines():
-                logger.error(f'* {i}')
+                logger.error('* %s', i)
 
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
@@ -249,9 +252,8 @@ class Dispatcher(View):
         it register all subclases of Handler. (In fact, it looks for packages inside "methods" package, child of this)
         """
         logger.info('Initializing REST Handlers')
-
         # Our parent module "REST", because we are in "dispatcher"
-        modName = __name__[:__name__.rfind('.')]
+        modName = __name__[: __name__.rfind('.')]
 
         # Register all subclasses of Handler
         modfinder.dynamicLoadAndRegisterPackages(
@@ -261,8 +263,6 @@ class Dispatcher(View):
             checker=lambda x: not x.__subclasses__(),  # only register if final class, no inherited classes
             packageName='methods',
         )
-
-        return
 
 
 Dispatcher.initialize()

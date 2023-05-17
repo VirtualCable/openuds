@@ -6,6 +6,8 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014
 # Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2020,2022
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
@@ -25,10 +27,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-15 04:01+0100\n"
+"POT-Creation-Date: 2023-05-17 14:28+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
-"Language-Team: Spanish (http://www.transifex.com/openuds/openuds/language/"
+"Language-Team: Spanish (http://app.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -232,11 +234,11 @@ msgid "If active, authenticator will be visible for users"
 msgstr "Si está activo, el autenticador será visible para los usuarios"
 
 #: REST/methods/authenticators.py:126 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:188
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
-#: services/Sample/service.py:106 services/TestService_enterprise/service.py:29
+#: services/Sample/service.py:106
 msgid "None"
 msgstr "Ninguno"
 
@@ -257,7 +259,6 @@ msgid "Refine your query"
 msgstr "Depura tu consulta"
 
 #: REST/methods/authenticators.py:233
-#| msgid "Label must contain only letters, numbers, \":\" and \"-\""
 msgid "Label must contain only letters, numbers, or symbols: - : ."
 msgstr "La etiqueta debe contener solo letras, números o símbolos: - : ."
 
@@ -696,10 +697,10 @@ msgstr "Informes disponibles"
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
 #: auths/ActiveDirectory_enterprise/authenticator.py:174
-#: auths/AzureAD_enterprise/azure_ad.py:95
-#: auths/EDirectory_enterprise/authenticator.py:114
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:201
-#: auths/SAML_enterprise/saml.py:109 auths/SimpleLDAP/authenticator.py:182
+#: auths/AzureAD_enterprise/azure_ad.py:97
+#: auths/EDirectory_enterprise/authenticator.py:133
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
+#: auths/SAML_enterprise/saml.py:108 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Grupo"
@@ -741,7 +742,7 @@ msgid "Services Pools"
 msgstr "Pools de Servicios"
 
 #: REST/methods/services.py:252 REST/methods/services.py:315
-#: auths/AzureAD_enterprise/azure_ad.py:130
+#: auths/AzureAD_enterprise/azure_ad.py:132
 #: services/AWS_enterprise/provider.py:87
 #: services/Azure_enterprise/provider.py:109 services/OpenStack/provider.py:209
 #: services/OpenStack/provider_legacy.py:195
@@ -755,7 +756,7 @@ msgstr "Proxy para servicios detrás de un firewall"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:176 core/ui/user_interface.py:101
+#: auths/RegexLdap/authenticator.py:194 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -1068,10 +1069,10 @@ msgstr "Miembro del personal"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
-#: auths/AzureAD_enterprise/azure_ad.py:94
+#: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:106 reports/lists/audit.py:120
+#: auths/SAML_enterprise/saml.py:105 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1089,8 +1090,8 @@ msgstr "Usuarios actuales"
 
 #: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:172
-#: auths/EDirectory_enterprise/authenticator.py:112
-#: auths/RegexLdap/authenticator.py:199 auths/SimpleLDAP/authenticator.py:180
+#: auths/EDirectory_enterprise/authenticator.py:131
+#: auths/RegexLdap/authenticator.py:217 auths/SimpleLDAP/authenticator.py:210
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
@@ -1100,7 +1101,8 @@ msgstr "Usuarios actuales"
 #: services/Proxmox/provider.py:83 services/RDS_enterprise/provider.py:128
 #: services/VCloud_enterprise/provider.py:58
 #: services/Vmware_enterprise/provider.py:60 services/Xen/provider.py:107
-#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5VNC/html5vnc.py:87
+#: transports/HTML5RDP/html5rdp.py:100 transports/HTML5SSH/html5ssh.py:84
+#: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
 #: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
@@ -1243,8 +1245,8 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/ActiveDirectory_enterprise/authenticator.py:176
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:203
-#: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:184
+#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:221
+#: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:214
 #: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
 #: osmanagers/WindowsOsManager/windows_random.py:76
@@ -1330,11 +1332,15 @@ msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Tiempo de espera en segundos de conexión a Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: auths/EDirectory_enterprise/authenticator.py:94
+#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:107
 #: services/Vmware_enterprise/provider.py:121
 msgid "Verify SSL"
 msgstr "Verificar SSL"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: auths/EDirectory_enterprise/authenticator.py:98
+#: auths/RegexLdap/authenticator.py:120 auths/SimpleLDAP/authenticator.py:111
 #: services/Vmware_enterprise/provider.py:125
 msgid ""
 "If checked, SSL verification will be enforced. If not, SSL verification will "
@@ -1344,26 +1350,29 @@ msgstr ""
 "verificación SSL se desactivará"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:144
-#: auths/SAML_enterprise/saml.py:129 transports/SPICE/spice_base.py:83
+#: auths/EDirectory_enterprise/authenticator.py:105
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
+#: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Certificado"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:146
-#| msgid "Force SSL certificate verification"
+#: auths/EDirectory_enterprise/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:129 auths/SimpleLDAP/authenticator.py:120
 msgid "Certificate to use for SSL verification"
 msgstr "Certificado a utilizar para la verificación SSL"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:154
-#: auths/EDirectory_enterprise/authenticator.py:95
-#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:182
-#: auths/SAML_enterprise/saml.py:207
+#: auths/EDirectory_enterprise/authenticator.py:114
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
+#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "Atributo MFA"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:156
-#: auths/EDirectory_enterprise/authenticator.py:97
-#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:184
-#: auths/SAML_enterprise/saml.py:209
+#: auths/EDirectory_enterprise/authenticator.py:116
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
+#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atributo desde donde extraer el código MFA"
 
@@ -1376,112 +1385,112 @@ msgid "Authenticate against Active Directory"
 msgstr "Autenticar contra Active Directory"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:213
-#: auths/ActiveDirectory_enterprise/authenticator.py:688
+#: auths/ActiveDirectory_enterprise/authenticator.py:693
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr ""
 "Debe especificar el nombre de usuario con este formato: "
 "NOMBREDEUSUARIO@DOMAIN.DOM"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:356
+#: auths/ActiveDirectory_enterprise/authenticator.py:361
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
 msgstr ""
-"No se pudo conectar a ningún servidor AD. Comprueba tu configuración ("
-"servidor, certificados ssl,...)."
+"No se pudo conectar a ningún servidor AD. Comprueba tu configuración "
+"(servidor, certificados ssl,...)."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:561
-#: auths/ActiveDirectory_enterprise/authenticator.py:618
-#: auths/AzureAD_enterprise/azure_ad.py:315
-#: auths/EDirectory_enterprise/authenticator.py:293
-#: auths/EDirectory_enterprise/authenticator.py:324
-#: auths/RegexLdap/authenticator.py:586 auths/RegexLdap/authenticator.py:617
-#: auths/SimpleLDAP/authenticator.py:435 auths/SimpleLDAP/authenticator.py:478
+#: auths/ActiveDirectory_enterprise/authenticator.py:566
+#: auths/ActiveDirectory_enterprise/authenticator.py:623
+#: auths/AzureAD_enterprise/azure_ad.py:318
+#: auths/EDirectory_enterprise/authenticator.py:316
+#: auths/EDirectory_enterprise/authenticator.py:347
+#: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
+#: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "Nombre de usuario no encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:600
-#: auths/SimpleLDAP/authenticator.py:468
+#: auths/ActiveDirectory_enterprise/authenticator.py:605
+#: auths/SimpleLDAP/authenticator.py:541
 msgid "Group not found"
 msgstr "Grupo no encontrado"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:645
-#: auths/ActiveDirectory_enterprise/authenticator.py:667
-#: auths/EDirectory_enterprise/authenticator.py:346
-#: auths/RegexLdap/authenticator.py:645 auths/SimpleLDAP/authenticator.py:503
-#: auths/SimpleLDAP/authenticator.py:523
+#: auths/ActiveDirectory_enterprise/authenticator.py:650
+#: auths/ActiveDirectory_enterprise/authenticator.py:672
+#: auths/EDirectory_enterprise/authenticator.py:369
+#: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
+#: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "Demasiados resultados, sea más específico"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:699
+#: auths/ActiveDirectory_enterprise/authenticator.py:704
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Dominio parece incorrecto, por favor compruébelo"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:718
+#: auths/ActiveDirectory_enterprise/authenticator.py:723
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de usuario)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:741
+#: auths/ActiveDirectory_enterprise/authenticator.py:746
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "Servidor no parece un Active Directory (no tiene objetos de grupo)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:750
-#: auths/EDirectory_enterprise/authenticator.py:469
-#: auths/RegexLdap/authenticator.py:755 auths/SimpleLDAP/authenticator.py:686
+#: auths/ActiveDirectory_enterprise/authenticator.py:755
+#: auths/EDirectory_enterprise/authenticator.py:492
+#: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 "Los parámetros de conexión parecen correctos, la prueba fue ejecutada con "
 "éxito"
 
-#: auths/AzureAD_enterprise/azure_ad.py:79
+#: auths/AzureAD_enterprise/azure_ad.py:81
 msgid "Azure AD Authenticator"
 msgstr "Autenticador Azure AD"
 
-#: auths/AzureAD_enterprise/azure_ad.py:81
+#: auths/AzureAD_enterprise/azure_ad.py:83
 msgid "Azure Active Directory Authenticator"
 msgstr "Autenticador Azure Active Directory"
 
-#: auths/AzureAD_enterprise/azure_ad.py:99
+#: auths/AzureAD_enterprise/azure_ad.py:101
 #: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "Tenant ID"
 
-#: auths/AzureAD_enterprise/azure_ad.py:101
+#: auths/AzureAD_enterprise/azure_ad.py:103
 #: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Obtenidos de Azure Active Directory - propiedades - ID de directorio"
 
-#: auths/AzureAD_enterprise/azure_ad.py:106
+#: auths/AzureAD_enterprise/azure_ad.py:108
 #: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "ID de cliente"
 
-#: auths/AzureAD_enterprise/azure_ad.py:108
+#: auths/AzureAD_enterprise/azure_ad.py:110
 #: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "Obtenido de la aplicación creada en Azure para UDS Enterprise"
 
-#: auths/AzureAD_enterprise/azure_ad.py:113
+#: auths/AzureAD_enterprise/azure_ad.py:115
 #: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "Clave de Cliente"
 
-#: auths/AzureAD_enterprise/azure_ad.py:115
+#: auths/AzureAD_enterprise/azure_ad.py:117
 #: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "Obtenido de la aplicación creada en Azure para UDS Enterprise - claves"
 
-#: auths/AzureAD_enterprise/azure_ad.py:121
+#: auths/AzureAD_enterprise/azure_ad.py:123
 msgid "Callback"
 msgstr "URL de respuesta"
 
-#: auths/AzureAD_enterprise/azure_ad.py:123
+#: auths/AzureAD_enterprise/azure_ad.py:125
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr "Url de respuesta (rellenado por UDS, modificar sólo si es necesario!!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:133
+#: auths/AzureAD_enterprise/azure_ad.py:135
 #: services/Azure_enterprise/provider.py:112
 msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
@@ -1490,52 +1499,52 @@ msgstr ""
 "Proxy utilizado para la conexión a azure para conexiones HTTPS (use "
 "PROTOCOL: // host:port, ejemplo: https://proxy:8080)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:140
+#: auths/AzureAD_enterprise/azure_ad.py:142
 msgid "Enable School Data Sync Integration"
 msgstr "Habilitar la integración de School Data Sync"
 
-#: auths/AzureAD_enterprise/azure_ad.py:143
+#: auths/AzureAD_enterprise/azure_ad.py:145
 msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr "Habilite solo si tiene Microsoft School Data Sync en su entorno."
 
-#: auths/AzureAD_enterprise/azure_ad.py:150
+#: auths/AzureAD_enterprise/azure_ad.py:152
 msgid "Azure Logout method."
 msgstr "Método de cierre de sesión de Azure."
 
-#: auths/AzureAD_enterprise/azure_ad.py:152
+#: auths/AzureAD_enterprise/azure_ad.py:154
 msgid "UDS Redirection to Microsoft logout pages on UDS logout."
 msgstr ""
 "Redirección de UDS a páginas de cierre de sesión de Microsoft en el cierre "
 "de sesión de UDS."
 
-#: auths/AzureAD_enterprise/azure_ad.py:156
+#: auths/AzureAD_enterprise/azure_ad.py:158
 msgid "Do not redirect"
 msgstr "No redirigir"
 
-#: auths/AzureAD_enterprise/azure_ad.py:157
+#: auths/AzureAD_enterprise/azure_ad.py:159
 msgid "Microsoft logout"
 msgstr "Cierre de sesión de Microsoft"
 
-#: auths/AzureAD_enterprise/azure_ad.py:158
+#: auths/AzureAD_enterprise/azure_ad.py:160
 msgid "Office 365 logout"
 msgstr "Cierre de sesión de Office 365"
 
-#: auths/AzureAD_enterprise/azure_ad.py:176
+#: auths/AzureAD_enterprise/azure_ad.py:178
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "El autenticador SAML no admite espacios en blanco en el campo NOMBRE"
 
-#: auths/AzureAD_enterprise/azure_ad.py:325
-#: auths/AzureAD_enterprise/azure_ad.py:351
-#: auths/AzureAD_enterprise/azure_ad.py:361
+#: auths/AzureAD_enterprise/azure_ad.py:328
+#: auths/AzureAD_enterprise/azure_ad.py:354
+#: auths/AzureAD_enterprise/azure_ad.py:364
 msgid "Authenticator exception:"
 msgstr "Excepción de autenticador:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
+#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "Error de conexión: "
 
-#: auths/AzureAD_enterprise/azure_ad.py:399
+#: auths/AzureAD_enterprise/azure_ad.py:402
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr ""
 "Los parámetros de conexión parecen validos, el test fue ejecutado "
@@ -1566,32 +1575,32 @@ msgstr "Nombre de usuario con privilegios de lectura en eDirectory"
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "Tiempo de espera en segundos de conexión a LDAP"
 
-#: auths/EDirectory_enterprise/authenticator.py:102
+#: auths/EDirectory_enterprise/authenticator.py:121
 msgid "eDirectory Authenticator"
 msgstr "Autenticador eDirectory "
 
-#: auths/EDirectory_enterprise/authenticator.py:104
+#: auths/EDirectory_enterprise/authenticator.py:123
 msgid "Authenticate against eDirectory"
 msgstr "Autenticar contra eDirectory"
 
-#: auths/EDirectory_enterprise/authenticator.py:364
+#: auths/EDirectory_enterprise/authenticator.py:387
 msgid "Edirectory connection error: {}"
 msgstr "Error de conexión con Edirectory: {}"
 
-#: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:668 auths/SimpleLDAP/authenticator.py:548
+#: auths/EDirectory_enterprise/authenticator.py:392
+#: auths/RegexLdap/authenticator.py:671 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "La base de búsqueda LDAP es incorrecta"
 
-#: auths/EDirectory_enterprise/authenticator.py:387
-#: auths/RegexLdap/authenticator.py:686 auths/SimpleLDAP/authenticator.py:556
+#: auths/EDirectory_enterprise/authenticator.py:410
+#: auths/RegexLdap/authenticator.py:689 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "La clase de usuario de LDAP parece ser incorrecta (ningún usuario encontrado "
 "por esa clase)"
 
-#: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/SimpleLDAP/authenticator.py:602
+#: auths/EDirectory_enterprise/authenticator.py:433
+#: auths/SimpleLDAP/authenticator.py:675
 msgid ""
 "Ldap user id attribute seems to be incorrect (no user found by that "
 "attribute)"
@@ -1599,11 +1608,11 @@ msgstr ""
 "El atributo de id de usuario Ldap parece ser incorrecto (ningún usuario "
 "encontrado por ese atributo)"
 
-#: auths/EDirectory_enterprise/authenticator.py:433
+#: auths/EDirectory_enterprise/authenticator.py:456
 msgid "Expected group attribute "
 msgstr "Atributo de grupo previsto"
 
-#: auths/EDirectory_enterprise/authenticator.py:460
+#: auths/EDirectory_enterprise/authenticator.py:483
 msgid ""
 "Ldap user class or user id attr is probably wrong (Ldap is an eDirectory?)"
 msgstr ""
@@ -1671,11 +1680,11 @@ msgstr "DNS Inversa"
 msgid "If checked, the host will be reversed dns"
 msgstr "Si está seleccionado, el host será DNS Inversa"
 
-#: auths/InternalDB/authenticator.py:180
+#: auths/InternalDB/authenticator.py:182
 msgid "Internal structures seems ok"
 msgstr "Las estructuras internas parecen correctas"
 
-#: auths/InternalDB/authenticator.py:183
+#: auths/InternalDB/authenticator.py:185
 msgid "All seems fine in the authenticator."
 msgstr "Parace que todo funciona correctamente en el autenticador. "
 
@@ -1745,45 +1754,45 @@ msgstr "Servidor host LDAP"
 msgid "Username with read privileges on the base selected"
 msgstr "Usuario con privilegios de lectura en la base seleccionada"
 
-#: auths/RegexLdap/authenticator.py:117 auths/SimpleLDAP/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:135 auths/SimpleLDAP/authenticator.py:127
 #: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "Base"
 
-#: auths/RegexLdap/authenticator.py:119 auths/SimpleLDAP/authenticator.py:109
+#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:129
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "Base común de búsqueda (utilizada para \"usuarios\" y \"grupos\")"
 
-#: auths/RegexLdap/authenticator.py:121 auths/RegexLdap/authenticator.py:130
-#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:151
-#: auths/RegexLdap/authenticator.py:163 auths/SimpleLDAP/authenticator.py:111
-#: auths/SimpleLDAP/authenticator.py:120 auths/SimpleLDAP/authenticator.py:129
+#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:148
+#: auths/RegexLdap/authenticator.py:157 auths/RegexLdap/authenticator.py:169
+#: auths/RegexLdap/authenticator.py:181 auths/SimpleLDAP/authenticator.py:131
 #: auths/SimpleLDAP/authenticator.py:140 auths/SimpleLDAP/authenticator.py:149
-#: auths/SimpleLDAP/authenticator.py:158 auths/SimpleLDAP/authenticator.py:167
+#: auths/SimpleLDAP/authenticator.py:160 auths/SimpleLDAP/authenticator.py:169
+#: auths/SimpleLDAP/authenticator.py:178 auths/SimpleLDAP/authenticator.py:187
 msgid "Ldap info"
 msgstr "Información de LDAP"
 
-#: auths/RegexLdap/authenticator.py:125 auths/SimpleLDAP/authenticator.py:115
+#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:135
 msgid "User class"
 msgstr "Clase de usuario"
 
-#: auths/RegexLdap/authenticator.py:128 auths/SimpleLDAP/authenticator.py:118
+#: auths/RegexLdap/authenticator.py:146 auths/SimpleLDAP/authenticator.py:138
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "Clase para usuarios LDAP (normalmente posixAccount)"
 
-#: auths/RegexLdap/authenticator.py:134 auths/SimpleLDAP/authenticator.py:124
+#: auths/RegexLdap/authenticator.py:152 auths/SimpleLDAP/authenticator.py:144
 msgid "User Id Attr"
 msgstr "Atr. de Id de usuario"
 
-#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:127
+#: auths/RegexLdap/authenticator.py:155 auths/SimpleLDAP/authenticator.py:147
 msgid "Attribute that contains the user id"
 msgstr "Atributo que contiene el id de usuario"
 
-#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:133
+#: auths/RegexLdap/authenticator.py:161 auths/SimpleLDAP/authenticator.py:153
 msgid "User Name Attr"
 msgstr "Atr. de nombre de usuario"
 
-#: auths/RegexLdap/authenticator.py:148
+#: auths/RegexLdap/authenticator.py:166
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
@@ -1791,11 +1800,11 @@ msgstr ""
 "Atributos que contienen el nombre de usuario o patrones de atributos (uno en "
 "cada línea)"
 
-#: auths/RegexLdap/authenticator.py:155
+#: auths/RegexLdap/authenticator.py:173
 msgid "Group Name Attr"
 msgstr "Atr. de nombre de Grupo"
 
-#: auths/RegexLdap/authenticator.py:160
+#: auths/RegexLdap/authenticator.py:178
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
@@ -1803,11 +1812,11 @@ msgstr ""
 "Atributo que contiene el nombre de grupo o patrones de atributos (uno en "
 "cada línea)"
 
-#: auths/RegexLdap/authenticator.py:169
+#: auths/RegexLdap/authenticator.py:187
 msgid "Alt. class"
 msgstr "Clase alt."
 
-#: auths/RegexLdap/authenticator.py:173
+#: auths/RegexLdap/authenticator.py:191
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
@@ -1815,15 +1824,15 @@ msgstr ""
 "Clase de objetos LDAP que se verificará también para la recuperación de los "
 "grupos (normalmente vacío)"
 
-#: auths/RegexLdap/authenticator.py:189
+#: auths/RegexLdap/authenticator.py:207
 msgid "Regex LDAP Authenticator"
 msgstr "Autenticador Regex LDAP"
 
-#: auths/RegexLdap/authenticator.py:191
+#: auths/RegexLdap/authenticator.py:209
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Expresiones regulares autenticador LDAP "
 
-#: auths/RegexLdap/authenticator.py:711
+#: auths/RegexLdap/authenticator.py:714
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1831,7 +1840,7 @@ msgstr ""
 "El atributo del id de usuario LDAP es probablemente incorrecto (no se puede "
 "encontrar ningún usuario con ambas condiciones)"
 
-#: auths/RegexLdap/authenticator.py:740 auths/SimpleLDAP/authenticator.py:625
+#: auths/RegexLdap/authenticator.py:743 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1839,19 +1848,19 @@ msgstr ""
 "El atributo de id de grupo LDAP parece ser incorrecto (ningún grupo "
 "encontrado por ese atributo)"
 
-#: auths/SAML_enterprise/saml.py:76
+#: auths/SAML_enterprise/saml.py:75
 msgid "SAML Authenticator"
 msgstr "Autenticador SAML "
 
-#: auths/SAML_enterprise/saml.py:88
+#: auths/SAML_enterprise/saml.py:87
 msgid "SAML (v2.0) Authenticator"
 msgstr "Autenticador SAML (v2.0) "
 
-#: auths/SAML_enterprise/saml.py:118
+#: auths/SAML_enterprise/saml.py:117
 msgid "Private key"
 msgstr "Clave privada"
 
-#: auths/SAML_enterprise/saml.py:121
+#: auths/SAML_enterprise/saml.py:120
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1859,11 +1868,11 @@ msgstr ""
 "Clave privada utilizada para firmar y encriptar, la generada en la base 64 "
 "de OpenSSL"
 
-#: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
+#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
 msgid "Certificates"
 msgstr "Certificados"
 
-#: auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:131
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1871,86 +1880,86 @@ msgstr ""
 "Clave pública utilizada para firma y encriptación (parte pública de la clave "
 "privada anterior), como se genera en base 64 usando openssl"
 
-#: auths/SAML_enterprise/saml.py:140
+#: auths/SAML_enterprise/saml.py:139
 msgid "IDP Metadata"
 msgstr "Metadatos IDP "
 
-#: auths/SAML_enterprise/saml.py:143
+#: auths/SAML_enterprise/saml.py:142
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Puede introducir aquí la URL o los metadatos IDP o simplemente los metadatos "
 "(xml)"
 
-#: auths/SAML_enterprise/saml.py:146 auths/SAML_enterprise/saml.py:155
+#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
 msgid "Metadata"
 msgstr "Metadatos "
 
-#: auths/SAML_enterprise/saml.py:150
+#: auths/SAML_enterprise/saml.py:149
 msgid "Entity ID"
 msgstr "ID de la entidad"
 
-#: auths/SAML_enterprise/saml.py:153
+#: auths/SAML_enterprise/saml.py:152
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "ID del SP. Si se deja en blanco, se generará automáticamente desde la "
 "dirección URL del servidor"
 
-#: auths/SAML_enterprise/saml.py:161
+#: auths/SAML_enterprise/saml.py:160
 msgid "User name attrs"
 msgstr "Atrs del nombre de usuario"
 
-#: auths/SAML_enterprise/saml.py:163
+#: auths/SAML_enterprise/saml.py:162
 msgid "Fields from where to extract user name"
 msgstr "Campos de los que se extrae el nombre de usuario"
 
-#: auths/SAML_enterprise/saml.py:165 auths/SAML_enterprise/saml.py:175
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:184
 msgid "Attributes"
 msgstr "Atributos"
 
-#: auths/SAML_enterprise/saml.py:171
+#: auths/SAML_enterprise/saml.py:170
 msgid "Group name attrs"
 msgstr "Atrs del nombre de grupo "
 
-#: auths/SAML_enterprise/saml.py:173
+#: auths/SAML_enterprise/saml.py:172
 msgid "Fields from where to extract the groups"
 msgstr "Campos de los que extraer los grupos"
 
-#: auths/SAML_enterprise/saml.py:181
+#: auths/SAML_enterprise/saml.py:180
 msgid "Real name attrs"
 msgstr "Atrs del nombre real "
 
-#: auths/SAML_enterprise/saml.py:183
+#: auths/SAML_enterprise/saml.py:182
 msgid "Fields from where to extract the real name"
 msgstr "Campos de los que se extrae el nombre real"
 
-#: auths/SAML_enterprise/saml.py:189
+#: auths/SAML_enterprise/saml.py:188
 msgid "Global logout"
 msgstr "Cierre de sesión global"
 
-#: auths/SAML_enterprise/saml.py:192
+#: auths/SAML_enterprise/saml.py:191
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr ""
 "Si se establece, el cierre de sesión de UDS activará el cierre de sesión de "
 "SAML"
 
-#: auths/SAML_enterprise/saml.py:197
+#: auths/SAML_enterprise/saml.py:196
 msgid "ADFS compatibility"
 msgstr "Compatibilidad con ADFS"
 
-#: auths/SAML_enterprise/saml.py:200
+#: auths/SAML_enterprise/saml.py:199
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "Si está configurado, habilite la codificación de URL en minúsculas para que "
 "ADFS pueda funcionar correctamente"
 
-#: auths/SAML_enterprise/saml.py:231
+#: auths/SAML_enterprise/saml.py:230
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr ""
 "Este tipo de autenticador no admite espacios en blanco en el campo NOMBRE"
 
-#: auths/SAML_enterprise/saml.py:245
+#: auths/SAML_enterprise/saml.py:244
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1958,11 +1967,11 @@ msgstr ""
 "El certificado del servidor debe ser un PEM válido (Los certificados PEM "
 "empiezan con---BEGIN CERTIFICATE---)"
 
-#: auths/SAML_enterprise/saml.py:253
+#: auths/SAML_enterprise/saml.py:252
 msgid "Invalid server certificate. "
 msgstr "Certificado de servidor no válido. "
 
-#: auths/SAML_enterprise/saml.py:264
+#: auths/SAML_enterprise/saml.py:263
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1970,44 +1979,48 @@ msgstr ""
 "La clave privada debe ser un PEM válido (Las claves privadas PEM empiezan "
 "con---BEGIN RSA PRIVATE KEY---"
 
-#: auths/SAML_enterprise/saml.py:272
+#: auths/SAML_enterprise/saml.py:271
 msgid "Invalid private key. "
 msgstr "Clave privada inválida. "
 
-#: auths/SAML_enterprise/saml.py:291
+#: auths/SAML_enterprise/saml.py:276
+msgid "Certificate and private key do not match"
+msgstr "El certificado y la clave privada no coinciden"
+
+#: auths/SAML_enterprise/saml.py:295
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "No se puede extraer url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:302
+#: auths/SAML_enterprise/saml.py:306
 msgid " (obtained from URL)"
 msgstr " (Obtenido de la URL)"
 
-#: auths/SAML_enterprise/saml.py:304
+#: auths/SAML_enterprise/saml.py:308
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML no parece válido para metadatos IDP "
 
-#: auths/SAML_enterprise/saml.py:357
+#: auths/SAML_enterprise/saml.py:366
 msgid "Can't access idp metadata"
 msgstr "No se puede acceder a los metadatos IDP"
 
-#: auths/SAML_enterprise/saml.py:424
+#: auths/SAML_enterprise/saml.py:433
 msgid "Error validating SP metadata: "
 msgstr "Error al validar los metadatos del SP:"
 
-#: auths/SAML_enterprise/saml.py:528
+#: auths/SAML_enterprise/saml.py:542
 msgid "Error processing SLO: "
 msgstr "Error al procesar SLO:"
 
-#: auths/SAML_enterprise/saml.py:558
+#: auths/SAML_enterprise/saml.py:572
 msgid "Error processing SAML response: "
 msgstr "Error al procesar la respuesta SAML:"
 
-#: auths/SAML_enterprise/saml.py:571
+#: auths/SAML_enterprise/saml.py:585
 msgid "SAML response not authenticated"
 msgstr "Respuesta SAML no autenticada"
 
-#: auths/SAML_enterprise/saml.py:602
+#: auths/SAML_enterprise/saml.py:616
 msgid "No attributes returned from IdP"
 msgstr "Ningún atributo devuelto por IdP"
 
@@ -2043,51 +2056,53 @@ msgstr "Ldap Server IP o nombre del host"
 msgid "Ldap User"
 msgstr "Usuario Ldap"
 
-#: auths/SimpleLDAP/authenticator.py:137
+#: auths/SimpleLDAP/authenticator.py:157
 msgid "Attributes that contains the user name (list of comma separated values)"
 msgstr ""
 "Atributos que contienen el nombre de usuario (lista de valores separados por "
 "comas)"
 
-#: auths/SimpleLDAP/authenticator.py:144
+#: auths/SimpleLDAP/authenticator.py:164
 msgid "Group class"
 msgstr "Clase de grupo"
 
-#: auths/SimpleLDAP/authenticator.py:147
+#: auths/SimpleLDAP/authenticator.py:167
 msgid "Class for LDAP groups (normally poxisGroup)"
 msgstr "Clase para grupos LDAP (normalmente poxisGroup)"
 
-#: auths/SimpleLDAP/authenticator.py:153
+#: auths/SimpleLDAP/authenticator.py:173
 msgid "Group Id Attr"
 msgstr "Atributo del ID de Grupo"
 
-#: auths/SimpleLDAP/authenticator.py:156
+#: auths/SimpleLDAP/authenticator.py:176
 msgid "Attribute that contains the group id"
 msgstr "Atributo que contiene el ID del grupo"
 
-#: auths/SimpleLDAP/authenticator.py:162
+#: auths/SimpleLDAP/authenticator.py:182
 msgid "Group membership attr"
 msgstr "Atributo de miembros de grupo"
 
-#: auths/SimpleLDAP/authenticator.py:165
+#: auths/SimpleLDAP/authenticator.py:185
 msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Atributo del grupo que contiene los usuarios"
 
-#: auths/SimpleLDAP/authenticator.py:170
-msgid "SimpleLDAP (DEPRECATED)"
-msgstr "SimpleLDAP (DEPRECATED)"
+#: auths/SimpleLDAP/authenticator.py:200
+#| msgid "SimpleLDAP (DEPRECATED)"
+msgid "SimpleLDAP"
+msgstr "SimpleLDAP"
 
-#: auths/SimpleLDAP/authenticator.py:172
-msgid "Simple LDAP authenticator (DEPRECATED)"
-msgstr "Autenticador Simple LDAP (DEPRECATED)"
+#: auths/SimpleLDAP/authenticator.py:202
+#| msgid "Sample Authenticator"
+msgid "Simple LDAP authenticator"
+msgstr "Autenticador LDAP simple"
 
-#: auths/SimpleLDAP/authenticator.py:579
+#: auths/SimpleLDAP/authenticator.py:652
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
 msgstr ""
 "La clase de grupo LDAP parece ser incorrecta (no se ha encontrado ningún "
 "grupo en esa clase)"
 
-#: auths/SimpleLDAP/authenticator.py:650
+#: auths/SimpleLDAP/authenticator.py:723
 msgid ""
 "Ldap user class or user id attr is probably wrong (can't find any user with "
 "both conditions)"
@@ -2095,7 +2110,7 @@ msgstr ""
 "La clase de usuario LDAP o el ID de usuario probablemente estén equivocados "
 "(no se puede encontrar ningún usuario con ambas condiciones)"
 
-#: auths/SimpleLDAP/authenticator.py:669
+#: auths/SimpleLDAP/authenticator.py:742
 msgid ""
 "Ldap group class or group id attr is probably wrong (can't find any group "
 "with both conditions)"
@@ -2103,7 +2118,7 @@ msgstr ""
 "La clase de grupo de Ldap o el ID de grupo es probablemente incorrecto (no "
 "se puede encontrar ningún grupo con ambas condiciones)"
 
-#: auths/SimpleLDAP/authenticator.py:679
+#: auths/SimpleLDAP/authenticator.py:752
 msgid "Can't locate any group with the membership attribute specified"
 msgstr ""
 "No se puede localizar ningún grupo al que pertenezca el atributo especificado"
@@ -2184,7 +2199,7 @@ msgstr "El servicio no es accesible desde este dispositivo."
 msgid "Base MFA"
 msgstr "MFA base"
 
-#: core/mfas/mfa.py:259
+#: core/mfas/mfa.py:266
 msgid "Invalid MFA code"
 msgstr "Código MFA no válido"
 
@@ -2248,7 +2263,7 @@ msgstr "Credenciales"
 msgid "Tunnel"
 msgstr "Túnel"
 
-#: core/util/ldaputil.py:118
+#: core/util/ldaputil.py:125
 msgid "Can't contact LDAP server"
 msgstr "No existe conexión con el servidor LDAP"
 
@@ -2560,8 +2575,8 @@ msgstr "Asunto del correo electrónico"
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
 #: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
-#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
-#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
+#: mfas/SMS/mfa.py:262 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "Configuración"
 
@@ -2590,12 +2605,12 @@ msgid "Action for MFA response error"
 msgstr "Acción para el error de respuesta de MFA"
 
 #: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
-#: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "Permitir inicio de sesión de usuario"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "Denegar inicio de sesión de usuario"
 
@@ -2628,9 +2643,8 @@ msgstr ""
 "predeterminado"
 
 #: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
-#, python-brace-format
-msgid "Allowed variables are: {code}, {username}, {ip}"
-msgstr "Las variables permitidas son: {code}, {username}, {ip}"
+msgid "Allowed variables are: "
+msgstr "Las variables permitidas son:"
 
 #: mfas/Email/mfa.py:169
 msgid "Mail HTML"
@@ -2726,19 +2740,19 @@ msgstr "Error de conexión OTP de Radius"
 msgid "Invalid OTP code"
 msgstr "Código OTP no válido"
 
-#: mfas/SMS/mfa.py:96
+#: mfas/SMS/mfa.py:97
 msgid "SMS via HTTP"
 msgstr "SMS a través de HTTP"
 
-#: mfas/SMS/mfa.py:98
+#: mfas/SMS/mfa.py:99
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Envío de SMS simple MFA usando HTTP/HTTPS"
 
-#: mfas/SMS/mfa.py:103
+#: mfas/SMS/mfa.py:104
 msgid "URL pattern for SMS sending"
 msgstr "Patrón de URL para envío de SMS"
 
-#: mfas/SMS/mfa.py:106
+#: mfas/SMS/mfa.py:107
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2751,16 +2765,16 @@ msgstr ""
 "{username} - el nombre de usuario * {justUsername} - el nombre de usuario "
 "sin @...."
 
-#: mfas/SMS/mfa.py:114 mfas/SMS/mfa.py:125 mfas/SMS/mfa.py:134
-#: mfas/SMS/mfa.py:152 mfas/SMS/mfa.py:169 mfas/SMS/mfa.py:179
+#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
+#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
 msgid "HTTP Server"
 msgstr "Servidor HTTP"
 
-#: mfas/SMS/mfa.py:118
+#: mfas/SMS/mfa.py:119
 msgid "Ignore certificate errors"
 msgstr "Ignorar errores de certificado"
 
-#: mfas/SMS/mfa.py:122
+#: mfas/SMS/mfa.py:123
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2768,19 +2782,19 @@ msgstr ""
 "Si está marcado, se ignorará el certificado del servidor. Esto es útil si el "
 "servidor usa un certificado autofirmado."
 
-#: mfas/SMS/mfa.py:129
+#: mfas/SMS/mfa.py:130
 msgid "SMS sending method"
 msgstr "Método de envío de SMS"
 
-#: mfas/SMS/mfa.py:131 mfas/SMS/mfa.py:185
+#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
 msgid "Method for sending SMS"
 msgstr "Método para enviar SMS"
 
-#: mfas/SMS/mfa.py:140
+#: mfas/SMS/mfa.py:141
 msgid "Headers for SMS requests"
 msgstr "Encabezados para solicitudes de SMS"
 
-#: mfas/SMS/mfa.py:143
+#: mfas/SMS/mfa.py:144
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2792,14 +2806,14 @@ msgstr ""
 "Encabezados para solicitudes de SMS. Puede contener las siguientes "
 "variables: * {code} - el código para enviar * {phone/+phone} - el número de "
 "teléfono * {username} - el nombre de usuario * {justUsername} - el nombre de "
-"usuario sin @.... Los encabezados están en la forma de \"Encabezado: Valor"
-"\". (sin las comillas)"
+"usuario sin @.... Los encabezados están en la forma de \"Encabezado: "
+"Valor\". (sin las comillas)"
 
-#: mfas/SMS/mfa.py:158
+#: mfas/SMS/mfa.py:159
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "Parámetros para el envío de SMS POST/PUT"
 
-#: mfas/SMS/mfa.py:161
+#: mfas/SMS/mfa.py:162
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2813,51 +2827,51 @@ msgstr ""
 "teléfono * {username} - el nombre de usuario * {justUsername} - el nombre de "
 "usuario sin @...."
 
-#: mfas/SMS/mfa.py:173
+#: mfas/SMS/mfa.py:174
 msgid "SMS encoding"
 msgstr "Codificación de SMS"
 
-#: mfas/SMS/mfa.py:176
+#: mfas/SMS/mfa.py:177
 msgid "Encoding for SMS"
 msgstr "Codificación para SMS"
 
-#: mfas/SMS/mfa.py:183
+#: mfas/SMS/mfa.py:184
 msgid "SMS authentication method"
 msgstr "Método de autenticación por SMS"
 
-#: mfas/SMS/mfa.py:189
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Basic Auth"
 msgstr "Autenticación básica HTTP"
 
-#: mfas/SMS/mfa.py:190
+#: mfas/SMS/mfa.py:191
 msgid "HTTP Digest Auth"
 msgstr "Autenticación de resumen HTTP"
 
-#: mfas/SMS/mfa.py:192 mfas/SMS/mfa.py:201 mfas/SMS/mfa.py:210
+#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
 msgid "HTTP Authentication"
 msgstr "Autenticación HTTP"
 
-#: mfas/SMS/mfa.py:197
+#: mfas/SMS/mfa.py:198
 msgid "SMS authentication user or token"
 msgstr "Usuario o token de autenticación por SMS"
 
-#: mfas/SMS/mfa.py:199
+#: mfas/SMS/mfa.py:200
 msgid "User or token for SMS authentication"
 msgstr "Usuario o token para autenticación por SMS"
 
-#: mfas/SMS/mfa.py:206
+#: mfas/SMS/mfa.py:207
 msgid "SMS authentication password"
 msgstr "Contraseña de autenticación de SMS"
 
-#: mfas/SMS/mfa.py:208
+#: mfas/SMS/mfa.py:209
 msgid "Password for SMS authentication"
 msgstr "Contraseña para la autenticación por SMS"
 
-#: mfas/SMS/mfa.py:215
+#: mfas/SMS/mfa.py:216
 msgid "SMS response OK regex"
 msgstr "Respuesta de SMS OK expresión regular"
 
-#: mfas/SMS/mfa.py:218
+#: mfas/SMS/mfa.py:219
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2865,53 +2879,53 @@ msgstr ""
 "Regex para respuesta SMS OK. Si está vacío, la respuesta se considera "
 "correcta si el código de estado es 200."
 
-#: mfas/SMS/mfa.py:221
+#: mfas/SMS/mfa.py:222
 msgid "HTTP Response"
 msgstr "Respuesta HTTP"
 
-#: mfas/SMS/mfa.py:225
+#: mfas/SMS/mfa.py:226
 msgid "SMS response error action"
 msgstr "Acción de error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:228 mfas/SMS/mfa.py:243
+#: mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
 msgid "Action for SMS response error"
 msgstr "Acción para el error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Permitir que el usuario inicie sesión si su IP está en la lista de redes"
 
-#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Denegar al usuario el inicio de sesión si su IP está en la lista de redes"
 
-#: mfas/SMS/mfa.py:240
+#: mfas/SMS/mfa.py:241
 msgid "User without MFA policy"
 msgstr "Politica para usuario sin MFA"
 
-#: mfas/SMS/mfa.py:255
+#: mfas/SMS/mfa.py:256
 msgid "SMS networks"
 msgstr "Redes SMS"
 
-#: mfas/SMS/mfa.py:259
+#: mfas/SMS/mfa.py:260
 msgid "Networks for SMS authentication"
 msgstr "Redes para la autenticación de SMS"
 
-#: mfas/SMS/mfa.py:335
+#: mfas/SMS/mfa.py:333
 msgid "SMS sending failed"
 msgstr "Envío de SMS fallido"
 
-#: mfas/SMS/mfa.py:344
+#: mfas/SMS/mfa.py:343
 msgid "SMS response error"
 msgstr "Error de respuesta de SMS"
 
-#: mfas/SMS/mfa.py:398 web/views/modern.py:312
+#: mfas/SMS/mfa.py:397 web/views/modern.py:316
 msgid "MFA Code"
 msgstr "Código MFA"
 
-#: mfas/SMS/mfa.py:402
+#: mfas/SMS/mfa.py:401
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "Revisa tu teléfono. Recibirás un SMS con el código de verificación"
 
@@ -4294,7 +4308,7 @@ msgstr "Test de conexión realizado con éxito"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:310
+#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:312
 msgid "Connection failed. Check connection params"
 msgstr "La conexión ha fallado. Compruebe los parámetros de conexión"
 
@@ -4315,8 +4329,7 @@ msgstr "Hyper Services basados en plantillas y discos diferenciales (LEGACY)"
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
-#: services/Proxmox/service.py:85 services/TestService_enterprise/service.py:27
-#: services/Xen/service.py:82
+#: services/Proxmox/service.py:85 services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr ""
 "Número de máquinas que desea mantener en ejecución esperando a un usuario"
@@ -4498,8 +4511,8 @@ msgstr ""
 
 #: services/HyperV_enterprise/provider.py:187
 msgid ""
-"For clusters, username must be a domain user name (user@domain or DOMAIN"
-"\\user"
+"For clusters, username must be a domain user name (user@domain or "
+"DOMAIN\\user"
 msgstr ""
 "Para los clusters, el usuario debe ser un nombre de usuario de dominio "
 "(usuario @ dominio o DOMINIO\\usuario)"
@@ -4577,8 +4590,8 @@ msgstr "Seleccionar un proyecto"
 #: services/NutanixPrism_enterprise/service.py:83
 #: services/Nutanix_enterprise/service.py:69
 msgid ""
-"Memory assigned to machines. (Zero value means \"keep original machine memory"
-"\")"
+"Memory assigned to machines. (Zero value means \"keep original machine "
+"memory\")"
 msgstr ""
 "Memoria asignada a las máquinas. (Valor cero significa \"mantener la memoria "
 "de la máquina original\")"
@@ -4964,11 +4977,11 @@ msgstr "Plantilla base"
 msgid "Service base template"
 msgstr "Plantilla de servicio base"
 
-#: services/OpenStack/openstack/openstack_client.py:783
+#: services/OpenStack/openstack/openstack_client.py:767
 msgid "Authentication error"
 msgstr "Error de autenticación"
 
-#: services/OpenStack/openstack/openstack_client.py:790
+#: services/OpenStack/openstack/openstack_client.py:774
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -5674,7 +5687,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "¡¡¡Matusalén no está vivo!!! :-)"
 
 #: services/Sample/provider.py:205
-#: services/TestService_enterprise/provider.py:56
 msgid "Nothing tested, but all went fine.."
 msgstr "No se ha comprobado nada, pero todo salió bien..."
 
@@ -5729,22 +5741,6 @@ msgstr "Caché L2 para elementos simulados"
 #: services/Sample/service.py:229
 msgid "List of names"
 msgstr "Lista de nombres"
-
-#: services/TestService_enterprise/provider.py:49
-msgid "Test Provider"
-msgstr "Proveedor de prueba"
-
-#: services/TestService_enterprise/provider.py:51
-msgid "Test (and dummy) service provider"
-msgstr "Proveedor de servicios de prueba (y simulado)"
-
-#: services/TestService_enterprise/service.py:18
-msgid "Test Service with cache"
-msgstr "Servicio de prueba con caché"
-
-#: services/TestService_enterprise/service.py:20
-msgid "Test service for cache L1 only"
-msgstr "Servicio de prueba sólo para caché L1 "
 
 #: services/VCloud_enterprise/provider.py:38
 msgid "vCloud Server IP or Hostname"
@@ -5891,7 +5887,7 @@ msgstr "Proveedor de plataforma VMware vCenter"
 msgid "Provides connection to Virtual Center Services"
 msgstr "Proporciona conexión a los Servicios del Centro Virtual"
 
-#: services/Vmware_enterprise/provider.py:306
+#: services/Vmware_enterprise/provider.py:308
 msgid "Connection params ok"
 msgstr "Parámetros de conexión ok"
 
@@ -6294,13 +6290,13 @@ msgstr "Protocolo RDP utilizando a cliente de HTML5"
 
 #: transports/HTML5RDP/html5rdp.py:73
 #: transports/HTML5RDS_enterprise/html5rds.py:80
-#: transports/HTML5VNC/html5vnc.py:75
+#: transports/HTML5SSH/html5ssh.py:72 transports/HTML5VNC/html5vnc.py:75
 msgid "Tunnel Server"
 msgstr "Servidor de túnel"
 
 #: transports/HTML5RDP/html5rdp.py:76
 #: transports/HTML5RDS_enterprise/html5rds.py:83
-#: transports/HTML5VNC/html5vnc.py:78
+#: transports/HTML5SSH/html5ssh.py:75 transports/HTML5VNC/html5vnc.py:78
 msgid ""
 "Host of the tunnel server (use http/https & port if needed) as accesible "
 "from users"
@@ -6379,8 +6375,8 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
 #: transports/RDS_enterprise/rds_base.py:62
 msgid ""
-"If not empty, this domain will be always used as credential (used as DOMAIN"
-"\\user)"
+"If not empty, this domain will be always used as credential (used as "
+"DOMAIN\\user)"
 msgstr ""
 "Si no está vacío, este dominio se utilizará siempre como parte de las "
 "credenciales (como DOMINIO\\usuario)"
@@ -6469,31 +6465,37 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:173
 #: transports/HTML5RDS_enterprise/html5rds.py:166
+#: transports/HTML5SSH/html5ssh.py:122
 msgid "File Sharing"
 msgstr "Compartición de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:175
 #: transports/HTML5RDS_enterprise/html5rds.py:168
+#: transports/HTML5SSH/html5ssh.py:124
 msgid "File upload/download redirection policy"
 msgstr "Política de redireccionamiento de carga/descarga de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:178
 #: transports/HTML5RDS_enterprise/html5rds.py:171
+#: transports/HTML5SSH/html5ssh.py:127
 msgid "Disable file sharing"
 msgstr "Deshabilitar el uso compartido de archivos"
 
 #: transports/HTML5RDP/html5rdp.py:179
 #: transports/HTML5RDS_enterprise/html5rds.py:172
+#: transports/HTML5SSH/html5ssh.py:128
 msgid "Allow download only"
 msgstr "Permitir solo descarga"
 
 #: transports/HTML5RDP/html5rdp.py:180
 #: transports/HTML5RDS_enterprise/html5rds.py:173
+#: transports/HTML5SSH/html5ssh.py:129
 msgid "Allow upload only"
 msgstr "Permitir solo la carga"
 
 #: transports/HTML5RDP/html5rdp.py:181
 #: transports/HTML5RDS_enterprise/html5rds.py:174
+#: transports/HTML5SSH/html5ssh.py:130
 msgid "Enable file sharing"
 msgstr "Habilitar el uso compartido de archivos"
 
@@ -6630,13 +6632,13 @@ msgstr "A prueba de fallos"
 
 #: transports/HTML5RDP/html5rdp.py:231
 #: transports/HTML5RDS_enterprise/html5rds.py:222
-#: transports/HTML5VNC/html5vnc.py:147
+#: transports/HTML5SSH/html5ssh.py:174 transports/HTML5VNC/html5vnc.py:147
 msgid "Ticket Validity"
 msgstr "Validez del ticket"
 
 #: transports/HTML5RDP/html5rdp.py:235
 #: transports/HTML5RDS_enterprise/html5rds.py:226
-#: transports/HTML5VNC/html5vnc.py:151
+#: transports/HTML5SSH/html5ssh.py:178 transports/HTML5VNC/html5vnc.py:151
 msgid ""
 "Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. "
 "The default value of 60 is recommended."
@@ -6647,20 +6649,21 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:244
 #: transports/HTML5RDS_enterprise/html5rds.py:235
-#: transports/HTML5VNC/html5vnc.py:159 transports/URL/url_custom.py:82
+#: transports/HTML5SSH/html5ssh.py:186 transports/HTML5VNC/html5vnc.py:159
+#: transports/URL/url_custom.py:82
 msgid "Force new HTML Window"
 msgstr "Forzar nueva ventana HTML"
 
 #: transports/HTML5RDP/html5rdp.py:245
 #: transports/HTML5RDS_enterprise/html5rds.py:236
-#: transports/HTML5VNC/html5vnc.py:160
+#: transports/HTML5SSH/html5ssh.py:187 transports/HTML5VNC/html5vnc.py:160
 msgid "Select windows behavior for new connections on HTML5"
 msgstr ""
 "Seleccione el comportamiento de Windows para nuevas conexiones en HTML5"
 
 #: transports/HTML5RDP/html5rdp.py:250
 #: transports/HTML5RDS_enterprise/html5rds.py:241
-#: transports/HTML5VNC/html5vnc.py:165
+#: transports/HTML5SSH/html5ssh.py:192 transports/HTML5VNC/html5vnc.py:165
 msgid "Open every connection on the same window, but keeps UDS window."
 msgstr ""
 "Abre todas las conexiones en la misma ventana, pero mantiene la ventana de "
@@ -6668,13 +6671,13 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:253
 #: transports/HTML5RDS_enterprise/html5rds.py:244
-#: transports/HTML5VNC/html5vnc.py:168
+#: transports/HTML5SSH/html5ssh.py:195 transports/HTML5VNC/html5vnc.py:168
 msgid "Force every connection to be opened on a new window."
 msgstr "Fuerza que todas las conexiones se abran en una nueva ventana."
 
 #: transports/HTML5RDP/html5rdp.py:257
 #: transports/HTML5RDS_enterprise/html5rds.py:248
-#: transports/HTML5VNC/html5vnc.py:172
+#: transports/HTML5SSH/html5ssh.py:199 transports/HTML5VNC/html5vnc.py:172
 msgid "Override UDS window and replace it with the connection."
 msgstr "Anule la ventana UDS y reemplácela con la conexión."
 
@@ -6739,7 +6742,7 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:323
 #: transports/HTML5RDS_enterprise/html5rds.py:365
-#: transports/HTML5VNC/html5vnc.py:187
+#: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "El servidor debe ser http o https"
 
@@ -6826,6 +6829,74 @@ msgid ""
 msgstr ""
 "Credenciales de vacías (en la ficha de credenciales) está permitido sólo con "
 "nivel de seguridad (en ficha de parámetros) se establece en \"RDP\""
+
+#: transports/HTML5SSH/html5ssh.py:61
+msgid "HTML5 SSH"
+msgstr "HTML5 SSH"
+
+#: transports/HTML5SSH/html5ssh.py:63
+msgid "SSH protocol using HTML5 client"
+msgstr "Protocolo SSH usando cliente HTML5"
+
+#: transports/HTML5SSH/html5ssh.py:86
+msgid "Username for SSH connection authentication."
+msgstr "Nombre de usuario para autenticación de conexión SSH."
+
+#: transports/HTML5SSH/html5ssh.py:114
+msgid "SSH Command"
+msgstr "Comando SSH"
+
+#: transports/HTML5SSH/html5ssh.py:117
+msgid ""
+"Command to execute on the remote server. If not provided, an interactive "
+"shell will be executed."
+msgstr ""
+"Comando a ejecutar en el servidor remoto. Si no se proporciona, se ejecutará "
+"un shell interactivo."
+
+#: transports/HTML5SSH/html5ssh.py:135
+msgid "File Sharing Root"
+msgstr "Raíz para compartir archivos"
+
+#: transports/HTML5SSH/html5ssh.py:138
+msgid ""
+"Root path for file sharing. If not provided, root directory will be used."
+msgstr ""
+"Ruta raíz para compartir archivos. Si no se proporciona, se utilizará el "
+"directorio raíz."
+
+#: transports/HTML5SSH/html5ssh.py:144
+msgid "SSH Server port"
+msgstr "Puerto del servidor SSH"
+
+#: transports/HTML5SSH/html5ssh.py:147
+msgid "Port of the SSH server."
+msgstr "Puerto del servidor SSH."
+
+#: transports/HTML5SSH/html5ssh.py:152
+msgid "SSH Host Key"
+msgstr "Clave de host SSH"
+
+#: transports/HTML5SSH/html5ssh.py:155
+msgid ""
+"Host key of the SSH server. If not provided, no verification of host "
+"identity is done."
+msgstr ""
+"Clave de host del servidor SSH. Si no se proporciona, no se realiza ninguna "
+"verificación de la identidad del host."
+
+#: transports/HTML5SSH/html5ssh.py:161
+msgid "Server Keep Alive"
+msgstr "Mantener vivo el servidor"
+
+#: transports/HTML5SSH/html5ssh.py:165
+msgid ""
+"Time in seconds between keep alive messages sent to server. If not provided, "
+"no keep alive messages are sent."
+msgstr ""
+"Tiempo en segundos entre los mensajes de mantenimiento de vida enviados al "
+"servidor. Si no se proporciona, no se envían mensajes de mantenimiento de "
+"vida."
 
 #: transports/HTML5VNC/html5vnc.py:64
 msgid "HTML5 VNC Experimental"
@@ -7635,10 +7706,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "El Autenticador no proporciona información"
 
-#: web/views/modern.py:303
+#: web/views/modern.py:307
 msgid "{} days"
 msgstr "{} días"
 
-#: web/views/modern.py:305
+#: web/views/modern.py:309
 msgid "{} hours"
 msgstr "{} horas"

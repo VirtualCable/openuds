@@ -32,15 +32,10 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 
 from uds import models
-from uds.core.util.log import (
-    REST,
-    OWNER_TYPE_AUDIT,
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    CRITICAL,
-)
+
+# Import for REST using this module can access constants easily
+# pylint: disable=unused-import
+from uds.core.util.log import LogLevel, LogSource, doLog
 
 if typing.TYPE_CHECKING:
     from .handlers import Handler
@@ -53,6 +48,7 @@ if typing.TYPE_CHECKING:
 UUID_REPLACER = (
     ('providers', models.Provider),
     ('services', models.Service),
+    ('servicespools', models.ServicePool),
     ('users', models.User),
     ('groups', models.Group),
 )
@@ -68,14 +64,14 @@ def replacePath(path: str) -> str:
                 uuid = path.split(f'/{type}/')[1].split('/')[0]
                 name = model.objects.get(uuid=uuid).name  # type: ignore
                 path = path.replace(uuid, f'[{name}]')
-            except Exception:   # nosec: intentionally broad exception
+            except Exception:  # nosec: intentionally broad exception
                 pass
 
     return path
 
 
-def log_operation(
-    handler: typing.Optional['Handler'], response_code: int, level: int = INFO
+def logOperation(
+    handler: typing.Optional['Handler'], response_code: int, level: LogLevel = LogLevel.INFO
 ):
     """
     Logs a request
@@ -83,7 +79,7 @@ def log_operation(
     if not handler:
         return  # Nothing to log
 
-    path = handler._request.path
+    path = handler.request.path
 
     # If a common request, and no error, we don't log it because it's useless and a waste of resources
     if response_code < 400 and any(
@@ -93,15 +89,13 @@ def log_operation(
 
     path = replacePath(path)
 
-    username = handler._request.user.pretty_name if handler._request.user else 'Unknown'
-    # Global log is used without owner nor type
-    models.Log.objects.create(
-        owner_id=0,
-        owner_type=OWNER_TYPE_AUDIT,
-        created=models.getSqlDatetime(),
+    username = handler.request.user.pretty_name if handler.request.user else 'Unknown'
+    doLog(
+        None,
         level=level,
-        source=REST,
-        data=f'{handler._request.ip} {username}: [{handler._request.method}/{response_code}] {path}'[
+        message=f'{handler.request.ip}[{username}]: [{handler.request.method}/{response_code}] {path}'[
             :4096
         ],
+        source=LogSource.REST,
+        avoidDuplicates=False,
     )

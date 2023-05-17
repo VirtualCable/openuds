@@ -30,7 +30,7 @@
 Provides useful functions for authenticating, used by web interface.
 
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
 import typing
@@ -54,7 +54,7 @@ from uds.core.util import net
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.auths import Authenticator as AuthenticatorInstance, SUCCESS_AUTH
 
 from uds import models
@@ -73,6 +73,7 @@ EXPIRY_KEY = 'ek'
 AUTHORIZED_KEY = 'ak'
 ROOT_ID = -20091204  # Any negative number will do the trick
 UDS_COOKIE_LENGTH = 48
+IP_KEY = 'session_ip'
 
 RT = typing.TypeVar('RT')
 
@@ -91,9 +92,14 @@ def getUDSCookie(
     Generates a random cookie for uds, used, for example, to encript things
     """
     if 'uds' not in request.COOKIES:
-        cookie = cryptoManager().randomString(UDS_COOKIE_LENGTH)
+        cookie = CryptoManager().randomString(UDS_COOKIE_LENGTH)
         if response is not None:
-            response.set_cookie('uds', cookie, samesite='Lax')
+            response.set_cookie(
+                'uds',
+                cookie,
+                samesite='Lax',
+                httponly=GlobalConfig.ENHANCED_SECURITY.getBool(),
+            )
         request.COOKIES['uds'] = cookie
     else:
         cookie = request.COOKIES['uds'][:UDS_COOKIE_LENGTH]
@@ -163,7 +169,7 @@ def webLoginRequired(
             if not request.user or not request.authorized:
                 return HttpResponseRedirect(reverse('page.login'))
 
-            if admin in (True, 'admin'): 
+            if admin in (True, 'admin'):
                 if request.user.isStaff() is False or (
                     admin == 'admin' and not request.user.is_admin
                 ):
@@ -197,7 +203,7 @@ def trustedSourceRequired(
         try:
             if not isTrustedSource(request.ip):
                 return HttpResponseForbidden()
-        except Exception as e:
+        except Exception:
             logger.warning(
                 'Error checking trusted source: "%s" does not seems to be a valid network string. Using Unrestricted access.',
                 GlobalConfig.TRUSTED_SOURCES.get(),
@@ -397,7 +403,9 @@ def webLogin(
     Helper function to, once the user is authenticated, store the information at the user session.
     @return: Always returns True
     """
-    from uds import REST
+    from uds import (  # pylint: disable=import-outside-toplevel  # to avoid circular imports
+        REST,
+    )
 
     if (
         user.id != ROOT_ID
@@ -413,12 +421,16 @@ def webLogin(
     request.authorized = (
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
+    # Store request ip in session
+    request.session[IP_KEY] = request.ip
     # If Enabled zero trust, do not cache credentials
     if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
         password = ''  # nosec: clear password if zero trust is enabled
 
     request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = codecs.encode(cryptoManager().symCrypt(password, cookie), "base64").decode()  # as str
+    request.session[PASS_KEY] = codecs.encode(
+        CryptoManager().symCrypt(password, cookie), "base64"
+    ).decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
     # Note that REST api will set the session expiry to selected value if user is an administrator
@@ -444,11 +456,13 @@ def webPassword(request: HttpRequest) -> str:
     """
     if hasattr(request, 'session'):
         passkey = codecs.decode(request.session.get(PASS_KEY, '').encode(), 'base64')
-        return cryptoManager().symDecrpyt(
+        return CryptoManager().symDecrpyt(
             passkey, getUDSCookie(request)
         )  # recover as original unicode string
-    else:  # No session, get from _session instead, this is an "client" REST request
-        return cryptoManager().symDecrpyt(request._cryptedpass, request._scrambler)  # type: ignore
+    # No session, get from _session instead, this is an "client" REST request
+    return CryptoManager().symDecrpyt(
+        getattr(request, '_cryptedpass'), getattr(request, '_scrambler')
+    )
 
 
 def webLogout(
@@ -476,8 +490,6 @@ def webLogout(
                 )
         else:  # No user, redirect to /
             return HttpResponseRedirect(reverse('page.login'))
-    except Exception:
-        raise
     finally:
         # Try to delete session
         request.session.flush()
@@ -513,14 +525,12 @@ def authLogLogin(
             ]
         )
     )
-    level = log.INFO if logStr == 'Logged in' else log.ERROR
+    level = log.LogLevel.INFO if logStr == 'Logged in' else log.LogLevel.ERROR
     log.doLog(
         authenticator,
         level,
-        'user {} has {} from {} where os is {}'.format(
-            userName, logStr, request.ip, request.os.os.name
-        ),
-        log.WEB,
+        f'user {userName} has {logStr} from {request.ip} where os is {request.os.os.name}',
+        log.LogSource.WEB,
     )
 
     try:
@@ -529,12 +539,10 @@ def authLogLogin(
         log.doLog(
             user,
             level,
-            '{} from {} where OS is {}'.format(
-                logStr, request.ip, request.os.os.name
-            ),
-            log.WEB,
+            f'{logStr} from {request.ip} where OS is {request.os.os.name}',
+            log.LogSource.WEB,
         )
-    except models.User.DoesNotExist:
+    except models.User.DoesNotExist:  # pylint: disable=no-member
         pass
 
 
@@ -542,10 +550,8 @@ def authLogLogout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
         log.doLog(
             request.user.manager,
-            log.INFO,
-            'user {} has logged out from {}'.format(request.user.name, request.ip),
-            log.WEB,
+            log.LogLevel.INFO,
+            f'user {request.user.name} has logged out from {request.ip}',
+            log.LogSource.WEB,
         )
-        log.doLog(
-            request.user, log.INFO, 'has logged out from {}'.format(request.ip), log.WEB
-        )
+        log.doLog(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)

@@ -37,7 +37,7 @@ To create a new authentication module, you will need to follow this steps:
 
 The registration of modules is done locating subclases of :py:class:`uds.core.auths.Authentication`
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import os.path
 import pkgutil
@@ -45,24 +45,22 @@ import importlib
 import sys
 import typing
 
-def __init__():
+
+import logging
+
+from uds.core.util import modfinder
+
+logger = logging.getLogger(__name__)
+
+
+def __loadModules():
     """
     This imports all packages that are descendant of this package, and, after that,
-    it register all subclases of authenticator as
+    it register all subclases of mfas.MFA 
     """
-    from uds.core import mfas
+    from uds.core import mfas  # pylint: disable=import-outside-toplevel
 
-    # Dinamycally import children of this package. The __init__.py files must declare mfs as subclasses of mfas.MFA
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[__name__].__file__))
-    for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # import module
-
-    importlib.invalidate_caches()
-
-    a = mfas.MFA
-    for cls in a.__subclasses__():
-        mfas.factory().insert(cls)
+    modfinder.dynamicLoadAndRegisterModules(mfas.factory(), mfas.MFA, __name__)
 
 
-__init__()
+__loadModules()

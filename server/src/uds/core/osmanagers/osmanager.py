@@ -39,7 +39,7 @@ from uds.core.util.state import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
 from uds.core.util.config import GlobalConfig
-from uds.core import Module
+from uds.core.module import Module
 
 STORAGE_KEY = 'osmk'
 
@@ -100,7 +100,7 @@ class OSManager(Module):
 
     # These methods must be overriden
     def actorData(
-        self, userService: 'UserService'
+        self, userService: 'UserService'  # pylint: disable=unused-argument
     ) -> typing.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
@@ -136,7 +136,9 @@ class OSManager(Module):
         """
         return {}
 
-    def checkState(self, userService: 'UserService') -> str:
+    def checkState(
+        self, userService: 'UserService'  # pylint: disable=unused-argument
+    ) -> str:
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -155,7 +157,9 @@ class OSManager(Module):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
 
-    def isRemovableOnLogout(self, userService: 'UserService') -> bool:
+    def isRemovableOnLogout(
+        self, userService: 'UserService'  # pylint: disable=unused-argument
+    ) -> bool:
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden
@@ -181,7 +185,10 @@ class OSManager(Module):
         return cls.processUserPassword != OSManager.processUserPassword
 
     def processUserPassword(
-        self, userService: 'UserService', username: str, password: str
+        self,
+        userService: 'UserService',  # pylint: disable=unused-argument
+        username: str,
+        password: str,
     ) -> typing.Tuple[str, str]:
         """
         This will be invoked prior to passsing username/password to Transport.
@@ -251,9 +258,9 @@ class OSManager(Module):
 
         log.doLog(
             userService,
-            log.INFO,
-            "User {0} has logged in".format(userName),
-            log.OSMANAGER,
+            log.LogLevel.INFO,
+            f'User {userName} has logged in',
+            log.LogSource.OSMANAGER,
         )
 
         log.useLog(
@@ -316,9 +323,9 @@ class OSManager(Module):
 
         log.doLog(
             userService,
-            log.INFO,
-            "User {0} has logged out".format(userName),
-            log.OSMANAGER,
+            log.LogLevel.INFO,
+            f'User {userName} has logged out',
+            log.LogSource.OSMANAGER,
         )
 
         log.useLog(

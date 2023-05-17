@@ -27,7 +27,7 @@ class StatType(typing.NamedTuple):
             'st_ctime': self.st_ctime,
             'st_mtime': self.st_mtime,
             'st_atime': self.st_atime,
-            'st_nlink': self.st_nlink
+            'st_nlink': self.st_nlink,
         }
         # Append optional fields
         if self.st_dev != -1:
@@ -46,7 +46,7 @@ class StatType(typing.NamedTuple):
             rst['st_blksize'] = self.st_blksize
         if self.st_blocks != -1:
             rst['st_blocks'] = self.st_blocks
-        
+
         return rst
 
 
@@ -54,6 +54,7 @@ class UDSFSInterface:
     """
     Base Class for UDS Info File system
     """
+
     def getattr(self, path: typing.List[str]) -> StatType:
         """
         Get file attributes. Path is the full path to the file, already splitted.
@@ -65,12 +66,12 @@ class UDSFSInterface:
         Get a list of files in the directory. Path is the full path to the directory, already splitted.
         """
         raise NotImplementedError
-    
+
     def read(self, path: typing.List[str], size: int, offset: int) -> bytes:
         """
         Read a file. Path is the full path to the file, already splitted.
         """
         raise NotImplementedError
 
-    def flush(self, path: typing.List[str]) -> None:
+    def flush(self, path: typing.List[str]) -> None:  # pylint: disable=unused-argument
         return

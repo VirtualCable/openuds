@@ -42,11 +42,7 @@ class StateQueue:
         self._current = None
 
     def __str__(self):
-        res = '<StateQueue Current: %s, Queue: (%s)>' % (
-            self._current,
-            ','.join(state for state in self._queue),
-        )
-        return res
+        return f'<StateQueue Current: {self._current}, Queue: ({",".join(state for state in self._queue)})>'
 
     def clearQueue(self) -> None:
         self._queue.clear()
@@ -84,5 +80,5 @@ class StateQueue:
     def remove(self, state: typing.Any):
         try:
             self._queue.remove(state)
-        except Exception:
+        except Exception:  # nosec: Fine to ignore exception here
             pass  # If state not in queue, nothing happens

@@ -34,7 +34,7 @@ import logging
 import typing
 
 from uds import models
-from uds.core import managers
+from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
@@ -99,11 +99,11 @@ class TunnelTicket(Handler):
                 sent, recv = self._params['sent'], self._params['recv']
                 # Ensures extra exists...
                 extra = extra or {}
-                now = models.getSqlDatetimeAsUnix()
+                now = getSqlDatetimeAsUnix()
                 totalTime = now - extra.get('b', now - 1)
                 msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
-                log.doLog(user.manager, log.INFO, msg)
-                log.doLog(userService, log.INFO, msg)
+                log.doLog(user.manager, log.LogLevel.INFO, msg)
+                log.doLog(userService, log.LogLevel.INFO, msg)
 
                 # Try to log Close event
                 try:
@@ -131,8 +131,8 @@ class TunnelTicket(Handler):
                     tunnel=self._args[0],
                 )
                 msg = f'User {user.name} started tunnel {self._args[0][:8]}... to {host}:{port} from {self._args[1]}.'
-                log.doLog(user.manager, log.INFO, msg)
-                log.doLog(userService, log.INFO, msg)
+                log.doLog(user.manager, log.LogLevel.INFO, msg)
+                log.doLog(userService, log.LogLevel.INFO, msg)
                 # Generate new, notify only, ticket
                 notifyTicket = models.TicketStore.create_for_tunnel(
                     userService=userService,
@@ -140,7 +140,7 @@ class TunnelTicket(Handler):
                     host=host,
                     extra={
                         't': self._args[0],  # ticket
-                        'b': models.getSqlDatetimeAsUnix(),  # Begin time stamp
+                        'b': getSqlDatetimeAsUnix(),  # Begin time stamp
                     },
                     validity=MAX_SESSION_LENGTH,
                 )
@@ -149,7 +149,7 @@ class TunnelTicket(Handler):
             return data
         except Exception as e:
             logger.info('Ticket ignored: %s', e)
-            raise AccessDenied()
+            raise AccessDenied() from e
 
 
 class TunnelRegister(Handler):
@@ -159,7 +159,7 @@ class TunnelRegister(Handler):
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         tunnelToken: models.TunnelToken
-        now = models.getSqlDatetimeAsUnix()
+        now = getSqlDatetimeAsUnix()
         try:
             # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
             tunnelToken = models.TunnelToken.objects.get(
@@ -168,7 +168,7 @@ class TunnelRegister(Handler):
             # Update parameters
             tunnelToken.username = self._user.pretty_name
             tunnelToken.ip_from = self._request.ip
-            tunnelToken.stamp = models.getSqlDatetime()
+            tunnelToken.stamp = getSqlDatetime()
             tunnelToken.save()
         except Exception:
             try:
@@ -178,7 +178,7 @@ class TunnelRegister(Handler):
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
                     token=secrets.token_urlsafe(36),
-                    stamp=models.getSqlDatetime(),
+                    stamp=getSqlDatetime(),
                 )
             except Exception as e:
                 return {'result': '', 'stamp': now, 'error': str(e)}

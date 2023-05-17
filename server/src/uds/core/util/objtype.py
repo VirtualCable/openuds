@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class ObjectType(enum.Enum):
     PROVIDER = (1, models.Provider)
     SERVICE = (2, models.Service)
@@ -67,7 +68,6 @@ class ObjectType(enum.Enum):
     LOG = (22, models.Log)
     NOTIFICATION = (23, models.Notification)
     TICKET_STORE = (24, models.TicketStore)
-    
 
     @property
     def model(self) -> typing.Type['Model']:
@@ -75,8 +75,7 @@ class ObjectType(enum.Enum):
 
     @property
     def type(self) -> int:
-        """Returns the integer value of this object type
-        """
+        """Returns the integer value of this object type"""
         return self.value[0]
 
     @staticmethod
@@ -84,7 +83,7 @@ class ObjectType(enum.Enum):
         for objType in ObjectType:
             if objType.model == type(model):
                 return objType
-        raise ValueError('Invalid model type: {}'.format(model))
+        raise ValueError(f'Invalid model type: {model}')
 
     def __eq__(self, __o: object) -> bool:
         """Compares with another ObjType, and includes int comparison

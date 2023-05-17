@@ -27,25 +27,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
 
-from django.db import transaction
-
 from uds.core.util import singleton
-from uds.models.notifications import Notification, NotificationLevel
+from uds.core.util.log import LogLevel
 
 if typing.TYPE_CHECKING:
     from ..messaging import provider
 
 logger = logging.getLogger(__name__)
 
+
 class NotificationsManager(metaclass=singleton.Singleton):
     """
     This class manages alerts and notifications
     """
+
     def __init__(self):
         pass
 
@@ -53,8 +53,12 @@ class NotificationsManager(metaclass=singleton.Singleton):
     def manager() -> 'NotificationsManager':
         return NotificationsManager()  # Singleton pattern will return always the same instance
 
-    def notify(self, group: str, identificator: str, level: NotificationLevel, message: str, *args) -> None:
-        logger.debug('Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args)
+    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
+        from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
+
+        # logger.debug(
+        #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
+        # )
         # Format the string
         try:
             message = message % args
@@ -65,17 +69,3 @@ class NotificationsManager(metaclass=singleton.Singleton):
         with Notification.atomicPersistent():
             notify = Notification(group=group, identificator=identificator, level=level, message=message)
             Notification.savePersistent(notify)
-
-    def registerGroup(self, group: str) -> None:
-        """
-        Registers a new group.
-        This is used to group notifications
-        """
-        pass
-
-    def registerIdentificator(self, group: str, identificator: str) -> None:
-        """
-        Registers a new identificator.
-        This is used to identify notifications
-        """
-        pass

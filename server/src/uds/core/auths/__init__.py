@@ -30,7 +30,7 @@
 """
 UDS authentication related interfaces and classes
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from .authenticator import (
     Authenticator,

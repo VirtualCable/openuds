@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding=utf-8 -*-
 
-from functools import WRAPPER_ASSIGNMENTS
 import ssl
 import asyncio
-import logging
 import typing
 
 import certifi # In order to get valid ca certificates
 
 if typing.TYPE_CHECKING:
-    from asyncio.streams import StreamReader, StreamWriter
+    pass
 
 
 async def tcp_echo_client():

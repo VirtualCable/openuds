@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
@@ -52,7 +52,7 @@ class UniqueId(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[UniqueId]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -64,6 +64,4 @@ class UniqueId(models.Model):
         ]
 
     def __str__(self) -> str:
-        return u"{0} {1}.{2}, assigned is {3}".format(
-            self.owner, self.basename, self.seq, self.assigned
-        )
+        return f'{self.owner} {self.basename}.{self.seq}, assigned is {self.assigned}'

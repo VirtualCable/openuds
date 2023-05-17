@@ -198,6 +198,7 @@ def osmanager_exporter(osmanager: models.OSManager) -> typing.Dict[str, typing.A
     o = managed_object_exporter(osmanager)
     return o
 
+
 def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]:
     """
     Exports a calendar to a dict
@@ -212,7 +213,10 @@ def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]
     )
     return c
 
-def calendar_rule_exporter(calendar_rule: models.CalendarRule) -> typing.Dict[str, typing.Any]:
+
+def calendar_rule_exporter(
+    calendar_rule: models.CalendarRule,
+) -> typing.Dict[str, typing.Any]:
     """
     Exports a calendar rule to a dict
     """
@@ -231,6 +235,7 @@ def calendar_rule_exporter(calendar_rule: models.CalendarRule) -> typing.Dict[st
         }
     )
     return c
+
 
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
@@ -315,7 +320,7 @@ class Command(BaseCommand):
         entities = self.remove_reduntant_entities(options['entities'])
 
         # For each entity, export it as yaml to output file
-        with open(options['output'], 'w') as f:
+        with open(options['output'], 'w', encoding='utf8') as f:
             for entity in entities:
                 self.stderr.write(f'Exporting {entity}')
                 f.write(self.VALID_ENTITIES[entity]())
@@ -324,9 +329,7 @@ class Command(BaseCommand):
         if self.verbose:
             self.stderr.write(f'Exported to {options["output"]}')
 
-    def apply_filter(
-        self, model: typing.Type[ModelType]
-    ) -> typing.Iterable[ModelType]:
+    def apply_filter(self, model: typing.Type[ModelType]) -> typing.Iterable[ModelType]:
         """
         Applies a filter to a model
         """
@@ -337,7 +340,9 @@ class Command(BaseCommand):
             self.stderr.write("\n  ".join(values))
         # Generate "OR" filter with all kwargs
         if self.filter_args:
-            return model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args)))
+            return model.objects.filter(
+                reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))
+            )
         return model.objects.all()
 
     def output_count(
@@ -367,16 +372,11 @@ class Command(BaseCommand):
     def export_services(self) -> str:
         # First, locate providers for services with the filter
         services_list = list(
-            self.output_count(
-                'Filtering services', self.apply_filter(models.Service)
-            )
+            self.output_count('Filtering services', self.apply_filter(models.Service))
         )
-        providers_list = set(
-            [
-                s.provider
-                for s in self.output_count('Filtering providers', services_list)
-            ]
-        )
+        providers_list = {
+            s.provider for s in self.output_count('Filtering providers', services_list)
+        }
         # Now, export those providers
         providers = [
             provider_exporter(p)
@@ -416,16 +416,11 @@ class Command(BaseCommand):
         """
         # first, locate authenticators for users with the filter
         users_list = list(
-            self.output_count(
-                'Filtering users', self.apply_filter(models.User)
-            )
+            self.output_count('Filtering users', self.apply_filter(models.User))
         )
-        authenticators_list = set(
-            [
-                u.manager
-                for u in self.output_count('Filtering authenticators', users_list)
-            ]
-        )
+        authenticators_list = {
+            u.manager for u in self.output_count('Filtering authenticators', users_list)
+        }
         # Now, groups that contains those users
         groups_list = set()
         for u in self.output_count('Filtering groups', users_list):
@@ -461,16 +456,12 @@ class Command(BaseCommand):
         """
         # First export authenticators for groups with the filter
         groups_list = list(
-            self.output_count(
-                'Filtering groups', self.apply_filter(models.Group)
-            )
+            self.output_count('Filtering groups', self.apply_filter(models.Group))
         )
-        authenticators_list = set(
-            [
-                g.manager
-                for g in self.output_count('Filtering authenticators', groups_list)
-            ]
-        )
+        authenticators_list = {
+            g.manager
+            for g in self.output_count('Filtering authenticators', groups_list)
+        }
         authenticators = [
             authenticator_exporter(a)
             for a in self.output_count('Saving authenticators', authenticators_list)

@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import csv
 import io
@@ -92,7 +92,7 @@ class CountersPoolAssigned(StatsReport):
         for poolUuid in self.pools.value:
             try:
                 pool = ServicePool.objects.get(uuid=poolUuid)
-            except Exception:
+            except Exception:  # nosec:  If not found, simple ignore it and go for next
                 continue
 
             hours = [0] * 24
@@ -125,9 +125,7 @@ class CountersPoolAssigned(StatsReport):
         d = {
             'title': _('Services by hour'),
             'x': X,
-            'xtickFnc': lambda xx: '{:02d}'.format(
-                xx
-            ),  # pylint: disable=unnecessary-lambda
+            'xtickFnc': '{:02d}'.format,  # Two digits
             'xlabel': _('Hour'),
             'y': [
                 {'label': i['name'], 'data': [i['hours'][v] for v in X]} for i in items
@@ -172,6 +170,6 @@ class CountersPoolAssignedCSV(CountersPoolAssigned):
 
         for i in items:
             for j in range(24):
-                writer.writerow([i['name'], '{:02d}'.format(j), i['hours'][j]])
+                writer.writerow([i['name'], f'{j:02d}', i['hours'][j]])
 
         return output.getvalue()

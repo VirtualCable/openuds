@@ -216,7 +216,7 @@ class ForwardThread(threading.Thread):
         class SubHandler(Handler):
             chain_host = self.redirectHost
             chain_port = self.redirectPort
-            ssh_transport = self.client.get_transport()
+            ssh_transport = self.client.get_transport()  # type: ignore
             event = self.stopEvent
             thread = self
 

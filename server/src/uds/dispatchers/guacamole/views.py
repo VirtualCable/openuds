@@ -37,7 +37,7 @@ from django.http import HttpResponse
 
 from uds.models import TicketStore, UserService, TunnelToken
 from uds.core.auths import auth
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.util import log
 from uds.core.util.stats import events
 from uds.core.util.request import ExtendedHttpRequestWithUser
@@ -91,10 +91,10 @@ def guacamole(
                     raise Exception()
                 # Log message and event
                 protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
-                host = val.get('hostname', '0.0.0.0')
+                host = val.get('hostname', '0.0.0.0')  # nosec: Not a bind, just a placeholder for "no host"
                 msg = f'User {user.name} started HTML5 {protocol} tunnel to {host}.'
-                log.doLog(user.manager, log.INFO, msg)
-                log.doLog(userService, log.INFO, msg)
+                log.doLog(user.manager, log.LogLevel.INFO, msg)
+                log.doLog(userService, log.LogLevel.INFO, msg)
 
                 events.addEvent(
                     userService.deployed_service,
@@ -113,7 +113,7 @@ def guacamole(
                 raise  # Let it be handled by the upper layers
 
         if 'password' in val:
-            val['password'] = cryptoManager().symDecrpyt(val['password'], scrambler)
+            val['password'] = CryptoManager().symDecrpyt(val['password'], scrambler)
 
         response = dict2resp(val)
     except Exception:

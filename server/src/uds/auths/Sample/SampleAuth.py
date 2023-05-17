@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -118,7 +118,9 @@ class SampleAuth(auths.Authenticator):
     # : We will define a simple form where we will use a simple
     # : list editor to allow entering a few group names
 
-    groups = gui.EditableListField(label=_('Groups'), values=['Gods', 'Daemons', 'Mortals'])
+    groups = gui.EditableListField(
+        label=_('Groups'), values=['Gods', 'Daemons', 'Mortals']
+    )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         """
@@ -131,9 +133,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise exceptions.ValidationError(
-                _('We need more than two groups!')
-            )
+            raise exceptions.ValidationError(_('We need more than two groups!'))
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
@@ -147,8 +147,8 @@ class SampleAuth(auths.Authenticator):
         """
         return [
             {
-                'id': '{0}-{1}'.format(pattern, a),
-                'name': '{0} number {1}'.format(pattern, a),
+                'id': f'{pattern}-{a}',
+                'name': f'{pattern} number {a}',
             }
             for a in range(1, 10)
         ]
@@ -173,7 +173,7 @@ class SampleAuth(auths.Authenticator):
         username: str,
         credentials: str,
         groupsManager: 'GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
     ) -> auths.AuthenticationResult:
         """
         This method is invoked by UDS whenever it needs an user to be authenticated.
@@ -246,7 +246,9 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def getJavascript(
+        self, request: 'HttpRequest'   # pylint: disable=unused-argument
+    ) -> typing.Optional[str]: 
         """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.
@@ -278,7 +280,10 @@ class SampleAuth(auths.Authenticator):
         return res
 
     def authCallback(
-        self, parameters: typing.Dict[str, typing.Any], gm: 'auths.GroupsManager', request: 'ExtendedHttpRequestWithUser'
+        self,
+        parameters: typing.Dict[str, typing.Any],
+        gm: 'auths.GroupsManager',               # pylint: disable=unused-argument
+        request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> AuthenticationResult:
         """
         We provide this as a sample of callback for an user.
@@ -313,7 +318,7 @@ class SampleAuth(auths.Authenticator):
 
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
         """
-        from uds.core.util.state import State
+        from uds.core.util.state import State  # pylint: disable=import-outside-toplevel
 
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE

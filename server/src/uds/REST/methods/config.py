@@ -43,14 +43,13 @@ logger = logging.getLogger(__name__)
 class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
-    def get(self):
-        cfg: CfgConfig.Value
-
+    def get(self) -> typing.Any:
         return CfgConfig.getConfigValues(self.is_admin())
 
 
-    def put(self):
+    def put(self) -> typing.Any:
         for section, secDict in self._params.items():
             for key, vals in secDict.items():
+                logger.info('Updating config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
                 CfgConfig.update(section, key, vals['value'])
         return 'done'

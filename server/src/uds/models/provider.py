@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -59,7 +59,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     # objects: 'models.manager.Manager[Provider]'
     services: 'models.manager.RelatedManager[Service]'
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
@@ -76,7 +76,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         Returns:
             The python type for this record object
         """
-        from uds.core import services  # pylint: disable=redefined-outer-name
+        from uds.core import services  # pylint: disable=import-outside-toplevel
 
         return services.factory().lookup(self.data_type) or services.ServiceProvider
 
@@ -94,10 +94,10 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return self.maintenance_mode
 
     def __str__(self) -> str:
-        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
+        return f'Provider {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Provider class "Destroy" before deleting it from database.
 
@@ -106,7 +106,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
         logger.debug('Before delete service provider %s', toDelete)

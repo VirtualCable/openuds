@@ -41,7 +41,7 @@ def ensure_list(obj: typing.Union[T, typing.Iterable[T]]) -> typing.List[T]:
         return [typing.cast(T, obj)]
 
     try:
-        return [_ for _ in typing.cast(typing.List[T], obj)]
+        return list(typing.cast(typing.List[T], obj))
     except Exception: # Not iterable
         return [typing.cast(T, obj)]
 

@@ -37,7 +37,7 @@ import logging
 
 from django.db import transaction
 from uds.models.cache import Cache as DBCache
-from uds.models.util import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.util import serializer
 
 from .hash import hash_key
@@ -107,10 +107,9 @@ class Cache:
             Cache.misses += 1
             # logger.debug('key not found: %s', skey)
             return defValue
-        except Exception as e:
+        except Exception:
             logger.exception('Error getting cache key: %s', skey)
             Cache.misses += 1
-            # logger.debug('Cache inaccesible: %s:%s', skey, e)
             return defValue
 
     def __getitem__(self, key: typing.Union[str, bytes]) -> typing.Any:

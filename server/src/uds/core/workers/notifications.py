@@ -32,16 +32,14 @@
 import logging
 
 from uds.core.jobs import Job
-from uds.core.util.config import GlobalConfig
-from uds.core.util.state import State
-from uds.models import ServicePool, getSqlDatetime
+# from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
 
 class Notifications(Job):
     frecuency = 60  # Once every minute
-    frecuency_cfg = GlobalConfig.CHECK_UNUSED_DELAY
+    # frecuency_cfg = GlobalConfig.XXXX
     friendly_name = 'Notifications worker'
 
     def run(self) -> None:

@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # API URL 1: https://www.informatica.us.es/~ramon/opengnsys/?url=opengnsys-api.yml
 # API URL 2: http://opengnsys.es/wiki/ApiRest

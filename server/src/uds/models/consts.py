@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2020 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,25 +26,17 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-'''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
-'''
 
-import curio
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+import typing
+from datetime import datetime
+from time import mktime
 
+NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
 
-BUFFER_SIZE = 1024
-
-async def echo_server(client, address) -> None:
-    print(f'Connection fro {address!r}')
-    while True:
-        data = await client.recv(BUFFER_SIZE)
-        if not data:
-            break
-        print(f'received {data}')
-        await client.sendall(data)
-    print('Closed')
-
-if __name__ == '__main__':
-    curio.run(curio.tcp_server, 'localhost', 7777, echo_server)
-
+# Max ip v6 string length representation, allowing ipv4 mapped addresses
+MAX_IPV6_LENGTH: typing.Final[int] = 45
+MAX_DNS_NAME_LENGTH: typing.Final[int] = 255

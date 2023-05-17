@@ -39,12 +39,15 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 def _process_response(
-    request: 'ExtendedHttpRequest', response: 'HttpResponse'
+    request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
+    response: 'HttpResponse',
 ) -> 'HttpResponse':
     if response.get('content-type', '').startswith('text/html'):
         response['X-UA-Compatible'] = 'IE=edge'
     return response
+
 
 # Add a X-UA-Compatible header to the response
 # This header tells to Internet Explorer to render page with latest

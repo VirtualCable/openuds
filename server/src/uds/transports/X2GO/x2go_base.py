@@ -38,7 +38,7 @@ import typing
 import paramiko
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
 from uds.core import transports
@@ -52,7 +52,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
-SSH_KEY_LENGTH = 1024
+SSH_KEY_LENGTH = 2048
 
 
 class BaseX2GOTransport(transports.Transport):
@@ -269,11 +269,11 @@ class BaseX2GOTransport(transports.Transport):
         key.write_private_key(privFile)
         priv = privFile.getvalue()
 
-        pub = key.get_base64()  # 'ssh-rsa {} UDS@X2GOCLIENT'.format(key.get_base64())
+        pub = key.get_base64()
         return priv, pub
 
     def getAuthorizeScript(self, user: str, pubKey: str) -> str:
-        with open(os.path.join(os.path.dirname(__file__), 'scripts/authorize.py')) as f:
+        with open(os.path.join(os.path.dirname(__file__), 'scripts/authorize.py'), encoding='utf8') as f:
             data = f.read()
 
         return data.replace('__USER__', user).replace('__KEY__', pubKey)
@@ -283,5 +283,5 @@ class BaseX2GOTransport(transports.Transport):
     ) -> typing.Tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
         authScript = self.getAuthorizeScript(userName, pub)
-        userServiceManager().sendScript(userService, authScript)
+        UserServiceManager().sendScript(userService, authScript)
         return priv, pub

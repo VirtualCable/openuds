@@ -27,19 +27,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-""" from django.utils.translation import gettext_noop as _
+# from django.utils.translation import gettext_noop as _
 
-from .base import StatsReport
+# from .base import StatsReport
 
 
-class StatsReportUsage(StatsReport):  # Disabled from being used
-    name = _('Usage stats')  # Report name
-    description = _('Statistics of platform use')  # Report description
-    uuid = '9ae54172-ed48-11e4-b8e1-10feed05884b'
+# class StatsReportUsage(StatsReport):  # Disabled from being used
+#     name = _('Usage stats')  # Report name
+#     description = _('Statistics of platform use')  # Report description
+#     uuid = '9ae54172-ed48-11e4-b8e1-10feed05884b'
 
-    def generate(self):
-        return ''
- """
+#     def generate(self):
+#         return ''

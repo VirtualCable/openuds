@@ -38,12 +38,12 @@ from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports, exceptions
 from uds.core.util import os_detector as OsDetector
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
 
@@ -236,7 +236,7 @@ class HTML5VNCTransport(transports.Transport):
 
         logger.debug('VNC Params: %s', params)
 
-        scrambler = cryptoManager().randomString(32)
+        scrambler = CryptoManager().randomString(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''
@@ -246,8 +246,4 @@ class HTML5VNCTransport(transports.Transport):
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
-        return str(
-            "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value, ticket, scrambler, onw
-            )
-        )
+        return f'{self.guacamoleServer.value}/guacamole/#/?data={ticket}.{scrambler}{onw}'

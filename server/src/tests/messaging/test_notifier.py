@@ -79,7 +79,7 @@ class EmailNotifierTest(UDSTestCase):
         notifier.getInstance().notify(
             'Group',
             'Identificator',
-            messaging.NotificationLevel.CRITICAL,
+            messaging.LogLevel.CRITICAL,
             'Test message cañón',
         )
 

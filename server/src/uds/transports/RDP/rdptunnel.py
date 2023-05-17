@@ -46,7 +46,7 @@ from .rdp_file import RDPFile
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -59,6 +59,7 @@ class TRDPTransport(BaseRDPTransport):
     Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     isBase = False
 
     iconFile = 'rdp-tunnel.png'
@@ -91,9 +92,7 @@ class TRDPTransport(BaseRDPTransport):
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
-        tooltip=_(
-            'If enabled, the certificate of tunnel server will be verified (recommended).'
-        ),
+        tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
         defvalue=gui.FALSE,
         tab=gui.Tab.TUNNEL,
     )
@@ -168,9 +167,7 @@ class TRDPTransport(BaseRDPTransport):
 
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
-        r = RDPFile(
-            width == '-1' or height == '-1', width, height, depth, target=os.os
-        )
+        r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
         r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
         r.address = '{address}'
         r.username = username
@@ -237,10 +234,6 @@ class TRDPTransport(BaseRDPTransport):
                 'Os not valid for RDP Transport: %s',
                 request.META.get('HTTP_USER_AGENT', 'Unknown'),
             )
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
-
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
 
         return self.getScript(os.os.os_name(), 'tunnel', sp)
-        

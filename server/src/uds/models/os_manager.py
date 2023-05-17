@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -55,7 +55,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
     # objects: 'models.manager.Manager[OSManager]'
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order
         """
@@ -80,7 +80,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         :note: We only need to get info from this, not access specific data (class specific info)
         """
         # We only need to get info from this, not access specific data (class specific info)
-        from uds.core import osmanagers
+        from uds.core import osmanagers  # pylint: disable=import-outside-toplevel
 
         return osmanagers.factory().lookup(self.data_type) or osmanagers.OSManager
 
@@ -101,10 +101,10 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         return True
 
     def __str__(self) -> str:
-        return "{0} of type {1} (id:{2})".format(self.name, self.data_type, self.id)
+        return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

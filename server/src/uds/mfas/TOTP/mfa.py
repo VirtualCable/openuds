@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import logging
@@ -39,6 +39,7 @@ import qrcode
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
+from uds.core.util.model import getSqlDatetime
 from uds.core import mfas
 from uds.core.ui import gui
 
@@ -155,7 +156,7 @@ class TOTP_MFA(mfas.MFA):
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         # Get data from storage related to this user
-        secret, qrShown = self._userData(userId)
+        qrShown = self._userData(userId)[1]
         if qrShown:
             return _('Enter your authentication code')
         # Compose the QR code from provisioning URI
@@ -216,7 +217,7 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.num(), for_time=models.getSqlDatetime()
+            code, valid_window=self.validWindow.num(), for_time=getSqlDatetime()
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 

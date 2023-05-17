@@ -30,13 +30,8 @@ package org.openuds.guacamole.config;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.apache.guacamole.GuacamoleException;
-import org.apache.guacamole.GuacamoleServerException;
 import org.apache.guacamole.environment.Environment;
 import org.apache.guacamole.properties.URIGuacamoleProperty;
 

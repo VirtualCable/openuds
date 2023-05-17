@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import pickle
 import logging
@@ -115,7 +115,7 @@ class XenLinkedDeployment(UserDeployment):
             self._mac = vals[3].decode('utf8')
             self._vmid = vals[4].decode('utf8')
             self._reason = vals[5].decode('utf8')
-            self._queue = pickle.loads(vals[6])
+            self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
             self._task = vals[7].decode('utf8')
 
     def getName(self) -> str:
@@ -154,7 +154,7 @@ class XenLinkedDeployment(UserDeployment):
             self.cache.put('ready', '1', 30)                
         except Exception as e:
             # On case of exception, log an an error and return as if the operation was executed
-            self.doLog(log.ERROR, 'Error setting machine state: {}'.format(e))
+            self.doLog(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
         return State.FINISHED
@@ -224,7 +224,7 @@ class XenLinkedDeployment(UserDeployment):
 
     def __error(self, reason: typing.Any) -> str:
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.ERROR, reason)
+        self.doLog(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off and delete VM
             try:

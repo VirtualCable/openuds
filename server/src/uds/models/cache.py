@@ -28,14 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from datetime import timedelta
 import logging
 
 from django.db import models, transaction
 
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ class Cache(models.Model):
     # "fake" relations declarations for type checking
     # objects: 'models.manager.Manager[Cache]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
         """
@@ -80,4 +80,4 @@ class Cache(models.Model):
             expired = "Expired"
         else:
             expired = "Active"
-        return "{0} {1} = {2} ({3})".format(self.owner, self.key, self.value, expired)
+        return f'{self.owner} {self.key} = {self.value} ({expired})'

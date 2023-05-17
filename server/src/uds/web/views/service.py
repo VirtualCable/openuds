@@ -32,20 +32,17 @@ import json
 import logging
 import typing
 
-from django.utils.translation import gettext as _
-from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import webLoginRequired, webPassword
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
 from uds.core.util import log
 from uds.core.services.exceptions import ServiceNotReadyError
 
-from uds.web.util import errors
 from uds.web.util import services
 
 # Not imported at runtime, just for type checking
@@ -66,7 +63,7 @@ def transportOwnLink(
 
     # For type checkers to "be happy"
     try:
-        res = userServiceManager().getService(
+        res = UserServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport
         )
         ip, userService, iads, trans, itrans = res
@@ -91,10 +88,7 @@ def transportOwnLink(
 
     return HttpResponse(content=json.dumps(response), content_type='application/json')
 
-    # Will never reach this
-    return errors.errorView(request, errors.UNKNOWN_ERROR)
-
-
+# pylint: disable=unused-argument
 @cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
     try:
@@ -164,12 +158,12 @@ def userServiceStatus(
     userService: typing.Optional['UserService'] = None
     status = 'running'
     # If service exists (meta or not)
-    if userServiceManager().isMetaService(idService):
-        userService = userServiceManager().locateMetaService(
+    if UserServiceManager().isMetaService(idService):
+        userService = UserServiceManager().locateMetaService(
             user=request.user, idService=idService
         )
     else:
-        userService = userServiceManager().locateUserService(
+        userService = UserServiceManager().locateUserService(
             user=request.user, idService=idService, create=False
         )
     if userService:
@@ -198,11 +192,11 @@ def userServiceStatus(
 def action(
     request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
 ) -> HttpResponse:
-    userService = userServiceManager().locateMetaService(
+    userService = UserServiceManager().locateMetaService(
         request.user, idService
     )
     if not userService:
-        userService = userServiceManager().locateUserService(
+        userService = UserServiceManager().locateUserService(
             request.user, idService, create=False
         )
 
@@ -216,30 +210,30 @@ def action(
             rebuild = True
             log.doLog(
                 userService.deployed_service,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Removing User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.WEB,
+                log.LogSource.WEB,
             )
-            userServiceManager().requestLogoff(userService)
+            UserServiceManager().requestLogoff(userService)
             userService.release()
         elif (
             actionString == 'reset'
             and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.getType().canReset
+            and userService.deployed_service.service.getType().canReset  # type: ignore
         ):
             rebuild = True
             log.doLog(
                 userService.deployed_service,
-                log.INFO,
+                log.LogLevel.INFO,
                 "Reseting User Service {} as requested by {} from {}".format(
                     userService.friendly_name, request.user.pretty_name, request.ip
                 ),
-                log.WEB,
+                log.LogSource.WEB,
             )
-            # userServiceManager().requestLogoff(userService)
-            userServiceManager().reset(userService)
+            # UserServiceManager().requestLogoff(userService)
+            UserServiceManager().reset(userService)
             
 
     if rebuild:

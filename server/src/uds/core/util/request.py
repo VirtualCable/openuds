@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -46,16 +46,6 @@ class ExtendedHttpRequest(HttpRequest):
     os: 'DetectedOsInfo'
     user: typing.Optional[User]
     authorized: bool
-    
-
-    def __init__(self) -> None:
-        super().__init__()
-
 
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
     user: User
-
-    def __init__(self) -> None:
-        super().__init__()
-
-

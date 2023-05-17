@@ -28,17 +28,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
 import typing
-import types
 
 from django.db import models
-
-from .util import NEVER_UNIX
-from .util import getSqlDatetimeAsUnix
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +58,7 @@ class StatsEvents(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[StatsEvents]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -160,7 +156,7 @@ class StatsEvents(models.Model):
 
     # Return record as csv line using separator (default: ',')
     def toCsv(self, sep: str = ',') -> str:
-        from uds.core.util.stats.events import EVENT_NAMES, TYPES_NAMES
+        from uds.core.util.stats.events import EVENT_NAMES, TYPES_NAMES  # pylint: disable=import-outside-toplevel
 
         return sep.join(
             [
@@ -176,12 +172,7 @@ class StatsEvents(models.Model):
         )
 
     def __str__(self):
-        return 'Log of {}({}): {} - {} - {}, {}, {}'.format(
-            self.owner_type,
-            self.owner_id,
-            self.event_type,
-            self.stamp,
-            self.fld1,
-            self.fld2,
-            self.fld3,
+        return (
+            f'Log of {self.owner_type}({self.owner_id}): {self.event_type} - {self.stamp}, '
+            f'{self.fld1}, {self.fld2}, {self.fld3}'
         )

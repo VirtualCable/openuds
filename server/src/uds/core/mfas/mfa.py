@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
 
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
@@ -37,10 +37,11 @@ import hashlib
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _
-from uds import models
-from uds.core import Module
+from django.utils.translation import gettext_noop as _, gettext
+from uds.core.module import Module
+from uds.core.util.model import getSqlDatetime
 from uds.core.auths import exceptions
+from uds.models.network import Network
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -48,6 +49,54 @@ if typing.TYPE_CHECKING:
     from uds.models import User
 
 logger = logging.getLogger(__name__)
+
+
+class LoginAllowed(enum.StrEnum):
+    """
+    This enum is used to know if the MFA code was sent or not.
+    """
+
+    ALLOWED = '0'
+    DENIED = '1'
+    ALLOWED_IF_IN_NETWORKS = '2'
+    DENIED_IF_IN_NETWORKS = '3'
+
+    @staticmethod
+    def checkAction(
+        action: 'LoginAllowed|str',
+        request: 'ExtendedHttpRequest',
+        networks: typing.Optional[typing.Iterable[str]] = None,
+    ) -> bool:
+        def checkIp() -> bool:
+            if networks is None:
+                return True  # No network restrictions, so we allow
+            return any(
+                i.contains(request.ip)
+                for i in Network.objects.filter(uuid__in=list(networks))
+            )
+
+        if isinstance(action, str):
+            action = LoginAllowed(action)
+
+        return {
+            LoginAllowed.ALLOWED: True,
+            LoginAllowed.DENIED: False,
+            LoginAllowed.ALLOWED_IF_IN_NETWORKS: checkIp(),
+            LoginAllowed.DENIED_IF_IN_NETWORKS: not checkIp(),
+        }.get(action, False)
+
+    @staticmethod
+    def valuesForSelect() -> typing.Mapping[str, str]:
+        return {
+            LoginAllowed.ALLOWED.value: gettext('Allow user login'),
+            LoginAllowed.DENIED.value: gettext('Deny user login'),
+            LoginAllowed.ALLOWED_IF_IN_NETWORKS.value: gettext(
+                'Allow user to login if it IP is in the networks list'
+            ),
+            LoginAllowed.DENIED_IF_IN_NETWORKS.value: gettext(
+                'Deny user to login if it IP is in the networks list'
+            ),
+        }
 
 
 class MFA(Module):
@@ -119,7 +168,7 @@ class MFA(Module):
         """
         This method will be invoked from the MFA form, to know the HTML that will be presented
         to the user below the MFA code form.
-        
+
         Args:
             userId: Id of the user that is requesting the MFA code
             request: Request object, so you can get more information
@@ -129,7 +178,9 @@ class MFA(Module):
         """
         return ''
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(
+        self, request: 'ExtendedHttpRequest'
+    ) -> typing.Optional[bool]:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
         Returns:
@@ -153,8 +204,8 @@ class MFA(Module):
         If returns MFA.RESULT.ALLOW, the MFA code was not sent, the user does not need to enter the MFA code.
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
-
-        raise NotImplementedError('sendCode method not implemented')
+        logger.error('MFA.sendCode not implemented')
+        raise exceptions.MFAError('MFA.sendCode not implemented')
 
     def _getData(
         self, request: 'ExtendedHttpRequest', userId: str
@@ -177,7 +228,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (models.getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
 
     def process(
         self,
@@ -214,7 +265,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > models.getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -224,10 +275,16 @@ class MFA(Module):
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
         logger.debug('Generated OTP is %s', code)
-        # Store the code in the database, own storage space
-        self._putData(request, userId, code)
+
         # Send the code to the user
-        return self.sendCode(request, userId, username, identifier, code)
+        # May raise an exception if the code was not sent and is required to be sent
+        # pylint: disable=assignment-from-no-return
+        result = self.sendCode(request, userId, username, identifier, code)
+
+        # Store the code in the database, own storage space, if no exception was raised
+        self._putData(request, userId, code)
+
+        return result
 
     def validate(
         self,
@@ -264,7 +321,7 @@ class MFA(Module):
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
-                    < models.getSqlDatetime()
+                    < getSqlDatetime()
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
@@ -290,17 +347,16 @@ class MFA(Module):
         This method allows to reset the MFA state of an user.
         Normally, this will do nothing, but for persistent MFA data (as Google Authenticator), this will remove the data.
         """
-        pass
 
     @staticmethod
-    def getUserId(user: models.User) -> str:
+    def getUserId(user: 'User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
         """
         mfa = user.manager.mfa
         if not mfa:
             raise exceptions.MFAError('MFA is not enabled')
-        
+
         return hashlib.sha3_256(
             (user.name + (user.uuid or '') + mfa.uuid).encode()
         ).hexdigest()

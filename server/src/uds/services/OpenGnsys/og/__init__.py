@@ -28,14 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
 import json
 import logging
 import typing
 
-import requests
+from uds.core.util import security
 
 from . import urls
 from . import fake
@@ -43,13 +43,16 @@ from . import fake
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
+    import requests
     from uds.core.util.cache import Cache
 
 # Fake part
 FAKE = False
 CACHE_VALIDITY = 180
+TIMEOUT = 10
 
 RT = typing.TypeVar('RT')
+
 
 # Decorator
 def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
@@ -62,7 +65,7 @@ def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 # Result checker
 def ensureResponseIsValid(
-    response: requests.Response, errMsg: typing.Optional[str] = None
+    response: 'requests.Response', errMsg: typing.Optional[str] = None
 ) -> typing.Any:
     if not response.ok:
         if not errMsg:
@@ -75,7 +78,7 @@ def ensureResponseIsValid(
             err = response.content.decode()
         if 'Database error' in err:
             err = 'Database error: Please, check OpenGnsys fields length on remotepc table (loginurl and logouturl)'
-            
+
         errMsg = '{}: {}, ({})'.format(errMsg, err, response.status_code)
         logger.error('%s: %s', errMsg, response.content)
         raise Exception(errMsg)
@@ -131,11 +134,11 @@ class OpenGnsysClient:
     ) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.post(
+                security.secureRequestsSession(verify=self.verifyCert).post(
                     self._ogUrl(path),
                     data=json.dumps(data),
                     headers=self.headers,
-                    verify=self.verifyCert,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )
@@ -145,8 +148,9 @@ class OpenGnsysClient:
     def _get(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.get(
-                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                security.secureRequestsSession(verify=self.verifyCert).get(
+                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )
@@ -156,8 +160,10 @@ class OpenGnsysClient:
     def _delete(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                requests.delete(
-                    self._ogUrl(path), headers=self.headers, verify=self.verifyCert
+                security.secureRequestsSession(verify=self.verifyCert).delete(
+                    self._ogUrl(path),
+                    headers=self.headers,
+                    timeout=TIMEOUT,
                 ),
                 errMsg=errMsg,
             )

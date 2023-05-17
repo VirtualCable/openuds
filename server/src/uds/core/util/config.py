@@ -37,7 +37,7 @@ import enum
 from django.apps import apps
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models.config import Config as DBConfig
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ class Config:
             if crypt is False or not default:
                 self._default = default
             else:
-                self._default = cryptoManager().encrypt(default)
+                self._default = CryptoManager().encrypt(default)
 
             self._help = kwargs.get('help', '')
 
@@ -148,14 +148,12 @@ class Config:
                         section=self._section.name(), key=self._key
                     )
                     self._data = readed.value
-                    self._crypt = [self._crypt, True][
-                        readed.crypt
-                    ]  # True has "higher" precedende than False
+                    self._crypt = readed.crypt or self._crypt
                     self._longText = readed.long
-                    if self._type != -1 and self._type != readed.field_type:
+                    if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
                         readed.save(update_fields=['field_type'])
-                    if self._help != '' and self._help != readed.help:
+                    if self._help not in ('', readed.help):
                         readed.help = self._help
                         readed.save(
                             update_fields=['help']
@@ -165,21 +163,19 @@ class Config:
             except DBConfig.DoesNotExist:
                 # Not found, so we create it
                 if self._default and self._crypt:
-                    self.set(cryptoManager().decrypt(self._default))
+                    self.set(CryptoManager().decrypt(self._default))
                 elif not self._crypt:
                     self.set(self._default)
                 self._data = self._default
             except Exception as e:
                 logger.info(
-                    'Error accessing db config {0}.{1}'.format(
-                        self._section.name(), self._key
-                    )
+                    'Error accessing db config %s.%s', self._section.name(), self._key
                 )
                 logger.exception(e)
                 self._data = self._default
 
             if self._crypt:
-                return cryptoManager().decrypt(typing.cast(str, self._data))
+                return CryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
         def setParams(self, params: typing.Any) -> None:
@@ -242,7 +238,7 @@ class Config:
                 value = str(value)
 
             if self._crypt:
-                value = cryptoManager().encrypt(value)
+                value = CryptoManager().encrypt(value)
 
             logger.debug(
                 'Saving config %s.%s as %s', self._section.name(), self._key, value
@@ -275,7 +271,7 @@ class Config:
                 self._data = value
 
         def __str__(self) -> str:
-            return '{}.{}'.format(self._section.name(), self._key)
+            return f'{self._section.name()}.{self._key}'
 
     @staticmethod
     def section(sectionName):
@@ -316,11 +312,14 @@ class Config:
             cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
-            if checkType and cfg.field_type in (Config.FieldType.READ, Config.FieldType.HIDDEN):
+            if checkType and cfg.field_type in (
+                Config.FieldType.READ,
+                Config.FieldType.HIDDEN,
+            ):
                 return False  # Skip non writable elements
 
             if cfg.crypt:
-                value = cryptoManager().encrypt(value)
+                value = CryptoManager().encrypt(value)
             cfg.value = value
             cfg.save()
             logger.debug('Updated value for %s.%s to %s', section, key, value)
@@ -354,6 +353,7 @@ class Config:
                 'longText': cfg.isLongText(),
                 'type': cfg.getType(),
                 'params': cfg.getParams(),
+                help: cfg.getHelp(),
             }
         logger.debug('Configuration: %s', res)
         return res
@@ -507,7 +507,7 @@ class GlobalConfig:
     # Redirect HTTP to HTTPS
     REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value(
         'redirectToHttps',
-        '0',
+        '1',
         type=Config.FieldType.BOOLEAN,
         help=_('Redirect HTTP to HTTPS on connection to UDS'),
     )
@@ -530,12 +530,21 @@ class GlobalConfig:
         ),
     )
     # Maximum logs per every log-capable administration element
-    MAX_LOGS_PER_ELEMENT: Config.Value = Config.section(GLOBAL_SECTION).value(
+    INDIVIDIAL_LOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
         'maxLogPerElement',
         '100',
         type=Config.FieldType.NUMERIC,
         help=_('Maximum logs per every log-capable administration element'),
     )
+    # Maximum logs per every log-capable administration element
+    GENERAL_LOG_MAX_ELEMENTS: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Max entries for general UDS logs',
+        '32000',
+        type=Config.FieldType.NUMERIC,
+        help=_('Maximum logs entries for general UDS logs (0 = unlimited, use with care)'),
+    )
+
+
     # Time to restrain a user service in case it gives some errors at some point
     RESTRAINT_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
         'restrainTime',
@@ -567,14 +576,18 @@ class GlobalConfig:
         'statsAccumFrequency',
         '14400',
         type=Config.FieldType.NUMERIC,
-        help=_('Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'),
+        help=_(
+            'Frequency of stats collection in seconds. Default is 4 hours (14400 seconds)'
+        ),
     )
     # Statisctis accumulation chunk size, in days
     STATS_ACCUM_MAX_CHUNK_TIME = Config.section(GLOBAL_SECTION).value(
         'statsAccumMaxChunkTime',
         '7',
         type=Config.FieldType.NUMERIC,
-        help=_('Maximum number of time to accumulate on one run. Default is 7 (1 week)'),
+        help=_(
+            'Maximum number of time to accumulate on one run. Default is 7 (1 week)'
+        ),
     )
 
     # If disallow login showing authenticatiors
@@ -593,11 +606,6 @@ class GlobalConfig:
         help=_(
             'Notify user of existence of a new version of a service on new publication'
         ),
-    )
-
-    # Maximum security logs duration in days
-    MAX_AUDIT_LOGS_DURATION: Config.Value = Config.section(SECURITY_SECTION).value(
-        'Max Audit Logs duration', '365', type=Config.FieldType.NUMERIC
     )
 
     # Allowed "trusted sources" for request
@@ -684,7 +692,7 @@ class GlobalConfig:
     # Global UDS ID (common for all servers on the same cluster)
     UDS_ID: Config.Value = Config.section(GLOBAL_SECTION).value(
         'UDS ID',
-        cryptoManager().uuid(),
+        CryptoManager().uuid(),
         type=Config.FieldType.READ,
         help=_('Global UDS ID (common for all servers on the same cluster)'),
     )
@@ -718,7 +726,10 @@ class GlobalConfig:
         help=_('Custom CSS styles applied to the user accesible site'),
     )
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value(
-        'Site information', '', type=Config.FieldType.LONGTEXT, help=_('Site information')
+        'Site information',
+        '',
+        type=Config.FieldType.LONGTEXT,
+        help=_('Site information'),
     )
     SITE_FILTER_ONTOP: Config.Value = Config.section(CUSTOM_SECTION).value(
         'Show Filter on Top',
@@ -783,7 +794,9 @@ class GlobalConfig:
                 for v in GlobalConfig.__dict__.values():
                     if isinstance(v, Config.Value):
                         v.get()
-                        logger.debug('Initialized global config value %s=%s', v.key(), v.get())
+                        logger.debug(
+                            'Initialized global config value %s=%s', v.key(), v.get()
+                        )
 
                 for c in _getLater:
                     logger.debug('Get later: %s', c)

@@ -33,20 +33,8 @@ import typing
 import asyncio
 
 from django.utils.decorators import sync_and_async_middleware
-from django.http import HttpResponseForbidden
-from django.utils import timezone
 
-from uds.core.util import os_detector as OsDetector
-from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import (
-    AUTHORIZED_KEY,
-    EXPIRY_KEY,
-    ROOT_ID,
-    USER_KEY,
-    getRootUser,
-    webLogout,
-)
-from uds.models import User
+from django.conf import settings
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
@@ -71,14 +59,14 @@ def build_middleware(
     response_processor: ResponseMiddelwareProcessorType,
 ) -> typing.Callable[[typing.Any], typing.Union[typing.Callable, typing.Coroutine]]:
     """
-    Creates a method to be used as a middleware, synchronously or asynchronously
+    Creates a method to be used as a middleware, synchronously or asynchronously.
+    Currently, the is forced to sync an production, but it will be changed in the future to allow async
     """
-
     @sync_and_async_middleware
     def middleware(
         get_response: typing.Any,
     ) -> typing.Union[typing.Callable, typing.Coroutine]:
-        if asyncio.iscoroutinefunction(get_response):
+        if settings.DEBUG and asyncio.iscoroutinefunction(get_response):
 
             async def async_middleware(
                 request: 'ExtendedHttpRequest',
@@ -89,12 +77,12 @@ def build_middleware(
                 )
 
             return async_middleware
-        else:
 
-            def sync_middleware(request: 'ExtendedHttpRequest') -> 'HttpResponse':
-                response = request_processor(request)
-                return response_processor(request, response or get_response(request))
+        # Sync middleware
+        def sync_middleware(request: 'ExtendedHttpRequest') -> 'HttpResponse':
+            response = request_processor(request)
+            return response_processor(request, response or get_response(request))
 
-            return sync_middleware
+        return sync_middleware
 
     return middleware

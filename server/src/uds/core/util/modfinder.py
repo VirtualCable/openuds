@@ -65,7 +65,7 @@ def loadModulesUrls() -> typing.List[typing.Any]:
             modName = 'uds.dispatchers'
             pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
             for _, name, _ in pkgutil.iter_modules([pkgpath]):
-                fullModName = '{}.{}.urls'.format(modName, name)
+                fullModName = f'{modName}.{name}.urls'
                 try:
                     mod = importlib.import_module(fullModName)
                     urlpatterns: typing.List[typing.Any] = getattr(mod, 'urlpatterns')
@@ -98,7 +98,7 @@ def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> 
     pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
     if packageName:  # Append package name to path and module name
         pkgpath = os.path.join(pkgpath, packageName)
-        modName = '{}.{}'.format(modName, packageName)
+        modName = f'{modName}.{packageName}'
 
     logger.info('* Importing modules from %s', pkgpath)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):

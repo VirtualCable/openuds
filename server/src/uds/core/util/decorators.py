@@ -36,6 +36,7 @@ import inspect
 import typing
 import time
 import threading
+import hashlib
 
 from uds.core.util.cache import Cache
 
@@ -43,6 +44,7 @@ from uds.core.util.cache import Cache
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
+
 
 # Caching statistics
 class StatsType:
@@ -53,7 +55,7 @@ class StatsType:
     total: int
     start_time: float
     saving_time: int  # in nano seconds
-    
+
     def __init__(self) -> None:
         self.hits = 0
         self.misses = 0
@@ -66,10 +68,9 @@ class StatsType:
         self.total += 1
         self.saving_time += saving_time
 
-    def add_miss(self, saving_time: int = 0) -> None:
+    def add_miss(self) -> None:
         self.misses += 1
         self.total += 1
-        self.saving_time += saving_time
 
     @property
     def uptime(self) -> float:
@@ -90,7 +91,20 @@ class StatsType:
             f'saving_time={self.saving_time/1000000:.2f}'
         )
 
+
 stats = StatsType()
+
+
+class CacheInfo(typing.NamedTuple):
+    """
+    Cache info
+    """
+
+    hits: int
+    misses: int
+    total: int
+    exec_time: int
+
 
 def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
@@ -114,7 +128,16 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
     return new_func
 
+
 def deprecatedClassValue(newVarName: str) -> typing.Callable:
+    """
+    Decorator to make a class value deprecated and warn about it
+
+    Example:
+        @deprecatedClassValue('other.varname')
+        def varname(self):  # It's like a property
+            return self._varname  # Returns old value
+    """
     class innerDeprecated:
         fget: typing.Callable
         new_var_name: str
@@ -134,7 +157,9 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
                     self.new_var_name,
                 )
             except Exception:
-                logger.info('No stack info on deprecated value use %s', self.fget.__name__)
+                logger.info(
+                    'No stack info on deprecated value use %s', self.fget.__name__
+                )
 
             return self.fget(cls)
 
@@ -172,8 +197,8 @@ def allowCache(
         cachingArgs: List of arguments to use for cache key (i.e. [0, 1] will use first and second argument for cache key, 0 will use "self" if a method, and 1 will use first argument)
         cachingKWArgs: List of keyword arguments to use for cache key (i.e. ['a', 'b'] will use "a" and "b" keyword arguments for cache key)
         cachingKeyFnc: Function to use for cache key. If provided, this function will be called with the same arguments as the wrapped function, and must return a string to use as cache key
-    
-    Note: 
+
+    Note:
         If cachingArgs and cachingKWArgs are not provided, the whole arguments will be used for cache key
 
     """
@@ -185,12 +210,13 @@ def allowCache(
         isinstance(cachingKWArgs, str) and [cachingKWArgs] or list(cachingKWArgs or [])
     )
 
+    lock = threading.Lock()
+
+    hits = misses = exec_time = 0
+
     def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
-        setattr(fnc, '__cache_hit__', 0)  # Cache hit
-        setattr(fnc, '__cache_miss__', 0) # Cache miss
-        setattr(fnc, '__exec_time__', 0.0)  # Execution time
         try:
             if cachingArgList is None and cachingKwargList is None:
                 for pos, (paramName, param) in enumerate(
@@ -204,25 +230,34 @@ def allowCache(
                         inspect.Parameter.POSITIONAL_ONLY,
                     ):
                         cachingArgList.append(pos)
-                    elif param.kind in (inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD):
+                    elif param.kind in (
+                        inspect.Parameter.KEYWORD_ONLY,
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                    ):
                         cachingKwargList.append(paramName)
-                    # *args and **kwargs are not supported                    
+                    # *args and **kwargs are not supported
         except Exception:  # nosec
             pass  # Not inspectable, no caching
-        
+
         keyFnc = cachingKeyFnc or (lambda x: fnc.__name__)
-        
+
         @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
-            argList: str = '.'.join(
-                [str(args[i]) for i in cachingArgList if i < len(args)]
-                + [str(kwargs.get(i, '')) for i in cachingKwargList]
+            nonlocal hits, misses, exec_time
+            keyHash = hashlib.sha256(usedforsecurity=False)
+            for i in cachingArgList:
+                if i < len(args):
+                    keyHash.update(str(args[i]).encode('utf-8'))
+            for s in cachingKwargList:
+                keyHash.update(str(kwargs.get(s, '')).encode('utf-8'))
+            # Append key data
+            keyHash.update(
+                keyFnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8')
             )
-            # If invoked from a class, and the class provides "cache"
-            # we will use it, otherwise, we will use a global cache
+            # compute cache key
+            cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
+
             cache = getattr(args[0], 'cache', None) or Cache('functionCache')
-            kkey = keyFnc(args[0]) if len(args) > 0 else ''
-            cacheKey = '{}-{}.{}'.format(cachePrefix, kkey, argList)
 
             # if cacheTimeout is a function, call it
             timeout = cacheTimeout() if callable(cacheTimeout) else cacheTimeout
@@ -231,12 +266,14 @@ def allowCache(
             if not kwargs.get('force', False) and timeout > 0:
                 data = cache.get(cacheKey)
                 if data:
-                    setattr(fnc, '__cache_hit__', getattr(fnc, '__cache_hit__') + 1)
-                    stats.add_hit(getattr(fnc, '__exec_time__'))
+                    with lock:
+                        hits += 1
+                        stats.add_hit(exec_time // hits)  # Use mean execution time
                     return data
 
-            setattr(fnc, '__cache_miss__', getattr(fnc, '__cache_miss__') + 1)
-            stats.add_miss(getattr(fnc, '__exec_time__'))
+            with lock:
+                misses += 1
+                stats.add_miss()
 
             if 'force' in kwargs:
                 # Remove force key
@@ -244,7 +281,10 @@ def allowCache(
 
             t = time.thread_time_ns()
             data = fnc(*args, **kwargs)
-            setattr(fnc, '__exec_time__', getattr(fnc, '__exec_time__') + time.thread_time_ns() - t)
+            # Compute duration
+            with lock:
+                exec_time += time.thread_time_ns() - t
+
             try:
                 # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
                 cache.put(cacheKey, data, timeout)
@@ -257,6 +297,21 @@ def allowCache(
                     e,
                 )
             return data
+
+        def cache_info() -> CacheInfo:
+            """Report cache statistics"""
+            with lock:
+                return CacheInfo(hits, misses, hits+misses, exec_time)
+
+        def cache_clear() -> None:
+            """Clear the cache and cache statistics"""
+            nonlocal hits, misses, exec_time
+            with lock:
+                hits = misses = exec_time = 0
+
+        # Same as lru_cache
+        wrapper.cache_info = cache_info  # type: ignore
+        wrapper.cache_clear = cache_clear  # type: ignore
 
         return wrapper
 

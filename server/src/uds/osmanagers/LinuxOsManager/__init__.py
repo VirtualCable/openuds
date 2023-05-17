@@ -46,60 +46,50 @@ from .linux_ad_osmanager import LinuxOsADManager
 from .linux_freeipa_osmanager import LinuxOsFreeIPAManager
 
 downloadsManager().registerDownloadable(
-    'udsactor_{version}_all.deb'.format(version=VERSION),
-    _(
-        'UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.6)</b>'
-    ),
-    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/udsactor_{version}_all.deb'.format(version=VERSION),
+    f'udsactor_{VERSION}_all.deb',
+    _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.6)</b>'),
+    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__)) + f'/files/udsactor_{VERSION}_all.deb',
     'application/x-debian-package',
 )
 
 downloadsManager().registerDownloadable(
-    'udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
-    _(
-        'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.6)</b>'
-    ),
+    f'udsactor-{VERSION}-1.noarch.rpm',
+    _('UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.6)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/udsactor-{version}-1.noarch.rpm'.format(version=VERSION),
+    + f'/files/udsactor-{VERSION}-1.noarch.rpm',
     'application/x-redhat-package-manager',
 )
 
 downloadsManager().registerDownloadable(
-    'udsactor-unmanaged_{version}_all.deb'.format(version=VERSION),
+    f'udsactor-unmanaged_{VERSION}_all.deb',
     _(
         'UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
     ),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/udsactor-unmanaged_{version}_all.deb'.format(version=VERSION),
+    + f'/files/udsactor-unmanaged_{VERSION}_all.deb',
     'application/x-debian-package',
 )
 
 downloadsManager().registerDownloadable(
-    'udsactor-unmanaged-{version}-1.noarch.rpm'.format(version=VERSION),
+    f'udsactor-unmanaged-{VERSION}-1.noarch.rpm',
     _(
         'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
     ),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/udsactor-unmanaged-{version}-1.noarch.rpm'.format(version=VERSION),
+    + f'/files/udsactor-unmanaged-{VERSION}-1.noarch.rpm',
     'application/x-redhat-package-manager',
 )
 
 downloadsManager().registerDownloadable(
     'udsactor_2.2.0_legacy.deb',
-    _(
-        '<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'
-    ),
-    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
-    + '/files/udsactor_2.2.0_legacy.deb',
+    _('<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
+    os.path.dirname(typing.cast(str, sys.modules[__package__].__file__)) + '/files/udsactor_2.2.0_legacy.deb',
     'application/x-debian-package',
 )
 
 downloadsManager().registerDownloadable(
     'udsactor-legacy-2.2.1-1.noarch.rpm',
-    _(
-        '<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'
-    ),
+    _('<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
     + '/files/udsactor-legacy-2.2.1-1.noarch.rpm',
     'application/x-redhat-package-manager',
@@ -107,9 +97,7 @@ downloadsManager().registerDownloadable(
 
 downloadsManager().registerDownloadable(
     'udsactor-opensuse-legacy-2.2.1-1.noarch.rpm',
-    _(
-        '<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python 2.7)</b>'
-    ),
+    _('<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
     + '/files/udsactor-opensuse-legacy-2.2.1-1.noarch.rpm',
     'application/x-redhat-package-manager',

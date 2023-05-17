@@ -32,35 +32,35 @@
 import typing
 
 from collections import defaultdict
-from xml.etree import cElementTree
+import defusedxml.ElementTree as ET
 
 if typing.TYPE_CHECKING:
-    from xml.etree.cElementTree import Element
+    from xml.etree.ElementTree import Element  # nosec: Only type checking
 
 
-def etree_to_dict(t: 'Element') -> typing.Mapping[str, typing.Any]:
-    d: typing.MutableMapping[str, typing.Any] = {}
-    if t.attrib:
-        d.update({t.tag: {}})
+def etree_to_dict(tree: 'Element') -> typing.Mapping[str, typing.Any]:
+    dct: typing.MutableMapping[str, typing.Any] = {}
+    if tree.attrib:
+        dct.update({tree.tag: {}})
 
-    children = list(t)
+    children = list(tree)
     if children:
         dd = defaultdict(list)
         for dc in map(etree_to_dict, children):
             for k, v in dc.items():
                 dd[k].append(v)
-        d = {t.tag: {k: v[0] if len(v) == 1 else v for k, v in dd.items()}}
-    if t.attrib:
-        d[t.tag].update(('@' + k, v) for k, v in t.attrib.items())
-    if t.text:
-        text = t.text.strip()
-        if children or t.attrib:
+        dct = {tree.tag: {k: v[0] if len(v) == 1 else v for k, v in dd.items()}}
+    if tree.attrib:
+        dct[tree.tag].update(('@' + k, v) for k, v in tree.attrib.items())
+    if tree.text:
+        text = tree.text.strip()
+        if children or tree.attrib:
             if text:
-                d[t.tag]['#text'] = text
+                dct[tree.tag]['#text'] = text
         else:
-            d[t.tag] = text
-    return d
+            dct[tree.tag] = text
+    return dct
 
 
 def parse(xml_string: str) -> typing.Mapping[str, typing.Any]:
-    return etree_to_dict(cElementTree.XML(xml_string))
+    return etree_to_dict(ET.XML(xml_string))

@@ -32,10 +32,12 @@
 # pylint: disable=invalid-name
 import warnings
 import json
+import ssl
 import logging
 import typing
 
 import requests
+import requests.adapters
 
 from udsactor import types, tools
 from udsactor.version import VERSION, BUILD
@@ -94,6 +96,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
     _host: str = ''
     _validateCert: bool = True
     _url: str = ''
+    _session: 'requests.Session'
 
     def __init__(self, host: str, validateCert: bool) -> None:
         self._host = host
@@ -106,6 +109,28 @@ class UDSApi:  # pylint: disable=too-few-public-methods
             warnings.simplefilter('ignore')  # Disables all warnings
         except Exception:  # nosec: not interested in exceptions
             pass
+
+        context = (
+            ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH)
+            if validateCert
+            else ssl._create_unverified_context(purpose=ssl.Purpose.SERVER_AUTH, check_hostname=False)
+        )
+        # Disable SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2
+        context.minimum_version = ssl.TLSVersion.TLSv1_3
+
+        # Configure session security
+        class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
+            def init_poolmanager(self, *args, **kwargs) -> None:
+                kwargs["ssl_context"] = context
+
+                return super().init_poolmanager(*args, **kwargs)
+            
+            def cert_verify(self, conn, url, verify, cert):  # pylint: disable=unused-argument
+                # Overridden to do nothing
+                return super().cert_verify(conn, url, validateCert, cert)
+
+        self._session = requests.Session()
+        self._session.mount("https://", UDSHTTPAdapter())
 
     @property
     def _headers(self) -> typing.MutableMapping[str, str]:
@@ -126,11 +151,11 @@ class UDSApi:  # pylint: disable=too-few-public-methods
     ) -> typing.Any:
         headers = headers or self._headers
         try:
-            result = requests.post(
+            result = self._session.post(
                 self._api_url(method),
                 data=json.dumps(payLoad),
                 headers=headers,
-                verify=self._validateCert,
+                # verify=self._validateCert, Not needed, already in session
                 timeout=TIMEOUT,
                 proxies=NO_PROXY  # type: ignore
                 if disableProxy
@@ -163,10 +188,10 @@ class UDSServerApi(UDSApi):
 
     def enumerateAuthenticators(self) -> typing.Iterable[types.AuthenticatorType]:
         try:
-            result = requests.get(
+            result = self._session.get(
                 self._url + 'auth/auths',
                 headers=self._headers,
-                verify=self._validateCert,
+                # verify=self._validateCert,
                 timeout=4,
             )
             if result.ok:
@@ -179,7 +204,7 @@ class UDSServerApi(UDSApi):
                         priority=v['priority'],
                         isCustom=v['isCustom'],
                     )
-        except Exception:  # nosec: not interested in exceptions
+        except Exception as e:
             pass
 
     def register(
@@ -214,22 +239,22 @@ class UDSServerApi(UDSApi):
             # First, try to login
             authInfo = {'auth': auth, 'username': username, 'password': password}
             headers = self._headers
-            result = requests.post(
+            result = self._session.post(
                 self._url + 'auth/login',
                 data=json.dumps(authInfo),
                 headers=headers,
-                verify=self._validateCert,
+                # verify=self._validateCert,
             )
             if not result.ok or result.json()['result'] == 'error':
                 raise Exception()  # Invalid credentials
 
             headers['X-Auth-Token'] = result.json()['token']
 
-            result = requests.post(
+            result = self._session.post(
                 self._api_url('register'),
                 data=json.dumps(data),
                 headers=headers,
-                verify=self._validateCert,
+                # verify=self._validateCert,
             )
             if result.ok:
                 return result.json()['result']

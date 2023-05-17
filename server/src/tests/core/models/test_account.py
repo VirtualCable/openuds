@@ -34,7 +34,10 @@ import typing
 import logging
 
 from uds import models
+from uds.core.util import model
+from uds.models import consts
 from uds.models.account_usage import AccountUsage
+
 from ...fixtures import services as services_fixtures
 
 from ...utils.test import UDSTestCase
@@ -52,9 +55,7 @@ class ModelAccountTest(UDSTestCase):
 
     def setUp(self) -> None:
         super().setUp()
-        self.user_services = services_fixtures.createCacheTestingUserServices(
-            NUM_USERSERVICES
-        )
+        self.user_services = services_fixtures.createCacheTestingUserServices(NUM_USERSERVICES)
 
     def test_base(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
@@ -62,7 +63,7 @@ class ModelAccountTest(UDSTestCase):
         self.assertEqual(acc.name, 'Test Account')
         self.assertIsInstance(acc.uuid, str)
         self.assertEqual(acc.comments, '')
-        self.assertEqual(acc.time_mark, models.util.NEVER)
+        self.assertEqual(acc.time_mark, consts.NEVER)
         # Ensures no ussage accounting is done
         self.assertEqual(acc.usages.count(), 0)
 
@@ -72,7 +73,7 @@ class ModelAccountTest(UDSTestCase):
             acc.startUsageAccounting(self.user_services[0])
 
             # Only one usage is createdm even with different accounters
-            self.assertEqual(acc.usages.count(), 1, 'loop {}'.format(i))
+            self.assertEqual(acc.usages.count(), 1, f'loop {i}')
 
         # Now create one acconting with the same user service 32 times
         # no usage is created because already created one for that user service
@@ -80,7 +81,7 @@ class ModelAccountTest(UDSTestCase):
             acc = models.Account.objects.create(name='Test Account')
             acc.startUsageAccounting(self.user_services[0])
 
-            self.assertEqual(acc.usages.count(), 0, 'loop {}'.format(i))
+            self.assertEqual(acc.usages.count(), 0, f'loop {i}')
 
     def test_start_single_many(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
@@ -89,7 +90,7 @@ class ModelAccountTest(UDSTestCase):
                 acc.startUsageAccounting(self.user_services[i])
 
             # Only one usage is createdm even with different accounters
-            self.assertEqual(acc.usages.count(), NUM_USERSERVICES, 'loop {}'.format(i))
+            self.assertEqual(acc.usages.count(), NUM_USERSERVICES, f'loop {i}'.format(i))
 
         # Now create one acconting with the same user services 32 times
         # no usage is created because already created one for that user service
@@ -98,7 +99,7 @@ class ModelAccountTest(UDSTestCase):
             for i in range(NUM_USERSERVICES):
                 acc.startUsageAccounting(self.user_services[i])
 
-            self.assertEqual(acc.usages.count(), 0, 'loop {}'.format(i))
+            self.assertEqual(acc.usages.count(), 0, f'loop {i}')
 
     def test_start_multiple(self) -> None:
         for i in range(NUM_USERSERVICES):
@@ -109,9 +110,7 @@ class ModelAccountTest(UDSTestCase):
 
     def test_end_single(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
-        for i in range(
-            32
-        ):  # will create 32 usages, because we close them all, even with one user service
+        for i in range(32):  # will create 32 usages, because we close them all, even with one user service
             acc.startUsageAccounting(self.user_services[i % NUM_USERSERVICES])
             acc.stopUsageAccounting(self.user_services[i % NUM_USERSERVICES])
 
@@ -120,15 +119,13 @@ class ModelAccountTest(UDSTestCase):
     def test_end_single_many(self) -> None:
         # Now create one acconting with the same user service 32 times
         # no usage is created
-        for i in range(32):
+        for _ in range(32):
             acc = models.Account.objects.create(name='Test Account')
             for j in range(NUM_USERSERVICES):
                 acc.startUsageAccounting(self.user_services[j])
                 acc.stopUsageAccounting(self.user_services[j])
 
-            self.assertEqual(
-                acc.usages.count(), NUM_USERSERVICES
-            )  # This acc will only have one usage
+            self.assertEqual(acc.usages.count(), NUM_USERSERVICES)  # This acc will only have one usage
 
     def test_account_usage(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
@@ -145,7 +142,7 @@ class ModelAccountTest(UDSTestCase):
         for i, usage in enumerate(AccountUsage.objects.all().order_by('id')):
             self.assertEqual(usage.elapsed_seconds, 32 + i)
             # With timemark to NEVER, we should get 0 in elapsed_seconds_timemark
-            usage.account.time_mark = models.util.NEVER
+            usage.account.time_mark = consts.NEVER
             usage.account.save(update_fields=['time_mark'])
             self.assertEqual(usage.elapsed_seconds_timemark, 0)
 
@@ -161,24 +158,21 @@ class ModelAccountTest(UDSTestCase):
             self.assertEqual(usage.elapsed_seconds_timemark, 32)
 
             # With start or end to NEVER, we should get 0 in elapsed_seconds
-            usage.start = models.util.NEVER
+            usage.start = consts.NEVER
             usage.save(update_fields=['start'])
             self.assertEqual(usage.elapsed_seconds, 0)
-            usage.start = models.getSqlDatetime()
-            usage.end = models.util.NEVER
+            usage.start = model.getSqlDatetime()
+            usage.end = consts.NEVER
             usage.save(update_fields=['start', 'end'])
             self.assertEqual(usage.elapsed_seconds, 0)
             # Now end is before start
-            usage.start = models.getSqlDatetime()
+            usage.start = model.getSqlDatetime()
             usage.end = usage.start - datetime.timedelta(seconds=1)
             usage.save(update_fields=['start', 'end'])
             self.assertEqual(usage.elapsed_seconds, 0)
-
 
         # Esnure elapsed and elapsed_timemark as strings
         for i, usage in enumerate(AccountUsage.objects.all().order_by('id')):
             self.assertIsInstance(usage.elapsed, str)
             self.assertIsInstance(usage.elapsed_timemark, str)
             self.assertIsInstance(str(usage), str)
-
-        

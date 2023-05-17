@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 
@@ -37,23 +37,17 @@ class AuthenticatorException(Exception):
     Generic authentication exception
     """
 
-    pass
-
 
 class InvalidUserException(AuthenticatorException):
     """
     Invalid user specified. The user cant access the requested service
     """
 
-    pass
-
 
 class InvalidAuthenticatorException(AuthenticatorException):
     """
     Invalida authenticator has been specified
     """
-
-    pass
 
 
 class Redirect(AuthenticatorException):
@@ -62,20 +56,14 @@ class Redirect(AuthenticatorException):
     Used in authUrlCallback to indicate that redirect is needed
     """
 
-    pass
-
 
 class Logout(AuthenticatorException):
     """
     This exceptions redirects logouts an user and redirects to an url
     """
 
-    pass
-
 
 class MFAError(AuthenticatorException):
     """
     This exceptions indicates than an MFA error has ocurred
     """
-
-    pass

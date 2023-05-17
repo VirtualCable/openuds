@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -37,7 +37,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
 from uds.core import auths
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds.core.auths.auth import authLogLogin
 
 from . import client
@@ -207,9 +207,9 @@ class RadiusAuth(auths.Authenticator):
             connection = self.radiusClient()
             # Reply is not important...
             connection.authenticate(
-                cryptoManager().randomString(10), cryptoManager().randomString(10)
+                CryptoManager().randomString(10), CryptoManager().randomString(10)
             )
-        except client.RadiusAuthenticationError as e:
+        except client.RadiusAuthenticationError:
             pass
         except Exception:
             logger.exception('Connecting')

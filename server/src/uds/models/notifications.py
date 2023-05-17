@@ -26,15 +26,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from enum import IntEnum
 import logging
 import typing
 
 from django.db import models, transaction
-from django.utils.translation import gettext as _
 
+from uds.core.util.log import LogLevel
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -44,20 +43,6 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from uds.core.messaging import Notifier as NotificationProviderModule
 
-class NotificationLevel(IntEnum):
-    """
-    Notification Levels
-    """
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    CRITICAL = 3
-
-    # Return all notification levels as tuples of (level value, level name)
-    @classmethod
-    def all(cls):
-        return [(level.value, level.name) for level in (cls.INFO, cls.WARNING, cls.ERROR, cls.CRITICAL)]
-    
 
 # This model will be available on local "persistent" storage and also on configured database
 class Notification(models.Model):
@@ -75,7 +60,7 @@ class Notification(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.BaseManager[Notification]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -102,12 +87,12 @@ class Notifier(ManagedObjectModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
-    level = models.PositiveSmallIntegerField(default=NotificationLevel.ERROR)
+    level = models.PositiveSmallIntegerField(default=LogLevel.ERROR)
 
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[Notifier]'
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """
         Meta class to declare db table
         """
@@ -124,21 +109,22 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         Returns:
             The python type for this record object
         """
-        from uds.core import messaging  # pylint: disable=redefined-outer-name
+        from uds.core import messaging  # pylint: disable=import-outside-toplevel
 
-        kind_ = messaging.factory().lookup(self.data_type) 
-        if kind_ is None:
-            raise Exception('Notifier type not found: {0}'.format(self.data_type))
-        return kind_
+        kind = messaging.factory().lookup(self.data_type)
+        if kind is None:
+            raise Exception(f'Notifier type not found: {self.data_type}')
+        return kind
 
     def getInstance(
         self, values: typing.Optional[typing.Dict[str, str]] = None
     ) -> 'NotificationProviderModule':
-        return typing.cast('NotificationProviderModule', super().getInstance(values=values))
-
+        return typing.cast(
+            'NotificationProviderModule', super().getInstance(values=values)
+        )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -152,12 +138,16 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         if toDelete.data:
             try:
                 s = toDelete.getInstance()
-                s.destroy()
-                s.env.clearRelatedData()
+                s.destroy()  # Invokes the destruction of "related own data"
+                s.env.clearRelatedData()  # Clears related data, such as storage, cache, etc...
             except Exception as e:
-                logger.error('Error processing deletion of notifier %s: %s (forced deletion)', toDelete.name, e)
+                logger.error(
+                    'Error processing deletion of notifier %s: %s (forced deletion)',
+                    toDelete.name,
+                    e,
+                )
 
-        logger.debug('Before delete mfa provider %s', toDelete)
+        logger.debug('Before delete notification provider %s', toDelete)
 
 
 # : Connects a pre deletion signal to OS Manager

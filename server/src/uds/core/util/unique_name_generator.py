@@ -47,15 +47,15 @@ class UniqueNameGenerator(UniqueIDGenerator):
     def __toName(self, seq: int, length: int) -> str:
         if seq == -1:
             raise KeyError('No more names available. Please, increase service digits.')
-        return "%s%0*d" % (self._baseName, length, seq)
+        return f'{self._baseName}{seq:0{length}d}'
 
-    def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ
+    def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ,arguments-renamed
         self.setBaseName(baseName)
         minVal = 0
-        maxVal = 10 ** length - 1
+        maxVal = 10**length - 1
         return self.__toName(super().get(minVal, maxVal), length)
 
-    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore
+    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
         super().transfer(int(name[len(self._baseName) :]), toUNGen)
 

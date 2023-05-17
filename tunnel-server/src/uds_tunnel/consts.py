@@ -28,6 +28,7 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import re
 import typing
 
 DEBUG = True
@@ -71,3 +72,6 @@ RESPONSE_OK: typing.Final[bytes] = b'OK'
 
 # Backlog for listen socket
 BACKLOG = 1024
+
+# Regular expression for parsing ticket
+TICKET_REGEX = re.compile(f'^[a-zA-Z0-9]{{{TICKET_LENGTH}}}$')

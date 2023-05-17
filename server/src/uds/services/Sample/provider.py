@@ -30,7 +30,7 @@
 """
 Created on Jun 22, 2012
 
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -43,7 +43,7 @@ from .service import ServiceOne, ServiceTwo
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.environment import Environment
 
 logger = logging.getLogger(__name__)

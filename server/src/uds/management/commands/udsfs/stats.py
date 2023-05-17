@@ -6,12 +6,12 @@ import logging
 
 from uds import models
 from uds.core.util.cache import Cache
-from uds.core.util.stats import events, counters
 
 from . import types
 
 
 logger = logging.getLogger(__name__)
+
 
 # Custom types
 class StatInterval(typing.NamedTuple):
@@ -87,13 +87,13 @@ class StatsFS(types.UDSFSInterface):
         self, filename: typing.List[str]
     ) -> typing.Tuple[DispatcherType, StatInterval, str]:
         if len(filename) != 1:
-            raise FileNotFoundError
+            raise FileNotFoundError()
 
         # Extract components
         try:
             dispatcher, interval, extension = (filename[0].split('.') + [''])[:3]
         except ValueError:
-            raise FileNotFoundError
+            raise FileNotFoundError() from None
 
         logger.debug(
             'Dispatcher: %s, interval: %s, extension: %s',
@@ -103,16 +103,16 @@ class StatsFS(types.UDSFSInterface):
         )
 
         if dispatcher not in self._dispatchers:
-            raise FileNotFoundError
+            raise FileNotFoundError()
 
         fnc, requiresInterval = self._dispatchers[dispatcher]
 
         if extension == '' and requiresInterval is True:
-            raise FileNotFoundError
+            raise FileNotFoundError()
 
         if requiresInterval:
             if interval not in self._interval:
-                raise FileNotFoundError
+                raise FileNotFoundError()
 
             range = self._interval[interval]
         else:
@@ -122,7 +122,7 @@ class StatsFS(types.UDSFSInterface):
             extension = interval
 
         if extension != 'csv':
-            raise FileNotFoundError
+            raise FileNotFoundError()
 
         todayStart = datetime.datetime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0
@@ -174,14 +174,14 @@ class StatsFS(types.UDSFSInterface):
             cacheTime = 60
 
         # Check if the file info is cached
-        cached = self._cache.get(path[0]+extension)
+        cached = self._cache.get(path[0] + extension)
         if cached is not None:
             logger.debug('Cache hit for %s', path[0])
             data = cached
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.put(path[0]+extension, data, cacheTime)
+            self._cache.put(path[0] + extension, data, cacheTime)
 
         # Calculate the size of the file
         size = len(data)
@@ -206,14 +206,14 @@ class StatsFS(types.UDSFSInterface):
             cacheTime = 60
 
         # Check if the file info is cached
-        cached = self._cache.get(path[0]+extension)
+        cached = self._cache.get(path[0] + extension)
         if cached is not None:
             logger.debug('Cache hit for %s', path[0])
             data = cached
         else:
             logger.debug('Cache miss for %s', path[0])
             data = dispatcher(interval, extension, 0, 0)
-            self._cache.put(path[0]+extension, data, cacheTime)
+            self._cache.put(path[0] + extension, data, cacheTime)
 
         # Dispatch the read to the dispatcher
         data = dispatcher(interval, extension, size, offset)

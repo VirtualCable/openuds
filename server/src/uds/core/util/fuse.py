@@ -15,12 +15,13 @@
 
 # Modified to add type checking, fix bugs, etc.. by dkmaster@dkmon.com
 
+# pylint: disable=protected-access,too-few-public-methods,unused-argument
+
 import sys
 import os
 import ctypes
 import errno
 import typing
-import warnings
 import logging
 
 from ctypes.util import find_library
@@ -44,29 +45,26 @@ if _system == 'Windows':
     #
     # We have to fix up c_long and c_ulong so that it matches the
     # Cygwin (and UNIX) sizes when run on Windows.
-    import sys
-
     if sys.maxsize > 0xFFFFFFFF:
         c_win_long = ctypes.c_int64
         c_win_ulong = ctypes.c_uint64
 
 if _system == 'Windows' or _system.startswith('CYGWIN'):
 
-    class c_timespec(ctypes.Structure):  # type: ignore
+    class c_timespec(ctypes.Structure):  # type: ignore  # pylint: disable=too-few-public-methods
         _fields_ = [('tv_sec', c_win_long), ('tv_nsec', c_win_long)]
-
 
 else:
 
-    class c_timespec(ctypes.Structure):  # type: ignore
+    class c_timespec(ctypes.Structure):  # type: ignore  # pylint: disable=too-few-public-methods
         _fields_ = [('tv_sec', ctypes.c_long), ('tv_nsec', ctypes.c_long)]
 
 
-class c_utimbuf(ctypes.Structure):
+class c_utimbuf(ctypes.Structure):  # type: ignore  # pylint: disable=too-few-public-methods
     _fields_ = [('actime', c_timespec), ('modtime', c_timespec)]
 
 
-class c_stat(ctypes.Structure):
+class c_stat(ctypes.Structure):  # type: ignore  # pylint: disable=too-few-public-methods
     pass  # Platform dependent
 
 
@@ -92,7 +90,7 @@ if not _libfuse_path:
                     rootkey, keyname, 0, reg.KEY_READ | reg.KEY_WOW64_32KEY  # type: ignore
                 )
                 val = str(reg.QueryValueEx(key, valname)[0])  # type: ignore
-            except WindowsError:  # type: ignore
+            except WindowsError:  # type: ignore  # pylint: disable=undefined-variable
                 pass
             finally:
                 if key is not None:
@@ -103,16 +101,19 @@ if not _libfuse_path:
             reg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WinFsp", r"InstallDir"  # type: ignore
         )
         if _libfuse_path:
-            _libfuse_path += r"bin\winfsp-%s.dll" % (
-                "x64" if sys.maxsize > 0xFFFFFFFF else "x86"
+            _libfuse_path += (
+                r"bin\winfsp-%s.dll"  # pylint: disable=consider-using-f-string
+                % (  # pylint: disable=consider-using-f-string
+                    "x64" if sys.maxsize > 0xFFFFFFFF else "x86"
+                )
             )
     else:
         _libfuse_path = find_library('fuse')
 
 if not _libfuse_path:
     raise EnvironmentError('Unable to find libfuse')
-else:
-    _libfuse = ctypes.CDLL(_libfuse_path)
+
+_libfuse = ctypes.CDLL(_libfuse_path)
 
 if _system == 'Darwin' and hasattr(_libfuse, 'macfuse_version'):
     _system = 'Darwin-MacFuse'
@@ -131,7 +132,6 @@ getxattr_t: typing.Type
 
 if _system in ('Darwin', 'Darwin-MacFuse', 'FreeBSD'):
     ENOTSUP = 45
-
     c_dev_t = ctypes.c_int32
     c_fsblkcnt_t = ctypes.c_ulong
     c_fsfilcnt_t = ctypes.c_ulong
@@ -295,7 +295,7 @@ elif _system == 'Linux':
             ('st_mtimespec', c_timespec),
             ('st_ctimespec', c_timespec),
         ]
-    elif _machine == 'ppc64' or _machine == 'ppc64le':
+    elif _machine in ('ppc64', 'ppc64le'):
         c_stat._fields_ = [
             ('st_dev', c_dev_t),
             ('st_ino', ctypes.c_ulong),
@@ -392,7 +392,7 @@ elif _system == 'Windows' or _system.startswith('CYGWIN'):
         ('st_birthtimespec', c_timespec),
     ]
 else:
-    raise NotImplementedError('%s is not supported.' % _system)
+    raise NotImplementedError(f'{_system} is not supported.')
 
 
 if _system == 'FreeBSD':
@@ -428,7 +428,6 @@ if _system == 'FreeBSD':
             ('f_frsize', ctypes.c_ulong),
         ]
 
-
 elif _system == 'Windows' or _system.startswith('CYGWIN'):
 
     class c_statvfs(ctypes.Structure):  # type: ignore
@@ -445,7 +444,6 @@ elif _system == 'Windows' or _system.startswith('CYGWIN'):
             ('f_flag', c_win_ulong),
             ('f_namemax', c_win_ulong),
         ]
-
 
 else:
 
@@ -480,7 +478,6 @@ if _system == 'Windows' or _system.startswith('CYGWIN'):
             ('fh', ctypes.c_uint64),
             ('lock_owner', ctypes.c_uint64),
         ]
-
 
 else:
 
@@ -713,7 +710,7 @@ class FuseOperations(ctypes.Structure):
 
 
 def time_of_timespec(ts: c_timespec, use_ns=False):
-    return ts.tv_sec * 10 ** 9 + ts.tv_nsec  # type: ignore
+    return ts.tv_sec * 10**9 + ts.tv_nsec  # type: ignore
 
 
 def set_st_attrs(st: c_stat, attrs: typing.Mapping[str, int]) -> None:
@@ -723,7 +720,7 @@ def set_st_attrs(st: c_stat, attrs: typing.Mapping[str, int]) -> None:
             if timespec is None:
                 continue
 
-            timespec.tv_sec, timespec.tv_nsec = divmod(int(val), 10 ** 9)
+            timespec.tv_sec, timespec.tv_nsec = divmod(int(val), 10**9)
         elif hasattr(st, key):
             setattr(st, key, val)
 
@@ -749,10 +746,11 @@ def fuse_exit():
 
 
 class FuseOSError(OSError):
-    def __init__(self, errno):
-        super(FuseOSError, self).__init__(errno, os.strerror(errno))
+    def __init__(self, errno):  # pylint: disable=redefined-outer-name
+        super().__init__(errno, os.strerror(errno))
 
 
+# pylint: disable=too-many-public-methods
 class FUSE:
     '''
     This class is the lower level interface and should not be subclassed under
@@ -776,7 +774,6 @@ class FUSE:
         encoding: typing.Optional[str] = None,
         **kwargs,
     ) -> None:
-
         '''
         Setting raw_fi to True will cause FUSE to pass the fuse_file_info
         class as is to Operations, instead of just the fh field.
@@ -839,8 +836,8 @@ class FUSE:
 
         del self.operations  # Invoke the destructor
 
-        if type(self.__critical_exception) is not Exception:
-            raise self.__critical_exception
+        if not isinstance(self.__critical_exception, Exception):
+            raise self.__critical_exception  # type: ignore
         if err:
             raise RuntimeError(err)
 
@@ -863,37 +860,35 @@ class FUSE:
                 # private_data field of struct fuse_context
                 return func(*args, **kwargs) or 0
 
-            else:
-                try:
-                    return func(*args, **kwargs) or 0
+            try:
+                return func(*args, **kwargs) or 0
 
-                except OSError as e:
-                    if e.errno > 0:
-                        logger.debug(
-                            "FUSE operation %s raised a %s, returning errno %s.",
-                            func.__name__,
-                            type(e),
-                            e.errno,
-                        )
-                        return -e.errno
-                    else:
-                        logger.error(
-                            "FUSE operation %s raised an OSError with negative "
-                            "errno %s, returning errno.EINVAL.",
-                            func.__name__,
-                            e.errno,
-                            exc_info=True,
-                        )
-                        return -errno.EINVAL
-
-                except Exception:
-                    logger.error(
-                        "Uncaught exception from FUSE operation %s, "
-                        "returning errno.EINVAL.",
+            except OSError as e:
+                if e.errno > 0:
+                    logger.debug(
+                        "FUSE operation %s raised a %s, returning errno %s.",
                         func.__name__,
-                        exc_info=True,
+                        type(e),
+                        e.errno,
                     )
-                    return -errno.EINVAL
+                    return -e.errno
+                logger.error(
+                    "FUSE operation %s raised an OSError with negative "
+                    "errno %s, returning errno.EINVAL.",
+                    func.__name__,
+                    e.errno,
+                    exc_info=True,
+                )
+                return -errno.EINVAL
+
+            except Exception:
+                logger.error(
+                    "Uncaught exception from FUSE operation %s, "
+                    "returning errno.EINVAL.",
+                    func.__name__,
+                    exc_info=True,
+                )
+                return -errno.EINVAL
 
         except BaseException as e:
             if len(args) > 0 and isinstance(args[0], FUSE):
@@ -1003,9 +998,7 @@ class FUSE:
         logger.debug('Read operation on %s returned %d bytes', path, retsize)
 
         if retsize > size:
-            raise RuntimeError(
-                "read too much data ({} bytes, expected {})".format(retsize, size)
-            )
+            raise RuntimeError(f'read too much data ({retsize} bytes, expected {size})')
 
         ctypes.memmove(buf, ret, retsize)
         return retsize
@@ -1271,8 +1264,8 @@ class Operations:
     def __call__(self, op: str, *args) -> typing.Any:
         try:
             return getattr(self, op)(*args)
-        except AttributeError:
-            raise FuseOSError(errno.EFAULT)
+        except AttributeError as e:
+            raise FuseOSError(errno.EFAULT) from e
 
     def access(self, path: str, amode: int) -> None:
         return
@@ -1297,8 +1290,7 @@ class Operations:
         raise FuseOSError(errno.EROFS)
 
     def destroy(self, path: str) -> None:
-        'Called on filesystem destruction. Path is always /'
-        pass
+        '''Called on filesystem destruction. Path is always /'''
 
     def flush(self, path: typing.Optional[str], fh: typing.Any) -> None:
         pass
@@ -1325,7 +1317,7 @@ class Operations:
 
         if path != '/':
             raise FuseOSError(errno.ENOENT)
-        return dict(st_mode=(S_IFDIR | 0o755), st_nlink=2)
+        return {'st_mode': (S_IFDIR | 0o755), 'st_nlink': 2}
 
     def getxattr(self, path: str, name: str, position: int = 0) -> str:
         raise FuseOSError(ENOTSUP)
@@ -1336,7 +1328,6 @@ class Operations:
 
         Use it instead of __init__ if you start threads on initialization.
         '''
-        pass
 
     def ioctl(
         self, path: str, cmd: bytes, arg: bytes, fip: int, flags: int, data: bytes

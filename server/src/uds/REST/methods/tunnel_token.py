@@ -58,7 +58,7 @@ class TunnelTokens(ModelHandler):
     def item_as_dict(self, item: TunnelToken) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.token,
-            'name': _('Token isued by {} from {}').format(item.username, item.ip),
+            'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
             'stamp': item.stamp,
             'username': item.username,
             'ip': item.ip,
@@ -80,6 +80,6 @@ class TunnelTokens(ModelHandler):
         try:
             self.model.objects.get(token=self._args[0]).delete()
         except self.model.DoesNotExist:
-            raise NotFound('Element do not exists')
+            raise NotFound('Element do not exists') from None
 
         return OK

@@ -48,7 +48,6 @@ def serialize(obj: typing.Any) -> bytes:
     """
     # generate pickle dump and encrypt it to keep it safe
     # Compress data using lzma first
-    
 
     data = CryptoManager().fastCrypt(
         lzma.compress(pickle.dumps(obj))
@@ -63,8 +62,12 @@ def deserialize(data: typing.Optional[bytes]) -> typing.Any:
     if not data:
         return None
 
-    if data[0:2] in DESERIALIZERS: 
-        return pickle.loads(lzma.decompress(DESERIALIZERS[data[0:2]](data[2:])))  # nosec:  Secured by encryption
-    else:
-        # Old version, try to unpickle it
+    if data[0:2] in DESERIALIZERS:
+        return pickle.loads(
+            lzma.decompress(DESERIALIZERS[data[0:2]](data[2:]))
+        )  # nosec:  Secured by encryption
+    # Old version, try to unpickle it
+    try:
         return pickle.loads(data)  # nosec:  Backward compatibility
+    except Exception:
+        return None

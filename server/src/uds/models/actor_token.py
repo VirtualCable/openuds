@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2020 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,11 +26,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 from django.db import models
 
-from .util import MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
+from .consts import MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
+
 
 class ActorToken(models.Model):
     """
@@ -41,7 +42,7 @@ class ActorToken(models.Model):
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
     ip = models.CharField(max_length=MAX_IPV6_LENGTH)
     ip_version = models.IntegerField(default=4)  # Version of ip fields
-    
+
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
     mac = models.CharField(max_length=128, db_index=True, unique=True)
     pre_command = models.CharField(max_length=255, blank=True, default='')
@@ -52,13 +53,11 @@ class ActorToken(models.Model):
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
-    # "fake" declarations for type checking
-    # objects: 'models.manager.Manager[ActorToken]'
+    # New fields for 4.0, optional "custom" data, to be interpreted by specific code
+    custom = models.TextField(blank=True, default='')
 
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
 
     def __str__(self):
-        return '<ActorToken {} created on {} by {} from {}/{}>'.format(
-            self.token, self.stamp, self.username, self.hostname, self.ip_from
-        )
+        return f'<ActorToken {self.token} created on {self.stamp} by {self.username} from {self.hostname}/{self.ip_from}>'

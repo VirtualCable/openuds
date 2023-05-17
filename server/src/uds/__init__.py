@@ -38,6 +38,7 @@ import logging
 from django.db import connections
 
 from django.db.backends.signals import connection_created
+
 # from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 
@@ -50,8 +51,8 @@ logger = logging.getLogger(__name__)
 
 # Set default ssl context unverified, as MOST servers that we will connect will be with self signed certificates...
 try:
-    _create_unverified_https_context = ssl._create_unverified_context
-    ssl._create_default_https_context = _create_unverified_https_context
+    # _create_unverified_https_context = ssl._create_unverified_context
+    # ssl._create_default_https_context = _create_unverified_https_context
 
     # Capture warnnins to logg
     logging.captureWarnings(True)
@@ -69,17 +70,37 @@ class UDSAppConfig(AppConfig):
         # with ANY command from manage.
         logger.debug('Initializing app (ready) ***************')
 
-        # Now, ensures that all dynamic elements are loadad and present
-        # To make sure that the packages are initialized at this point
+        # Now, ensures that all dynamic elements are loaded and present
+        # To make sure that the packages are already initialized at this point
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import services
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import auths
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import mfas
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import osmanagers
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import notifiers
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import transports
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import reports
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import dispatchers
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import plugins
+
+        # pylint: disable=unused-import,import-outside-toplevel
         from . import REST
 
         # Ensure notifications table exists on local sqlite db (called "persistent" on settings.py)
@@ -96,8 +117,9 @@ default_app_config = 'uds.UDSAppConfig'
 
 
 # Sets up several sqlite non existing methodsm and some optimizations on sqlite
+# pylint: disable=unused-argument
 @receiver(connection_created)
-def extend_sqlite(connection=None, **kwargs):
+def extend_sqlite(connection=None, **kwargs) -> None:
     if connection and connection.vendor == "sqlite":
         logger.debug('Connection vendor is sqlite, extending methods')
         cursor = connection.cursor()
@@ -108,4 +130,3 @@ def extend_sqlite(connection=None, **kwargs):
         cursor.execute('PRAGMA mmap_size=67108864')
         connection.connection.create_function("MIN", 2, min)
         connection.connection.create_function("MAX", 2, max)
-        connection.connection.create_function("CEIL", 1, math.ceil)

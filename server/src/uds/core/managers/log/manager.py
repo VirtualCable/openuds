@@ -29,48 +29,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import traceback
-import logging
+# import traceback
 import typing
 
-from uds import models
-
-from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
+from uds.core.util.model import getSqlDatetime
+from uds.models.log import Log
+
+from .objects import MODEL_TO_TYPE, LogObjectType
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
-
-
-logger = logging.getLogger(__name__)
-
-(
-    OT_USERSERVICE,
-    OT_PUBLICATION,
-    OT_SERVICEPOOL,
-    OT_SERVICE,
-    OT_PROVIDER,
-    OT_USER,
-    OT_GROUP,
-    OT_AUTHENTICATOR,
-    OT_METAPOOL,
-) = range(
-    9
-)  # @UndefinedVariable
-
-# Dict for translations
-transDict: typing.Dict[typing.Type['Model'], int] = {
-    models.UserService: OT_USERSERVICE,
-    models.ServicePoolPublication: OT_PUBLICATION,
-    models.ServicePool: OT_SERVICEPOOL,
-    models.Service: OT_SERVICE,
-    models.Provider: OT_PROVIDER,
-    models.User: OT_USER,
-    models.Group: OT_GROUP,
-    models.Authenticator: OT_AUTHENTICATOR,
-    models.MetaPool: OT_METAPOOL,
-}
+    from uds import models
 
 
 class LogManager(metaclass=singleton.Singleton):
@@ -85,130 +56,146 @@ class LogManager(metaclass=singleton.Singleton):
     def manager() -> 'LogManager':
         return LogManager()  # Singleton pattern will return always the same instance
 
-    def __log(
+    def _log(
         self,
-        owner_type: int,
+        owner_type: LogObjectType,
         owner_id: int,
         level: int,
         message: str,
         source: str,
         avoidDuplicates: bool,
+        logName: str
     ):
         """
         Logs a message associated to owner
         """
         # Ensure message fits on space
-        message = str(message)[:255]
+        message = str(message)[:4096]
 
-        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
+        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         # First, ensure we do not have more than requested logs, and we can put one more log item
-        if qs.count() >= GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt():
-            for i in qs.order_by(
-                '-created',
-            )[GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt() - 1 :]:
-                i.delete()
+        max_elements = owner_type.get_max_elements()
+        current_elements = qs.count()
+        # If max_elements is greater than 0, database contains equals or more than max_elements, we will delete the oldest ones to ensure we have max_elements - 1
+        if 0 < max_elements <= current_elements:
+            # We will delete the oldest ones
+            for x in qs.order_by('created', 'id')[
+                : current_elements - max_elements + 1
+            ]:
+                x.delete()
 
         if avoidDuplicates:
-            try:
-                lg: models.Log = models.Log.objects.filter(
-                    owner_id=owner_id, owner_type=owner_type
-                ).order_by('-id')[
-                    0  # type: ignore  # Slicing is not supported by pylance right now
-                ]
-                if lg.data == message:
-                    # Do not log again, already logged
-                    return
-            except Exception:  # nosec: Do not exists log, all ok
-                pass
+            lg: typing.Optional['Log'] = Log.objects.filter(
+                owner_id=owner_id, owner_type=owner_type.value
+            ).last()
+            if lg and lg.data == message:
+                # Do not log again, already logged
+                return
 
         # now, we add new log
         try:
-            models.Log.objects.create(
-                owner_type=owner_type,
+            Log.objects.create(
+                owner_type=owner_type.value,
                 owner_id=owner_id,
-                created=models.getSqlDatetime(),
+                created=getSqlDatetime(),
                 source=source,
                 level=level,
                 data=message,
+                name=logName,
             )
         except Exception:  # nosec
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 
-    def __getLogs(
-        self, owner_type: int, owner_id: int, limit: int
+    def _getLogs(
+        self, owner_type: LogObjectType, owner_id: int, limit: int
     ) -> typing.List[typing.Dict]:
         """
         Get all logs associated with an user service, ordered by date
         """
-        qs = models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type)
+        qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
         return [
             {'date': x.created, 'level': x.level, 'source': x.source, 'message': x.data}
             for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
         ]
 
-    def __clearLogs(self, owner_type: int, owner_id: int):
+    def _clearLogs(self, owner_type: LogObjectType, owner_id: int):
         """
-        Clears all logs related to user service
+        Clears ALL logs related to user service
         """
-        models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
+        Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
     def doLog(
         self,
-        wichObject: 'Model',
+        wichObject: typing.Optional['Model'],
         level: int,
         message: str,
         source: str,
         avoidDuplicates: bool = True,
+        logName: typing.Optional[str] = None,
     ):
         """
         Do the logging for the requested object.
 
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
-        owner_type = transDict.get(type(wichObject), None)
+        owner_type = (
+            MODEL_TO_TYPE.get(type(wichObject), None)
+            if wichObject
+            else LogObjectType.SYSLOG
+        )
+        objectId = getattr(wichObject, 'id', -1)
+        logName = logName or ''
 
         if owner_type is not None:
             try:
-                self.__log(owner_type, wichObject.id, level, message, source, avoidDuplicates)  # type: ignore
-            except Exception:
-                logger.error('Error logging: %s:%s %s - %s %s', owner_type, wichObject.id, level, message, source) # type: ignore
-        else:
-            logger.debug(
-                'Requested doLog for a type of object not covered: %s', wichObject
-            )
+                self._log(
+                    owner_type, objectId, level, message, source, avoidDuplicates, logName
+                )
+            except Exception:  # nosec
+                pass  # Can not log,
 
-    def getLogs(self, wichObject: 'Model', limit: int) -> typing.List[typing.Dict]:
+    def getLogs(
+        self, wichObject: typing.Optional['Model'], limit: int = -1
+    ) -> typing.List[typing.Dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
 
-        owner_type = transDict.get(type(wichObject), None)
-        logger.debug('Getting log: %s -> %s', wichObject, owner_type)
-
-        if owner_type is not None:  # 0 is valid owner type
-            return self.__getLogs(owner_type, wichObject.id, limit)  # type: ignore
-
-        logger.debug(
-            'Requested getLogs for a type of object not covered: %s', wichObject
+        owner_type = (
+            MODEL_TO_TYPE.get(type(wichObject), None)
+            if wichObject
+            else LogObjectType.SYSLOG
         )
+
+        if owner_type:  # 0 is valid owner type
+            return self._getLogs(
+                owner_type,
+                getattr(wichObject, 'id', -1),
+                limit if limit != -1 else owner_type.get_max_elements(),
+            )
+
         return []
 
-    def clearLogs(self, wichObject: 'Model'):
+    def clearLogs(self, wichObject: typing.Optional['Model']):
         """
         Clears all logs related to wichObject
 
         Used mainly at object database removal (parent object)
         """
 
-        owner_type = transDict.get(type(wichObject), None)
-        if owner_type is not None:
-            self.__clearLogs(owner_type, wichObject.id)  # type: ignore
-        else:
-            logger.debug(
-                'Requested clearLogs for a type of object not covered: %s: %s',
-                type(wichObject),
-                wichObject,
-            )
-            for line in traceback.format_stack(limit=5):
-                logger.debug('>> %s', line)
+        owner_type = (
+            MODEL_TO_TYPE.get(type(wichObject), None)
+            if wichObject
+            else LogObjectType.SYSLOG
+        )
+        if owner_type:
+            self._clearLogs(owner_type, getattr(wichObject, 'id', -1))
+        #else:
+            # logger.debug(
+            #    'Requested clearLogs for a type of object not covered: %s: %s',
+            #    type(wichObject),
+            #    wichObject,
+            #)
+            #for line in traceback.format_stack(limit=5):
+            #    logger.debug('>> %s', line)

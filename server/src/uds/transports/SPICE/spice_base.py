@@ -127,7 +127,7 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
         required=False,
         tab=gui.Tab.ADVANCED,
-        pattern=gui.TextField.PatternTypes.URL,
+        pattern=gui.TextField.PatternType.URL,
     )
 
     overridedProxy = gui.TextField(
@@ -135,7 +135,7 @@ class BaseSpiceTransport(transports.Transport):
         label=_('Override Proxy'),
         tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
         required=False,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

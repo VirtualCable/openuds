@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=no-member
 
 #
 # Copyright (c) 2016-2021 Virtual Cable S.L.U.
@@ -36,6 +36,13 @@ import tempfile
 import os.path
 
 import ldap.filter
+from ldap import (
+    SCOPE_BASE,  # type: ignore
+    SCOPE_SUBTREE,  # type: ignore
+    SCOPE_ONELEVEL,  # type: ignore
+    # SCOPE_SUBORDINATE,  # type: ignore
+)
+
 
 from django.utils.translation import gettext as _
 from uds.core.util import tools
@@ -44,23 +51,16 @@ logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
 
-from ldap import (
-    SCOPE_BASE,  # type: ignore
-    SCOPE_SUBTREE,  # type: ignore
-    SCOPE_ONELEVEL,  # type: ignore
-    SCOPE_SUBORDINATE,  # type: ignore
-)
-
 
 class LDAPError(Exception):
     @staticmethod
     def reraise(e: typing.Any):
         _str = _('Connection error: ')
         if hasattr(e, 'message') and isinstance(e.message, dict):
-            _str += '{}, {}'.format(e.message.get('info', ''), e.message.get('desc'))
+            _str += f'{e.message.get("info", "")}, {e.message.get("desc", "")}'
         else:
-            _str += '{}'.format(e)
-        raise LDAPError(_str)
+            _str += str(e)
+        raise LDAPError(_str) from e
 
 
 def escape(value: str):
@@ -100,7 +100,7 @@ def connection(
         schema = 'ldaps' if ssl else 'ldap'
         if port == -1:
             port = 636 if ssl else 389
-        uri = "{}://{}:{}".format(schema, host, port)
+        uri = f'{schema}://{host}:{port}'
         logger.debug('Ldap uri: %s', uri)
 
         l = ldap.initialize(uri=uri)  # type: ignore
@@ -116,22 +116,26 @@ def connection(
                 # Create a semi-temporary ca file, with the content of the certificate
                 # The name is from the host, so we can ovwerwrite it if needed
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
-                with open(cert_filename, 'w') as f:
+                with open(cert_filename, 'w', encoding='utf8') as f:
                     f.write(certificate)
-                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename) # type: ignore
+                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # type: ignore
 
             if not verify_ssl:
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
+            # Disable TLS1 and TLS1.1
+            # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
+            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)  # type: ignore
+
             l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
 
         l.simple_bind_s(who=username, cred=password)
     except ldap.SERVER_DOWN as e:  # type: ignore
-        raise LDAPError(_('Can\'t contact LDAP server') + ': {}'.format(e))
+        raise LDAPError(_('Can\'t contact LDAP server') + f': {e}') from e
     except ldap.LDAPError as e:  # type: ignore
         LDAPError.reraise(e)
     except Exception as e:
         logger.exception('Exception connection:')
-        raise LDAPError('{}'.format(e))
+        raise LDAPError(str(e)) from e
 
     logger.debug('Connection was successful')
     return l
@@ -141,8 +145,8 @@ def getAsDict(
     con: typing.Any,
     base: str,
     ldapFilter: str,
-    attrList: typing.Optional[typing.Iterable[str]]=None,
-    sizeLimit: int=100,
+    attrList: typing.Optional[typing.Iterable[str]] = None,
+    sizeLimit: int = 100,
     scope=SCOPE_SUBTREE,
 ) -> typing.Generator[LDAPResultType, None, None]:
     """
@@ -152,7 +156,7 @@ def getAsDict(
     logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
     if attrList:
-        attrList = [i for i in attrList]  # Ensures iterable is a list
+        attrList = list(attrList)  # Ensures iterable is a list
 
     res = None
     try:
@@ -168,7 +172,7 @@ def getAsDict(
         LDAPError.reraise(e)
     except Exception as e:
         logger.exception('Exception connection:')
-        raise LDAPError('{}'.format(e))
+        raise LDAPError(str(e)) from e
 
     logger.debug('Result of search %s on %s: %s', ldapFilter, base, res)
 
@@ -210,9 +214,9 @@ def getFirst(
     """
     value = ldap.filter.escape_filter_chars(value)
 
-    attrList = [field] + [i for i in attributes] if attributes else []
+    attrList = [field] + list(attributes) if attributes else []
 
-    ldapFilter = '(&(objectClass={})({}={}))'.format(objectClass, field, value)
+    ldapFilter = f'(&(objectClass={objectClass})({field}={value}))'
 
     try:
         obj = next(getAsDict(con, base, ldapFilter, attrList, sizeLimit))
@@ -242,9 +246,11 @@ def getRootDSE(con: typing.Any) -> typing.Optional[LDAPResultType]:
     @param cont: Connection to LDAP server
     @return: None if root DSE is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
     """
-    return next(getAsDict(
-        con=con,
-        base='',
-        ldapFilter='(objectClass=*)',
-        scope=SCOPE_BASE,
-    ))
+    return next(
+        getAsDict(
+            con=con,
+            base='',
+            ldapFilter='(objectClass=*)',
+            scope=SCOPE_BASE,
+        )
+    )

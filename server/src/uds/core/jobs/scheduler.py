@@ -40,7 +40,8 @@ from datetime import timedelta
 from django.db import transaction, DatabaseError, connections
 from django.db.models import Q
 
-from uds.models import Scheduler as DBScheduler, getSqlDatetime
+from uds.models import Scheduler as DBScheduler
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.state import State
 from .jobs_factory import JobsFactory
 
@@ -64,7 +65,7 @@ class JobThread(threading.Thread):
     _freq: int
 
     def __init__(self, jobInstance: 'Job', dbJob: DBScheduler) -> None:
-        super(JobThread, self).__init__()
+        super().__init__()
         self._jobInstance = jobInstance
         self._dbJobId = dbJob.id
         self._freq = dbJob.frecuency
@@ -186,8 +187,8 @@ class Scheduler:
             # I have got some deadlock errors, but looking at that url, i found that it is not so abnormal
             # logger.debug('Deadlock, no problem at all :-) (sounds hards, but really, no problem, will retry later :-) )')
             raise DatabaseError(
-                'Database access problems. Retrying connection ({})'.format(e)
-            )
+                f'Database access problems. Retrying connection ({e})'
+            ) from e
 
     @staticmethod
     def releaseOwnShedules() -> None:

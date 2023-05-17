@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 import logging
@@ -42,7 +42,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 
 from .service_pool import ServicePool
-from .util import getSqlDatetime
+from ..core.util.model import getSqlDatetime
 from .uuid_model import UUIDModel
 
 
@@ -65,7 +65,7 @@ class ServicePoolPublicationChangelog(models.Model):
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[ServicePoolPublicationChangelog]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -74,9 +74,7 @@ class ServicePoolPublicationChangelog(models.Model):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return 'Revision log  for publication {}, rev {}:  {}'.format(
-            self.publication.name, self.revision, self.log
-        )
+        return f'Changelog for publication {self.publication.name}, rev {self.revision}: {self.log}'
 
 
 class ServicePoolPublication(UUIDModel):
@@ -105,7 +103,7 @@ class ServicePoolPublication(UUIDModel):
     # objects: 'models.manager.Manager["ServicePoolPublication"]'
     userServices: 'models.manager.RelatedManager[UserService]'
 
-    class Meta(UUIDModel.Meta):
+    class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -146,9 +144,7 @@ class ServicePoolPublication(UUIDModel):
 
         if serviceInstance.publicationType is None:
             raise Exception(
-                'Class {} do not have defined publicationType but needs to be published!!!'.format(
-                    serviceInstance.__class__
-                )
+                f'Class {serviceInstance.__class__.__name__} do not have defined publicationType but needs to be published!!!'
             )
 
         publication = serviceInstance.publicationType(
@@ -208,7 +204,7 @@ class ServicePoolPublication(UUIDModel):
         publicationManager().cancel(self)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -230,9 +226,7 @@ class ServicePoolPublication(UUIDModel):
         logger.debug('Deleted publication %s', toDelete)
 
     def __str__(self) -> str:
-        return 'Publication {}, rev {}, state {}'.format(
-            self.deployed_service.name, self.revision, State.toString(self.state)
-        )
+        return f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.toString(self.state)}'
 
 
 # Connects a pre deletion signal to Authenticator

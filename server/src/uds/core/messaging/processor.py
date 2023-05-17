@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import time
@@ -35,8 +35,9 @@ import typing
 
 from uds.core.managers.task import BaseThread
 
-from uds.models import Notifier, Notification, getSqlDatetime
-from .provider import Notifier as NotificationProviderModule, NotificationLevel
+from uds.models import Notifier, Notification
+from uds.core.util.model import getSqlDatetime
+from .provider import Notifier as NotificationProviderModule, LogLevel
 from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ class MessageProcessorThread(BaseThread):
 
     def __init__(self):
         super().__init__()
-        self.setName('MessageProcessorThread')
+        self.name = 'MessageProcessorThread'
         self._cached_providers = None
         self._cached_stamp = 0.0
 
@@ -75,18 +76,20 @@ class MessageProcessorThread(BaseThread):
 
     def run(self):
         while self.keepRunning:
-
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
+            sinceSkip = getSqlDatetime() - datetime.timedelta(
+                seconds=DO_NOT_REPEAT.getInt()
+            )
             for n in Notification.getPersistentQuerySet().all():
                 # If there are any other notification simmilar to this on default db, skip it
-                # Simmilar means that group and identificator are present and it has less than DO_NOT_REPEAT seconds
+                # Simmilar means that group, identificator and message are already been logged less than DO_NOT_REPEAT seconds ago
                 # from last time
                 if Notification.objects.filter(
                     group=n.group,
                     identificator=n.identificator,
-                    stamp__gt=getSqlDatetime()
-                    - datetime.timedelta(DO_NOT_REPEAT.getInt()),
+                    message=n.message,
+                    stamp__gt=sinceSkip,
                 ).exists():
                     # Remove it from the persistent db
                     n.deletePersistent()
@@ -94,10 +97,11 @@ class MessageProcessorThread(BaseThread):
                 # Try to insert into Main DB
                 notify = (
                     not n.processed
-                )  # If it was already processed, the only thing left is to add to maind DB and remove it from persistent
+                )  # If it was already processed, the only thing left to do is to add to main DB and remove it from persistent
                 pk = n.pk
                 n.processed = True
                 try:
+                    # Trick to save it to main DB
                     n.pk = None
                     n.save(using='default')
                     # Delete from Persistent DB, first restore PK
@@ -114,10 +118,10 @@ class MessageProcessorThread(BaseThread):
                         logger.error('Error saving notification %s to persistent DB', n)
                         continue
                     # Process notificators, but this is kept on db with processed flat as True
-                    logger.warning(
-                        'Could not save notification %s to main DB, trying notificators',
-                        n,
-                    )
+                    # logger.warning(
+                    #     'Could not save notification %s to main DB, trying notificators',
+                    #    n,
+                    #)
 
                 if notify:
                     for p in (i[1] for i in self.providers if i[0] >= n.level):
@@ -127,11 +131,11 @@ class MessageProcessorThread(BaseThread):
                         p.notify(
                             n.group,
                             n.identificator,
-                            NotificationLevel.from_int(n.level),
+                            LogLevel.fromInt(n.level),
                             n.message,
                         )
 
-            for a in range(WAIT_TIME):
+            for _ in range(WAIT_TIME):
                 if not self.keepRunning:
                     break
                 time.sleep(1)

@@ -42,7 +42,7 @@ from django.db import transaction, OperationalError
 from django.db.models import Q
 
 from uds.models import DelayedTask as DBDelayedTask
-from uds.models import getSqlDatetime
+from uds.core.util.model import getSqlDatetime
 from uds.core.environment import Environment
 from uds.core.util import singleton
 
@@ -55,6 +55,7 @@ class DelayedTaskThread(threading.Thread):
     """
     Class responsible of executing a delayed task in its own thread
     """
+
     __slots__ = ('_taskInstance',)
 
     _taskInstance: DelayedTask
@@ -76,6 +77,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
     """
     Delayed task runner class
     """
+
     __slots__ = ()
 
     granularity: typing.ClassVar[int] = 2  # we check for delayed tasks every "granularity" seconds
@@ -105,9 +107,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
 
     def executeOneDelayedTask(self) -> None:
         now = getSqlDatetime()
-        filt = Q(execution_time__lt=now) | Q(
-            insert_date__gt=now + timedelta(seconds=30)
-        )
+        filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         try:
             with transaction.atomic():  # Encloses
@@ -118,9 +118,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                     .order_by('execution_time')[0]  # type: ignore  # Slicing is not supported by pylance right now
                 )  # @UndefinedVariable
                 if task.insert_date > now + timedelta(seconds=30):
-                    logger.warning(
-                        'Executed %s due to insert_date being in the future!', task.type
-                    )
+                    logger.warning('Executed %s due to insert_date being in the future!', task.type)
                 taskInstanceDump = codecs.decode(task.instance.encode(), 'base64')
                 task.delete()
             taskInstance = pickle.loads(taskInstanceDump)  # nosec: controlled pickle
@@ -186,18 +184,14 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
                 time.sleep(1)  # Wait a bit before next try...
         # If retries == 0, this is a big error
         if retries == 0:
-            logger.error(
-                "Could not insert delayed task!!!! %s %s %s", instance, delay, tag
-            )
+            logger.error("Could not insert delayed task!!!! %s %s %s", instance, delay, tag)
             return False
         return True
 
     def remove(self, tag: str) -> None:
         try:
             with transaction.atomic():
-                DBDelayedTask.objects.select_for_update().filter(
-                    tag=tag
-                ).delete()  # @UndefinedVariable
+                DBDelayedTask.objects.select_for_update().filter(tag=tag).delete()  # @UndefinedVariable
         except Exception as e:
             logger.exception('Exception removing a delayed task %s: %s', e.__class__, e)
 

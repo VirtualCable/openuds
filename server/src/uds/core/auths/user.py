@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -81,9 +81,9 @@ class User:
 
         :note: Once obtained valid groups, it caches them until object removal.
         """
-        from uds.models.user import (
+        from uds.models.user import (  # pylint: disable=import-outside-toplevel
             User as DBUser,
-        )  # pylint: disable=redefined-outer-name
+        )
 
         if self._groups is None:
             if self._manager.isExternalSource:
@@ -92,7 +92,6 @@ class User:
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
-                lst: typing.List[int] = []
                 usr.groups.set((g.dbGroup().id for g in self._groups if g.dbGroup().is_meta is False))  # type: ignore
             else:
                 # From db

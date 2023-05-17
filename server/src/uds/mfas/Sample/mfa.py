@@ -68,4 +68,3 @@ class SampleMFA(mfas.MFA):
     def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
         logger.debug('Sending code: %s (from %s)', code, request.ip)
         return mfas.MFA.RESULT.OK
-

@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
@@ -46,8 +46,8 @@ from .provider import Provider
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import services
     from uds.models.service_pool import ServicePool
+    from uds.core import services
 
 
 logger = logging.getLogger(__name__)
@@ -63,10 +63,10 @@ class ServiceTokenAlias(models.Model):
     )
     alias = models.CharField(max_length=64, unique=True)
 
-    def __str__(self):
-        return self.alias
+    def __str__(self)  -> str:
+        return str(self.alias)  # pylint complains about CharField
 
-
+# pylint: disable=no-member
 class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     """
     A Service represents an specidied type of service offered to final users,
@@ -93,7 +93,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     deployedServices: 'models.manager.RelatedManager[ServicePool]'
     aliases: 'models.manager.RelatedManager[ServiceTokenAlias]'
 
-    class Meta(ManagedObjectModel.Meta):
+    class Meta(ManagedObjectModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare default order and unique multiple field index
         """
@@ -149,9 +149,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             self.deserialize(obj, values)
         else:
             raise Exception(
-                'Service type of {} is not recogniced by provider {}'.format(
-                    self.data_type, prov
-                )
+                f'Service type of {self.data_type} is not recogniced by provider {prov.name}'
             )
 
         self._cachedInstance = obj
@@ -169,6 +167,8 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: We only need to get info from this, not access specific data (class specific info)
         """
+        from uds.core import services  # pylint: disable=import-outside-toplevel,redefined-outer-name
+
         prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
         return prov.getServiceByType(self.data_type) or services.Service
 
@@ -194,10 +194,10 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         return self.max_services_count_type == 1
 
     def __str__(self) -> str:
-        return '{} of type {} (id:{})'.format(self.name, self.data_type, self.id)
+        return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:
+    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -206,7 +206,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 

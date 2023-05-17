@@ -40,12 +40,12 @@ from uds.core.ui import gui
 from uds.core import transports, exceptions
 
 from uds.core.util import os_detector as OsDetector
-from uds.core.managers import cryptoManager
+from uds.core.managers.crypto import CryptoManager
 from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import Module
+    from uds.core.module import Module
     from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
 
@@ -66,6 +66,7 @@ class HTML5SSHTransport(transports.Transport):
 
     ownLink = True
     supportedOss = OsDetector.allOss
+    # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
     protocol = transports.protocols.SSH
     group = transports.TUNNELED_GROUP
 
@@ -78,20 +79,20 @@ class HTML5SSHTransport(transports.Transport):
         defvalue='https://',
         length=64,
         required=True,
-        tab=gui.TUNNEL_TAB,
+        tab=gui.Tab.TUNNEL,
     )
 
     username = gui.TextField(
         label=_('Username'),
         order=20,
         tooltip=_('Username for SSH connection authentication.'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for SSH connection authentication'),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     sshPrivateKey = gui.TextField(
         label=_('SSH Private Key'),
@@ -100,7 +101,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Private key for SSH authentication. If not provided, password authentication is used.'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
     sshPassphrase = gui.PasswordField(
         label=_('SSH Private Key Passphrase'),
@@ -108,7 +109,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
         ),
-        tab=gui.CREDENTIALS_TAB,
+        tab=gui.Tab.CREDENTIALS,
     )
 
     sshCommand = gui.TextField(
@@ -117,7 +118,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Command to execute on the remote server. If not provided, an interactive shell will be executed.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     enableFileSharing = gui.ChoiceField(
         label=_('File Sharing'),
@@ -130,7 +131,7 @@ class HTML5SSHTransport(transports.Transport):
             {'id': 'up', 'text': _('Allow upload only')},
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     fileSharingRoot = gui.TextField(
         label=_('File Sharing Root'),
@@ -138,7 +139,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Root path for file sharing. If not provided, root directory will be used.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     sshPort = gui.NumericField(
         length=40,
@@ -147,7 +148,7 @@ class HTML5SSHTransport(transports.Transport):
         order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     sshHostKey = gui.TextField(
         label=_('SSH Host Key'),
@@ -155,7 +156,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Host key of the SSH server. If not provided, no verification of host identity is done.'
         ),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
     serverKeepAlive = gui.NumericField(
         length=3,
@@ -167,7 +168,7 @@ class HTML5SSHTransport(transports.Transport):
         ),
         required=True,
         minValue=0,
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.Tab.PARAMETERS,
     )
 
     ticketValidity = gui.NumericField(
@@ -180,7 +181,7 @@ class HTML5SSHTransport(transports.Transport):
         ),
         required=True,
         minValue=60,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED,
     )
     forceNewWindow = gui.ChoiceField(
         order=91,
@@ -201,7 +202,7 @@ class HTML5SSHTransport(transports.Transport):
             ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.ADVANCED_TAB,
+        tab=gui.Tab.ADVANCED
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -211,9 +212,7 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
         self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
         if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationError(
-                _('The server must be http or https')
-            )
+            raise exceptions.ValidationError(_('The server must be http or https'))
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -232,13 +231,13 @@ class HTML5SSHTransport(transports.Transport):
 
     def getLink(
         self,
-        userService: 'models.UserService',
+        userService: 'models.UserService',  # pylint: disable=unused-argument
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
-        user: 'models.User',
-        password: str,
-        request: 'ExtendedHttpRequestWithUser',
+        os: 'DetectedOsInfo',  # pylint: disable=unused-argument
+        user: 'models.User',  # pylint: disable=unused-argument
+        password: str,  # pylint: disable=unused-argument
+        request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
         # Build params dict
         params = {
@@ -254,9 +253,9 @@ class HTML5SSHTransport(transports.Transport):
         # Add optional parameters (strings only)
         for i in (
             ('username', self.username),
-            ('password', self.password),
-            ('private-key', self.sshPrivateKey),
-            ('passphrase', self.sshPassphrase),
+            # ('password', self.password),
+            # ('private-key', self.sshPrivateKey),
+            # ('passphrase', self.sshPassphrase),
             ('command', self.sshCommand),
             ('host-key', self.sshHostKey),
         ):
@@ -266,19 +265,19 @@ class HTML5SSHTransport(transports.Transport):
         # Filesharing using guacamole sftp
         if self.enableFileSharing.value != 'false':
             params['enable-sftp'] = 'true'
-            
+
             if self.fileSharingRoot.value.strip():
                 params['sftp-root-directory'] = self.fileSharingRoot.value.strip()
 
             if self.enableFileSharing.value not in ('down', 'true'):
-                 params['sftp-disable-download'] = 'true'
-            
+                params['sftp-disable-download'] = 'true'
+
             if self.enableFileSharing.value not in ('up', 'true'):
-                    params['sftp-disable-upload'] = 'true'
+                params['sftp-disable-upload'] = 'true'
 
         logger.debug('SSH Params: %s', params)
 
-        scrambler = cryptoManager().randomString(32)
+        scrambler = CryptoManager().randomString(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''
@@ -289,7 +288,5 @@ class HTML5SSHTransport(transports.Transport):
         onw = onw.format(hash(transport.name))
 
         return str(
-            "{}/guacamole/#/?data={}.{}{}".format(
-                self.guacamoleServer.value, ticket, scrambler, onw
-            )
+            f'{self.guacamoleServer.value}/guacamole/#/?data={ticket}.{scrambler}{onw}'
         )

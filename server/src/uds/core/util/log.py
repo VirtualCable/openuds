@@ -30,75 +30,87 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import os
 import logging
+import logging.handlers
 import typing
+import enum
+import re
 
-from uds.core.managers import logManager
+from django.apps import apps
+
+from systemd import journal
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
-logger = logging.getLogger(__name__)
 useLogger = logging.getLogger('useLog')
 
-# Logging levels
-OTHER, DEBUG, INFO, WARNING, ERROR, CRITICAL = (
-    10000 * (x + 1) for x in range(6)
-)  # @UndefinedVariable
-
-WARN = WARNING
-FATAL  = CRITICAL
-
-# Logging sources
-INTERNAL, ACTOR, TRANSPORT, OSMANAGER, UNKNOWN, WEB, ADMIN, SERVICE, REST = (
-    'internal',
-    'actor',
-    'transport',
-    'osmanager',
-    'unknown',
-    'web',
-    'admin',
-    'service',
-    'rest',
-)
-
-OTHERSTR, DEBUGSTR, INFOSTR, WARNSTR, ERRORSTR, FATALSTR = (
-    'OTHER',
-    'DEBUG',
-    'INFO',
-    'WARN',
-    'ERROR',
-    'FATAL',
-)
-
-# Names for defined log levels
-__nameLevels = {
-    DEBUGSTR: DEBUG,
-    INFOSTR: INFO,
-    WARNSTR: WARN,
-    ERRORSTR: ERROR,
-    FATALSTR: FATAL,
-    OTHERSTR: OTHER,
-}
-
-# Reverse dict of names
-__valueLevels = {v: k for k, v in __nameLevels.items()}
-
-# Global log owner types:
-OWNER_TYPE_GLOBAL = -1
-OWNER_TYPE_AUDIT = -2
+# Pattern for look for date and time in this format: 2023-04-20 04:03:08,776 (and trailing spaces)
+# This is the format used by python logging module
+DATETIME_PATTERN: typing.Final[re.Pattern] = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) *')
+# Pattern for removing the LOGLEVEL from the log line beginning
+LOGLEVEL_PATTERN: typing.Final[re.Pattern] = re.compile(r'^(DEBUG|INFO|WARNING|ERROR|CRITICAL) *')
 
 
-def logLevelFromStr(level: str) -> int:
-    """
-    Gets the numeric log level from an string.
-    """
-    return __nameLevels.get(level.upper(), OTHER)
+class LogLevel(enum.IntEnum):
+    OTHER = 10000
+    DEBUG = 20000
+    INFO = 30000
+    WARNING = 40000
+    ERROR = 50000
+    CRITICAL = 60000
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return self.name
+
+    @classmethod
+    def fromStr(cls: typing.Type['LogLevel'], level: str) -> 'LogLevel':
+        try:
+            return cls[level.upper()]
+        except KeyError:
+            return cls.OTHER
+
+    @classmethod
+    def fromInt(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+        try:
+            return cls(level)
+        except ValueError:
+            return cls.OTHER
+
+    @classmethod
+    def fromActorLevel(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+        """
+        Returns the log level for actor log level
+        """
+        return [cls.DEBUG, cls.INFO, cls.ERROR, cls.CRITICAL][level % 4]
+
+    # Return all Log levels as tuples of (level value, level name)
+    @staticmethod
+    def all() -> typing.List[typing.Tuple[int, str]]:
+        return [(level.value, level.name) for level in LogLevel]
+
+    # Rteturns "interesting" log levels
+    @staticmethod
+    def interesting() -> typing.List[typing.Tuple[int, str]]:
+        return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
 
 
-def logStrFromLevel(level: int) -> str:
-    return __valueLevels.get(level, 'OTHER')
+class LogSource(enum.StrEnum):
+    INTERNAL = 'internal'
+    ACTOR = 'actor'
+    TRANSPORT = 'transport'
+    OSMANAGER = 'osmanager'
+    UNKNOWN = 'unknown'
+    WEB = 'web'
+    ADMIN = 'admin'
+    SERVICE = 'service'
+    REST = 'rest'
+    LOGS = 'logs'
 
 
 def useLog(
@@ -140,34 +152,98 @@ def useLog(
         )
     )
 
+    # Will be stored on database by UDSLogHandler
+
 
 def doLog(
-    wichObject: 'Model',
-    level: int,
+    wichObject: typing.Optional['Model'],
+    level: LogLevel,
     message: str,
-    source: str = UNKNOWN,
+    source: LogSource = LogSource.UNKNOWN,
     avoidDuplicates: bool = True,
+    logName: typing.Optional[str] = None,
 ) -> None:
-    logger.debug('%s %s %s', wichObject, level, message)
-    logManager().doLog(wichObject, level, message, source, avoidDuplicates)
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
+
+    LogManager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
 
 
-def getLogs(
-    wichObject: 'Model', limit: typing.Optional[int] = None
-) -> typing.List[typing.Dict]:
+def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> typing.List[typing.Dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
-    from uds.core.util.config import GlobalConfig
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
 
-    if limit is None:
-        limit = GlobalConfig.MAX_LOGS_PER_ELEMENT.getInt()
-
-    return logManager().getLogs(wichObject, limit)
+    return LogManager().getLogs(wichObject, limit)
 
 
-def clearLogs(wichObject: 'Model') -> None:
+def clearLogs(wichObject: typing.Optional['Model']) -> None:
     """
     Clears the logs associated with the object using the logManager
     """
-    return logManager().clearLogs(wichObject)
+    # pylint: disable=import-outside-toplevel
+    from uds.core.managers.log import LogManager
+
+    return LogManager().clearLogs(wichObject)
+
+
+class UDSLogHandler(logging.handlers.RotatingFileHandler):
+    """
+    Custom log handler that will log to database before calling to RotatingFileHandler
+    """
+
+    # Protects from recursive calls
+    emiting: typing.ClassVar[bool] = False
+
+    def emit(self, record: logging.LogRecord) -> None:
+        # To avoid circular imports and loading manager before apps are ready
+        # pylint: disable=import-outside-toplevel
+        from uds.core.managers.notifications import NotificationsManager
+
+        def getMsg(*, removeLevel: bool) -> str:
+            msg = self.format(record)
+            # Remove date and time from message, as it will be stored on database
+            msg = DATETIME_PATTERN.sub('', msg)
+            if removeLevel:
+                # Remove log level from message, as it will be stored on database
+                msg = LOGLEVEL_PATTERN.sub('', msg)
+            return msg
+
+        def notify(msg: str, identificator: str, logLevel: LogLevel) -> None:
+            NotificationsManager().notify('log', identificator, logLevel, msg)
+
+        if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
+            try:
+                # Convert to own loglevel, basically multiplying by 1000
+                logLevel = LogLevel.fromInt(record.levelno * 1000)
+                UDSLogHandler.emiting = True
+                identificator = os.path.basename(self.baseFilename)
+                msg = getMsg(removeLevel=True)
+                if record.levelno >= logging.WARNING:
+                    # Remove traceback from message, as it will be stored on database
+                    notify(msg.splitlines()[0], identificator, logLevel)
+                doLog(None, logLevel, msg, LogSource.LOGS, False, identificator)
+            except Exception:  # nosec: If cannot log, just ignore it
+                pass
+            finally:
+                UDSLogHandler.emiting = False
+
+        # Send warning and error messages to systemd journal
+        if record.levelno >= logging.WARNING:
+            msg = getMsg(removeLevel=False)
+            # Send to systemd journaling, transforming identificator and priority
+            identificator = 'UDS-' + os.path.basename(self.baseFilename).split('.')[0]
+            # convert syslog level to systemd priority
+            # Systemd priority levels are:
+            #  "emerg" (0), "alert" (1), "crit" (2), "err" (3),
+            #  "warning" (4), "notice" (5), "info" (6), "debug" (7)
+            # Log levels are:
+            # "CRITICAL" (50), "ERROR" (40), "WARNING" (30), "INFO" (20), "DEBUG" (10), "NOTSET" (0)
+            # Note, priority will be always 4 (WARNING), 3(ERROR), or 2(CRITICAL)
+            priority = 4 if record.levelno == logging.WARNING else 3 if record.levelno == logging.ERROR else 2
+
+            journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)
+
+        return super().emit(record)

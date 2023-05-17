@@ -56,9 +56,7 @@ def _getMacAddr(ifname: str) -> typing.Optional[str]:
     ifnameBytes = ifname.encode('utf-8')
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        info = bytearray(
-            fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15]))
-        )
+        info = bytearray(fcntl.ioctl(s.fileno(), 0x8927, struct.pack(str('256s'), ifnameBytes[:15])))
         return str(''.join(['%02x:' % char for char in info[18:24]])[:-1]).upper()
     except Exception:
         return None
@@ -110,10 +108,7 @@ def _getInterfaces() -> typing.List[str]:
     )[0]
     namestr = names.tobytes()
     # return namestr, outbytes
-    return [
-        namestr[i : i + offset].split(b'\0', 1)[0].decode('utf-8')
-        for i in range(0, outbytes, length)
-    ]
+    return [namestr[i : i + offset].split(b'\0', 1)[0].decode('utf-8') for i in range(0, outbytes, length)]
 
 
 def _getIpAndMac(
@@ -138,10 +133,7 @@ def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     for ifname in _getInterfaces():
         ip, mac = _getIpAndMac(ifname)
         if (
-            mac != '00:00:00:00:00:00'
-            and mac
-            and ip
-            and ip.startswith('169.254') is False
+            mac != '00:00:00:00:00:00' and mac and ip and ip.startswith('169.254') is False
         ):  # Skips local interfaces & interfaces with no dhcp IPs
             yield types.InterfaceInfoType(name=ifname, mac=mac, ip=ip)
 
@@ -164,6 +156,7 @@ def getLinuxOs() -> str:
 def getVersion() -> str:
     return 'Linux ' + getLinuxOs()
 
+
 def reboot(flags: int = 0):
     '''
     Simple reboot using os command
@@ -172,6 +165,7 @@ def reboot(flags: int = 0):
         subprocess.call(['/sbin/shutdown', 'now', '-r'])  # nosec: fixed params
     except Exception as e:
         logger.error('Error rebooting: %s', e)
+
 
 def loggoff() -> None:
     '''
@@ -192,7 +186,6 @@ def renameComputer(newName: str) -> bool:
     '''
     rename(newName)
     return True  # Always reboot right now. Not much slower but much more convenient
-
 
 def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
         name: str,
@@ -256,15 +249,20 @@ def leaveDomain(
     except Exception as e:
         logger.error(f'Error leave machine from domain {domain}: {e}')
 
-def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
+def changeUserPassword(
+    user: str, oldPassword: str, newPassword: str
+) -> None:  # pylint: disable=unused-argument
     '''
-    Simple password change for user using command line
+    Simple password change for user on linux
     '''
-
-    subprocess.run(  # nosec: Fine, all under control
-        'echo "{1}\n{1}" | /usr/bin/passwd {0} 2> /dev/null'.format(user, newPassword),
-        shell=True,
-    )  
+    try:
+        subprocess.Popen(
+            ['/usr/bin/passwd', user],  # nosec: Fixed params
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+        ).communicate(f'{newPassword}\n{newPassword}\n'.encode('utf-8'))
+    except Exception as e:
+        logger.error('Error changing password: %s', e)
 
 
 def initIdleDuration(atLeastSeconds: int) -> None:
@@ -289,11 +287,7 @@ def getSessionType() -> str:
       * xrdp --> xrdp session
       * other types
     '''
-    return (
-        'xrdp'
-        if 'XRDP_SESSION' in os.environ
-        else os.environ.get('XDG_SESSION_TYPE', 'unknown')
-    )
+    return 'xrdp' if 'XRDP_SESSION' in os.environ else os.environ.get('XDG_SESSION_TYPE', 'unknown')
 
 
 def forceTimeSync() -> None:

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=unused-argument  # this has a lot of "default" methods, so we need to ignore unused arguments most of the time
 
 #
 # Copyright (c) 2012-2022 Virtual Cable S.L.U.
@@ -30,7 +30,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os
 import sys
 import codecs
 import logging
@@ -40,7 +39,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.util import os_detector as OsDetector
-from uds.core import Module
+from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util import net
 
@@ -156,7 +155,7 @@ class Transport(Module):
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
         """
-        return "Not accessible (using service ip {})".format(ip)
+        return f'Not accessible (using service ip {ip})'
 
     @classmethod
     def supportsProtocol(cls, protocol: typing.Union[typing.Iterable, str]):
@@ -229,7 +228,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -263,7 +262,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -296,12 +295,16 @@ class Transport(Module):
             params: Parameters for the return tuple
         """
         # Reads script and signature
+        import os  # pylint: disable=import-outside-toplevel
+
         basePath = os.path.dirname(
             sys.modules[self.__module__].__file__ or 'not_found'
         )  # Will raise if not found
 
-        script = open(os.path.join(basePath, scriptName), 'r').read()
-        signature = open(os.path.join(basePath, scriptName + '.signature'), 'r').read()
+        with open(os.path.join(basePath, scriptName), 'r', encoding='utf8') as scriptFile:
+            script = scriptFile.read()
+        with open(os.path.join(basePath, scriptName + '.signature'), 'r', encoding='utf8') as signatureFile:
+            signature = signatureFile.read()
 
         return TransportScript(
             script=script,
@@ -320,7 +323,7 @@ class Transport(Module):
         Returns a script for the given os and type
         """
         return self.getRelativeScript(
-            'scripts/{os}/{type}.py'.format(os=osName, type=type), params
+            f'scripts/{osName}/{type}.py', params
         )
 
     def getLink(
@@ -328,7 +331,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

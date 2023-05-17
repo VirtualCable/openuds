@@ -133,12 +133,7 @@ class EmailMFA(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for MFA response error'),
         required=True,
-        values={
-            '0': _('Allow user login'),
-            '1': _('Deny user login'),
-            '2': _('Allow user to login if it IP is in the networks list'),
-            '3': _('Deny user to login if it IP is in the networks list'),
-        },
+        values=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -157,7 +152,10 @@ class EmailMFA(mfas.MFA):
         label=_('Mail text'),
         order=33,
         multiline=4,
-        tooltip=_('Text of the email. If empty, a default text will be used') + '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        tooltip=_('Text of the email. If empty, a default text will be used')
+        + '\n'
+        + _('Allowed variables are: ')
+        + '{code}, {username}, {justUsername}. {ip}',
         required=True,
         defvalue='',
         tab=_('Config'),
@@ -168,7 +166,11 @@ class EmailMFA(mfas.MFA):
         label=_('Mail HTML'),
         order=34,
         multiline=4,
-        tooltip=_('HTML of the email. If empty, a default HTML will be used')+ '\n' + _('Allowed variables are: {code}, {username}, {ip}'),
+        tooltip=_('HTML of the email. If empty, a default HTML will be used')
+        + '\n'
+        + _('Allowed variables are: ')
+        + '\n'
+        + '{code}, {username}, {justUsername}, {ip}',
         required=False,
         defvalue='',
         tab=_('Config'),
@@ -191,7 +193,7 @@ class EmailMFA(mfas.MFA):
         # Now check is valid format
         if ':' in hostname:
             host, port = validators.validateHostPortPair(hostname)
-            self.hostname.value = '{}:{}'.format(host, port)
+            self.hostname.value = f'{host}:{port}'
         else:
             host = self.hostname.cleanStr()
             self.hostname.value = validators.validateFqdn(host)
@@ -203,7 +205,7 @@ class EmailMFA(mfas.MFA):
         return gettext(
             'Check your mail. You will receive an email with the verification code'
         )
-    
+
     def initGui(self) -> None:
         # Populate the networks list
         self.networks.setValues(
@@ -214,28 +216,10 @@ class EmailMFA(mfas.MFA):
             ]
         )
 
-    def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
-        def checkIp() -> bool:
-            return any(
-                i.contains(request.ip)
-                for i in models.Network.objects.filter(uuid__in=self.networks.value)
-            )
-
-        if action == '0':
-            return True
-        elif action == '1':
-            return False
-        elif action == '2':
-            return checkIp()
-        elif action == '3':
-            return not checkIp()
-        else:
-            return False
-
     def emptyIndentifierAllowedToLogin(
         self, request: 'ExtendedHttpRequest'
     ) -> typing.Optional[bool]:
-        return self.checkAction(self.allowLoginWithoutMFA.value, request)
+        return mfas.LoginAllowed.checkAction(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
     def label(self) -> str:
         return 'OTP received via email'
@@ -270,7 +254,7 @@ class EmailMFA(mfas.MFA):
 
                 smtp.sendmail(self.fromEmail.value, identifier, msg.as_string())
             except smtplib.SMTPException as e:
-                logger.error('Error sending email: {}'.format(e))
+                logger.error('Error sending email: %s', e)
                 raise
 
     def sendCode(

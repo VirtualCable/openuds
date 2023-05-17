@@ -36,7 +36,7 @@ from django.db import transaction
 from django.db.models import Q
 from uds.core.util.config import GlobalConfig
 from uds.core.util.state import State
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
 from uds.core import services
@@ -66,7 +66,7 @@ class ServiceCacheUpdater(Job):
             servicePool,
             log.WARN,
             'Service Pool is restrained due to excesive errors',
-            log.INTERNAL,
+            log.LogSource.INTERNAL,
         )
         logger.info('%s is restrained, will check this later', servicePool.name)
 
@@ -91,7 +91,7 @@ class ServiceCacheUpdater(Job):
         for servicePool in servicePoolsNeedingCaching:
             servicePool.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
-            spServiceInstance = servicePool.service.getInstance()
+            spServiceInstance = servicePool.service.getInstance()  # type: ignore
 
             if (
                 servicePool.activePublication() is None
@@ -122,7 +122,7 @@ class ServiceCacheUpdater(Job):
             inCacheL1: int = (
                 servicePool.cachedUserServices()
                 .filter(
-                    userServiceManager().getCacheStateFilter(
+                    UserServiceManager().getCacheStateFilter(
                         servicePool, services.UserDeployment.L1_CACHE
                     )
                 )
@@ -132,7 +132,7 @@ class ServiceCacheUpdater(Job):
             inCacheL2: int = (
                 servicePool.cachedUserServices()
                 .filter(
-                    userServiceManager().getCacheStateFilter(
+                    UserServiceManager().getCacheStateFilter(
                         servicePool, services.UserDeployment.L2_CACHE
                     )
                 )
@@ -140,7 +140,7 @@ class ServiceCacheUpdater(Job):
             )
             inAssigned: int = (
                 servicePool.assignedUserServices()
-                .filter(userServiceManager().getStateFilter(servicePool.service))
+                .filter(UserServiceManager().getStateFilter(servicePool.service))  # type: ignore
                 .count()
             )
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -179,7 +179,7 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # If this service don't allows more starting user services, continue
-            if not userServiceManager().canGrowServicePool(servicePool):
+            if not UserServiceManager().canGrowServicePool(servicePool):
                 logger.debug(
                     'This pool cannot grow rithg now: %s',
                     servicePool,
@@ -209,7 +209,11 @@ class ServiceCacheUpdater(Job):
         return servicesPools
 
     def growL1Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ) -> None:
         """
         This method tries to enlarge L1 cache.
@@ -227,7 +231,7 @@ class ServiceCacheUpdater(Job):
                     servicePool.cachedUserServices()
                     .select_for_update()
                     .filter(
-                        userServiceManager().getCacheStateFilter(
+                        UserServiceManager().getCacheStateFilter(
                             servicePool, services.UserDeployment.L2_CACHE
                         )
                     )
@@ -248,16 +252,16 @@ class ServiceCacheUpdater(Job):
                 return
         try:
             # This has a velid publication, or it will not be here
-            userServiceManager().createCacheFor(
+            UserServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
                 services.UserDeployment.L1_CACHE,
             )
         except MaxServicesReachedError:
             log.doLog(
                 servicePool,
-                log.ERROR,
+                log.LogLevel.ERROR,
                 'Max number of services reached for this service',
-                log.INTERNAL,
+                log.LogSource.INTERNAL,
             )
             logger.warning(
                 'Max user services reached for %s: %s. Cache not created',
@@ -268,7 +272,11 @@ class ServiceCacheUpdater(Job):
             logger.exception('Exception')
 
     def growL2Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,  # pylint: disable=unused-argument
+        assigned: int,  # pylint: disable=unused-argument
     ) -> None:
         """
         Tries to grow L2 cache of service.
@@ -280,7 +288,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Growing L2 cache creating a new service for %s", servicePool.name)
         try:
             # This has a velid publication, or it will not be here
-            userServiceManager().createCacheFor(
+            UserServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
                 services.UserDeployment.L2_CACHE,
             )
@@ -293,14 +301,18 @@ class ServiceCacheUpdater(Job):
             # TODO: When alerts are ready, notify this
 
     def reduceL1Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
         cacheItems: typing.List[UserService] = list(
             servicePool.cachedUserServices()
             .filter(
-                userServiceManager().getCacheStateFilter(
+                UserServiceManager().getCacheStateFilter(
                     servicePool, services.UserDeployment.L1_CACHE
                 )
             )
@@ -334,7 +346,11 @@ class ServiceCacheUpdater(Job):
         cache.removeOrCancel()
 
     def reduceL2Cache(
-        self, servicePool: ServicePool, cacheL1: int, cacheL2: int, assigned: int
+        self,
+        servicePool: ServicePool,
+        cacheL1: int,  # pylint: disable=unused-argument
+        cacheL2: int,
+        assigned: int,  # pylint: disable=unused-argument
     ):
         logger.debug(
             "Reducing L2 cache erasing a service in cache for %s", servicePool.name
@@ -343,14 +359,14 @@ class ServiceCacheUpdater(Job):
             cacheItems = (
                 servicePool.cachedUserServices()
                 .filter(
-                    userServiceManager().getCacheStateFilter(
+                    UserServiceManager().getCacheStateFilter(
                         servicePool, services.UserDeployment.L2_CACHE
                     )
                 )
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
-            cache: UserService = cacheItems[0]  # type: ignore  # Slicing is not supported by pylance right now
+            cache: UserService = cacheItems[0]
             cache.removeOrCancel()
 
     def run(self) -> None:

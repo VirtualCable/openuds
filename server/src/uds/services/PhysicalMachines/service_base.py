@@ -30,11 +30,10 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import requests
 import logging
 import typing
 
-
+from uds.core.util import security
 from uds.core import services
 
 logger = logging.getLogger(__name__)
@@ -71,13 +70,15 @@ class IPServiceBase(services.Service):
     def unassignMachine(self, ip: str) -> None:
         raise NotADirectoryError('unassignMachine')
 
-    def wakeup(self, ip: str, mac: typing.Optional[str], verify_ssl: bool = False) -> None:
+    def wakeup(
+        self, ip: str, mac: typing.Optional[str], verify_ssl: bool = False
+    ) -> None:
         if mac:
             wolurl = self.parent().wolURL(ip, mac)
             if wolurl:
                 logger.info('Launching WOL: %s', wolurl)
                 try:
-                    requests.get(wolurl, verify=verify_ssl)
+                    security.secureRequestsSession(verify=verify_ssl).get(wolurl)
                     # logger.debug('Result: %s', result)
                 except Exception as e:
                     logger.error('Error on WOL: %s', e)

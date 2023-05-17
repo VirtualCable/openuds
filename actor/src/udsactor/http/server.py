@@ -42,12 +42,10 @@ from .. import rest
 from .public import PublicProvider
 from .local import LocalProvider
 
+# a couple of 1.2 ciphers + 1.3 ciphers (implicit)
 DEFAULT_CIPHERS = (
-    'ECDHE-RSA-AES256-GCM-SHA384'
-    ':ECDHE-ECDSA-AES256-GCM-SHA384'
-    ':ECDHE-ECDSA-AES256-GCM-SHA384'
-    ':ECDHE-ECDSA-AES256-CCM'
-    ':DHE-RSA-AES256-SHA256'
+    'ECDHE-RSA-AES128-GCM-SHA256'
+    ':ECDHE-RSA-AES256-GCM-SHA384'
 )
 
 # Not imported at runtime, just for type checking
@@ -191,8 +189,8 @@ class HTTPServerThread(threading.Thread):
         # self._server.socket = ssl.wrap_socket(self._server.socket, certfile=self.certFile, server_side=True)
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-        # Disable TLSv1.0 and TLSv1.1, disable TLSv1.2, use only TLSv1.3
-        context.options |= ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
+        # Disable TLSv1.0 and TLSv1.1, use only TLSv1.3 or TLSv1.2 with allowed ciphers
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
 
         # If a configures ciphers are provided, use them, otherwise use the default ones
         context.set_ciphers(self._service._certificate.ciphers or DEFAULT_CIPHERS)

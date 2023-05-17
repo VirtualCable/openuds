@@ -34,13 +34,8 @@ This package contains all core-related code for UDS
 """
 import time
 
-# Core needs tasks manager to register scheduled jobs, so we ensure of that here
-from .environment import Environmentable
-from .serializable import Serializable
-from .module import Module
-
 
 VERSION = '4.x.x-DEVEL'
-VERSION_STAMP = '{}-DEVEL'.format(time.strftime("%Y%m%d"))
+VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
 # Minimal uds client version required to connect to this server
-REQUIRED_CLIENT_VERSION = '3.5.0'
+REQUIRED_CLIENT_VERSION = '3.6.0'

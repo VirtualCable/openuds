@@ -44,8 +44,9 @@ from uds.models import (
     ServicePoolGroup,
     Account,
     User,
-    getSqlDatetime,
 )
+from uds.core.util.model import getSqlDatetime
+
 from uds.models.calendar_action import (
     CALENDAR_ACTION_INITIAL,
     CALENDAR_ACTION_MAX,
@@ -63,7 +64,7 @@ from uds.models.calendar_action import (
     CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
 )
 
-from uds.core.managers import userServiceManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
@@ -157,9 +158,7 @@ class ServicesPools(ModelHandler):
 
     def getItems(self, *args, **kwargs):
         # Optimized query, due that there is a lot of info needed for theee
-        d = getSqlDatetime() - datetime.timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         return super().getItems(
             overview=kwargs.get('overview', True),
             query=(
@@ -180,11 +179,7 @@ class ServicesPools(ModelHandler):
                         filter=~Q(userServices__state__in=State.INFO_STATES),
                     )
                 )
-                .annotate(
-                    preparing_count=Count(
-                        'userServices', filter=Q(userServices__state=State.PREPARING)
-                    )
-                )
+                .annotate(preparing_count=Count('userServices', filter=Q(userServices__state=State.PREPARING)))
                 .annotate(
                     error_count=Count(
                         'userServices',
@@ -225,25 +220,23 @@ class ServicesPools(ModelHandler):
         state = item.state
         if item.isInMaintenance():
             state = State.MAINTENANCE
-        # This needs a lot of queries, and really does not shows anything important i think...
-        # elif userServiceManager().canInitiateServiceFromDeployedService(item) is False:
+        # This needs a lot of queries, and really does not apport anything important to the report
+        # elif UserServiceManager().canInitiateServiceFromDeployedService(item) is False:
         #     state = State.SLOWED_DOWN
         val = {
             'id': item.uuid,
             'name': item.name,
             'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
-            'parent': item.service.name,
-            'parent_type': item.service.data_type,
+            'parent': item.service.name,  # type: ignore
+            'parent_type': item.service.data_type,  # type: ignore
             'comments': item.comments,
             'state': state,
-            'thumb': item.image.thumb64
-            if item.image is not None
-            else DEFAULT_THUMB_BASE64,
+            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'account': item.account.name if item.account is not None else '',
             'account_id': item.account.uuid if item.account is not None else None,
-            'service_id': item.service.uuid,
-            'provider_id': item.service.provider.uuid,
+            'service_id': item.service.uuid,  # type: ignore
+            'provider_id': item.service.provider.uuid,  # type: ignore
             'image_id': item.image.uuid if item.image is not None else None,
             'initial_srvs': item.initial_srvs,
             'cache_l1_srvs': item.cache_l1_srvs,
@@ -256,8 +249,7 @@ class ServicesPools(ModelHandler):
             'ignores_unused': item.ignores_unused,
             'fallbackAccess': item.fallbackAccess,
             'meta_member': [
-                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name}
-                for i in item.memberOfMeta.all()
+                {'id': i.meta_pool.uuid, 'name': i.meta_pool.name} for i in item.memberOfMeta.all()
             ],
             'calendar_message': item.calendar_message,
         }
@@ -270,12 +262,8 @@ class ServicesPools(ModelHandler):
                 restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()  # type: ignore
                 usage_count = item.usage_count  # type: ignore
             else:
-                valid_count = item.userServices.exclude(
-                    state__in=State.INFO_STATES
-                ).count()
-                preparing_count = item.userServices.filter(
-                    state=State.PREPARING
-                ).count()
+                valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
+                preparing_count = item.userServices.filter(state=State.PREPARING).count()
                 restrained = item.isRestrained()
                 usage_count = -1
 
@@ -289,15 +277,13 @@ class ServicesPools(ModelHandler):
                     poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
             val['state'] = state
-            val['thumb'] = (
-                item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
-            )
+            val['thumb'] = item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64
             val['user_services_count'] = valid_count
             val['user_services_in_preparation'] = preparing_count
             val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
             val['permission'] = permissions.getEffectivePermission(self._user, item)
-            val['info'] = Services.serviceInfo(item.service)
+            val['info'] = Services.serviceInfo(item.service)  # type: ignore
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName
             val['pool_group_thumb'] = poolGroupThumb
@@ -313,9 +299,7 @@ class ServicesPools(ModelHandler):
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
-            raise ResponseError(
-                gettext('Create at least a service before creating a new service pool')
-            )
+            raise ResponseError(gettext('Create at least a service before creating a new service pool'))
 
         g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
 
@@ -325,7 +309,7 @@ class ServicesPools(ModelHandler):
                 'values': [gui.choiceItem('', '')]
                 + gui.sortedChoices(
                     [
-                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)
+                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
                         for v in Service.objects.all()
                     ]
                 ),
@@ -339,7 +323,7 @@ class ServicesPools(ModelHandler):
                 'name': 'osmanager_id',
                 'values': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]
+                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
                 ),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
@@ -362,9 +346,7 @@ class ServicesPools(ModelHandler):
                 'name': 'allow_users_reset',
                 'value': False,
                 'label': gettext('Allow reset by users'),
-                'tooltip': gettext(
-                    'If active, the user will be allowed to reset the service'
-                ),
+                'tooltip': gettext('If active, the user will be allowed to reset the service'),
                 'type': gui.InputField.Types.CHECKBOX,
                 'order': 112,
                 'tab': gettext('Advanced'),
@@ -393,10 +375,7 @@ class ServicesPools(ModelHandler):
                 'name': 'image_id',
                 'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
-                    [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
-                        for v in Image.objects.all()
-                    ]
+                    [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -409,14 +388,12 @@ class ServicesPools(ModelHandler):
                 'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)
+                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
                 'label': gettext('Pool group'),
-                'tooltip': gettext(
-                    'Pool group for this pool (for pool classify on display)'
-                ),
+                'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
                 'type': gui.InputField.Types.IMAGE_CHOICE,
                 'order': 121,
                 'tab': gettext('Display'),
@@ -447,9 +424,7 @@ class ServicesPools(ModelHandler):
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Services to keep in cache'),
-                'tooltip': gettext(
-                    'Services kept in cache for improved user service assignation'
-                ),
+                'tooltip': gettext('Services kept in cache for improved user service assignation'),
                 'type': gui.InputField.Types.NUMERIC,
                 'order': 131,
                 'tab': gettext('Availability'),
@@ -459,9 +434,7 @@ class ServicesPools(ModelHandler):
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Services to keep in L2 cache'),
-                'tooltip': gettext(
-                    'Services kept in cache of level2 for improved service generation'
-                ),
+                'tooltip': gettext('Services kept in cache of level2 for improved service generation'),
                 'type': gui.InputField.Types.NUMERIC,
                 'order': 132,
                 'tab': gettext('Availability'),
@@ -482,9 +455,7 @@ class ServicesPools(ModelHandler):
                 'name': 'show_transports',
                 'value': True,
                 'label': gettext('Show transports'),
-                'tooltip': gettext(
-                    'If active, alternative transports for user will be shown'
-                ),
+                'tooltip': gettext('If active, alternative transports for user will be shown'),
                 'type': gui.InputField.Types.CHECKBOX,
                 'tab': gettext('Advanced'),
                 'order': 130,
@@ -493,7 +464,7 @@ class ServicesPools(ModelHandler):
                 'name': 'account_id',
                 'values': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]
+                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
@@ -506,16 +477,15 @@ class ServicesPools(ModelHandler):
 
         return g
 
-    def beforeSave(
-        self, fields: typing.Dict[str, typing.Any]
-    ) -> None:  # pylint: disable=too-many-branches,too-many-statements
+    # pylint: disable=too-many-statements
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             try:
                 service = Service.objects.get(uuid=processUuid(fields['service_id']))
                 fields['service_id'] = service.id
-            except:
-                raise RequestError(gettext('Base service does not exist anymore'))
+            except Exception:
+                raise RequestError(gettext('Base service does not exist anymore')) from None
 
             try:
                 serviceType = service.getType()
@@ -527,9 +497,7 @@ class ServicesPools(ModelHandler):
                     self._params['allow_users_reset'] = False
 
                 if serviceType.needsManager is True:
-                    osmanager = OSManager.objects.get(
-                        uuid=processUuid(fields['osmanager_id'])
-                    )
+                    osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
@@ -556,19 +524,11 @@ class ServicesPools(ModelHandler):
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
                     if serviceType.maxDeployed != -1:
-                        fields['max_srvs'] = min(
-                            (fields['max_srvs'], serviceType.maxDeployed)
-                        )
-                        fields['initial_srvs'] = min(
-                            fields['initial_srvs'], serviceType.maxDeployed
-                        )
-                        fields['cache_l1_srvs'] = min(
-                            fields['cache_l1_srvs'], serviceType.maxDeployed
-                        )
-
-
-            except Exception:
-                raise RequestError(gettext('This service requires an OS Manager'))
+                        fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxDeployed))
+                        fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxDeployed)
+                        fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxDeployed)
+            except Exception as e:
+                raise RequestError(gettext('This service requires an OS Manager')) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -586,9 +546,7 @@ class ServicesPools(ModelHandler):
 
             if accountId != '-1':
                 try:
-                    fields['account_id'] = Account.objects.get(
-                        uuid=processUuid(accountId)
-                    ).id
+                    fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
                 except Exception:
                     logger.exception('Getting account ID')
 
@@ -618,14 +576,14 @@ class ServicesPools(ModelHandler):
         except (RequestError, ResponseError):
             raise
         except Exception as e:
-            raise RequestError(str(e))
+            raise RequestError(str(e)) from e
 
     def afterSave(self, item: ServicePool) -> None:
         if self._params.get('publish_on_save', False) is True:
             try:
                 item.publish()
-            except Exception as e:  
-                logger.error('Could not publish service pool %s: %s',item.name, e)
+            except Exception as e:
+                logger.error('Could not publish service pool %s: %s', item.name, e)
 
     def deleteItem(self, item: ServicePool) -> None:
         try:
@@ -659,7 +617,7 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item: ServicePool) -> typing.Any:
         validActions: typing.Tuple[typing.Dict, ...] = ()
-        itemInfo = item.service.getType()
+        itemInfo = item.service.getType()  # type: ignore
         if itemInfo.usesCache is True:
             validActions += (
                 CALENDAR_ACTION_INITIAL,
@@ -679,7 +637,7 @@ class ServicesPools(ModelHandler):
             CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
             CALENDAR_ACTION_ADD_GROUP,
             CALENDAR_ACTION_DEL_GROUP,
-            CALENDAR_ACTION_DEL_ALL_GROUPS
+            CALENDAR_ACTION_DEL_ALL_GROUPS,
         )
 
         # Advanced actions
@@ -691,7 +649,7 @@ class ServicesPools(ModelHandler):
         return validActions
 
     def listAssignables(self, item: ServicePool) -> typing.Any:
-        service = item.service.getInstance()
+        service = item.service.getInstance()  # type: ignore
         return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
 
     def createFromAssignable(self, item: ServicePool) -> typing.Any:
@@ -699,7 +657,7 @@ class ServicesPools(ModelHandler):
             return self.invalidRequestException('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
-        userServiceManager().createFromAssignable(
+        UserServiceManager().createFromAssignable(
             item,
             User.objects.get(uuid=processUuid(self._params['user_id'])),
             self._params['assignable_id'],

@@ -16,7 +16,6 @@ from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core import osmanagers, exceptions
 from uds.core.services import types as serviceTypes
 from uds.core.ui import gui
-from uds.core.managers import userServiceManager
 from uds.core.util.state import State
 from uds.core.util import log
 from uds.models import TicketStore
@@ -97,7 +96,7 @@ class WindowsOsManager(osmanagers.OSManager):
         except Exception:
             raise exceptions.ValidationError(
                 _('Length must be numeric!!')
-            )
+            ) from None
         if length > 6 or length < 1:
             raise exceptions.ValidationError(
                 _('Length must be betwen 1 and 6')
@@ -108,7 +107,7 @@ class WindowsOsManager(osmanagers.OSManager):
         self.processUnusedMachines = self._onLogout == 'remove'
 
     def __init__(self, environment, values):
-        super(WindowsOsManager, self).__init__(environment, values)
+        super().__init__(environment, values)
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
@@ -141,21 +140,21 @@ class WindowsOsManager(osmanagers.OSManager):
     def getName(self, userService: 'UserService') -> str:
         return userService.getName()
 
-    def doLog(self, userService: 'UserService', data: str, origin=log.OSMANAGER):
+    def doLog(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
         try:
             msg, levelStr = data.split('\t')
             try:
-                level = int(levelStr)
+                level = log.LogLevel.fromStr(levelStr)
             except Exception:
                 logger.debug('Do not understand level %s', levelStr)
-                level = log.INFO
+                level = log.LogLevel.INFO
 
             log.doLog(userService, level, msg, origin)
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
             log.doLog(
-                userService, log.ERROR, "do not understand {0}".format(data), origin
+                userService, log.LogLevel.ERROR, f'do not understand {data}', origin
             )
 
     def actorData(
@@ -192,9 +191,9 @@ class WindowsOsManager(osmanagers.OSManager):
         if self.isRemovableOnLogout(userService):
             log.doLog(
                 userService,
-                log.INFO,
+                log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
-                log.OSMANAGER,
+                log.LogSource.OSMANAGER,
             )
             userService.remove()
 

@@ -28,11 +28,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
 
 from uds import models
 from uds.core.util import log
+
+from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 from .. import test, generators, rest, constants
 from ...fixtures import (
@@ -40,7 +41,6 @@ from ...fixtures import (
     services as services_fixtures,
 )
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
@@ -91,10 +91,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         )
 
         for user in self.users:
-            log.doLog(user, log.DEBUG, f'Debug Log for {user.name}')
-            log.doLog(user, log.INFO, f'Info Log for {user.name}')
-            log.doLog(user, log.WARNING, f'Warning Log for {user.name}')
-            log.doLog(user, log.ERROR, f'Error Log for {user.name}')
+            log.doLog(user, log.LogLevel.DEBUG, f'Debug Log for {user.name}')
+            log.doLog(user, log.LogLevel.INFO, f'Info Log for {user.name}')
+            log.doLog(user, log.LogLevel.WARNING, f'Warning Log for {user.name}')
+            log.doLog(user, log.LogLevel.ERROR, f'Error Log for {user.name}')
 
         self.provider = services_fixtures.createProvider()
 

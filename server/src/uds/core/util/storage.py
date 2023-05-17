@@ -29,7 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle    # nosec: This is e controled pickle use
+import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib
 import codecs
@@ -66,7 +66,9 @@ def _decodeValue(
 ) -> typing.Tuple[str, typing.Any]:
     if value:
         try:
-            v = pickle.loads(base64.b64decode(value.encode()))  # nosec: This is e controled pickle loading
+            v = pickle.loads(
+                base64.b64decode(value.encode())
+            )  # nosec: This is e controled pickle loading
             if isinstance(v, tuple) and v[0] == MARK:
                 return typing.cast(typing.Tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
@@ -75,7 +77,7 @@ def _decodeValue(
             try:
                 return ('#' + dbk, base64.b64decode(value.encode()).decode())
             except Exception as e:
-                logger.warn('Unknown decodeable value: %s (%s)', value, e)
+                logger.warning('Unknown decodeable value: %s (%s)', value, e)
     return ('', None)
 
 
@@ -108,9 +110,8 @@ class StorageAsDict(MutableMapping):
     @property
     def _db(self) -> typing.Union[models.QuerySet, models.Manager]:
         if self._atomic:
-            return DBStorage.objects.select_for_update()  # type: ignore
-        else:
-            return DBStorage.objects  # type: ignore
+            return DBStorage.objects.select_for_update()
+        return DBStorage.objects
 
     @property
     def _filtered(self) -> 'models.QuerySet[DBStorage]':
@@ -127,7 +128,7 @@ class StorageAsDict(MutableMapping):
 
     def __getitem__(self, key: str) -> typing.Any:
         if not isinstance(key, str):
-            raise TypeError('Key must be str, {} found'.format(type(key)))
+            raise TypeError(f'Key must be str, {type(key)} found')
 
         dbk = self._key(key)
         logger.debug('Getitem: %s', dbk)
@@ -139,12 +140,13 @@ class StorageAsDict(MutableMapping):
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
         if not isinstance(key, str):
-            raise TypeError('Key must be str type, {} found'.format(type(key)))
+            raise TypeError(f'Key must be str type, {type(key)} found')
 
         dbk = self._key(key)
         logger.debug('Setitem: %s = %s', dbk, value)
         data = _encodeValue(key, value, self._compat)
-        c, created = DBStorage.objects.update_or_create(
+        # ignores return value, we don't care if it was created or updated
+        DBStorage.objects.update_or_create(
             key=dbk, defaults={'data': data, 'attr1': self._group, 'owner': self._owner}
         )
 
@@ -179,7 +181,7 @@ class StorageAsDict(MutableMapping):
         return self[key] or default
 
     def delete(self, key: str) -> None:
-        self.__delitem__(key)
+        self.__delitem__(key)  # pylint: disable=unnecessary-dunder-call
 
     # Custom utility methods
     @property
@@ -312,7 +314,9 @@ class Storage:
     def getPickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.readData(skey, True)
         if v:
-            return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
+            return pickle.loads(
+                typing.cast(bytes, v)
+            )  # nosec: This is e controled pickle loading
         return None
 
     def getPickleByAttr1(self, attr1: str, forUpdate: bool = False):
@@ -335,7 +339,9 @@ class Storage:
         try:
             # Process several keys at once
             DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
-        except Exception:  # nosec: Not interested in processing exceptions, just ignores it
+        except (
+            Exception
+        ):  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
     def lock(self):

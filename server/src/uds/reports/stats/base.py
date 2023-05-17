@@ -28,10 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-
 from django.utils.translation import gettext_noop as _
 from uds.core import reports
 from ..auto import ReportAuto
@@ -43,6 +41,6 @@ class StatsReport(reports.Report):
     def generate(self) -> bytes:
         raise NotImplementedError('StatsReport generate invoked and not implemented')
 
-
+# pylint: disable=abstract-method
 class StatsReportAuto(ReportAuto, StatsReport):
     pass

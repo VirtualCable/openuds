@@ -29,6 +29,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+
+# pylint: disable=unused-import
 from .unique_gid_generator import UniqueGIDGenerator
 from .unique_mac_generator import UniqueMacGenerator
 from .unique_name_generator import UniqueNameGenerator

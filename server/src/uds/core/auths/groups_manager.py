@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
 import logging
@@ -42,6 +42,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class _LocalGrp(typing.NamedTuple):
     name: str
     group: 'Group'
@@ -53,6 +54,7 @@ class _LocalGrp(typing.NamedTuple):
         Checks if this group name is equal to the provided name (case)
         """
         return name.casefold() == self.name.casefold()
+
 
 class GroupsManager:
     """
@@ -85,7 +87,9 @@ class GroupsManager:
         self._dbAuthenticator = dbAuthenticator
         # We just get active groups, inactive aren't visible to this class
         self._groups = []
-        if dbAuthenticator.id:  # If "fake" authenticator (that is, root user with no authenticator in fact)
+        if (
+            dbAuthenticator.id
+        ):  # If "fake" authenticator (that is, root user with no authenticator in fact)
             for g in dbAuthenticator.groups.filter(state=State.ACTIVE, is_meta=False):
                 name = g.name.lower()
                 isPattern = name.find('pat:') == 0  # Is a pattern?
@@ -93,7 +97,7 @@ class GroupsManager:
                     _LocalGrp(
                         name=name[4:] if isPattern else name,
                         group=Group(g),
-                        is_pattern=isPattern
+                        is_pattern=isPattern,
                     )
                 )
 
@@ -127,7 +131,9 @@ class GroupsManager:
         """
         returns the list of valid groups (:py:class:uds.core.auths.group.Group)
         """
-        from uds.models import Group as DBGroup
+        from uds.models import (  # pylint: disable=import-outside-toplevel
+            Group as DBGroup,
+        )
 
         valid_id_list: typing.List[int] = []
         for group in self._groups:
@@ -139,7 +145,9 @@ class GroupsManager:
         for db_group in DBGroup.objects.filter(
             manager__id=self._dbAuthenticator.id, is_meta=True
         ):  # @UndefinedVariable
-            gn = db_group.groups.filter(id__in=valid_id_list, state=State.ACTIVE).count()
+            gn = db_group.groups.filter(
+                id__in=valid_id_list, state=State.ACTIVE
+            ).count()
             if db_group.meta_if_any and gn > 0:
                 gn = db_group.groups.count()
             if (
@@ -183,7 +191,7 @@ class GroupsManager:
                 self.validate(n)
         else:
             for n in self._checkAllGroups(groupName):
-                self._groups[n] =  self._groups[n]._replace(is_valid=True)
+                self._groups[n] = self._groups[n]._replace(is_valid=True)
 
     def isValid(self, groupName: str) -> bool:
         """
@@ -196,4 +204,4 @@ class GroupsManager:
         return False
 
     def __str__(self):
-        return "Groupsmanager: {0}".format(self._groups)
+        return f'Groupsmanager: {self._groups}'

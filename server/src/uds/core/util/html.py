@@ -43,24 +43,23 @@ logger = logging.getLogger(__name__)
 
 
 def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
-
     if request.is_secure():
         proto = 'udss'
     else:
         proto = 'uds'
 
-    return "{}://{}{}/{}".format(
-        proto, request.build_absolute_uri('/').split('//')[1], ticket, scrambler
-    )
+    return f'{proto}://{request.build_absolute_uri("/")}{ticket}/{scrambler}'
 
 
 def udsAccessLink(
-    request: 'HttpRequest', serviceId: str, transportId: typing.Optional[str]
+    request: 'HttpRequest',  # pylint: disable=unused-argument
+    serviceId: str,
+    transportId: typing.Optional[str],
 ) -> str:
     '''
     If transportId (uuid) is None, this will be a metaLink
     '''
-    return 'udsa://{}/{}'.format(serviceId, transportId or 'meta')
+    return f'udsa://{serviceId}/{transportId or "meta"}'
 
 
 def parseDate(dateToParse) -> datetime.date:
@@ -97,4 +96,3 @@ def extractKey(dictionary: typing.Dict, key: typing.Any, **kwargs) -> str:
     else:
         value = default
     return value
-
