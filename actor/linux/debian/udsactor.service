@@ -3,6 +3,7 @@ Description=UDS Broker actor
 After=network.target
 
 [Service]
+KillMode=mixed
 Type=simple
 User=root
 Group=root

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 '''
 # pylint: disable=invalid-name
 
@@ -194,10 +195,15 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         # Cleans sensible data
         if self._cfg.config:
-            self._cfg = self._cfg._replace(
-                config=self._cfg.config._replace(os=None), data=None
-            )
-            platform.store.writeConfig(self._cfg)
+            try:
+                isPersistent = self._cfg.config.os.isPersistent == 'y'
+            except:
+                isPersistent = True
+            if isPersistent:
+                self._cfg = self._cfg._replace(
+                    config=self._cfg.config._replace(os=None), data=None
+                )
+                platform.store.writeConfig(self._cfg)
 
         logger.info('Service ready')
 
@@ -235,13 +241,27 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                             osData.new_password,
                         )
                     elif osData.action == 'rename_ad':
-                        self.joinDomain(
-                            osData.name,
-                            osData.ad or '',
-                            osData.ou or '',
-                            osData.username or '',
-                            osData.password or '',
-                        )
+                        if not osData.serverSoftware:
+                            self.joinDomain(
+                                osData.name,
+                                osData.ad or '',
+                                osData.ou or '',
+                                osData.username or '',
+                                osData.password or '',
+                            )
+                        else:
+                            self.joinDomain(
+                                osData.name,
+                                osData.ad or '',
+                                osData.ou or '',
+                                osData.username or '',
+                                osData.password or '',
+                                osData.clientSoftware or '',
+                                osData.serverSoftware or '',
+                                osData.membershipSoftware or '',
+                                osData.ssl or '',
+                                osData.automaticIdMapping or ''
+                            )
 
                     if self._rebootRequested:
                         try:

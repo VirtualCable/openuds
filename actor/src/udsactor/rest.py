@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2019-2021 Virtual Cable S.L.U.
+# Copyright (c) 2019-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 '''
 # pylint: disable=invalid-name
 import warnings
@@ -293,6 +294,12 @@ class UDSServerApi(UDSApi):
                 new_password=os.get('new_password'),
                 ad=os.get('ad'),
                 ou=os.get('ou'),
+                clientSoftware = os.get('clientSoftware'),
+                serverSoftware = os.get('serverSoftware'),
+                membershipSoftware = os.get('membershipSoftware'),
+                ssl = os.get('ssl'),
+                automaticIdMapping = os.get('automaticIdMapping'),
+                isPersistent = os.get('isPersistent'),
             )
             if r['os']
             else None,

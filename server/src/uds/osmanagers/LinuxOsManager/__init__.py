@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,7 @@
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import os.path
 import typing
@@ -41,6 +42,8 @@ from uds.core import VERSION
 
 from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager
+from .linux_ad_osmanager import LinuxOsADManager
+from .linux_freeipa_osmanager import LinuxOsFreeIPAManager
 
 downloadsManager().registerDownloadable(
     f'udsactor_{VERSION}_all.deb',

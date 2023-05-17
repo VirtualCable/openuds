@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,10 +28,12 @@
 
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 '''
 import signal
 
 from . import daemon
+from . import operations
 
 from ..log import logger
 from ..service import CommonService
@@ -60,10 +62,42 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             domain: str,
             ou: str,
             account: str,
-            password: str
+            password: str,
+            client_software: str,
+            server_software: str,
+            membership_software: str,
+            ssl: bool,
+            automatic_id_mapping: bool
         ) -> None:
-        logger.info('Join domain is not supported on linux platforms right now. Just renaming.')
         self.rename(name)
+        logger.debug(f'Starting joining domain {domain} with name {name}')
+        operations.joinDomain(name, \
+                            domain, \
+                            ou, \
+                            account, \
+                            password, \
+                            client_software, \
+                            server_software, \
+                            membership_software, \
+                            ssl, \
+                            automatic_id_mapping
+                        )
+
+    def finish(self) -> None:
+        try:
+            if self._cfg.config and self._cfg.config.os:
+                osData = self._cfg.config.os
+                if osData.action == 'rename_ad' and osData.isPersistent == 'n' :
+                    operations.leaveDomain(
+                        osData.ad or '',
+                        osData.username or '',
+                        osData.password or '',
+                        osData.clientSoftware or '',
+                        osData.serverSoftware or '',
+                    )
+        except Exception as e:
+            logger.error(f'Got exception operating machine: {e}')
+        super().finish()
 
     def run(self) -> None:
         logger.debug('Running Daemon: {}'.format(self._isAlive))

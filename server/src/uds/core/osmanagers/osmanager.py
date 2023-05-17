@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,7 @@
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import typing
 
@@ -117,6 +118,12 @@ class OSManager(Module):
               'ou': 'ou'   # or '' if default ou
               'username': 'userwithaddmachineperms@domain.xxxx'
               'password': 'passwordForTheUserWithPerms',
+              'clientSoftware': 'sssd' or 'winbind' or 'automatically' if linux os manager,
+              'serverSoftware': 'active-directory' or 'ipa' if linux os manager,
+              'membershipSoftware': 'samba' or 'adcli' or 'automatically' if linux os manager,
+              'ssl': 'n' or 'y' if linux os manager,
+              'automaticIdMapping': 'n' or 'y' if linux os manager,
+              'isPersistent': 'n' or 'y' if linux os manager,
           }
         * rename vm, do NOT ADD to AD, and change password for an user
           {
