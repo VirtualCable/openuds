@@ -268,6 +268,12 @@ class UDSServerApi(UDSApi):
                 new_password=os.get('new_password'),
                 ad=os.get('ad'),
                 ou=os.get('ou'),
+                clientSoftware = os.get('clientSoftware'),
+                serverSoftware = os.get('serverSoftware'),
+                membershipSoftware = os.get('membershipSoftware'),
+                ssl = os.get('ssl'),
+                automaticIdMapping = os.get('automaticIdMapping'),
+                isPersistent = os.get('isPersistent'),
             )
             if r['os']
             else None,
