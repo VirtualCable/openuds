@@ -235,13 +235,27 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                             osData.new_password,
                         )
                     elif osData.action == 'rename_ad':
-                        self.joinDomain(
-                            osData.name,
-                            osData.ad or '',
-                            osData.ou or '',
-                            osData.username or '',
-                            osData.password or '',
-                        )
+                        if not osData.serverSoftware:
+                            self.joinDomain(
+                                osData.name,
+                                osData.ad or '',
+                                osData.ou or '',
+                                osData.username or '',
+                                osData.password or '',
+                            )
+                        else:
+                            self.joinDomain(
+                                osData.name,
+                                osData.ad or '',
+                                osData.ou or '',
+                                osData.username or '',
+                                osData.password or '',
+                                osData.clientSoftware or '',
+                                osData.serverSoftware or '',
+                                osData.membershipSoftware or '',
+                                osData.ssl or '',
+                                osData.automaticIdMapping or ''
+                            )
 
                     if self._rebootRequested:
                         try:

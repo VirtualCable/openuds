@@ -32,6 +32,7 @@
 import signal
 
 from . import daemon
+from . import operations
 
 from ..log import logger
 from ..service import CommonService
@@ -60,10 +61,26 @@ class UDSActorSvc(daemon.Daemon, CommonService):
             domain: str,
             ou: str,
             account: str,
-            password: str
+            password: str,
+            client_software: str,
+            server_software: str,
+            membership_software: str,
+            ssl: bool,
+            automatic_id_mapping: bool
         ) -> None:
-        logger.info('Join domain is not supported on linux platforms right now. Just renaming.')
         self.rename(name)
+        logger.debug(f'Starting joining domain {domain} with name {name}')
+        operations.joinDomain(name, \
+                            domain, \
+                            ou, \
+                            account, \
+                            password, \
+                            client_software, \
+                            server_software, \
+                            membership_software, \
+                            ssl, \
+                            automatic_id_mapping
+                        )
 
     def run(self) -> None:
         logger.debug('Running Daemon: {}'.format(self._isAlive))
