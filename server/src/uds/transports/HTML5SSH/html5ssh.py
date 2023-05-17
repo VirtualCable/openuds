@@ -86,29 +86,29 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_('Username for SSH connection authentication.'),
         tab=gui.CREDENTIALS_TAB,
     )
-    password = gui.PasswordField(
-        label=_('Password'),
-        order=21,
-        tooltip=_('Password for SSH connection authentication'),
-        tab=gui.CREDENTIALS_TAB,
-    )
-    sshPrivateKey = gui.TextField(
-        label=_('SSH Private Key'),
-        order=22,
-        multiline=4,
-        tooltip=_(
-            'Private key for SSH authentication. If not provided, password authentication is used.'
-        ),
-        tab=gui.CREDENTIALS_TAB,
-    )
-    sshPassphrase = gui.PasswordField(
-        label=_('SSH Private Key Passphrase'),
-        order=23,
-        tooltip=_(
-            'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
-        ),
-        tab=gui.CREDENTIALS_TAB,
-    )
+    # password = gui.PasswordField(
+    #     label=_('Password'),
+    #     order=21,
+    #     tooltip=_('Password for SSH connection authentication'),
+    #     tab=gui.CREDENTIALS_TAB,
+    # )
+    # sshPrivateKey = gui.TextField(
+    #     label=_('SSH Private Key'),
+    #     order=22,
+    #     multiline=4,
+    #     tooltip=_(
+    #         'Private key for SSH authentication. If not provided, password authentication is used.'
+    #     ),
+    #     tab=gui.CREDENTIALS_TAB,
+    # )
+    # sshPassphrase = gui.PasswordField(
+    #     label=_('SSH Private Key Passphrase'),
+    #     order=23,
+    #     tooltip=_(
+    #         'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
+    #     ),
+    #     tab=gui.CREDENTIALS_TAB,
+    # )
 
     sshCommand = gui.TextField(
         label=_('SSH Command'),
@@ -253,9 +253,9 @@ class HTML5SSHTransport(transports.Transport):
         # Add optional parameters (strings only)
         for i in (
             ('username', self.username),
-            ('password', self.password),
-            ('private-key', self.sshPrivateKey),
-            ('passphrase', self.sshPassphrase),
+            # ('password', self.password),
+            # ('private-key', self.sshPrivateKey),
+            # ('passphrase', self.sshPassphrase),
             ('command', self.sshCommand),
             ('host-key', self.sshHostKey),
         ):
