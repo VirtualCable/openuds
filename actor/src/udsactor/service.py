@@ -194,10 +194,15 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         # Cleans sensible data
         if self._cfg.config:
-            self._cfg = self._cfg._replace(
-                config=self._cfg.config._replace(os=None), data=None
-            )
-            platform.store.writeConfig(self._cfg)
+            try:
+                isPersistent = self._cfg.config.os.isPersistent == 'y'
+            except:
+                isPersistent = True
+            if isPersistent:
+                self._cfg = self._cfg._replace(
+                    config=self._cfg.config._replace(os=None), data=None
+                )
+                platform.store.writeConfig(self._cfg)
 
         logger.info('Service ready')
 
