@@ -119,8 +119,10 @@ class ForwardServer(socketserver.ThreadingTCPServer):
 
             # Do not "recompress" data, use only "base protocol" compression
             context.options |= ssl.OP_NO_COMPRESSION
-            # On macs, seems to have problems with TLSv1.3, so we force TLSv1.2
-            context.minimum_version = ssl.TLSVersion.TLSv1_2 if tools.isMac() else ssl.TLSVersion.TLSv1_3
+            # Macs with default installed python, does not support mininum tls version set to TLSv1.3
+            # USe "brew" version instead, or uncomment next line and comment the next one
+            # context.minimum_version = ssl.TLSVersion.TLSv1_2 if tools.isMac() else ssl.TLSVersion.TLSv1_3
+            context.minimum_version = ssl.TLSVersion.TLSv1_3
 
             if tools.getCaCertsFile() is not None:
                 context.load_verify_locations(tools.getCaCertsFile())  # Load certifi certificates
