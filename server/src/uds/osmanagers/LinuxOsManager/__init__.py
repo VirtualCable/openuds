@@ -29,6 +29,7 @@
 
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Alexander Burmatov,  thatman at altlinux dot org
 """
 import os.path
 import typing
