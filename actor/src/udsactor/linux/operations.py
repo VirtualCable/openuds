@@ -193,11 +193,43 @@ def renameComputer(newName: str) -> bool:
     return True  # Always reboot right now. Not much slower but much more convenient
 
 
-def joinDomain(
-    domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False
-):
-    pass
-
+def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
+        name: str,
+        domain: str,
+        ou: str,
+        account: str,
+        password: str,
+        client_software: str,
+        server_software: str,
+        membership_software: str,
+        ssl: bool,
+        automatic_id_mapping: bool
+    ) -> None:
+    if server_software == 'ipa':
+        try:
+            hostname = getComputerName() + domain[domain.index('.'):]
+            command = f'hostnamectl set-hostname {hostname}'
+            subprocess.run(command, shell=True)
+        except Exception as e:
+            logger.error(f'Error set hostname for freeeipa: {e}')
+    try:
+        command = f'realm join -U {account} '
+        if client_software and client_software != 'automatically':
+            command += f'--client-software={client_software} '
+        if server_software:
+            command += f'--server-software={server_software} '
+        if membership_software and membership_software != 'automatically':
+            command += f'--membership-software={membership_software} '
+        if ou and server_software !='ipa':
+            command += f'--computer-ou="{ou}" '
+        if ssl == 'y':
+            command += '--use-ldaps '
+        if automatic_id_mapping == 'n':
+            command += '--automatic-id-mapping=no '
+        command += domain
+        subprocess.run(command, input=password.encode(), shell=True)
+    except Exception as e:
+        logger.error(f'Error join machine to domain {name}: {e}')
 
 def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     '''
