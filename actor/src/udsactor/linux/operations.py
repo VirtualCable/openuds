@@ -231,6 +231,30 @@ def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
     except Exception as e:
         logger.error(f'Error join machine to domain {name}: {e}')
 
+def leaveDomain(
+        domain: str,
+        account: str,
+        password: str,
+        client_software: str,
+        server_software: str,
+    ) -> None:
+    if server_software == 'ipa':
+        try:
+            command = f'hostnamectl set-hostname {getComputerName()}'
+            subprocess.run(command, shell=True)
+        except Exception as e:
+            logger.error(f'Error set hostname for leave freeeipa domain: {e}')
+    try:
+        command = f'realm leave -U {account} '
+        if client_software and client_software != 'automatically':
+            command += f'--client-software={client_software} '
+        if server_software:
+            command += f'--server-software={server_software} '
+        command += domain
+        subprocess.run(command, input=password.encode(), shell=True)
+    except Exception as e:
+        logger.error(f'Error leave machine from domain {domain}: {e}')
+
 def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
     '''
     Simple password change for user using command line
