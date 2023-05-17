@@ -193,7 +193,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tab=gui.Tab.MFA,
     )
 
-    typeName = _('SimpleLDAP (DEPRECATED)')
+    typeName = _('SimpleLDAP')
     typeType = 'SimpleLdapAuthenticator'
     typeDescription = _('Simple LDAP authenticator')
     iconFile = 'auth.png'
