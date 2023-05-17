@@ -82,6 +82,22 @@ class UDSActorSvc(daemon.Daemon, CommonService):
                             automatic_id_mapping
                         )
 
+    def finish(self) -> None:
+        try:
+            if self._cfg.config and self._cfg.config.os:
+                osData = self._cfg.config.os
+                if osData.action == 'rename_ad' and osData.isPersistent == 'n' :
+                    operations.leaveDomain(
+                        osData.ad or '',
+                        osData.username or '',
+                        osData.password or '',
+                        osData.clientSoftware or '',
+                        osData.serverSoftware or '',
+                    )
+        except Exception as e:
+            logger.error(f'Got exception operating machine: {e}')
+        super().finish()
+
     def run(self) -> None:
         logger.debug('Running Daemon: {}'.format(self._isAlive))
         set_proctitle('UDSActorDaemon')
