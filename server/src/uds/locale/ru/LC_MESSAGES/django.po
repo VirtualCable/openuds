@@ -7,6 +7,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -20,10 +21,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-30 15:34+0200\n"
+"POT-Creation-Date: 2023-05-17 14:28+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Elena Mishina, 2022-2023\n"
-"Language-Team: Russian (http://www.transifex.com/openuds/openuds/language/"
+"Last-Translator: Александр Бурматов, 2022\n"
+"Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -228,11 +229,11 @@ msgid "If active, authenticator will be visible for users"
 msgstr "Если активен, аутентификатор будет виден пользователям"
 
 #: REST/methods/authenticators.py:126 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:188
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
-#: services/Sample/service.py:106 services/TestService_enterprise/service.py:29
+#: services/Sample/service.py:106
 msgid "None"
 msgstr "Ничто"
 
@@ -691,10 +692,10 @@ msgstr "Доступные отчеты"
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
 #: auths/ActiveDirectory_enterprise/authenticator.py:174
-#: auths/AzureAD_enterprise/azure_ad.py:95
+#: auths/AzureAD_enterprise/azure_ad.py:97
 #: auths/EDirectory_enterprise/authenticator.py:133
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
-#: auths/SAML_enterprise/saml.py:110 auths/SimpleLDAP/authenticator.py:212
+#: auths/SAML_enterprise/saml.py:108 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Группа"
@@ -735,7 +736,7 @@ msgid "Services Pools"
 msgstr "Сервисные пулы"
 
 #: REST/methods/services.py:252 REST/methods/services.py:315
-#: auths/AzureAD_enterprise/azure_ad.py:130
+#: auths/AzureAD_enterprise/azure_ad.py:132
 #: services/AWS_enterprise/provider.py:87
 #: services/Azure_enterprise/provider.py:109 services/OpenStack/provider.py:209
 #: services/OpenStack/provider_legacy.py:195
@@ -1060,10 +1061,10 @@ msgstr "Штатный сотрудник"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
-#: auths/AzureAD_enterprise/azure_ad.py:94
+#: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:107 reports/lists/audit.py:120
+#: auths/SAML_enterprise/saml.py:105 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1249,8 +1250,7 @@ msgstr ""
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5SSH/html5ssh.py:90
-#: transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -1342,7 +1342,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:144
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:130
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Сертификат"
@@ -1356,14 +1356,14 @@ msgstr "Сертификат, используемый для проверки S
 #: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:192
+#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "Атрибут многофакторной идентификации"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:210 auths/SimpleLDAP/authenticator.py:194
+#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Атрибут, из которого извлекается код МФА"
 
@@ -1390,7 +1390,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:566
 #: auths/ActiveDirectory_enterprise/authenticator.py:623
-#: auths/AzureAD_enterprise/azure_ad.py:315
+#: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
 #: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
@@ -1435,58 +1435,58 @@ msgstr ""
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Параметры подключения правильные, тест был успешно выполнен"
 
-#: auths/AzureAD_enterprise/azure_ad.py:79
+#: auths/AzureAD_enterprise/azure_ad.py:81
 msgid "Azure AD Authenticator"
 msgstr "Аутентификатор Azure AD"
 
-#: auths/AzureAD_enterprise/azure_ad.py:81
+#: auths/AzureAD_enterprise/azure_ad.py:83
 msgid "Azure Active Directory Authenticator"
 msgstr "Аутентификатор Azure Active Directory"
 
-#: auths/AzureAD_enterprise/azure_ad.py:99
+#: auths/AzureAD_enterprise/azure_ad.py:101
 #: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "Идентификатор клиента"
 
-#: auths/AzureAD_enterprise/azure_ad.py:101
+#: auths/AzureAD_enterprise/azure_ad.py:103
 #: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "Полученные от Azure Active Directory - Свойства - ID каталога"
 
-#: auths/AzureAD_enterprise/azure_ad.py:106
+#: auths/AzureAD_enterprise/azure_ad.py:108
 #: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "Идентификатор клиента"
 
-#: auths/AzureAD_enterprise/azure_ad.py:108
+#: auths/AzureAD_enterprise/azure_ad.py:110
 #: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr ""
 "Получено от приложения, созданного на платформе Azure для UDS Enterprise"
 
-#: auths/AzureAD_enterprise/azure_ad.py:113
+#: auths/AzureAD_enterprise/azure_ad.py:115
 #: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "Секрет клиента"
 
-#: auths/AzureAD_enterprise/azure_ad.py:115
+#: auths/AzureAD_enterprise/azure_ad.py:117
 #: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr ""
 "Получено от приложения, созданного на платформе Azure для UDS Enteprise - "
 "Ключи"
 
-#: auths/AzureAD_enterprise/azure_ad.py:121
+#: auths/AzureAD_enterprise/azure_ad.py:123
 msgid "Callback"
 msgstr "Обратный вызов"
 
-#: auths/AzureAD_enterprise/azure_ad.py:123
+#: auths/AzureAD_enterprise/azure_ad.py:125
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr ""
 "Строка адреса обратного вызова (заполняется UDS, исправлять только в случае "
 "необходимости!)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:133
+#: auths/AzureAD_enterprise/azure_ad.py:135
 #: services/Azure_enterprise/provider.py:112
 msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
@@ -1495,51 +1495,51 @@ msgstr ""
 "Прокси-сервер, используемый для подключения к azure для HTTPS-подключений "
 "(используйте PROTOCOL: // host: port, т.е. https://10.10.0.1:8080)"
 
-#: auths/AzureAD_enterprise/azure_ad.py:140
+#: auths/AzureAD_enterprise/azure_ad.py:142
 msgid "Enable School Data Sync Integration"
 msgstr "Включить интеграцию School Data Sync"
 
-#: auths/AzureAD_enterprise/azure_ad.py:143
+#: auths/AzureAD_enterprise/azure_ad.py:145
 msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr ""
 "Включите, только если у вас есть Microsoft School Data Sync в вашей среде."
 
-#: auths/AzureAD_enterprise/azure_ad.py:150
+#: auths/AzureAD_enterprise/azure_ad.py:152
 msgid "Azure Logout method."
 msgstr "Метод выхода из Azure."
 
-#: auths/AzureAD_enterprise/azure_ad.py:152
+#: auths/AzureAD_enterprise/azure_ad.py:154
 msgid "UDS Redirection to Microsoft logout pages on UDS logout."
 msgstr "Перенаправление UDS на страницы выхода Microsoft при выходе из UDS."
 
-#: auths/AzureAD_enterprise/azure_ad.py:156
+#: auths/AzureAD_enterprise/azure_ad.py:158
 msgid "Do not redirect"
 msgstr "Не перенаправлять"
 
-#: auths/AzureAD_enterprise/azure_ad.py:157
+#: auths/AzureAD_enterprise/azure_ad.py:159
 msgid "Microsoft logout"
 msgstr "Выход из Microsoft"
 
-#: auths/AzureAD_enterprise/azure_ad.py:158
+#: auths/AzureAD_enterprise/azure_ad.py:160
 msgid "Office 365 logout"
 msgstr "Выход из Office 365"
 
-#: auths/AzureAD_enterprise/azure_ad.py:176
+#: auths/AzureAD_enterprise/azure_ad.py:178
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "Аутентификатор SAML не поддерживает пробелы в поле NAME"
 
-#: auths/AzureAD_enterprise/azure_ad.py:325
-#: auths/AzureAD_enterprise/azure_ad.py:351
-#: auths/AzureAD_enterprise/azure_ad.py:361
+#: auths/AzureAD_enterprise/azure_ad.py:328
+#: auths/AzureAD_enterprise/azure_ad.py:354
+#: auths/AzureAD_enterprise/azure_ad.py:364
 msgid "Authenticator exception:"
 msgstr "Исключение проверки подлинности:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
+#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "Ошибка подключения: "
 
-#: auths/AzureAD_enterprise/azure_ad.py:399
+#: auths/AzureAD_enterprise/azure_ad.py:402
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Параметры подключения кажутся верными, тест выполнен успешно"
 
@@ -1672,11 +1672,11 @@ msgstr "Обратный DNS"
 msgid "If checked, the host will be reversed dns"
 msgstr "Если отмечено, хост будет использовать обратный DNS"
 
-#: auths/InternalDB/authenticator.py:180
+#: auths/InternalDB/authenticator.py:182
 msgid "Internal structures seems ok"
 msgstr "Внутренняя структура - ОК"
 
-#: auths/InternalDB/authenticator.py:183
+#: auths/InternalDB/authenticator.py:185
 msgid "All seems fine in the authenticator."
 msgstr "Все хорошо для аутентификатора."
 
@@ -1840,19 +1840,19 @@ msgstr ""
 "Идентификатор аттрибута группы LDAP вероятно неверный (невозможно найти "
 "группу с такими аттрибутами)"
 
-#: auths/SAML_enterprise/saml.py:77
+#: auths/SAML_enterprise/saml.py:75
 msgid "SAML Authenticator"
 msgstr "Аутентификатор SAML"
 
-#: auths/SAML_enterprise/saml.py:89
+#: auths/SAML_enterprise/saml.py:87
 msgid "SAML (v2.0) Authenticator"
 msgstr "Аутентификатор SAML (v2.0)"
 
-#: auths/SAML_enterprise/saml.py:119
+#: auths/SAML_enterprise/saml.py:117
 msgid "Private key"
 msgstr "Приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:122
+#: auths/SAML_enterprise/saml.py:120
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1860,11 +1860,11 @@ msgstr ""
 "Приватный ключ, используемый для подписи и шифрования, сгенерированный в "
 "base64 c помощью openssl"
 
-#: auths/SAML_enterprise/saml.py:125 auths/SAML_enterprise/saml.py:136
+#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
 msgid "Certificates"
 msgstr "Сертификаты"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:131
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1872,82 +1872,82 @@ msgstr ""
 "Открытый ключ, используемый для подписывания и шифрования (общедоступная "
 "часть предыдущего частного), сгенерированный в base64 от openssl"
 
-#: auths/SAML_enterprise/saml.py:141
+#: auths/SAML_enterprise/saml.py:139
 msgid "IDP Metadata"
 msgstr "IDP метаданные"
 
-#: auths/SAML_enterprise/saml.py:144
+#: auths/SAML_enterprise/saml.py:142
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Здесь вы можете указать URL-адрес, метаданные IDP или сами метаданные (xml)"
 
-#: auths/SAML_enterprise/saml.py:147 auths/SAML_enterprise/saml.py:156
+#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
 msgid "Metadata"
 msgstr "Метаданные"
 
-#: auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:149
 msgid "Entity ID"
 msgstr "ID объекта"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:152
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "Идентификатор SP. Если оставить пустым, будет автоматически генерироваться с "
 "URL-адреса сервера"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:160
 msgid "User name attrs"
 msgstr "Атрибут имени пользователя"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:162
 msgid "Fields from where to extract user name"
 msgstr "Поля, откуда извлекается имя пользователя"
 
-#: auths/SAML_enterprise/saml.py:166 auths/SAML_enterprise/saml.py:176
-#: auths/SAML_enterprise/saml.py:186
+#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:184
 msgid "Attributes"
 msgstr "Атрибуты"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:170
 msgid "Group name attrs"
 msgstr "Атрибуты имени группы"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:172
 msgid "Fields from where to extract the groups"
 msgstr "Поля, откуда извлекается имя группы"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:180
 msgid "Real name attrs"
 msgstr "Атрибуты реального имени"
 
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:182
 msgid "Fields from where to extract the real name"
 msgstr "Поля, откуда извлекается реальное имя"
 
-#: auths/SAML_enterprise/saml.py:190
+#: auths/SAML_enterprise/saml.py:188
 msgid "Global logout"
 msgstr "Глобальный выход"
 
-#: auths/SAML_enterprise/saml.py:193
+#: auths/SAML_enterprise/saml.py:191
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "Если установлено, выход из UDS приведет к выходу из системы SAML."
 
-#: auths/SAML_enterprise/saml.py:198
+#: auths/SAML_enterprise/saml.py:196
 msgid "ADFS compatibility"
 msgstr "Совместимость с ADFS"
 
-#: auths/SAML_enterprise/saml.py:201
+#: auths/SAML_enterprise/saml.py:199
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "Если установлено, включите кодировку URL-адресов в нижнем регистре, чтобы "
 "ADFS могла работать правильно."
 
-#: auths/SAML_enterprise/saml.py:232
+#: auths/SAML_enterprise/saml.py:230
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "Этот тип аутентификатора не поддерживает пробелы в поле NAME."
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:244
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1955,11 +1955,11 @@ msgstr ""
 "Сертификат сервера должен быть действительным PEM (PEM сертификат начинается "
 "с -----BEGIN CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:254
+#: auths/SAML_enterprise/saml.py:252
 msgid "Invalid server certificate. "
 msgstr "Недопустимый сертификат сервера"
 
-#: auths/SAML_enterprise/saml.py:265
+#: auths/SAML_enterprise/saml.py:263
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1967,48 +1967,48 @@ msgstr ""
 "Приватный ключ должен быть действительным PEM (PEM приватный ключ начинается "
 "с -----BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:273
+#: auths/SAML_enterprise/saml.py:271
 msgid "Invalid private key. "
 msgstr "Недопустимый приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:278
+#: auths/SAML_enterprise/saml.py:276
 msgid "Certificate and private key do not match"
 msgstr "Сертификат и закрытый ключ не совпадают"
 
-#: auths/SAML_enterprise/saml.py:297
+#: auths/SAML_enterprise/saml.py:295
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Невозможно получить url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:308
+#: auths/SAML_enterprise/saml.py:306
 msgid " (obtained from URL)"
 msgstr "(полученный из URL)"
 
-#: auths/SAML_enterprise/saml.py:310
+#: auths/SAML_enterprise/saml.py:308
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML не подходит для метаданных IDP"
 
-#: auths/SAML_enterprise/saml.py:368
+#: auths/SAML_enterprise/saml.py:366
 msgid "Can't access idp metadata"
 msgstr "Нет доступа к IDP метаданным"
 
-#: auths/SAML_enterprise/saml.py:435
+#: auths/SAML_enterprise/saml.py:433
 msgid "Error validating SP metadata: "
 msgstr "Ошибка проверки метаданных SP:"
 
-#: auths/SAML_enterprise/saml.py:544
+#: auths/SAML_enterprise/saml.py:542
 msgid "Error processing SLO: "
 msgstr "Ошибка обработки SLO:"
 
-#: auths/SAML_enterprise/saml.py:574
+#: auths/SAML_enterprise/saml.py:572
 msgid "Error processing SAML response: "
 msgstr "Ошибка обработки ответа SAML:"
 
-#: auths/SAML_enterprise/saml.py:587
+#: auths/SAML_enterprise/saml.py:585
 msgid "SAML response not authenticated"
 msgstr "Ответ SAML не аутентифицирован"
 
-#: auths/SAML_enterprise/saml.py:618
+#: auths/SAML_enterprise/saml.py:616
 msgid "No attributes returned from IdP"
 msgstr "От IdP не возвращаются атрибуты"
 
@@ -2074,12 +2074,14 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Атрибут группы, которая содержит пользователей, принадлежащих ему"
 
 #: auths/SimpleLDAP/authenticator.py:200
-msgid "SimpleLDAP (DEPRECATED)"
-msgstr "SimpleLDAP (УСТАРЕЛО)"
+#| msgid "SimpleLDAP (DEPRECATED)"
+msgid "SimpleLDAP"
+msgstr "ПростойLDAP"
 
 #: auths/SimpleLDAP/authenticator.py:202
-msgid "Simple LDAP authenticator (DEPRECATED)"
-msgstr "SimpleLDAP аутентификатор (УСТАРЕЛО)"
+#| msgid "Sample Authenticator"
+msgid "Simple LDAP authenticator"
+msgstr "Простой аутентификатор LDAP"
 
 #: auths/SimpleLDAP/authenticator.py:652
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
@@ -2246,7 +2248,7 @@ msgstr "Учётные данные"
 msgid "Tunnel"
 msgstr "Туннель"
 
-#: core/util/ldaputil.py:120
+#: core/util/ldaputil.py:125
 msgid "Can't contact LDAP server"
 msgstr "Не удаётся связаться с сервером LDAP"
 
@@ -2554,8 +2556,8 @@ msgstr "Тема письма"
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
 #: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
-#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
-#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
+#: mfas/SMS/mfa.py:262 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "Конфигурация"
 
@@ -2585,12 +2587,12 @@ msgid "Action for MFA response error"
 msgstr "Действие при ошибке ответа МФА"
 
 #: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
-#: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "Разрешить вход пользователя"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "Запретить вход пользователя"
 
@@ -2623,7 +2625,6 @@ msgstr ""
 "умолчанию"
 
 #: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
-#| msgid "Allowed variables are: {code}, {username}, {ip}"
 msgid "Allowed variables are: "
 msgstr "Допустимые переменные:"
 
@@ -2719,19 +2720,19 @@ msgstr "Ошибка подключения Radius OTP"
 msgid "Invalid OTP code"
 msgstr "Неверный OTP-код"
 
-#: mfas/SMS/mfa.py:96
+#: mfas/SMS/mfa.py:97
 msgid "SMS via HTTP"
 msgstr "СМС через HTTP"
 
-#: mfas/SMS/mfa.py:98
+#: mfas/SMS/mfa.py:99
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "Простая отправка SMS MFA с использованием HTTP/HTTPS"
 
-#: mfas/SMS/mfa.py:103
+#: mfas/SMS/mfa.py:104
 msgid "URL pattern for SMS sending"
 msgstr "Шаблон URL для отправки SMS"
 
-#: mfas/SMS/mfa.py:106
+#: mfas/SMS/mfa.py:107
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2743,16 +2744,16 @@ msgstr ""
 "{code} - код для отправки * {phone/+phone} - номер телефона * {username} - "
 "имя пользователя * {justUsername} - имя пользователя без @...."
 
-#: mfas/SMS/mfa.py:114 mfas/SMS/mfa.py:125 mfas/SMS/mfa.py:134
-#: mfas/SMS/mfa.py:152 mfas/SMS/mfa.py:169 mfas/SMS/mfa.py:179
+#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
+#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
 msgid "HTTP Server"
 msgstr "HTTP-сервер"
 
-#: mfas/SMS/mfa.py:118
+#: mfas/SMS/mfa.py:119
 msgid "Ignore certificate errors"
 msgstr "Игнорировать ошибки сертификата"
 
-#: mfas/SMS/mfa.py:122
+#: mfas/SMS/mfa.py:123
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
@@ -2760,19 +2761,19 @@ msgstr ""
 "Если этот флажок установлен, сертификат сервера будет игнорироваться. Это "
 "полезно, если сервер использует самозаверяющий сертификат."
 
-#: mfas/SMS/mfa.py:129
+#: mfas/SMS/mfa.py:130
 msgid "SMS sending method"
 msgstr "Способ отправки СМС"
 
-#: mfas/SMS/mfa.py:131 mfas/SMS/mfa.py:185
+#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
 msgid "Method for sending SMS"
 msgstr "Способ отправки СМС"
 
-#: mfas/SMS/mfa.py:140
+#: mfas/SMS/mfa.py:141
 msgid "Headers for SMS requests"
 msgstr "Заголовки для SMS-запросов"
 
-#: mfas/SMS/mfa.py:143
+#: mfas/SMS/mfa.py:144
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2786,11 +2787,11 @@ msgstr ""
 "имя пользователя * {justUsername} - имя пользователя без @.... Заголовки в "
 "виде «Заголовок: Значение». (без кавычек)"
 
-#: mfas/SMS/mfa.py:158
+#: mfas/SMS/mfa.py:159
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "Параметры для отправки SMS POST/PUT"
 
-#: mfas/SMS/mfa.py:161
+#: mfas/SMS/mfa.py:162
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2803,51 +2804,51 @@ msgstr ""
 "переменные: * {code} - код для отправки * {phone/+phone} - номер телефона * "
 "{username} - имя пользователя * {justUsername} - имя пользователя без @...."
 
-#: mfas/SMS/mfa.py:173
+#: mfas/SMS/mfa.py:174
 msgid "SMS encoding"
 msgstr "Кодировка SMS"
 
-#: mfas/SMS/mfa.py:176
+#: mfas/SMS/mfa.py:177
 msgid "Encoding for SMS"
 msgstr "Кодировка для СМС"
 
-#: mfas/SMS/mfa.py:183
+#: mfas/SMS/mfa.py:184
 msgid "SMS authentication method"
 msgstr "Метод аутентификации по SMS"
 
-#: mfas/SMS/mfa.py:189
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Basic Auth"
 msgstr "Базовая HTTP-аутентификация"
 
-#: mfas/SMS/mfa.py:190
+#: mfas/SMS/mfa.py:191
 msgid "HTTP Digest Auth"
 msgstr "Дайджест-аутентификация HTTP"
 
-#: mfas/SMS/mfa.py:192 mfas/SMS/mfa.py:201 mfas/SMS/mfa.py:210
+#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
 msgid "HTTP Authentication"
 msgstr "HTTP-аутентификация"
 
-#: mfas/SMS/mfa.py:197
+#: mfas/SMS/mfa.py:198
 msgid "SMS authentication user or token"
 msgstr "Пользователь или токен SMS-аутентификации"
 
-#: mfas/SMS/mfa.py:199
+#: mfas/SMS/mfa.py:200
 msgid "User or token for SMS authentication"
 msgstr "Пользователь или токен для SMS-аутентификации"
 
-#: mfas/SMS/mfa.py:206
+#: mfas/SMS/mfa.py:207
 msgid "SMS authentication password"
 msgstr "SMS-пароль аутентификации"
 
-#: mfas/SMS/mfa.py:208
+#: mfas/SMS/mfa.py:209
 msgid "Password for SMS authentication"
 msgstr "Пароль для SMS-аутентификации"
 
-#: mfas/SMS/mfa.py:215
+#: mfas/SMS/mfa.py:216
 msgid "SMS response OK regex"
 msgstr "SMS ответ OK регулярное выражение"
 
-#: mfas/SMS/mfa.py:218
+#: mfas/SMS/mfa.py:219
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
@@ -2855,54 +2856,54 @@ msgstr ""
 "Регулярное выражение для SMS-ответа OK. Если пусто, ответ считается ОК, если "
 "код состояния равен 200."
 
-#: mfas/SMS/mfa.py:221
+#: mfas/SMS/mfa.py:222
 msgid "HTTP Response"
 msgstr "HTTP-ответ"
 
-#: mfas/SMS/mfa.py:225
+#: mfas/SMS/mfa.py:226
 msgid "SMS response error action"
 msgstr "Действие при ошибке ответа SMS"
 
-#: mfas/SMS/mfa.py:228 mfas/SMS/mfa.py:243
+#: mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
 msgid "Action for SMS response error"
 msgstr "Действия при ошибке ответа на SMS"
 
-#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
 msgid "Allow user to login if its IP is in the networks list"
 msgstr ""
 "Разрешить пользователю входить в систему, если его IP-адрес есть в списке "
 "сетей"
 
-#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
 msgid "Deny user to login if its IP is in the networks list"
 msgstr ""
 "Запретить пользователю вход в систему, если его IP-адрес есть в списке сетей"
 
-#: mfas/SMS/mfa.py:240
+#: mfas/SMS/mfa.py:241
 msgid "User without MFA policy"
 msgstr "Пользователь без политики MFA"
 
-#: mfas/SMS/mfa.py:255
+#: mfas/SMS/mfa.py:256
 msgid "SMS networks"
 msgstr "SMS-сети"
 
-#: mfas/SMS/mfa.py:259
+#: mfas/SMS/mfa.py:260
 msgid "Networks for SMS authentication"
 msgstr "Сети для SMS-аутентификации"
 
-#: mfas/SMS/mfa.py:336
+#: mfas/SMS/mfa.py:333
 msgid "SMS sending failed"
 msgstr "Отправка СМС не удалась"
 
-#: mfas/SMS/mfa.py:346
+#: mfas/SMS/mfa.py:343
 msgid "SMS response error"
 msgstr "Ошибка ответа на смс"
 
-#: mfas/SMS/mfa.py:400 web/views/modern.py:316
+#: mfas/SMS/mfa.py:397 web/views/modern.py:316
 msgid "MFA Code"
 msgstr "Код МФА"
 
-#: mfas/SMS/mfa.py:404
+#: mfas/SMS/mfa.py:401
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "Проверьте свой телефон. Вы получите SMS с кодом подтверждения"
 
@@ -4310,8 +4311,7 @@ msgstr "Гиперсервисы на основе шаблонов и дифф�
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
-#: services/Proxmox/service.py:85 services/TestService_enterprise/service.py:27
-#: services/Xen/service.py:82
+#: services/Proxmox/service.py:85 services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "Количество работающих в ожидании пользователя машин"
 
@@ -4956,11 +4956,11 @@ msgstr "Базовый шаблон"
 msgid "Service base template"
 msgstr "Шаблон для развертывания образов"
 
-#: services/OpenStack/openstack/openstack_client.py:783
+#: services/OpenStack/openstack/openstack_client.py:767
 msgid "Authentication error"
 msgstr "Ошибка аутентификации"
 
-#: services/OpenStack/openstack/openstack_client.py:790
+#: services/OpenStack/openstack/openstack_client.py:774
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -5665,7 +5665,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "Methuselah не жив!!! :-)"
 
 #: services/Sample/provider.py:205
-#: services/TestService_enterprise/provider.py:56
 msgid "Nothing tested, but all went fine.."
 msgstr "Ничего не проверено, но все прошло хорошо..."
 
@@ -5720,22 +5719,6 @@ msgstr "Кэш L2 для фиктивных элементов"
 #: services/Sample/service.py:229
 msgid "List of names"
 msgstr "Список имен"
-
-#: services/TestService_enterprise/provider.py:49
-msgid "Test Provider"
-msgstr "Тестовый поставщик"
-
-#: services/TestService_enterprise/provider.py:51
-msgid "Test (and dummy) service provider"
-msgstr "Тестовый (и фейковый) поставщик услуг"
-
-#: services/TestService_enterprise/service.py:18
-msgid "Test Service with cache"
-msgstr "Тестировать службу с кэшем"
-
-#: services/TestService_enterprise/service.py:20
-msgid "Test service for cache L1 only"
-msgstr "Тестировать службу с кэшем только 1 уровня"
 
 #: services/VCloud_enterprise/provider.py:38
 msgid "vCloud Server IP or Hostname"
@@ -6824,49 +6807,16 @@ msgstr ""
 "безопасности (на вкладке «Параметры»), установленным в RDP"
 
 #: transports/HTML5SSH/html5ssh.py:61
-#| msgid "HTML5 RDP"
 msgid "HTML5 SSH"
 msgstr "HTML5 SSH"
 
 #: transports/HTML5SSH/html5ssh.py:63
-#| msgid "RDP protocol using HTML5 client"
 msgid "SSH protocol using HTML5 client"
 msgstr "Протокол SSH с использованием клиента HTML5"
 
 #: transports/HTML5SSH/html5ssh.py:86
-#| msgid "Username for VNC connection authentication."
 msgid "Username for SSH connection authentication."
 msgstr "Имя пользователя для аутентификации SSH-соединения."
-
-#: transports/HTML5SSH/html5ssh.py:92
-#| msgid "Password for VNC connection authentication"
-msgid "Password for SSH connection authentication"
-msgstr "Пароль для аутентификации SSH-подключения"
-
-#: transports/HTML5SSH/html5ssh.py:96
-#| msgid "Private key"
-msgid "SSH Private Key"
-msgstr "Закрытый ключ SSH"
-
-#: transports/HTML5SSH/html5ssh.py:100
-msgid ""
-"Private key for SSH authentication. If not provided, password authentication "
-"is used."
-msgstr ""
-"Закрытый ключ для аутентификации SSH. Если он не указан, используется "
-"аутентификация по паролю."
-
-#: transports/HTML5SSH/html5ssh.py:105
-msgid "SSH Private Key Passphrase"
-msgstr "Парольная фраза закрытого ключа SSH"
-
-#: transports/HTML5SSH/html5ssh.py:108
-msgid ""
-"Passphrase for SSH private key if it is required. If not provided, but it is "
-"needed, user will be prompted for it."
-msgstr ""
-"Парольная фраза для закрытого ключа SSH, если требуется. Если он не указан, "
-"но необходим, пользователю будет предложено ввести его."
 
 #: transports/HTML5SSH/html5ssh.py:114
 msgid "SSH Command"
@@ -6881,7 +6831,6 @@ msgstr ""
 "выполнена интерактивная оболочка."
 
 #: transports/HTML5SSH/html5ssh.py:135
-#| msgid "File Sharing"
 msgid "File Sharing Root"
 msgstr "Корень общего доступа к файлам"
 
@@ -6893,17 +6842,14 @@ msgstr ""
 "использоваться корневой каталог."
 
 #: transports/HTML5SSH/html5ssh.py:144
-#| msgid "VNC Server port"
 msgid "SSH Server port"
 msgstr "Порт SSH-сервера"
 
 #: transports/HTML5SSH/html5ssh.py:147
-#| msgid "Port of the VNC server."
 msgid "Port of the SSH server."
 msgstr "Порт SSH-сервера."
 
 #: transports/HTML5SSH/html5ssh.py:152
-#| msgid "Src Host"
 msgid "SSH Host Key"
 msgstr "Ключ хоста SSH"
 

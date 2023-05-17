@@ -7,14 +7,15 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-30 15:34+0200\n"
+"POT-Creation-Date: 2023-05-17 14:28+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
-"Language-Team: Chinese (http://www.transifex.com/openuds/openuds/language/"
+"Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
 "zh/)\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -217,11 +218,11 @@ msgid "If active, authenticator will be visible for users"
 msgstr "如果激活，验证器将对用户可见"
 
 #: REST/methods/authenticators.py:126 core/services/service.py:143
-#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:188
+#: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
 #: services/Proxmox/service.py:208 services/Sample/service.py:100
-#: services/Sample/service.py:106 services/TestService_enterprise/service.py:29
+#: services/Sample/service.py:106
 msgid "None"
 msgstr "没有"
 
@@ -671,10 +672,10 @@ msgstr "可用报告"
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
 #: auths/ActiveDirectory_enterprise/authenticator.py:174
-#: auths/AzureAD_enterprise/azure_ad.py:95
+#: auths/AzureAD_enterprise/azure_ad.py:97
 #: auths/EDirectory_enterprise/authenticator.py:133
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
-#: auths/SAML_enterprise/saml.py:110 auths/SimpleLDAP/authenticator.py:212
+#: auths/SAML_enterprise/saml.py:108 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "组"
@@ -714,7 +715,7 @@ msgid "Services Pools"
 msgstr "服务池"
 
 #: REST/methods/services.py:252 REST/methods/services.py:315
-#: auths/AzureAD_enterprise/azure_ad.py:130
+#: auths/AzureAD_enterprise/azure_ad.py:132
 #: services/AWS_enterprise/provider.py:87
 #: services/Azure_enterprise/provider.py:109 services/OpenStack/provider.py:209
 #: services/OpenStack/provider_legacy.py:195
@@ -1023,10 +1024,10 @@ msgstr "工作人员"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
 #: auths/ActiveDirectory_enterprise/authenticator.py:70
-#: auths/AzureAD_enterprise/azure_ad.py:94
+#: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:107 reports/lists/audit.py:120
+#: auths/SAML_enterprise/saml.py:105 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1208,8 +1209,7 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: services/Proxmox/provider.py:93 services/RDS_enterprise/provider.py:138
 #: services/Sample/service.py:142 services/VCloud_enterprise/provider.py:65
 #: services/Vmware_enterprise/provider.py:67 services/Xen/provider.py:115
-#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5SSH/html5ssh.py:90
-#: transports/HTML5VNC/html5vnc.py:93
+#: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
 #: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
@@ -1294,7 +1294,7 @@ msgstr "如果选中，将强制执行 SSL 验证。否则，SSL 验证将被禁
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:144
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:130
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "证书"
@@ -1308,14 +1308,14 @@ msgstr "用于 SSL 验证的证书"
 #: auths/ActiveDirectory_enterprise/authenticator.py:154
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:192
+#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "MFA 属性"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:156
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:210 auths/SimpleLDAP/authenticator.py:194
+#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "从哪里提取 MFA 代码的属性"
 
@@ -1340,7 +1340,7 @@ msgstr "无法连接到任何 AD 服务器。检查您的配置（服务器、ss
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:566
 #: auths/ActiveDirectory_enterprise/authenticator.py:623
-#: auths/AzureAD_enterprise/azure_ad.py:315
+#: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
 #: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
@@ -1381,53 +1381,53 @@ msgstr "服务器似乎不是Active Directory（它没有组对象）"
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "连接参数似乎正确，测试成功执行"
 
-#: auths/AzureAD_enterprise/azure_ad.py:79
+#: auths/AzureAD_enterprise/azure_ad.py:81
 msgid "Azure AD Authenticator"
 msgstr "Azure AD身份验证器"
 
-#: auths/AzureAD_enterprise/azure_ad.py:81
+#: auths/AzureAD_enterprise/azure_ad.py:83
 msgid "Azure Active Directory Authenticator"
 msgstr "Azure Active Directory身份验证器"
 
-#: auths/AzureAD_enterprise/azure_ad.py:99
+#: auths/AzureAD_enterprise/azure_ad.py:101
 #: services/Azure_enterprise/provider.py:46
 msgid "Tenant ID"
 msgstr "租户ID"
 
-#: auths/AzureAD_enterprise/azure_ad.py:101
+#: auths/AzureAD_enterprise/azure_ad.py:103
 #: services/Azure_enterprise/provider.py:48
 msgid "Obtained from Azure Active Directory - Properties - Directory ID"
 msgstr "从Azure Active Directory获取 - 属性 - 目录ID"
 
-#: auths/AzureAD_enterprise/azure_ad.py:106
+#: auths/AzureAD_enterprise/azure_ad.py:108
 #: services/Azure_enterprise/provider.py:53
 msgid "Client ID"
 msgstr "客户ID"
 
-#: auths/AzureAD_enterprise/azure_ad.py:108
+#: auths/AzureAD_enterprise/azure_ad.py:110
 #: services/Azure_enterprise/provider.py:55
 msgid "Obtained from App created on Azure for UDS Enterprise"
 msgstr "从Azure上为UDS Enterprise创建的应用程序获取"
 
-#: auths/AzureAD_enterprise/azure_ad.py:113
+#: auths/AzureAD_enterprise/azure_ad.py:115
 #: services/Azure_enterprise/provider.py:60
 msgid "Client Secret"
 msgstr "客户秘密"
 
-#: auths/AzureAD_enterprise/azure_ad.py:115
+#: auths/AzureAD_enterprise/azure_ad.py:117
 #: services/Azure_enterprise/provider.py:62
 msgid "Obtained from App created on Azure for UDS Enteprise - Keys"
 msgstr "从Azure上为UDS Enteprise创建的应用程序获得 - 密钥"
 
-#: auths/AzureAD_enterprise/azure_ad.py:121
+#: auths/AzureAD_enterprise/azure_ad.py:123
 msgid "Callback"
 msgstr "打回来"
 
-#: auths/AzureAD_enterprise/azure_ad.py:123
+#: auths/AzureAD_enterprise/azure_ad.py:125
 msgid "Callback url (Filled by UDS, fix this only if necesary!!)"
 msgstr "回调网址（由UDS填写，仅在必要时修复此问题！）"
 
-#: auths/AzureAD_enterprise/azure_ad.py:133
+#: auths/AzureAD_enterprise/azure_ad.py:135
 #: services/Azure_enterprise/provider.py:112
 msgid ""
 "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
@@ -1436,50 +1436,50 @@ msgstr ""
 "用于连接到Azure的HTTPS连接的代理（使用PROTOCOL：// host：port，即"
 "https://10.10.0.1:8080）"
 
-#: auths/AzureAD_enterprise/azure_ad.py:140
+#: auths/AzureAD_enterprise/azure_ad.py:142
 msgid "Enable School Data Sync Integration"
 msgstr "启用学校数据同步集成"
 
-#: auths/AzureAD_enterprise/azure_ad.py:143
+#: auths/AzureAD_enterprise/azure_ad.py:145
 msgid ""
 "Enable only if you have Microsoft School Data Sync in your Environnment."
 msgstr "仅当您的环境中有 Microsoft School Data Sync 时才启用。"
 
-#: auths/AzureAD_enterprise/azure_ad.py:150
+#: auths/AzureAD_enterprise/azure_ad.py:152
 msgid "Azure Logout method."
 msgstr "Azure 注销方法。"
 
-#: auths/AzureAD_enterprise/azure_ad.py:152
+#: auths/AzureAD_enterprise/azure_ad.py:154
 msgid "UDS Redirection to Microsoft logout pages on UDS logout."
 msgstr "UDS 注销时重定向到 Microsoft 注销页面。"
 
-#: auths/AzureAD_enterprise/azure_ad.py:156
+#: auths/AzureAD_enterprise/azure_ad.py:158
 msgid "Do not redirect"
 msgstr "不要重定向"
 
-#: auths/AzureAD_enterprise/azure_ad.py:157
+#: auths/AzureAD_enterprise/azure_ad.py:159
 msgid "Microsoft logout"
 msgstr "微软注销"
 
-#: auths/AzureAD_enterprise/azure_ad.py:158
+#: auths/AzureAD_enterprise/azure_ad.py:160
 msgid "Office 365 logout"
 msgstr "Office 365 注销"
 
-#: auths/AzureAD_enterprise/azure_ad.py:176
+#: auths/AzureAD_enterprise/azure_ad.py:178
 msgid "SAML Authenticator does not support white spaces on field NAME"
 msgstr "SAML身份验证器不支持字段NAME上的空格"
 
-#: auths/AzureAD_enterprise/azure_ad.py:325
-#: auths/AzureAD_enterprise/azure_ad.py:351
-#: auths/AzureAD_enterprise/azure_ad.py:361
+#: auths/AzureAD_enterprise/azure_ad.py:328
+#: auths/AzureAD_enterprise/azure_ad.py:354
+#: auths/AzureAD_enterprise/azure_ad.py:364
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/azure_ad.py:396 core/util/ldaputil.py:50
+#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:50
 msgid "Connection error: "
 msgstr "连接错误："
 
-#: auths/AzureAD_enterprise/azure_ad.py:399
+#: auths/AzureAD_enterprise/azure_ad.py:402
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "连接参数似乎是正确的，测试成功执行"
 
@@ -1602,11 +1602,11 @@ msgstr "反向DNS"
 msgid "If checked, the host will be reversed dns"
 msgstr "如果选中，则主机将被反转dns"
 
-#: auths/InternalDB/authenticator.py:180
+#: auths/InternalDB/authenticator.py:182
 msgid "Internal structures seems ok"
 msgstr "内部结构似乎没问题"
 
-#: auths/InternalDB/authenticator.py:183
+#: auths/InternalDB/authenticator.py:185
 msgid "All seems fine in the authenticator."
 msgstr "在验证器中一切似乎都很好。"
 
@@ -1758,163 +1758,163 @@ msgid ""
 "attribute)"
 msgstr "Ldap组id属性似乎不正确（该属性找不到任何组）"
 
-#: auths/SAML_enterprise/saml.py:77
+#: auths/SAML_enterprise/saml.py:75
 msgid "SAML Authenticator"
 msgstr "SAML身份验证器"
 
-#: auths/SAML_enterprise/saml.py:89
+#: auths/SAML_enterprise/saml.py:87
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML（v2.0）身份验证器"
 
-#: auths/SAML_enterprise/saml.py:119
+#: auths/SAML_enterprise/saml.py:117
 msgid "Private key"
 msgstr "私钥"
 
-#: auths/SAML_enterprise/saml.py:122
+#: auths/SAML_enterprise/saml.py:120
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:125 auths/SAML_enterprise/saml.py:136
+#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
 msgid "Certificates"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:133
+#: auths/SAML_enterprise/saml.py:131
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr "用于签名和登记的公钥（前一个私钥的公共部分），由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:141
+#: auths/SAML_enterprise/saml.py:139
 msgid "IDP Metadata"
 msgstr "IDP元数据"
 
-#: auths/SAML_enterprise/saml.py:144
+#: auths/SAML_enterprise/saml.py:142
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "您可以在此处输入URL或IDP元数据或元数据本身（xml）"
 
-#: auths/SAML_enterprise/saml.py:147 auths/SAML_enterprise/saml.py:156
+#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
 msgid "Metadata"
 msgstr "元数据"
 
-#: auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:149
 msgid "Entity ID"
 msgstr "实体ID"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:152
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP的ID。如果留空，则会从服务器URL自动生成"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:160
 msgid "User name attrs"
 msgstr "用户名attrs"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:162
 msgid "Fields from where to extract user name"
 msgstr "从哪里提取用户名的字段"
 
-#: auths/SAML_enterprise/saml.py:166 auths/SAML_enterprise/saml.py:176
-#: auths/SAML_enterprise/saml.py:186
+#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:184
 msgid "Attributes"
 msgstr "属性"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:170
 msgid "Group name attrs"
 msgstr "集团名称attrs"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:172
 msgid "Fields from where to extract the groups"
 msgstr "从哪里提取组的字段"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:180
 msgid "Real name attrs"
 msgstr "真名牌"
 
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:182
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:190
+#: auths/SAML_enterprise/saml.py:188
 msgid "Global logout"
 msgstr "全局注销"
 
-#: auths/SAML_enterprise/saml.py:193
+#: auths/SAML_enterprise/saml.py:191
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "如果设置，从 UDS 注销将触发 SAML 注销"
 
-#: auths/SAML_enterprise/saml.py:198
+#: auths/SAML_enterprise/saml.py:196
 msgid "ADFS compatibility"
 msgstr "ADFS 兼容性"
 
-#: auths/SAML_enterprise/saml.py:201
+#: auths/SAML_enterprise/saml.py:199
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "如果设置，则启用小写 url 编码，以便 ADFS 可以正常工作"
 
-#: auths/SAML_enterprise/saml.py:232
+#: auths/SAML_enterprise/saml.py:230
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "这种 Authenticator 不支持字段 NAME 上的空格"
 
-#: auths/SAML_enterprise/saml.py:246
+#: auths/SAML_enterprise/saml.py:244
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:254
+#: auths/SAML_enterprise/saml.py:252
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:265
+#: auths/SAML_enterprise/saml.py:263
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:273
+#: auths/SAML_enterprise/saml.py:271
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:278
+#: auths/SAML_enterprise/saml.py:276
 msgid "Certificate and private key do not match"
 msgstr "证书和私钥不匹配"
 
-#: auths/SAML_enterprise/saml.py:297
+#: auths/SAML_enterprise/saml.py:295
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:308
+#: auths/SAML_enterprise/saml.py:306
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:310
+#: auths/SAML_enterprise/saml.py:308
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:368
+#: auths/SAML_enterprise/saml.py:366
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
-#: auths/SAML_enterprise/saml.py:435
+#: auths/SAML_enterprise/saml.py:433
 msgid "Error validating SP metadata: "
 msgstr "验证 SP 元数据时出错："
 
-#: auths/SAML_enterprise/saml.py:544
+#: auths/SAML_enterprise/saml.py:542
 msgid "Error processing SLO: "
 msgstr "处理 SLO 时出错："
 
-#: auths/SAML_enterprise/saml.py:574
+#: auths/SAML_enterprise/saml.py:572
 msgid "Error processing SAML response: "
 msgstr "处理 SAML 响应时出错："
 
-#: auths/SAML_enterprise/saml.py:587
+#: auths/SAML_enterprise/saml.py:585
 msgid "SAML response not authenticated"
 msgstr "SAML 响应未通过身份验证"
 
-#: auths/SAML_enterprise/saml.py:618
+#: auths/SAML_enterprise/saml.py:616
 msgid "No attributes returned from IdP"
 msgstr "没有从 IdP 返回的属性"
 
@@ -1979,12 +1979,14 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "包含属于它的用户的组的属性"
 
 #: auths/SimpleLDAP/authenticator.py:200
-msgid "SimpleLDAP (DEPRECATED)"
-msgstr "SimpleLDAP（不建议使用）"
+#| msgid "SimpleLDAP (DEPRECATED)"
+msgid "SimpleLDAP"
+msgstr "简单的LDAP"
 
 #: auths/SimpleLDAP/authenticator.py:202
-msgid "Simple LDAP authenticator (DEPRECATED)"
-msgstr "简单LDAP身份验证器（不推荐使用）"
+#| msgid "Sample Authenticator"
+msgid "Simple LDAP authenticator"
+msgstr "简单的 LDAP 验证器"
 
 #: auths/SimpleLDAP/authenticator.py:652
 msgid "Ldap group class seems to be incorrect (no group found by that class)"
@@ -2141,7 +2143,7 @@ msgstr "证书"
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/util/ldaputil.py:120
+#: core/util/ldaputil.py:125
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
@@ -2446,8 +2448,8 @@ msgstr "电子邮件的主题"
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
 #: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
-#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:236 mfas/SMS/mfa.py:251
-#: mfas/SMS/mfa.py:261 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
+#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
+#: mfas/SMS/mfa.py:262 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "配置"
 
@@ -2476,12 +2478,12 @@ msgid "Action for MFA response error"
 msgstr "针对 MFA 响应错误的操作"
 
 #: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
-#: mfas/SMS/mfa.py:231 mfas/SMS/mfa.py:246
+#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "允许用户登录"
 
 #: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
-#: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
+#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "拒绝用户登录"
 
@@ -2510,7 +2512,6 @@ msgid "Text of the email. If empty, a default text will be used"
 msgstr "电子邮件的文本。如果为空，将使用默认文本"
 
 #: mfas/Email/mfa.py:161 mfas/Email/mfa.py:172
-#| msgid "Allowed variables are: {code}, {username}, {ip}"
 msgid "Allowed variables are: "
 msgstr "允许的变量是："
 
@@ -2602,19 +2603,19 @@ msgstr "半径 OTP 连接错误"
 msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
-#: mfas/SMS/mfa.py:96
+#: mfas/SMS/mfa.py:97
 msgid "SMS via HTTP"
 msgstr "通过 HTTP 发送短信"
 
-#: mfas/SMS/mfa.py:98
+#: mfas/SMS/mfa.py:99
 msgid "Simple SMS sending MFA using HTTP/HTTPS"
 msgstr "使用 HTTP/HTTPS 发送 MFA 的简单短信"
 
-#: mfas/SMS/mfa.py:103
+#: mfas/SMS/mfa.py:104
 msgid "URL pattern for SMS sending"
 msgstr "SMS 发送的 URL 模式"
 
-#: mfas/SMS/mfa.py:106
+#: mfas/SMS/mfa.py:107
 msgid ""
 "URL pattern for SMS sending. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2626,34 +2627,34 @@ msgstr ""
 "{phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@.... 的用户名"
 
-#: mfas/SMS/mfa.py:114 mfas/SMS/mfa.py:125 mfas/SMS/mfa.py:134
-#: mfas/SMS/mfa.py:152 mfas/SMS/mfa.py:169 mfas/SMS/mfa.py:179
+#: mfas/SMS/mfa.py:115 mfas/SMS/mfa.py:126 mfas/SMS/mfa.py:135
+#: mfas/SMS/mfa.py:153 mfas/SMS/mfa.py:170 mfas/SMS/mfa.py:180
 msgid "HTTP Server"
 msgstr "HTTP 服务器"
 
-#: mfas/SMS/mfa.py:118
+#: mfas/SMS/mfa.py:119
 msgid "Ignore certificate errors"
 msgstr "忽略证书错误"
 
-#: mfas/SMS/mfa.py:122
+#: mfas/SMS/mfa.py:123
 msgid ""
 "If checked, the server certificate will be ignored. This is useful if the "
 "server uses a self-signed certificate."
 msgstr "如果选中，服务器证书将被忽略。如果服务器使用自签名证书，这很有用。"
 
-#: mfas/SMS/mfa.py:129
+#: mfas/SMS/mfa.py:130
 msgid "SMS sending method"
 msgstr "短信发送方式"
 
-#: mfas/SMS/mfa.py:131 mfas/SMS/mfa.py:185
+#: mfas/SMS/mfa.py:132 mfas/SMS/mfa.py:186
 msgid "Method for sending SMS"
 msgstr "发送短信的方法"
 
-#: mfas/SMS/mfa.py:140
+#: mfas/SMS/mfa.py:141
 msgid "Headers for SMS requests"
 msgstr "SMS 请求的标头"
 
-#: mfas/SMS/mfa.py:143
+#: mfas/SMS/mfa.py:144
 msgid ""
 "Headers for SMS requests. It can contain the following variables:\n"
 "* {code} - the code to send\n"
@@ -2666,11 +2667,11 @@ msgstr ""
 "+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 @.... 的用户"
 "名“标题：值”的形式。 （不带引号）"
 
-#: mfas/SMS/mfa.py:158
+#: mfas/SMS/mfa.py:159
 msgid "Parameters for SMS POST/PUT sending"
 msgstr "SMS POST/PUT 发送参数"
 
-#: mfas/SMS/mfa.py:161
+#: mfas/SMS/mfa.py:162
 msgid ""
 "Parameters for SMS sending via POST/PUT. It can contain the following "
 "variables:\n"
@@ -2683,102 +2684,102 @@ msgstr ""
 "* {phone/+phone} - 电话号码 * {username} - 用户名 * {justUsername} - 不带 "
 "@...."
 
-#: mfas/SMS/mfa.py:173
+#: mfas/SMS/mfa.py:174
 msgid "SMS encoding"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:176
+#: mfas/SMS/mfa.py:177
 msgid "Encoding for SMS"
 msgstr "短信编码"
 
-#: mfas/SMS/mfa.py:183
+#: mfas/SMS/mfa.py:184
 msgid "SMS authentication method"
 msgstr "短信认证方式"
 
-#: mfas/SMS/mfa.py:189
+#: mfas/SMS/mfa.py:190
 msgid "HTTP Basic Auth"
 msgstr "HTTP 基本身份验证"
 
-#: mfas/SMS/mfa.py:190
+#: mfas/SMS/mfa.py:191
 msgid "HTTP Digest Auth"
 msgstr "HTTP摘要认证"
 
-#: mfas/SMS/mfa.py:192 mfas/SMS/mfa.py:201 mfas/SMS/mfa.py:210
+#: mfas/SMS/mfa.py:193 mfas/SMS/mfa.py:202 mfas/SMS/mfa.py:211
 msgid "HTTP Authentication"
 msgstr "HTTP 身份验证"
 
-#: mfas/SMS/mfa.py:197
+#: mfas/SMS/mfa.py:198
 msgid "SMS authentication user or token"
 msgstr "短信认证用户或令牌"
 
-#: mfas/SMS/mfa.py:199
+#: mfas/SMS/mfa.py:200
 msgid "User or token for SMS authentication"
 msgstr "用于 SMS 身份验证的用户或令牌"
 
-#: mfas/SMS/mfa.py:206
+#: mfas/SMS/mfa.py:207
 msgid "SMS authentication password"
 msgstr "短信认证密码"
 
-#: mfas/SMS/mfa.py:208
+#: mfas/SMS/mfa.py:209
 msgid "Password for SMS authentication"
 msgstr "短信验证密码"
 
-#: mfas/SMS/mfa.py:215
+#: mfas/SMS/mfa.py:216
 msgid "SMS response OK regex"
 msgstr "短信回复 OK 正则表达式"
 
-#: mfas/SMS/mfa.py:218
+#: mfas/SMS/mfa.py:219
 msgid ""
 "Regex for SMS response OK. If empty, the response is considered OK if status "
 "code is 200."
 msgstr ""
 "SMS 响应的正则表达式 OK。如果为空，则如果状态码为 200，则认为响应正常。"
 
-#: mfas/SMS/mfa.py:221
+#: mfas/SMS/mfa.py:222
 msgid "HTTP Response"
 msgstr "HTTP 响应"
 
-#: mfas/SMS/mfa.py:225
+#: mfas/SMS/mfa.py:226
 msgid "SMS response error action"
 msgstr "短信响应错误动作"
 
-#: mfas/SMS/mfa.py:228 mfas/SMS/mfa.py:243
+#: mfas/SMS/mfa.py:229 mfas/SMS/mfa.py:244
 msgid "Action for SMS response error"
 msgstr "SMS 响应错误的操作"
 
-#: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
+#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
 msgid "Allow user to login if its IP is in the networks list"
 msgstr "如果用户的 IP 在网络列表中，则允许用户登录"
 
-#: mfas/SMS/mfa.py:234 mfas/SMS/mfa.py:249
+#: mfas/SMS/mfa.py:235 mfas/SMS/mfa.py:250
 msgid "Deny user to login if its IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
-#: mfas/SMS/mfa.py:240
+#: mfas/SMS/mfa.py:241
 msgid "User without MFA policy"
 msgstr "没有 MFA 策略的用户"
 
-#: mfas/SMS/mfa.py:255
+#: mfas/SMS/mfa.py:256
 msgid "SMS networks"
 msgstr "短信网络"
 
-#: mfas/SMS/mfa.py:259
+#: mfas/SMS/mfa.py:260
 msgid "Networks for SMS authentication"
 msgstr "用于 SMS 身份验证的网络"
 
-#: mfas/SMS/mfa.py:336
+#: mfas/SMS/mfa.py:333
 msgid "SMS sending failed"
 msgstr "短信发送失败"
 
-#: mfas/SMS/mfa.py:346
+#: mfas/SMS/mfa.py:343
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:400 web/views/modern.py:316
+#: mfas/SMS/mfa.py:397 web/views/modern.py:316
 msgid "MFA Code"
 msgstr "MFA 代码"
 
-#: mfas/SMS/mfa.py:404
+#: mfas/SMS/mfa.py:401
 msgid "Check your phone. You will receive an SMS with the verification code"
 msgstr "检查你的手机。您将收到一条带有验证码的短信"
 
@@ -4148,8 +4149,7 @@ msgstr "基于模板和差异磁盘的超级服务 (LEGACY)"
 
 #: services/HyperV_enterprise/legacy/service.py:70
 #: services/HyperV_enterprise/service.py:68 services/OVirt/service.py:85
-#: services/Proxmox/service.py:85 services/TestService_enterprise/service.py:27
-#: services/Xen/service.py:82
+#: services/Proxmox/service.py:85 services/Xen/service.py:82
 msgid "Number of desired machines to keep running waiting for a user"
 msgstr "要继续运行等待用户的所需机器数"
 
@@ -4761,11 +4761,11 @@ msgstr "基本模板"
 msgid "Service base template"
 msgstr "服务基础模板"
 
-#: services/OpenStack/openstack/openstack_client.py:783
+#: services/OpenStack/openstack/openstack_client.py:767
 msgid "Authentication error"
 msgstr "授权错误"
 
-#: services/OpenStack/openstack/openstack_client.py:790
+#: services/OpenStack/openstack/openstack_client.py:774
 msgid ""
 "Openstack does not support identity API 3.2 or newer. This OpenStack server "
 "is not compatible with UDS."
@@ -5428,7 +5428,6 @@ msgid "Methuselah is not alive!!! :-)"
 msgstr "玛土撒拉还活着！ :-)"
 
 #: services/Sample/provider.py:205
-#: services/TestService_enterprise/provider.py:56
 msgid "Nothing tested, but all went fine.."
 msgstr "没有测试，但一切都很顺利.."
 
@@ -5483,22 +5482,6 @@ msgstr "虚拟元素的L2缓存"
 #: services/Sample/service.py:229
 msgid "List of names"
 msgstr "名单"
-
-#: services/TestService_enterprise/provider.py:49
-msgid "Test Provider"
-msgstr "测试提供者"
-
-#: services/TestService_enterprise/provider.py:51
-msgid "Test (and dummy) service provider"
-msgstr "测试（和虚拟）服务提供商"
-
-#: services/TestService_enterprise/service.py:18
-msgid "Test Service with cache"
-msgstr "带缓存的测试服务"
-
-#: services/TestService_enterprise/service.py:20
-msgid "Test service for cache L1 only"
-msgstr "仅限缓存L1的测试服务"
 
 #: services/VCloud_enterprise/provider.py:38
 msgid "vCloud Server IP or Hostname"
@@ -6529,45 +6512,16 @@ msgstr ""
 "上）"
 
 #: transports/HTML5SSH/html5ssh.py:61
-#| msgid "HTML5 RDP"
 msgid "HTML5 SSH"
 msgstr "HTML5 SSH"
 
 #: transports/HTML5SSH/html5ssh.py:63
-#| msgid "RDP protocol using HTML5 client"
 msgid "SSH protocol using HTML5 client"
 msgstr "使用 HTML5 客户端的 SSH 协议"
 
 #: transports/HTML5SSH/html5ssh.py:86
-#| msgid "Username for VNC connection authentication."
 msgid "Username for SSH connection authentication."
 msgstr "SSH 连接认证的用户名。"
-
-#: transports/HTML5SSH/html5ssh.py:92
-#| msgid "Password for VNC connection authentication"
-msgid "Password for SSH connection authentication"
-msgstr "SSH连接认证密码"
-
-#: transports/HTML5SSH/html5ssh.py:96
-#| msgid "Private key"
-msgid "SSH Private Key"
-msgstr "SSH 私钥"
-
-#: transports/HTML5SSH/html5ssh.py:100
-msgid ""
-"Private key for SSH authentication. If not provided, password authentication "
-"is used."
-msgstr "SSH 身份验证的私钥。如果未提供，则使用密码身份验证。"
-
-#: transports/HTML5SSH/html5ssh.py:105
-msgid "SSH Private Key Passphrase"
-msgstr "SSH 私钥密码"
-
-#: transports/HTML5SSH/html5ssh.py:108
-msgid ""
-"Passphrase for SSH private key if it is required. If not provided, but it is "
-"needed, user will be prompted for it."
-msgstr "SSH 私钥的密码（如果需要）。如果未提供，但需要，系统将提示用户输入。"
 
 #: transports/HTML5SSH/html5ssh.py:114
 msgid "SSH Command"
@@ -6580,7 +6534,6 @@ msgid ""
 msgstr "在远程服务器上执行的命令。如果未提供，将执行交互式 shell。"
 
 #: transports/HTML5SSH/html5ssh.py:135
-#| msgid "File Sharing"
 msgid "File Sharing Root"
 msgstr "文件共享根"
 
@@ -6590,17 +6543,14 @@ msgid ""
 msgstr "文件共享的根路径。如果未提供，将使用根目录。"
 
 #: transports/HTML5SSH/html5ssh.py:144
-#| msgid "VNC Server port"
 msgid "SSH Server port"
 msgstr "SSH 服务器端口"
 
 #: transports/HTML5SSH/html5ssh.py:147
-#| msgid "Port of the VNC server."
 msgid "Port of the SSH server."
 msgstr "SSH 服务器的端口。"
 
 #: transports/HTML5SSH/html5ssh.py:152
-#| msgid "Src Host"
 msgid "SSH Host Key"
 msgstr "SSH 主机密钥"
 
@@ -6618,7 +6568,8 @@ msgstr "服务器保持活动"
 msgid ""
 "Time in seconds between keep alive messages sent to server. If not provided, "
 "no keep alive messages are sent."
-msgstr "发送到服务器的保持活动消息之间的时间（以秒为单位）。如果未提供，则不会发送保"
+msgstr ""
+"发送到服务器的保持活动消息之间的时间（以秒为单位）。如果未提供，则不会发送保"
 "持活动消息。"
 
 #: transports/HTML5VNC/html5vnc.py:64
