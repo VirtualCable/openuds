@@ -289,11 +289,6 @@ class UDSServerApi(UDSApi):
             os=types.ActorOsConfigurationType(
                 action=os['action'],
                 name=os['name'],
-                username=os.get('username'),
-                password=os.get('password'),
-                new_password=os.get('new_password'),
-                ad=os.get('ad'),
-                ou=os.get('ou'),
                 custom=os.get('custom'),
             )
             if r['os']

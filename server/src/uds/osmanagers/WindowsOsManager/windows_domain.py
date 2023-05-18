@@ -440,10 +440,20 @@ class WinDomainOsManager(WindowsOsManager):
         return {
             'action': 'rename_ad',
             'name': userService.getName(),
+
+            # Repeat data, to keep compat with old versions of Actor
+            # Will be removed in a couple of versions
             'ad': self._domain,
             'ou': self._ou,
             'username': self._account,
             'password': self._password,
+
+            'custom': {
+                'domain': self._domain,
+                'ou': self._ou,
+                'username': self._account,
+                'password': self._password,
+            },
         }
 
     def marshal(self) -> bytes:

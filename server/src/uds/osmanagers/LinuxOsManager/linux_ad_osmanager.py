@@ -185,12 +185,12 @@ class LinuxOsADManager(LinuxOsManager):
         return {
             'action': 'rename_ad',
             'name': userService.getName(),
-            'ad': self._domain,
-            'username': self._account,
-            'password': self._password,
-            'ou': self._ou,
-            'isPersistent': self.isPersistent(),
             'custom': {
+                'domain': self._domain,
+                'username': self._account,
+                'password': self._password,
+                'ou': self._ou,
+                'isPersistent': self.isPersistent(),
                 'clientSoftware': self._clientSoftware,
                 'serverSoftware': self._serverSoftware,
                 'membershipSoftware': self._membershipSoftware,

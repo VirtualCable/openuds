@@ -49,11 +49,13 @@ from ..log import logger
 
 REMOTE_USERS_SID = 'S-1-5-32-555'  # Well nown sid for remote desktop users
 
+
 class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     '''
     This class represents a Windows Service for managing actor interactions
     with UDS Broker and Machine
     '''
+
     # ServiceeFramework related
     _svc_name_ = "UDSActorNG"
     _svc_display_name_ = "UDS Actor Service"
@@ -78,7 +80,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
     SvcShutdown = SvcStop
 
     def notifyStop(self) -> None:
-        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STOPPED, (self._svc_name_, ''))
+        servicemanager.LogMsg(
+            servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STOPPED, (self._svc_name_, '')
+        )
         super().notifyStop()
 
     def doWait(self, miliseconds: int) -> None:
@@ -86,7 +90,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # On windows, and while on tasks, ensure that our app processes waiting messages on "wait times"
         pythoncom.PumpWaitingMessages()  # pylint: disable=no-member
 
-    def oneStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
+    def oneStepJoin(
+        self, name: str, domain: str, ou: str, account: str, password: str
+    ) -> None:  # pylint: disable=too-many-arguments
         '''
         Ejecutes the join domain in exactly one step
         '''
@@ -103,7 +109,9 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         logger.debug('Requested join domain {} without errors'.format(domain))
         self.reboot()
 
-    def multiStepJoin(self, name: str, domain: str, ou: str, account: str, password: str) -> None:  # pylint: disable=too-many-arguments
+    def multiStepJoin(
+        self, name: str, domain: str, ou: str, account: str, password: str
+    ) -> None:  # pylint: disable=too-many-arguments
         currName = operations.getComputerName()
         if currName.lower() == name.lower():
             currDomain = operations.getDomainName()
@@ -119,17 +127,21 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             logger.info('Rebooting computer for activating new name {}'.format(name))
             self.reboot()
 
-    def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
-            self,
-            name: str,
-            domain: str,
-            ou: str,
-            account: str,
-            password: str
-        ) -> None:
+    def joinDomain(self, name: str, custom: typing.Mapping[str, typing.Any]) -> None:
         versionData = operations.getWindowsVersion()
         versionInt = versionData[0] * 10 + versionData[1]
-        logger.debug('Starting joining domain {} with name {} (detected operating version: {})'.format(domain, name, versionData))
+
+        # Extract custom data
+        domain = custom.get('domain', '')
+        ou = custom.get('ou', '')
+        account = custom.get('account', '')
+        password = custom.get('password', '')
+
+        logger.debug(
+            'Starting joining domain {} with name {} (detected operating version: {})'.format(
+                domain, name, versionData
+            )
+        )
         # Accepts one step joinDomain, also remember XP is no more supported by
         # microsoft, but this also must works with it because will do a "multi
         # step" join
@@ -139,17 +151,19 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
             logger.info('Using multiple step join because configuration requests to do so')
             self.multiStepJoin(name, domain, ou, account, password)
 
-    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str, udsUserName: str) -> str:    
+    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str, udsUserName: str) -> str:
         logger.debug('Pre connect invoked')
 
         if protocol == 'rdp':  # If connection is not using rdp, skip adding user
             # Well known SSID for Remote Desktop Users
-            groupName = win32security.LookupAccountSid(None, win32security.GetBinarySid(REMOTE_USERS_SID))[0]
+            groupName = win32security.LookupAccountSid(None, win32security.GetBinarySid(REMOTE_USERS_SID))[0]  # type: ignore
 
             useraAlreadyInGroup = False
             resumeHandle = 0
             while True:
-                users, _, resumeHandle = win32net.NetLocalGroupGetMembers(None, groupName, 1, resumeHandle, 32768)
+                users, _, resumeHandle = win32net.NetLocalGroupGetMembers(
+                    None, groupName, 1, resumeHandle, 32768  # type: ignore
+                )[:3]
                 if userName.lower() in [u['name'].lower() for u in users]:
                     useraAlreadyInGroup = True
                     break
@@ -161,7 +175,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 self._user = userName
                 try:
                     userSSID = win32security.LookupAccountName(None, userName)[0]
-                    win32net.NetLocalGroupAddMembers(None, groupName, 0, [{'sid': userSSID}])
+                    win32net.NetLocalGroupAddMembers(None, groupName, 0, [{'sid': userSSID}])  # type: ignore
                 except Exception as e:
                     logger.error('Exception adding user to Remote Desktop Users: {}'.format(e))
             else:
@@ -178,7 +192,12 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         # Compose packet for ov
         usernameBytes = username.encode()
         passwordBytes = password.encode()
-        packet = struct.pack('!I', len(usernameBytes)) + usernameBytes + struct.pack('!I', len(passwordBytes)) + passwordBytes
+        packet = (
+            struct.pack('!I', len(usernameBytes))
+            + usernameBytes
+            + struct.pack('!I', len(passwordBytes))
+            + passwordBytes
+        )
         # Send packet with username/password to ov pipe
         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
         return 'done'
@@ -187,14 +206,14 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         logger.debug('Windows onLogout invoked: {}, {}'.format(userName, self._user))
         try:
             p = win32security.GetBinarySid(REMOTE_USERS_SID)
-            groupName = win32security.LookupAccountSid(None, p)[0]
+            groupName = win32security.LookupAccountSid(None, p)[0]  # type: ignore
         except Exception:
             logger.error('Exception getting Windows Group')
             return
 
         if self._user:
             try:
-                win32net.NetLocalGroupDelMembers(None, groupName, [self._user])
+                win32net.NetLocalGroupDelMembers(None, groupName, [self._user])  # type: ignore
             except Exception as e:
                 logger.error('Exception removing user from Remote Desktop Users: {}'.format(e))
 
@@ -203,18 +222,22 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
         Detect if windows is installing anything, so we can delay the execution of Service
         '''
         try:
-            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State')
-            data, _ = wreg.QueryValueEx(key, 'ImageState')
+            key = wreg.OpenKey(wreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State')  # type: ignore
+            data, _ = wreg.QueryValueEx(key, 'ImageState')  # type: ignore
             logger.debug('State: %s', data)
-            return data != 'IMAGE_STATE_COMPLETE'  # If ImageState is different of ImageStateComplete, there is something running on installation
-        except Exception:  # If not found, means that no installation is running 
+            return (
+                data != 'IMAGE_STATE_COMPLETE'
+            )  # If ImageState is different of ImageStateComplete, there is something running on installation
+        except Exception:  # If not found, means that no installation is running
             return False
 
     def SvcDoRun(self) -> None:  # pylint: disable=too-many-statements, too-many-branches
         '''
         Main service loop
         '''
-        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STARTED, (self._svc_name_, ''))
+        servicemanager.LogMsg(
+            servicemanager.EVENTLOG_INFORMATION_TYPE, servicemanager.PYS_SERVICE_STARTED, (self._svc_name_, '')
+        )
 
         # call the CoInitialize to allow the registration to run in an other
         # thread
@@ -239,7 +262,7 @@ class UDSActorSvc(win32serviceutil.ServiceFramework, CommonService):
                 logger.info('Service stopped due to init')
                 self.finish()
                 win32event.WaitForSingleObject(self._hWaitStop, 5000)
-                return # Stop daemon if initializes told to do so
+                return  # Stop daemon if initializes told to do so
 
             # Initialization is done, set machine to ready for UDS, communicate urls, etc...
             self.setReady()

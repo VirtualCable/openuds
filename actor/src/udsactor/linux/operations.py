@@ -187,13 +187,16 @@ def renameComputer(newName: str) -> bool:
     rename(newName)
     return True  # Always reboot right now. Not much slower but much more convenient
 
-def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False, custom: typing.Optional[typing.Mapping[str, typing.Any]] = None):
+def joinDomain(name: str, custom: typing.Optional[typing.Mapping[str, typing.Any]] = None):
     if not custom:
         logger.error('Error joining domain: no custom data provided')
         return
     
     # Read parameters from custom data
-    name: str = custom.get('name', '')
+    domain: str = custom.get('domain', '')
+    ou: str = custom.get('ou', '')
+    account: str = custom.get('account', '')
+    password: str = custom.get('password', '')
     client_software: str = custom.get('client_software', '')
     server_software: str = custom.get('server_software', '')
     membership_software: str = custom.get('membership_software', '')

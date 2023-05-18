@@ -174,11 +174,11 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         return {
             'action': 'rename_ad',
             'name': userService.getName(),
-            'ad': self._domain,
-            'username': self._account,
-            'password': self._password,
-            'isPersistent': self.isPersistent(),
             'custom': {
+                'domain': self._domain,
+                'username': self._account,
+                'password': self._password,
+                'isPersistent': self.isPersistent(),
                 'clientSoftware': self._clientSoftware,
                 'serverSoftware': self._serverSoftware,
                 'membershipSoftware': self._membershipSoftware,

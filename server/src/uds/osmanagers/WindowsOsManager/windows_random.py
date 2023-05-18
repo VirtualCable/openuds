@@ -127,9 +127,18 @@ class WinRandomPassManager(WindowsOsManager):
         return {
             'action': 'rename',
             'name': userService.getName(),
+
+            # Repeat data, to keep compat with old versions of Actor
+            # Will be removed in a couple of versions
             'username': self._userAccount,
             'password': self._password,
             'new_password': self.genPassword(userService),
+
+            'custom': {
+                'username': self._userAccount,
+                'password': self._password,
+                'new_password': self.genPassword(userService),
+            },
         }
 
     def marshal(self) -> bytes:

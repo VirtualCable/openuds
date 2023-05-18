@@ -75,9 +75,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             logger.debug('Executing command on {}: {}'.format(section, cmdLine))
             res = subprocess.check_call(cmdLine, shell=True)
         except Exception as e:
-            logger.error(
-                'Got exception executing: {} - {} - {}'.format(section, cmdLine, e)
-            )
+            logger.error('Got exception executing: {} - {} - {}'.format(section, cmdLine, e))
             return False
         logger.debug('Result of executing cmd for {} was {}'.format(section, res))
         return True
@@ -131,9 +129,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         )  # Emty interfaces is like "no ip change" because cannot be notified
         if self._cfg.config and interfaces:
             try:
-                return next(
-                    x for x in interfaces if x.mac.lower() == self._cfg.config.unique_id
-                )
+                return next(x for x in interfaces if x.mac.lower() == self._cfg.config.unique_id)
             except StopIteration:
                 return interfaces[0]
 
@@ -188,9 +184,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     # Success or any error that is not recoverable (retunerd by UDS). if Error, service will be cleaned in a while.
                     break
             else:
-                logger.error(
-                    'Could not locate IP address!!!. (Not registered with UDS)'
-                )
+                logger.error('Could not locate IP address!!!. (Not registered with UDS)')
 
         # Do not continue if not alive...
         if not self._isAlive:
@@ -199,9 +193,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         # Cleans sensible data
         if self._cfg.config:
             if self.canCleanSensibleData():
-                self._cfg = self._cfg._replace(
-                    config=self._cfg.config._replace(os=None), data=None
-                )
+                self._cfg = self._cfg._replace(config=self._cfg.config._replace(os=None), data=None)
                 platform.store.writeConfig(self._cfg)
 
         logger.info('Service ready')
@@ -232,22 +224,17 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             try:
                 if self._cfg.config and self._cfg.config.os:
                     osData = self._cfg.config.os
+                    custom: typing.Mapping[str, typing.Any] = osData.custom or {}
+                    # Needs UDS Server >= 4.0 to work
                     if osData.action == 'rename':
                         self.rename(
                             osData.name,
-                            osData.username,
-                            osData.password,
-                            osData.new_password,
+                            custom.get('username'),
+                            custom.get('password'),
+                            custom.get('new_password'),
                         )
                     elif osData.action == 'rename_ad':
-                            self.joinDomain(
-                                osData.name,
-                                osData.ad or '',
-                                osData.ou or '',
-                                osData.username or '',
-                                osData.password or '',
-                                osData.custom
-                            )
+                        self.joinDomain(osData.name, custom)
 
                     if self._rebootRequested:
                         try:
@@ -295,9 +282,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             self.doWait(5000)
 
     def initialize(self) -> bool:
-        if (
-            self._initialized or not self._cfg.host or not self._isAlive
-        ):  # Not configured or not running
+        if self._initialized or not self._cfg.host or not self._isAlive:  # Not configured or not running
             return False
 
         self._initialized = True
@@ -319,18 +304,14 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                     )
                     if not initResult.own_token:  # Not managed
                         logger.debug(
-                            'This host is not managed by UDS Broker (ids: {})'.format(
-                                self._interfaces
-                            )
+                            'This host is not managed by UDS Broker (ids: {})'.format(self._interfaces)
                         )
                         return False
 
                     # Only removes master token for managed machines (will need it on next client execution)
                     # For unmanaged, if alias is present, replace master token with it
                     master_token = (
-                        None
-                        if self.isManaged()
-                        else (initResult.alias_token or self._cfg.master_token)
+                        None if self.isManaged() else (initResult.alias_token or self._cfg.master_token)
                     )
                     # Replace master token with alias token if present
                     self._cfg = self._cfg._replace(
@@ -352,16 +333,10 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
                 break  # Initial configuration done..
             except rest.RESTConnectionError as e:
-                logger.info(
-                    'Trying to inititialize connection with broker (last error: {})'.format(
-                        e
-                    )
-                )
+                logger.info('Trying to inititialize connection with broker (last error: {})'.format(e))
                 self.doWait(5000)  # Wait a bit and retry
             except rest.RESTError as e:  # Invalid key?
-                logger.error(
-                    'Error validating with broker. (Invalid token?): {}'.format(e)
-                )
+                logger.error('Error validating with broker. (Invalid token?): {}'.format(e))
                 return False
             except Exception:
                 logger.exception()
@@ -371,9 +346,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
     def uninitialize(self):
         self._initialized = False
-        self._cfg = self._cfg._replace(
-            own_token=None
-        )  # Ensures assigned token is cleared
+        self._cfg = self._cfg._replace(own_token=None)  # Ensures assigned token is cleared
 
     def finish(self) -> None:
         if self._http:
@@ -389,8 +362,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                             self._cfg.actorType,
                             self._cfg.own_token,
                             '',
-                            client.session_id
-                            or 'stop',  # If no session id, pass "stop"
+                            client.session_id or 'stop',  # If no session id, pass "stop"
                             '',
                             self._interfaces,
                             self._secret,
@@ -405,11 +377,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             return  # Unamanaged hosts does not changes ips. (The full initialize-login-logout process is done in a row, so at login the IP is correct)
 
         try:
-            if (
-                not self._cfg.own_token
-                or not self._cfg.config
-                or not self._cfg.config.unique_id
-            ):
+            if not self._cfg.own_token or not self._cfg.config or not self._cfg.config.unique_id:
                 # Not enouth data do check
                 return
             currentInterfaces = tools.validNetworkCards(
@@ -418,58 +386,19 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
             old = self.serviceInterfaceInfo()
             new = self.serviceInterfaceInfo(currentInterfaces)
             if not new or not old:
-                raise Exception(
-                    'No ip currently available for {}'.format(
-                        self._cfg.config.unique_id
-                    )
-                )
+                raise Exception('No ip currently available for {}'.format(self._cfg.config.unique_id))
             if old.ip != new.ip:
                 self._certificate = self._api.notifyIpChange(
                     self._cfg.own_token, self._secret, new.ip, rest.LISTEN_PORT
                 )
                 # Now store new addresses & interfaces...
                 self._interfaces = currentInterfaces
-                logger.info(
-                    'Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip)
-                )
+                logger.info('Ip changed from {} to {}. Notified to UDS'.format(old.ip, new.ip))
                 # Stop the running HTTP Thread and start a new one, with new generated cert
                 self.startHttpServer()
         except Exception as e:
             # No ip changed, log exception for info
             logger.warn('Checking ips failed: {}'.format(e))
-
-    def rename(
-        self,
-        name: str,
-        userName: typing.Optional[str] = None,
-        oldPassword: typing.Optional[str] = None,
-        newPassword: typing.Optional[str] = None,
-    ) -> None:
-        '''
-        Invoked when broker requests a rename action
-        default does nothing
-        '''
-        hostName = platform.operations.getComputerName()
-
-        # Check for password change request for an user
-        if userName and newPassword:
-            logger.info('Setting password for configured user')
-            try:
-                platform.operations.changeUserPassword(
-                    userName, oldPassword or '', newPassword
-                )
-            except Exception as e:
-                # Logs error, but continue renaming computer
-                logger.error(
-                    'Could not change password for user {}: {}'.format(userName, e)
-                )
-
-        if hostName.lower() == name.lower():
-            logger.info('Computer name is already {}'.format(hostName))
-            return
-
-        if platform.operations.renameComputer(name):
-            self.reboot()
 
     def loop(self):
         # Main common loop
@@ -487,22 +416,44 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     # ******************************************************
     # Methods that can be overriden by linux & windows Actor
     # ******************************************************
-    def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
-        self, name: str, domain: str, ou: str, account: str, password: str, custom: typing.Optional[typing.Mapping[str, typing.Any]] = None
+    def rename(
+        self,
+        name: str,
+        userName: typing.Optional[str] = None,
+        oldPassword: typing.Optional[str] = None,
+        newPassword: typing.Optional[str] = None,
     ) -> None:
+        '''
+        Invoked when broker requests a rename action
+        '''
+        hostName = platform.operations.getComputerName()
+
+        # Check for password change request for an user
+        if userName and newPassword:
+            logger.info('Setting password for configured user')
+            try:
+                platform.operations.changeUserPassword(userName, oldPassword or '', newPassword)
+            except Exception as e:
+                # Logs error, but continue renaming computer
+                logger.error('Could not change password for user {}: {}'.format(userName, e))
+
+        if hostName.lower() == name.lower():
+            logger.info('Computer name is already {}'.format(hostName))
+            return
+
+        if platform.operations.renameComputer(name):
+            self.reboot()
+
+    def joinDomain(self, name: str, custom: typing.Mapping[str, typing.Any]) -> None:
         '''
         Invoked when broker requests a "domain" action
         default does nothing
         '''
-        logger.debug('Base join invoked: {} on {}, {}'.format(name, domain, ou))
+        logger.debug('Base join invoked: %s on %s, %s', name, custom)
 
     # Client notifications
-    def login(
-        self, username: str, sessionType: typing.Optional[str] = None
-    ) -> types.LoginResultInfoType:
-        result = types.LoginResultInfoType(
-            ip='', hostname='', dead_line=None, max_idle=None, session_id=None
-        )
+    def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
+        result = types.LoginResultInfoType(ip='', hostname='', dead_line=None, max_idle=None, session_id=None)
         master_token = None
         secret = None
         # If unmanaged, do initialization now, because we don't know before this
@@ -564,9 +515,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                 )
                 != 'ok'  # Can return also "notified", that means the logout has not been processed by UDS
             ):
-                logger.info(
-                    'Logout from %s ignored as required by uds broker', username
-                )
+                logger.info('Logout from %s ignored as required by uds broker', username)
                 return
 
         self.onLogout(username, session_id or '')
@@ -595,9 +544,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         '''
         logger.info('Service stopped')
 
-    def preConnect(
-        self, userName: str, protocol: str, ip: str, hostname: str, udsUserName: str
-    ) -> str:
+    def preConnect(self, userName: str, protocol: str, ip: str, hostname: str, udsUserName: str) -> str:
         '''
         Invoked when received a PRE Connection request via REST
         Base preconnect executes the preconnect command

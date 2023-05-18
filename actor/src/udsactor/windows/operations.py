@@ -63,24 +63,17 @@ def getComputerName() -> str:
 def getNetworkInfo() -> typing.Iterator[types.InterfaceInfoType]:
     obj = win32com.client.Dispatch("WbemScripting.SWbemLocator")
     wmobj = obj.ConnectServer("localhost", "root\\cimv2")
-    adapters = wmobj.ExecQuery(
-        "Select * from Win32_NetworkAdapterConfiguration where IpEnabled=True"
-    )
+    adapters = wmobj.ExecQuery("Select * from Win32_NetworkAdapterConfiguration where IpEnabled=True")
     try:
         for obj in adapters:
             for ip in obj.IPAddress:
                 if ':' in ip:  # Is IPV6, skip this
                     continue
                 if (
-                    ip is None
-                    or ip == ''
-                    or ip.startswith('169.254')
-                    or ip.startswith('0.')
+                    ip is None or ip == '' or ip.startswith('169.254') or ip.startswith('0.')
                 ):  # If single link ip, or no ip
                     continue
-                yield types.InterfaceInfoType(
-                    name=obj.Caption, mac=obj.MACAddress, ip=ip
-                )
+                yield types.InterfaceInfoType(name=obj.Caption, mac=obj.MACAddress, ip=ip)
     except Exception:
         return
 
@@ -97,7 +90,7 @@ def getDomainName() -> str:
     # 3 = Domain
     domain, status = win32net.NetGetJoinInformation()
     if status != 3:
-        domain = None
+        domain = ''
 
     return domain
 
@@ -109,9 +102,7 @@ def getWindowsVersion() -> typing.Tuple[int, int, int, int, str]:
 def getVersion() -> str:
     verinfo = getWindowsVersion()
     # Remove platform id i
-    return 'Windows-{}.{} Build {} ({})'.format(
-        verinfo[0], verinfo[1], verinfo[2], verinfo[4]
-    )
+    return 'Windows-{}.{} Build {} ({})'.format(verinfo[0], verinfo[1], verinfo[2], verinfo[4])
 
 
 EWX_LOGOFF = 0x00000000
@@ -129,11 +120,11 @@ def reboot(flags: int = EWX_FORCEIFHUNG | EWX_REBOOT) -> None:
     )
     privs = (
         (
-            win32security.LookupPrivilegeValue(None, win32security.SE_SHUTDOWN_NAME),
+            win32security.LookupPrivilegeValue(None, win32security.SE_SHUTDOWN_NAME),  # type: ignore
             win32security.SE_PRIVILEGE_ENABLED,
         ),
     )
-    win32security.AdjustTokenPrivileges(htok, 0, privs)
+    win32security.AdjustTokenPrivileges(htok, 0, privs)  # type: ignore
     win32api.ExitWindowsEx(flags, 0)
 
 
@@ -148,7 +139,7 @@ def renameComputer(newName: str) -> bool:
     '''
     # Needs admin privileges to work
     if (
-        ctypes.windll.kernel32.SetComputerNameExW(
+        ctypes.windll.kernel32.SetComputerNameExW(  # type: ignore
             DWORD(win32con.ComputerNamePhysicalDnsHostname), LPCWSTR(newName)
         )
         == 0
@@ -157,14 +148,8 @@ def renameComputer(newName: str) -> bool:
         # win32api.GetLastError -> returns error code
         # (just put this comment here to remember to log this when logger is available)
         error = getErrorMessage()
-        computerName = win32api.GetComputerNameEx(
-            win32con.ComputerNamePhysicalDnsHostname
-        )
-        raise Exception(
-            'Error renaming computer from {} to {}: {}'.format(
-                computerName, newName, error
-            )
-        )
+        computerName = win32api.GetComputerNameEx(win32con.ComputerNamePhysicalDnsHostname)
+        raise Exception('Error renaming computer from {} to {}: {}'.format(computerName, newName, error))
     return True
 
 
@@ -179,9 +164,7 @@ NETSETUP_JOIN_WITH_NEW_NAME = 0x00000400
 NETSETUP_DEFER_SPN_SET = 0x1000000
 
 
-def joinDomain(
-    domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False
-) -> None:
+def joinDomain(domain: str, ou: str, account: str, password: str, executeInOneStep: bool = False) -> None:
     '''
     Joins machine to a windows domain
     :param domain: Domain to join to
@@ -198,9 +181,7 @@ def joinDomain(
             account = domain + '\\' + account
 
     # Do log
-    flags: typing.Any = (
-        NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
-    )
+    flags: typing.Any = NETSETUP_ACCT_CREATE | NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN
 
     if executeInOneStep:
         flags |= NETSETUP_JOIN_WITH_NEW_NAME
@@ -214,13 +195,13 @@ def joinDomain(
     lpAccount = LPCWSTR(account)
     lpPassword = LPCWSTR(password)
 
-    res = ctypes.windll.netapi32.NetJoinDomain(
+    res = ctypes.windll.netapi32.NetJoinDomain(  # type: ignore
         None, lpDomain, lpOu, lpAccount, lpPassword, flags
     )
     # Machine found in another ou, use it and warn this on log
     if res == 2224:
         flags = DWORD(NETSETUP_DOMAIN_JOIN_IF_JOINED | NETSETUP_JOIN_DOMAIN)
-        res = ctypes.windll.netapi32.NetJoinDomain(
+        res = ctypes.windll.netapi32.NetJoinDomain(  # type: ignore
             None, lpDomain, None, lpAccount, lpPassword, flags
         )
     if res:
@@ -247,14 +228,12 @@ def changeUserPassword(user: str, oldPassword: str, newPassword: str) -> None:
 
     # res = ctypes.windll.netapi32.NetUserChangePassword(None, lpUser, lpOldPassword, lpNewPassword)
     # Try to set new password "a las bravas", ignoring old one. This will not work with domain users
-    res = win32net.NetUserSetInfo(None, user, 1003, {'password': newPassword})
+    res = win32net.NetUserSetInfo(None, user, 1003, {'password': newPassword})  # type: ignore
 
     if res:
         # Log the error, and raise exception to parent
         error = getErrorMessage(res)
-        raise Exception(
-            'Error changing password for user {}: {} {}'.format(user, res, error)
-        )
+        raise Exception('Error changing password for user {}: {} {}'.format(user, res, error))
 
 
 class LASTINPUTINFO(ctypes.Structure):  # pylint: disable=too-few-public-methods
@@ -274,14 +253,14 @@ def initIdleDuration(atLeastSeconds: int):  # pylint: disable=unused-argument
 def getIdleDuration() -> float:
     try:
         lastInputInfo = LASTINPUTINFO()
-        lastInputInfo.cbSize = ctypes.sizeof(
-            lastInputInfo
-        )  # pylint: disable=attribute-defined-outside-init
-        if ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo)) == 0:
+        lastInputInfo.cbSize = ctypes.sizeof(lastInputInfo)  # pylint: disable=attribute-defined-outside-init
+        if ctypes.windll.user32.GetLastInputInfo(ctypes.byref(lastInputInfo)) == 0:  # type: ignore
             return 0
-        current = ctypes.c_uint(ctypes.windll.kernel32.GetTickCount()).value
+        current = ctypes.c_uint(ctypes.windll.kernel32.GetTickCount()).value  # type: ignore
         if current < lastInputInfo.dwTime:
-            current += 4294967296  # If current has "rolled" to zero, adjust it so it is greater than lastInputInfo
+            current += (
+                4294967296  # If current has "rolled" to zero, adjust it so it is greater than lastInputInfo
+            )
         millis = current - lastInputInfo.dwTime  # @UndefinedVariable
         return millis / 1000.0
     except Exception as e:
@@ -306,9 +285,7 @@ def getSessionType() -> str:
     return os.environ.get('SESSIONNAME', 'unknown')
 
 
-def writeToPipe(
-    pipeName: str, bytesPayload: bytes, waitForResponse: bool
-) -> typing.Optional[bytes]:
+def writeToPipe(pipeName: str, bytesPayload: bytes, waitForResponse: bool) -> typing.Optional[bytes]:
     # (str, bytes, bool) -> Optional[bytes]
     try:
         with open(pipeName, 'r+b', 0) as f:
@@ -323,8 +300,6 @@ def writeToPipe(
 
 def forceTimeSync() -> None:
     try:
-        subprocess.call(
-            [r'c:\WINDOWS\System32\w32tm.exe', ' /resync']
-        )  # , '/rediscover'])
+        subprocess.call([r'c:\WINDOWS\System32\w32tm.exe', ' /resync'])  # , '/rediscover'])
     except Exception as e:
         logger.error('Error invoking time sync command: %s', e)
