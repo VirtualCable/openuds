@@ -283,6 +283,24 @@ class UDSServerApi(UDSApi):
         }
         r = self._doPost('initialize', payload)
         os = r['os']
+        # * TO BE REMOVED ON FUTURE VERSIONS *
+        # To keep compatibility, store old values on custom data
+        # This will be removed in future versions
+        # The values stored are:
+        #        username=os.get('username'),
+        #        password=os.get('password'),
+        #        new_password=os.get('new_password'),
+        #        domain=os.get('ad'),
+        #        ou=os.get('ou'),
+        # So update custom data with this info
+        custom = os.get('custom', {})
+        for i in ('username', 'password', 'new_password', 'ad', 'ou'):
+            # ad is converted to domain
+            if i not in os:
+                continue  # Skip if not present on os, do not overwrite custom
+            name = 'domain' if i == 'ad' else i
+            custom[name] = os[i]  # os[i] is present, so force it on custom
+
         return types.InitializationResultType(
             own_token=r['own_token'],
             unique_id=r['unique_id'].lower() if r['unique_id'] else None,
