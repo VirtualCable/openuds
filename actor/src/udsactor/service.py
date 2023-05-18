@@ -144,6 +144,9 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
         logger.info('Rebooting...')
         self._rebootRequested = True
 
+    def canCleanSensibleData(self) -> bool:
+        return True
+
     def setReady(self) -> None:
         if not self._isAlive or not self.isManaged():
             return
@@ -195,11 +198,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
 
         # Cleans sensible data
         if self._cfg.config:
-            try:
-                isPersistent = self._cfg.config.os.isPersistent == 'y'
-            except:
-                isPersistent = True
-            if isPersistent:
+            if self.canCleanSensibleData():
                 self._cfg = self._cfg._replace(
                     config=self._cfg.config._replace(os=None), data=None
                 )
@@ -241,26 +240,13 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
                             osData.new_password,
                         )
                     elif osData.action == 'rename_ad':
-                        if not osData.serverSoftware:
                             self.joinDomain(
                                 osData.name,
                                 osData.ad or '',
                                 osData.ou or '',
                                 osData.username or '',
                                 osData.password or '',
-                            )
-                        else:
-                            self.joinDomain(
-                                osData.name,
-                                osData.ad or '',
-                                osData.ou or '',
-                                osData.username or '',
-                                osData.password or '',
-                                osData.clientSoftware or '',
-                                osData.serverSoftware or '',
-                                osData.membershipSoftware or '',
-                                osData.ssl or '',
-                                osData.automaticIdMapping or ''
+                                osData.custom
                             )
 
                     if self._rebootRequested:
@@ -502,7 +488,7 @@ class CommonService:  # pylint: disable=too-many-instance-attributes
     # Methods that can be overriden by linux & windows Actor
     # ******************************************************
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
-        self, name: str, domain: str, ou: str, account: str, password: str
+        self, name: str, domain: str, ou: str, account: str, password: str, custom: typing.Optional[typing.Mapping[str, typing.Any]] = None
     ) -> None:
         '''
         Invoked when broker requests a "domain" action

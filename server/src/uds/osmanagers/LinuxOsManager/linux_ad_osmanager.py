@@ -189,12 +189,14 @@ class LinuxOsADManager(LinuxOsManager):
             'username': self._account,
             'password': self._password,
             'ou': self._ou,
-            'clientSoftware': self._clientSoftware,
-            'serverSoftware': self._serverSoftware,
-            'membershipSoftware': self._membershipSoftware,
-            'ssl': self._ssl,
-            'automaticIdMapping': self._automaticIdMapping,
-            'isPersistent': 'y' if self.isPersistent() else 'n',
+            'isPersistent': self.isPersistent(),
+            'custom': {
+                'clientSoftware': self._clientSoftware,
+                'serverSoftware': self._serverSoftware,
+                'membershipSoftware': self._membershipSoftware,
+                'ssl': self._ssl == 'y',
+                'automaticIdMapping': self._automaticIdMapping == 'y',
+            }
         }
 
     def marshal(self) -> bytes:

@@ -31,6 +31,8 @@
 @author: Alexander Burmatov,  thatman at altlinux dot org
 '''
 import signal
+import copy
+import typing
 
 from . import daemon
 from . import operations
@@ -45,6 +47,8 @@ except ImportError:  # Platform may not include prctl, so in case it's not avail
         pass
 
 class UDSActorSvc(daemon.Daemon, CommonService):
+    _sensibleDataCleanable: bool = False
+
     def __init__(self) -> None:
         daemon.Daemon.__init__(self, '/run/udsactor.pid')
         CommonService.__init__(self)
@@ -56,44 +60,37 @@ class UDSActorSvc(daemon.Daemon, CommonService):
     def markForExit(self, signum, frame) -> None:  # pylint: disable=unused-argument
         self._isAlive = False
 
+    def canCleanSensibleData(self) -> bool:
+        return self._sensibleDataCleanable
+
     def joinDomain(  # pylint: disable=unused-argument, too-many-arguments
-            self,
-            name: str,
-            domain: str,
-            ou: str,
-            account: str,
-            password: str,
-            client_software: str,
-            server_software: str,
-            membership_software: str,
-            ssl: bool,
-            automatic_id_mapping: bool
-        ) -> None:
+        self, name: str, domain: str, ou: str, account: str, password: str, custom: typing.Optional[typing.Mapping[str, typing.Any]] = None
+    ) -> None:
+        # Add name to custom data, needed by joinDomain on Linux
+        # First, Copy mapping to mutable dict so we can add name to it
+        localCustom = {k: v for k, v in (custom.items() if custom is not None else [])}
+        localCustom['name'] = name
+
+        # If isPersistent is False, we need to keep sensible data, so it's not cleaned
+        self._sensibleDataCleanable = localCustom.get('isPersistent', False)
+
         self.rename(name)
+
         logger.debug(f'Starting joining domain {domain} with name {name}')
-        operations.joinDomain(name, \
-                            domain, \
-                            ou, \
-                            account, \
-                            password, \
-                            client_software, \
-                            server_software, \
-                            membership_software, \
-                            ssl, \
-                            automatic_id_mapping
-                        )
+        operations.joinDomain(domain, ou, account, password, custom=localCustom)
 
     def finish(self) -> None:
         try:
-            if self._cfg.config and self._cfg.config.os:
+            if self._cfg.config and self._cfg.config.os and self._cfg.config.os.custom:
                 osData = self._cfg.config.os
-                if osData.action == 'rename_ad' and osData.isPersistent == 'n' :
+                custom = self._cfg.config.os.custom
+                if osData.action == 'rename_ad' and custom.get('isPersistent', False):
                     operations.leaveDomain(
                         osData.ad or '',
                         osData.username or '',
                         osData.password or '',
-                        osData.clientSoftware or '',
-                        osData.serverSoftware or '',
+                        custom['clientSoftware'] or '',
+                        custom['serverSoftware'] or '',
                     )
         except Exception as e:
             logger.error(f'Got exception operating machine: {e}')

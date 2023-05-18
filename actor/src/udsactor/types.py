@@ -24,12 +24,7 @@ class ActorOsConfigurationType(typing.NamedTuple):
     new_password: typing.Optional[str] = None
     ad: typing.Optional[str] = None
     ou: typing.Optional[str] = None
-    clientSoftware: typing.Optional[str] = None
-    serverSoftware: typing.Optional[str] = None
-    membershipSoftware: typing.Optional[str] = None
-    ssl: typing.Optional[str] = None
-    automaticIdMapping: typing.Optional[str] = None
-    isPersistent: typing.Optional[str] = None
+    custom: typing.Optional[typing.Mapping[str, typing.Any]] = None
 
 class ActorDataConfigurationType(typing.NamedTuple):
     unique_id: typing.Optional[str] = None
