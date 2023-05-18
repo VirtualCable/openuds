@@ -114,28 +114,30 @@ class OSManager(Module):
           {
               'action': 'rename_ad',
               'name': 'xxxxxxx',
-              'ad': 'domain.xxx'
-              'ou': 'ou'   # or '' if default ou
-              'username': 'userwithaddmachineperms@domain.xxxx'
-              'password': 'passwordForTheUserWithPerms',
-              # In a future, probably all AD related data will go inside "custom" key
-              'custom': # Dictionary with custom data for the os manager, currently only for ad join domain
-                {
+              'custom': # Dictionary with custom data for the os manager, currently only for ad join domain and random password
+               {
+                    'ad': 'domain.xxx'
+                    'ou': 'ou'   # or '' if default ou
+                    'username': 'userwithaddmachineperms@domain.xxxx'
+                    'password': 'passwordForTheUserWithPerms',
                     'clientSoftware': 'sssd' or 'winbind' or 'automatically' if linux os manager,
                     'serverSoftware': 'active-directory' or 'ipa' if linux os manager,
                     'membershipSoftware': 'samba' or 'adcli' or 'automatically' if linux os manager,
                     'ssl': 'n' or 'y' if linux os manager,
                     'automaticIdMapping': 'n' or 'y' if linux os manager,
                     'isPersistent': 'n' or 'y' if linux os manager,
-                }
+               }
           }
         * rename vm, do NOT ADD to AD, and change password for an user
           {
               'action': 'rename'
               'name': 'xxxxx'
-              'username': 'username to change pass'
-              'password': 'current password for username to change password'
-              'new_password': 'new password to be set for the username'
+              'custom': 
+              {
+                 'username': 'username to change pass'
+                 'password': 'current password for username to change password'
+                 'new_password': 'new password to be set for the username'
+              }
           }
         """
         return {}
