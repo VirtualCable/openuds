@@ -49,7 +49,6 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
     async def test_run_app_help(self) -> None:
         # Executes the app with --help
         async with tuntools.tunnel_app_runner(args=['--help']) as process:
-
             stdout, stderr = await process.communicate()
             self.assertEqual(process.returncode, 0, f'{stdout!r} {stderr!r}')
             self.assertEqual(stderr, b'')
@@ -57,7 +56,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
 
     async def test_tunnel_fail_cmd(self) -> None:
         # Test on ipv4 and ipv6
-        for host in ('127.0.0.1', '::1'):
+        for host in ('::1', '127.0.0.1'):
             # Remote is not really important in this tests, will fail before using it
             async with tuntools.create_tunnel_proc(
                 host,
@@ -65,18 +64,17 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 '127.0.0.1',
                 13579,  # A port not used by any other test
                 command_timeout=0.1,
-            ) as (cfg, queue):
+            ) as (cfg, queue):  # pylint: disable=unused-variable
                 for i in range(0, 8192, 128):
                     # Set timeout to 1 seconds
-                    bad_cmd = bytes(
-                        random.randint(0, 255) for _ in range(i)
-                    )  # Some garbage
-                    logger.info(f'Testing invalid command with {bad_cmd!r}')
+                    bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # nosec:  Some garbage
+                    logger.info('Testing invalid command with %s', bad_cmd)
                     # On full, we need the handshake to be done, before connecting
                     # Our "test" server will simple "eat" the handshake, but we need to do it
-                    async with tuntools.open_tunnel_client(
-                        cfg, use_tunnel_handshake=True
-                    ) as (creader, cwriter):
+                    async with tuntools.open_tunnel_client(cfg) as (
+                        creader,
+                        cwriter,
+                    ):
                         cwriter.write(bad_cmd)
                         await cwriter.drain()
                         # Read response
@@ -95,13 +93,14 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 7891,
                 '127.0.0.1',
                 13581,
-            ) as (cfg, queue):
-                for i in range(10):  # Several times
+            ) as (cfg, queue):  # pylint: disable=unused-variable
+                for _ in range(10):  # Several times
                     # On full, we need the handshake to be done, before connecting
                     # Our "test" server will simple "eat" the handshake, but we need to do it
-                    async with tuntools.open_tunnel_client(
-                        cfg, use_tunnel_handshake=True
-                    ) as (creader, cwriter):
+                    async with tuntools.open_tunnel_client(cfg) as (
+                        creader,
+                        cwriter,
+                    ):
                         cwriter.write(consts.COMMAND_TEST)
                         await cwriter.drain()
                         # Read response
@@ -119,7 +118,7 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                     server.host,
                     server.port,
                     command_timeout=0.1,
-                ) as (cfg, queue):
+                ) as (cfg, queue):  # pylint: disable=unused-variable
                     for i in range(
                         0, consts.TICKET_LENGTH - 1, 4
                     ):  # All will fail. Any longer will be processed, and mock will return correct don't matter the ticket
@@ -127,9 +126,10 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         ticket = tuntools.get_correct_ticket(i)
                         # On full, we need the handshake to be done, before connecting
                         # Our "test" server will simple "eat" the handshake, but we need to do it
-                        async with tuntools.open_tunnel_client(
-                            cfg, use_tunnel_handshake=True
-                        ) as (creader, cwriter):
+                        async with tuntools.open_tunnel_client(cfg) as (
+                            creader,
+                            cwriter,
+                        ):
                             cwriter.write(consts.COMMAND_OPEN)
                             # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
                             cwriter.write(ticket)
@@ -149,13 +149,11 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                 received += data
                 # if data contains EOS marcker ('STREAM_END'), we are done
                 if b'STREAM_END' in data:
-                    callback_invoked.set()
+                    callback_invoked.set()  # pylint: disable=cell-var-from-loop
 
             # Remote is important in this tests
             # create a remote server, use a different port than the tunnel fail test, because tests may run in parallel
-            async with tools.AsyncTCPServer(
-                host=host, port=5445, callback=callback
-            ) as server:
+            async with tools.AsyncTCPServer(host=host, port=5445, callback=callback) as server:
                 for tunnel_host in ('127.0.0.1', '::1'):
                     async with tuntools.create_tunnel_proc(
                         tunnel_host,
@@ -165,17 +163,19 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         use_fake_http_server=True,
                     ) as (cfg, queue):
                         # Ensure queue is not none but an asyncio.Queue
+                        # Note, this also let's mypy know that queue is not None after this point
                         if queue is None:
                             raise AssertionError('Queue is None')
-                        
-                        for i in range(16):
+
+                        for _ in range(16):
                             # Create a random ticket with valid format
                             ticket = tuntools.get_correct_ticket()
                             # On full, we need the handshake to be done, before connecting
                             # Our "test" server will simple "eat" the handshake, but we need to do it
-                            async with tuntools.open_tunnel_client(
-                                cfg, use_tunnel_handshake=True
-                            ) as (creader, cwriter):
+                            async with tuntools.open_tunnel_client(cfg) as (
+                                creader,
+                                cwriter,
+                            ):
                                 cwriter.write(consts.COMMAND_OPEN)
                                 # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
                                 cwriter.write(ticket)
@@ -199,14 +199,14 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                                 else:
                                     should_be_url = f'/stop/{cfg.uds_token}'.encode()
                                 self.assertIn(should_be_url, queue_item)
-                                    
+
                                 # Ensure user agent is correct
 
                                 # Data sent will be received by server
                                 # One single write will ensure all data is on same packet
                                 test_str = (
                                     b'Some Random Data'
-                                    + bytes(random.randint(0, 255) for _ in range(8192))
+                                    + bytes(random.randint(0, 255) for _ in range(8192))  # nosec: some random data, not used for security
                                     + b'STREAM_END'
                                 )
                                 # Clean received data
@@ -233,9 +233,10 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                     ticket = tuntools.get_correct_ticket()
                     # On full, we need the handshake to be done, before connecting
                     # Our "test" server will simple "eat" the handshake, but we need to do it
-                    async with tuntools.open_tunnel_client(
-                        cfg, use_tunnel_handshake=True
-                    ) as (creader, cwriter):
+                    async with tuntools.open_tunnel_client(cfg) as (
+                        creader,
+                        cwriter,
+                    ):
                         cwriter.write(consts.COMMAND_OPEN)
                         # fake ticket, consts.TICKET_LENGTH bytes long, letters and numbers. Use a random ticket,
                         cwriter.write(ticket)

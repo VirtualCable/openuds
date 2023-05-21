@@ -62,7 +62,7 @@ class TestTunnel(IsolatedAsyncioTestCase):
         # Commands are 4 bytes length, try with less and more invalid commands
         for i in range(0, 100, 10):
             # Set timeout to 1 seconds
-            bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # Some garbage
+            bad_cmd = bytes(random.randint(0, 255) for _ in range(i))  # nosec: Some garbage, not security related
             logger.info('Testing invalid command with %s', bad_cmd)
             async with tuntools.create_test_tunnel(callback=lambda x: None, port=7770, remote_port=54555, command_timeout=0.1) as cfg:
                 logger_mock = mock.MagicMock()
@@ -95,18 +95,18 @@ class TestTunnel(IsolatedAsyncioTestCase):
     def test_tunnel_invalid_handshake(self) -> None:
         # Not async test, executed on main thread without event loop
         # Pipe for testing
-        own_conn, other_conn = multiprocessing.Pipe()
+        own_conn, other_conn = multiprocessing.Pipe()  # pylint: disable=unused-variable
 
         # Some random data to send on each test, all invalid
         # 0 bytes will make timeout to be reached
-        for i in [i for i in range(10)] + [i for i in range(100, 10000, 100)]:
+        for i in list(range(10)) + list(range(100, 10000, 100)):
             # Create a simple socket for testing
             rsock, wsock = socket.socketpair()
             # Set read timeout to 1 seconds
             rsock.settimeout(3)
 
             # Set timeout to 1 seconds
-            bad_handshake = bytes(random.randint(0, 255) for _ in range(i))
+            bad_handshake = bytes(random.randint(0, 255) for _ in range(i))  # nosec not for security
             logger_mock = mock.MagicMock()
             with mock.patch('udstunnel.logger', logger_mock):
                 wsock.sendall(bad_handshake)
@@ -138,4 +138,3 @@ class TestTunnel(IsolatedAsyncioTestCase):
         # and that other_conn has received a ('host', 'port') tuple
         # recv()[0] will be a copy of the socket, we don't care about it
         self.assertEqual(other_conn.recv()[1], ('host', 'port'))
-

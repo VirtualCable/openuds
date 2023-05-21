@@ -74,11 +74,17 @@ class Proxy:
         # Handshake correct in this point, upgrade the connection to TSL and let
         # the protocol controller do the rest
 
+        # Store source ip and port, for logging purposes in case of error
+        src_ip, src_port = (source.getpeername() if source else ('Unknown', 0))[:2]   # May be ipv4 or ipv6, so we get only first two elements
+
         # Upgrade connection to SSL, and use asyncio to handle the rest
+        tun: typing.Optional[tunnel.TunnelProtocol] = None
         try:
+            tun = tunnel.TunnelProtocol(self)
             # (connect accepted loop not present on AbastractEventLoop definition < 3.10), that's why we use ignore
             await loop.connect_accepted_socket(  # type: ignore
-                lambda: tunnel.TunnelProtocol(self), source, ssl=context
+                lambda: tun, source, ssl=context,
+                ssl_handshake_timeout=3,
             )
 
             # Wait for connection to be closed
@@ -86,6 +92,11 @@ class Proxy:
 
         except asyncio.CancelledError:
             pass  # Return on cancel
+        except Exception as e:
+            # Any other exception, ensure we close the connection
+            logger.error('ERROR on %s:%s: %s', src_ip, src_port, e)
+            if tun:
+                tun.close_connection()
 
         logger.debug('Proxy finished')
 

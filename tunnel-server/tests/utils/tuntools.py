@@ -146,7 +146,7 @@ async def create_tunnel_proc(
     if response is None:
         response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
-    port = random.randint(8000, 58000)  # nosec  Just a random port
+    port = random.randint(20000, 40000)  # nosec  Just a random port
     hhost = f'[{listen_host}]' if ':' in listen_host else listen_host
     args = {
         'uds_server': f'http://{hhost}:{port}/uds/rest',
@@ -205,44 +205,43 @@ async def create_tunnel_proc(
             # Create the tunnel task
             task = asyncio.create_task(udstunnel.tunnel_proc_async(other_end, cfg, global_stats.ns))
 
-            # Create a small asyncio server that reads the handshake,
-            # and sends the socket to the tunnel_proc_async using the pipe
-            # the pipe message will be typing.Tuple[socket.socket, typing.Tuple[str, int]]
-            # socket and address
-            async def client_connected_cb(reader, writer):
-                # Read the handshake
-                # Note: We need a small wait on sender, because this is a bufferedReader
-                # so it will read the handshake and the first bytes of the data (that is the ssl handshake)
-                _ = await reader.read(len(consts.HANDSHAKE_V1))
-                # For testing, we ignore the handshake value
-                # Send the socket to the tunnel
-                own_end.send(
-                    (
-                        writer.get_extra_info('socket').dup(),
-                        writer.get_extra_info('peername'),
-                    )
-                )
-                # Close the socket
-                writer.close()
+            # Server listening for connections
+            server_socket = socket.socket(socket.AF_INET6 if ':' in listen_host else socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Allow reuse of address
+            server_socket.bind((listen_host, listen_port))
+            server_socket.listen(8)
+            server_socket.setblocking(False)
 
-            server = await asyncio.start_server(
-                client_connected_cb,
-                listen_host,
-                listen_port,
-            )
+            async def server():
+                loop = asyncio.get_running_loop()
+                try:
+                    while True:
+                        client, addr = await loop.sock_accept(server_socket)
+                        # Send the socket to the tunnel
+                        own_end.send((client, addr))
+                except asyncio.CancelledError:
+                    pass  # We are closing
+                except Exception:
+                    logger.exception('Exception in server')
+                # Close the socket
+                server_socket.close()
+
+
+            # Create the middleware task
+            server_task = asyncio.create_task(server())
             try:
                 yield cfg, possible_queue
             finally:
+                # Cancel the middleware task
+                server_task.cancel()
+                logger.info('Server closed')
+
                 # Close the pipe (both ends)
                 own_end.close()
 
                 task.cancel()
                 # wait for the task to finish
                 await task
-
-                server.close()
-                await server.wait_closed()
-                logger.info('Server closed')
 
                 # Ensure log file are removed
                 rootlog = logging.getLogger()
@@ -385,7 +384,7 @@ async def open_tunnel_client(
 
     if not use_tunnel_handshake:
         reader, writer = await asyncio.open_connection(
-            cfg.listen_address, cfg.listen_port, ssl=context, family=family
+            cfg.listen_address, cfg.listen_port, ssl=context, family=family, ssl_handshake_timeout=1
         )
     else:
         # Open the socket, send handshake and then upgrade to ssl, non blocking
@@ -402,7 +401,6 @@ async def open_tunnel_client(
         # (reads chunks of 4096 bytes). If we don't wait, the handshake will be readed
         # and part or all of ssl handshake also.
         # With uvloop this seems to be not needed, but with asyncio it is.
-        await asyncio.sleep(0.05)
         # upgrade to ssl
         reader, writer = await asyncio.open_connection(
             sock=sock, ssl=context, server_hostname=cfg.listen_address
@@ -451,8 +449,15 @@ async def tunnel_app_runner(
         finally:
             # Ensure the process is terminated
             if process.returncode is None:
+                logger.info('Terminating tunnel process %s', process.pid)
                 process.terminate()
-                await process.wait()
+                await asyncio.wait_for(process.wait(), 10)
+                # Ensure the process is terminated
+                if process.returncode is None:
+                    logger.info('Killing tunnel process %s', process.pid)
+                    process.kill()
+                    await asyncio.wait_for(process.wait(), 10)
+                logger.info('Tunnel process %s terminated', process.pid)
 
 
 def get_correct_ticket(length: int = consts.TICKET_LENGTH, *, prefix: typing.Optional[str] = None) -> bytes:

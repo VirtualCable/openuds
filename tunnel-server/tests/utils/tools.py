@@ -32,18 +32,21 @@ import asyncio
 import os
 import ssl
 import typing
-import collections.abc
 import socket
-import aiohttp
 import logging
 from unittest import mock
 
+import aiohttp
+
 from . import certs
+
+if typing.TYPE_CHECKING:
+    import collections.abc
 
 logger = logging.getLogger(__name__)
 
 class AsyncMock(mock.MagicMock):
-    async def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs):  # pylint: disable=invalid-overridden-method
         return super().__call__(*args, **kwargs)
 
 
@@ -69,7 +72,7 @@ class AsyncHttpServer:
         self._server = None
         self._response = response
         if use_ssl:
-            self._ssl_ctx, self._ssl_cert_file, pwd = certs.sslContext(host)
+            self._ssl_ctx, self._ssl_cert_file, pwd = certs.sslContext()  # pylint: disable=unused-variable
         else:
             self._ssl_ctx = None
             self._ssl_cert_file = None
@@ -150,15 +153,18 @@ class AsyncTCPServer:
             await self._processor(reader, writer)
             return
         while True:
-            data = await reader.read(4096)  # Care with this and tunnel handshake on testings...
-            if not data:
-                break
+            try:
+                data = await reader.read(4096)  # Care with this and tunnel handshake on testings...
+                if not data:
+                    break
 
-            resp = self._callback(data) if self._callback else self._response
+                resp = self._callback(data) if self._callback else self._response
 
-            if resp is not None:
-                writer.write(resp)
-                await writer.drain()
+                if resp is not None:
+                    writer.write(resp)
+                    await writer.drain()
+            except Exception as e:
+                logger.exception('Exception %s on %s', e, self._name)
 
     async def __aenter__(self) -> 'AsyncTCPServer':
         if ':' in self.host:
@@ -196,7 +202,7 @@ async def wait_for_port(host: str, port: int) -> None:
         except ConnectionRefusedError:
             await asyncio.sleep(0.1)
 
-async def waitable_range(len: int, wait: float = 0.0001) -> 'collections.abc.AsyncGenerator[int, None]':
-    for i in range(len):
+async def waitable_range(size: int, wait: float = 0.0001) -> 'collections.abc.AsyncGenerator[int, None]':
+    for i in range(size):
         await asyncio.sleep(wait)
         yield i

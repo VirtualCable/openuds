@@ -45,13 +45,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 try:
-    import uvloop
+    import uvloop  # type: ignore
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass  # no uvloop support
 
 try:
-    import setproctitle
+    import setproctitle  # type: ignore
 except ImportError:
     setproctitle = None  # type: ignore
 
@@ -111,7 +112,12 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType, n
 
     def add_autoremovable_task(task: asyncio.Task) -> None:
         tasks.append(task)
-        task.add_done_callback(tasks.remove)
+
+        def remove_task(task: asyncio.Task) -> None:
+            logger.debug('Removing task %s', task)
+            tasks.remove(task)
+
+        task.add_done_callback(remove_task)
 
     def get_socket() -> typing.Tuple[typing.Optional[socket.socket], typing.Optional[typing.Tuple[str, int]]]:
         try:
@@ -174,7 +180,9 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType, n
                         break  # No more sockets, exit
                     logger.debug('CONNECTION from %s (pid: %s)', address, os.getpid())
                     # Due to proxy contains an "event" to stop, we need to create a new one for each connection
-                    add_autoremovable_task(asyncio.create_task(proxy.Proxy(cfg, ns)(sock, context)))
+                    add_autoremovable_task(
+                        asyncio.create_task(proxy.Proxy(cfg, ns)(sock, context), name=f'proxy-{address}')
+                    )
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise  # Stop, but avoid generic exception
                 except Exception:
@@ -184,7 +192,7 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType, n
 
     # create task for server
 
-    add_autoremovable_task(asyncio.create_task(run_server()))
+    add_autoremovable_task(asyncio.create_task(run_server(), name='server'))
 
     try:
         while tasks and not do_stop.is_set():
@@ -195,6 +203,9 @@ async def tunnel_proc_async(pipe: 'Connection', cfg: config.ConfigurationType, n
     except asyncio.CancelledError:
         logger.info('Task cancelled')
         do_stop.set()  # ensure we stop
+    except Exception:
+        logger.exception('Error in main loop')
+        do_stop.set()
 
     logger.debug('Out of loop, stopping tasks: %s, running: %s', tasks, do_stop.is_set())
 
@@ -236,8 +247,10 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
     # Try to bind to port as running user
     # Wait for socket incoming connections and spread them
     socket.setdefaulttimeout(3.0)  # So we can check for stop from time to time and not block forever
-    af_inet = socket.AF_INET6 if args.ipv6 or cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
-    sock = socket.socket(af_inet, socket.SOCK_STREAM)
+    sock = socket.socket(
+        socket.AF_INET6 if args.ipv6 or cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET,
+        socket.SOCK_STREAM,
+    )
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     # We will not reuse port, we only want a UDS tunnel server running on a port

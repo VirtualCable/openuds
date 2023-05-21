@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 class TestUDSTunnelApp(IsolatedAsyncioTestCase):
-    async def client_task(self, host: str, tunnel_port: int, remote_port: int) -> None:
+    async def client_task(self, host: str, tunnel_port: int, remote_port: int, use_tunnel_handshake: bool = False) -> None:
         received: bytes = b''
         callback_invoked: asyncio.Event = asyncio.Event()
         # Data sent will be received by server
@@ -77,7 +77,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             cfg.listen_port = tunnel_port
 
             async with tuntools.open_tunnel_client(
-                cfg, local_port=remote_port + 10000, use_tunnel_handshake=True
+                cfg, local_port=remote_port + 10000, use_tunnel_handshake=use_tunnel_handshake
             ) as (
                 creader,
                 cwriter,
@@ -120,7 +120,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                 self.assertEqual(received, test_str)
 
     async def test_app_concurrency(self) -> None:
-        concurrent_tasks = 512
+        concurrent_tasks = 1024
         fake_broker_port = 20000
         tunnel_server_port = fake_broker_port + 1
         remote_port = fake_broker_port + 2
@@ -158,7 +158,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                 ) as process:  # pylint: disable=unused-variable
                     # Create a "bunch" of clients
                     tasks = [
-                        asyncio.create_task(self.client_task(host, tunnel_server_port, remote_port + i))
+                        asyncio.create_task(self.client_task(host, tunnel_server_port, remote_port + i, use_tunnel_handshake=True))
                         async for i in tools.waitable_range(concurrent_tasks)
                     ]
 
