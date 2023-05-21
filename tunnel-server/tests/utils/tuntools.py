@@ -206,7 +206,9 @@ async def create_tunnel_proc(
             task = asyncio.create_task(udstunnel.tunnel_proc_async(other_end, cfg, global_stats.ns))
 
             # Server listening for connections
-            server_socket = socket.socket(socket.AF_INET6 if ':' in listen_host else socket.AF_INET, socket.SOCK_STREAM)
+            server_socket = socket.socket(
+                socket.AF_INET6 if ':' in listen_host else socket.AF_INET, socket.SOCK_STREAM
+            )
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Allow reuse of address
             server_socket.bind((listen_host, listen_port))
             server_socket.listen(8)
@@ -218,14 +220,14 @@ async def create_tunnel_proc(
                     while True:
                         client, addr = await loop.sock_accept(server_socket)
                         # Send the socket to the tunnel
-                        own_end.send((client, addr))
+                        own_end.send((client.dup(), addr))
+                        client.close()
                 except asyncio.CancelledError:
                     pass  # We are closing
                 except Exception:
                     logger.exception('Exception in server')
                 # Close the socket
                 server_socket.close()
-
 
             # Create the middleware task
             server_task = asyncio.create_task(server())
@@ -374,6 +376,7 @@ async def open_tunnel_client(
     cfg: 'config.ConfigurationType',
     use_tunnel_handshake: bool = False,
     local_port: typing.Optional[int] = None,
+    skip_ssl: bool = False,  # Onlt valid if use_tunnel_handshake is False
 ) -> collections.abc.AsyncGenerator[typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None]:
     """opens an ssl socket to the tunnel server"""
     loop = asyncio.get_running_loop()
@@ -383,9 +386,12 @@ async def open_tunnel_client(
     context.verify_mode = ssl.CERT_NONE
 
     if not use_tunnel_handshake:
-        reader, writer = await asyncio.open_connection(
-            cfg.listen_address, cfg.listen_port, ssl=context, family=family, ssl_handshake_timeout=1
-        )
+        if not skip_ssl:
+            reader, writer = await asyncio.open_connection(
+                cfg.listen_address, cfg.listen_port, family=family, ssl=context, ssl_handshake_timeout=1
+            )
+        else:
+            reader, writer = await asyncio.open_connection(cfg.listen_address, cfg.listen_port, family=family)
     else:
         # Open the socket, send handshake and then upgrade to ssl, non blocking
         sock = socket.socket(family, socket.SOCK_STREAM)
@@ -465,7 +471,8 @@ def get_correct_ticket(length: int = consts.TICKET_LENGTH, *, prefix: typing.Opt
     prefix = prefix or ''
     return (
         ''.join(
-            random.choice(string.ascii_letters + string.digits) for _ in range(length - len(prefix))  # nosec just for tests
+            random.choice(string.ascii_letters + string.digits)
+            for _ in range(length - len(prefix))  # nosec just for tests
         ).encode()
         + prefix.encode()
     )

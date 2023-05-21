@@ -245,3 +245,25 @@ class TestUDSTunnelMainProc(IsolatedAsyncioTestCase):
                         # Read response
                         data = await creader.read(1024)
                         self.assertEqual(data, b'', f'Tunnel host: {tunnel_host}, server host: {host}')
+
+    async def test_tunnel_invalid_ssl_handshake(self) -> None:
+        for tunnel_host in ('127.0.0.1', '::1'):
+            async with tuntools.create_tunnel_proc(
+                tunnel_host,
+                7779,
+                'localhost',
+                17222,  # Any non used port will do the trick
+            ) as (cfg, _):
+                async with tuntools.open_tunnel_client(cfg, skip_ssl=True) as (
+                    creader,
+                    cwriter
+                ):
+                    cwriter.write(consts.COMMAND_OPEN)  # Will fail, not ssl connection, this is invalid in fact
+
+                    await cwriter.drain()
+
+                    # Read response, shoub be empty and at_eof
+                    data = await creader.read(1024)
+
+                    self.assertEqual(data, b'')
+                    self.assertTrue(creader.at_eof())
