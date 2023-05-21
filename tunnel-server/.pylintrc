@@ -67,7 +67,8 @@ ignored-modules=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-#init-hook=
+# So tests linting can find the src directory, where the code is...
+init-hook='import sys, os; sys.path.append(os.path.join(os.getcwd(), "src"))'
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use, and will cap the count on Windows to

@@ -46,7 +46,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 try:
     import uvloop
-
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass  # no uvloop support
@@ -318,7 +317,7 @@ def tunnel_main(args: 'argparse.Namespace') -> None:
         if cfg.pidfile:
             os.unlink(cfg.pidfile)
     except Exception:
-        pass
+        logger.warning('Could not remove pidfile %s', cfg.pidfile)
 
     logger.info('FINISHED')
 

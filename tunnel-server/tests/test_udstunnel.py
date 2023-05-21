@@ -28,11 +28,10 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import typing
 import random
 import asyncio
 import logging
-from unittest import IsolatedAsyncioTestCase, mock
+from unittest import IsolatedAsyncioTestCase
 
 from uds_tunnel import consts
 

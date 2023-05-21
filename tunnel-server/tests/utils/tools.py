@@ -32,6 +32,7 @@ import asyncio
 import os
 import ssl
 import typing
+import collections.abc
 import socket
 import aiohttp
 import logging
@@ -149,7 +150,7 @@ class AsyncTCPServer:
             await self._processor(reader, writer)
             return
         while True:
-            data = await reader.read(4096)
+            data = await reader.read(4096)  # Care with this and tunnel handshake on testings...
             if not data:
                 break
 
@@ -195,7 +196,7 @@ async def wait_for_port(host: str, port: int) -> None:
         except ConnectionRefusedError:
             await asyncio.sleep(0.1)
 
-async def waitable_range(len: int, wait: float = 0.0001) -> typing.AsyncGenerator[int, None]:
+async def waitable_range(len: int, wait: float = 0.0001) -> 'collections.abc.AsyncGenerator[int, None]':
     for i in range(len):
         await asyncio.sleep(wait)
         yield i

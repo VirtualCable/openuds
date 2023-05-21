@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import asyncio
 import contextlib
+import collections.abc
 import json
 import logging
 import multiprocessing
@@ -122,7 +123,7 @@ async def create_tunnel_proc(
     global_stats: typing.Optional[stats.GlobalStats] = None,
     # Configuration parameters
     **kwargs,
-) -> typing.AsyncGenerator[
+) -> collections.abc.AsyncGenerator[
     typing.Tuple['config.ConfigurationType', typing.Optional[asyncio.Queue[bytes]]],
     None,
 ]:
@@ -138,7 +139,7 @@ async def create_tunnel_proc(
         use_fake_http_server (bool, optional): If True, a fake http server will be used instead of a mock. Defaults to False.
 
     Yields:
-        typing.AsyncGenerator[typing.Tuple[config.ConfigurationType, typing.Optional[asyncio.Queue[bytes]]], None]: A tuple with the configuration
+        collections.abc.AsyncGenerator[typing.Tuple[config.ConfigurationType, typing.Optional[asyncio.Queue[bytes]]], None]: A tuple with the configuration
             and a queue with the data received by the "fake_http_server" if used, or None if not used
     """
 
@@ -158,7 +159,7 @@ async def create_tunnel_proc(
         resp = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
         @contextlib.asynccontextmanager
-        async def provider() -> typing.AsyncGenerator[
+        async def provider() -> collections.abc.AsyncGenerator[
             typing.Optional[asyncio.Queue[bytes]], None
         ]:
             async with create_fake_broker_server(
@@ -172,7 +173,7 @@ async def create_tunnel_proc(
     else:
 
         @contextlib.asynccontextmanager
-        async def provider() -> typing.AsyncGenerator[
+        async def provider() -> collections.abc.AsyncGenerator[
             typing.Optional[asyncio.Queue[bytes]], None
         ]:
             with mock.patch(
@@ -219,7 +220,9 @@ async def create_tunnel_proc(
             # socket and address
             async def client_connected_cb(reader, writer):
                 # Read the handshake
-                data = await reader.read(1024)
+                # Note: We need a small wait on sender, because this is a bufferedReader
+                # so it will read the handshake and the first bytes of the data (that is the ssl handshake)
+                _ = await reader.read(len(consts.HANDSHAKE_V1))
                 # For testing, we ignore the handshake value
                 # Send the socket to the tunnel
                 own_end.send(
@@ -297,7 +300,7 @@ async def create_test_tunnel(
     remote_port: typing.Optional[int] = None,
     # Configuration parameters
     **kwargs: typing.Any,
-) -> typing.AsyncGenerator['config.ConfigurationType', None]:
+) -> collections.abc.AsyncGenerator['config.ConfigurationType', None]:
     # Generate a listening server for testing tunnel
     # Prepare the end of the tunnel
     async with tools.AsyncTCPServer(
@@ -337,7 +340,7 @@ async def create_fake_broker_server(
             typing.Mapping[str, typing.Any],
         ]
     ],
-) -> typing.AsyncGenerator[asyncio.Queue[bytes], None]:
+) -> collections.abc.AsyncGenerator[asyncio.Queue[bytes], None]:
     # crate a fake broker server
     # Ignores request, and sends response
     # if is a callable, it will be called to get the response and encode it as json
@@ -388,7 +391,7 @@ async def open_tunnel_client(
     cfg: 'config.ConfigurationType',
     use_tunnel_handshake: bool = False,
     local_port: typing.Optional[int] = None,
-) -> typing.AsyncGenerator[
+) -> collections.abc.AsyncGenerator[
     typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None
 ]:
     """opens an ssl socket to the tunnel server"""
@@ -414,6 +417,12 @@ async def open_tunnel_client(
         sock.setblocking(False)
         await loop.sock_connect(sock, (cfg.listen_address, cfg.listen_port))
         await loop.sock_sendall(sock, consts.HANDSHAKE_V1)
+        # Note, we need an small delay, because the "middle connection", in case of tunnel proc,
+        # that will simulate the tunnel handshake processor is running over a bufferedReader
+        # (reads chunks of 4096 bytes). If we don't wait, the handshake will be readed
+        # and part or all of ssl handshake also.
+        # With uvloop this seems to be not needed, but with asyncio it is.
+        await asyncio.sleep(0.05)
         # upgrade to ssl
         reader, writer = await asyncio.open_connection(
             sock=sock, ssl=context, server_hostname=cfg.listen_address
@@ -433,7 +442,7 @@ async def tunnel_app_runner(
     wait_for_port: bool = False,
     args: typing.Optional[typing.List[str]] = None,
     **kwargs: typing.Union[str, int, bool],
-) -> typing.AsyncGenerator['Process', None]:
+) -> collections.abc.AsyncGenerator['Process', None]:
     # Ensure we are on src directory
     if os.path.basename(os.getcwd()) != 'src':
         os.chdir('src')

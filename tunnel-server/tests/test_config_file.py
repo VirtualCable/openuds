@@ -49,7 +49,7 @@ class TestConfigFile(TestCase):
             values['logsize'] = values['logsize'] * 1024 * 1024
             values['listen_address'] = values['address']
             values['listen_port'] = values['port']
-            
+
             del values['address']
             del values['port']
             # Ensure data is correct

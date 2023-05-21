@@ -1,3 +1,4 @@
 psutil>=5.7.3
+cryptography
 aiohttp
 uvloop

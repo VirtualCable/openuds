@@ -43,6 +43,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class TestUDSTunnelApp(IsolatedAsyncioTestCase):
     async def client_task(self, host: str, tunnel_port: int, remote_port: int) -> None:
         received: bytes = b''
@@ -50,13 +51,9 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
         # Data sent will be received by server
         # One single write will ensure all data is on same packet
         test_str = (
-            b'Some Random Data'
-            + bytes(random.randint(0, 255) for _ in range(1024)) * 4
-            + b'STREAM_END'
+            b'Some Random Data' + bytes(random.randint(0, 255) for _ in range(1024)) * 4 + b'STREAM_END'  # nosec: just testing data
         )  # length = 16 + 1024 * 4 + 10 = 4122
-        test_response = (
-            bytes(random.randint(48, 127) for _ in range(12))
-        )  # length = 12, random printable chars
+        test_response = bytes(random.randint(48, 127) for _ in range(12))  # nosec: length = 12, random printable chars
 
         def callback(data: bytes) -> typing.Optional[bytes]:
             nonlocal received
@@ -127,6 +124,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
         fake_broker_port = 20000
         tunnel_server_port = fake_broker_port + 1
         remote_port = fake_broker_port + 2
+
         # Extracts the port from an string that has bX0bwmbPORTbX0bwmb in it
         def extract_port(data: bytes) -> int:
             if b'bX0bwmb' not in data:
@@ -142,9 +140,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             async with tuntools.create_fake_broker_server(
                 host,
                 fake_broker_port,
-                response=lambda data: conf.UDS_GET_TICKET_RESPONSE(
-                    host, extract_port(data)
-                ),
+                response=lambda data: conf.UDS_GET_TICKET_RESPONSE(host, extract_port(data)),
             ) as req_queue:
                 if req_queue is None:
                     raise AssertionError('req_queue is None')
@@ -160,12 +156,9 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
                     workers=4,
                     command_timeout=16,  # Increase command timeout because heavy load we will create
                 ) as process:
-
                     # Create a "bunch" of clients
                     tasks = [
-                        asyncio.create_task(
-                            self.client_task(host, tunnel_server_port, remote_port + i)
-                        )
+                        asyncio.create_task(self.client_task(host, tunnel_server_port, remote_port + i))
                         async for i in tools.waitable_range(concurrent_tasks)
                     ]
 
@@ -185,7 +178,7 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
         remote_port = fake_broker_port + 2
         # Extracts the port from an string that has bX0bwmbPORTbX0bwmb in it
 
-        req_queue: asyncio.Queue[bytes] = asyncio.Queue()
+        req_queue: 'asyncio.Queue[bytes]' = asyncio.Queue()
 
         def extract_port(data: bytes) -> int:
             logger.debug('Data: %r', data)
@@ -206,17 +199,13 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
             async with tuntools.create_tunnel_proc(
                 host,
                 tunnel_server_port,
-                response=lambda data: conf.UDS_GET_TICKET_RESPONSE(
-                    host, extract_port(data)
-                ),
+                response=lambda data: conf.UDS_GET_TICKET_RESPONSE(host, extract_port(data)),
                 command_timeout=16,  # Increase command timeout because heavy load we will create,
                 global_stats=stats_collector,
             ) as (cfg, _):
                 # Create a "bunch" of clients
                 tasks = [
-                    asyncio.create_task(
-                        self.client_task(host, tunnel_server_port, remote_port + i)
-                    )
+                    asyncio.create_task(self.client_task(host, tunnel_server_port, remote_port + i))
                     async for i in tools.waitable_range(concurrent_tasks)
                 ]
 
@@ -228,8 +217,8 @@ class TestUDSTunnelApp(IsolatedAsyncioTestCase):
 
                 # Queue should have all requests (concurrent_tasks*2, one for open and one for close)
                 self.assertEqual(req_queue.qsize(), concurrent_tasks * 2)
-                
+
             # Check stats
-            self.assertEqual(stats_collector.ns.recv, concurrent_tasks*12)
-            self.assertEqual(stats_collector.ns.sent, concurrent_tasks*4122)
+            self.assertEqual(stats_collector.ns.recv, concurrent_tasks * 12)
+            self.assertEqual(stats_collector.ns.sent, concurrent_tasks * 4122)
             self.assertEqual(stats_collector.ns.total, concurrent_tasks)
