@@ -97,6 +97,9 @@ class Proxy:
             logger.error('ERROR on %s:%s: %s', src_ip, src_port, e)
             if tun:
                 tun.close_connection()
+            # Also, ensure socket is closed
+            if source:
+                del source
 
         logger.debug('Proxy finished')
 
