@@ -97,8 +97,6 @@ class TunnelProtocol(asyncio.Protocol):
         # We start processing command
         # After command, we can process stats or do_proxy, that is the "normal" operation
         self.runner = self.do_command
-        # Set starting timeout task, se we dont get hunged on connections without data (or insufficient data)
-        self.set_timeout(self.owner.cfg.command_timeout)
 
     def process_open(self) -> None:
         # Open Command has the ticket behind it
@@ -158,7 +156,7 @@ class TunnelProtocol(asyncio.Protocol):
                 self.transport.write(b'OK')
                 self.stats_manager.increment_connections()  # Increment connections counters
             except Exception as e:
-                logger.error('Error opening connection: %s', e)
+                logger.error('CONNECTION FAILED: %s', e)
                 self.close_connection()
 
         # add open other side to the loop
@@ -276,9 +274,10 @@ class TunnelProtocol(asyncio.Protocol):
 
     def close_connection(self):
         try:
+            self.clean_timeout()  # If a timeout is set, clean it
             if not self.transport.is_closing():
                 self.transport.close()
-        except Exception:
+        except Exception:   # nosec: best effort
             pass  # Ignore errors
 
     def notify_end(self):
@@ -304,6 +303,10 @@ class TunnelProtocol(asyncio.Protocol):
 
     def connection_made(self, transport: 'asyncio.transports.BaseTransport') -> None:
         # We know for sure that the transport is a Transport.
+
+        # Set starting timeout task, se we dont get hunged on connections without data (or insufficient data)
+        self.set_timeout(self.owner.cfg.command_timeout)
+
         self.transport = typing.cast('asyncio.transports.Transport', transport)
         # Get source
         self.source = self.transport.get_extra_info('peername')
