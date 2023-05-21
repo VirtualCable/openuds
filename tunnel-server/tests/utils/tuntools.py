@@ -85,7 +85,7 @@ def create_config_file(
             'ssl_dhparam': '',
         }
     )
-    values, cfg = fixtures.get_config(
+    values, cfg = fixtures.get_config(  # pylint: disable=unused-variable
         **values,
     )
     # Write config file
@@ -97,21 +97,20 @@ def create_config_file(
     try:
         yield cfgfile
     finally:
-        pass
         # Remove the files if they exists
         for filename in (cfgfile, cert_file):
-           try:
-               os.remove(filename)
-           except Exception:
-               pass
+            try:
+                os.remove(filename)
+            except Exception:
+                logger.warning('Error removing %s', filename)
 
 
 @contextlib.asynccontextmanager
 async def create_tunnel_proc(
     listen_host: str,
     listen_port: int,
-    remote_host: str = '0.0.0.0',  # Not used if response is provided
-    remote_port: int = 0,          # Not used if response is provided
+    remote_host: str = '0.0.0.0',  # nosec: intentionally value, Not used if response is provided
+    remote_port: int = 0,  # Not used if response is provided
     *,
     response: typing.Optional[
         typing.Union[
@@ -147,7 +146,7 @@ async def create_tunnel_proc(
     if response is None:
         response = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
-    port = random.randint(20000, 30000)
+    port = random.randint(8000, 58000)  # nosec  Just a random port
     hhost = f'[{listen_host}]' if ':' in listen_host else listen_host
     args = {
         'uds_server': f'http://{hhost}:{port}/uds/rest',
@@ -159,12 +158,8 @@ async def create_tunnel_proc(
         resp = conf.UDS_GET_TICKET_RESPONSE(remote_host, remote_port)
 
         @contextlib.asynccontextmanager
-        async def provider() -> collections.abc.AsyncGenerator[
-            typing.Optional[asyncio.Queue[bytes]], None
-        ]:
-            async with create_fake_broker_server(
-                listen_host, port, response=response or resp
-            ) as queue:
+        async def provider() -> collections.abc.AsyncGenerator[typing.Optional[asyncio.Queue[bytes]], None]:
+            async with create_fake_broker_server(listen_host, port, response=response or resp) as queue:
                 try:
                     yield queue
                 finally:
@@ -173,9 +168,7 @@ async def create_tunnel_proc(
     else:
 
         @contextlib.asynccontextmanager
-        async def provider() -> collections.abc.AsyncGenerator[
-            typing.Optional[asyncio.Queue[bytes]], None
-        ]:
+        async def provider() -> collections.abc.AsyncGenerator[typing.Optional[asyncio.Queue[bytes]], None]:
             with mock.patch(
                 'uds_tunnel.tunnel.TunnelProtocol._read_from_uds',
                 new_callable=tools.AsyncMock,
@@ -210,9 +203,7 @@ async def create_tunnel_proc(
             udstunnel.do_stop.clear()
 
             # Create the tunnel task
-            task = asyncio.create_task(
-                udstunnel.tunnel_proc_async(other_end, cfg, global_stats.ns)
-            )
+            task = asyncio.create_task(udstunnel.tunnel_proc_async(other_end, cfg, global_stats.ns))
 
             # Create a small asyncio server that reads the handshake,
             # and sends the socket to the tunnel_proc_async using the pipe
@@ -262,12 +253,10 @@ async def create_tunnel_proc(
                         try:
                             os.unlink(h.baseFilename)
                         except Exception:
-                            pass
+                            logger.warning('Could not remove log file %s', h.baseFilename)
 
 
-async def create_tunnel_server(
-    cfg: 'config.ConfigurationType', context: 'ssl.SSLContext'
-) -> 'asyncio.Server':
+async def create_tunnel_server(cfg: 'config.ConfigurationType', context: 'ssl.SSLContext') -> 'asyncio.Server':
     # Create fake proxy
     proxy = mock.MagicMock()
     proxy.cfg = cfg
@@ -286,9 +275,7 @@ async def create_tunnel_server(
         cfg.listen_address,
         cfg.listen_port,
         ssl=context,
-        family=socket.AF_INET6
-        if cfg.ipv6 or ':' in cfg.listen_address
-        else socket.AF_INET,
+        family=socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET,
     )
 
 
@@ -308,7 +295,7 @@ async def create_test_tunnel(
     ) as server:
         # Create a tunnel to localhost 13579
         # SSl cert for tunnel server
-        with certs.ssl_context(server.host) as (ssl_ctx, _):
+        with certs.ssl_context() as (ssl_ctx, _):
             _, cfg = fixtures.get_config(
                 address=server.host,
                 port=port or 7771,
@@ -365,10 +352,7 @@ async def create_fake_broker_server(
         else:
             rr = response or {}
 
-        resp: bytes = (
-            b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n'
-            + json.dumps(rr).encode()
-        )
+        resp: bytes = b'HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n' + json.dumps(rr).encode()
 
         data = b''  # reset data for next
         # send response
@@ -379,7 +363,7 @@ async def create_fake_broker_server(
 
     async with tools.AsyncTCPServer(
         host=host, port=port, processor=processor, name='create_fake_broker_server'
-    ) as server:
+    ) as server:  # pylint: disable=unused-variable
         try:
             yield requests
         finally:
@@ -391,14 +375,10 @@ async def open_tunnel_client(
     cfg: 'config.ConfigurationType',
     use_tunnel_handshake: bool = False,
     local_port: typing.Optional[int] = None,
-) -> collections.abc.AsyncGenerator[
-    typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None
-]:
+) -> collections.abc.AsyncGenerator[typing.Tuple[asyncio.StreamReader, asyncio.StreamWriter], None]:
     """opens an ssl socket to the tunnel server"""
     loop = asyncio.get_running_loop()
-    family = (
-        socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
-    )
+    family = socket.AF_INET6 if cfg.ipv6 or ':' in cfg.listen_address else socket.AF_INET
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.check_hostname = False
     context.verify_mode = ssl.CERT_NONE
@@ -475,15 +455,12 @@ async def tunnel_app_runner(
                 await process.wait()
 
 
-def get_correct_ticket(
-    length: int = consts.TICKET_LENGTH, *, prefix: typing.Optional[str] = None
-) -> bytes:
+def get_correct_ticket(length: int = consts.TICKET_LENGTH, *, prefix: typing.Optional[str] = None) -> bytes:
     """Returns a ticket with the correct length"""
     prefix = prefix or ''
     return (
         ''.join(
-            random.choice(string.ascii_letters + string.digits)
-            for _ in range(length - len(prefix))
+            random.choice(string.ascii_letters + string.digits) for _ in range(length - len(prefix))  # nosec just for tests
         ).encode()
         + prefix.encode()
     )
