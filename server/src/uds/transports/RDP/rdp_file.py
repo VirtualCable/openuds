@@ -124,8 +124,9 @@ class RDPFile:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
             else:
-                params.append('/sound')
-                params.append('/microphone')
+                params.append('/sound')  # Mac does not support alsa
+                # And microphone seems to not work on mac
+                # params.append('/microphone')
 
         if self.multimedia:
             params.append('/video')
