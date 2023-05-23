@@ -38,8 +38,13 @@ import webbrowser
 import threading
 import typing
 
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtCore import QSettings
+# First, try to use PySide6, available on arm64, x86_64, i386, ...
+try:
+    from PySide6 import QtCore, QtWidgets, QtGui
+    from PySide6.QtCore import QSettings
+except ImportError:  # If not found, try to use PyQt5 (not available on arm64)
+    from PyQt5 import QtCore, QtWidgets, QtGui  # type: ignore
+    from PyQt5.QtCore import QSettings  # type: ignore
 
 from uds.rest import RestApi, RetryException, InvalidVersion
 
@@ -54,7 +59,7 @@ from uds import VERSION
 from UDSWindow import Ui_MainWindow
 
 
-class UDSClient(QtWidgets.QMainWindow):
+class UDSClient(QtWidgets.QMainWindow):  # type: ignore
     ticket: str = ''
     scrambler: str = ''
     withError = False
@@ -106,7 +111,7 @@ class UDSClient(QtWidgets.QMainWindow):
             None,  # type: ignore
             'UDS Plugin Error',
             '{}'.format(error),
-            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.StandardButton.Ok,
         )
         self.withError = True
 
@@ -143,7 +148,7 @@ class UDSClient(QtWidgets.QMainWindow):
                 self,
                 'Upgrade required',
                 'A newer connector version is required.\nA browser will be opened to download it.',
-                QtWidgets.QMessageBox.Ok,
+                QtWidgets.QMessageBox.StandardButton.Ok,
             )
             webbrowser.open(e.downloadUrl)
             self.closeWindow()
@@ -241,9 +246,9 @@ def approveHost(hostName: str):
                 None,  # type: ignore
                 'ACCESS Warning',
                 errorString,
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,  # type: ignore
             )
-            == QtWidgets.QMessageBox.Yes
+            == QtWidgets.QMessageBox.StandardButton.Yes
         ):
             settings.setValue(hostName, True)
             approved = True
@@ -264,9 +269,9 @@ def sslError(hostname: str, serial):
             None,  # type: ignore
             'SSL Warning',
             f'Could not check SSL certificate for {hostname}.\nDo you trust this host?',
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,  # type: ignore
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,  # type: ignore
         )
-        == QtWidgets.QMessageBox.Yes
+        == QtWidgets.QMessageBox.StandardButton.Yes
     ):
         approved = True
         settings.setValue(serial, True)
@@ -287,7 +292,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
                 None,  # type: ignore
                 'Upgrade required',
                 'A newer connector version is required.\nA browser will be opened to download it.',
-                QtWidgets.QMessageBox.Ok,
+                QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
             )
             webbrowser.open(e.downloadUrl)
             return 0
@@ -305,7 +310,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             'Service not ready',
             '{}'.format('.\n'.join(str(e).split('.')))
             + '\n\nPlease, retry again in a while.',
-            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
         )
     except Exception as e:  # pylint: disable=broad-exception-caught
         # logger.exception('Got exception on getTransportData')
@@ -313,7 +318,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             None,  # type: ignore
             'Error',
             '{}'.format(str(e)) + '\n\nPlease, retry again in a while.',
-            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
         )
     return 0
 
@@ -360,7 +365,7 @@ def main(args: typing.List[str]):
                 None,  # type: ignore
                 'Notice',
                 f'UDS Client Version {VERSION} does not support HTTP protocol Anymore.',
-                QtWidgets.QMessageBox.Ok,
+                QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
             )
             sys.exit(1)
         if uri[:7] != 'udss://':
@@ -379,7 +384,7 @@ def main(args: typing.List[str]):
             None,  # type: ignore
             'Notice',
             f'UDS Client Version {VERSION}',
-            QtWidgets.QMessageBox.Ok,
+            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
         )
         sys.exit(1)
 
