@@ -26,6 +26,10 @@ class UdsApplication(QtWidgets.QApplication):   # type: ignore
         self.lastWindowClosed.connect(self.closeTunnels)  # type: ignore
 
     def cleanTunnels(self) -> None:
+        '''
+        Removes all finished tunnels from the list
+        '''
+
         def isRunning(p: subprocess.Popen):
             try:
                 if p.poll() is None:
@@ -34,13 +38,13 @@ class UdsApplication(QtWidgets.QApplication):   # type: ignore
                 logger.debug('Got error polling subprocess: %s', e)
             return False
 
-        for k in [i for i, tunnel in enumerate(self.tunnels) if not isRunning(tunnel)]:
-            try:
-                del self.tunnels[k]
-            except Exception as e:
-                logger.debug('Error closing tunnel: %s', e)
+        # Remove references to finished tunnels, they will be garbage collected
+        self.tunnels = [tunnel for tunnel in self.tunnels if isRunning(tunnel)]
 
     def closeTunnels(self) -> None:
+        '''
+        Finishes all running tunnels
+        '''
         logger.debug('Closing remaining tunnels')
         for tunnel in self.tunnels:
             logger.debug('Checking %s - "%s"', tunnel, tunnel.poll())
@@ -74,6 +78,6 @@ def main(args: typing.List[str]):
 
         sys.exit(app.exec())
 
+
 if __name__ == "__main__":
     main(args=sys.argv)
-

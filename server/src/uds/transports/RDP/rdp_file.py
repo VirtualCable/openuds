@@ -192,6 +192,12 @@ class RDPFile:
         if self.customParameters and self.customParameters.strip() != '':
             params += shlex.split(self.customParameters.strip())
 
+        # On MacOSX, /rfx /gfx:rfx are almost inprescindible, as it seems the only way to get a decent performance
+        if self.target == OsDetector.KnownOS.Macintosh:
+            for i in ('/rfx', '/gfx:rfx'):
+                if i not in params:
+                    params.append(i)
+
         return params
 
     def getGeneric(self):  # pylint: disable=too-many-statements
