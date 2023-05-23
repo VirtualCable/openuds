@@ -36,6 +36,14 @@ import platform
 import sys
 import tempfile
 
+# First, try to use PySide6, available on arm64, x86_64, i386, ...
+try:
+    from PySide6 import QtCore   # Just to test if it's available
+    QT='PySide6'
+except ImportError:  # If not found, it is using PyQt5
+    QT='PyQt5'
+
+
 LOGLEVEL = logging.INFO
 DEBUG = False
 
@@ -79,6 +87,7 @@ if DEBUG:
     logger.debug('  Python compiler: %s', platform.python_compiler())
     logger.debug('  Python build: %s', platform.python_build())
     # Also environment variables and any useful info
+    logger.debug('Qt framework: %s', QT)
     logger.debug('Log level set to DEBUG')
     logger.debug('Environment variables:')
     for k, v in os.environ.items():
