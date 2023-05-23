@@ -38,10 +38,10 @@ import webbrowser
 import threading
 import typing
 
-# First, try to use PySide6, available on arm64, x86_64, i386, ...
+# First, try to use PyQt6, available on arm64, x86_64, i386, ...
 try:
-    from PySide6 import QtCore, QtWidgets, QtGui
-    from PySide6.QtCore import QSettings
+    from PyQt6 import QtCore, QtWidgets, QtGui
+    from PyQt6.QtCore import QSettings
 except ImportError:  # If not found, try to use PyQt5 (not available on arm64)
     from PyQt5 import QtCore, QtWidgets, QtGui  # type: ignore
     from PyQt5.QtCore import QSettings  # type: ignore

@@ -7,7 +7,7 @@ function process {
     done
 }    
 
-pyrcc5 UDSResources.qrc -o UDSResources_rc.py
+pyrcc5 UDSResources.qrc -o uds/ UDSResources_rc.py
 
 
 # process current directory ui's
