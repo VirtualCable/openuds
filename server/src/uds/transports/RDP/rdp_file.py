@@ -48,7 +48,7 @@ class RDPFile:
     address = ''
     username = ''
     domain = ''
-    password = ''
+    password = ''   # nosec: emtpy password is ok here
     redirectSerials = False
     redirectPrinters = False
     redirectDrives = "false"  # Can have "true", "false" or "dynamic"
@@ -179,7 +179,7 @@ class RDPFile:
             params.append('/u:{}'.format(self.username))
         else:
             forceRDPSecurity = True
-        if self.password != '':
+        if self.password:
             params.append('/p:{}'.format(self.password))
         else:
             forceRDPSecurity = True
@@ -192,10 +192,16 @@ class RDPFile:
         if self.customParameters and self.customParameters.strip() != '':
             params += shlex.split(self.customParameters.strip())
 
+        # On MacOSX, /rfx /gfx:rfx are almost inprescindible, as it seems the only way to get a decent performance
+        if self.target == OsDetector.KnownOS.Macintosh:
+            for i in ('/rfx', '/gfx:rfx'):
+                if i not in params:
+                    params.append(i)
+
         return params
 
     def getGeneric(self):  # pylint: disable=too-many-statements
-        password = '{password}'
+        password = '{password}'  # nosec: placeholder
         screenMode = '2' if self.fullScreen else '1'
         audioMode = '0' if self.redirectAudio else '2'
         serials = '1' if self.redirectSerials else '0'
