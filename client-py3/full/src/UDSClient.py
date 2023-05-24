@@ -51,7 +51,6 @@ from uds import tools
 from uds import VERSION
 
 
-
 class UDSClient(QtWidgets.QMainWindow):  # type: ignore
     ticket: str = ''
     scrambler: str = ''
@@ -66,7 +65,7 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
         self.api = api
         self.ticket = ticket
         self.scrambler = scrambler
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)  # type: ignore
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint | QtCore.Qt.WindowType.WindowStaysOnTopHint)
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -83,7 +82,7 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
         self.move(hpos, vpos)
 
         self.animTimer = QtCore.QTimer()
-        self.animTimer.timeout.connect(self.updateAnim)  # type: ignore
+        self.animTimer.timeout.connect(self.updateAnim)
         # QtCore.QObject.connect(self.animTimer, QtCore.SIGNAL('timeout()'), self.updateAnim)
 
         self.activateWindow()
@@ -121,7 +120,7 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
         self.ui.progressBar.setValue(self.anim)
 
     def startAnim(self):
-        self.ui.progressBar.invertedAppearance = False  # type: ignore
+        self.ui.progressBar.setInvertedAppearance(False)
         self.anim = 0
         self.animInverted = False
         self.ui.progressBar.setInvertedAppearance(self.animInverted)
@@ -129,7 +128,7 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
             self.animTimer.start(40)
 
     def stopAnim(self):
-        self.ui.progressBar.invertedAppearance = False  # type: ignore
+        self.ui.progressBar.setInvertedAppearance(False)
         if self.animTimer:
             self.animTimer.stop()
 
@@ -239,7 +238,7 @@ def approveHost(hostName: str):
                 None,  # type: ignore
                 'ACCESS Warning',
                 errorString,
-                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,  # type: ignore
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
             )
             == QtWidgets.QMessageBox.StandardButton.Yes
         ):
@@ -262,7 +261,7 @@ def sslError(hostname: str, serial):
             None,  # type: ignore
             'SSL Warning',
             f'Could not check SSL certificate for {hostname}.\nDo you trust this host?',
-            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,  # type: ignore
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
         )
         == QtWidgets.QMessageBox.StandardButton.Yes
     ):
@@ -285,7 +284,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
                 None,  # type: ignore
                 'Upgrade required',
                 'A newer connector version is required.\nA browser will be opened to download it.',
-                QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
+                QtWidgets.QMessageBox.StandardButton.Ok,
             )
             webbrowser.open(e.downloadUrl)
             return 0
@@ -303,7 +302,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             'Service not ready',
             '{}'.format('.\n'.join(str(e).split('.')))
             + '\n\nPlease, retry again in a while.',
-            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
+            QtWidgets.QMessageBox.StandardButton.Ok,
         )
     except Exception as e:  # pylint: disable=broad-exception-caught
         # logger.exception('Got exception on getTransportData')
@@ -311,7 +310,7 @@ def minimal(api: RestApi, ticket: str, scrambler: str):
             None,  # type: ignore
             'Error',
             '{}'.format(str(e)) + '\n\nPlease, retry again in a while.',
-            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
+            QtWidgets.QMessageBox.StandardButton.Ok,
         )
     return 0
 
@@ -327,7 +326,7 @@ def main(args: typing.List[str]):
 
     if 'darwin' not in sys.platform:
         logger.debug('Mac OS *NOT* Detected')
-        app.setStyle('plastique')  # type: ignore
+        app.setStyle('plastique')
     else:
         logger.debug('Platform is Mac OS, adding homebrew possible paths')
         os.environ['PATH'] += ''.join(
@@ -358,7 +357,7 @@ def main(args: typing.List[str]):
                 None,  # type: ignore
                 'Notice',
                 f'UDS Client Version {VERSION} does not support HTTP protocol Anymore.',
-                QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
+                QtWidgets.QMessageBox.StandardButton.Ok,
             )
             sys.exit(1)
         if uri[:7] != 'udss://':
@@ -377,7 +376,7 @@ def main(args: typing.List[str]):
             None,  # type: ignore
             'Notice',
             f'UDS Client Version {VERSION}',
-            QtWidgets.QMessageBox.StandardButton.Ok,  # type: ignore
+            QtWidgets.QMessageBox.StandardButton.Ok,
         )
         sys.exit(1)
 
@@ -405,7 +404,10 @@ def main(args: typing.List[str]):
         logger.exception('Got an exception executing client:')
         exitVal = 128
         QtWidgets.QMessageBox.critical(
-            None, 'Error', str(e), QtWidgets.QMessageBox.Ok  # type: ignore
+            None,  # type: ignore
+            'Error', 
+            f'Fatal error: {e}',
+            QtWidgets.QMessageBox.StandardButton.Ok
         )
 
     logger.debug('Exiting')
