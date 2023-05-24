@@ -38,7 +38,6 @@ import webbrowser
 import threading
 import typing
 
-# First, try to use PyQt6, available on arm64, x86_64, i386, ...
 from uds.ui import QtCore, QtWidgets, QtGui, QSettings, Ui_MainWindow
 from uds.rest import RestApi, RetryException, InvalidVersion
 
