@@ -35,7 +35,7 @@ AppDir:
     include:
       - python3
       - python3-pkg-resources
-      # In future, will be replaced with pyside6 (when available as debian package)
+      # In future, will be replaced with PyQt6 (when available as debian package)
       - python3-pyqt5
       - python3-paramiko
       - python3-cryptography

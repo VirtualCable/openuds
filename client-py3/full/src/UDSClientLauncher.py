@@ -5,13 +5,8 @@ import typing
 
 from uds.log import logger
 import UDSClient
-from UDSLauncherMac import Ui_MacLauncher
 
-# First, try to use PySide6 (has arm64, x86_64 support)
-try:
-    from PySide6 import QtCore, QtWidgets, QtGui
-except ImportError:  # If not found, try to use PyQt5 (only x86_64)
-    from PyQt5 import QtCore, QtWidgets, QtGui  # type: ignore
+from uds.ui import QtCore, QtWidgets, QtGui, Ui_MacLauncher
 
 SCRIPT_NAME = 'UDSClientLauncher'
 

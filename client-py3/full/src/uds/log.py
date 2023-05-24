@@ -36,10 +36,10 @@ import platform
 import sys
 import tempfile
 
-# First, try to use PySide6, available on arm64, x86_64, i386, ...
+# First, try to use PyQt6, available on arm64, x86_64, i386, ...
 try:
-    from PySide6 import QtCore   # Just to test if it's available
-    QT='PySide6'
+    from PyQt6 import QtCore   # Just to test if it's available
+    QT='PyQt6'
 except ImportError:  # If not found, it is using PyQt5
     QT='PyQt5'
 

@@ -38,14 +38,8 @@ import webbrowser
 import threading
 import typing
 
-# First, try to use PySide6, available on arm64, x86_64, i386, ...
-try:
-    from PySide6 import QtCore, QtWidgets, QtGui
-    from PySide6.QtCore import QSettings
-except ImportError:  # If not found, try to use PyQt5 (not available on arm64)
-    from PyQt5 import QtCore, QtWidgets, QtGui  # type: ignore
-    from PyQt5.QtCore import QSettings  # type: ignore
-
+# First, try to use PyQt6, available on arm64, x86_64, i386, ...
+from uds.ui import QtCore, QtWidgets, QtGui, QSettings, Ui_MainWindow
 from uds.rest import RestApi, RetryException, InvalidVersion
 
 # Just to ensure there are available on runtime
@@ -56,7 +50,6 @@ from uds.log import logger
 from uds import tools
 from uds import VERSION
 
-from UDSWindow import Ui_MainWindow
 
 
 class UDSClient(QtWidgets.QMainWindow):  # type: ignore

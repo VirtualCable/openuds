@@ -7,7 +7,7 @@ update-desktop-database
 echo "Installation process done."
 echo "Remember that the following packages must be installed on system:"
 echo "* Python3 paramiko"
-echo "* Python3 PySide6 or PyQt5"
+echo "* Python3 PyQt6 or PyQt5"
 echo "* Python3 six"
 echo "* Python3 requests"
 echo "* Python3 cryptography"

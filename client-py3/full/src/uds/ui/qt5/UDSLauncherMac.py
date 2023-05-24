@@ -62,14 +62,4 @@ class Ui_MacLauncher(object):
         MacLauncher.setWindowTitle(_translate("MacLauncher", "UDS Launcher"))
         self.topLabel.setText(_translate("MacLauncher", "<html><head/><body><p align=\"center\"><span style=\" font-size:12pt; font-weight:600;\">UDS Launcher</span></p></body></html>"))
         self.label_2.setText(_translate("MacLauncher", "<html><head/><body><p align=\"center\"><span style=\" font-size:6pt;\">Closing this window will end all UDS tunnels</span></p></body></html>"))
-import UDSResources_rc
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MacLauncher = QtWidgets.QMainWindow()
-    ui = Ui_MacLauncher()
-    ui.setupUi(MacLauncher)
-    MacLauncher.show()
-    sys.exit(app.exec_())
+from uds.ui.qt5 import UDSResources_rc
