@@ -49,6 +49,7 @@ from uds.core.util.decorators import allowCache, ensureConected
 
 CACHE_DURATION = 120  # Keep cache 2 minutes by default
 CACHE_INFO_DURATION = 30
+CACHE_DURATION_LONG = 24 * 60 * 60  # 24 hours
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -284,16 +285,43 @@ class ProxmoxClient:
     def getNodeNetworks(self, node: str, **kwargs):
         return self._get('nodes/{}/network'.format(node))['data']
 
+    # pylint: disable=unused-argument
     @ensureConected
-    def getBestNodeForVm(self, minMemory: int = 0) -> typing.Optional[types.NodeStats]:
+    @allowCache(
+        'nodeHasGpu',
+        CACHE_DURATION_LONG,
+        cachingArgs=1,
+        cachingKWArgs=['node'],
+        cachingKeyFnc=cachingKeyHelper,
+    )
+    def nodeHasGpu(self, node: str, **kwargs) -> typing.Any:
+        for device in self._get(f'nodes/{node}/hardware/pci')['data']:
+            if 'mdev' in device:
+                return True
+        return False
+
+    @ensureConected
+    def getBestNodeForVm(self, minMemory: int = 0, mustHaveVGPUS: typing.Optional[bool] = None) -> typing.Optional[types.NodeStats]:
+        '''
+        Returns the best node to create a VM on
+
+        Args:
+            minMemory (int, optional): Minimum memory required. Defaults to 0.
+            mustHaveVGPUS (typing.Optional[bool], optional): If the node must have VGPUS. True, False or None (don't care). Defaults to None.
+        '''
         best = types.NodeStats.empty()
         node: types.NodeStats
-        weightFnc = lambda x: (x.mem / x.maxmem) + (x.cpu / x.maxcpu) * 1.3
+
+        # Function to calculate the weight of a node
+        def weightFnc(x: types.NodeStats) -> float:
+            return (x.mem / x.maxmem) + (x.cpu / x.maxcpu) * 1.3
 
         # Offline nodes are not "the best"
         for node in filter(lambda x: x.status == 'online', self.getNodesStats()):
             if minMemory and node.mem < minMemory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
+            if mustHaveVGPUS is not None and mustHaveVGPUS != self.nodeHasGpu(node.name):
+                continue
 
             if weightFnc(node) < weightFnc(best):
                 best = node
@@ -313,6 +341,7 @@ class ProxmoxClient:
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
         toPool: typing.Optional[str] = None,
+        mustHaveVGPUS: typing.Optional[bool] = None,
     ) -> types.VmCreationResult:
         vmInfo = self.getVmInfo(vmId)
 
@@ -322,7 +351,7 @@ class ProxmoxClient:
             logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
             if toStorage and self.getStorage(toStorage, vmInfo.node).shared:
-                node = self.getBestNodeForVm(minMemory=-1)
+                node = self.getBestNodeForVm(minMemory=-1, mustHaveVGPUS=mustHaveVGPUS)
                 if node is None:
                     raise ProxmoxError(
                         'No switable node available for new vm {} on Proxmox'.format(

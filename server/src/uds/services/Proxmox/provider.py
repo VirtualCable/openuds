@@ -239,6 +239,7 @@ class ProxmoxProvider(
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
         toPool: typing.Optional[str] = None,
+        mustHaveVGPUS: typing.Optional[bool] = None,
     ) -> client.types.VmCreationResult:
         return self.__getApi().cloneVm(
             vmId,
@@ -249,6 +250,7 @@ class ProxmoxProvider(
             toNode,
             toStorage,
             toPool,
+            mustHaveVGPUS,
         )
 
     def startMachine(self, vmId: int) -> client.types.UPID:
