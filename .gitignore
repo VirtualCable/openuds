@@ -163,3 +163,4 @@
 .vscode
 .mypy_cache
 .pytest_cache
+.python-version
