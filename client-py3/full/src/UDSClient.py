@@ -38,7 +38,7 @@ import webbrowser
 import threading
 import typing
 
-from uds.ui import QtCore, QtWidgets, QtGui, QSettings, Ui_MainWindow
+from uds.ui import QtCore, QtWidgets, QtGui, QSettings, Ui_MainWindow  # type: ignore
 from uds.rest import RestApi, RetryException, InvalidVersion
 
 # Just to ensure there are available on runtime
@@ -145,6 +145,8 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
             self.closeWindow()
             return
         except Exception as e:  # pylint: disable=broad-exception-caught
+            if logger.getEffectiveLevel() == 10:
+                logger.exception('Get Version')
             self.showError(e)
             self.closeWindow()
             return
@@ -175,7 +177,8 @@ class UDSClient(QtWidgets.QMainWindow):  # type: ignore
             # Retry operation in ten seconds
             QtCore.QTimer.singleShot(10000, self.getTransportData)
         except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.exception('Error getting transport data')
+            if logger.getEffectiveLevel() == 10:
+                logger.exception('Get Transport Data')
             self.showError(e)
 
     def start(self):
