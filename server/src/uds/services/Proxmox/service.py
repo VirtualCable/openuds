@@ -156,6 +156,20 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
         required=True,
     )
 
+    gpu = gui.ChoiceField(
+        label=_("GPU Availability"),
+        rdonly=False,
+        order=112,
+        values={
+            '0': _('Do not check'),
+            '1': _('Only if available'),
+            '2': _('Only if NOT available'),
+        },
+        tooltip=_('Storage for publications & machines.'),
+        tab=_('Machine'),
+        required=True,
+    )
+
     baseName = gui.TextField(
         label=_('Machine Names'),
         rdonly=False,
@@ -249,6 +263,7 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
             linkedClone=True,
             toStorage=self.datastore.value,
             toPool=pool,
+            mustHaveVGPUS={'1': True, '2': False}.get(self.gpu.value, None),
         )
 
     def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':

@@ -30,6 +30,8 @@
 import logging
 import typing
 
+from uds.core.environment import Environment 
+
 from django.utils.translation import gettext as _
 
 
@@ -37,9 +39,7 @@ logger = logging.getLogger(__name__)
 
 
 def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
-    from .provider import ProxmoxProvider
-
-    from uds.core.environment import Environment
+    from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)
     env = Environment(parameters['ev'])
@@ -51,8 +51,6 @@ def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.An
         vmInfo = provider.getMachineInfo(int(parameters['machine']))
     except Exception:
         return []
-
-    storages = provider.listStorages(vmInfo.node)
 
     res = []
     # Get storages for that datacenter

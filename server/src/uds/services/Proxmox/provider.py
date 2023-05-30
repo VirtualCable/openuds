@@ -163,7 +163,7 @@ class ProxmoxProvider(
     _vmid_generator: UniqueIDGenerator
     _macs_generator: UniqueMacGenerator
 
-    def __getApi(self) -> client.ProxmoxClient:
+    def _getApi(self) -> client.ProxmoxClient:
         """
         Returns the connection API object
         """
@@ -205,32 +205,32 @@ class ProxmoxProvider(
             True if all went fine, false if id didn't
         """
 
-        return self.__getApi().test()
+        return self._getApi().test()
 
     def listMachines(self) -> typing.List[client.types.VMInfo]:
-        return self.__getApi().listVms()
+        return self._getApi().listVms()
 
     def getMachineInfo(
         self, vmId: int, poolId: typing.Optional[str] = None
     ) -> client.types.VMInfo:
-        return self.__getApi().getVMPoolInfo(vmId, poolId, force=True)
+        return self._getApi().getVMPoolInfo(vmId, poolId, force=True)
 
     def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
-        return self.__getApi().getVmConfiguration(vmId, force=True)
+        return self._getApi().getVmConfiguration(vmId, force=True)
 
     def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
-        return self.__getApi().getStorage(storageId, node)
+        return self._getApi().getStorage(storageId, node)
 
     def listStorages(
         self, node: typing.Optional[str]
     ) -> typing.List[client.types.StorageInfo]:
-        return self.__getApi().listStorages(node=node, content='images')
+        return self._getApi().listStorages(node=node, content='images')
 
     def listPools(self) -> typing.List[client.types.PoolInfo]:
-        return self.__getApi().listPools()
+        return self._getApi().listPools()
 
     def makeTemplate(self, vmId: int) -> None:
-        return self.__getApi().convertToTemplate(vmId)
+        return self._getApi().convertToTemplate(vmId)
 
     def cloneMachine(
         self,
@@ -241,8 +241,9 @@ class ProxmoxProvider(
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
         toPool: typing.Optional[str] = None,
+        mustHaveVGPUS: typing.Optional[bool] = None,
     ) -> client.types.VmCreationResult:
-        return self.__getApi().cloneVm(
+        return self._getApi().cloneVm(
             vmId,
             self.getNewVmId(),
             name,
@@ -251,65 +252,67 @@ class ProxmoxProvider(
             toNode,
             toStorage,
             toPool,
+            mustHaveVGPUS,
         )
+        
 
     def startMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().startVm(vmId)
+        return self._getApi().startVm(vmId)
 
     def stopMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().stopVm(vmId)
+        return self._getApi().stopVm(vmId)
 
     def resetMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().resetVm(vmId)
+        return self._getApi().resetVm(vmId)
 
     def suspendMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().suspendVm(vmId)
+        return self._getApi().suspendVm(vmId)
 
     def shutdownMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().shutdownVm(vmId)
+        return self._getApi().shutdownVm(vmId)
 
     def removeMachine(self, vmId: int) -> client.types.UPID:
-        return self.__getApi().deleteVm(vmId)
+        return self._getApi().deleteVm(vmId)
 
     def getTaskInfo(self, node: str, upid: str) -> client.types.TaskStatus:
-        return self.__getApi().getTask(node, upid)
+        return self._getApi().getTask(node, upid)
 
     def enableHA(
         self, vmId: int, started: bool = False, group: typing.Optional[str] = None
     ) -> None:
-        self.__getApi().enableVmHA(vmId, started, group)
+        self._getApi().enableVmHA(vmId, started, group)
 
     def setVmMac(
         self, vmId: int, macAddress: str
     ) -> None:
-        self.__getApi().setVmMac(vmId, macAddress)
+        self._getApi().setVmMac(vmId, macAddress)
 
     def disableHA(self, vmId: int) -> None:
-        self.__getApi().disableVmHA(vmId)
+        self._getApi().disableVmHA(vmId)
 
     def setProtection(
         self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
     ) -> None:
-        self.__getApi().setProtection(vmId, node, protection)
+        self._getApi().setProtection(vmId, node, protection)
 
     def listHaGroups(self) -> typing.List[str]:
-        return self.__getApi().listHAGroups()
+        return self._getApi().listHAGroups()
 
     def getConsoleConnection(
         self, machineId: str
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
-        return self.__getApi().getConsoleConnection(machineId)
+        return self._getApi().getConsoleConnection(machineId)
 
     def getNewVmId(self) -> int:
         while True:  # look for an unused VmId
             vmId = self._vmid_generator.get(self.startVmId.num(), MAX_VM_ID)
-            if self.__getApi().isVMIdAvailable(vmId):
+            if self._getApi().isVMIdAvailable(vmId):
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)
 
     @allowCache('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
-        return self.__getApi().test()
+        return self._getApi().test()
 
     def getMacRange(self) -> str:
         return self.macsRange.value
