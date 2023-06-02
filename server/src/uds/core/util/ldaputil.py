@@ -36,6 +36,12 @@ import tempfile
 import os.path
 
 import ldap.filter
+from ldap import (
+    SCOPE_BASE,  # type: ignore
+    SCOPE_SUBTREE,  # type: ignore
+    SCOPE_ONELEVEL,  # type: ignore
+    # SCOPE_SUBORDINATE,  # type: ignore
+)
 
 from django.utils.translation import ugettext as _
 from uds.core.util import tools
@@ -137,8 +143,8 @@ def getAsDict(
     con: typing.Any,
     base: str,
     ldapFilter: str,
-    attrList: typing.Optional[typing.Iterable[str]],
-    sizeLimit: int,
+    attrList: typing.Optional[typing.Iterable[str]]=None,
+    sizeLimit: int=100,
     scope=ldap.SCOPE_SUBTREE,  # type: ignore
 ) -> typing.Generator[LDAPResultType, None, None]:
     """
@@ -148,7 +154,7 @@ def getAsDict(
     logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
 
     if attrList:
-        attrList = [i for i in attrList]  # Ensures iterable is a dict
+        attrList = list(attrList)  # Ensures iterable is a list
 
     res = None
     try:
@@ -230,3 +236,16 @@ def recursive_delete(con: typing.Any, base_dn: str) -> None:
         con.delete_s(dn)
 
     con.delete_s(base_dn)
+
+def getRootDSE(con: typing.Any) -> typing.Optional[LDAPResultType]:
+    """
+    Gets the root DSE of the LDAP server
+    @param cont: Connection to LDAP server
+    @return: None if root DSE is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
+    """
+    return next(getAsDict(
+        con=con,
+        base='',
+        ldapFilter='(objectClass=*)',
+        scope=ldap.SCOPE_BASE,  # type: ignore
+    ))
