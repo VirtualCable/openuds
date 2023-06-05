@@ -256,7 +256,7 @@ class gui:
     def fromBool(bol: bool) -> str:
         """
         Converts a boolean to the string representation. True is converted to
-        "true", False to "false".
+        "true", False to "false". (gui.TRUE and gui.FALSE are the same)
 
         Args:
             bol: Boolean value (True or false) to convert
