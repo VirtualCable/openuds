@@ -46,6 +46,7 @@ from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUs
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -55,7 +56,6 @@ from uds.web.util import configjs
 from uds.core import mfas
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix
-
 
 
 logger = logging.getLogger(__name__)
@@ -95,17 +95,13 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 
 # Basically, the original /login method, but fixed for modern interface
 @never_cache
-def login(
-    request: ExtendedHttpRequest, tag: typing.Optional[str] = None
-) -> HttpResponse:
+def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     logger.debug('Tag: %s', tag)
     response: typing.Optional[HttpResponse] = None
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
-        request.authorized = (
-            False  # Ensure that on login page, user is unauthorized first
-        )
+        request.authorized = False  # Ensure that on login page, user is unauthorized first
 
         form = LoginForm(request.POST, tag=tag)
         loginResult = checkLogin(request, form, tag)
@@ -113,7 +109,9 @@ def login(
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
-            auth.webLogin(request, response, loginResult.user, loginResult.password)  # data is user password here
+            auth.webLogin(
+                request, response, loginResult.user, loginResult.password
+            )  # data is user password here
             # And restore tag
             request.session['tag'] = tag
 
@@ -130,7 +128,9 @@ def login(
                 return HttpResponseRedirect(loginResult.url)
 
             if request.ip not in ('127.0.0.1', '::1'):  # If not localhost, wait a bit
-                time.sleep(random.SystemRandom().randint(1600, 2400) / 1000)  # On failure, wait a bit if not localhost (random wait)
+                time.sleep(
+                    random.SystemRandom().randint(1600, 2400) / 1000
+                )  # On failure, wait a bit if not localhost (random wait)
             # If error is numeric, redirect...
             if loginResult.errid:
                 return errors.errorView(request, loginResult.errid)
@@ -150,16 +150,12 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
-    return auth.webLogout(
-        request, logoutResponse.url or request.session.get('logouturl', None)
-    )
+    return auth.webLogout(request, logoutResponse.url or request.session.get('logouturl', None))
 
 
 @never_cache
 def js(request: ExtendedHttpRequest) -> HttpResponse:
-    return HttpResponse(
-        content=configjs.udsJs(request), content_type='application/javascript'
-    )
+    return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
 
 
 @never_cache
@@ -170,10 +166,8 @@ def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 
 # The MFA page does not needs CRF token, so we disable it
 @csrf_exempt
-def mfa(request: ExtendedHttpRequest) -> HttpResponse:
-    if (
-        not request.user or request.authorized
-    ):  # If no user, or user is already authorized, redirect to index
+def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-many-return-statements,too-many-statements
+    if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
         logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
@@ -196,12 +190,12 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
     mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
 
     # Get validity duration
-    validity = mfaProvider.validity*60
+    validity = mfaProvider.validity * 60
     now = getSqlDatetimeAsUnix()
     start_time = request.session.get('mfa_start_time', now)
 
     # If mfa process timed out, we need to start login again
-    if validity > 0 and now - start_time > validity:
+    if 0 < validity < now - start_time:
         logger.debug('MFA: MFA process timed out')
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
@@ -251,10 +245,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:
                 response = HttpResponseRedirect(reverse('page.index'))
 
                 # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
-                if (
-                    mfaProvider.remember_device > 0
-                    and form.cleaned_data['remember'] is True
-                ):
+                if mfaProvider.remember_device > 0 and form.cleaned_data['remember'] is True:
                     response.set_cookie(
                         MFA_COOKIE_NAME,
                         mfaUserId,
@@ -332,26 +323,33 @@ def update_transport_ticket(
 
             # Update username andd password in ticket
             username = data.get('username', None) or None  # None if not present
-            password = (
-                data.get('password', None) or None
-            )  # If password is empty, set it to None
+            password = data.get('password', None) or None  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
                 password = CryptoManager().symCrypt(password, scrambler)
 
             def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
-                if 'ticket-info' not in data:
-                    return True
-                try:
-                    user = models.User.objects.get(
-                        uuid=data['ticket-info'].get('user', None)
-                    )
-                    if request.user == user:
-                        return True
-                except models.User.DoesNotExist:
-                    pass
-                return False
+                if 'ticket-info' in data:
+                    try:
+                        user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                        if request.user != user:
+                            return False
+                    except models.User.DoesNotExist:
+                        return False
+
+                    if username:
+                        try:
+                            userService = models.UserService.objects.get(
+                                uuid=data['ticket-info'].get('userService', None)
+                            )
+                            UserServiceManager().notifyPreconnect(
+                                userService, username, data.get('protocol', '')
+                            )
+                        except models.UserService.DoesNotExist:
+                            pass
+
+                return True
 
             models.TicketStore.update(
                 uuid=idTicket,
@@ -360,14 +358,10 @@ def update_transport_ticket(
                 password=password,
                 domain=domain,
             )
-            return HttpResponse(
-                '{"status": "OK"}', status=200, content_type='application/json'
-            )
+            return HttpResponse('{"status": "OK"}', status=200, content_type='application/json')
     except Exception as e:
         # fallback to error
         logger.warning('Error updating ticket: %s', e)
 
     # Invalid request
-    return HttpResponse(
-        '{"status": "Invalid Request"}', status=400, content_type='application/json'
-    )
+    return HttpResponse('{"status": "Invalid Request"}', status=400, content_type='application/json')
