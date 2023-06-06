@@ -47,7 +47,7 @@ from uds import models
 from uds.core import mfas
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
-from uds.core.managers import cryptoManager
+from uds.core.managers import cryptoManager, userServiceManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -332,7 +332,7 @@ def update_transport_ticket(
             data = json.loads(request.body)
 
             # Update username andd password in ticket
-            username = data.get('username', None) or None  # None if not present
+            username: typing.Optional[str] = data.get('username', None) or None  # None if not present
             password = (
                 data.get('password', None) or None
             )  # If password is empty, set it to None
@@ -348,11 +348,25 @@ def update_transport_ticket(
                     user = models.User.objects.get(
                         uuid=data['ticket-info'].get('user', None)
                     )
-                    if request.user == user:
-                        return True
+                    if request.user != user:
+                        return False
                 except models.User.DoesNotExist:
+                    return False
+
+                try:
+                    userService = models.UserService.objects.get(
+                        uuid=data['ticket-info'].get('userService', None)
+                    )
+                    # Notify preconnect
+                    # Notifies pre-connect to wyse...
+                    if username:
+                        userServiceManager().notifyPreconnect(
+                            userService, username, data.get('protocol', '')
+                        )
+                except models.UserService.DoesNotExist:
                     pass
-                return False
+
+                return True
 
             models.TicketStore.update(
                 uuid=idTicket,
