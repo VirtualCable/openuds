@@ -1,1 +1,0 @@
-sudo daemonize -p /var/run/udsproxy.pid -l /var/lock/subsys/udsproxy -u nobody /home/dkmaster/projects/uds/openuds/udsProxy/bin/udsproxy
