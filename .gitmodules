@@ -7,3 +7,6 @@
 [submodule "actor"]
 	path = actor
 	url = git@github.com:VirtualCable/uds-actor.git
+[submodule "client-py3"]
+	path = client-py3
+	url = git@github.com:VirtualCable/uds-client.git
