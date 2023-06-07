@@ -1,6 +1,0 @@
-#!/bin/sh
-
-FOLDER=/usr/share/UDSActor
-
-cd $FOLDER
-exec python3 actor_config.py -platform xcb $@
