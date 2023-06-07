@@ -1,3 +1,6 @@
 [submodule "guacamole-auth-uds"]
 	path = guacamole-auth-uds
 	url = git@github.com:VirtualCable/guacamole-auth-uds.git
+[submodule "tunnel-server"]
+	path = tunnel-server
+	url = git@github.com:VirtualCable/uds-tunnel-server.git
