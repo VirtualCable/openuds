@@ -1,5 +1,0 @@
-#!/bin/sh
-
-export LD_PRELOAD=""
-/bin/udsclient $*
-exit 0

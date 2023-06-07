@@ -1,2 +1,0 @@
-# UDS handlers.json
-restore "/lib/UDSClient/firefox/handlers.json" "$FIREFOX_PROFILE_HANDLERS"
