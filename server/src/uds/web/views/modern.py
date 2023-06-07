@@ -353,18 +353,18 @@ def update_transport_ticket(
                 except models.User.DoesNotExist:
                     return False
 
-                try:
-                    userService = models.UserService.objects.get(
-                        uuid=data['ticket-info'].get('userService', None)
-                    )
-                    # Notify preconnect
-                    # Notifies pre-connect to wyse...
-                    if username:
+                # If we have an username and an userservice, notify preconnect..
+                if username:
+                    try:
+                        userService = models.UserService.objects.get(
+                            uuid=data['ticket-info'].get('userService', None)
+                        )
+                        # Notify preconnect
                         userServiceManager().notifyPreconnect(
                             userService, username, data.get('protocol', '')
                         )
-                except models.UserService.DoesNotExist:
-                    pass
+                    except models.UserService.DoesNotExist:
+                        pass
 
                 return True
 
