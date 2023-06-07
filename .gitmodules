@@ -4,3 +4,6 @@
 [submodule "tunnel-server"]
 	path = tunnel-server
 	url = git@github.com:VirtualCable/uds-tunnel-server.git
+[submodule "actor"]
+	path = actor
+	url = git@github.com:VirtualCable/uds-actor.git
