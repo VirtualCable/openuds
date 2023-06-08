@@ -7,6 +7,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 #, fuzzy
@@ -14,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-17 14:29+0200\n"
+"POT-Creation-Date: 2023-06-08 04:17+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2017,2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"

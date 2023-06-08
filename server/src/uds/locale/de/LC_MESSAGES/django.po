@@ -8,6 +8,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Víctor Alonso <valonso@virtualcable.net>, 2022
 # Víctor Alonso <valonso@virtualcable.net>, 2022
@@ -15,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-17 14:28+0200\n"
+"POT-Creation-Date: 2023-06-08 04:17+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
@@ -224,7 +225,7 @@ msgstr "Wenn aktiv, ist der Authentifikator für Benutzer sichtbar"
 #: core/services/service.py:154 mfas/Email/mfa.py:79 mfas/SMS/mfa.py:189
 #: models/permissions.py:92 models/permissions.py:96
 #: services/Azure_enterprise/helpers.py:116 services/OpenStack/helpers.py:82
-#: services/Proxmox/service.py:208 services/Sample/service.py:100
+#: services/Proxmox/service.py:222 services/Sample/service.py:100
 #: services/Sample/service.py:106
 msgid "None"
 msgstr "Keiner"
@@ -400,7 +401,7 @@ msgstr "Service-Pools"
 msgid "Service Pool name"
 msgstr "Name des Service-Pools"
 
-#: REST/methods/meta_service_pools.py:90 services/Proxmox/service.py:212
+#: REST/methods/meta_service_pools.py:90 services/Proxmox/service.py:226
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -614,7 +615,7 @@ msgid "Check certificate"
 msgstr "Zertifikat prüfen"
 
 #: REST/methods/proxies.py:88
-#: auths/ActiveDirectory_enterprise/authenticator.py:44
+#: auths/ActiveDirectory_enterprise/authenticator.py:52
 #: auths/EDirectory_enterprise/authenticator.py:47
 #: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
 #: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
@@ -654,7 +655,7 @@ msgid "Port of proxy server"
 msgstr "Port des Proxy-Servers"
 
 #: REST/methods/proxies.py:105
-#: auths/ActiveDirectory_enterprise/authenticator.py:50
+#: auths/ActiveDirectory_enterprise/authenticator.py:58
 #: auths/EDirectory_enterprise/authenticator.py:61
 #: auths/RegexLdap/authenticator.py:83 auths/SimpleLDAP/authenticator.py:74
 #: osmanagers/WindowsOsManager/windows_domain.py:124
@@ -684,7 +685,7 @@ msgstr "Verfügbare Berichte"
 
 #: REST/methods/reports.py:67 REST/methods/users_groups.py:386
 #: REST/methods/users_groups.py:407
-#: auths/ActiveDirectory_enterprise/authenticator.py:174
+#: auths/ActiveDirectory_enterprise/authenticator.py:212
 #: auths/AzureAD_enterprise/azure_ad.py:97
 #: auths/EDirectory_enterprise/authenticator.py:133
 #: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
@@ -1059,7 +1060,7 @@ msgid "Staff member"
 msgstr "Mitarbeiter"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
-#: auths/ActiveDirectory_enterprise/authenticator.py:70
+#: auths/ActiveDirectory_enterprise/authenticator.py:79
 #: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
 #: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
@@ -1080,7 +1081,7 @@ msgid "Current users"
 msgstr "Derzeitige Nutzer"
 
 #: REST/methods/users_groups.py:162
-#: auths/ActiveDirectory_enterprise/authenticator.py:172
+#: auths/ActiveDirectory_enterprise/authenticator.py:210
 #: auths/EDirectory_enterprise/authenticator.py:131
 #: auths/RegexLdap/authenticator.py:217 auths/SimpleLDAP/authenticator.py:210
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
@@ -1206,28 +1207,28 @@ msgstr "Vorgang wird nicht unterstützt"
 msgid "requested a template that do not exist"
 msgstr "eine Vorlage angefordert, die nicht vorhanden ist"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:46
+#: auths/ActiveDirectory_enterprise/authenticator.py:54
 msgid "Active Directory Server IP or Hostname"
 msgstr "Active Directory Server-IP oder Hostname"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:52
+#: auths/ActiveDirectory_enterprise/authenticator.py:60
 #: osmanagers/WindowsOsManager/windows_domain.py:126
 msgid "If checked,  a ssl connection to Active Directory will be used"
 msgstr ""
 "Wenn diese Option aktiviert ist, wird eine SSL-Verbindung zu Active "
 "Directory verwendet"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:55
+#: auths/ActiveDirectory_enterprise/authenticator.py:63
 #: services/VCloud_enterprise/provider.py:71
 msgid "Compatibility"
 msgstr "Kompatibilität"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:58
+#: auths/ActiveDirectory_enterprise/authenticator.py:66
 msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr ""
 "Kompatibilität der AD-Verbindung (normalerweise Windows 2000 und höher)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:73
+#: auths/ActiveDirectory_enterprise/authenticator.py:81
 msgid ""
 "Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
 "for this)"
@@ -1235,8 +1236,8 @@ msgstr ""
 "Benutzername mit Leseberechtigung für die ausgewählte Basis (verwenden Sie "
 "hierfür das Format USER@DOMAIN.DOM)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:80
-#: auths/ActiveDirectory_enterprise/authenticator.py:176
+#: auths/ActiveDirectory_enterprise/authenticator.py:87
+#: auths/ActiveDirectory_enterprise/authenticator.py:214
 #: auths/EDirectory_enterprise/authenticator.py:77
 #: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:221
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:214
@@ -1261,17 +1262,17 @@ msgstr ""
 msgid "Password"
 msgstr "Passwort"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:82
+#: auths/ActiveDirectory_enterprise/authenticator.py:89
 #: auths/EDirectory_enterprise/authenticator.py:79
 #: auths/RegexLdap/authenticator.py:101 auths/SimpleLDAP/authenticator.py:92
 msgid "Password of the ldap user"
 msgstr "Passwort des LDAP-Benutzers"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:88
+#: auths/ActiveDirectory_enterprise/authenticator.py:95
 msgid "Override Base"
 msgstr "Basis überschreiben"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:91
+#: auths/ActiveDirectory_enterprise/authenticator.py:97
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
@@ -1279,24 +1280,25 @@ msgstr ""
 "Wenn nicht leer, wird die AD-Suchbasis mit diesem Wert überschrieben "
 "(Format: dc = ..., dc = ...)."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:99
+#: auths/ActiveDirectory_enterprise/authenticator.py:104
 msgid "Default domain"
 msgstr "Standarddomäne"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:102
+#: auths/ActiveDirectory_enterprise/authenticator.py:107
 msgid ""
-"If not empty, the compatibility is \"Windows 2000 and later\" and the user "
-"does not use UPN (user@domain) as login, this domain will be appended."
+"Domain used for users without domain (if empty, will use the domain of the "
+"user) if compat mode is not \"Windows NT\""
 msgstr ""
-"Wenn nicht leer, ist die Kompatibilität \"Windows 2000 und höher\" und der "
-"Benutzer verwendet keinen UPN (Benutzer@Domäne) als Login, diese Domäne wird "
-"angehängt."
+"Domäne wird für Benutzer ohne Domäne verwendet (wenn leer, wird die Domäne "
+"des Benutzers verwendet), wenn der Kompatibilitätsmodus nicht „Windows NT“ "
+"ist."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:111
-msgid "Backup server"
+#: auths/ActiveDirectory_enterprise/authenticator.py:116
+#| msgid "Backup server"
+msgid "Backup servers"
 msgstr "Backup-Server"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:114
+#: auths/ActiveDirectory_enterprise/authenticator.py:119
 msgid ""
 "If not empty, this host will be used in case main host server is not "
 "reachable"
@@ -1304,7 +1306,7 @@ msgstr ""
 "Wenn nicht leer, wird dieser Host verwendet, falls der Haupthostserver nicht "
 "erreichbar ist"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:123
+#: auths/ActiveDirectory_enterprise/authenticator.py:127
 #: auths/EDirectory_enterprise/authenticator.py:85
 #: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
@@ -1320,18 +1322,18 @@ msgstr ""
 msgid "Timeout"
 msgstr "Auszeit"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:126
+#: auths/ActiveDirectory_enterprise/authenticator.py:130
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Timeout in Sekunden der Verbindung zu Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:132
+#: auths/ActiveDirectory_enterprise/authenticator.py:136
 #: auths/EDirectory_enterprise/authenticator.py:94
 #: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:107
 #: services/Vmware_enterprise/provider.py:121
 msgid "Verify SSL"
 msgstr "SSL verifizieren"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: auths/ActiveDirectory_enterprise/authenticator.py:139
 #: auths/EDirectory_enterprise/authenticator.py:98
 #: auths/RegexLdap/authenticator.py:120 auths/SimpleLDAP/authenticator.py:111
 #: services/Vmware_enterprise/provider.py:125
@@ -1342,47 +1344,89 @@ msgstr ""
 "Wenn diese Option aktiviert ist, wird die SSL-Überprüfung erzwungen. "
 "Andernfalls wird die SSL-Überprüfung deaktiviert"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:144
+#: auths/ActiveDirectory_enterprise/authenticator.py:146
 #: auths/EDirectory_enterprise/authenticator.py:105
 #: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Zertifikat"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#: auths/ActiveDirectory_enterprise/authenticator.py:148
 #: auths/EDirectory_enterprise/authenticator.py:107
 #: auths/RegexLdap/authenticator.py:129 auths/SimpleLDAP/authenticator.py:120
 msgid "Certificate to use for SSL verification"
 msgstr "Zertifikat zur Verwendung für die SSL-Überprüfung"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:154
+#: auths/ActiveDirectory_enterprise/authenticator.py:155
+msgid "Host translation list"
+msgstr "Host-Übersetzungsliste"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:160
+msgid ""
+"If not empty, this list of key=value pairs will be used to translate the "
+"host name from AD to an resolvable hostname."
+msgstr ""
+"Wenn sie nicht leer ist, wird diese Liste von Schlüssel=Wert-Paaren "
+"verwendet, um den Hostnamen von AD in einen auflösbaren Hostnamen zu "
+"übersetzen."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:168
+#| msgid "Ignores unused"
+msgid "Ignore domains"
+msgstr "Domänen ignorieren"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:172
+#| msgid ""
+#| "If not empty, this host will be used in case main host server is not "
+#| "reachable"
+msgid ""
+"If not empty, this list of domains will be ignored when searching for users. "
+"Comma separated values."
+msgstr ""
+"Wenn diese Liste nicht leer ist, wird sie bei der Suche nach Benutzern "
+"ignoriert. Komma-getrennte Werte."
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:180
+msgid "Redirect On Expired"
+msgstr "Bei Ablauf umleiten"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:182
+#| msgid "If not empty, this password will be always used as credential"
+msgid ""
+"If not empty, if user password is expired, will be automatically redirected "
+"to this URL"
+msgstr ""
+"Wenn es nicht leer ist und das Benutzerkennwort abgelaufen ist, wird es "
+"automatisch zu dieser URL umgeleitet"
+
+#: auths/ActiveDirectory_enterprise/authenticator.py:191
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
 #: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "MFA-Attribut"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:156
+#: auths/ActiveDirectory_enterprise/authenticator.py:193
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
 #: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Attribut, aus dem der MFA-Code extrahiert werden soll"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:161
+#: auths/ActiveDirectory_enterprise/authenticator.py:199
 msgid "Active Directory Authenticator"
 msgstr "Active Directory Authenticator"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:163
+#: auths/ActiveDirectory_enterprise/authenticator.py:201
 msgid "Authenticate against Active Directory"
 msgstr "Authentifizieren Sie sich gegen Active Directory"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:213
-#: auths/ActiveDirectory_enterprise/authenticator.py:693
+#: auths/ActiveDirectory_enterprise/authenticator.py:260
+#: auths/ActiveDirectory_enterprise/authenticator.py:918
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Der Benutzername muss in der Form USERNAME@DOMAIN.DOM angegeben werden"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:361
+#: auths/ActiveDirectory_enterprise/authenticator.py:520
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
@@ -1390,8 +1434,8 @@ msgstr ""
 "Es konnte keine Verbindung zu einem AD-Server hergestellt werden. Überprüfen "
 "Sie Ihre Konfiguration (Server, SSL-Zertifikate, ...)."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:566
-#: auths/ActiveDirectory_enterprise/authenticator.py:623
+#: auths/ActiveDirectory_enterprise/authenticator.py:793
+#: auths/ActiveDirectory_enterprise/authenticator.py:842
 #: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
@@ -1400,36 +1444,36 @@ msgstr ""
 msgid "Username not found"
 msgstr "Benutzername nicht gefunden"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:605
+#: auths/ActiveDirectory_enterprise/authenticator.py:826
 #: auths/SimpleLDAP/authenticator.py:541
 msgid "Group not found"
 msgstr "Gruppe nicht gefunden"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:650
-#: auths/ActiveDirectory_enterprise/authenticator.py:672
+#: auths/ActiveDirectory_enterprise/authenticator.py:873
+#: auths/ActiveDirectory_enterprise/authenticator.py:897
 #: auths/EDirectory_enterprise/authenticator.py:369
 #: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "Zu viele Ergebnisse, bitte konkretisieren"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:704
+#: auths/ActiveDirectory_enterprise/authenticator.py:929
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Die Domain scheint falsch zu sein, bitte überprüfen Sie es"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:723
+#: auths/ActiveDirectory_enterprise/authenticator.py:947
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 "Server scheint kein Active Directory zu sein (es hat keine Benutzerobjekte)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:746
+#: auths/ActiveDirectory_enterprise/authenticator.py:968
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
 "Server scheint kein Active Directory zu sein (er hat keine Gruppenobjekte)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:755
+#: auths/ActiveDirectory_enterprise/authenticator.py:976
 #: auths/EDirectory_enterprise/authenticator.py:492
 #: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
@@ -1534,7 +1578,7 @@ msgstr "SAML Authenticator unterstützt keine Leerzeichen im Feld NAME"
 msgid "Authenticator exception:"
 msgstr "Authenticator-Ausnahme:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:50
+#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:56
 msgid "Connection error: "
 msgstr "Verbindungsfehler:"
 
@@ -2080,12 +2124,10 @@ msgid "Attribute of the group that contains the users belonging to it"
 msgstr "Attribut der Gruppe, die die dazugehörigen Benutzer enthält"
 
 #: auths/SimpleLDAP/authenticator.py:200
-#| msgid "SimpleLDAP (DEPRECATED)"
 msgid "SimpleLDAP"
 msgstr "SimpleLDAP"
 
 #: auths/SimpleLDAP/authenticator.py:202
-#| msgid "Sample Authenticator"
 msgid "Simple LDAP authenticator"
 msgstr "Einfacher LDAP-Authentifikator"
 
@@ -2261,7 +2303,7 @@ msgstr "Referenzen"
 msgid "Tunnel"
 msgstr "Tunnel"
 
-#: core/util/ldaputil.py:125
+#: core/util/ldaputil.py:131
 msgid "Can't contact LDAP server"
 msgstr "LDAP-Server kann nicht kontaktiert werden"
 
@@ -4074,11 +4116,11 @@ msgstr "Für dieses Gerät zu verwendendes Schlüsselpaar"
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:143
+#: services/HyperV_enterprise/service.py:148
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
-#: services/Proxmox/service.py:158 services/VCloud_enterprise/service.py:108
+#: services/Proxmox/service.py:172 services/VCloud_enterprise/service.py:108
 #: services/Vmware_enterprise/service_linked.py:186 services/Xen/service.py:166
 msgid "Machine Names"
 msgstr "Maschinennamen"
@@ -4086,11 +4128,11 @@ msgstr "Maschinennamen"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:146
+#: services/HyperV_enterprise/service.py:151
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
-#: services/Proxmox/service.py:161 services/VCloud_enterprise/service.py:111
+#: services/Proxmox/service.py:175 services/VCloud_enterprise/service.py:111
 #: services/Vmware_enterprise/service_linked.py:189 services/Xen/service.py:169
 msgid "Base name for clones from this machine"
 msgstr "Basisname für Klone von diesem System"
@@ -4098,11 +4140,11 @@ msgstr "Basisname für Klone von diesem System"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:153
+#: services/HyperV_enterprise/service.py:158
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
-#: services/Proxmox/service.py:168 services/VCloud_enterprise/service.py:117
+#: services/Proxmox/service.py:182 services/VCloud_enterprise/service.py:117
 #: services/Vmware_enterprise/service_linked.py:195 services/Xen/service.py:176
 msgid "Name Length"
 msgstr "Name Länge"
@@ -4110,11 +4152,11 @@ msgstr "Name Länge"
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:156
+#: services/HyperV_enterprise/service.py:161
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
-#: services/Proxmox/service.py:171 services/VCloud_enterprise/service.py:120
+#: services/Proxmox/service.py:185 services/VCloud_enterprise/service.py:120
 #: services/Vmware_enterprise/service_linked.py:198 services/Xen/service.py:179
 msgid "Size of numeric part for the names of these machines"
 msgstr "Größe des numerischen Teils für die Namen dieser Maschinen"
@@ -4318,7 +4360,7 @@ msgstr "Verbindungstest erfolgreich"
 #: services/HyperV_enterprise/legacy/provider.py:363
 #: services/NutanixPrism_enterprise/provider.py:264
 #: services/Nutanix_enterprise/provider.py:321 services/OVirt/provider.py:544
-#: services/Proxmox/provider.py:344 services/Vmware_enterprise/provider.py:312
+#: services/Proxmox/provider.py:346 services/Vmware_enterprise/provider.py:312
 msgid "Connection failed. Check connection params"
 msgstr "Verbindung fehlgeschlagen. Überprüfen Sie die Verbindungsparameter"
 
@@ -4395,11 +4437,12 @@ msgstr "Service-Basismaschine"
 #: services/HyperV_enterprise/legacy/service.py:137
 #: services/HyperV_enterprise/legacy/service.py:147
 #: services/HyperV_enterprise/service.py:105
-#: services/HyperV_enterprise/service.py:116
-#: services/HyperV_enterprise/service.py:127
-#: services/HyperV_enterprise/service.py:138
-#: services/HyperV_enterprise/service.py:147
-#: services/HyperV_enterprise/service.py:157
+#: services/HyperV_enterprise/service.py:114
+#: services/HyperV_enterprise/service.py:125
+#: services/HyperV_enterprise/service.py:134
+#: services/HyperV_enterprise/service.py:143
+#: services/HyperV_enterprise/service.py:152
+#: services/HyperV_enterprise/service.py:162
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4418,8 +4461,8 @@ msgstr "Service-Basismaschine"
 #: services/OpenStack/service.py:160 services/OpenStack/service.py:167
 #: services/OpenStack/service.py:175 services/OpenStack/service.py:184
 #: services/OpenStack/service.py:194 services/Proxmox/service.py:144
-#: services/Proxmox/service.py:153 services/Proxmox/service.py:162
-#: services/Proxmox/service.py:172
+#: services/Proxmox/service.py:153 services/Proxmox/service.py:167
+#: services/Proxmox/service.py:176 services/Proxmox/service.py:186
 #: services/Vmware_enterprise/service_full.py:81
 #: services/Vmware_enterprise/service_linked.py:116
 #: services/Vmware_enterprise/service_linked.py:134
@@ -4437,7 +4480,7 @@ msgid "Machine"
 msgstr "Maschine"
 
 #: services/HyperV_enterprise/legacy/service.py:115
-#: services/HyperV_enterprise/service.py:114
+#: services/HyperV_enterprise/service.py:113
 msgid ""
 "If more than 1 interface is found in machine, use one on this network as main"
 msgstr ""
@@ -4445,7 +4488,7 @@ msgstr ""
 "Sie in diesem Netzwerk eine als Hauptschnittstelle"
 
 #: services/HyperV_enterprise/legacy/service.py:122
-#: services/HyperV_enterprise/service.py:121
+#: services/HyperV_enterprise/service.py:119
 #: services/NutanixPrism_enterprise/service.py:76
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:150
 #: services/Vmware_enterprise/service_linked.py:138 services/Xen/service.py:144
@@ -4453,7 +4496,7 @@ msgid "Memory (Mb)"
 msgstr "Speicher (Mb)"
 
 #: services/HyperV_enterprise/legacy/service.py:127
-#: services/HyperV_enterprise/service.py:126
+#: services/HyperV_enterprise/service.py:124
 #: services/Vmware_enterprise/service_linked.py:143
 msgid "Memory for machines deployed from this service"
 msgstr "Speicher für Maschinen, die von diesem Service bereitgestellt werden"
@@ -4536,15 +4579,26 @@ msgstr "HyperV-Klon"
 msgid "Hyper Services based on templates and differential disks"
 msgstr "Hyper Services basierend auf Vorlagen und Differentialplatten"
 
-#: services/HyperV_enterprise/service.py:132
+#: services/HyperV_enterprise/service.py:130
 msgid "Use Full Clones"
 msgstr "Verwenden Sie vollständige Klone"
 
-#: services/HyperV_enterprise/service.py:136
+#: services/HyperV_enterprise/service.py:133
 msgid "If checked, full clones will be used instead of differential disks"
 msgstr ""
 "Wenn diese Option aktiviert ist, werden anstelle von differenziellen "
 "Festplatten vollständige Klone verwendet"
+
+#: services/HyperV_enterprise/service.py:139
+msgid "Enable Nested Virtualization"
+msgstr "Aktivieren Sie die verschachtelte Virtualisierung"
+
+#: services/HyperV_enterprise/service.py:142
+#| msgid "If active, the user will be allowed to reset the service"
+msgid "If checked, nested virtualization will be enabled for this service"
+msgstr ""
+"Wenn diese Option aktiviert ist, wird die verschachtelte Virtualisierung für "
+"diesen Dienst aktiviert"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5383,11 +5437,31 @@ msgstr ""
 "herunterzufahren (soft). Verzögert 30 Sekunden das Ausschalten von hängenden "
 "Maschinen."
 
-#: services/Proxmox/service.py:152
+#: services/Proxmox/service.py:152 services/Proxmox/service.py:166
 msgid "Storage for publications & machines."
 msgstr "Lagerung für Publikationen &amp; Maschinen."
 
-#: services/Proxmox/service.py:212
+#: services/Proxmox/service.py:158
+#| msgid "Availability"
+msgid "GPU Availability"
+msgstr "GPU-Verfügbarkeit"
+
+#: services/Proxmox/service.py:162
+#| msgid "Do not redirect"
+msgid "Do not check"
+msgstr "Nicht prüfen"
+
+#: services/Proxmox/service.py:163
+#| msgid "Start if unavailable"
+msgid "Only if available"
+msgstr "Nur wenn verfügbar"
+
+#: services/Proxmox/service.py:164
+#| msgid "Start if unavailable"
+msgid "Only if NOT available"
+msgstr "Nur wenn NICHT verfügbar"
+
+#: services/Proxmox/service.py:226
 msgid "Disabled"
 msgstr "Deaktiviert"
 
