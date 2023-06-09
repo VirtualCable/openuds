@@ -75,11 +75,13 @@ async def login(session: aiohttp.ClientSession) -> None:
     # Fix user agent, so we indicate we are on Linux
     session.headers.update({'User-Agent': 'SampleClient/1.0 (Linux)'})
 
+
 async def logout(session: aiohttp.ClientSession) -> None:
     response = await session.get(REST_URL + 'auth/logout')
 
     if not response.ok:
         raise LogoutException('Error logging out')
+
 
 async def list_services(
     session: aiohttp.ClientSession,
@@ -132,6 +134,7 @@ async def main():
             print(f'Link is {link}')
 
         await logout(session)
+
 
 if __name__ == "__main__":
     loop = asyncio.new_event_loop()
