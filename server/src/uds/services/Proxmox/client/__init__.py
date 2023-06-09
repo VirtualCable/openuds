@@ -78,6 +78,8 @@ class ProxmoxNotFound(ProxmoxError):
 class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
     pass
 
+class ProxmoxNoGPUError(ProxmoxError):
+    pass
 
 # caching helper
 def cachingKeyHelper(obj: 'ProxmoxClient') -> str:
@@ -354,13 +356,15 @@ class ProxmoxClient:
                 node = self.getBestNodeForVm(minMemory=-1, mustHaveVGPUS=mustHaveVGPUS)
                 if node is None:
                     raise ProxmoxError(
-                        'No switable node available for new vm {} on Proxmox'.format(
-                            name
-                        )
+                        f'No switable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
                     )
                 toNode = node.name
             else:
                 toNode = fromNode
+
+        # Check if mustHaveVGPUS is compatible with the node
+        if mustHaveVGPUS is not None and mustHaveVGPUS != self.nodeHasGpu(toNode):
+            raise ProxmoxNoGPUError(f'Node "{toNode}" does not have VGPUS and they are required')
 
         # From normal vm, disable "linked cloning"
         if linkedClone and not vmInfo.template:
