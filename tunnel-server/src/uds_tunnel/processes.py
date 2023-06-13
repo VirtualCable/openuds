@@ -167,5 +167,6 @@ class Processes:
                     asyncio.run(proc(conn, cfg, ns))
             except ImportError:
                 logger.warning('uvloop not found, using default asyncio')
+                asyncio.run(proc(conn, cfg, ns))
         else:
             asyncio.run(proc(conn, cfg, ns))
