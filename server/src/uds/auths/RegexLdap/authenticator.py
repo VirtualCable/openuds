@@ -282,14 +282,46 @@ class RegexLdap(auths.Authenticator):
                 attr = line[:equalPos]
             else:
                 attr = line
-            res.append(attr)
+            # If + is present, we must split it
+            if '+' in attr:
+                for a in attr.split('+'):
+                    if a not in res:
+                        res.append(a)
+            elif ':' in attr:
+                res.append(attr.split(':')[0])
+            else:
+                if attr not in res:
+                    res.append(attr)
         return res
 
     def __processField(
         self, field: str, attributes: typing.MutableMapping[str, typing.Any]
     ) -> typing.List[str]:
         res: typing.List[str] = []
-        logger.debug('Attributes: %s', attributes)
+
+        def getAttr(attrName: str) -> typing.List[str]:
+            def asList(val: typing.Any) -> typing.List[str]:
+                if isinstance(val, list):
+                    return val
+                return [val]
+            
+            if '+' in attrName:
+                attrList = attrName.split('+')
+                # Check all attributes are present, and has only one value
+                if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
+                    logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
+                    return []
+            
+                val = [''.join([asList(attributes.get(a, ['']))[0] for a in attrList])]
+            elif ':' in attrName:
+                # Prepend the value after : to value before :
+                attr, prependable = attrName.split(':')
+                val = [prependable + a for a in asList(attributes.get(attr, []))]
+            else:
+                val = asList(attributes.get(attrName, []))
+            return val
+
+        logger.debug('******** Attributes: %s', attributes)
         for line in field.splitlines():
             equalPos = line.find('=')
             if (
@@ -301,15 +333,13 @@ class RegexLdap(auths.Authenticator):
             # if pattern do not have groups, define one with complete pattern (i.e. id=.* --> id=(.*))
             if pattern.find('(') == -1:
                 pattern = '(' + pattern + ')'
-            val = attributes.get(attr, [])
-
-            if not isinstance(val, list):  # May we have a single value
-                val = [val]
+            val = getAttr(attr)
 
             logger.debug('Pattern: %s', pattern)
 
             for v in val:
                 try:
+                    logger.debug('Pattern: %s on value %s', pattern, v)
                     searchResult = re.search(
                         pattern, v, re.IGNORECASE
                     )  # @UndefinedVariable
@@ -317,7 +347,7 @@ class RegexLdap(auths.Authenticator):
                         continue
                     logger.debug("Found against %s: %s ", v, searchResult.groups())
                     res.append(''.join(searchResult.groups()))
-                except Exception:  # nosec
+                except Exception:  # nosec: If not a valid regex, just ignore it
                     pass  # Ignore exceptions here
         logger.debug('Res: %s', res)
         return res
@@ -343,12 +373,14 @@ class RegexLdap(auths.Authenticator):
             'userNameAttr': self._userNameAttr,
             'altClass': self._altClass,
             'mfaAttr': self._mfaAttr,
+            'verifySsl': gui.fromBool(self._verifySsl),
+            'certificate': self._certificate,
         }
 
     def marshal(self) -> bytes:
         return '\t'.join(
             [
-                'v4',
+                'v5',
                 self._host,
                 self._port,
                 gui.fromBool(self._ssl),

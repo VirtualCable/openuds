@@ -546,6 +546,24 @@ class SAMLAuthenticator(auths.Authenticator):
 
     def processField(self, field: str, attributes: typing.Dict[str, typing.List]) -> typing.List[str]:
         res = []
+
+        def getAttr(attrName: str) -> typing.List[str]:
+            if '+' in attrName:
+                attrList = attrName.split('+')
+                # Check all attributes are present, and has only one value
+                if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
+                    logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
+                    return []
+            
+                val = [''.join([attributes.get(a, [''])[0] for a in attrList])]
+            elif ':' in attrName:
+                # Prepend the value after : to value before :
+                attr, prependable = attrName.split(':')
+                val = [prependable + a for a in attributes.get(attr, [])]
+            else:
+                val = attributes.get(attrName, [])
+            return val
+
         for line in field.splitlines():
             equalPos = line.find('=')
             if equalPos != -1:
@@ -553,11 +571,12 @@ class SAMLAuthenticator(auths.Authenticator):
                 # if pattern do not have groups, define one with full re
                 if pattern.find('(') == -1:
                     pattern = '(' + pattern + ')'
-                val = attributes.get(attr, [])
+
+                val = getAttr(attr)
 
                 for v in val:
                     try:
-                        logger.debug('Pattern: %s', pattern)
+                        logger.debug('Pattern: %s on value %s', pattern, v)
                         srch = re.search(pattern, v)
                         if srch is None:
                             continue
@@ -567,7 +586,8 @@ class SAMLAuthenticator(auths.Authenticator):
                         logger.debug(e)
                         break
             else:
-                res += attributes.get(line, [])
+                res += getAttr(line)
+            logger.debug('Result: %s', res)
         return res
 
     def getInfo(
