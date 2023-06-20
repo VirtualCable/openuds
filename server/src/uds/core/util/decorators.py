@@ -149,7 +149,7 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     return new_func
 
 
-def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @wraps(func)
