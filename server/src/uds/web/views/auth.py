@@ -46,7 +46,6 @@ from uds.core.auths.auth import (
     authenticateViaCallback,
     authLogLogin,
     getUDSCookie,
-    authLogLogin,
 )
 
 from uds.core.managers import userServiceManager, cryptoManager
