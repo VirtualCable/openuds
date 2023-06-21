@@ -131,9 +131,7 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
         authLogLogin(request, authenticator, user.name, 'Federated login')
 
         request.session['OS'] = os
-        # Now we render an intermediate page, so we get Java support from user
-        # It will only detect java, and them redirect to Java
-
+        
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
         if authenticator.getType().providesMfa() and authenticator.mfa:
