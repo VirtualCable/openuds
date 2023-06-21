@@ -80,7 +80,9 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
     an authenticator that has an authCallback
     """
     try:
-        authenticator = Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+        authenticator = (
+            Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+        )
         if not authenticator:
             raise Exception('Authenticator not found')
 
@@ -94,9 +96,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
             'query_string': request.META['QUERY_STRING'],
         }
 
-        logger.debug(
-            'Auth callback for %s with params %s', authenticator, params.keys()
-        )
+        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
 
         ticket = TicketStore.create({'params': params, 'auth': authenticator.uuid})
         return HttpResponseRedirect(reverse('page.auth.callback_stage2', args=[ticket]))
@@ -105,9 +105,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exceptionView(request, e)
 
 
-def authCallback_stage2(
-    request: 'ExtendedHttpRequestWithUser', ticketId: str
-) -> HttpResponse:
+def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId)
         params: typing.Dict[str, typing.Any] = ticket['params'].copy()
@@ -122,32 +120,26 @@ def authCallback_stage2(
             raise auths.exceptions.Redirect(result.url)
 
         if result.user is None:
-            authLogLogin(
-                request, authenticator, f'{params}', 'Invalid at auth callback'
-            )
+            authLogLogin(request, authenticator, f'{params}', 'Invalid at auth callback')
             raise auths.exceptions.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
 
         webLogin(request, response, result.user, '')  # Password is unavailable in this case
-        # Now we render an intermediate page, so we get Java support from user
-        # It will only detect java, and them redirect to Java
+
+        authLogLogin(request, authenticator, result.user.name, 'Federated login')
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
         if authenticator.getType().providesMfa() and authenticator.mfa:
             authInstance = authenticator.getInstance()
             if authInstance.mfaIdentifier(result.user.name):
-                request.authorized = False   # We can ask for MFA so first disauthorize user
-                response = HttpResponseRedirect(
-                    reverse('page.mfa')
-                )
+                request.authorized = False  # We can ask for MFA so first disauthorize user
+                response = HttpResponseRedirect(reverse('page.mfa'))
 
         return response
     except auths.exceptions.Redirect as e:
-        return HttpResponseRedirect(
-            request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/'
-        )
+        return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/')
     except auths.exceptions.Logout as e:
         return webLogout(
             request,
@@ -225,7 +217,7 @@ def ticketAuth(
             password = CryptoManager().decrypt(data['password'])
         except Exception:
             logger.error('Ticket stored is not valid')
-            raise auths.exceptions.InvalidUserException() from  None
+            raise auths.exceptions.InvalidUserException() from None
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
@@ -242,9 +234,7 @@ def ticketAuth(
             raise Exception('Invalid ticket authentication')
 
         usr = auth.getOrCreateUser(username, realname)
-        if (
-            usr is None or State.isActive(usr.state) is False
-        ):  # If user is inactive, raise an exception
+        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
             raise auths.exceptions.InvalidUserException()
 
         # Add groups to user (replace existing groups)
@@ -253,7 +243,12 @@ def ticketAuth(
         # Force cookie generation
         webLogin(request, None, usr, password)
 
-        request.user = usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
+        # Log the login
+        authLogLogin(request, auth, username, 'Ticket authentication')
+
+        request.user = (
+            usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
+        )
         request.authorized = True  # User is authorized
         request.session['ticket'] = '1'  # Store that user access is done using ticket
 
@@ -264,9 +259,7 @@ def ticketAuth(
         # Check if servicePool is part of the ticket
         if poolUuid:
             # Request service, with transport = None so it is automatic
-            res = UserServiceManager().getService(
-                request.user, request.os, request.ip, poolUuid, None, False
-            )
+            res = UserServiceManager().getService(request.user, request.os, request.ip, poolUuid, None, False)
             _, userService, _, transport, _ = res
 
             transportInstance = transport.getInstance()
@@ -275,9 +268,7 @@ def ticketAuth(
                     'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore
                 )
             else:
-                link = html.udsAccessLink(
-                    request, 'A' + userService.uuid, transport.uuid  # type: ignore
-                )
+                link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)  # type: ignore
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
