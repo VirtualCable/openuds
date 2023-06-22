@@ -64,7 +64,7 @@ class ServiceCacheUpdater(Job):
     def __notifyRestrain(servicePool) -> None:
         log.doLog(
             servicePool,
-            log.WARN,
+            log.LogLevel.WARNING,
             'Service Pool is restrained due to excesive errors',
             log.LogSource.INTERNAL,
         )
@@ -93,10 +93,7 @@ class ServiceCacheUpdater(Job):
             # If this deployedService don't have a publication active and needs it, ignore it
             spServiceInstance = servicePool.service.getInstance()  # type: ignore
 
-            if (
-                servicePool.activePublication() is None
-                and spServiceInstance.publicationType is not None
-            ):
+            if servicePool.activePublication() is None and spServiceInstance.publicationType is not None:
                 logger.debug(
                     'Skipping. %s Needs publication but do not have one',
                     servicePool.name,
@@ -121,21 +118,13 @@ class ServiceCacheUpdater(Job):
             # Get data related to actual state of cache
             inCacheL1: int = (
                 servicePool.cachedUserServices()
-                .filter(
-                    UserServiceManager().getCacheStateFilter(
-                        servicePool, services.UserDeployment.L1_CACHE
-                    )
-                )
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
                 .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
                 .count()
             )
             inCacheL2: int = (
                 servicePool.cachedUserServices()
-                .filter(
-                    UserServiceManager().getCacheStateFilter(
-                        servicePool, services.UserDeployment.L2_CACHE
-                    )
-                )
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE))
                 .count()
             )
             inAssigned: int = (
@@ -159,22 +148,15 @@ class ServiceCacheUpdater(Job):
                 servicesPools.append((servicePool, inCacheL1, inCacheL2, inAssigned))
                 continue
             # We have more in L1 cache than needed
-            if (
-                totalL1Assigned > servicePool.initial_srvs
-                and inCacheL1 > servicePool.cache_l1_srvs
-            ):
-                logger.debug(
-                    'We have more services in cache L1 than configured, appending'
-                )
+            if totalL1Assigned > servicePool.initial_srvs and inCacheL1 > servicePool.cache_l1_srvs:
+                logger.debug('We have more services in cache L1 than configured, appending')
                 servicesPools.append((servicePool, inCacheL1, inCacheL2, inAssigned))
                 continue
 
             # If we have more in L2 cache than needed, decrease L2 cache, but int this case, we continue checking cause L2 cache removal
             # has less priority than l1 creations or removals, but higher. In this case, we will simply take last l2 oversized found and reduce it
             if inCacheL2 > servicePool.cache_l2_srvs:
-                logger.debug(
-                    'We have more services in L2 cache than configured, appending'
-                )
+                logger.debug('We have more services in L2 cache than configured, appending')
                 servicesPools.append((servicePool, inCacheL1, inCacheL2, inAssigned))
                 continue
 
@@ -198,10 +180,7 @@ class ServiceCacheUpdater(Job):
             if totalL1Assigned == servicePool.max_srvs:
                 continue
 
-            if (
-                totalL1Assigned < servicePool.initial_srvs
-                or inCacheL1 < servicePool.cache_l1_srvs
-            ):
+            if totalL1Assigned < servicePool.initial_srvs or inCacheL1 < servicePool.cache_l1_srvs:
                 logger.debug('Needs to grow L1 cache for %s', servicePool)
                 servicesPools.append((servicePool, inCacheL1, inCacheL2, inAssigned))
 
@@ -231,16 +210,12 @@ class ServiceCacheUpdater(Job):
                     servicePool.cachedUserServices()
                     .select_for_update()
                     .filter(
-                        UserServiceManager().getCacheStateFilter(
-                            servicePool, services.UserDeployment.L2_CACHE
-                        )
+                        UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE)
                     )
                     .order_by('creation_date')
                 ):
                     if n.needsOsManager():
-                        if State.isUsable(n.state) is False or State.isUsable(
-                            n.os_state
-                        ):
+                        if State.isUsable(n.state) is False or State.isUsable(n.os_state):
                             valid = n
                             break
                     else:
@@ -311,11 +286,7 @@ class ServiceCacheUpdater(Job):
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
         cacheItems: typing.List[UserService] = list(
             servicePool.cachedUserServices()
-            .filter(
-                UserServiceManager().getCacheStateFilter(
-                    servicePool, services.UserDeployment.L1_CACHE
-                )
-            )
+            .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
             .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
             .order_by('-creation_date')
             .iterator()
@@ -352,17 +323,11 @@ class ServiceCacheUpdater(Job):
         cacheL2: int,
         assigned: int,  # pylint: disable=unused-argument
     ):
-        logger.debug(
-            "Reducing L2 cache erasing a service in cache for %s", servicePool.name
-        )
+        logger.debug("Reducing L2 cache erasing a service in cache for %s", servicePool.name)
         if cacheL2 > 0:
             cacheItems = (
                 servicePool.cachedUserServices()
-                .filter(
-                    UserServiceManager().getCacheStateFilter(
-                        servicePool, services.UserDeployment.L2_CACHE
-                    )
-                )
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE))
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
@@ -386,21 +351,15 @@ class ServiceCacheUpdater(Job):
             # first, the service will get lock until someone removes something.
             if totalL1Assigned > servicePool.max_srvs:
                 self.reduceL1Cache(servicePool, cacheL1, cacheL2, assigned)
-            elif (
-                totalL1Assigned > servicePool.initial_srvs
-                and cacheL1 > servicePool.cache_l1_srvs
-            ):
+            elif totalL1Assigned > servicePool.initial_srvs and cacheL1 > servicePool.cache_l1_srvs:
                 self.reduceL1Cache(servicePool, cacheL1, cacheL2, assigned)
             elif cacheL2 > servicePool.cache_l2_srvs:  # We have excesives L2 items
                 self.reduceL2Cache(servicePool, cacheL1, cacheL2, assigned)
             elif totalL1Assigned < servicePool.max_srvs and (
-                totalL1Assigned < servicePool.initial_srvs
-                or cacheL1 < servicePool.cache_l1_srvs
+                totalL1Assigned < servicePool.initial_srvs or cacheL1 < servicePool.cache_l1_srvs
             ):  # We need more services
                 self.growL1Cache(servicePool, cacheL1, cacheL2, assigned)
             elif cacheL2 < servicePool.cache_l2_srvs:  # We need more L2 items
                 self.growL2Cache(servicePool, cacheL1, cacheL2, assigned)
             else:
-                logger.warning(
-                    "We have more services than max requested for %s", servicePool.name
-                )
+                logger.warning("We have more services than max requested for %s", servicePool.name)
