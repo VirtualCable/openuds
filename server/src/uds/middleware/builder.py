@@ -46,12 +46,8 @@ logger = logging.getLogger(__name__)
 # How often to check the requests cache for stuck objects
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
-RequestMiddelwareProcessorType = typing.Callable[
-    ['ExtendedHttpRequest'], typing.Optional['HttpResponse']
-]
-ResponseMiddelwareProcessorType = typing.Callable[
-    ['ExtendedHttpRequest', 'HttpResponse'], 'HttpResponse'
-]
+RequestMiddelwareProcessorType = typing.Callable[['ExtendedHttpRequest'], typing.Optional['HttpResponse']]
+ResponseMiddelwareProcessorType = typing.Callable[['ExtendedHttpRequest', 'HttpResponse'], 'HttpResponse']
 
 
 def build_middleware(
@@ -62,6 +58,7 @@ def build_middleware(
     Creates a method to be used as a middleware, synchronously or asynchronously.
     Currently, the is forced to sync an production, but it will be changed in the future to allow async
     """
+
     @sync_and_async_middleware
     def middleware(
         get_response: typing.Any,
@@ -72,9 +69,7 @@ def build_middleware(
                 request: 'ExtendedHttpRequest',
             ) -> 'HttpResponse':
                 response = request_processor(request)
-                return response_processor(
-                    request, response or await get_response(request)
-                )
+                return response_processor(request, response or await get_response(request))
 
             return async_middleware
 

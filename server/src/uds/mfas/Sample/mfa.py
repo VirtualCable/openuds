@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -43,6 +43,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 class SampleMFA(mfas.MFA):
     typeName = _('Sample Multi Factor')
     typeType = 'sampleMFA'
@@ -52,9 +53,7 @@ class SampleMFA(mfas.MFA):
     useless = gui.CheckBoxField(
         label=_('Sample useless field'),
         order=90,
-        tooltip=_(
-            'This is a useless field, for sample and testing pourposes'
-        ),
+        tooltip=_('This is a useless field, for sample and testing pourposes'),
         tab=gui.Tab.ADVANCED,
         defvalue=gui.TRUE,
     )
@@ -65,6 +64,8 @@ class SampleMFA(mfas.MFA):
     def label(self) -> str:
         return 'Code is in log'
 
-    def sendCode(self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str) -> mfas.MFA.RESULT:
+    def sendCode(
+        self, request: 'ExtendedHttpRequest', userId: str, username: str, identifier: str, code: str
+    ) -> mfas.MFA.RESULT:
         logger.debug('Sending code: %s (from %s)', code, request.ip)
         return mfas.MFA.RESULT.OK

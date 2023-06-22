@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -46,7 +46,6 @@ if typing.TYPE_CHECKING:
 
 
 class Calendar(UUIDModel, TaggingMixin):
-
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     modified = models.DateTimeField(auto_now=True)
@@ -66,11 +65,7 @@ class Calendar(UUIDModel, TaggingMixin):
         app_label = 'uds'
 
     # Override default save to add uuid
-    def save(
-        self,
-        *args,
-        **kwargs
-    ):
+    def save(self, *args, **kwargs):
         logger.debug('Saving calendar')
 
         res = UUIDModel.save(self, *args, **kwargs)
@@ -79,7 +74,9 @@ class Calendar(UUIDModel, TaggingMixin):
         try:
             for v in self.calendaraction_set.all():
                 v.save()
-        except Exception:  # nosec: catch all, we don't want to fail here (if one action cannot be saved, we don't want to fail all)
+        except (
+            Exception
+        ):  # nosec: catch all, we don't want to fail here (if one action cannot be saved, we don't want to fail all)
             pass
 
         return res

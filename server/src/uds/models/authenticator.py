@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -114,9 +114,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
-            return auths.Authenticator(
-                environment.Environment.getTempEnv(), values, dbAuth=self
-            )
+            return auths.Authenticator(environment.Environment.getTempEnv(), values, dbAuth=self)
 
         auType = self.getType()
         env = self.getEnvironment()
@@ -138,9 +136,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
 
-    def getOrCreateUser(
-        self, username: str, realName: typing.Optional[str] = None
-    ) -> 'User':
+    def getOrCreateUser(self, username: str, realName: typing.Optional[str] = None) -> 'User':
         """
         Used to get or create a new user at database associated with this authenticator.
 
@@ -233,13 +229,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         ip, version = net.ipToLong(ipStr)
         # Allow
         if self.net_filtering == Authenticator.ALLOW:
-            return self.networks.filter(
-                net_start__lte=ip, net_end__gte=ip, version=version
-            ).exists()
+            return self.networks.filter(net_start__lte=ip, net_end__gte=ip, version=version).exists()
         # Deny, must not be in any network
-        return (
-            self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
-        )
+        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
 
     @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':
@@ -260,9 +252,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         )
 
         if tag is not None:
-            authsList = Authenticator.objects.filter(small_name=tag).order_by(
-                'priority', 'name'
-            )
+            authsList = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
             if not authsList.exists():
                 authsList = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name

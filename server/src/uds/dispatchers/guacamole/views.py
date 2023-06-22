@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -57,9 +57,7 @@ def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
 
 
 @auth.trustedSourceRequired
-def guacamole(
-    request: ExtendedHttpRequestWithUser, token: str, tunnelId: str
-) -> HttpResponse:
+def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
     if not TunnelToken.validateToken(token):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
@@ -69,9 +67,7 @@ def guacamole(
         tunnelId, scrambler = tunnelId.split('.')
 
         # All strings excetp "ticket-info", that is fixed if it exists later
-        val = typing.cast(
-            typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False)
-        )
+        val = typing.cast(typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
@@ -85,9 +81,7 @@ def guacamole(
                 user = userService.user
                 # check service owner is the same as the one that requested the ticket
                 if not user or user.uuid != ti['user']:
-                    logger.error(
-                        'The requested userservice has changed owner and is not accesible'
-                    )
+                    logger.error('The requested userservice has changed owner and is not accesible')
                     raise Exception()
                 # Log message and event
                 protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
@@ -100,16 +94,13 @@ def guacamole(
                     userService.deployed_service,
                     events.ET_TUNNEL_OPEN,
                     username=user.pretty_name,
-                    source='HTML5-'
-                    + protocol,  # On HTML5, currently src is not provided by Guacamole
+                    source='HTML5-' + protocol,  # On HTML5, currently src is not provided by Guacamole
                     dstip=host,
                     uniqueid=userService.unique_id,
                 )
 
             except Exception:
-                logger.error(
-                    'The requested guacamole userservice does not exists anymore'
-                )
+                logger.error('The requested guacamole userservice does not exists anymore')
                 raise  # Let it be handled by the upper layers
 
         if 'password' in val:

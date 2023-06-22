@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -202,32 +202,22 @@ class EmailMFA(mfas.MFA):
         self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
-        return gettext(
-            'Check your mail. You will receive an email with the verification code'
-        )
+        return gettext('Check your mail. You will receive an email with the verification code')
 
     def initGui(self) -> None:
         # Populate the networks list
         self.networks.setValues(
-            [
-                gui.choiceItem(v.uuid, v.name)
-                for v in models.Network.objects.all().order_by('name')
-                if v.uuid
-            ]
+            [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
-    def emptyIndentifierAllowedToLogin(
-        self, request: 'ExtendedHttpRequest'
-    ) -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return mfas.LoginAllowed.checkAction(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
     def label(self) -> str:
         return 'OTP received via email'
 
     @decorators.threaded
-    def doSendCode(
-        self, request: 'ExtendedHttpRequest', identifier: str, code: str
-    ) -> None:
+    def doSendCode(self, request: 'ExtendedHttpRequest', identifier: str, code: str) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:

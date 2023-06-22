@@ -74,12 +74,7 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
     # We will accept only 2 proxies, the last ones
     # And the only trusted address, counting with NGINX, will be PROXY if behind_proxy is True
     proxies = list(
-        reversed(
-            [
-                i.split('%')[0].strip()
-                for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")
-            ]
-        )
+        reversed([i.split('%')[0].strip() for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")])
     )
 
     # Original IP will be empty in case of nginx & gunicorn using sockets, as we do
@@ -150,9 +145,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
         # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
         now = timezone.now()
         try:
-            expiry = datetime.datetime.fromisoformat(
-                request.session.get(EXPIRY_KEY, '')
-            )
+            expiry = datetime.datetime.fromisoformat(request.session.get(EXPIRY_KEY, ''))
         except ValueError:
             expiry = now
         if expiry < now:
@@ -174,13 +167,12 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
     return None
 
 
-def _process_response(
-    request: 'ExtendedHttpRequest', response: 'HttpResponse'
-) -> 'HttpResponse':
+def _process_response(request: 'ExtendedHttpRequest', response: 'HttpResponse') -> 'HttpResponse':
     # Update authorized on session
     if hasattr(request, 'session'):
         request.session[AUTHORIZED_KEY] = request.authorized
     return response
+
 
 # Compatibility with old middleware, so we can use it in settings.py as it was
 GlobalRequestMiddleware = builder.build_middleware(_process_request, _process_response)

@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2020 Virtual Cable S.L.
+# Copyright (c) 2016-2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -13,7 +13,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -145,16 +145,12 @@ CALENDAR_ACTION_DEL_ALL_TRANSPORTS: typing.Dict[str, typing.Any] = {
 CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {
     'id': 'ADD_GROUP',
     'description': _('Add a group'),
-    'params': (
-        {'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},
-    ),
+    'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
 }
 CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_GROUP',
     'description': _('Remove a group'),
-    'params': (
-        {'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},
-    ),
+    'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
 }
 CALENDAR_ACTION_DEL_ALL_GROUPS: typing.Dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_GROUPS',
@@ -186,9 +182,7 @@ CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: typing.Dict[str, typing.Any] = {
         {
             'type': 'numeric',
             'name': 'hours',
-            'description': _(
-                'Time in hours before considering the user service is OLD.'
-            ),
+            'description': _('Time in hours before considering the user service is OLD.'),
             'default': '72',
         },
     ),
@@ -231,25 +225,15 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
 
 
 class CalendarAction(UUIDModel):
-    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(
-        Calendar, on_delete=models.CASCADE
-    )
-    service_pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
-        ServicePool, on_delete=models.CASCADE
-    )
+    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    service_pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
     action = models.CharField(max_length=64, default='')
-    at_start = models.BooleanField(
-        default=False
-    )  # If false, action is done at end of event
+    at_start = models.BooleanField(default=False)  # If false, action is done at end of event
     events_offset = models.IntegerField(default=0)  # In minutes
     params = models.CharField(max_length=1024, default='')
     # Not to be edited, just to be used as indicators for executions
-    last_execution = models.DateTimeField(
-        default=None, db_index=True, null=True, blank=True
-    )
-    next_execution = models.DateTimeField(
-        default=None, db_index=True, null=True, blank=True
-    )
+    last_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
+    next_execution = models.DateTimeField(default=None, db_index=True, null=True, blank=True)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[CalendarAction]'
@@ -302,9 +286,7 @@ class CalendarAction(UUIDModel):
             logger.exception('error')
             return '(invalid action)'
 
-    def execute(
-        self, save: bool = True
-    ) -> None:  # pylint: disable=too-many-branches, too-many-statements
+    def execute(self, save: bool = True) -> None:  # pylint: disable=too-many-branches, too-many-statements
         """Executes the calendar action
 
         Keyword Arguments:
@@ -351,9 +333,7 @@ class CalendarAction(UUIDModel):
 
         def remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assignedUserServices().filter(
-                state=state.State.USABLE
-            ):
+            for userService in self.service_pool.assignedUserServices().filter(state=state.State.USABLE):
                 userService.remove()
 
         def remove_stuck_userservice() -> None:
@@ -405,9 +385,7 @@ class CalendarAction(UUIDModel):
                 else:
                     self.service_pool.assignedGroups.remove(grp)
             except Exception:
-                self.service_pool.log(
-                    'Scheduled action not executed because group is not available anymore'
-                )
+                self.service_pool.log('Scheduled action not executed because group is not available anymore')
 
         actions: typing.Mapping[str, typing.Tuple[typing.Callable[[], None], bool]] = {
             # Id, actions (lambda), saveServicePool (bool)
@@ -457,9 +435,7 @@ class CalendarAction(UUIDModel):
                 )
                 logger.exception('Error executing scheduled action')
         else:
-            self.service_pool.log(
-                f'Scheduled action not executed because is not supported: {self.action}'
-            )
+            self.service_pool.log(f'Scheduled action not executed because is not supported: {self.action}')
 
         # On save, will regenerate nextExecution
         if save:

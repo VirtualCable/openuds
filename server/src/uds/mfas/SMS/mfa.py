@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -216,9 +216,7 @@ class SMSMFA(mfas.MFA):
         length=256,
         label=_('SMS response OK regex'),
         order=30,
-        tooltip=_(
-            'Regex for SMS response OK. If empty, the response is considered OK if status code is 200.'
-        ),
+        tooltip=_('Regex for SMS response OK. If empty, the response is considered OK if status code is 200.'),
         required=False,
         tab=_('HTTP Response'),
     )
@@ -264,11 +262,7 @@ class SMSMFA(mfas.MFA):
     def initGui(self) -> None:
         # Populate the networks list
         self.networks.setValues(
-            [
-                gui.choiceItem(v.uuid, v.name)
-                for v in models.Network.objects.all().order_by('name')
-                if v.uuid
-            ]
+            [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
     def composeSmsUrl(
@@ -287,9 +281,7 @@ class SMSMFA(mfas.MFA):
         return url
 
     def getSession(self) -> requests.Session:
-        session = security.secureRequestsSession(
-            verify=self.ignoreCertificateErrors.isTrue()
-        )
+        session = security.secureRequestsSession(verify=self.ignoreCertificateErrors.isTrue())
         # 0 means no authentication
         if self.authenticationMethod.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(
@@ -311,16 +303,10 @@ class SMSMFA(mfas.MFA):
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
-    def emptyIndentifierAllowedToLogin(
-        self, request: 'ExtendedHttpRequest'
-    ) -> typing.Optional[bool]:
-        return mfas.LoginAllowed.checkAction(
-            self.allowLoginWithoutMFA.value, request, self.networks.value
-        )
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+        return mfas.LoginAllowed.checkAction(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
-    def processResponse(
-        self, request: 'ExtendedHttpRequest', response: requests.Response
-    ) -> mfas.MFA.RESULT:
+    def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
         if not response.ok:
             logger.warning(
@@ -328,9 +314,7 @@ class SMSMFA(mfas.MFA):
                 response.status_code,
                 response.text,
             )
-            if not mfas.LoginAllowed.checkAction(
-                self.responseErrorAction.value, request, self.networks.value
-            ):
+            if not mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
                 raise Exception(_('SMS sending failed'))
             return mfas.MFA.RESULT.ALLOWED  # Allow login, NO MFA code was sent
         if self.responseOkRegex.value.strip():
@@ -431,9 +415,7 @@ class SMSMFA(mfas.MFA):
         return gettext('MFA Code')
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
-        return gettext(
-            'Check your phone. You will receive an SMS with the verification code'
-        )
+        return gettext('Check your phone. You will receive an SMS with the verification code')
 
     def sendCode(
         self,

@@ -2,7 +2,7 @@
 
 # Model based on https://github.com/llazzaro/django-scheduler
 #
-# Copyright (c) 2016-2020 Virtual Cable S.L.U.
+# Copyright (c) 2016-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -13,7 +13,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -47,9 +47,7 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAccess(UUIDModel):
-    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(
-        Calendar, on_delete=models.CASCADE
-    )
+    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     service_pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
         ServicePool, related_name='calendarAccess', on_delete=models.CASCADE
     )
@@ -74,9 +72,7 @@ class CalendarAccess(UUIDModel):
 
 class CalendarAccessMeta(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    meta_pool = models.ForeignKey(
-        MetaPool, related_name='calendarAccess', on_delete=models.CASCADE
-    )
+    meta_pool = models.ForeignKey(MetaPool, related_name='calendarAccess', on_delete=models.CASCADE)
     access = models.CharField(max_length=8, default=states.action.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 

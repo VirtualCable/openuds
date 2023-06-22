@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -109,9 +109,7 @@ class TOTP_MFA(mfas.MFA):
             ]
         )
 
-    def emptyIndentifierAllowedToLogin(
-        self, request: 'ExtendedHttpRequest'
-    ) -> typing.Optional[bool]:
+    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return None
 
     def askForOTP(self, request: 'ExtendedHttpRequest') -> bool:
@@ -122,10 +120,7 @@ class TOTP_MFA(mfas.MFA):
             True if we need to ask for OTP
         """
 
-        return not any(
-            request.ip in i
-            for i in models.Network.objects.filter(uuid__in=self.networks.value)
-        )
+        return not any(request.ip in i for i in models.Network.objects.filter(uuid__in=self.networks.value))
 
     def label(self) -> str:
         return gettext('Authentication Code')
@@ -167,9 +162,7 @@ class TOTP_MFA(mfas.MFA):
         img.save(imgByteStream, format='PNG')  # type: ignore  # pylance complains abot format, but it is ok
         # Convert to base64 to be used in html img tag
         imgByteArr = imgByteStream.getvalue()
-        imgData = 'data:image/png;base64,' + base64.b64encode(imgByteArr).decode(
-            'utf-8'
-        )
+        imgData = 'data:image/png;base64,' + base64.b64encode(imgByteArr).decode('utf-8')
 
         # Return HTML code to be shown to user
         return f'''
@@ -208,9 +201,7 @@ class TOTP_MFA(mfas.MFA):
             return
 
         if self.cache.get(userId + code) is not None:
-            raise exceptions.MFAError(
-                gettext('Code is already used. Wait a minute and try again.')
-            )
+            raise exceptions.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
         secret, qrShown = self._userData(userId)
@@ -221,14 +212,10 @@ class TOTP_MFA(mfas.MFA):
         ):
             raise exceptions.MFAError(gettext('Invalid code'))
 
-        self.cache.put(
-            userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1)
-        )
+        self.cache.put(userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1))
 
         if qrShown is False:
-            self._saveUserData(
-                userId, (secret, True)
-            )  # Update user data to show QR code only once
+            self._saveUserData(userId, (secret, True))  # Update user data to show QR code only once
 
     def resetData(self, userId: str) -> None:
         self._removeUserData(userId)

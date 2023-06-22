@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -57,9 +57,7 @@ def opengnsys(
 
     def getUserService() -> typing.Optional[UserService]:
         try:
-            userService = UserService.objects.get(
-                uuid=processUuid(uuid), state=states.userService.USABLE
-            )
+            userService = UserService.objects.get(uuid=processUuid(uuid), state=states.userService.USABLE)
             if userService.getProperty('token') == token:
                 return userService
             logger.warning(
@@ -70,9 +68,7 @@ def opengnsys(
             # Sleep a while in case of error?
         except Exception:
             # Any exception will stop process
-            logger.warning(
-                'OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid
-            )
+            logger.warning('OpenGnsys: invalid userService %s:%s. (Ignored)', token, uuid)
 
         return None
 
@@ -93,9 +89,7 @@ def opengnsys(
                     userService.friendly_name,
                 )
                 return
-            logger.debug(
-                'Processing login from OpenGnsys %s', userService.friendly_name
-            )
+            logger.debug('Processing login from OpenGnsys %s', userService.friendly_name)
             actor_v3.Login.process_login(userService, 'OpenGnsys')
 
     def logout() -> None:
@@ -108,12 +102,8 @@ def opengnsys(
                     userService.friendly_name,
                 )
                 return
-            logger.debug(
-                'Processing logout from OpenGnsys %s', userService.friendly_name
-            )
-            actor_v3.Logout.process_logout(
-                userService, 'OpenGnsys', ''
-            )  # Close all sessions
+            logger.debug('Processing logout from OpenGnsys %s', userService.friendly_name)
+            actor_v3.Logout.process_logout(userService, 'OpenGnsys', '')  # Close all sessions
 
     fnc: typing.Optional[typing.Callable[[], None]] = {
         'login': login,

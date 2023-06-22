@@ -1,3 +1,34 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2023 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+
 import stat
 import calendar
 import datetime
@@ -14,6 +45,7 @@ from . import types
 logger = logging.getLogger(__name__)
 
 LINELEN = 160
+
 
 # Helper, returns a "pretty print" of an event
 def pretty_print(event: StatsEvents) -> str:
@@ -69,12 +101,7 @@ class EventFS(types.UDSFSInterface):
             if len(path) == 3 and int(path[2]) in range(
                 1, EventFS.number_of_days(int(path[0]), int(path[1])) + 1
             ):
-                size = (
-                    LINELEN
-                    * EventFS.get_events(
-                        int(path[0]), int(path[1]), int(path[2]), 0
-                    ).count()
-                )
+                size = LINELEN * EventFS.get_events(int(path[0]), int(path[1]), int(path[2]), 0).count()
                 return types.StatType(st_mode=stat.S_IFREG | 0o444, st_size=size)
 
         raise FileNotFoundError('No such file or directory')
@@ -90,14 +117,9 @@ class EventFS(types.UDSFSInterface):
             if len(path) == 1:
                 return ['.', '..'] + EventFS._months
 
-            if (
-                len(path) == 2 and path[1] in EventFS._months
-            ):  # Return days of month as indicated on path
+            if len(path) == 2 and path[1] in EventFS._months:  # Return days of month as indicated on path
                 month = int(path[1])
-                return ['.', '..'] + [
-                    f'{x:02d}'
-                    for x in range(1, EventFS.number_of_days(year, month) + 1)
-                ]
+                return ['.', '..'] + [f'{x:02d}' for x in range(1, EventFS.number_of_days(year, month) + 1)]
 
         raise FileNotFoundError('No such file or directory')
 
@@ -128,12 +150,7 @@ class EventFS(types.UDSFSInterface):
 
     @staticmethod
     def last_years() -> typing.List[str]:
-        return [
-            str(x)
-            for x in range(
-                datetime.datetime.now().year - 4, datetime.datetime.now().year + 1
-            )
-        ]
+        return [str(x) for x in range(datetime.datetime.now().year - 4, datetime.datetime.now().year + 1)]
 
     @staticmethod
     def number_of_days(year: int, month: int) -> int:
@@ -141,17 +158,11 @@ class EventFS(types.UDSFSInterface):
 
     # retrieve Events from a year as a list of events
     @staticmethod
-    def get_events(
-        year: int, month: int, day: int, skip: int = 0
-    ) -> QuerySet[StatsEvents]:
+    def get_events(year: int, month: int, day: int, skip: int = 0) -> QuerySet[StatsEvents]:
         # Calculate starting and ending stamp as unix timestamp from year and month
         start = calendar.timegm((year, month, day, 0, 0, 0, 0, 0, 0))
         end = calendar.timegm((year, month, day, 23, 59, 59, 0, 0, 0))
-        logger.debug(
-            'Reading stats events from %s to %s, skiping %s first', start, end, skip
-        )
-        return StatsEvents.objects.filter(stamp__gte=start, stamp__lte=end).order_by(
-            'stamp'
-        )[
+        logger.debug('Reading stats events from %s to %s, skiping %s first', start, end, skip)
+        return StatsEvents.objects.filter(stamp__gte=start, stamp__lte=end).order_by('stamp')[
             skip:  # type: ignore  # Slicing is not supported by pylance right now
         ]

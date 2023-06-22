@@ -11,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -43,11 +43,14 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest, HttpResponse
 
+
 def _check_redirectable(request: 'HttpRequest') -> typing.Optional['HttpResponse']:
     if request.is_secure() or settings.DEBUG:
         return None
 
-    return HttpResponsePermanentRedirect(request.build_absolute_uri(reverse('page.index')).replace('http://', 'https://', 1))
+    return HttpResponsePermanentRedirect(
+        request.build_absolute_uri(reverse('page.index')).replace('http://', 'https://', 1)
+    )
 
 
 # Compatibility with old middleware, so we can use it in settings.py as it was

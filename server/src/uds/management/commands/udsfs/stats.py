@@ -1,3 +1,34 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2023 Virtual Cable S.L.U.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#      may be used to endorse or promote products derived from this software
+#      without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+@author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+
 import stat
 import calendar
 import datetime
@@ -50,9 +81,7 @@ class StatsFS(types.UDSFSInterface):
     )
     # Dictionary containing a mapping between a relative day and the corresponding
     # today start timestamp + first element of tuple, today start timestamp + second element of tuple
-    _interval: typing.ClassVar[
-        typing.Mapping[str, typing.Tuple[datetime.timedelta, datetime.timedelta]]
-    ] = {
+    _interval: typing.ClassVar[typing.Mapping[str, typing.Tuple[datetime.timedelta, datetime.timedelta]]] = {
         'today': (
             datetime.timedelta(days=0),
             datetime.timedelta(days=1),
@@ -116,17 +145,13 @@ class StatsFS(types.UDSFSInterface):
 
             range = self._interval[interval]
         else:
-            range = StatsFS._interval[
-                'lastmonth'
-            ]  # Any value except "today" will do the trick
+            range = StatsFS._interval['lastmonth']  # Any value except "today" will do the trick
             extension = interval
 
         if extension != 'csv':
             raise FileNotFoundError()
 
-        todayStart = datetime.datetime.utcnow().replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        todayStart = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
         return (
             fnc,
             StatInterval(
@@ -144,16 +169,12 @@ class StatsFS(types.UDSFSInterface):
                 ['.', '..']
                 + [
                     f'{dispatcher}.{interval}.csv'
-                    for dispatcher in filter(
-                        lambda x: self._dispatchers[x][1], self._dispatchers
-                    )
+                    for dispatcher in filter(lambda x: self._dispatchers[x][1], self._dispatchers)
                     for interval in self._interval
                 ]
                 + [
                     f'{dispatcher}.csv'
-                    for dispatcher in filter(
-                        lambda x: self._dispatchers[x][1] is False, self._dispatchers
-                    )
+                    for dispatcher in filter(lambda x: self._dispatchers[x][1] is False, self._dispatchers)
                 ]
             )
 
@@ -221,9 +242,7 @@ class StatsFS(types.UDSFSInterface):
         return data[offset : offset + size]
 
     # Dispatchers for different stats files
-    def _read_events(
-        self, interval: StatInterval, extension: str, size: int, offset: int
-    ) -> bytes:
+    def _read_events(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:
         logger.debug(
             'Reading events. Interval=%s, extension=%s, offset=%s, size=%s',
             interval,
@@ -241,9 +260,7 @@ class StatsFS(types.UDSFSInterface):
 
         return virtualFile
 
-    def _read_pools(
-        self, interval: StatInterval, extension: str, size: int, offset: int
-    ) -> bytes:
+    def _read_pools(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:
         logger.debug(
             'Reading pools. Interval=%s, extension=%s, offset: %s, size: %s',
             interval,
@@ -258,9 +275,7 @@ class StatsFS(types.UDSFSInterface):
             virtualFile += pool.toCsv().encode() + b'\n'
         return virtualFile
 
-    def _read_auths(
-        self, interval: StatInterval, extension: str, size: int, offset: int
-    ) -> bytes:
+    def _read_auths(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:
         logger.debug(
             'Reading auths. Interval=%s, extension=%s, offset: %s, size: %s',
             interval,
