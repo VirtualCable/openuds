@@ -14,5 +14,8 @@ This is an Open Source Source project, initiated by Spanish Company ​Virtualca
 
 Please fell free to contribute to this project.
 
-**Note: Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch.**
+Notes
+=====
+* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch.
+* From 4.0 onwards (current master), OpenUDS has been splited in serveral repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
 
