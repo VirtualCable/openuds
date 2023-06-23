@@ -9,6 +9,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -22,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-08 04:17+0200\n"
+"POT-Creation-Date: 2023-06-23 16:16+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Александр Бурматов, 2022\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
@@ -1196,7 +1197,7 @@ msgstr "Метод не найден в {}: {}"
 msgid "Item not found"
 msgstr "Элемент не найден"
 
-#: REST/model.py:340 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:340 web/util/authentication.py:142 web/util/errors.py:81
 msgid "Access denied"
 msgstr "Доступ запрещен"
 
@@ -1292,7 +1293,6 @@ msgstr ""
 "NT\""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:116
-#| msgid "Backup server"
 msgid "Backup servers"
 msgstr "Резервные серверы"
 
@@ -1344,7 +1344,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:146
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:126
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Сертификат"
@@ -1368,14 +1368,10 @@ msgstr ""
 "преобразования имени хоста из AD в разрешимое имя хоста."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:168
-#| msgid "Ignores unused"
 msgid "Ignore domains"
 msgstr "Игнорировать домены"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:172
-#| msgid ""
-#| "If not empty, this host will be used in case main host server is not "
-#| "reachable"
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
@@ -1388,7 +1384,6 @@ msgid "Redirect On Expired"
 msgstr "Перенаправление по истечении срока действия"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:182
-#| msgid "If not empty, this password will be always used as credential"
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
@@ -1399,14 +1394,14 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:191
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
+#: auths/SAML_enterprise/saml.py:200 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "Атрибут многофакторной идентификации"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:193
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
+#: auths/SAML_enterprise/saml.py:202 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Атрибут, из которого извлекается код МФА"
 
@@ -1436,7 +1431,7 @@ msgstr ""
 #: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
-#: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
+#: auths/RegexLdap/authenticator.py:619 auths/RegexLdap/authenticator.py:650
 #: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "Имя пользователя не найдено"
@@ -1449,7 +1444,7 @@ msgstr "Группа не найдена"
 #: auths/ActiveDirectory_enterprise/authenticator.py:873
 #: auths/ActiveDirectory_enterprise/authenticator.py:897
 #: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
+#: auths/RegexLdap/authenticator.py:678 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "Слишком много результатов, сделайте запрос более уникальным"
@@ -1474,7 +1469,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:976
 #: auths/EDirectory_enterprise/authenticator.py:492
-#: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
+#: auths/RegexLdap/authenticator.py:788 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Параметры подключения правильные, тест был успешно выполнен"
 
@@ -1624,12 +1619,12 @@ msgid "Edirectory connection error: {}"
 msgstr "Ошибка подключения к электронному каталогу: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:392
-#: auths/RegexLdap/authenticator.py:671 auths/SimpleLDAP/authenticator.py:621
+#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "Поиск в LDAP некорректный"
 
 #: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/RegexLdap/authenticator.py:689 auths/SimpleLDAP/authenticator.py:629
+#: auths/RegexLdap/authenticator.py:719 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "Класс пользователя Ldap возможно указан неправильно (пользователь с этим "
@@ -1867,7 +1862,7 @@ msgstr "Аутентификатор Regex LDAP"
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Регулярное выражение для аутентификатора LDAP"
 
-#: auths/RegexLdap/authenticator.py:714
+#: auths/RegexLdap/authenticator.py:744
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1875,7 +1870,7 @@ msgstr ""
 "Идентификатор аттрибута пользователя LDAP вероятно неверный (невозможно "
 "найти пользователя с обоими условиями)"
 
-#: auths/RegexLdap/authenticator.py:743 auths/SimpleLDAP/authenticator.py:698
+#: auths/RegexLdap/authenticator.py:773 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1895,7 +1890,7 @@ msgstr "Аутентификатор SAML (v2.0)"
 msgid "Private key"
 msgstr "Приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:120
+#: auths/SAML_enterprise/saml.py:119
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1903,11 +1898,11 @@ msgstr ""
 "Приватный ключ, используемый для подписи и шифрования, сгенерированный в "
 "base64 c помощью openssl"
 
-#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:121 auths/SAML_enterprise/saml.py:132
 msgid "Certificates"
 msgstr "Сертификаты"
 
-#: auths/SAML_enterprise/saml.py:131
+#: auths/SAML_enterprise/saml.py:129
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1915,82 +1910,82 @@ msgstr ""
 "Открытый ключ, используемый для подписывания и шифрования (общедоступная "
 "часть предыдущего частного), сгенерированный в base64 от openssl"
 
-#: auths/SAML_enterprise/saml.py:139
+#: auths/SAML_enterprise/saml.py:137
 msgid "IDP Metadata"
 msgstr "IDP метаданные"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:139
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Здесь вы можете указать URL-адрес, метаданные IDP или сами метаданные (xml)"
 
-#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:141 auths/SAML_enterprise/saml.py:148
 msgid "Metadata"
 msgstr "Метаданные"
 
-#: auths/SAML_enterprise/saml.py:149
+#: auths/SAML_enterprise/saml.py:145
 msgid "Entity ID"
 msgstr "ID объекта"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:147
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "Идентификатор SP. Если оставить пустым, будет автоматически генерироваться с "
 "URL-адреса сервера"
 
-#: auths/SAML_enterprise/saml.py:160
+#: auths/SAML_enterprise/saml.py:154
 msgid "User name attrs"
 msgstr "Атрибут имени пользователя"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:156
 msgid "Fields from where to extract user name"
 msgstr "Поля, откуда извлекается имя пользователя"
 
-#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:168
+#: auths/SAML_enterprise/saml.py:178
 msgid "Attributes"
 msgstr "Атрибуты"
 
-#: auths/SAML_enterprise/saml.py:170
+#: auths/SAML_enterprise/saml.py:164
 msgid "Group name attrs"
 msgstr "Атрибуты имени группы"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:166
 msgid "Fields from where to extract the groups"
 msgstr "Поля, откуда извлекается имя группы"
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:174
 msgid "Real name attrs"
 msgstr "Атрибуты реального имени"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:176
 msgid "Fields from where to extract the real name"
 msgstr "Поля, откуда извлекается реальное имя"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:182
 msgid "Global logout"
 msgstr "Глобальный выход"
 
-#: auths/SAML_enterprise/saml.py:191
+#: auths/SAML_enterprise/saml.py:185
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "Если установлено, выход из UDS приведет к выходу из системы SAML."
 
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:190
 msgid "ADFS compatibility"
 msgstr "Совместимость с ADFS"
 
-#: auths/SAML_enterprise/saml.py:199
+#: auths/SAML_enterprise/saml.py:193
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "Если установлено, включите кодировку URL-адресов в нижнем регистре, чтобы "
 "ADFS могла работать правильно."
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "Этот тип аутентификатора не поддерживает пробелы в поле NAME."
 
-#: auths/SAML_enterprise/saml.py:244
+#: auths/SAML_enterprise/saml.py:233
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1998,11 +1993,11 @@ msgstr ""
 "Сертификат сервера должен быть действительным PEM (PEM сертификат начинается "
 "с -----BEGIN CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:252
+#: auths/SAML_enterprise/saml.py:240
 msgid "Invalid server certificate. "
 msgstr "Недопустимый сертификат сервера"
 
-#: auths/SAML_enterprise/saml.py:263
+#: auths/SAML_enterprise/saml.py:248
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -2010,48 +2005,48 @@ msgstr ""
 "Приватный ключ должен быть действительным PEM (PEM приватный ключ начинается "
 "с -----BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:271
+#: auths/SAML_enterprise/saml.py:255
 msgid "Invalid private key. "
 msgstr "Недопустимый приватный ключ"
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:260
 msgid "Certificate and private key do not match"
 msgstr "Сертификат и закрытый ключ не совпадают"
 
-#: auths/SAML_enterprise/saml.py:295
+#: auths/SAML_enterprise/saml.py:278
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Невозможно получить url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:306
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr "(полученный из URL)"
 
-#: auths/SAML_enterprise/saml.py:308
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML не подходит для метаданных IDP"
 
-#: auths/SAML_enterprise/saml.py:366
+#: auths/SAML_enterprise/saml.py:346
 msgid "Can't access idp metadata"
 msgstr "Нет доступа к IDP метаданным"
 
-#: auths/SAML_enterprise/saml.py:433
+#: auths/SAML_enterprise/saml.py:411
 msgid "Error validating SP metadata: "
 msgstr "Ошибка проверки метаданных SP:"
 
-#: auths/SAML_enterprise/saml.py:542
+#: auths/SAML_enterprise/saml.py:535
 msgid "Error processing SLO: "
 msgstr "Ошибка обработки SLO:"
 
-#: auths/SAML_enterprise/saml.py:572
+#: auths/SAML_enterprise/saml.py:561
 msgid "Error processing SAML response: "
 msgstr "Ошибка обработки ответа SAML:"
 
-#: auths/SAML_enterprise/saml.py:585
+#: auths/SAML_enterprise/saml.py:569
 msgid "SAML response not authenticated"
 msgstr "Ответ SAML не аутентифицирован"
 
-#: auths/SAML_enterprise/saml.py:616
+#: auths/SAML_enterprise/saml.py:598
 msgid "No attributes returned from IdP"
 msgstr "От IdP не возвращаются атрибуты"
 
@@ -4087,7 +4082,7 @@ msgstr "Ключевая пара, используемая для этой ма
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:148
+#: services/HyperV_enterprise/service.py:154
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -4099,7 +4094,7 @@ msgstr "Имена машин"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:151
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -4111,7 +4106,7 @@ msgstr "Базовое имя для клонов этой машины"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:164
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -4123,7 +4118,7 @@ msgstr "Длина имени"
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:161
+#: services/HyperV_enterprise/service.py:167
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4410,9 +4405,10 @@ msgstr "Сервисная базовая машина"
 #: services/HyperV_enterprise/service.py:114
 #: services/HyperV_enterprise/service.py:125
 #: services/HyperV_enterprise/service.py:134
-#: services/HyperV_enterprise/service.py:143
-#: services/HyperV_enterprise/service.py:152
-#: services/HyperV_enterprise/service.py:162
+#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:150
+#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:168
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4557,16 +4553,27 @@ msgstr ""
 "Если флажок установлен, вместо дифференциальных дисков будут использоваться "
 "полные клоны."
 
-#: services/HyperV_enterprise/service.py:139
+#: services/HyperV_enterprise/service.py:138
 msgid "Enable Nested Virtualization"
 msgstr "Включить вложенную виртуализацию"
 
-#: services/HyperV_enterprise/service.py:142
-#| msgid "If active, the user will be allowed to reset the service"
+#: services/HyperV_enterprise/service.py:141
 msgid "If checked, nested virtualization will be enabled for this service"
 msgstr ""
 "Если этот флажок установлен, для этой службы будет включена вложенная "
 "виртуализация."
+
+#: services/HyperV_enterprise/service.py:146
+msgid "Enable Compatibility for Migration"
+msgstr "Включить совместимость для миграции"
+
+#: services/HyperV_enterprise/service.py:149
+#| msgid "If checked, nested virtualization will be enabled for this service"
+msgid ""
+"If checked, compatibility for migration will be enabled for this service"
+msgstr ""
+"Если флажок установлен, совместимость для миграции будет включена для этой "
+"службы."
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5403,22 +5410,18 @@ msgid "Storage for publications & machines."
 msgstr "Хранилище публикаций и машин."
 
 #: services/Proxmox/service.py:158
-#| msgid "Availability"
 msgid "GPU Availability"
 msgstr "Доступность графического процессора"
 
 #: services/Proxmox/service.py:162
-#| msgid "Do not redirect"
 msgid "Do not check"
 msgstr "Не проверять"
 
 #: services/Proxmox/service.py:163
-#| msgid "Start if unavailable"
 msgid "Only if available"
 msgstr "Только если доступно"
 
 #: services/Proxmox/service.py:164
-#| msgid "Start if unavailable"
 msgid "Only if NOT available"
 msgstr "Только если НЕТ в наличии"
 
@@ -7609,16 +7612,16 @@ msgstr "Качество изображение, используемое в н�
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go доступ (Эксперимент). Туннельное подключение."
 
-#: web/util/authentication.py:111
+#: web/util/authentication.py:110
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr ""
 "Слишком много ошибок аутентификации. Пользователь временно заблокирован"
 
-#: web/util/authentication.py:121
+#: web/util/authentication.py:120
 msgid "Access tried from an unallowed source"
 msgstr "Попытка доступа из недопустимого источника"
 
-#: web/util/authentication.py:158
+#: web/util/authentication.py:157
 msgid "Invalid data"
 msgstr "Неверные данные"
 
@@ -7749,7 +7752,7 @@ msgstr ""
 "Ваш сервис создается, пожалуйста, подождите несколько секунд, пока мы "
 "завершим."
 
-#: web/views/auth.py:189
+#: web/views/auth.py:182
 msgid "Authenticator does not provide information"
 msgstr "Аутентификатор не предоставляет информацию"
 

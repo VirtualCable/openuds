@@ -9,12 +9,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-08 04:17+0200\n"
+"POT-Creation-Date: 2023-06-23 16:16+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -1177,7 +1178,7 @@ msgstr "تعذر العثور على الأسلوب في {}: {}"
 msgid "Item not found"
 msgstr "تعذر العثور على عنصر"
 
-#: REST/model.py:340 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:340 web/util/authentication.py:142 web/util/errors.py:81
 msgid "Access denied"
 msgstr "تم رفض الوصول"
 
@@ -1272,7 +1273,6 @@ msgstr ""
 "المستخدم) إذا كان وضع التوافق ليس \"Windows NT\""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:116
-#| msgid "Backup server"
 msgid "Backup servers"
 msgstr "خوادم النسخ الاحتياطي"
 
@@ -1324,7 +1324,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:146
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:126
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "شهادة"
@@ -1348,14 +1348,10 @@ msgstr ""
 "المضيف من AD إلى اسم مضيف قابل للحل."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:168
-#| msgid "Ignores unused"
 msgid "Ignore domains"
 msgstr "تجاهل المجالات"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:172
-#| msgid ""
-#| "If not empty, this host will be used in case main host server is not "
-#| "reachable"
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
@@ -1368,7 +1364,6 @@ msgid "Redirect On Expired"
 msgstr "انتهت صلاحية إعادة التوجيه"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:182
-#| msgid "If not empty, this password will be always used as credential"
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
@@ -1379,14 +1374,14 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:191
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
+#: auths/SAML_enterprise/saml.py:200 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "سمة MFA"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:193
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
+#: auths/SAML_enterprise/saml.py:202 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "السمة من مكان استخراج رمز MFA"
 
@@ -1416,7 +1411,7 @@ msgstr ""
 #: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
-#: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
+#: auths/RegexLdap/authenticator.py:619 auths/RegexLdap/authenticator.py:650
 #: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "لم يتم العثور على اسم المستخدم"
@@ -1429,7 +1424,7 @@ msgstr "لم يتم العثور على المجموعة"
 #: auths/ActiveDirectory_enterprise/authenticator.py:873
 #: auths/ActiveDirectory_enterprise/authenticator.py:897
 #: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
+#: auths/RegexLdap/authenticator.py:678 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "الكثير من النتائج، كن أكثر تحديداً"
@@ -1450,7 +1445,7 @@ msgstr "الملقم لا يبدو Active Directory (ليس لديه كائنا�
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:976
 #: auths/EDirectory_enterprise/authenticator.py:492
-#: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
+#: auths/RegexLdap/authenticator.py:788 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "يبدو الاتصال params  صحيحا، تم تنفيذ الأختبار بنجاح"
 
@@ -1597,12 +1592,12 @@ msgid "Edirectory connection error: {}"
 msgstr "خطأ في اتصال Edirectory: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:392
-#: auths/RegexLdap/authenticator.py:671 auths/SimpleLDAP/authenticator.py:621
+#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "قاعدة البحث Ldap غير صحيح"
 
 #: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/RegexLdap/authenticator.py:689 auths/SimpleLDAP/authenticator.py:629
+#: auths/RegexLdap/authenticator.py:719 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "يبدو أن فئة Ldap المستخدم غير صحيحة (العثور على لا مستخدم من تلك الفئة)"
@@ -1831,14 +1826,14 @@ msgstr "المصادق Regex LDAP"
 msgid "Regular Expressions LDAP authenticator"
 msgstr " التعبيرات العادية لمصادق LDAP"
 
-#: auths/RegexLdap/authenticator.py:714
+#: auths/RegexLdap/authenticator.py:744
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr ""
 "ربما Ldap user id attr خاطئ (لا يمكن العثور على أي مستخدم مع كل الشروط)"
 
-#: auths/RegexLdap/authenticator.py:743 auths/SimpleLDAP/authenticator.py:698
+#: auths/RegexLdap/authenticator.py:773 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1856,7 +1851,7 @@ msgstr "المصادق (SAML (v2.0"
 msgid "Private key"
 msgstr "المفتاح الخاص"
 
-#: auths/SAML_enterprise/saml.py:120
+#: auths/SAML_enterprise/saml.py:119
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1864,11 +1859,11 @@ msgstr ""
 "استخدام المفتاح الخاص للتسجيل ولهذه السمة، كما تم إنشاؤه في الأساس 64 من "
 "OpenSSL"
 
-#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:121 auths/SAML_enterprise/saml.py:132
 msgid "Certificates"
 msgstr "شهادات"
 
-#: auths/SAML_enterprise/saml.py:131
+#: auths/SAML_enterprise/saml.py:129
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1876,80 +1871,80 @@ msgstr ""
 "المفتاح العمومي يستخدم للإمضاء والتشفير (الجزء العلني من المفتاح الخاص "
 "السابق)، كما ولد في base64 من OpenSSL"
 
-#: auths/SAML_enterprise/saml.py:139
+#: auths/SAML_enterprise/saml.py:137
 msgid "IDP Metadata"
 msgstr "IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:139
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "يمكنك إدخال URL أو بيانات IDP Metadata هنا داخليا أو بيان التعريف نفسه (xml)"
 
-#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:141 auths/SAML_enterprise/saml.py:148
 msgid "Metadata"
 msgstr "بيانات التعريف"
 
-#: auths/SAML_enterprise/saml.py:149
+#: auths/SAML_enterprise/saml.py:145
 msgid "Entity ID"
 msgstr "معرف الكيان"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:147
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP ID. إذا ترك فارغاً، ستكون هذه المعطيات من محدد موقع معلومات الخادم"
 
-#: auths/SAML_enterprise/saml.py:160
+#: auths/SAML_enterprise/saml.py:154
 msgid "User name attrs"
 msgstr "User name attrs"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:156
 msgid "Fields from where to extract user name"
 msgstr "حقول منها يستخرج اسم المستخدم"
 
-#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:168
+#: auths/SAML_enterprise/saml.py:178
 msgid "Attributes"
 msgstr "سمات"
 
-#: auths/SAML_enterprise/saml.py:170
+#: auths/SAML_enterprise/saml.py:164
 msgid "Group name attrs"
 msgstr "Group name attrs"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:166
 msgid "Fields from where to extract the groups"
 msgstr "حقول منها تستخرج المجموعات"
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:174
 msgid "Real name attrs"
 msgstr "Real name attrs"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:176
 msgid "Fields from where to extract the real name"
 msgstr "حقول منها يستخرج الاسم الحقيقي"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:182
 msgid "Global logout"
 msgstr "تسجيل الخروج العالمي"
 
-#: auths/SAML_enterprise/saml.py:191
+#: auths/SAML_enterprise/saml.py:185
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "في حالة الضبط ، سيؤدي الخروج من UDS إلى تشغيل تسجيل الخروج من SAML"
 
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:190
 msgid "ADFS compatibility"
 msgstr "توافق ADFS"
 
-#: auths/SAML_enterprise/saml.py:199
+#: auths/SAML_enterprise/saml.py:193
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "في حالة التعيين ، قم بتمكين ترميز عنوان url بأحرف صغيرة حتى يعمل ADFS بشكل "
 "صحيح"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "لا يدعم هذا النوع من المصادقة المسافات البيضاء في الحقل NAME"
 
-#: auths/SAML_enterprise/saml.py:244
+#: auths/SAML_enterprise/saml.py:233
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1957,11 +1952,11 @@ msgstr ""
 "يجب أن تكون شهادة الملقم PEM صالحة (PEM شهادات تبدأ ب-----BEGIN "
 "CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:252
+#: auths/SAML_enterprise/saml.py:240
 msgid "Invalid server certificate. "
 msgstr "شهادة الملقم غير صالحة. "
 
-#: auths/SAML_enterprise/saml.py:263
+#: auths/SAML_enterprise/saml.py:248
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1969,48 +1964,48 @@ msgstr ""
 "يجب أن يكون المفتاح الخاص PEM صالح (PEM المفاتيح الخاصة تبدأ ب------BEGIN "
 "RSA PRIVATE KEY-----"
 
-#: auths/SAML_enterprise/saml.py:271
+#: auths/SAML_enterprise/saml.py:255
 msgid "Invalid private key. "
 msgstr "المفتاح الخاص غير صالح. "
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:260
 msgid "Certificate and private key do not match"
 msgstr "الشهادة والمفتاح الخاص لا يتطابقان"
 
-#: auths/SAML_enterprise/saml.py:295
+#: auths/SAML_enterprise/saml.py:278
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "لا يمكن إحضار url {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:306
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr " (تم الحصول عليها من URL)"
 
-#: auths/SAML_enterprise/saml.py:308
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML لا تبدو صالحة لبيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:366
+#: auths/SAML_enterprise/saml.py:346
 msgid "Can't access idp metadata"
 msgstr "لا يمكن الوصول إلى بيانات التعريف IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:433
+#: auths/SAML_enterprise/saml.py:411
 msgid "Error validating SP metadata: "
 msgstr "خطأ في التحقق من صحة بيانات تعريف مقدم الخدمة:"
 
-#: auths/SAML_enterprise/saml.py:542
+#: auths/SAML_enterprise/saml.py:535
 msgid "Error processing SLO: "
 msgstr "خطأ في معالجة SLO:"
 
-#: auths/SAML_enterprise/saml.py:572
+#: auths/SAML_enterprise/saml.py:561
 msgid "Error processing SAML response: "
 msgstr "خطأ في معالجة استجابة SAML:"
 
-#: auths/SAML_enterprise/saml.py:585
+#: auths/SAML_enterprise/saml.py:569
 msgid "SAML response not authenticated"
 msgstr "لم تتم مصادقة استجابة SAML"
 
-#: auths/SAML_enterprise/saml.py:616
+#: auths/SAML_enterprise/saml.py:598
 msgid "No attributes returned from IdP"
 msgstr "لم يتم إرجاع أي سمات من IdP"
 
@@ -4019,7 +4014,7 @@ msgstr "زوج المفاتيح الذي سيتم استخدامه لهذا ال
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:148
+#: services/HyperV_enterprise/service.py:154
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -4031,7 +4026,7 @@ msgstr "أسماء الأجهزة"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:151
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -4043,7 +4038,7 @@ msgstr "الاسم الأساسي للاستنساخ من هذا الجهاز"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:164
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -4055,7 +4050,7 @@ msgstr "طول الاسم "
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:161
+#: services/HyperV_enterprise/service.py:167
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4339,9 +4334,10 @@ msgstr "آلة قاعدة الخدمة"
 #: services/HyperV_enterprise/service.py:114
 #: services/HyperV_enterprise/service.py:125
 #: services/HyperV_enterprise/service.py:134
-#: services/HyperV_enterprise/service.py:143
-#: services/HyperV_enterprise/service.py:152
-#: services/HyperV_enterprise/service.py:162
+#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:150
+#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:168
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4479,14 +4475,23 @@ msgstr "استخدم النسخ الكاملة"
 msgid "If checked, full clones will be used instead of differential disks"
 msgstr "إذا تم تحديده ، فسيتم استخدام النسخ الكاملة بدلاً من الأقراص التفاضلية"
 
-#: services/HyperV_enterprise/service.py:139
+#: services/HyperV_enterprise/service.py:138
 msgid "Enable Nested Virtualization"
 msgstr "تفعيل الافتراضية المتداخلة"
 
-#: services/HyperV_enterprise/service.py:142
-#| msgid "If active, the user will be allowed to reset the service"
+#: services/HyperV_enterprise/service.py:141
 msgid "If checked, nested virtualization will be enabled for this service"
 msgstr "إذا تم تحديده ، فسيتم تمكين المحاكاة الافتراضية المتداخلة لهذه الخدمة"
+
+#: services/HyperV_enterprise/service.py:146
+msgid "Enable Compatibility for Migration"
+msgstr "تمكين التوافق من أجل الترحيل"
+
+#: services/HyperV_enterprise/service.py:149
+#| msgid "If checked, nested virtualization will be enabled for this service"
+msgid ""
+"If checked, compatibility for migration will be enabled for this service"
+msgstr "إذا تم تحديده ، فسيتم تمكين التوافق مع الترحيل لهذه الخدمة"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5306,22 +5311,18 @@ msgid "Storage for publications & machines."
 msgstr "تخزين للمنشورات والآلات."
 
 #: services/Proxmox/service.py:158
-#| msgid "Availability"
 msgid "GPU Availability"
 msgstr "توفر GPU"
 
 #: services/Proxmox/service.py:162
-#| msgid "Do not redirect"
 msgid "Do not check"
 msgstr "لا تتحقق"
 
 #: services/Proxmox/service.py:163
-#| msgid "Start if unavailable"
 msgid "Only if available"
 msgstr "فقط إذا كان ذلك متاحًا"
 
 #: services/Proxmox/service.py:164
-#| msgid "Start if unavailable"
 msgid "Only if NOT available"
 msgstr "فقط إذا لم يكن متاحًا"
 
@@ -7447,15 +7448,15 @@ msgstr "قيمة الجودة المستخدمة في بعض الأشكال حز
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "X2Go إتصال (تجريبية). اتصال النفق."
 
-#: web/util/authentication.py:111
+#: web/util/authentication.py:110
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "الكثير من أخطاء التوثيق. المستخدم محظور مؤقتا"
 
-#: web/util/authentication.py:121
+#: web/util/authentication.py:120
 msgid "Access tried from an unallowed source"
 msgstr "تم محاولة الوصول من مصدر غير مسموح به"
 
-#: web/util/authentication.py:158
+#: web/util/authentication.py:157
 msgid "Invalid data"
 msgstr "بيانات غير صالحة"
 
@@ -7581,7 +7582,7 @@ msgid ""
 "complete it.)"
 msgstr "جاري إنشاء الخدمة الخاصة بك ، يرجى الانتظار لبضع ثوان أثناء إكمالها.)"
 
-#: web/views/auth.py:189
+#: web/views/auth.py:182
 msgid "Authenticator does not provide information"
 msgstr "الموثق لا يوفر المعلومات"
 

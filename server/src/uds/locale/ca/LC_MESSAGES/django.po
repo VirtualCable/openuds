@@ -9,6 +9,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Javier <jgonzalez@virtualcable.es>, 2020
@@ -16,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-08 04:17+0200\n"
+"POT-Creation-Date: 2023-06-23 16:16+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -1191,7 +1192,7 @@ msgstr "Mètode no trobat a {}: {}"
 msgid "Item not found"
 msgstr "Element no trobat"
 
-#: REST/model.py:340 web/util/authentication.py:143 web/util/errors.py:81
+#: REST/model.py:340 web/util/authentication.py:142 web/util/errors.py:81
 msgid "Access denied"
 msgstr "Accés denegat"
 
@@ -1289,7 +1290,6 @@ msgstr ""
 "domini de l&#39;usuari) si el mode compat no és \"Windows NT\""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:116
-#| msgid "Backup server"
 msgid "Backup servers"
 msgstr "Servidors de còpia de seguretat"
 
@@ -1341,7 +1341,7 @@ msgstr ""
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:146
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:128
+#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:126
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Certificat"
@@ -1365,14 +1365,10 @@ msgstr ""
 "traduir el nom d&#39;amfitrió d&#39;AD a un nom d&#39;amfitrió resoluble."
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:168
-#| msgid "Ignores unused"
 msgid "Ignore domains"
 msgstr "Ignora els dominis"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:172
-#| msgid ""
-#| "If not empty, this host will be used in case main host server is not "
-#| "reachable"
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
@@ -1385,7 +1381,6 @@ msgid "Redirect On Expired"
 msgstr "Redirecció en caducat"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:182
-#| msgid "If not empty, this password will be always used as credential"
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
@@ -1396,14 +1391,14 @@ msgstr ""
 #: auths/ActiveDirectory_enterprise/authenticator.py:191
 #: auths/EDirectory_enterprise/authenticator.py:114
 #: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:206 auths/SimpleLDAP/authenticator.py:192
+#: auths/SAML_enterprise/saml.py:200 auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "Atribut MFA"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:193
 #: auths/EDirectory_enterprise/authenticator.py:116
 #: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:208 auths/SimpleLDAP/authenticator.py:194
+#: auths/SAML_enterprise/saml.py:202 auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atribut d&#39;on extreure el codi MFA"
 
@@ -1433,7 +1428,7 @@ msgstr ""
 #: auths/AzureAD_enterprise/azure_ad.py:318
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
-#: auths/RegexLdap/authenticator.py:589 auths/RegexLdap/authenticator.py:620
+#: auths/RegexLdap/authenticator.py:619 auths/RegexLdap/authenticator.py:650
 #: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "Nom d'usuari no trobat"
@@ -1446,7 +1441,7 @@ msgstr "Grup no trobat"
 #: auths/ActiveDirectory_enterprise/authenticator.py:873
 #: auths/ActiveDirectory_enterprise/authenticator.py:897
 #: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:648 auths/SimpleLDAP/authenticator.py:576
+#: auths/RegexLdap/authenticator.py:678 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "Massa resultats, cal especificar més"
@@ -1467,7 +1462,7 @@ msgstr "El servidor sembla no ser un Directori Actiu (no té objectes de grup)"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:976
 #: auths/EDirectory_enterprise/authenticator.py:492
-#: auths/RegexLdap/authenticator.py:758 auths/SimpleLDAP/authenticator.py:759
+#: auths/RegexLdap/authenticator.py:788 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr ""
 "Els paràmetres de connexió semblen correctes, la prova s'ha executat "
@@ -1619,12 +1614,12 @@ msgid "Edirectory connection error: {}"
 msgstr "Error de connexió amb l'eDirectori: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:392
-#: auths/RegexLdap/authenticator.py:671 auths/SimpleLDAP/authenticator.py:621
+#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "La base de cerca LDAP no és correcta"
 
 #: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/RegexLdap/authenticator.py:689 auths/SimpleLDAP/authenticator.py:629
+#: auths/RegexLdap/authenticator.py:719 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "La classe d'usuari LDAP sembla no ser correcta (no s'ha trobat cap usuari "
@@ -1863,7 +1858,7 @@ msgstr "Autenticador Regex LDAP"
 msgid "Regular Expressions LDAP authenticator"
 msgstr "Autenticador LDAP d'Expressions Regulars"
 
-#: auths/RegexLdap/authenticator.py:714
+#: auths/RegexLdap/authenticator.py:744
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1871,7 +1866,7 @@ msgstr ""
 "L'atribut d'ID d'usuari de LDAP probablement és incorrecte (no es pot trobar "
 "cap usuari que compleixi les dues condicions)"
 
-#: auths/RegexLdap/authenticator.py:743 auths/SimpleLDAP/authenticator.py:698
+#: auths/RegexLdap/authenticator.py:773 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1891,7 +1886,7 @@ msgstr "Autenticador SAML (v2.0)"
 msgid "Private key"
 msgstr "Clau privada"
 
-#: auths/SAML_enterprise/saml.py:120
+#: auths/SAML_enterprise/saml.py:119
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1899,11 +1894,11 @@ msgstr ""
 "Clau privada utilitzada per a signar i encriptar, generada en base 64 des "
 "d'OPENSSL"
 
-#: auths/SAML_enterprise/saml.py:123 auths/SAML_enterprise/saml.py:134
+#: auths/SAML_enterprise/saml.py:121 auths/SAML_enterprise/saml.py:132
 msgid "Certificates"
 msgstr "Certificats"
 
-#: auths/SAML_enterprise/saml.py:131
+#: auths/SAML_enterprise/saml.py:129
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1911,82 +1906,82 @@ msgstr ""
 "Clau pública utilitzada per a signar i encriptar (part pública de la clau "
 "privada anterior), generada en base 64 des d'OPENSSL"
 
-#: auths/SAML_enterprise/saml.py:139
+#: auths/SAML_enterprise/saml.py:137
 msgid "IDP Metadata"
 msgstr "Metadades IDP"
 
-#: auths/SAML_enterprise/saml.py:142
+#: auths/SAML_enterprise/saml.py:139
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr ""
 "Podeu posar aquí l'URL o les metadades IDP o les mateixes metadades (xml)"
 
-#: auths/SAML_enterprise/saml.py:145 auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:141 auths/SAML_enterprise/saml.py:148
 msgid "Metadata"
 msgstr "Metadades"
 
-#: auths/SAML_enterprise/saml.py:149
+#: auths/SAML_enterprise/saml.py:145
 msgid "Entity ID"
 msgstr "ID de l'entitat"
 
-#: auths/SAML_enterprise/saml.py:152
+#: auths/SAML_enterprise/saml.py:147
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "ID del SP. Si es deixa en blanc, es generarà automàticament des del servidor "
 "URL"
 
-#: auths/SAML_enterprise/saml.py:160
+#: auths/SAML_enterprise/saml.py:154
 msgid "User name attrs"
 msgstr "Atributs de nom d'usuari"
 
-#: auths/SAML_enterprise/saml.py:162
+#: auths/SAML_enterprise/saml.py:156
 msgid "Fields from where to extract user name"
 msgstr "Camps d'on obtenir el nom d'usuari"
 
-#: auths/SAML_enterprise/saml.py:164 auths/SAML_enterprise/saml.py:174
-#: auths/SAML_enterprise/saml.py:184
+#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:168
+#: auths/SAML_enterprise/saml.py:178
 msgid "Attributes"
 msgstr "Atributs"
 
-#: auths/SAML_enterprise/saml.py:170
+#: auths/SAML_enterprise/saml.py:164
 msgid "Group name attrs"
 msgstr "Atributs de Nom de grup"
 
-#: auths/SAML_enterprise/saml.py:172
+#: auths/SAML_enterprise/saml.py:166
 msgid "Fields from where to extract the groups"
 msgstr "Camps d'on obtenir els grups"
 
-#: auths/SAML_enterprise/saml.py:180
+#: auths/SAML_enterprise/saml.py:174
 msgid "Real name attrs"
 msgstr "Atributs de Nom real"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:176
 msgid "Fields from where to extract the real name"
 msgstr "Camps d'on obtenir el nom real"
 
-#: auths/SAML_enterprise/saml.py:188
+#: auths/SAML_enterprise/saml.py:182
 msgid "Global logout"
 msgstr "Tancament de sessió global"
 
-#: auths/SAML_enterprise/saml.py:191
+#: auths/SAML_enterprise/saml.py:185
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "Si s&#39;estableix, la sessió d&#39;UDS activarà la sortida de SAML"
 
-#: auths/SAML_enterprise/saml.py:196
+#: auths/SAML_enterprise/saml.py:190
 msgid "ADFS compatibility"
 msgstr "Compatibilitat ADFS"
 
-#: auths/SAML_enterprise/saml.py:199
+#: auths/SAML_enterprise/saml.py:193
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "Si s&#39;estableix, activeu la codificació d&#39;URL en minúscules perquè "
 "ADFS pugui funcionar correctament"
 
-#: auths/SAML_enterprise/saml.py:230
+#: auths/SAML_enterprise/saml.py:223
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "Aquest tipus d&#39;autenticador no admet espais en blanc al camp NOM"
 
-#: auths/SAML_enterprise/saml.py:244
+#: auths/SAML_enterprise/saml.py:233
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1994,11 +1989,11 @@ msgstr ""
 "El certificat del servidor ha de ser PEM vàlid (els certificats PEM comencen "
 "amb -----BEGIN CERTIFICATE-----)"
 
-#: auths/SAML_enterprise/saml.py:252
+#: auths/SAML_enterprise/saml.py:240
 msgid "Invalid server certificate. "
 msgstr "Certificat de servidor no vàlid"
 
-#: auths/SAML_enterprise/saml.py:263
+#: auths/SAML_enterprise/saml.py:248
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -2006,48 +2001,48 @@ msgstr ""
 "La clau privada ha de ser PEM vàlida (les claus privades PEM comencen amb "
 "-----BEGIN RSA PRIVATE KEY-----)"
 
-#: auths/SAML_enterprise/saml.py:271
+#: auths/SAML_enterprise/saml.py:255
 msgid "Invalid private key. "
 msgstr "Clau privada incorrecta."
 
-#: auths/SAML_enterprise/saml.py:276
+#: auths/SAML_enterprise/saml.py:260
 msgid "Certificate and private key do not match"
 msgstr "El certificat i la clau privada no coincideixen"
 
-#: auths/SAML_enterprise/saml.py:295
+#: auths/SAML_enterprise/saml.py:278
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "No es por extreure URL {0}: {1}"
 
-#: auths/SAML_enterprise/saml.py:306
+#: auths/SAML_enterprise/saml.py:287
 msgid " (obtained from URL)"
 msgstr " (obtingut de l'URL)"
 
-#: auths/SAML_enterprise/saml.py:308
+#: auths/SAML_enterprise/saml.py:289
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "El XML no sembla vàlid per a metadades IDP"
 
-#: auths/SAML_enterprise/saml.py:366
+#: auths/SAML_enterprise/saml.py:346
 msgid "Can't access idp metadata"
 msgstr "No es pot accedir a les metadades IDP"
 
-#: auths/SAML_enterprise/saml.py:433
+#: auths/SAML_enterprise/saml.py:411
 msgid "Error validating SP metadata: "
 msgstr "Error en validar les metadades de SP:"
 
-#: auths/SAML_enterprise/saml.py:542
+#: auths/SAML_enterprise/saml.py:535
 msgid "Error processing SLO: "
 msgstr "Error en processar SLO:"
 
-#: auths/SAML_enterprise/saml.py:572
+#: auths/SAML_enterprise/saml.py:561
 msgid "Error processing SAML response: "
 msgstr "Error en processar la resposta SAML:"
 
-#: auths/SAML_enterprise/saml.py:585
+#: auths/SAML_enterprise/saml.py:569
 msgid "SAML response not authenticated"
 msgstr "La resposta SAML no s&#39;ha autenticat"
 
-#: auths/SAML_enterprise/saml.py:616
+#: auths/SAML_enterprise/saml.py:598
 msgid "No attributes returned from IdP"
 msgstr "No s&#39;ha retornat cap atribut d&#39;IdP"
 
@@ -4096,7 +4091,7 @@ msgstr "Parell de claus que cal utilitzar per a aquesta màquina"
 #: services/AWS_enterprise/service_base.py:80
 #: services/Azure_enterprise/service.py:92
 #: services/HyperV_enterprise/legacy/service.py:133
-#: services/HyperV_enterprise/service.py:148
+#: services/HyperV_enterprise/service.py:154
 #: services/NutanixPrism_enterprise/service.py:114
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
@@ -4108,7 +4103,7 @@ msgstr "Noms de màquina"
 #: services/AWS_enterprise/service_base.py:83
 #: services/Azure_enterprise/service.py:95
 #: services/HyperV_enterprise/legacy/service.py:136
-#: services/HyperV_enterprise/service.py:151
+#: services/HyperV_enterprise/service.py:157
 #: services/NutanixPrism_enterprise/service.py:117
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
@@ -4120,7 +4115,7 @@ msgstr "Nom base per als clons d'aquesta màquina"
 #: services/AWS_enterprise/service_base.py:88
 #: services/Azure_enterprise/service.py:100
 #: services/HyperV_enterprise/legacy/service.py:143
-#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:164
 #: services/NutanixPrism_enterprise/service.py:123
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
@@ -4132,7 +4127,7 @@ msgstr "Llargada del nom"
 #: services/AWS_enterprise/service_base.py:91
 #: services/Azure_enterprise/service.py:103
 #: services/HyperV_enterprise/legacy/service.py:146
-#: services/HyperV_enterprise/service.py:161
+#: services/HyperV_enterprise/service.py:167
 #: services/NutanixPrism_enterprise/service.py:126
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
@@ -4423,9 +4418,10 @@ msgstr "Màquina base del servei"
 #: services/HyperV_enterprise/service.py:114
 #: services/HyperV_enterprise/service.py:125
 #: services/HyperV_enterprise/service.py:134
-#: services/HyperV_enterprise/service.py:143
-#: services/HyperV_enterprise/service.py:152
-#: services/HyperV_enterprise/service.py:162
+#: services/HyperV_enterprise/service.py:142
+#: services/HyperV_enterprise/service.py:150
+#: services/HyperV_enterprise/service.py:158
+#: services/HyperV_enterprise/service.py:168
 #: services/NutanixPrism_enterprise/service.py:58
 #: services/NutanixPrism_enterprise/service.py:71
 #: services/NutanixPrism_enterprise/service.py:85
@@ -4569,16 +4565,27 @@ msgstr ""
 "Si està marcat, s&#39;utilitzaran clons complets en lloc de discs "
 "diferencials"
 
-#: services/HyperV_enterprise/service.py:139
+#: services/HyperV_enterprise/service.py:138
 msgid "Enable Nested Virtualization"
 msgstr "Activa la virtualització imbricada"
 
-#: services/HyperV_enterprise/service.py:142
-#| msgid "If active, the user will be allowed to reset the service"
+#: services/HyperV_enterprise/service.py:141
 msgid "If checked, nested virtualization will be enabled for this service"
 msgstr ""
 "Si està marcat, s&#39;habilitarà la virtualització imbricada per a aquest "
 "servei"
+
+#: services/HyperV_enterprise/service.py:146
+msgid "Enable Compatibility for Migration"
+msgstr "Activa la compatibilitat per a la migració"
+
+#: services/HyperV_enterprise/service.py:149
+#| msgid "If checked, nested virtualization will be enabled for this service"
+msgid ""
+"If checked, compatibility for migration will be enabled for this service"
+msgstr ""
+"Si està marcat, s&#39;habilitarà la compatibilitat per a la migració per a "
+"aquest servei"
 
 #: services/NutanixPrism_enterprise/provider.py:30
 msgid "Prism Central Platform Provider"
@@ -5419,22 +5426,18 @@ msgid "Storage for publications & machines."
 msgstr "Emmagatzematge per a publicacions i màquines."
 
 #: services/Proxmox/service.py:158
-#| msgid "Availability"
 msgid "GPU Availability"
 msgstr "Disponibilitat de GPU"
 
 #: services/Proxmox/service.py:162
-#| msgid "Do not redirect"
 msgid "Do not check"
 msgstr "No comproveu"
 
 #: services/Proxmox/service.py:163
-#| msgid "Start if unavailable"
 msgid "Only if available"
 msgstr "Només si està disponible"
 
 #: services/Proxmox/service.py:164
-#| msgid "Start if unavailable"
 msgid "Only if NOT available"
 msgstr "Només si NO està disponible"
 
@@ -7635,15 +7638,15 @@ msgstr "Valor de qualitat utilitzat en alguns formats de paquet"
 msgid "X2Go access (Experimental). Tunneled connection."
 msgstr "Accés X2Go (experimental). Connexió via túnel"
 
-#: web/util/authentication.py:111
+#: web/util/authentication.py:110
 msgid "Too many authentication errrors. User temporarily blocked"
 msgstr "Excés d'errors d'autenticació. Usuari bloquejat temporalment"
 
-#: web/util/authentication.py:121
+#: web/util/authentication.py:120
 msgid "Access tried from an unallowed source"
 msgstr "Accés intentat des d'un origen no permès"
 
-#: web/util/authentication.py:158
+#: web/util/authentication.py:157
 msgid "Invalid data"
 msgstr "Dades no vàlides"
 
@@ -7778,7 +7781,7 @@ msgstr ""
 "El vostre servei s'està creant, si us plau, espereu uns segons mentre es "
 "completa.)"
 
-#: web/views/auth.py:189
+#: web/views/auth.py:182
 msgid "Authenticator does not provide information"
 msgstr "L'autenticador no proporciona informació"
 
