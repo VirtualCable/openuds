@@ -103,16 +103,6 @@ def connection(
         uri = f'{schema}://{host}:{port}'
         logger.debug('Ldap uri: %s', uri)
 
-        # Cipher suites are from GNU TLS, not OpenSSL
-        # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
-        # i.e.:
-        #  * NORMAL
-        #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
-        #  * SECURE256
-        #  
-        ldap.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, 'SECURE256')  # type: ignore
-        ldap.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
-
         l = ldap.initialize(uri=uri)  # type: ignore
         l.set_option(ldap.OPT_REFERRALS, 0)  # type: ignore
         l.set_option(ldap.OPT_TIMEOUT, int(timeout))  # type: ignore
@@ -122,20 +112,30 @@ def connection(
         certificate = (certificate or '').strip()
 
         if ssl:
+            cipher_suite = 'SECURE256'
             if certificate and verify_ssl:  # If not verify_ssl, we don't need the certificate
                 # Create a semi-temporary ca file, with the content of the certificate
                 # The name is from the host, so we can ovwerwrite it if needed
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
                 with open(cert_filename, 'w', encoding='utf8') as f:
                     f.write(certificate)
-                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename) # type: ignore
+                cipher_suite = 'PFS'
 
             if not verify_ssl:
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
-            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)  # type: ignore
-
+            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
+            # Cipher suites are from GNU TLS, not OpenSSL
+            # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
+            # i.e.:
+            #  * NORMAL
+            #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
+            #  * PFS
+            #  * SECURE256
+            #  
+            l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # type: ignore
             l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
 
         l.simple_bind_s(who=username, cred=password)
