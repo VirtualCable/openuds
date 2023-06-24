@@ -189,7 +189,7 @@ class TelegramNotifier(messaging.Notifier):
         with ignoreExceptions():  # In case getUpdates fails, ignore it
             for update in t.getUpdates():
                 # Process update
-                with ignoreExceptions():    # Any failure will be ignored and next update will be processed
+                with ignoreExceptions():  # Any failure will be ignored and next update will be processed
                     message = update.text.strip()
                     if message.split(' ')[0] in ('/join', '/subscribe'):
                         try:
@@ -198,7 +198,8 @@ class TelegramNotifier(messaging.Notifier):
                                 raise Exception()
                         except Exception:
                             logger.warning(
-                                'Invalid subscribe command received from telegram bot (invalid secret: %s)', message
+                                'Invalid subscribe command received from telegram bot (invalid secret: %s)',
+                                message,
                             )
                         self.subscribeUser(update.chat.id)
                         t.sendMessage(update.chat.id, _('You have been subscribed to notifications'))

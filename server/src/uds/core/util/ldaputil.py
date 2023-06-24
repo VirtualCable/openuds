@@ -103,6 +103,16 @@ def connection(
         uri = f'{schema}://{host}:{port}'
         logger.debug('Ldap uri: %s', uri)
 
+        # Cipher suites are from GNU TLS, not OpenSSL
+        # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
+        # i.e.:
+        #  * NORMAL
+        #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
+        #  * SECURE256
+        #  
+        ldap.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, 'SECURE256')  # type: ignore
+        ldap.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
+
         l = ldap.initialize(uri=uri)  # type: ignore
         l.set_option(ldap.OPT_REFERRALS, 0)  # type: ignore
         l.set_option(ldap.OPT_TIMEOUT, int(timeout))  # type: ignore
