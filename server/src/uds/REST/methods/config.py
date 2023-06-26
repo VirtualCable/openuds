@@ -46,8 +46,15 @@ class Config(Handler):
     def get(self) -> typing.Any:
         cfg: CfgConfig.Value
 
-        return CfgConfig.getConfigValues(self.is_admin())
-
+        configs = CfgConfig.getConfigValues(self.is_admin())
+        # Remove values from cryptes keys
+        return {
+            section: {
+                key: vals if not vals['crypt'] else {**vals, 'value': '********'}
+                for key, vals in secDict.items()
+            }
+            for section, secDict in configs.items()
+        }
 
     def put(self):
         for section, secDict in self._params.items():
