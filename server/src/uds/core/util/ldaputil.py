@@ -43,14 +43,14 @@ from ldap import (
     # SCOPE_SUBORDINATE,  # type: ignore
 )
 
-
 from django.utils.translation import gettext as _
+from django.conf import settings
+
 from uds.core.util import tools
 
 logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
-
 
 class LDAPError(Exception):
     @staticmethod
@@ -112,21 +112,28 @@ def connection(
         certificate = (certificate or '').strip()
 
         if ssl:
-            cipher_suite = 'SECURE256'
+            cipher_suite = getattr(settings, 'LDAP_CIPHER_SUITE', 'PFS')
             if certificate and verify_ssl:  # If not verify_ssl, we don't need the certificate
                 # Create a semi-temporary ca file, with the content of the certificate
                 # The name is from the host, so we can ovwerwrite it if needed
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
-                with open(cert_filename, 'w', encoding='utf8') as f:
+                with open(cert_filename, 'w') as f:
                     f.write(certificate)
                 l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename) # type: ignore
-                cipher_suite = 'PFS'
+                # If enforced on settings, do no change it here
+                if not getattr(settings, 'LDAP_CIPHER_SUITE', None):
+                    cipher_suite = 'PFS'
 
             if not verify_ssl:
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
-            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, ldap.OPT_X_TLS_PROTOCOL_TLS1_2)   # type: ignore
+            tls_version = {
+                '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2, # type: ignore
+                '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3, # type: ignore
+            }.get(getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2'), ldap.OPT_X_TLS_PROTOCOL_TLS1_2) # type: ignore
+            
+            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)   # type: ignore
             # Cipher suites are from GNU TLS, not OpenSSL
             # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
             # i.e.:
