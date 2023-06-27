@@ -131,7 +131,7 @@ def connection(
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
             tls_version = {
                 '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2, # type: ignore
-                '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3, # type: ignore
+                '1.3': getattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3', ldap.OPT_X_TLS_PROTOCOL_TLS1_2), # type: ignore
             }.get(getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2'), ldap.OPT_X_TLS_PROTOCOL_TLS1_2) # type: ignore
             
             l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)   # type: ignore
