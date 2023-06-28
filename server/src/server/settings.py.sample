@@ -54,14 +54,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 TIME_ZONE = 'Europe/Madrid'
 # TIME_SECTION_END
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
-
 # Override for gettext so we can use the same syntax as in django
 # and we can translate it later with our own function
 def gettext(s):
     return s
+
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+# LANGUAGE_SECTION_START
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = (
     ('es', gettext('Spanish')),
@@ -76,6 +77,7 @@ LANGUAGES = (
     ('ca', gettext('Catalan')),
     ('zh-hans', gettext('Chinese')),
 )
+# LANGUAGE_SECTION_END
 
 LANGUAGE_COOKIE_NAME = 'uds_lang'
 
@@ -183,14 +185,15 @@ SECURE_CIPHERS = (
 # Min TLS version
 SECURE_MIN_TLS_VERSION = '1.2'
 
-# LDAP CIFHER SUITE can be enforced here. Use GNU TLS cipher suite names
+# LDAP CIFHER SUITE can be enforced here. Use GNU TLS cipher suite names in this case
 # i.e.:
 #  * NORMAL
 #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
 #  * PFS
 #  * SECURE256
-# If omitted, defaults to PFS
-# LDAP_CIPHER_SUITE = 'PFS'
+# If omitted, defaults to PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC
+# Example:
+LDAP_CIPHER_SUITE = 'PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC'
 
 TEMPLATES = [
     {

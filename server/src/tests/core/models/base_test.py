@@ -37,7 +37,6 @@ from ...fixtures import authenticators as authenticators_fixtures
 from ...fixtures import services as services_fixtures
 from ...fixtures import images as images_fixtures
 from ...fixtures import networks as networks_fixtures
-from ...fixtures import osmanagers as osmanagers_fixtures
 from ...fixtures import notifiers as notifiers_fixtures
 from ...fixtures import stats_counters as stats_counters_fixtures
 
