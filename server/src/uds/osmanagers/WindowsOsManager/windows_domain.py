@@ -289,7 +289,7 @@ class WinDomainOsManager(WindowsOsManager):
                 # Direct LDAP operation "modify", maybe this need to be added to ldaputil? :)
                 # #
                 ldapConnection.modify_s(
-                    group, ((ldap.MOD_ADD, 'member', machine),)  # type: ignore  # (valid)
+                    group, ((ldap.MOD_ADD, 'member', [machine.encode()]),)  # type: ignore  # (valid)
                 )  # @UndefinedVariable
                 error = None
                 break
