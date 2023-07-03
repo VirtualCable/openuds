@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,8 @@ import xmlrpc.client
 import logging
 import typing
 
-from . import XenAPI
+import XenAPI
+
 
 logger = logging.getLogger(__name__)
 
@@ -193,7 +194,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
             self._loggedIn = True
             self._apiVersion = self._session.API_version
             self._poolName = str(self.getPoolName())
-        except XenAPI.Failure as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
+        except (
+            XenAPI.Failure
+        ) as e:  # XenAPI.Failure: ['HOST_IS_SLAVE', '172.27.0.29'] indicates that this host is an slave of 172.27.0.29, connect to it...
             if switchToMaster and e.details[0] == 'HOST_IS_SLAVE':
                 logger.info(
                     '%s is an Slave, connecting to master at %s',
@@ -259,11 +262,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             status = 'failure'
 
         # Removes <value></value> if present
-        if (
-            result
-            and not isinstance(result, XenFailure)
-            and result.startswith('<value>')
-        ):
+        if result and not isinstance(result, XenFailure) and result.startswith('<value>'):
             result = result[7:-8]
 
         if destroyTask:
@@ -279,11 +278,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
             # Skip non valid...
-            if (
-                self.SR.get_content_type(srId) == 'iso'
-                or self.SR.get_shared(srId) is False
-                or name_label == ''
-            ):
+            if self.SR.get_content_type(srId) == 'iso' or self.SR.get_shared(srId) is False or name_label == '':
                 continue
 
             valid = True
@@ -310,12 +305,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
     def getNetworks(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
         for netId in self.network.get_all():
-            if (
-                self.network.get_other_config(netId).get(
-                    'is_host_internal_management_network', False
-                )
-                is False
-            ):
+            if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
                 yield {
                     'id': netId,
                     'name': self.network.get_name_label(netId),
@@ -408,9 +398,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             return self.Async.VM.resume(vmId, False, False)
         return self.VM.resume(vmId, False, False)
 
-    def cloneVM(
-        self, vmId: str, targetName: str, targetSR: typing.Optional[str] = None
-    ) -> str:
+    def cloneVM(self, vmId: str, targetName: str, targetSR: typing.Optional[str] = None) -> str:
         """
         If targetSR is NONE:
             Clones the specified VM, making a new VM.
@@ -430,15 +418,11 @@ class XenServer:  # pylint: disable=too-many-public-methods
         try:
             if targetSR:
                 if 'copy' not in operations:
-                    raise XenException(
-                        'Copy is not supported for this machine (maybe it\'s powered on?)'
-                    )
+                    raise XenException('Copy is not supported for this machine (maybe it\'s powered on?)')
                 task = self.Async.VM.copy(vmId, targetName, targetSR)
             else:
                 if 'clone' not in operations:
-                    raise XenException(
-                        'Clone is not supported for this machine (maybe it\'s powered on?)'
-                    )
+                    raise XenException('Clone is not supported for this machine (maybe it\'s powered on?)')
                 task = self.Async.VM.clone(vmId, targetName)
             return task
         except XenAPI.Failure as e:
@@ -528,9 +512,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             operations = self.VM.get_allowed_operations(vmId)
             logger.debug('Allowed operations: %s', operations)
             if 'make_into_template' not in operations:
-                raise XenException(
-                    'Convert in template is not supported for this machine'
-                )
+                raise XenException('Convert in template is not supported for this machine')
             self.VM.set_is_a_template(vmId, True)
 
             # Apply that is an "UDS Template" taggint it
@@ -546,7 +528,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             try:
                 self.VM.set_HVM_shadow_multiplier(vmId, float(shadowMultiplier))
             except Exception:  # nosec: Can't set shadowMultiplier, nothing happens
-                pass  
+                pass
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
 
