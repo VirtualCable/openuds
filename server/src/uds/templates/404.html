@@ -2,20 +2,9 @@
 <html>
 
 <head>
-    <!-- just in case translations cannot be loaded, provide a fallback -->
-    <script type="text/javascript">
-        django = {
-            gettext: function (s) {
-                return s;
-            }
-        }
-    </script>
-    <script type="text/javascript" src="{% url 'utility.jsCatalog' LANGUAGE_CODE %}"></script>
-    <script type="text/javascript" src="{% url 'utility-adm.js' %}"></script>
-
     <script type="text/javascript">
         function onLoad() {
-            window.location.href = "{% url 'page.error' '16' %}"
+            window.location.href = "{% url 'page.error' '16' %}";
         }
     </script>
 </head>
