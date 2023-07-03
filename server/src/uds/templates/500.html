@@ -15,8 +15,7 @@
 
     <script type="text/javascript">
         function onLoad() {
-            var msg = '17';
-            window.location.href = "{% url 'page.error' 'param' %}".replace('param', msg);
+            window.location.href = "{% url 'page.error' '17' %}"
         }
     </script>
 </head>
