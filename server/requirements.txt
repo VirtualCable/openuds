@@ -25,6 +25,7 @@ webencodings
 xml-marshaller
 ipython
 pyvmomi
+XenAPI
 PyJWT
 pylibmc
 gunicorn

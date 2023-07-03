@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         function onLoad() {
-            var msg = window.btoa(django.gettext('Page not found'));
+            var msg = '16'
             window.location.href = "{% url 'page.error' 'param' %}".replace('param', msg);
         }
     </script>

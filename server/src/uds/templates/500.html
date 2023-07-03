@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         function onLoad() {
-            var msg = window.btoa(django.gettext('Internal server error'));
+            var msg = '17';
             window.location.href = "{% url 'page.error' 'param' %}".replace('param', msg);
         }
     </script>
