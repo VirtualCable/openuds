@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
 
-LDAP_CIPHERS = 'PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC'
+LDAP_CIPHERS = 'PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC:-AES-256-CBC:-DHE-RSA'
 
 class LDAPError(Exception):
     @staticmethod
