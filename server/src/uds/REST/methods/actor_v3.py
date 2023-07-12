@@ -36,10 +36,10 @@ import functools
 import enum
 
 from uds.models import (
-    ActorToken,
     UserService,
     Service,
     TicketStore,
+    RegisteredServers,
 )
 
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
@@ -240,7 +240,9 @@ class Test(ActorV3Action):
             if self._params.get('type') == UNMANAGED:
                 Service.objects.get(token=self._params['token'])
             else:
-                ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
+                RegisteredServers.objects.get(
+                    token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR
+                )  # Not assigned, because only needs check
             clearFailedIp(self._request)
         except Exception:
             # Increase failed attempts
@@ -273,44 +275,55 @@ class Register(ActorV3Action):
     name = 'register'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        actorToken: ActorToken
-        try:
-            # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
-            actorToken = ActorToken.objects.get(mac=self._params['mac'])
-            # Update parameters
-            actorToken.username = self._user.pretty_name
-            actorToken.ip_from = self._request.ip
-            actorToken.ip = self._params['ip']
-            actorToken.hostname = self._params['hostname']
-            actorToken.pre_command = self._params['pre_command']
-            actorToken.post_command = self._params['post_command']
-            actorToken.runonce_command = self._params['run_once_command']
-            actorToken.log_level = self._params['log_level']
-            if 'custom' in self._params:
-                actorToken.custom = self._params['certificate']
-            actorToken.stamp = getSqlDatetime()
-            actorToken.save()
-            logger.info('Registered actor %s', self._params)
-        except Exception:  # Not found, create a new token
+        actorToken: RegisteredServers
+        # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
+        # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
+        # and mac is the requested one
+        found = False
+        for actorToken in RegisteredServers.objects.filter(kind=RegisteredServers.ServerType.ACTOR):
+            if actorToken.data and actorToken.data.get('mac', '') == self._params['mac']:
+                # Update parameters
+                actorToken.username = self._user.pretty_name
+                actorToken.ip_from = self._request.ip
+                actorToken.ip = self._params['ip']
+                actorToken.hostname = self._params['hostname']
+                actorToken.data = {  # type: ignore
+                    'mac': self._params['mac'],
+                    'pre_command': self._params['pre_command'],
+                    'post_command': self._params['post_command'],
+                    'run_once_command': self._params['run_once_command'],
+                    'log_level': self._params['log_level'],
+                    'custom': self._params.get('custom', ''),
+                }
+                actorToken.stamp = getSqlDatetime()
+                actorToken.save()
+                logger.info('Registered actor %s', self._params)
+                found = True
+                break
+
+        if not found:
             kwargs = {
                 'username': self._user.pretty_name,
                 'ip_from': self._request.ip,
                 'ip': self._params['ip'],
                 'ip_version': self._request.ip_version,
                 'hostname': self._params['hostname'],
-                'mac': self._params['mac'],
-                'pre_command': self._params['pre_command'],
-                'post_command': self._params['post_command'],
-                'runonce_command': self._params['run_once_command'],
-                'log_level': self._params['log_level'],
+                'data': {  # type: ignore
+                    'mac': self._params['mac'],
+                    'pre_command': self._params['pre_command'],
+                    'post_command': self._params['post_command'],
+                    'run_once_command': self._params['run_once_command'],
+                    'log_level': self._params['log_level'],
+                    'custom': self._params.get('custom', ''),
+                },
                 'token': secrets.token_urlsafe(36),
+                'kind': RegisteredServers.ServerType.ACTOR,
                 'stamp': getSqlDatetime(),
             }
-            if 'custom' in self._params:
-                kwargs['custom'] = self._params['custom']
 
-            actorToken = ActorToken.objects.create(**kwargs)
-        return ActorV3Action.actorResult(actorToken.token)
+            actorToken = RegisteredServers.objects.create(**kwargs)
+
+        return ActorV3Action.actorResult(actorToken.token)  # type: ignore  # actorToken is always assigned
 
 
 class Initialize(ActorV3Action):
@@ -396,7 +409,9 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                ActorToken.objects.get(token=token)  # Not assigned, because only needs check
+                RegisteredServers.objects.get(
+                    token=token, kind=RegisteredServers.ServerType.ACTOR
+                )  # Not assigned, because only needs check
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
                 dbFilter = UserService.objects.all()
@@ -430,7 +445,7 @@ class Initialize(ActorV3Action):
                 service.aliases.create(alias=alias_token)
 
             return initialization_result(userService.uuid, userService.unique_id, osData, alias_token)
-        except (ActorToken.DoesNotExist, Service.DoesNotExist):
+        except (RegisteredServers.DoesNotExist, Service.DoesNotExist):
             raise BlockAccess() from None
 
 
@@ -706,8 +721,8 @@ class Ticket(ActorV3Action):
 
         try:
             # Simple check that token exists
-            ActorToken.objects.get(token=self._params['token'])  # Not assigned, because only needs check
-        except ActorToken.DoesNotExist:
+            RegisteredServers.objects.get(token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR)  # Not assigned, because only needs check
+        except RegisteredServers.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...
 
         try:
