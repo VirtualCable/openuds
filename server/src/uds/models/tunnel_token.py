@@ -53,9 +53,12 @@ class RegisteredServers(models.Model):
     If server is Other, but not Tunnel, it will be allowed to access API, but will not be able to
     create tunnels.
     """
-    class ServerKind(enum.IntFlag):
+    class ServerType(enum.IntFlag):
         TUNNEL = 1
         OTHER = 2
+
+        def as_str(self) -> str:
+            return self.name.lower()  # type: ignore
 
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
@@ -65,7 +68,7 @@ class RegisteredServers(models.Model):
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
-    kind = models.IntegerField(default=ServerKind.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
+    kind = models.IntegerField(default=ServerType.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[TunnelToken]'

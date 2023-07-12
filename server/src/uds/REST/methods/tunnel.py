@@ -160,5 +160,5 @@ class TunnelRegister(ServerRegister):
 
     # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        self._params['type'] = models.RegisteredServers.ServerKind.TUNNEL
+        self._params['type'] = models.RegisteredServers.ServerType.TUNNEL
         return super().post()

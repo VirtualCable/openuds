@@ -33,9 +33,14 @@ import secrets
 import logging
 import typing
 
+from django.utils.translation import gettext_lazy as _
+
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.REST import Handler
+from uds.REST.exceptions import RequestError, NotFound
+from uds.REST.model import ModelHandler, OK
+from uds.core.util import permissions
 
 logger = logging.getLogger(__name__)
 
@@ -73,3 +78,49 @@ class ServerRegister(Handler):
             except Exception as e:
                 return {'result': '', 'stamp': now, 'error': str(e)}
         return {'result': serverToken.token, 'stamp': now}
+
+
+class ServersTokens(ModelHandler):
+    model = models.RegisteredServers
+    path = 'servers'
+    name = 'tokens'
+
+    table_title = _('Servers tokens')
+    table_fields = [
+        {'token': {'title': _('Token')}},
+        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+        {'username': {'title': _('Issued by')}},
+        {'hostname': {'title': _('Origin')}},
+        {'type': {'title': _('Type')}},
+        {'ip': {'title': _('IP')}},
+    ]
+
+    def item_as_dict(self, item: models.RegisteredServers) -> typing.Dict[str, typing.Any]:
+        return {
+            'id': item.token,
+            'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
+            'stamp': item.stamp,
+            'username': item.username,
+            'ip': item.ip,
+            'hostname': item.hostname,
+            'token': item.token,
+            'type': models.RegisteredServers.ServerType(item.kind).as_str(),  # type is a reserved word, so we use "kind" instead on model
+        }
+
+    def delete(self) -> str:
+        """
+        Processes a DELETE request
+        """
+        if len(self._args) != 1:
+            raise RequestError('Delete need one and only one argument')
+
+        self.ensureAccess(
+            self.model(), permissions.PermissionType.ALL, root=True
+        )  # Must have write permissions to delete
+
+        try:
+            self.model.objects.get(token=self._args[0]).delete()
+        except self.model.DoesNotExist:
+            raise NotFound('Element do not exists') from None
+
+        return OK
