@@ -29,17 +29,33 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import enum
 
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 
 from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
 
+class RegisteredServers(models.Model):
+    """
+    UDS Registered Servers
 
-class TunnelToken(models.Model):
+    This table stores the information about registered servers for tunnel servers (on v3.6) or
+    more recently, for other kind of servers that may be need to be registered (as app servers)
+
+    kind field is a flag that indicates the kind of server that is registered. This is used to
+    allow or deny access to the API for this server.
+    Currently there are two kinds of servers:
+    - Tunnel servers: This is the original use of this table, and is used to allow tunnel servers (1)
+    - Other servers: This is used to register server that needs to access some API methods, but
+        that are not tunnel servers (2)
+
+    If server is Other, but not Tunnel, it will be allowed to access API, but will not be able to
+    create tunnels.
     """
-    UDS Tunnel tokens on DB
-    """
+    class ServerKind(enum.IntFlag):
+        TUNNEL = 1
+        OTHER = 2
 
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
@@ -48,6 +64,8 @@ class TunnelToken(models.Model):
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
+
+    kind = models.IntegerField(default=ServerKind.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager[TunnelToken]'
@@ -63,12 +81,12 @@ class TunnelToken(models.Model):
         token: str, request: typing.Optional[ExtendedHttpRequest] = None
     ) -> bool:
         try:
-            tt = TunnelToken.objects.get(token=token)
+            tt = RegisteredServers.objects.get(token=token)
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
             return True
-        except TunnelToken.DoesNotExist:
+        except RegisteredServers.DoesNotExist:
             pass
         return False
 

@@ -62,7 +62,7 @@ class ObjectType(enum.Enum):
     METAPOOL = (16, models.MetaPool)
     ACCOUNT = (17, models.Account)
     ACTOR_TOKEN = (18, models.ActorToken)
-    TUNNEL_TOKEN = (19, models.TunnelToken)
+    TUNNEL_TOKEN = (19, models.RegisteredServers)
     ACCOUNT_USAGE = (20, models.AccountUsage)
     IMAGE = (21, models.Image)
     LOG = (22, models.Log)

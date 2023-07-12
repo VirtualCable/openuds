@@ -62,6 +62,10 @@ REMOVED_CONFIG_ELEMENTS = {
     'VMWare': (),
     'HyperV': (),
     'Security': (),
+    'RGS': (
+        'downloadUrl',
+        'tunnelOpenedTime',
+    )
 }
 
 
@@ -248,7 +252,7 @@ class Config:
                     section=self._section.name(), key=self._key
                 )
                 obj.value, obj.crypt, obj.long, obj.field_type, obj.help = (
-                    value,
+                    str(value),
                     self._crypt,
                     self._longText,
                     self._type,
@@ -268,7 +272,7 @@ class Config:
                     self._key,
                 )
             finally:
-                self._data = value
+                self._data = str(value)
 
         def __str__(self) -> str:
             return f'{self._section.name()}.{self._key}'
@@ -353,7 +357,7 @@ class Config:
                 'longText': cfg.isLongText(),
                 'type': cfg.getType(),
                 'params': cfg.getParams(),
-                help: cfg.getHelp(),
+                'help': cfg.getHelp(),
             }
         logger.debug('Configuration: %s', res)
         return res

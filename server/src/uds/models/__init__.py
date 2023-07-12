@@ -104,7 +104,7 @@ from .tag import Tag, TaggingMixin
 
 # Tokens
 from .actor_token import ActorToken
-from .tunnel_token import TunnelToken
+from .tunnel_token import RegisteredServers
 
 # Notifications & Alerts
 from .notifications import Notification, Notifier, LogLevel

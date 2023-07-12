@@ -35,7 +35,7 @@ import logging
 
 from django.http import HttpResponse
 
-from uds.models import TicketStore, UserService, TunnelToken
+from uds.models import TicketStore, UserService, RegisteredServers
 from uds.core.auths import auth
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import log
@@ -58,7 +58,7 @@ def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
 
 @auth.trustedSourceRequired
 def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
-    if not TunnelToken.validateToken(token):
+    if not RegisteredServers.validateToken(token):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
     logger.debug('Received credentials request for tunnel id %s', tunnelId)

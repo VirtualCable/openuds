@@ -367,7 +367,7 @@ class Command(BaseCommand):
 
             # Tunnel tokens
             tunnelTokens: typing.Dict[str, typing.Any] = {}
-            for tunnelToken in models.TunnelToken.objects.all():
+            for tunnelToken in models.RegisteredServers.objects.all():
                 tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(
                     tunnelToken, passwordFields=['token']
                 )

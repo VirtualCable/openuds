@@ -29,7 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import secrets
 import logging
 import typing
 
@@ -40,6 +39,8 @@ from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
 from uds.core.util.stats import events
+
+from .servers import ServerRegister
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +79,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.TunnelToken.validateToken(token):
+        if not models.RegisteredServers.validateToken(token):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
@@ -152,34 +153,12 @@ class TunnelTicket(Handler):
             raise AccessDenied() from e
 
 
-class TunnelRegister(Handler):
+class TunnelRegister(ServerRegister):
     needs_admin = True
     path = 'tunnel'
     name = 'register'
 
+    # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        tunnelToken: models.TunnelToken
-        now = getSqlDatetimeAsUnix()
-        try:
-            # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
-            tunnelToken = models.TunnelToken.objects.get(
-                ip=self._params['ip'], hostname=self._params['hostname']
-            )
-            # Update parameters
-            tunnelToken.username = self._user.pretty_name
-            tunnelToken.ip_from = self._request.ip
-            tunnelToken.stamp = getSqlDatetime()
-            tunnelToken.save()
-        except Exception:
-            try:
-                tunnelToken = models.TunnelToken.objects.create(
-                    username=self._user.pretty_name,
-                    ip_from=self._request.ip,
-                    ip=self._params['ip'],
-                    hostname=self._params['hostname'],
-                    token=secrets.token_urlsafe(36),
-                    stamp=getSqlDatetime(),
-                )
-            except Exception as e:
-                return {'result': '', 'stamp': now, 'error': str(e)}
-        return {'result': tunnelToken.token, 'stamp': now}
+        self._params['type'] = models.RegisteredServers.ServerKind.TUNNEL
+        return super().post()
