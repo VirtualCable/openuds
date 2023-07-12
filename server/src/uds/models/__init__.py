@@ -103,8 +103,7 @@ from .account_usage import AccountUsage
 from .tag import Tag, TaggingMixin
 
 # Tokens
-from .actor_token import ActorToken
-from .tunnel_token import RegisteredServers
+from .registered_servers import RegisteredServers
 
 # Notifications & Alerts
 from .notifications import Notification, Notifier, LogLevel

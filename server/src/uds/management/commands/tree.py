@@ -356,23 +356,13 @@ class Command(BaseCommand):
 
             tree[counter('GALLERY')] = gallery
 
-            # Actor tokens
-            actorTokens: typing.Dict[str, typing.Any] = {}
-            for actorToken in models.ActorToken.objects.all():
-                actorTokens[actorToken.hostname] = getSerializedFromModel(
-                    actorToken, passwordFields=['token']
+
+            # Rest of registerd servers
+            registeredServers: typing.Dict[str, typing.Any] = {}
+            for i, registeredServer in enumerate(models.RegisteredServers.objects.all()):
+                registeredServers[f'{i}'] = getSerializedFromModel(
+                    registeredServer
                 )
-
-            tree[counter('ACTORTOKENS')] = actorTokens
-
-            # Tunnel tokens
-            tunnelTokens: typing.Dict[str, typing.Any] = {}
-            for tunnelToken in models.RegisteredServers.objects.all():
-                tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(
-                    tunnelToken, passwordFields=['token']
-                )
-
-            tree[counter('TUNNELTOKENS')] = tunnelTokens
 
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 

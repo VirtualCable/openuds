@@ -55,7 +55,8 @@ class RegisteredServers(models.Model):
     """
     class ServerType(enum.IntFlag):
         TUNNEL = 1
-        OTHER = 2
+        ACTOR = 2
+        OTHER = 99
 
         def as_str(self) -> str:
             return self.name.lower()  # type: ignore
@@ -63,6 +64,8 @@ class RegisteredServers(models.Model):
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
     ip = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip_version = models.IntegerField(default=4)  # 4 or 6, version of ip fields
+
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
@@ -70,14 +73,10 @@ class RegisteredServers(models.Model):
 
     kind = models.IntegerField(default=ServerType.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
 
-    # "fake" declarations for type checking
-    # objects: 'models.manager.Manager[TunnelToken]'
+    data = models.JSONField(null=True, blank=True, default=None)
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
-        constraints = [
-            models.UniqueConstraint(fields=['ip', 'hostname'], name='tt_ip_hostname')
-        ]
 
     @staticmethod
     def validateToken(

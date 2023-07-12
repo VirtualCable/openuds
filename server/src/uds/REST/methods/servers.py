@@ -74,6 +74,7 @@ class ServerRegister(Handler):
                     token=secrets.token_urlsafe(36),
                     stamp=getSqlDatetime(),
                     kind=self._params['type'],
+                    data=self._params.get('data', None),
                 )
             except Exception as e:
                 return {'result': '', 'stamp': now, 'error': str(e)}
@@ -82,6 +83,7 @@ class ServerRegister(Handler):
 
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
+    model_filter = {'kind__in': [models.RegisteredServers.ServerType.TUNNEL, models.RegisteredServers.ServerType.OTHER]}
     path = 'servers'
     name = 'tokens'
 
