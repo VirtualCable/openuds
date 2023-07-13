@@ -304,22 +304,21 @@ class ProxmoxClient:
                 'device': gpu['device'],
                 'available': gpu['available'],
                 'type': gpu['type'],
-
             }
             for device in self.nodeGpuDevices(node)
             for gpu in self._get(f'nodes/{node}/hardware/pci/{device}/mdev')['data']
         ]
-    
+
     @ensureConnected
     def nodeHasFreeVGPU(self, node: str, vgpu_type: str, **kwargs) -> bool:
-        return any(
-            gpu['available'] and gpu['type'] == vgpu_type
-            for gpu in self.getNodeVGPUs(node)
-        )
+        return any(gpu['available'] and gpu['type'] == vgpu_type for gpu in self.getNodeVGPUs(node))
 
     @ensureConnected
     def getBestNodeForVm(
-        self, minMemory: int = 0, mustHaveVGPUs: typing.Optional[bool] = None
+        self,
+        minMemory: int = 0,
+        mustHaveVGPUs: typing.Optional[bool] = None,
+        mdevType: typing.Optional[str] = None,
     ) -> typing.Optional[types.NodeStats]:
         '''
         Returns the best node to create a VM on
@@ -341,6 +340,8 @@ class ProxmoxClient:
                 continue  # Skips nodes with not enouhg memory
             if mustHaveVGPUs is not None and mustHaveVGPUs != bool(self.nodeGpuDevices(node.name)):
                 continue  # Skips nodes without VGPUS if vGPUS are required
+            if mdevType and not self.nodeHasFreeVGPU(node.name, mdevType):
+                continue
 
             # Get best node using our simple weight function (basically, the less used node, but with a little more weight on CPU)
             if weightFnc(node) < weightFnc(best):
@@ -371,7 +372,9 @@ class ProxmoxClient:
             logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
             if toStorage and self.getStorage(toStorage, vmInfo.node).shared:
-                node = self.getBestNodeForVm(minMemory=-1, mustHaveVGPUS=mustHaveVGPUs)
+                node = self.getBestNodeForVm(
+                    minMemory=-1, mustHaveVGPUS=mustHaveVGPUs, mdevType=vmInfo.vgpu_type
+                )
                 if node is None:
                     raise ProxmoxError(
                         f'No switable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
@@ -383,6 +386,9 @@ class ProxmoxClient:
         # Check if mustHaveVGPUS is compatible with the node
         if mustHaveVGPUs is not None and mustHaveVGPUs != bool(self.nodeGpuDevices(toNode)):
             raise ProxmoxNoGPUError(f'Node "{toNode}" does not have VGPUS and they are required')
+        
+        if self.nodeHasFreeVGPU(toNode, vmInfo.vgpu_type):
+            raise ProxmoxNoGPUError(f'Node "{toNode}" does not have free VGPUS of type {vmInfo.vgpu_type} (requred by VM {vmInfo.name})')
 
         # From normal vm, disable "linked cloning"
         if linkedClone and not vmInfo.template:

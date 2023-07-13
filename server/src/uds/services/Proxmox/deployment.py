@@ -144,7 +144,7 @@ class ProxmoxDeployment(services.UserDeployment):
             self._task = vals[4].decode('utf8')
             self._vmid = vals[5].decode('utf8')
             self._reason = vals[6].decode('utf8')
-            self._queue = pickle.loads(vals[7])
+            self._queue = pickle.loads(vals[7])  # nosec: own data unmarshalled ok
 
     def getName(self) -> str:
         if self._name == '':
