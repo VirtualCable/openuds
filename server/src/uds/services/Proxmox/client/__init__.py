@@ -301,7 +301,7 @@ class ProxmoxClient:
             {
                 'name': gpu['name'],
                 'description': gpu['description'],
-                'device': gpu['device'],
+                'device': device,
                 'available': gpu['available'],
                 'type': gpu['type'],
             }
