@@ -246,6 +246,9 @@ def ticketAuth(
         # Force cookie generation
         webLogin(request, None, usr, password)
 
+        # Set restricted access to user
+        request.session['restricted'] = True
+
         # Log the login
         authLogLogin(request, auth, username, 'Ticket authentication')
 

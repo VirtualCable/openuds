@@ -87,7 +87,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 # Includes a request.session ticket, indicating that
 def ticketLauncher(request: HttpRequest) -> HttpResponse:
-    request.session['restricted'] = True  # Access is from ticket
     return index(request)
 
 
