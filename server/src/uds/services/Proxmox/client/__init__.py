@@ -341,7 +341,7 @@ class ProxmoxClient:
             if mustHaveVGPUs is not None and mustHaveVGPUs != bool(self.nodeGpuDevices(node.name)):
                 continue  # Skips nodes without VGPUS if vGPUS are required
             if mdevType and not self.nodeHasFreeVGPU(node.name, mdevType):
-                continue
+                continue  # Skips nodes without free vGPUS of required type if a type is required
 
             # Get best node using our simple weight function (basically, the less used node, but with a little more weight on CPU)
             if weightFnc(node) < weightFnc(best):
