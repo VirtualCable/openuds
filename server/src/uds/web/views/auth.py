@@ -250,7 +250,9 @@ def ticketAuth(
             usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
         )
         request.authorized = True  # User is authorized
-        request.session['ticket'] = '1'  # Store that user access is done using ticket
+
+        # Set restricted access (no allow to see other services, logout automatically if user tries to access other service, ...)
+        request.session['restricted'] = True  # Access is from ticket
 
         # Transport must always be automatic for ticket authentication
 
