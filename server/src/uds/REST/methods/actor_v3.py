@@ -53,6 +53,7 @@ from uds.core.util import log, security
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
+from uds.core.util.os_detector import KnownOS
 from uds.core import exceptions
 from uds.models.service import ServiceTokenAlias
 
@@ -318,6 +319,7 @@ class Register(ActorV3Action):
                 },
                 'token': secrets.token_urlsafe(36),
                 'kind': RegisteredServers.ServerType.ACTOR,
+                'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
                 'stamp': getSqlDatetime(),
             }
 

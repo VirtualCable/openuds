@@ -154,7 +154,7 @@ class RDPTransport(BaseRDPTransport):
             'address': r.address,
         }
 
-        if os == os_detector.KnownOS.Windows:
+        if os == os_detector.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -163,7 +163,7 @@ class RDPTransport(BaseRDPTransport):
                     'as_file': r.as_file,
                 }
             )
-        elif os == os_detector.KnownOS.Linux:
+        elif os == os_detector.KnownOS.LINUX:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
@@ -171,7 +171,7 @@ class RDPTransport(BaseRDPTransport):
                     'address': r.address,
                 }
             )
-        elif os == os_detector.KnownOS.MacOS:
+        elif os == os_detector.KnownOS.MAC_OS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {

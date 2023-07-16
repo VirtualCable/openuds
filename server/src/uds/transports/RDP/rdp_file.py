@@ -78,7 +78,7 @@ class RDPFile:
         width: typing.Union[str, int],
         height: typing.Union[str, int],
         bpp: str,
-        target: OsDetector.KnownOS = OsDetector.KnownOS.Windows,
+        target: OsDetector.KnownOS = OsDetector.KnownOS.WINDOWS,
     ):
         self.width = str(width)
         self.height = str(height)
@@ -88,9 +88,9 @@ class RDPFile:
 
     def get(self):
         if self.target in (
-            OsDetector.KnownOS.Windows,
-            OsDetector.KnownOS.Linux,
-            OsDetector.KnownOS.MacOS,
+            OsDetector.KnownOS.WINDOWS,
+            OsDetector.KnownOS.LINUX,
+            OsDetector.KnownOS.MAC_OS,
         ):
             return self.getGeneric()
         # Unknown target
@@ -120,7 +120,7 @@ class RDPFile:
                 params.append('/smartcard')
 
         if self.redirectAudio:
-            if self.alsa and self.target != OsDetector.KnownOS.MacOS:
+            if self.alsa and self.target != OsDetector.KnownOS.MAC_OS:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
             else:
@@ -132,7 +132,7 @@ class RDPFile:
             params.append('/video')
 
         if self.redirectDrives != 'false':
-            if self.target in (OsDetector.KnownOS.Linux, OsDetector.KnownOS.MacOS):
+            if self.target in (OsDetector.KnownOS.LINUX, OsDetector.KnownOS.MAC_OS):
                 params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')
@@ -158,7 +158,7 @@ class RDPFile:
             params.append('/multimon')
 
         if self.fullScreen:
-            if self.target != OsDetector.KnownOS.MacOS:
+            if self.target != OsDetector.KnownOS.MAC_OS:
                 params.append('/f')
             else:  # On mac, will fix this later...
                 params.append('/w:#WIDTH#')
@@ -233,7 +233,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == OsDetector.KnownOS.Windows:
+            if self.target == OsDetector.KnownOS.WINDOWS:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'
@@ -299,7 +299,7 @@ class RDPFile:
         # res += 'camerastoredirect:s:*\n'
 
         # If target is windows, add customParameters
-        if self.target == OsDetector.KnownOS.Windows:
+        if self.target == OsDetector.KnownOS.WINDOWS:
             if self.customParameters and self.customParameters.strip() != '':
                 res += self.customParameters.strip() + '\n'
 

@@ -204,7 +204,7 @@ class TRDPTransport(BaseRDPTransport):
             'this_server': request.build_absolute_uri('/'),
         }
 
-        if os.os == os_detector.KnownOS.Windows:
+        if os.os == os_detector.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -213,14 +213,14 @@ class TRDPTransport(BaseRDPTransport):
                     'as_file': r.as_file,
                 }
             )
-        elif os.os == os_detector.KnownOS.Linux:
+        elif os.os == os_detector.KnownOS.LINUX:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 }
             )
-        elif os.os == os_detector.KnownOS.MacOS:
+        elif os.os == os_detector.KnownOS.MAC_OS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {

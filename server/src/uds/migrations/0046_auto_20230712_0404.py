@@ -1,13 +1,19 @@
 import typing
 
 from django.db import migrations, models
+from uds.core.util.os_detector import KnownOS
 
 ACTOR_TYPE = 2  # Hardcoded value from uds/models/registered_servers.py
 
-def migrate_old_actor_tokens(apps, schema_editor):
+def migrate_old_data(apps, schema_editor):
     try:
         RegisteredServers = apps.get_model('uds', 'RegisteredServers')
         ActorToken = apps.get_model('uds', 'ActorToken')
+
+        # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
+        RegisteredServers.objects.all().update(os_type=KnownOS.LINUX.os_name())
+
+        # Now append actors to registered servers, with "unknown" os type (legacy)
         for token in ActorToken.objects.all():
             RegisteredServers.objects.create(
                 username=token.username,
@@ -18,6 +24,7 @@ def migrate_old_actor_tokens(apps, schema_editor):
                 token=token.token,
                 stamp=token.stamp,
                 kind=ACTOR_TYPE,
+                os_type=KnownOS.UNKNOWN.os_name(),
                 data={
                     'mac': token.mac,
                     'pre_command': token.pre_command,
@@ -32,7 +39,7 @@ def migrate_old_actor_tokens(apps, schema_editor):
             # Pytest is running this method twice??
             raise e
 
-def revert_migration_to_old_actor_tokens(apps, schema_editor):
+def revert_old_data(apps, schema_editor):
     RegisteredServers = apps.get_model('uds', 'RegisteredServers')
     ActorToken = apps.get_model('uds', 'ActorToken')
     for server in RegisteredServers.objects.filter(kind=ACTOR_TYPE):
@@ -83,9 +90,14 @@ class Migration(migrations.Migration):
             name="data",
             field=models.JSONField(blank=True, default=None, null=True),
         ),
+        migrations.AddField(
+            model_name="registeredservers",
+            name="os_type",
+            field=models.CharField(default="unknown", max_length=32),
+        ),
         migrations.RunPython(
-            migrate_old_actor_tokens,
-            revert_migration_to_old_actor_tokens,
+            migrate_old_data,
+            revert_old_data,
             atomic=True,
         ),
         migrations.DeleteModel(

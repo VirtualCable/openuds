@@ -65,7 +65,7 @@ class BaseX2GOTransport(transports.Transport):
 
     iconFile = 'x2go.png'
     protocol = transports.protocols.X2GO
-    supportedOss = (OsDetector.KnownOS.Linux, OsDetector.KnownOS.Windows)
+    supportedOss = (OsDetector.KnownOS.LINUX, OsDetector.KnownOS.WINDOWS)
 
     fixedName = gui.TextField(
         order=2,

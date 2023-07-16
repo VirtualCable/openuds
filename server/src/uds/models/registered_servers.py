@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 import enum
+from uds.core.util.os_detector import KnownOS
 
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
@@ -72,6 +73,7 @@ class RegisteredServers(models.Model):
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     kind = models.IntegerField(default=ServerType.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
+    os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())  # os type of server (linux, windows, etc..)
 
     data = models.JSONField(null=True, blank=True, default=None)
 

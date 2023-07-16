@@ -67,7 +67,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         self.request.ip_version = 4
         self.request.ip_proxy = '127.0.0.1'
         self.request.os = osd.DetectedOsInfo(
-            osd.KnownOS.Linux, osd.KnownBrowser.Firefox, 'Windows 10'
+            osd.KnownOS.LINUX, osd.KnownBrowser.FIREFOX, 'Windows 10'
         )
 
         return super().setUp()

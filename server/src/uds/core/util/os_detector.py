@@ -45,66 +45,69 @@ class DetectedOsInfo(typing.NamedTuple):
 
 
 class KnownOS(enum.Enum):
-    Linux = ('Linux', 'armv7l')
-    ChromeOS = ('CrOS',)
-    WindowsPhone = ('Windows Phone',)
-    Windows = ('Windows',)
-    MacOS = ('MacOsX',)
-    Android = ('Android',)
-    iPad = ('iPad',)  #
-    iPhone = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate them
+    LINUX = ('Linux', 'armv7l')
+    CHROME_OS = ('CrOS',)
+    WINDOWS_PHONE = ('Windows Phone',)
+    WINDOWS = ('Windows',)
+    MAC_OS = ('MacOsX',)
+    ANDROID = ('Android',)
+    IPAD = ('iPad',)  #
+    IPHONE = ('iPhone',)  # In fact, these are IOS both, but we can diferentiate them
     WYSE = ('WYSE',)
-    Unknown = ('Unknown',)
+    UNKNOWN = ('Unknown',)
 
     def os_name(self):
         return self.value[0].lower()
 
-knownOss = tuple(os for os in KnownOS if os != KnownOS.Unknown)
+knownOss = tuple(os for os in KnownOS if os != KnownOS.UNKNOWN)
 
-allOss = knownOss + (KnownOS.Unknown,)
-desktopOss = (KnownOS.Linux, KnownOS.Windows, KnownOS.MacOS)
+allOss = knownOss + (KnownOS.UNKNOWN,)
+desktopOss = (KnownOS.LINUX, KnownOS.WINDOWS, KnownOS.MAC_OS)
 mobilesODD = list(set(allOss) - set(desktopOss))
 
 
-DEFAULT_OS = KnownOS.Windows
+DEFAULT_OS = KnownOS.WINDOWS
 
 class KnownBrowser(enum.Enum):
     # Known browsers
-    Firefox = 'Firefox'
-    Seamonkey = 'Seamonkey'
-    Chrome = 'Chrome'
-    Chromium = 'Chromium'
-    Safari = 'Safari'
-    Opera = 'Opera'
-    IExplorer = 'Explorer'
-    Other = 'Other'
+    FIREFOX = 'Firefox'
+    SEAMONKEY = 'Seamonkey'
+    CHROME = 'Chrome'
+    CHROMIUM = 'Chromium'
+    SAFARI = 'Safari'
+    OPERA = 'Opera'
+    IEXPLORER = 'Explorer'
+    EDGE = 'Edge'
+    OTHER = 'Other'
 
 knownBrowsers = tuple(KnownBrowser)
 
 browsersREs: typing.Dict[KnownBrowser, typing.Tuple] = {
-    KnownBrowser.Firefox: (re.compile(r'Firefox/([0-9.]+)'),),
-    KnownBrowser.Seamonkey: (re.compile(r'Seamonkey/([0-9.]+)'),),
-    KnownBrowser.Chrome: (re.compile(r'Chrome/([0-9.]+)'),),
-    KnownBrowser.Chromium: (re.compile(r'Chromium/([0-9.]+)'),),
-    KnownBrowser.Safari: (re.compile(r'Safari/([0-9.]+)'),),
-    KnownBrowser.Opera: (
+    KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
+    KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
+    KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),
+    KnownBrowser.CHROMIUM: (re.compile(r'Chromium/([0-9.]+)'),),
+    KnownBrowser.SAFARI: (re.compile(r'Safari/([0-9.]+)'),),
+    KnownBrowser.OPERA: (
         re.compile(r'OPR/([0-9.]+)'),
         re.compile(r'Opera/([0-9.]+)'),
     ),
-    KnownBrowser.IExplorer: (
+    KnownBrowser.IEXPLORER: (
         re.compile(r';MSIE ([0-9.]+);'),
         re.compile(r'Trident/.*rv:([0-9.]+)'),
     ),
+    KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
 }
 
 browserRules: typing.Dict[KnownBrowser, typing.Tuple] = {
-    KnownBrowser.Chrome: (KnownBrowser.Chrome, (KnownBrowser.Chromium, KnownBrowser.Opera)),
-    KnownBrowser.Firefox: (KnownBrowser.Firefox, (KnownBrowser.Seamonkey,)),
-    KnownBrowser.IExplorer: (KnownBrowser.IExplorer, ()),
-    KnownBrowser.Chromium: (KnownBrowser.Chromium, (KnownBrowser.Chrome,)),
-    KnownBrowser.Safari: (KnownBrowser.Safari, (KnownBrowser.Chrome, KnownBrowser.Chromium, KnownBrowser.Opera)),
-    KnownBrowser.Seamonkey: (KnownBrowser.Seamonkey, (KnownBrowser.Firefox,)),
-    KnownBrowser.Opera: (KnownBrowser.Opera, ()),
+    KnownBrowser.EDGE: (KnownBrowser.EDGE, ()),
+    KnownBrowser.CHROME: (KnownBrowser.CHROME, (KnownBrowser.CHROMIUM, KnownBrowser.OPERA)),
+    KnownBrowser.FIREFOX: (KnownBrowser.FIREFOX, (KnownBrowser.SEAMONKEY,)),
+    KnownBrowser.IEXPLORER: (KnownBrowser.IEXPLORER, ()),
+    KnownBrowser.CHROMIUM: (KnownBrowser.CHROMIUM, (KnownBrowser.CHROME,)),
+    KnownBrowser.SAFARI: (KnownBrowser.SAFARI, (KnownBrowser.CHROME, KnownBrowser.CHROMIUM, KnownBrowser.OPERA)),
+    KnownBrowser.SEAMONKEY: (KnownBrowser.SEAMONKEY, (KnownBrowser.FIREFOX,)),
+    KnownBrowser.OPERA: (KnownBrowser.OPERA, ()),
 }
 
 
@@ -114,9 +117,9 @@ def getOsFromUA(
     """
     Basic OS Client detector (very basic indeed :-))
     """
-    ua = ua or KnownOS.Unknown.value[0]
+    ua = ua or KnownOS.UNKNOWN.value[0]
 
-    res = DetectedOsInfo(os=KnownOS.Unknown, browser=KnownBrowser.Other, version='0.0')
+    res = DetectedOsInfo(os=KnownOS.UNKNOWN, browser=KnownBrowser.OTHER, version='0.0')
     found: bool = False
     for os in knownOss:
         if found:

@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
+from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
@@ -74,6 +75,7 @@ class ServerRegister(Handler):
                     token=secrets.token_urlsafe(36),
                     stamp=getSqlDatetime(),
                     kind=self._params['type'],
+                    os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
                     data=self._params.get('data', None),
                 )
             except Exception as e:
@@ -94,6 +96,7 @@ class ServersTokens(ModelHandler):
         {'username': {'title': _('Issued by')}},
         {'hostname': {'title': _('Origin')}},
         {'type': {'title': _('Type')}},
+        {'os': {'title': _('OS')}},
         {'ip': {'title': _('IP')}},
     ]
 
@@ -107,6 +110,7 @@ class ServersTokens(ModelHandler):
             'hostname': item.hostname,
             'token': item.token,
             'type': models.RegisteredServers.ServerType(item.kind).as_str(),  # type is a reserved word, so we use "kind" instead on model
+            'os': item.os_type,
         }
 
     def delete(self) -> str:

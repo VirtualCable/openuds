@@ -34,6 +34,7 @@ import typing
 
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
+from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
@@ -161,4 +162,5 @@ class TunnelRegister(ServerRegister):
     # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         self._params['type'] = models.RegisteredServers.ServerType.TUNNEL
+        self._params['os'] = KnownOS.LINUX.os_name()  # Legacy tunnels are always linux
         return super().post()
