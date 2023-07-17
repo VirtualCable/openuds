@@ -52,6 +52,12 @@ VALID_CONFIG_SECTIONS = set(('wol',))
 
 
 class PhysicalMachinesProvider(services.ServiceProvider):
+    # What services do we offer?
+    typeName = _('Static IP Machines Provider')
+    typeType = 'PhysicalMachinesServiceProvider'
+    typeDescription = _('Provides connection to machines by IP')
+    iconFile = 'provider.png'
+
     # No extra data needed
     config = gui.TextField(
         length=8192,
@@ -107,12 +113,6 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                     raise exceptions.ValidationError(
                         _('Invalid url in advanced configuration: ') + key
                     )
-
-    # What services do we offer?
-    typeName = _('Static IP Machines Provider')
-    typeType = 'PhysicalMachinesServiceProvider'
-    typeDescription = _('Provides connection to machines by IP')
-    iconFile = 'provider.png'
 
     from .service_multi import IPMachinesService  # pylint: disable=import-outside-toplevel
     from .service_single import IPSingleMachineService  # pylint: disable=import-outside-toplevel
