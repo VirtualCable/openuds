@@ -87,9 +87,7 @@ class BaseRDPTransport(transports.Transport):
     fixedDomain = gui.TextField(
         label=_('Domain'),
         order=15,
-        tooltip=_(
-            'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
-        ),
+        tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=gui.Tab.CREDENTIALS,
     )
 
@@ -265,34 +263,26 @@ class BaseRDPTransport(transports.Transport):
     multimedia = gui.CheckBoxField(
         label=_('Multimedia sync'),
         order=40,
-        tooltip=_(
-            'If checked. Linux client will use multimedia parameter for xfreerdp'
-        ),
+        tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'),
         tab='Linux Client',
     )
     alsa = gui.CheckBoxField(
         label=_('Use Alsa'),
         order=41,
-        tooltip=_(
-            'If checked, Linux client will try to use ALSA, otherwise Pulse will be used'
-        ),
+        tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'),
         tab='Linux Client',
     )
     printerString = gui.TextField(
         label=_('Printer string'),
         order=43,
-        tooltip=_(
-            'If printer is checked, the printer string used with xfreerdp client'
-        ),
+        tooltip=_('If printer is checked, the printer string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
     )
     smartcardString = gui.TextField(
         label=_('Smartcard string'),
         order=44,
-        tooltip=_(
-            'If smartcard is checked, the smartcard string used with xfreerdp client'
-        ),
+        tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
     )
@@ -309,9 +299,7 @@ class BaseRDPTransport(transports.Transport):
     allowMacMSRDC = gui.CheckBoxField(
         label=_('Allow Microsoft Rdp Client'),
         order=50,
-        tooltip=_(
-            'If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'
-        ),
+        tooltip=_('If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'),
         tab='Mac OS X',
         defvalue=gui.FALSE,
     )
@@ -329,14 +317,18 @@ class BaseRDPTransport(transports.Transport):
     customParametersWindows = gui.TextField(
         label=_('Custom parameters'),
         order=45,
-        tooltip=_(
-            'If not empty, extra parameters to include for Windows Client'
-        ),
+        tooltip=_('If not empty, extra parameters to include for Windows Client'),
         length=4096,
         multiline=10,
         tab='Windows Client',
     )
 
+    optimizeTeams = gui.CheckBoxField(
+        label=_('Optimize Teams'),
+        order=46,
+        tooltip=_('If checked, Teams will be optimized (only works on Windows clients)'),
+        tab='Windows Client',
+    )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -353,9 +345,7 @@ class BaseRDPTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(
-        self, userService: 'models.UserService', user: 'models.User'
-    ) -> str:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.processUserPassword(userService, user, '', altUsername=None)
         return v['username']
 
@@ -412,6 +402,9 @@ class BaseRDPTransport(transports.Transport):
         if azureAd:
             username = 'AzureAD\\' + username
 
+        if self.optimizeTeams.isTrue():
+            password = ''  # nosec
+
         return {
             'protocol': self.protocol,
             'username': username,
@@ -425,7 +418,6 @@ class BaseRDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> typing.Mapping[str, str]:
-
         username = None
         if isinstance(userService, UserService):
             cdata = userService.getInstance().getConnectionData()

@@ -131,6 +131,7 @@ class TRDPTransport(BaseRDPTransport):
     customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
     customParametersWindows = BaseRDPTransport.customParametersWindows
+    optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -193,6 +194,7 @@ class TRDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
+        r.optimizeTeams = self.optimizeTeams.isTrue()
 
         sp: typing.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,

@@ -94,6 +94,7 @@ class RDPTransport(BaseRDPTransport):
     customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
     customParametersWindows = BaseRDPTransport.customParametersWindows
+    optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,
@@ -145,6 +146,7 @@ class RDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
+        r.optimizeTeams = self.optimizeTeams.isTrue()
 
         sp: typing.MutableMapping[str, typing.Any] = {
             'password': password,
@@ -154,16 +156,17 @@ class RDPTransport(BaseRDPTransport):
             'address': r.address,
         }
 
-        if os == os_detector.KnownOS.WINDOWS:
+        if os.os == os_detector.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
                 {
                     'as_file': r.as_file,
+                    'optimize_teams': self.optimizeTeams.isTrue(),
                 }
             )
-        elif os == os_detector.KnownOS.LINUX:
+        elif os.os == os_detector.KnownOS.LINUX:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
@@ -171,7 +174,7 @@ class RDPTransport(BaseRDPTransport):
                     'address': r.address,
                 }
             )
-        elif os == os_detector.KnownOS.MAC_OS:
+        elif os.os == os_detector.KnownOS.MAC_OS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {

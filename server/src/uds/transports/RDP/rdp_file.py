@@ -71,6 +71,7 @@ class RDPFile:
     enableClipboard = False
     customParameters: typing.Optional[str] = None
     enforcedShares: typing.Optional[str] = None
+    optimizeTeams = False
 
     def __init__(
         self,
@@ -193,7 +194,7 @@ class RDPFile:
             params += shlex.split(self.customParameters.strip())
 
         # On MacOSX, /rfx /gfx:rfx are almost inprescindible, as it seems the only way to get a decent performance
-        if self.target == OsDetector.KnownOS.Macintosh:
+        if self.target == OsDetector.KnownOS.MAC_OS:
             for i in ('/rfx', '/gfx:rfx'):
                 if i not in params:
                     params.append(i)
@@ -233,7 +234,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == OsDetector.KnownOS.WINDOWS:
+            if self.target == OsDetector.KnownOS.WINDOWS and not self.optimizeTeams:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'

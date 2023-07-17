@@ -42,6 +42,9 @@ class ServiceException(UDSException):
     """
     Base class for all service exceptions
     """
+    def __init__(self, *args, **kwargs):
+        # Eats "kwargs" to avoid "unexpected keyword argument" error
+        super().__init__(*args)
 
 
 class UnsupportedException(ServiceException):
