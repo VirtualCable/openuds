@@ -48,7 +48,8 @@ logger = logging.getLogger(__name__)
 ValidatorType = typing.Callable[[typing.Any], bool]
 
 SECURED = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but weird enough
-
+# Note that the tunnel ticket will be the owner + the ticket itself, so it will be 48 chars long (Secured or not)
+TICKET_LENGTH = 40  # Ticket length must much the length of the ticket length on tunnel server!!! (take care with previous note)
 
 class TicketStore(UUIDModel):
     """
@@ -90,7 +91,7 @@ class TicketStore(UUIDModel):
     @staticmethod
     def generateUuid() -> str:
         return (
-            cryptoManager().randomString(40).lower()
+            cryptoManager().randomString(TICKET_LENGTH).lower()
         )  # Temporary fix lower() for compat with 3.0
 
     @staticmethod
