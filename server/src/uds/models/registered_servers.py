@@ -30,12 +30,15 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 import enum
+import secrets
+
 from uds.core.util.os_detector import KnownOS
 
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 
 from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
+
 
 class RegisteredServers(models.Model):
     """
@@ -54,13 +57,17 @@ class RegisteredServers(models.Model):
     If server is Other, but not Tunnel, it will be allowed to access API, but will not be able to
     create tunnels.
     """
-    class ServerType(enum.IntFlag):
+
+    class ServerType(enum.IntEnum):
         TUNNEL = 1
         ACTOR = 2
+        APP_SERVER = 3
         OTHER = 99
 
         def as_str(self) -> str:
             return self.name.lower()  # type: ignore
+        
+    MAC_UNKNOWN = '00:00:00:00:00:00'
 
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
@@ -72,18 +79,26 @@ class RegisteredServers(models.Model):
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
-    kind = models.IntegerField(default=ServerType.TUNNEL.value)  # Defaults to tunnel server, so we can migrate from previous versions
-    os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())  # os type of server (linux, windows, etc..)
+    # Type of server. Defaults to tunnel, so we can migrate from previous versions
+    kind = models.IntegerField(default=ServerType.TUNNEL.value)
+    # os type of server (linux, windows, etc..)
+    os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
+    # mac address of registered server, if any. Important for actor servers mainly, informative for others
+    mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
 
+    # Extra data, for custom server type use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
 
     @staticmethod
-    def validateToken(
-        token: str, request: typing.Optional[ExtendedHttpRequest] = None
-    ) -> bool:
+    def create_token() -> str:
+        return secrets.token_urlsafe(36)
+
+    @staticmethod
+    def validateToken(token: str, request: typing.Optional[ExtendedHttpRequest] = None) -> bool:
+        # Ensure tiken is composed of 
         try:
             tt = RegisteredServers.objects.get(token=token)
             # We could check the request ip here

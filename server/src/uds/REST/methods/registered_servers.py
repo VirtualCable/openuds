@@ -55,7 +55,9 @@ class ServerRegister(Handler):
         serverToken: models.RegisteredServers
         now = getSqlDatetimeAsUnix()
         try:
-            # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
+            # If already exists a token for this, return it instead of creating a new one, and update the information...
+            # Note that we use IP and HOSTNAME to identify the server, so if any of them changes, a new token will be created
+            # MAC is just informative, and data is used to store any other information that may be needed
             serverToken = models.RegisteredServers.objects.get(
                 ip=self._params['ip'], hostname=self._params['hostname']
             )
@@ -72,10 +74,11 @@ class ServerRegister(Handler):
                     ip_from=self._request.ip,
                     ip=self._params['ip'],
                     hostname=self._params['hostname'],
-                    token=secrets.token_urlsafe(36),
+                    token=models.RegisteredServers.create_token(),
                     stamp=getSqlDatetime(),
                     kind=self._params['type'],
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
+                    mac=self._params.get('mac', models.RegisteredServers.MAC_UNKNOWN),
                     data=self._params.get('data', None),
                 )
             except Exception as e:

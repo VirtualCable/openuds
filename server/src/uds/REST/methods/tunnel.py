@@ -41,7 +41,7 @@ from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
 from uds.core.util.stats import events
 
-from .servers import ServerRegister
+from .registered_servers import ServerRegister
 
 logger = logging.getLogger(__name__)
 
@@ -162,5 +162,5 @@ class TunnelRegister(ServerRegister):
     # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         self._params['type'] = models.RegisteredServers.ServerType.TUNNEL
-        self._params['os'] = KnownOS.LINUX.os_name()  # Legacy tunnels are always linux
+        self._params['os'] = self._params.get('os', KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
         return super().post()

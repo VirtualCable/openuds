@@ -276,31 +276,28 @@ class Register(ActorV3Action):
     name = 'register'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        actorToken: RegisteredServers
         # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
         # and mac is the requested one
         found = False
-        for actorToken in RegisteredServers.objects.filter(kind=RegisteredServers.ServerType.ACTOR):
-            if actorToken.data and actorToken.data.get('mac', '') == self._params['mac']:
-                # Update parameters
-                actorToken.username = self._user.pretty_name
-                actorToken.ip_from = self._request.ip
-                actorToken.ip = self._params['ip']
-                actorToken.hostname = self._params['hostname']
-                actorToken.data = {  # type: ignore
-                    'mac': self._params['mac'],
-                    'pre_command': self._params['pre_command'],
-                    'post_command': self._params['post_command'],
-                    'run_once_command': self._params['run_once_command'],
-                    'log_level': self._params['log_level'],
-                    'custom': self._params.get('custom', ''),
-                }
-                actorToken.stamp = getSqlDatetime()
-                actorToken.save()
-                logger.info('Registered actor %s', self._params)
-                found = True
-                break
+        actorToken: typing.Optional[RegisteredServers] = RegisteredServers.objects.filter(kind=RegisteredServers.ServerType.ACTOR, mac=self._params['mac']).first()
+        if actorToken:
+            # Update parameters
+            actorToken.username = self._user.pretty_name
+            actorToken.ip_from = self._request.ip
+            actorToken.ip = self._params['ip']
+            actorToken.hostname = self._params['hostname']
+            actorToken.data = {  # type: ignore
+                'pre_command': self._params['pre_command'],
+                'post_command': self._params['post_command'],
+                'run_once_command': self._params['run_once_command'],
+                'log_level': self._params['log_level'],
+                'custom': self._params.get('custom', ''),
+            }
+            actorToken.stamp = getSqlDatetime()
+            actorToken.save()
+            logger.info('Registered actor %s', self._params)
+            found = True
 
         if not found:
             kwargs = {
@@ -310,16 +307,16 @@ class Register(ActorV3Action):
                 'ip_version': self._request.ip_version,
                 'hostname': self._params['hostname'],
                 'data': {  # type: ignore
-                    'mac': self._params['mac'],
                     'pre_command': self._params['pre_command'],
                     'post_command': self._params['post_command'],
                     'run_once_command': self._params['run_once_command'],
                     'log_level': self._params['log_level'],
                     'custom': self._params.get('custom', ''),
                 },
-                'token': secrets.token_urlsafe(36),
+                'token': RegisteredServers.create_token(),
                 'kind': RegisteredServers.ServerType.ACTOR,
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
+                'mac': self._params['mac'],
                 'stamp': getSqlDatetime(),
             }
 
