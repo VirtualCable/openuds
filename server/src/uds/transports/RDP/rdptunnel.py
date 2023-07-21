@@ -213,6 +213,7 @@ class TRDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_file': r.as_file,
+                    'optimize_teams': self.optimizeTeams.isTrue(),
                 }
             )
         elif os.os == os_detector.KnownOS.LINUX:

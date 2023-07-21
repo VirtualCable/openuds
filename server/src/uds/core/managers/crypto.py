@@ -70,7 +70,7 @@ class CryptoManager(metaclass=singleton.Singleton):
     _namespace: uuid.UUID
     _counter: int
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._rsa = serialization.load_pem_private_key(
             settings.RSA_KEY.encode(), password=None, backend=default_backend()
         )

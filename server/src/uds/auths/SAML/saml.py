@@ -544,16 +544,17 @@ class SAMLAuthenticator(auths.Authenticator):
                 except Exception as e:
                     raise exceptions.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
 
-    def processField(self, field: str, attributes: typing.Dict[str, typing.List]) -> typing.List[str]:
+    def processField(self, field: str, attributes: typing.Dict[str, typing.List[str]]) -> typing.List[str]:
         res = []
 
         def getAttr(attrName: str) -> typing.List[str]:
+            val: typing.List[str] = []  
             if '+' in attrName:
                 attrList = attrName.split('+')
                 # Check all attributes are present, and has only one value
                 if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
                     logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
-                    return []
+                    return val
             
                 val = [''.join([attributes.get(a, [''])[0] for a in attrList])]
             elif ':' in attrName:

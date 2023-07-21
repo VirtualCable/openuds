@@ -237,8 +237,17 @@ def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
     try:
-        host, port = hostPortPair.split(':')
-        return validateHostname(host, 255, False), validatePort(port)
+        if '[' in hostPortPair and ']' in hostPortPair:  # IPv6
+            host, port = hostPortPair.split(']:')
+            host = host[1:]
+        else:
+            host, port = hostPortPair.split(':')
+        # if an ip address is used, it must be valid
+        try:
+            dj_validators.validate_ipv46_address(host)
+            return host, validatePort(port)
+        except Exception:
+            return validateHostname(host, 255, False), validatePort(port)
     except Exception:
         raise exceptions.ValidationError(
             _('{} is not a valid host:port pair').format(hostPortPair)

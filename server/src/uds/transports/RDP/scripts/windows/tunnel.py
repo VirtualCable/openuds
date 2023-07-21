@@ -64,9 +64,4 @@ else:
 
     subprocess.Popen([executable, filename])  # nosec
 
-executable = tools.findApp('mstsc.exe')
-if executable is None:
-    raise Exception('Unable to find mstsc.exe. Check that path points to your SYSTEM32 folder')
-
-subprocess.Popen([executable, filename])  # nosec
-tools.addFileToUnlink(filename)
+# tools.addFileToUnlink(filename)
