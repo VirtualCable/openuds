@@ -128,12 +128,14 @@ def connection(
                 l.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # type: ignore
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
-            tls_version = {
-                '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2, # type: ignore
-                '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3, # type: ignore
-            }.get(getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2'), ldap.OPT_X_TLS_PROTOCOL_TLS1_2) # type: ignore
-            
-            l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)   # type: ignore
+            # Ensure that libldap is compiled with TLS1.3 support
+            if hasattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3'):
+                tls_version = {
+                    '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2, # type: ignore
+                    '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3, # type: ignore
+                }.get(getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2'), ldap.OPT_X_TLS_PROTOCOL_TLS1_2) # type: ignore
+                
+                l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)   # type: ignore
             # Cipher suites are from GNU TLS, not OpenSSL
             # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
             # i.e.:
@@ -142,8 +144,11 @@ def connection(
             #  * PFS
             #  * SECURE256
             #  
-            l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # type: ignore
-            l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+            try:
+                l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # type: ignore
+                l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
+            except Exception:
+                logger.info('Cipher suite %s not supported by libldap', cipher_suite)
 
         l.simple_bind_s(who=username, cred=password)
     except ldap.SERVER_DOWN as e:  # type: ignore
