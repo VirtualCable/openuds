@@ -144,6 +144,8 @@ def connection(
             #  * PFS
             #  * SECURE256
             #  
+            #  Note: Your distro could have compiled libldap with OpenSSL, so this will not work
+            #  You can simply use OpenSSL cipher suites, but you will need to test them
             try:
                 l.set_option(ldap.OPT_X_TLS_CIPHER_SUITE, cipher_suite)  # type: ignore
                 l.set_option(ldap.OPT_X_TLS_NEWCTX, 0)  # type: ignore
