@@ -295,7 +295,7 @@ def authenticate(
         not useInternalAuthenticate
         and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
-        and password == GlobalConfig.SUPER_USER_PASS.get(True)
+        and CryptoManager().checkHash(password, GlobalConfig.SUPER_USER_PASS.get(True))
     ):
         return AuthResult(user=getRootUser())
 

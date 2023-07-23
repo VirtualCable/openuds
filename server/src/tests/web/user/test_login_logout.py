@@ -84,7 +84,9 @@ class WebLoginLogoutTest(test.WEBTestCase):
 
         # All users, admin and staff must be able to login
         root = GlobalConfig.SUPER_USER_LOGIN.get(True)
-        rootpass = GlobalConfig.SUPER_USER_PASS.get(True)
+        # Ensure web login for super user is enabled
+        rootpass = 'testRootPasword'
+        GlobalConfig.SUPER_USER_PASS.set(rootpass)       
         # Ensure web login for super user is enabled
         GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.set(True)
         users_pass = [(user.name, user.name) for user in users + admins + stafs]

@@ -95,6 +95,13 @@ class Migration(migrations.Migration):
             name="os_type",
             field=models.CharField(default="unknown", max_length=32),
         ),
+        migrations.AddField(
+            model_name="registeredservers",
+            name="mac",
+            field=models.CharField(
+                db_index=True, default="00:00:00:00:00:00", max_length=32
+            ),
+        ),
         migrations.RunPython(
             migrate_old_data,
             revert_old_data,

@@ -36,6 +36,7 @@ import string
 import functools
 import logging
 import typing
+from uds.core.managers.crypto import CryptoManager
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import processUuid
@@ -163,7 +164,7 @@ class Login(Handler):
             ):
                 if (
                     GlobalConfig.SUPER_USER_LOGIN.get(True) == username
-                    and GlobalConfig.SUPER_USER_PASS.get(True) == password
+                    and CryptoManager().checkHash(password, GlobalConfig.SUPER_USER_PASS.get(True))
                 ):
                     self.genAuthToken(
                         -1, username, password, locale, platform, True, True, scrambler

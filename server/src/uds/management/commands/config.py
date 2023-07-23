@@ -33,7 +33,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
-from uds.core.util.config import Config, GLOBAL_SECTION, GlobalConfig
+from uds.core.util.config import Config, GlobalConfig
 
 logger = logging.getLogger(__name__)
 
@@ -54,9 +54,9 @@ class Command(BaseCommand):
                 first, value = config.split('=', 1)  # Only first = is separator :)
                 first = first.split('.')
                 if len(first) == 2:
-                    mod, name = first
+                    mod, name = Config.SectionType.fromStr(first[0]), first[1]
                 else:
-                    mod, name = GLOBAL_SECTION, first[0]
+                    mod, name = Config.SectionType.GLOBAL, first[0]
                 if (
                     Config.update(mod, name, value) is False
                 ):  # If not exists, try to store value without any special parameters

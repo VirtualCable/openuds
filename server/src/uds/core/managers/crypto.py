@@ -286,7 +286,6 @@ class CryptoManager(metaclass=singleton.Singleton):
             return secrets.compare_digest(
                 hashlib.sha3_256(value).hexdigest(), hashValue[28:]
             )
-
         # Argon2
         if hashValue[:8] == '{ARGON2}':
             ph = PasswordHasher()

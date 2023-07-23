@@ -51,5 +51,5 @@ class Config(Handler):
         for section, secDict in self._params.items():
             for key, vals in secDict.items():
                 logger.info('Updating config value %s.%s to %s by %s', section, key, vals['value'], self._user.name)
-                CfgConfig.update(section, key, vals['value'])
+                CfgConfig.update(CfgConfig.SectionType.fromStr(section), key, vals['value'])
         return 'done'
