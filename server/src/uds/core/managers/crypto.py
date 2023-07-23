@@ -41,6 +41,8 @@ import logging
 import typing
 import secrets
 
+# For password secrets
+from argon2 import PasswordHasher
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -263,10 +265,8 @@ class CryptoManager(metaclass=singleton.Singleton):
         if isinstance(value, str):
             value = value.encode()
 
-        salt = self.salt(8)  # 8 bytes = 16 chars
-        value = salt.encode() + value
-
-        return '{SHA256SALT}' + salt + str(hashlib.sha3_256(value).hexdigest())
+        # Argon2
+        return '{ARGON2}' + PasswordHasher().hash(value.decode())
 
     def checkHash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
         if isinstance(value, str):
@@ -286,6 +286,15 @@ class CryptoManager(metaclass=singleton.Singleton):
             return secrets.compare_digest(
                 hashlib.sha3_256(value).hexdigest(), hashValue[28:]
             )
+
+        # Argon2
+        if hashValue[:8] == '{ARGON2}':
+            ph = PasswordHasher()
+            try:
+                ph.verify(hashValue[8:], value.decode())
+                return True
+            except Exception:
+                return False  # Verify will raise an exception if not valid
 
         # Old sha1
         return secrets.compare_digest(
