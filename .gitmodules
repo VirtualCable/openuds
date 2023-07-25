@@ -11,6 +11,6 @@
 	url = git@github.com:VirtualCable/uds-actor.git
 	branch = master
 [submodule "client-py3"]
-	path = client
+	path = client-py3
 	url = git@github.com:VirtualCable/uds-client.git
 	branch = master
