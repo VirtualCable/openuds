@@ -102,6 +102,11 @@ class Migration(migrations.Migration):
                 db_index=True, default="00:00:00:00:00:00", max_length=32
             ),
         ),
+        migrations.AddField(
+            model_name="registeredservers",
+            name="listen_port",
+            field=models.IntegerField(default=43910),
+        ),
         migrations.RunPython(
             migrate_old_data,
             revert_old_data,

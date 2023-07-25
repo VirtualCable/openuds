@@ -54,16 +54,23 @@ class ServerRegister(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         serverToken: models.RegisteredServers
         now = getSqlDatetimeAsUnix()
+        ip_version = 4
+        ip = self._params.get('ip', self.request.ip)
+        if ':' in ip:
+            ip_version = 6
+            # If zone is present, remove it
+            ip = ip.split('%')[0]
+
         try:
             # If already exists a token for this, return it instead of creating a new one, and update the information...
-            # Note that we use IP and HOSTNAME to identify the server, so if any of them changes, a new token will be created
+            # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
             serverToken = models.RegisteredServers.objects.get(
-                ip=self._params['ip'], hostname=self._params['hostname']
+                ip=ip, hostname=self._params['hostname'], kind=self._params['type']
             )
             # Update parameters
             serverToken.username = self._user.pretty_name
-            serverToken.ip_from = self._request.ip
+            serverToken.ip_from = self._request.ip.split('%')[0]  # Ensure we do not store zone if IPv6 and present
             serverToken.stamp = getSqlDatetime()
             serverToken.kind = self._params['type']
             serverToken.save()
@@ -71,8 +78,8 @@ class ServerRegister(Handler):
             try:
                 serverToken = models.RegisteredServers.objects.create(
                     username=self._user.pretty_name,
-                    ip_from=self._request.ip,
-                    ip=self._params['ip'],
+                    ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
+                    ip=ip,
                     hostname=self._params['hostname'],
                     token=models.RegisteredServers.create_token(),
                     stamp=getSqlDatetime(),
@@ -88,7 +95,9 @@ class ServerRegister(Handler):
 
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
-    model_filter = {'kind__in': [models.RegisteredServers.ServerType.TUNNEL, models.RegisteredServers.ServerType.OTHER]}
+    model_filter = {
+        'kind__in': [models.RegisteredServers.ServerType.TUNNEL, models.RegisteredServers.ServerType.OTHER]
+    }
     path = 'servers'
     name = 'tokens'
 
@@ -112,7 +121,9 @@ class ServersTokens(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': models.RegisteredServers.ServerType(item.kind).as_str(),  # type is a reserved word, so we use "kind" instead on model
+            'type': models.RegisteredServers.ServerType(
+                item.kind
+            ).as_str(),  # type is a reserved word, so we use "kind" instead on model
             'os': item.os_type,
         }
 
