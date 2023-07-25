@@ -186,7 +186,8 @@ SECURE_CIPHERS = (
 SECURE_MIN_TLS_VERSION = '1.2'
 
 # LDAP CIFHER SUITE can be enforced here. Use GNU TLS cipher suite names in this case
-# i.e.:
+# Debian libldap uses gnutls, and it's my development environment. Continue reading for more info:
+# i.e. (GNU TLS):
 #  * NORMAL
 #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
 #  * PFS
@@ -194,6 +195,8 @@ SECURE_MIN_TLS_VERSION = '1.2'
 # If omitted, defaults to PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC
 # Example:
 LDAP_CIPHER_SUITE = 'PFS:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3:-AES-128-CBC'
+# For OpenSSL python-ldap version, this is a valid starting point 
+# LDAP_CIPHER_SUITE = 'HIGH:-SSLv2:-SSLv3:-TLSv1.0:-TLSv1.1:+TLSv1.2:+TLSv1.3'
 
 TEMPLATES = [
     {
