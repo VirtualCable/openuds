@@ -542,7 +542,7 @@ def authLogLogin(
             f'{logStr} from {request.ip} where OS is {request.os.os.name}',
             log.LogSource.WEB,
         )
-    except models.User.DoesNotExist:  # pylint: disable=no-member
+    except Exception:  # nosec: root user is not on any authenticator, will fail with an exception we can ingore
         pass
 
 
