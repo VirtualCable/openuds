@@ -627,6 +627,12 @@ class UserService(UUIDModel):
 
     def getLoggedIP(self) -> str:
         return self.getProperty('ip') or '0.0.0.0'  # nosec: no binding address
+    
+    def setActorVersion(self, version: typing.Optional[str] = None) -> None:
+        self.setProperty('actor_version', version)
+
+    def getActorVersion(self) -> str:
+        return self.getProperty('actor_version') or '0.0.0'
 
     def isValidPublication(self) -> bool:
         """

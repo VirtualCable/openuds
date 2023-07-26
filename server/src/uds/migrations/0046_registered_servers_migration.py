@@ -107,6 +107,11 @@ class Migration(migrations.Migration):
             name="listen_port",
             field=models.IntegerField(default=43910),
         ),
+        migrations.AddField(
+            model_name="registeredservers",
+            name="log_level",
+            field=models.IntegerField(default=50000),
+        ),
         migrations.RunPython(
             migrate_old_data,
             revert_old_data,

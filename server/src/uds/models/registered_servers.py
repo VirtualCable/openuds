@@ -36,6 +36,7 @@ from uds.core.util.os_detector import KnownOS
 
 from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
+from uds.core.util.log import LogLevel
 
 from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
 
@@ -61,8 +62,8 @@ class RegisteredServers(models.Model):
     """
 
     class ServerType(enum.IntEnum):
-        TUNNEL = 1
-        ACTOR = 2
+        TUNNEL_SERVER = 1
+        ACTOR_SERVICE = 2
         APP_SERVER = 3
         OTHER = 99
 
@@ -71,8 +72,8 @@ class RegisteredServers(models.Model):
 
         def path(self) -> str:
             return {
-                RegisteredServers.ServerType.TUNNEL: 'tunnel',
-                RegisteredServers.ServerType.ACTOR: 'actor',
+                RegisteredServers.ServerType.TUNNEL_SERVER: 'tunnel',
+                RegisteredServers.ServerType.ACTOR_SERVICE: 'actor',
                 RegisteredServers.ServerType.APP_SERVER: 'app',
                 RegisteredServers.ServerType.OTHER: 'other',
             }[self]
@@ -96,11 +97,13 @@ class RegisteredServers(models.Model):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-    kind = models.IntegerField(default=ServerType.TUNNEL.value)
+    kind = models.IntegerField(default=ServerType.TUNNEL_SERVER.value)
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
     mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
+    # Log level, so we can filter messages for this server
+    log_level = models.IntegerField(default=LogLevel.ERROR.value)
 
     # Extra data, for custom server type use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)

@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 class ActorTokens(ModelHandler):
     model = RegisteredServers
-    model_filter = {'kind': RegisteredServers.ServerType.ACTOR}
+    model_filter = {'kind': RegisteredServers.ServerType.ACTOR_SERVICE}
 
     table_title = _('Actor tokens')
     table_fields = [
@@ -65,6 +65,11 @@ class ActorTokens(ModelHandler):
 
     def item_as_dict(self, item: RegisteredServers) -> typing.Dict[str, typing.Any]:
         data = item.data or {}
+        log_level_int = data.get('log_level', 2)
+        if log_level_int < 10000:  # Old log level
+            log_level = LogLevel.fromActorLevel(log_level_int).name
+        else:
+            log_level = LogLevel(log_level_int).name
         return {
             'id': item.token,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.hostname or item.ip),
@@ -76,9 +81,7 @@ class ActorTokens(ModelHandler):
             'pre_command': data.get('pre_command', ''),
             'post_command': data.get('post_command', ''),
             'runonce_command': data.get('runonce_command', ''),
-            'log_level': LogLevel.fromActorLevel(
-                data.get('log_level', 2)
-            ).name,  # ['DEBUG', 'INFO', 'ERROR', 'FATAL'][item.log_level % 4],
+            'log_level': log_level,
         }
 
     def delete(self) -> str:

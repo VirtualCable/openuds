@@ -38,6 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
+from uds.core.util.log import LogLevel
 from uds.REST import Handler
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
@@ -66,11 +67,12 @@ class ServerRegister(Handler):
             # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
             serverToken = models.RegisteredServers.objects.get(
-                ip=ip, hostname=self._params['hostname'], kind=self._params['type']
+                ip=ip, ip_version=ip_version, hostname=self._params['hostname'], kind=self._params['type']
             )
             # Update parameters
             serverToken.username = self._user.pretty_name
-            serverToken.ip_from = self._request.ip.split('%')[0]  # Ensure we do not store zone if IPv6 and present
+            # Ensure we do not store zone if IPv6 and present
+            serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.stamp = getSqlDatetime()
             serverToken.kind = self._params['type']
             serverToken.save()
@@ -80,8 +82,10 @@ class ServerRegister(Handler):
                     username=self._user.pretty_name,
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
+                    ip_version=ip_version,
                     hostname=self._params['hostname'],
                     token=models.RegisteredServers.create_token(),
+                    log_level=self._params.get('log_level', LogLevel.INFO.value),
                     stamp=getSqlDatetime(),
                     kind=self._params['type'],
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
@@ -96,7 +100,7 @@ class ServerRegister(Handler):
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
     model_filter = {
-        'kind__in': [models.RegisteredServers.ServerType.TUNNEL, models.RegisteredServers.ServerType.OTHER]
+        'kind__in': [models.RegisteredServers.ServerType.TUNNEL_SERVER, models.RegisteredServers.ServerType.OTHER]
     }
     path = 'servers'
     name = 'tokens'
