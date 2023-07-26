@@ -41,6 +41,7 @@ from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
 
 DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 
+
 class RegisteredServers(models.Model):
     """
     UDS Registered Servers
@@ -84,7 +85,9 @@ class RegisteredServers(models.Model):
     ip_version = models.IntegerField(default=4)  # 4 or 6, version of ip fields
 
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
-    listen_port = models.IntegerField(default=DEFAULT_LISTEN_PORT)  # Port where server listens for connections (if it listens)
+    listen_port = models.IntegerField(
+        default=DEFAULT_LISTEN_PORT
+    )  # Port where server listens for connections (if it listens)
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
@@ -110,10 +113,17 @@ class RegisteredServers(models.Model):
         return secrets.token_urlsafe(36)
 
     @staticmethod
-    def validateToken(token: str, request: typing.Optional[ExtendedHttpRequest] = None) -> bool:
+    def validateToken(
+        token: str,
+        serverType: typing.Union[typing.Iterable[ServerType], ServerType],
+        request: typing.Optional[ExtendedHttpRequest] = None,
+    ) -> bool:
         # Ensure tiken is composed of
         try:
-            tt = RegisteredServers.objects.get(token=token)
+            if isinstance(serverType, RegisteredServers.ServerType):
+                tt = RegisteredServers.objects.get(token=token, kind=serverType.value)
+            else:
+                tt = RegisteredServers.objects.get(token=token, kind__in=[st.value for st in serverType])
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
@@ -136,7 +146,7 @@ class RegisteredServers(models.Model):
 
         Args:
             path: Path to add to url
-            port: Port to use (if not provided, default port will be used, that is 
+            port: Port to use (if not provided, default port will be used, that is
             secret: Secret to use (if not provided, token will be used)
 
         Returns:
@@ -160,11 +170,10 @@ class RegisteredServers(models.Model):
             path = '/' + path
 
         path = f'/{self.server_type.path()}{secret}{path}'
-        
+
         if self.ip_version == 4:
             return f'https://{self.ip}:{port}{path}'
         return f'https://[{self.ip}]:{port}{path}'
-
 
     def __str__(self):
         return f'<RegisterdServer {self.token} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'

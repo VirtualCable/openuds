@@ -80,7 +80,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.RegisteredServers.validateToken(token):
+        if not models.RegisteredServers.validateToken(token, serverType=models.RegisteredServers.ServerType.TUNNEL):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
