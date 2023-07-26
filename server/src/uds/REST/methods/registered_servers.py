@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 class ServerRegister(Handler):
-    needs_admin = True
+    needs_staff = True
     path = 'servers'
     name = 'register'
 
@@ -96,6 +96,18 @@ class ServerRegister(Handler):
                 return {'result': '', 'stamp': now, 'error': str(e)}
         return {'result': serverToken.token, 'stamp': now}
 
+class ServerTest(Handler):
+    needs_staff = True
+    path = 'servers'
+    name = 'test'
+
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        # Test if a token is valid
+        try:
+            serverToken = models.RegisteredServers.objects.get(token=self._params['token'])
+            return {'result': serverToken.token, 'stamp': getSqlDatetimeAsUnix()}
+        except Exception as e:
+            return {'result': '', 'stamp': getSqlDatetimeAsUnix(), 'error': 'Token not found'}
 
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
