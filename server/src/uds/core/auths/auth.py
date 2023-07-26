@@ -543,15 +543,18 @@ def authLogLogin(
             log.LogSource.WEB,
         )
     except Exception:  # nosec: root user is not on any authenticator, will fail with an exception we can ingore
-        pass
+        logger.info('Root {logStr} from %s where OS is %s', request.ip, request.os.os.name)
 
 
 def authLogLogout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
-        log.doLog(
-            request.user.manager,
-            log.LogLevel.INFO,
-            f'user {request.user.name} has logged out from {request.ip}',
-            log.LogSource.WEB,
-        )
-        log.doLog(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)
+        if request.user.manager.id is not None:
+            log.doLog(
+                request.user.manager,
+                log.LogLevel.INFO,
+                f'user {request.user.name} has logged out from {request.ip}',
+                log.LogSource.WEB,
+            )
+            log.doLog(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)
+        else:
+            logger.info('Root has logged out from %s', request.ip)
