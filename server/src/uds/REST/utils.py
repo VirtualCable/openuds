@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2014-2021 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -12,7 +11,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -26,19 +25,18 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'''
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+'''
 import typing
 
-from uds.core.managers.crypto import CryptoManager
+from uds.core import VERSION
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 
-def generateUuid(obj: typing.Any = None) -> str:
-    """
-    Generates a ramdom uuid for models default
-    """
-    return CryptoManager().uuid(obj=obj).lower()
-
-
-def processUuid(uuid: str) -> str:
-    if isinstance(uuid, bytes):
-        uuid = uuid.decode('utf8')  # type: ignore
-    return uuid.lower()
+def rest_result(result: typing.Any, **kwargs) -> typing.MutableMapping[str, typing.Any]:
+    '''
+    Returns a REST result
+    '''
+    # A common possible value in kwargs is "error"
+    return {'result': result, 'stamp': getSqlDatetimeAsUnix(), 'version': VERSION, **kwargs}

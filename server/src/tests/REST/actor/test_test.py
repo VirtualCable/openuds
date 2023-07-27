@@ -55,7 +55,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
         )
         
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['result'], 'invalid token')
+        self.assertEqual(response.json()['error'], 'invalid token')
 
         # Helpers
         success = lambda: self.client.post(
@@ -73,7 +73,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
         response = invalid()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['result'], 'invalid token')
+        self.assertEqual(response.json()['error'], 'invalid token')
 
         # This one works
         response = success()
@@ -94,7 +94,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
         for a in range(ALLOWED_FAILS):
             response = invalid()
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.json()['result'], 'invalid token')
+            self.assertEqual(response.json()['error'], 'invalid token')
 
         # And this one will give 403
         response = invalid()

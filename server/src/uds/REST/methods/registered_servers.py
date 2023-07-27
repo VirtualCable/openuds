@@ -42,6 +42,7 @@ from uds.core.util.log import LogLevel
 from uds.REST import Handler
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
+from uds.REST.utils import rest_result
 from uds.core.util import permissions
 
 logger = logging.getLogger(__name__)
@@ -93,8 +94,9 @@ class ServerRegister(Handler):
                     data=self._params.get('data', None),
                 )
             except Exception as e:
-                return {'result': '', 'stamp': now, 'error': str(e)}
-        return {'result': serverToken.token, 'stamp': now}
+                return rest_result('error', error=str(e))
+        return rest_result(result=serverToken.token)
+
 
 class ServerTest(Handler):
     needs_staff = True
@@ -105,14 +107,19 @@ class ServerTest(Handler):
         # Test if a token is valid
         try:
             serverToken = models.RegisteredServers.objects.get(token=self._params['token'])
-            return {'result': serverToken.token, 'stamp': getSqlDatetimeAsUnix()}
+            return rest_result(result=serverToken.token)
         except Exception as e:
-            return {'result': '', 'stamp': getSqlDatetimeAsUnix(), 'error': 'Token not found'}
+            return rest_result('error', error=str(e))
+
 
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
     model_filter = {
-        'kind__in': [models.RegisteredServers.ServerType.TUNNEL_SERVER, models.RegisteredServers.ServerType.OTHER]
+        'kind__in': [
+            models.RegisteredServers.ServerType.TUNNEL_SERVER,
+            models.RegisteredServers.ServerType.APP_SERVER,
+            models.RegisteredServers.ServerType.OTHER,
+        ]
     }
     path = 'servers'
     name = 'tokens'

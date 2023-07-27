@@ -36,17 +36,22 @@ import string
 import functools
 import logging
 import typing
+
+
 from uds.core.managers.crypto import CryptoManager
 
+from uds.core import VERSION as UDS_VERSION
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import processUuid
 from uds.core.util.cache import Cache
 from uds.core.auths.auth import authenticate
-from uds.core import VERSION as UDS_VERSION
+
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 from uds.REST import RequestError
 from uds.REST import Handler
 from uds.REST import AccessDenied
+from uds.REST.utils import rest_result
 
 from uds.models import Authenticator
 
@@ -69,21 +74,10 @@ class Login(Handler):
     def result(
         result: str = 'error',
         token: typing.Optional[str] = None,
-        scrambler: typing.Optional[str] = None,
-        error: typing.Optional[str] = None,
+        **kwargs: typing.Any,
     ) -> typing.MutableMapping[str, typing.Any]:
-        res = {
-            'result': result,
-            'token': token,
-            'version': UDS_VERSION,
-        }
-        if error:
-            res['error'] = error
-
-        if scrambler:
-            res['scrambler'] = scrambler
-
-        return res
+        # Valid kwargs are: error, scrambler
+        return rest_result(result, token=token, **kwargs)
 
     def post(self) -> typing.Any:
         """

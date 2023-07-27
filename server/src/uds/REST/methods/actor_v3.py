@@ -57,6 +57,8 @@ from uds.core.util.os_detector import KnownOS
 from uds.core import exceptions
 from uds.models.service import ServiceTokenAlias
 
+from uds.REST.utils import rest_result
+
 from ..handlers import Handler
 from ..exceptions import AccessDenied, RequestError
 
@@ -148,13 +150,9 @@ class ActorV3Action(Handler):
 
     @staticmethod
     def actorResult(
-        result: typing.Any = None, error: typing.Optional[str] = None
+        result: typing.Any = None, **kwargs: typing.Any
     ) -> typing.MutableMapping[str, typing.Any]:
-        result = result or ''
-        res = {'result': result, 'stamp': getSqlDatetimeAsUnix()}
-        if error:
-            res['error'] = error
-        return res
+        return rest_result(result=result, **kwargs)
 
     @staticmethod
     def setCommsUrl(userService: UserService, ip: str, port: int, secret: str):
@@ -249,7 +247,7 @@ class Test(ActorV3Action):
             # Increase failed attempts
             incFailedIp(self._request)
             # And return test failed
-            return ActorV3Action.actorResult('invalid token')
+            return ActorV3Action.actorResult('invalid token', error='invalid token')
 
         return ActorV3Action.actorResult('ok')
 
@@ -280,7 +278,9 @@ class Register(ActorV3Action):
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
         # and mac is the requested one
         found = False
-        actorToken: typing.Optional[RegisteredServers] = RegisteredServers.objects.filter(kind=RegisteredServers.ServerType.ACTOR_SERVICE, mac=self._params['mac']).first()
+        actorToken: typing.Optional[RegisteredServers] = RegisteredServers.objects.filter(
+            kind=RegisteredServers.ServerType.ACTOR_SERVICE, mac=self._params['mac']
+        ).first()
         if actorToken:
             # Update parameters
             actorToken.username = self._user.pretty_name
@@ -673,15 +673,13 @@ class Logout(ActorV3Action):
                 self._params.get('username') or '',
                 self._params.get('session_id') or '',
             )
-        except (
-            Exception
-        ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
+        # If unamanaged host, lets do a bit more work looking for a service with the provided parameters...
+        except Exception:
             if isManaged:
                 raise
             self.notifyService(NotifyActionType.LOGOUT)  # Logout notification
-            return ActorV3Action.actorResult(
-                'notified'
-            )  # Result is that we have not processed the logout in fact, but notified the service
+            # Result is that we have not processed the logout in fact, but notified the service
+            return ActorV3Action.actorResult('notified')
 
         return ActorV3Action.actorResult('ok')
 
@@ -707,7 +705,6 @@ class Log(ActorV3Action):
             self._params['message'],
             log.LogSource.ACTOR,
         )
-            
 
         return ActorV3Action.actorResult('ok')
 
@@ -724,7 +721,9 @@ class Ticket(ActorV3Action):
 
         try:
             # Simple check that token exists
-            RegisteredServers.objects.get(token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR_SERVICE)  # Not assigned, because only needs check
+            RegisteredServers.objects.get(
+                token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR_SERVICE
+            )  # Not assigned, because only needs check
         except RegisteredServers.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...
 
