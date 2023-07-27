@@ -255,6 +255,7 @@ class Auths(Handler):
                 yield {
                     'authId': auth.uuid,
                     'authSmallName': str(auth.small_name),
+                    'authLabel': str(auth.small_name),
                     'auth': auth.name,
                     'type': theType.typeType,
                     'priority': auth.priority,
