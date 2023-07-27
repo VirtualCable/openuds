@@ -254,7 +254,7 @@ class Auths(Handler):
             ):
                 yield {
                     'authId': auth.uuid,
-                    'authSmallName': str(auth.small_name),
+                    'authSmallName': str(auth.small_name),  # Deprecated
                     'authLabel': str(auth.small_name),
                     'auth': auth.name,
                     'type': theType.typeType,
