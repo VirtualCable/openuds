@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
+
 class ParametersException(Exception):
     pass
 
@@ -64,7 +65,7 @@ class ContentProcessor:
     def __init__(self, request: 'HttpRequest'):
         self._request = request
 
-    def processGetParameters(self) -> typing.MutableMapping[str, typing.Any]:
+    def processGetParameters(self) -> typing.Dict[str, typing.Any]:
         """
         returns parameters based on request method
         GET parameters are understood
@@ -72,9 +73,9 @@ class ContentProcessor:
         if self._request.method != 'GET':
             return {}
 
-        return self._request.GET.copy()
+        return dict(self._request.GET)
 
-    def processParameters(self) -> typing.MutableMapping[str, typing.Any]:
+    def processParameters(self) -> typing.Dict[str, typing.Any]:
         """
         Returns the parameter from the request
         """
@@ -85,9 +86,7 @@ class ContentProcessor:
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
         """
-        return HttpResponse(
-            content=self.render(obj), content_type=self.mime_type + "; charset=utf-8"
-        )
+        return HttpResponse(content=self.render(obj), content_type=self.mime_type + "; charset=utf-8")
 
     def render(self, obj: typing.Any):
         """
@@ -111,8 +110,8 @@ class ContentProcessor:
 
         if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
             return int(time.mktime(obj.timetuple()))
-        
-        if isinstance(obj, (datetime.date,)):   # Date as string
+
+        if isinstance(obj, (datetime.date,)):  # Date as string
             return '{}-{:02d}-{:02d}'.format(obj.year, obj.month, obj.day)
 
         if isinstance(obj, bytes):
@@ -129,12 +128,9 @@ class MarshallerProcessor(ContentProcessor):
 
     marshaller: typing.ClassVar[typing.Any] = None
 
-    def processParameters(self) -> typing.MutableMapping[str, typing.Any]:
+    def processParameters(self) -> typing.Dict[str, typing.Any]:
         try:
-            if (
-                self._request.META.get('CONTENT_LENGTH', '0') == '0'
-                or not self._request.body
-            ):
+            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or not self._request.body:
                 return self.processGetParameters()
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             res = self.marshaller.loads(self._request.body.decode('utf8'))

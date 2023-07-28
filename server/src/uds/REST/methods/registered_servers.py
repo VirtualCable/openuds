@@ -29,7 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import secrets
 import logging
 import typing
 
@@ -43,7 +42,7 @@ from uds.REST import Handler
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
 from uds.REST.utils import rest_result
-from uds.core.util import permissions
+from uds.core.util import permissions, blocker
 
 logger = logging.getLogger(__name__)
 
@@ -99,15 +98,17 @@ class ServerRegister(Handler):
 
 
 class ServerTest(Handler):
-    needs_staff = True
+    authenticated = False  # Test is not authenticated, the auth is the token to test itself
+
     path = 'servers'
     name = 'test'
 
+    @blocker.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         # Test if a token is valid
         try:
-            serverToken = models.RegisteredServers.objects.get(token=self._params['token'])
-            return rest_result(result=serverToken.token)
+            models.RegisteredServers.objects.get(token=self._params['token'])
+            return rest_result(True)
         except Exception as e:
             return rest_result('error', error=str(e))
 
