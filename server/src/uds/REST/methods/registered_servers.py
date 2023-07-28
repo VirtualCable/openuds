@@ -30,11 +30,13 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import enum
 import typing
 
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
+from uds.core import exceptions
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 from uds.core.util.log import LogLevel
@@ -97,22 +99,6 @@ class ServerRegister(Handler):
         return rest_result(result=serverToken.token)
 
 
-class ServerTest(Handler):
-    authenticated = False  # Test is not authenticated, the auth is the token to test itself
-
-    path = 'servers'
-    name = 'test'
-
-    @blocker.blocker()
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
-        # Test if a token is valid
-        try:
-            models.RegisteredServers.objects.get(token=self._params['token'])
-            return rest_result(True)
-        except Exception as e:
-            return rest_result('error', error=str(e))
-
-
 class ServersTokens(ModelHandler):
     model = models.RegisteredServers
     model_filter = {
@@ -168,3 +154,78 @@ class ServersTokens(ModelHandler):
             raise NotFound('Element do not exists') from None
 
         return OK
+
+class ServerTest(Handler):
+    authenticated = False  # Test is not authenticated, the auth is the token to test itself
+
+    path = 'servers'
+    name = 'test'
+
+    @blocker.blocker()
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        # Test if a token is valid
+        try:
+            models.RegisteredServers.objects.get(token=self._params['token'])
+            return rest_result(True)
+        except Exception as e:
+            return rest_result('error', error=str(e))
+
+# Server related classes/actions
+class ServerAction(Handler):
+    authenticated = False  # Actor requests are not authenticated normally
+    path = 'servers/action'
+
+    def action(self, server: models.RegisteredServers) -> typing.MutableMapping[str, typing.Any]:
+        return rest_result('error', error='Base action invoked')
+    
+    @blocker.blocker()
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        try:
+            server = models.RegisteredServers.objects.get(token=self._params['token'])
+        except models.RegisteredServers.DoesNotExist:
+            raise exceptions.BlockAccess() from None   # Block access if token is not valid
+        
+        return self.action(server)
+
+class NotifyActions(enum.StrEnum):
+    LOGIN = 'login'
+    LOGOUT = 'logout'
+
+class ServerNotify(ServerAction):
+    name = 'notify'
+
+    def getUserService(self) -> models.UserService:
+        '''
+        Looks for an userService and, if not found, raises a BlockAccess request
+        '''
+        try:
+            return models.UserService.objects.get(uuid=self._params['uuid'])
+        except models.UserService.DoesNotExist:
+            logger.error('User service not found (params: %s)', self._params)
+            raise 
+
+    def action(self, server: models.RegisteredServers) -> typing.MutableMapping[str, typing.Any]:
+        # Notify a server that a new service has been assigned to it
+        # Get action from parameters
+        # Parameters:
+        #  * action
+        #  * uuid  (user service uuid)
+        try:
+            action = NotifyActions(self._params.get('action', None))
+        except ValueError:
+            return rest_result('error', error='No valid action specified')
+
+        # Extract user service
+        try:
+            userService = self.getUserService()
+        except Exception:
+            return rest_result('error', error='User service not found')
+
+        if action == NotifyActions.LOGIN:
+            # TODO: notify
+            pass
+        elif action == NotifyActions.LOGOUT:
+            # TODO: notify
+            pass
+
+        return rest_result(True)

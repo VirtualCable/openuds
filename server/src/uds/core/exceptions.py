@@ -48,3 +48,9 @@ class TransportError(UDSException):
     """
     Exception used to indicate that the transport is not available
     """
+
+
+class BlockAccess(UDSException):
+    """
+    Exception used to signal that the access to a resource is blocked
+    """

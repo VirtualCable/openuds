@@ -37,7 +37,7 @@ import logging
 
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.exceptions import UDSException
+from uds.core.exceptions import BlockAccess
 from uds.REST.exceptions import AccessDenied
 
 if typing.TYPE_CHECKING:
@@ -48,9 +48,6 @@ logger = logging.getLogger(__name__)
 ALLOWED_FAILS: typing.Final[int] = 5
 
 blockCache = Cache('uds:blocker')  # One year
-
-class BlockAccess(UDSException):
-    pass
 
 RT = typing.TypeVar('RT')
 
@@ -83,7 +80,6 @@ def blocker(request_attr: typing.Optional[str] = None) -> typing.Callable[[typin
                 return f(*args, **kwargs)
 
             ip = request.ip
-            now = datetime.datetime.now()
 
             # if ip is blocked, raise exception
             failuresCount = blockCache.get(ip, 0)
