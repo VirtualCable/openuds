@@ -34,6 +34,7 @@ import base64
 import tempfile
 import logging
 import typing
+from uds.core import types
 
 from uds.core.util.security import secureRequestsSession
 
@@ -130,21 +131,21 @@ def _requestActor(
     return js
 
 
-def notifyPreconnect(userService: 'UserService', userName: str, protocol: str) -> None:
+def notifyPreconnect(userService: 'UserService', info: types.ConnectionInfoType) -> None:
     """
     Notifies a preconnect to an user service
     """
-    ip, hostname = userService.getConnectionSource()
+    src = userService.getConnectionSource()
 
     try:
         _requestActor(
             userService,
             'preConnect',
             {
-                'user': userName,
-                'protocol': protocol,
-                'ip': ip,
-                'hostname': hostname,
+                'user': info.username,
+                'protocol': info.protocol,
+                'ip': src.ip,
+                'hostname': src.hostname,
                 'udsuser': userService.user.name + '@' + userService.user.manager.name if userService.user else '',
             },
         )

@@ -83,9 +83,8 @@ class X2GOTransport(BaseX2GOTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
         ci = self.getConnectionInfo(userService, user, password)
-        username = ci['username']
 
-        priv, pub = self.getAndPushKey(username, userService)
+        priv, pub = self.getAndPushKey(ci.username, userService)
 
         width, height = self.getScreenSize()
         rootless = False
@@ -105,7 +104,7 @@ class X2GOTransport(BaseX2GOTransport):
             rootless=rootless,
             width=width,
             height=height,
-            user=username,
+            user=ci.username,
         )
 
         sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}

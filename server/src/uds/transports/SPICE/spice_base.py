@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core import transports, types
 from uds.core.transports import protocols
 
 # Not imported at runtime, just for type checking
@@ -194,14 +194,14 @@ class BaseSpiceTransport(transports.Transport):
         self, userService: 'models.UserService', user: 'models.User'
     ) -> str:
         v = self.processUserPassword(userService, user, '')
-        return v['username']
+        return v.username
 
     def processUserPassword(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Dict[str, str]:
+    ) -> types.ConnectionInfoType:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value:
@@ -216,12 +216,12 @@ class BaseSpiceTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return {'protocol': self.protocol, 'username': username, 'password': password}
+        return types.ConnectionInfoType(protocol=self.protocol, username=username, password=password)
 
     def getConnectionInfo(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Dict[str, str]:
+    ) -> types.ConnectionInfoType:
         return self.processUserPassword(userService, user, password)

@@ -150,7 +150,6 @@ class TRDPTransport(BaseRDPTransport):
         # We use helper to keep this clean
 
         ci = self.getConnectionInfo(userService, user, password)
-        username, password, domain = ci['username'], ci['password'], ci['domain']
 
         # escape conflicting chars : Note, on 3.0 this should not be neccesary. Kept until more tests
         # password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
@@ -169,11 +168,12 @@ class TRDPTransport(BaseRDPTransport):
         tunHost, tunPort = self.tunnelServer.value.split(':')
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
-        r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
+        #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
+        r.enablecredsspsupport = self.credssp.isTrue()
         r.address = '{address}'
-        r.username = username
-        r.password = password
-        r.domain = domain
+        r.username = ci.username
+        r.password = ci.password
+        r.domain = ci.domain
 
         r.redirectPrinters = self.allowPrinters.isTrue()
         r.redirectSmartcards = self.allowSmartcards.isTrue()

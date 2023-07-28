@@ -33,8 +33,11 @@
 import datetime
 import logging
 import typing
+
+
 from uds.core.util.request import ExtendedHttpRequestWithUser
 
+from uds.core import types
 from uds.REST import Handler
 from uds.REST import RequestError
 from uds.core.managers.user_service import UserServiceManager
@@ -44,6 +47,9 @@ from uds.core.util.rest.tools import match
 from uds.web.util import errors, services
 
 logger = logging.getLogger(__name__)
+
+if typing.TYPE_CHECKING:
+    from uds import models
 
 
 # Enclosed methods under /connection path
@@ -89,9 +95,7 @@ class Connection(Handler):
         self._request.user = self._user
 
         return Connection.result(
-            result=services.getServicesData(
-                typing.cast(ExtendedHttpRequestWithUser, self._request)
-            )
+            result=services.getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request))
         )
 
     def connection(self, idService: str, idTransport: str, skip: str = '') -> typing.Dict[str, typing.Any]:
@@ -101,7 +105,7 @@ class Connection(Handler):
                 ip,
                 userService,
                 _,  # iads,
-                _, #trans,
+                _,  # trans,
                 itrans,
             ) = UserServiceManager().getService(  # pylint: disable=unused-variable
                 self._user,
@@ -111,7 +115,7 @@ class Connection(Handler):
                 idTransport,
                 not doNotCheck,
             )
-            ci = {
+            connectionInfoDict = {
                 'username': '',
                 'password': '',
                 'domain': '',
@@ -119,22 +123,25 @@ class Connection(Handler):
                 'ip': ip,
             }
             if itrans:  # only will be available id doNotCheck is False
-                ci.update(itrans.getConnectionInfo(userService, self._user, 'UNKNOWN'))
-            return Connection.result(result=ci)
+                connectionInfoDict.update(
+                    itrans.getConnectionInfo(userService, self._user, 'UNKNOWN')._asdict()
+                )
+            return Connection.result(result=connectionInfoDict)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(
-                error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
-            )
+            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> typing.Dict[str, typing.Any]:
+    def script(
+        self, idService: str, idTransport: str, scrambler: str, hostname: str
+    ) -> typing.Dict[str, typing.Any]:
         try:
             res = UserServiceManager().getService(
                 self._user, self._request.os, self._request.ip, idService, idTransport
             )
+            userService: 'models.UserService'
             logger.debug('Res: %s', res)
             (
                 ip,
@@ -146,7 +153,7 @@ class Connection(Handler):
             password = CryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(
-                self._request.ip, hostname
+                types.ConnectionSourceType(self._request.ip, hostname)
             )  # Store where we are accessing from so we can notify Service
 
             if not ip or not transportInstance:
@@ -165,14 +172,14 @@ class Connection(Handler):
             return Connection.result(result=transportScript)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(
-                error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
-            )
+            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def getTicketContent(self, ticketId: str) -> typing.Dict[str, typing.Any]:  # pylint: disable=unused-argument
+    def getTicketContent(
+        self, ticketId: str
+    ) -> typing.Dict[str, typing.Any]:  # pylint: disable=unused-argument
         return {}
 
     def getUdsLink(self, idService: str, idTransport: str) -> typing.Dict[str, typing.Any]:
@@ -180,9 +187,7 @@ class Connection(Handler):
         self._request.user = self._user  # type: ignore
         setattr(self._request, '_cryptedpass', self._session['REST']['password'])  # type: ignore  # pylint: disable=protected-access
         setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])  # type: ignore  # pylint: disable=protected-access
-        linkInfo = services.enableService(
-            self._request, idService=idService, idTransport=idTransport
-        )
+        linkInfo = services.enableService(self._request, idService=idService, idTransport=idTransport)
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])
@@ -205,5 +210,4 @@ class Connection(Handler):
             (('<idService>', '<idTransport>', '<skip>'), self.connection),
             (('<idService>', '<idTransport>'), self.connection),
             (('<idService>', '<idTransport>', '<scrambler>', '<hostname>'), self.script),
-
         )

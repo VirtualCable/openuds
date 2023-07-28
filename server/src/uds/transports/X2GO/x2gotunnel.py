@@ -125,9 +125,8 @@ class TX2GOTransport(BaseX2GOTransport):
     ) -> 'transports.TransportScript':
 
         ci = self.getConnectionInfo(userService, user, password)
-        username = ci['username']
 
-        priv, pub = self.getAndPushKey(username, userService)
+        priv, pub = self.getAndPushKey(ci.username, userService)
 
         width, height = self.getScreenSize()
 
@@ -148,7 +147,7 @@ class TX2GOTransport(BaseX2GOTransport):
             rootless=rootless,
             width=width,
             height=height,
-            user=username,
+            user=ci.username,
         )
 
         ticket = TicketStore.create_for_tunnel(

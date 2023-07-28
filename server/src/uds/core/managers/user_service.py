@@ -38,6 +38,8 @@ import typing
 from django.utils.translation import gettext as _
 from django.db.models import Q
 from django.db import transaction
+
+from uds.core import types
 from uds.core.services.exceptions import OperationException
 from uds.core.util.state import State
 from uds.core.util import log
@@ -609,8 +611,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, userName: str, protocol: str) -> None:
-        comms.notifyPreconnect(userService, userName, protocol)
+    def notifyPreconnect(self, userService: UserService, info: types.ConnectionInfoType) -> None:
+        comms.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
         return comms.checkUuid(userService)
@@ -741,7 +743,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
 
         # Early log of "access try" so we can imagine what is going on
-        userService.setConnectionSource(srcIp, clientHostname or srcIp)
+        userService.setConnectionSource(types.ConnectionSourceType(srcIp, clientHostname or srcIp))
 
         if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()
@@ -817,12 +819,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     serviceNotReadyCode = 0x0003
                     transportInstance = transport.getInstance()
                     if transportInstance.isAvailableFor(userService, ip):
-                        # userService.setConnectionSource(srcIp, 'unknown')
                         log.doLog(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
                         self.notifyPreconnect(
                             userService,
-                            transportInstance.processedUser(userService, user),
-                            transportInstance.protocol,
+                            transportInstance.getConnectionInfo(userService, user, ''),
                         )
                         traceLogger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',

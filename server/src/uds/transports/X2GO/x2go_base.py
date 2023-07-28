@@ -41,7 +41,7 @@ from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.user_preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core import transports, types
 from uds.core.util import os_detector as OsDetector
 from uds.core.util import connection
 
@@ -128,9 +128,7 @@ class BaseX2GOTransport(transports.Transport):
     exports = gui.CheckBoxField(
         order=14,
         label=_('Redirect home folder'),
-        tooltip=_(
-            'If checked, user home folder will be redirected. (On linux, also redirects /media)'
-        ),
+        tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
         defvalue=gui.FALSE,
         tab=gui.Tab.PARAMETERS,
     )
@@ -220,18 +218,16 @@ class BaseX2GOTransport(transports.Transport):
     def getScreenSize(self) -> typing.Tuple[int, int]:
         return CommonPrefs.getWidthHeight(self.screenSize.value)
 
-    def processedUser(
-        self, userService: 'models.UserService', user: 'models.User'
-    ) -> str:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.processUserPassword(userService, user, '')
-        return v['username']
+        return v.username
 
     def processUserPassword(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Dict[str, str]:
+    ) -> types.ConnectionInfoType:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value != '':
@@ -240,14 +236,14 @@ class BaseX2GOTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return {'protocol': self.protocol, 'username': username, 'password': ''}
+        return types.ConnectionInfoType(protocol=self.protocol, username=username, password=password)
 
     def getConnectionInfo(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Dict[str, str]:
+    ) -> types.ConnectionInfoType:
         return self.processUserPassword(userService, user, password)
 
     def genKeyPairForSsh(self) -> typing.Tuple[str, str]:
@@ -278,9 +274,7 @@ class BaseX2GOTransport(transports.Transport):
 
         return data.replace('__USER__', user).replace('__KEY__', pubKey)
 
-    def getAndPushKey(
-        self, userName: str, userService: 'models.UserService'
-    ) -> typing.Tuple[str, str]:
+    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> typing.Tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
         authScript = self.getAuthorizeScript(userName, pub)
         UserServiceManager().sendScript(userService, authScript)

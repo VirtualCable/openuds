@@ -35,6 +35,7 @@ import typing
 
 from django.db import models
 from django.db.models import signals
+from uds.core import types
 
 from uds.core.environment import Environment
 from uds.core.util import log, unique
@@ -307,7 +308,7 @@ class UserService(UUIDModel):
             val = typing.cast(str, self.getEnvironment().storage.get(name))
         return val
 
-    def setConnectionSource(self, ip: str, hostname: str = '') -> None:
+    def setConnectionSource(self, src: types.ConnectionSourceType) -> None:
         """
         Notifies that the last access to this service was initiated from provided params
 
@@ -318,10 +319,10 @@ class UserService(UUIDModel):
         Returns:
             Nothing
         """
-        self.src_ip = ip[:MAX_IPV6_LENGTH]
-        self.src_hostname = hostname[:MAX_DNS_NAME_LENGTH]
+        self.src_ip = src.ip[:MAX_IPV6_LENGTH]
+        self.src_hostname = src.hostname[:MAX_DNS_NAME_LENGTH]
 
-        if len(ip) > MAX_IPV6_LENGTH or len(hostname) > MAX_DNS_NAME_LENGTH:
+        if len(src.ip) > MAX_IPV6_LENGTH or len(src.hostname) > MAX_DNS_NAME_LENGTH:
             logger.info(
                 'Truncated connection source data to %s/%s',
                 self.src_ip,
@@ -330,7 +331,7 @@ class UserService(UUIDModel):
 
         self.save(update_fields=['src_ip', 'src_hostname'])
 
-    def getConnectionSource(self) -> typing.Tuple[str, str]:
+    def getConnectionSource(self) -> types.ConnectionSourceType:
         """
         Returns stored connection source data (ip & hostname)
 
@@ -339,7 +340,7 @@ class UserService(UUIDModel):
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return (
+        return types.ConnectionSourceType(
             self.src_ip or '0.0.0.0',  # nosec: not a binding address
             self.src_hostname or 'unknown',
         )

@@ -48,7 +48,7 @@ from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 # from uds.core import VERSION
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.crypto import CryptoManager
-from uds.core import osmanagers
+from uds.core import osmanagers, types
 from uds.core.util import log, security
 from uds.core.util.state import State
 from uds.core.util.cache import Cache
@@ -592,7 +592,7 @@ class Login(ActorV3Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
-        ip = hostname = ''
+        src = types.ConnectionSourceType('', '')
         deadLine = maxIdle = None
         session_id = ''
 
@@ -606,7 +606,7 @@ class Login(ActorV3Action):
 
             logger.debug('Max idle: %s', maxIdle)
 
-            ip, hostname = userService.getConnectionSource()
+            src = userService.getConnectionSource()
             session_id = userService.initSession()  # creates a session for every login requested
 
             if osManager:  # For os managed services, let's check if we honor deadline
@@ -626,8 +626,8 @@ class Login(ActorV3Action):
 
         return ActorV3Action.actorResult(
             {
-                'ip': ip,
-                'hostname': hostname,
+                'ip': src.ip,
+                'hostname': src.hostname,
                 'dead_line': deadLine,
                 'max_idle': maxIdle,
                 'session_id': session_id,

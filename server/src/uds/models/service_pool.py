@@ -192,7 +192,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return self.osmanager.getType().transformsUserOrPasswordForService()
         return False
 
-    def processUserPassword(self, username, password):
+    def processUserPassword(self, username: str, password:str ) -> typing.Tuple[str, str]:
         """
         This method is provided for consistency between UserService and ServicePool
         There is no posibility to check the username and password that a user will use to

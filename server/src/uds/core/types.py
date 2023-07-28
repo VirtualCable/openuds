@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,18 +29,21 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
-from django.utils.translation import gettext_lazy as _
+class ConnectionInfoType(typing.NamedTuple):
+    # protocol: protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
+    # username: username (transformed if needed to) used to login to service
+    # password: password (transformed if needed to) used to login to service
+    # domain: domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
+    protocol: str
+    username: str
+    password: str = ''
+    domain: str = ''  # For some transports (RDP, ...)
+    host: str = ''  # Used only for some transports that needs the host to connect to
+    # sso: bool = False  # For future sso implementation
 
-from uds.core.util import config as cfg
 
-# Globals for messagging
-DO_NOT_REPEAT = cfg.Config.section(cfg.Config.SectionType.GLOBAL).value(
-    'Uniqueness',
-    '10',
-    help=_('Number of seconds to ignore repeated messages'),
-    type=cfg.Config.FieldType.NUMERIC,
-)
-
-# Ensure that we have a default value for this on startup
-DO_NOT_REPEAT.getInt()
+class ConnectionSourceType(typing.NamedTuple):
+    ip: str
+    hostname: str

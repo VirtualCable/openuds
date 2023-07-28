@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
-from uds.core import transports, exceptions
+from uds.core import transports, exceptions, types
 from uds.core.util import os_detector as OsDetector
 from uds.core.managers.crypto import CryptoManager
 from uds import models
@@ -348,14 +348,14 @@ class HTML5RDPTransport(transports.Transport):
         self, userService: 'models.UserService', user: 'models.User'
     ) -> str:
         v = self.getConnectionInfo(userService, user, '')
-        return v['username']
+        return v.username
 
     def getConnectionInfo(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Mapping[str, str]:
+    ) -> types.ConnectionInfoType:
         username = user.getUsernameForAuth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
@@ -402,12 +402,7 @@ class HTML5RDPTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return {
-            'protocol': self.protocol,
-            'username': username,
-            'password': password,
-            'domain': domain,
-        }
+        return types.ConnectionInfoType(protocol=self.protocol, username=username, password=password, domain=domain)
 
     def getLink(
         self,
@@ -421,9 +416,9 @@ class HTML5RDPTransport(transports.Transport):
     ) -> str:
         credsInfo = self.getConnectionInfo(userService, user, password)
         username, password, domain = (
-            credsInfo['username'],
-            credsInfo['password'],
-            credsInfo['domain'],
+            credsInfo.username,
+            credsInfo.password,
+            credsInfo.domain,
         )
 
         scrambler = CryptoManager().randomString(32)

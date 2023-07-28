@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core import transports, types
 from uds.models import UserService
 
 # Not imported at runtime, just for type checking
@@ -347,7 +347,7 @@ class BaseRDPTransport(transports.Transport):
 
     def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.processUserPassword(userService, user, '', altUsername=None)
-        return v['username']
+        return v.username
 
     def processUserPassword(
         self,
@@ -356,7 +356,7 @@ class BaseRDPTransport(transports.Transport):
         password: str,
         *,
         altUsername: typing.Optional[str]
-    ) -> typing.Mapping[str, str]:
+    ) -> types.ConnectionInfoType:
         username: str = altUsername or user.getUsernameForAuth()
 
         if self.fixedName.value:
@@ -405,19 +405,16 @@ class BaseRDPTransport(transports.Transport):
         if self.optimizeTeams.isTrue():
             password = ''  # nosec
 
-        return {
-            'protocol': self.protocol,
-            'username': username,
-            'password': password,
-            'domain': domain,
-        }
+        return types.ConnectionInfoType(
+            protocol=self.protocol, username=username, password=password, domain=domain
+        )
 
     def getConnectionInfo(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Mapping[str, str]:
+    ) -> types.ConnectionInfoType:
         username = None
         if isinstance(userService, UserService):
             cdata = userService.getInstance().getConnectionData()

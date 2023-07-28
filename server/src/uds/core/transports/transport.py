@@ -38,6 +38,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
+from uds.core import types
 from uds.core.util import os_detector as OsDetector
 from uds.core.module import Module
 from uds.core.transports import protocols
@@ -69,9 +70,7 @@ class TransportScript(typing.NamedTuple):
         """
         Returns encoded parameters for transport script
         """
-        return codecs.encode(
-            codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64'
-        ).decode()
+        return codecs.encode(codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64').decode()
 
 
 class Transport(Module):
@@ -148,9 +147,7 @@ class Transport(Module):
         """
         return False
 
-    def getCustomAvailableErrorMsg(
-        self, userService: 'models.UserService', ip: str
-    ) -> str:
+    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
         """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
@@ -187,7 +184,7 @@ class Transport(Module):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> typing.Mapping[str, str]:
+    ) -> types.ConnectionInfoType:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -200,22 +197,25 @@ class Transport(Module):
             user: user (dbUser) logged in
             pass: password used in authentication
 
-        The expected result from this method is a dictionary, containing at least:
-            'protocol': protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
-            'username': username (transformed if needed to) used to login to service
-            'password': password (transformed if needed to) used to login to service
-            'domain': domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
+        The expected result from this method is a ConnectionInfoType object
 
         :note: The provided service can be an user service or an service pool (parent of user services).
                I have implemented getConnectionInfo in both so in most cases we do not need if the service is
                ServicePool or UserService. In case of getConnectionInfo for an ServicePool, no transformation
                is done, because there is no relation at that level between user and service.
         """
-        return {'protocol': self.protocol, 'username': '', 'password': '', 'domain': ''}
+        if isinstance(userService, models.ServicePool):
+            username, password = userService.processUserPassword(user.name, password)
+        else:
+            username = self.processedUser(userService, user)
+        return types.ConnectionInfoType(
+            protocol=self.protocol,
+            username=username,
+            password='',  # nosec: password is empty string, no password
+            domain='',
+        )
 
-    def processedUser(
-        self, userService: 'models.UserService', user: 'models.User'
-    ) -> str:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification
@@ -270,24 +270,18 @@ class Transport(Module):
         """
         Encodes the script so the client can understand it
         """
-        transport_script = self.getUDSTransportScript(
-            userService, transport, ip, os, user, password, request
-        )
+        transport_script = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', transport_script)
 
         return TransportScript(
-            script=codecs.encode(
-                codecs.encode(transport_script.script.encode(), 'bz2'), 'base64'
-            )
+            script=codecs.encode(codecs.encode(transport_script.script.encode(), 'bz2'), 'base64')
             .decode()
             .replace('\n', ''),
             signature_b64=transport_script.signature_b64,
             parameters=transport_script.parameters,
         )
 
-    def getRelativeScript(
-        self, scriptName: str, params: typing.Mapping[str, typing.Any]
-    ) -> 'TransportScript':
+    def getRelativeScript(self, scriptName: str, params: typing.Mapping[str, typing.Any]) -> 'TransportScript':
         """Returns a script that will be executed on client, but will be downloaded from server
 
         Args:
@@ -322,9 +316,7 @@ class Transport(Module):
         """
         Returns a script for the given os and type
         """
-        return self.getRelativeScript(
-            f'scripts/{osName}/{type}.py', params
-        )
+        return self.getRelativeScript(f'scripts/{osName}/{type}.py', params)
 
     def getLink(
         self,
