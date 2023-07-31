@@ -504,7 +504,7 @@ gettext("Reports");
 gettext("Notifiers");
 gettext("Tokens");
 gettext("Actor");
-gettext("Tunnel");
+gettext("Servers");
 gettext("Configuration");
 gettext("Flush Cache");
 gettext("User mode");
