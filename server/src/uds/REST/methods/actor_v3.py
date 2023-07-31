@@ -281,6 +281,9 @@ class Register(ActorV3Action):
         actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
             kind=RegisteredServer.ServerType.ACTOR_SERVICE, mac=self._params['mac']
         ).first()
+
+        # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
+        # This means that we can invoke its API from user_service, but not from server (The actor token is transformed as soon as initialized to a user service token)
         if actorToken:
             # Update parameters
             actorToken.username = self._user.pretty_name
@@ -288,7 +291,7 @@ class Register(ActorV3Action):
             actorToken.ip = self._params['ip']
             actorToken.hostname = self._params['hostname']
             actorToken.log_level = self._params['log_level']
-            actorToken.version = self._params.get('version', '')
+            actorToken.sub_kind = self._params.get('version', '')
             actorToken.data = {  # type: ignore
                 'pre_command': self._params['pre_command'],
                 'post_command': self._params['post_command'],
@@ -316,8 +319,8 @@ class Register(ActorV3Action):
                 },
                 'token': RegisteredServer.create_token(),
                 'kind': RegisteredServer.ServerType.ACTOR_SERVICE,
-                'sub_kind': 'v3',
-                'version': self._params.get('version', ''),
+                'sub_kind': self._params.get('version', ''),
+                'version': '',  
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
                 'stamp': getSqlDatetime(),
