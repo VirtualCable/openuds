@@ -80,7 +80,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.RegisteredServers.validateToken(token, serverType=models.RegisteredServers.ServerType.TUNNEL_SERVER):
+        if not models.RegisteredServer.validateToken(token, serverType=models.RegisteredServer.ServerType.TUNNEL_SERVER):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
@@ -161,6 +161,7 @@ class TunnelRegister(ServerRegister):
 
     # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        self._params['type'] = models.RegisteredServers.ServerType.TUNNEL_SERVER
+        self._params['type'] = models.RegisteredServer.ServerType.TUNNEL_SERVER
         self._params['os'] = self._params.get('os', KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
+        self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS
         return super().post()

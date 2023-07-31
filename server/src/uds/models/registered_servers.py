@@ -43,7 +43,7 @@ from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
 DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 
 
-class RegisteredServers(models.Model):
+class RegisteredServer(models.Model):
     """
     UDS Registered Servers
 
@@ -72,10 +72,10 @@ class RegisteredServers(models.Model):
 
         def path(self) -> str:
             return {
-                RegisteredServers.ServerType.TUNNEL_SERVER: 'tunnel',
-                RegisteredServers.ServerType.ACTOR_SERVICE: 'actor',
-                RegisteredServers.ServerType.APP_SERVER: 'app',
-                RegisteredServers.ServerType.OTHER: 'other',
+                RegisteredServer.ServerType.TUNNEL_SERVER: 'tunnel',
+                RegisteredServer.ServerType.ACTOR_SERVICE: 'actor',
+                RegisteredServer.ServerType.APP_SERVER: 'app',
+                RegisteredServer.ServerType.OTHER: 'other',
             }[self]
 
     MAC_UNKNOWN = '00:00:00:00:00:00'
@@ -98,6 +98,9 @@ class RegisteredServers(models.Model):
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
     kind = models.IntegerField(default=ServerType.TUNNEL_SERVER.value)
+    sub_kind = models.CharField(max_length=32, default='')  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
+    version = models.CharField(max_length=32, default='4.0.0')  # Version of the UDS API of the server. Starst at 4.0.0
+
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
@@ -107,6 +110,18 @@ class RegisteredServers(models.Model):
 
     # Extra data, for custom server type use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
+
+    # The Registered Server can be an "attachable" sever, that is, one that is attached to a "master" server (provider)
+    # For Actors and Tunnels, this is always "NONE", but for App servers, this can be a provider (or None, it is not)
+    # attached to a provider
+    attached_to = models.ForeignKey(
+        'uds.Provider',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        default=None,
+        related_name='attached_servers',
+    )
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
@@ -123,21 +138,21 @@ class RegisteredServers(models.Model):
     ) -> bool:
         # Ensure tiken is composed of
         try:
-            if isinstance(serverType, RegisteredServers.ServerType):
-                tt = RegisteredServers.objects.get(token=token, kind=serverType.value)
+            if isinstance(serverType, RegisteredServer.ServerType):
+                tt = RegisteredServer.objects.get(token=token, kind=serverType.value)
             else:
-                tt = RegisteredServers.objects.get(token=token, kind__in=[st.value for st in serverType])
+                tt = RegisteredServer.objects.get(token=token, kind__in=[st.value for st in serverType])
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
             return True
-        except RegisteredServers.DoesNotExist:
+        except RegisteredServer.DoesNotExist:
             pass
         return False
 
     @property
     def server_type(self) -> ServerType:
-        return RegisteredServers.ServerType(self.kind)
+        return RegisteredServer.ServerType(self.kind)
 
     @server_type.setter
     def server_type(self, value: ServerType) -> None:

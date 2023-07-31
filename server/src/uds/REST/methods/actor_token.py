@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.models import RegisteredServers
+from uds.models import RegisteredServer
 from uds.REST.exceptions import RequestError, NotFound
 from uds.REST.model import ModelHandler, OK
 from uds.core.util import permissions
@@ -47,8 +47,8 @@ logger = logging.getLogger(__name__)
 
 
 class ActorTokens(ModelHandler):
-    model = RegisteredServers
-    model_filter = {'kind': RegisteredServers.ServerType.ACTOR_SERVICE}
+    model = RegisteredServer
+    model_filter = {'kind': RegisteredServer.ServerType.ACTOR_SERVICE}
 
     table_title = _('Actor tokens')
     table_fields = [
@@ -63,7 +63,7 @@ class ActorTokens(ModelHandler):
         {'log_level': {'title': _('Log level')}},
     ]
 
-    def item_as_dict(self, item: RegisteredServers) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: RegisteredServer) -> typing.Dict[str, typing.Any]:
         data = item.data or {}
         log_level_int = data.get('log_level', 2)
         if log_level_int < 10000:  # Old log level

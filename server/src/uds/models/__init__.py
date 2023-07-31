@@ -103,7 +103,7 @@ from .account_usage import AccountUsage
 from .tag import Tag, TaggingMixin
 
 # Tokens
-from .registered_servers import RegisteredServers
+from .registered_servers import RegisteredServer
 
 # Notifications & Alerts
 from .notifications import Notification, Notifier, LogLevel

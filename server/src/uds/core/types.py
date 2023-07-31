@@ -30,20 +30,60 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import enum
+
+# Types used in UDS
+
+# ************
+# Connections
+# ************
 
 class ConnectionInfoType(typing.NamedTuple):
-    # protocol: protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
-    # username: username (transformed if needed to) used to login to service
-    # password: password (transformed if needed to) used to login to service
-    # domain: domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
-    protocol: str
-    username: str
-    password: str = ''
-    domain: str = ''  # For some transports (RDP, ...)
-    host: str = ''  # Used only for some transports that needs the host to connect to
+    """
+    Connection info type is provided by transports, and contains all the "transformable" information needed to connect to a service
+    """
+    protocol: str # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
+    username: str # username (transformed if needed to) used to login to service
+    password: str = '' # password (transformed if needed to) used to login to service
+    domain: str = ''  # domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
+    host: str = ''  # Used only for some transports that needs the host to connect to (like SPICE, RDS, etc..)
     # sso: bool = False  # For future sso implementation
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
 
 
 class ConnectionSourceType(typing.NamedTuple):
+    """
+    Connection source from where the connection is being done
+    """
+    ip: str  # IP of the client
+    hostname: str  # Hostname of the client
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
+
+# **************
+# Notifications
+# **************
+
+# From UDS to Service or UserService types
+class PreconnectInfoType(typing.NamedTuple):
+    user: str
+    protocol: str
     ip: str
     hostname: str
+    udsuser: str
+    userservice: str
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
+
+# From UserService to Service types
+class NotifiableEvents(enum.StrEnum):
+    """
+    Possible notification actions
+    """
+    LOGIN = 'login'
+    LOGOUT = 'logout'
+    LOG = 'log'

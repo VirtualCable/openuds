@@ -39,7 +39,7 @@ from uds.models import (
     UserService,
     Service,
     TicketStore,
-    RegisteredServers,
+    RegisteredServer,
 )
 
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
@@ -239,8 +239,8 @@ class Test(ActorV3Action):
             if self._params.get('type') == UNMANAGED:
                 Service.objects.get(token=self._params['token'])
             else:
-                RegisteredServers.objects.get(
-                    token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR_SERVICE
+                RegisteredServer.objects.get(
+                    token=self._params['token'], kind=RegisteredServer.ServerType.ACTOR_SERVICE
                 )  # Not assigned, because only needs check
             clearFailedIp(self._request)
         except Exception:
@@ -278,8 +278,8 @@ class Register(ActorV3Action):
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
         # and mac is the requested one
         found = False
-        actorToken: typing.Optional[RegisteredServers] = RegisteredServers.objects.filter(
-            kind=RegisteredServers.ServerType.ACTOR_SERVICE, mac=self._params['mac']
+        actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
+            kind=RegisteredServer.ServerType.ACTOR_SERVICE, mac=self._params['mac']
         ).first()
         if actorToken:
             # Update parameters
@@ -288,6 +288,7 @@ class Register(ActorV3Action):
             actorToken.ip = self._params['ip']
             actorToken.hostname = self._params['hostname']
             actorToken.log_level = self._params['log_level']
+            actorToken.version = self._params.get('version', '')
             actorToken.data = {  # type: ignore
                 'pre_command': self._params['pre_command'],
                 'post_command': self._params['post_command'],
@@ -313,14 +314,16 @@ class Register(ActorV3Action):
                     'run_once_command': self._params['run_once_command'],
                     'custom': self._params.get('custom', ''),
                 },
-                'token': RegisteredServers.create_token(),
-                'kind': RegisteredServers.ServerType.ACTOR_SERVICE,
+                'token': RegisteredServer.create_token(),
+                'kind': RegisteredServer.ServerType.ACTOR_SERVICE,
+                'sub_kind': 'v3',
+                'version': self._params.get('version', ''),
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
                 'stamp': getSqlDatetime(),
             }
 
-            actorToken = RegisteredServers.objects.create(**kwargs)
+            actorToken = RegisteredServer.objects.create(**kwargs)
 
         return ActorV3Action.actorResult(actorToken.token)  # type: ignore  # actorToken is always assigned
 
@@ -408,7 +411,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not RegisteredServers.validateToken(token, RegisteredServers.ServerType.ACTOR_SERVICE):
+                if not RegisteredServer.validateToken(token, RegisteredServer.ServerType.ACTOR_SERVICE):
                     raise BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -721,10 +724,10 @@ class Ticket(ActorV3Action):
 
         try:
             # Simple check that token exists
-            RegisteredServers.objects.get(
-                token=self._params['token'], kind=RegisteredServers.ServerType.ACTOR_SERVICE
+            RegisteredServer.objects.get(
+                token=self._params['token'], kind=RegisteredServer.ServerType.ACTOR_SERVICE
             )  # Not assigned, because only needs check
-        except RegisteredServers.DoesNotExist:
+        except RegisteredServer.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...
 
         try:

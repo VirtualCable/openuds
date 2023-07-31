@@ -71,18 +71,16 @@ def _requestActor(
         # Maybe service knows how to do it
 
         # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
-        raise NoActorComms(
-            f'No notification urls for {userService.friendly_name}'
-        )
+        raise NoActorComms(f'No notification urls for {userService.friendly_name}')
 
     minVersion = minVersion or '3.5.0'
     version = userService.getProperty('actor_version') or '0.0.0'
     if '-' in version or version < minVersion:
-        logger.warning(
-            'Pool %s has old actors (%s)', userService.deployed_service.name, version
-        )
+        logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
         raise OldActorVersion(
-            f'Old actor version {version} for {userService.friendly_name}'.format(version, userService.friendly_name)
+            f'Old actor version {version} for {userService.friendly_name}'.format(
+                version, userService.friendly_name
+            )
         )
 
     url += '/' + method
@@ -141,13 +139,14 @@ def notifyPreconnect(userService: 'UserService', info: types.ConnectionInfoType)
         _requestActor(
             userService,
             'preConnect',
-            {
-                'user': info.username,
-                'protocol': info.protocol,
-                'ip': src.ip,
-                'hostname': src.hostname,
-                'udsuser': userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-            },
+            types.PreconnectInfoType(
+                user=info.username,
+                protocol=info.protocol,
+                ip=src.ip,
+                hostname=src.hostname,
+                udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
+                userservice=userService.uuid,
+            ).asDict(),
         )
     except NoActorComms:
         pass  # If no preconnect, warning will appear on UDS log
@@ -159,9 +158,7 @@ def checkUuid(userService: 'UserService') -> bool:
     """
     try:
         uuid = _requestActor(userService, 'uuid')
-        if (
-            uuid and uuid != userService.uuid
-        ):  # Empty UUID means "no check this, fixed pool machine"
+        if uuid and uuid != userService.uuid:  # Empty UUID means "no check this, fixed pool machine"
             logger.info(
                 'Machine %s do not have expected uuid %s, instead has %s',
                 userService.friendly_name,
@@ -179,7 +176,9 @@ def requestScreenshot(userService: 'UserService') -> bytes:
     """
     Returns an screenshot in PNG format (bytes) or empty png if not supported
     """
-    emptyPng = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+    emptyPng = (
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+    )
     try:
         png = _requestActor(
             userService, 'screenshot', minVersion='3.0.0'

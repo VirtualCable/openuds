@@ -30,13 +30,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import enum
 import typing
 
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 from uds.core.util.log import LogLevel
@@ -55,7 +54,7 @@ class ServerRegister(Handler):
     name = 'register'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        serverToken: models.RegisteredServers
+        serverToken: models.RegisteredServer
         now = getSqlDatetimeAsUnix()
         ip_version = 4
         ip = self._params.get('ip', self.request.ip)
@@ -68,7 +67,7 @@ class ServerRegister(Handler):
             # If already exists a token for this, return it instead of creating a new one, and update the information...
             # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.RegisteredServers.objects.get(
+            serverToken = models.RegisteredServer.objects.get(
                 ip=ip, ip_version=ip_version, hostname=self._params['hostname'], kind=self._params['type']
             )
             # Update parameters
@@ -80,18 +79,19 @@ class ServerRegister(Handler):
             serverToken.save()
         except Exception:
             try:
-                serverToken = models.RegisteredServers.objects.create(
+                serverToken = models.RegisteredServer.objects.create(
                     username=self._user.pretty_name,
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
                     ip_version=ip_version,
                     hostname=self._params['hostname'],
-                    token=models.RegisteredServers.create_token(),
+                    token=models.RegisteredServer.create_token(),
                     log_level=self._params.get('log_level', LogLevel.INFO.value),
                     stamp=getSqlDatetime(),
                     kind=self._params['type'],
+                    sub_kind=self._params.get('sub_kind', ''), # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
-                    mac=self._params.get('mac', models.RegisteredServers.MAC_UNKNOWN),
+                    mac=self._params.get('mac', models.RegisteredServer.MAC_UNKNOWN),
                     data=self._params.get('data', None),
                 )
             except Exception as e:
@@ -100,12 +100,10 @@ class ServerRegister(Handler):
 
 
 class ServersTokens(ModelHandler):
-    model = models.RegisteredServers
-    model_filter = {
+    model = models.RegisteredServer
+    model_exclude = {
         'kind__in': [
-            models.RegisteredServers.ServerType.TUNNEL_SERVER,
-            models.RegisteredServers.ServerType.APP_SERVER,
-            models.RegisteredServers.ServerType.OTHER,
+            models.RegisteredServer.ServerType.ACTOR_SERVICE,
         ]
     }
     path = 'servers'
@@ -122,7 +120,7 @@ class ServersTokens(ModelHandler):
         {'ip': {'title': _('IP')}},
     ]
 
-    def item_as_dict(self, item: models.RegisteredServers) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: models.RegisteredServer) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.token,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
@@ -131,7 +129,7 @@ class ServersTokens(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': models.RegisteredServers.ServerType(
+            'type': models.RegisteredServer.ServerType(
                 item.kind
             ).as_str(),  # type is a reserved word, so we use "kind" instead on model
             'os': item.os_type,
@@ -165,7 +163,7 @@ class ServerTest(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         # Test if a token is valid
         try:
-            models.RegisteredServers.objects.get(token=self._params['token'])
+            models.RegisteredServer.objects.get(token=self._params['token'])
             return rest_result(True)
         except Exception as e:
             return rest_result('error', error=str(e))
@@ -175,23 +173,29 @@ class ServerAction(Handler):
     authenticated = False  # Actor requests are not authenticated normally
     path = 'servers/action'
 
-    def action(self, server: models.RegisteredServers) -> typing.MutableMapping[str, typing.Any]:
+    def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
         return rest_result('error', error='Base action invoked')
     
     @blocker.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
-            server = models.RegisteredServers.objects.get(token=self._params['token'])
-        except models.RegisteredServers.DoesNotExist:
+            server = models.RegisteredServer.objects.get(token=self._params['token'])
+        except models.RegisteredServer.DoesNotExist:
             raise exceptions.BlockAccess() from None   # Block access if token is not valid
         
         return self.action(server)
 
-class NotifyActions(enum.StrEnum):
-    LOGIN = 'login'
-    LOGOUT = 'logout'
+class ServerEvent(ServerAction):
+    """
+    Manages a event notification from a server to UDS Broker
 
-class ServerNotify(ServerAction):
+    The idea behind this is manage events like login and logout from a single point
+
+    Currently possible notify actions are:
+    * login
+    * logout
+    * log
+    """
     name = 'notify'
 
     def getUserService(self) -> models.UserService:
@@ -204,16 +208,20 @@ class ServerNotify(ServerAction):
             logger.error('User service not found (params: %s)', self._params)
             raise 
 
-    def action(self, server: models.RegisteredServers) -> typing.MutableMapping[str, typing.Any]:
+    def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
         # Notify a server that a new service has been assigned to it
         # Get action from parameters
         # Parameters:
-        #  * action
+        #  * event
         #  * uuid  (user service uuid)
+        #  * data: data related to the received event
+        #    * Login: { 'username': 'username'}
+        #    * Logout: { 'username': 'username'}
+        #    * Log: { 'level': 'level', 'message': 'message'}
         try:
-            action = NotifyActions(self._params.get('action', None))
+            event = types.NotifiableEvents(self._params.get('event', None))
         except ValueError:
-            return rest_result('error', error='No valid action specified')
+            return rest_result('error', error='No valid event specified')
 
         # Extract user service
         try:
@@ -221,11 +229,14 @@ class ServerNotify(ServerAction):
         except Exception:
             return rest_result('error', error='User service not found')
 
-        if action == NotifyActions.LOGIN:
+        if event == types.NotifiableEvents.LOGIN:
             # TODO: notify
             pass
-        elif action == NotifyActions.LOGOUT:
+        elif event == types.NotifiableEvents.LOGOUT:
             # TODO: notify
+            pass
+        elif event == types.NotifiableEvents.LOG:
+            # TODO: log
             pass
 
         return rest_result(True)

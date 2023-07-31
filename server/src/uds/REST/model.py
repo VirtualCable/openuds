@@ -711,6 +711,8 @@ class ModelHandler(BaseModelHandler):
     model: 'typing.ClassVar[typing.Type[models.Model]]'
     # If the model is filtered (for overviews)
     model_filter: 'typing.ClassVar[typing.Optional[typing.Mapping[str, typing.Any]]]' = None
+    # Same, but for exclude
+    model_exclude: 'typing.ClassVar[typing.Optional[typing.Mapping[str, typing.Any]]]' = None
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -939,6 +941,9 @@ class ModelHandler(BaseModelHandler):
 
         if self.model_filter is not None:
             query = query.filter(**self.model_filter)
+
+        if self.model_exclude is not None:
+            query = query.exclude(**self.model_exclude)
 
         for item in query:
             try:
