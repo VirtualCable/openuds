@@ -81,10 +81,14 @@ class Config:
         SECURITY = 'Security'
         CUSTOM = 'Custom'
         ADMIN = 'Admin'
+        WYSE = 'WYSE'  # Legacy
+        OTHER = 'Other'
 
         @staticmethod
         def fromStr(value: str) -> 'Config.SectionType':
-            return Config.SectionType(value)
+            if value in list(Config.SectionType.values()):
+                return Config.SectionType(value)
+            return Config.SectionType(Config.SectionType.OTHER)
         
         @staticmethod
         def values() -> typing.Iterable['Config.SectionType']:
@@ -278,8 +282,8 @@ class Config:
             return f'{self._section.name()}.{self._key}'
 
     @staticmethod
-    def section(sectionName: SectionType):
-        return Config.Section(sectionName)
+    def section(sectionType: SectionType):
+        return Config.Section(sectionType)
 
     @staticmethod
     def value(
@@ -299,9 +303,9 @@ class Config:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             if cfg.crypt:
-                val = Config.section(Config.SectionType(cfg.section)).valueCrypt(cfg.key)
+                val = Config.section(Config.SectionType.fromStr(cfg.section)).valueCrypt(cfg.key)
             else:
-                val = Config.section(Config.SectionType(cfg.section)).value(cfg.key)
+                val = Config.section(Config.SectionType.fromStr(cfg.section)).value(cfg.key)
             yield val
 
     @staticmethod
