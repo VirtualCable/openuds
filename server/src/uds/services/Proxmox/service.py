@@ -106,7 +106,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     deployedType = ProxmoxDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
 
     pool = gui.ChoiceField(

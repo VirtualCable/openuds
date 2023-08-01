@@ -76,7 +76,8 @@ class IPSingleMachineService(IPServiceBase):
 
     deployedType = IPMachineDeployed
 
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:

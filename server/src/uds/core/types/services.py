@@ -32,13 +32,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import enum
 import typing
 
+
 class ServiceType(enum.StrEnum):
-    VDI = 'vdi'
-    VAPP = 'vApp'
+    VDI = 'VDI'
+    VAPP = 'VApp'
 
     def asStr(self) -> str:
-        """Returns the service type as a string
-        """
+        """Returns the service type as a string"""
         return str(self)
-
-ALL: typing.Final[typing.Iterable[ServiceType]] = (ServiceType.VDI, ServiceType.VAPP)

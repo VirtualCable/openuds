@@ -101,7 +101,8 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = XenLinkedDeployment
 
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
     # Now the form part
     datastore = gui.ChoiceField(

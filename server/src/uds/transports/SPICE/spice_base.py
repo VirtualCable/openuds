@@ -124,7 +124,9 @@ class BaseSpiceTransport(transports.Transport):
     overridedProxy = gui.TextField(
         order=10,
         label=_('Override Proxy'),
-        tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
+        tooltip=_(
+            'If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'
+        ),
         required=False,
         tab=gui.Tab.ADVANCED,
         pattern=gui.TextField.PatternType.URL,
@@ -133,7 +135,9 @@ class BaseSpiceTransport(transports.Transport):
     overridedProxy = gui.TextField(
         order=10,
         label=_('Override Proxy'),
-        tooltip=_('If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'),
+        tooltip=_(
+            'If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'
+        ),
         required=False,
         tab=gui.Tab.ADVANCED,
     )
@@ -151,7 +155,7 @@ class BaseSpiceTransport(transports.Transport):
 
             if con is None:
                 return False
-            
+
             if 'proxy' in con:  # If we have a proxy, we can't check if it is available, return True
                 return True
 
@@ -180,19 +184,13 @@ class BaseSpiceTransport(transports.Transport):
 
         return ready == 'Y'
 
-    def getCustomAvailableErrorMsg(
-        self, userService: 'models.UserService', ip: str
-    ) -> str:
+    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
         msg = self.cache.get('cachedMsg')
         if msg is None:
-            return transports.Transport.getCustomAvailableErrorMsg(
-                self, userService, ip
-            )
+            return transports.Transport.getCustomAvailableErrorMsg(self, userService, ip)
         return msg
 
-    def processedUser(
-        self, userService: 'models.UserService', user: 'models.User'
-    ) -> str:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.processUserPassword(userService, user, '')
         return v.username
 
@@ -216,7 +214,12 @@ class BaseSpiceTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionInfoType(protocol=self.protocol, username=username, password=password)
+        return types.connections.ConnectionInfoType(
+            protocol=self.protocol,
+            username=username,
+            service_type=types.services.ServiceType.VDI,
+            password=password,
+        )
 
     def getConnectionInfo(
         self,

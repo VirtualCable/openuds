@@ -211,6 +211,7 @@ class Transport(Module):
         return types.connections.ConnectionInfoType(
             protocol=self.protocol,
             username=username,
+            service_type=types.services.ServiceType.VDI,
             password='',  # nosec: password is empty string, no password
             domain='',
         )

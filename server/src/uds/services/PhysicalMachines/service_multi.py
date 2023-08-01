@@ -130,7 +130,8 @@ class IPMachinesService(IPServiceBase):
 
     deployedType = IPMachineDeployed
 
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
     _ips: typing.List[str] = []
     _token: str = ''

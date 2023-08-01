@@ -406,7 +406,11 @@ class BaseRDPTransport(transports.Transport):
             password = ''  # nosec
 
         return types.connections.ConnectionInfoType(
-            protocol=self.protocol, username=username, password=password, domain=domain
+            protocol=self.protocol,
+            username=username,
+            service_type=types.services.ServiceType.VDI,
+            password=password,
+            domain=domain,
         )
 
     def getConnectionInfo(

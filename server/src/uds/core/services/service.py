@@ -194,7 +194,7 @@ class Service(Module):
 
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
-    servicesTypeProvided: typing.Iterable[types.services.ServiceType] = types.services.ALL
+    servicesTypeProvided: types.services.ServiceType = types.services.ServiceType.VDI
 
     _provider: 'services.ServiceProvider'
 

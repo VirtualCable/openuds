@@ -79,7 +79,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             'cache_tooltip_l2': _(info.cacheTooltip_L2),
             'needs_manager': info.needsManager,
             'allowedProtocols': info.allowedProtocols,
-            'servicesTypeProvided': info.servicesTypeProvided,
+            'servicesTypeProvided': [info.servicesTypeProvided],  # As a list for compatibility, to be removed TODO: Remove
             'must_assign_manually': info.mustAssignManually,
             'can_reset': info.canReset,
             'can_list_assignables': info.canAssign(),

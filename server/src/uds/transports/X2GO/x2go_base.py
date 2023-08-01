@@ -230,13 +230,26 @@ class BaseX2GOTransport(transports.Transport):
     ) -> types.connections.ConnectionInfoType:
         username = user.getUsernameForAuth()
 
+        # Get the type of service (VDI, VAPP, ...)
+        if isinstance(userService, models.UserService):
+            service = userService.deployed_service.service
+        else:
+            service = userService.service
+
+        servicesTypeProvided = service.getType().servicesTypeProvided
+
         if self.fixedName.value != '':
             username = self.fixedName.value
 
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionInfoType(protocol=self.protocol, username=username, password=password)
+        return types.connections.ConnectionInfoType(
+            protocol=self.protocol,
+            username=username,
+            service_type=servicesTypeProvided,
+            password=password,
+        )
 
     def getConnectionInfo(
         self,

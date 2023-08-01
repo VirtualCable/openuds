@@ -73,9 +73,7 @@ class HTML5RDPTransport(transports.Transport):
     guacamoleServer = gui.TextField(
         label=_('Tunnel Server'),
         order=1,
-        tooltip=_(
-            'Host of the tunnel server (use http/https & port if needed) as accesible from users'
-        ),
+        tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'),
         defvalue='https://',
         length=64,
         required=True,
@@ -120,9 +118,7 @@ class HTML5RDPTransport(transports.Transport):
     fixedDomain = gui.TextField(
         label=_('Domain'),
         order=7,
-        tooltip=_(
-            'If not empty, this domain will be always used as credential (used as DOMAIN\\user)'
-        ),
+        tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=gui.Tab.CREDENTIALS,
     )
     wallpaper = gui.CheckBoxField(
@@ -148,9 +144,7 @@ class HTML5RDPTransport(transports.Transport):
     enableAudio = gui.CheckBoxField(
         label=_('Enable Audio'),
         order=21,
-        tooltip=_(
-            'If checked, the audio will be redirected to remote session (if client browser supports it)'
-        ),
+        tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=gui.Tab.PARAMETERS,
         defvalue=gui.TRUE,
     )
@@ -250,9 +244,7 @@ class HTML5RDPTransport(transports.Transport):
                 gui.FALSE,
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            gui.choiceItem(
-                gui.TRUE, _('Force every connection to be opened on a new window.')
-            ),
+            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
             gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
@@ -267,9 +259,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,
         values=[
-            gui.choiceItem(
-                'any', _('Any (Allow the server to choose the type of auth)')
-            ),
+            gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
             gui.choiceItem(
                 'rdp',
                 _('RDP (Standard RDP encryption. Should be supported by all servers)'),
@@ -344,9 +334,7 @@ class HTML5RDPTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(
-        self, userService: 'models.UserService', user: 'models.User'
-    ) -> str:
+    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.getConnectionInfo(userService, user, '')
         return v.username
 
@@ -402,7 +390,13 @@ class HTML5RDPTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionInfoType(protocol=self.protocol, username=username, password=password, domain=domain)
+        return types.connections.ConnectionInfoType(
+            protocol=self.protocol,
+            username=username,
+            service_type=types.services.ServiceType.VDI,
+            password=password,
+            domain=domain,
+        )
 
     def getLink(
         self,
@@ -437,20 +431,12 @@ class HTML5RDPTransport(transports.Transport):
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
-            'enable-drive': as_txt(
-                self.enableFileSharing.value in ('true', 'down', 'up')
-            ),
-            'disable-upload': as_txt(
-                self.enableFileSharing.value not in ('true', 'up')
-            ),
+            'enable-drive': as_txt(self.enableFileSharing.value in ('true', 'down', 'up')),
+            'disable-upload': as_txt(self.enableFileSharing.value not in ('true', 'up')),
             'drive-path': f'/share/{user.uuid}',
             'drive-name': 'UDSfs',
-            'disable-copy': as_txt(
-                self.enableClipboard.value in ('dis-copy', 'disabled')
-            ),
-            'disable-paste': as_txt(
-                self.enableClipboard.value in ('dis-paste', 'disabled')
-            ),
+            'disable-copy': as_txt(self.enableClipboard.value in ('dis-copy', 'disabled')),
+            'disable-paste': as_txt(self.enableClipboard.value in ('dis-paste', 'disabled')),
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
@@ -514,15 +500,9 @@ class HTML5RDPTransport(transports.Transport):
             onw = f'&o_n_w={userService.deployed_service.uuid}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'
-        path = (
-            self.customGEPath.value
-            if self.useGlyptodonTunnel.isTrue()
-            else '/guacamole'
-        )
+        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
         # Remove trailing /
         if path[-1] == '/':
             path = path[:-1]
 
-        return str(
-            f'{self.guacamoleServer.value}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
-        )
+        return str(f'{self.guacamoleServer.value}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}')

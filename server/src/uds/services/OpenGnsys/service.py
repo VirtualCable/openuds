@@ -95,7 +95,8 @@ class OGService(services.Service):
     deployedType = OGDeployment
 
     allowedProtocols = protocols.GENERIC
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
 
     # Now the form part

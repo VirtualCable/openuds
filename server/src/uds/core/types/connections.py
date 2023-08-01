@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
+from .services import ServiceType
 
 class PreconnectInfoType(typing.NamedTuple):
     user: str
@@ -38,7 +39,8 @@ class PreconnectInfoType(typing.NamedTuple):
     ip: str
     hostname: str
     udsuser: str
-    userservice: str
+    userservice: str  # UUid od userservice
+    uservice_type: str  # VDI or VAPP (as in ServiceType)
 
     def asDict(self) -> typing.Dict[str, str]:
         return self._asdict()
@@ -51,11 +53,13 @@ class ConnectionInfoType(typing.NamedTuple):
 
     protocol: str  # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
     username: str  # username (transformed if needed to) used to login to service
+    service_type: ServiceType # If VDI or APP, Defaults to VDI
     password: str = ''  # password (transformed if needed to) used to login to service
     domain: str = (
         ''  # domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
     )
     host: str = ''  # Used only for some transports that needs the host to connect to (like SPICE, RDS, etc..)
+
     # sso: bool = False  # For future sso implementation
 
     def asDict(self) -> typing.Dict[str, str]:

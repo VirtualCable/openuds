@@ -103,7 +103,8 @@ class LiveService(services.Service):
     deployedType = LiveDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
 
     # Now the form part

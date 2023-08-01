@@ -105,7 +105,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     deployedType = OVirtLinkedDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (types.services.ServiceType.VDI,)
+    servicesTypeProvided = types.services.ServiceType.VDI
+
 
     # Now the form part
     cluster = gui.ChoiceField(
