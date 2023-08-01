@@ -64,8 +64,7 @@ class RegisteredServer(models.Model):
     class ServerType(enum.IntEnum):
         TUNNEL_SERVER = 1
         ACTOR_SERVICE = 2
-        APP_SERVER = 3
-        OTHER = 99
+        SERVER = 3
 
         def as_str(self) -> str:
             return self.name.lower()  # type: ignore
@@ -74,8 +73,7 @@ class RegisteredServer(models.Model):
             return {
                 RegisteredServer.ServerType.TUNNEL_SERVER: 'tunnel',
                 RegisteredServer.ServerType.ACTOR_SERVICE: 'actor',
-                RegisteredServer.ServerType.APP_SERVER: 'app',
-                RegisteredServer.ServerType.OTHER: 'other',
+                RegisteredServer.ServerType.SERVER: 'server',
             }[self]
 
     MAC_UNKNOWN = '00:00:00:00:00:00'

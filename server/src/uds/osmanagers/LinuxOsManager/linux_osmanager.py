@@ -55,7 +55,7 @@ class LinuxOsManager(osmanagers.OSManager):
     typeDescription = _('Os Manager to control Linux virtual machines')
     iconFile = 'losmanager.png'
 
-    servicesType = (serviceTypes.VDI,)
+    servicesType = serviceTypes.VDI
 
     onLogout = gui.ChoiceField(
         label=_('Logout Action'),

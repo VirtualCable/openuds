@@ -257,10 +257,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     'description': _(t.description()),
                     'icon': t.icon64().replace('\n', ''),
                 }
-                for t in parent.getType().getServicesTypes()
+                for t in parent.getType().getProvidedServices()
             ]
         else:
-            for t in parent.getType().getServicesTypes():
+            for t in parent.getType().getProvidedServices():
                 if forType == t.type():
                     offers = [
                         {

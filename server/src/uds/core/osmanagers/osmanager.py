@@ -70,7 +70,7 @@ class OSManager(Module):
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
-    servicesType: typing.Iterable[types.services.ServiceType] = types.services.ALL
+    servicesType: types.services.ServiceType = types.services.ServiceType.VDI
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)

@@ -69,7 +69,7 @@ class OsManagers(ModelHandler):
             'deployed_count': osm.deployedServices.count(),
             'type': type_.type(),
             'type_name': type_.name(),
-            'servicesTypes': type_.servicesType,
+            'servicesTypes': [type_.servicesType],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,
             'permission': permissions.getEffectivePermission(self._user, osm),
         }

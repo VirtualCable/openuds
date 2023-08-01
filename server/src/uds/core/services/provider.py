@@ -125,7 +125,7 @@ class ServiceProvider(Module):
     ignoreLimits: typing.Any = None
 
     @classmethod
-    def getServicesTypes(cls) -> typing.List[typing.Type['Service']]:
+    def getProvidedServices(cls) -> typing.List[typing.Type['Service']]:
         """
         Returns what type of services this provider offers
         """

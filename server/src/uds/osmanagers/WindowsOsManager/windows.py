@@ -45,7 +45,7 @@ class WindowsOsManager(osmanagers.OSManager):
     typeType = 'WindowsManager'
     typeDescription = _('Os Manager to control windows machines without domain.')
     iconFile = 'wosmanager.png'
-    servicesType = (serviceTypes.VDI,)
+    servicesType = serviceTypes.VDI
 
     onLogout = gui.ChoiceField(
         label=_('Logout Action'),
