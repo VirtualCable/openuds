@@ -611,7 +611,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, info: types.ConnectionInfoType) -> None:
+    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionInfoType) -> None:
         comms.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
@@ -743,7 +743,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
 
         # Early log of "access try" so we can imagine what is going on
-        userService.setConnectionSource(types.ConnectionSourceType(srcIp, clientHostname or srcIp))
+        userService.setConnectionSource(types.connections.ConnectionSourceType(srcIp, clientHostname or srcIp))
 
         if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()

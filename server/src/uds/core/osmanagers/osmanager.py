@@ -34,7 +34,8 @@
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.services import types as serviceTypes
+
+from uds.core import types
 from uds.core.util.state import State
 from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
 from uds.core.util import log
@@ -69,7 +70,7 @@ class OSManager(Module):
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
-    servicesType: typing.Tuple[str, ...] = serviceTypes.ALL
+    servicesType: typing.Iterable[types.services.ServiceType] = types.services.ALL
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)

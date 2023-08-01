@@ -14,7 +14,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core import osmanagers, exceptions
-from uds.core.services import types as serviceTypes
+from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util.state import State
 from uds.core.util import log

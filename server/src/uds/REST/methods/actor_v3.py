@@ -598,7 +598,7 @@ class Login(ActorV3Action):
 
     def action(self) -> typing.MutableMapping[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
-        src = types.ConnectionSourceType('', '')
+        src = types.connections.ConnectionSourceType('', '')
         deadLine = maxIdle = None
         session_id = ''
 

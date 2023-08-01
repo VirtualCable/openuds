@@ -33,8 +33,7 @@ import re
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.services import Service
-from uds.core.services import types as serviceTypes
+from uds.core import services, types
 from uds.core.transports import protocols
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -55,7 +54,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
+class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public-methods
     """
     Proxmox Linked clones service. This is based on creating a template from selected vm, and then use it to
     """
@@ -107,7 +106,8 @@ class ProxmoxLinkedService(Service):  # pylint: disable=too-many-public-methods
     deployedType = ProxmoxDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
+
 
     pool = gui.ChoiceField(
         label=_("Pool"),

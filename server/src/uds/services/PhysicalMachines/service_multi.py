@@ -41,7 +41,7 @@ from uds.core.util.model import getSqlDatetimeAsUnix
 from uds.core.ui import gui
 from uds.core.util import log
 from uds.core.util import net
-from uds.core import services, exceptions
+from uds.core import services, exceptions, types
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -130,7 +130,7 @@ class IPMachinesService(IPServiceBase):
 
     deployedType = IPMachineDeployed
 
-    servicesTypeProvided = (services.types.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
 
     _ips: typing.List[str] = []
     _token: str = ''

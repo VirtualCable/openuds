@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +29,46 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-VDI = 'vdi'
-VAPP = 'vApp'
+import typing
 
-ALL = (VDI, VAPP)
+
+class PreconnectInfoType(typing.NamedTuple):
+    user: str
+    protocol: str
+    ip: str
+    hostname: str
+    udsuser: str
+    userservice: str
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
+
+
+class ConnectionInfoType(typing.NamedTuple):
+    """
+    Connection info type is provided by transports, and contains all the "transformable" information needed to connect to a service
+    """
+
+    protocol: str  # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
+    username: str  # username (transformed if needed to) used to login to service
+    password: str = ''  # password (transformed if needed to) used to login to service
+    domain: str = (
+        ''  # domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)
+    )
+    host: str = ''  # Used only for some transports that needs the host to connect to (like SPICE, RDS, etc..)
+    # sso: bool = False  # For future sso implementation
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
+
+
+class ConnectionSourceType(typing.NamedTuple):
+    """
+    Connection source from where the connection is being done
+    """
+
+    ip: str  # IP of the client
+    hostname: str  # Hostname of the client
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()

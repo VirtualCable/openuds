@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,21 +27,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS Service modules interfaces and classes.
-
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import exceptions
+import enum
+import typing
 
-from .user_service import UserDeployment
-from .publication import Publication
-from .service import Service
-from .provider import ServiceProvider
-from .provider_factory import ServiceProviderFactory
+class ServiceType(enum.StrEnum):
+    VDI = 'vdi'
+    VAPP = 'vApp'
 
+    def asStr(self) -> str:
+        """Returns the service type as a string
+        """
+        return str(self)
 
-def factory() -> ServiceProviderFactory:
-    """
-    Returns factory for register/access to service providers
-    """
-    return ServiceProviderFactory()
+ALL: typing.Final[typing.Iterable[ServiceType]] = (ServiceType.VDI, ServiceType.VAPP)

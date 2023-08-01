@@ -40,7 +40,8 @@ from uds.core.transports import protocols
 from uds.core.util.state import State
 from uds.core.util import log
 
-from . import types
+from uds.core import types
+
 from .publication import Publication
 from .user_service import UserDeployment
 
@@ -193,7 +194,7 @@ class Service(Module):
 
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
-    servicesTypeProvided: typing.Iterable = types.ALL
+    servicesTypeProvided: typing.Iterable[types.services.ServiceType] = types.services.ALL
 
     _provider: 'services.ServiceProvider'
 

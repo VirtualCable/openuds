@@ -34,8 +34,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+from uds.core import services, types
 from uds.core.transports import protocols
-from uds.core.services import Service, types as serviceTypes
 from uds.core.util import validators
 from uds.core.ui import gui
 
@@ -51,7 +51,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class LiveService(Service):
+class LiveService(services.Service):
     """
     Opennebula Live Service
     """
@@ -103,7 +103,8 @@ class LiveService(Service):
     deployedType = LiveDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
+
 
     # Now the form part
     datastore = gui.ChoiceField(

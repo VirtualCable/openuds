@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds.core.transports import protocols
-from uds.core import services, exceptions
+from uds.core import services, exceptions, types
 from uds.core.util import validators
 from uds.core.ui import gui
 
@@ -105,7 +105,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     deployedType = OVirtLinkedDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
-    servicesTypeProvided = (services.types.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
 
     # Now the form part
     cluster = gui.ChoiceField(

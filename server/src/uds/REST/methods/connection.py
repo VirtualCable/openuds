@@ -153,7 +153,7 @@ class Connection(Handler):
             password = CryptoManager().symDecrpyt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(
-                types.ConnectionSourceType(self._request.ip, hostname)
+                types.connections.ConnectionSourceType(self._request.ip, hostname)
             )  # Store where we are accessing from so we can notify Service
 
             if not ip or not transportInstance:

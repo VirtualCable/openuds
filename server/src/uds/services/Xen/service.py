@@ -33,7 +33,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, exceptions
+from uds.core import services, exceptions, types
 from uds.core.util import validators
 from uds.core.ui import gui
 
@@ -101,7 +101,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # : Types of deploys (services in cache and/or assigned to users)
     deployedType = XenLinkedDeployment
 
-    servicesTypeProvided = (services.types.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
 
     # Now the form part
     datastore = gui.ChoiceField(

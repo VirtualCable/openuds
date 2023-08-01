@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,21 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS Service modules interfaces and classes.
-
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import exceptions
 
-from .user_service import UserDeployment
-from .publication import Publication
-from .service import Service
-from .provider import ServiceProvider
-from .provider_factory import ServiceProviderFactory
-
-
-def factory() -> ServiceProviderFactory:
-    """
-    Returns factory for register/access to service providers
-    """
-    return ServiceProviderFactory()
+# pylint: disable=unused-import
+from . import connections
+from . import events
+from . import services

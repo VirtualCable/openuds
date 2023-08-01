@@ -34,8 +34,8 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
+from uds.core import types, services
 from uds.core.transports import protocols
-from uds.core.services import Service, types as serviceTypes
 from uds.core.ui import gui
 
 from . import helpers
@@ -50,7 +50,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class OGService(Service):
+class OGService(services.Service):
     """
     OpenGnsys Service
     """
@@ -95,7 +95,8 @@ class OGService(Service):
     deployedType = OGDeployment
 
     allowedProtocols = protocols.GENERIC
-    servicesTypeProvided = (serviceTypes.VDI,)
+    servicesTypeProvided = (types.services.ServiceType.VDI,)
+
 
     # Now the form part
     ou = gui.ChoiceField(

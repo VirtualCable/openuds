@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
 
-from uds.core.services import types as serviceTypes
+from uds.core import types
 from uds.core.ui import gui
 from uds.core import osmanagers
 from uds.core.util.state import State
@@ -54,7 +54,7 @@ class TestOSManager(osmanagers.OSManager):
     typeDescription = _('Os Manager for testing pourposes')
     iconFile = 'osmanager.png'
 
-    servicesType = serviceTypes.ALL
+    servicesType = types.services.ALL
 
     onLogout = gui.ChoiceField(
         label=_('Logout Action'),

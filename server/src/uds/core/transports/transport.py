@@ -184,7 +184,7 @@ class Transport(Module):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.ConnectionInfoType:
+    ) -> types.connections.ConnectionInfoType:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -208,7 +208,7 @@ class Transport(Module):
             username, password = userService.processUserPassword(user.name, password)
         else:
             username = self.processedUser(userService, user)
-        return types.ConnectionInfoType(
+        return types.connections.ConnectionInfoType(
             protocol=self.protocol,
             username=username,
             password='',  # nosec: password is empty string, no password

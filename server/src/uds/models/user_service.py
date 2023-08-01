@@ -308,7 +308,7 @@ class UserService(UUIDModel):
             val = typing.cast(str, self.getEnvironment().storage.get(name))
         return val
 
-    def setConnectionSource(self, src: types.ConnectionSourceType) -> None:
+    def setConnectionSource(self, src: types.connections.ConnectionSourceType) -> None:
         """
         Notifies that the last access to this service was initiated from provided params
 
@@ -331,7 +331,7 @@ class UserService(UUIDModel):
 
         self.save(update_fields=['src_ip', 'src_hostname'])
 
-    def getConnectionSource(self) -> types.ConnectionSourceType:
+    def getConnectionSource(self) -> types.connections.ConnectionSourceType:
         """
         Returns stored connection source data (ip & hostname)
 
@@ -340,7 +340,7 @@ class UserService(UUIDModel):
 
         :note: If the transport did not notified this data, this may be "empty"
         """
-        return types.ConnectionSourceType(
+        return types.connections.ConnectionSourceType(
             self.src_ip or '0.0.0.0',  # nosec: not a binding address
             self.src_hostname or 'unknown',
         )
