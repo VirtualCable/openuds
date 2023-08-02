@@ -57,6 +57,8 @@ logger = logging.getLogger(__name__)
 
 
 class TunnelServers(DetailHandler):
+    path = 'tunnel'
+    name = 'servers'
     custom_methods = ['maintenance']
 
     def getItems(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]):
@@ -136,6 +138,8 @@ class TunnelServers(DetailHandler):
 
 # Enclosed methods under /auth path
 class Tunnels(ModelHandler):
+    path = 'tunnel'
+    name = 'tunnels'
     model = RegisteredServerGroup
     model_filter = {'kind': types.servers.Type.TUNNEL}
 
