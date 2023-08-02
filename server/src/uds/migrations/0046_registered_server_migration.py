@@ -176,6 +176,7 @@ class Migration(migrations.Migration):
                 default=None,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
+                related_name="servers",
                 to="uds.registeredservergroup",
             ),
         ),

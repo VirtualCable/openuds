@@ -139,7 +139,12 @@ class RegisteredServer(UUIDModel):
 
     # Group this server belongs to
     group = models.ForeignKey(
-        RegisteredServerGroup, null=True, blank=True, default=None, on_delete=models.SET_NULL
+        RegisteredServerGroup,
+        related_name='servers',
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
     )
 
     class Meta:  # pylint: disable=too-few-public-methods
