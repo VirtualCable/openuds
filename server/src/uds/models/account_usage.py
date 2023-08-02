@@ -38,7 +38,7 @@ from uds.core.util.tools import secondsToTimeString
 from .uuid_model import UUIDModel
 from .account import Account
 from .user_service import UserService
-from .consts import NEVER
+from ..core.consts import NEVER
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

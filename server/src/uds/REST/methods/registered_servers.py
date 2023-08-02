@@ -35,15 +35,15 @@ import typing
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import exceptions, types
-from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
-from uds.core.util.os_detector import KnownOS
+from uds.core import consts, exceptions, types
+from uds.core.util import blocker, permissions
 from uds.core.util.log import LogLevel
+from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
+from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
-from uds.REST.exceptions import RequestError, NotFound
-from uds.REST.model import ModelHandler, OK
+from uds.REST.exceptions import NotFound, RequestError
+from uds.REST.model import OK, ModelHandler
 from uds.REST.utils import rest_result
-from uds.core.util import permissions, blocker
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +91,7 @@ class ServerRegister(Handler):
                     kind=self._params['type'],
                     sub_kind=self._params.get('sub_kind', ''), # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
-                    mac=self._params.get('mac', models.RegisteredServer.MAC_UNKNOWN),
+                    mac=self._params.get('mac', consts.MAC_UNKNOWN),
                     data=self._params.get('data', None),
                 )
             except Exception as e:
@@ -103,7 +103,7 @@ class ServersTokens(ModelHandler):
     model = models.RegisteredServer
     model_exclude = {
         'kind__in': [
-            models.RegisteredServer.ServerType.ACTOR_SERVICE,
+            types.servers.Type.ACTOR,
         ]
     }
     path = 'servers'
@@ -129,7 +129,7 @@ class ServersTokens(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': models.RegisteredServer.ServerType(
+            'type': types.servers.Type(
                 item.kind
             ).as_str(),  # type is a reserved word, so we use "kind" instead on model
             'os': item.os_type,
@@ -219,7 +219,7 @@ class ServerEvent(ServerAction):
         #    * Logout: { 'username': 'username'}
         #    * Log: { 'level': 'level', 'message': 'message'}
         try:
-            event = types.NotifiableEvents(self._params.get('event', None))
+            event = types.events.NotifiableEvents(self._params.get('event', None))
         except ValueError:
             return rest_result('error', error='No valid event specified')
 
@@ -229,13 +229,13 @@ class ServerEvent(ServerAction):
         except Exception:
             return rest_result('error', error='User service not found')
 
-        if event == types.NotifiableEvents.LOGIN:
+        if event == types.events.NotifiableEvents.LOGIN:
             # TODO: notify
             pass
-        elif event == types.NotifiableEvents.LOGOUT:
+        elif event == types.events.NotifiableEvents.LOGOUT:
             # TODO: notify
             pass
-        elif event == types.NotifiableEvents.LOG:
+        elif event == types.events.NotifiableEvents.LOG:
             # TODO: log
             pass
 

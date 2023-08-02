@@ -35,7 +35,7 @@ import logging
 
 from uds import models
 from uds.core.util import model
-from uds.models import consts
+from uds.core import consts
 from uds.models.account_usage import AccountUsage
 
 from ...fixtures import services as services_fixtures

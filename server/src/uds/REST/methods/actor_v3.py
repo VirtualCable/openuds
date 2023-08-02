@@ -28,39 +28,28 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import secrets
-import time
-import logging
-import typing
-import functools
 import enum
-
-from uds.models import (
-    UserService,
-    Service,
-    TicketStore,
-    RegisteredServer,
-)
-
-from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
-
+import functools
+import logging
+import time
+import typing
 
 # from uds.core import VERSION
-from uds.core.managers.user_service import UserServiceManager
+from uds.core import exceptions, osmanagers, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core import osmanagers, types
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.util import log, security
-from uds.core.util.state import State
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.os_detector import KnownOS
-from uds.core import exceptions
+from uds.core.util.state import State
+from uds.models import RegisteredServer, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
-
 from uds.REST.utils import rest_result
 
-from ..handlers import Handler
 from ..exceptions import AccessDenied, RequestError
+from ..handlers import Handler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -149,9 +138,7 @@ class ActorV3Action(Handler):
     path = 'actor/v3'
 
     @staticmethod
-    def actorResult(
-        result: typing.Any = None, **kwargs: typing.Any
-    ) -> typing.MutableMapping[str, typing.Any]:
+    def actorResult(result: typing.Any = None, **kwargs: typing.Any) -> typing.MutableMapping[str, typing.Any]:
         return rest_result(result=result, **kwargs)
 
     @staticmethod
@@ -240,7 +227,7 @@ class Test(ActorV3Action):
                 Service.objects.get(token=self._params['token'])
             else:
                 RegisteredServer.objects.get(
-                    token=self._params['token'], kind=RegisteredServer.ServerType.ACTOR_SERVICE
+                    token=self._params['token'], kind=types.servers.Type.ACTOR
                 )  # Not assigned, because only needs check
             clearFailedIp(self._request)
         except Exception:
@@ -279,7 +266,7 @@ class Register(ActorV3Action):
         # and mac is the requested one
         found = False
         actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
-            kind=RegisteredServer.ServerType.ACTOR_SERVICE, mac=self._params['mac']
+            kind=types.servers.Type.ACTOR, mac=self._params['mac']
         ).first()
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
@@ -318,9 +305,9 @@ class Register(ActorV3Action):
                     'custom': self._params.get('custom', ''),
                 },
                 'token': RegisteredServer.create_token(),
-                'kind': RegisteredServer.ServerType.ACTOR_SERVICE,
+                'kind': types.servers.Type.ACTOR,
                 'sub_kind': self._params.get('version', ''),
-                'version': '',  
+                'version': '',
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
                 'stamp': getSqlDatetime(),
@@ -414,7 +401,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not RegisteredServer.validateToken(token, RegisteredServer.ServerType.ACTOR_SERVICE):
+                if not RegisteredServer.validateToken(token, types.servers.Type.ACTOR):
                     raise BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -728,7 +715,7 @@ class Ticket(ActorV3Action):
         try:
             # Simple check that token exists
             RegisteredServer.objects.get(
-                token=self._params['token'], kind=RegisteredServer.ServerType.ACTOR_SERVICE
+                token=self._params['token'], kind=types.servers.Type.ACTOR
             )  # Not assigned, because only needs check
         except RegisteredServer.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...

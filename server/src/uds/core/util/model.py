@@ -38,7 +38,7 @@ from time import mktime
 
 from django.db import connection, models
 
-from uds.models import consts
+from uds.core import consts
 from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)

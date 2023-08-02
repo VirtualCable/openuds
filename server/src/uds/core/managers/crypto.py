@@ -70,14 +70,12 @@ UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new
 class CryptoManager(metaclass=singleton.Singleton):
     _rsa: 'RSAPrivateKey'
     _namespace: uuid.UUID
-    _counter: int
 
     def __init__(self) -> None:
         self._rsa = serialization.load_pem_private_key(
             settings.RSA_KEY.encode(), password=None, backend=default_backend()
         )
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
-        self._counter = 0
 
     @staticmethod
     def AESKey(key: typing.Union[str, bytes], length: int) -> bytes:
@@ -301,15 +299,13 @@ class CryptoManager(metaclass=singleton.Singleton):
         )  # nosec: Old compatibility SHA1, not used anymore but need to be supported
 
     def uuid(self, obj: typing.Any = None) -> str:
-        """
-        Generates an uuid from obj. (lower case)
-        If obj is None, returns an uuid based on current datetime + counter
+        """ Generates an uuid from obj. (lower case)
+        If obj is None, returns an uuid based on a random string
         """
         if obj is None:
             obj = self.randomString()
-            self._counter += 1
         elif isinstance(obj, bytes):
-            obj = obj.decode('utf8')  # To binary
+            obj = obj.decode('utf8')  # To string
         else:
             obj = str(obj)
 

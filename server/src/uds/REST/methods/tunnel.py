@@ -33,6 +33,7 @@ import logging
 import typing
 
 from uds import models
+from uds.core import types
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
@@ -80,7 +81,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.RegisteredServer.validateToken(token, serverType=models.RegisteredServer.ServerType.TUNNEL_SERVER):
+        if not models.RegisteredServer.validateToken(token, serverType=types.servers.Type.TUNNEL):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
@@ -161,7 +162,7 @@ class TunnelRegister(ServerRegister):
 
     # Just a compatibility method for old tunnel servers
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        self._params['type'] = models.RegisteredServer.ServerType.TUNNEL_SERVER
+        self._params['type'] = types.servers.Type.TUNNEL
         self._params['os'] = self._params.get('os', KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
         self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS
         return super().post()

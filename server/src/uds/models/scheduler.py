@@ -39,7 +39,7 @@ from uds.core.util.state import State
 from uds.core.environment import Environment
 from uds.core import jobs
 
-from .consts import NEVER, MAX_DNS_NAME_LENGTH
+from ..core.consts import NEVER, MAX_DNS_NAME_LENGTH
 
 logger = logging.getLogger(__name__)
 

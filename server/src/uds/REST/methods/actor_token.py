@@ -35,11 +35,12 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.models import RegisteredServer
-from uds.REST.exceptions import RequestError, NotFound
-from uds.REST.model import ModelHandler, OK
+from uds.core import types
 from uds.core.util import permissions
 from uds.core.util.log import LogLevel
+from uds.models import RegisteredServer
+from uds.REST.exceptions import NotFound, RequestError
+from uds.REST.model import OK, ModelHandler
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class ActorTokens(ModelHandler):
     model = RegisteredServer
-    model_filter = {'kind': RegisteredServer.ServerType.ACTOR_SERVICE}
+    model_filter = {'kind': types.servers.Type.ACTOR}
 
     table_title = _('Actor tokens')
     table_fields = [

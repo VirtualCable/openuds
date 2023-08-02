@@ -35,14 +35,14 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.REST import RequestError
-from uds.REST.model import DetailHandler
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
+from uds.REST import RequestError
+from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import AccountUsage, Account
+    from uds.models import Account, AccountUsage
 
 logger = logging.getLogger(__name__)
 

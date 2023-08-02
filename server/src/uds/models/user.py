@@ -39,7 +39,7 @@ from uds.core import auths, mfas
 from uds.core.util import log, storage
 
 from .authenticator import Authenticator
-from .consts import NEVER
+from ..core.consts import NEVER
 from ..core.util.model import UnsavedForeignKey, getSqlDatetime
 from .uuid_model import UUIDModel
 

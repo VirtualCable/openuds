@@ -32,18 +32,59 @@ import typing
 import enum
 import secrets
 
+from django.db import models
+
+from uds.core import types
 from uds.core.util.os_detector import KnownOS
 
-from django.db import models
 from uds.core.util.request import ExtendedHttpRequest
 from uds.core.util.log import LogLevel
 
-from .consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH
+from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
 
-DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
+from .uuid_model import UUIDModel
 
 
-class RegisteredServer(models.Model):
+if typing.TYPE_CHECKING:
+    from uds.models.transport import Transport
+
+
+class RegisteredServerGroup(UUIDModel):
+    """
+    Registered Server Groups
+
+    This table stores the information about registered server groups, that are used to group
+    registered servers and allow access to them by groups.
+
+    One Regestered server can belong to 0 or 1 groups. (once assigned to a group, it cannot be assigned to another one)
+    """
+
+    name = models.CharField(max_length=64, unique=True)
+    comments = models.CharField(max_length=255, default='')
+
+    # A RegisteredServer Group can have a host and port that listent to
+    # (For example for tunnel servers)
+    # These are not the servers ports itself, and it depends on the kind of server
+    # For example, for tunnel server groups, has an internet address and port that will be used
+    # But for RDS SERVERS, host and port are ununsed
+    kind = models.IntegerField(default=types.servers.Type.LEGACY)
+
+    host = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
+    port = models.IntegerField(default=0)
+
+    # 'Fake' declarations for type checking
+    transports: 'models.manager.RelatedManager[Transport]'
+
+    def https_url(self, path: str) -> str:
+        if not path.startswith('/'):
+            path = '/' + path
+        return f'https://{self.host}:{self.port}{path}'
+
+    def __str__(self):
+        return self.name
+
+
+class RegisteredServer(UUIDModel):
     """
     UDS Registered Servers
 
@@ -61,23 +102,6 @@ class RegisteredServer(models.Model):
     create tunnels.
     """
 
-    class ServerType(enum.IntEnum):
-        TUNNEL_SERVER = 1
-        ACTOR_SERVICE = 2
-        SERVER = 3
-
-        def as_str(self) -> str:
-            return self.name.lower()  # type: ignore
-
-        def path(self) -> str:
-            return {
-                RegisteredServer.ServerType.TUNNEL_SERVER: 'tunnel',
-                RegisteredServer.ServerType.ACTOR_SERVICE: 'actor',
-                RegisteredServer.ServerType.SERVER: 'server',
-            }[self]
-
-    MAC_UNKNOWN = '00:00:00:00:00:00'
-
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
     ip = models.CharField(max_length=MAX_IPV6_LENGTH)
@@ -85,7 +109,7 @@ class RegisteredServer(models.Model):
 
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
     listen_port = models.IntegerField(
-        default=DEFAULT_LISTEN_PORT
+        default=SERVER_DEFAULT_LISTEN_PORT
     )  # Port where server listens for connections (if it listens)
 
     token = models.CharField(max_length=48, db_index=True, unique=True)
@@ -95,9 +119,13 @@ class RegisteredServer(models.Model):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-    kind = models.IntegerField(default=ServerType.TUNNEL_SERVER.value)
-    sub_kind = models.CharField(max_length=32, default='')  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
-    version = models.CharField(max_length=32, default='4.0.0')  # Version of the UDS API of the server. Starst at 4.0.0
+    kind = models.IntegerField(default=types.servers.Type.TUNNEL.value)
+    sub_kind = models.CharField(
+        max_length=32, default=''
+    )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
+    version = models.CharField(
+        max_length=32, default='4.0.0'
+    )  # Version of the UDS API of the server. Starst at 4.0.0
 
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
@@ -109,16 +137,9 @@ class RegisteredServer(models.Model):
     # Extra data, for custom server type use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
 
-    # The Registered Server can be an "attachable" sever, that is, one that is attached to a "master" server (provider)
-    # For Actors and Tunnels, this is always "NONE", but for App servers, this can be a provider (or None, it is not)
-    # attached to a provider
-    attached_to = models.ForeignKey(
-        'uds.Provider',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        default=None,
-        related_name='attached_servers',
+    # Group this server belongs to
+    group = models.ForeignKey(
+        RegisteredServerGroup, null=True, blank=True, default=None, on_delete=models.SET_NULL
     )
 
     class Meta:  # pylint: disable=too-few-public-methods
@@ -131,12 +152,12 @@ class RegisteredServer(models.Model):
     @staticmethod
     def validateToken(
         token: str,
-        serverType: typing.Union[typing.Iterable[ServerType], ServerType],
+        serverType: typing.Union[typing.Iterable[types.servers.Type], types.servers.Type],
         request: typing.Optional[ExtendedHttpRequest] = None,
     ) -> bool:
         # Ensure tiken is composed of
         try:
-            if isinstance(serverType, RegisteredServer.ServerType):
+            if isinstance(serverType, types.servers.Type):
                 tt = RegisteredServer.objects.get(token=token, kind=serverType.value)
             else:
                 tt = RegisteredServer.objects.get(token=token, kind__in=[st.value for st in serverType])
@@ -149,14 +170,16 @@ class RegisteredServer(models.Model):
         return False
 
     @property
-    def server_type(self) -> ServerType:
-        return RegisteredServer.ServerType(self.kind)
+    def server_type(self) -> types.servers.Type:
+        return types.servers.Type(self.kind)
 
     @server_type.setter
-    def server_type(self, value: ServerType) -> None:
+    def server_type(self, value: types.servers.Type) -> None:
         self.kind = value.value
 
-    def url(self, path: str, *, port: int = DEFAULT_LISTEN_PORT, secret: typing.Optional[str] = None) -> str:
+    def url(
+        self, path: str, *, port: int = SERVER_DEFAULT_LISTEN_PORT, secret: typing.Optional[str] = None
+    ) -> str:
         """
         Returns the url for a path to this server
 

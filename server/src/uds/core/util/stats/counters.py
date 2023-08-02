@@ -43,7 +43,7 @@ from uds.models import (
     Authenticator,
     StatsCountersAccum,
 )
-from uds.models.consts import NEVER
+from uds.core.consts import NEVER
 
 
 logger = logging.getLogger(__name__)

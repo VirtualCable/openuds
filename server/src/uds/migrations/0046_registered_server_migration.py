@@ -1,15 +1,25 @@
 import typing
 
 from django.db import migrations, models
-import django.db.models.deletion
 from uds.core.util.os_detector import KnownOS
+from django.db import migrations, models
+import django.db.models.deletion
+import uds.core.util.model
+import uds.core.types.servers
+
 
 ACTOR_TYPE = 2  # Hardcoded value from uds/models/registered_servers.py
+
 
 def migrate_old_data(apps, schema_editor):
     try:
         RegisteredServer = apps.get_model('uds', 'RegisteredServer')
         ActorToken = apps.get_model('uds', 'ActorToken')
+
+        # First, add uuid to existing registered servers
+        for server in RegisteredServer.objects.all():
+            server.uuid = uds.core.util.model.generateUuid()
+            server.save(update_fields=['uuid'])
 
         # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
         RegisteredServer.objects.all().update(os_type=KnownOS.LINUX.os_name())
@@ -33,12 +43,13 @@ def migrate_old_data(apps, schema_editor):
                     'runonce_command': token.runonce_command,
                     'log_level': token.log_level,
                     'custom': token.custom,
-                }
+                },
             )
     except Exception as e:
         if 'no such table' not in str(e):
             # Pytest is running this method twice??
             raise e
+
 
 def revert_old_data(apps, schema_editor):
     RegisteredServer = apps.get_model('uds', 'RegisteredServer')
@@ -62,6 +73,7 @@ def revert_old_data(apps, schema_editor):
         # Delete the server
         server.delete()
 
+
 class Migration(migrations.Migration):
     dependencies = [
         ("uds", "0045_actortoken_custom_log_name"),
@@ -71,6 +83,41 @@ class Migration(migrations.Migration):
         migrations.RenameModel(
             'TunnelToken',
             'RegisteredServer',
+        ),
+        migrations.CreateModel(
+            name="RegisteredServerGroup",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.CharField(
+                        default=uds.core.util.model.generateUuid,
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                ("name", models.CharField(max_length=64, unique=True)),
+                ("comments", models.CharField(default="", max_length=255)),
+                ("kind", models.IntegerField(default=uds.core.types.servers.Type["LEGACY"])),
+                ("host", models.CharField(default="", max_length=255)),
+                ("port", models.IntegerField(default=0)),
+            ],
+            options={
+                "abstract": False,
+            },
+        ),
+        migrations.AddField(
+            model_name="registeredserver",
+            name="uuid",
+            field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=False),
         ),
         migrations.RemoveConstraint(
             model_name="registeredserver",
@@ -109,9 +156,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="registeredserver",
             name="mac",
-            field=models.CharField(
-                db_index=True, default="00:00:00:00:00:00", max_length=32
-            ),
+            field=models.CharField(db_index=True, default="00:00:00:00:00:00", max_length=32),
         ),
         migrations.AddField(
             model_name="registeredserver",
@@ -125,14 +170,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
-            name="attached_to",
+            name="group",
             field=models.ForeignKey(
                 blank=True,
                 default=None,
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                related_name="attached_servers",
-                to="uds.provider",
+                to="uds.registeredservergroup",
             ),
         ),
         migrations.RunPython(
@@ -143,4 +187,22 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name="ActorToken",
         ),
+        # After generating all the uuid's, set it as unique
+        migrations.AlterField(
+            model_name="registeredserver",
+            name="uuid",
+            field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=True),
+        ),
+        # Add server group to transports
+        migrations.AddField(
+            model_name="transport",
+            name="serverGroup",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="transports",
+                to="uds.registeredservergroup",
+            ),
+        ),
+
     ]

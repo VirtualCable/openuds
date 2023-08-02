@@ -52,7 +52,7 @@ from .image import Image
 from .service_pool_group import ServicePoolGroup
 from .account import Account
 
-from .consts import NEVER
+from ..core.consts import NEVER
 from ..core.util.model import getSqlDatetime
 
 

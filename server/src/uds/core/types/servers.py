@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +29,22 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-from datetime import datetime
-from time import mktime
+import enum
 
-NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
+class Type(enum.IntEnum):
+    TUNNEL = 1
+    ACTOR = 2
+    SERVER = 3
 
-# Max ip v6 string length representation, allowing ipv4 mapped addresses
-MAX_IPV6_LENGTH: typing.Final[int] = 45
-MAX_DNS_NAME_LENGTH: typing.Final[int] = 255
+    LEGACY = 100
+
+    def as_str(self) -> str:
+        return self.name.lower()  # type: ignore
+
+    def path(self) -> str:
+        return {
+            Type.TUNNEL: 'tunnel',
+            Type.ACTOR: 'actor',
+            Type.SERVER: 'server',
+            Type.LEGACY: '',  # Legacy has no path, does not listen to anything
+        }[self]

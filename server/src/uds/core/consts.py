@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,9 +30,21 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+from datetime import datetime
+from time import mktime
 
-# pylint: disable=unused-import
-from . import connections
-from . import events
-from . import services
-from . import servers
+# Date related constants
+NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
+NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
+
+# Max ip v6 string length representation, allowing ipv4 mapped addresses
+MAX_IPV6_LENGTH: typing.Final[int] = 45
+MAX_DNS_NAME_LENGTH: typing.Final[int] = 255
+
+# Unknown mac address "magic" value
+MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
+
+# Default UDS Registerd Server listen port
+SERVER_DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
+
