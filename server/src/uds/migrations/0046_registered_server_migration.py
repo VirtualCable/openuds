@@ -8,12 +8,23 @@ import uds.core.util.model
 import uds.core.types.servers
 
 
-ACTOR_TYPE = 2  # Hardcoded value from uds/models/registered_servers.py
+ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.Type.ACTOR.value
+
+if typing.TYPE_CHECKING:
+    import uds.models
 
 
-def migrate_old_data(apps, schema_editor):
+def migrate_html5rdp_transport(apps, schema_editor) -> None:
     try:
-        RegisteredServer = apps.get_model('uds', 'RegisteredServer')
+        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+    except Exception:  # nosec: ignore this
+        pass
+
+
+def migrate_old_data(apps, schema_editor) -> None:
+    try:
+        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        # Not typed, disappeared on this migration
         ActorToken = apps.get_model('uds', 'ActorToken')
 
         # First, add uuid to existing registered servers
@@ -51,10 +62,12 @@ def migrate_old_data(apps, schema_editor):
             raise e
 
 
-def revert_old_data(apps, schema_editor):
-    RegisteredServer = apps.get_model('uds', 'RegisteredServer')
+def revert_old_data(apps, schema_editor) -> None:
+    RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
     ActorToken = apps.get_model('uds', 'ActorToken')
     for server in RegisteredServer.objects.filter(kind=ACTOR_TYPE):
+        if not server.data:
+            continue  # Skip servers without data, they are not actors!!
         ActorToken.objects.create(
             username=server.username,
             ip_from=server.ip_from,
@@ -109,10 +122,16 @@ class Migration(migrations.Migration):
                 ("kind", models.IntegerField(default=uds.core.types.servers.Type["LEGACY"])),
                 ("host", models.CharField(default="", max_length=255)),
                 ("port", models.IntegerField(default=0)),
+                ("tags", models.ManyToManyField(to="uds.tag")),
             ],
             options={
                 "abstract": False,
             },
+        ),
+        migrations.AddField(
+            model_name="registeredserver",
+            name="tags",
+            field=models.ManyToManyField(to="uds.tag"),
         ),
         migrations.AddField(
             model_name="registeredserver",
@@ -126,12 +145,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="registeredserver",
             name="kind",
-            field=models.IntegerField(default=1),
+            field=models.IntegerField(db_index=True, default=1),
         ),
         migrations.AddField(
             model_name="registeredserver",
             name="sub_kind",
-            field=models.CharField(default="", max_length=32),
+            field=models.CharField(db_index=True, default="", max_length=32),
+        ),
+        migrations.AddField(
+            model_name="registeredserver",
+            name="maintenance_mode",
+            field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AddField(
             model_name="registeredserver",
@@ -205,5 +229,4 @@ class Migration(migrations.Migration):
                 to="uds.registeredservergroup",
             ),
         ),
-
     ]

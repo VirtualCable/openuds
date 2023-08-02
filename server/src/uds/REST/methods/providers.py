@@ -157,7 +157,7 @@ class Providers(ModelHandler):
             # logger.exception('Exception')
             return {}
 
-    def maintenance(self, item: Provider):
+    def maintenance(self, item: Provider) -> typing.Dict:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:

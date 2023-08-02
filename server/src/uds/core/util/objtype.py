@@ -67,6 +67,7 @@ class ObjectType(enum.Enum):
     LOG = (22, models.Log)
     NOTIFICATION = (23, models.Notification)
     TICKET_STORE = (24, models.TicketStore)
+    REGISTERED_SERVER_GROUP = (26, models.RegisteredServerGroup)
 
     @property
     def model(self) -> typing.Type['Model']:

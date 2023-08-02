@@ -313,14 +313,14 @@ class Groups(DetailHandler):
             {
                 'group_name': {
                     'title': _('Name'),
-                    'type': 'icon_dict',
-                    'icon_dict': {
-                        'group': 'fa fa-group text-success',
-                        'meta': 'fa fa-gears text-info',
-                    },
+                    'type': 'alphanumeric',
                 }
             },
             {'comments': {'title': _('comments')}},
+            {'type': {
+                'title': _('Type'),
+                # Alphanumeric, default is alphanumeric
+            }},
             {
                 'state': {
                     'title': _('State'),

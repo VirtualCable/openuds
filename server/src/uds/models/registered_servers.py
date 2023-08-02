@@ -43,13 +43,13 @@ from uds.core.util.log import LogLevel
 from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
 
 from .uuid_model import UUIDModel
+from .tag import TaggingMixin
 
 
 if typing.TYPE_CHECKING:
     from uds.models.transport import Transport
 
-
-class RegisteredServerGroup(UUIDModel):
+class RegisteredServerGroup(UUIDModel, TaggingMixin):  # type: ignore  # Mypy complains about Meta on base classes O_o
     """
     Registered Server Groups
 
@@ -74,6 +74,13 @@ class RegisteredServerGroup(UUIDModel):
 
     # 'Fake' declarations for type checking
     transports: 'models.manager.RelatedManager[Transport]'
+    servers: 'models.manager.RelatedManager[RegisteredServer]'
+
+    @property
+    def pretty_host(self) -> str:
+        if self.port == 0:
+            return self.host
+        return f'{self.host}:{self.port}'
 
     def https_url(self, path: str) -> str:
         if not path.startswith('/'):
@@ -84,7 +91,7 @@ class RegisteredServerGroup(UUIDModel):
         return self.name
 
 
-class RegisteredServer(UUIDModel):
+class RegisteredServer(UUIDModel, TaggingMixin):
     """
     UDS Registered Servers
 
@@ -119,13 +126,17 @@ class RegisteredServer(UUIDModel):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-    kind = models.IntegerField(default=types.servers.Type.TUNNEL.value)
+    kind = models.IntegerField(default=types.servers.Type.TUNNEL.value, db_index=True)
     sub_kind = models.CharField(
-        max_length=32, default=''
+        max_length=32, default='', db_index=True
     )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
     version = models.CharField(
         max_length=32, default='4.0.0'
     )  # Version of the UDS API of the server. Starst at 4.0.0
+
+    # If server is in "maintenance mode". Not used on tunnels (Because they are "redirected" by an external load balancer)
+    # But used on other servers, so we can disable them for maintenance
+    maintenance_mode = models.BooleanField(default=False, db_index=True)
 
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
@@ -160,7 +171,7 @@ class RegisteredServer(UUIDModel):
         serverType: typing.Union[typing.Iterable[types.servers.Type], types.servers.Type],
         request: typing.Optional[ExtendedHttpRequest] = None,
     ) -> bool:
-        # Ensure tiken is composed of
+        # Ensure token is valid
         try:
             if isinstance(serverType, types.servers.Type):
                 tt = RegisteredServer.objects.get(token=token, kind=serverType.value)
@@ -172,6 +183,8 @@ class RegisteredServer(UUIDModel):
             return True
         except RegisteredServer.DoesNotExist:
             pass
+        except RegisteredServer.MultipleObjectsReturned:
+            raise Exception('Multiple objects returned for token')
         return False
 
     @property

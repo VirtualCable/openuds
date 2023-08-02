@@ -384,12 +384,6 @@ class Groups(DetailHandler):
             {
                 'name': {
                     'title': _('Group'),
-                    'visible': True,
-                    'type': 'icon_dict',
-                    'icon_dict': {
-                        'group': 'fa fa-group text-success',
-                        'meta': 'fa fa-gears text-info',
-                    },
                 }
             },
             {'comments': {'title': _('Comments')}},

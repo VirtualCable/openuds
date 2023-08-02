@@ -57,164 +57,81 @@ logger = logging.getLogger(__name__)
 
 
 class TunnelServers(DetailHandler):
-    custom_methods = ['servicesPools', 'users']
+    custom_methods = ['maintenance']
 
     def getItems(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]):
         try:
             multi = False
             if item is None:
                 multi = True
-                q = parent.groups.all().order_by('name')
+                q = parent.servers.all().order_by('name')
             else:
-                q = parent.groups.filter(uuid=processUuid(item))
+                q = parent.servers.filter(uuid=processUuid(item))
             res = []
             i = None
             for i in q:
                 val = {
                     'id': i.uuid,
-                    'name': i.name,
-                    'comments': i.comments,
-                    'state': i.state,
-                    'type': i.is_meta and 'meta' or 'group',
-                    'meta_if_any': i.meta_if_any,
+                    'hostname': i.hostname,
                 }
-                if i.is_meta:
-                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
             if multi:
                 return res
             if not i:
                 raise Exception('Item not found')
-            # Add pools field if 1 item only
-            result = res[0]
-            result['pools'] = [v.uuid for v in getPoolsForGroups([i])]
-            return result
+            return res[0]
         except Exception as e:
             logger.exception('REST groups')
             raise self.invalidItemException() from e
 
     def getTitle(self, parent: 'RegisteredServerGroup') -> str:
         try:
-            return _('Groups of {0}').format(parent.name)
+            return _('Servers of of {0}').format(parent.name)
         except Exception:
-            return _('Current groups')
+            return _('Servers')
 
     def getFields(self, parent: 'RegisteredServerGroup') -> typing.List[typing.Any]:
         return [
             {
-                'name': {
-                    'title': _('Group'),
-                    'visible': True,
-                    'type': 'icon_dict',
-                    'icon_dict': {
-                        'group': 'fa fa-group text-success',
-                        'meta': 'fa fa-gears text-info',
-                    },
+                'hostname': {
+                    'title': _('Hostname'),
                 }
             },
-            {'comments': {'title': _('Comments')}},
-            {
-                'state': {
-                    'title': _('state'),
-                    'type': 'dict',
-                    'dict': State.dictionary(),
-                }
-            },
+            {'state': {'title': _('State')}},
         ]
-
-    def getTypes(self, parent: 'RegisteredServerGroup', forType: typing.Optional[str]):
-        tDct = {
-            'group': {'name': _('Group'), 'description': _('UDS Group')},
-            'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
-        }
-        types = [
-            {
-                'name': v['name'],
-                'type': k,
-                'description': v['description'],
-                'icon': '',
-            }
-            for k, v in tDct.items()
-        ]
-
-        if forType is None:
-            return types
-
-        try:
-            return next(filter(lambda x: x['type'] == forType, types))
-        except Exception:
-            raise self.invalidRequestException() from None
 
     def saveItem(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]) -> None:
-        group = None  # Avoid warning on reference before assignment
+        # Item is always None here, because we can "add" existing servers to a group, but not create new ones
+        server: typing.Optional['RegisteredServer'] = None  # Avoid warning on reference before assignment
+        if item is not None:
+            raise self.invalidRequestException('Cannot create new servers from here')
+
         try:
-            is_meta = self._params['type'] == 'meta'
-            meta_if_any = self._params.get('meta_if_any', False)
-            pools = self._params.get('pools', None)
-            logger.debug('Saving group %s / %s', parent, item)
-            logger.debug('Meta any %s', meta_if_any)
-            logger.debug('Pools: %s', pools)
-            valid_fields = ['name', 'comments', 'state']
-            if self._params.get('name', '') == '':
-                raise RequestError(_('Group name is required'))
-            fields = self.readFieldsFromParams(valid_fields)
-            is_pattern = fields.get('name', '').find('pat:') == 0
-            auth = parent.getInstance()
-            if not item:  # Create new
-                if not is_meta and not is_pattern:
-                    auth.createGroup(
-                        fields
-                    )  # this throws an exception if there is an error (for example, this auth can't create groups)
-                toSave = {}
-                for k in valid_fields:
-                    toSave[k] = fields[k]
-                toSave['comments'] = fields['comments'][:255]
-                toSave['is_meta'] = is_meta
-                toSave['meta_if_any'] = meta_if_any
-                group = parent.groups.create(**toSave)
-            else:
-                if not is_meta and not is_pattern:
-                    auth.modifyGroup(fields)
-                toSave = {}
-                for k in valid_fields:
-                    toSave[k] = fields[k]
-                del toSave['name']  # Name can't be changed
-                toSave['comments'] = fields['comments'][:255]
-                toSave['meta_if_any'] = meta_if_any
-
-                group = parent.groups.get(uuid=processUuid(item))
-                group.__dict__.update(toSave)
-
-            if is_meta:
-                # Do not allow to add meta groups to meta groups
-                group.groups.set(
-                    i for i in parent.groups.filter(uuid__in=self._params['groups']) if i.is_meta is False
-                )
-
-            if pools:
-                # Update pools
-                group.deployedServices.set(ServicePool.objects.filter(uuid__in=pools))
-
-            group.save()
-        except Group.DoesNotExist:
+            server = RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+            parent.servers.add(server)
+        except Exception:
             raise self.invalidItemException() from None
-        except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('User already exists (duplicate key error)')) from None
-        except AuthenticatorException as e:
-            raise RequestError(str(e)) from e
-        except RequestError:  # pylint: disable=try-except-raise
-            raise  # Re-raise
-        except Exception as e:
-            logger.exception('Saving group')
-            raise self.invalidRequestException() from e
+
+        # TODO: implement this
+        raise self.invalidRequestException() from None
 
     def deleteItem(self, parent: 'RegisteredServerGroup', item: str) -> None:
         try:
-            group = parent.groups.get(uuid=item)
-
-            group.delete()
+            group = parent.servers.remove(RegisteredServer.objects.get(uuid=processUuid(item)))
         except Exception:
             raise self.invalidItemException() from None
+
+    # Custom methods
+    def maintenance(self, parent: 'RegisteredServerGroup') -> typing.Any:
+        """
+        Custom method that swaps maintenance mode state for a provider
+        :param item:
+        """
+        item = RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        item.maintenance_mode = not item.maintenance_mode
+        item.save()
+        return 'ok'
 
 
 # Enclosed methods under /auth path
@@ -249,13 +166,14 @@ class Tunnels(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: 'RegisteredServer') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
+            'comments': item.comments,
+            'host': item.pretty_host,
             'tags': [tag.tag for tag in item.tags.all()],
-            'net_string': item.net_string,
             'transports_count': item.transports.count(),
-            'authenticators_count': item.authenticators.count(),
+            'servers_count': item.servers.count(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }

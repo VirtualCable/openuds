@@ -588,7 +588,7 @@ class DetailHandler(BaseModelHandler):
 
     # Override this to provide functionality
     # Default (as sample) getItems
-    def getItems(self, parent: models.Model, item: typing.Optional[str]):
+    def getItems(self, parent: models.Model, item: typing.Optional[str]) -> typing.Union[typing.List[typing.Dict], typing.Dict]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
