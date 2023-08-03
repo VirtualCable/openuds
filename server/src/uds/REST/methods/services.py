@@ -39,6 +39,7 @@ from django.utils.translation import gettext as _
 from uds import models
 
 from uds.core import exceptions
+import uds.core.types.permissions
 from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
@@ -329,7 +330,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         for i in service.deployedServices.all():
             try:
                 self.ensureAccess(
-                    i, permissions.PermissionType.READ
+                    i, uds.core.types.permissions.PermissionType.READ
                 )  # Ensures access before listing...
                 res.append(
                     {

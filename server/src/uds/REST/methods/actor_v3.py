@@ -227,7 +227,7 @@ class Test(ActorV3Action):
                 Service.objects.get(token=self._params['token'])
             else:
                 RegisteredServer.objects.get(
-                    token=self._params['token'], kind=types.servers.Type.ACTOR
+                    token=self._params['token'], kind=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
             clearFailedIp(self._request)
         except Exception:
@@ -266,7 +266,7 @@ class Register(ActorV3Action):
         # and mac is the requested one
         found = False
         actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
-            kind=types.servers.Type.ACTOR, mac=self._params['mac']
+            kind=types.servers.ServerType.ACTOR, mac=self._params['mac']
         ).first()
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
@@ -305,7 +305,7 @@ class Register(ActorV3Action):
                     'custom': self._params.get('custom', ''),
                 },
                 'token': RegisteredServer.create_token(),
-                'kind': types.servers.Type.ACTOR,
+                'kind': types.servers.ServerType.ACTOR,
                 'sub_kind': self._params.get('version', ''),
                 'version': '',
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
@@ -401,7 +401,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not RegisteredServer.validateToken(token, types.servers.Type.ACTOR):
+                if not RegisteredServer.validateToken(token, types.servers.ServerType.ACTOR):
                     raise BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -715,7 +715,7 @@ class Ticket(ActorV3Action):
         try:
             # Simple check that token exists
             RegisteredServer.objects.get(
-                token=self._params['token'], kind=types.servers.Type.ACTOR
+                token=self._params['token'], kind=types.servers.ServerType.ACTOR
             )  # Not assigned, because only needs check
         except RegisteredServer.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...

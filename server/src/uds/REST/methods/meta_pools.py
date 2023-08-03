@@ -34,6 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+import uds.core.types.permissions
 from uds.models import MetaPool, Image, ServicePoolGroup
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
 from uds.core.util.state import State
@@ -274,7 +275,7 @@ class MetaPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: MetaPool):
-        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         logger.debug('Setting fallback of %s to %s', item.name, fallback)

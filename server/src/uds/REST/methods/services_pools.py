@@ -36,6 +36,7 @@ import typing
 
 from django.db.models import Q, Count
 from django.utils.translation import gettext, gettext_lazy as _
+import uds.core.types.permissions
 from uds.models import (
     ServicePool,
     OSManager,
@@ -602,7 +603,7 @@ class ServicesPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: ServicePool):
-        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         if fallback != '':

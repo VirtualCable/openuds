@@ -32,12 +32,14 @@
 import logging
 import re
 import typing
+from django.db import models
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types, consts
 from uds.core.environment import Environment
+import uds.core.types.permissions
 from uds.core.ui import gui
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
@@ -101,10 +103,11 @@ class TunnelServers(DetailHandler):
             },
             {'state': {'title': _('State')}},
         ]
-
+    
     def saveItem(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]) -> None:
         # Item is always None here, because we can "add" existing servers to a group, but not create new ones
         server: typing.Optional['RegisteredServer'] = None  # Avoid warning on reference before assignment
+
         if item is not None:
             raise self.invalidRequestException('Cannot create new servers from here')
 
@@ -119,7 +122,7 @@ class TunnelServers(DetailHandler):
 
     def deleteItem(self, parent: 'RegisteredServerGroup', item: str) -> None:
         try:
-            group = parent.servers.remove(RegisteredServer.objects.get(uuid=processUuid(item)))
+            parent.servers.remove(RegisteredServer.objects.get(uuid=processUuid(item)))
         except Exception:
             raise self.invalidItemException() from None
 
@@ -130,7 +133,7 @@ class TunnelServers(DetailHandler):
         :param item:
         """
         item = RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
-        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
@@ -141,7 +144,7 @@ class Tunnels(ModelHandler):
     path = 'tunnel'
     name = 'tunnels'
     model = RegisteredServerGroup
-    model_filter = {'kind': types.servers.Type.TUNNEL}
+    model_filter = {'kind': types.servers.ServerType.TUNNEL}
 
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']

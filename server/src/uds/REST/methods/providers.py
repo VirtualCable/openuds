@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
 from uds.core.environment import Environment
+import uds.core.types.permissions
 
 from uds.models import Provider, Service, UserService
 from uds.core import services
@@ -139,7 +140,7 @@ class Providers(ModelHandler):
         for s in Service.objects.all():
             try:
                 perm = permissions.getEffectivePermission(self._user, s)
-                if perm >= permissions.PermissionType.READ:
+                if perm >= uds.core.types.permissions.PermissionType.READ:
                     yield DetailServices.serviceToDict(s, perm, True)
             except Exception:
                 logger.exception('Passed service cause type is unknown')
@@ -150,7 +151,7 @@ class Providers(ModelHandler):
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            self.ensureAccess(service.provider, permissions.PermissionType.READ)
+            self.ensureAccess(service.provider, uds.core.types.permissions.PermissionType.READ)
             perm = self.getPermissions(service.provider)
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
@@ -162,7 +163,7 @@ class Providers(ModelHandler):
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
-        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)

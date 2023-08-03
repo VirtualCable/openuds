@@ -36,6 +36,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds import models
+import uds.core.types.permissions
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
 from uds.core.util import log, permissions
@@ -433,7 +434,7 @@ class Publications(DetailHandler):
 
         if (
             permissions.hasAccess(
-                self._user, parent, permissions.PermissionType.MANAGEMENT
+                self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT
             )
             is False
         ):
@@ -463,7 +464,7 @@ class Publications(DetailHandler):
         """
         if (
             permissions.hasAccess(
-                self._user, parent, permissions.PermissionType.MANAGEMENT
+                self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT
             )
             is False
         ):

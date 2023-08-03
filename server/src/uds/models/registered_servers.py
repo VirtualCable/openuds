@@ -67,7 +67,7 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):  # type: ignore  # Mypy co
     # These are not the servers ports itself, and it depends on the kind of server
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for RDS SERVERS, host and port are ununsed
-    kind = models.IntegerField(default=types.servers.Type.LEGACY)
+    kind = models.IntegerField(default=types.servers.ServerType.LEGACY)
 
     host = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
     port = models.IntegerField(default=0)
@@ -126,7 +126,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-    kind = models.IntegerField(default=types.servers.Type.TUNNEL.value, db_index=True)
+    kind = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
     sub_kind = models.CharField(
         max_length=32, default='', db_index=True
     )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
@@ -149,13 +149,9 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     data = models.JSONField(null=True, blank=True, default=None)
 
     # Group this server belongs to
-    group = models.ForeignKey(
+    groups = models.ManyToManyField(
         RegisteredServerGroup,
         related_name='servers',
-        null=True,
-        blank=True,
-        default=None,
-        on_delete=models.SET_NULL,
     )
 
     class Meta:  # pylint: disable=too-few-public-methods
@@ -168,12 +164,12 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     @staticmethod
     def validateToken(
         token: str,
-        serverType: typing.Union[typing.Iterable[types.servers.Type], types.servers.Type],
+        serverType: typing.Union[typing.Iterable[types.servers.ServerType], types.servers.ServerType],
         request: typing.Optional[ExtendedHttpRequest] = None,
     ) -> bool:
         # Ensure token is valid
         try:
-            if isinstance(serverType, types.servers.Type):
+            if isinstance(serverType, types.servers.ServerType):
                 tt = RegisteredServer.objects.get(token=token, kind=serverType.value)
             else:
                 tt = RegisteredServer.objects.get(token=token, kind__in=[st.value for st in serverType])
@@ -188,11 +184,11 @@ class RegisteredServer(UUIDModel, TaggingMixin):
         return False
 
     @property
-    def server_type(self) -> types.servers.Type:
-        return types.servers.Type(self.kind)
+    def server_type(self) -> types.servers.ServerType:
+        return types.servers.ServerType(self.kind)
 
     @server_type.setter
-    def server_type(self, value: types.servers.Type) -> None:
+    def server_type(self, value: types.servers.ServerType) -> None:
         self.kind = value.value
 
     def url(

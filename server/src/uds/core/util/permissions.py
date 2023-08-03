@@ -36,7 +36,7 @@ import typing
 # from django.utils.translation import gettext as _
 
 from uds import models
-from uds.models.permissions import PermissionType
+from uds.core.types.permissions import PermissionType
 
 from uds.core.util import objtype
 

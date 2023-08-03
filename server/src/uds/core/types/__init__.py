@@ -35,3 +35,4 @@ from . import connections
 from . import events
 from . import services
 from . import servers
+from . import permissions

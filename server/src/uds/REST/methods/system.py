@@ -37,6 +37,7 @@ import logging
 import typing
 
 from uds import models
+import uds.core.types.permissions
 from uds.core.util.model import getSqlDatetime
 
 from uds.core.util.model import processUuid
@@ -189,7 +190,7 @@ class System(Handler):
                 raise AccessDenied()
             # Check permission for pool..
             if not permissions.hasAccess(
-                self._user, typing.cast('Model', pool), permissions.PermissionType.READ
+                self._user, typing.cast('Model', pool), uds.core.types.permissions.PermissionType.READ
             ):
                 raise AccessDenied()
             if self._args[0] == 'stats':

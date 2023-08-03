@@ -37,6 +37,7 @@ import typing
 from django.utils.translation import gettext_lazy as _
 
 from uds.REST.model import ModelHandler
+import uds.core.types.permissions
 from uds.core.util import permissions
 from uds.models import Account
 from .accountsusage import AccountsUsage
@@ -85,5 +86,5 @@ class Accounts(ModelHandler):
         return ''
 
     def clear(self, item: Account):
-        self.ensureAccess(item, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

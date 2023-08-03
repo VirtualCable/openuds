@@ -8,7 +8,7 @@ import uds.core.util.model
 import uds.core.types.servers
 
 
-ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.Type.ACTOR.value
+ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.ServerType.ACTOR.value
 
 if typing.TYPE_CHECKING:
     import uds.models
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=64, unique=True)),
                 ("comments", models.CharField(default="", max_length=255)),
-                ("kind", models.IntegerField(default=uds.core.types.servers.Type["LEGACY"])),
+                ("kind", models.IntegerField(default=uds.core.types.servers.ServerType["LEGACY"])),
                 ("host", models.CharField(default="", max_length=255)),
                 ("port", models.IntegerField(default=0)),
                 ("tags", models.ManyToManyField(to="uds.tag")),
@@ -194,12 +194,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
-            name="group",
-            field=models.ForeignKey(
-                blank=True,
-                default=None,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
+            name="groups",
+            field=models.ManyToManyField(
                 related_name="servers",
                 to="uds.registeredservergroup",
             ),

@@ -32,6 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import uds.core.types.permissions
 
 from uds.core.util import permissions
 from uds.core.util import objtype
@@ -83,95 +84,95 @@ class PermissionsTest(UDSTestCase):
 
     def doTestUserPermissions(self, obj, user: models.User):
         permissions.addUserPermission(
-            user, obj, permissions.PermissionType.NONE
+            user, obj, uds.core.types.permissions.PermissionType.NONE
         )
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, objtype.ObjectType.from_model(obj).type)
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.NONE)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.NONE)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             ),
             user.is_admin,
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.MANAGEMENT
+                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
             ),
             user.is_admin,
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             ),
             user.is_admin,
         )
 
         # Add a new permission, must overwrite the previous one
         permissions.addUserPermission(
-            user, obj, permissions.PermissionType.ALL
+            user, obj, uds.core.types.permissions.PermissionType.ALL
         )
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.ALL)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.MANAGEMENT
+                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             )
         )
 
         # Again, with read
         permissions.addUserPermission(
-            user, obj, permissions.PermissionType.READ
+            user, obj, uds.core.types.permissions.PermissionType.READ
         )
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.READ)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.READ)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             )
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.MANAGEMENT
+                user, obj, uds.core.types.permissions.PermissionType.MANAGEMENT
             ),
             user.is_admin,
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             ),
             user.is_admin,
         )
@@ -184,79 +185,79 @@ class PermissionsTest(UDSTestCase):
         group = user.groups.all()[0]
 
         permissions.addGroupPermission(
-            group, obj, permissions.PermissionType.NONE
+            group, obj, uds.core.types.permissions.PermissionType.NONE
         )
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.NONE)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.NONE)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         # Admins has all permissions ALWAYS
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             ),
             user.is_admin,
         )
         self.assertEqual(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             ),
             user.is_admin,
         )
 
         permissions.addGroupPermission(
-            group, obj, permissions.PermissionType.ALL
+            group, obj, uds.core.types.permissions.PermissionType.ALL
         )
         self.assertEqual(models.Permissions.objects.count(), 1)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.ALL)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             )
         )
 
         # Add user permission, DB must contain both an return ALL
 
         permissions.addUserPermission(
-            user, obj, permissions.PermissionType.READ
+            user, obj, uds.core.types.permissions.PermissionType.READ
         )
         self.assertEqual(models.Permissions.objects.count(), 2)
         perm = models.Permissions.objects.all()[0]
         self.assertEqual(perm.object_type, PermissionsTest.getObjectType(obj))
         self.assertEqual(perm.object_id, obj.pk)
-        self.assertEqual(perm.permission, permissions.PermissionType.ALL)
+        self.assertEqual(perm.permission, uds.core.types.permissions.PermissionType.ALL)
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.NONE
+                user, obj, uds.core.types.permissions.PermissionType.NONE
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.READ
+                user, obj, uds.core.types.permissions.PermissionType.READ
             )
         )
         self.assertTrue(
             permissions.hasAccess(
-                user, obj, permissions.PermissionType.ALL
+                user, obj, uds.core.types.permissions.PermissionType.ALL
             )
         )
 

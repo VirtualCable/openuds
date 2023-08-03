@@ -40,6 +40,7 @@ import logging
 
 from django.utils.translation import gettext as _
 from django.db import IntegrityError, models
+import uds.core.types.permissions
 
 from uds.core.ui import gui as uiGui
 from uds.core.util import log
@@ -240,7 +241,7 @@ class BaseModelHandler(Handler):
     def ensureAccess(
         self,
         obj: models.Model,
-        permission: permissions.PermissionType,
+        permission: uds.core.types.permissions.PermissionType,
         root: bool = False,
     ) -> None:
         if not permissions.hasAccess(self._user, obj, permission, root):
@@ -785,7 +786,7 @@ class ModelHandler(BaseModelHandler):
 
     # log related
     def getLogs(self, item: models.Model) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, permissions.PermissionType.READ)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
         try:
             return log.getLogs(item)
         except Exception as e:
@@ -878,9 +879,9 @@ class ModelHandler(BaseModelHandler):
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
-                requiredPermission = permissions.PermissionType.MANAGEMENT
+                requiredPermission = uds.core.types.permissions.PermissionType.MANAGEMENT
             else:
-                requiredPermission = permissions.PermissionType.READ
+                requiredPermission = uds.core.types.permissions.PermissionType.READ
 
             if permissions.hasAccess(self._user, item, requiredPermission) is False:
                 logger.debug(
@@ -951,7 +952,7 @@ class ModelHandler(BaseModelHandler):
                     permissions.hasAccess(
                         typing.cast('User', self._user),
                         item,
-                        permissions.PermissionType.READ,
+                        uds.core.types.permissions.PermissionType.READ,
                     )
                     is False
                 ):
@@ -1030,7 +1031,7 @@ class ModelHandler(BaseModelHandler):
             try:
                 val = self.model.objects.get(uuid=self._args[0].lower())
 
-                self.ensureAccess(val, permissions.PermissionType.READ)
+                self.ensureAccess(val, uds.core.types.permissions.PermissionType.READ)
 
                 res = self.item_as_dict(val)
                 self.fillIntanceFields(val, res)
@@ -1099,7 +1100,7 @@ class ModelHandler(BaseModelHandler):
 
         # Here, self.model() indicates an "django model object with default params"
         self.ensureAccess(
-            self.model(), permissions.PermissionType.ALL, root=True
+            self.model(), uds.core.types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
         try:
@@ -1198,7 +1199,7 @@ class ModelHandler(BaseModelHandler):
             raise exceptions.RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
-            self.model(), permissions.PermissionType.ALL, root=True
+            self.model(), uds.core.types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:

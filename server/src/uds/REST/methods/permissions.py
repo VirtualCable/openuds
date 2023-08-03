@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import uds.core.types.permissions
 
 from uds.core.util import permissions
 from uds.core.util.rest.tools import match
@@ -130,7 +131,7 @@ class Permissions(Handler):
 
         la = len(self._args)
 
-        perm = permissions.PermissionType.from_str(self._params.get('perm', '0'))
+        perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
 
         def add_user_permission(cls_param: str, obj_param: str, user_param: str) -> typing.List[typing.Dict]:
             cls = Permissions.getClass(cls_param)

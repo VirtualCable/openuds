@@ -36,7 +36,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, exceptions, types
-from uds.core.util import blocker, permissions
+from uds.core.types import blocker, permissions
 from uds.core.util.log import LogLevel
 from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.core.util.os_detector import KnownOS
@@ -103,7 +103,7 @@ class ServersTokens(ModelHandler):
     model = models.RegisteredServer
     model_exclude = {
         'kind__in': [
-            types.servers.Type.ACTOR,
+            types.servers.ServerType.ACTOR,
         ]
     }
     path = 'servers'
@@ -129,7 +129,7 @@ class ServersTokens(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': types.servers.Type(
+            'type': types.servers.ServerType(
                 item.kind
             ).as_str(),  # type is a reserved word, so we use "kind" instead on model
             'os': item.os_type,

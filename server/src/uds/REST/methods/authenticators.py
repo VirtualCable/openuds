@@ -35,6 +35,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
+import uds.core.types.permissions
 from uds.models import Authenticator, Network, MFA
 from uds.core import auths
 from uds.core.environment import Environment
@@ -192,7 +193,7 @@ class Authenticators(ModelHandler):
 
     # Custom "search" method
     def search(self, item: Authenticator) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, permissions.PermissionType.READ)
+        self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):

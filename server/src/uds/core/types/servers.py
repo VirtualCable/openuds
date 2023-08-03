@@ -31,7 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 
-class Type(enum.IntEnum):
+class ServerType(enum.IntEnum):
     TUNNEL = 1
     ACTOR = 2
     SERVER = 3
@@ -43,8 +43,8 @@ class Type(enum.IntEnum):
 
     def path(self) -> str:
         return {
-            Type.TUNNEL: 'tunnel',
-            Type.ACTOR: 'actor',
-            Type.SERVER: 'server',
-            Type.LEGACY: '',  # Legacy has no path, does not listen to anything
+            ServerType.TUNNEL: 'tunnel',
+            ServerType.ACTOR: 'actor',
+            ServerType.SERVER: 'server',
+            ServerType.LEGACY: '',  # Legacy has no path, does not listen to anything
         }[self]
