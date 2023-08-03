@@ -41,7 +41,6 @@ def migrate_old_data(apps, schema_editor) -> None:
                 username=token.username,
                 ip_from=token.ip_from,
                 ip=token.ip,
-                ip_version=token.ip_version,
                 hostname=token.hostname,
                 token=token.token,
                 stamp=token.stamp,
@@ -72,7 +71,6 @@ def revert_old_data(apps, schema_editor) -> None:
             username=server.username,
             ip_from=server.ip_from,
             ip=server.ip,
-            ip_version=server.ip_version,
             hostname=server.hostname,
             token=server.token,
             stamp=server.stamp,
@@ -161,11 +159,6 @@ class Migration(migrations.Migration):
             model_name="registeredserver",
             name="version",
             field=models.CharField(default="4.0.0", max_length=32),
-        ),
-        migrations.AddField(
-            model_name="registeredserver",
-            name="ip_version",
-            field=models.IntegerField(default=4),
         ),
         migrations.AddField(
             model_name="registeredserver",

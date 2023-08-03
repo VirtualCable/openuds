@@ -56,11 +56,9 @@ class ServerRegister(Handler):
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         serverToken: models.RegisteredServer
-        now = getSqlDatetimeAsUnix()
-        ip_version = 4
+        now = getSqlDatetime()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
-            ip_version = 6
             # If zone is present, remove it
             ip = ip.split('%')[0]
 
@@ -69,13 +67,14 @@ class ServerRegister(Handler):
             # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
             serverToken = models.RegisteredServer.objects.get(
-                ip=ip, ip_version=ip_version, hostname=self._params['hostname'], kind=self._params['type']
+                ip=ip, kind=self._params['type']
             )
             # Update parameters
+            serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
-            serverToken.stamp = getSqlDatetime()
+            serverToken.stamp = now
             serverToken.kind = self._params['type']
             serverToken.save()
         except Exception:
@@ -84,11 +83,10 @@ class ServerRegister(Handler):
                     username=self._user.pretty_name,
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
-                    ip_version=ip_version,
                     hostname=self._params['hostname'],
                     token=models.RegisteredServer.create_token(),
                     log_level=self._params.get('log_level', LogLevel.INFO.value),
-                    stamp=getSqlDatetime(),
+                    stamp=now,
                     kind=self._params['type'],
                     sub_kind=self._params.get('sub_kind', ''), # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),

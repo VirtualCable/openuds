@@ -112,7 +112,6 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     username = models.CharField(max_length=128)
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
     ip = models.CharField(max_length=MAX_IPV6_LENGTH)
-    ip_version = models.IntegerField(default=4)  # 4 or 6, version of ip fields
 
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
     listen_port = models.IntegerField(
@@ -185,11 +184,22 @@ class RegisteredServer(UUIDModel, TaggingMixin):
 
     @property
     def server_type(self) -> types.servers.ServerType:
+        """Returns the server type of this server
+        """
         return types.servers.ServerType(self.kind)
 
     @server_type.setter
     def server_type(self, value: types.servers.ServerType) -> None:
+        """Sets the server type of this server
+        """
         self.kind = value.value
+
+
+    @property
+    def ip_version(self) -> int: 
+        """Returns the ip version of this server
+        """
+        return 6 if ':' in self.ip else 4
 
     def url(
         self, path: str, *, port: int = SERVER_DEFAULT_LISTEN_PORT, secret: typing.Optional[str] = None
