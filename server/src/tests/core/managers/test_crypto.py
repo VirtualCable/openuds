@@ -32,6 +32,7 @@
 """
 import typing
 import datetime
+import uuid as uuid_type
 
 from django.conf import settings
 
@@ -117,9 +118,13 @@ class CryptoManagerTest(UDSTestCase):
             self.assertIsInstance(hashValue, str, 'Returned hash must be an string')
 
     def test_Uuid(self) -> None:
-        self.manager._counter = 0
-        self.assertIsInstance(self.manager.uuid(), str)
-        self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
+        uuid = self.manager.uuid()
+        # Ensure is an string
+        self.assertIsInstance(uuid, str)
+        # Ensure is lowercase
+        self.assertEqual(uuid, uuid.lower())
+        # Ensure is a valid uuid
+        uuid_type.UUID(uuid)
 
         for o in (
             (1, '47c69004-5f4c-5266-b93d-747b318e2d3f'),
@@ -133,8 +138,10 @@ class CryptoManagerTest(UDSTestCase):
             uuid = self.manager.uuid(o[0])
             self.assertIsInstance(uuid, str, 'Returned uuid must be an string')
             self.assertEqual(uuid, o[1])
-
-        self.assertEqual(1, self.manager._counter, 'Counter has note been incremented!')
+            # Ensure is lowercase
+            self.assertEqual(uuid, uuid.lower())
+            # Ensure is a valid uuid
+            uuid_type.UUID(uuid)
 
     def testFastCrypt(self) -> None:
         # Fast crypt uses random padding text, so the last block can be different

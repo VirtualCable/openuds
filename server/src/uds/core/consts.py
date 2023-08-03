@@ -52,3 +52,6 @@ SERVER_DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 OK: typing.Final[
     str
 ] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
+
+# Maximum number of failures before blocking on REST API
+ALLOWED_FAILS: typing.Final[int] = 5

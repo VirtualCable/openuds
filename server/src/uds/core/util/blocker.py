@@ -29,13 +29,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import functools
 import logging
+import typing
 
+from uds.core import consts
+from uds.core.exceptions import BlockAccess
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.exceptions import BlockAccess
 from uds.REST.exceptions import AccessDenied
 
 if typing.TYPE_CHECKING:
@@ -43,13 +44,14 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-ALLOWED_FAILS: typing.Final[int] = 5
-
 blockCache = Cache('uds:blocker')  # One year
 
 RT = typing.TypeVar('RT')
 
-def blocker(request_attr: typing.Optional[str] = None) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+
+def blocker(
+    request_attr: typing.Optional[str] = None,
+) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator that will block the actor if it has more than ALLOWED_FAILS failures in BLOCK_ACTOR_TIME seconds
     GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() --> If true, block actor after ALLOWED_FAILS failures
@@ -65,6 +67,7 @@ def blocker(request_attr: typing.Optional[str] = None) -> typing.Callable[[typin
         Decorator
 
     """
+
     def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
@@ -81,9 +84,9 @@ def blocker(request_attr: typing.Optional[str] = None) -> typing.Callable[[typin
 
             # if ip is blocked, raise exception
             failuresCount = blockCache.get(ip, 0)
-            if failuresCount >= ALLOWED_FAILS:
+            if failuresCount >= consts.ALLOWED_FAILS:
                 raise AccessDenied
-            
+
             try:
                 result = f(*args, **kwargs)
             except BlockAccess:
@@ -98,6 +101,7 @@ def blocker(request_attr: typing.Optional[str] = None) -> typing.Callable[[typin
             blockCache.delete(ip)
 
             return result
-        return wrapper
-    return decorator
 
+        return wrapper
+
+    return decorator

@@ -35,7 +35,7 @@ import time
 import typing
 
 # from uds.core import VERSION
-from uds.core import exceptions, osmanagers, types
+from uds.core import consts, exceptions, osmanagers, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.util import log, security
@@ -58,7 +58,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-ALLOWED_FAILS = 8  # More than enough for now
 MANAGED = 'managed'
 UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
 
@@ -99,7 +98,7 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
         return
     fails = cache.get(request.ip) or 0
-    if fails >= ALLOWED_FAILS:
+    if fails >= consts.ALLOWED_FAILS:
         logger.info(
             'Access to actor from %s is blocked for %s seconds since last fail',
             request.ip,

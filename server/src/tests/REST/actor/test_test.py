@@ -30,8 +30,9 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts
 from uds.REST.handlers import AUTH_TOKEN_HEADER
-from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
+from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED
 
 from ...utils import rest
 
@@ -91,7 +92,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
 
         # We have ALLOWED_FAILS until we get blocked for a while
         # Next one will give 403
-        for a in range(ALLOWED_FAILS):
+        for a in range(consts.ALLOWED_FAILS):
             response = invalid()
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['error'], 'invalid token')

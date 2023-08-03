@@ -30,32 +30,23 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import random
-import time
-import string
 import functools
 import logging
+import random
+import string
+import time
 import typing
 
-
-from uds.core.managers.crypto import CryptoManager
-
 from uds.core import VERSION as UDS_VERSION
-from uds.core.util.config import GlobalConfig
-from uds.core.util.model import processUuid
-from uds.core.util.cache import Cache
+from uds.core import consts
 from uds.core.auths.auth import authenticate
-
-from uds.core.util.model import getSqlDatetimeAsUnix
-
-from uds.REST import RequestError
-from uds.REST import Handler
-from uds.REST import AccessDenied
-from uds.REST.utils import rest_result
-
+from uds.core.managers.crypto import CryptoManager
+from uds.core.util.cache import Cache
+from uds.core.util.config import GlobalConfig
+from uds.core.util.model import getSqlDatetimeAsUnix, processUuid
 from uds.models import Authenticator
-
-ALLOWED_FAILS = 5
+from uds.REST import AccessDenied, Handler, RequestError
+from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +103,7 @@ class Login(Handler):
         # Checks if client is "blocked"
         fail_cache = Cache('RESTapi')
         fails = fail_cache.get(self._request.ip) or 0
-        if fails > ALLOWED_FAILS:
+        if fails > consts.ALLOWED_FAILS:
             logger.info(
                 'Access to REST API %s is blocked for %s seconds since last fail',
                 self._request.ip,
@@ -133,12 +124,9 @@ class Login(Handler):
                 raise RequestError('Invalid parameters (no auth)')
 
             scrambler: str = ''.join(
-                random.SystemRandom().choice(string.ascii_letters + string.digits)
-                for _ in range(32)
+                random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)
             )
-            authId: typing.Optional[str] = self._params.get(
-                'authId', self._params.get('auth_id', None)
-            )
+            authId: typing.Optional[str] = self._params.get('authId', self._params.get('auth_id', None))
             authLabel: typing.Optional[str] = self._params.get(
                 'auth_label',
                 self._params.get('authSmallName', None),
@@ -151,33 +139,20 @@ class Login(Handler):
 
             username, password = self._params['username'], self._params['password']
             locale: str = self._params.get('locale', 'en')
-            if (
-                authName == 'admin'
-                or authLabel == 'admin'
-                or authId == '00000000-0000-0000-0000-000000000000'
-            ):
-                if (
-                    GlobalConfig.SUPER_USER_LOGIN.get(True) == username
-                    and CryptoManager().checkHash(password, GlobalConfig.SUPER_USER_PASS.get(True))
+            if authName == 'admin' or authLabel == 'admin' or authId == '00000000-0000-0000-0000-000000000000':
+                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().checkHash(
+                    password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
-                    self.genAuthToken(
-                        -1, username, password, locale, platform, True, True, scrambler
-                    )
+                    self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
                     return Login.result(result='ok', token=self.getAuthToken())
                 return Login.result(error='Invalid credentials')
 
             # invalid login
             if (
-                functools.reduce(
-                    lambda a, b: (a << 4) + b, [i for i in username.encode()]
-                )
+                functools.reduce(lambda a, b: (a << 4) + b, [i for i in username.encode()])
                 == 474216907296766572900491101513
             ):
-                return Login.result(
-                    result=bytes(
-                        [i ^ 64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']
-                    ).decode()
-                )
+                return Login.result(result=bytes([i ^ 64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']).decode())
 
             # Will raise an exception if no auth found
             if authId:
@@ -196,9 +171,7 @@ class Login(Handler):
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
-                fail_cache.put(
-                    self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.getInt()
-                )
+                fail_cache.put(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.getInt())
 
                 return Login.result(error='Invalid credentials')
             return Login.result(
@@ -249,9 +222,7 @@ class Auths(Handler):
         auth: Authenticator
         for auth in Authenticator.objects.all():
             theType = auth.getType()
-            if paramAll or (
-                theType.isCustom() is False and theType.typeType not in ('IP',)
-            ):
+            if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
                 yield {
                     'authId': auth.uuid,
                     'authSmallName': str(auth.small_name),  # Deprecated

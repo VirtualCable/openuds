@@ -28,18 +28,19 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
+import typing
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
-from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED, ALLOWED_FAILS
 from uds import models
+from uds.core import consts
+from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED
 
+from ...fixtures import rest as rest_fixtures
+from ...utils import rest
 
 logger = logging.getLogger(__name__)
 
-from ...utils import rest
-from ...fixtures import rest as rest_fixtures
 
 class ServicePoolTest(rest.test.RESTTestCase):
     def setUp(self) -> None:
@@ -52,7 +53,7 @@ class ServicePoolTest(rest.test.RESTTestCase):
 
         response = self.client.rest_get(url)
         self.assertEqual(response.status_code, 404)
-    
+
     def test_service_pools(self) -> None:
         url = f'servicespools/overview'
 
@@ -70,4 +71,3 @@ class ServicePoolTest(rest.test.RESTTestCase):
             # Get from DB the service pool
             db_pool = models.ServicePool.objects.get(uuid=service_pool['id'])
             self.assertTrue(rest.assertions.assertServicePoolIs(db_pool, service_pool))
-
