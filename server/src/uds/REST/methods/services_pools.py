@@ -606,7 +606,7 @@ class ServicesPools(ModelHandler):
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
-        if fallback != '':
+        if fallback:
             logger.debug('Setting fallback of %s to %s', item.name, fallback)
             item.fallbackAccess = fallback
             item.save()
