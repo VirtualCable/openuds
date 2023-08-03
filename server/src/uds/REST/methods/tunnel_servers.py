@@ -30,22 +30,18 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import re
 import typing
-from django.db import models
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types, consts
-from uds.core.environment import Environment
 import uds.core.types.permissions
+from uds.core import types
 from uds.core.ui import gui
-from uds.core.util import permissions
+from uds.core.util import permissions, validators
 from uds.core.util.model import processUuid
-from uds.models import RegisteredServerGroup, RegisteredServer
-from uds.REST import NotFound
-from uds.REST.model import ModelHandler, DetailHandler
+from uds.models import RegisteredServer, RegisteredServerGroup
+from uds.REST.model import DetailHandler, ModelHandler
 
 from .users_groups import Groups, Users
 
@@ -59,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 class TunnelServers(DetailHandler):
-    path = 'tunnel'
+    path = 'tunnels'
     name = 'servers'
     custom_methods = ['maintenance']
 
@@ -68,7 +64,7 @@ class TunnelServers(DetailHandler):
             multi = False
             if item is None:
                 multi = True
-                q = parent.servers.all().order_by('name')
+                q = parent.servers.all().order_by('hostname')
             else:
                 q = parent.servers.filter(uuid=processUuid(item))
             res = []
@@ -141,7 +137,7 @@ class TunnelServers(DetailHandler):
 
 # Enclosed methods under /auth path
 class Tunnels(ModelHandler):
-    path = 'tunnel'
+    path = 'tunnels'
     name = 'tunnels'
     model = RegisteredServerGroup
     model_filter = {'kind': types.servers.ServerType.TUNNEL}
@@ -154,12 +150,17 @@ class Tunnels(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'comments': {'title': _('Comments')}},
         {'host': {'title': _('Host')}},
-        {'servers_count': {'title': _('Users'), 'type': 'numeric', 'width': '1rem'}},
+        {'port': {'title': _('Port')}},
+        {'servers_count': {'title': _('Servers'), 'type': 'numeric', 'width': '1rem'}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        return self.addDefaultFields(
+        return self.addField(
+            self.addDefaultFields(
+                [],
+                ['name', 'comments', 'tags'],
+            ),
             [
                 {
                     'name': 'host',
@@ -180,7 +181,6 @@ class Tunnels(ModelHandler):
                     'order': 101,  # At end
                 },
             ],
-            ['name', 'comments', 'tags'],
         )
 
     def item_as_dict(self, item: 'RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
@@ -188,7 +188,8 @@ class Tunnels(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
-            'host': item.pretty_host,
+            'host': item.host,
+            'port': item.port,
             'tags': [tag.tag for tag in item.tags.all()],
             'transports_count': item.transports.count(),
             'servers_count': item.servers.count(),
@@ -198,3 +199,6 @@ class Tunnels(ModelHandler):
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['kind'] = types.servers.ServerType.TUNNEL.value
         fields['port'] = int(fields['port'])
+        # Ensure host is a valid IP(4 or 6) or hostname
+        validators.validateHost(fields['host'])
+

@@ -66,6 +66,8 @@ TABLEINFO: typing.Final[str] = 'tableinfo'
 GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
 
+FieldType = typing.Mapping[str, typing.Any]
+
 # pylint: disable=unused-argument
 class BaseModelHandler(Handler):
     """
@@ -73,7 +75,7 @@ class BaseModelHandler(Handler):
     """
 
     def addField(
-        self, gui: typing.List[typing.Any], field: typing.Dict[str, typing.Any]
+        self, gui: typing.List[typing.Any], field: typing.Union[FieldType, typing.List[FieldType]]
     ) -> typing.List[typing.Any]:
         """
         Add a field to a "gui" description.
@@ -82,28 +84,33 @@ class BaseModelHandler(Handler):
         :param gui: List of "gui" items where the field will be added
         :param field: Field to be added (dictionary)
         """
-        v = {
-            'name': field.get('name', ''),
-            'value': '',
-            'gui': {
-                'required': field.get('required', False),
-                'defvalue': field.get('value', ''),
-                'value': field.get('value', ''),
-                'minValue': field.get('minValue', '987654321'),
-                'label': field.get('label', ''),
-                'length': field.get('length', 128),
-                'multiline': field.get('multiline', 0),
-                'tooltip': field.get('tooltip', ''),
-                'rdonly': field.get('rdonly', False),
-                'type': str(field.get('type', uiGui.InputField.Types.TEXT)),
-                'order': field.get('order', 0),
-                'values': field.get('values', []),
-            },
-        }
-        if field.get('tab', None):
-            v['gui']['tab'] = _(str(field['tab']))
-        gui.append(v)
+        if isinstance(field, list):
+            for i in field:
+                gui = self.addField(gui, i)
+        else:
+            v = {
+                'name': field.get('name', ''),
+                'value': '',
+                'gui': {
+                    'required': field.get('required', False),
+                    'defvalue': field.get('value', ''),
+                    'value': field.get('value', ''),
+                    'minValue': field.get('minValue', '987654321'),
+                    'label': field.get('label', ''),
+                    'length': field.get('length', 128),
+                    'multiline': field.get('multiline', 0),
+                    'tooltip': field.get('tooltip', ''),
+                    'rdonly': field.get('rdonly', False),
+                    'type': str(field.get('type', uiGui.InputField.Types.TEXT)),
+                    'order': field.get('order', 0),
+                    'values': field.get('values', []),
+                },
+            }
+            if field.get('tab', None):
+                v['gui']['tab'] = _(str(field['tab']))
+            gui.append(v)
         return gui
+    
 
     def addDefaultFields(
         self, gui: typing.List[typing.Any], flds: typing.List[str]

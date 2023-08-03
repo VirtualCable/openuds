@@ -228,6 +228,17 @@ def validatePort(portStr: str) -> int:
     """
     return validateNumeric(portStr, minValue=0, maxValue=65535, fieldName='Port')
 
+def validateHost(host: str) -> str:
+    """
+    Validates that a host is valid
+    :param host: host to validate
+    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    """
+    try:
+        dj_validators.validate_ipv46_address(host)
+        return host
+    except Exception:
+        return validateHostname(host, 255, False)
 
 def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
     """
