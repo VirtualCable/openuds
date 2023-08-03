@@ -103,16 +103,16 @@ class TunnelServers(DetailHandler):
             },
             {'state': {'title': _('State')}},
         ]
-    
+
     def saveItem(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]) -> None:
-        # Item is always None here, because we can "add" existing servers to a group, but not create new ones
+        # Item is the uuid of the server to add
         server: typing.Optional['RegisteredServer'] = None  # Avoid warning on reference before assignment
 
-        if item is not None:
-            raise self.invalidRequestException('Cannot create new servers from here')
+        if item is None:
+            raise self.invalidItemException('No server specified')
 
         try:
-            server = RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+            server = RegisteredServer.objects.get(uuid=processUuid(item))
             parent.servers.add(server)
         except Exception:
             raise self.invalidItemException() from None
@@ -159,18 +159,28 @@ class Tunnels(ModelHandler):
     ]
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        return self.addField(
-            self.addDefaultFields([], ['name', 'comments', 'tags']),
-            {
-                'name': 'net_string',
-                'value': '',
-                'label': gettext('Network range'),
-                'tooltip': gettext(
-                    'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
-                ),
-                'type': gui.InputField.Types.TEXT,
-                'order': 100,  # At end
-            },
+        return self.addDefaultFields(
+            [
+                {
+                    'name': 'host',
+                    'value': '',
+                    'label': gettext('Hostname'),
+                    'tooltip': gettext(
+                        'Hostname or IP address of the server where the tunnel is visible by the users'
+                    ),
+                    'type': gui.InputField.Types.TEXT,
+                    'order': 100,  # At end
+                },
+                {
+                    'name': 'port',
+                    'value': 443,
+                    'label': gettext('Port'),
+                    'tooltip': gettext('Port where the tunnel is visible by the users'),
+                    'type': gui.InputField.Types.NUMERIC,
+                    'order': 101,  # At end
+                },
+            ],
+            ['name', 'comments', 'tags'],
         )
 
     def item_as_dict(self, item: 'RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
@@ -184,3 +194,7 @@ class Tunnels(ModelHandler):
             'servers_count': item.servers.count(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }
+
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+        fields['kind'] = types.servers.ServerType.TUNNEL.value
+        fields['port'] = int(fields['port'])

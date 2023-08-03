@@ -29,8 +29,6 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
-import codecs
 import typing
 import functools
 import logging

@@ -38,7 +38,8 @@ from django.utils.translation import gettext as _
 
 from uds.models import Calendar, CalendarAction
 from uds.models.calendar_action import CALENDAR_ACTION_DICT
-from uds.core.types import log, permissions
+from uds.core import types
+from uds.core.util import log
 from uds.core.util.model import processUuid
 
 from uds.REST.model import DetailHandler
@@ -238,7 +239,7 @@ class ActionsCalendars(DetailHandler):
         logger.debug('Launching action')
         uuid = processUuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
-        self.ensureAccess(calendarAction, permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(calendarAction, types.permissions.PermissionType.MANAGEMENT)
 
         logStr = (
             f'Launched scheduled action "{calendarAction.calendar.name},'

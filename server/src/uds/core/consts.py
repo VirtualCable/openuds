@@ -48,3 +48,7 @@ MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
 # Default UDS Registerd Server listen port
 SERVER_DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 
+# REST Related constants
+OK: typing.Final[
+    str
+] = 'ok'  # Constant to be returned when result is just "operation complete successfully"

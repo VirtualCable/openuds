@@ -32,27 +32,25 @@
 # pylint: disable=too-many-public-methods
 
 import fnmatch
+import logging
 import re
 import types
 import typing
 
-import logging
-
-from django.utils.translation import gettext as _
 from django.db import IntegrityError, models
+from django.utils.translation import gettext as _
+
+from uds.core.consts import OK
 import uds.core.types.permissions
-
-from uds.core.ui import gui as uiGui
-from uds.core.util import log
-from uds.core.util import permissions
-from uds.core.util.model import processUuid
-from uds.core.module import Module
 from uds.core import exceptions as g_exceptions
-
-from uds.models import Tag, TaggingMixin, ManagedObjectModel, Network
+from uds.core.module import Module
+from uds.core.ui import gui as uiGui
+from uds.core.util import log, permissions
+from uds.core.util.model import processUuid
+from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
+from uds.REST.utils import rest_result
 
 from . import exceptions
-
 from .handlers import Handler
 
 # Not imported at runtime, just for type checking
@@ -67,10 +65,6 @@ TYPES: typing.Final[str] = 'types'
 TABLEINFO: typing.Final[str] = 'tableinfo'
 GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
-
-OK: typing.Final[
-    str
-] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
 # pylint: disable=unused-argument
 class BaseModelHandler(Handler):
@@ -554,7 +548,7 @@ class DetailHandler(BaseModelHandler):
         logger.debug('Invoking proper saving detail item %s', item)
         self.saveItem(parent, item)
         # Empty response
-        return ''
+        return rest_result(OK)
 
     def post(self) -> typing.Any:
         """
