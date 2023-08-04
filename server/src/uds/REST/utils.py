@@ -34,7 +34,7 @@ from uds.core import VERSION
 from uds.core.util.model import getSqlDatetimeAsUnix
 
 
-def rest_result(result: typing.Any, **kwargs) -> typing.MutableMapping[str, typing.Any]:
+def rest_result(result: typing.Any, **kwargs) -> typing.Dict[str, typing.Any]:
     '''
     Returns a REST result
     '''
