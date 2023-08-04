@@ -317,7 +317,7 @@ class ProxmoxClient:
     def getBestNodeForVm(
         self,
         minMemory: int = 0,
-        mustHaveVGPUs: typing.Optional[bool] = None,
+        mustHaveVGPUS: typing.Optional[bool] = None,
         mdevType: typing.Optional[str] = None,
     ) -> typing.Optional[types.NodeStats]:
         '''
@@ -338,7 +338,7 @@ class ProxmoxClient:
         for node in filter(lambda x: x.status == 'online', self.getNodesStats()):
             if minMemory and node.mem < minMemory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
-            if mustHaveVGPUs is not None and mustHaveVGPUs != bool(self.nodeGpuDevices(node.name)):
+            if mustHaveVGPUS is not None and mustHaveVGPUS != bool(self.nodeGpuDevices(node.name)):
                 continue  # Skips nodes without VGPUS if vGPUS are required
             if mdevType and not self.nodeHasFreeVGPU(node.name, mdevType):
                 continue  # Skips nodes without free vGPUS of required type if a type is required
@@ -362,7 +362,7 @@ class ProxmoxClient:
         toNode: typing.Optional[str] = None,
         toStorage: typing.Optional[str] = None,
         toPool: typing.Optional[str] = None,
-        mustHaveVGPUs: typing.Optional[bool] = None,
+        mustHaveVGPUS: typing.Optional[bool] = None,
     ) -> types.VmCreationResult:
         vmInfo = self.getVmInfo(vmId)
 
@@ -373,7 +373,7 @@ class ProxmoxClient:
             # If storage is not shared, must be done on same as origin
             if toStorage and self.getStorage(toStorage, vmInfo.node).shared:
                 node = self.getBestNodeForVm(
-                    minMemory=-1, mustHaveVGPUS=mustHaveVGPUs, mdevType=vmInfo.vgpu_type
+                    minMemory=-1, mustHaveVGPUS=mustHaveVGPUS, mdevType=vmInfo.vgpu_type
                 )
                 if node is None:
                     raise ProxmoxError(
@@ -384,7 +384,7 @@ class ProxmoxClient:
                 toNode = fromNode
 
         # Check if mustHaveVGPUS is compatible with the node
-        if mustHaveVGPUs is not None and mustHaveVGPUs != bool(self.nodeGpuDevices(toNode)):
+        if mustHaveVGPUS is not None and mustHaveVGPUS != bool(self.nodeGpuDevices(toNode)):
             raise ProxmoxNoGPUError(f'Node "{toNode}" does not have VGPUS and they are required')
         
         if self.nodeHasFreeVGPU(toNode, vmInfo.vgpu_type):
