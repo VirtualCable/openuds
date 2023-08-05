@@ -163,7 +163,8 @@ class Config:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
                     readed = DBConfig.objects.get(section=self._section.name(), key=self._key)
                     self._data = readed.value
-                    self._crypt = readed.crypt or self._crypt
+                    # Ensure password are not encrypted again on DB, even if legacy values were
+                    self._crypt = (readed.crypt or self._crypt) if self._type != Config.FieldType.PASSWORD else False
                     self._longText = readed.long
                     if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
