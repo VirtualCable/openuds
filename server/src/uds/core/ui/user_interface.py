@@ -154,9 +154,7 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choiceItem(
-        id_: typing.Union[str, int], text: typing.Union[str, int]
-    ) -> 'gui.ChoiceType':
+    def choiceItem(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'gui.ChoiceType':
         """
         Helper method to create a single choice item.
 
@@ -191,9 +189,7 @@ class gui:
             return []
 
         # Helper to convert an item to a dict
-        def choiceFromValue(
-            val: typing.Union[str, int, typing.Dict[str, str]]
-        ) -> 'gui.ChoiceType':
+        def choiceFromValue(val: typing.Union[str, int, typing.Dict[str, str]]) -> 'gui.ChoiceType':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
                     raise ValueError(f'Invalid choice dict: {val}')
@@ -217,9 +213,7 @@ class gui:
         raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
-    def convertToList(
-        vals: typing.Union[str, int, typing.Iterable]
-    ) -> typing.List[str]:
+    def convertToList(vals: typing.Union[str, int, typing.Iterable]) -> typing.List[str]:
         if vals:
             if isinstance(vals, (str, int)):
                 return [str(vals)]
@@ -227,9 +221,7 @@ class gui:
         return []
 
     @staticmethod
-    def choiceImage(
-        id_: typing.Union[str, int], text: str, img: str
-    ) -> typing.Dict[str, str]:
+    def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> typing.Dict[str, str]:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod
@@ -337,9 +329,7 @@ class gui:
             if 'type' in options:
                 self.type = options['type']  # set type first
 
-            defvalue = options.get(
-                'defvalue', options.get('defaultValue', options.get('defValue', ''))
-            )
+            defvalue = options.get('defvalue', options.get('defaultValue', options.get('defValue', '')))
             self._data.update(
                 {
                     'length': options.get(
@@ -399,11 +389,7 @@ class gui:
             """
             if callable(self._data['value']):
                 return self._data['value']()
-            return (
-                self._data['value']
-                if self._data['value'] is not None
-                else self.defValue
-            )
+            return self._data['value'] if self._data['value'] is not None else self.defValue
 
         @value.setter
         def value(self, value: typing.Any) -> None:
@@ -438,11 +424,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            return (
-                self._data['defvalue']
-                if not callable(self._data['defvalue'])
-                else self._data['defvalue']()
-            )
+            return self._data['defvalue'] if not callable(self._data['defvalue']) else self._data['defvalue']()
 
         @defValue.setter
         def defValue(self, defValue: typing.Any) -> None:
@@ -479,6 +461,13 @@ class gui:
             """
             return True
 
+        def __str__(self):
+            return str(self.value)
+        
+        def __repr__(self):
+            args = ','.join([f'{k}="{v}"' for k,v in self._data.items()])
+            return f'{self.__class__.__name__}({args})'
+
     class TextField(InputField):
         """
         This represents a text field.
@@ -511,7 +500,7 @@ class gui:
 
         """
 
-        class PatternType(enum.Enum):
+        class PatternType(enum.StrEnum):
             IPV4 = 'ipv4'
             IPV6 = 'ipv6'
             IP = 'ip'
@@ -541,9 +530,7 @@ class gui:
             #   - 'path'     # Path (absolute or relative, Windows or Unix)
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
-            self._data['pattern'] = options.get(
-                'pattern', gui.TextField.PatternType.NONE
-            )
+            self._data['pattern'] = options.get('pattern', gui.TextField.PatternType.NONE)
             if isinstance(self._data['pattern'], str):
                 self._data['pattern'] = gui.TextField.PatternType(self._data['pattern'])
 
@@ -682,9 +669,7 @@ class gui:
                 datetime.date: the date that this object holds, or "min" | "max" on error
             """
             try:
-                return datetime.datetime.strptime(
-                    self.value, '%Y-%m-%d'
-                ).date()  # ISO Format
+                return datetime.datetime.strptime(self.value, '%Y-%m-%d').date()  # ISO Format
             except Exception:
                 return datetime.date.min if useMin else datetime.date.max
 
@@ -704,11 +689,10 @@ class gui:
                 return datetime.datetime.min if useMin else datetime.datetime.max
 
         def stamp(self) -> int:
-            return int(
-                time.mktime(
-                    datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()
-                )
-            )
+            return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
+
+        def __str__(self):
+            return str(self.datetime())
 
     class PasswordField(InputField):
         """
@@ -737,6 +721,9 @@ class gui:
 
         def cleanStr(self):
             return str(self.value).strip()
+
+        def __str__(self):
+            return '********'
 
     class HiddenField(InputField):
         """
@@ -822,6 +809,9 @@ class gui:
             Returns the value as bool
             """
             return self.isTrue()
+
+        def __str__(self):
+            return str(self.isTrue())
 
     class ChoiceField(InputField):
         """
@@ -1074,9 +1064,7 @@ class UserInterfaceType(type):
                 _gui[attrName]._data = copy.deepcopy(attr._data)
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
-        return typing.cast(
-            'UserInterfaceType', type.__new__(mcs, classname, bases, newClassDict)
-        )
+        return typing.cast('UserInterfaceType', type.__new__(mcs, classname, bases, newClassDict))
 
 
 class UserInterface(metaclass=UserInterfaceType):
@@ -1116,9 +1104,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         self._gui = copy.deepcopy(self._base_gui)
         for key, val in self._gui.items():  # And refresh self references to them
-            setattr(
-                self, key, val
-            )  # val is an InputField instance, so it is a reference to self._gui[key]
+            setattr(self, key, val)  # val is an InputField instance, so it is a reference to self._gui[key]
 
         if values is not None:
             for k, v in self._gui.items():
@@ -1201,7 +1187,7 @@ class UserInterface(metaclass=UserInterfaceType):
             return serializer.serialize(value)
 
         fw_converters: typing.Mapping[
-            gui.InfoField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
+            gui.InputField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
         ] = {
             gui.InputField.Types.TEXT: lambda x: x.value,
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x.value,
@@ -1209,19 +1195,11 @@ class UserInterface(metaclass=UserInterfaceType):
             gui.InputField.Types.PASSWORD: lambda x: (
                 CryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
-            gui.InputField.Types.HIDDEN: (
-                lambda x: None if not x.isSerializable() else x.value
-            ),
-            gui.InfoField.Types.CHOICE: lambda x: x.value,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(
-                serialize(x.value), 'base64'
-            ).decode(),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(
-                serialize(x.value), 'base64'
-            ).decode(),
-            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE
-            if x.isTrue()
-            else gui.FALSE,
+            gui.InputField.Types.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
+            gui.InputField.Types.CHOICE: lambda x: x.value,
+            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x.value,
             gui.InputField.Types.IMAGE: lambda x: x.value,
             gui.InputField.Types.DATE: lambda x: x.value,
@@ -1265,8 +1243,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # For future use, right now we only have one version
         version = values[  # pylint: disable=unused-variable
-            len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER)
-            + len(SERIALIZATION_VERSION)
+            len(SERIALIZATION_HEADER) : len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION)
         ]
 
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
@@ -1278,17 +1255,12 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # Set all values to defaults ones
         for k in self._gui:
-            if (
-                self._gui[k].isType(gui.InputField.Types.HIDDEN)
-                and self._gui[k].isSerializable() is False
-            ):
+            if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
             self._gui[k].value = self._gui[k].defValue
 
-        converters: typing.Mapping[
-            gui.InfoField.Types, typing.Callable[[str], typing.Any]
-        ] = {
+        converters: typing.Mapping[gui.InputField.Types, typing.Callable[[str], typing.Any]] = {
             gui.InputField.Types.TEXT: lambda x: x,
             gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
             gui.InputField.Types.NUMERIC: int,
@@ -1296,13 +1268,9 @@ class UserInterface(metaclass=UserInterfaceType):
                 CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
             ),
             gui.InputField.Types.HIDDEN: lambda x: None,
-            gui.InfoField.Types.CHOICE: lambda x: x,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(
-                codecs.decode(x.encode(), 'base64')
-            ),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(
-                codecs.decode(x.encode(), 'base64')
-            ),
+            gui.InputField.Types.CHOICE: lambda x: x,
+            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
             gui.InputField.Types.CHECKBOX: lambda x: x,
             gui.InputField.Types.IMAGE_CHOICE: lambda x: x,
             gui.InputField.Types.IMAGE: lambda x: x,
@@ -1343,10 +1311,7 @@ class UserInterface(metaclass=UserInterfaceType):
         try:
             # Set all values to defaults ones
             for k in self._gui:
-                if (
-                    self._gui[k].isType(gui.InputField.Types.HIDDEN)
-                    and self._gui[k].isSerializable() is False
-                ):
+                if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
                 self._gui[k].value = self._gui[k].defValue
@@ -1403,15 +1368,11 @@ class UserInterface(metaclass=UserInterfaceType):
         return res
 
     def errors(self) -> typing.List[ValidationFieldInfo]:
-        found_erros: typing.List[UserInterface.ValidationFieldInfo] = []
+        found_errors: typing.List[UserInterface.ValidationFieldInfo] = []
         for key, val in self._gui.items():
             if val.required and not val.value:
-                found_erros.append(
-                    UserInterface.ValidationFieldInfo(key, 'Field is required')
-                )
+                found_errors.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))
             if not val.validate():
-                found_erros.append(
-                    UserInterface.ValidationFieldInfo(key, 'Field is not valid')
-                )
+                found_errors.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
 
-        return found_erros
+        return found_errors

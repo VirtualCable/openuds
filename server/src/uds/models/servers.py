@@ -76,6 +76,14 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):  # type: ignore  # Mypy co
     transports: 'models.manager.RelatedManager[Transport]'
     servers: 'models.manager.RelatedManager[RegisteredServer]'
 
+    class Meta:
+        # Unique for host and port, so we can have only one group for each host:port
+        constraints = [
+            models.UniqueConstraint(
+                fields=['host', 'port'], name='unique_host_port_group'
+            )
+        ]
+
     @property
     def pretty_host(self) -> str:
         if self.port == 0:

@@ -86,7 +86,7 @@ def oldSerializeForm(ui) -> bytes:
         ):
             # logger.debug('Serializing value {0}'.format(v.value))
             val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
-        elif v.isType(gui.InfoField.Types.PASSWORD):
+        elif v.isType(gui.InputField.Types.PASSWORD):
             val = PASSWORD_FIELD + CryptoManager().AESCrypt(
                 v.value.encode('utf8'), UDSK, True
             )

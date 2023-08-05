@@ -1,24 +1,16 @@
 import typing
 
-from django.db import migrations, models
-from uds.core.util.os_detector import KnownOS
-from django.db import migrations, models
 import django.db.models.deletion
-import uds.core.util.model
-import uds.core.types.servers
+from django.db import migrations, models
 
+import uds.core.types.servers
+import uds.core.util.model
+from uds.core.util.os_detector import KnownOS
 
 ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.ServerType.ACTOR.value
 
 if typing.TYPE_CHECKING:
     import uds.models
-
-
-def migrate_html5rdp_transport(apps, schema_editor) -> None:
-    try:
-        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-    except Exception:  # nosec: ignore this
-        pass
 
 
 def migrate_old_data(apps, schema_editor) -> None:
@@ -125,6 +117,12 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
+        ),
+        migrations.AddConstraint(
+            model_name="registeredservergroup",
+            constraint=models.UniqueConstraint(
+                fields=("host", "port"), name="unique_host_port_group"
+            ),
         ),
         migrations.AddField(
             model_name="registeredserver",

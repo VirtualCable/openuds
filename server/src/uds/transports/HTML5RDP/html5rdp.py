@@ -73,7 +73,7 @@ class HTML5RDPTransport(transports.Transport):
     guacamoleServer = gui.TextField(
         label=_('Tunnel Server'),
         order=1,
-        tooltip=_('Host of the tunnel server (use http/https & port if needed) as accesible from users'),
+        tooltip=_('Host of the tunnel server (use https & port if needed) as accesible from users'),
         defvalue='https://',
         length=64,
         required=True,
