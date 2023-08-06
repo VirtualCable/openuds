@@ -27,30 +27,29 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+.. moduleauthor:: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import urllib.parse
+import urllib3
 import re
+import urllib3.exceptions
+import urllib.parse
 import typing
 import logging
 
-import urllib3
-import urllib3.exceptions
 import requests
-
-
-from uds.core.util import security
-from uds.core.util.decorators import allowCache, ensureConected
 
 from . import types
 
+
+from uds.core.util import security
+from uds.core.util.decorators import allowCache, ensureConnected
 
 # DEFAULT_PORT = 8006
 
 CACHE_DURATION = 120  # Keep cache 2 minutes by default
 CACHE_INFO_DURATION = 30
-CACHE_DURATION_LONG = 3600 * 24  # 24 hours
+CACHE_DURATION_LONG = 24 * 60 * 60  # 24 hours
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -80,9 +79,13 @@ class ProxmoxNodeUnavailableError(ProxmoxConnectionError):
     pass
 
 
+class ProxmoxNoGPUError(ProxmoxError):
+    pass
+
+
 # caching helper
 def cachingKeyHelper(obj: 'ProxmoxClient') -> str:
-    return getattr(obj, '_host', str(hash(obj)))
+    return obj._host  # pylint: disable=protected-access
 
 
 class ProxmoxClient:
@@ -113,7 +116,7 @@ class ProxmoxClient:
         self._credentials = (('username', username), ('password', password))
         self._validateCert = validateCertificate
         self._timeout = timeout
-        self._url = f'https://{self._host}:{self._port}/api2/json/'
+        self._url = 'https://{}:{}/api2/json/'.format(self._host, self._port)
 
         self.cache = cache
 
@@ -134,7 +137,7 @@ class ProxmoxClient:
     @staticmethod
     def checkError(response: 'requests.Response') -> typing.Any:
         if not response.ok:
-            errMsg = f'Status code {response.status_code}'
+            errMsg = 'Status code {}'.format(response.status_code)
             if response.status_code == 595:
                 raise ProxmoxNodeUnavailableError()
 
@@ -143,8 +146,8 @@ class ProxmoxClient:
 
             if response.status_code == 400:
                 try:
-                    errMsg = f'Errors on request: {response.json()["errors"]}'
-                except Exception:  # nosec:  No json or no error info
+                    errMsg = 'Errors on request: {}'.format(response.json()['errors'])
+                except Exception:  # nosec: No joson or no errors, use default msg
                     pass
 
             raise ProxmoxError(errMsg)
@@ -165,7 +168,7 @@ class ProxmoxClient:
 
             logger.debug('GET result to %s: %s -- %s', path, result.status_code, result.content)
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e) from None
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
@@ -177,7 +180,7 @@ class ProxmoxClient:
         try:
             result = security.secureRequestsSession(verify=self._validateCert).post(
                 self._getPath(path),
-                data=list(data or []) or None,
+                data=data,  # type: ignore
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
                 timeout=self._timeout,
@@ -185,7 +188,7 @@ class ProxmoxClient:
 
             logger.debug('POST result to %s: %s -- %s', path, result.status_code, result.content)
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e) from None
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
@@ -197,7 +200,7 @@ class ProxmoxClient:
         try:
             result = security.secureRequestsSession(verify=self._validateCert).delete(
                 self._getPath(path),
-                data=list(data or []) or None,
+                data=data,  # type: ignore
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
                 timeout=self._timeout,
@@ -211,7 +214,7 @@ class ProxmoxClient:
                 result.headers,
             )
         except requests.ConnectionError as e:
-            raise ProxmoxConnectionError(e) from None
+            raise ProxmoxConnectionError(e)
 
         return ProxmoxClient.checkError(result)
 
@@ -247,22 +250,21 @@ class ProxmoxClient:
     def test(self) -> bool:
         try:
             self.connect()
-        except Exception:
+        except Exception as e:
             # logger.error('Error testing proxmox: %s', e)
             return False
         return True
 
-    # pylint: disable=unused-argument
-    @ensureConected
+    @ensureConnected
     @allowCache('cluster', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
     def getClusterInfo(self, **kwargs) -> types.ClusterStatus:
         return types.ClusterStatus.fromJson(self._get('cluster/status'))
 
-    @ensureConected
+    @ensureConnected
     def getNextVMId(self) -> int:
         return int(self._get('cluster/nextid')['data'])
 
-    @ensureConected
+    @ensureConnected
     def isVMIdAvailable(self, vmId: int) -> bool:
         try:
             self._get(f'cluster/nextid?vmid={vmId}')
@@ -270,8 +272,7 @@ class ProxmoxClient:
             return False
         return True
 
-    # pylint: disable=unused-argument
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'nodeNets',
         CACHE_DURATION,
@@ -280,25 +281,45 @@ class ProxmoxClient:
         cachingKeyFnc=cachingKeyHelper,
     )
     def getNodeNetworks(self, node: str, **kwargs):
-        return self._get(f'nodes/{node}/network')['data']
+        return self._get('nodes/{}/network'.format(node))['data']
 
     # pylint: disable=unused-argument
-    @ensureConected
+    @ensureConnected
     @allowCache(
-        'nodeHasGpu',
+        'nodeGpuDevices',
         CACHE_DURATION_LONG,
         cachingArgs=1,
         cachingKWArgs=['node'],
         cachingKeyFnc=cachingKeyHelper,
     )
-    def nodeHasGpu(self, node: str, **kwargs) -> typing.Any:
-        for device in self._get(f'nodes/{node}/hardware/pci')['data']:
-            if 'mdev' in device:
-                return True
-        return False
+    def nodeGpuDevices(self, node: str, **kwargs) -> typing.List[str]:
+        return [device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if 'mdev' in device]
 
-    @ensureConected
-    def getBestNodeForVm(self, minMemory: int = 0, mustHaveVGPUS: typing.Optional[bool] = None) -> typing.Optional[types.NodeStats]:
+    @ensureConnected
+    def getNodeVGPUs(self, node: str, **kwargs) -> typing.List[typing.Any]:
+        return [
+            {
+                'name': gpu['name'],
+                'description': gpu['description'],
+                'device': device,
+                'available': gpu['available'],
+                'type': gpu['type'],
+            }
+            for device in self.nodeGpuDevices(node)
+            for gpu in self._get(f'nodes/{node}/hardware/pci/{device}/mdev')['data']
+        ]
+
+    @ensureConnected
+    def nodeHasFreeVGPU(self, node: str, vgpu_type: str, **kwargs) -> bool:
+        return any(gpu['available'] and gpu['type'] == vgpu_type for gpu in self.getNodeVGPUs(node))
+
+    @ensureConnected
+    def getBestNodeForVm(
+        self,
+        minMemory: int = 0,
+        mustHaveVGPUS: typing.Optional[bool] = None,
+        mdevType: typing.Optional[str] = None,
+    ) -> typing.Optional[types.NodeStats]:
         '''
         Returns the best node to create a VM on
 
@@ -317,9 +338,12 @@ class ProxmoxClient:
         for node in filter(lambda x: x.status == 'online', self.getNodesStats()):
             if minMemory and node.mem < minMemory + 512000000:  # 512 MB reserved
                 continue  # Skips nodes with not enouhg memory
-            if mustHaveVGPUS is not None and mustHaveVGPUS != self.nodeHasGpu(node.name):
-                continue
+            if mustHaveVGPUS is not None and mustHaveVGPUS != bool(self.nodeGpuDevices(node.name)):
+                continue  # Skips nodes without VGPUS if vGPUS are required
+            if mdevType and not self.nodeHasFreeVGPU(node.name, mdevType):
+                continue  # Skips nodes without free vGPUS of required type if a type is required
 
+            # Get best node using our simple weight function (basically, the less used node, but with a little more weight on CPU)
             if weightFnc(node) < weightFnc(best):
                 best = node
 
@@ -327,7 +351,7 @@ class ProxmoxClient:
 
         return best if best.status == 'online' else None
 
-    @ensureConected
+    @ensureConnected
     def cloneVm(
         self,
         vmId: int,
@@ -348,7 +372,9 @@ class ProxmoxClient:
             logger.debug('Selecting best node')
             # If storage is not shared, must be done on same as origin
             if toStorage and self.getStorage(toStorage, vmInfo.node).shared:
-                node = self.getBestNodeForVm(minMemory=-1, mustHaveVGPUS=mustHaveVGPUS)
+                node = self.getBestNodeForVm(
+                    minMemory=-1, mustHaveVGPUS=mustHaveVGPUS, mdevType=vmInfo.vgpu_type
+                )
                 if node is None:
                     raise ProxmoxError(
                         f'No switable node available for new vm {name} on Proxmox (check memory and VGPUS, space...)'
@@ -358,8 +384,11 @@ class ProxmoxClient:
                 toNode = fromNode
 
         # Check if mustHaveVGPUS is compatible with the node
-        if mustHaveVGPUS is not None and mustHaveVGPUS != self.nodeHasGpu(toNode):
+        if mustHaveVGPUS is not None and mustHaveVGPUS != bool(self.nodeGpuDevices(toNode)):
             raise ProxmoxNoGPUError(f'Node "{toNode}" does not have VGPUS and they are required')
+        
+        if self.nodeHasFreeVGPU(toNode, vmInfo.vgpu_type):
+            raise ProxmoxNoGPUError(f'Node "{toNode}" does not have free VGPUS of type {vmInfo.vgpu_type} (requred by VM {vmInfo.name})')
 
         # From normal vm, disable "linked cloning"
         if linkedClone and not vmInfo.template:
@@ -389,20 +418,20 @@ class ProxmoxClient:
         return types.VmCreationResult(
             node=toNode,
             vmid=newVmId,
-            upid=types.UPID.fromDict(self._post(f'nodes/{fromNode}/qemu/{vmId}/clone', data=params)),
+            upid=types.UPID.fromDict(self._post('nodes/{}/qemu/{}/clone'.format(fromNode, vmId), data=params)),
         )
 
-    @ensureConected
+    @ensureConnected
     @allowCache('hagrps', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
     def listHAGroups(self) -> typing.List[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
-    @ensureConected
+    @ensureConnected
     def enableVmHA(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         self._post(
             'cluster/ha/resources',
             data=[
-                ('sid', f'vm:{vmId}'),
+                ('sid', 'vm:{}'.format(vmId)),
                 ('comment', 'UDS HA VM'),
                 ('state', 'started' if started else 'stopped'),
                 ('max_restart', '4'),
@@ -411,31 +440,33 @@ class ProxmoxClient:
             + ([('group', group)] if group else []),
         )
 
-    @ensureConected
+    @ensureConnected
     def disableVmHA(self, vmId: int) -> None:
         try:
-            self._delete(f'cluster/ha/resources/vm%3A{vmId}')
+            self._delete('cluster/ha/resources/vm%3A{}'.format(vmId))
         except Exception:
             logger.exception('removeFromHA')
 
-    @ensureConected
+    @ensureConnected
     def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
         params: typing.List[typing.Tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
         node = node or self.getVmInfo(vmId).node
-        self._post(f'nodes/{node}/qemu/{vmId}/config', data=params)
+        self._post('nodes/{}/qemu/{}/config'.format(node, vmId), data=params)
 
-    @ensureConected
+    @ensureConnected
     def deleteVm(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._delete(f'nodes/{node}/qemu/{vmId}?purge=1'))
+        return types.UPID.fromDict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def getTask(self, node: str, upid: str) -> types.TaskStatus:
-        return types.TaskStatus.fromJson(self._get(f'nodes/{node}/tasks/{urllib.parse.quote(upid)}/status'))
+        return types.TaskStatus.fromJson(
+            self._get('nodes/{}/tasks/{}/status'.format(node, urllib.parse.quote(upid)))
+        )
 
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'vms',
         CACHE_DURATION,
@@ -454,13 +485,13 @@ class ProxmoxClient:
 
         result = []
         for nodeName in nodeList:
-            for vm in self._get(f'nodes/{nodeName}/qemu')['data']:
+            for vm in self._get('nodes/{}/qemu'.format(nodeName))['data']:
                 vm['node'] = nodeName
                 result.append(types.VMInfo.fromDict(vm))
 
-        return sorted(result, key=lambda x: (x.node, x.name))
+        return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'vmip',
         CACHE_INFO_DURATION,
@@ -478,14 +509,14 @@ class ProxmoxClient:
                         if i['vmid'] == vmId:
                             node = i['node']
                             break
-                    except Exception:  # nosec: no need to log this
+                    except Exception:  # nosec: # If vmid is not present, just try next node
                         pass
-            except Exception:  # nosec: Error requesting pool, fallback to getVmInfo
+            except Exception:  # nosec: # If pool is not present, just use default getVmInfo
                 pass
 
         return self.getVmInfo(vmId, node, **kwargs)
 
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'vmin',
         CACHE_INFO_DURATION,
@@ -498,7 +529,7 @@ class ProxmoxClient:
         anyNodeIsDown = False
         for n in nodes:
             try:
-                vm = self._get(f'nodes/{n.name}/qemu/{vmId}/status/current')['data']
+                vm = self._get('nodes/{}/qemu/{}/status/current'.format(n.name, vmId))['data']
                 vm['node'] = n.name
                 return types.VMInfo.fromDict(vm)
             except ProxmoxConnectionError:
@@ -513,16 +544,13 @@ class ProxmoxClient:
 
         raise ProxmoxNotFound()
 
-    @ensureConected
+    @ensureConnected
     # @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
-    # pylint: disable=unused-argument
-    def getVmConfiguration(
-        self, vmId: int, node: typing.Optional[str] = None, **kwargs
-    ) -> types.VMConfiguration:
+    def getVmConfiguration(self, vmId: int, node: typing.Optional[str] = None):
         node = node or self.getVmInfo(vmId).node
-        return types.VMConfiguration.fromDict(self._get(f'nodes/{node}/qemu/{vmId}/config')['data'])
+        return types.VMConfiguration.fromDict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
 
-    @ensureConected
+    @ensureConnected
     def setVmMac(
         self,
         vmId: int,
@@ -532,7 +560,7 @@ class ProxmoxClient:
     ) -> None:
         node = node or self.getVmInfo(vmId).node
         # First, read current configuration and extract network configuration
-        config = self._get(f'nodes/{node}/qemu/{vmId}/config')['data']
+        config = self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data']
         if netid not in config:
             # Get first network interface (netX where X is a number)
             netid = next((k for k in config if k.startswith('net') and k[3:].isdigit()), None)
@@ -542,55 +570,54 @@ class ProxmoxClient:
         netdata = config[netid]
 
         # Update mac address, that is the first field <model>=<mac>,<other options>
-        # pylint: disable=consider-using-f-string
         netdata = re.sub(r'^([^=]+)=([^,]+),', r'\1={},'.format(mac), netdata)
 
         logger.debug('Updating mac address for VM %s: %s=%s', vmId, netid, netdata)
 
         self._post(
-            f'nodes/{node}/qemu/{vmId}/config',
+            'nodes/{}/qemu/{}/config'.format(node, vmId),
             data=[(netid, netdata)],
         )
 
-    @ensureConected
+    @ensureConnected
     def startVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post(f'nodes/{node}/qemu/{vmId}/status/start'))
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def stopVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post(f'nodes/{node}/qemu/{vmId}/status/stop'))
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def resetVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post(f'nodes/{node}/qemu/{vmId}/status/reset'))
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def suspendVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post(f'nodes/{node}/qemu/{vmId}/status/suspend'))
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def shutdownVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post(f'nodes/{node}/qemu/{vmId}/status/shutdown'))
+        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
 
-    @ensureConected
+    @ensureConnected
     def convertToTemplate(self, vmId: int, node: typing.Optional[str] = None) -> None:
         node = node or self.getVmInfo(vmId).node
-        self._post(f'nodes/{node}/qemu/{vmId}/template')
+        self._post('nodes/{}/qemu/{}/template'.format(node, vmId))
         # Ensure cache is reset for this VM (as it is now a template)
         self.getVmInfo(vmId, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
     resumeVm = startVm
 
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'storage',
         CACHE_DURATION,
@@ -600,10 +627,10 @@ class ProxmoxClient:
     )
     def getStorage(self, storage: str, node: str, **kwargs) -> types.StorageInfo:
         return types.StorageInfo.fromDict(
-            self._get(f'nodes/{node}/storage/{urllib.parse.quote(storage)}/status')['data']
+            self._get('nodes/{}/storage/{}/status'.format(node, urllib.parse.quote(storage)))['data']
         )
 
-    @ensureConected
+    @ensureConnected
     @allowCache(
         'storages',
         CACHE_DURATION,
@@ -625,30 +652,30 @@ class ProxmoxClient:
             nodeList = [node]
         else:
             nodeList = node
-        params = '' if not content else f'?content={urllib.parse.quote(content)}'
+        params = '' if not content else '?content={}'.format(urllib.parse.quote(content))
         result: typing.List[types.StorageInfo] = []
 
         for nodeName in nodeList:
-            for storage in self._get(f'nodes/{nodeName}/storage{params}')['data']:
+            for storage in self._get('nodes/{}/storage{}'.format(nodeName, params))['data']:
                 storage['node'] = nodeName
                 storage['content'] = storage['content'].split(',')
                 result.append(types.StorageInfo.fromDict(storage))
 
         return result
 
-    @ensureConected
+    @ensureConnected
     @allowCache('nodeStats', CACHE_INFO_DURATION, cachingKeyFnc=cachingKeyHelper)
     def getNodesStats(self, **kwargs) -> typing.List[types.NodeStats]:
         return [
             types.NodeStats.fromDict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
-    @ensureConected
+    @ensureConnected
     @allowCache('pools', CACHE_DURATION // 6, cachingKeyFnc=cachingKeyHelper)
     def listPools(self) -> typing.List[types.PoolInfo]:
         return [types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']]
 
-    @ensureConected
+    @ensureConnected
     def getConsoleConnection(
         self, vmId: int, node: typing.Optional[str] = None
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:

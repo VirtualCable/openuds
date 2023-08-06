@@ -15,14 +15,17 @@ conversors: typing.MutableMapping[typing.Type, typing.Callable] = {
 
 
 def convertFromDict(
-    type: typing.Type[typing.Any], dictionary: typing.MutableMapping[str, typing.Any]
+    type: typing.Type[typing.Any],
+    dictionary: typing.MutableMapping[str, typing.Any],
+    extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
 ) -> typing.Any:
+    extra = extra or {}
     return type(
         **{
             k: conversors.get(type.__annotations__.get(k, str), lambda x: x)(
-                dictionary.get(k, None)
+                dictionary.get(k, extra.get(k, None))
             )
-            for k in typing.cast(typing.NamedTuple, type)._fields
+            for k in type._fields  # type: ignore
         }
     )
 
@@ -183,9 +186,7 @@ class VMInfo(typing.NamedTuple):
     template: bool
 
     cpus: typing.Optional[int]
-    lock: typing.Optional[
-        str
-    ]  # if suspended, lock == "suspended" & qmpstatus == "stopped"
+    lock: typing.Optional[str]  # if suspended, lock == "suspended" & qmpstatus == "stopped"
     disk: typing.Optional[int]
     maxdisk: typing.Optional[int]
     mem: typing.Optional[int]
@@ -199,10 +200,25 @@ class VMInfo(typing.NamedTuple):
     netout: typing.Optional[int]
     diskread: typing.Optional[int]
     diskwrite: typing.Optional[int]
+    vgpu_type: typing.Optional[str]
 
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'VMInfo':
-        return convertFromDict(VMInfo, dictionary)
+        vgpu_type = None
+        # Look for vgpu type if present
+        for k, v in dictionary.items():
+            if k.startswith('hostpci'):
+                for i in v.split(','):
+                    if i.startswith('mdev='):
+                        vgpu_type = i[5:]
+                        break  # found it, stop looking
+
+            if vgpu_type is not None:
+                break  # Already found it, stop looking
+
+        data = convertFromDict(VMInfo, dictionary, {'vgpu_type': vgpu_type})
+
+        return data
 
 
 class VMConfiguration(typing.NamedTuple):
@@ -217,9 +233,7 @@ class VMConfiguration(typing.NamedTuple):
     template: bool
 
     @staticmethod
-    def fromDict(
-        src: typing.MutableMapping[str, typing.Any]
-    ) -> 'VMConfiguration':
+    def fromDict(src: typing.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: typing.List[NetworkConfiguration] = []
         for k in src.keys():
             if k[:3] == 'net':
@@ -259,5 +273,4 @@ class PoolInfo(typing.NamedTuple):
 
     @staticmethod
     def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'PoolInfo':
-
         return convertFromDict(PoolInfo, dictionary)

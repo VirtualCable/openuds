@@ -166,7 +166,7 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
     return functools.partial(innerDeprecated, newVarName=newVarName)
 
 
-def ensureConected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
