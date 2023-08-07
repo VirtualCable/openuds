@@ -533,7 +533,7 @@ class ProxmoxClient:
                 vm['node'] = n.name
                 return types.VMInfo.fromDict(vm)
             except ProxmoxConnectionError:
-                anyNodeIsDown = True
+                anyNodeIsDown = True  # There is at least one node down when we are trying to get info
             except ProxmoxAuthError:
                 raise
             except ProxmoxError:

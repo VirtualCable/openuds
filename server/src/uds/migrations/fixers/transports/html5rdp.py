@@ -77,4 +77,4 @@ class HTML5RDPTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.migrate_transport(apps, HTML5RDPTransport, 'HTML5 RDP', 'Tunnel for HTML RDP', is_html_server=True)
+    migrator.tunnel_transport(apps, HTML5RDPTransport, 'guacamoleServer', 'HTML5 RDP', 'Tunnel for HTML RDP', is_html_server=True)

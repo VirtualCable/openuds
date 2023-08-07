@@ -93,4 +93,4 @@ class HTML5RDSTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.migrate_transport(apps, HTML5RDSTransport, 'HTML5 RDS', 'Tunnel for HTML RDS', is_html_server=True)
+    migrator.tunnel_transport(apps, HTML5RDSTransport, 'guacamoleServer', 'HTML5 RDS', 'Tunnel for HTML RDS', is_html_server=True)

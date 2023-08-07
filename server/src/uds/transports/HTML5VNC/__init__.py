@@ -31,5 +31,5 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-# DISABLED: NOT FOR USE, JUST TESTS!!!
-# from .html5vnc import HTML5VNCTransport
+# Experimental VNC transport
+from .html5vnc import HTML5VNCTransport
