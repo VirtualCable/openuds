@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, name: str, comments: str, is_html_server: bool = False) -> None:
     """
-    Migrates a transport with 
+    Migrates an old tunnel transport to a new one (with tunnelServer)
     """
     try:
         # Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
@@ -27,7 +27,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, name: st
             obj.deserialize(t.data)
             # Guacamole server is https://<host>:<port>
             server = getattr(obj, serverAttr).value
-            print(obj)
+            print(obj, server, is_html_server)
             if is_html_server:
                 if not server.startswith('https://'):
                     # Skip if not https found
@@ -64,3 +64,33 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, name: st
     except Exception as e:  # nosec: ignore this
         print(e)
         logger.exception('Exception found while migrating HTML5RDP transports')
+
+def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_html_server: bool) -> None:
+    """
+    "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
+    """
+    try:
+        # Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+        # RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
+        # RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        # For testing
+        from uds.models import Transport, RegisteredServerGroup, RegisteredServer
+
+        for t in Transport.objects.filter(data_type=TransportType.typeType):
+            print(t)
+            # Extranct data
+            obj = TransportType(Environment(t.uuid), None)
+            obj.deserialize(t.data)
+            # Guacamole server is https://<host>:<port>
+            server = getattr(obj, serverAttr)
+            tunnelServer = RegisteredServerGroup.objects.get(uuid=obj.tunnelServer.value)
+            if is_html_server:
+                server.value = f'https://{tunnelServer.pretty_host}'
+            else:
+                server.value = f'{tunnelServer.pretty_host}'
+            # Save transport
+            t.data = obj.serialize()
+            t.save(update_fields=['data'])
+    except Exception as e:  # nosec: ignore this
+        print(e)
+        logger.exception('Exception found while migrating BACK HTML5RDP transports')

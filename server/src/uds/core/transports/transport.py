@@ -336,4 +336,4 @@ class Transport(Module):
         return 'https://www.udsenterprise.com'
 
     def __str__(self):
-        return 'Base OS Manager'
+        return f'Transport {self.typeName} ({self.typeDescription})'

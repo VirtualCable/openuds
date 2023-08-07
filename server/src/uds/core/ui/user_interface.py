@@ -102,7 +102,7 @@ class gui:
 
     ValuesDictType = typing.Dict[
         str,
-        typing.Union[str, bool, typing.List[str], typing.List[ChoiceType]],
+        typing.Union[str, bool, typing.List[str], typing.List[ChoiceType], typing.Callable[[], typing.List[ChoiceType]]],
     ]
 
     # : True string value
@@ -180,13 +180,16 @@ class gui:
             typing.Dict[str, str],
             None,
         ]
-    ) -> typing.List['gui.ChoiceType']:
+    ) -> typing.Union[typing.Callable[[], typing.List['gui.ChoiceType']], typing.List['gui.ChoiceType']]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
         multichoice, ..
         """
         if not vals:
             return []
+        
+        if callable(vals):
+            return vals
 
         # Helper to convert an item to a dict
         def choiceFromValue(val: typing.Union[str, int, typing.Dict[str, str]]) -> 'gui.ChoiceType':
@@ -463,9 +466,9 @@ class gui:
 
         def __str__(self):
             return str(self.value)
-        
+
         def __repr__(self):
-            args = ','.join([f'{k}="{v}"' for k,v in self._data.items()])
+            args = ','.join([f'{k}="{v}"' for k, v in self._data.items()])
             return f'{self.__class__.__name__}({args})'
 
     class TextField(InputField):
@@ -1062,6 +1065,7 @@ class UserInterfaceType(type):
             if isinstance(attr, gui.InputField):
                 _gui[attrName] = attr
                 _gui[attrName]._data = copy.deepcopy(attr._data)
+
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
         return typing.cast('UserInterfaceType', type.__new__(mcs, classname, bases, newClassDict))
@@ -1103,8 +1107,16 @@ class UserInterface(metaclass=UserInterfaceType):
         # this is done to avoid modifying the original gui description
 
         self._gui = copy.deepcopy(self._base_gui)
-        for key, val in self._gui.items():  # And refresh self references to them
-            setattr(self, key, val)  # val is an InputField instance, so it is a reference to self._gui[key]
+
+        # If a field has a callable on defined attributes(value, defvalue, values)
+        # update the reference to the new copy
+        # Note that defvalue has Aliases (defaultValue, defValue)
+        for attrName, val in self._gui.items():  # And refresh self references to them
+            for field in ['values']: #['value', 'defvalue', 'defaultValue', 'defValue', 'values']:
+                if field in val._data and callable(val._data[field]):
+                    val._data[field] = val._data[field]()
+            # val is an InputField instance, so it is a reference to self._gui[key]
+            setattr(self, attrName, val)
 
         if values is not None:
             for k, v in self._gui.items():

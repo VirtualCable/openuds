@@ -38,7 +38,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core.ui import gui
 from uds.core import transports, exceptions, types
-from uds.core.util import os_detector as OsDetector
+from uds.core.util import os_detector as OsDetector, fields
 from uds.core.managers.crypto import CryptoManager
 from uds import models
 from uds.core.util.model import getSqlDatetime
@@ -79,6 +79,8 @@ class HTML5RDPTransport(transports.Transport):
         required=True,
         tab=gui.Tab.TUNNEL,
     )
+
+    tunnelServer = fields.tunnelServerField()
 
     useGlyptodonTunnel = gui.CheckBoxField(
         label=_('Use Glyptodon Enterprise tunnel'),
