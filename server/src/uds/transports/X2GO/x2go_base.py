@@ -39,10 +39,10 @@ import paramiko
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.managers.user_preferences import CommonPrefs
+from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
 from uds.core import transports, types
-from uds.core.util import os_detector as OsDetector
+from uds.core.util import os_detector
 from uds.core.util import connection
 
 # Not imported at runtime, just for type checking
@@ -65,7 +65,7 @@ class BaseX2GOTransport(transports.Transport):
 
     iconFile = 'x2go.png'
     protocol = transports.protocols.X2GO
-    supportedOss = (OsDetector.KnownOS.LINUX, OsDetector.KnownOS.WINDOWS)
+    supportedOss = (os_detector.KnownOS.LINUX, os_detector.KnownOS.WINDOWS)
 
     fixedName = gui.TextField(
         order=2,

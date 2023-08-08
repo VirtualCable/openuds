@@ -3,12 +3,12 @@
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without modification,
+# Redistribution and use in source and binary forms, with or without modification
 # are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright notice,
+#    * Redistributions of source code must retain the above copyright notice
 #      this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice,
+#    * Redistributions in binary form must reproduce the above copyright notice
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
 #    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
@@ -22,7 +22,7 @@
 # FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 # DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
@@ -33,7 +33,7 @@ import logging
 from uds.core.ui import gui
 from uds.core import transports
 
-from . import migrator
+from . import _migrator
 
 logger = logging.getLogger(__name__)
 
@@ -60,40 +60,22 @@ class HTML5RDPTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
+    enableAudio = gui.CheckBoxField(defvalue=gui.TRUE)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
-    enableFileSharing = gui.ChoiceField(
-        defvalue='false',
-    )
-    enableClipboard = gui.ChoiceField(
-        defvalue='enabled',
-    )
+    enableFileSharing = gui.ChoiceField(defvalue='false')
+    enableClipboard = gui.ChoiceField(defvalue='enabled')
 
-    serverLayout = gui.ChoiceField(
-        defvalue='-',
-    )
+    serverLayout = gui.ChoiceField(defvalue='-')
 
-    ticketValidity = gui.NumericField(
-        defvalue='60',
-    )
+    ticketValidity = gui.NumericField(defvalue='60')
 
-    forceNewWindow = gui.ChoiceField(
-        defvalue=gui.FALSE,
-    )
-    security = gui.ChoiceField(
-        defvalue='any',
-    )
+    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
+    security = gui.ChoiceField(defvalue='any')
 
-    rdpPort = gui.NumericField(
-        defvalue='3389',
-    )
+    rdpPort = gui.NumericField(defvalue='3389')
 
-    customGEPath = gui.TextField(
-        defvalue='/',
-    )
+    customGEPath = gui.TextField(defvalue='/')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
@@ -101,7 +83,8 @@ class HTML5RDPTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.tunnel_transport(apps, HTML5RDPTransport, 'guacamoleServer', 'HTML5 RDP', 'Tunnel for HTML RDP', is_html_server=True)
+    _migrator.tunnel_transport(apps, HTML5RDPTransport, 'guacamoleServer', is_html_server=True)
+
 
 def rollback(apps, schema_editor) -> None:
-    migrator.tunnel_transport_back(apps, HTML5RDPTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport_back(apps, HTML5RDPTransport, 'guacamoleServer', is_html_server=True)

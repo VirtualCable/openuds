@@ -39,25 +39,24 @@ logger = logging.getLogger(__name__)
 
 
 # Copy for migration
-class HTML5VNCTransport(transports.Transport):
+class TSPICETransport(transports.Transport):
     """
-    Provides access via VNC to service.
-    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
+    Provides access via SPICE to service.
     """
 
-    typeName = 'HTML5 VNC Experimental'
-    typeType = 'HTML5VNCTransport'
-    guacamoleServer = gui.TextField(defvalue='https://')
+    typeType = 'TSSPICETransport'
 
-    username = gui.TextField()
-    password = gui.PasswordField()
-    vncPort = gui.NumericField(defvalue='5900')
-    colorDepth = gui.ChoiceField(defvalue='-')
-    swapRedBlue = gui.CheckBoxField()
-    cursor = gui.CheckBoxField()
-    readOnly = gui.CheckBoxField()
-    ticketValidity = gui.NumericField(defvalue='60')
-    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
+    tunnelServer = gui.TextField()
+    tunnelWait = gui.NumericField(defvalue='30')
+    verifyCertificate = gui.CheckBoxField()
+    serverCertificate = gui.TextField()
+    fullScreen = gui.CheckBoxField()
+    smartCardRedirect = gui.CheckBoxField(defvalue=gui.FALSE)
+    usbShare = gui.CheckBoxField(defvalue=gui.FALSE)
+    autoNewUsbShare = gui.CheckBoxField(defvalue=gui.FALSE)
+    SSLConnection = gui.CheckBoxField(defvalue=gui.TRUE)
+
+    overridedProxy = gui.TextField()
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
@@ -65,8 +64,8 @@ class HTML5VNCTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    _migrator.tunnel_transport(apps, HTML5VNCTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport(apps, TSPICETransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps, schema_editor) -> None:
-    _migrator.tunnel_transport_back(apps, HTML5VNCTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport_back(apps, TSPICETransport, 'tunnelServer', is_html_server=False)

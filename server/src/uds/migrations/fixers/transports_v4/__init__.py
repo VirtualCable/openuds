@@ -29,9 +29,9 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
-from . import html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine
+from . import html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine, spice, x2go
 
-ALL: typing.Final = (html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine)
+ALL: typing.Final = (html5rdp, html5rds, html5ssh, html5vnc, nicedcv, rdp, rds, nomachine, spice, x2go)
 
 def migrate(apps, schema_editor):
     for i in ALL:

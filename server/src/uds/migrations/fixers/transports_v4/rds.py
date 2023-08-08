@@ -33,7 +33,7 @@ import logging
 from uds.core.ui import gui
 from uds.core import transports
 
-from . import migrator
+from . import _migrator
 
 logger = logging.getLogger(__name__)
 
@@ -54,47 +54,25 @@ class TRDSTransport(transports.Transport):
     fixedDomain = gui.TextField()
     allowSmartcards = gui.CheckBoxField()
     allowPrinters = gui.CheckBoxField()
-    allowDrives = gui.ChoiceField(
-        defvalue='false',
-    )
+    allowDrives = gui.ChoiceField(defvalue='false')
     enforceDrives = gui.TextField()
-
     allowSerials = gui.CheckBoxField()
-    allowClipboard = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
-    allowAudio = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
-    allowWebcam = gui.CheckBoxField(
-        defvalue=gui.FALSE,
-    )
-    credssp = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
-    rdpPort = gui.NumericField(
-        defvalue='3389',
-    )
-
+    allowClipboard = gui.CheckBoxField(defvalue=gui.TRUE)
+    allowAudio = gui.CheckBoxField(defvalue=gui.TRUE)
+    allowWebcam = gui.CheckBoxField(defvalue=gui.FALSE)
+    credssp = gui.CheckBoxField(defvalue=gui.TRUE)
+    rdpPort = gui.NumericField(defvalue='3389')
     colorDepth = gui.ChoiceField()
-
-    smooth = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
-    windowState = gui.ChoiceField(
-        defvalue='normal',
-    )
-
-    executeAsShell = gui.CheckBoxField(
-        defvalue=gui.TRUE,
-    )
+    smooth = gui.CheckBoxField(defvalue=gui.TRUE)
+    windowState = gui.ChoiceField(defvalue='normal')
+    executeAsShell = gui.CheckBoxField(defvalue=gui.TRUE)
     multimedia = gui.CheckBoxField()
     alsa = gui.CheckBoxField()
     printerString = gui.TextField()
     smartcardString = gui.TextField()
     customParameters = gui.TextField()
-
     customParametersWindows = gui.TextField()
+    optimizeTeams = gui.CheckBoxField()
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
@@ -102,10 +80,8 @@ class TRDSTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.tunnel_transport(
-        apps, TRDSTransport, 'tunnelServer', 'RDS', 'Tunnel for RDS', is_html_server=False
-    )
+    _migrator.tunnel_transport(apps, TRDSTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps, schema_editor) -> None:
-    migrator.tunnel_transport_back(apps, TRDSTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport_back(apps, TRDSTransport, 'tunnelServer', is_html_server=False)

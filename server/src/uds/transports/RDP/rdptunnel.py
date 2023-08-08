@@ -67,28 +67,9 @@ class TRDPTransport(BaseRDPTransport):
     typeDescription = _('RDP Protocol. Tunneled connection.')
     group = transports.TUNNELED_GROUP
 
-    tunnelServer = gui.TextField(
-        label=_('Tunnel server'),
-        order=1,
-        tooltip=_(
-            'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
-        ),
-        tab=gui.Tab.TUNNEL,
-    )
-
     tunnel = fields.tunnelField()
 
-    tunnelWait = gui.NumericField(
-        length=3,
-        label=_('Tunnel wait time'),
-        defvalue='60',
-        minValue=5,
-        maxValue=65536,
-        order=2,
-        tooltip=_('Maximum time to wait before closing the tunnel listener'),
-        required=True,
-        tab=gui.Tab.TUNNEL,
-    )
+    tunnelWait = fields.tunnelTunnelWait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -132,7 +113,7 @@ class TRDPTransport(BaseRDPTransport):
     customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
     customParametersWindows = BaseRDPTransport.customParametersWindows
-    optimizeTeams = BaseRDPTransport.optimizeTeams
+    # optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:

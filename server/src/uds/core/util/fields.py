@@ -36,12 +36,19 @@ from uds import models
 from uds.core import types, ui
 
 
+# ******************************************************
+# Tunnel related common use fields and related functions
+# ******************************************************
+
+
+# Tunnel server field
 def tunnelField() -> ui.gui.ChoiceField:
     def tunnelServerValues() -> typing.List[ui.gui.ChoiceType]:
         return [
             ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})')
             for v in models.RegisteredServerGroup.objects.filter(kind=types.servers.ServerType.TUNNEL).all()
         ]
+
     return ui.gui.ChoiceField(
         label=_('Tunnel server'),
         order=1,
@@ -51,8 +58,40 @@ def tunnelField() -> ui.gui.ChoiceField:
         tab=ui.gui.Tab.TUNNEL,
     )
 
+
 def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
     try:
         return models.RegisteredServerGroup.objects.get(uuid=fld.value)
     except Exception:
         return models.RegisteredServerGroup()
+
+
+# Ticket validity time field (for http related tunnels)
+def tunnelTicketValidityField() -> ui.gui.NumericField:
+    return ui.gui.NumericField(
+        length=3,
+        label=_('Ticket Validity'),
+        defvalue='60',
+        order=90,
+        tooltip=_(
+            'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
+        ),
+        required=True,
+        minValue=60,
+        tab=ui.gui.Tab.ADVANCED,
+    )
+
+# Tunnel wait time (for uds client related tunnels)
+def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
+    return ui.gui.NumericField(
+        length=3,
+        label=_('Tunnel wait time'),
+        defvalue='30',
+        minValue=5,
+        maxValue=3600 * 24,
+        order=order,
+        tooltip=_('Maximum time, in seconds, to wait before disable new connections on client tunnel listener'),
+        required=True,
+        tab=ui.gui.Tab.TUNNEL,
+    )
+

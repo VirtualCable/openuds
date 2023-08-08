@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-UDS managers (downloads, users preferences, publications, ...)
+UDS managers (downloads, users publications, ...)
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """

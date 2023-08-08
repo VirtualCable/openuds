@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 
 from uds.core.ui import gui
+from uds.core.types.preferences import CommonPrefs
 from uds.core import transports
 
 from . import _migrator
@@ -39,25 +40,28 @@ logger = logging.getLogger(__name__)
 
 
 # Copy for migration
-class HTML5VNCTransport(transports.Transport):
+class TX2GOTransport(transports.Transport):
     """
-    Provides access via VNC to service.
+    Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = 'HTML5 VNC Experimental'
-    typeType = 'HTML5VNCTransport'
-    guacamoleServer = gui.TextField(defvalue='https://')
+    typeType = 'TX2GOTransport'
 
-    username = gui.TextField()
-    password = gui.PasswordField()
-    vncPort = gui.NumericField(defvalue='5900')
-    colorDepth = gui.ChoiceField(defvalue='-')
-    swapRedBlue = gui.CheckBoxField()
-    cursor = gui.CheckBoxField()
-    readOnly = gui.CheckBoxField()
-    ticketValidity = gui.NumericField(defvalue='60')
-    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
+    tunnelServer = gui.TextField()
+    tunnelWait = gui.NumericField(defvalue='30')
+    verifyCertificate = gui.CheckBoxField(defvalue=gui.FALSE)
+    fixedName = gui.TextField()
+    screenSize = gui.ChoiceField(defvalue=CommonPrefs.SZ_FULLSCREEN)
+    desktopType = gui.ChoiceField()
+    customCmd = gui.TextField()
+    sound = gui.CheckBoxField(defvalue=gui.TRUE)
+    exports = gui.CheckBoxField(defvalue=gui.FALSE)
+    speed = gui.ChoiceField(defvalue='3')
+    soundType = gui.ChoiceField(defvalue='pulse')
+    keyboardLayout = gui.TextField(defvalue='')
+    pack = gui.TextField(defvalue='16m-jpeg')
+    quality = gui.NumericField(defvalue='6')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
@@ -65,8 +69,8 @@ class HTML5VNCTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    _migrator.tunnel_transport(apps, HTML5VNCTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport(apps, TX2GOTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps, schema_editor) -> None:
-    _migrator.tunnel_transport_back(apps, HTML5VNCTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.tunnel_transport_back(apps, TX2GOTransport, 'tunnelServer', is_html_server=False)

@@ -33,7 +33,7 @@ import logging
 from uds.core.ui import gui
 from uds.core import transports
 
-from . import migrator
+from . import _migrator
 
 logger = logging.getLogger(__name__)
 
@@ -45,16 +45,11 @@ class TSNoMachineTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = False
-
     typeType = 'TSNoMachineTransport'
 
     tunnelServer = gui.TextField()
-
     tunnelWait = gui.NumericField(defvalue='30')
-
     verifyCertificate = gui.CheckBoxField(defvalue=gui.FALSE)
-
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
@@ -67,10 +62,8 @@ class TSNoMachineTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.tunnel_transport(
-        apps, TSNoMachineTransport, 'tunnelServer', 'NoMachine', 'Tunnel for NoMachine', is_html_server=False
-    )
+    _migrator.tunnel_transport(apps, TSNoMachineTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps, schema_editor) -> None:
-    migrator.tunnel_transport_back(apps, TSNoMachineTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport_back(apps, TSNoMachineTransport, 'tunnelServer', is_html_server=False)

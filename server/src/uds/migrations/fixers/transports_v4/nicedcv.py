@@ -33,7 +33,7 @@ import logging
 from uds.core.ui import gui
 from uds.core import transports
 
-from . import migrator
+from . import _migrator
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +50,7 @@ class NICEDCVTunnelTransport(transports.Transport):
     tunnelServer = gui.TextField()
 
     tunnelWait = gui.NumericField(defvalue='60')
-
     verifyCertificate = gui.CheckBoxField(defvalue=gui.TRUE)
-
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
@@ -68,10 +66,8 @@ class NICEDCVTunnelTransport(transports.Transport):
 
 
 def migrate(apps, schema_editor) -> None:
-    migrator.tunnel_transport(
-        apps, NICEDCVTunnelTransport, 'tunnelServer', 'NICE DCV', 'Tunnel for NICE DCV', is_html_server=False
-    )
+    _migrator.tunnel_transport(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)
 
 
 def rollback(apps, schema_editor) -> None:
-    migrator.tunnel_transport_back(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)
+    _migrator.tunnel_transport_back(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)

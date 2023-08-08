@@ -41,6 +41,8 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util import fields, os_detector
 
+from ..HTML5RDP.html5rdp import HTML5RDPTransport
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -71,14 +73,8 @@ class HTML5VNCTransport(transports.Transport):
 
     tunnel = fields.tunnelField()
 
-    useGlyptodonTunnel = gui.CheckBoxField(
-        label=_('Use Glyptodon Enterprise tunnel'),
-        order=2,
-        tooltip=_(
-            'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
-        ),
-        tab=gui.Tab.TUNNEL,
-    )
+    useGlyptodonTunnel = HTML5RDPTransport.useGlyptodonTunnel
+
     username = gui.TextField(
         label=_('Username'),
         order=20,
@@ -120,9 +116,7 @@ class HTML5VNCTransport(transports.Transport):
     swapRedBlue = gui.CheckBoxField(
         label=_('Swap red/blue'),
         order=27,
-        tooltip=_(
-            'Use this if your colours seems incorrect (blue appears red, ..) to swap them.'
-        ),
+        tooltip=_('Use this if your colours seems incorrect (blue appears red, ..) to swap them.'),
         tab=gui.Tab.PARAMETERS,
     )
     cursor = gui.CheckBoxField(
@@ -138,50 +132,10 @@ class HTML5VNCTransport(transports.Transport):
         tab=gui.Tab.PARAMETERS,
     )
 
-    ticketValidity = gui.NumericField(
-        length=3,
-        label=_('Ticket Validity'),
-        defvalue='60',
-        order=90,
-        tooltip=_(
-            'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
-        ),
-        required=True,
-        minValue=60,
-        tab=gui.Tab.ADVANCED,
-    )
-    forceNewWindow = gui.ChoiceField(
-        order=91,
-        label=_('Force new HTML Window'),
-        tooltip=_('Select windows behavior for new connections on HTML5'),
-        required=True,
-        values=[
-            gui.choiceItem(
-                gui.FALSE,
-                _('Open every connection on the same window, but keeps UDS window.'),
-            ),
-            gui.choiceItem(
-                gui.TRUE, _('Force every connection to be opened on a new window.')
-            ),
-            gui.choiceItem(
-                'overwrite',
-                _('Override UDS window and replace it with the connection.'),
-            ),
-        ],
-        defvalue=gui.FALSE,
-        tab=gui.Tab.ADVANCED,
-    )
-    customGEPath = gui.TextField(
-        label=_('Glyptodon Enterprise context path'),
-        order=94,
-        tooltip=_(
-            'Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon Enterprise Tunnel)'
-        ),
-        defvalue='/',
-        length=128,
-        required=False,
-        tab=gui.Tab.ADVANCED,
-    )
+    ticketValidity = fields.tunnelTicketValidityField()
+
+    forceNewWindow = HTML5RDPTransport.forceNewWindow
+    customGEPath = HTML5RDPTransport.customGEPath
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
@@ -254,6 +208,4 @@ class HTML5VNCTransport(transports.Transport):
         path = path.rstrip('/')
 
         tunnelServer = fields.getTunnelFromField(self.tunnel)
-        return str(
-            f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}'
-        )
+        return str(f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}')

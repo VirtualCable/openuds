@@ -32,22 +32,22 @@
 import logging
 import typing
 
-
 from django.utils.translation import gettext_noop as _
+
+from uds.core import exceptions, transports
 from uds.core.ui import gui
-from uds.core import transports, exceptions
-from uds.core.util import validators
+from uds.core.util import fields, validators
 from uds.models import TicketStore
 
-from .spice_base import BaseSpiceTransport
 from .remote_viewer_file import RemoteViewerFile
+from .spice_base import BaseSpiceTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util import os_detector
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -65,26 +65,8 @@ class TSPICETransport(BaseSpiceTransport):
     protocol = transports.protocols.SPICE
     group: typing.ClassVar[str] = transports.TUNNELED_GROUP
 
-    tunnelServer = gui.TextField(
-        label=_('Tunnel server'),
-        order=1,
-        tooltip=_(
-            'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
-        ),
-        tab=gui.Tab.TUNNEL,
-    )
-
-    tunnelWait = gui.NumericField(
-        length=3,
-        label=_('Tunnel wait time'),
-        defvalue='30',
-        minValue=5,
-        maxValue=65536,
-        order=2,
-        tooltip=_('Maximum time to wait before closing the tunnel listener'),
-        required=True,
-        tab=gui.Tab.TUNNEL,
-    )
+    tunnel = fields.tunnelField()
+    tunnelWait = fields.tunnelTunnelWait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -129,7 +111,8 @@ class TSPICETransport(BaseSpiceTransport):
                 _('No console connection data received'),
             )
 
-        tunHost, tunPort = self.tunnelServer.value.split(':')
+        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         # We MAY need two tickets, one for 'insecure' port an one for secure
         ticket = ''

@@ -33,20 +33,21 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.ui import gui
-from uds.core.util import os_detector as OsDetector
-from uds.core.util import tools, validators
+
 from uds.core import transports
+from uds.core.ui import gui
+from uds.core.util import fields, validators
 from uds.models import TicketStore
-from .x2go_base import BaseX2GOTransport
+
 from . import x2go_file
+from .x2go_base import BaseX2GOTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,7 @@ class TX2GOTransport(BaseX2GOTransport):
     Provides access via X2GO to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+
     isBase = False
 
     iconFile = 'x2go-tunnel.png'
@@ -65,33 +67,13 @@ class TX2GOTransport(BaseX2GOTransport):
     typeDescription = _('X2Go access (Experimental). Tunneled connection.')
     group = transports.TUNNELED_GROUP
 
-    tunnelServer = gui.TextField(
-        label=_('Tunnel server'),
-        order=1,
-        tooltip=_(
-            'IP or Hostname of tunnel server sent to client device ("public" ip) and port. (use HOST:PORT format)'
-        ),
-        tab=gui.Tab.TUNNEL,
-    )
-
-    tunnelWait = gui.NumericField(
-        length=3,
-        label=_('Tunnel wait time'),
-        defvalue='30',
-        minValue=5,
-        maxValue=65536,
-        order=2,
-        tooltip=_('Maximum time to wait before closing the tunnel listener'),
-        required=True,
-        tab=gui.Tab.TUNNEL,
-    )
+    tunnel = fields.tunnelField()
+    tunnelWait = fields.tunnelTunnelWait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
-        tooltip=_(
-            'If enabled, the certificate of tunnel server will be verified (recommended).'
-        ),
+        tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
         defvalue=gui.FALSE,
         tab=gui.Tab.TUNNEL,
     )
@@ -123,7 +105,6 @@ class TX2GOTransport(BaseX2GOTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
-
         ci = self.getConnectionInfo(userService, user, password)
 
         priv, pub = self.getAndPushKey(ci.username, userService)
@@ -156,7 +137,8 @@ class TX2GOTransport(BaseX2GOTransport):
             validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 
-        tunHost, tunPort = self.tunnelServer.value.split(':')
+        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         sp = {
             'tunHost': tunHost,
@@ -171,6 +153,4 @@ class TX2GOTransport(BaseX2GOTransport):
         try:
             return self.getScript(os.os.os_name(), 'tunnel', sp)
         except Exception:
-            return super().getUDSTransportScript(
-                userService, transport, ip, os, user, password, request
-            )
+            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)

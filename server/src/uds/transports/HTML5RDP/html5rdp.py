@@ -39,7 +39,7 @@ from django.utils.translation import gettext_noop as _
 from uds import models
 from uds.core import transports, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core.ui import gui
+from uds.core import ui
 from uds.core.util import fields, os_detector
 from uds.core.util.model import getSqlDatetime
 
@@ -52,7 +52,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
-
 
 class HTML5RDPTransport(transports.Transport):
     """
@@ -72,91 +71,91 @@ class HTML5RDPTransport(transports.Transport):
 
     tunnel = fields.tunnelField()
 
-    useGlyptodonTunnel = gui.CheckBoxField(
+    useGlyptodonTunnel = ui.gui.CheckBoxField(
         label=_('Use Glyptodon Enterprise tunnel'),
         order=2,
         tooltip=_(
             'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
         ),
-        tab=gui.Tab.TUNNEL,
+        tab=ui.gui.Tab.TUNNEL,
     )
 
-    useEmptyCreds = gui.CheckBoxField(
+    useEmptyCreds = ui.gui.CheckBoxField(
         label=_('Empty creds'),
         order=3,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=ui.gui.Tab.CREDENTIALS,
     )
-    fixedName = gui.TextField(
+    fixedName = ui.gui.TextField(
         label=_('Username'),
         order=4,
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=ui.gui.Tab.CREDENTIALS,
     )
-    fixedPassword = gui.PasswordField(
+    fixedPassword = ui.gui.PasswordField(
         label=_('Password'),
         order=5,
         tooltip=_('If not empty, this password will be always used as credential'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=ui.gui.Tab.CREDENTIALS,
     )
-    withoutDomain = gui.CheckBoxField(
+    withoutDomain = ui.gui.CheckBoxField(
         label=_('Without Domain'),
         order=6,
         tooltip=_(
             'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
         ),
-        tab=gui.Tab.CREDENTIALS,
+        tab=ui.gui.Tab.CREDENTIALS,
     )
-    fixedDomain = gui.TextField(
+    fixedDomain = ui.gui.TextField(
         label=_('Domain'),
         order=7,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=ui.gui.Tab.CREDENTIALS,
     )
-    wallpaper = gui.CheckBoxField(
+    wallpaper = ui.gui.CheckBoxField(
         label=_('Show wallpaper'),
         order=18,
         tooltip=_(
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    desktopComp = gui.CheckBoxField(
+    desktopComp = ui.gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=19,
         tooltip=_('If checked, desktop composition will be allowed'),
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    smooth = gui.CheckBoxField(
+    smooth = ui.gui.CheckBoxField(
         label=_('Font Smoothing'),
         order=20,
         tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    enableAudio = gui.CheckBoxField(
+    enableAudio = ui.gui.CheckBoxField(
         label=_('Enable Audio'),
         order=21,
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
-        tab=gui.Tab.PARAMETERS,
-        defvalue=gui.TRUE,
+        tab=ui.gui.Tab.PARAMETERS,
+        defvalue=ui.gui.TRUE,
     )
-    enableAudioInput = gui.CheckBoxField(
+    enableAudioInput = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
         order=22,
         tooltip=_(
             'If checked, the microphone will be redirected to remote session (if client browser supports it)'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    enablePrinting = gui.CheckBoxField(
+    enablePrinting = ui.gui.CheckBoxField(
         label=_('Enable Printing'),
         order=23,
         tooltip=_(
             'If checked, the printing will be redirected to remote session (if client browser supports it)'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    enableFileSharing = gui.ChoiceField(
+    enableFileSharing = ui.gui.ChoiceField(
         label=_('File Sharing'),
         order=24,
         tooltip=_('File upload/download redirection policy'),
@@ -167,9 +166,9 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'up', 'text': _('Allow upload only')},
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
-    enableClipboard = gui.ChoiceField(
+    enableClipboard = ui.gui.ChoiceField(
         label=_('Clipboard'),
         order=25,
         tooltip=_('Clipboard redirection policy'),
@@ -180,111 +179,100 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'dis-paste', 'text': _('Disable paste to remote')},
             {'id': 'enabled', 'text': _('Enable clipboard')},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
 
-    serverLayout = gui.ChoiceField(
+    serverLayout = ui.gui.ChoiceField(
         order=26,
         label=_('Layout'),
-        tooltip=_('Keyboards Layout of server'),
+        tooltip=_('Keyboard Layout of server'),
         required=True,
         values=[
-            gui.choiceItem('-', 'default'),
-            gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
-            gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
-            gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
-            gui.choiceItem('es-latam-qwerty', _('Latin American keyboard')),
-            gui.choiceItem('da-dk-querty', _('Danish keyboard')),
-            gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
-            gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
-            gui.choiceItem('fr-be-azerty', _('Belgian French keyboard (azerty)')),
-            gui.choiceItem('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
-            gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
-            gui.choiceItem('hu-hu-qwerty', _('Hungarian keyboard')),
-            gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
-            gui.choiceItem('ja-jp-qwerty', _('Japanese keyboard')),
-            gui.choiceItem('no-no-querty', _('Norwegian keyboard')),
-            gui.choiceItem('pt-br-qwerty', _('Portuguese Brazilian keyboard')),
-            gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
-            gui.choiceItem('tr-tr-qwerty', _('Turkish keyboard')),
-            gui.choiceItem('failsafe', _('Failsafe')),
+            ui.gui.choiceItem('-', 'default'),
+            ui.gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
+            ui.gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
+            ui.gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
+            ui.gui.choiceItem('es-latam-qwerty', _('Latin American keyboard')),
+            ui.gui.choiceItem('da-dk-querty', _('Danish keyboard')),
+            ui.gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
+            ui.gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
+            ui.gui.choiceItem('fr-be-azerty', _('Belgian French keyboard (azerty)')),
+            ui.gui.choiceItem('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
+            ui.gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
+            ui.gui.choiceItem('hu-hu-qwerty', _('Hungarian keyboard')),
+            ui.gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
+            ui.gui.choiceItem('ja-jp-qwerty', _('Japanese keyboard')),
+            ui.gui.choiceItem('no-no-querty', _('Norwegian keyboard')),
+            ui.gui.choiceItem('pt-br-qwerty', _('Portuguese Brazilian keyboard')),
+            ui.gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
+            ui.gui.choiceItem('tr-tr-qwerty', _('Turkish keyboard')),
+            ui.gui.choiceItem('failsafe', _('Failsafe')),
         ],
         defvalue='-',
-        tab=gui.Tab.PARAMETERS,
+        tab=ui.gui.Tab.PARAMETERS,
     )
 
-    ticketValidity = gui.NumericField(
-        length=3,
-        label=_('Ticket Validity'),
-        defvalue='60',
-        order=90,
-        tooltip=_(
-            'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
-        ),
-        required=True,
-        minValue=60,
-        tab=gui.Tab.ADVANCED,
-    )
+    ticketValidity = fields.tunnelTicketValidityField()
 
-    forceNewWindow = gui.ChoiceField(
+    forceNewWindow = ui.gui.ChoiceField(
         order=91,
         label=_('Force new HTML Window'),
         tooltip=_('Select windows behavior for new connections on HTML5'),
         required=True,
         values=[
-            gui.choiceItem(
-                gui.FALSE,
+            ui.gui.choiceItem(
+                ui.gui.FALSE,
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
-            gui.choiceItem(
+            ui.gui.choiceItem(ui.gui.TRUE, _('Force every connection to be opened on a new window.')),
+            ui.gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
             ),
         ],
-        defvalue=gui.FALSE,
-        tab=gui.Tab.ADVANCED,
+        defvalue=ui.gui.FALSE,
+        tab=ui.gui.Tab.ADVANCED,
     )
-    security = gui.ChoiceField(
+    security = ui.gui.ChoiceField(
         order=92,
         label=_('Security'),
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,
         values=[
-            gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
-            gui.choiceItem(
+            ui.gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
+            ui.gui.choiceItem(
                 'rdp',
                 _('RDP (Standard RDP encryption. Should be supported by all servers)'),
             ),
-            gui.choiceItem(
+            ui.gui.choiceItem(
                 'nla',
                 _(
                     'NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)'
                 ),
             ),
-            gui.choiceItem(
+            ui.gui.choiceItem(
                 'nla-ext',
                 _(
                     'NLA extended (Network Layer authentication. Requires VALID username&password, or connection will fail)'
                 ),
             ),
-            gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
+            ui.gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
         defvalue='any',
-        tab=gui.Tab.ADVANCED,
+        tab=ui.gui.Tab.ADVANCED,
     )
 
-    rdpPort = gui.NumericField(
+    rdpPort = ui.gui.NumericField(
         order=93,
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         required=True,  #: Numeric fields have always a value, so this not really needed
         defvalue='3389',
-        tab=gui.Tab.ADVANCED,
+        tab=ui.gui.Tab.ADVANCED,
     )
 
-    customGEPath = gui.TextField(
+    customGEPath = ui.gui.TextField(
         label=_('Glyptodon Enterprise context path'),
         order=94,
         tooltip=_(
@@ -293,7 +281,7 @@ class HTML5RDPTransport(transports.Transport):
         defvalue='/',
         length=128,
         required=False,
-        tab=gui.Tab.ADVANCED,
+        tab=ui.gui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -484,7 +472,7 @@ class HTML5RDPTransport(transports.Transport):
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = f'&o_n_w={transport.uuid}'
-        if self.forceNewWindow.value == gui.TRUE:
+        if self.forceNewWindow.value == ui.gui.TRUE:
             onw = f'&o_n_w={userService.deployed_service.uuid}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'
