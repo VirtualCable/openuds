@@ -63,7 +63,7 @@ knownOss = tuple(os for os in KnownOS if os != KnownOS.UNKNOWN)
 
 allOss = knownOss + (KnownOS.UNKNOWN,)
 desktopOss = (KnownOS.LINUX, KnownOS.WINDOWS, KnownOS.MAC_OS)
-mobilesODD = list(set(allOss) - set(desktopOss))
+mobileOss = list(set(allOss) - set(desktopOss))
 
 
 DEFAULT_OS = KnownOS.WINDOWS

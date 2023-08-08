@@ -116,12 +116,14 @@ class Module(UserInterface, Environmentable, Serializable):
     # : Description of this module, used at admin level
     typeDescription: typing.ClassVar[str] = 'Base Module'
     # : Icon file, relative to module folders
-    iconFile: typing.ClassVar[
-        str
-    ] = 'base.png'  # This is expected to be png, use this format always
+    # This is expected to be png, use this format always
+    iconFile: typing.ClassVar[str] = 'base.png'
 
     # Not defined, but declared. If module is groupable, this value will contain to which group belongs
     group: typing.ClassVar[str]
+
+    # if this modules is marked as "Experimental"
+    experimental: typing.ClassVar[bool] = False
 
     @classmethod
     def name(cls: typing.Type['Module']) -> str:
@@ -182,9 +184,7 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         try:
             with open(
-                os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__))
-                + '/'
-                + cls.iconFile,
+                os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile,
                 'rb',
             ) as f:
                 data = f.read()
@@ -207,7 +207,9 @@ class Module(UserInterface, Environmentable, Serializable):
         return codecs.encode(cls.icon(), 'base64').decode()
 
     @staticmethod
-    def test(env: Environment, data: typing.Dict[str, str]) -> typing.List[typing.Any]:  # pylint: disable=unused-argument
+    def test(
+        env: Environment, data: typing.Dict[str, str]
+    ) -> typing.List[typing.Any]:  # pylint: disable=unused-argument
         """
         Test if the connection data is ok.
 

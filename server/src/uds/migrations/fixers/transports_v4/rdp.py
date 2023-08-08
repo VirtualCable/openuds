@@ -39,37 +39,110 @@ logger = logging.getLogger(__name__)
 
 
 # Copy for migration
-class HTML5VNCTransport(transports.Transport):
+class TRDPTransport(transports.Transport):
     """
-    Provides access via VNC to service.
+    Provides access via RDP to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
+    typeType = 'TSRDPTransport'
 
-    typeName = 'HTML5 VNC Experimental'
-    typeType = 'HTML5VNCTransport'
-    guacamoleServer = gui.TextField(
-        defvalue='https://',
+    tunnelServer = gui.TextField(
     )
 
-    username = gui.TextField()
-    password = gui.PasswordField()
+    tunnelWait = gui.NumericField(
+        defvalue='60',
+    )
 
-    vncPort = gui.NumericField(
-        defvalue='5900',
+    verifyCertificate = gui.CheckBoxField(
+        defvalue=gui.FALSE,
+    )
+
+    useEmptyCreds = gui.CheckBoxField(
+    )
+    fixedName = gui.TextField(
+    )
+    fixedPassword = gui.PasswordField(
+    )
+    withoutDomain = gui.CheckBoxField(
+    )
+    fixedDomain = gui.TextField(
+    )
+
+    allowSmartcards = gui.CheckBoxField(
+    )
+    allowPrinters = gui.CheckBoxField(
+    )
+    allowDrives = gui.ChoiceField(
+        defvalue='false',
+    )
+    enforceDrives = gui.TextField(
+    )
+
+    allowSerials = gui.CheckBoxField(
+    )
+    allowClipboard = gui.CheckBoxField(
+        defvalue=gui.TRUE,
+    )
+    allowAudio = gui.CheckBoxField(
+        defvalue=gui.TRUE,
+    )
+    allowWebcam = gui.CheckBoxField(
+        defvalue=gui.FALSE,
+    )
+    usbRedirection = gui.ChoiceField(
+        defvalue='false',
+    )
+
+    credssp = gui.CheckBoxField(
+        defvalue=gui.TRUE,
+    )
+    rdpPort = gui.NumericField(
+        defvalue='3389',
+    )
+
+    screenSize = gui.ChoiceField(
+        defvalue='-1x-1',
     )
 
     colorDepth = gui.ChoiceField(
-        defvalue='-',
+        defvalue='24',
     )
-    swapRedBlue = gui.CheckBoxField()
-    cursor = gui.CheckBoxField()
-    readOnly = gui.CheckBoxField()
 
-    ticketValidity = gui.NumericField(
-        defvalue='60',
+    wallpaper = gui.CheckBoxField(
     )
-    forceNewWindow = gui.ChoiceField(
+    multimon = gui.CheckBoxField(
+    )
+    aero = gui.CheckBoxField(
+    )
+    smooth = gui.CheckBoxField(
+        defvalue=gui.TRUE,
+    )
+    showConnectionBar = gui.CheckBoxField(
+        defvalue=gui.TRUE,
+    )
+
+    multimedia = gui.CheckBoxField(
+    )
+    alsa = gui.CheckBoxField(
+    )
+    printerString = gui.TextField(
+    )
+    smartcardString = gui.TextField(
+    )
+    customParameters = gui.TextField(
+    )
+
+    allowMacMSRDC = gui.CheckBoxField(
         defvalue=gui.FALSE,
+    )
+
+    customParametersMAC = gui.TextField(
+    )
+
+    customParametersWindows = gui.TextField(
+    )
+
+    optimizeTeams = gui.CheckBoxField(
     )
 
     # This value is the new "tunnel server"
@@ -79,9 +152,9 @@ class HTML5VNCTransport(transports.Transport):
 
 def migrate(apps, schema_editor) -> None:
     migrator.tunnel_transport(
-        apps, HTML5VNCTransport, 'guacamoleServer', 'HTML5 VNC', 'Tunnel for HTML VNC', is_html_server=True
+        apps, TRDPTransport, 'tunnelServer', 'RDP', 'Tunnel for RDP', is_html_server=False
     )
 
 
 def rollback(apps, schema_editor) -> None:
-    migrator.tunnel_transport_back(apps, HTML5VNCTransport, 'guacamoleServer', is_html_server=True)
+    migrator.tunnel_transport_back(apps, TRDPTransport, 'tunnelServer', is_html_server=False)

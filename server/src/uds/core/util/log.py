@@ -166,7 +166,7 @@ def doLog(
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    LogManager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
+    LogManager.manager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
 
 
 def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> typing.List[typing.Dict]:
@@ -212,7 +212,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
             return msg
 
         def notify(msg: str, identificator: str, logLevel: LogLevel) -> None:
-            NotificationsManager().notify('log', identificator, logLevel, msg)
+            NotificationsManager.manager().notify('log', identificator, logLevel, msg)
 
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:

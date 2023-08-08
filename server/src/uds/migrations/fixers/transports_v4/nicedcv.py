@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2023 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,31 +28,50 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
+import logging
 
-from django.utils.translation import gettext as _
+from uds.core.ui import gui
+from uds.core import transports
 
-from uds import models
-from uds.core import types, ui
+from . import migrator
+
+logger = logging.getLogger(__name__)
 
 
-def tunnelField() -> ui.gui.ChoiceField:
-    def tunnelServerValues() -> typing.List[ui.gui.ChoiceType]:
-        return [
-            ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})')
-            for v in models.RegisteredServerGroup.objects.filter(kind=types.servers.ServerType.TUNNEL).all()
-        ]
-    return ui.gui.ChoiceField(
-        label=_('Tunnel server'),
-        order=1,
-        tooltip=_('Tunnel server to use'),
-        required=True,
-        values=tunnelServerValues,
-        tab=ui.gui.Tab.TUNNEL,
+# Copy for migration
+class NICEDCVTunnelTransport(transports.Transport):
+    '''
+    Provides access via NICE to service.
+    This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
+    '''
+
+    typeType = 'NICEDCVTunnelTransport'
+
+    tunnelServer = gui.TextField()
+
+    tunnelWait = gui.NumericField(defvalue='60')
+
+    verifyCertificate = gui.CheckBoxField(defvalue=gui.TRUE)
+
+    useEmptyCreds = gui.CheckBoxField()
+    fixedName = gui.TextField()
+    fixedPassword = gui.PasswordField()
+
+    fullScreen = gui.CheckBoxField()
+
+    multimon = gui.CheckBoxField()
+    port = gui.NumericField(defvalue=8443)
+
+    # This value is the new "tunnel server"
+    # Old guacamoleserver value will be stored also on database, but will be ignored
+    tunnel = gui.ChoiceField()
+
+
+def migrate(apps, schema_editor) -> None:
+    migrator.tunnel_transport(
+        apps, NICEDCVTunnelTransport, 'tunnelServer', 'NICE DCV', 'Tunnel for NICE DCV', is_html_server=False
     )
 
-def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
-    try:
-        return models.RegisteredServerGroup.objects.get(uuid=fld.value)
-    except Exception:
-        return models.RegisteredServerGroup()
+
+def rollback(apps, schema_editor) -> None:
+    migrator.tunnel_transport_back(apps, NICEDCVTunnelTransport, 'tunnelServer', is_html_server=False)

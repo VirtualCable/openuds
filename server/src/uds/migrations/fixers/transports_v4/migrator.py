@@ -14,11 +14,11 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, name: st
     Migrates an old tunnel transport to a new one (with tunnelServer)
     """
     try:
-        # Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        # RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
-        # RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
+        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
         # For testing
-        from uds.models import Transport, RegisteredServerGroup, RegisteredServer
+        # from uds.models import Transport, RegisteredServerGroup, RegisteredServer
 
         for t in Transport.objects.filter(data_type=TransportType.typeType):
             print(t)
@@ -35,29 +35,29 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, name: st
                     continue
                 host, port = (server+':443').split('https://')[1].split(':')[:2]
             else:
-                host, port = (server+':443')[1].split(':')[:2]
+                host, port = (server+':443').split(':')[:2]
             # If no host or port, skip
             if not host or not port:
                 logger.error('Skipping %s transport %s as it does not have host or port', TransportType.__name__, t.name)
                 continue
             # Look for an existing tunnel server (RegisteredServerGroup)
-            tunnelServer = RegisteredServerGroup.objects.filter(
+            tunnel = RegisteredServerGroup.objects.filter(
                 host=host, port=port, kind=servers.ServerType.TUNNEL
             ).first()
-            if tunnelServer is None:
+            if tunnel is None:
                 logger.info('Creating new tunnel server for %s: %s:%s', TransportType.__name__,  host, port)
                 # Create a new one, adding all tunnel servers to it
-                tunnelServer = RegisteredServerGroup.objects.create(
+                tunnel = RegisteredServerGroup.objects.create(
                     name=f'{name} on {host}:{port}',
                     comments=f'{comments or name} (migration)',
                     host=host,
                     port=port,
                     kind=servers.ServerType.TUNNEL,
                 )
-            tunnelServer.servers.set(RegisteredServer.objects.filter(kind=servers.ServerType.TUNNEL))
+            tunnel.servers.set(RegisteredServer.objects.filter(kind=servers.ServerType.TUNNEL))
             # Set tunnel server on transport
-            logger.info('Setting tunnel server %s on transport %s', tunnelServer.name, t.name)
-            obj.tunnelServer.value = tunnelServer.uuid
+            logger.info('Setting tunnel server %s on transport %s', tunnel.name, t.name)
+            obj.tunnel.value = tunnel.uuid
             # Save transport
             t.data = obj.serialize()
             t.save(update_fields=['data'])
@@ -70,11 +70,10 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
     "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
     """
     try:
-        # Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        # RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
-        # RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
         # For testing
-        from uds.models import Transport, RegisteredServerGroup, RegisteredServer
+        # from uds.models import Transport, RegisteredServerGroup
 
         for t in Transport.objects.filter(data_type=TransportType.typeType):
             print(t)
@@ -82,12 +81,14 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
             obj = TransportType(Environment(t.uuid), None)
             obj.deserialize(t.data)
             # Guacamole server is https://<host>:<port>
+            # Other tunnels are <host>:<port>
             server = getattr(obj, serverAttr)
-            tunnelServer = RegisteredServerGroup.objects.get(uuid=obj.tunnelServer.value)
+            tunnelServer = RegisteredServerGroup.objects.get(uuid=obj.tunnel.value)
             if is_html_server:
-                server.value = f'https://{tunnelServer.pretty_host}'
+                server.value = f'https://{tunnelServer.host}:{tunnelServer.port}'
             else:
-                server.value = f'{tunnelServer.pretty_host}'
+                server.value = f'{tunnelServer.host}:{tunnelServer.port}'
+            print(obj, server)
             # Save transport
             t.data = obj.serialize()
             t.save(update_fields=['data'])

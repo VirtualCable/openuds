@@ -30,24 +30,24 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
 import logging
+import re
 import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core.ui import gui
-from uds.core import transports, exceptions, types
-from uds.core.util import os_detector as OsDetector, fields
-from uds.core.managers.crypto import CryptoManager
 from uds import models
+from uds.core import transports, types
+from uds.core.managers.crypto import CryptoManager
+from uds.core.ui import gui
+from uds.core.util import fields, os_detector
 from uds.core.util.model import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -66,21 +66,11 @@ class HTML5RDPTransport(transports.Transport):
     iconFile = 'html5.png'
 
     ownLink = True
-    supportedOss = OsDetector.allOss
+    supportedOss = os_detector.allOss
     protocol = transports.protocols.RDP
     group = transports.TUNNELED_GROUP
 
-    guacamoleServer = gui.TextField(
-        label=_('Tunnel Server'),
-        order=1,
-        tooltip=_('Host of the tunnel server (use https & port if needed) as accesible from users'),
-        defvalue='https://',
-        length=64,
-        required=True,
-        tab=gui.Tab.TUNNEL,
-    )
-
-    tunnelServer = fields.tunnelServerField()
+    tunnel = fields.tunnelField()
 
     useGlyptodonTunnel = gui.CheckBoxField(
         label=_('Use Glyptodon Enterprise tunnel'),
@@ -309,10 +299,6 @@ class HTML5RDPTransport(transports.Transport):
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
             return
-        # Strip spaces and all trailing '/'
-        self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
-        if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationError(_('The server must be http or https'))
         # if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
         #    raise exceptions.ValidationException(
         #        _(
@@ -504,7 +490,9 @@ class HTML5RDPTransport(transports.Transport):
             onw = '&o_s_w=yes'
         path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
         # Remove trailing /
-        if path[-1] == '/':
-            path = path[:-1]
+        path = path.rstrip('/')
 
-        return str(f'{self.guacamoleServer.value}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}')
+        tunnelServer = fields.getTunnelFromField(self.tunnel)
+        return str(
+            f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
+        )

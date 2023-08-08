@@ -35,19 +35,17 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core.ui import gui
-
-from uds.core import transports, exceptions
-
-from uds.core.util import os_detector as OsDetector
-from uds.core.managers.crypto import CryptoManager
 from uds import models
+from uds.core import transports
+from uds.core.managers.crypto import CryptoManager
+from uds.core.ui import gui
+from uds.core.util import fields, os_detector
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import DetectedOsInfo
+    from uds.core.util.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -65,20 +63,19 @@ class HTML5SSHTransport(transports.Transport):
     iconFile = 'html5ssh.png'
 
     ownLink = True
-    supportedOss = OsDetector.allOss
+    supportedOss = os_detector.allOss
     # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
     protocol = transports.protocols.SSH
     group = transports.TUNNELED_GROUP
 
-    guacamoleServer = gui.TextField(
-        label=_('Tunnel Server'),
-        order=1,
+    tunnel = fields.tunnelField()
+
+    useGlyptodonTunnel = gui.CheckBoxField(
+        label=_('Use Glyptodon Enterprise tunnel'),
+        order=2,
         tooltip=_(
-            'Host of the tunnel server (use http/https & port if needed) as accesible from users'
+            'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
         ),
-        defvalue='https://',
-        length=64,
-        required=True,
         tab=gui.Tab.TUNNEL,
     )
 
@@ -88,6 +85,7 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_('Username for SSH connection authentication.'),
         tab=gui.Tab.CREDENTIALS,
     )
+    
     # password = gui.PasswordField(
     #     label=_('Password'),
     #     order=21,
@@ -136,9 +134,7 @@ class HTML5SSHTransport(transports.Transport):
     fileSharingRoot = gui.TextField(
         label=_('File Sharing Root'),
         order=32,
-        tooltip=_(
-            'Root path for file sharing. If not provided, root directory will be used.'
-        ),
+        tooltip=_('Root path for file sharing. If not provided, root directory will be used.'),
         tab=gui.Tab.PARAMETERS,
     )
     sshPort = gui.NumericField(
@@ -153,9 +149,7 @@ class HTML5SSHTransport(transports.Transport):
     sshHostKey = gui.TextField(
         label=_('SSH Host Key'),
         order=34,
-        tooltip=_(
-            'Host key of the SSH server. If not provided, no verification of host identity is done.'
-        ),
+        tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done.'),
         tab=gui.Tab.PARAMETERS,
     )
     serverKeepAlive = gui.NumericField(
@@ -193,26 +187,31 @@ class HTML5SSHTransport(transports.Transport):
                 gui.FALSE,
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            gui.choiceItem(
-                gui.TRUE, _('Force every connection to be opened on a new window.')
-            ),
+            gui.choiceItem(gui.TRUE, _('Force every connection to be opened on a new window.')),
             gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
             ),
         ],
         defvalue=gui.FALSE,
-        tab=gui.Tab.ADVANCED
+        tab=gui.Tab.ADVANCED,
     )
+    customGEPath = gui.TextField(
+        label=_('Glyptodon Enterprise context path'),
+        order=94,
+        tooltip=_(
+            'Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon Enterprise Tunnel)'
+        ),
+        defvalue='/',
+        length=128,
+        required=False,
+        tab=gui.Tab.ADVANCED,
+    )
+
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
             return
-        # Strip spaces
-        # Remove trailing / (one or more) from url if it exists from "guacamoleServer" field
-        self.guacamoleServer.value = self.guacamoleServer.value.strip().rstrip('/')
-        if self.guacamoleServer.value[0:4] != 'http':
-            raise exceptions.ValidationError(_('The server must be http or https'))
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -287,6 +286,11 @@ class HTML5SSHTransport(transports.Transport):
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
+        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
+        # Remove trailing /
+        path = path.rstrip('/')
+
+        tunnelServer = fields.getTunnelFromField(self.tunnel)
         return str(
-            f'{self.guacamoleServer.value}/guacamole/#/?data={ticket}.{scrambler}{onw}'
+            f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}'
         )

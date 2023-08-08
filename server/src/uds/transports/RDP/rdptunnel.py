@@ -33,15 +33,14 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.ui import gui
+
 from uds.core import transports
+from uds.core.ui import gui
+from uds.core.util import fields, os_detector, validators
 from uds.models import TicketStore
-from uds.core.util import os_detector
-from uds.core.util import validators
 
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
-
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -76,6 +75,8 @@ class TRDPTransport(BaseRDPTransport):
         ),
         tab=gui.Tab.TUNNEL,
     )
+
+    tunnel = fields.tunnelField()
 
     tunnelWait = gui.NumericField(
         length=3,
@@ -165,7 +166,8 @@ class TRDPTransport(BaseRDPTransport):
             validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 
-        tunHost, tunPort = self.tunnelServer.value.split(':')
+        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
         #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
