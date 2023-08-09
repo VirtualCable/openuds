@@ -42,12 +42,12 @@ from uds.core import types, ui
 # ******************************************************
 
 
-def _serverValues(
-    kind: types.servers.ServerType, subkind: typing.Optional[str] = None
+def _serverGroupValues(
+    kind: types.servers.ServerType, sub_kind: typing.Optional[str] = None
 ) -> typing.List[ui.gui.ChoiceType]:
     fltr = models.RegisteredServerGroup.objects.filter(kind=kind)
-    if subkind is not None:
-        fltr = fltr.filter(subkind=subkind)
+    if sub_kind is not None:
+        fltr = fltr.filter(sub_kind=sub_kind)
     return [ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})') for v in fltr.all()]
 
 
@@ -68,7 +68,7 @@ def tunnelField() -> ui.gui.ChoiceField:
         order=1,
         tooltip=_('Tunnel server to use'),
         required=True,
-        values=functools.partial(_serverValues, types.servers.ServerType.TUNNEL),
+        values=functools.partial(_serverGroupValues, types.servers.ServerType.TUNNEL),
         tab=ui.gui.Tab.TUNNEL,
     )
 
@@ -96,7 +96,7 @@ def serverGroupField(
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        values=functools.partial(_serverValues, kind, subkind),  # So it gets evaluated at runtime
+        values=functools.partial(_serverGroupValues, kind, subkind),  # So it gets evaluated at runtime
         tab=ui.gui.Tab.TUNNEL,
     )
 

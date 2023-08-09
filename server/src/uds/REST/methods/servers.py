@@ -49,6 +49,7 @@ from uds.REST.utils import rest_result
 logger = logging.getLogger(__name__)
 
 
+# REST API for Server Token Clients interaction
 class ServerRegister(Handler):
     needs_staff = True
     path = 'servers'
@@ -66,9 +67,7 @@ class ServerRegister(Handler):
             # If already exists a token for this, return it instead of creating a new one, and update the information...
             # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.RegisteredServer.objects.get(
-                ip=ip, kind=self._params['type']
-            )
+            serverToken = models.RegisteredServer.objects.get(ip=ip, kind=self._params['type'])
             # Update parameters
             serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
@@ -88,7 +87,7 @@ class ServerRegister(Handler):
                     log_level=self._params.get('log_level', LogLevel.INFO.value),
                     stamp=now,
                     kind=self._params['type'],
-                    sub_kind=self._params.get('sub_kind', ''), # Optional
+                    sub_kind=self._params.get('sub_kind', ''),  # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
                     mac=self._params.get('mac', consts.MAC_UNKNOWN),
                     data=self._params.get('data', None),
@@ -98,60 +97,7 @@ class ServerRegister(Handler):
         return rest_result(result=serverToken.token)
 
 
-class ServersTokens(ModelHandler):
-    model = models.RegisteredServer
-    model_exclude = {
-        'kind__in': [
-            types.servers.ServerType.ACTOR,
-        ]
-    }
-    path = 'servers'
-    name = 'tokens'
-
-    table_title = _('Servers tokens')
-    table_fields = [
-        {'token': {'title': _('Token')}},
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-        {'username': {'title': _('Issued by')}},
-        {'hostname': {'title': _('Origin')}},
-        {'type': {'title': _('Type')}},
-        {'os': {'title': _('OS')}},
-        {'ip': {'title': _('IP')}},
-    ]
-
-    def item_as_dict(self, item: models.RegisteredServer) -> typing.Dict[str, typing.Any]:
-        return {
-            'id': item.token,
-            'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
-            'stamp': item.stamp,
-            'username': item.username,
-            'ip': item.ip,
-            'hostname': item.hostname,
-            'token': item.token,
-            'type': types.servers.ServerType(
-                item.kind
-            ).as_str(),  # type is a reserved word, so we use "kind" instead on model
-            'os': item.os_type,
-        }
-
-    def delete(self) -> str:
-        """
-        Processes a DELETE request
-        """
-        if len(self._args) != 1:
-            raise RequestError('Delete need one and only one argument')
-
-        self.ensureAccess(
-            self.model(), permissions.PermissionType.ALL, root=True
-        )  # Must have write permissions to delete
-
-        try:
-            self.model.objects.get(token=self._args[0]).delete()
-        except self.model.DoesNotExist:
-            raise NotFound('Element do not exists') from None
-
-        return OK
-
+# REST handlers for server actions
 class ServerTest(Handler):
     authenticated = False  # Test is not authenticated, the auth is the token to test itself
 
@@ -167,6 +113,7 @@ class ServerTest(Handler):
         except Exception as e:
             return rest_result('error', error=str(e))
 
+
 # Server related classes/actions
 class ServerAction(Handler):
     authenticated = False  # Actor requests are not authenticated normally
@@ -174,15 +121,16 @@ class ServerAction(Handler):
 
     def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
         return rest_result('error', error='Base action invoked')
-    
+
     @blocker.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
             server = models.RegisteredServer.objects.get(token=self._params['token'])
         except models.RegisteredServer.DoesNotExist:
-            raise exceptions.BlockAccess() from None   # Block access if token is not valid
-        
+            raise exceptions.BlockAccess() from None  # Block access if token is not valid
+
         return self.action(server)
+
 
 class ServerEvent(ServerAction):
     """
@@ -195,6 +143,7 @@ class ServerEvent(ServerAction):
     * logout
     * log
     """
+
     name = 'notify'
 
     def getUserService(self) -> models.UserService:
@@ -205,7 +154,7 @@ class ServerEvent(ServerAction):
             return models.UserService.objects.get(uuid=self._params['uuid'])
         except models.UserService.DoesNotExist:
             logger.error('User service not found (params: %s)', self._params)
-            raise 
+            raise
 
     def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
         # Notify a server that a new service has been assigned to it
