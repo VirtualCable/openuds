@@ -620,7 +620,8 @@ class UserService(UUIDModel):
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.setProperty('comms_url', commsUrl)
 
-    def getCommsUrl(self) -> typing.Optional[str]:
+    def getCommsUrl(self, path: typing.Optional[str] = None) -> typing.Optional[str]:  # pylint: disable=unused-argument
+        # path is not used, but to keep compat with RegisteredServer "getCommUrl" method
         return self.getProperty('comms_url', None)
 
     def logIP(self, ip: typing.Optional[str] = None) -> None:

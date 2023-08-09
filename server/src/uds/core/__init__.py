@@ -32,10 +32,4 @@ Core of UDS.
 This package contains all core-related code for UDS
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import time
 
-
-VERSION = '4.x.x-DEVEL'
-VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
-# Minimal uds client version required to connect to this server
-REQUIRED_CLIENT_VERSION = '3.6.0'

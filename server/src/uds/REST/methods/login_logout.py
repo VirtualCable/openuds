@@ -37,7 +37,7 @@ import string
 import time
 import typing
 
-from uds.core import VERSION as UDS_VERSION
+from uds.core.consts import VERSION as UDS_VERSION
 from uds.core import consts
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager

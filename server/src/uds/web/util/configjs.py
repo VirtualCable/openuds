@@ -41,9 +41,10 @@ from django.templatetags.static import static
 
 from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
+from uds.core.consts import VERSION
 from uds.core.managers import downloadsManager
 from uds.core.util.config import GlobalConfig
-from uds.core import VERSION, VERSION_STAMP
+from uds.core.consts import VERSION_STAMP
 from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking

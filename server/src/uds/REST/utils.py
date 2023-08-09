@@ -30,7 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 
-from uds.core import VERSION
+from uds.core.consts import VERSION
 from uds.core.util.model import getSqlDatetimeAsUnix
 
 

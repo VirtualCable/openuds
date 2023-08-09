@@ -39,7 +39,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
-from uds.core import VERSION, VERSION_STAMP
+from uds.core.consts import VERSION_STAMP
+from uds.core.consts import VERSION
 from uds.core.util import modfinder
 
 from . import processors, log

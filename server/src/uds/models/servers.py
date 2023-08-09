@@ -49,7 +49,8 @@ from .tag import TaggingMixin
 if typing.TYPE_CHECKING:
     from uds.models.transport import Transport
 
-class RegisteredServerGroup(UUIDModel, TaggingMixin):  # type: ignore  # Mypy complains about Meta on base classes O_o
+
+class RegisteredServerGroup(UUIDModel, TaggingMixin):
     """
     Registered Server Groups
 
@@ -78,11 +79,8 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):  # type: ignore  # Mypy co
 
     class Meta:
         # Unique for host and port, so we can have only one group for each host:port
-        constraints = [
-            models.UniqueConstraint(
-                fields=['host', 'port'], name='unique_host_port_group'
-            )
-        ]
+        app_label = 'uds'
+        constraints = [models.UniqueConstraint(fields=['host', 'port'], name='unique_host_port_group')]
 
     @property
     def pretty_host(self) -> str:
@@ -149,10 +147,13 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
     mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
+    # certificate of server, if any. VDI Actors will have it's certificate on a property of the userService
+    certificate = models.TextField(default='', blank=True)
+
     # Log level, so we can filter messages for this server
     log_level = models.IntegerField(default=LogLevel.ERROR.value)
 
-    # Extra data, for custom server type use (i.e. actor keeps command related data here)
+    # Extra data, for server type custom data use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
 
     # Group this server belongs to
@@ -192,59 +193,49 @@ class RegisteredServer(UUIDModel, TaggingMixin):
 
     @property
     def server_type(self) -> types.servers.ServerType:
-        """Returns the server type of this server
-        """
+        """Returns the server type of this server"""
         return types.servers.ServerType(self.kind)
 
     @server_type.setter
     def server_type(self, value: types.servers.ServerType) -> None:
-        """Sets the server type of this server
-        """
+        """Sets the server type of this server"""
         self.kind = value.value
 
-
     @property
-    def ip_version(self) -> int: 
-        """Returns the ip version of this server
-        """
+    def ip_version(self) -> int:
+        """Returns the ip version of this server"""
         return 6 if ':' in self.ip else 4
 
-    def url(
-        self, path: str, *, port: int = SERVER_DEFAULT_LISTEN_PORT, secret: typing.Optional[str] = None
-    ) -> str:
+    def getCommsUrl(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
         """
         Returns the url for a path to this server
 
         Args:
             path: Path to add to url
-            port: Port to use (if not provided, default port will be used, that is
-            secret: Secret to use (if not provided, token will be used)
 
         Returns:
             The url for the path
 
         Note:
-            Currently, Actor urls are managed by the actor itself.
+            USerService Actors has it own "comms" method
             This is so because every VDI actor has a different tocken, not registered here
             (This only registers "Master" actor, the descendants obtains a token from it)
             App Servers, future implementations of Tunnel and Other servers will use this method
             to obtain the url for the path.
             Currently, only App Servers uses this method. Tunnel servers does not expose any url.
+            The "token" will be sent by server api on header, and it is a sha256 of the server token
+            (so we don't sent it directly to client) on X-AUTH-HASH
         """
-        if secret is None:
-            secret = self.token  # If no custom secret, use token
-
-        if secret:
-            secret = '/' + secret
+        path = path or ''
 
         if not path.startswith('/'):
             path = '/' + path
 
-        path = f'/{self.server_type.path()}{secret}{path}'
+        path = f'/{self.server_type.path()}{path}'
 
         if self.ip_version == 4:
-            return f'https://{self.ip}:{port}{path}'
-        return f'https://[{self.ip}]:{port}{path}'
+            return f'https://{self.ip}:{self.listen_port}{path}'
+        return f'https://[{self.ip}]:{self.listen_port}{path}'
 
     def __str__(self):
         return f'<RegisterdServer {self.token} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'

@@ -181,6 +181,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
+            name="certificate",
+            field=models.TextField(blank=True, default=""),
+        ),
+        migrations.AddField(
+            model_name="registeredserver",
             name="listen_port",
             field=models.IntegerField(default=43910),
         ),

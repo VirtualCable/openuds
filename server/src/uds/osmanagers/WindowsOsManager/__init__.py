@@ -38,7 +38,7 @@ import sys
 from django.utils.translation import gettext_noop as _
 from uds.core import osmanagers
 from uds.core import managers
-from uds.core import VERSION
+from uds.core.consts import VERSION
 
 from .windows import WindowsOsManager
 from .windows_domain import WinDomainOsManager

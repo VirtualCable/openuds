@@ -37,6 +37,9 @@ from django.utils.translation import gettext as _
 from uds.core import types
 from uds.core.util import singleton
 
+from .servers_api import request
+
+
 if typing.TYPE_CHECKING:
     from uds import models
 
@@ -53,6 +56,19 @@ class ServerManager(metaclass=singleton.Singleton):
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
 
-    # TODO: Implement this
-    def notifyPreconnect(self, server: 'models.RegisteredServer') -> None:
-        pass
+    def notifyPreconnect(
+        self,
+        server: 'models.RegisteredServer',
+        userService: 'models.UserService',
+        info: types.connections.ConnectionInfoType,
+    ) -> None:
+        """
+        Notifies preconnect to server
+        """
+        request.ServerApiRequester(server).notifyPreconnect(userService, info)
+
+    def notifyRemoval(self, server: 'models.RegisteredServer', userService: 'models.UserService') -> None:
+        """
+        Notifies removal to server
+        """
+        request.ServerApiRequester(server).notifyRemoval(userService)

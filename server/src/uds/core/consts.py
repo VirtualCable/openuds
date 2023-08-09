@@ -32,11 +32,17 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 from datetime import datetime
-from time import mktime
+import time
+
+# UDS Version related
+VERSION = '4.x.x-DEVEL'
+VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
+# Minimal uds client version required to connect to this server
+REQUIRED_CLIENT_VERSION = '3.6.0'
 
 # Date related constants
 NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
-NEVER_UNIX: typing.Final[int] = int(mktime(NEVER.timetuple()))
+NEVER_UNIX: typing.Final[int] = int(time.mktime(NEVER.timetuple()))
 
 # Max ip v6 string length representation, allowing ipv4 mapped addresses
 MAX_IPV6_LENGTH: typing.Final[int] = 45
@@ -55,3 +61,7 @@ OK: typing.Final[
 
 # Maximum number of failures before blocking on REST API
 ALLOWED_FAILS: typing.Final[int] = 5
+
+# Servers communications constants
+USER_AGENT: typing.Final[str] = f'UDS Server/{VERSION}'
+COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers

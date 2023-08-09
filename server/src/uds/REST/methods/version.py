@@ -31,7 +31,8 @@
 import logging
 import typing
 
-from uds.core import VERSION, VERSION_STAMP
+from uds.core.consts import VERSION_STAMP
+from uds.core.consts import VERSION
 
 from ..handlers import Handler
 

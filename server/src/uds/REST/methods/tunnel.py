@@ -165,4 +165,5 @@ class TunnelRegister(ServerRegister):
         self._params['type'] = types.servers.ServerType.TUNNEL
         self._params['os'] = self._params.get('os', KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
         self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS
+        self._params['certiciate'] = '' # No certificate for legacy tunnels, does not respond to API requests from UDS
         return super().post()

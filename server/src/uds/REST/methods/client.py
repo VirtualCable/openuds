@@ -36,6 +36,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
+from uds.core.consts import VERSION as UDS_VERSION
 from uds.models import TicketStore
 from uds.models import User
 from uds.web.util import errors
@@ -43,7 +44,7 @@ from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core import VERSION as UDS_VERSION, REQUIRED_CLIENT_VERSION
+from uds.core.consts import REQUIRED_CLIENT_VERSION
 from uds.core.util.rest.tools import match
 
 if typing.TYPE_CHECKING:

@@ -38,7 +38,7 @@ import sys
 from django.utils.translation import gettext_noop as _
 from uds.core.osmanagers.osmfactory import OSManagersFactory
 from uds.core.managers import downloadsManager
-from uds.core import VERSION
+from uds.core.consts import VERSION
 
 from .linux_osmanager import LinuxOsManager
 from .linux_randompass_osmanager import LinuxRandomPassManager

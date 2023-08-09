@@ -1,22 +1,22 @@
-import secrets
-import random
-from datetime import datetime, timedelta
 import ipaddress
-import typing
 import logging
+import random
+import secrets
 import ssl
+import typing
+from datetime import datetime, timedelta
 
-from django.conf import settings
-
-from cryptography import x509
-from cryptography.x509.oid import NameOID
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
 import certifi
 import requests
 import requests.adapters
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.x509.oid import NameOID
+from django.conf import settings
+
+from uds.core import consts
 
 logger = logging.getLogger(__name__)
 
@@ -189,5 +189,8 @@ def secureRequestsSession(
 
     session = requests.Session()
     session.mount("https://", UDSHTTPAdapter())
+
+    # Add user agent header to session
+    session.headers.update({"User-Agent": consts.USER_AGENT})
 
     return session
