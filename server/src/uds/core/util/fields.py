@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import functools
 
 from django.utils.translation import gettext as _
 
@@ -41,29 +42,88 @@ from uds.core import types, ui
 # ******************************************************
 
 
+def _serverValues(
+    kind: types.servers.ServerType, subkind: typing.Optional[str] = None
+) -> typing.List[ui.gui.ChoiceType]:
+    fltr = models.RegisteredServerGroup.objects.filter(kind=kind)
+    if subkind is not None:
+        fltr = fltr.filter(subkind=subkind)
+    return [ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})') for v in fltr.all()]
+
+
+def _serverGrpFromField(
+    fld: ui.gui.ChoiceField, kind: types.servers.ServerType
+) -> models.RegisteredServerGroup:
+    try:
+        return models.RegisteredServerGroup.objects.get(uuid=fld.value, kind=kind)
+    except Exception:
+        return models.RegisteredServerGroup()
+
+
 # Tunnel server field
 def tunnelField() -> ui.gui.ChoiceField:
-    def tunnelServerValues() -> typing.List[ui.gui.ChoiceType]:
-        return [
-            ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})')
-            for v in models.RegisteredServerGroup.objects.filter(kind=types.servers.ServerType.TUNNEL).all()
-        ]
-
+    """Returns a field to select a tunnel server"""
     return ui.gui.ChoiceField(
         label=_('Tunnel server'),
         order=1,
         tooltip=_('Tunnel server to use'),
         required=True,
-        values=tunnelServerValues,
+        values=functools.partial(_serverValues, types.servers.ServerType.TUNNEL),
         tab=ui.gui.Tab.TUNNEL,
     )
 
 
 def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
-    try:
-        return models.RegisteredServerGroup.objects.get(uuid=fld.value)
-    except Exception:
-        return models.RegisteredServerGroup()
+    """Returns a tunnel server from a field"""
+    return _serverGrpFromField(fld, types.servers.ServerType.TUNNEL)
+
+
+# Server group field
+def serverGroupField(
+    kind: types.servers.ServerType = types.servers.ServerType.LEGACY, subkind: typing.Optional[str] = None
+) -> ui.gui.ChoiceField:
+    """Returns a field to select a server group
+
+    Args:
+        kind: Type of server group to select
+        subkind: Subtype of server group to select (if any)
+
+    Returns:
+        A ChoiceField with the server group selection
+    """
+    return ui.gui.ChoiceField(
+        label=_('Server group'),
+        order=2,
+        tooltip=_('Server group to use'),
+        required=True,
+        values=functools.partial(_serverValues, kind, subkind),  # So it gets evaluated at runtime
+        tab=ui.gui.Tab.TUNNEL,
+    )
+
+
+def getServerGroupFromField(
+    fld: ui.gui.ChoiceField, kind: types.servers.ServerType = types.servers.ServerType.LEGACY
+) -> models.RegisteredServerGroup:
+    """Returns a server group from a field
+
+    Args:
+        fld: Field to get server group from
+        kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
+    """
+    return _serverGrpFromField(fld, kind)
+
+
+def getServersFromServerGroupField(
+    fld: ui.gui.ChoiceField, kind: types.servers.ServerType = types.servers.ServerType.LEGACY
+) -> typing.List[models.RegisteredServer]:
+    """Returns a list of servers from a server group field
+
+    Args:
+        fld: Field to get server group from
+        kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
+    """
+    grp = _serverGrpFromField(fld, kind)
+    return list(grp.servers.all())
 
 
 # Ticket validity time field (for http related tunnels)
@@ -81,6 +141,7 @@ def tunnelTicketValidityField() -> ui.gui.NumericField:
         tab=ui.gui.Tab.ADVANCED,
     )
 
+
 # Tunnel wait time (for uds client related tunnels)
 def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
     return ui.gui.NumericField(
@@ -94,4 +155,3 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
         required=True,
         tab=ui.gui.Tab.TUNNEL,
     )
-

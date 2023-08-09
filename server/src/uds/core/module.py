@@ -125,6 +125,8 @@ class Module(UserInterface, Environmentable, Serializable):
     # if this modules is marked as "Experimental"
     experimental: typing.ClassVar[bool] = False
 
+    _uuid: str
+
     @classmethod
     def name(cls: typing.Type['Module']) -> str:
         """

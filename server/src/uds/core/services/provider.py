@@ -42,6 +42,7 @@ from uds.core.ui import gui
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .service import Service
+    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +179,12 @@ class ServiceProvider(Module):
         Default implementation does nothing
         """
 
+    def getDbObject(self) -> 'models.Provider':
+        """
+        Returns the database object for this provider
+        """
+        return models.Provider.objects.get(uuid=self._uuid)
+
     def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices
         if val is None:
@@ -215,9 +222,7 @@ class ServiceProvider(Module):
         from uds.models import Provider as DBProvider  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
-            log.doLog(
-                DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE
-            )
+            log.doLog(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
 
     def __str__(self):
         """

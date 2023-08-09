@@ -75,15 +75,13 @@ class Providers(ModelHandler):
         {'comments': {'title': _('Comments')}},
         {'maintenance_state': {'title': _('Status')}},
         {'services_count': {'title': _('Services'), 'type': 'numeric'}},
-        {
-            'user_services_count': {'title': _('User Services'), 'type': 'numeric'}
-        },  # , 'width': '132px'
+        {'user_services_count': {'title': _('User Services'), 'type': 'numeric'}},  # , 'width': '132px'
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def item_as_dict(self, item: Provider) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Provider') -> typing.Dict[str, typing.Any]:
         type_ = item.getType()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
@@ -102,9 +100,7 @@ class Providers(ModelHandler):
             'name': item.name,
             'tags': [tag.vtag for tag in item.tags.all()],
             'services_count': item.services.count(),
-            'user_services_count': UserService.objects.filter(
-                deployed_service__service__provider=item
-            )
+            'user_services_count': UserService.objects.filter(deployed_service__service__provider=item)
             .exclude(state__in=(State.REMOVED, State.ERROR))
             .count(),
             'maintenance_mode': item.maintenance_mode,
@@ -128,9 +124,7 @@ class Providers(ModelHandler):
         providerType = services.factory().lookup(type_)
         if providerType:
             provider = providerType(Environment.getTempEnv(), None)
-            return self.addDefaultFields(
-                provider.guiDescription(), ['name', 'comments', 'tags']
-            )
+            return self.addDefaultFields(provider.guiDescription(), ['name', 'comments', 'tags'])
         raise NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[typing.Dict, None, None]:

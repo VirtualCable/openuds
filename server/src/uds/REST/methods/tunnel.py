@@ -42,7 +42,7 @@ from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
 from uds.core.util.stats import events
 
-from .registered_servers import ServerRegister
+from .servers import ServerRegister
 
 logger = logging.getLogger(__name__)
 

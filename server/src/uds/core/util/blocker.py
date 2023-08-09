@@ -51,6 +51,8 @@ RT = typing.TypeVar('RT')
 
 def blocker(
     request_attr: typing.Optional[str] = None,
+    max_failures: typing.Optional[int] = None,
+    ignore_block_config: bool = False,
 ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
     """
     Decorator that will block the actor if it has more than ALLOWED_FAILS failures in BLOCK_ACTOR_TIME seconds
@@ -67,11 +69,12 @@ def blocker(
         Decorator
 
     """
+    max_failures = max_failures or consts.ALLOWED_FAILS
 
     def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
-            if not GlobalConfig.BLOCK_ACTOR_FAILURES.getBool(True):
+            if not GlobalConfig.BLOCK_ACTOR_FAILURES.getBool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
             request: typing.Optional['ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)
@@ -84,7 +87,7 @@ def blocker(
 
             # if ip is blocked, raise exception
             failuresCount = blockCache.get(ip, 0)
-            if failuresCount >= consts.ALLOWED_FAILS:
+            if failuresCount >= max_failures:
                 raise AccessDenied
 
             try:

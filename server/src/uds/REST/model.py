@@ -1030,12 +1030,12 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                val = self.model.objects.get(uuid=self._args[0].lower())
+                item = self.model.objects.get(uuid=self._args[0].lower())
 
-                self.ensureAccess(val, uds.core.types.permissions.PermissionType.READ)
+                self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
 
-                res = self.item_as_dict(val)
-                self.fillIntanceFields(val, res)
+                res = self.item_as_dict(item)
+                self.fillIntanceFields(item, res)
                 return res
             except Exception as e:
                 logger.exception('Got Exception looking for item')

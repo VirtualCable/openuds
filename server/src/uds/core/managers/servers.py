@@ -72,3 +72,9 @@ class ServerManager(metaclass=singleton.Singleton):
         Notifies removal to server
         """
         request.ServerApiRequester(server).notifyRemoval(userService)
+
+    def processNotification(self, server: 'models.RegisteredServer', data: str) -> None:
+        """
+        Processes a notification from server
+        """
+        pass
