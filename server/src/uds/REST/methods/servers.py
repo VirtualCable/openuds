@@ -67,14 +67,15 @@ class ServerRegister(Handler):
             # If already exists a token for this, return it instead of creating a new one, and update the information...
             # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.RegisteredServer.objects.get(ip=ip, kind=self._params['type'])
+            serverToken = models.RegisteredServer.objects.get(ip=ip, type=self._params['type'])
             # Update parameters
             serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.stamp = now
-            serverToken.kind = self._params['type']
+            serverToken.type = self._params['type']
+            serverToken.subtype = self._params.get('subtype', '')  # Optional
             serverToken.save()
         except Exception:
             try:
@@ -86,8 +87,8 @@ class ServerRegister(Handler):
                     token=models.RegisteredServer.create_token(),
                     log_level=self._params.get('log_level', LogLevel.INFO.value),
                     stamp=now,
-                    kind=self._params['type'],
-                    sub_kind=self._params.get('sub_kind', ''),  # Optional
+                    type=self._params['type'],
+                    subtype=self._params.get('subtype', ''),  # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
                     mac=self._params.get('mac', consts.MAC_UNKNOWN),
                     data=self._params.get('data', None),
@@ -167,7 +168,7 @@ class ServerEvent(ServerAction):
         #    * Logout: { 'username': 'username'}
         #    * Log: { 'level': 'level', 'message': 'message'}
         try:
-            event = types.events.NotifiableEvents(self._params.get('event', None))
+            event = types.events.NotifiableEvents(self._params.get('event', None) or '')
         except ValueError:
             return rest_result('error', error='No valid event specified')
 

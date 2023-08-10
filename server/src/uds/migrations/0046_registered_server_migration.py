@@ -38,7 +38,7 @@ def migrate_old_data(apps, schema_editor) -> None:
                 hostname=token.hostname,
                 token=token.token,
                 stamp=token.stamp,
-                kind=ACTOR_TYPE,
+                type=ACTOR_TYPE,
                 os_type=KnownOS.UNKNOWN.os_name(),
                 data={
                     'mac': token.mac,
@@ -115,8 +115,8 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=64, unique=True)),
                 ("comments", models.CharField(default="", max_length=255)),
-                ("kind", models.IntegerField(default=uds.core.types.servers.ServerType["LEGACY"], db_index=True)),
-                ("sub_kind", models.CharField(db_index=True, default="", max_length=32)),
+                ("type", models.IntegerField(default=uds.core.types.servers.ServerType["LEGACY"], db_index=True)),
+                ("subtype", models.CharField(db_index=True, default="", max_length=32)),
                 ("host", models.CharField(default="", max_length=255)),
                 ("port", models.IntegerField(default=0)),
                 ("tags", models.ManyToManyField(to="uds.tag")),
@@ -147,12 +147,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
-            name="kind",
+            name="type",
             field=models.IntegerField(db_index=True, default=1),
         ),
         migrations.AddField(
             model_name="registeredserver",
-            name="sub_kind",
+            name="subtype",
             field=models.CharField(db_index=True, default="", max_length=32),
         ),
         migrations.AddField(

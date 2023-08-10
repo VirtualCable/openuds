@@ -47,22 +47,21 @@ logger = logging.getLogger(__name__)
 class ServersTokens(ModelHandler):
     model = models.RegisteredServer
     model_exclude = {
-        'kind__in': [
+        'type__in': [
             types.servers.ServerType.ACTOR,
         ]
     }
     path = 'servers'
     name = 'tokens'
 
-    table_title = _('Servers tokens')
+    table_title = _('Registered Servers')
     table_fields = [
-        {'token': {'title': _('Token')}},
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-        {'username': {'title': _('Issued by')}},
-        {'hostname': {'title': _('Origin')}},
+        {'hostname': {'title': _('Hostname')}},
+        {'ip': {'title': _('IP')}},
         {'type': {'title': _('Type')}},
         {'os': {'title': _('OS')}},
-        {'ip': {'title': _('IP')}},
+        {'username': {'title': _('Issued by')}},
+        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
     def item_as_dict(self, item: models.RegisteredServer) -> typing.Dict[str, typing.Any]:
@@ -74,9 +73,7 @@ class ServersTokens(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': types.servers.ServerType(
-                item.kind
-            ).as_str(),  # type is a reserved word, so we use "kind" instead on model
+            'type': types.servers.ServerType(item.type).as_str(),
             'os': item.os_type,
         }
 
@@ -98,11 +95,12 @@ class ServersTokens(ModelHandler):
 
         return OK
 
+
 # REST API For servers (except tunnel servers nor actors)
 class ServersGroups(ModelHandler):
     model = models.RegisteredServerGroup
     model_filter = {
-        'kind__in': [
+        'type__in': [
             types.servers.ServerType.SERVER,
             types.servers.ServerType.LEGACY,
         ]
@@ -113,7 +111,7 @@ class ServersGroups(ModelHandler):
     table_title = _('Servers Groups')
     table_fields = [
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
-        {'kind': {'title': _('Type')}},
+        {'type': {'title': _('Type')}},
         {'ip': {'title': _('IP')}},
     ]
 
@@ -126,9 +124,7 @@ class ServersGroups(ModelHandler):
             'ip': item.ip,
             'hostname': item.hostname,
             'token': item.token,
-            'type': types.servers.ServerType(
-                item.kind
-            ).as_str(),  # type is a reserved word, so we use "kind" instead on model
+            'type': types.servers.ServerType(item.type).as_str(),
             'os': item.os_type,
         }
 
@@ -149,5 +145,3 @@ class ServersGroups(ModelHandler):
             raise NotFound('Element do not exists') from None
 
         return OK
-
-

@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 class ActorTokens(ModelHandler):
     model = RegisteredServer
-    model_filter = {'kind': types.servers.ServerType.ACTOR}
+    model_filter = {'type': types.servers.ServerType.ACTOR}
 
     table_title = _('Actor tokens')
     table_fields = [

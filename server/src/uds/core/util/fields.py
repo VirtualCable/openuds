@@ -43,11 +43,11 @@ from uds.core import types, ui
 
 
 def _serverGroupValues(
-    kind: types.servers.ServerType, sub_kind: typing.Optional[str] = None
+    type_: types.servers.ServerType, subtype: typing.Optional[str] = None
 ) -> typing.List[ui.gui.ChoiceType]:
-    fltr = models.RegisteredServerGroup.objects.filter(kind=kind)
-    if sub_kind is not None:
-        fltr = fltr.filter(sub_kind=sub_kind)
+    fltr = models.RegisteredServerGroup.objects.filter(type=type_)
+    if subtype is not None:
+        fltr = fltr.filter(subtype=subtype)
     return [ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})') for v in fltr.all()]
 
 
@@ -102,7 +102,7 @@ def serverGroupField(
 
 
 def getServerGroupFromField(
-    fld: ui.gui.ChoiceField, kind: types.servers.ServerType = types.servers.ServerType.LEGACY
+    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.LEGACY
 ) -> models.RegisteredServerGroup:
     """Returns a server group from a field
 
@@ -110,11 +110,11 @@ def getServerGroupFromField(
         fld: Field to get server group from
         kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
     """
-    return _serverGrpFromField(fld, kind)
+    return _serverGrpFromField(fld, type_)
 
 
 def getServersFromServerGroupField(
-    fld: ui.gui.ChoiceField, kind: types.servers.ServerType = types.servers.ServerType.LEGACY
+    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.LEGACY
 ) -> typing.List[models.RegisteredServer]:
     """Returns a list of servers from a server group field
 
@@ -122,7 +122,7 @@ def getServersFromServerGroupField(
         fld: Field to get server group from
         kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
     """
-    grp = _serverGrpFromField(fld, kind)
+    grp = _serverGrpFromField(fld, type_)
     return list(grp.servers.all())
 
 

@@ -140,7 +140,7 @@ class Tunnels(ModelHandler):
     path = 'tunnels'
     name = 'tunnels'
     model = RegisteredServerGroup
-    model_filter = {'kind': types.servers.ServerType.TUNNEL}
+    model_filter = {'type': types.servers.ServerType.TUNNEL}
 
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']
@@ -197,7 +197,7 @@ class Tunnels(ModelHandler):
         }
 
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
-        fields['kind'] = types.servers.ServerType.TUNNEL.value
+        fields['type'] = types.servers.ServerType.TUNNEL.value
         fields['port'] = int(fields['port'])
         # Ensure host is a valid IP(4 or 6) or hostname
         validators.validateHost(fields['host'])

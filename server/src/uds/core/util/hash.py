@@ -42,7 +42,8 @@ try:
 except ImportError:
     import hashlib
 
-    hasher = hashlib.md5
+    hasher = hashlib.md5  # nosec: just a hashm not for crypto
+
 
 
 def hash_key(key: typing.Union[str, bytes]) -> str:

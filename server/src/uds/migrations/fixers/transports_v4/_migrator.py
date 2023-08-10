@@ -41,7 +41,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
                 continue
             # Look for an existing tunnel server (RegisteredServerGroup)
             tunnel = RegisteredServerGroup.objects.filter(
-                host=host, port=port, kind=servers.ServerType.TUNNEL
+                host=host, port=port, type=servers.ServerType.TUNNEL
             ).first()
             if tunnel is None:
                 logger.info('Creating new tunnel server for %s: %s:%s', TransportType.__name__,  host, port)
@@ -51,13 +51,13 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
                     comments=f'Migrated from {t.name}',
                     host=host,
                     port=port,
-                    kind=servers.ServerType.TUNNEL,
+                    type=servers.ServerType.TUNNEL,
                 )
             else:
                 # Append transport name to comments
                 tunnel.comments = f'{tunnel.comments}, {t.name}'[:255]
                 tunnel.save(update_fields=['comments'])
-            tunnel.servers.set(RegisteredServer.objects.filter(kind=servers.ServerType.TUNNEL))
+            tunnel.servers.set(RegisteredServer.objects.filter(type=servers.ServerType.TUNNEL))
             # Set tunnel server on transport
             logger.info('Setting tunnel server %s on transport %s', tunnel.name, t.name)
             obj.tunnel.value = tunnel.uuid

@@ -68,8 +68,8 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
     # These are not the servers ports itself, and it depends on the kind of server
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for APP Servers, host and port are ununsed
-    kind = models.IntegerField(default=types.servers.ServerType.LEGACY, db_index=True)
-    sub_kind = models.CharField(
+    type = models.IntegerField(default=types.servers.ServerType.LEGACY, db_index=True)
+    subtype = models.CharField(
         max_length=32, default='', db_index=True
     )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
 
@@ -134,8 +134,8 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-    kind = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
-    sub_kind = models.CharField(
+    type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
+    subtype = models.CharField(
         max_length=32, default='', db_index=True
     )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
     version = models.CharField(
