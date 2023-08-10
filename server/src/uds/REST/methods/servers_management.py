@@ -32,11 +32,16 @@
 import logging
 import typing
 
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import types
-from uds.core.types import permissions
+from uds.core.types import permissions as permtypes
+from uds.core.types import rest, servers
+from uds.core.ui import gui
+from uds.core.util import permissions
+from uds.core.util.model import processUuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import OK, ModelHandler
 
@@ -85,7 +90,7 @@ class ServersTokens(ModelHandler):
             raise RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
-            self.model(), permissions.PermissionType.ALL, root=True
+            self.model(), permtypes.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
@@ -102,30 +107,68 @@ class ServersGroups(ModelHandler):
     model_filter = {
         'type__in': [
             types.servers.ServerType.SERVER,
-            types.servers.ServerType.LEGACY,
+            types.servers.ServerType.UNMANAGED,
         ]
     }
     path = 'servers'
     name = 'groups'
 
+    save_fields = ['name', 'comments', 'type', 'subtype']
     table_title = _('Servers Groups')
     table_fields = [
-        {'stamp': {'title': _('Date'), 'type': 'datetime'}},
+        {'name': {'title': _('Name')}},
+        {'comments': {'title': _('Comments')}},
         {'type': {'title': _('Type')}},
-        {'ip': {'title': _('IP')}},
+        {'subtype': {'title': _('Subtype')}},
     ]
 
-    def item_as_dict(self, item: models.RegisteredServer) -> typing.Dict[str, typing.Any]:
+    def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+        for i in servers.ServerSubType.manager().enum():
+            v = rest.TypeInfo(name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon='').asDict(
+                group=gettext('Managed') if i.managed else gettext('Unmanaged')
+            )
+            yield v
+
+    def getGui(self, type_: str) -> typing.List[typing.Any]:
+        strServerType, serverSubType = type_.split('@')
+        serverType = types.servers.ServerType[strServerType]
+        serverSubType = serverSubType.lower()
+
+        logger.info('Server type: %s', serverType)
+        return self.addField(
+            self.addDefaultFields(
+                [],
+                ['name', 'comments', 'tags'],
+            ),
+            [
+                {
+                    'name': 'type',
+                    'value': serverType,  # As int
+                    'type': gui.InputField.Types.HIDDEN,                    
+                },
+                {
+                    'name': 'subtype',
+                    'value': serverSubType,  # As str
+                    'type': gui.InputField.Types.HIDDEN,
+                },
+            ],
+        )
+    
+    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+        
+        return super().beforeSave(fields)
+
+    def item_as_dict(self, item: 'models.RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
-            'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
-            'stamp': item.stamp,
-            'username': item.username,
-            'ip': item.ip,
-            'hostname': item.hostname,
-            'token': item.token,
-            'type': types.servers.ServerType(item.type).as_str(),
-            'os': item.os_type,
+            'name': item.name,
+            'comments': item.comments,
+            'host': item.host,
+            'port': item.port,
+            'tags': [tag.tag for tag in item.tags.all()],
+            'transports_count': item.transports.count(),
+            'servers_count': item.servers.count(),
+            'permission': permissions.getEffectivePermission(self._user, item),
         }
 
     def delete(self) -> str:
@@ -140,7 +183,7 @@ class ServersGroups(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(token=self._args[0]).delete()
+            self.model.objects.get(uuid=processUuid(self._args[0])).delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 

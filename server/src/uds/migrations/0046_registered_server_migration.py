@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=64, unique=True)),
                 ("comments", models.CharField(default="", max_length=255)),
-                ("type", models.IntegerField(default=uds.core.types.servers.ServerType["LEGACY"], db_index=True)),
+                ("type", models.IntegerField(default=uds.core.types.servers.ServerType["UNMANAGED"], db_index=True)),
                 ("subtype", models.CharField(db_index=True, default="", max_length=32)),
                 ("host", models.CharField(default="", max_length=255)),
                 ("port", models.IntegerField(default=0)),

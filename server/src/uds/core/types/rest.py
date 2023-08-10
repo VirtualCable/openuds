@@ -29,59 +29,20 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import typing
 
-from uds.core.util import singleton
+class TypeInfo(typing.NamedTuple):
+    name: str
+    type: str
+    description: str
+    icon: str
 
-
-class ServerType(enum.IntEnum):
-    TUNNEL = 1
-    ACTOR = 2
-    SERVER = 3
-
-    UNMANAGED = 100
-
-    def as_str(self) -> str:
-        return self.name.lower()  # type: ignore
-
-    def path(self) -> str:
+    def asDict(self, **extra) -> typing.Dict[str, typing.Any]:
         return {
-            ServerType.TUNNEL: 'tunnel',
-            ServerType.ACTOR: 'actor',
-            ServerType.SERVER: 'server',
-            ServerType.UNMANAGED: '',  # Unmanaged has no path, does not listen to anything
-        }[self]
-
-
-class ServerSubType(metaclass=singleton.Singleton):
-    class Info(typing.NamedTuple):
-        type: ServerType
-        subtype: str
-        description: str
-        managed: bool
-
-    registered: typing.Dict[typing.Tuple[ServerType, str], Info]
-
-    def __init__(self) -> None:
-        self.registered = {}
-
-    @staticmethod
-    def manager() -> 'ServerSubType':
-        return ServerSubType()
-
-    def register(self, type: ServerType, subtype: str, description: str, managed: bool) -> None:
-        self.registered[(type, subtype)] = ServerSubType.Info(
-            type=type, subtype=subtype, description=description, managed=managed
-        )
-
-    def enum(self) -> typing.Iterable[Info]:
-        return self.registered.values()
-
-    def get(self, type: ServerType, subtype: str) -> typing.Optional[Info]:
-        return self.registered.get((type, subtype))
-
-
-# Registering default subtypes (basically, ip unmanaged is the "global" one), any other will be registered by the providers
-# I.e. "linuxapp" will be registered by the Linux Applications Provider
-ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', False)
+            'name': self.name,
+            'type': self.type,
+            'description': self.description,
+            'icon': self.icon,
+            **extra
+        }
+    

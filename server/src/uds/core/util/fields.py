@@ -80,7 +80,7 @@ def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
 
 # Server group field
 def serverGroupField(
-    kind: types.servers.ServerType = types.servers.ServerType.LEGACY, subkind: typing.Optional[str] = None
+    kind: types.servers.ServerType = types.servers.ServerType.UNMANAGED, subkind: typing.Optional[str] = None
 ) -> ui.gui.ChoiceField:
     """Returns a field to select a server group
 
@@ -102,7 +102,7 @@ def serverGroupField(
 
 
 def getServerGroupFromField(
-    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.LEGACY
+    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.UNMANAGED
 ) -> models.RegisteredServerGroup:
     """Returns a server group from a field
 
@@ -114,7 +114,7 @@ def getServerGroupFromField(
 
 
 def getServersFromServerGroupField(
-    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.LEGACY
+    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.UNMANAGED
 ) -> typing.List[models.RegisteredServer]:
     """Returns a list of servers from a server group field
 

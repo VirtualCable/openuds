@@ -40,9 +40,10 @@ import typing
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
 
-from uds.core.consts import OK
 import uds.core.types.permissions
+import uds.core.types.rest
 from uds.core import exceptions as g_exceptions
+from uds.core.consts import OK
 from uds.core.module import Module
 from uds.core.ui import gui as uiGui
 from uds.core.util import log, permissions
@@ -67,6 +68,7 @@ GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
 
 FieldType = typing.Mapping[str, typing.Any]
+
 
 # pylint: disable=unused-argument
 class BaseModelHandler(Handler):
@@ -110,11 +112,8 @@ class BaseModelHandler(Handler):
                 v['gui']['tab'] = _(str(field['tab']))
             gui.append(v)
         return gui
-    
 
-    def addDefaultFields(
-        self, gui: typing.List[typing.Any], flds: typing.List[str]
-    ) -> typing.List[typing.Any]:
+    def addDefaultFields(self, gui: typing.List[typing.Any], flds: typing.List[str]) -> typing.List[typing.Any]:
         """
         Adds default fields (based in a list) to a "gui" description
         :param gui: Gui list where the "default" fielsds will be added
@@ -176,9 +175,7 @@ class BaseModelHandler(Handler):
                     'name': 'priority',
                     'type': 'numeric',
                     'label': _('Priority'),
-                    'tooltip': _(
-                        'Selects the priority of this element (lower number means higher priority)'
-                    ),
+                    'tooltip': _('Selects the priority of this element (lower number means higher priority)'),
                     'required': True,
                     'value': 1,
                     'length': 4,
@@ -228,9 +225,7 @@ class BaseModelHandler(Handler):
                         key=lambda x: x['text'].lower(),
                     ),
                     'label': _('Networks'),
-                    'tooltip': _(
-                        'Networks associated. If No network selected, will mean "all networks"'
-                    ),
+                    'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
                     'type': 'multichoice',
                     'order': 101,
                     'tab': uiGui.Tab.ADVANCED,
@@ -264,15 +259,12 @@ class BaseModelHandler(Handler):
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
-        res = self.typeInfo(type_)
-        res.update(
-            {
-                'name': _(type_.name()),
-                'type': type_.type(),
-                'description': _(type_.description()),
-                'icon': type_.icon64().replace('\n', ''),
-            }
-        )
+        res = uds.core.types.rest.TypeInfo(
+            name=_(type_.name()),
+            type=type_.type(),
+            description=_(type_.description()),
+            icon=type_.icon64().replace('\n', ''),
+        ).asDict(**self.typeInfo(type_))
         if hasattr(type_, 'group'):
             res['group'] = _(type_.group)  # Add group info is it is contained
         return res
@@ -294,9 +286,7 @@ class BaseModelHandler(Handler):
             'subtitle': subtitle or '',
         }
 
-    def readFieldsFromParams(
-        self, fldList: typing.List[str]
-    ) -> typing.Dict[str, typing.Any]:
+    def readFieldsFromParams(self, fldList: typing.List[str]) -> typing.Dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
         :param fldList: List of required fields
@@ -345,9 +335,7 @@ class BaseModelHandler(Handler):
         return res
 
     # Exceptions
-    def invalidRequestException(
-        self, message: typing.Optional[str] = None
-    ) -> exceptions.HandlerError:
+    def invalidRequestException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
@@ -355,9 +343,7 @@ class BaseModelHandler(Handler):
         message = message or _('Invalid Request')
         return exceptions.RequestError(f'{message} {self.__class__}: {self._args}')
 
-    def invalidResponseException(
-        self, message: typing.Optional[str] = None
-    ) -> exceptions.HandlerError:
+    def invalidResponseException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         message = 'Invalid response' if message is None else message
         return exceptions.ResponseError(message)
 
@@ -365,13 +351,9 @@ class BaseModelHandler(Handler):
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        return exceptions.RequestError(
-            _('Method not found in {}: {}').format(self.__class__, self._args)
-        )
+        return exceptions.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    def invalidItemException(
-        self, message: typing.Optional[str] = None
-    ) -> exceptions.HandlerError:
+    def invalidItemException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         """
         Raises a NotFound exception, with location info
         """
@@ -379,14 +361,10 @@ class BaseModelHandler(Handler):
         return exceptions.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def accessDenied(
-        self, message: typing.Optional[str] = None
-    ) -> exceptions.HandlerError:
+    def accessDenied(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         return exceptions.AccessDenied(message or _('Access denied'))
 
-    def notSupported(
-        self, message: typing.Optional[str] = None
-    ) -> exceptions.HandlerError:
+    def notSupported(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         return exceptions.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
@@ -401,9 +379,7 @@ class BaseModelHandler(Handler):
         """
         Invokes a test for an item
         """
-        logger.debug(
-            'Called base test for %s --> %s', self.__class__.__name__, self._params
-        )
+        logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
         raise self.invalidMethodException()
 
 
@@ -460,9 +436,7 @@ class DetailHandler(BaseModelHandler):
         self._kwargs = kwargs
         self._user = kwargs.get('user', None)
 
-    def __checkCustom(
-        self, check: str, parent: models.Model, arg: typing.Any = None
-    ) -> typing.Any:
+    def __checkCustom(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
         """
         checks curron methods
         :param check: Method to check
@@ -590,7 +564,9 @@ class DetailHandler(BaseModelHandler):
 
     # Override this to provide functionality
     # Default (as sample) getItems
-    def getItems(self, parent: models.Model, item: typing.Optional[str]) -> typing.Union[typing.List[typing.Dict], typing.Dict]:
+    def getItems(
+        self, parent: models.Model, item: typing.Optional[str]
+    ) -> typing.Union[typing.List[typing.Dict], typing.Dict]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
@@ -600,9 +576,7 @@ class DetailHandler(BaseModelHandler):
         # if item is None:  # Returns ALL detail items
         #     return []
         # return {}  # Returns one item
-        raise NotImplementedError(
-            f'Must provide an getItems method for {self.__class__} class'
-        )
+        raise NotImplementedError(f'Must provide an getItems method for {self.__class__} class')
 
     # Default save
     def saveItem(self, parent: models.Model, item: typing.Optional[str]) -> None:
@@ -768,7 +742,7 @@ class ModelHandler(BaseModelHandler):
         """
         return []
 
-    def getTypes(self, *args, **kwargs):
+    def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
         for type_ in self.enum_types():
             yield self.typeAsDict(type_)
 
@@ -865,16 +839,12 @@ class ModelHandler(BaseModelHandler):
         except Exception as e:
             logger.exception('Exception:')
             logger.info('Filtering expression %s is invalid!', self.fltr)
-            raise exceptions.RequestError(
-                f'Filtering expression {self.fltr} is invalid'
-            ) from e
+            raise exceptions.RequestError(f'Filtering expression {self.fltr} is invalid') from e
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
     def processDetail(self) -> typing.Any:
-        logger.debug(
-            'Processing detail %s for with params %s', self._path, self._params
-        )
+        logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
             item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]  # type: ignore  # Slicing is not supported by pylance right now
             # If we do not have access to parent to, at least, read...
@@ -899,9 +869,7 @@ class ModelHandler(BaseModelHandler):
             detailCls = self.detail[self._args[1]]
             args = list(self._args[2:])
             path = self._path + '/' + '/'.join(args[:2])
-            detail = detailCls(
-                self, path, self._params, *args, parent=item, user=self._user
-            )
+            detail = detailCls(self, path, self._params, *args, parent=item, user=self._user)
             method = getattr(detail, self._operation)
 
             return method()
@@ -915,9 +883,7 @@ class ModelHandler(BaseModelHandler):
             logger.error('Exception processing detail: %s', e)
             raise self.invalidRequestException() from e
 
-    def getItems(
-        self, *args, **kwargs
-    ) -> typing.Generator[typing.MutableMapping[str, typing.Any], None, None]:
+    def getItems(self, *args, **kwargs) -> typing.Generator[typing.MutableMapping[str, typing.Any], None, None]:
         if 'overview' in kwargs:
             overview = kwargs['overview']
             del kwargs['overview']
@@ -932,14 +898,12 @@ class ModelHandler(BaseModelHandler):
             prefetch = []
 
         if 'query' in kwargs:
-            query = kwargs['query']
+            query = kwargs['query']  # We are using a prebuilt query on args
             logger.debug('Got query: %s', query)
             del kwargs['query']
         else:
             logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.model.objects.filter(*args, **kwargs).prefetch_related(
-                *prefetch
-            )
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
 
         if self.model_filter is not None:
             query = query.filter(**self.model_filter)
@@ -1133,16 +1097,8 @@ class ModelHandler(BaseModelHandler):
             if isinstance(item, TaggingMixin):
                 if tags:
                     logger.debug('Updating tags: %s', tags)
-                    item.tags.set(
-                        [
-                            Tag.objects.get_or_create(tag=val)[0]
-                            for val in tags
-                            if val != ''
-                        ]
-                    )
-                elif isinstance(
-                    tags, list
-                ):  # Present, but list is empty (will be proccesed on "if" else)
+                    item.tags.set([Tag.objects.get_or_create(tag=val)[0] for val in tags if val != ''])
+                elif isinstance(tags, list):  # Present, but list is empty (will be proccesed on "if" else)
                     item.tags.clear()
 
             if not deleteOnError:
@@ -1153,9 +1109,7 @@ class ModelHandler(BaseModelHandler):
             # Store associated object if requested (data_type)
             try:
                 if isinstance(item, ManagedObjectModel):
-                    data_type: typing.Optional[str] = self._params.get(
-                        'data_type', self._params.get('type')
-                    )
+                    data_type: typing.Optional[str] = self._params.get('data_type', self._params.get('type'))
                     if data_type:
                         item.data_type = data_type
                         item.data = item.getInstance(self._params).serialize()
@@ -1177,9 +1131,7 @@ class ModelHandler(BaseModelHandler):
         except self.model.DoesNotExist:
             raise exceptions.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
-            raise exceptions.RequestError(
-                'Element already exists (duplicate key error)'
-            ) from None
+            raise exceptions.RequestError('Element already exists (duplicate key error)') from None
         except (exceptions.SaveException, g_exceptions.ValidationError) as e:
             raise exceptions.RequestError(str(e)) from e
         except (exceptions.RequestError, exceptions.ResponseError):

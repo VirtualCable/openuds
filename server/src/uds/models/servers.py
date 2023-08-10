@@ -68,7 +68,7 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
     # These are not the servers ports itself, and it depends on the kind of server
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for APP Servers, host and port are ununsed
-    type = models.IntegerField(default=types.servers.ServerType.LEGACY, db_index=True)
+    type = models.IntegerField(default=types.servers.ServerType.UNMANAGED, db_index=True)
     subtype = models.CharField(
         max_length=32, default='', db_index=True
     )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)

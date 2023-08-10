@@ -78,6 +78,10 @@ class CryptoManager(metaclass=singleton.Singleton):
         self._namespace = uuid.UUID('627a37a5-e8db-431a-b783-73f7d20b4934')
 
     @staticmethod
+    def manager() -> 'CryptoManager':
+        return CryptoManager()  # Singleton pattern will return always the same instance
+
+    @staticmethod
     def AESKey(key: typing.Union[str, bytes], length: int) -> bytes:
         if isinstance(key, str):
             key = key.encode('utf8')
@@ -93,10 +97,6 @@ class CryptoManager(metaclass=singleton.Singleton):
             del kl[length]
 
         return bytes(kl)
-
-    @staticmethod
-    def manager() -> 'CryptoManager':
-        return CryptoManager()  # Singleton pattern will return always the same instance
 
     def encrypt(self, value: str) -> str:
         return codecs.encode(
@@ -139,9 +139,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         )
         rndStr = secrets.token_bytes(16)  # Same as block size of CBC (that is 16 here)
         paddedLength = ((len(text) + 4 + 15) // 16) * 16
-        toEncode = (
-            struct.pack('>i', len(text)) + text + rndStr[: paddedLength - len(text) - 4]
-        )
+        toEncode = struct.pack('>i', len(text)) + text + rndStr[: paddedLength - len(text) - 4]
         encryptor = cipher.encryptor()
         encoded = encryptor.update(toEncode) + encryptor.finalize()
 
@@ -172,9 +170,7 @@ class CryptoManager(metaclass=singleton.Singleton):
     def fastDecrypt(self, data: bytes) -> bytes:
         return self.AESDecrypt(data, UDSK)
 
-    def xor(
-        self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]
-    ) -> bytes:
+    def xor(self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
         if not key:
             return b''  # Protect against division by cero
 
@@ -184,17 +180,11 @@ class CryptoManager(metaclass=singleton.Singleton):
             key = key.encode('utf-8')
         mult = len(value) // len(key) + 1
         value_array = array.array('B', value)
-        key_array = array.array(
-            'B', key * mult
-        )  # Ensure key array is at least as long as value_array
+        key_array = array.array('B', key * mult)  # Ensure key array is at least as long as value_array
         # We must return binary in xor, because result is in fact binary
-        return array.array(
-            'B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))
-        ).tobytes()
+        return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
 
-    def symCrypt(
-        self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]
-    ) -> bytes:
+    def symCrypt(self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
         if isinstance(text, str):
             text = text.encode()
         if isinstance(key, str):
@@ -202,9 +192,7 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         return self.AESCrypt(text, key)
 
-    def symDecrpyt(
-        self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]
-    ) -> str:
+    def symDecrpyt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
         if isinstance(cryptText, str):
             cryptText = cryptText.encode()
 
@@ -221,19 +209,13 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def loadPrivateKey(
         self, rsaKey: str
-    ) -> typing.Union[
-        'RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey'
-    ]:
+    ) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
         try:
-            return serialization.load_pem_private_key(
-                rsaKey.encode(), password=None, backend=default_backend()
-            )
+            return serialization.load_pem_private_key(rsaKey.encode(), password=None, backend=default_backend())
         except Exception as e:
             raise e
 
-    def loadCertificate(
-        self, certificate: typing.Union[str, bytes]
-    ) -> x509.Certificate:
+    def loadCertificate(self, certificate: typing.Union[str, bytes]) -> x509.Certificate:
         if isinstance(certificate, str):
             certificate = certificate.encode()
 
@@ -274,16 +256,12 @@ class CryptoManager(metaclass=singleton.Singleton):
             return not hashValue
 
         if hashValue[:8] == '{SHA256}':
-            return secrets.compare_digest(
-                hashlib.sha3_256(value).hexdigest(), hashValue[8:]
-            )
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hashValue[8:])
         if hashValue[:12] == '{SHA256SALT}':
             # Extract 16 chars salt and hash
             salt = hashValue[12:28].encode()
             value = salt + value
-            return secrets.compare_digest(
-                hashlib.sha3_256(value).hexdigest(), hashValue[28:]
-            )
+            return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hashValue[28:])
         # Argon2
         if hashValue[:8] == '{ARGON2}':
             ph = PasswordHasher()
@@ -295,11 +273,16 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         # Old sha1
         return secrets.compare_digest(
-            hashValue, str(hashlib.sha1(value).hexdigest())  # nosec: Old compatibility SHA1, not used anymore but need to be supported
-        )  # nosec: Old compatibility SHA1, not used anymore but need to be supported
+            hashValue,
+            str(
+                hashlib.sha1(
+                    value
+                ).hexdigest()  # nosec: Old SHA1 password, not used anymore but need to be supported
+            ),
+        ) 
 
     def uuid(self, obj: typing.Any = None) -> str:
-        """ Generates an uuid from obj. (lower case)
+        """Generates an uuid from obj. (lower case)
         If obj is None, returns an uuid based on a random string
         """
         if obj is None:
@@ -319,8 +302,5 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def unique(self) -> str:
         return hashlib.sha3_256(
-            (
-                self.randomString(24, True)
-                + datetime.datetime.now().strftime('%H%M%S%f')
-            ).encode()
+            (self.randomString(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
         ).hexdigest()
