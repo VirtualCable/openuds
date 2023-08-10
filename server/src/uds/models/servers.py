@@ -80,10 +80,13 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
     transports: 'models.manager.RelatedManager[Transport]'
     servers: 'models.manager.RelatedManager[RegisteredServer]'
 
+    def all_valid_servers(self) -> 'models.manager.RelatedManager[RegisteredServer]':
+        """Returns all servers that can belong to this group"""
+        return self.servers.filter(maintenance_mode=False, type=self.type, subtype=self.subtype)
+
     class Meta:
         # Unique for host and port, so we can have only one group for each host:port
         app_label = 'uds'
-        constraints = [models.UniqueConstraint(fields=['host', 'port'], name='unique_host_port_group')]
 
     @property
     def pretty_host(self) -> str:

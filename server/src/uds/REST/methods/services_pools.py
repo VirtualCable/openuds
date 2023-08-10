@@ -34,60 +34,36 @@ import datetime
 import logging
 import typing
 
-from django.db.models import Q, Count
-from django.utils.translation import gettext, gettext_lazy as _
-import uds.core.types.permissions
-from uds.models import (
-    ServicePool,
-    OSManager,
-    Service,
-    Image,
-    ServicePoolGroup,
-    Account,
-    User,
-)
-from uds.core.util.model import getSqlDatetime
+from django.db.models import Count, Q
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.models.calendar_action import (
-    CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX,
-    CALENDAR_ACTION_CACHE_L1,
-    CALENDAR_ACTION_CACHE_L2,
-    CALENDAR_ACTION_PUBLISH,
-    CALENDAR_ACTION_ADD_TRANSPORT,
-    CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
-    CALENDAR_ACTION_ADD_GROUP,
-    CALENDAR_ACTION_DEL_GROUP,
-    CALENDAR_ACTION_DEL_ALL_GROUPS,
-    CALENDAR_ACTION_IGNORE_UNUSED,
-    CALENDAR_ACTION_REMOVE_USERSERVICES,
-    CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
-)
-
+from uds.core import types
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
-from uds.core.util.state import State
-from uds.core.util.model import processUuid
-from uds.core.util import log
-from uds.core.util.config import GlobalConfig
 from uds.core.ui import gui
-from uds.core.util import permissions
-
-from uds.REST.model import ModelHandler
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.util import log, permissions
+from uds.core.util.config import GlobalConfig
+from uds.core.util.model import getSqlDatetime, processUuid
+from uds.core.util.state import State
+from uds.models import (Account, Image, OSManager, Service, ServicePool,
+                        ServicePoolGroup, User)
+from uds.models.calendar_action import (
+    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_ADD_TRANSPORT,
+    CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2,
+    CALENDAR_ACTION_DEL_ALL_GROUPS, CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
+    CALENDAR_ACTION_DEL_GROUP, CALENDAR_ACTION_DEL_TRANSPORT,
+    CALENDAR_ACTION_IGNORE_UNUSED, CALENDAR_ACTION_INITIAL,
+    CALENDAR_ACTION_MAX, CALENDAR_ACTION_PUBLISH,
+    CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
+    CALENDAR_ACTION_REMOVE_USERSERVICES)
 from uds.REST import RequestError, ResponseError
+from uds.REST.model import ModelHandler
 
-from .user_services import (
-    AssignedService,
-    CachedService,
-    Groups,
-    Transports,
-    Publications,
-    Changelog,
-)
 from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
-
+from .user_services import (AssignedService, CachedService, Changelog, Groups,
+                            Publications, Transports)
 
 logger = logging.getLogger(__name__)
 
@@ -603,7 +579,7 @@ class ServicesPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: ServicePool):
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         if fallback:

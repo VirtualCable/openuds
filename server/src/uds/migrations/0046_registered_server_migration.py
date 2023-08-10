@@ -125,12 +125,6 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
         ),
-        migrations.AddConstraint(
-            model_name="registeredservergroup",
-            constraint=models.UniqueConstraint(
-                fields=("host", "port"), name="unique_host_port_group"
-            ),
-        ),
         migrations.AddField(
             model_name="registeredserver",
             name="tags",

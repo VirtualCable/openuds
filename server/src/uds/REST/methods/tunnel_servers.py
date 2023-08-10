@@ -86,7 +86,7 @@ class TunnelServers(DetailHandler):
 
     def getTitle(self, parent: 'RegisteredServerGroup') -> str:
         try:
-            return _('Servers of of {0}').format(parent.name)
+            return _('Servers of {0}').format(parent.name)
         except Exception:
             return _('Servers')
 
@@ -141,6 +141,7 @@ class Tunnels(ModelHandler):
     name = 'tunnels'
     model = RegisteredServerGroup
     model_filter = {'type': types.servers.ServerType.TUNNEL}
+    custom_methods = [types.rest.ModelCustomMethodType('tunnels')]
 
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']
@@ -202,3 +203,15 @@ class Tunnels(ModelHandler):
         # Ensure host is a valid IP(4 or 6) or hostname
         validators.validateHost(fields['host'])
 
+    def tunnels(self, item: 'RegisteredServerGroup') -> typing.Any:
+        """
+        Custom method that returns all tunnels of a tunnel server
+        :param item:
+        """
+        return [
+            {
+                'id': i.uuid,
+                'permission': permissions.getEffectivePermission(self._user, i),
+            }
+            for i in item.servers.filter(type=types.servers.ServerType.TUNNEL)
+        ]

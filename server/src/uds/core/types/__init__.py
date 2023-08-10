@@ -36,4 +36,5 @@ from . import events
 from . import services
 from . import servers
 from . import permissions
+from . import rest
 # Preferences must be include explicitly, as it is not a "normal use" type

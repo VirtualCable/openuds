@@ -43,7 +43,7 @@ from uds.core.ui import gui
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.REST.exceptions import NotFound, RequestError
-from uds.REST.model import OK, ModelHandler
+from uds.REST.model import OK, DetailHandler, ModelHandler
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +102,90 @@ class ServersTokens(ModelHandler):
 
 
 # REST API For servers (except tunnel servers nor actors)
+class ServersServers(DetailHandler):
+    path = 'servers'
+    name = 'servers'
+    custom_methods = ['maintenance']
+
+    def getItems(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]):
+        try:
+            multi = False
+            if item is None:
+                multi = True
+                q = parent.servers.all()
+            else:
+                q = parent.servers.filter(uuid=processUuid(item))
+            res = []
+            i = None
+            for i in q:
+                val = {
+                    'id': i.uuid,
+                    'hostname': i.hostname,
+                    'ip': i.ip,
+                    'maintenance': i.maintenance_mode,
+                }
+                res.append(val)
+            if multi:
+                return res
+            if not i:
+                raise Exception('Item not found')
+            return res[0]
+        except Exception as e:
+            logger.exception('REST servers')
+            raise self.invalidItemException() from e
+
+    def getTitle(self, parent: 'models.RegisteredServerGroup') -> str:
+        try:
+            return _('Servers of {0}').format(parent.name)
+        except Exception:
+            return _('Servers')
+
+    def getFields(self, parent: 'models.RegisteredServerGroup') -> typing.List[typing.Any]:
+        return [
+            {
+                'hostname': {
+                    'title': _('Hostname'),
+                }
+            },
+            {'ip': {'title': _('Ip')}},
+        ]
+
+    def saveItem(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]) -> None:
+        # Item is the uuid of the server to add
+        server: typing.Optional[
+            'models.RegisteredServer'
+        ] = None  # Avoid warning on reference before assignment
+
+        if item is None:
+            raise self.invalidItemException('No server specified')
+
+        try:
+            server = models.RegisteredServer.objects.get(uuid=processUuid(item))
+            parent.servers.add(server)
+        except Exception:
+            raise self.invalidItemException() from None
+
+        raise self.invalidRequestException() from None
+
+    def deleteItem(self, parent: 'models.RegisteredServerGroup', item: str) -> None:
+        try:
+            parent.servers.remove(models.RegisteredServer.objects.get(uuid=processUuid(item)))
+        except Exception:
+            raise self.invalidItemException() from None
+
+    # Custom methods
+    def maintenance(self, parent: 'models.RegisteredServerGroup') -> typing.Any:
+        """
+        Custom method that swaps maintenance mode state for a provider
+        :param item:
+        """
+        item = models.RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+        self.ensureAccess(item, permtypes.PermissionType.MANAGEMENT)
+        item.maintenance_mode = not item.maintenance_mode
+        item.save()
+        return 'ok'
+
+
 class ServersGroups(ModelHandler):
     model = models.RegisteredServerGroup
     model_filter = {
@@ -113,28 +197,25 @@ class ServersGroups(ModelHandler):
     path = 'servers'
     name = 'groups'
 
-    save_fields = ['name', 'comments', 'type', 'subtype']
+    save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on beforeSave
     table_title = _('Servers Groups')
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
-        {'type': {'title': _('Type')}},
+        {'kind': {'title': _('Type')}},
+        {'type': {'title': 'xx', 'visible': False}},
         {'subtype': {'title': _('Subtype')}},
+        {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
     def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
         for i in servers.ServerSubType.manager().enum():
-            v = rest.TypeInfo(name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon='').asDict(
-                group=gettext('Managed') if i.managed else gettext('Unmanaged')
-            )
+            v = rest.TypeInfo(
+                name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=''
+            ).asDict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
             yield v
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        strServerType, serverSubType = type_.split('@')
-        serverType = types.servers.ServerType[strServerType]
-        serverSubType = serverSubType.lower()
-
-        logger.info('Server type: %s', serverType)
         return self.addField(
             self.addDefaultFields(
                 [],
@@ -143,19 +224,17 @@ class ServersGroups(ModelHandler):
             [
                 {
                     'name': 'type',
-                    'value': serverType,  # As int
-                    'type': gui.InputField.Types.HIDDEN,                    
-                },
-                {
-                    'name': 'subtype',
-                    'value': serverSubType,  # As str
+                    'value': type_,
                     'type': gui.InputField.Types.HIDDEN,
-                },
+                }
             ],
         )
-    
+
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
-        
+        # Update type and subtype to correct values
+        type, subtype = fields['type'].split('@')
+        fields['type'] = types.servers.ServerType[type.upper()].value
+        fields['subtype'] = subtype
         return super().beforeSave(fields)
 
     def item_as_dict(self, item: 'models.RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
@@ -163,10 +242,10 @@ class ServersGroups(ModelHandler):
             'id': item.uuid,
             'name': item.name,
             'comments': item.comments,
-            'host': item.host,
-            'port': item.port,
+            'type': f'{types.servers.ServerType(item.type).name}@{item.subtype}',
+            'subtype': item.subtype.capitalize(),
+            'kind': types.servers.ServerType(item.type).name.capitalize(),
             'tags': [tag.tag for tag in item.tags.all()],
-            'transports_count': item.transports.count(),
             'servers_count': item.servers.count(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }
