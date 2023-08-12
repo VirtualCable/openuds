@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
-import typing
 
 
 class ServiceType(enum.StrEnum):

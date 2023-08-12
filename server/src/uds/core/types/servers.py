@@ -84,4 +84,36 @@ class ServerSubType(metaclass=singleton.Singleton):
 
 # Registering default subtypes (basically, ip unmanaged is the "global" one), any other will be registered by the providers
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
+# The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
 ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', False)
+
+
+class ServerStatsType(typing.NamedTuple):
+    mem: int  # In bytes
+    maxmem: int  # In bytes
+    cpu: float  # 0-1
+    uptime: int  # In seconds
+    disk: int  # In bytes
+    maxdisk: int  # In bytes
+    connections: int  # Number of connections
+    current_users: int  # Number of current users
+
+    @staticmethod
+    def fromDict(dct: typing.Dict[str, typing.Any]) -> 'ServerStatsType':
+        return ServerStatsType(
+            mem=dct.get('mem', 0),
+            maxmem=dct.get('maxmem', 0),
+            cpu=dct.get('cpu', 0),
+            uptime=dct.get('uptime', 0),
+            disk=dct.get('disk', 0),
+            maxdisk=dct.get('maxdisk', 0),
+            connections=dct.get('connections', 0),
+            current_users=dct.get('current_users', 0),
+        )
+
+    def weight(self, minMemory: int = 0) -> float:
+        # Weights are calculated as:
+        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total)
+        if self.mem < minMemory + 512000000:  # 512 MB reserved
+            return 10000000000   # Try to skip nodes with not enouhg memory, putting them at the end of the list
+        return (self.mem / self.maxmem) + (self.cpu) * 1.3

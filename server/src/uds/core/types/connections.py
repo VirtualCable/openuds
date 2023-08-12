@@ -33,18 +33,29 @@ import typing
 
 from .services import ServiceType
 
+
 class PreconnectInfoType(typing.NamedTuple):
     user: str
     protocol: str
     ip: str
     hostname: str
     udsuser: str
-    userservice: str  # UUid od userservice
-    uservice_type: str  # VDI or VAPP (as in ServiceType)
+    udsuser_uuid: str
+    userservice_uuid: str  # UUID of userservice
+    userservice_type: str  # VDI or VAPP (as in ServiceType)
 
     def asDict(self) -> typing.Dict[str, str]:
         return self._asdict()
 
+
+class AssignInfoType(typing.NamedTuple):
+    udsuser: str
+    udsuser_uuid: str
+    userservice_uuid: str  # UUID of userservice
+    userservice_type: str  # VDI or VAPP (as in ServiceType)
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
 
 class ConnectionInfoType(typing.NamedTuple):
     """
@@ -53,7 +64,7 @@ class ConnectionInfoType(typing.NamedTuple):
 
     protocol: str  # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
     username: str  # username (transformed if needed to) used to login to service
-    service_type: ServiceType # If VDI or APP, Defaults to VDI
+    service_type: ServiceType  # If VDI or APP, Defaults to VDI
     password: str = ''  # password (transformed if needed to) used to login to service
     domain: str = (
         ''  # domain (extracted from username or wherever) that will be used. (Not necesarily an AD domain)

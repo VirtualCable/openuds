@@ -146,7 +146,7 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 userservice=userService.uuid,
-                uservice_type=info.service_type
+                userservice_type=info.service_type
             ).asDict(),
         )
     except NoActorComms:

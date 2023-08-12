@@ -31,11 +31,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import random
 
 from django.utils.translation import gettext as _
 
-from uds.core import types
+from uds.core import types, exceptions
 from uds.core.util import singleton
+from uds.core.util.storage import Storage
+
 
 from .servers_api import request
 
@@ -55,6 +58,10 @@ class ServerManager(metaclass=singleton.Singleton):
     @staticmethod
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
+
+    @property
+    def storage(self) -> Storage:
+        return Storage('uds.servers')
 
     def notifyPreconnect(
         self,
@@ -78,3 +85,75 @@ class ServerManager(metaclass=singleton.Singleton):
         Processes a notification from server
         """
         pass
+
+    def assign(
+        self,
+        userService: 'models.UserService',
+        serverGroups: 'models.RegisteredServerGroup',
+        serverType: types.services.ServiceType = types.services.ServiceType.VDI,
+        minMemory: int = 0,
+    ) -> str:
+        """
+        Select a server for an user from a re
+        """
+        storage_key = (userService.user.uuid if userService.user else '') + serverGroups.uuid
+        with self.storage.map() as saved:
+            uuid_counter: typing.Optional[typing.Tuple[str, int]] = saved.get(storage_key)
+            if uuid_counter:
+                # If server is in maintenance, data is None in fact
+                if models.RegisteredServer.objects.get(uuid=uuid_counter).maintenance_mode:
+                    uuid_counter = None
+                    del saved[storage_key]
+            # If no cached value, get server assignation
+            if uuid_counter is None:
+                unmanaged_list: typing.List[str] = []
+                best: typing.Optional[
+                    typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']
+                ] = None
+                for server in serverGroups.servers.all():
+                    stats = request.ServerApiRequester(server).getStats()
+                    if stats is None:
+                        unmanaged_list.append(server.uuid)
+                        continue
+                    if minMemory and stats.mem < minMemory:
+                        continue
+
+                    if best is None:
+                        best = (server, stats)
+                    elif stats.weight() < best[1].weight():
+                        best = (server, stats)
+
+                # Cannot be assigned to any server!!
+                if best is None and len(unmanaged_list) == 0:
+                    raise exceptions.UDSException(_('No server available for user'))
+
+                # If no best, select one from unmanaged
+                if best is None:
+                    uuid_counter = (
+                        random.choice(unmanaged_list),  # nosec: Simple random selection, no security required
+                        0,
+                    )
+                else:
+                    uuid_counter = (best[0].uuid, 0)
+        # Notify to server
+        saved[storage_key] = (uuid_counter[0], uuid_counter[1] + 1)
+        bestServer = models.RegisteredServer.objects.get(uuid=uuid_counter)
+        request.ServerApiRequester(bestServer).notifyAssign(userService, serverType)
+        return uuid_counter[0]
+
+    def remove(self, userService: 'models.UserService', serverGroups: 'models.RegisteredServerGroup') -> None:
+        """
+        Unassigns a server from an user
+        """
+        storage_key = (userService.user.uuid if userService.user else '') + serverGroups.uuid
+        with self.storage.map() as saved:
+            uuid_counter: typing.Optional[typing.Tuple[str, int]] = saved.get(storage_key)
+            # If no cached value, get server assignation
+            if uuid_counter is None:
+                return
+            if uuid_counter[1] == 1:  # Last one, remove it
+                del saved[storage_key]
+            else:
+                saved[storage_key] = (uuid_counter[0], uuid_counter[1] - 1)
+        server = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
+        request.ServerApiRequester(server).notifyRemoval(userService)

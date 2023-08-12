@@ -39,6 +39,7 @@ import typing
 from uds.core import types, consts
 
 from uds.core.util.security import secureRequestsSession
+from uds.core.util import decorators
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -46,7 +47,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-MIN_SERVER_VERSION = '4.0.0'
 
 
 class ServerApiRequester:
@@ -64,7 +64,7 @@ class ServerApiRequester:
         """
         Sets up the request for the server
         """
-        minVersion = minVersion or MIN_SERVER_VERSION
+        minVersion = minVersion or consts.MIN_SERVER_VERSION
         # If server has a cert, save it to a file
         verify: typing.Union[str, bool] = False
         try:
@@ -98,9 +98,18 @@ class ServerApiRequester:
                 except Exception:
                     logger.error('Error removing temp file %s', verify)
 
+    def getCommsUrl(self, method: str, minVersion: typing.Optional[str]) -> typing.Optional[str]:
+        """
+        Returns the url for a method
+        """
+        if self.server.type == types.servers.ServerType.UNMANAGED or (self.server.version < (minVersion or consts.MIN_SERVER_VERSION)):
+            return None
+
+        return self.server.getCommsUrl(path=method)
+
     def get(self, method: str, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.server.getCommsUrl(path=method)
-        if not url or (self.server.version < (minVersion or MIN_SERVER_VERSION)):
+        url = self.getCommsUrl(method, minVersion)
+        if not url:
             return None
 
         try:
@@ -117,8 +126,8 @@ class ServerApiRequester:
             return None
 
     def post(self, method: str, data: typing.Any, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.server.getCommsUrl(path=method)
-        if not url or (self.server.version < (minVersion or MIN_SERVER_VERSION)):
+        url = self.getCommsUrl(method, minVersion)
+        if not url:
             return None
 
         try:
@@ -133,12 +142,29 @@ class ServerApiRequester:
                 return response.json()
         except Exception:  # If any error, return None
             return None
+        
+    def notifyAssign(
+            self, userService: 'models.UserService', service_type: 'types.services.ServiceType'
+    ) -> None:
+        """
+        Notifies assign of user service to server
+        """
+        self.post(
+            'assign',
+            types.connections.AssignInfoType(
+                udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
+                udsuser_uuid=userService.user.uuid if userService.user else '',
+                userservice_uuid=userService.uuid,
+                userservice_type=service_type
+            )
+        )
+                  
 
     def notifyPreconnect(
         self, userService: 'models.UserService', info: types.connections.ConnectionInfoType
     ) -> None:
         """
-        Notifies preconnect to server
+        Notifies preconnect to server, if this allows it
         """
         src = userService.getConnectionSource()
 
@@ -150,8 +176,9 @@ class ServerApiRequester:
                 ip=src.ip,
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-                userservice=userService.uuid,
-                uservice_type=info.service_type,
+                udsuser_uuid=userService.user.uuid if userService.user else '',
+                userservice_uuid=userService.uuid,
+                userservice_type=info.service_type,
             ).asDict(),
         )
 
@@ -160,3 +187,14 @@ class ServerApiRequester:
         Notifies removal of user service to server
         """
         self.post('removeService', {'userservice': userService.uuid})
+
+    @decorators.allowCache('reqserver', cacheTimeout=60)
+    def getStats(self) -> typing.Optional[types.servers.ServerStatsType]:
+        """
+        Returns the stats of a server
+        """
+        data = self.get('stats')
+        if data is None:
+            return None
+
+        return types.servers.ServerStatsType.fromDict(data)

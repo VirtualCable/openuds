@@ -46,7 +46,7 @@ MARK = '_mgb_'
 
 
 def _calcKey(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
-    h = hashlib.md5()  # nosec: not used for cryptography, just for hashing
+    h = hashlib.md5(usedforsecurity=False)
     h.update(owner)
     h.update(key)
     if extra:

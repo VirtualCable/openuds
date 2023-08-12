@@ -63,5 +63,6 @@ OK: typing.Final[
 ALLOWED_FAILS: typing.Final[int] = 5
 
 # Servers communications constants
-USER_AGENT: typing.Final[str] = f'UDS Server/{VERSION}'
+USER_AGENT: typing.Final[str] = f'UDS/{VERSION}'
 COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers
+MIN_SERVER_VERSION: typing.Final[str] = '4.0.0'

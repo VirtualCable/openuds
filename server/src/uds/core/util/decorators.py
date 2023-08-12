@@ -177,10 +177,8 @@ def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     return new_func
 
 
-# Decorator that allows us a "fast&clean" caching system on service providers
-#
 # Decorator for caching
-# Decorator that tries to get from cache before executing
+# This decorator will cache the result of the function for a given time, and given parameters
 def allowCache(
     cachePrefix: str,
     cacheTimeout: typing.Union[typing.Callable[[], int], int] = -1,
