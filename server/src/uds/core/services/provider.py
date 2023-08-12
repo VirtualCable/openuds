@@ -183,7 +183,8 @@ class ServiceProvider(Module):
         """
         Returns the database object for this provider
         """
-        return models.Provider.objects.get(uuid=self._uuid)
+        from uds.models.provider import Provider
+        return Provider.objects.get(uuid=self._uuid)
 
     def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices

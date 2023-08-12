@@ -21,7 +21,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
         # from uds.models import Transport, RegisteredServerGroup, RegisteredServer
 
         for t in Transport.objects.filter(data_type=TransportType.typeType):
-            # Extranct data
+            # Extract data
             obj = TransportType(Environment(t.uuid), None)
             obj.deserialize(t.data)
 
