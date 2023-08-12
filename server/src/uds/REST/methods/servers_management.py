@@ -94,7 +94,7 @@ class ServersTokens(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(token=self._args[0]).delete()
+            self.model.objects.get(uuid=processUuid(self._args[0])).delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
@@ -262,7 +262,12 @@ class ServersGroups(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(uuid=processUuid(self._args[0])).delete()
+            obj = models.RegisteredServerGroup.objects.get(uuid=processUuid(self._args[0]))
+            if obj.type == types.servers.ServerType.UNMANAGED:
+                 # Unmanaged has to remove ALSO the servers
+                for server in obj.servers.all():
+                    server.delete()
+            obj.delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 

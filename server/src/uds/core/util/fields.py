@@ -32,6 +32,7 @@ import typing
 import functools
 
 from django.utils.translation import gettext as _
+from django.db.models import Q
 
 from uds import models
 from uds.core import types, ui
@@ -43,19 +44,21 @@ from uds.core import types, ui
 
 
 def _serverGroupValues(
-    type_: types.servers.ServerType, subtype: typing.Optional[str] = None
+    types_: typing.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
 ) -> typing.List[ui.gui.ChoiceType]:
-    fltr = models.RegisteredServerGroup.objects.filter(type=type_)
+    fltr = models.RegisteredServerGroup.objects.filter(
+        functools.reduce(lambda x, y: x | y, [Q(type=type_) for type_ in types_])
+    )
     if subtype is not None:
         fltr = fltr.filter(subtype=subtype)
     return [ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})') for v in fltr.all()]
 
 
 def _serverGrpFromField(
-    fld: ui.gui.ChoiceField, kind: types.servers.ServerType
+    fld: ui.gui.ChoiceField
 ) -> models.RegisteredServerGroup:
     try:
-        return models.RegisteredServerGroup.objects.get(uuid=fld.value, kind=kind)
+        return models.RegisteredServerGroup.objects.get(uuid=fld.value)
     except Exception:
         return models.RegisteredServerGroup()
 
@@ -68,49 +71,50 @@ def tunnelField() -> ui.gui.ChoiceField:
         order=1,
         tooltip=_('Tunnel server to use'),
         required=True,
-        values=functools.partial(_serverGroupValues, types.servers.ServerType.TUNNEL),
+        values=functools.partial(_serverGroupValues, [types.servers.ServerType.TUNNEL]),
         tab=ui.gui.Tab.TUNNEL,
     )
 
 
 def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
     """Returns a tunnel server from a field"""
-    return _serverGrpFromField(fld, types.servers.ServerType.TUNNEL)
+    return _serverGrpFromField(fld)
 
 
 # Server group field
 def serverGroupField(
-    kind: types.servers.ServerType = types.servers.ServerType.UNMANAGED, subkind: typing.Optional[str] = None
+    type: typing.Optional[typing.List[types.servers.ServerType]] = None, subtype: typing.Optional[str] = None,
+    tab: typing.Optional[ui.gui.Tab] = None
 ) -> ui.gui.ChoiceField:
     """Returns a field to select a server group
 
     Args:
-        kind: Type of server group to select
-        subkind: Subtype of server group to select (if any)
+        type: Type of server group to select
+        subktype: Subtype of server group to select (if any)
 
     Returns:
         A ChoiceField with the server group selection
     """
+    type = type or [types.servers.ServerType.UNMANAGED]
     return ui.gui.ChoiceField(
         label=_('Server group'),
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        values=functools.partial(_serverGroupValues, kind, subkind),  # So it gets evaluated at runtime
-        tab=ui.gui.Tab.TUNNEL,
+        values=functools.partial(_serverGroupValues, type, subtype),  # So it gets evaluated at runtime
+        tab=tab,
     )
 
 
 def getServerGroupFromField(
-    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.UNMANAGED
+    fld: ui.gui.ChoiceField
 ) -> models.RegisteredServerGroup:
     """Returns a server group from a field
 
     Args:
         fld: Field to get server group from
-        kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
     """
-    return _serverGrpFromField(fld, type_)
+    return _serverGrpFromField(fld)
 
 
 def getServersFromServerGroupField(
@@ -120,9 +124,8 @@ def getServersFromServerGroupField(
 
     Args:
         fld: Field to get server group from
-        kind: Type of server group to get  (in fact, this is a "securty" check, with just the fld.value, we can get the server group)
     """
-    grp = _serverGrpFromField(fld, type_)
+    grp = _serverGrpFromField(fld)
     return list(grp.servers.all())
 
 

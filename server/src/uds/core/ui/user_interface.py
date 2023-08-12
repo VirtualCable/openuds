@@ -350,8 +350,8 @@ class gui:
                     'value': options.get('value', defvalue),
                 }
             )
-            if 'tab' in options:
-                self._data['tab'] = str(options.get('tab'))  # Ensure it's a string
+            if 'tab' in options and options['tab']:
+                self._data['tab'] = str(options['tab'])  # Ensure it's a string
 
         @property
         def type(self) -> 'Types':
