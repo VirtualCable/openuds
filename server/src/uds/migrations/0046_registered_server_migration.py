@@ -7,7 +7,7 @@ import uds.core.types.servers
 import uds.core.util.model
 from uds.core.util.os_detector import KnownOS
 
-from .fixers import transports_v4
+from .fixers import transports_v4, providers_v4
 
 ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.ServerType.ACTOR.value
 
@@ -51,6 +51,8 @@ def migrate_old_data(apps, schema_editor) -> None:
             )
         # Migrate old transports
         transports_v4.migrate(apps, schema_editor)
+        # And old providers and services
+        providers_v4.migrate(apps, schema_editor)
     except Exception as e:
         if 'no such table' not in str(e):
             # Pytest is running this method twice??
@@ -60,7 +62,7 @@ def migrate_old_data(apps, schema_editor) -> None:
 def rollback_old_data(apps, schema_editor) -> None:
     RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
     ActorToken = apps.get_model('uds', 'ActorToken')
-    for server in RegisteredServer.objects.filter(kind=ACTOR_TYPE):
+    for server in RegisteredServer.objects.filter(type=ACTOR_TYPE):
         if not server.data:
             continue  # Skip servers without data, they are not actors!!
         ActorToken.objects.create(
@@ -81,6 +83,7 @@ def rollback_old_data(apps, schema_editor) -> None:
         server.delete()
     
     transports_v4.rollback(apps, schema_editor)
+    providers_v4.rollback(apps, schema_editor)
 
 
 class Migration(migrations.Migration):

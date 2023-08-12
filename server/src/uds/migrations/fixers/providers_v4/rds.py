@@ -123,5 +123,4 @@ def migrate(apps, schema_editor) -> None:
 
 
 def rollback(apps, schema_editor) -> None:
-    pass
-#    _migrator.tunnel_transport_back(apps, HTML5SSHTransport, 'guacamoleServer', is_html_server=True)
+    _migrator.rollback(apps, 'Provider', RDSProvider, RDS_SUBTYPE, 'ipList')

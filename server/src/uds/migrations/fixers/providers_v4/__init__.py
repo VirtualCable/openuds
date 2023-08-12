@@ -25,3 +25,18 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+Author: Adolfo Gómez, dkmaster at dkmon dot com
+"""
+import typing
+from . import rds
+
+ALL: typing.Final = (rds,)
+
+def migrate(apps, schema_editor):
+    for i in ALL:
+        i.migrate(apps, schema_editor)
+
+def rollback(apps, schema_editor):
+    for i in reversed(ALL):
+       i.rollback(apps, schema_editor)
