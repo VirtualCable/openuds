@@ -917,9 +917,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Sort pools array. List of tuples with (priority, pool)
         sortPools: typing.List[typing.Tuple[int, ServicePool]]
         # Sort pools based on meta selection
-        if meta.policy == MetaPool.PRIORITY_POOL:
+        if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
-        elif meta.policy == MetaPool.MOST_AVAILABLE_BY_NUMBER:
+        elif meta.policy == types.pools.LoadBalancingPolicy.MOST_AVAILABLE_BY_NUMBER:
             sortPools = [(p.pool.usage(), p.pool) for p in poolMembers]
         else:
             sortPools = [
@@ -987,7 +987,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             ]
             logger.debug('Already assigned %s', alreadyAssigned)
             # If already assigned, and HA is enabled, check if it is accessible
-            if meta.ha_policy == MetaPool.HA_POLICY_ENABLED:
+            if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                 # Check that servide is accessible
                 if (
                     not alreadyAssigned.deployed_service.service.getInstance().isAvailable()
@@ -1011,7 +1011,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         except Exception:  # No service already assigned, lets find a suitable one
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
-                if meta.ha_policy == MetaPool.HA_POLICY_ENABLED:
+                if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                     # If not available, skip it
                     if pool.service.getInstance().isAvailable() is False:
                         continue

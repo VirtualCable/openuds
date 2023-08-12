@@ -31,36 +31,28 @@
 import logging
 import typing
 
-from django.utils.translation import gettext
-from django.utils import formats
 from django.urls import reverse
+from django.utils import formats
+from django.utils.translation import gettext
 
-from uds.models import (
-    ServicePool,
-    Transport,
-    Network,
-    ServicePoolGroup,
-    MetaPool,
-    TicketStore,
-)
-from uds.core.util.model import getSqlDatetime
-from uds.core.util.config import GlobalConfig
-from uds.core.util import html
-from uds.core.managers.user_service import UserServiceManager
-from uds.core.managers.crypto import CryptoManager
-from uds.core.services.exceptions import (
-    ServiceNotReadyError,
-    MaxServicesReachedError,
-    ServiceAccessDeniedByCalendar,
-)
-
-from uds.web.util import errors
+from uds.core import types
 from uds.core.auths.auth import webPassword
+from uds.core.managers.crypto import CryptoManager
+from uds.core.managers.user_service import UserServiceManager
+from uds.core.services.exceptions import (MaxServicesReachedError,
+                                          ServiceAccessDeniedByCalendar,
+                                          ServiceNotReadyError)
+from uds.core.util import html
+from uds.core.util.config import GlobalConfig
+from uds.core.util.model import getSqlDatetime
+from uds.models import (MetaPool, Network, ServicePool, ServicePoolGroup,
+                        TicketStore, Transport)
+from uds.web.util import errors
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.core.util.os_detector import KnownOS
+    from uds.core.util.request import ExtendedHttpRequestWithUser
     from uds.models import Image
 
 
@@ -195,7 +187,7 @@ def getServicesData(
 
         inAll: typing.Optional[typing.Set[str]] = None
         tmpSet: typing.Set[str]
-        if meta.transport_grouping == MetaPool.COMMON_TRANSPORT_SELECT:  # If meta.use_common_transports
+        if meta.transport_grouping == types.pools.TransportSelectionPolicy.COMMON:
             # only keep transports that are in ALL members
             for member in meta.members.all().order_by('priority'):
                 tmpSet = set()
@@ -211,7 +203,7 @@ def getServicesData(
             metaTransports = buildMetaTransports(
                 Transport.objects.filter(uuid__in=inAll or []), isLabel=False, meta=meta
             )
-        elif meta.transport_grouping == MetaPool.LABEL_TRANSPORT_SELECT:
+        elif meta.transport_grouping == types.pools.TransportSelectionPolicy.LABEL:
             ltrans: typing.MutableMapping[str, Transport] = {}
             for member in meta.members.all().order_by('priority'):
                 tmpSet = set()

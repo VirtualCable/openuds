@@ -128,6 +128,16 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
         ),
+        migrations.AlterField(
+            model_name="registeredserver",
+            name="token",
+            field=models.CharField(
+                db_index=True,
+                default=uds.models.servers.create_token,
+                max_length=48,
+                unique=True,
+            ),
+        ),
         migrations.AddField(
             model_name="registeredserver",
             name="tags",

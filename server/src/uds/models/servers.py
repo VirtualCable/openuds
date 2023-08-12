@@ -65,13 +65,13 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
 
     # A RegisteredServer Group can have a host and port that listent to
     # (For example for tunnel servers)
-    # These are not the servers ports itself, and it depends on the kind of server
+    # These are not the servers ports itself, and it depends on the type of server
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for APP Servers, host and port are ununsed
     type = models.IntegerField(default=types.servers.ServerType.UNMANAGED, db_index=True)
     subtype = models.CharField(
         max_length=32, default='', db_index=True
-    )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
+    )  # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..)
 
     host = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
     port = models.IntegerField(default=0)
@@ -103,22 +103,19 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
         return self.name
 
 
+def create_token() -> str:
+    return secrets.token_urlsafe(36)
+
+
 class RegisteredServer(UUIDModel, TaggingMixin):
     """
     UDS Registered Servers
 
     This table stores the information about registered servers for tunnel servers (on v3.6) or
-    more recently, for other kind of servers that may be need to be registered (as app servers)
+    more recently, for other type of servers that may be need to be registered (as app servers)
 
-    kind field is a flag that indicates the kind of server that is registered. This is used to
+    type is used to
     allow or deny access to the API for this server.
-    Currently there are two kinds of servers:
-    - Tunnel servers: This is the original use of this table, and is used to allow tunnel servers (1)
-    - Other servers: This is used to register server that needs to access some API methods, but
-        that are not tunnel servers (2)
-
-    If server is Other, but not Tunnel, it will be allowed to access API, but will not be able to
-    create tunnels.
     """
 
     username = models.CharField(max_length=128)
@@ -130,7 +127,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
         default=SERVER_DEFAULT_LISTEN_PORT
     )  # Port where server listens for connections (if it listens)
 
-    token = models.CharField(max_length=48, db_index=True, unique=True)
+    token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)
     stamp = models.DateTimeField()  # Date creation or validation of this entry
 
     # Type of server. Defaults to tunnel, so we can migrate from previous versions
@@ -140,7 +137,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
     subtype = models.CharField(
         max_length=32, default='', db_index=True
-    )  # Subkind of server, if any (I.E. LinuxDocker, RDS, etc..)
+    )  # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..)
     version = models.CharField(
         max_length=32, default='4.0.0'
     )  # Version of the UDS API of the server. Starst at 4.0.0
@@ -173,7 +170,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
 
     @staticmethod
     def create_token() -> str:
-        return secrets.token_urlsafe(36)
+        return create_token()  # Return global function
 
     @staticmethod
     def validateToken(
@@ -184,9 +181,9 @@ class RegisteredServer(UUIDModel, TaggingMixin):
         # Ensure token is valid
         try:
             if isinstance(serverType, types.servers.ServerType):
-                tt = RegisteredServer.objects.get(token=token, kind=serverType.value)
+                tt = RegisteredServer.objects.get(token=token, type=serverType.value)
             else:
-                tt = RegisteredServer.objects.get(token=token, kind__in=[st.value for st in serverType])
+                tt = RegisteredServer.objects.get(token=token, type__in=[st.value for st in serverType])
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
@@ -200,12 +197,12 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     @property
     def server_type(self) -> types.servers.ServerType:
         """Returns the server type of this server"""
-        return types.servers.ServerType(self.kind)
+        return types.servers.ServerType(self.type)
 
     @server_type.setter
     def server_type(self, value: types.servers.ServerType) -> None:
         """Sets the server type of this server"""
-        self.kind = value.value
+        self.type = value
 
     @property
     def ip_version(self) -> int:

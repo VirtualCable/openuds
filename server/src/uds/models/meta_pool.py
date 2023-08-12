@@ -35,25 +35,25 @@ import operator
 import typing
 
 from django.db import models
-from django.db.models import signals, QuerySet
+from django.db.models import QuerySet, signals
 from django.utils.translation import gettext_noop as _
 
-from uds.core.util import log
-from uds.core.util import states
+from uds.core import types
+from uds.core.util import log, states
 from uds.core.util.calendar import CalendarChecker
 
-from .uuid_model import UUIDModel
-from .tag import TaggingMixin
 from ..core.util.model import getSqlDatetime
-
-from .image import Image
-from .service_pool_group import ServicePoolGroup
-from .service_pool import ServicePool
 from .group import Group
+from .image import Image
+from .service_pool import ServicePool
+from .service_pool_group import ServicePoolGroup
+from .tag import TaggingMixin
+from .uuid_model import UUIDModel
 
 if typing.TYPE_CHECKING:
     import datetime
-    from uds.models import User, CalendarAccessMeta
+
+    from uds.models import CalendarAccessMeta, User
 
 
 logger = logging.getLogger(__name__)
@@ -63,37 +63,6 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     """
     A meta pool is a pool that has pool members
     """
-
-    # Type of pool selection for meta pool
-    ROUND_ROBIN_POOL = 0
-    PRIORITY_POOL = 1
-    MOST_AVAILABLE_BY_NUMBER = 2
-
-    TYPES: typing.Mapping[int, str] = {
-        ROUND_ROBIN_POOL: _('Evenly distributed'),
-        PRIORITY_POOL: _('Priority'),
-        MOST_AVAILABLE_BY_NUMBER: _('Greater % available'),
-    }
-
-    # Type of transport grouping
-    AUTO_TRANSPORT_SELECT = 0
-    COMMON_TRANSPORT_SELECT = 1
-    LABEL_TRANSPORT_SELECT = 2
-    TRANSPORT_SELECT: typing.Mapping[int, str] = {
-        AUTO_TRANSPORT_SELECT: _('Automatic selection'),
-        COMMON_TRANSPORT_SELECT: _('Use only common transports'),
-        LABEL_TRANSPORT_SELECT: _('Group Transports by label'),
-    }
-
-    # Type of HA policy
-    HA_POLICY_DISABLED = 0
-    HA_POLICY_ENABLED = 1
-
-    HA_SELECT: typing.Mapping[int, str] = {
-        HA_POLICY_DISABLED: 'Disabled',
-        HA_POLICY_ENABLED: 'Enabled',
-    }
-
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
@@ -122,11 +91,11 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
     # Pool selection policy
-    policy = models.SmallIntegerField(default=ROUND_ROBIN_POOL)
+    policy = models.SmallIntegerField(default=types.pools.LoadBalancingPolicy.ROUND_ROBIN)
     # If use common transports instead of auto select one
-    transport_grouping = models.IntegerField(default=AUTO_TRANSPORT_SELECT)
+    transport_grouping = models.IntegerField(default=types.pools.TransportSelectionPolicy.AUTO)
     # HA policy
-    ha_policy = models.SmallIntegerField(default=HA_POLICY_DISABLED)
+    ha_policy = models.SmallIntegerField(default=types.pools.HighAvailabilityPolicy.DISABLED)
 
     # "fake" declarations for type checking
     # objects: 'models.BaseManager["MetaPool"]'
@@ -257,7 +226,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
+        from uds.core.util.permissions import \
+            clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 

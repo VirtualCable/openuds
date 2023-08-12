@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -29,14 +30,30 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
+import typing
+import uuid as uuid_type
 
-# pylint: disable=unused-import
-from . import connections
-from . import events
-from . import services
-from . import servers
-from . import permissions
-from . import rest
-from . import os
-from . import pools
-# Preferences must be include explicitly, as it is not a "normal use" type
+from django.conf import settings
+
+from uds.core.managers import servers
+
+from ...fixtures import services as services_fixtures
+from ...utils.test import UDSTestCase
+
+if typing.TYPE_CHECKING:
+    from uds import models
+
+NUM_USERSERVICES = 8
+
+
+class ServerManagerTest(UDSTestCase):
+    user_services: typing.List['models.UserService']
+    manager = servers.ServerManager()
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.user_services = services_fixtures.createCacheTestingUserServices(NUM_USERSERVICES)
+
+    def test_RSA(self) -> None:
+        pass

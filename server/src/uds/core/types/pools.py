@@ -29,14 +29,53 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
+import typing
 
-# pylint: disable=unused-import
-from . import connections
-from . import events
-from . import services
-from . import servers
-from . import permissions
-from . import rest
-from . import os
-from . import pools
-# Preferences must be include explicitly, as it is not a "normal use" type
+from django.utils.translation import gettext as _
+
+class LoadBalancingPolicy(enum.IntEnum):
+    ROUND_ROBIN = 0
+    PRIORITY = 1
+    MOST_AVAILABLE_BY_NUMBER = 2
+
+    def asStr(self) -> str:
+        return str(self)
+    
+    @staticmethod
+    def enumerate() -> typing.List[typing.Tuple[int, str]]:
+        return [
+            (LoadBalancingPolicy.ROUND_ROBIN, _('Evenly distributed')),
+            (LoadBalancingPolicy.PRIORITY, _('Priority')),
+            (LoadBalancingPolicy.MOST_AVAILABLE_BY_NUMBER, _('Greater % available')),
+        ]
+
+class TransportSelectionPolicy(enum.IntEnum):
+    AUTO = 0
+    COMMON = 1
+    LABEL = 2
+
+    def asStr(self) -> str:
+        return str(self)
+    
+    @staticmethod
+    def enumerate() -> typing.List[typing.Tuple[int, str]]:
+        return [
+            (TransportSelectionPolicy.AUTO, _('Automatic selection')),
+            (TransportSelectionPolicy.COMMON, _('Use only common transports')),
+            (TransportSelectionPolicy.LABEL, _('Group Transports by label')),
+        ]
+    
+class HighAvailabilityPolicy(enum.IntEnum):
+    DISABLED = 0
+    ENABLED = 1
+
+    def asStr(self) -> str:
+        return str(self)
+    
+    @staticmethod
+    def enumerate() -> typing.List[typing.Tuple[int, str]]:
+        return [
+            (HighAvailabilityPolicy.DISABLED, _('Disabled')),
+            (HighAvailabilityPolicy.ENABLED, _('Enabled')),
+        ]

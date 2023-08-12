@@ -32,7 +32,7 @@ import datetime
 import typing
 
 from uds import models
-from uds.core import environment
+from uds.core import environment, types
 from uds.core.util import states
 
 from ..utils import generators
@@ -208,9 +208,9 @@ def createUserService(
 def createMetaPool(
     service_pools: typing.List[models.ServicePool],
     groups: typing.List[models.Group],
-    round_policy: int = models.MetaPool.ROUND_ROBIN_POOL,
-    transport_grouping: int = models.MetaPool.AUTO_TRANSPORT_SELECT,
-    ha_policy: int = models.MetaPool.HA_POLICY_ENABLED,
+    round_policy: int = types.pools.LoadBalancingPolicy.ROUND_ROBIN,
+    transport_grouping: int = types.pools.TransportSelectionPolicy.AUTO,
+    ha_policy: int = types.pools.HighAvailabilityPolicy.ENABLED,
 ) -> models.MetaPool:
     meta_pool: 'models.MetaPool' = models.MetaPool.objects.create(
         name='Meta pool %d' % (glob['meta_pool_id']),

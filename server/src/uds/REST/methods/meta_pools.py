@@ -33,20 +33,22 @@
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
-import uds.core.types.permissions
-from uds.models import MetaPool, Image, ServicePoolGroup
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
-from uds.core.util.state import State
-from uds.core.util.model import processUuid
-from uds.core.util import permissions
-from uds.REST.model import ModelHandler
-from uds.REST import RequestError, ResponseError
-from uds.core.ui import gui
-from uds.REST.methods.op_calendars import AccessCalendars
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
+from uds.core import types
+from uds.core.ui import gui
+from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.util import permissions
+from uds.core.util.model import processUuid
+from uds.core.util.state import State
+from uds.models import Image, MetaPool, ServicePoolGroup
+from uds.REST import RequestError, ResponseError
+from uds.REST.methods.op_calendars import AccessCalendars
+from uds.REST.model import ModelHandler
+
+from .meta_service_pools import MetaAssignedService, MetaServicesPool
 from .user_services import Groups
-from .meta_service_pools import MetaServicesPool, MetaAssignedService
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +84,8 @@ class MetaPools(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
-        {'policy': {'title': _('Policy'), 'type': 'dict', 'dict': MetaPool.TYPES}},
-        {'ha_policy': {'title': _('HA Policy'), 'type': 'dict', 'dict': MetaPool.HA_SELECT}},
+        {'policy': {'title': _('Policy'), 'type': 'dict', 'dict': dict(types.pools.LoadBalancingPolicy.enumerate())}},
+        {'ha_policy': {'title': _('HA Policy'), 'type': 'dict', 'dict': dict(types.pools.HighAvailabilityPolicy.enumerate())}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
@@ -152,20 +154,20 @@ class MetaPools(ModelHandler):
             {
                 'name': 'policy',
                 'values': [
-                    gui.choiceItem(k, str(v)) for k, v in MetaPool.TYPES.items()
+                    gui.choiceItem(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()
                 ],
-                'label': gettext('Policy'),
-                'tooltip': gettext('Service pool policy'),
+                'label': gettext('Load balancing policy'),
+                'tooltip': gettext('Service pool load balancing policy'),
                 'type': gui.InputField.Types.CHOICE,
                 'order': 100,
             },
             {
                 'name': 'ha_policy',
                 'values': [
-                    gui.choiceItem(k, str(v)) for k, v in MetaPool.HA_SELECT.items()
+                    gui.choiceItem(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
                 ],
                 'label': gettext('HA Policy'),
-                'tooltip': gettext('Service pool HA policy. Enable with care!'),
+                'tooltip': gettext('Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!.'),
                 'type': gui.InputField.Types.CHOICE,
                 'order': 101,
             },
@@ -225,7 +227,7 @@ class MetaPools(ModelHandler):
                 'name': 'transport_grouping',
                 'values': [
                     gui.choiceItem(k, str(v))
-                    for k, v in MetaPool.TRANSPORT_SELECT.items()
+                    for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],
                 'label': gettext('Transport Selection'),
                 'tooltip': gettext('Transport selection policy'),
@@ -275,9 +277,9 @@ class MetaPools(ModelHandler):
 
     # Set fallback status
     def setFallbackAccess(self, item: MetaPool):
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
 
-        fallback = self._params.get('fallbackAccess')
+        fallback = self._params.get('fallbackAccess', 'ALLOW')
         logger.debug('Setting fallback of %s to %s', item.name, fallback)
         item.fallbackAccess = fallback
         item.save()

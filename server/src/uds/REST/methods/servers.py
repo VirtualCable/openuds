@@ -65,7 +65,8 @@ class ServerRegister(Handler):
 
         try:
             # If already exists a token for this, return it instead of creating a new one, and update the information...
-            # Note that we use IP and HOSTNAME (with type) to identify the server, so if any of them changes, a new token will be created
+            # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
+            # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
             serverToken = models.RegisteredServer.objects.get(ip=ip, type=self._params['type'])
             # Update parameters
@@ -84,7 +85,6 @@ class ServerRegister(Handler):
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
                     hostname=self._params['hostname'],
-                    token=models.RegisteredServer.create_token(),
                     log_level=self._params.get('log_level', LogLevel.INFO.value),
                     stamp=now,
                     type=self._params['type'],

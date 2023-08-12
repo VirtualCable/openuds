@@ -33,7 +33,7 @@ import logging
 import typing
 
 from uds import models
-from uds.core import types
+from uds.core import consts, types
 from uds.core.util.model import getSqlDatetimeAsUnix, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
@@ -165,5 +165,5 @@ class TunnelRegister(ServerRegister):
         self._params['type'] = types.servers.ServerType.TUNNEL
         self._params['os'] = self._params.get('os', KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
         self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS
-        self._params['certiciate'] = '' # No certificate for legacy tunnels, does not respond to API requests from UDS
+        self._params['certificate'] = '' # No certificate for legacy tunnels, does not respond to API requests from UDS
         return super().post()

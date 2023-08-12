@@ -226,7 +226,7 @@ class Test(ActorV3Action):
                 Service.objects.get(token=self._params['token'])
             else:
                 RegisteredServer.objects.get(
-                    token=self._params['token'], kind=types.servers.ServerType.ACTOR
+                    token=self._params['token'], type=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
             clearFailedIp(self._request)
         except Exception:
@@ -261,11 +261,12 @@ class Register(ActorV3Action):
 
     def post(self) -> typing.Dict[str, typing.Any]:
         # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
+        # For actors we use MAC instead of IP, because VDI normally is a dynamic IP, and we do "our best" to locate the existing actor
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
         # and mac is the requested one
         found = False
         actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
-            kind=types.servers.ServerType.ACTOR, mac=self._params['mac']
+            type=types.servers.ServerType.ACTOR, mac=self._params['mac']
         ).first()
 
         # Actors does not support any SERVER API version in fact, they has their own interfaces on UserServices
@@ -277,7 +278,7 @@ class Register(ActorV3Action):
             actorToken.ip = self._params['ip']
             actorToken.hostname = self._params['hostname']
             actorToken.log_level = self._params['log_level']
-            actorToken.sub_kind = self._params.get('version', '')
+            actorToken.subtype = self._params.get('version', '')
             actorToken.data = {  # type: ignore
                 'pre_command': self._params['pre_command'],
                 'post_command': self._params['post_command'],
@@ -294,7 +295,6 @@ class Register(ActorV3Action):
                 'username': self._user.pretty_name,
                 'ip_from': self._request.ip,
                 'ip': self._params['ip'],
-                'ip_version': self._request.ip_version,
                 'hostname': self._params['hostname'],
                 'log_level': self._params['log_level'],
                 'data': {  # type: ignore
@@ -303,9 +303,9 @@ class Register(ActorV3Action):
                     'run_once_command': self._params['run_once_command'],
                     'custom': self._params.get('custom', ''),
                 },
-                'token': RegisteredServer.create_token(),
-                'kind': types.servers.ServerType.ACTOR,
-                'sub_kind': self._params.get('version', ''),
+                # 'token': RegisteredServer.create_token(),  # Not needed, defaults to create_token
+                'type': types.servers.ServerType.ACTOR,
+                'subtype': self._params.get('version', ''),
                 'version': '',
                 'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
@@ -714,7 +714,7 @@ class Ticket(ActorV3Action):
         try:
             # Simple check that token exists
             RegisteredServer.objects.get(
-                token=self._params['token'], kind=types.servers.ServerType.ACTOR
+                token=self._params['token'], type=types.servers.ServerType.ACTOR
             )  # Not assigned, because only needs check
         except RegisteredServer.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...
