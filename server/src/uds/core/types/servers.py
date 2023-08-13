@@ -98,6 +98,13 @@ class ServerStatsType(typing.NamedTuple):
     connections: int  # Number of connections
     current_users: int  # Number of current users
 
+    def weight(self, minMemory: int = 0) -> float:
+        # Weights are calculated as:
+        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total)
+        if self.mem < minMemory + 512000000:  # 512 MB reserved
+            return 10000000000   # Try to skip nodes with not enouhg memory, putting them at the end of the list
+        return (self.mem / self.maxmem) + (self.cpu) * 1.3
+
     @staticmethod
     def fromDict(dct: typing.Dict[str, typing.Any]) -> 'ServerStatsType':
         return ServerStatsType(
@@ -111,9 +118,6 @@ class ServerStatsType(typing.NamedTuple):
             current_users=dct.get('current_users', 0),
         )
 
-    def weight(self, minMemory: int = 0) -> float:
-        # Weights are calculated as:
-        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total)
-        if self.mem < minMemory + 512000000:  # 512 MB reserved
-            return 10000000000   # Try to skip nodes with not enouhg memory, putting them at the end of the list
-        return (self.mem / self.maxmem) + (self.cpu) * 1.3
+    @staticmethod
+    def empty() -> 'ServerStatsType':
+        return ServerStatsType(0, 0, 0, 0, 0, 0, 0, 0)

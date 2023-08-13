@@ -204,6 +204,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
+            name="locked",
+            field=models.DateField(blank=True, db_index=True, default=None, null=True),
+        ),
+        migrations.AddField(
+            model_name="registeredserver",
             name="groups",
             field=models.ManyToManyField(
                 related_name="servers",

@@ -146,6 +146,11 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # But used on other servers, so we can disable them for maintenance
     maintenance_mode = models.BooleanField(default=False, db_index=True)
 
+    # If server is locked, since when is it locked.
+    # This is used, for example, to allow one time use servers until the lock is released
+    # (i.e. if a server is 1-1 machine, and we want to allow only one connection to it)
+    locked = models.DateField(null=True, blank=True, default=None, db_index=True)
+
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
