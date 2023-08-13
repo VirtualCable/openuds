@@ -38,8 +38,10 @@ import enum
 import re
 
 from django.apps import apps
-
-from systemd import journal
+try:
+    from systemd import journal
+except ImportError:
+    journal = None
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -244,6 +246,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
             # Note, priority will be always 4 (WARNING), 3(ERROR), or 2(CRITICAL)
             priority = 4 if record.levelno == logging.WARNING else 3 if record.levelno == logging.ERROR else 2
 
-            journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)
+            if journal is not None:
+                journal.send(MESSAGE=msg, PRIORITY=priority, SYSLOG_IDENTIFIER=identificator)
 
         return super().emit(record)
