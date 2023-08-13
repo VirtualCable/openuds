@@ -41,8 +41,7 @@ from . import tools
 
 HANDSHAKE_V1 = b'\x5AMGB\xA5\x01\x00'
 BUFFER_SIZE = 1024 * 16  # Max buffer length
-DEBUG = True
-LISTEN_ADDRESS = '0.0.0.0' if DEBUG else '127.0.0.1'
+LISTEN_ADDRESS = '127.0.0.1'
 
 # ForwarServer states
 TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
@@ -51,6 +50,7 @@ TUNNEL_LISTENING, TUNNEL_OPENING, TUNNEL_PROCESSING, TUNNEL_ERROR = 0, 1, 2, 3
 logger = logging.getLogger(__name__)
 
 PayLoadType = typing.Optional[typing.Tuple[typing.Optional[bytes], typing.Optional[bytes]]]
+
 
 class ForwardServer(socketserver.ThreadingTCPServer):
     daemon_threads = True
@@ -266,35 +266,3 @@ def forward(
     threading.Thread(target=_run, args=(fs,)).start()
 
     return fs
-
-
-if __name__ == "__main__":
-    import sys
-
-    log = logging.getLogger()
-    log.setLevel(logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(levelname)s - %(message)s')  # Basic log format, nice for syslog
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    ticket = 'mffqg7q4s61fvx0ck2pe0zke6k0c5ipb34clhbkbs4dasb4g'
-
-    fs = forward(
-        ('demoaslan.udsenterprise.com', 11443),
-        ticket,
-        local_port=0,
-        timeout=-20,
-        check_certificate=False,
-    )
-    print('Listening on port', fs.server_address)
-    import socket
-    # Open a socket to local fs.server_address and send some random data
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(fs.server_address)
-        s.sendall(b'Hello world!')
-        data = s.recv(1024)
-        print('Received', repr(data))
-    fs.stop()
-    
