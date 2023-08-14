@@ -32,6 +32,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import enum
 import typing
 
+from django.utils.translation import gettext as _
+
 from uds.core.util import singleton
 
 
@@ -52,6 +54,15 @@ class ServerType(enum.IntEnum):
             ServerType.SERVER: 'server',
             ServerType.UNMANAGED: '',  # Unmanaged has no path, does not listen to anything
         }[self]
+        
+    @staticmethod
+    def enumerate() -> typing.List[typing.Tuple[int, str]]:
+        return [
+            (ServerType.TUNNEL, _('Tunnel')),
+            (ServerType.ACTOR, _('Actor')),
+            (ServerType.SERVER, _('Server')),
+            (ServerType.UNMANAGED, _('Unmanaged')),
+        ]
 
 
 class ServerSubType(metaclass=singleton.Singleton):

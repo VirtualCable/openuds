@@ -38,6 +38,7 @@ import enum
 import re
 
 from django.apps import apps
+
 try:
     from systemd import journal
 except ImportError:
@@ -70,26 +71,40 @@ class LogLevel(enum.IntEnum):
     def __repr__(self) -> str:
         return self.name
 
-    @classmethod
-    def fromStr(cls: typing.Type['LogLevel'], level: str) -> 'LogLevel':
+    @staticmethod
+    def fromStr(level: str) -> 'LogLevel':
         try:
-            return cls[level.upper()]
+            return LogLevel[level.upper()]
         except KeyError:
-            return cls.OTHER
+            return LogLevel.OTHER
 
-    @classmethod
-    def fromInt(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+    @staticmethod
+    def fromInt(level: int) -> 'LogLevel':
         try:
-            return cls(level)
+            return LogLevel(level)
         except ValueError:
-            return cls.OTHER
+            return LogLevel.OTHER
 
-    @classmethod
-    def fromActorLevel(cls: typing.Type['LogLevel'], level: int) -> 'LogLevel':
+    @staticmethod
+    def fromActorLevel(level: int) -> 'LogLevel':
         """
         Returns the log level for actor log level
         """
-        return [cls.DEBUG, cls.INFO, cls.ERROR, cls.CRITICAL][level % 4]
+        return [LogLevel.DEBUG, LogLevel.INFO, LogLevel.ERROR, LogLevel.CRITICAL][level % 4]
+
+    @staticmethod
+    def fromLoggingLevel(level: int) -> 'LogLevel':
+        """
+        Returns the log level for logging log level
+        """
+        return [
+            LogLevel.OTHER,
+            LogLevel.DEBUG,
+            LogLevel.INFO,
+            LogLevel.WARNING,
+            LogLevel.ERROR,
+            LogLevel.CRITICAL,
+        ][level // 10]
 
     # Return all Log levels as tuples of (level value, level name)
     @staticmethod
@@ -219,7 +234,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
                 # Convert to own loglevel, basically multiplying by 1000
-                logLevel = LogLevel.fromInt(record.levelno * 1000)
+                logLevel = LogLevel.fromLoggingLevel(record.levelno)
                 UDSLogHandler.emiting = True
                 identificator = os.path.basename(self.baseFilename)
                 msg = getMsg(removeLevel=True)

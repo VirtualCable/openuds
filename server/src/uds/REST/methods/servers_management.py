@@ -50,10 +50,12 @@ logger = logging.getLogger(__name__)
 
 # REST API for Server Tokens management (for admin interface)
 class ServersTokens(ModelHandler):
+    # servers/groups/[id]/servers
     model = models.RegisteredServer
     model_exclude = {
         'type__in': [
             types.servers.ServerType.ACTOR,
+            types.servers.ServerType.UNMANAGED,
         ]
     }
     path = 'servers'
@@ -63,13 +65,13 @@ class ServersTokens(ModelHandler):
     table_fields = [
         {'hostname': {'title': _('Hostname')}},
         {'ip': {'title': _('IP')}},
-        {'type': {'title': _('Type')}},
+        {'type': {'title': _('Type'), 'type': 'dict', 'dict': dict(types.servers.ServerType.enumerate())}},
         {'os': {'title': _('OS')}},
         {'username': {'title': _('Issued by')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item: models.RegisteredServer) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'models.RegisteredServer') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
@@ -77,6 +79,7 @@ class ServersTokens(ModelHandler):
             'username': item.username,
             'ip': item.ip,
             'hostname': item.hostname,
+            'mac': item.mac,
             'token': item.token,
             'type': types.servers.ServerType(item.type).as_str(),
             'os': item.os_type,
@@ -103,8 +106,6 @@ class ServersTokens(ModelHandler):
 
 # REST API For servers (except tunnel servers nor actors)
 class ServersServers(DetailHandler):
-    path = 'servers'
-    name = 'servers'
     custom_methods = ['maintenance']
 
     def getItems(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]):
@@ -148,6 +149,7 @@ class ServersServers(DetailHandler):
                 }
             },
             {'ip': {'title': _('Ip')}},
+            {'mac': {'title': _('Mac')}},
         ]
 
     def saveItem(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]) -> None:
@@ -194,6 +196,8 @@ class ServersGroups(ModelHandler):
             types.servers.ServerType.UNMANAGED,
         ]
     }
+    detail = {'servers': ServersServers}
+    
     path = 'servers'
     name = 'groups'
 
@@ -202,8 +206,8 @@ class ServersGroups(ModelHandler):
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
-        {'kind': {'title': _('Type')}},
-        {'type': {'title': 'xx', 'visible': False}},
+        {'type_name': {'title': _('Type')}},
+        {'type': {'title': '', 'visible': False}},
         {'subtype': {'title': _('Subtype')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -244,7 +248,7 @@ class ServersGroups(ModelHandler):
             'comments': item.comments,
             'type': f'{types.servers.ServerType(item.type).name}@{item.subtype}',
             'subtype': item.subtype.capitalize(),
-            'kind': types.servers.ServerType(item.type).name.capitalize(),
+            'type_name': types.servers.ServerType(item.type).name.capitalize(),
             'tags': [tag.tag for tag in item.tags.all()],
             'servers_count': item.servers.count(),
             'permission': permissions.getEffectivePermission(self._user, item),

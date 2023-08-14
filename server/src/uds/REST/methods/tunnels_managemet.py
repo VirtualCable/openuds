@@ -55,8 +55,7 @@ logger = logging.getLogger(__name__)
 
 
 class TunnelServers(DetailHandler):
-    path = 'tunnels'
-    name = 'servers'
+    # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
     def getItems(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]):

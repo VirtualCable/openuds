@@ -238,7 +238,7 @@ def validateHost(host: str) -> str:
         dj_validators.validate_ipv46_address(host)
         return host
     except Exception:
-        return validateHostname(host, 255, False)
+        return validateFqdn(host)
 
 def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
     """
