@@ -170,7 +170,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="registeredserver",
             name="version",
-            field=models.CharField(default="4.0.0", max_length=32),
+            field=models.CharField(default="", max_length=32),
         ),
         migrations.AddField(
             model_name="registeredserver",
@@ -205,7 +205,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="registeredserver",
             name="locked",
-            field=models.DateField(blank=True, db_index=True, default=None, null=True),
+            field=models.DateTimeField(blank=True, db_index=True, default=None, null=True),
         ),
         migrations.AddField(
             model_name="registeredserver",

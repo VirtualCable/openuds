@@ -69,7 +69,7 @@ def createRegisteredServerGroup(
     host: typing.Optional[str] = None,
     port: int = 0,
     listen_port: int = 0,
-    numServers: int = 1,
+    num_servers: int = 1,
 ) -> models.RegisteredServerGroup:
     rsg = models.RegisteredServerGroup.objects.create(
         name=generators.random_string(),
@@ -79,7 +79,7 @@ def createRegisteredServerGroup(
         host=host or '',
         port=port,
     )
-    for i in range(numServers):
+    for i in range(num_servers):
         server = createRegisterdServer(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
         rsg.servers.add(server)
 

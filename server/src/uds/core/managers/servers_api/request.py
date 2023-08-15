@@ -54,7 +54,7 @@ class ServerApiRequester:
     hash: str
 
     def __init__(self, server: 'models.RegisteredServer') -> None:
-        hash = hashlib.sha256((server.token).encode()).hexdigest()
+        self.hash = hashlib.sha256((server.token).encode()).hexdigest()
         self.server = server
 
     @contextlib.contextmanager
@@ -182,7 +182,7 @@ class ServerApiRequester:
             ).asDict(),
         )
 
-    def notifyRemoval(self, userService: 'models.UserService') -> None:
+    def notifyRelease(self, userService: 'models.UserService') -> None:
         """
         Notifies removal of user service to server
         """

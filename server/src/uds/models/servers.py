@@ -69,10 +69,11 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for APP Servers, host and port are ununsed
     type = models.IntegerField(default=types.servers.ServerType.UNMANAGED, db_index=True)
-    subtype = models.CharField(
-        max_length=32, default='', db_index=True
-    )  # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..)
+    # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..). so we can filter/group them
+    subtype = models.CharField(max_length=32, default='', db_index=True)
 
+    # On some cases, the group will have a host and port that will be used to connect to the servers
+    # I.e. UDS Tunnels can be a lot of them, but have a load balancer that redirects to them
     host = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
     port = models.IntegerField(default=0)
 
@@ -118,29 +119,37 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     allow or deny access to the API for this server.
     """
 
+    # Username that registered the server
     username = models.CharField(max_length=128)
+    # Ip from where the server was registered, can be IPv4 or IPv6
     ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
+    # Ip of the server, can be IPv4 or IPv6 (used to communicate with it)
     ip = models.CharField(max_length=MAX_IPV6_LENGTH)
 
+    # Hostname. It use depends on the implementation of the service, providers. etc..
+    # But the normal operations is that hostname has precedence over ip
+    # * Resolve hostname to ip
+    # * If fails, use ip
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
-    listen_port = models.IntegerField(
-        default=SERVER_DEFAULT_LISTEN_PORT
-    )  # Port where server listens for connections (if it listens)
+    # Port where server listens for connections (if it listens)
+    listen_port = models.IntegerField(default=SERVER_DEFAULT_LISTEN_PORT)
 
+    # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
     token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)
-    stamp = models.DateTimeField()  # Date creation or validation of this entry
+    # Simple info field of when the registered server was created or revalidated
+    stamp = models.DateTimeField()
 
     # Type of server. Defaults to tunnel, so we can migrate from previous versions
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
     type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
-    subtype = models.CharField(
-        max_length=32, default='', db_index=True
-    )  # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..)
-    version = models.CharField(
-        max_length=32, default='4.0.0'
-    )  # Version of the UDS API of the server. Starst at 4.0.0
+    # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..) so we can group it for
+    # selections
+    subtype = models.CharField(max_length=32, default='', db_index=True)
+    # Version of the UDS API of the server. Starst at 4.0.0
+    # If version is empty, means that it has no API
+    version = models.CharField(max_length=32, default='')
 
     # If server is in "maintenance mode". Not used on tunnels (Because they are "redirected" by an external load balancer)
     # But used on other servers, so we can disable them for maintenance
@@ -149,7 +158,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # If server is locked, since when is it locked.
     # This is used, for example, to allow one time use servers until the lock is released
     # (i.e. if a server is 1-1 machine, and we want to allow only one connection to it)
-    locked = models.DateField(null=True, blank=True, default=None, db_index=True)
+    locked = models.DateTimeField(null=True, blank=True, default=None, db_index=True)
 
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())

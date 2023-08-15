@@ -176,7 +176,7 @@ class StorageAsDict(MutableMapping):
 
     def values(self):
         return iter(_decodeValue(i.key, i.data)[1] for i in self._filtered)
-
+    
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         return self[key] or default
 
