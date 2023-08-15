@@ -167,24 +167,32 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             # def getStats(self) -> typing.Optional[types.servers.ServerStatsType]:
             mockServerApiRequester.return_value.getStats.return_value = None
             # Assign all user services with lock
-            for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
+            for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                 uuid, counter = self.assign(
                     userService,
-                    lock=datetime.timedelta(seconds=1),
+                    lockTime=datetime.timedelta(seconds=1),
                 )
                 storage_key = self.manager.storage_key(self.registered_servers_group, userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in all_uuids)
                 # Server locked should not be None (that is, it should be locked)
                 self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked)
+
+                with self.manager_storage.map() as stor:
+                    self.assertEqual(len(stor), elementNumber + 1)
+                    uuid_counter = stor[storage_key]
+                    # uuid_counter is (uuid, assign counter)
+                    self.assertEqual(uuid_counter[0], uuid)
+                    self.assertEqual(uuid_counter[1], counter)
+
                 
             # Next one should fail with an exceptions.UDSException
             with self.assertRaises(exceptions.UDSException):
-                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock=datetime.timedelta(seconds=1))
+                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
                 
             # Wait a couple of seconds, and try again, it should work
             time.sleep(2)
-            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lock=datetime.timedelta(seconds=1))
+            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
             
             # notifyRelease should has been called once
             self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)

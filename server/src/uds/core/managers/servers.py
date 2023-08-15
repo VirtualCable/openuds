@@ -74,8 +74,8 @@ class ServerManager(metaclass=singleton.Singleton):
         self,
         userService: 'models.UserService',
         serverGroup: 'models.RegisteredServerGroup',
+        now: datetime.datetime,
         minMemoryMB: int = 0,
-        limitLockDate: typing.Optional[datetime.datetime] = None,
     ) -> typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']:
         """
         Finds the best server for a service
@@ -83,10 +83,7 @@ class ServerManager(metaclass=singleton.Singleton):
         best: typing.Optional[typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']] = None
         unmanaged_list: typing.List['models.RegisteredServer'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
-        if limitLockDate:
-            fltrs = fltrs.filter(Q(locked=None) | Q(locked__lt=limitLockDate))  # Only unlocked servers
-        else:
-            fltrs = fltrs.filter(locked=None)
+        fltrs = fltrs.filter(Q(locked=None) | Q(locked__lte=now))  # Only unlocked servers
         for server in fltrs.select_for_update():
             stats = request.ServerApiRequester(server).getStats()
             if stats is None:
@@ -110,7 +107,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 random.choice(unmanaged_list),  # nosec: Simple random selection, no security required
                 types.servers.ServerStatsType.empty(),
             )
-            
+
         # If best was locked, notify it
         if best[0].locked is not None:
             request.ServerApiRequester(best[0]).notifyRelease(userService)
@@ -123,8 +120,8 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.RegisteredServerGroup',
         serviceType: types.services.ServiceType = types.services.ServiceType.VDI,
         minMemoryMB: int = 0,
-        lock: typing.Optional[datetime.timedelta] = None,
-        server: typing.Optional['models.RegisteredServer'] = None,
+        lockTime: typing.Optional[datetime.timedelta] = None,
+        server: typing.Optional['models.RegisteredServer'] = None,  # If not note
     ) -> typing.Tuple[str, int]:
         """
         Select a server for an userservice to be assigned to
@@ -134,7 +131,7 @@ class ServerManager(metaclass=singleton.Singleton):
             serverGroup: Server group to select server from
             serverType: Type of service to assign
             minMemoryMB: Minimum memory required for server in MB
-            lock: If not None, lock server for this time
+            maxLockTime: If not None, lock server for this time
             server: If not None, use this server instead of selecting one from serverGroup. (Used on manual assign)
 
         Returns:
@@ -165,13 +162,17 @@ class ServerManager(metaclass=singleton.Singleton):
                         best = self._findBestServer(
                             userService=userService,
                             serverGroup=serverGroup,
+                            now=now,
                             minMemoryMB=minMemoryMB,
-                            limitLockDate=now - lock if lock else None,
                         )
 
                         uuid_counter = (best[0].uuid, 0)
-                        best[0].locked = now if lock else None
+                        best[0].locked = now + lockTime if lockTime else None
                         best[0].save(update_fields=['locked'])
+                elif lockTime:  # If lockTime is set, update it
+                    models.RegisteredServer.objects.filter(uuid=uuid_counter[0]).update(
+                        locked=now + lockTime
+                    )
 
         # Notify to server
         # Update counter
@@ -218,8 +219,8 @@ class ServerManager(metaclass=singleton.Singleton):
             server.locked = None  # Ensure server is unlocked if no more users are assigned to it
             server.save(update_fields=['locked'])
         request.ServerApiRequester(server).notifyRelease(userService)
-        
-        return (uuid_counter[0], uuid_counter[1] - 1)  if uuid_counter[1] > 1 else None
+
+        return (uuid_counter[0], uuid_counter[1] - 1) if uuid_counter[1] > 1 else None
 
     def notifyPreconnect(
         self,
