@@ -204,7 +204,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name="registeredserver",
-            name="locked",
+            name="locked_until",
             field=models.DateTimeField(blank=True, db_index=True, default=None, null=True),
         ),
         migrations.AddField(

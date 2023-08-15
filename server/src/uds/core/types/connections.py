@@ -53,8 +53,9 @@ class AssignInfoType(typing.NamedTuple):
     udsuser_uuid: str
     userservice_uuid: str  # UUID of userservice
     userservice_type: str  # VDI or VAPP (as in ServiceType)
+    assignations: int  # Number of times this service has been assigned
 
-    def asDict(self) -> typing.Dict[str, str]:
+    def asDict(self) -> typing.Dict[str, 'str|int']:
         return self._asdict()
 
 class ConnectionInfoType(typing.NamedTuple):

@@ -158,7 +158,7 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # If server is locked, since when is it locked.
     # This is used, for example, to allow one time use servers until the lock is released
     # (i.e. if a server is 1-1 machine, and we want to allow only one connection to it)
-    locked = models.DateTimeField(null=True, blank=True, default=None, db_index=True)
+    locked_until = models.DateTimeField(null=True, blank=True, default=None, db_index=True)
 
     # os type of server (linux, windows, etc..)
     os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())

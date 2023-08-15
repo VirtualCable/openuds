@@ -61,14 +61,10 @@ def _encodeValue(key: str, value: typing.Any, compat: bool = False) -> str:
     return base64.b64encode(pickle.dumps(value)).decode()
 
 
-def _decodeValue(
-    dbk: str, value: typing.Optional[str]
-) -> typing.Tuple[str, typing.Any]:
+def _decodeValue(dbk: str, value: typing.Optional[str]) -> typing.Tuple[str, typing.Any]:
     if value:
         try:
-            v = pickle.loads(
-                base64.b64decode(value.encode())
-            )  # nosec: This is e controled pickle loading
+            v = pickle.loads(base64.b64decode(value.encode()))  # nosec: This is e controled pickle loading
             if isinstance(v, tuple) and v[0] == MARK:
                 return typing.cast(typing.Tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
@@ -115,10 +111,10 @@ class StorageAsDict(MutableMapping):
 
     @property
     def _filtered(self) -> 'models.QuerySet[DBStorage]':
-        fltr = self._db.filter(owner=self._owner)
+        fltr_params = {'owner': self._owner}
         if self._group:
-            fltr = fltr.filter(attr1=self._group)
-        return typing.cast('models.QuerySet[DBStorage]', fltr)
+            fltr_params['attr1'] = self._group
+        return typing.cast('models.QuerySet[DBStorage]', self._db.filter(**fltr_params))
 
     def _key(self, key: str) -> str:
         if key[0] == '#':
@@ -176,7 +172,7 @@ class StorageAsDict(MutableMapping):
 
     def values(self):
         return iter(_decodeValue(i.key, i.data)[1] for i in self._filtered)
-    
+
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         return self[key] or default
 
@@ -234,9 +230,7 @@ class Storage:
         self._bowner = self._owner.encode('utf8')
 
     def getKey(self, key: typing.Union[str, bytes]) -> str:
-        return _calcKey(
-            self._bowner, key.encode('utf8') if isinstance(key, str) else key
-        )
+        return _calcKey(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
 
     def saveData(
         self,
@@ -255,9 +249,7 @@ class Storage:
         dataStr = codecs.encode(data, 'base64').decode()
         attr1 = attr1 or ''
         try:
-            DBStorage.objects.create(
-                owner=self._owner, key=key, data=dataStr, attr1=attr1
-            )
+            DBStorage.objects.create(owner=self._owner, key=key, data=dataStr, attr1=attr1)
         except Exception:
             with transaction.atomic():
                 DBStorage.objects.filter(key=key).select_for_update().update(
@@ -306,17 +298,13 @@ class Storage:
             logger.debug('key not found')
             return None
 
-    def get(
-        self, skey: typing.Union[str, bytes]
-    ) -> typing.Optional[typing.Union[str, bytes]]:
+    def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.readData(skey)
 
     def getPickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
         v = self.readData(skey, True)
         if v:
-            return pickle.loads(
-                typing.cast(bytes, v)
-            )  # nosec: This is e controled pickle loading
+            return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
         return None
 
     def getPickleByAttr1(self, attr1: str, forUpdate: bool = False):
@@ -330,29 +318,25 @@ class Storage:
         except Exception:
             return None
 
-    def remove(
-        self, skey: typing.Union[typing.Iterable[typing.Union[str, bytes]], str, bytes]
-    ) -> None:
-        keys: typing.Iterable[typing.Union[str, bytes]] = (
-            [skey] if isinstance(skey, (str, bytes)) else skey
-        )
+    def remove(self, skey: typing.Union[typing.Iterable[typing.Union[str, bytes]], str, bytes]) -> None:
+        keys: typing.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
         try:
             # Process several keys at once
             DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
-        except (
-            Exception
-        ):  # nosec: Not interested in processing exceptions, just ignores it
+        except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
     def lock(self):
         """
         Use with care. If locked, it must be unlocked before returning
+        legacy, not user anymore
         """
         # dbStorage.objects.lock()  # @UndefinedVariable
 
     def unlock(self):
         """
         Must be used to unlock table
+        legacy, not user anymore
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
 
@@ -364,17 +348,11 @@ class Storage:
     ) -> StorageAccess:
         return StorageAccess(self._owner, group=group, atomic=atomic, compat=compat)
 
-    def locateByAttr1(
-        self, attr1: typing.Union[typing.Iterable[str], str]
-    ) -> typing.Iterable[bytes]:
+    def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Iterable[bytes]:
         if isinstance(attr1, str):
-            query = DBStorage.objects.filter(
-                owner=self._owner, attr1=attr1
-            )  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
-            query = DBStorage.objects.filter(
-                owner=self._owner, attr1__in=attr1
-            )  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1__in=attr1)  # @UndefinedVariable
 
         for v in query:
             yield codecs.decode(v.data.encode(), 'base64')
@@ -385,9 +363,7 @@ class Storage:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
-            query = DBStorage.objects.filter(
-                owner=self._owner, attr1=attr1
-            )  # @UndefinedVariable
+            query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
         if forUpdate:
             query = query.select_for_update()

@@ -48,7 +48,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-
 class ServerApiRequester:
     server: 'models.RegisteredServer'
     hash: str
@@ -102,7 +101,9 @@ class ServerApiRequester:
         """
         Returns the url for a method
         """
-        if self.server.type == types.servers.ServerType.UNMANAGED or (self.server.version < (minVersion or consts.MIN_SERVER_VERSION)):
+        if self.server.type == types.servers.ServerType.UNMANAGED or (
+            self.server.version < (minVersion or consts.MIN_SERVER_VERSION)
+        ):
             return None
 
         return self.server.getCommsUrl(path=method)
@@ -142,9 +143,9 @@ class ServerApiRequester:
                 return response.json()
         except Exception:  # If any error, return None
             return None
-        
+
     def notifyAssign(
-            self, userService: 'models.UserService', service_type: 'types.services.ServiceType'
+        self, userService: 'models.UserService', service_type: 'types.services.ServiceType', count: int
     ) -> None:
         """
         Notifies assign of user service to server
@@ -155,10 +156,10 @@ class ServerApiRequester:
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
-                userservice_type=service_type
-            )
+                userservice_type=service_type,
+                assignations=count,
+            ),
         )
-                  
 
     def notifyPreconnect(
         self, userService: 'models.UserService', info: types.connections.ConnectionInfoType

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -42,7 +41,7 @@ from uds import models
 from uds.core import exceptions, types
 from uds.core.util import model as model_utils
 from uds.core.util import singleton
-from uds.core.util.storage import Storage
+from uds.core.util.storage import StorageAccess, Storage
 
 from .servers_api import request
 
@@ -53,6 +52,7 @@ operationsLogger = logging.getLogger('operationsLog')
 
 class ServerManager(metaclass=singleton.Singleton):
     STORAGE_NAME: typing.Final[str] = 'uds.servers'
+    # counters is "volatile" counter for better round robin info.
 
     def __init__(self):
         pass
@@ -61,14 +61,39 @@ class ServerManager(metaclass=singleton.Singleton):
     def manager() -> 'ServerManager':
         return ServerManager()  # Singleton pattern will return always the same instance
 
+    def svrStorage(self) -> 'StorageAccess':
+        return Storage(self.STORAGE_NAME).map(atomic=True, group='servers')
+
+    def cntStorage(self) -> 'StorageAccess':
+        return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
+
     def storage_key(
         self, serverGroup: 'models.RegisteredServerGroup', user: typing.Optional['models.User']
     ) -> str:
         return (user.uuid if user else '') + serverGroup.uuid
 
-    @property
-    def storage(self) -> Storage:
-        return Storage(ServerManager.STORAGE_NAME)
+    def clearCounters(self) -> None:
+        with self.cntStorage() as counters:
+            counters.clear()
+            
+    def getUnmanagedUsage(self, uuid: str) -> int:
+        uuid = 'c' + uuid
+        with self.cntStorage() as counters:
+            return counters.get(uuid, 0)
+
+    def decreaseUnmanagedUsage(self, uuid: str, forceReset: bool = False) -> None:
+        uuid = 'c' + uuid
+        with self.cntStorage() as counters:
+            if uuid in counters:
+                counters[uuid] -= 1
+                if counters[uuid] <= 0 or forceReset:
+                    del counters[uuid]
+                
+    def increaseUnmanagedUsage(self, uuid: str, onlyIfExists: bool = False) -> None:
+        uuid = 'c' + uuid
+        with self.cntStorage() as counters:
+            if not onlyIfExists or uuid in counters:
+                counters[uuid] = counters.get(uuid, 0) + 1
 
     def _findBestServer(
         self,
@@ -83,7 +108,7 @@ class ServerManager(metaclass=singleton.Singleton):
         best: typing.Optional[typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']] = None
         unmanaged_list: typing.List['models.RegisteredServer'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
-        fltrs = fltrs.filter(Q(locked=None) | Q(locked__lte=now))  # Only unlocked servers
+        fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
         for server in fltrs.select_for_update():
             stats = request.ServerApiRequester(server).getStats()
             if stats is None:
@@ -98,18 +123,27 @@ class ServerManager(metaclass=singleton.Singleton):
                 best = (server, stats)
 
         # Cannot be assigned to any server!!
-        if best is None and len(unmanaged_list) == 0:
-            raise exceptions.UDSException(_('No server available for user'))
-
         # If no best, select one from unmanaged
         if best is None:
+            if len(unmanaged_list) == 0:
+                raise exceptions.UDSException(_('No server available for user'))
+
+            # Unmanaged servers are a bit messy. We have to keep track of connected users,
+            # But users may disconnect (i.e. on machines without actor) and UDS will not notice it.
+            # So we have to provide a way to "reset" the server usage, and this is done by
+            # Get counter with less usage
+            best_with_counter = sorted(
+                [(s, self.getUnmanagedUsage(s.uuid)) for s in unmanaged_list], key=lambda x: x[1]
+            )[0]
+            # Update counter
+            self.increaseUnmanagedUsage(best_with_counter[0].uuid)
             best = (
-                random.choice(unmanaged_list),  # nosec: Simple random selection, no security required
+                best_with_counter[0],
                 types.servers.ServerStatsType.empty(),
             )
 
         # If best was locked, notify it
-        if best[0].locked is not None:
+        if best[0].locked_until is not None:
             request.ServerApiRequester(best[0]).notifyRelease(userService)
 
         return best
@@ -119,7 +153,7 @@ class ServerManager(metaclass=singleton.Singleton):
         userService: 'models.UserService',
         serverGroup: 'models.RegisteredServerGroup',
         serviceType: types.services.ServiceType = types.services.ServiceType.VDI,
-        minMemoryMB: int = 0,
+        minMemoryMB: int = 0,  # Does not apply to unmanged servers
         lockTime: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.RegisteredServer'] = None,  # If not note
     ) -> typing.Tuple[str, int]:
@@ -130,7 +164,7 @@ class ServerManager(metaclass=singleton.Singleton):
             userService: User service to assign server to
             serverGroup: Server group to select server from
             serverType: Type of service to assign
-            minMemoryMB: Minimum memory required for server in MB
+            minMemoryMB: Minimum memory required for server in MB, does not apply to unmanaged servers
             maxLockTime: If not None, lock server for this time
             server: If not None, use this server instead of selecting one from serverGroup. (Used on manual assign)
 
@@ -140,22 +174,32 @@ class ServerManager(metaclass=singleton.Singleton):
         storage_key = self.storage_key(serverGroup, userService.user)
         now = model_utils.getSqlDatetime()
 
-        with self.storage.map() as saved:
+        with self.svrStorage() as saved:
             uuid_counter: typing.Optional[typing.Tuple[str, int]] = saved[storage_key]
             # If server is forced, and server is part of the group, use it
-            if server and serverGroup.servers.filter(uuid=server.uuid).exists():
-                # if server.uuid is stored uuid, increase counter, else store it
+            if server:
+                if server.groups.filter(uuid=serverGroup.uuid).count() == 0:
+                    raise exceptions.UDSException(_('Server is not part of the group'))
+                elif server.maintenance_mode:
+                    raise exceptions.UDSException(_('Server is in maintenance mode'))
+
+                # if server.uuid is stored uuid, increase counter (and counters if exits), else store it
                 if uuid_counter and uuid_counter[0] == server.uuid:
                     uuid_counter = (server.uuid, uuid_counter[1] + 1)
                 else:
                     saved[storage_key] = (server.uuid, 0)
                     uuid_counter = (server.uuid, 0)
+
+                self.increaseUnmanagedUsage(server.uuid, onlyIfExists=True)
             else:
-                # If server and it is in maintenance, remove it from saved and use another one
                 if uuid_counter:
+                    # If server and it is in maintenance, remove it from saved and use another one
                     if models.RegisteredServer.objects.get(uuid=uuid_counter[0]).maintenance_mode:
                         uuid_counter = None
                         del saved[storage_key]
+                    else:
+                        # Increase "local" counters for RR if needed
+                        self.increaseUnmanagedUsage(uuid_counter[0], onlyIfExists=True)
                 # If no cached value, get server assignation
                 if uuid_counter is None:
                     with transaction.atomic():
@@ -167,11 +211,11 @@ class ServerManager(metaclass=singleton.Singleton):
                         )
 
                         uuid_counter = (best[0].uuid, 0)
-                        best[0].locked = now + lockTime if lockTime else None
-                        best[0].save(update_fields=['locked'])
+                        best[0].locked_until = now + lockTime if lockTime else None
+                        best[0].save(update_fields=['locked_until'])
                 elif lockTime:  # If lockTime is set, update it
                     models.RegisteredServer.objects.filter(uuid=uuid_counter[0]).update(
-                        locked=now + lockTime
+                        locked_until=now + lockTime
                     )
 
         # Notify to server
@@ -179,8 +223,10 @@ class ServerManager(metaclass=singleton.Singleton):
         uuid_counter = (uuid_counter[0], uuid_counter[1] + 1)
         saved[storage_key] = uuid_counter
         bestServer = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
-        # if lock requested, store getSqlDatetime() in locked field
-        request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType)
+
+        # Notify assgination in every case, even if reassignation to same server is made
+        # This lets the server to keep track, if needed, of multi-assignations
+        request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, uuid_counter[1])
         return uuid_counter
 
     def release(
@@ -188,7 +234,7 @@ class ServerManager(metaclass=singleton.Singleton):
         userService: 'models.UserService',
         serverGroups: 'models.RegisteredServerGroup',
         unlock: bool = False,
-    ) -> typing.Optional[typing.Tuple[str, int]]:
+    ) -> typing.Tuple[str, int]:
         """
         Unassigns a server from an user
 
@@ -197,30 +243,37 @@ class ServerManager(metaclass=singleton.Singleton):
             serverGroups: Server group to unassign server from
             unlock: If True, unlock server, even if it has more users assigned to it
         """
-        storage_key = self.storage_key(serverGroups, userService.user)
+        with transaction.atomic():
+            storage_key = self.storage_key(serverGroups, userService.user)
+            resetCounter = False
+            with self.svrStorage() as saved:
+                uuid_counter: typing.Optional[typing.Tuple[str, int]] = saved.get(storage_key)
+                # If no cached value, get server assignation
+                if uuid_counter is None:
+                    return ('', 0)
+                # Ensure counter is at least 1
+                uuid_counter = (uuid_counter[0], max(1, uuid_counter[1]))
+                if uuid_counter[1] == 1 or unlock:
+                    # Last one, remove it
+                    del saved[storage_key]
+                else:  # Not last one, just decrement counter
+                    saved[storage_key] = (uuid_counter[0], uuid_counter[1] - 1)
 
-        with self.storage.map() as saved:
-            uuid_counter: typing.Optional[typing.Tuple[str, int]] = saved.get(storage_key)
-            # If no cached value, get server assignation
-            if uuid_counter is None:
-                return None
-            if uuid_counter[1] == 1:
-                # Last one, remove it
-                del saved[storage_key]
-            elif not unlock:
-                # Decrement assignation counter
-                saved[storage_key] = (uuid_counter[0], uuid_counter[1] - 1)
-            else:
-                # Unlock requested, remove assignation even if more users are assigned to it
-                del saved[storage_key]
+            server = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
 
-        server = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
-        if unlock or uuid_counter[1] == 1:
-            server.locked = None  # Ensure server is unlocked if no more users are assigned to it
-            server.save(update_fields=['locked'])
-        request.ServerApiRequester(server).notifyRelease(userService)
+            if unlock:
+                if uuid_counter[1] == 1:
+                    server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
+                    server.save(update_fields=['locked_until'])
 
-        return (uuid_counter[0], uuid_counter[1] - 1) if uuid_counter[1] > 1 else None
+                # Enure server counter is cleaned also, because server is considered "fully released"
+                resetCounter = True
+
+            self.decreaseUnmanagedUsage(server.uuid, forceReset=resetCounter)
+
+            request.ServerApiRequester(server).notifyRelease(userService)
+
+        return (uuid_counter[0], uuid_counter[1] - 1)
 
     def notifyPreconnect(
         self,
