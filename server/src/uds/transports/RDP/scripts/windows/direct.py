@@ -42,7 +42,8 @@ filename = tools.saveTempFile(theFile)
 
 if sp['optimize_teams'] == True:  # type: ignore
     try:
-        h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
+        # Very basic check for RDP client from Microsoft Store
+        h = wreg.OpenKey(wreg.HKEY_CLASSES_ROOT, '.rdp\\OpenWithProgids', 0, wreg.KEY_READ)  # type: ignore
         h.Close()
     except Exception:
         raise Exception('Required Microsoft RDP Client is not found. Please, install it from Microsoft store.')

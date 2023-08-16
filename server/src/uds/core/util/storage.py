@@ -127,7 +127,6 @@ class StorageAsDict(MutableMapping):
             raise TypeError(f'Key must be str, {type(key)} found')
 
         dbk = self._key(key)
-        logger.debug('Getitem: %s', dbk)
         try:
             c: DBStorage = typing.cast(DBStorage, self._db.get(pk=dbk))
             return _decodeValue(dbk, c.data)[1]  # Ignores original key
@@ -139,7 +138,6 @@ class StorageAsDict(MutableMapping):
             raise TypeError(f'Key must be str type, {type(key)} found')
 
         dbk = self._key(key)
-        logger.debug('Setitem: %s = %s', dbk, value)
         data = _encodeValue(key, value, self._compat)
         # ignores return value, we don't care if it was created or updated
         DBStorage.objects.update_or_create(
@@ -148,7 +146,6 @@ class StorageAsDict(MutableMapping):
 
     def __delitem__(self, key: str) -> None:
         dbk = self._key(key)
-        logger.debug('Delitem: %s --> %s', key, dbk)
         DBStorage.objects.filter(key=dbk).delete()
 
     def __iter__(self):
@@ -158,7 +155,6 @@ class StorageAsDict(MutableMapping):
         return iter(_decodeValue(i.key, i.data)[0] for i in self._filtered)
 
     def __contains__(self, key: object) -> bool:
-        logger.debug('Contains: %s', key)
         if isinstance(key, str):
             return self._filtered.filter(key=self._key(key)).exists()
         return False
@@ -255,7 +251,6 @@ class Storage:
                 DBStorage.objects.filter(key=key).select_for_update().update(
                     owner=self._owner, data=dataStr, attr1=attr1
                 )  # @UndefinedVariable
-        # logger.debug('Key saved')
 
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
         return self.saveData(skey, data)
@@ -283,7 +278,6 @@ class Storage:
     ) -> typing.Optional[typing.Union[str, bytes]]:
         try:
             key = self.getKey(skey)
-            logger.debug('Accesing to %s %s', skey, key)
             c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
             val = codecs.decode(c.data.encode(), 'base64')
 
@@ -295,7 +289,6 @@ class Storage:
             except Exception:
                 return val
         except DBStorage.DoesNotExist:  # @UndefinedVariable
-            logger.debug('key not found')
             return None
 
     def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:

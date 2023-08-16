@@ -41,7 +41,6 @@ import logging
 from uds import models
 from uds.core import types, exceptions
 from uds.core.managers import servers
-from uds.core.util import storage
 
 from ...fixtures import servers as servers_fixtures
 from ...fixtures import services as services_fixtures
@@ -53,7 +52,7 @@ NUM_REGISTEREDSERVERS = 8
 NUM_USERSERVICES = NUM_REGISTEREDSERVERS + 1
 
 
-class ServerManagerUnmanagedServersTest(UDSTestCase):
+class ServerManagerManagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.RegisteredServerGroup'
@@ -87,7 +86,28 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
     @contextmanager
     def createMockApiRequester(self) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.request.ServerApiRequester') as mockServerApiRequester:
-            mockServerApiRequester.return_value.getStats.return_value = None
+
+            stats_dct = {
+                server.uuid: types.servers.ServerStatsType(
+                    mem=i*100,
+                    maxmem=NUM_REGISTEREDSERVERS*100,
+                    cpu=100/NUM_REGISTEREDSERVERS * (i+1),
+                    uptime=0,
+                    disk=0,
+                    maxdisk=0,
+                    connections=0,
+                    current_users=0,
+                    )
+                for i, server in enumerate(self.registered_servers_group.servers.all())
+            }
+                
+            def getStats() -> typing.Optional[types.servers.ServerStatsType]:
+                # Get first argument from call to init on serverApiRequester
+                server = mockServerApiRequester.call_args[0][0]
+                return stats_dct.get(server.uuid, None)
+
+            # return_value returns the instance of the mock
+            mockServerApiRequester.return_value.getStats.side_effect = getStats
             yield mockServerApiRequester
 
     def testAssignAuto(self) -> None:
@@ -127,8 +147,6 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
 
                 # Server storage should contain the assignation
                 with self.manager.svrStorage() as stor:
-                    for i in stor.items():
-                        logger.info('Storage item: %s', i)
                     self.assertEqual(len(stor), elementNumber + 1)
                     uuid_counter = stor[storage_key]
                     # uuid_counter is (uuid, assign counter)
@@ -155,7 +173,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                         mockServerApiRequester.return_value.notifyAssign.call_count,
                         expected_notifyAssign_calls + i + 2,
                     )
-                    
+
                     # Server storage should be emtpy here
                     with self.manager.svrStorage() as stor:
                         self.assertEqual(len(stor), elementNumber + 1)
@@ -177,7 +195,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             with self.manager.svrStorage() as stor:
                 self.assertEqual(len(stor), 0)
 
-    def testAssignAutoLock(self) -> None:
+    def testAssignAutoLockLimit(self) -> None:
         with self.createMockApiRequester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
@@ -196,14 +214,14 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             with self.assertRaises(exceptions.UDSException):
                 self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
 
-            # Wait a couple of seconds, and try again, it should work
-            time.sleep(2)
+            # Wait a second, and try again, it should work
+            time.sleep(1)
             self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
 
             # notifyRelease should has been called once
             self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)
 
-    def testAssignRoundRobin(self) -> None:
+    def testAssignReleaseMax(self) -> None:
         for assignation in range(3):
             with self.createMockApiRequester() as mockServerApiRequester:
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
@@ -215,6 +233,13 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     # Server locked should be None
                     self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
                     self.assertEqual(self.manager.getUnmanagedUsage(uuid), assignation + 1)
+
+        with self.manager.svrStorage() as stor:
+            self.assertEqual(len(stor), NUM_REGISTEREDSERVERS)
+
+        with self.manager.cntStorage() as stor:
+            self.assertEqual(len(stor), NUM_REGISTEREDSERVERS)
+
         # Now release all, 3 times
         for release in range(3):
             for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
@@ -233,3 +258,8 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                         3 - release - 1,
                         f'Error on {elementNumber}/{release}',
                     )
+        with self.manager.svrStorage() as stor:
+            self.assertEqual(len(stor), 0)
+
+        with self.manager.cntStorage() as stor:
+            self.assertEqual(len(stor), 0)
