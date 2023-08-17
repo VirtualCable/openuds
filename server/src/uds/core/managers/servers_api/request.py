@@ -162,7 +162,7 @@ class ServerApiRequester:
         )
 
     def notifyPreconnect(
-        self, userService: 'models.UserService', info: types.connections.ConnectionInfoType
+        self, userService: 'models.UserService', info: 'types.connections.ConnectionInfoType'
     ) -> None:
         """
         Notifies preconnect to server, if this allows it
@@ -190,7 +190,7 @@ class ServerApiRequester:
         self.post('removeService', {'userservice': userService.uuid})
 
     @decorators.allowCache('reqserver', cacheTimeout=60)
-    def getStats(self) -> typing.Optional[types.servers.ServerStatsType]:
+    def getStats(self) -> typing.Optional['types.servers.ServerStatsType']:
         """
         Returns the stats of a server
         """

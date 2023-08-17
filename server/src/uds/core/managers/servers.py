@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
 import logging
+import datetime
 import random
 import typing
 
@@ -52,10 +53,12 @@ operationsLogger = logging.getLogger('operationsLog')
 
 class ServerManager(metaclass=singleton.Singleton):
     STORAGE_NAME: typing.Final[str] = 'uds.servers'
-    # counters is "volatile" counter for better round robin info.
+    MAX_COUNTERS_AGE: typing.Final[datetime.timedelta] = datetime.timedelta(days=3)
+    
+    last_counters_clean: datetime.datetime
 
     def __init__(self):
-        pass
+        self.last_counters_clean = datetime.datetime.now()
 
     @staticmethod
     def manager() -> 'ServerManager':
@@ -65,6 +68,9 @@ class ServerManager(metaclass=singleton.Singleton):
         return Storage(self.STORAGE_NAME).map(atomic=True, group='servers')
 
     def cntStorage(self) -> 'StorageAccess':
+        # If counters are too old, restart them
+        if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
+            self.clearCounters()
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
     def storage_key(
@@ -75,6 +81,7 @@ class ServerManager(metaclass=singleton.Singleton):
     def clearCounters(self) -> None:
         with self.cntStorage() as counters:
             counters.clear()
+        self.last_counters_clean = datetime.datetime.now()
             
     def getUnmanagedUsage(self, uuid: str) -> int:
         uuid = 'c' + uuid
@@ -114,7 +121,7 @@ class ServerManager(metaclass=singleton.Singleton):
             if stats is None:
                 unmanaged_list.append(server)
                 continue
-            if minMemoryMB and stats.mem // (1024 * 1024) < minMemoryMB:  # Stats has minMemory in bytes
+            if minMemoryMB and stats.memused // (1024 * 1024) < minMemoryMB:  # Stats has minMemory in bytes
                 continue
 
             if best is None:
@@ -261,15 +268,16 @@ class ServerManager(metaclass=singleton.Singleton):
 
             server = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
 
-            if unlock:
-                if uuid_counter[1] == 1:
-                    server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
-                    server.save(update_fields=['locked_until'])
+            if unlock or uuid_counter[1] == 1:
+                server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
+                server.save(update_fields=['locked_until'])
 
                 # Enure server counter is cleaned also, because server is considered "fully released"
                 resetCounter = True
 
-            self.decreaseUnmanagedUsage(server.uuid, forceReset=resetCounter)
+            # If unmanaged, decrease usage
+            if server.type == types.servers.ServerType.UNMANAGED:
+                self.decreaseUnmanagedUsage(server.uuid, forceReset=resetCounter)
 
             request.ServerApiRequester(server).notifyRelease(userService)
 

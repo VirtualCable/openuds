@@ -60,4 +60,4 @@ else:
 
     subprocess.Popen([executable, filename])  # nosec
 
-# tools.addFileToUnlink(filename)
+tools.addFileToUnlink(filename)

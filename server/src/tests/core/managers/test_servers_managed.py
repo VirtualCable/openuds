@@ -48,8 +48,13 @@ from ...utils.test import UDSTestCase
 
 logger = logging.getLogger(__name__)
 
-NUM_REGISTEREDSERVERS = 8
-NUM_USERSERVICES = NUM_REGISTEREDSERVERS + 1
+NUM_REGISTEREDSERVERS: typing.Final[int] = 8
+NUM_USERSERVICES: typing.Final[int] = NUM_REGISTEREDSERVERS * 2
+
+MB: typing.Final[int] = 1024 * 1024
+GB: typing.Final[int] = 1024 * MB
+
+MIN_TEST_MEMORY_MB: typing.Final[int] = 512
 
 
 class ServerManagerManagedServersTest(UDSTestCase):
@@ -58,6 +63,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
     registered_servers_group: 'models.RegisteredServerGroup'
     assign: typing.Callable[..., typing.Tuple[str, int]]
     all_uuids: typing.List[str]
+    server_stats: typing.Dict[str, 'types.servers.ServerStatsType']
 
     def setUp(self) -> None:
         super().setUp()
@@ -71,51 +77,58 @@ class ServerManagerManagedServersTest(UDSTestCase):
             self.user_services.extend(services_fixtures.createCacheTestingUserServices())
 
         self.registered_servers_group = servers_fixtures.createRegisteredServerGroup(
-            type=types.servers.ServerType.UNMANAGED, subtype='test', num_servers=NUM_REGISTEREDSERVERS
+            type=types.servers.ServerType.SERVER, subtype='test', num_servers=NUM_REGISTEREDSERVERS
         )
         # commodity call to assign
         self.assign = functools.partial(
             self.manager.assign,
             serverGroup=self.registered_servers_group,
             serviceType=types.services.ServiceType.VDI,
+            minMemoryMB=MIN_TEST_MEMORY_MB,
         )
         self.all_uuids: typing.List[str] = list(
             self.registered_servers_group.servers.all().values_list('uuid', flat=True)
         )
 
+        self.server_stats = {
+            server.uuid: types.servers.ServerStatsType(
+                memused=(NUM_REGISTEREDSERVERS - i) * GB,
+                memtotal=NUM_REGISTEREDSERVERS * 2 * GB,
+                cpuused=(NUM_REGISTEREDSERVERS - i) / NUM_REGISTEREDSERVERS,
+                current_users=0,
+            )
+            for i, server in enumerate(list(self.registered_servers_group.servers.all()))
+        }
+
     @contextmanager
-    def createMockApiRequester(self) -> typing.Iterator[mock.Mock]:
+    def createMockApiRequester(
+        self,
+        getStats: typing.Optional[
+            typing.Callable[['models.RegisteredServer'], typing.Optional['types.servers.ServerStatsType']]
+        ] = None,
+    ) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.request.ServerApiRequester') as mockServerApiRequester:
 
-            stats_dct = {
-                server.uuid: types.servers.ServerStatsType(
-                    mem=i*100,
-                    maxmem=NUM_REGISTEREDSERVERS*100,
-                    cpu=100/NUM_REGISTEREDSERVERS * (i+1),
-                    uptime=0,
-                    disk=0,
-                    maxdisk=0,
-                    connections=0,
-                    current_users=0,
-                    )
-                for i, server in enumerate(self.registered_servers_group.servers.all())
-            }
-                
-            def getStats() -> typing.Optional[types.servers.ServerStatsType]:
+            def _getStats() -> typing.Optional[types.servers.ServerStatsType]:
                 # Get first argument from call to init on serverApiRequester
                 server = mockServerApiRequester.call_args[0][0]
-                return stats_dct.get(server.uuid, None)
+                return (getStats or (lambda x: self.server_stats.get(x.uuid)))(server)
 
             # return_value returns the instance of the mock
-            mockServerApiRequester.return_value.getStats.side_effect = getStats
+            mockServerApiRequester.return_value.getStats.side_effect = _getStats
             yield mockServerApiRequester
 
     def testAssignAuto(self) -> None:
         with self.createMockApiRequester() as mockServerApiRequester:
-            for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+            for elementNumber, userService in enumerate(self.user_services):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
                 uuid, counter = self.assign(userService)
+                # Update only users, as the connection does not consume memory nor cpu
+                self.server_stats[uuid] = self.server_stats[uuid]._replace(
+                    current_users=self.server_stats[uuid].current_users + 1
+                )
+
                 storage_key = self.manager.storage_key(self.registered_servers_group, userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
@@ -174,7 +187,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                         expected_notifyAssign_calls + i + 2,
                     )
 
-                    # Server storage should be emtpy here
+                    # Server storage should have elementNumber + 1 elements
                     with self.manager.svrStorage() as stor:
                         self.assertEqual(len(stor), elementNumber + 1)
                         uuid_counter = stor[storage_key]
@@ -183,7 +196,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                         self.assertEqual(uuid_counter[1], counter)
 
             # Now, remove all asignations..
-            for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+            for elementNumber, userService in enumerate(self.user_services):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
                 storage_key = self.manager.storage_key(self.registered_servers_group, userService.user)
@@ -205,7 +218,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 )
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
-                # And only one assignment, so counter is 1
+                # And only one assignment, so counter is 1, (because of the lock)
                 self.assertTrue(counter, 1)
                 # Server locked should not be None (that is, it should be locked)
                 self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
@@ -222,26 +235,35 @@ class ServerManagerManagedServersTest(UDSTestCase):
             self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)
 
     def testAssignReleaseMax(self) -> None:
-        for assignation in range(3):
-            with self.createMockApiRequester() as mockServerApiRequester:
+        with self.createMockApiRequester() as mockServerApiRequester:
+            for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
-                    uuid, counter = self.assign(userService)
+                    # Ensure locking server, so we have to use every server only once
+                    uuid, counter = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
                     # uuid shuld be one on registered servers
                     self.assertTrue(uuid in self.all_uuids)
                     # And only one assignment, so counter is 1
                     self.assertTrue(counter, 1)
                     # Server locked should be None
-                    self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
-                    self.assertEqual(self.manager.getUnmanagedUsage(uuid), assignation + 1)
+                    self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
 
+        # Trying to lock a new one, should fail
+        with self.assertRaises(exceptions.UDSException):
+            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=32))
+
+        # All servers should be locked
+        for server in self.registered_servers_group.servers.all():
+            self.assertIsNotNone(server.locked_until)
+
+        # Storage should have NUM_REGISTEREDSERVERS elements
         with self.manager.svrStorage() as stor:
             self.assertEqual(len(stor), NUM_REGISTEREDSERVERS)
 
         with self.manager.cntStorage() as stor:
-            self.assertEqual(len(stor), NUM_REGISTEREDSERVERS)
+            self.assertEqual(len(stor), 0)  # No counter storage for managed servers
 
-        # Now release all, 3 times
-        for release in range(3):
+        # Now release all, twice
+        for release in range(2):
             for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                 res = self.manager.release(userService, self.registered_servers_group)
                 if res:
@@ -249,17 +271,23 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # uuid shuld be one on registered servers
                     self.assertTrue(uuid in self.all_uuids)
                     # Number of lasting assignations should be one less than before
-                    self.assertEqual(counter, 3 - release - 1)
-                    # Server locked should be None
-                    self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
-                    # 3 - release -1 because we have released it already
-                    self.assertEqual(
-                        self.manager.getUnmanagedUsage(uuid),
-                        3 - release - 1,
-                        f'Error on {elementNumber}/{release}',
-                    )
+                    self.assertEqual(counter, 2 - release - 1)
+
+        # All servers should be unlocked
+        for server in self.registered_servers_group.servers.all():
+            self.assertIsNone(server.locked_until)
+
         with self.manager.svrStorage() as stor:
             self.assertEqual(len(stor), 0)
 
         with self.manager.cntStorage() as stor:
             self.assertEqual(len(stor), 0)
+
+        # Trying to release again should return '', 0
+        for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+            res = self.manager.release(userService, self.registered_servers_group)
+            if res:
+                uuid, counter = res
+                self.assertEqual(uuid, '')
+                # Number of lasting assignations should be one less than before
+                self.assertEqual(counter, 0)

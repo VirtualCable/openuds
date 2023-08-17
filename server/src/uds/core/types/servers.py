@@ -54,7 +54,7 @@ class ServerType(enum.IntEnum):
             ServerType.SERVER: 'server',
             ServerType.UNMANAGED: '',  # Unmanaged has no path, does not listen to anything
         }[self]
-        
+
     @staticmethod
     def enumerate() -> typing.List[typing.Tuple[int, str]]:
         return [
@@ -100,35 +100,53 @@ ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Serve
 
 
 class ServerStatsType(typing.NamedTuple):
-    mem: int  # In bytes
-    maxmem: int  # In bytes
-    cpu: float  # 0-1
-    uptime: int  # In seconds
-    disk: int  # In bytes
-    maxdisk: int  # In bytes
-    connections: int  # Number of connections
-    current_users: int  # Number of current users
+    memused: int = 1  # In bytes
+    memtotal: int = 1  # In bytes
+    cpuused: float = 0  # 0-1 (cpu usage)
+    uptime: int = 0  # In seconds
+    diskused: int = 0  # In bytes
+    disktotal: int = 0  # In bytes
+    connections: int = 0  # Number of connections
+    current_users: int = 0  # Number of current users
+    
+    @property
+    def cpufree_ratio(self) -> float:
+        return (1 - self.cpuused) / (self.current_users + 1)
+    
+    @property
+    def memfree_ratio(self) -> float:
+        return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
+        
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
-        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total)
-        if self.mem < minMemory + 512000000:  # 512 MB reserved
-            return 10000000000   # Try to skip nodes with not enouhg memory, putting them at the end of the list
-        return (self.mem / self.maxmem) + (self.cpu) * 1.3
+        # 0.5 * cpu_usage + 0.5 * (1 - mem_free / mem_total) / (current_users + 1)
+        # +1 is because this weights the connection of current users + new user
+        # Dividing by number of users + 1 gives us a "ratio" of available resources per user when a new user is added
+        # Also note that +512 forces that if mem_free is less than 512 MB, this server will be put at the end of the list
+        if self.memtotal - self.memused < minMemory:
+            return 1000000000  # At the end of the list
+
+        # Higher weight is worse
+        return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
 
     @staticmethod
     def fromDict(dct: typing.Dict[str, typing.Any]) -> 'ServerStatsType':
         return ServerStatsType(
-            mem=dct.get('mem', 0),
-            maxmem=dct.get('maxmem', 0),
-            cpu=dct.get('cpu', 0),
+            memused=dct.get('memused', 1),
+            memtotal=dct.get('memtotal', dct.get('mem_free', 1)),  # Avoid division by zero
+            cpuused=dct.get('cpuused', 0),
             uptime=dct.get('uptime', 0),
-            disk=dct.get('disk', 0),
-            maxdisk=dct.get('maxdisk', 0),
+            diskused=dct.get('diskused', 0),
+            disktotal=dct.get('disktotal', 0),
             connections=dct.get('connections', 0),
             current_users=dct.get('current_users', 0),
         )
 
     @staticmethod
     def empty() -> 'ServerStatsType':
-        return ServerStatsType(0, 0, 0, 0, 0, 0, 0, 0)
+        return ServerStatsType()
+
+    def __str__(self) -> str:
+        # Human readable
+        return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}'

@@ -48,7 +48,7 @@ class RDPFile:
     address = ''
     username = ''
     domain = ''
-    password = ''  # nosec: not a password
+    password = ''   # nosec: emtpy password is ok here
     redirectSerials = False
     redirectPrinters = False
     redirectDrives = "false"  # Can have "true", "false" or "dynamic"
@@ -202,7 +202,7 @@ class RDPFile:
         return params
 
     def getGeneric(self):  # pylint: disable=too-many-statements
-        password = '{password}'  # nosec: not a password, but a reference
+        password = '{password}'  # nosec: placeholder
         screenMode = '2' if self.fullScreen else '1'
         audioMode = '0' if self.redirectAudio else '2'
         serials = '1' if self.redirectSerials else '0'
