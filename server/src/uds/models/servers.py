@@ -29,7 +29,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
-import enum
 import secrets
 
 from django.db import models
@@ -48,9 +47,10 @@ from .tag import TaggingMixin
 
 if typing.TYPE_CHECKING:
     from uds.models.transport import Transport
+    from uds.models.user import User
 
 
-class RegisteredServerGroup(UUIDModel, TaggingMixin):
+class ServerGroup(UUIDModel, TaggingMixin):
     """
     Registered Server Groups
 
@@ -63,7 +63,7 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
     name = models.CharField(max_length=64, unique=True)
     comments = models.CharField(max_length=255, default='')
 
-    # A RegisteredServer Group can have a host and port that listent to
+    # A Server Group can have a host and port that listent to
     # (For example for tunnel servers)
     # These are not the servers ports itself, and it depends on the type of server
     # For example, for tunnel server groups, has an internet address and port that will be used
@@ -79,9 +79,9 @@ class RegisteredServerGroup(UUIDModel, TaggingMixin):
 
     # 'Fake' declarations for type checking
     transports: 'models.manager.RelatedManager[Transport]'
-    servers: 'models.manager.RelatedManager[RegisteredServer]'
+    servers: 'models.manager.RelatedManager[Server]'
 
-    def all_valid_servers(self) -> 'models.manager.RelatedManager[RegisteredServer]':
+    def all_valid_servers(self) -> 'models.manager.RelatedManager[Server]':
         """Returns all servers that can belong to this group"""
         return self.servers.filter(maintenance_mode=False, type=self.type, subtype=self.subtype)
 
@@ -108,7 +108,7 @@ def create_token() -> str:
     return secrets.token_urlsafe(36)
 
 
-class RegisteredServer(UUIDModel, TaggingMixin):
+class Server(UUIDModel, TaggingMixin):
     """
     UDS Registered Servers
 
@@ -173,11 +173,14 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     # Extra data, for server type custom data use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
 
-    # Group this server belongs to
+    # Group (of registered servers) this server belongs to
     groups = models.ManyToManyField(
-        RegisteredServerGroup,
+        ServerGroup,
         related_name='servers',
     )
+    
+    # For type checking
+    users: 'models.manager.RelatedManager[ServerUser]'
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
@@ -195,16 +198,16 @@ class RegisteredServer(UUIDModel, TaggingMixin):
         # Ensure token is valid
         try:
             if isinstance(serverType, types.servers.ServerType):
-                tt = RegisteredServer.objects.get(token=token, type=serverType.value)
+                tt = Server.objects.get(token=token, type=serverType.value)
             else:
-                tt = RegisteredServer.objects.get(token=token, type__in=[st.value for st in serverType])
+                tt = Server.objects.get(token=token, type__in=[st.value for st in serverType])
             # We could check the request ip here
             if request and request.ip != tt.ip:
                 raise Exception('Invalid ip')
             return True
-        except RegisteredServer.DoesNotExist:
+        except Server.DoesNotExist:
             pass
-        except RegisteredServer.MultipleObjectsReturned:
+        except Server.MultipleObjectsReturned:
             raise Exception('Multiple objects returned for token')
         return False
 
@@ -217,6 +220,11 @@ class RegisteredServer(UUIDModel, TaggingMixin):
     def server_type(self, value: types.servers.ServerType) -> None:
         """Sets the server type of this server"""
         self.type = value
+
+    @property
+    def host(self) -> str:
+        """Returns the host of this server"""
+        return self.hostname or self.ip
 
     @property
     def ip_version(self) -> int:
@@ -255,4 +263,26 @@ class RegisteredServer(UUIDModel, TaggingMixin):
         return f'https://[{self.ip}]:{self.listen_port}{path}'
 
     def __str__(self):
-        return f'<RegisterdServer {self.token} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
+        return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
+
+
+class ServerUser(UUIDModel):
+    server: 'models.ForeignKey[Server]' = models.ForeignKey(
+        Server, related_name='users', on_delete=models.CASCADE
+    )
+    user: 'models.ForeignKey[User]' = models.ForeignKey(
+        'uds.User', related_name='servers', on_delete=models.CASCADE
+    )
+    data = models.JSONField(null=True, blank=True, default=None)
+
+    class Meta:  # pylint: disable=too-few-public-methods
+        app_label = 'uds'
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=['server', 'user'], name='u_su_server_user'
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f'<ServerUser {self.server} - {self.user}>'

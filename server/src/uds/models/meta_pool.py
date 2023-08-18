@@ -99,8 +99,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     # "fake" declarations for type checking
     # objects: 'models.BaseManager["MetaPool"]'
-    calendarAccess: 'models.QuerySet[CalendarAccessMeta]'
-    members: 'models.QuerySet["MetaPoolMember"]'
+    calendarAccess: 'models.manager.RelatedManager[CalendarAccessMeta]'
+    members: 'models.manager.RelatedManager["MetaPoolMember"]'
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """

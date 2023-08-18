@@ -71,4 +71,4 @@ class ActorRegisterTest(rest.test.RESTActorTestCase):
             token = response.json()['result']
 
             # Ensure database contains the registered token
-            self.assertEqual(models.RegisteredServer.objects.filter(token=token).count(), 1)
+            self.assertEqual(models.Server.objects.filter(token=token).count(), 1)

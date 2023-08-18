@@ -49,10 +49,10 @@ logger = logging.getLogger(__name__)
 
 
 class ServerApiRequester:
-    server: 'models.RegisteredServer'
+    server: 'models.Server'
     hash: str
 
-    def __init__(self, server: 'models.RegisteredServer') -> None:
+    def __init__(self, server: 'models.Server') -> None:
         self.hash = hashlib.sha256((server.token).encode()).hexdigest()
         self.server = server
 

@@ -40,7 +40,7 @@ from uds.core import types
 from uds.core.ui import gui
 from uds.core.util import permissions, validators
 from uds.core.util.model import processUuid
-from uds.models import RegisteredServer, RegisteredServerGroup
+from uds.models import Server, ServerGroup
 from uds.REST.model import DetailHandler, ModelHandler
 
 from .users_groups import Groups, Users
@@ -58,7 +58,7 @@ class TunnelServers(DetailHandler):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
-    def getItems(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]):
+    def getItems(self, parent: 'ServerGroup', item: typing.Optional[str]):
         try:
             multi = False
             if item is None:
@@ -83,13 +83,13 @@ class TunnelServers(DetailHandler):
             logger.exception('REST groups')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'RegisteredServerGroup') -> str:
+    def getTitle(self, parent: 'ServerGroup') -> str:
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
             return _('Servers')
 
-    def getFields(self, parent: 'RegisteredServerGroup') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'ServerGroup') -> typing.List[typing.Any]:
         return [
             {
                 'hostname': {
@@ -99,15 +99,15 @@ class TunnelServers(DetailHandler):
             {'state': {'title': _('State')}},
         ]
 
-    def saveItem(self, parent: 'RegisteredServerGroup', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'ServerGroup', item: typing.Optional[str]) -> None:
         # Item is the uuid of the server to add
-        server: typing.Optional['RegisteredServer'] = None  # Avoid warning on reference before assignment
+        server: typing.Optional['Server'] = None  # Avoid warning on reference before assignment
 
         if item is None:
             raise self.invalidItemException('No server specified')
 
         try:
-            server = RegisteredServer.objects.get(uuid=processUuid(item))
+            server = Server.objects.get(uuid=processUuid(item))
             parent.servers.add(server)
         except Exception:
             raise self.invalidItemException() from None
@@ -115,19 +115,19 @@ class TunnelServers(DetailHandler):
         # TODO: implement this
         raise self.invalidRequestException() from None
 
-    def deleteItem(self, parent: 'RegisteredServerGroup', item: str) -> None:
+    def deleteItem(self, parent: 'ServerGroup', item: str) -> None:
         try:
-            parent.servers.remove(RegisteredServer.objects.get(uuid=processUuid(item)))
+            parent.servers.remove(Server.objects.get(uuid=processUuid(item)))
         except Exception:
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent: 'RegisteredServerGroup') -> typing.Any:
+    def maintenance(self, parent: 'ServerGroup') -> typing.Any:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
-        item = RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+        item = Server.objects.get(uuid=processUuid(self._params['id']))
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
@@ -138,7 +138,7 @@ class TunnelServers(DetailHandler):
 class Tunnels(ModelHandler):
     path = 'tunnels'
     name = 'tunnels'
-    model = RegisteredServerGroup
+    model = ServerGroup
     model_filter = {'type': types.servers.ServerType.TUNNEL}
     custom_methods = [types.rest.ModelCustomMethodType('tunnels')]
 
@@ -183,7 +183,7 @@ class Tunnels(ModelHandler):
             ],
         )
 
-    def item_as_dict(self, item: 'RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'ServerGroup') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
@@ -202,7 +202,7 @@ class Tunnels(ModelHandler):
         # Ensure host is a valid IP(4 or 6) or hostname
         validators.validateHost(fields['host'])
 
-    def tunnels(self, item: 'RegisteredServerGroup') -> typing.Any:
+    def tunnels(self, item: 'ServerGroup') -> typing.Any:
         """
         Custom method that returns all tunnels of a tunnel server
         :param item:

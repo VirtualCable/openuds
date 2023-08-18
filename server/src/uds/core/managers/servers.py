@@ -74,7 +74,7 @@ class ServerManager(metaclass=singleton.Singleton):
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
     def storage_key(
-        self, serverGroup: 'models.RegisteredServerGroup', user: typing.Optional['models.User']
+        self, serverGroup: 'models.ServerGroup', user: typing.Optional['models.User']
     ) -> str:
         return (user.uuid if user else '') + serverGroup.uuid
 
@@ -105,15 +105,15 @@ class ServerManager(metaclass=singleton.Singleton):
     def _findBestServer(
         self,
         userService: 'models.UserService',
-        serverGroup: 'models.RegisteredServerGroup',
+        serverGroup: 'models.ServerGroup',
         now: datetime.datetime,
         minMemoryMB: int = 0,
-    ) -> typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']:
+    ) -> typing.Tuple['models.Server', 'types.servers.ServerStatsType']:
         """
         Finds the best server for a service
         """
-        best: typing.Optional[typing.Tuple['models.RegisteredServer', 'types.servers.ServerStatsType']] = None
-        unmanaged_list: typing.List['models.RegisteredServer'] = []
+        best: typing.Optional[typing.Tuple['models.Server', 'types.servers.ServerStatsType']] = None
+        unmanaged_list: typing.List['models.Server'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
         for server in fltrs.select_for_update():
@@ -158,11 +158,11 @@ class ServerManager(metaclass=singleton.Singleton):
     def assign(
         self,
         userService: 'models.UserService',
-        serverGroup: 'models.RegisteredServerGroup',
+        serverGroup: 'models.ServerGroup',
         serviceType: types.services.ServiceType = types.services.ServiceType.VDI,
         minMemoryMB: int = 0,  # Does not apply to unmanged servers
         lockTime: typing.Optional[datetime.timedelta] = None,
-        server: typing.Optional['models.RegisteredServer'] = None,  # If not note
+        server: typing.Optional['models.Server'] = None,  # If not note
     ) -> typing.Tuple[str, int]:
         """
         Select a server for an userservice to be assigned to
@@ -201,7 +201,7 @@ class ServerManager(metaclass=singleton.Singleton):
             else:
                 if uuid_counter:
                     # If server and it is in maintenance, remove it from saved and use another one
-                    if models.RegisteredServer.objects.get(uuid=uuid_counter[0]).maintenance_mode:
+                    if models.Server.objects.get(uuid=uuid_counter[0]).maintenance_mode:
                         uuid_counter = None
                         del saved[storage_key]
                     else:
@@ -221,7 +221,7 @@ class ServerManager(metaclass=singleton.Singleton):
                         best[0].locked_until = now + lockTime if lockTime else None
                         best[0].save(update_fields=['locked_until'])
                 elif lockTime:  # If lockTime is set, update it
-                    models.RegisteredServer.objects.filter(uuid=uuid_counter[0]).update(
+                    models.Server.objects.filter(uuid=uuid_counter[0]).update(
                         locked_until=now + lockTime
                     )
 
@@ -229,7 +229,7 @@ class ServerManager(metaclass=singleton.Singleton):
         # Update counter
         uuid_counter = (uuid_counter[0], uuid_counter[1] + 1)
         saved[storage_key] = uuid_counter
-        bestServer = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
+        bestServer = models.Server.objects.get(uuid=uuid_counter[0])
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
@@ -239,7 +239,7 @@ class ServerManager(metaclass=singleton.Singleton):
     def release(
         self,
         userService: 'models.UserService',
-        serverGroups: 'models.RegisteredServerGroup',
+        serverGroups: 'models.ServerGroup',
         unlock: bool = False,
     ) -> typing.Tuple[str, int]:
         """
@@ -266,7 +266,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 else:  # Not last one, just decrement counter
                     saved[storage_key] = (uuid_counter[0], uuid_counter[1] - 1)
 
-            server = models.RegisteredServer.objects.get(uuid=uuid_counter[0])
+            server = models.Server.objects.get(uuid=uuid_counter[0])
 
             if unlock or uuid_counter[1] == 1:
                 server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
@@ -285,7 +285,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def notifyPreconnect(
         self,
-        server: 'models.RegisteredServer',
+        server: 'models.Server',
         userService: 'models.UserService',
         info: types.connections.ConnectionInfoType,
     ) -> None:
@@ -294,7 +294,7 @@ class ServerManager(metaclass=singleton.Singleton):
         """
         request.ServerApiRequester(server).notifyPreconnect(userService, info)
 
-    def processNotification(self, server: 'models.RegisteredServer', data: str) -> None:
+    def processNotification(self, server: 'models.Server', data: str) -> None:
         """
         Processes a notification from server
         """

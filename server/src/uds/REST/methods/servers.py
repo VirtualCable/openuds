@@ -56,7 +56,7 @@ class ServerRegister(Handler):
     name = 'register'
 
     def post(self) -> typing.MutableMapping[str, typing.Any]:
-        serverToken: models.RegisteredServer
+        serverToken: models.Server
         now = getSqlDatetime()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
@@ -68,7 +68,7 @@ class ServerRegister(Handler):
             # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
             # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.RegisteredServer.objects.get(ip=ip, type=self._params['type'])
+            serverToken = models.Server.objects.get(ip=ip, type=self._params['type'])
             # Update parameters
             serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
@@ -80,7 +80,7 @@ class ServerRegister(Handler):
             serverToken.save()
         except Exception:
             try:
-                serverToken = models.RegisteredServer.objects.create(
+                serverToken = models.Server.objects.create(
                     username=self._user.pretty_name,
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
@@ -109,7 +109,7 @@ class ServerTest(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         # Test if a token is valid
         try:
-            models.RegisteredServer.objects.get(token=self._params['token'])
+            models.Server.objects.get(token=self._params['token'])
             return rest_result(True)
         except Exception as e:
             return rest_result('error', error=str(e))
@@ -120,14 +120,14 @@ class ServerAction(Handler):
     authenticated = False  # Actor requests are not authenticated normally
     path = 'servers/action'
 
-    def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
+    def action(self, server: models.Server) -> typing.MutableMapping[str, typing.Any]:
         return rest_result('error', error='Base action invoked')
 
     @blocker.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
-            server = models.RegisteredServer.objects.get(token=self._params['token'])
-        except models.RegisteredServer.DoesNotExist:
+            server = models.Server.objects.get(token=self._params['token'])
+        except models.Server.DoesNotExist:
             raise exceptions.BlockAccess() from None  # Block access if token is not valid
 
         return self.action(server)
@@ -157,7 +157,7 @@ class ServerEvent(ServerAction):
             logger.error('User service not found (params: %s)', self._params)
             raise
 
-    def action(self, server: models.RegisteredServer) -> typing.MutableMapping[str, typing.Any]:
+    def action(self, server: models.Server) -> typing.MutableMapping[str, typing.Any]:
         # Notify a server that a new service has been assigned to it
         # Get action from parameters
         # Parameters:

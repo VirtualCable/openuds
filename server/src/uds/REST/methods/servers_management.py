@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # REST API for Server Tokens management (for admin interface)
 class ServersTokens(ModelHandler):
     # servers/groups/[id]/servers
-    model = models.RegisteredServer
+    model = models.Server
     model_exclude = {
         'type__in': [
             types.servers.ServerType.ACTOR,
@@ -71,7 +71,7 @@ class ServersTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item: 'models.RegisteredServer') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'models.Server') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
@@ -108,7 +108,7 @@ class ServersTokens(ModelHandler):
 class ServersServers(DetailHandler):
     custom_methods = ['maintenance']
 
-    def getItems(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]):
+    def getItems(self, parent: 'models.ServerGroup', item: typing.Optional[str]):
         try:
             multi = False
             if item is None:
@@ -135,13 +135,13 @@ class ServersServers(DetailHandler):
             logger.exception('REST servers')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'models.RegisteredServerGroup') -> str:
+    def getTitle(self, parent: 'models.ServerGroup') -> str:
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
             return _('Servers')
 
-    def getFields(self, parent: 'models.RegisteredServerGroup') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'models.ServerGroup') -> typing.List[typing.Any]:
         return [
             {
                 'hostname': {
@@ -152,36 +152,36 @@ class ServersServers(DetailHandler):
             {'mac': {'title': _('Mac')}},
         ]
 
-    def saveItem(self, parent: 'models.RegisteredServerGroup', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'models.ServerGroup', item: typing.Optional[str]) -> None:
         # Item is the uuid of the server to add
         server: typing.Optional[
-            'models.RegisteredServer'
+            'models.Server'
         ] = None  # Avoid warning on reference before assignment
 
         if item is None:
             raise self.invalidItemException('No server specified')
 
         try:
-            server = models.RegisteredServer.objects.get(uuid=processUuid(item))
+            server = models.Server.objects.get(uuid=processUuid(item))
             parent.servers.add(server)
         except Exception:
             raise self.invalidItemException() from None
 
         raise self.invalidRequestException() from None
 
-    def deleteItem(self, parent: 'models.RegisteredServerGroup', item: str) -> None:
+    def deleteItem(self, parent: 'models.ServerGroup', item: str) -> None:
         try:
-            parent.servers.remove(models.RegisteredServer.objects.get(uuid=processUuid(item)))
+            parent.servers.remove(models.Server.objects.get(uuid=processUuid(item)))
         except Exception:
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent: 'models.RegisteredServerGroup') -> typing.Any:
+    def maintenance(self, parent: 'models.ServerGroup') -> typing.Any:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
-        item = models.RegisteredServer.objects.get(uuid=processUuid(self._params['id']))
+        item = models.Server.objects.get(uuid=processUuid(self._params['id']))
         self.ensureAccess(item, permtypes.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
@@ -189,7 +189,7 @@ class ServersServers(DetailHandler):
 
 
 class ServersGroups(ModelHandler):
-    model = models.RegisteredServerGroup
+    model = models.ServerGroup
     model_filter = {
         'type__in': [
             types.servers.ServerType.SERVER,
@@ -241,7 +241,7 @@ class ServersGroups(ModelHandler):
         fields['subtype'] = subtype
         return super().beforeSave(fields)
 
-    def item_as_dict(self, item: 'models.RegisteredServerGroup') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'models.ServerGroup') -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'name': item.name,
@@ -266,7 +266,7 @@ class ServersGroups(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            obj = models.RegisteredServerGroup.objects.get(uuid=processUuid(self._args[0]))
+            obj = models.ServerGroup.objects.get(uuid=processUuid(self._args[0]))
             if obj.type == types.servers.ServerType.UNMANAGED:
                  # Unmanaged has to remove ALSO the servers
                 for server in obj.servers.all():

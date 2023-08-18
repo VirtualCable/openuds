@@ -42,7 +42,7 @@ from uds.core.util import log
 from uds.core.util.stats import events
 from uds.core.util.request import ExtendedHttpRequestWithUser
 
-from uds.models import TicketStore, UserService, RegisteredServer
+from uds.models import TicketStore, UserService, Server
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
 
 @auth.trustedSourceRequired
 def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -> HttpResponse:
-    if not RegisteredServer.validateToken(token, serverType=types.servers.ServerType.TUNNEL):
+    if not Server.validateToken(token, serverType=types.servers.ServerType.TUNNEL):
         logger.error('Invalid token %s from %s', token, request.ip)
         return HttpResponse(ERROR, content_type=CONTENT_TYPE)
     logger.debug('Received credentials request for tunnel id %s', tunnelId)

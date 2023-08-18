@@ -15,10 +15,10 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
     """
     try:
         Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
-        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
+        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # For testing
-        # from uds.models import Transport, RegisteredServerGroup, RegisteredServer
+        # from uds.models import Transport, ServerGroup, Server
 
         for t in Transport.objects.filter(data_type=TransportType.typeType):
             # Extract data
@@ -39,14 +39,14 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
             if not host or not port:
                 logger.error('Skipping %s transport %s as it does not have host or port', TransportType.__name__, t.name)
                 continue
-            # Look for an existing tunnel server (RegisteredServerGroup)
-            tunnel = RegisteredServerGroup.objects.filter(
+            # Look for an existing tunnel server (ServerGroup)
+            tunnel = ServerGroup.objects.filter(
                 host=host, port=port, type=servers.ServerType.TUNNEL
             ).first()
             if tunnel is None:
                 logger.info('Creating new tunnel server for %s: %s:%s', TransportType.__name__,  host, port)
                 # Create a new one, adding all tunnel servers to it
-                tunnel = RegisteredServerGroup.objects.create(
+                tunnel = ServerGroup.objects.create(
                     name=f'Tunnel on {host}:{port}',
                     comments=f'Migrated from {t.name}',
                     host=host,
@@ -57,7 +57,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
                 # Append transport name to comments
                 tunnel.comments = f'{tunnel.comments}, {t.name}'[:255]
                 tunnel.save(update_fields=['comments'])
-            tunnel.servers.set(RegisteredServer.objects.filter(type=servers.ServerType.TUNNEL))
+            tunnel.servers.set(Server.objects.filter(type=servers.ServerType.TUNNEL))
             # Set tunnel server on transport
             logger.info('Setting tunnel server %s on transport %s', tunnel.name, t.name)
             obj.tunnel.value = tunnel.uuid
@@ -74,9 +74,9 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
     """
     try:
         Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model('uds', 'RegisteredServerGroup')
+        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
         # For testing
-        # from uds.models import Transport, RegisteredServerGroup
+        # from uds.models import Transport, ServerGroup
 
         for t in Transport.objects.filter(data_type=TransportType.typeType):
             # Extranct data
@@ -85,7 +85,7 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
             # Guacamole server is https://<host>:<port>
             # Other tunnels are <host>:<port>
             server = getattr(obj, serverAttr)
-            tunnelServer = RegisteredServerGroup.objects.get(uuid=obj.tunnel.value)
+            tunnelServer = ServerGroup.objects.get(uuid=obj.tunnel.value)
             if is_html_server:
                 server.value = f'https://{tunnelServer.host}:{tunnelServer.port}'
             else:

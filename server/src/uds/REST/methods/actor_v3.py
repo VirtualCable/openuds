@@ -44,7 +44,7 @@ from uds.core.util.config import GlobalConfig
 from uds.core.util.model import getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 from uds.core.util.state import State
-from uds.models import RegisteredServer, Service, TicketStore, UserService
+from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
 from uds.REST.utils import rest_result
 
@@ -225,7 +225,7 @@ class Test(ActorV3Action):
             if self._params.get('type') == UNMANAGED:
                 Service.objects.get(token=self._params['token'])
             else:
-                RegisteredServer.objects.get(
+                Server.objects.get(
                     token=self._params['token'], type=types.servers.ServerType.ACTOR
                 )  # Not assigned, because only needs check
             clearFailedIp(self._request)
@@ -265,7 +265,7 @@ class Register(ActorV3Action):
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
         # and mac is the requested one
         found = False
-        actorToken: typing.Optional[RegisteredServer] = RegisteredServer.objects.filter(
+        actorToken: typing.Optional[Server] = Server.objects.filter(
             type=types.servers.ServerType.ACTOR, mac=self._params['mac']
         ).first()
 
@@ -303,7 +303,7 @@ class Register(ActorV3Action):
                     'run_once_command': self._params['run_once_command'],
                     'custom': self._params.get('custom', ''),
                 },
-                # 'token': RegisteredServer.create_token(),  # Not needed, defaults to create_token
+                # 'token': Server.create_token(),  # Not needed, defaults to create_token
                 'type': types.servers.ServerType.ACTOR,
                 'subtype': self._params.get('version', ''),
                 'version': '',
@@ -312,7 +312,7 @@ class Register(ActorV3Action):
                 'stamp': getSqlDatetime(),
             }
 
-            actorToken = RegisteredServer.objects.create(**kwargs)
+            actorToken = Server.objects.create(**kwargs)
 
         return ActorV3Action.actorResult(actorToken.token)  # type: ignore  # actorToken is always assigned
 
@@ -400,7 +400,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not RegisteredServer.validateToken(token, types.servers.ServerType.ACTOR):
+                if not Server.validateToken(token, types.servers.ServerType.ACTOR):
                     raise BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -713,10 +713,10 @@ class Ticket(ActorV3Action):
 
         try:
             # Simple check that token exists
-            RegisteredServer.objects.get(
+            Server.objects.get(
                 token=self._params['token'], type=types.servers.ServerType.ACTOR
             )  # Not assigned, because only needs check
-        except RegisteredServer.DoesNotExist:
+        except Server.DoesNotExist:
             raise BlockAccess() from None  # If too many blocks...
 
         try:

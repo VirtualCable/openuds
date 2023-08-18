@@ -17,21 +17,21 @@ if typing.TYPE_CHECKING:
 
 def migrate_old_data(apps, schema_editor) -> None:
     try:
-        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # Not typed, disappeared on this migration
         ActorToken = apps.get_model('uds', 'ActorToken')
 
         # First, add uuid to existing registered servers
-        for server in RegisteredServer.objects.all():
+        for server in Server.objects.all():
             server.uuid = uds.core.util.model.generateUuid()
             server.save(update_fields=['uuid'])
 
         # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
-        RegisteredServer.objects.all().update(os_type=KnownOS.LINUX.os_name())
+        Server.objects.all().update(os_type=KnownOS.LINUX.os_name())
 
         # Now append actors to registered servers, with "unknown" os type (legacy)
         for token in ActorToken.objects.all():
-            RegisteredServer.objects.create(
+            Server.objects.create(
                 username=token.username,
                 ip_from=token.ip_from,
                 ip=token.ip,
@@ -60,9 +60,9 @@ def migrate_old_data(apps, schema_editor) -> None:
 
 
 def rollback_old_data(apps, schema_editor) -> None:
-    RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+    Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
     ActorToken = apps.get_model('uds', 'ActorToken')
-    for server in RegisteredServer.objects.filter(type=ACTOR_TYPE):
+    for server in Server.objects.filter(type=ACTOR_TYPE):
         if not server.data:
             continue  # Skip servers without data, they are not actors!!
         ActorToken.objects.create(
@@ -94,10 +94,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RenameModel(
             'TunnelToken',
-            'RegisteredServer',
+            'Server',
         ),
         migrations.CreateModel(
-            name="RegisteredServerGroup",
+            name="ServerGroup",
             fields=[
                 (
                     "id",
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AlterField(
-            model_name="registeredserver",
+            model_name="server",
             name="token",
             field=models.CharField(
                 db_index=True,
@@ -139,80 +139,80 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="tags",
             field=models.ManyToManyField(to="uds.tag"),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="uuid",
             field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=False),
         ),
         migrations.RemoveConstraint(
-            model_name="registeredserver",
+            model_name="server",
             name="tt_ip_hostname",
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="type",
             field=models.IntegerField(db_index=True, default=1),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="subtype",
             field=models.CharField(db_index=True, default="", max_length=32),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="maintenance_mode",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="version",
             field=models.CharField(default="", max_length=32),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="data",
             field=models.JSONField(blank=True, default=None, null=True),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="os_type",
             field=models.CharField(default="unknown", max_length=32),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="mac",
             field=models.CharField(db_index=True, default="00:00:00:00:00:00", max_length=32),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="certificate",
             field=models.TextField(blank=True, default=""),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="listen_port",
             field=models.IntegerField(default=43910),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="log_level",
             field=models.IntegerField(default=50000),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="locked_until",
             field=models.DateTimeField(blank=True, db_index=True, default=None, null=True),
         ),
         migrations.AddField(
-            model_name="registeredserver",
+            model_name="server",
             name="groups",
             field=models.ManyToManyField(
                 related_name="servers",
-                to="uds.registeredservergroup",
+                to="uds.servergroup",
             ),
         ),
         migrations.RunPython(
@@ -225,7 +225,7 @@ class Migration(migrations.Migration):
         ),
         # After generating all the uuid's, set it as unique
         migrations.AlterField(
-            model_name="registeredserver",
+            model_name="server",
             name="uuid",
             field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=True),
         ),
@@ -237,7 +237,52 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="transports",
-                to="uds.registeredservergroup",
+                to="uds.servergroup",
+            ),
+        ),
+        migrations.CreateModel(
+            name="ServerUser",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.CharField(
+                        default=uds.core.util.model.generateUuid,
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                ("data", models.JSONField(blank=True, default=None, null=True)),
+                (
+                    "server",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="users",
+                        to="uds.server",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="servers",
+                        to="uds.user",
+                    ),
+                ),
+            ],
+        ),
+        migrations.AddConstraint(
+            model_name="serveruser",
+            constraint=models.UniqueConstraint(
+                fields=("server", "user"), name="u_su_server_user"
             ),
         ),
     ]

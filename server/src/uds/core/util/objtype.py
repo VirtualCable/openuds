@@ -61,13 +61,13 @@ class ObjectType(enum.Enum):
     # PROXY_TYPE = (15, models.Proxy)  has been removed
     METAPOOL = (16, models.MetaPool)
     ACCOUNT = (17, models.Account)
-    REGISTERED_SERVER = (19, models.RegisteredServer)
+    REGISTERED_SERVER = (19, models.Server)
     ACCOUNT_USAGE = (20, models.AccountUsage)
     IMAGE = (21, models.Image)
     LOG = (22, models.Log)
     NOTIFICATION = (23, models.Notification)
     TICKET_STORE = (24, models.TicketStore)
-    REGISTERED_SERVER_GROUP = (26, models.RegisteredServerGroup)
+    REGISTERED_SERVER_GROUP = (26, models.ServerGroup)
 
     @property
     def model(self) -> typing.Type['Model']:

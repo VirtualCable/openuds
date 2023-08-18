@@ -359,7 +359,7 @@ class Command(BaseCommand):
 
             # Rest of registerd servers
             registeredServers: typing.Dict[str, typing.Any] = {}
-            for i, registeredServer in enumerate(models.RegisteredServer.objects.all()):
+            for i, registeredServer in enumerate(models.Server.objects.all()):
                 registeredServers[f'{i}'] = getSerializedFromModel(
                     registeredServer
                 )

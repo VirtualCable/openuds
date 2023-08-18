@@ -56,7 +56,7 @@ NUM_USERSERVICES = NUM_REGISTEREDSERVERS + 1
 class ServerManagerUnmanagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
-    registered_servers_group: 'models.RegisteredServerGroup'
+    registered_servers_group: 'models.ServerGroup'
     assign: typing.Callable[..., typing.Tuple[str, int]]
     all_uuids: typing.List[str]
 
@@ -71,7 +71,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             # So we have 8 userservices, each one with a different user
             self.user_services.extend(services_fixtures.createCacheTestingUserServices())
 
-        self.registered_servers_group = servers_fixtures.createRegisteredServerGroup(
+        self.registered_servers_group = servers_fixtures.createServerGroup(
             type=types.servers.ServerType.UNMANAGED, subtype='test', num_servers=NUM_REGISTEREDSERVERS
         )
         # commodity call to assign
@@ -100,7 +100,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
-                self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
 
                 # mockServer.getStats has been called NUM_REGISTEREDSERVERS times
                 self.assertEqual(
@@ -143,7 +143,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     # uuid2 should be one on registered servers
                     self.assertTrue(uuid2 in self.all_uuids)
                     self.assertIsNone(
-                        models.RegisteredServer.objects.get(uuid=uuid).locked_until
+                        models.Server.objects.get(uuid=uuid).locked_until
                     )  # uuid is uuid2
 
                     # mockServer.getStats has been called NUM_REGISTEREDSERVERS times, because no new requests has been done
@@ -190,7 +190,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                 # And only one assignment, so counter is 1
                 self.assertTrue(counter, 1)
                 # Server locked should not be None (that is, it should be locked)
-                self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
             # Next one should fail with an exceptions.UDSException
             with self.assertRaises(exceptions.UDSException):
@@ -213,7 +213,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     # And only one assignment, so counter is 1
                     self.assertTrue(counter, 1)
                     # Server locked should be None
-                    self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                    self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
                     self.assertEqual(self.manager.getUnmanagedUsage(uuid), assignation + 1)
                     
         with self.manager.svrStorage() as stor:
@@ -233,7 +233,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     # Number of lasting assignations should be one less than before
                     self.assertEqual(counter, 3 - release - 1)
                     # Server locked should be None
-                    self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                    self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
                     # 3 - release -1 because we have released it already
                     self.assertEqual(
                         self.manager.getUnmanagedUsage(uuid),

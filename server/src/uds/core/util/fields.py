@@ -46,21 +46,22 @@ from uds.core import types, ui
 def _serverGroupValues(
     types_: typing.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
 ) -> typing.List[ui.gui.ChoiceType]:
-    fltr = models.RegisteredServerGroup.objects.filter(
+    fltr = models.ServerGroup.objects.filter(
         functools.reduce(lambda x, y: x | y, [Q(type=type_) for type_ in types_])
     )
     if subtype is not None:
         fltr = fltr.filter(subtype=subtype)
-    return [ui.gui.choiceItem(v.uuid, f'{v.name} ({v.pretty_host})') for v in fltr.all()]
+        
+    return [ui.gui.choiceItem(v.uuid, f'{v.name} {("("+ v.pretty_host + ")") if v.pretty_host else ""}') for v in fltr.all()]
 
 
 def _serverGrpFromField(
     fld: ui.gui.ChoiceField
-) -> models.RegisteredServerGroup:
+) -> models.ServerGroup:
     try:
-        return models.RegisteredServerGroup.objects.get(uuid=fld.value)
+        return models.ServerGroup.objects.get(uuid=fld.value)
     except Exception:
-        return models.RegisteredServerGroup()
+        return models.ServerGroup()
 
 
 # Tunnel server field
@@ -76,7 +77,7 @@ def tunnelField() -> ui.gui.ChoiceField:
     )
 
 
-def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.RegisteredServerGroup:
+def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     """Returns a tunnel server from a field"""
     return _serverGrpFromField(fld)
 
@@ -108,7 +109,7 @@ def serverGroupField(
 
 def getServerGroupFromField(
     fld: ui.gui.ChoiceField
-) -> models.RegisteredServerGroup:
+) -> models.ServerGroup:
     """Returns a server group from a field
 
     Args:
@@ -119,7 +120,7 @@ def getServerGroupFromField(
 
 def getServersFromServerGroupField(
     fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.UNMANAGED
-) -> typing.List[models.RegisteredServer]:
+) -> typing.List[models.Server]:
     """Returns a list of servers from a server group field
 
     Args:

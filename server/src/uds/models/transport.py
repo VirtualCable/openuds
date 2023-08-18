@@ -70,7 +70,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     label = models.CharField(max_length=32, default='', db_index=True)
 
     serverGroup = models.ForeignKey(
-        'RegisteredServerGroup',
+        'ServerGroup',
         related_name='transports',
         null=True,
         on_delete=models.SET_NULL,

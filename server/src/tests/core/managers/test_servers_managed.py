@@ -60,7 +60,7 @@ MIN_TEST_MEMORY_MB: typing.Final[int] = 512
 class ServerManagerManagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
-    registered_servers_group: 'models.RegisteredServerGroup'
+    registered_servers_group: 'models.ServerGroup'
     assign: typing.Callable[..., typing.Tuple[str, int]]
     all_uuids: typing.List[str]
     server_stats: typing.Dict[str, 'types.servers.ServerStatsType']
@@ -76,7 +76,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             # So we have 8 userservices, each one with a different user
             self.user_services.extend(services_fixtures.createCacheTestingUserServices())
 
-        self.registered_servers_group = servers_fixtures.createRegisteredServerGroup(
+        self.registered_servers_group = servers_fixtures.createServerGroup(
             type=types.servers.ServerType.SERVER, subtype='test', num_servers=NUM_REGISTEREDSERVERS
         )
         # commodity call to assign
@@ -104,7 +104,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
     def createMockApiRequester(
         self,
         getStats: typing.Optional[
-            typing.Callable[['models.RegisteredServer'], typing.Optional['types.servers.ServerStatsType']]
+            typing.Callable[['models.Server'], typing.Optional['types.servers.ServerStatsType']]
         ] = None,
     ) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.request.ServerApiRequester') as mockServerApiRequester:
@@ -133,7 +133,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
-                self.assertIsNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
 
                 # mockServer.getStats has been called NUM_REGISTEREDSERVERS times
                 self.assertEqual(
@@ -174,7 +174,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # uuid2 should be one on registered servers
                     self.assertTrue(uuid2 in self.all_uuids)
                     self.assertIsNone(
-                        models.RegisteredServer.objects.get(uuid=uuid).locked_until
+                        models.Server.objects.get(uuid=uuid).locked_until
                     )  # uuid is uuid2
 
                     # mockServer.getStats has been called NUM_REGISTEREDSERVERS times, because no new requests has been done
@@ -221,7 +221,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 # And only one assignment, so counter is 1, (because of the lock)
                 self.assertTrue(counter, 1)
                 # Server locked should not be None (that is, it should be locked)
-                self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
             # Next one should fail with an exceptions.UDSException
             with self.assertRaises(exceptions.UDSException):
@@ -245,7 +245,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # And only one assignment, so counter is 1
                     self.assertTrue(counter, 1)
                     # Server locked should be None
-                    self.assertIsNotNone(models.RegisteredServer.objects.get(uuid=uuid).locked_until)
+                    self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
         # Trying to lock a new one, should fail
         with self.assertRaises(exceptions.UDSException):

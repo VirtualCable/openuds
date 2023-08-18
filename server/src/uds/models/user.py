@@ -45,7 +45,7 @@ from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Group, UserService, Permissions
+    from uds.models import Group, UserService, Permissions, ServerUser
     from uds.core.util.request import ExtendedHttpRequest
 
 
@@ -84,6 +84,7 @@ class User(UUIDModel):
     groups: 'models.manager.RelatedManager[Group]'
     userServices: 'models.manager.RelatedManager[UserService]'
     permissions: 'models.manager.RelatedManager[Permissions]'
+    servers: 'models.manager.RelatedManager[ServerUser]'
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """

@@ -45,8 +45,8 @@ def createRegisterdServer(
     ip: typing.Optional[str] = None,
     listen_port: int = 0,
     data: typing.Any = None,
-) -> 'models.RegisteredServer':
-    return models.RegisteredServer.objects.create(
+) -> 'models.Server':
+    return models.Server.objects.create(
         username=generators.random_string(),
         ip_from=ip or '127.0.0.1',
         ip=ip or '127.0.0.1',
@@ -61,7 +61,7 @@ def createRegisterdServer(
     )
 
 
-def createRegisteredServerGroup(
+def createServerGroup(
     type: 'types.servers.ServerType',
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
@@ -70,8 +70,8 @@ def createRegisteredServerGroup(
     port: int = 0,
     listen_port: int = 0,
     num_servers: int = 1,
-) -> models.RegisteredServerGroup:
-    rsg = models.RegisteredServerGroup.objects.create(
+) -> models.ServerGroup:
+    rsg = models.ServerGroup.objects.create(
         name=generators.random_string(),
         comments=generators.random_string(),
         type=type,

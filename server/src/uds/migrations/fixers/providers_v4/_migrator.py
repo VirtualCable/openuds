@@ -52,12 +52,12 @@ def migrate(
 ) -> None:
     try:
         Table: typing.Type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
-        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model(
-            'uds', 'RegisteredServerGroup'
+        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model(
+            'uds', 'ServerGroup'
         )
-        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
+        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # For testing
-        # from uds.models import Provider, RegisteredServer, RegisteredServerGroup
+        # from uds.models import Provider, Server, ServerGroup
 
         for record in Table.objects.filter(data_type=DataType.typeType):
             # Extract data
@@ -93,29 +93,26 @@ def migrate(
                             # Not found, continue, but do not add to servers and log it
                             logger.error('Server %s on %s not found on DNS', server, record.name)
 
-            registeredServerGroup = RegisteredServerGroup.objects.create(
+            registeredServerGroup = ServerGroup.objects.create(
                 name=f'RDS Server Group for {record.name}',
                 comments='Migrated from {}'.format(record.name),
                 type=types.servers.ServerType.UNMANAGED,
                 subtype=subtype,
             )
             # Create Registered Servers for IP (individual) and add them to the group
-            registeredServers = [
-                RegisteredServer.objects.create(
+            for svr in server_ip_hostname:
+                registeredServerGroup.servers.create(
                     token=secrets.token_urlsafe(36),
                     username='migration',
-                    ip_from=server[0],
-                    ip=server[0],
+                    ip_from=svr[0],
+                    ip=svr[0],
                     os_type=os_detector.KnownOS.WINDOWS.os_name(),
-                    hostname=server[1],
+                    hostname=svr[1],
                     listen_port=0,
                     type=types.servers.ServerType.UNMANAGED,
                     subtype=subtype,
                     stamp=datetime.datetime.now(),
                 )
-                for server in server_ip_hostname
-            ]
-            registeredServerGroup.servers.set(registeredServers)
             # Set server group on provider
             logger.info('Setting server group %s on provider %s', registeredServerGroup.name, record.name)
             obj.serverGroup.value = registeredServerGroup.uuid
@@ -133,12 +130,11 @@ def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typin
     """
     try:
         Table: typing.Type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
-        RegisteredServerGroup: 'typing.Type[uds.models.RegisteredServerGroup]' = apps.get_model(
-            'uds', 'RegisteredServerGroup'
+        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model(
+            'uds', 'ServerGroup'
         )
-        RegisteredServer: 'typing.Type[uds.models.RegisteredServer]' = apps.get_model('uds', 'RegisteredServer')
         # For testing
-        # from uds.models import Transport, RegisteredServerGroup
+        # from uds.models import Transport, ServerGroup
 
         for record in Table.objects.filter(data_type=DataType.typeType):
             # Extranct data
@@ -147,7 +143,7 @@ def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typin
             # Guacamole server is https://<host>:<port>
             # Other tunnels are <host>:<port>
             iplist = getattr(obj, ipListAttr)
-            rsg = RegisteredServerGroup.objects.get(uuid=obj.serverGroup.value)
+            rsg = ServerGroup.objects.get(uuid=obj.serverGroup.value)
             iplist.value=[i.ip for i in rsg.servers.all()]
             # Remove registered servers
             for i in rsg.servers.all():
