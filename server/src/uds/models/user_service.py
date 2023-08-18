@@ -282,7 +282,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             value: Value of the value to store
         """
         # Store value as a property
-        self.setProperty(name, value)
+        self.properties[name] = value
 
     def recoverValue(self, name: str) -> str:
         """
@@ -569,14 +569,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         UserServiceManager().moveToLevel(self, cacheLevel)
 
-    def setProperty(self, propName: str, propValue: typing.Optional[str] = None) -> None:
-        self.properties[propName] = propValue
-
-    def deleteProperty(self, propName: str) -> None:
-        del self.properties[propName]
-
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
-        self.setProperty('comms_url', commsUrl)
+        self.properties['comms_url'] = commsUrl
 
     def getCommsUrl(
         self, path: typing.Optional[str] = None
@@ -585,13 +579,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return self.properties.get('comms_url', None)
 
     def logIP(self, ip: typing.Optional[str] = None) -> None:
-        self.setProperty('ip', ip)
+        self.properties['ip'] = ip
 
     def getLoggedIP(self) -> str:
         return self.properties.get('ip') or '0.0.0.0'  # nosec: no binding address
 
     def setActorVersion(self, version: typing.Optional[str] = None) -> None:
-        self.setProperty('actor_version', version)
+        self.properties['actor_version'] = version
 
     def getActorVersion(self) -> str:
         return self.properties.get('actor_version') or '0.0.0'

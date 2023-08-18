@@ -490,9 +490,9 @@ class BaseReadyChange(ActorV3Action):
         # Generates a certificate and send it to client.
         privateKey, cert, password = security.selfSignedCert(self._params['ip'])
         # Store certificate with userService
-        userService.setProperty('cert', cert)
-        userService.setProperty('priv', privateKey)
-        userService.setProperty('priv_passwd', password)
+        userService.properties['cert'] = cert
+        userService.properties['priv'] = privateKey
+        userService.properties['priv_passwd'] = password
 
         return ActorV3Action.actorResult(
             {

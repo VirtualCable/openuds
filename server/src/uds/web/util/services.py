@@ -39,14 +39,15 @@ from uds.core import types
 from uds.core.auths.auth import webPassword
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.services.exceptions import (MaxServicesReachedError,
-                                          ServiceAccessDeniedByCalendar,
-                                          ServiceNotReadyError)
+from uds.core.services.exceptions import (
+    MaxServicesReachedError,
+    ServiceAccessDeniedByCalendar,
+    ServiceNotReadyError,
+)
 from uds.core.util import html
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import getSqlDatetime
-from uds.models import (MetaPool, Network, ServicePool, ServicePoolGroup,
-                        TicketStore, Transport)
+from uds.models import MetaPool, Network, ServicePool, ServicePoolGroup, TicketStore, Transport
 from uds.web.util import errors
 
 # Not imported at runtime, just for type checking
@@ -418,7 +419,7 @@ def enableService(
 
         userService, trans = res[1], res[3]
 
-        userService.setProperty('accessedByClient', '0')  # Reset accesed property to
+        userService.properties['accessedByClient'] = False  # Reset accesed property to
 
         typeTrans = trans.getType()
 
