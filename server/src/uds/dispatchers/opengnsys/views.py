@@ -58,7 +58,7 @@ def opengnsys(
     def getUserService() -> typing.Optional[UserService]:
         try:
             userService = UserService.objects.get(uuid=processUuid(uuid), state=states.userService.USABLE)
-            if userService.getProperty('token') == token:
+            if userService.properties.get('token') == token:
                 return userService
             logger.warning(
                 'OpenGnsys: invalid token %s for userService %s. (Ignored)',
@@ -76,7 +76,7 @@ def opengnsys(
         userService = getUserService()
         if userService:
             logger.info('Released from OpenGnsys %s', userService.friendly_name)
-            userService.setProperty('from_release', '1')
+            userService.properties['from_release'] = True
             userService.release()
 
     def login() -> None:

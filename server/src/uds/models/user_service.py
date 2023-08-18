@@ -35,35 +35,28 @@ import typing
 
 from django.db import models
 from django.db.models import signals
+
 from uds.core import types
-
+from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, NEVER
 from uds.core.environment import Environment
-from uds.core.util import log, unique
+from uds.core.util import log, unique, properties
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.state import State
-
-from uds.models.uuid_model import UUIDModel
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
-from uds.core.util.model import getSqlDatetime
-from uds.core.consts import NEVER, MAX_IPV6_LENGTH, MAX_DNS_NAME_LENGTH
+from uds.models.uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core import osmanagers
-    from uds.core import services
-    from uds.models import (
-        OSManager,
-        UserServiceProperty,
-        UserServiceSession,
-        AccountUsage,
-    )
+    from uds.core import osmanagers, services
+    from uds.models import AccountUsage, OSManager, UserServiceSession
 
 logger = logging.getLogger(__name__)
 
 
 # pylint: disable=too-many-instance-attributes,too-many-public-methods
-class UserService(UUIDModel):
+class UserService(UUIDModel, properties.PropertiesMixin):
     """
     This is the base model for assigned user service and cached user services.
     This are the real assigned services to users. ServicePool is the container (the group) of this elements.
@@ -85,9 +78,7 @@ class UserService(UUIDModel):
         related_name='userServices',
     )
 
-    unique_id = models.CharField(
-        max_length=128, default='', db_index=True
-    )  # User by agents to locate machine
+    unique_id = models.CharField(max_length=128, default='', db_index=True)  # User by agents to locate machine
     friendly_name = models.CharField(max_length=128, default='')
     # We need to keep separated two differents os states so service operations (move beween caches, recover service) do not affects os manager state
     state = models.CharField(
@@ -120,7 +111,6 @@ class UserService(UUIDModel):
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["UserService"]'
-    properties: 'models.manager.RelatedManager[UserServiceProperty]'
     sessions: 'models.manager.RelatedManager[UserServiceSession]'
     accounting: 'AccountUsage'
 
@@ -136,6 +126,10 @@ class UserService(UUIDModel):
             models.Index(fields=['deployed_service', 'cache_level', 'state']),
         ]
 
+    # For properties
+    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+        return self.uuid, 'userservice'
+
     @property
     def name(self) -> str:
         """
@@ -148,21 +142,21 @@ class UserService(UUIDModel):
         """
         Returns True if this service is to be removed
         """
-        return self.getProperty('to_be_removed', 'n') == 'y'
+        return self.properties.get('destroy_after', False) in ('y', True)
 
     @destroy_after.setter
     def destroy_after(self, value: bool) -> None:
         """
         Sets the to_be_removed property
         """
-        self.setProperty('destroy_after', 'y' if value else 'n')
+        self.properties['destroy_after'] = value
 
     @destroy_after.deleter
     def destroy_after(self) -> None:
         """
         Removes the to_be_removed property
         """
-        self.deleteProperty('destroy_after')
+        del self.properties['destroy_after']
 
     def getEnvironment(self) -> Environment:
         """
@@ -300,7 +294,7 @@ class UserService(UUIDModel):
         Returns:
             Stored value, None if no value was stored
         """
-        val = self.getProperty(name)
+        val = self.properties.get(name)
 
         # To transition between old stor at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
@@ -366,9 +360,7 @@ class UserService(UUIDModel):
         """
         return self.deployed_service.transformsUserOrPasswordForService()
 
-    def processUserPassword(
-        self, username: str, password: str
-    ) -> typing.Tuple[str, str]:
+    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
         """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport
@@ -394,9 +386,7 @@ class UserService(UUIDModel):
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.getInstance().processUserPassword(
-            self, username, password
-        )
+        return servicePool.osmanager.getInstance().processUserPassword(self, username, password)
 
     def setState(self, state: str) -> None:
         """
@@ -480,10 +470,7 @@ class UserService(UUIDModel):
         # 1.- If do not have any accounter associated, do nothing
         # 2.- If called but not accounting, do nothing
         # 3.- If called and accounting, stop accounting
-        if (
-            self.deployed_service.account is None
-            or hasattr(self, 'accounting') is False
-        ):
+        if self.deployed_service.account is None or hasattr(self, 'accounting') is False:
             return
 
         self.deployed_service.account.stopUsageAccounting(self)
@@ -507,9 +494,7 @@ class UserService(UUIDModel):
                 session = self.sessions.get(session_id=sessionId)
                 session.close()
             except Exception:  # Does not exists, log it and ignore it
-                logger.warning(
-                    'Session %s does not exists for user deployed service', self.id
-                )
+                logger.warning('Session %s does not exists for user deployed service', self.id)
 
     def isUsable(self) -> bool:
         """
@@ -584,65 +569,39 @@ class UserService(UUIDModel):
 
         UserServiceManager().moveToLevel(self, cacheLevel)
 
-    def getProperty(
-        self, propName: str, default: typing.Optional[str] = None
-    ) -> typing.Optional[str]:
-        try:
-            val = self.properties.get(name=propName).value
-            return val or default  # Empty string is null
-        except Exception:
-            return default
-
-    def getProperties(self) -> typing.Dict[str, str]:
-        """
-        Retrieves all properties as a dictionary
-        The number of properties per item is expected to be "relatively small" (no more than 5 items?)
-        """
-        dct: typing.Dict[str, str] = {}
-        v: 'UserServiceProperty'
-        for v in self.properties.all():
-            dct[v.name] = v.value
-        return dct
-
-    def setProperty(
-        self, propName: str, propValue: typing.Optional[str] = None
-    ) -> None:
-        prop, _ = self.properties.get_or_create(name=propName)
-        prop.value = propValue or ''
-        prop.save()
+    def setProperty(self, propName: str, propValue: typing.Optional[str] = None) -> None:
+        self.properties[propName] = propValue
 
     def deleteProperty(self, propName: str) -> None:
-        try:
-            self.properties.get(name=propName).delete()
-        except Exception:  # nosec: we don't care if it does not exists
-            pass
+        del self.properties[propName]
 
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.setProperty('comms_url', commsUrl)
 
-    def getCommsUrl(self, path: typing.Optional[str] = None) -> typing.Optional[str]:  # pylint: disable=unused-argument
+    def getCommsUrl(
+        self, path: typing.Optional[str] = None
+    ) -> typing.Optional[str]:  # pylint: disable=unused-argument
         # path is not used, but to keep compat with Server "getCommUrl" method
-        return self.getProperty('comms_url', None)
+        return self.properties.get('comms_url', None)
 
     def logIP(self, ip: typing.Optional[str] = None) -> None:
         self.setProperty('ip', ip)
 
     def getLoggedIP(self) -> str:
-        return self.getProperty('ip') or '0.0.0.0'  # nosec: no binding address
-    
+        return self.properties.get('ip') or '0.0.0.0'  # nosec: no binding address
+
     def setActorVersion(self, version: typing.Optional[str] = None) -> None:
         self.setProperty('actor_version', version)
 
     def getActorVersion(self) -> str:
-        return self.getProperty('actor_version') or '0.0.0'
+        return self.properties.get('actor_version') or '0.0.0'
 
     def isValidPublication(self) -> bool:
         """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service
-            and self.deployed_service.service.getType().publicationType is None
+            self.deployed_service.service and self.deployed_service.service.getType().publicationType is None
         ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging
@@ -685,3 +644,5 @@ class UserService(UUIDModel):
 
 # Connects a pre deletion signal to Authenticator
 signals.pre_delete.connect(UserService.beforeDelete, sender=UserService)
+# Connects the properties signals
+properties.PropertiesMixin.setupSignals(UserService)

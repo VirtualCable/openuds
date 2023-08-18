@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -26,47 +26,55 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import typing
 
-from django.db import models
+from uds import models
+from uds.core.util import properties
 
-from .user_service import UserService
-
+from ...fixtures import services as services_fixtures
+from ...utils.test import UDSTestCase
 
 logger = logging.getLogger(__name__)
 
+NUM_USERSERVICES = 8
 
-class UserServiceProperty(models.Model):  # pylint: disable=too-many-public-methods
-    """
-    Properties for User Service.
-    The value field is a Text field, so we can put whatever we want in it
-    """
 
-    name = models.CharField(max_length=128, db_index=True)
-    value = models.TextField(default='')
-    user_service = models.ForeignKey(
-        UserService, on_delete=models.CASCADE, related_name='properties'
-    )
+class PropertiesTest(UDSTestCase):
+    user_services: typing.List['models.UserService']
 
-    # "fake" declarations for type checking
-    # objects: 'models.manager.Manager[UserServiceProperty]'
+    def setUp(self) -> None:
+        super().setUp()
+        self.user_services = []
+        for i in range(NUM_USERSERVICES):
+            # So we have 8 userservices, each one with a different user
+            self.user_services.extend(services_fixtures.createCacheTestingUserServices())
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    def testUserServiceProperty(self) -> None:
         """
-        Meta class to declare default order and unique multiple field index
+        Test that properties are stored and retrieved for user services
         """
+        for i, us in enumerate(self.user_services):
+            key, value = 'key{}'.format(i), 'value{}'.format(i)
+            
+            # Test as context manager
+            with us.properties as p:
+                p[key] = value
+            with us.properties as p:
+                self.assertEqual(p[key], value)
 
-        db_table = 'uds__user_service_property'
-        app_label = 'uds'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'user_service'], name='u_uprop_name_userservice'
-            )
-        ]
-
-    def __str__(self) -> str:
-        return f'Property of {self.user_service.pk}. {self.name}={self.value}'
+            prop = models.Properties.objects.get(owner_id=us.uuid, owner_type='userservice', key=key)
+            self.assertEqual(prop.value, value)
+            
+            # Test as property
+            key, value = 'keyx{}'.format(i), 'valuex{}'.format(i)
+            us.properties[key] = value
+            self.assertEqual(us.properties[key], value)
+            
+            prop = models.Properties.objects.get(owner_id=us.uuid, owner_type='userservice', key=key)
+            self.assertEqual(prop.value, value)
+        
+    

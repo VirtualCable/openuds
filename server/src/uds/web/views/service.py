@@ -179,7 +179,7 @@ def userServiceStatus(
             ip = False
 
         ready = 'ready'
-        if userService.getProperty('accessedByClient', '0') != '0':
+        if userService.properties.get('accessedByClient', '0') != '0':
             ready = 'accessed'
 
         status = 'running' if ip is None else 'error' if ip is False else ready

@@ -58,9 +58,7 @@ class StateUpdater:
     ):
         self.userService = userService
         self.userServiceInstance = (
-            userServiceInstance
-            if userServiceInstance is not None
-            else userService.getInstance()
+            userServiceInstance if userServiceInstance is not None else userService.getInstance()
         )
 
     def setError(self, msg: typing.Optional[str] = None):
@@ -161,9 +159,8 @@ class UpdateFromPreparing(StateUpdater):
             self.save(State.REMOVABLE)  # And start removing it
             return
 
-        state = (
-            State.REMOVABLE
-        )  # By default, if not valid publication, service will be marked for removal on preparation finished
+        # By default, if not valid publication, service will be marked for removal on preparation finished
+        state = State.REMOVABLE
         if self.userService.isValidPublication():
             logger.debug('Publication is valid for %s', self.userService.friendly_name)
             state = self.checkOsManagerRelated()
@@ -195,14 +192,10 @@ class UpdateFromCanceling(StateUpdater):
 
 class UpdateFromOther(StateUpdater):
     def finish(self):
-        self.setError(
-            f'Unknown running transition from {State.toString(self.userService.state)}'
-        )
+        self.setError(f'Unknown running transition from {State.toString(self.userService.state)}')
 
     def running(self):
-        self.setError(
-            f'Unknown running transition from {State.toString(self.userService.state)}'
-        )
+        self.setError(f'Unknown running transition from {State.toString(self.userService.state)}')
 
 
 class UserServiceOpChecker(DelayedTask):
@@ -216,30 +209,22 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    def makeUnique(
-        userService: UserService, userServiceInstance: UserDeployment, state: str
-    ):
+    def makeUnique(userService: UserService, userServiceInstance: UserDeployment, state: str):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userService.uuid)
-        UserServiceOpChecker.checkAndUpdateState(
-            userService, userServiceInstance, state
-        )
+        UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
 
     @staticmethod
-    def checkAndUpdateState(
-        userService: UserService, userServiceInstance: UserDeployment, state: str
-    ):
+    def checkAndUpdateState(userService: UserService, userServiceInstance: UserDeployment, state: str):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         """
         try:
             # Fills up basic data
-            userService.unique_id = (
-                userServiceInstance.getUniqueId()
-            )  # Updates uniqueId
+            userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
             userService.friendly_name = (
                 userServiceInstance.getName()
             )  # And name, both methods can modify serviceInstance, so we save it later
@@ -297,9 +282,7 @@ class UserServiceOpChecker(DelayedTask):
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
         except UserService.DoesNotExist as e:  # pylint: disable=no-member
-            logger.error(
-                'User service not found (erased from database?) %s : %s', e.__class__, e
-            )
+            logger.error('User service not found (erased from database?) %s : %s', e.__class__, e)
         except Exception as e:
             # Exception caught, mark service as errored
             logger.exception("Error %s, %s :", e.__class__, e)

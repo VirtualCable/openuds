@@ -133,7 +133,7 @@ class OSManager(Module):
           {
               'action': 'rename'
               'name': 'xxxxx'
-              'custom': 
+              'custom':
               {
                  'username': 'username to change pass'
                  'password': 'current password for username to change password'
@@ -143,9 +143,7 @@ class OSManager(Module):
         """
         return {}
 
-    def checkState(
-        self, userService: 'UserService'  # pylint: disable=unused-argument
-    ) -> str:
+    def checkState(self, userService: 'UserService') -> str:  # pylint: disable=unused-argument
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -164,9 +162,7 @@ class OSManager(Module):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
 
-    def isRemovableOnLogout(
-        self, userService: 'UserService'  # pylint: disable=unused-argument
-    ) -> bool:
+    def isRemovableOnLogout(self, userService: 'UserService') -> bool:  # pylint: disable=unused-argument
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden
@@ -225,14 +221,12 @@ class OSManager(Module):
         '''
         Resets login counter to 0
         '''
-        userService.setProperty('loginsCounter', '0')
+        userService.properties['loginsCounter'] = 0
         # And execute ready notification method
         self.readyNotified(userService)
 
     @staticmethod
-    def loggedIn(
-        userService: 'UserService', userName: typing.Optional[str] = None
-    ) -> None:
+    def loggedIn(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -281,25 +275,24 @@ class OSManager(Module):
             userService.deployed_service.name,
         )
 
-        counter = (
-            int(typing.cast(str, userService.getProperty('loginsCounter', '0'))) + 1
-        )
-        userService.setProperty('loginsCounter', str(counter))
+        # Context makes a transaction, so we can use it to update the counter
+        with userService.properties as p:
+            counter = int(typing.cast(str, p.get('loginsCounter', 0))) + 1
+            p['loginsCounter'] = counter
 
     @staticmethod
-    def loggedOut(
-        userService: 'UserService', userName: typing.Optional[str] = None
-    ) -> None:
+    def loggedOut(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         """
-        counter = int(typing.cast(str, userService.getProperty('loginsCounter', '0')))
-        if counter > 0:
-            counter -= 1
-        userService.setProperty('loginsCounter', str(counter))
+        with userService.properties as p:
+            counter = int(typing.cast(str, p.get('loginsCounter', 0))) - 1
+            if counter > 0:
+                counter -= 1
+            p['loginsCounter'] = counter
 
         if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) and counter > 0:
             return

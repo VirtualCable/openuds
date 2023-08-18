@@ -165,9 +165,7 @@ class MetaAssignedService(DetailHandler):
                 for u in (
                     m.pool.assignedUserServices()
                     .filter(state__in=State.VALID_STATES)
-                    .prefetch_related('properties')
-                    .prefetch_related('deployed_service')
-                    .prefetch_related('publication')
+                    .prefetch_related('deployed_service', 'publication')
                 ):
                     yield u
 

@@ -338,7 +338,7 @@ class OGDeployment(UserDeployment):
         if dbs:
             # On release callback, we will set a property on DB called "from_release"
             # so we can avoid double unreserve
-            if dbs.getProperty('from_release') is None:
+            if dbs.properties.get('from_release') is None:
                 self.service().unreserve(self._machineId)
         return State.RUNNING
 

@@ -33,6 +33,7 @@
 import logging
 import typing
 
+from django.db.models import Prefetch, F
 from django.utils.translation import gettext as _
 
 from uds import models
@@ -61,14 +62,17 @@ class AssignedService(DetailHandler):
 
     @staticmethod
     def itemToDict(
-        item: models.UserService, is_cache: bool = False
+        item: models.UserService,
+        props: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        is_cache: bool = False,
     ) -> typing.Dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
         :param is_cache: If item is from cache or not
         """
-        props = item.getProperties()
+        if props is None:
+            props = dict(item.properties)
 
         val = {
             'id': item.uuid,
@@ -115,13 +119,20 @@ class AssignedService(DetailHandler):
         # Extract provider
         try:
             if not item:
+                # First, fetch all properties for all assigned services on this pool
+                # We can cache them, because they are going to be readed anyway...
+                properties = {
+                    k: v
+                    for k,v in models.Properties.objects.filter(
+                        owner_type='userservice',
+                        owner_id__in=parent.assignedUserServices().values_list('uuid', flat=True),
+                    ).values_list('key', 'value')
+                }
                 return [
-                    AssignedService.itemToDict(k)
+                    AssignedService.itemToDict(k, properties.get(k.uuid, {}))
                     for k in parent.assignedUserServices()
                     .all()
-                    .prefetch_related(
-                        'properties', 'deployed_service', 'publication', 'user'
-                    )
+                    .prefetch_related('deployed_service', 'publication', 'user')
                 ]
             return AssignedService.itemToDict(
                 parent.assignedUserServices().get(processUuid(uuid=processUuid(item)))
@@ -160,9 +171,7 @@ class AssignedService(DetailHandler):
 
     def getLogs(self, parent: models.ServicePool, item: str) -> typing.List[typing.Any]:
         try:
-            userService: models.UserService = parent.assignedUserServices().get(
-                uuid=processUuid(item)
-            )
+            userService: models.UserService = parent.assignedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', userService)
             return log.getLogs(userService)
         except Exception as e:
@@ -171,9 +180,7 @@ class AssignedService(DetailHandler):
     # This is also used by CachedService, so we use "userServices" directly and is valid for both
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
         try:
-            userService: models.UserService = parent.userServices.get(
-                uuid=processUuid(item)
-            )
+            userService: models.UserService = parent.userServices.get(uuid=processUuid(item))
         except Exception as e:
             logger.exception('deleteItem')
             raise self.invalidItemException() from e
@@ -232,24 +239,20 @@ class CachedService(AssignedService):
     Rest handler for Cached Services, wich parent is Service
     """
 
-    custom_methods: typing.ClassVar[
-        typing.List[str]
-    ] = []  # Remove custom methods from assigned services
+    custom_methods: typing.ClassVar[typing.List[str]] = []  # Remove custom methods from assigned services
 
     def getItems(self, parent: models.ServicePool, item: typing.Optional[str]):
         # Extract provider
         try:
             if not item:
                 return [
-                    AssignedService.itemToDict(k, True)
+                    AssignedService.itemToDict(k, is_cache=True)
                     for k in parent.cachedUserServices()
                     .all()
-                    .prefetch_related('properties', 'deployed_service', 'publication')
+                    .prefetch_related('deployed_service', 'publication')
                 ]
-            cachedService: models.UserService = parent.cachedUserServices().get(
-                uuid=processUuid(item)
-            )
-            return AssignedService.itemToDict(cachedService, True)
+            cachedService: models.UserService = parent.cachedUserServices().get(uuid=processUuid(item))
+            return AssignedService.itemToDict(cachedService, is_cache=True)
         except Exception as e:
             logger.exception('getItems')
             raise self.invalidItemException() from e
@@ -318,10 +321,12 @@ class Groups(DetailHandler):
                 }
             },
             {'comments': {'title': _('comments')}},
-            {'type': {
-                'title': _('Type'),
-                # Alphanumeric, default is alphanumeric
-            }},
+            {
+                'type': {
+                    'title': _('Type'),
+                    # Alphanumeric, default is alphanumeric
+                }
+            },
             {
                 'state': {
                     'title': _('State'),
@@ -335,9 +340,7 @@ class Groups(DetailHandler):
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
-        group: models.Group = models.Group.objects.get(
-            uuid=processUuid(self._params['id'])
-        )
+        group: models.Group = models.Group.objects.get(uuid=processUuid(self._params['id']))
         parent.assignedGroups.add(group)
         log.doLog(
             parent,
@@ -394,9 +397,7 @@ class Transports(DetailHandler):
         ]
 
     def saveItem(self, parent: models.ServicePool, item: typing.Optional[str]) -> None:
-        transport: models.Transport = models.Transport.objects.get(
-            uuid=processUuid(self._params['id'])
-        )
+        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['id']))
         parent.transports.add(transport)
         log.doLog(
             parent,
@@ -406,9 +407,7 @@ class Transports(DetailHandler):
         )
 
     def deleteItem(self, parent: models.ServicePool, item: str) -> None:
-        transport: models.Transport = models.Transport.objects.get(
-            uuid=processUuid(self._args[0])
-        )
+        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._args[0]))
         parent.transports.remove(transport)
         log.doLog(
             parent,
@@ -433,18 +432,14 @@ class Publications(DetailHandler):
         changeLog = self._params['changelog'] if 'changelog' in self._params else None
 
         if (
-            permissions.hasAccess(
-                self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT
-            )
+            permissions.hasAccess(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
             raise self.accessDenied()
 
         logger.debug('Custom "publish" invoked for %s', parent)
-        parent.publish(
-            changeLog
-        )  # Can raise exceptions that will be processed on response
+        parent.publish(changeLog)  # Can raise exceptions that will be processed on response
 
         log.doLog(
             parent,
@@ -463,9 +458,7 @@ class Publications(DetailHandler):
         :param uuid: uuid of the publication
         """
         if (
-            permissions.hasAccess(
-                self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT
-            )
+            permissions.hasAccess(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
@@ -493,9 +486,7 @@ class Publications(DetailHandler):
                 'revision': i.revision,
                 'publish_date': i.publish_date,
                 'state': i.state,
-                'reason': State.isErrored(i.state)
-                and i.getInstance().reasonOfError()
-                or '',
+                'reason': State.isErrored(i.state) and i.getInstance().reasonOfError() or '',
                 'state_date': i.state_date,
             }
             for i in parent.publications.all()

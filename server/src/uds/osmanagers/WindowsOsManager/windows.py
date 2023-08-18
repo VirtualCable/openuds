@@ -165,7 +165,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def processUserPassword(
         self, userService: 'UserService', username: str, password: str
     ) -> typing.Tuple[str, str]:
-        if userService.getProperty('sso_available') == '1':
+        if userService.properties.get('sso_available') == '1':
             # Generate a ticket, store it and return username with no password
             domain = ''
             if '@' in username:

@@ -74,7 +74,7 @@ def _requestActor(
         raise NoActorComms(f'No notification urls for {userService.friendly_name}')
 
     minVersion = minVersion or '3.5.0'
-    version = userService.getProperty('actor_version') or '0.0.0'
+    version = userService.properties.get('actor_version', '0.0.0')
     if '-' in version or version < minVersion:
         logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
         raise OldActorVersion(
@@ -87,7 +87,7 @@ def _requestActor(
 
     try:
         verify: typing.Union[bool, str]
-        cert = userService.getProperty('cert') or ''
+        cert = userService.properties.get('cert', '')
         # cert = ''  # Uncomment to test without cert
         if cert:
             # Generate temp file, and delete it after
@@ -145,7 +145,8 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
                 ip=src.ip,
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-                userservice=userService.uuid,
+                udsuser_uuid=userService.user.uuid if userService.user else '',
+                userservice_uuid=userService.uuid,
                 userservice_type=info.service_type
             ).asDict(),
         )

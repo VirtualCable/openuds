@@ -60,7 +60,8 @@ class ServicesUsage(DetailHandler):
         :param item: item to convert
         :param is_cache: If item is from cache or not
         """
-        props = item.getProperties()
+        with item.properties as p:
+            props = dict(p)
 
         if item.user is None:
             owner = ''
@@ -102,11 +103,7 @@ class ServicesUsage(DetailHandler):
                 ServicesUsage.itemToDict(k)
                 for k in userServicesQuery.filter(state=State.USABLE)
                 .order_by('creation_date')
-                .prefetch_related('deployed_service')
-                .prefetch_related('deployed_service__service')
-                .prefetch_related('properties')
-                .prefetch_related('user')
-                .prefetch_related('user__manager')
+                .prefetch_related('deployed_service', 'deployed_service__service', 'user', 'user__manager')
             ]
 
         except Exception:

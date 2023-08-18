@@ -116,10 +116,11 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # Get data related to actual state of cache
+            # Before we were removing the elements marked to be destroyed after creation, but this makes us
+            # to create new items over the limit stablisshed, so we will not remove them anymore
             inCacheL1: int = (
                 servicePool.cachedUserServices()
                 .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
-                .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
                 .count()
             )
             inCacheL2: int = (
@@ -284,13 +285,15 @@ class ServiceCacheUpdater(Job):
     ):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
-        cacheItems: typing.List[UserService] = list(
-            servicePool.cachedUserServices()
+        # Here, we will take into account the "remove_after" marked user services, so we don't try to remove them
+        cacheItems: typing.List[UserService] = [
+            i
+            for i in servicePool.cachedUserServices()
             .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
-            .exclude(Q(properties__name='destroy_after') & Q(properties__value='y'))
             .order_by('-creation_date')
             .iterator()
-        )
+            if not i.destroy_after
+        ]
 
         if not cacheItems:
             logger.debug(

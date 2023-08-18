@@ -69,7 +69,6 @@ class StuckCleaner(Job):
                     & (
                         Q(
                             userServices__state=State.PREPARING,
-                            userServices__properties__name='destroy_after',
                         )
                         | ~Q(
                             userServices__state__in=State.INFO_STATES
@@ -88,7 +87,7 @@ class StuckCleaner(Job):
             # Get all that are not in valid or info states, AND the ones that are "PREPARING" with
             # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)
             yield from q.exclude(state__in=State.INFO_STATES + State.VALID_STATES)
-            yield from q.filter(state=State.PREPARING, properties__name='destroy_after')
+            yield from q.filter(state=State.PREPARING)
 
         for servicePool in servicePoolswithStucks:
             # logger.debug('Searching for stuck states for %s', servicePool.name)

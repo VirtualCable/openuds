@@ -35,9 +35,10 @@ from django.db import models
 
 from uds.core import types
 from uds.core.util.os_detector import KnownOS
-
+from uds.core.util.model import getSqlDatetime
 from uds.core.util.request import ExtendedHttpRequest
 from uds.core.util.log import LogLevel
+from uds.core.util import properties
 
 from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
 
@@ -50,7 +51,7 @@ if typing.TYPE_CHECKING:
     from uds.models.user import User
 
 
-class ServerGroup(UUIDModel, TaggingMixin):
+class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     """
     Registered Server Groups
 
@@ -80,10 +81,10 @@ class ServerGroup(UUIDModel, TaggingMixin):
     # 'Fake' declarations for type checking
     transports: 'models.manager.RelatedManager[Transport]'
     servers: 'models.manager.RelatedManager[Server]'
-
-    def all_valid_servers(self) -> 'models.manager.RelatedManager[Server]':
-        """Returns all servers that can belong to this group"""
-        return self.servers.filter(maintenance_mode=False, type=self.type, subtype=self.subtype)
+    
+    # For properties
+    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+        return self.uuid, 'servergroup'
 
     class Meta:
         # Unique for host and port, so we can have only one group for each host:port
@@ -108,7 +109,7 @@ def create_token() -> str:
     return secrets.token_urlsafe(36)
 
 
-class Server(UUIDModel, TaggingMixin):
+class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     """
     UDS Registered Servers
 
@@ -174,16 +175,27 @@ class Server(UUIDModel, TaggingMixin):
     data = models.JSONField(null=True, blank=True, default=None)
 
     # Group (of registered servers) this server belongs to
+    # Note that only Tunnel servers can belong to more than one servergroup
     groups = models.ManyToManyField(
         ServerGroup,
         related_name='servers',
     )
     
+    def parent(self) -> typing.Optional['Server']:
+        """
+        Returns the parent group (not valid for Tunnel Servers, that can belong to more than one group)
+        """
+        return self.groups.first()
+
     # For type checking
     users: 'models.manager.RelatedManager[ServerUser]'
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
+
+    # For properties
+    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+        return self.uuid, 'server'
 
     @staticmethod
     def create_token() -> str:
@@ -266,23 +278,24 @@ class Server(UUIDModel, TaggingMixin):
         return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
 
 
-class ServerUser(UUIDModel):
+class ServerUser(UUIDModel, properties.PropertiesMixin):
     server: 'models.ForeignKey[Server]' = models.ForeignKey(
         Server, related_name='users', on_delete=models.CASCADE
     )
     user: 'models.ForeignKey[User]' = models.ForeignKey(
         'uds.User', related_name='servers', on_delete=models.CASCADE
     )
-    data = models.JSONField(null=True, blank=True, default=None)
+    # When this record was created
+    created = models.DateTimeField(default=getSqlDatetime, db_index=True)
 
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
 
-        constraints = [
-            models.UniqueConstraint(
-                fields=['server', 'user'], name='u_su_server_user'
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=['server', 'user'], name='u_su_server_user')]
 
     def __str__(self) -> str:
-        return f'<ServerUser {self.server} - {self.user}>'
+        return f'{self.user} of {self.server}'
+
+properties.PropertiesMixin.setupSignals(Server)
+properties.PropertiesMixin.setupSignals(ServerGroup)
+properties.PropertiesMixin.setupSignals(ServerUser)

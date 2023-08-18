@@ -60,7 +60,6 @@ from .service_pool_group import ServicePoolGroup
 from .service_pool_publication import ServicePoolPublication, ServicePoolPublicationChangelog
 
 from .user_service import UserService
-from .user_service_property import UserServiceProperty
 from .user_service_session import UserServiceSession
 
 # Especific log information for an user service
@@ -77,6 +76,7 @@ from .cache import Cache
 from .config import Config
 from .storage import Storage
 from .unique_id import UniqueId
+from .properties import Properties
 
 # Workers/Schedulers related
 from .scheduler import Scheduler

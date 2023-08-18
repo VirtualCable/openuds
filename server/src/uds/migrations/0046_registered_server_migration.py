@@ -7,7 +7,7 @@ import uds.core.types.servers
 import uds.core.util.model
 from uds.core.util.os_detector import KnownOS
 
-from .fixers import transports_v4, providers_v4
+from .fixers import properties_v4, transports_v4, providers_v4
 
 ACTOR_TYPE: typing.Final[int] = uds.core.types.servers.ServerType.ACTOR.value
 
@@ -51,8 +51,12 @@ def migrate_old_data(apps, schema_editor) -> None:
             )
         # Migrate old transports
         transports_v4.migrate(apps, schema_editor)
-        # And old providers and services
+        # Old providers and services
         providers_v4.migrate(apps, schema_editor)
+        # Old properties to new model
+        properties_v4.migrate(apps, schema_editor)
+        
+        
     except Exception as e:
         if 'no such table' not in str(e):
             # Pytest is running this method twice??
@@ -81,9 +85,10 @@ def rollback_old_data(apps, schema_editor) -> None:
         )
         # Delete the server
         server.delete()
-    
+
     transports_v4.rollback(apps, schema_editor)
     providers_v4.rollback(apps, schema_editor)
+    properties_v4.rollback(apps, schema_editor)
 
 
 class Migration(migrations.Migration):
@@ -92,6 +97,33 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name="Properties",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("owner_id", models.CharField(db_index=True, max_length=128)),
+                ("owner_type", models.CharField(db_index=True, max_length=64)),
+                (
+                    "key",
+                    models.CharField(max_length=64, db_index=True),
+                ),
+                ("value", models.JSONField(default=dict)),
+            ],
+        ),
+        migrations.AddConstraint(
+            model_name="properties",
+            constraint=models.UniqueConstraint(
+                fields=("owner_id", "owner_type", "key"), name="unique_property"
+            ),
+        ),
         migrations.RenameModel(
             'TunnelToken',
             'Server',
@@ -118,7 +150,10 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=64, unique=True)),
                 ("comments", models.CharField(default="", max_length=255)),
-                ("type", models.IntegerField(default=uds.core.types.servers.ServerType["UNMANAGED"], db_index=True)),
+                (
+                    "type",
+                    models.IntegerField(default=uds.core.types.servers.ServerType["UNMANAGED"], db_index=True),
+                ),
                 ("subtype", models.CharField(db_index=True, default="", max_length=32)),
                 ("host", models.CharField(default="", max_length=255)),
                 ("port", models.IntegerField(default=0)),
@@ -223,6 +258,9 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name="ActorToken",
         ),
+        migrations.DeleteModel(
+            name="UserServiceProperty",
+        ),
         # After generating all the uuid's, set it as unique
         migrations.AlterField(
             model_name="server",
@@ -260,7 +298,7 @@ class Migration(migrations.Migration):
                         unique=True,
                     ),
                 ),
-                ("data", models.JSONField(blank=True, default=None, null=True)),
+                ("created", models.DateTimeField(db_index=True, default=uds.core.util.model.getSqlDatetime)),
                 (
                     "server",
                     models.ForeignKey(
@@ -281,8 +319,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="serveruser",
-            constraint=models.UniqueConstraint(
-                fields=("server", "user"), name="u_su_server_user"
-            ),
+            constraint=models.UniqueConstraint(fields=("server", "user"), name="u_su_server_user"),
         ),
     ]
