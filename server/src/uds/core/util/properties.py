@@ -155,8 +155,9 @@ class PropertiesMixin:
     @staticmethod
     def _deleteSignal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         toDelete: 'PropertiesMixin' = kwargs['instance']
-        with toDelete.properties as p:
-            p.clear()
+        # We are deleting the object, so we delete the properties too
+        # Remember that properties is a generic table, does not have any cascade delete
+        toDelete.properties.clear()
 
     @staticmethod
     def setupSignals(model: 'typing.Type[models.Model]') -> None:

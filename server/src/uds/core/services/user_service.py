@@ -217,7 +217,7 @@ class UserDeployment(Environmentable, Serializable):
     def getUuid(self) -> str:
         return self._uuid
 
-    def dbservice(self) -> typing.Optional['models.UserService']:
+    def dbUserService(self) -> typing.Optional['models.UserService']:
         """
         Utility method to access database object for the object this represents.
 

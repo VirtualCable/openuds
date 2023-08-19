@@ -248,7 +248,7 @@ if sys.platform == 'win32':
 '''
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
-        dbService = self.dbservice()
+        dbService = self.dbUserService()
         if dbService:
             UserServiceManager().sendScript(dbService, script)
 

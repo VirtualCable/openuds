@@ -79,7 +79,7 @@ class OGDeployment(UserDeployment):
 
     def initialize(self) -> None:
         self._queue = []
-        dbs = self.dbservice()
+        dbs = self.dbUserService()
         self._uuid = dbs.uuid if dbs and dbs.uuid else ''
 
     def service(self) -> 'OGService':
@@ -141,7 +141,7 @@ class OGDeployment(UserDeployment):
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         """
-        dbs = self.dbservice()
+        dbs = self.dbUserService()
         if not dbs:
             return State.FINISHED
 
@@ -316,7 +316,7 @@ class OGDeployment(UserDeployment):
         )
 
         # Store actor version & Known ip
-        dbs = self.dbservice()
+        dbs = self.dbUserService()
         if dbs:
             dbs.properties['actor_version'] = '1.1-OpenGnsys'
             dbs.properties['token'] = token
@@ -334,7 +334,7 @@ class OGDeployment(UserDeployment):
         Removes a machine from system
         Avoids "double unreserve" in case the reservation was made from release
         """
-        dbs = self.dbservice()
+        dbs = self.dbUserService()
         if dbs:
             # On release callback, we will set a property on DB called "from_release"
             # so we can avoid double unreserve

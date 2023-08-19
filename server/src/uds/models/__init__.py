@@ -102,8 +102,8 @@ from .account_usage import AccountUsage
 # Tagging
 from .tag import Tag, TaggingMixin
 
-# Tokens
-from .servers import Server, ServerGroup, ServerUser
+# Servers
+from .servers import Server, ServerGroup
 
 # Notifications & Alerts
 from .notifications import Notification, Notifier, LogLevel

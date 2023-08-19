@@ -93,6 +93,11 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
     def isInMaintenance(self) -> bool:
         return self.maintenance_mode
 
+    @staticmethod
+    def typeFilter(type_: str) -> typing.Iterable['Provider']:
+        for i in Provider.objects.filter(data_type=type):
+            yield i
+
     def __str__(self) -> str:
         return f'Provider {self.name} of type {self.data_type} (id:{self.id})'
 

@@ -129,7 +129,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     current_users=self.server_stats[uuid].current_users + 1
                 )
 
-                storage_key = self.manager.storage_key(self.registered_servers_group, userService.user)
+                prop_name = self.manager.property_name(userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
@@ -159,12 +159,11 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 )  # counter
 
                 # Server storage should contain the assignation
-                with self.manager.svrStorage() as stor:
-                    self.assertEqual(len(stor), elementNumber + 1)
-                    uuid_counter = stor[storage_key]
-                    # uuid_counter is (uuid, assign counter)
-                    self.assertEqual(uuid_counter[0], uuid)
-                    self.assertEqual(uuid_counter[1], counter)
+                self.assertEqual(len(self.registered_servers_group.properties), elementNumber + 1)
+                uuid_counter = self.registered_servers_group.properties[prop_name]
+                # uuid_counter is (uuid, assign counter)
+                self.assertEqual(uuid_counter[0], uuid)
+                self.assertEqual(uuid_counter[1], counter)
 
                 # Again, try to assign, same user service, same group, same service type, same minMemoryMB and same uuid
                 for i in range(32):
@@ -173,9 +172,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     self.assertEqual(uuid, uuid2)
                     # uuid2 should be one on registered servers
                     self.assertTrue(uuid2 in self.all_uuids)
-                    self.assertIsNone(
-                        models.Server.objects.get(uuid=uuid).locked_until
-                    )  # uuid is uuid2
+                    self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)  # uuid is uuid2
 
                     # mockServer.getStats has been called NUM_REGISTEREDSERVERS times, because no new requests has been done
                     self.assertEqual(
@@ -188,25 +185,22 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     )
 
                     # Server storage should have elementNumber + 1 elements
-                    with self.manager.svrStorage() as stor:
-                        self.assertEqual(len(stor), elementNumber + 1)
-                        uuid_counter = stor[storage_key]
-                        # uuid_counter is (uuid, assign counter)
-                        self.assertEqual(uuid_counter[0], uuid)
-                        self.assertEqual(uuid_counter[1], counter)
+                    self.assertEqual(len(self.registered_servers_group.properties), elementNumber + 1)
+                    uuid_counter = self.registered_servers_group.properties[prop_name]
+                    # uuid_counter is (uuid, assign counter)
+                    self.assertEqual(uuid_counter[0], uuid)
+                    self.assertEqual(uuid_counter[1], counter)
 
             # Now, remove all asignations..
             for elementNumber, userService in enumerate(self.user_services):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
-                storage_key = self.manager.storage_key(self.registered_servers_group, userService.user)
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
                     res = self.manager.release(userService, self.registered_servers_group)
 
-            with self.manager.svrStorage() as stor:
-                self.assertEqual(len(stor), 0)
+            self.assertEqual(len(self.registered_servers_group.properties), 0)
 
     def testAssignAutoLockLimit(self) -> None:
         with self.createMockApiRequester() as mockServerApiRequester:
@@ -256,8 +250,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             self.assertIsNotNone(server.locked_until)
 
         # Storage should have NUM_REGISTEREDSERVERS elements
-        with self.manager.svrStorage() as stor:
-            self.assertEqual(len(stor), NUM_REGISTEREDSERVERS)
+        self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
 
         with self.manager.cntStorage() as stor:
             self.assertEqual(len(stor), 0)  # No counter storage for managed servers
@@ -277,8 +270,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         for server in self.registered_servers_group.servers.all():
             self.assertIsNone(server.locked_until)
 
-        with self.manager.svrStorage() as stor:
-            self.assertEqual(len(stor), 0)
+        self.assertEqual(len(self.registered_servers_group.properties), 0)
 
         with self.manager.cntStorage() as stor:
             self.assertEqual(len(stor), 0)

@@ -187,9 +187,6 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """
         return self.groups.first()
 
-    # For type checking
-    users: 'models.manager.RelatedManager[ServerUser]'
-
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
 
@@ -235,7 +232,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     @property
     def host(self) -> str:
-        """Returns the host of this server"""
+        """Returns the host of this server
+        Host is hostname first, and if not exists, the ip of the server
+        """
         return self.hostname or self.ip
 
     @property
@@ -278,24 +277,5 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
 
 
-class ServerUser(UUIDModel, properties.PropertiesMixin):
-    server: 'models.ForeignKey[Server]' = models.ForeignKey(
-        Server, related_name='users', on_delete=models.CASCADE
-    )
-    user: 'models.ForeignKey[User]' = models.ForeignKey(
-        'uds.User', related_name='servers', on_delete=models.CASCADE
-    )
-    # When this record was created
-    created = models.DateTimeField(default=getSqlDatetime, db_index=True)
-
-    class Meta:  # pylint: disable=too-few-public-methods
-        app_label = 'uds'
-
-        constraints = [models.UniqueConstraint(fields=['server', 'user'], name='u_su_server_user')]
-
-    def __str__(self) -> str:
-        return f'{self.user} of {self.server}'
-
 properties.PropertiesMixin.setupSignals(Server)
 properties.PropertiesMixin.setupSignals(ServerGroup)
-properties.PropertiesMixin.setupSignals(ServerUser)

@@ -51,13 +51,14 @@ def _serverGroupValues(
     )
     if subtype is not None:
         fltr = fltr.filter(subtype=subtype)
-        
-    return [ui.gui.choiceItem(v.uuid, f'{v.name} {("("+ v.pretty_host + ")") if v.pretty_host else ""}') for v in fltr.all()]
+
+    return [
+        ui.gui.choiceItem(v.uuid, f'{v.name} {("("+ v.pretty_host + ")") if v.pretty_host else ""}')
+        for v in fltr.all()
+    ]
 
 
-def _serverGrpFromField(
-    fld: ui.gui.ChoiceField
-) -> models.ServerGroup:
+def _serverGrpFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     try:
         return models.ServerGroup.objects.get(uuid=fld.value)
     except Exception:
@@ -84,8 +85,9 @@ def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 # Server group field
 def serverGroupField(
-    type: typing.Optional[typing.List[types.servers.ServerType]] = None, subtype: typing.Optional[str] = None,
-    tab: typing.Optional[ui.gui.Tab] = None
+    type: typing.Optional[typing.List[types.servers.ServerType]] = None,
+    subtype: typing.Optional[str] = None,
+    tab: typing.Optional[ui.gui.Tab] = None,
 ) -> ui.gui.ChoiceField:
     """Returns a field to select a server group
 
@@ -107,27 +109,13 @@ def serverGroupField(
     )
 
 
-def getServerGroupFromField(
-    fld: ui.gui.ChoiceField
-) -> models.ServerGroup:
+def getServerGroupFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     """Returns a server group from a field
 
     Args:
         fld: Field to get server group from
     """
     return _serverGrpFromField(fld)
-
-
-def getServersFromServerGroupField(
-    fld: ui.gui.ChoiceField, type_: types.servers.ServerType = types.servers.ServerType.UNMANAGED
-) -> typing.List[models.Server]:
-    """Returns a list of servers from a server group field
-
-    Args:
-        fld: Field to get server group from
-    """
-    grp = _serverGrpFromField(fld)
-    return list(grp.servers.all())
 
 
 # Ticket validity time field (for http related tunnels)

@@ -278,47 +278,4 @@ class Migration(migrations.Migration):
                 to="uds.servergroup",
             ),
         ),
-        migrations.CreateModel(
-            name="ServerUser",
-            fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "uuid",
-                    models.CharField(
-                        default=uds.core.util.model.generateUuid,
-                        max_length=50,
-                        unique=True,
-                    ),
-                ),
-                ("created", models.DateTimeField(db_index=True, default=uds.core.util.model.getSqlDatetime)),
-                (
-                    "server",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="users",
-                        to="uds.server",
-                    ),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="servers",
-                        to="uds.user",
-                    ),
-                ),
-            ],
-        ),
-        migrations.AddConstraint(
-            model_name="serveruser",
-            constraint=models.UniqueConstraint(fields=("server", "user"), name="u_su_server_user"),
-        ),
     ]

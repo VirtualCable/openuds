@@ -150,3 +150,17 @@ class ServerStatsType(typing.NamedTuple):
     def __str__(self) -> str:
         # Human readable
         return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}'
+
+class ServerCounterType(typing.NamedTuple):
+    server_uuid: str
+    counter: int
+    
+    @staticmethod
+    def fromIterable(data: typing.Optional[typing.Iterable]) -> typing.Optional['ServerCounterType']:
+        if data is None:
+            return None
+        return ServerCounterType(*data)
+
+    @staticmethod
+    def empty() -> 'ServerCounterType':
+        return ServerCounterType('', 0)
