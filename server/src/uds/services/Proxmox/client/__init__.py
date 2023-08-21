@@ -43,7 +43,7 @@ from . import types
 
 
 from uds.core.util import security
-from uds.core.util.decorators import allowCache, ensureConnected
+from uds.core.util.decorators import cached, ensureConnected
 
 # DEFAULT_PORT = 8006
 
@@ -256,7 +256,7 @@ class ProxmoxClient:
         return True
 
     @ensureConnected
-    @allowCache('cluster', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
+    @cached('cluster', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
     def getClusterInfo(self, **kwargs) -> types.ClusterStatus:
         return types.ClusterStatus.fromJson(self._get('cluster/status'))
 
@@ -273,7 +273,7 @@ class ProxmoxClient:
         return True
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'nodeNets',
         CACHE_DURATION,
         cachingArgs=1,
@@ -285,7 +285,7 @@ class ProxmoxClient:
 
     # pylint: disable=unused-argument
     @ensureConnected
-    @allowCache(
+    @cached(
         'nodeGpuDevices',
         CACHE_DURATION_LONG,
         cachingArgs=1,
@@ -422,7 +422,7 @@ class ProxmoxClient:
         )
 
     @ensureConnected
-    @allowCache('hagrps', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
+    @cached('hagrps', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
     def listHAGroups(self) -> typing.List[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
@@ -467,7 +467,7 @@ class ProxmoxClient:
         )
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'vms',
         CACHE_DURATION,
         cachingArgs=1,
@@ -492,7 +492,7 @@ class ProxmoxClient:
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'vmip',
         CACHE_INFO_DURATION,
         cachingArgs=[1, 2],
@@ -517,7 +517,7 @@ class ProxmoxClient:
         return self.getVmInfo(vmId, node, **kwargs)
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'vmin',
         CACHE_INFO_DURATION,
         cachingArgs=[1, 2],
@@ -618,7 +618,7 @@ class ProxmoxClient:
     resumeVm = startVm
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'storage',
         CACHE_DURATION,
         cachingArgs=[1, 2],
@@ -631,7 +631,7 @@ class ProxmoxClient:
         )
 
     @ensureConnected
-    @allowCache(
+    @cached(
         'storages',
         CACHE_DURATION,
         cachingArgs=[1, 2],
@@ -664,14 +664,14 @@ class ProxmoxClient:
         return result
 
     @ensureConnected
-    @allowCache('nodeStats', CACHE_INFO_DURATION, cachingKeyFnc=cachingKeyHelper)
+    @cached('nodeStats', CACHE_INFO_DURATION, cachingKeyFnc=cachingKeyHelper)
     def getNodesStats(self, **kwargs) -> typing.List[types.NodeStats]:
         return [
             types.NodeStats.fromDict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
     @ensureConnected
-    @allowCache('pools', CACHE_DURATION // 6, cachingKeyFnc=cachingKeyHelper)
+    @cached('pools', CACHE_DURATION // 6, cachingKeyFnc=cachingKeyHelper)
     def listPools(self) -> typing.List[types.PoolInfo]:
         return [types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']]
 

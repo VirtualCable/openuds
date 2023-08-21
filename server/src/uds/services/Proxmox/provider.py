@@ -38,7 +38,7 @@ from uds.core.util import validators
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 
 from .service import ProxmoxLinkedService
 
@@ -310,7 +310,7 @@ class ProxmoxProvider(
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)
 
-    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
         return self._getApi().test()
 

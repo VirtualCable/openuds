@@ -189,7 +189,7 @@ class ServerApiRequester:
         """
         self.post('removeService', {'userservice': userService.uuid})
 
-    @decorators.allowCache('reqserver', cacheTimeout=60)
+    @decorators.cached('reqserver', cacheTimeout=60)
     def getStats(self) -> typing.Optional['types.servers.ServerStatsType']:
         """
         Returns the stats of a server

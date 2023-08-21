@@ -37,7 +37,7 @@ from uds.core import services
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 
 from . import client
 from .service import OVirtLinkedService
@@ -508,7 +508,7 @@ class OVirtProvider(
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
 
-    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

@@ -38,7 +38,7 @@ from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 
 from . import on
 from .service import LiveService
@@ -337,7 +337,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
         return OpenNebulaProvider(env, data).testConnection()
 
-    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

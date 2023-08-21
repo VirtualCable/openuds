@@ -38,7 +38,7 @@ from uds.core.transports import protocols
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 
 from . import helpers
 from .deployment import ProxmoxDeployment
@@ -339,6 +339,6 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
 
-    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
         return self.parent().isAvailable()

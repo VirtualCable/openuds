@@ -49,7 +49,7 @@ from uds.core.util.model import getSqlDatetime
 from uds.core.ui import gui
 from uds.core import auths, exceptions
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 from uds.core.util import security
 
 from . import config
@@ -440,7 +440,7 @@ class SAMLAuthenticator(auths.Authenticator):
             'query_string': request.META['QUERY_STRING'],
         }
 
-    @allowCache(
+    @cached(
         cachePrefix='idpm',
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600 * 24 * 365,  # 1 year
@@ -512,7 +512,7 @@ class SAMLAuthenticator(auths.Authenticator):
             },
         }
 
-    @allowCache(
+    @cached(
         cachePrefix='spm',
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600,  # 1 hour

@@ -31,15 +31,16 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import functools
-import logging
-import inspect
-import typing
-import time
-import threading
 import hashlib
+import inspect
+import logging
+import threading
+import time
+import typing
+
+from django.db import transaction
 
 from uds.core.util.cache import Cache
-
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +139,7 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
         def varname(self):  # It's like a property
             return self._varname  # Returns old value
     """
+
     class innerDeprecated:
         fget: typing.Callable
         new_var_name: str
@@ -157,9 +159,7 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
                     self.new_var_name,
                 )
             except Exception:
-                logger.info(
-                    'No stack info on deprecated value use %s', self.fget.__name__
-                )
+                logger.info('No stack info on deprecated value use %s', self.fget.__name__)
 
             return self.fget(cls)
 
@@ -179,14 +179,14 @@ def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
-def allowCache(
+def cached(
     cachePrefix: str,
     cacheTimeout: typing.Union[typing.Callable[[], int], int] = -1,
     cachingArgs: typing.Optional[typing.Union[typing.Iterable[int], int]] = None,
     cachingKWArgs: typing.Optional[typing.Union[typing.Iterable[str], str]] = None,
     cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None,
 ) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
-    """Decorator that give us a "quick& clean" caching feature.
+    """Decorator that give us a "quick& clean" caching feature on db.
     The "cached" element must provide a "cache" variable, which is a cache object
 
     Parameters:
@@ -217,9 +217,7 @@ def allowCache(
         # If no parameters provider, try to infer them from function signature
         try:
             if cachingArgList is None and cachingKwargList is None:
-                for pos, (paramName, param) in enumerate(
-                    inspect.signature(fnc).parameters.items()
-                ):
+                for pos, (paramName, param) in enumerate(inspect.signature(fnc).parameters.items()):
                     if paramName == 'self':
                         continue
                     # Parameters can be included twice in the cache, but it's not a problem
@@ -241,65 +239,64 @@ def allowCache(
 
         @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
-            nonlocal hits, misses, exec_time
-            keyHash = hashlib.sha256(usedforsecurity=False)
-            for i in cachingArgList:
-                if i < len(args):
-                    keyHash.update(str(args[i]).encode('utf-8'))
-            for s in cachingKwargList:
-                keyHash.update(str(kwargs.get(s, '')).encode('utf-8'))
-            # Append key data
-            keyHash.update(
-                keyFnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8')
-            )
-            # compute cache key
-            cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
+            with transaction.atomic(): # On its own transaction (for cache operations, that are on DB)
+                nonlocal hits, misses, exec_time
+                keyHash = hashlib.sha256(usedforsecurity=False)
+                for i in cachingArgList:
+                    if i < len(args):
+                        keyHash.update(str(args[i]).encode('utf-8'))
+                for s in cachingKwargList:
+                    keyHash.update(str(kwargs.get(s, '')).encode('utf-8'))
+                # Append key data
+                keyHash.update(keyFnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8'))
+                # compute cache key
+                cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
 
-            cache = getattr(args[0], 'cache', None) or Cache('functionCache')
+                cache = getattr(args[0], 'cache', None) or Cache('functionCache')
 
-            # if cacheTimeout is a function, call it
-            timeout = cacheTimeout() if callable(cacheTimeout) else cacheTimeout
+                # if cacheTimeout is a function, call it
+                timeout = cacheTimeout() if callable(cacheTimeout) else cacheTimeout
 
-            data: typing.Any = None
-            if not kwargs.get('force', False) and timeout > 0:
-                data = cache.get(cacheKey)
-                if data:
-                    with lock:
-                        hits += 1
-                        stats.add_hit(exec_time // hits)  # Use mean execution time
-                    return data
+                data: typing.Any = None
+                if not kwargs.get('force', False) and timeout > 0:
+                    data = cache.get(cacheKey)
+                    if data:
+                        with lock:
+                            hits += 1
+                            stats.add_hit(exec_time // hits)  # Use mean execution time
+                        return data
 
-            with lock:
-                misses += 1
-                stats.add_miss()
+                with lock:
+                    misses += 1
+                    stats.add_miss()
 
-            if 'force' in kwargs:
-                # Remove force key
-                del kwargs['force']
+                if 'force' in kwargs:
+                    # Remove force key
+                    del kwargs['force']
 
-            t = time.thread_time_ns()
-            data = fnc(*args, **kwargs)
-            # Compute duration
-            with lock:
-                exec_time += time.thread_time_ns() - t
+                t = time.thread_time_ns()
+                data = fnc(*args, **kwargs)
+                # Compute duration
+                with lock:
+                    exec_time += time.thread_time_ns() - t
 
-            try:
-                # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                cache.put(cacheKey, data, timeout)
-            except Exception as e:
-                logger.debug(
-                    'Data for %s is not serializable on call to %s, not cached. %s (%s)',
-                    cacheKey,
-                    fnc.__name__,
-                    data,
-                    e,
-                )
-            return data
+                try:
+                    # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
+                    cache.put(cacheKey, data, timeout)
+                except Exception as e:
+                    logger.debug(
+                        'Data for %s is not serializable on call to %s, not cached. %s (%s)',
+                        cacheKey,
+                        fnc.__name__,
+                        data,
+                        e,
+                    )
+                return data
 
         def cache_info() -> CacheInfo:
             """Report cache statistics"""
             with lock:
-                return CacheInfo(hits, misses, hits+misses, exec_time)
+                return CacheInfo(hits, misses, hits + misses, exec_time)
 
         def cache_clear() -> None:
             """Clear the cache and cache statistics"""

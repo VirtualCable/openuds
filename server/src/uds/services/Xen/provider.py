@@ -35,7 +35,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util.cache import Cache
-from uds.core.util.decorators import allowCache
+from uds.core.util.decorators import cached
 
 # from uds.core.util import validators
 
@@ -452,7 +452,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     def getMacRange(self) -> str:
         return self.macsRange.value
 
-    @allowCache('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', Cache.SHORT_VALIDITY)
     def isAvailable(self) -> bool:
         try:
             self.testConnection()
