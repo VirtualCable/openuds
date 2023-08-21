@@ -73,7 +73,9 @@ class ServerManager(metaclass=singleton.Singleton):
     def property_name(
         self, user: typing.Optional['models.User']
     ) -> str:
-        return 'usr' + str(user.id) if user else 'usr_'
+        """Returns the property name for a user
+        """
+        return 'usr' + str(user.uuid) if user else 'usr_'
     
     def clearUnmanagedUsage(self) -> None:
         with self.cntStorage() as counters:
@@ -148,7 +150,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 types.servers.ServerStatsType.empty(),
             )
 
-        # If best was locked, notify it
+        # If best was locked, notify it (will be notified again on assign)
         if best[0].locked_until is not None:
             request.ServerApiRequester(best[0]).notifyRelease(userService)
 
@@ -237,7 +239,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
-        request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, info[1])
+        request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, info.counter)
         return info
 
     def release(
@@ -245,6 +247,7 @@ class ServerManager(metaclass=singleton.Singleton):
         userService: 'models.UserService',
         serverGroup: 'models.ServerGroup',
         unlock: bool = False,
+        userUuid: typing.Optional[str] = None,
     ) -> typing.Tuple[str, int]:
         """
         Unassigns a server from an user
@@ -253,7 +256,13 @@ class ServerManager(metaclass=singleton.Singleton):
             userService: User service to unassign server from
             serverGroups: Server group to unassign server from
             unlock: If True, unlock server, even if it has more users assigned to it
+            userUuid: If not None, use this uuid instead of userService.user.uuid
         """
+        userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
+        
+        if userUuid is None:
+            return ('', 0)  # No user is assigned to this service, nothing to do
+        
         prop_name = self.property_name(userService.user)
         with serverGroup.properties as props:
             with transaction.atomic():
