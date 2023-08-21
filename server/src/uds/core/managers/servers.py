@@ -54,7 +54,8 @@ operationsLogger = logging.getLogger('operationsLog')
 class ServerManager(metaclass=singleton.Singleton):
     STORAGE_NAME: typing.Final[str] = 'uds.servers'
     MAX_COUNTERS_AGE: typing.Final[datetime.timedelta] = datetime.timedelta(days=3)
-    
+    PROPERTY_BASE_NAME: typing.Final[str] = 'usr_'
+
     last_counters_clean: datetime.datetime
 
     def __init__(self):
@@ -70,18 +71,15 @@ class ServerManager(metaclass=singleton.Singleton):
             self.clearUnmanagedUsage()
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
-    def property_name(
-        self, user: typing.Optional['models.User']
-    ) -> str:
-        """Returns the property name for a user
-        """
-        return 'usr' + str(user.uuid) if user else 'usr_'
-    
+    def property_name(self, user: typing.Optional['models.User']) -> str:
+        """Returns the property name for a user"""
+        return ServerManager.PROPERTY_BASE_NAME + (str(user.uuid) if user else '_')
+
     def clearUnmanagedUsage(self) -> None:
         with self.cntStorage() as counters:
             counters.clear()
         self.last_counters_clean = datetime.datetime.now()
-            
+
     def getUnmanagedUsage(self, uuid: str) -> int:
         uuid = 'c' + uuid
         with self.cntStorage() as counters:
@@ -94,7 +92,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 counters[uuid] -= 1
                 if counters[uuid] <= 0 or forceReset:
                     del counters[uuid]
-                
+
     def increaseUnmanagedUsage(self, uuid: str, onlyIfExists: bool = False) -> None:
         uuid = 'c' + uuid
         with self.cntStorage() as counters:
@@ -107,7 +105,7 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.ServerGroup',
         now: datetime.datetime,
         minMemoryMB: int = 0,
-        excludeServersUUids: typing.Optional[typing.List[str]] = None
+        excludeServersUUids: typing.Optional[typing.List[str]] = None,
     ) -> typing.Tuple['models.Server', 'types.servers.ServerStatsType']:
         """
         Finds the best server for a service
@@ -127,7 +125,7 @@ class ServerManager(metaclass=singleton.Singleton):
             if minMemoryMB and stats.memused // (1024 * 1024) < minMemoryMB:  # Stats has minMemory in bytes
                 continue
 
-            if best is None or  stats.weight() < best[1].weight():
+            if best is None or stats.weight() < best[1].weight():
                 best = (server, stats)
 
         # Cannot be assigned to any server!!
@@ -164,13 +162,13 @@ class ServerManager(metaclass=singleton.Singleton):
         minMemoryMB: int = 0,  # Does not apply to unmanged servers
         lockTime: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
-        excludeServersUUids: typing.Optional[typing.List[str]] = None
+        excludeServersUUids: typing.Optional[typing.List[str]] = None,
     ) -> types.servers.ServerCounterType:
         """
         Select a server for an userservice to be assigned to
 
         Args:
-            userService: User service to assign server to
+            userService: User service to assign server to (in fact, user of userservice) and to notify
             serverGroup: Server group to select server from
             serverType: Type of service to assign
             minMemoryMB: Minimum memory required for server in MB, does not apply to unmanaged servers
@@ -182,12 +180,17 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns:
             uuid of server assigned
         """
+        if not userService.user:
+            raise exceptions.UDSException(_('No user assigned to service'))
+
         # Look for existint user asignation through properties
         prop_name = self.property_name(userService.user)
         now = model_utils.getSqlDatetime()
 
         with serverGroup.properties as props:
-            info: typing.Optional[types.servers.ServerCounterType] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
+            info: typing.Optional[
+                types.servers.ServerCounterType
+            ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
             # If server is forced, and server is part of the group, use it
             if server:
                 if server.groups.filter(uuid=serverGroup.uuid).count() == 0:
@@ -220,16 +223,14 @@ class ServerManager(metaclass=singleton.Singleton):
                             serverGroup=serverGroup,
                             now=now,
                             minMemoryMB=minMemoryMB,
-                            excludeServersUUids=excludeServersUUids
+                            excludeServersUUids=excludeServersUUids,
                         )
 
                         info = types.servers.ServerCounterType(best[0].uuid, 0)
                         best[0].locked_until = now + lockTime if lockTime else None
                         best[0].save(update_fields=['locked_until'])
                 elif lockTime:  # If lockTime is set, update it
-                    models.Server.objects.filter(uuid=info[0]).update(
-                        locked_until=now + lockTime
-                    )
+                    models.Server.objects.filter(uuid=info[0]).update(locked_until=now + lockTime)
 
             # Notify to server
             # Update counter
@@ -259,10 +260,10 @@ class ServerManager(metaclass=singleton.Singleton):
             userUuid: If not None, use this uuid instead of userService.user.uuid
         """
         userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
-        
+
         if userUuid is None:
             return ('', 0)  # No user is assigned to this service, nothing to do
-        
+
         prop_name = self.property_name(userService.user)
         with serverGroup.properties as props:
             with transaction.atomic():
@@ -295,6 +296,17 @@ class ServerManager(metaclass=singleton.Singleton):
             request.ServerApiRequester(server).notifyRelease(userService)
 
         return (uuid_counter[0], uuid_counter[1] - 1)
+
+    def getCurrentUsage(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
+        """
+        Return current server usages by user
+        """
+        res: typing.Dict[str, int] = {}
+        for k, v in serverGroup.properties.items():
+            if k.startswith(self.PROPERTY_BASE_NAME):
+                kk = k[len(self.PROPERTY_BASE_NAME) :] # Skip base name
+                res[kk] = res.get(kk, 0) + v[1]
+        return res
 
     def notifyPreconnect(
         self,
