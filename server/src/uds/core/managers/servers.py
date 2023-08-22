@@ -105,7 +105,7 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.ServerGroup',
         now: datetime.datetime,
         minMemoryMB: int = 0,
-        excludeServersUUids: typing.Optional[typing.List[str]] = None,
+        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
     ) -> typing.Tuple['models.Server', 'types.servers.ServerStatsType']:
         """
         Finds the best server for a service
@@ -162,8 +162,8 @@ class ServerManager(metaclass=singleton.Singleton):
         minMemoryMB: int = 0,  # Does not apply to unmanged servers
         lockTime: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
-        excludeServersUUids: typing.Optional[typing.List[str]] = None,
-    ) -> types.servers.ServerCounterType:
+        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
+    ) -> typing.Optional[types.servers.ServerCounterType]:
         """
         Select a server for an userservice to be assigned to
 
@@ -186,6 +186,8 @@ class ServerManager(metaclass=singleton.Singleton):
         # Look for existint user asignation through properties
         prop_name = self.property_name(userService.user)
         now = model_utils.getSqlDatetime()
+        
+        excludeServersUUids = excludeServersUUids or set()
 
         with serverGroup.properties as props:
             info: typing.Optional[
@@ -193,7 +195,7 @@ class ServerManager(metaclass=singleton.Singleton):
             ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
             # If server is forced, and server is part of the group, use it
             if server:
-                if server.groups.filter(uuid=serverGroup.uuid).count() == 0:
+                if server.groups.filter(uuid=serverGroup.uuid).exclude(uuid__in=excludeServersUUids).count() == 0:
                     raise exceptions.UDSException(_('Server is not part of the group'))
                 elif server.maintenance_mode:
                     raise exceptions.UDSException(_('Server is in maintenance mode'))
@@ -207,28 +209,33 @@ class ServerManager(metaclass=singleton.Singleton):
 
                 self.increaseUnmanagedUsage(server.uuid, onlyIfExists=True)
             else:
-                if info:
-                    # If server and it is in maintenance, remove it from saved and use another one
-                    if models.Server.objects.get(uuid=info.server_uuid).maintenance_mode:
+                if info and info.server_uuid:
+                    # If server does not exists, or it is in maintenance, or it is in exclude list,
+                    # remove it from saved and use look for another one
+                    svr = models.Server.objects.filter(uuid=info.server_uuid).first()
+                    if not svr or (svr.maintenance_mode or svr.uuid in excludeServersUUids):
                         info = None
                         del props[prop_name]
                     else:
                         # Increase "local" counters for RR if needed
                         self.increaseUnmanagedUsage(info.server_uuid, onlyIfExists=True)
-                # If no cached value, get server assignation
+                # If no existing assignation, check for a new one
                 if info is None:
-                    with transaction.atomic():
-                        best = self._findBestServer(
-                            userService=userService,
-                            serverGroup=serverGroup,
-                            now=now,
-                            minMemoryMB=minMemoryMB,
-                            excludeServersUUids=excludeServersUUids,
-                        )
+                    try:
+                        with transaction.atomic():
+                            best = self._findBestServer(
+                                userService=userService,
+                                serverGroup=serverGroup,
+                                now=now,
+                                minMemoryMB=minMemoryMB,
+                                excludeServersUUids=excludeServersUUids,
+                            )
 
-                        info = types.servers.ServerCounterType(best[0].uuid, 0)
-                        best[0].locked_until = now + lockTime if lockTime else None
-                        best[0].save(update_fields=['locked_until'])
+                            info = types.servers.ServerCounterType(best[0].uuid, 0)
+                            best[0].locked_until = now + lockTime if lockTime else None
+                            best[0].save(update_fields=['locked_until'])
+                    except exceptions.UDSException:  # No more servers
+                        return None
                 elif lockTime:  # If lockTime is set, update it
                     models.Server.objects.filter(uuid=info[0]).update(locked_until=now + lockTime)
 
@@ -299,14 +306,32 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def getCurrentUsage(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
-        Return current server usages by user
+        Return current server usages by user as a dict (user uuid, counter)
         """
         res: typing.Dict[str, int] = {}
         for k, v in serverGroup.properties.items():
             if k.startswith(self.PROPERTY_BASE_NAME):
-                kk = k[len(self.PROPERTY_BASE_NAME) :] # Skip base name
+                kk = k[len(self.PROPERTY_BASE_NAME) :]  # Skip base name
                 res[kk] = res.get(kk, 0) + v[1]
         return res
+
+    def doMaintenance(self, serverGroup: 'models.ServerGroup') -> None:
+        """Realizes maintenance on server group
+
+        Maintenace operations include:
+            * Clean up removed users from server counters
+
+        Args:
+            serverGroup: Server group to realize maintenance on
+        """
+        for k, v in serverGroup.properties.items():
+            if k.startswith(self.PROPERTY_BASE_NAME):
+                uuid = k[len(self.PROPERTY_BASE_NAME) :]
+                try:
+                    user = models.User.objects.get(uuid=uuid)
+                except Exception:
+                    # User does not exists, remove it from counters
+                    del serverGroup.properties[k]
 
     def notifyPreconnect(
         self,
