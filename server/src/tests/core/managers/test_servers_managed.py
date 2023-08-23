@@ -214,7 +214,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         with self.createMockApiRequester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                assignation = self.assign(userService)
+                assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1))
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -243,7 +243,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     # Ensure locking server, so we have to use every server only once
-                    assignation = self.assign(userService)
+                    assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
                     if assignation is None:
                         self.fail('Assignation returned None')
                         return  # For mypy
