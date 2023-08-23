@@ -256,7 +256,7 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.ServerGroup',
         unlock: bool = False,
         userUuid: typing.Optional[str] = None,
-    ) -> typing.Tuple[str, int]:
+    ) -> types.servers.ServerCounterType:
         """
         Unassigns a server from an user
 
@@ -269,27 +269,29 @@ class ServerManager(metaclass=singleton.Singleton):
         userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
 
         if userUuid is None:
-            return ('', 0)  # No user is assigned to this service, nothing to do
+            return types.servers.ServerCounterType.empty()  # No user is assigned to this service, nothing to do
 
         prop_name = self.property_name(userService.user)
         with serverGroup.properties as props:
             with transaction.atomic():
                 resetCounter = False
-                uuid_counter: typing.Optional[typing.Tuple[str, int]] = props.get(prop_name)
+                # ServerCounterType
+                
+                serverCounter: typing.Optional[types.servers.ServerCounterType] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
                 # If no cached value, get server assignation
-                if uuid_counter is None:
-                    return ('', 0)
+                if serverCounter is None:
+                    return types.servers.ServerCounterType.empty()
                 # Ensure counter is at least 1
-                uuid_counter = (uuid_counter[0], max(1, uuid_counter[1]))
-                if uuid_counter[1] == 1 or unlock:
+                serverCounter = types.servers.ServerCounterType(serverCounter.server_uuid, max(1, serverCounter.counter))
+                if serverCounter.counter == 1 or unlock:
                     # Last one, remove it
                     del props[prop_name]
                 else:  # Not last one, just decrement counter
-                    props[prop_name] = (uuid_counter[0], uuid_counter[1] - 1)
+                    props[prop_name] = (serverCounter.server_uuid, serverCounter.counter - 1)
 
-            server = models.Server.objects.get(uuid=uuid_counter[0])
+            server = models.Server.objects.get(uuid=serverCounter[0])
 
-            if unlock or uuid_counter[1] == 1:
+            if unlock or serverCounter.counter == 1:
                 server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it
                 server.save(update_fields=['locked_until'])
 
@@ -302,11 +304,18 @@ class ServerManager(metaclass=singleton.Singleton):
 
             request.ServerApiRequester(server).notifyRelease(userService)
 
-        return (uuid_counter[0], uuid_counter[1] - 1)
+        return types.servers.ServerCounterType(serverCounter.server_uuid, serverCounter.counter - 1)
 
-    def getCurrentUsage(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
+    def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
-        Return current server usages by user as a dict (user uuid, counter)
+        Get usage information for a server group
+        
+        Args:
+            serverGroup: Server group to get current usage from
+            
+        Returns:
+            Dict of current usage (user uuid, counter for assignations to that user)
+           
         """
         res: typing.Dict[str, int] = {}
         for k, v in serverGroup.properties.items():

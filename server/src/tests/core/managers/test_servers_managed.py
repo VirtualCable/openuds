@@ -61,7 +61,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.ServerGroup'
-    assign: typing.Callable[..., typing.Tuple[str, int]]
+    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounterType]]
     all_uuids: typing.List[str]
     server_stats: typing.Dict[str, 'types.servers.ServerStatsType']
 
@@ -123,7 +123,11 @@ class ServerManagerManagedServersTest(UDSTestCase):
             for elementNumber, userService in enumerate(self.user_services):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
-                uuid, counter = self.assign(userService)
+                assignation = self.assign(userService)
+                if assignation is None:
+                    self.fail('Assignation returned None')
+                    return  # For mypy
+                uuid, counter = assignation
                 # Update only users, as the connection does not consume memory nor cpu
                 self.server_stats[uuid] = self.server_stats[uuid]._replace(
                     current_users=self.server_stats[uuid].current_users + 1
@@ -167,7 +171,11 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
                 # Again, try to assign, same user service, same group, same service type, same minMemoryMB and same uuid
                 for i in range(32):
-                    uuid2, counter = self.assign(userService)
+                    assignation = self.assign(userService)
+                    if assignation is None:
+                        self.fail('Assignation returned None')
+                        return  # For mypy
+                    uuid2, counter = assignation
                     # uuid2 should be the same as uuid
                     self.assertEqual(uuid, uuid2)
                     # uuid2 should be one on registered servers
@@ -206,10 +214,11 @@ class ServerManagerManagedServersTest(UDSTestCase):
         with self.createMockApiRequester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                uuid, counter = self.assign(
-                    userService,
-                    lockTime=datetime.timedelta(seconds=1),
-                )
+                assignation = self.assign(userService)
+                if assignation is None:
+                    self.fail('Assignation returned None')
+                    return  # For mypy
+                uuid, counter = assignation
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # And only one assignment, so counter is 1, (because of the lock)
@@ -217,9 +226,10 @@ class ServerManagerManagedServersTest(UDSTestCase):
                 # Server locked should not be None (that is, it should be locked)
                 self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
-            # Next one should fail with an exceptions.UDSException
-            with self.assertRaises(exceptions.UDSException):
+            # Next one should fail returning None
+            self.assertIsNone(
                 self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
+            )
 
             # Wait a second, and try again, it should work
             time.sleep(1)
@@ -233,7 +243,11 @@ class ServerManagerManagedServersTest(UDSTestCase):
             for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     # Ensure locking server, so we have to use every server only once
-                    uuid, counter = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
+                    assignation = self.assign(userService)
+                    if assignation is None:
+                        self.fail('Assignation returned None')
+                        return  # For mypy
+                    uuid, counter = assignation
                     # uuid shuld be one on registered servers
                     self.assertTrue(uuid in self.all_uuids)
                     # And only one assignment, so counter is 1
@@ -242,8 +256,9 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
         # Trying to lock a new one, should fail
-        with self.assertRaises(exceptions.UDSException):
+        self.assertIsNone(
             self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=32))
+        )
 
         # All servers should be locked
         for server in self.registered_servers_group.servers.all():
