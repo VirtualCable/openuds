@@ -38,7 +38,7 @@ from uds.core import services
 from uds.core.ui import gui
 
 from .publication import TestPublication
-from .deployment import TestUserDeployment
+from .deployment import TestUserService
 
 
 # Not imported at runtime, just for type checking
@@ -69,7 +69,7 @@ class TestServiceNoCache(services.Service):
     mustAssignManually = False
 
     publicationType = None
-    deployedType = TestUserDeployment
+    deployedType = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())
@@ -105,7 +105,7 @@ class TestServiceCache(services.Service):
     # : Note that this is a MUST if you indicate that needPublication
     publicationType = TestPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = TestUserDeployment
+    deployedType = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())

@@ -357,9 +357,9 @@ class CalendarAction(UUIDModel):
             for i in self.service_pool.cachedUserServices().filter(
                 UserServiceManager().getCacheStateFilter(
                     self.service_pool,
-                    services.UserDeployment.L1_CACHE
+                    services.UserService.L1_CACHE
                     if self.action == CALENDAR_ACTION_CLEAN_CACHE_L1['id']
-                    else services.UserDeployment.L2_CACHE,
+                    else services.UserService.L2_CACHE,
                 )
             ):
                 i.remove()

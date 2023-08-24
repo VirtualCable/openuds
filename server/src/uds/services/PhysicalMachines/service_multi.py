@@ -305,7 +305,7 @@ class IPMachinesService(IPServiceBase):
         self,
         assignableId: str,
         user: 'models.User',
-        userDeployment: 'services.UserDeployment',
+        userDeployment: 'services.UserService',
     ) -> str:
         userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
         theIP = IPServiceBase.getIp(assignableId)

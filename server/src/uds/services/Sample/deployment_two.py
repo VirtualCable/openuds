@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class SampleUserDeploymentTwo(services.UserDeployment):
+class SampleUserServiceTwo(services.UserService):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -290,7 +290,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
         self._count = 0
 
         # random fail
-        if random.randint(0, 9) == 9:
+        if random.randint(0, 9) == 9:  # nosec: just testing values
             # Note that we can mark this string as translatable, and return
             # it translated at reasonOfError method
             self._error = 'Random error at deployForUser :-)'
@@ -352,7 +352,7 @@ class SampleUserDeploymentTwo(services.UserDeployment):
             return State.FINISHED
 
         # random fail
-        if random.randint(0, 9) == 9:
+        if random.randint(0, 9) == 9:  # nosec: just testing values
             self._error = 'Random error at checkState :-)'
             return State.ERROR
 

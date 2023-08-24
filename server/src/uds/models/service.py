@@ -39,6 +39,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 from uds.core.util import unique
 from uds.core.util import net
+from uds.core.types.services import ServicesCountingType
 
 from .managed_object_model import ManagedObjectModel
 from .tag import TaggingMixin
@@ -58,13 +59,12 @@ class ServiceTokenAlias(models.Model):
     This model stores the alias for a service token.
     """
 
-    service = models.ForeignKey(
-        'Service', on_delete=models.CASCADE, related_name='aliases'
-    )
+    service = models.ForeignKey('Service', on_delete=models.CASCADE, related_name='aliases')
     alias = models.CharField(max_length=64, unique=True)
 
-    def __str__(self)  -> str:
+    def __str__(self) -> str:
         return str(self.alias)  # pylint complains about CharField
+
 
 # pylint: disable=no-member
 class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
@@ -78,13 +78,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         Provider, related_name='services', on_delete=models.CASCADE
     )
 
-    token = models.CharField(
-        max_length=64, default=None, null=True, blank=True, unique=True
-    )
+    token = models.CharField(max_length=64, default=None, null=True, blank=True, unique=True)
 
-    # 0 -> Standard max count type, that is, count only "creating and running" instances
-    # 1 -> Count all instances, including "waint for delete" and "deleting" ones
-    max_services_count_type = models.PositiveIntegerField(default=0)
+    max_services_count_type = models.PositiveIntegerField(default=ServicesCountingType.STANDARD)
 
     _cachedInstance: typing.Optional['services.Service'] = None
 
@@ -100,11 +96,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         ordering = ('name',)
         app_label = 'uds'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['provider', 'name'], name='u_srv_provider_name'
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=['provider', 'name'], name='u_srv_provider_name')]
 
     def getEnvironment(self) -> Environment:
         """
@@ -120,9 +112,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             },
         )
 
-    def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
-    ) -> 'services.Service':
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'services.Service':
         """
         Instantiates the object this record contains.
 
@@ -148,9 +138,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             obj = sType(self.getEnvironment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
-            raise Exception(
-                f'Service type of {self.data_type} is not recogniced by provider {prov.name}'
-            )
+            raise Exception(f'Service type of {self.data_type} is not recogniced by provider {prov.name}')
 
         self._cachedInstance = obj
 
@@ -172,26 +160,28 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
         return prov.getServiceByType(self.data_type) or services.Service
 
+    @property
+    def maxServicesCountType(self) -> ServicesCountingType:
+        return ServicesCountingType.fromInt(self.max_services_count_type)
+
     def isInMaintenance(self) -> bool:
         # orphaned services?
         return self.provider.isInMaintenance() if self.provider else True
 
-    def testServer(
-        self, host: str, port: typing.Union[str, int], timeout: float = 4
-    ) -> bool:
+    def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return net.testConnection(host, port, timeout)
 
     @property
     def oldMaxAccountingMethod(self) -> bool:
         # Compatibility with old accounting method
         # Counts only "creating and running" instances for max limit checking
-        return self.max_services_count_type == 0
+        return self.maxServicesCountType == ServicesCountingType.STANDARD
 
     @property
     def newMaxAccountingMethod(self) -> bool:
         # Compatibility with new accounting method,
         # Counts EVERYTHING for max limit checking
-        return self.max_services_count_type == 1
+        return self.maxServicesCountType == ServicesCountingType.CONSERVATIVE
 
     def __str__(self) -> str:
         return f'{self.name} of type {self.data_type} (id:{self.id})'

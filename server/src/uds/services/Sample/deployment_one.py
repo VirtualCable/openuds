@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class SampleUserDeploymentOne(services.UserDeployment):
+class SampleUserServiceOne(services.UserService):
     """
     This class generates the user consumable elements of the service tree.
 
@@ -243,7 +243,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
         self.storage.saveData('count', '0')
 
         # random fail
-        if random.randint(0, 9) == 9:
+        if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.saveData('error', 'Random error at deployForUser :-)')
             return State.ERROR
 
@@ -286,7 +286,7 @@ class SampleUserDeploymentOne(services.UserDeployment):
             return State.FINISHED
 
         # random fail
-        if random.randint(0, 9) == 9:
+        if random.randint(0, 9) == 9:  # nosec: just testing values
             self.storage.saveData('error', 'Random error at checkState :-)')
             return State.ERROR
 

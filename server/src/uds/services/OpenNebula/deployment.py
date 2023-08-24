@@ -34,7 +34,7 @@ import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
-from uds.core.services import UserDeployment
+from uds.core import services
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -54,7 +54,7 @@ opCreate, opStart, opShutdown, opRemove, opWait, opError, opFinish, opRetry = ra
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
-class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
+class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-methods
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 6
 

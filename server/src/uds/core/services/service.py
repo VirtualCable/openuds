@@ -42,13 +42,11 @@ from uds.core.util import log
 
 from uds.core import types
 
-from .publication import Publication
-from .user_service import UserDeployment
 
 if typing.TYPE_CHECKING:
+    from .user_service import UserService
+    from .publication import Publication
     from uds.core import services
-    from uds.core import osmanagers
-    from uds.core.environment import Environment
     from uds.core.util.unique_name_generator import UniqueNameGenerator
     from uds.core.util.unique_mac_generator import UniqueMacGenerator
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
@@ -170,14 +168,14 @@ class Service(Module):
     # : provide a publication type
     # : This refers to class that provides the logic for publication, you can see
     # : :py:class:uds.core.services.Publication
-    publicationType: typing.ClassVar[typing.Optional[typing.Type[Publication]]] = None
+    publicationType: typing.ClassVar[typing.Optional[typing.Type['Publication']]] = None
 
     # : Types of deploys (services in cache and/or assigned to users)
     # : This is ALWAYS a MUST. You mast indicate the class responsible
     # : for managing the user deployments (user consumable services generated
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
-    deployedType: typing.ClassVar[typing.Optional[typing.Type[UserDeployment]]] = None
+    deployedType: typing.ClassVar[typing.Optional[typing.Type['UserService']]] = None
 
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
@@ -267,7 +265,7 @@ class Service(Module):
 
         # Keep untouched if maxServices is not present
 
-    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable[UserDeployment]:
+    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable['UserService']:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -306,18 +304,22 @@ class Service(Module):
         return []
 
     def assignFromAssignables(
-        self, assignableId: str, user: 'models.User', userDeployment: UserDeployment
+        self, assignableId: str, user: 'models.User', userDeployment: 'UserService'
     ) -> str:
         """
         Assigns from it internal assignable list to an user
 
-        Arguments:
-            assignableId {str} -- [description]
-            user {[type]} -- [description]
-            userDeployment {UserDeployment} -- [description]
-
+        args:
+            assignableId: Id of the assignable element
+            user: User to assign to
+            userDeployment: User deployment to assign
+            
+        Note:
+            Base implementation does nothing, to be overriden if needed
+            
         Returns:
-            str -- State
+            str: The state of the service after the assignation
+
         """
         return State.FINISHED
 

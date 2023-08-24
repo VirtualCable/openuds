@@ -33,7 +33,7 @@ import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
-from uds.core.services import UserDeployment
+from uds.core import services
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.state import State
 from uds.core.util import log
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 opCreate, opError, opFinish, opRemove, opRetry, opStart = range(6)
 
 
-class OGDeployment(UserDeployment):
+class OGDeployment(services.UserService):
     """
     This class generates the user consumable elements of the service tree.
 

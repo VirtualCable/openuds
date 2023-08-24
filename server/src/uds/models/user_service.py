@@ -180,7 +180,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             },
         )
 
-    def getInstance(self) -> 'services.UserDeployment':
+    def getInstance(self) -> 'services.UserService':
         """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.
@@ -240,7 +240,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 )
         return us
 
-    def updateData(self, userServiceInstance: 'services.UserDeployment'):
+    def updateData(self, userServiceInstance: 'services.UserService'):
         """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 

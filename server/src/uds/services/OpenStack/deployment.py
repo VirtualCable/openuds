@@ -34,7 +34,7 @@ import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
-from uds.core.services import UserDeployment
+from uds.core import services
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -54,7 +54,7 @@ opCreate, opStart, opSuspend, opRemove, opWait, opError, opFinish, opRetry = ran
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
-class LiveDeployment(UserDeployment):  # pylint: disable=too-many-public-methods
+class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-methods
     """
     This class generates the user consumable elements of the service tree.
 

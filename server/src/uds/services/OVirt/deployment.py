@@ -66,7 +66,7 @@ NO_MORE_NAMES = 'NO-NAME-ERROR'
 UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 
 
-class OVirtLinkedDeployment(services.UserDeployment):
+class OVirtLinkedDeployment(services.UserService):
     """
     This class generates the user consumable elements of the service tree.
 

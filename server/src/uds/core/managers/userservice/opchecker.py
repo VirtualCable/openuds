@@ -37,7 +37,7 @@ from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.core.services import UserDeployment
+from uds.core import services
 from uds.models import UserService
 
 logger = logging.getLogger(__name__)
@@ -49,12 +49,12 @@ USERSERVICE_TAG = 'cm-'
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater:
     userService: UserService
-    userServiceInstance: UserDeployment
+    userServiceInstance: services.UserService
 
     def __init__(
         self,
         userService: UserService,
-        userServiceInstance: typing.Optional[UserDeployment] = None,
+        userServiceInstance: typing.Optional[services.UserService] = None,
     ):
         self.userService = userService
         self.userServiceInstance = (
@@ -209,7 +209,7 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    def makeUnique(userService: UserService, userServiceInstance: UserDeployment, state: str):
+    def makeUnique(userService: UserService, userServiceInstance: services.UserService, state: str):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
@@ -217,7 +217,7 @@ class UserServiceOpChecker(DelayedTask):
         UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
 
     @staticmethod
-    def checkAndUpdateState(userService: UserService, userServiceInstance: UserDeployment, state: str):
+    def checkAndUpdateState(userService: UserService, userServiceInstance: services.UserService, state: str):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished

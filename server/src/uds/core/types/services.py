@@ -39,3 +39,20 @@ class ServiceType(enum.StrEnum):
     def asStr(self) -> str:
         """Returns the service type as a string"""
         return str(self)
+
+
+class ServicesCountingType(enum.IntEnum):
+    # 0 -> Standard max count type, that is, count only "creating and running" instances
+    # 1 -> Count all instances, including "waint for delete" and "deleting" ones
+    STANDARD = 0
+    CONSERVATIVE = 1
+
+    @staticmethod
+    def fromInt(value: int) -> 'ServicesCountingType':
+        """Returns the MaxServiceCountingMethodType from an int
+        If the int is not a valid value, returns STANDARD
+        """
+        try:
+            return ServicesCountingType(value)
+        except ValueError:
+            return ServicesCountingType.STANDARD

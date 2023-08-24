@@ -38,8 +38,8 @@ from uds.core import services, exceptions
 from uds.core.ui import gui
 
 from .publication import SamplePublication
-from .deployment_one import SampleUserDeploymentOne
-from .deployment_two import SampleUserDeploymentTwo
+from .deployment_one import SampleUserServiceOne
+from .deployment_two import SampleUserServiceTwo
 
 
 # Not imported at runtime, just for type checking
@@ -116,7 +116,7 @@ class ServiceOne(services.Service):
     # : In our case, we do no need a publication, so this is None
     publicationType = None
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = SampleUserDeploymentOne
+    deployedType = SampleUserServiceOne
 
     # Now the form part, this service will have only two "dummy" fields
     # If we don't indicate an order, the output order of fields will be
@@ -223,7 +223,7 @@ class ServiceTwo(services.Service):
     # : Note that this is a MUST if you indicate that needPublication
     publicationType = SamplePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = SampleUserDeploymentTwo
+    deployedType = SampleUserServiceTwo
 
     # Gui, we will use here the EditableList field
     names = gui.EditableListField(label=_('List of names'))

@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 
 
-class UserDeployment(Environmentable, Serializable):
+class UserService(Environmentable, Serializable):
     """
     Interface for deployed services.
 
@@ -577,7 +577,7 @@ class UserDeployment(Environmentable, Serializable):
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.cancel != UserDeployment.cancel  # type: ignore
+        return cls.cancel != UserService.cancel  # type: ignore
 
     def reset(self) -> None:
         """

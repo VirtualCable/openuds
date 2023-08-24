@@ -71,7 +71,7 @@ UP_STATES = ('up', 'reboot_in_progress', 'powering_up', 'restoring_state')
 GUEST_SHUTDOWN_WAIT = 90  # Seconds
 
 
-class ProxmoxDeployment(services.UserDeployment):
+class ProxmoxDeployment(services.UserService):
     """
     This class generates the user consumable elements of the service tree.
 

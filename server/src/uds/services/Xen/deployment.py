@@ -29,11 +29,11 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle
+import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
 
-from uds.core.services import UserDeployment
+from uds.core import services
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -66,7 +66,7 @@ logger = logging.getLogger(__name__)
 NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 
-class XenLinkedDeployment(UserDeployment):
+class XenLinkedDeployment(services.UserService):
     # : Recheck every six seconds by default (for task methods)
     suggestedTime = 7
 

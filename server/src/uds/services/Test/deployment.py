@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TestUserDeployment(services.UserDeployment):
+class TestUserService(services.UserService):
     """
     Simple testing deployment, no cache
     """
@@ -68,7 +68,7 @@ class TestUserDeployment(services.UserDeployment):
 
     def initialize(self) -> None:
         super().initialize()
-        self.data = TestUserDeployment.Data()
+        self.data = TestUserService.Data()
 
     # : Recheck every five seconds by default (for task methods)
     suggestedTime = 5

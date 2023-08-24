@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class IPMachineDeployed(services.UserDeployment, AutoAttributes):
+class IPMachineDeployed(services.UserService, AutoAttributes):
     suggestedTime = 10
 
     _ip: str
@@ -58,7 +58,7 @@ class IPMachineDeployed(services.UserDeployment, AutoAttributes):
 
     def __init__(self, environment, **kwargs):
         AutoAttributes.__init__(self, ip=str, reason=str, state=str)
-        services.UserDeployment.__init__(self, environment, **kwargs)
+        services.UserService.__init__(self, environment, **kwargs)
         self._state = State.FINISHED
 
     # Utility overrides for type checking...

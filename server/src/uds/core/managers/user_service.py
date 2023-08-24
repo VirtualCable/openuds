@@ -403,7 +403,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 servicePool.cachedUserServices()
                 .select_for_update()
                 .filter(
-                    cache_level=services.UserDeployment.L1_CACHE,
+                    cache_level=services.UserService.L1_CACHE,
                     state=State.USABLE,
                     os_state=State.USABLE,
                 )[
@@ -431,7 +431,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     typing.List[UserService],
                     servicePool.cachedUserServices()
                     .select_for_update()
-                    .filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)[
+                    .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[
                         :1  # type: ignore  # Slicing is not supported by pylance right now
                     ],
                 )
@@ -463,7 +463,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 servicePool,
                 events.ET_CACHE_HIT,
                 fld1=servicePool.cachedUserServices()
-                .filter(cache_level=services.UserDeployment.L1_CACHE, state=State.USABLE)
+                .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)
                 .count(),
             )
             return cache
@@ -475,7 +475,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             caches = (
                 servicePool.cachedUserServices()
                 .select_for_update()
-                .filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)[
+                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[
                     :1  # type: ignore  # Slicing is not supported by pylance right now
                 ]
             )
@@ -506,7 +506,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 servicePool,
                 events.ET_CACHE_MISS,
                 fld1=servicePool.cachedUserServices()
-                .filter(cache_level=services.UserDeployment.L1_CACHE, state=State.PREPARING)
+                .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)
                 .count(),
             )
             return cache
@@ -725,7 +725,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     ) -> typing.Tuple[
         typing.Optional[str],
         UserService,
-        typing.Optional['services.UserDeployment'],
+        typing.Optional['services.UserService'],
         Transport,
         typing.Optional[transports.Transport],
     ]:
@@ -899,7 +899,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     ) -> typing.Tuple[
         typing.Optional[str],
         UserService,
-        typing.Optional['services.UserDeployment'],
+        typing.Optional['services.UserService'],
         Transport,
         typing.Optional[transports.Transport],
     ]:

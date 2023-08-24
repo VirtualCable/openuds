@@ -120,12 +120,12 @@ class ServiceCacheUpdater(Job):
             # to create new items over the limit stablisshed, so we will not remove them anymore
             inCacheL1: int = (
                 servicePool.cachedUserServices()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
                 .count()
             )
             inCacheL2: int = (
                 servicePool.cachedUserServices()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE))
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
                 .count()
             )
             inAssigned: int = (
@@ -211,7 +211,7 @@ class ServiceCacheUpdater(Job):
                     servicePool.cachedUserServices()
                     .select_for_update()
                     .filter(
-                        UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE)
+                        UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE)
                     )
                     .order_by('creation_date')
                 ):
@@ -224,13 +224,13 @@ class ServiceCacheUpdater(Job):
                         break
 
             if valid is not None:
-                valid.moveToLevel(services.UserDeployment.L1_CACHE)
+                valid.moveToLevel(services.UserService.L1_CACHE)
                 return
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
-                services.UserDeployment.L1_CACHE,
+                services.UserService.L1_CACHE,
             )
         except MaxServicesReachedError:
             log.doLog(
@@ -266,7 +266,7 @@ class ServiceCacheUpdater(Job):
             # This has a velid publication, or it will not be here
             UserServiceManager().createCacheFor(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
-                services.UserDeployment.L2_CACHE,
+                services.UserService.L2_CACHE,
             )
         except MaxServicesReachedError:
             logger.warning(
@@ -289,7 +289,7 @@ class ServiceCacheUpdater(Job):
         cacheItems: typing.List[UserService] = [
             i
             for i in servicePool.cachedUserServices()
-            .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L1_CACHE))
+            .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
             .order_by('-creation_date')
             .iterator()
             if not i.destroy_after
@@ -313,7 +313,7 @@ class ServiceCacheUpdater(Job):
                     break
 
             if valid is not None:
-                valid.moveToLevel(services.UserDeployment.L2_CACHE)
+                valid.moveToLevel(services.UserService.L2_CACHE)
                 return
 
         cache = cacheItems[0]
@@ -330,7 +330,7 @@ class ServiceCacheUpdater(Job):
         if cacheL2 > 0:
             cacheItems = (
                 servicePool.cachedUserServices()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserDeployment.L2_CACHE))
+                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
