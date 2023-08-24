@@ -449,7 +449,7 @@ class UDSClientApi(UDSApi):
             max_idle=result['max_idle'],
         )
 
-    def logout(self, username: str, sessionType: typing.Optional[str]) -> None:
+    def logout(self, username: str, sessionType: typing.Optional[str] = None) -> None:
         payLoad = {'username': username, 'session_type': sessionType or UNKNOWN}
         self.post('logout', payLoad)
 
