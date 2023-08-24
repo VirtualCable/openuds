@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -71,6 +71,7 @@ class RDPFile:
     enableClipboard = False
     customParameters: typing.Optional[str] = None
     enforcedShares: typing.Optional[str] = None
+    optimizeTeams = False
 
     def __init__(
         self,
@@ -233,7 +234,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == OsDetector.KnownOS.Windows:
+            if self.target == OsDetector.KnownOS.Windows and not self.optimizeTeams:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'

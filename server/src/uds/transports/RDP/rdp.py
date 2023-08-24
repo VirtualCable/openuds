@@ -12,7 +12,7 @@
 #    * Redistributions in binary form must reproduce the above copyright notice,
 #      this list of conditions and the following disclaimer in the documentation
 #      and/or other materials provided with the distribution.
-#    * Neither the name of Virtual Cable S.L. nor the names of its contributors
+#    * Neither the name of Virtual Cable S.L.U. nor the names of its contributors
 #      may be used to endorse or promote products derived from this software
 #      without specific prior written permission.
 #
@@ -54,6 +54,8 @@ class RDPTransport(BaseRDPTransport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
 
+    isBase = False
+
     typeName = _('RDP')
     typeType = 'RDPTransport'
     typeDescription = _('RDP Protocol. Direct connection.')
@@ -92,6 +94,7 @@ class RDPTransport(BaseRDPTransport):
     customParameters = BaseRDPTransport.customParameters
     customParametersMAC = BaseRDPTransport.customParametersMAC
     customParametersWindows = BaseRDPTransport.customParametersWindows
+    optimizeTeams = BaseRDPTransport.optimizeTeams
 
     def getUDSTransportScript(  # pylint: disable=too-many-locals
         self,
@@ -144,6 +147,7 @@ class RDPTransport(BaseRDPTransport):
         r.printerString = self.printerString.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
+        r.optimizeTeams = self.optimizeTeams.isTrue()
 
         osName = {
             OsDetector.KnownOS.Windows: 'windows',
@@ -175,6 +179,7 @@ class RDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_file': r.as_file,
+                    'optimize_teams': self.optimizeTeams.isTrue(),
                 }
             )
         elif osName == 'linux':

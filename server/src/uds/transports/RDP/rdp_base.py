@@ -62,6 +62,8 @@ class BaseRDPTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
+    isBase = True
+
     iconFile = 'rdp.png'
     protocol = transports.protocols.RDP
 
@@ -346,6 +348,12 @@ class BaseRDPTransport(transports.Transport):
         tab='Windows Client',
     )
 
+    optimizeTeams = gui.CheckBoxField(
+        label=_('Optimize Teams'),
+        order=46,
+        tooltip=_('If checked, Teams will be optimized (only works on Windows clients)'),
+        tab='Windows Client',
+    )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """
@@ -421,6 +429,9 @@ class BaseRDPTransport(transports.Transport):
         # If AzureAD, include it on username
         if azureAd:
             username = 'AzureAD\\' + username
+
+        if self.optimizeTeams.isTrue():
+            password = ''  # nosec
 
         return {
             'protocol': self.protocol,
