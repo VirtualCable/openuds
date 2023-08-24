@@ -95,9 +95,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
 
-    def _checkMaxDeployedReached(self, servicePool: ServicePool) -> None:
+    def _checkMaxUserServicesReached(self, servicePool: ServicePool) -> None:
         """
-        Checks if maxDeployed for the service has been reached, and, if so,
+        Checks if maxUserServices for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         """
         if self.maximumUserServicesDeployed(servicePool.service):
@@ -119,10 +119,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         serviceInstance = service.getInstance()
         # Early return, so no database count is needed
-        if serviceInstance.maxDeployed == services.Service.UNLIMITED:
+        if serviceInstance.maxUserServices == services.Service.UNLIMITED:
             return False
 
-        if self.getExistingUserServices(service) >= (serviceInstance.maxDeployed or 1):
+        if self.getExistingUserServices(service) >= (serviceInstance.maxUserServices or 1):
             return True
 
         return False
@@ -131,8 +131,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Private method to instatiate a cache element at database with default states
         """
-        # Checks if maxDeployed has been reached and if so, raises an exception
-        self._checkMaxDeployedReached(publication.deployed_service)
+        # Checks if maxUserServices has been reached and if so, raises an exception
+        self._checkMaxUserServicesReached(publication.deployed_service)
         now = getSqlDatetime()
         return publication.userServices.create(
             cache_level=cacheLevel,
@@ -150,7 +150,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Private method to instatiate an assigned element at database with default state
         """
-        self._checkMaxDeployedReached(publication.deployed_service)
+        self._checkMaxUserServicesReached(publication.deployed_service)
         now = getSqlDatetime()
         return publication.userServices.create(
             cache_level=0,
@@ -170,7 +170,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
         an UserService with no publications, and create them from an ServicePool
         """
-        self._checkMaxDeployedReached(servicePool)
+        self._checkMaxUserServicesReached(servicePool)
         now = getSqlDatetime()
         return servicePool.userServices.create(
             cache_level=0,

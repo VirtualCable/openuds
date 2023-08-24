@@ -125,7 +125,7 @@ class Service(Module):
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
     # : for providing deployed services to users. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    maxDeployed: int = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    maxUserServices: int = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
@@ -254,14 +254,14 @@ class Service(Module):
         super().unmarshal(data)
 
         if hasattr(self, 'maxServices'):
-            # Fix Own "maxDeployed" value after loading fields
+            # Fix self "maxUserServices" value after loading fields
             try:
-                self.maxDeployed = getattr(self, 'maxServices').num()
+                self.maxUserServices = getattr(self, 'maxServices').num()
             except Exception:
-                self.maxDeployed = Service.UNLIMITED
+                self.maxUserServices = Service.UNLIMITED
 
-            if self.maxDeployed < 1:
-                self.maxDeployed = Service.UNLIMITED
+            if self.maxUserServices < 1:
+                self.maxUserServices = Service.UNLIMITED
 
         # Keep untouched if maxServices is not present
 

@@ -500,10 +500,10 @@ class ServicesPools(ModelHandler):
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
-                    if serviceType.maxDeployed != -1:
-                        fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxDeployed))
-                        fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxDeployed)
-                        fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxDeployed)
+                    if serviceType.maxUserServices != -1:
+                        fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxUserServices))
+                        fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxUserServices)
+                        fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxUserServices)
             except Exception as e:
                 raise RequestError(gettext('This service requires an OS Manager')) from e
 

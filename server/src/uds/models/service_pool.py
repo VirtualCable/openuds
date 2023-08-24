@@ -679,7 +679,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0 and self.service:
-            maxs = self.service.getInstance().maxDeployed
+            maxs = self.service.getInstance().maxUserServices
 
         if maxs <= 0:
             return 0

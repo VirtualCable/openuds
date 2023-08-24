@@ -119,10 +119,6 @@ class IPMachinesService(IPServiceBase):
     typeDescription = _('This service provides access to POWERED-ON Machines by IP')
     iconFile = 'machines.png'
 
-    # Characteristics of service
-    maxDeployed = (
-        services.Service.UNLIMITED
-    )  # If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state
     needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
@@ -223,7 +219,7 @@ class IPMachinesService(IPServiceBase):
                 self._lockByExternalAccess = gui.toBool(values[5].decode())
 
         # Sets maximum services for this
-        self.maxDeployed = len(self._ips)
+        self.maxUserServices = len(self._ips)
 
     def canBeUsed(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked

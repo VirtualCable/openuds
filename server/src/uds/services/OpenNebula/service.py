@@ -71,9 +71,6 @@ class LiveService(services.Service):
 
     # Functional related data
 
-    # : If the service provides more than 1 "deployed user" (-1 = no limit,
-    # : 0 = ???? (do not use it!!!), N = max number to deploy
-    maxDeployed = -1
     # : If we need to generate "cache" for this service, so users can access the
     # : provided services faster. Is usesCache is True, you will need also
     # : set publicationType, do take care about that!

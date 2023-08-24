@@ -88,9 +88,6 @@ class ServiceOne(services.Service):
 
     # Functional related data
 
-    # : If the service provides more than 1 "deployed user" (-1 = no limit,
-    # : 0 = ???? (do not use it!!!), N = max number to deploy
-    maxDeployed = -1
     # : If we need to generate "cache" for this service, so users can access the
     # : provided services faster. Is usesCache is True, you will need also
     # : set publicationType, do take care about that!
@@ -209,7 +206,7 @@ class ServiceTwo(services.Service):
     iconFile = 'provider.png'  # : We reuse provider icon here :-)
 
     # Functional related data
-    maxDeployed = 5
+    maxUserServices = 5  # : Max number of deployed services for user in this service
     usesCache = True
     cacheTooltip = _('L1 cache for dummy elements')
     usesCache_L2 = True

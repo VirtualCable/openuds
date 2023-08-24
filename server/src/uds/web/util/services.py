@@ -338,9 +338,9 @@ def getServicesData(
             toBeReplacedTxt = ''
 
         # Calculate max deployed
-        maxDeployed = str(sPool.max_srvs)
+        maxUserServices = str(sPool.max_srvs)
         # if sPool.service.getType().usesCache is False:
-        #    maxDeployed = sPool.service.getInstance().maxDeployed
+        #    maxUserServices = sPool.service.getInstance().maxUserServices
 
         # pylint: disable=cell-var-from-loop
         def datator(x) -> str:
@@ -357,7 +357,7 @@ def getServicesData(
                 is_meta=False,
                 name=datator(sPool.name),
                 visual_name=datator(
-                    sPool.visual_name.replace('{use}', use_percent).replace('{total}', maxDeployed)
+                    sPool.visual_name.replace('{use}', use_percent).replace('{total}', maxUserServices)
                 ),
                 description=sPool.comments,
                 group=group,

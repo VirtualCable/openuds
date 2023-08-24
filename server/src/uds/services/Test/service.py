@@ -59,7 +59,7 @@ class TestServiceNoCache(services.Service):
 
     # Functional related data
 
-    maxDeployed = 1000  # A big number for testing purposes
+    maxUserservices = 1000  # A big number for testing purposes
     usesCache = False
     cacheTooltip = _('None')
     usesCache_L2 = False
@@ -91,7 +91,7 @@ class TestServiceCache(services.Service):
     iconFile = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
     # Functional related data
-    maxDeployed = 1000  # A big number for testing
+    maxUserServices = 1000  # A big number for testing
     usesCache = True
     cacheTooltip = _('L1 cache for dummy elements')
     usesCache_L2 = True
