@@ -241,7 +241,7 @@ class Service(Module):
     def isAvailable(self) -> bool:
         """
         Returns if this service is reachable (that is, we can operate with it). This is used, for example, to check
-        if a service is "operable" before removing an user service (that is, pass from "waiting for remove" to "removing")
+        if a service is "operable" before removing an user service (pass from "waiting for removal" to "removing")
         By default, this method returns True.
         Ideally, availability should be cached for a while, so that we don't have to check it every time.
         """
