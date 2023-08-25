@@ -44,6 +44,18 @@ from .version import VERSION
 # Default public listen port
 LISTEN_PORT = 43910
 
+SECURE_CIPHERS = (
+    'TLS_AES_256_GCM_SHA384'
+    ':TLS_CHACHA20_POLY1305_SHA256'
+    ':TLS_AES_128_GCM_SHA256'
+    ':ECDHE-RSA-AES256-GCM-SHA384'
+    ':ECDHE-RSA-AES128-GCM-SHA256'
+    ':ECDHE-RSA-CHACHA20-POLY1305'
+    ':ECDHE-ECDSA-AES128-GCM-SHA256'
+    ':ECDHE-ECDSA-AES256-GCM-SHA384'
+    ':ECDHE-ECDSA-CHACHA20-POLY1305'
+)
+
 # Default timeout
 TIMEOUT = 5  # 5 seconds is more than enought
 
@@ -115,8 +127,10 @@ class UDSApi:  # pylint: disable=too-few-public-methods
             if validateCert
             else ssl._create_unverified_context(purpose=ssl.Purpose.SERVER_AUTH, check_hostname=False)
         )
+
         # Disable SSLv2, SSLv3, TLSv1, TLSv1.1, TLSv1.2
-        context.minimum_version = ssl.TLSVersion.TLSv1_3
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+        context.set_ciphers(SECURE_CIPHERS)
 
         # Configure session security
         class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
@@ -124,7 +138,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 kwargs["ssl_context"] = context
 
                 return super().init_poolmanager(*args, **kwargs)
-            
+
             def cert_verify(self, conn, url, verify, cert):  # pylint: disable=unused-argument
                 # Overridden to do nothing
                 return super().cert_verify(conn, url, validateCert, cert)
@@ -157,9 +171,7 @@ class UDSApi:  # pylint: disable=too-few-public-methods
                 headers=headers,
                 # verify=self._validateCert, Not needed, already in session
                 timeout=TIMEOUT,
-                proxies=NO_PROXY  # type: ignore
-                if disableProxy
-                else None,  # if not proxies wanted, enforce it
+                proxies=NO_PROXY if disableProxy else None,  # type: ignore  # if not proxies wanted, enforce it
             )
 
             if result.ok:
@@ -298,9 +310,7 @@ class UDSServerApi(UDSApi):
             else None,
         )
 
-    def ready(
-        self, own_token: str, secret: str, ip: str, port: int
-    ) -> types.CertificateInfoType:
+    def ready(self, own_token: str, secret: str, ip: str, port: int) -> types.CertificateInfoType:
         payload = {'token': own_token, 'secret': secret, 'ip': ip, 'port': port}
         result = self._doPost('ready', payload)
 
@@ -311,9 +321,7 @@ class UDSServerApi(UDSApi):
             ciphers=result.get('ciphers', ''),
         )
 
-    def notifyIpChange(
-        self, own_token: str, secret: str, ip: str, port: int
-    ) -> types.CertificateInfoType:
+    def notifyIpChange(self, own_token: str, secret: str, ip: str, port: int) -> types.CertificateInfoType:
         payload = {'token': own_token, 'secret': secret, 'ip': ip, 'port': port}
         result = self._doPost('ipchange', payload)
 
@@ -356,9 +364,7 @@ class UDSServerApi(UDSApi):
         secret: typing.Optional[str],
     ) -> types.LoginResultInfoType:
         if not token:
-            return types.LoginResultInfoType(
-                ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None
-            )
+            return types.LoginResultInfoType(ip='0.0.0.0', hostname=UNKNOWN, dead_line=None, max_idle=None)
         payload = {
             'type': actor_type or types.MANAGED,
             'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
@@ -434,9 +440,7 @@ class UDSClientApi(UDSApi):
         payLoad = {'callback_url': callbackUrl}
         self.post('unregister', payLoad)
 
-    def login(
-        self, username: str, sessionType: typing.Optional[str] = None
-    ) -> types.LoginResultInfoType:
+    def login(self, username: str, sessionType: typing.Optional[str] = None) -> types.LoginResultInfoType:
         payLoad = {
             'username': username,
             'session_type': sessionType or UNKNOWN,
