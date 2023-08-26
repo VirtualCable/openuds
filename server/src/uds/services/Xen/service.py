@@ -96,7 +96,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # : In our case, we do no need a publication, so this is None
     publicationType = XenPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = XenLinkedDeployment
+    userServiceType = XenLinkedDeployment
 
     servicesTypeProvided = types.services.ServiceType.VDI
 

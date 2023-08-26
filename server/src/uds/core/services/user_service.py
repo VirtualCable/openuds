@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 
 class UserService(Environmentable, Serializable):
     """
-    Interface for deployed services.
+    Interface for user services.
 
     This class provides the needed logic for implementing an "consumable user service",
     that are the elements that the user will interact with.

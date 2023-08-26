@@ -73,12 +73,10 @@ class Environment:
         from uds.core.util.cache import Cache  # pylint: disable=import-outside-toplevel
         from uds.core.util.storage import Storage  # pylint: disable=import-outside-toplevel
 
-        if idGenerators is None:
-            idGenerators = {}
         self._key = uniqueKey
         self._cache = Cache(uniqueKey)
         self._storage = Storage(uniqueKey)
-        self._idGenerators = idGenerators
+        self._idGenerators = idGenerators or {}
 
     @property
     def cache(self) -> 'Cache':

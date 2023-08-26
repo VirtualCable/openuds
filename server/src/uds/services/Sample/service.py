@@ -62,7 +62,7 @@ class ServiceOne(services.Service):
         * publicationType, type of publication in case it needs publication.
           If this is not provided, core will assume that the service do not
           needs publishing.
-        * deployedType, type of deployed user service. Do not forget this!!!
+        * userServiceType, type of deployed user service. Do not forget this!!!
 
     The rest of them can be ommited, but its recommended that you fill all
     declarations shown in this sample (that in fact, are all)
@@ -113,7 +113,7 @@ class ServiceOne(services.Service):
     # : In our case, we do no need a publication, so this is None
     publicationType = None
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = SampleUserServiceOne
+    userServiceType = SampleUserServiceOne
 
     # Now the form part, this service will have only two "dummy" fields
     # If we don't indicate an order, the output order of fields will be
@@ -220,7 +220,7 @@ class ServiceTwo(services.Service):
     # : Note that this is a MUST if you indicate that needPublication
     publicationType = SamplePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = SampleUserServiceTwo
+    userServiceType = SampleUserServiceTwo
 
     # Gui, we will use here the EditableList field
     names = gui.EditableListField(label=_('List of names'))

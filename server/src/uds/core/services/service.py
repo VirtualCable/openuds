@@ -175,7 +175,7 @@ class Service(Module):
     # : for managing the user deployments (user consumable services generated
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
-    deployedType: typing.ClassVar[typing.Optional[typing.Type['UserService']]] = None
+    userServiceType: typing.ClassVar[typing.Optional[typing.Type['UserService']]] = None
 
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
@@ -184,6 +184,7 @@ class Service(Module):
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
+    # This is a class attribute, so it can be overriden at instance level
     spawnsNew: bool = False
 
     # : If the service allows "reset", here we will announce it

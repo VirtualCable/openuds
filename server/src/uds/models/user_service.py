@@ -217,11 +217,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 'Got exception at getInstance of an userService %s (seems that publication does not exists!)',
                 self,
             )
-        if serviceInstance.deployedType is None:
+        if serviceInstance.userServiceType is None:
             raise Exception(
-                f'Class {serviceInstance.__class__.__name__} needs deployedType but it is not defined!!!'
+                f'Class {serviceInstance.__class__.__name__} needs userServiceType but it is not defined!!!'
             )
-        us = serviceInstance.deployedType(
+        us = serviceInstance.userServiceType(
             self.getEnvironment(),
             service=serviceInstance,
             publication=publicationInstance,

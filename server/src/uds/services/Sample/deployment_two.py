@@ -69,9 +69,9 @@ class SampleUserServiceTwo(services.UserService):
     by Serializable classes, like this) empty (that is, returns '' first and does
     nothing the second one)
 
-    Also Remember, if you don't include this class as the deployedType of the
+    Also Remember, if you don't include this class as the userServiceType of the
     SampleServiceTwo, or whenever you try to access a service of SampleServiceTwo,
-    you will get an exception that says that you haven't included the deployedType.
+    you will get an exception that says that you haven't included the userServiceType.
     """
 
     # : Recheck every five seconds by default (for task methods)

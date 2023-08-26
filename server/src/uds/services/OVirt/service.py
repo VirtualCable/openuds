@@ -99,7 +99,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     # : In our case, we do no need a publication, so this is None
     publicationType = OVirtPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = OVirtLinkedDeployment
+    userServiceType = OVirtLinkedDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
     servicesTypeProvided = types.services.ServiceType.VDI

@@ -70,7 +70,7 @@ class IPSingleMachineService(IPServiceBase):
     needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
     mustAssignManually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
-    deployedType = IPMachineDeployed
+    userServiceType = IPMachineDeployed
 
     servicesTypeProvided = types.services.ServiceType.VDI
 

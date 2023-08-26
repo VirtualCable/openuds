@@ -37,8 +37,7 @@ from uds.core import types
 from uds.core.util.os_detector import KnownOS
 from uds.core.util.model import getSqlDatetime
 from uds.core.util.request import ExtendedHttpRequest
-from uds.core.util.log import LogLevel
-from uds.core.util import properties
+from uds.core.util import properties, log, resolver
 
 from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
 
@@ -169,7 +168,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     certificate = models.TextField(default='', blank=True)
 
     # Log level, so we can filter messages for this server
-    log_level = models.IntegerField(default=LogLevel.ERROR.value)
+    log_level = models.IntegerField(default=log.LogLevel.ERROR.value)
 
     # Extra data, for server type custom data use (i.e. actor keeps command related data here)
     data = models.JSONField(null=True, blank=True, default=None)
@@ -235,7 +234,12 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """Returns the host of this server
         Host is hostname first, and if not exists, the ip of the server
         """
-        return self.hostname or self.ip
+        # If hostname exists, try first to resolve it
+        if self.hostname:
+            ips = resolver.resolve(self.hostname)
+            if ips:
+                return ips[0]
+        return self.ip
 
     @property
     def ip_version(self) -> int:

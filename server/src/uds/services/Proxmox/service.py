@@ -100,7 +100,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : In our case, we do no need a publication, so this is None
     publicationType = ProxmoxPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = ProxmoxDeployment
+    userServiceType = ProxmoxDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
     servicesTypeProvided = types.services.ServiceType.VDI

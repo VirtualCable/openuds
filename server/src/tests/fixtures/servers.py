@@ -38,7 +38,7 @@ import datetime
 from ..utils import generators
 
 
-def createRegisterdServer(
+def createServer(
     type: 'types.servers.ServerType',
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
@@ -80,7 +80,7 @@ def createServerGroup(
         port=port,
     )
     for i in range(num_servers):
-        server = createRegisterdServer(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
+        server = createServer(type, subtype=subtype, version=version, ip=ip, listen_port=listen_port)
         rsg.servers.add(server)
 
     return rsg

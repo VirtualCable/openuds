@@ -97,7 +97,7 @@ class LiveService(services.Service):
     # : In our case, we do no need a publication, so this is None
     publicationType = LivePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = LiveDeployment
+    userServiceType = LiveDeployment
 
     allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
     servicesTypeProvided = types.services.ServiceType.VDI

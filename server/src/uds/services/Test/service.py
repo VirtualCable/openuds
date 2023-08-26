@@ -69,7 +69,7 @@ class TestServiceNoCache(services.Service):
     mustAssignManually = False
 
     publicationType = None
-    deployedType = TestUserService
+    userServiceType = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())
@@ -105,7 +105,7 @@ class TestServiceCache(services.Service):
     # : Note that this is a MUST if you indicate that needPublication
     publicationType = TestPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = TestUserService
+    userServiceType = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())

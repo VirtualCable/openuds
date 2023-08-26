@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
@@ -26,48 +25,25 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
+import typing
+import functools
 
-from .unique_id_generator import UniqueIDGenerator
-
-logger = logging.getLogger(__name__)
+import dns.resolver
 
 
-# noinspection PyMethodOverriding
-class UniqueNameGenerator(UniqueIDGenerator):
-    __slots__ = ()
-
-    def __init__(self, owner):
-        super().__init__('name', owner)
-
-    def __toName(self, seq: int, length: int) -> str:
-        """Converts a sequence number to a name
-        
-        Args:
-            seq (int): Sequence number
-            length (int): Length of the name (will be filled with 0's)
-            
-        Returns:
-            str: Name, composed by baseName + sequence number with length digits (filled with 0's)
-        """
-        if seq == -1:
-            raise KeyError('No more names available. Please, increase service digits.')
-        return f'{self._baseName}{seq:0{length}d}'
-
-    def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ,arguments-renamed
-        self.setBaseName(baseName)
-        minVal = 0
-        maxVal = 10**length - 1
-        return self.__toName(super().get(minVal, maxVal), length)
-
-    def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.setBaseName(baseName)
-        super().transfer(int(name[len(self._baseName) :]), toUNGen)
-
-    def free(self, baseName: str, name: str) -> None:  # type: ignore  # pylint: disable=arguments-differ
-        self.setBaseName(baseName)
-        super().free(int(name[len(self._baseName) :]))
+@functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
+def resolve(hostname: str) -> typing.List[str]:
+    """
+    Resolves a hostname to a list of ips
+    First items are ipv4, then ipv6
+    """
+    ips: typing.List[str] = []
+    for i in ('A', 'AAAA'):
+        try:
+            ips.extend([str(ip) for ip in dns.resolver.resolve(hostname, i)])  # type: ignore
+        except dns.resolver.NXDOMAIN:
+            pass
+    return ips

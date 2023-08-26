@@ -89,7 +89,7 @@ class OGService(services.Service):
     # : In our case, we do no need a publication, so this is None
     publicationType = OGPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    deployedType = OGDeployment
+    userServiceType = OGDeployment
 
     allowedProtocols = protocols.GENERIC
     servicesTypeProvided = types.services.ServiceType.VDI
