@@ -31,8 +31,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import logging
 import datetime
-import random
 import typing
+from concurrent.futures import ThreadPoolExecutor
 
 from django.db import transaction
 from django.db.models import Q
@@ -116,9 +116,21 @@ class ServerManager(metaclass=singleton.Singleton):
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
         if excludeServersUUids:
             fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
+            
+        # Paralelize stats retrieval
+        cachedStats: typing.List[typing.Tuple[typing.Optional['types.servers.ServerStatsType'], 'models.Server']] = []
+        def _retrieveStats(server: 'models.Server') -> None:
+            try:
+                cachedStats.append((request.ServerApiRequester(server).getStats(), server))  # Store stats for later use
+            except Exception:
+                cachedStats.append((None, server))
 
-        for server in fltrs.select_for_update():
-            stats = request.ServerApiRequester(server).getStats()
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for server in fltrs.select_for_update():
+                executor.submit(_retrieveStats, server)
+        
+        # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
+        for stats, server in cachedStats:
             if stats is None:
                 unmanaged_list.append(server)
                 continue

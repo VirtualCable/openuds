@@ -150,6 +150,7 @@ class ServerApiRequester:
         """
         Notifies assign of user service to server
         """
+        logger.debug('Notifying assign of service %s to server %s', userService.uuid, self.server.host)
         self.post(
             'assign',
             types.connections.AssignRequestType(
@@ -169,6 +170,9 @@ class ServerApiRequester:
         """
         src = userService.getConnectionSource()
 
+        logger.debug(
+            'Notifying preconnect of service %s to server %s: %s', userService.uuid, self.server.host, info
+        )
         self.post(
             'preConnect',
             types.connections.PreconnectRequestType(
@@ -188,6 +192,7 @@ class ServerApiRequester:
         """
         Notifies removal of user service to server
         """
+        logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
         self.post('removeService', {'userservice': userService.uuid})
 
     @decorators.cached('reqserver', cacheTimeout=60)
@@ -195,6 +200,7 @@ class ServerApiRequester:
         """
         Returns the stats of a server
         """
+        logger.debug('Getting stats from server %s', self.server.host)
         data = self.get('stats')
         if data is None:
             return None

@@ -112,6 +112,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             def _getStats() -> typing.Optional[types.servers.ServerStatsType]:
                 # Get first argument from call to init on serverApiRequester
                 server = mockServerApiRequester.call_args[0][0]
+                logger.debug('Getting stats for %s', server.host)
                 return (getStats or (lambda x: self.server_stats.get(x.uuid)))(server)
 
             # return_value returns the instance of the mock
@@ -240,10 +241,15 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
     def testAssignReleaseMax(self) -> None:
         with self.createMockApiRequester() as mockServerApiRequester:
+            serverApiRequester = mockServerApiRequester.return_value
             for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     # Ensure locking server, so we have to use every server only once
                     assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
+                    self.assertEqual(
+                        serverApiRequester.notifyAssign.call_count,
+                        assignations * NUM_REGISTEREDSERVERS + elementNumber + 1,
+                    )
                     if assignation is None:
                         self.fail('Assignation returned None')
                         return  # For mypy
@@ -255,46 +261,57 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # Server locked should be None
                     self.assertIsNotNone(models.Server.objects.get(uuid=uuid).locked_until)
 
-        # Trying to lock a new one, should fail
-        self.assertIsNone(
-            self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=32))
-        )
+            # Trying to lock a new one, should fail
+            self.assertIsNone(
+                self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=32))
+            )
 
-        # All servers should be locked
-        for server in self.registered_servers_group.servers.all():
-            self.assertIsNotNone(server.locked_until)
+            # All servers should be locked
+            for server in self.registered_servers_group.servers.all():
+                self.assertIsNotNone(server.locked_until)
 
-        # Storage should have NUM_REGISTEREDSERVERS elements
-        self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
+            # Storage should have NUM_REGISTEREDSERVERS elements
+            self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
 
-        with self.manager.cntStorage() as stor:
-            self.assertEqual(len(stor), 0)  # No counter storage for managed servers
+            with self.manager.cntStorage() as stor:
+                self.assertEqual(len(stor), 0)  # No counter storage for managed servers
 
-        # Now release all, twice
-        for release in range(2):
+            # Now release all, twice
+            for release in range(2):
+                for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+                    res = self.manager.release(userService, self.registered_servers_group)
+                    if res:
+                        uuid, counter = res
+                        # uuid shuld be one on registered servers
+                        self.assertTrue(uuid in self.all_uuids)
+                        # Number of lasting assignations should be one less than before
+                        self.assertEqual(counter, 2 - release - 1)
+                    else:
+                        self.fail('Release returned None')
+                    self.assertEqual(
+                        serverApiRequester.notifyRelease.call_count,
+                        release * NUM_REGISTEREDSERVERS + elementNumber + 1,
+                        f'Error on loop {release} - {elementNumber}',
+                    )
+
+            # All servers should be unlocked
+            for server in self.registered_servers_group.servers.all():
+                self.assertIsNone(server.locked_until)
+
+            self.assertEqual(len(self.registered_servers_group.properties), 0)
+
+            with self.manager.cntStorage() as stor:
+                self.assertEqual(len(stor), 0)
+
+            # Trying to release again should return '', 0
             for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                 res = self.manager.release(userService, self.registered_servers_group)
                 if res:
                     uuid, counter = res
-                    # uuid shuld be one on registered servers
-                    self.assertTrue(uuid in self.all_uuids)
+                    self.assertEqual(uuid, '')
                     # Number of lasting assignations should be one less than before
-                    self.assertEqual(counter, 2 - release - 1)
-
-        # All servers should be unlocked
-        for server in self.registered_servers_group.servers.all():
-            self.assertIsNone(server.locked_until)
-
-        self.assertEqual(len(self.registered_servers_group.properties), 0)
-
-        with self.manager.cntStorage() as stor:
-            self.assertEqual(len(stor), 0)
-
-        # Trying to release again should return '', 0
-        for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
-            res = self.manager.release(userService, self.registered_servers_group)
-            if res:
-                uuid, counter = res
-                self.assertEqual(uuid, '')
-                # Number of lasting assignations should be one less than before
-                self.assertEqual(counter, 0)
+                    self.assertEqual(counter, 0)
+                    self.assertEqual(
+                        serverApiRequester.notifyRelease.call_count,
+                        2 * NUM_REGISTEREDSERVERS,  # No release if all are released already, so no notifyRelease
+                    )

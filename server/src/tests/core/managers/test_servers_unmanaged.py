@@ -201,10 +201,15 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)
 
     def testAssignReleaseMax(self) -> None:
-        for assignation in range(3):
-            with self.createMockApiRequester() as mockServerApiRequester:
+        with self.createMockApiRequester() as mockServerApiRequester:
+            serverApiRequester = mockServerApiRequester.return_value
+            for assignation in range(3):
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                     assign = self.assign(userService)
+                    self.assertEqual(
+                        serverApiRequester.notifyAssign.call_count,
+                        assignation * NUM_REGISTEREDSERVERS + elementNumber + 1,
+                    )
                     if assign is None:
                         self.fail('Assignation returned None')
                         return  # For mypy
@@ -217,24 +222,29 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
                     self.assertEqual(self.manager.getUnmanagedUsage(uuid), assignation + 1)
 
-        self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
+            self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
 
-        # Now release all, 3 times
-        for release in range(3):
-            for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
-                res = self.manager.release(userService, self.registered_servers_group)
-                if res:
-                    uuid, counter = res
-                    # uuid shuld be one on registered servers
-                    self.assertTrue(uuid in self.all_uuids)
-                    # Number of lasting assignations should be one less than before
-                    self.assertEqual(counter, 3 - release - 1)
-                    # Server locked should be None
-                    self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
-                    # 3 - release -1 because we have released it already
+            # Now release all, 3 times
+            for release in range(3):
+                for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
+                    res = self.manager.release(userService, self.registered_servers_group)
+                    if res:
+                        uuid, counter = res
+                        # uuid shuld be one on registered servers
+                        self.assertTrue(uuid in self.all_uuids)
+                        # Number of lasting assignations should be one less than before
+                        self.assertEqual(counter, 3 - release - 1)
+                        # Server locked should be None
+                        self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
+                        # 3 - release -1 because we have released it already
+                        self.assertEqual(
+                            self.manager.getUnmanagedUsage(uuid),
+                            3 - release - 1,
+                            f'Error on {elementNumber}/{release}',
+                        )
                     self.assertEqual(
-                        self.manager.getUnmanagedUsage(uuid),
-                        3 - release - 1,
-                        f'Error on {elementNumber}/{release}',
-                    )
-        self.assertEqual(len(self.registered_servers_group.properties), 0)
+                        serverApiRequester.notifyRelease.call_count,
+                        release * NUM_REGISTEREDSERVERS + elementNumber + 1,
+                        f'Error on loop {release} - {elementNumber}',
+                    )                        
+            self.assertEqual(len(self.registered_servers_group.properties), 0)
