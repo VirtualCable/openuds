@@ -625,8 +625,12 @@ class DetailHandler(BaseModelHandler):
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
-        :param parent: Parent object
-        :return: Expected to return a dictionary that contains 'field' & 'prefix' fields
+        
+        Args:
+            parent (models.Model): Parent object
+        
+        Return:
+            typing.Dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
         """
         return {}
 

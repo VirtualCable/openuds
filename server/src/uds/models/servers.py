@@ -35,9 +35,8 @@ from django.db import models
 
 from uds.core import types
 from uds.core.util.os_detector import KnownOS
-from uds.core.util.model import getSqlDatetime
 from uds.core.util.request import ExtendedHttpRequest
-from uds.core.util import properties, log, resolver
+from uds.core.util import properties, log, resolver, net
 
 from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
 
@@ -80,7 +79,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # 'Fake' declarations for type checking
     transports: 'models.manager.RelatedManager[Transport]'
     servers: 'models.manager.RelatedManager[Server]'
-    
+
     # For properties
     def ownerIdAndType(self) -> typing.Tuple[str, str]:
         return self.uuid, 'servergroup'
@@ -179,7 +178,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         ServerGroup,
         related_name='servers',
     )
-    
+
     def parent(self) -> typing.Optional['Server']:
         """
         Returns the parent group (not valid for Tunnel Servers, that can belong to more than one group)
@@ -232,19 +231,43 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @property
     def host(self) -> str:
         """Returns the host of this server
-        Host is hostname first, and if not exists, the ip of the server
+        
+        Host returns first the IP if it exists, and if not, the hostname (resolved)
         """
         # If hostname exists, try first to resolve it
+        if net.isValidIp(self.ip):
+            return self.ip
         if self.hostname:
             ips = resolver.resolve(self.hostname)
             if ips:
                 return ips[0]
-        return self.ip
+        return ''
 
     @property
     def ip_version(self) -> int:
         """Returns the ip version of this server"""
         return 6 if ':' in self.ip else 4
+
+    @staticmethod
+    def search(ip_or_host: str) -> typing.Optional['Server']:
+        """Locates a server by ip or hostname
+
+        It uses reverse dns lookup if ip_or_host is an ip and not found on database
+        to try to locate the server by hostname
+
+        Args:
+            ip_or_host: Ip or hostname to search for
+
+        Returns:
+            The server found, or None if not found
+        """
+        if net.isValidIp(ip_or_host):
+            found = Server.objects.filter(ip=ip_or_host).first()
+            if not found:  # Try reverse dns lookup
+                found = Server.objects.filter(hostname__in=resolver.reverse(ip_or_host)).first()
+        else:
+            found = Server.objects.filter(hostname=ip_or_host).first()
+        return found
 
     def getCommsUrl(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
         """

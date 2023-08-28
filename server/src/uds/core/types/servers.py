@@ -104,8 +104,7 @@ class ServerStatsType(typing.NamedTuple):
     memtotal: int = 1  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    diskused: int = 0  # In bytes
-    disktotal: int = 0  # In bytes
+    disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (name, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
     
@@ -132,13 +131,15 @@ class ServerStatsType(typing.NamedTuple):
 
     @staticmethod
     def fromDict(dct: typing.Dict[str, typing.Any]) -> 'ServerStatsType':
+        disks: typing.List[typing.Tuple[str, int, int]] = []
+        for disk in dct.get('disks', []):
+            disks.append((disk['name'], disk['used'], disk['total']))
         return ServerStatsType(
             memused=dct.get('memused', 1),
             memtotal=dct.get('memtotal', dct.get('mem_free', 1)),  # Avoid division by zero
             cpuused=dct.get('cpuused', 0),
             uptime=dct.get('uptime', 0),
-            diskused=dct.get('diskused', 0),
-            disktotal=dct.get('disktotal', 0),
+            disks=disks,
             connections=dct.get('connections', 0),
             current_users=dct.get('current_users', 0),
         )

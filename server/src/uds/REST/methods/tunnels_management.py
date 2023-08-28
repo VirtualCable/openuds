@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+from django.db import models
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -42,8 +43,6 @@ from uds.core.util import permissions, validators
 from uds.core.util.model import processUuid
 from uds.models import Server, ServerGroup
 from uds.REST.model import DetailHandler, ModelHandler
-
-from .users_groups import Groups, Users
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,6 +71,7 @@ class TunnelServers(DetailHandler):
                 val = {
                     'id': i.uuid,
                     'hostname': i.hostname,
+                    'maintenance_mode': i.maintenance_mode,
                 }
                 res.append(val)
             if multi:
@@ -96,24 +96,19 @@ class TunnelServers(DetailHandler):
                     'title': _('Hostname'),
                 }
             },
-            {'state': {'title': _('State')}},
+            {
+                'maintenance_mode': {
+                    'title': _('State'),
+                    'type': 'dict',
+                    'dict': {True: _('Maintenance'), False: _('Normal')},
+                }
+            },
         ]
 
-    def saveItem(self, parent: 'ServerGroup', item: typing.Optional[str]) -> None:
-        # Item is the uuid of the server to add
-        server: typing.Optional['Server'] = None  # Avoid warning on reference before assignment
+    def getRowStyle(self, parent: models.Model) -> typing.Dict[str, typing.Any]:
+        return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-        if item is None:
-            raise self.invalidItemException('No server specified')
-
-        try:
-            server = Server.objects.get(uuid=processUuid(item))
-            parent.servers.add(server)
-        except Exception:
-            raise self.invalidItemException() from None
-
-        # TODO: implement this
-        raise self.invalidRequestException() from None
+    # Cannot save a tunnel server, it's not editable...
 
     def deleteItem(self, parent: 'ServerGroup', item: str) -> None:
         try:
@@ -122,12 +117,12 @@ class TunnelServers(DetailHandler):
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent: 'ServerGroup') -> typing.Any:
+    def maintenance(self, parent: 'ServerGroup', id: str) -> typing.Any:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
-        item = Server.objects.get(uuid=processUuid(self._params['id']))
+        item = Server.objects.get(uuid=processUuid(id))
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
@@ -140,7 +135,10 @@ class Tunnels(ModelHandler):
     name = 'tunnels'
     model = ServerGroup
     model_filter = {'type': types.servers.ServerType.TUNNEL}
-    custom_methods = [types.rest.ModelCustomMethodType('tunnels')]
+    custom_methods = [
+        types.rest.ModelCustomMethodType('tunnels', needs_parent=True),
+        types.rest.ModelCustomMethodType('assign', needs_parent=True),
+    ]
 
     detail = {'servers': TunnelServers}
     save_fields = ['name', 'comments', 'host:', 'port:0']
@@ -202,15 +200,39 @@ class Tunnels(ModelHandler):
         # Ensure host is a valid IP(4 or 6) or hostname
         validators.validateHost(fields['host'])
 
-    def tunnels(self, item: 'ServerGroup') -> typing.Any:
+    def assign(self, parent: 'ServerGroup') -> typing.Any:
+        self.ensureAccess(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+
+        server: typing.Optional['Server'] = None  # Avoid warning on reference before assignment
+
+        item = self._args[-1]
+
+        if item is None:
+            raise self.invalidItemException('No server specified')
+
+        try:
+            server = Server.objects.get(uuid=processUuid(item))
+            self.ensureAccess(server, uds.core.types.permissions.PermissionType.READ)
+            parent.servers.add(server)
+        except Exception:
+            raise self.invalidItemException() from None
+
+        # TODO: implement this
+        return 'ok'
+
+    def tunnels(self, parent: 'ServerGroup') -> typing.Any:
         """
-        Custom method that returns all tunnels of a tunnel server
+        Custom method that returns all tunnels of a tunnel server NOT already assigned to a group
         :param item:
         """
+        allServers = set(parent.servers.all())
         return [
             {
                 'id': i.uuid,
-                'permission': permissions.getEffectivePermission(self._user, i),
+                'name': i.hostname,
             }
-            for i in item.servers.filter(type=types.servers.ServerType.TUNNEL)
+            for i in Server.objects.filter(type=types.servers.ServerType.TUNNEL)
+            if permissions.getEffectivePermission(self._user, i)
+            >= uds.core.types.permissions.PermissionType.READ
+            and i not in allServers
         ]

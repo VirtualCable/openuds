@@ -32,6 +32,7 @@ import typing
 import functools
 
 import dns.resolver
+import dns.reversename
 
 
 @functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
@@ -47,3 +48,13 @@ def resolve(hostname: str) -> typing.List[str]:
         except dns.resolver.NXDOMAIN:
             pass
     return ips
+
+@functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
+def reverse(ip: str) -> typing.List[str]:
+    """
+    Resolves an ip to a list of hostnames
+    """
+    try:
+        return[str(i).rstrip('.') for i in dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')]  # type: ignore
+    except dns.resolver.NXDOMAIN:
+        return []
