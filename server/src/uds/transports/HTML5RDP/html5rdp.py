@@ -319,7 +319,7 @@ class HTML5RDPTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionInfoType:
+    ) -> types.connections.ConnectionDataType:
         username = user.getUsernameForAuth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
@@ -366,7 +366,7 @@ class HTML5RDPTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionInfoType(
+        return types.connections.ConnectionDataType(
             protocol=self.protocol,
             username=username,
             service_type=types.services.ServiceType.VDI,
@@ -417,6 +417,7 @@ class HTML5RDPTransport(transports.Transport):
             'ticket-info': {
                 'userService': userService.uuid,
                 'user': user.uuid,
+                'service_type': types.services.ServiceType.VDI,
             },
         }
 

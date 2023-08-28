@@ -346,7 +346,7 @@ class ServerManager(metaclass=singleton.Singleton):
         self,
         server: 'models.Server',
         userService: 'models.UserService',
-        info: types.connections.ConnectionInfoType,
+        info: types.connections.ConnectionDataType,
     ) -> None:
         """
         Notifies preconnect to server

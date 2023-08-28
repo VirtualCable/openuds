@@ -227,7 +227,7 @@ class BaseX2GOTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionInfoType:
+    ) -> types.connections.ConnectionDataType:
         username = user.getUsernameForAuth()
 
         # Get the type of service (VDI, VAPP, ...)
@@ -244,7 +244,7 @@ class BaseX2GOTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionInfoType(
+        return types.connections.ConnectionDataType(
             protocol=self.protocol,
             username=username,
             service_type=servicesTypeProvided,
@@ -256,7 +256,7 @@ class BaseX2GOTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionInfoType:
+    ) -> types.connections.ConnectionDataType:
         return self.processUserPassword(userService, user, password)
 
     def genKeyPairForSsh(self) -> typing.Tuple[str, str]:

@@ -34,13 +34,19 @@ import typing
 from .services import ServiceType
 
 
-class PreconnectInfoType(typing.NamedTuple):
+# For requests to actors/servers
+class PreconnectRequestType(typing.NamedTuple):
+    """
+    Information sent on a preconnect request
+    """
+
     user: str
-    protocol: str
-    ip: str
-    hostname: str
-    udsuser: str
-    udsuser_uuid: str
+    protocol: str  # protocol to use, (RDP, SPICE, etc..)
+    ip: str  # IP of the client
+    hostname: str  # Hostname of the client
+    service_type: ServiceType  # If VDI or APP, Defaults to VDI
+    udsuser: str  # UDS user name
+    udsuser_uuid: str  # UDS user uuid
     userservice_uuid: str  # UUID of userservice
     userservice_type: str  # VDI or VAPP (as in ServiceType)
 
@@ -48,7 +54,8 @@ class PreconnectInfoType(typing.NamedTuple):
         return self._asdict()
 
 
-class AssignInfoType(typing.NamedTuple):
+# For requests to actors/servers
+class AssignRequestType(typing.NamedTuple):
     udsuser: str
     udsuser_uuid: str
     userservice_uuid: str  # UUID of userservice
@@ -58,9 +65,11 @@ class AssignInfoType(typing.NamedTuple):
     def asDict(self) -> typing.Dict[str, 'str|int']:
         return self._asdict()
 
-class ConnectionInfoType(typing.NamedTuple):
+
+class ConnectionDataType(typing.NamedTuple):
     """
-    Connection info type is provided by transports, and contains all the "transformable" information needed to connect to a service
+    Connection data provided by transports, and contains all the "transformable" information needed to connect to a service
+    (such as username, password, domain, etc..)
     """
 
     protocol: str  # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name

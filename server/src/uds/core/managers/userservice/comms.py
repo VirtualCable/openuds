@@ -129,7 +129,7 @@ def _requestActor(
     return js
 
 
-def notifyPreconnect(userService: 'UserService', info: types.connections.ConnectionInfoType) -> None:
+def notifyPreconnect(userService: 'UserService', info: types.connections.ConnectionDataType) -> None:
     """
     Notifies a preconnect to an user service
     """
@@ -139,9 +139,10 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
         _requestActor(
             userService,
             'preConnect',
-            types.connections.PreconnectInfoType(
+            types.connections.PreconnectRequestType(
                 user=info.username,
                 protocol=info.protocol,
+                service_type=info.service_type,
                 ip=src.ip,
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',

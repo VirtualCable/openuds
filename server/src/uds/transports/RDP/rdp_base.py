@@ -356,7 +356,7 @@ class BaseRDPTransport(transports.Transport):
         password: str,
         *,
         altUsername: typing.Optional[str]
-    ) -> types.connections.ConnectionInfoType:
+    ) -> types.connections.ConnectionDataType:
         username: str = altUsername or user.getUsernameForAuth()
 
         if self.fixedName.value:
@@ -405,7 +405,7 @@ class BaseRDPTransport(transports.Transport):
         if self.optimizeTeams.isTrue():
             password = ''  # nosec
 
-        return types.connections.ConnectionInfoType(
+        return types.connections.ConnectionDataType(
             protocol=self.protocol,
             username=username,
             service_type=types.services.ServiceType.VDI,
@@ -418,7 +418,7 @@ class BaseRDPTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionInfoType:
+    ) -> types.connections.ConnectionDataType:
         username = None
         if isinstance(userService, UserService):
             cdata = userService.getInstance().getConnectionData()

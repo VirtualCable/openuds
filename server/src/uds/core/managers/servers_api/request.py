@@ -152,7 +152,7 @@ class ServerApiRequester:
         """
         self.post(
             'assign',
-            types.connections.AssignInfoType(
+            types.connections.AssignRequestType(
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
@@ -162,7 +162,7 @@ class ServerApiRequester:
         )
 
     def notifyPreconnect(
-        self, userService: 'models.UserService', info: 'types.connections.ConnectionInfoType'
+        self, userService: 'models.UserService', info: 'types.connections.ConnectionDataType'
     ) -> None:
         """
         Notifies preconnect to server, if this allows it
@@ -171,9 +171,10 @@ class ServerApiRequester:
 
         self.post(
             'preConnect',
-            types.connections.PreconnectInfoType(
+            types.connections.PreconnectRequestType(
                 user=info.username,
                 protocol=info.protocol,
+                service_type=info.service_type,
                 ip=src.ip,
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',

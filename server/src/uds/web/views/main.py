@@ -53,7 +53,7 @@ from uds.web.forms.MFAForm import MFAForm
 from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
-from uds.core import mfas
+from uds.core import mfas, types
 from uds import models
 from uds.core.util.model import getSqlDatetimeAsUnix
 
@@ -343,7 +343,11 @@ def update_transport_ticket(
                                 uuid=data['ticket-info'].get('userService', None)
                             )
                             UserServiceManager().notifyPreconnect(
-                                userService, username, data.get('protocol', '')
+                                userService, types.connections.ConnectionDataType(
+                                    username=username,
+                                    protocol=data.get('protocol', ''),
+                                    service_type=data['ticket-info'].get('service_type', ''),
+                                )
                             )
                         except models.UserService.DoesNotExist:
                             pass

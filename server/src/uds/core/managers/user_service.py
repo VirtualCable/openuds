@@ -611,7 +611,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionInfoType) -> None:
+    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionDataType) -> None:
         comms.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
