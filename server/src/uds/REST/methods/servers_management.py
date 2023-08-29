@@ -36,7 +36,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import types
+from uds.core import types, consts
 from uds.core.types import permissions as permtypes
 from uds.core.types import rest, servers
 from uds.core.ui import gui
@@ -123,7 +123,8 @@ class ServersServers(DetailHandler):
                     'id': i.uuid,
                     'hostname': i.hostname,
                     'ip': i.ip,
-                    'maintenance': i.maintenance_mode,
+                    'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
+                    'maintenance_mode': i.maintenance_mode,
                 }
                 res.append(val)
             if multi:
@@ -150,13 +151,21 @@ class ServersServers(DetailHandler):
             },
             {'ip': {'title': _('Ip')}},
             {'mac': {'title': _('Mac')}},
+            {
+                'maintenance_mode': {
+                    'title': _('State'),
+                    'type': 'dict',
+                    'dict': {True: _('Maintenance'), False: _('Normal')},
+                }
+            },
         ]
+
+    def getRowStyle(self, parent: 'models.ServerGroup') -> typing.Dict[str, typing.Any]:
+        return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def saveItem(self, parent: 'models.ServerGroup', item: typing.Optional[str]) -> None:
         # Item is the uuid of the server to add
-        server: typing.Optional[
-            'models.Server'
-        ] = None  # Avoid warning on reference before assignment
+        server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
         if item is None:
             raise self.invalidItemException('No server specified')
@@ -176,12 +185,12 @@ class ServersServers(DetailHandler):
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent: 'models.ServerGroup') -> typing.Any:
+    def maintenance(self, parent: 'models.ServerGroup', id: str) -> typing.Any:
         """
-        Custom method that swaps maintenance mode state for a provider
+        Custom method that swaps maintenance mode state for a tunnel server
         :param item:
         """
-        item = models.Server.objects.get(uuid=processUuid(self._params['id']))
+        item = models.Server.objects.get(uuid=processUuid(id))
         self.ensureAccess(item, permtypes.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
@@ -197,7 +206,7 @@ class ServersGroups(ModelHandler):
         ]
     }
     detail = {'servers': ServersServers}
-    
+
     path = 'servers'
     name = 'groups'
 
@@ -220,6 +229,14 @@ class ServersGroups(ModelHandler):
             yield v
 
     def getGui(self, type_: str) -> typing.List[typing.Any]:
+        if '@' not in type_:  # If no subtype, use default
+            type_ += '@default'
+        kind, subkind = type_.split('@')[:2]
+        if kind == types.servers.ServerType.SERVER.name:
+            kind = _('Standard')
+        elif kind == types.servers.ServerType.UNMANAGED.name:
+            kind = _('Unmanaged')
+        title = _('of type') + f' {subkind.upper()} {kind}'
         return self.addField(
             self.addDefaultFields(
                 [],
@@ -230,7 +247,12 @@ class ServersGroups(ModelHandler):
                     'name': 'type',
                     'value': type_,
                     'type': gui.InputField.Types.HIDDEN,
-                }
+                },
+                {
+                    'name': 'title',
+                    'value': title,
+                    'type': gui.InputField.Types.INFO,
+                },
             ],
         )
 
@@ -268,7 +290,7 @@ class ServersGroups(ModelHandler):
         try:
             obj = models.ServerGroup.objects.get(uuid=processUuid(self._args[0]))
             if obj.type == types.servers.ServerType.UNMANAGED:
-                 # Unmanaged has to remove ALSO the servers
+                # Unmanaged has to remove ALSO the servers
                 for server in obj.servers.all():
                     server.delete()
             obj.delete()

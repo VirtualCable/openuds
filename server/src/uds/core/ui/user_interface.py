@@ -316,7 +316,7 @@ class gui:
             IMAGE_CHOICE = 'imgchoice'
             IMAGE = 'image'
             DATE = 'date'
-            INFO = 'dummy'
+            INFO = 'internal-info'
 
             def __str__(self):
                 return self.value

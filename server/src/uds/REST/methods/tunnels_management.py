@@ -37,8 +37,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
-from uds.core import types
-from uds.core.ui import gui
+from uds.core import types, consts, ui
 from uds.core.util import permissions, validators
 from uds.core.util.model import processUuid
 from uds.models import Server, ServerGroup
@@ -71,7 +70,9 @@ class TunnelServers(DetailHandler):
                 val = {
                     'id': i.uuid,
                     'hostname': i.hostname,
-                    'maintenance_mode': i.maintenance_mode,
+                    'ip': i.ip,
+                    'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
+                    'maintenance': i.maintenance_mode,
                 }
                 res.append(val)
             if multi:
@@ -96,6 +97,8 @@ class TunnelServers(DetailHandler):
                     'title': _('Hostname'),
                 }
             },
+            {'ip': {'title': _('Ip')}},
+            {'mac': {'title': _('Mac')}},
             {
                 'maintenance_mode': {
                     'title': _('State'),
@@ -105,7 +108,7 @@ class TunnelServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: models.Model) -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'ServerGroup') -> typing.Dict[str, typing.Any]:
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     # Cannot save a tunnel server, it's not editable...
@@ -119,7 +122,7 @@ class TunnelServers(DetailHandler):
     # Custom methods
     def maintenance(self, parent: 'ServerGroup', id: str) -> typing.Any:
         """
-        Custom method that swaps maintenance mode state for a provider
+        Custom method that swaps maintenance mode state for a tunnel server
         :param item:
         """
         item = Server.objects.get(uuid=processUuid(id))
@@ -167,7 +170,7 @@ class Tunnels(ModelHandler):
                     'tooltip': gettext(
                         'Hostname or IP address of the server where the tunnel is visible by the users'
                     ),
-                    'type': gui.InputField.Types.TEXT,
+                    'type': ui.gui.InputField.Types.TEXT,
                     'order': 100,  # At end
                 },
                 {
@@ -175,7 +178,7 @@ class Tunnels(ModelHandler):
                     'value': 443,
                     'label': gettext('Port'),
                     'tooltip': gettext('Port where the tunnel is visible by the users'),
-                    'type': gui.InputField.Types.NUMERIC,
+                    'type': ui.gui.InputField.Types.NUMERIC,
                     'order': 101,  # At end
                 },
             ],
