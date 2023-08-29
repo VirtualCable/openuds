@@ -185,7 +185,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     globalLogout = gui.CheckBoxField(
         label=_('Global logout'),
-        defvalue=False,
+        default=False,
         order=10,
         tooltip=_('If set, logout from UDS will trigger SAML logout'),
         tab=gui.Tab.ADVANCED,
@@ -193,7 +193,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     adFS = gui.CheckBoxField(
         label=_('ADFS compatibility'),
-        defvalue=False,
+        default=False,
         order=11,
         tooltip=_('If set, enable lowercase url encoding so ADFS can work correctly'),
         tab=gui.Tab.ADVANCED,
@@ -210,7 +210,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     checkSSLCertificate = gui.CheckBoxField(
         label=_('Check SSL certificate'),
-        defvalue=False,  # For compatibility with previous versions
+        default=False,  # For compatibility with previous versions
         order=23,
         tooltip=_('If set, check SSL certificate on requests for IDP Metadata'),
         tab=_('Security'),
@@ -218,7 +218,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     nameIdEncrypted = gui.CheckBoxField(
         label=_('Encripted nameID'),
-        defvalue=False,
+        default=False,
         order=12,
         tooltip=_('If set, nameID will be encripted'),
         tab=_('Security'),
@@ -226,7 +226,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     authnRequestsSigned = gui.CheckBoxField(
         label=_('Authn requests signed'),
-        defvalue=False,
+        default=False,
         order=13,
         tooltip=_('If set, authn requests will be signed'),
         tab=_('Security'),
@@ -234,7 +234,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     logoutRequestSigned = gui.CheckBoxField(
         label=_('Logout requests signed'),
-        defvalue=False,
+        default=False,
         order=14,
         tooltip=_('If set, logout requests will be signed'),
         tab=_('Security'),
@@ -242,7 +242,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     logoutResponseSigned = gui.CheckBoxField(
         label=_('Logout responses signed'),
-        defvalue=False,
+        default=False,
         order=15,
         tooltip=_('If set, logout responses will be signed'),
         tab=_('Security'),
@@ -250,7 +250,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     signMetadata = gui.CheckBoxField(
         label=_('Sign metadata'),
-        defvalue=False,
+        default=False,
         order=16,
         tooltip=_('If set, metadata will be signed'),
         tab=_('Security'),
@@ -258,7 +258,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     wantMessagesSigned = gui.CheckBoxField(
         label=_('Want messages signed'),
-        defvalue=False,
+        default=False,
         order=17,
         tooltip=_('If set, messages will be signed'),
         tab=_('Security'),
@@ -266,7 +266,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     wantAssertionsSigned = gui.CheckBoxField(
         label=_('Want assertions signed'),
-        defvalue=False,
+        default=False,
         order=18,
         tooltip=_('If set, assertions will be signed'),
         tab=_('Security'),
@@ -274,7 +274,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     wantAssertionsEncrypted = gui.CheckBoxField(
         label=_('Want assertions encrypted'),
-        defvalue=False,
+        default=False,
         order=19,
         tooltip=_('If set, assertions will be encrypted'),
         tab=_('Security'),
@@ -282,7 +282,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     wantNameIdEncrypted = gui.CheckBoxField(
         label=_('Want nameID encrypted'),
-        defvalue=False,
+        default=False,
         order=20,
         tooltip=_('If set, nameID will be encrypted'),
         tab=_('Security'),
@@ -290,7 +290,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     requestedAuthnContext = gui.CheckBoxField(
         label=_('Requested authn context'),
-        defvalue=False,
+        default=False,
         order=21,
         tooltip=_('If set, requested authn context will be sent'),
         tab=_('Security'),
@@ -298,7 +298,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     metadataCacheDuration = gui.NumericField(
         label=_('Metadata cache duration'),
-        defvalue=0,
+        default=0,
         order=22,
         tooltip=_('Duration of metadata cache in seconds'),
         tab=_('Metadata'),
@@ -306,7 +306,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     metadataValidityDuration = gui.NumericField(
         label=_('Metadata validity duration'),
-        defvalue=0,
+        default=0,
         order=22,
         tooltip=_('Duration of metadata validity in seconds'),
         tab=_('Metadata'),

@@ -62,7 +62,7 @@ class TestingUserInterface(UserInterface):
         order=1,
         tooltip='This is a text autocomplete field',
         required=True,
-        defvalue=DEFAULTS['str_auto_field'],
+        default=DEFAULTS['str_auto_field'],
         values=['Value 1', 'Value 2', 'Value 3'],
     )
     num_field = gui.NumericField(
@@ -70,7 +70,7 @@ class TestingUserInterface(UserInterface):
         order=1,
         tooltip='This is a numeric field',
         required=True,
-        defvalue=DEFAULTS['num_field'],
+        default=DEFAULTS['num_field'],
         minValue=0,
         maxValue=100,
     )
@@ -79,14 +79,14 @@ class TestingUserInterface(UserInterface):
         order=2,
         tooltip='This is a password field',
         required=True,
-        defvalue=DEFAULTS['password_field'],
+        default=DEFAULTS['password_field'],
     )
     hidden_field = gui.HiddenField(
         label='Hidden Field',
         order=3,
         tooltip='This is a hidden field',
         required=True,
-        defvalue=DEFAULTS['hidden_field'],
+        default=DEFAULTS['hidden_field'],
     )
     choice_field = gui.ChoiceField(
         label='Choice Field',
@@ -101,7 +101,7 @@ class TestingUserInterface(UserInterface):
         order=5,
         tooltip='This is a multi choice field',
         required=True,
-        defvalue=DEFAULTS['multi_choice_field'],
+        default=DEFAULTS['multi_choice_field'],
         values=['Value 1', 'Value 2', 'Value 3'],
     )
     editable_list_field = gui.EditableListField(
@@ -109,21 +109,21 @@ class TestingUserInterface(UserInterface):
         order=6,
         tooltip='This is a editable list field',
         required=True,
-        defvalue=DEFAULTS['editable_list_field'],
+        default=DEFAULTS['editable_list_field'],
     )
     checkbox_field = gui.CheckBoxField(
         label='Checkbox Field',
         order=7,
         tooltip='This is a checkbox field',
         required=True,
-        defvalue=DEFAULTS['checkbox_field'],
+        default=DEFAULTS['checkbox_field'],
     )
     image_choice_field = gui.ImageChoiceField(
         label='Image Choice Field',
         order=8,
         tooltip='This is a image choice field',
         required=True,
-        defvalue=DEFAULTS['image_choice_field'],
+        default=DEFAULTS['image_choice_field'],
         values=['Value 1', 'Value 2', 'Value 3'],
     )
     image_field = gui.ImageField(
@@ -131,14 +131,14 @@ class TestingUserInterface(UserInterface):
         order=9,
         tooltip='This is a image field',
         required=True,
-        defvalue=DEFAULTS['image_field'],
+        default=DEFAULTS['image_field'],
     )
     date_field = gui.DateField(
         label='Date Field',
         order=10,
         tooltip='This is a date field',
         required=True,
-        defvalue=DEFAULTS['date_field'],
+        default=DEFAULTS['date_field'],
     )
 
 

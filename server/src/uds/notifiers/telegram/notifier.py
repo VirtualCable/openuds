@@ -75,7 +75,7 @@ class TelegramNotifier(messaging.Notifier):
         order=1,
         tooltip=_('Bot name'),
         required=True,
-        defvalue='',
+        default='',
         tab=_('Telegram'),
     )
 
@@ -85,7 +85,7 @@ class TelegramNotifier(messaging.Notifier):
         order=2,
         tooltip=_('Access Token'),
         required=True,
-        defvalue='',
+        default='',
         tab=_('Telegram'),
     )
 
@@ -96,7 +96,7 @@ class TelegramNotifier(messaging.Notifier):
         order=3,
         tooltip=_('Secret key used to validate subscribtion requests (using /join or /subscribe commands)'),
         required=True,
-        defvalue='',
+        default='',
         tab=_('Telegram'),
     )
 
@@ -109,7 +109,7 @@ class TelegramNotifier(messaging.Notifier):
         order=3,
         tooltip=_('Delay in seconds between checks for commands'),
         required=True,
-        defvalue=3600,
+        default=3600,
         minValue=60,
         maxValue=86400,
         tab=_('Telegram'),
@@ -132,7 +132,7 @@ class TelegramNotifier(messaging.Notifier):
             i.value = s
 
     def initGui(self) -> None:
-        self.secret.defValue = self.secret.defValue or secrets.token_urlsafe(8)
+        self.secret.default = self.secret.default or secrets.token_urlsafe(8)
         return super().initGui()
 
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:

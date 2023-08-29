@@ -31,23 +31,25 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
 import codecs
-import datetime
-import time
-import pickle  # nosec: safe usage
 import copy
-import typing
-import logging
+import datetime
 import enum
-from collections import abc
+import inspect
+import logging
+import pickle  # nosec: safe usage
 import re
+import time
+import typing
+from collections import abc
 
+from django.utils.translation import get_language
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_noop
 
-from django.utils.translation import get_language, gettext as _, gettext_noop
-
-from uds.core.managers.crypto import CryptoManager, UDSK
-from uds.core.util.decorators import deprecatedClassValue
-from uds.core.util import serializer, validators
 from uds.core import exceptions
+from uds.core.managers.crypto import UDSK, CryptoManager
+from uds.core.util import serializer, validators
+from uds.core.util.decorators import deprecatedClassValue
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +85,7 @@ class gui:
            users = gui.EditableList(label = 'Users', tooltip = 'Select users',
                order = 1, values = ['user1', 'user2', 'user3', 'user4'])
            passw = gui.Password(label='Pass', length=32, tooltip='Password',
-               order = 2, required = True, defValue = '12345')
+               order = 2, required = True, default = '12345')
            # ...
            # more fields
            # ...
@@ -102,7 +104,9 @@ class gui:
 
     ValuesDictType = typing.Dict[
         str,
-        typing.Union[str, bool, typing.List[str], typing.List[ChoiceType], typing.Callable[[], typing.List[ChoiceType]]],
+        typing.Union[
+            str, bool, typing.List[str], typing.List[ChoiceType], typing.Callable[[], typing.List[ChoiceType]]
+        ],
     ]
 
     # : True string value
@@ -187,7 +191,7 @@ class gui:
         """
         if not vals:
             return []
-        
+
         if callable(vals):
             return vals
 
@@ -276,7 +280,7 @@ class gui:
             * length: Max length of the field. Defaults to DEFAULT_LENGTH
             * required: If this field is a MUST. defaults to false
             * label: Label used with this field. Defaults to ''
-            * defvalue: Default value for the field. Defaults to '' (this is
+            * dafault: Default value for the field. Defaults to '' (this is
               always an string)
             * rdonly: If the field is read only on modification. On creation,
               all fields are "writable". Defaults to False
@@ -290,7 +294,7 @@ class gui:
             * order
             * label
             * tooltip
-            * defvalue  (if not required, this is optional). Alias for this field is defaultValue
+            * default  (if not included, will be ''). Alias for this field is defaultValue
             * rdonly if can't be modified once it's created. Aliases for this field is readOnly
 
         Any other paremeter needed is indicated in the corresponding field class.
@@ -298,12 +302,13 @@ class gui:
         Also a value field is available, so you can get/set the form field value.
         This property expects always an string, no matter what kind of field it is.
 
-        Take into account also that "value" has precedence over "defValue",
+        Take into account also that "value" has precedence over "default",
         so if you use both, the used one will be "value". This is valid for
-        all form fields.
+        all form fields. (Anyway, default is part of the "value" property, so
+        if you use "value", you will get the default value if not set)
         """
 
-        class Types(enum.Enum):
+        class Types(enum.StrEnum):
             TEXT = 'text'
             TEXT_AUTOCOMPLETE = 'text-autocomplete'
             NUMERIC = 'numeric'
@@ -318,40 +323,51 @@ class gui:
             DATE = 'date'
             INFO = 'internal-info'
 
-            def __str__(self):
-                return self.value
-
         # : If length of some fields are not especified, this value is used as default
         DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
         _data: typing.Dict[str, typing.Any]
 
-        def __init__(self, **options) -> None:
-            # Added defaultValue as alias for defvalue
+        def __init__(self, **kwargs) -> None:
             self._data = {}
-            if 'type' in options:
-                self.type = options['type']  # set type first
+            if 'type' in kwargs:
+                self.type = kwargs['type']  # set type first
 
-            defvalue = options.get('defvalue', options.get('defaultValue', options.get('defValue', '')))
+            label = kwargs.get('label', '')
+            # if defvalue or defaultValue or defValue in kwargs, emit a warning
+            # with the new name (that is "default"), but use the old one
+            for i in ('defvalue', 'defaultValue', 'defValue'):
+                if i in kwargs:
+                    caller = inspect.stack()[1]
+                    logger.warning(
+                        'Field %s: %s parameter is deprecated, use "default" instead. Called from %s:%s',
+                        label,
+                        i,
+                        caller.filename,
+                        caller.lineno,
+                    )
+                    kwargs['default'] = kwargs[i]
+                    break
+            default = kwargs.get('default', '')
             self._data.update(
                 {
-                    'length': options.get(
+                    'length': kwargs.get(
                         'length', gui.InputField.DEFAULT_LENTGH
                     ),  # Length is not used on some kinds of fields, but present in all anyway
-                    'required': options.get('required', False),
-                    'label': options.get('label', ''),
-                    'defvalue': str(defvalue) if not callable(defvalue) else defvalue,
-                    'rdonly': options.get(
+                    'required': kwargs.get('required', False),
+                    'label': kwargs.get('label', ''),
+                    'default': str(default) if not callable(default) else default,
+                    'rdonly': kwargs.get(
                         'rdonly',
-                        options.get('readOnly', options.get('readonly', False)),
+                        kwargs.get('readOnly', kwargs.get('readonly', False)),
                     ),  # This property only affects in "modify" operations
-                    'order': options.get('order', 0),
-                    'tooltip': options.get('tooltip', ''),
-                    'value': options.get('value', defvalue),
+                    'order': kwargs.get('order', 0),
+                    'tooltip': kwargs.get('tooltip', ''),
+                    'value': kwargs.get('value', default),
                 }
             )
-            if 'tab' in options and options['tab']:
-                self._data['tab'] = str(options['tab'])  # Ensure it's a string
+            if 'tab' in kwargs and kwargs['tab']:
+                self._data['tab'] = str(kwargs['tab'])  # Ensure it's a string
 
         @property
         def type(self) -> 'Types':
@@ -392,7 +408,7 @@ class gui:
             """
             if callable(self._data['value']):
                 return self._data['value']()
-            return self._data['value'] if self._data['value'] is not None else self.defValue
+            return self._data['value'] if self._data['value'] is not None else self.default
 
         @value.setter
         def value(self, value: typing.Any) -> None:
@@ -415,32 +431,35 @@ class gui:
             alter original values.
             """
             data = self._data.copy()
+            if 'value' in data:
+                del data['value']  # We don't want to send value on guiDescription
             data['label'] = _(data['label']) if data['label'] else ''
             data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
                 data['tab'] = _(data['tab'])  # Translates tab name
-            data['defvalue'] = self.defValue  # We need to translate default value
+            data['default'] = self.default  # We need to translate default value
             return data
 
         @property
-        def defValue(self) -> typing.Any:
+        def default(self) -> typing.Any:
             """
             Returns the default value for this field
             """
-            return self._data['defvalue'] if not callable(self._data['defvalue']) else self._data['defvalue']()
+            defValue = self._data['default']
+            return defValue() if callable(defValue) else defValue
 
-        @defValue.setter
-        def defValue(self, defValue: typing.Any) -> None:
-            self.setDefValue(defValue)
+        @default.setter
+        def default(self, value: typing.Any) -> None:
+            self.setDefault(value)
 
-        def setDefValue(self, defValue: typing.Any) -> None:
+        def setDefault(self, value: typing.Any) -> None:
             """
             Sets the default value of the field·
 
             Args:
-                defValue: Default value (string)
+                value: Default value (string)
             """
-            self._data['defvalue'] = defValue
+            self._data['default'] = value
 
         @property
         def label(self) -> str:
@@ -617,7 +636,7 @@ class gui:
               # "Port", that is required,
               # with tooltip "Port (usually 443)" and order 1
               num = gui.NumericField(length=5, label = _('Port'),
-                  defvalue = '443', order = 1, tooltip = _('Port (usually 443)'),
+                  default = '443', order = 1, tooltip = _('Port (usually 443)'),
                   minVAlue = 1024, maxValue = 65535,
                   required = True)
         """
@@ -749,14 +768,14 @@ class gui:
 
 
            After that, at initGui method of module, we can store a value inside
-           using setDefValue as shown here:
+           using setDefault as shown here:
 
            .. code-block:: python
 
               def initGui(self):
-                  # always set defValue using self, cause we only want to store
+                  # always set default using self, cause we only want to store
                   # value for current instance
-                  self.hidden.setDefValue(self.parent().serialize())
+                  self.hidden.setDefault(self.parent().serialize())
 
         """
 
@@ -775,7 +794,7 @@ class gui:
 
         The values of parameters are inherited from :py:class:`InputField`
 
-        The valid values for this defvalue are: "true" and "false" (as strings)
+        The valid values for this default are: "true" and "false" (as strings)
 
         Example usage:
 
@@ -946,7 +965,7 @@ class gui:
             * 'rows' to tell gui how many rows to display (the length of the
               displayable list)
 
-        "defvalue"  is expresed as a comma separated list of ids
+        "default"  is expresed as a comma separated list of ids
 
         This class do not have callback support, as ChoiceField does.
 
@@ -993,7 +1012,7 @@ class gui:
         The struct used to pass values is an array of strings, i.e. ['1', '2',
         'test', 'bebito', ...]
 
-        This list don't have "selected" items, so its defvalue field is simply
+        This list don't have "selected" items, so its default field is simply
         ignored.
 
         We only nee to pass in "label" and, maybe, "values" to set default
@@ -1108,11 +1127,10 @@ class UserInterface(metaclass=UserInterfaceType):
 
         self._gui = copy.deepcopy(self._base_gui)
 
-        # If a field has a callable on defined attributes(value, defvalue, values)
+        # If a field has a callable on defined attributes(value, default, values)
         # update the reference to the new copy
-        # Note that defvalue has Aliases (defaultValue, defValue)
         for attrName, val in self._gui.items():  # And refresh self references to them
-            for field in ['values']: #['value', 'defvalue', 'defaultValue', 'defValue', 'values']:
+            for field in ['values']:  # ['value', 'default']:
                 if field in val._data and callable(val._data[field]):
                     val._data[field] = val._data[field]()
             # val is an InputField instance, so it is a reference to self._gui[key]
@@ -1270,7 +1288,7 @@ class UserInterface(metaclass=UserInterfaceType):
             if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
-            self._gui[k].value = self._gui[k].defValue
+            self._gui[k].value = self._gui[k].default
 
         converters: typing.Mapping[gui.InputField.Types, typing.Callable[[str], typing.Any]] = {
             gui.InputField.Types.TEXT: lambda x: x,
@@ -1326,7 +1344,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
-                self._gui[k].value = self._gui[k].defValue
+                self._gui[k].value = self._gui[k].default
 
             values = codecs.decode(values, 'zip')
             if not values:  # Has nothing

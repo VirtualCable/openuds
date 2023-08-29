@@ -107,7 +107,7 @@ class BaseRDPTransport(transports.Transport):
         label=_('Local drives policy'),
         order=22,
         tooltip=_('Local drives redirection policy'),
-        defvalue='false',
+        default='false',
         values=[
             {'id': 'false', 'text': 'Allow none'},
             {'id': 'dynamic', 'text': 'Allow PnP drives'},
@@ -135,27 +135,27 @@ class BaseRDPTransport(transports.Transport):
         order=25,
         tooltip=_('If checked, copy-paste functions will be allowed'),
         tab=gui.Tab.PARAMETERS,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     allowAudio = gui.CheckBoxField(
         label=_('Enable sound'),
         order=26,
         tooltip=_('If checked, sound will be redirected.'),
         tab=gui.Tab.PARAMETERS,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     allowWebcam = gui.CheckBoxField(
         label=_('Enable webcam'),
         order=27,
         tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
         tab=gui.Tab.PARAMETERS,
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
     )
     usbRedirection = gui.ChoiceField(
         label=_('USB redirection'),
         order=28,
         tooltip=_('USB redirection policy'),
-        defvalue='false',
+        default='false',
         values=[
             {'id': 'false', 'text': 'Allow none'},
             {'id': 'true', 'text': 'Allow all'},
@@ -173,7 +173,7 @@ class BaseRDPTransport(transports.Transport):
         order=29,
         tooltip=_('If checked, will enable Credentials Provider Support)'),
         tab=gui.Tab.PARAMETERS,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     rdpPort = gui.NumericField(
         order=30,
@@ -182,14 +182,14 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         tab=gui.Tab.PARAMETERS,
         required=True,  #: Numeric fields have always a value, so this not really needed
-        defvalue='3389',
+        default='3389',
     )
 
     screenSize = gui.ChoiceField(
         label=_('Screen Size'),
         order=31,
         tooltip=_('Screen size for this transport'),
-        defvalue='-1x-1',
+        default='-1x-1',
         values=[
             {'id': '640x480', 'text': '640x480'},
             {'id': '800x600', 'text': '800x600'},
@@ -213,7 +213,7 @@ class BaseRDPTransport(transports.Transport):
         label=_('Color depth'),
         order=32,
         tooltip=_('Color depth for this connection'),
-        defvalue='24',
+        default='24',
         values=[
             {'id': '8', 'text': '8'},
             {'id': '16', 'text': '16'},
@@ -247,7 +247,7 @@ class BaseRDPTransport(transports.Transport):
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
         order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=gui.Tab.DISPLAY,
@@ -257,7 +257,7 @@ class BaseRDPTransport(transports.Transport):
         order=37,
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
         tab=gui.Tab.DISPLAY,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
 
     multimedia = gui.CheckBoxField(
@@ -301,7 +301,7 @@ class BaseRDPTransport(transports.Transport):
         order=50,
         tooltip=_('If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'),
         tab='Mac OS X',
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
     )
 
     customParametersMAC = gui.TextField(

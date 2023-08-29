@@ -107,7 +107,7 @@ class WinDomainOsManager(WindowsOsManager):
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
         tab=_('Advanced'),
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     serverHint = gui.TextField(
         length=64,
@@ -121,7 +121,7 @@ class WinDomainOsManager(WindowsOsManager):
         order=10,
         tooltip=_('If checked,  a ssl connection to Active Directory will be used'),
         tab=_('Advanced'),
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
 
     # Inherits base "onLogout"

@@ -113,7 +113,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         tooltip=_('Pool that will contain UDS created vms'),
         # tab=_('Machine'),
         # required=True,
-        defvalue='',
+        default='',
     )
 
     ha = gui.ChoiceField(
@@ -125,7 +125,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     guestShutdown = gui.CheckBoxField(
         label=_('Try SOFT Shutdown first'),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         order=103,
         tooltip=_(
             'If active, UDS will try to shutdown (soft) the machine using VMWare Guest Tools. Will delay 30 seconds the power off of hanged machines.'
@@ -180,7 +180,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     lenName = gui.NumericField(
         length=1,
         label=_('Name Length'),
-        defvalue=5,
+        default=5,
         order=116,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
@@ -204,8 +204,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.ov.defValue = self.parent().serialize()
-        self.ev.defValue = self.parent().env.key
+        self.ov.default = self.parent().serialize()
+        self.ev.default = self.parent().env.key
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"

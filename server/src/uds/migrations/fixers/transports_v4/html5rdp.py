@@ -60,22 +60,22 @@ class HTML5RDPTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(defvalue=gui.TRUE)
+    enableAudio = gui.CheckBoxField(default=gui.TRUE)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
-    enableFileSharing = gui.ChoiceField(defvalue='false')
-    enableClipboard = gui.ChoiceField(defvalue='enabled')
+    enableFileSharing = gui.ChoiceField(default='false')
+    enableClipboard = gui.ChoiceField(default='enabled')
 
-    serverLayout = gui.ChoiceField(defvalue='-')
+    serverLayout = gui.ChoiceField(default='-')
 
-    ticketValidity = gui.NumericField(defvalue='60')
+    ticketValidity = gui.NumericField(default='60')
 
-    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
-    security = gui.ChoiceField(defvalue='any')
+    forceNewWindow = gui.ChoiceField(default=gui.FALSE)
+    security = gui.ChoiceField(default='any')
 
-    rdpPort = gui.NumericField(defvalue='3389')
+    rdpPort = gui.NumericField(default='3389')
 
-    customGEPath = gui.TextField(defvalue='/')
+    customGEPath = gui.TextField(default='/')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

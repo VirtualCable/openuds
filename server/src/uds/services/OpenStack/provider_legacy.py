@@ -109,7 +109,7 @@ class ProviderLegacy(ServiceProvider):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        defvalue='5000',
+        default='5000',
         order=2,
         tooltip=_(
             '5000 for older releases, 80/443 (ssl) for releases newer than OCATA'
@@ -129,7 +129,7 @@ class ProviderLegacy(ServiceProvider):
         order=5,
         tooltip=_('Access interface to be used'),
         values=INTERFACE_VALUES,
-        defvalue='public',
+        default='public',
     )
 
     domain = gui.TextField(
@@ -138,7 +138,7 @@ class ProviderLegacy(ServiceProvider):
         order=8,
         tooltip=_('Domain name (default is Default)'),
         required=True,
-        defvalue='Default',
+        default='Default',
     )
     username = gui.TextField(
         length=64,
@@ -146,7 +146,7 @@ class ProviderLegacy(ServiceProvider):
         order=9,
         tooltip=_('User with valid privileges on OpenStack'),
         required=True,
-        defvalue='admin',
+        default='admin',
     )
     password = gui.PasswordField(
         lenth=32,
@@ -159,7 +159,7 @@ class ProviderLegacy(ServiceProvider):
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=65536,
         order=50,
@@ -170,7 +170,7 @@ class ProviderLegacy(ServiceProvider):
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        defvalue='5',
+        default='5',
         minValue=1,
         maxValue=65536,
         order=51,
@@ -182,7 +182,7 @@ class ProviderLegacy(ServiceProvider):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=128,
         order=99,
@@ -202,8 +202,8 @@ class ProviderLegacy(ServiceProvider):
         tab=gui.Tab.ADVANCED,
     )
 
-    # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, defvalue='')
-    # -region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, defvalue='RegionOne')
+    # tenant = gui.TextField(length=64, label=_('Project'), order=6, tooltip=_('Project (tenant) for this provider'), required=True, default='')
+    # -region = gui.TextField(length=64, label=_('Region'), order=7, tooltip=_('Region for this provider'), required=True, default='RegionOne')
 
     legacy = True
 

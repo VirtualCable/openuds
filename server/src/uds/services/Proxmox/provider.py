@@ -77,7 +77,7 @@ class ProxmoxProvider(
         order=2,
         tooltip=_('Proxmox API port (default is 8006)'),
         required=True,
-        defvalue='8006',
+        default='8006',
     )
 
     username = gui.TextField(
@@ -88,7 +88,7 @@ class ProxmoxProvider(
             'User with valid privileges on Proxmox, (use "user@authenticator" form)'
         ),
         required=True,
-        defvalue='root@pam',
+        default='root@pam',
     )
     password = gui.PasswordField(
         lenth=32,
@@ -101,7 +101,7 @@ class ProxmoxProvider(
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=65536,
         order=50,
@@ -112,7 +112,7 @@ class ProxmoxProvider(
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        defvalue='5',
+        default='5',
         minValue=1,
         maxValue=65536,
         order=51,
@@ -124,7 +124,7 @@ class ProxmoxProvider(
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='20',
+        default='20',
         order=90,
         tooltip=_('Timeout in seconds of connection to Proxmox'),
         required=True,
@@ -134,7 +134,7 @@ class ProxmoxProvider(
     startVmId = gui.NumericField(
         length=3,
         label=_('Starting VmId'),
-        defvalue='10000',
+        default='10000',
         minValue=10000,
         maxValue=100000,
         order=91,
@@ -147,7 +147,7 @@ class ProxmoxProvider(
     macsRange = gui.TextField(
         length=36,
         label=_('Macs range'),
-        defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF',
+        default='52:54:00:00:00:00-52:54:00:FF:FF:FF',
         order=91,
         rdonly=False,
         tooltip=_(

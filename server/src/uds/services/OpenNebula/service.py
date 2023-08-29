@@ -132,7 +132,7 @@ class LiveService(services.Service):
     lenName = gui.NumericField(
         length=1,
         label=_('Name Length'),
-        defvalue=5,
+        default=5,
         order=112,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),

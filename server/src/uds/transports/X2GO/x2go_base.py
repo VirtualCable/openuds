@@ -78,7 +78,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Screen size'),
         order=10,
         tooltip=_('Screen size'),
-        defvalue=CommonPrefs.SZ_FULLSCREEN,
+        default=CommonPrefs.SZ_FULLSCREEN,
         values=[
             {'id': CommonPrefs.SZ_640x480, 'text': '640x480'},
             {'id': CommonPrefs.SZ_800x600, 'text': '800x600'},
@@ -121,7 +121,7 @@ class BaseX2GOTransport(transports.Transport):
         order=13,
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
         tab=gui.Tab.PARAMETERS,
     )
 
@@ -129,7 +129,7 @@ class BaseX2GOTransport(transports.Transport):
         order=14,
         label=_('Redirect home folder'),
         tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         tab=gui.Tab.PARAMETERS,
     )
 
@@ -137,7 +137,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Speed'),
         order=15,
         tooltip=_('Connection speed'),
-        defvalue='3',
+        default='3',
         values=[
             {'id': '0', 'text': 'MODEM'},
             {'id': '1', 'text': 'ISDN'},
@@ -152,7 +152,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Sound'),
         order=30,
         tooltip=_('Sound server'),
-        defvalue='pulse',
+        default='pulse',
         values=[
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
@@ -164,7 +164,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Keyboard'),
         order=31,
         tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
-        defvalue='',
+        default='',
         tab=gui.Tab.ADVANCED,
     )
     # 'nopack', '8', '64', '256', '512', '4k', '32k', '64k', '256k', '2m', '16m'
@@ -184,7 +184,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Pack'),
         order=32,
         tooltip=_('Pack format. Change with care!'),
-        defvalue='16m-jpeg',
+        default='16m-jpeg',
         tab=gui.Tab.ADVANCED,
     )
 
@@ -193,7 +193,7 @@ class BaseX2GOTransport(transports.Transport):
         order=33,
         tooltip=_('Quality value used on some pack formats.'),
         length=1,
-        defvalue='6',
+        default='6',
         minValue=1,
         maxValue=9,
         required=True,

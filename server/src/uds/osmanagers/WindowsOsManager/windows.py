@@ -60,13 +60,13 @@ class WindowsOsManager(osmanagers.OSManager):
                 'text': gettext_lazy('Keep service assigned even on new publication'),
             },
         ],
-        defvalue='keep',
+        default='keep',
     )
 
     idle = gui.NumericField(
         label=_("Max.Idle time"),
         length=4,
-        defvalue=-1,
+        default=-1,
         rdonly=False,
         order=11,
         tooltip=_(
@@ -82,7 +82,7 @@ class WindowsOsManager(osmanagers.OSManager):
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
 
     _onLogout: str

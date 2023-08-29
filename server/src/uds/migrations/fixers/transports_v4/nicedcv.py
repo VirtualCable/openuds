@@ -49,8 +49,8 @@ class NICEDCVTunnelTransport(transports.Transport):
 
     tunnelServer = gui.TextField()
 
-    tunnelWait = gui.NumericField(defvalue='60')
-    verifyCertificate = gui.CheckBoxField(defvalue=gui.TRUE)
+    tunnelWait = gui.NumericField(default='60')
+    verifyCertificate = gui.CheckBoxField(default=gui.TRUE)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
@@ -58,7 +58,7 @@ class NICEDCVTunnelTransport(transports.Transport):
     fullScreen = gui.CheckBoxField()
 
     multimon = gui.CheckBoxField()
-    port = gui.NumericField(defvalue=8443)
+    port = gui.NumericField(default=8443)
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

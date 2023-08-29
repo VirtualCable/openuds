@@ -48,13 +48,13 @@ class TSNoMachineTransport(transports.Transport):
     typeType = 'TSNoMachineTransport'
 
     tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(defvalue='30')
-    verifyCertificate = gui.CheckBoxField(defvalue=gui.FALSE)
+    tunnelWait = gui.NumericField(default='30')
+    verifyCertificate = gui.CheckBoxField(default=gui.FALSE)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
-    listenPort = gui.NumericField(defvalue='4000')
-    windowSize = gui.ChoiceField(defvalue='normal')
+    listenPort = gui.NumericField(default='4000')
+    windowSize = gui.ChoiceField(default='normal')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

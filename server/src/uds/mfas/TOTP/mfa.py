@@ -68,7 +68,7 @@ class TOTP_MFA(mfas.MFA):
     issuer = gui.TextField(
         length=64,
         label=_('Issuer'),
-        defvalue='UDS Authenticator',
+        default='UDS Authenticator',
         order=1,
         tooltip=_('Issuer for OTP. Once it\'s created it can\'t be changed'),
         required=True,
@@ -78,7 +78,7 @@ class TOTP_MFA(mfas.MFA):
     validWindow = gui.NumericField(
         length=2,
         label=_('Valid Window'),
-        defvalue=1,
+        default=1,
         minValue=0,
         maxValue=10,
         order=31,

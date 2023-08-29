@@ -55,7 +55,7 @@ class SampleMFA(mfas.MFA):
         order=90,
         tooltip=_('This is a useless field, for sample and testing pourposes'),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:

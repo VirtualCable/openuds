@@ -187,7 +187,7 @@ class LiveService(services.Service):
     lenName = gui.NumericField(
         length=1,
         label=_('Name Length'),
-        defvalue=5,
+        default=5,
         order=10,
         tooltip=_('Size of numeric part for the names of these machines'),
         required=True,
@@ -251,9 +251,9 @@ class LiveService(services.Service):
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())
 
-        self.ov.setDefValue(self.parent().serialize())
-        self.ev.setDefValue(self.parent().env.key)
-        self.legacy.setDefValue(self.parent().legacy and 'true' or 'false')
+        self.ov.setDefault(self.parent().serialize())
+        self.ev.setDefault(self.parent().env.key)
+        self.legacy.setDefault(self.parent().legacy and 'true' or 'false')
 
     @property
     def api(self) -> 'openstack.Client':

@@ -96,7 +96,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'winbind', 'text': gettext_lazy('Winbind')},
         ],
         tab=gui.Tab.ADVANCED,
-        defvalue='automatically',
+        default='automatically',
     )
     membershipSoftware = gui.ChoiceField(
         label=_('Membership software'),
@@ -108,7 +108,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'adcli', 'text': gettext_lazy('adcli')},
         ],
         tab=gui.Tab.ADVANCED,
-        defvalue='automatically',
+        default='automatically',
     )
     removeOnExit = gui.CheckBoxField(
         label=_('Machine clean'),
@@ -117,21 +117,21 @@ class LinuxOsADManager(LinuxOsManager):
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
     automaticIdMapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
     )
 
     # Inherits base "onLogout"

@@ -131,7 +131,7 @@ class ServiceOne(services.Service):
             gui.choiceItem('blue', 'Blue'),
             gui.choiceItem('nonsense', 'Blagenta'),
         ],
-        defvalue='1',  # Default value is the ID of the choicefield
+        default='1',  # Default value is the ID of the choicefield
     )
 
     passw = gui.PasswordField(
@@ -139,7 +139,7 @@ class ServiceOne(services.Service):
         label=_('Password'),
         tooltip=_('Password for testing purposes'),
         required=True,
-        defvalue='1234',  # : Default password are nonsense?? :-)
+        default='1234',  # : Default password are nonsense?? :-)
     )
 
     baseName = gui.TextField(
@@ -148,7 +148,7 @@ class ServiceOne(services.Service):
         tooltip=_('Base name for this user services'),
         # In this case, the choice can have none value selected by default
         required=True,
-        defvalue='',  # Default value is the ID of the choicefield
+        default='',  # Default value is the ID of the choicefield
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:

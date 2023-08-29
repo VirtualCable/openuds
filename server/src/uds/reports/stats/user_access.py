@@ -65,7 +65,7 @@ class StatsReportLogin(StatsReport):
         order=1,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        defvalue=datetime.date.min,
+        default=datetime.date.min,
         required=True,
     )
 
@@ -73,7 +73,7 @@ class StatsReportLogin(StatsReport):
         order=2,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        defvalue=datetime.date.max,
+        default=datetime.date.max,
         required=True,
     )
 
@@ -84,7 +84,7 @@ class StatsReportLogin(StatsReport):
         minValue=0,
         maxValue=128,
         tooltip=_('Number of sampling points used in charts'),
-        defvalue='64',
+        default='64',
     )
 
     def initialize(self, values):

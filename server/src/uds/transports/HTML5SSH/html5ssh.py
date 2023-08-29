@@ -123,7 +123,7 @@ class HTML5SSHTransport(transports.Transport):
     sshPort = gui.NumericField(
         length=40,
         label=_('SSH Server port'),
-        defvalue='22',
+        default='22',
         order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
@@ -138,7 +138,7 @@ class HTML5SSHTransport(transports.Transport):
     serverKeepAlive = gui.NumericField(
         length=3,
         label=_('Server Keep Alive'),
-        defvalue='30',
+        default='30',
         order=35,
         tooltip=_(
             'Time in seconds between keep alive messages sent to server. If not provided, no keep alive messages are sent.'

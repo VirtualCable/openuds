@@ -87,7 +87,7 @@ class EmailMFA(mfas.MFA):
         order=9,
         tooltip=_('User with access to SMTP server'),
         required=False,
-        defvalue='',
+        default='',
         tab=_('SMTP Server'),
     )
     password = gui.PasswordField(
@@ -96,13 +96,13 @@ class EmailMFA(mfas.MFA):
         order=10,
         tooltip=_('Password of the user with access to SMTP server'),
         required=False,
-        defvalue='',
+        default='',
         tab=_('SMTP Server'),
     )
 
     emailSubject = gui.TextField(
         length=128,
-        defvalue='Verification Code',
+        default='Verification Code',
         label=_('Subject'),
         order=3,
         tooltip=_('Subject of the email'),
@@ -123,7 +123,7 @@ class EmailMFA(mfas.MFA):
         label=_('Enable HTML'),
         order=13,
         tooltip=_('Enable HTML in emails'),
-        defvalue=True,
+        default=True,
         tab=_('Config'),
     )
 
@@ -157,7 +157,7 @@ class EmailMFA(mfas.MFA):
         + _('Allowed variables are: ')
         + '{code}, {username}, {justUsername}. {ip}',
         required=True,
-        defvalue='',
+        default='',
         tab=_('Config'),
     )
 
@@ -172,7 +172,7 @@ class EmailMFA(mfas.MFA):
         + '\n'
         + '{code}, {username}, {justUsername}, {ip}',
         required=False,
-        defvalue='',
+        default='',
         tab=_('Config'),
     )
 

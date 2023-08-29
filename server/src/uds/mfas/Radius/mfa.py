@@ -78,7 +78,7 @@ class RadiusOTP(mfas.MFA):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        defvalue='1812',
+        default='1812',
         order=2,
         tooltip=_('Radius authentication port (usually 1812)'),
         required=True,
@@ -93,7 +93,7 @@ class RadiusOTP(mfas.MFA):
     all_users_otp = gui.CheckBoxField(
         label=_('All users must send OTP'),
         order=4,
-        defvalue=True,
+        default=True,
         tooltip=_(
             'If unchecked, an authentication step is needed in order to know if this user must enter OTP. '
             'If checked, all users must enter OTP, so authentication step is skipped.'
@@ -102,7 +102,7 @@ class RadiusOTP(mfas.MFA):
     nasIdentifier = gui.TextField(
         length=64,
         label=_('NAS Identifier'),
-        defvalue='uds-server',
+        default='uds-server',
         order=5,
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,

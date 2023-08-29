@@ -110,7 +110,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         order=2,
         tooltip=_('User with valid privileges on XenServer'),
         required=True,
-        defvalue='root',
+        default='root',
     )
     password = gui.PasswordField(
         lenth=32,
@@ -123,7 +123,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=65536,
         order=50,
@@ -134,7 +134,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        defvalue='5',
+        default='5',
         minValue=1,
         maxValue=65536,
         order=51,
@@ -146,7 +146,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     macsRange = gui.TextField(
         length=36,
         label=_('Macs range'),
-        defvalue='02:46:00:00:00:00-02:46:00:FF:FF:FF',
+        default='02:46:00:00:00:00-02:46:00:FF:FF:FF',
         order=90,
         rdonly=True,
         tooltip=_('Range of valid macs for created machines'),
@@ -160,7 +160,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
             'If selected, certificate will be checked against system valid certificate providers'
         ),
         tab=gui.Tab.ADVANCED,
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
     )
 
     hostBackup = gui.TextField(

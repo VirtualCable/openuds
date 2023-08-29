@@ -69,13 +69,13 @@ class TestOSManager(osmanagers.OSManager):
                 'text': gettext_lazy('Keep service assigned even on new publication'),
             },
         ],
-        defvalue='keep',
+        default='keep',
     )
 
     idle = gui.NumericField(
         label=_("Max.Idle time"),
         length=4,
-        defvalue=-1,
+        default=-1,
         rdonly=False,
         order=11,
         tooltip=_(

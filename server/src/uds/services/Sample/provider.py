@@ -118,7 +118,7 @@ class Provider(services.ServiceProvider):
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
         requred=False,
-        defvalue='Tux',  # : This will not get translated
+        default='Tux',  # : This will not get translated
     )
     # : Age of Methuselah (matusalén in spanish)
     # : in Spain there is a well-known to say that something is very old,
@@ -129,7 +129,7 @@ class Provider(services.ServiceProvider):
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
         required=True,  # : Numeric fields have always a value, so this not really needed
-        defvalue='4500',
+        default='4500',
     )
 
     # : Is Methuselah istill alive?
@@ -137,7 +137,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        defvalue=gui.TRUE,  # : By default, at new item, check this
+        default=gui.TRUE,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -145,7 +145,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive BBBB?'),
         tooltip=_('If you fail, this will not get saved BBBB'),
-        defvalue=gui.TRUE,  # : By default, at new item, check this
+        default=gui.TRUE,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -153,7 +153,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive CCCC?'),
         tooltip=_('If you fail, this will not get saved CCCC'),
-        defvalue=gui.TRUE,  # : By default, at new item, check this
+        default=gui.TRUE,  # : By default, at new item, check this
     )
 
     methText = gui.TextField(
@@ -163,7 +163,7 @@ class Provider(services.ServiceProvider):
         label=_('Text area'),
         tooltip=_('This is a text area'),
         requred=False,
-        defvalue='Write\nsomething',  # : This will not get translated
+        default='Write\nsomething',  # : This will not get translated
     )
 
     # There is more fields type, but not here the best place to cover it

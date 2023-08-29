@@ -129,7 +129,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     minSpaceGB = gui.NumericField(
         length=3,
         label=_('Reserved Space'),
-        defvalue='32',
+        default='32',
         minValue=0,
         order=102,
         tooltip=_('Minimal free space in GB'),
@@ -147,7 +147,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     memory = gui.NumericField(
         label=_("Memory (Mb)"),
         length=4,
-        defvalue=512,
+        default=512,
         minValue=0,
         rdonly=False,
         order=111,
@@ -159,7 +159,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     memoryGuaranteed = gui.NumericField(
         label=_("Memory Guaranteed (Mb)"),
         length=4,
-        defvalue=256,
+        default=256,
         minValue=0,
         rdonly=False,
         order=112,
@@ -179,7 +179,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             # gui.choiceItem('legacy', 'legacy (deprecated)'),
         ],
         tab=_('Machine'),
-        defvalue='1',  # Default value is the ID of the choicefield
+        default='1',  # Default value is the ID of the choicefield
     )
 
     display = gui.ChoiceField(
@@ -189,7 +189,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         tooltip=_('Display type (only for administration purposes)'),
         values=[gui.choiceItem('spice', 'Spice'), gui.choiceItem('vnc', 'Vnc')],
         tab=_('Machine'),
-        defvalue='1',  # Default value is the ID of the choicefield
+        default='1',  # Default value is the ID of the choicefield
     )
     baseName = gui.TextField(
         label=_('Machine Names'),
@@ -203,7 +203,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     lenName = gui.NumericField(
         length=1,
         label=_('Name Length'),
-        defvalue=5,
+        default=5,
         order=116,
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
@@ -239,8 +239,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.ov.defValue = self.parent().serialize()
-        self.ev.defValue = self.parent().env.key
+        self.ov.default = self.parent().serialize()
+        self.ev.default = self.parent().env.key
 
         machines = self.parent().getMachines()
         vals = []

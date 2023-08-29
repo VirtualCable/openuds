@@ -113,7 +113,7 @@ class OpenStackProvider(ServiceProvider):
         order=5,
         tooltip=_('Access interface to be used'),
         values=INTERFACE_VALUES,
-        defvalue='public',
+        default='public',
     )
 
     domain = gui.TextField(
@@ -122,7 +122,7 @@ class OpenStackProvider(ServiceProvider):
         order=8,
         tooltip=_('Domain name (default is Default)'),
         required=True,
-        defvalue='Default',
+        default='Default',
     )
     username = gui.TextField(
         length=64,
@@ -130,7 +130,7 @@ class OpenStackProvider(ServiceProvider):
         order=9,
         tooltip=_('User with valid privileges on OpenStack'),
         required=True,
-        defvalue='admin',
+        default='admin',
     )
     password = gui.PasswordField(
         lenth=32,
@@ -143,7 +143,7 @@ class OpenStackProvider(ServiceProvider):
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=65536,
         order=50,
@@ -154,7 +154,7 @@ class OpenStackProvider(ServiceProvider):
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        defvalue='5',
+        default='5',
         minValue=1,
         maxValue=65536,
         order=51,
@@ -166,7 +166,7 @@ class OpenStackProvider(ServiceProvider):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=128,
         order=99,
@@ -183,7 +183,7 @@ class OpenStackProvider(ServiceProvider):
             'Project (tenant) for this provider. Set only if required by server.'
         ),
         required=False,
-        defvalue='',
+        default='',
         tab=gui.Tab.ADVANCED,
     )
     region = gui.TextField(
@@ -192,7 +192,7 @@ class OpenStackProvider(ServiceProvider):
         order=7,
         tooltip=_('Region for this provider. Set only if required by server.'),
         required=False,
-        defvalue='',
+        default='',
         tab=gui.Tab.ADVANCED,
     )
 
@@ -202,7 +202,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_(
             'If checked, the name of the subnets will be used instead of the names of networks'
         ),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         tab=gui.Tab.ADVANCED,
     )
 

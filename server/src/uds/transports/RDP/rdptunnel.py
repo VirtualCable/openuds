@@ -75,7 +75,7 @@ class TRDPTransport(BaseRDPTransport):
         label=_('Force SSL certificate verification'),
         order=23,
         tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         tab=gui.Tab.TUNNEL,
     )
 

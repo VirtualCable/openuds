@@ -97,7 +97,7 @@ class EmailNotifier(messaging.Notifier):
         order=9,
         tooltip=_('User with access to SMTP server'),
         required=False,
-        defvalue='',
+        default='',
         tab=_('SMTP Server'),
     )
     password = gui.PasswordField(
@@ -106,7 +106,7 @@ class EmailNotifier(messaging.Notifier):
         order=10,
         tooltip=_('Password of the user with access to SMTP server'),
         required=False,
-        defvalue='',
+        default='',
         tab=_('SMTP Server'),
     )
 
@@ -132,7 +132,7 @@ class EmailNotifier(messaging.Notifier):
         label=_('Enable HTML'),
         order=13,
         tooltip=_('Enable HTML in emails'),
-        defvalue=True,
+        default=True,
         tab=_('Config'),
     )
 

@@ -95,21 +95,21 @@ class RDSProvider(services.ServiceProvider):
 
     # Gui
     ipList = gui.EditableListField()
-    serverCheck = gui.CheckBoxField(defvalue=gui.FALSE)
+    serverCheck = gui.CheckBoxField(default=gui.FALSE)
 
     # User mapping, classical
-    useUserMapping = gui.CheckBoxField(defvalue=gui.FALSE)
+    useUserMapping = gui.CheckBoxField(default=gui.FALSE)
     userMap = gui.EditableListField()
     userPass = gui.PasswordField()
 
     # User creating, new
-    useUserCreation = gui.CheckBoxField(defvalue=gui.FALSE)
+    useUserCreation = gui.CheckBoxField(default=gui.FALSE)
     adHost = gui.TextField()
-    adPort = gui.NumericField(defvalue='636')
+    adPort = gui.NumericField(default='636')
     adUsersDn = gui.TextField()
     adUsername = gui.TextField()
     adPassword = gui.PasswordField()
-    adUserPrefix = gui.TextField(defvalue='UDS_')
+    adUserPrefix = gui.TextField(default='UDS_')
     adDomain = gui.TextField()
     adGroup = gui.TextField()
     adCertificate = gui.TextField()

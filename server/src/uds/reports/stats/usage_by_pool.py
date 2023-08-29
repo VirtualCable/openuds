@@ -63,7 +63,7 @@ class UsageByPool(StatsReport):
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        defvalue=datetime.date.min,
+        default=datetime.date.min,
         required=True,
     )
 
@@ -71,7 +71,7 @@ class UsageByPool(StatsReport):
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        defvalue=datetime.date.max,
+        default=datetime.date.max,
         required=True,
     )
 

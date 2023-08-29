@@ -48,7 +48,7 @@ if typing.TYPE_CHECKING:
 class IPAuth(auths.Authenticator):
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         order=50,
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address'
@@ -60,7 +60,7 @@ class IPAuth(auths.Authenticator):
     visibleFromNets = gui.TextField(
         order=50,
         label=_('Visible only from this networks'),
-        defvalue='',
+        default='',
         tooltip=_(
             'This authenticator will be visible only from these networks. Leave empty to allow all networks'
         ),

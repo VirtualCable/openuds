@@ -119,7 +119,7 @@ class SMSMFA(mfas.MFA):
     ignoreCertificateErrors = gui.CheckBoxField(
         label=_('Ignore certificate errors'),
         order=2,
-        defvalue=False,
+        default=False,
         tooltip=_(
             'If checked, the server certificate will be ignored. This is '
             'useful if the server uses a self-signed certificate.'

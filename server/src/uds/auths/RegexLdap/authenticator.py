@@ -73,7 +73,7 @@ class RegexLdap(auths.Authenticator):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        defvalue='389',
+        default='389',
         order=2,
         tooltip=_('Ldap port (usually 389 for non ssl and 636 for ssl)'),
         required=True,
@@ -104,7 +104,7 @@ class RegexLdap(auths.Authenticator):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='10',
+        default='10',
         order=6,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
@@ -112,7 +112,7 @@ class RegexLdap(auths.Authenticator):
     )
     verifySsl = gui.CheckBoxField(
         label=_('Verify SSL'),
-        defvalue=True,
+        default=True,
         order=11,
         tooltip=_(
             'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
@@ -139,7 +139,7 @@ class RegexLdap(auths.Authenticator):
     userClass = gui.TextField(
         length=64,
         label=_('User class'),
-        defvalue='posixAccount',
+        default='posixAccount',
         order=21,
         tooltip=_('Class for LDAP users (normally posixAccount)'),
         required=True,
@@ -148,7 +148,7 @@ class RegexLdap(auths.Authenticator):
     userIdAttr = gui.TextField(
         length=64,
         label=_('User Id Attr'),
-        defvalue='uid',
+        default='uid',
         order=22,
         tooltip=_('Attribute that contains the user id'),
         required=True,
@@ -158,7 +158,7 @@ class RegexLdap(auths.Authenticator):
         length=640,
         label=_('User Name Attr'),
         multiline=2,
-        defvalue='uid',
+        default='uid',
         order=23,
         tooltip=_(
             'Attributes that contains the user name attributes or attribute patterns (one for each line)'
@@ -170,7 +170,7 @@ class RegexLdap(auths.Authenticator):
         length=640,
         label=_('Group Name Attr'),
         multiline=2,
-        defvalue='cn',
+        default='cn',
         order=24,
         tooltip=_(
             'Attribute that contains the group name attributes or attribute patterns (one for each line)'
@@ -183,7 +183,7 @@ class RegexLdap(auths.Authenticator):
     altClass = gui.TextField(
         length=64,
         label=_('Alt. class'),
-        defvalue='',
+        default='',
         order=25,
         tooltip=_(
             'Class for LDAP objects that will be also checked for groups retrieval (normally empty)'

@@ -45,16 +45,16 @@ class HTML5SSHTransport(transports.Transport):
 
     typeType = 'HTML5SSHTransport'
 
-    guacamoleServer = gui.TextField(defvalue='https://')
+    guacamoleServer = gui.TextField(default='https://')
     username = gui.TextField()
     sshCommand = gui.TextField()
-    enableFileSharing = gui.ChoiceField(defvalue='false')
+    enableFileSharing = gui.ChoiceField(default='false')
     fileSharingRoot = gui.TextField()
-    sshPort = gui.NumericField(defvalue='22')
+    sshPort = gui.NumericField(default='22')
     sshHostKey = gui.TextField()
-    serverKeepAlive = gui.NumericField(defvalue='30')
-    ticketValidity = gui.NumericField(defvalue='60')
-    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
+    serverKeepAlive = gui.NumericField(default='30')
+    ticketValidity = gui.NumericField(default='60')
+    forceNewWindow = gui.ChoiceField(default=gui.FALSE)
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

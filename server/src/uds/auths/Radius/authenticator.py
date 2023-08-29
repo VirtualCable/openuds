@@ -71,7 +71,7 @@ class RadiusAuth(auths.Authenticator):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        defvalue='1812',
+        default='1812',
         order=2,
         tooltip=_('Radius authentication port (usually 1812)'),
         required=True,
@@ -87,7 +87,7 @@ class RadiusAuth(auths.Authenticator):
     nasIdentifier = gui.TextField(
         length=64,
         label=_('NAS Identifier'),
-        defvalue='uds-server',
+        default='uds-server',
         order=10,
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,
@@ -97,7 +97,7 @@ class RadiusAuth(auths.Authenticator):
     appClassPrefix = gui.TextField(
         length=64,
         label=_('App Prefix for Class Attributes'),
-        defvalue='',
+        default='',
         order=11,
         tooltip=_('Application prefix for filtering groups from "Class" attribute'),
         tab=gui.Tab.ADVANCED,
@@ -106,7 +106,7 @@ class RadiusAuth(auths.Authenticator):
     globalGroup = gui.TextField(
         length=64,
         label=_('Global group'),
-        defvalue='',
+        default='',
         order=12,
         tooltip=_('If set, this value will be added as group for all radius users'),
         tab=gui.Tab.ADVANCED,

@@ -95,9 +95,9 @@ class BaseModelHandler(Handler):
                 'value': '',
                 'gui': {
                     'required': field.get('required', False),
-                    'defvalue': field.get('value', ''),
-                    'value': field.get('value', ''),
+                    'default': field.get('value', ''),
                     'minValue': field.get('minValue', '987654321'),
+                    'maxValue': field.get('maxValue', '123456789'),
                     'label': field.get('label', ''),
                     'length': field.get('length', 128),
                     'multiline': field.get('multiline', 0),

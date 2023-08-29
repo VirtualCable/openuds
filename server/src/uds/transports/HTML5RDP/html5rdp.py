@@ -137,7 +137,7 @@ class HTML5RDPTransport(transports.Transport):
         order=21,
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=ui.gui.Tab.PARAMETERS,
-        defvalue=ui.gui.TRUE,
+        default=ui.gui.TRUE,
     )
     enableAudioInput = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
@@ -159,7 +159,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('File Sharing'),
         order=24,
         tooltip=_('File upload/download redirection policy'),
-        defvalue='false',
+        default='false',
         values=[
             {'id': 'false', 'text': _('Disable file sharing')},
             {'id': 'down', 'text': _('Allow download only')},
@@ -172,7 +172,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('Clipboard'),
         order=25,
         tooltip=_('Clipboard redirection policy'),
-        defvalue='enabled',
+        default='enabled',
         values=[
             {'id': 'disabled', 'text': _('Disable clipboard')},
             {'id': 'dis-copy', 'text': _('Disable copy from remote')},
@@ -208,7 +208,7 @@ class HTML5RDPTransport(transports.Transport):
             ui.gui.choiceItem('tr-tr-qwerty', _('Turkish keyboard')),
             ui.gui.choiceItem('failsafe', _('Failsafe')),
         ],
-        defvalue='-',
+        default='-',
         tab=ui.gui.Tab.PARAMETERS,
     )
 
@@ -230,7 +230,7 @@ class HTML5RDPTransport(transports.Transport):
                 _('Override UDS window and replace it with the connection.'),
             ),
         ],
-        defvalue=ui.gui.FALSE,
+        default=ui.gui.FALSE,
         tab=ui.gui.Tab.ADVANCED,
     )
     security = ui.gui.ChoiceField(
@@ -258,7 +258,7 @@ class HTML5RDPTransport(transports.Transport):
             ),
             ui.gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
         ],
-        defvalue='any',
+        default='any',
         tab=ui.gui.Tab.ADVANCED,
     )
 
@@ -268,7 +268,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         required=True,  #: Numeric fields have always a value, so this not really needed
-        defvalue='3389',
+        default='3389',
         tab=ui.gui.Tab.ADVANCED,
     )
 
@@ -278,7 +278,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_(
             'Customized path for Glyptodon Enterprise tunnel. (Only valid for Glyptodon Enterprise Tunnel)'
         ),
-        defvalue='/',
+        default='/',
         length=128,
         required=False,
         tab=ui.gui.Tab.ADVANCED,

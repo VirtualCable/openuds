@@ -71,7 +71,7 @@ class PoolPerformanceReport(StatsReport):
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        defvalue=datetime.date.min,
+        default=datetime.date.min,
         required=True,
     )
 
@@ -79,7 +79,7 @@ class PoolPerformanceReport(StatsReport):
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        defvalue=datetime.date.max,
+        default=datetime.date.max,
         required=True,
     )
 
@@ -90,7 +90,7 @@ class PoolPerformanceReport(StatsReport):
         minValue=0,
         maxValue=32,
         tooltip=_('Number of sampling points used in charts'),
-        defvalue='8',
+        default='8',
     )
 
     def initGui(self) -> None:

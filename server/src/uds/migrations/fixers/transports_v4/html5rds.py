@@ -48,7 +48,7 @@ class HTML5RDSTransport(transports.Transport):
     typeName = 'RDS'
     typeType = 'HTML5RDSTransport'
 
-    guacamoleServer = gui.TextField(defvalue='https://')
+    guacamoleServer = gui.TextField(default='https://')
     useGlyptodonTunnel = gui.CheckBoxField()
     useEmptyCreds = gui.CheckBoxField()
     withoutDomain = gui.CheckBoxField()
@@ -56,28 +56,28 @@ class HTML5RDSTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(defvalue=gui.TRUE)
+    enableAudio = gui.CheckBoxField(default=gui.TRUE)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
-    enableFileSharing = gui.ChoiceField(defvalue='false')
-    enableClipboard = gui.ChoiceField(defvalue='enabled')
-    serverLayout = gui.ChoiceField(defvalue='-')
-    ticketValidity = gui.NumericField(defvalue='60')
+    enableFileSharing = gui.ChoiceField(default='false')
+    enableClipboard = gui.ChoiceField(default='enabled')
+    serverLayout = gui.ChoiceField(default='-')
+    ticketValidity = gui.NumericField(default='60')
 
-    forceNewWindow = gui.ChoiceField(defvalue=gui.FALSE)
-    security = gui.ChoiceField(defvalue='any')
-    rdpPort = gui.NumericField(defvalue='3389')
+    forceNewWindow = gui.ChoiceField(default=gui.FALSE)
+    security = gui.ChoiceField(default='any')
+    rdpPort = gui.NumericField(default='3389')
 
-    customGEPath = gui.TextField(defvalue='/')
+    customGEPath = gui.TextField(default='/')
 
     # Load balancing info
-    loadBalancingInfo = gui.TextField(defvalue='')
+    loadBalancingInfo = gui.TextField(default='')
 
-    gatewayHostname = gui.TextField(defvalue='')
-    gatewayPort = gui.NumericField(defvalue='443')
-    gatewayUsername = gui.TextField(defvalue='')
-    gatewayPassword = gui.PasswordField(defvalue='')
-    gatewayDomain = gui.TextField(defvalue='')
+    gatewayHostname = gui.TextField(default='')
+    gatewayPort = gui.NumericField(default='443')
+    gatewayUsername = gui.TextField(default='')
+    gatewayPassword = gui.PasswordField(default='')
+    gatewayDomain = gui.TextField(default='')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

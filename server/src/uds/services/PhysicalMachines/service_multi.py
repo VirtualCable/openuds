@@ -63,7 +63,7 @@ class IPMachinesService(IPServiceBase):
         tooltip=_(
             'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
         ),
-        defvalue='',
+        default='',
         required=False,
         rdonly=False,
     )
@@ -76,7 +76,7 @@ class IPMachinesService(IPServiceBase):
     port = gui.NumericField(
         length=5,
         label=_('Check Port'),
-        defvalue='0',
+        default='0',
         order=2,
         tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
         required=True,
@@ -85,7 +85,7 @@ class IPMachinesService(IPServiceBase):
     skipTimeOnFailure = gui.NumericField(
         length=6,
         label=_('Skip time'),
-        defvalue='0',
+        default='0',
         order=2,
         tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
         minValue=0,
@@ -96,7 +96,7 @@ class IPMachinesService(IPServiceBase):
     maxSessionForMachine = gui.NumericField(
         length=3,
         label=_('Max session per machine'),
-        defvalue='0',
+        default='0',
         order=3,
         tooltip=_(
             'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
@@ -108,7 +108,7 @@ class IPMachinesService(IPServiceBase):
     lockByExternalAccess = gui.CheckBoxField(
         label=_('Lock machine by external access'),
         tooltip=_('If checked, UDS will lock the machine if it is accesed from outside UDS.'),
-        defvalue=False,
+        default=False,
         order=4,
         tab=gui.Tab.ADVANCED,
     )

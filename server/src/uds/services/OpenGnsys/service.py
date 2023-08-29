@@ -129,7 +129,7 @@ class OGService(services.Service):
         tooltip=_(
             'Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'
         ),
-        defvalue='2400',  # 1 hundred days
+        default='2400',  # 1 hundred days
         minValue='24',
         tab=_('Advanced'),
         required=False,
@@ -137,7 +137,7 @@ class OGService(services.Service):
 
     startIfUnavailable = gui.CheckBoxField(
         label=_('Start if unavailable'),
-        defvalue=gui.TRUE,
+        default=gui.TRUE,
         order=111,
         tooltip=_(
             'If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'
@@ -149,7 +149,7 @@ class OGService(services.Service):
         label=_("Max. Allowed services"),
         minValue=0,
         maxValue=99999,
-        defvalue=0,
+        default=0,
         rdonly=False,
         tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
         required=True,
@@ -168,8 +168,8 @@ class OGService(services.Service):
         ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
         self.ou.setValues(ous)
 
-        self.ov.setDefValue(self.parent().serialize())
-        self.ev.setDefValue(self.parent().env.key)
+        self.ov.setDefault(self.parent().serialize())
+        self.ev.setDefault(self.parent().env.key)
 
     def parent(self) -> 'OGProvider':
         return typing.cast('OGProvider', super().parent())

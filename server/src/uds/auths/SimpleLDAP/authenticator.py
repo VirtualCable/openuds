@@ -62,7 +62,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        defvalue='389',
+        default='389',
         order=2,
         tooltip=_('Ldap port (usually 389 for non ssl and 636 for ssl)'),
         required=True,
@@ -93,7 +93,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='10',
+        default='10',
         order=10,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
@@ -102,7 +102,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     )
     verifySsl = gui.CheckBoxField(
         label=_('Verify SSL'),
-        defvalue=True,
+        default=True,
         order=11,
         tooltip=_(
             'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
@@ -130,7 +130,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     userClass = gui.TextField(
         length=64,
         label=_('User class'),
-        defvalue='posixAccount',
+        default='posixAccount',
         order=31,
         tooltip=_('Class for LDAP users (normally posixAccount)'),
         required=True,
@@ -139,7 +139,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     userIdAttr = gui.TextField(
         length=64,
         label=_('User Id Attr'),
-        defvalue='uid',
+        default='uid',
         order=32,
         tooltip=_('Attribute that contains the user id'),
         required=True,
@@ -148,7 +148,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     userNameAttr = gui.TextField(
         length=64,
         label=_('User Name Attr'),
-        defvalue='uid',
+        default='uid',
         order=33,
         tooltip=_(
             'Attributes that contains the user name (list of comma separated values)'
@@ -159,7 +159,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     groupClass = gui.TextField(
         length=64,
         label=_('Group class'),
-        defvalue='posixGroup',
+        default='posixGroup',
         order=34,
         tooltip=_('Class for LDAP groups (normally poxisGroup)'),
         required=True,
@@ -168,7 +168,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     groupIdAttr = gui.TextField(
         length=64,
         label=_('Group Id Attr'),
-        defvalue='cn',
+        default='cn',
         order=35,
         tooltip=_('Attribute that contains the group id'),
         required=True,
@@ -177,7 +177,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     memberAttr = gui.TextField(
         length=64,
         label=_('Group membership attr'),
-        defvalue='memberUid',
+        default='memberUid',
         order=36,
         tooltip=_('Attribute of the group that contains the users belonging to it'),
         required=True,

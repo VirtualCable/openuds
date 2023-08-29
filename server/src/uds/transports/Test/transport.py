@@ -68,7 +68,7 @@ class TestTransport(transports.Transport):
         label=_('URL Pattern'),
         order=1,
         tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'),
-        defvalue='https://www.udsenterprise.com',
+        default='https://www.udsenterprise.com',
         length=256,
         required=True,
     )
@@ -79,7 +79,7 @@ class TestTransport(transports.Transport):
         tooltip=_(
             'If checked, every connection will try to open its own window instead of reusing the "global" one.'
         ),
-        defvalue=gui.FALSE,
+        default=gui.FALSE,
         tab=gui.Tab.ADVANCED,
     )
 

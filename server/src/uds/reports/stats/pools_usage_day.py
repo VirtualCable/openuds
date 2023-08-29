@@ -63,7 +63,7 @@ class CountersPoolAssigned(StatsReport):
         order=2,
         label=_('Date'),
         tooltip=_('Date for report'),
-        defvalue='',
+        default='',
         required=True,
     )
 

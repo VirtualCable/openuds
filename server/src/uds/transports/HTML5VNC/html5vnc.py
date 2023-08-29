@@ -91,7 +91,7 @@ class HTML5VNCTransport(transports.Transport):
     vncPort = gui.NumericField(
         length=22,
         label=_('VNC Server port'),
-        defvalue='5900',
+        default='5900',
         order=2,
         tooltip=_('Port of the VNC server.'),
         required=True,
@@ -110,7 +110,7 @@ class HTML5VNCTransport(transports.Transport):
             gui.choiceItem('24', '24 bits'),
             gui.choiceItem('32', '33 bits'),
         ],
-        defvalue='-',
+        default='-',
         tab=gui.Tab.PARAMETERS,
     )
     swapRedBlue = gui.CheckBoxField(

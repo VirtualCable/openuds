@@ -106,7 +106,7 @@ class OVirtProvider(
         values=[
             gui.choiceItem('4', '4.x'),
         ],
-        defvalue='4',  # Default value is the ID of the choicefield
+        default='4',  # Default value is the ID of the choicefield
     )
 
     host = gui.TextField(
@@ -122,7 +122,7 @@ class OVirtProvider(
         order=3,
         tooltip=_('User with valid privileges on oVirt, (use "user@domain" form)'),
         required=True,
-        defvalue='admin@internal',
+        default='admin@internal',
     )
     password = gui.PasswordField(
         lenth=32,
@@ -135,7 +135,7 @@ class OVirtProvider(
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        defvalue='10',
+        default='10',
         minValue=1,
         maxValue=65536,
         order=50,
@@ -146,7 +146,7 @@ class OVirtProvider(
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        defvalue='5',
+        default='5',
         minValue=1,
         maxValue=65536,
         order=51,
@@ -158,7 +158,7 @@ class OVirtProvider(
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        defvalue='10',
+        default='10',
         order=90,
         tooltip=_('Timeout in seconds of connection to oVirt'),
         required=True,
@@ -167,7 +167,7 @@ class OVirtProvider(
     macsRange = gui.TextField(
         length=36,
         label=_('Macs range'),
-        defvalue='52:54:00:00:00:00-52:54:00:FF:FF:FF',
+        default='52:54:00:00:00:00-52:54:00:FF:FF:FF',
         order=91,
         rdonly=True,
         tooltip=_('Range of valid macs for UDS managed machines'),
