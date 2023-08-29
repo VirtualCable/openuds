@@ -238,7 +238,7 @@ class LiveService(services.Service):
         else:
             regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
 
-        self.region.setValues(regions)
+        self.region.setChoices(regions)
 
         if parentCurrent and parentCurrent.tenant.value:
             tenants = [
@@ -246,7 +246,7 @@ class LiveService(services.Service):
             ]
         else:
             tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
-        self.project.setValues(tenants)
+        self.project.setChoices(tenants)
 
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())

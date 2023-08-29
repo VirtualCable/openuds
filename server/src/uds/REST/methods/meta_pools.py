@@ -153,7 +153,7 @@ class MetaPools(ModelHandler):
         for field in [
             {
                 'name': 'policy',
-                'values': [
+                'choices': [
                     gui.choiceItem(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()
                 ],
                 'label': gettext('Load balancing policy'),
@@ -163,7 +163,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'ha_policy',
-                'values': [
+                'choices': [
                     gui.choiceItem(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
                 ],
                 'label': gettext('HA Policy'),
@@ -173,7 +173,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
                         gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
@@ -188,7 +188,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'servicesPoolGroup_id',
-                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
                         gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
@@ -225,7 +225,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'transport_grouping',
-                'values': [
+                'choices': [
                     gui.choiceItem(k, str(v))
                     for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],

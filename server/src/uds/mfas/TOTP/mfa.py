@@ -102,7 +102,7 @@ class TOTP_MFA(mfas.MFA):
     @classmethod
     def initClassGui(cls) -> None:
         # Populate the networks list
-        cls.networks.setValues(
+        cls.networks.setChoices(
             [
                 gui.choiceItem(v.uuid, v.name)  # type: ignore
                 for v in models.Network.objects.all().order_by('name')

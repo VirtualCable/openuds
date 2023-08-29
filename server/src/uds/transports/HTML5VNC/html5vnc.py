@@ -103,7 +103,7 @@ class HTML5VNCTransport(transports.Transport):
         label=_('Color depth'),
         tooltip=_('Color depth for VNC connection. Use this to control bandwidth.'),
         required=True,
-        values=[
+        choices=[
             gui.choiceItem('-', 'default'),
             gui.choiceItem('8', '8 bits'),
             gui.choiceItem('16', '16 bits'),

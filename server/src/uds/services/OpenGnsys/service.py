@@ -166,7 +166,7 @@ class OGService(services.Service):
         Loads required values inside
         """
         ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
-        self.ou.setValues(ous)
+        self.ou.setChoices(ous)
 
         self.ov.setDefault(self.parent().serialize())
         self.ev.setDefault(self.parent().env.key)

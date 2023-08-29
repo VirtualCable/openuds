@@ -103,7 +103,7 @@ class OVirtProvider(
         # In this case, the choice can have none value selected by default
         required=True,
         rdonly=False,
-        values=[
+        choices=[
             gui.choiceItem('4', '4.x'),
         ],
         default='4',  # Default value is the ID of the choicefield

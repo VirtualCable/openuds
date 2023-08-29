@@ -61,7 +61,7 @@ class TestOSManager(osmanagers.OSManager):
         order=10,
         rdonly=True,
         tooltip=_('What to do when user logs out from service'),
-        values=[
+        choices=[
             {'id': 'keep', 'text': gettext_lazy('Keep service assigned')},
             {'id': 'remove', 'text': gettext_lazy('Remove service')},
             {

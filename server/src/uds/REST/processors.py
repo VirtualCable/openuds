@@ -73,7 +73,7 @@ class ContentProcessor:
         if self._request.method != 'GET':
             return {}
 
-        return dict(self._request.GET)
+        return {k: v[0] if len(v) == 1 else v for k, v in self._request.GET.lists()}
 
     def processParameters(self) -> typing.Dict[str, typing.Any]:
         """

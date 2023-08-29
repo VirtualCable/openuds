@@ -85,7 +85,7 @@ class Notifiers(ModelHandler):
         for field in [
             {
                 'name': 'level',
-                'values': [gui.choiceItem(i[0], i[1]) for i in LogLevel.interesting()],
+                'choices': [gui.choiceItem(i[0], i[1]) for i in LogLevel.interesting()],
                 'label': gettext('Level'),
                 'tooltip': gettext('Level of notifications'),
                 'type': gui.InputField.Types.CHOICE,

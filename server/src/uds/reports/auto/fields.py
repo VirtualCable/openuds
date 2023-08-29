@@ -75,7 +75,7 @@ def intervals_field(order: int) -> gui.ChoiceField:
     return gui.ChoiceField(
         label=_('Report data interval'),
         order=order,
-        values={
+        choices={
             'hour': _('Hourly'),
             'day': _('Daily'),
             'week': _('Weekly'),
@@ -121,4 +121,4 @@ def source_field_data(
     if isinstance(field, gui.MultiChoiceField):
         dataList.insert(0, {'id': '0-0-0-0', 'text': _('All')})
 
-    field.setValues(dataList)
+    field.setChoices(dataList)

@@ -80,7 +80,7 @@ class CountersPoolAssigned(StatsReport):
             gui.choiceItem(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
         ]
-        self.pools.setValues(vals)
+        self.pools.setChoices(vals)
 
     def getData(self) -> typing.List[typing.Dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db

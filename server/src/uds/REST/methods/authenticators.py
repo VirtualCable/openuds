@@ -115,7 +115,7 @@ class Authenticators(ModelHandler):
                     {
                         'name': 'state',
                         'value': Authenticator.VISIBLE,
-                        'values': [
+                        'choices': [
                             {'id': Authenticator.VISIBLE, 'text': _('Visible')},
                             {'id': Authenticator.HIDDEN, 'text': _('Hidden')},
                             {'id': Authenticator.DISABLED, 'text': _('Disabled')},
@@ -135,7 +135,7 @@ class Authenticators(ModelHandler):
                         field,
                         {
                             'name': 'mfa_id',
-                            'values': [gui.choiceItem('', _('None'))]
+                            'choices': [gui.choiceItem('', _('None'))]
                             + gui.sortedChoices(
                                 [
                                     gui.choiceItem(v.uuid or '', v.name)

@@ -82,7 +82,7 @@ class EmailNotifier(messaging.Notifier):
     security = gui.ChoiceField(
         label=_('Security'),
         tooltip=_('Security protocol to use'),
-        values=[
+        choices=[
             gui.choiceItem('tls', _('TLS')),
             gui.choiceItem('ssl', _('SSL')),
             gui.choiceItem('none', _('None')),

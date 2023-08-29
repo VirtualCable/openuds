@@ -108,7 +108,7 @@ class BaseRDPTransport(transports.Transport):
         order=22,
         tooltip=_('Local drives redirection policy'),
         default='false',
-        values=[
+        choices=[
             {'id': 'false', 'text': 'Allow none'},
             {'id': 'dynamic', 'text': 'Allow PnP drives'},
             {'id': 'true', 'text': 'Allow any drive'},
@@ -156,7 +156,7 @@ class BaseRDPTransport(transports.Transport):
         order=28,
         tooltip=_('USB redirection policy'),
         default='false',
-        values=[
+        choices=[
             {'id': 'false', 'text': 'Allow none'},
             {'id': 'true', 'text': 'Allow all'},
             {'id': '{ca3e7ab9-b4c3-4ae6-8251-579ef933890f}', 'text': 'Cameras'},
@@ -190,7 +190,7 @@ class BaseRDPTransport(transports.Transport):
         order=31,
         tooltip=_('Screen size for this transport'),
         default='-1x-1',
-        values=[
+        choices=[
             {'id': '640x480', 'text': '640x480'},
             {'id': '800x600', 'text': '800x600'},
             {'id': '1024x768', 'text': '1024x768'},
@@ -214,7 +214,7 @@ class BaseRDPTransport(transports.Transport):
         order=32,
         tooltip=_('Color depth for this connection'),
         default='24',
-        values=[
+        choices=[
             {'id': '8', 'text': '8'},
             {'id': '16', 'text': '16'},
             {'id': '24', 'text': '24'},

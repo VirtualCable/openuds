@@ -38,7 +38,7 @@ from django.utils.translation import gettext as _
 
 from uds import models
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 import uds.core.types.permissions
 from uds.core.util import log
 from uds.core.util import permissions
@@ -154,6 +154,11 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         fields = self.readFieldsFromParams(
             ['name', 'comments', 'data_type', 'tags', 'max_services_count_type']
         )
+        # Fix max_services_count_type to ServicesCountingType enum or ServicesCountingType.STANDARD if not found
+        try:
+            fields['max_services_count_type'] = types.services.ServicesCountingType.fromInt(int(fields['max_services_count_type']))
+        except Exception:
+            fields['max_services_count_type'] = types.services.ServicesCountingType.STANDARD
         tags = fields['tags']
         del fields['tags']
         service: typing.Optional[models.Service] = None
@@ -295,7 +300,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 localGui,
                 {
                     'name': 'max_services_count_type',
-                    'values': [
+                    'choices': [
                         gui.choiceItem('0', _('Standard')),
                         gui.choiceItem('1', _('Conservative')),
                     ],

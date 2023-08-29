@@ -71,7 +71,7 @@ class ListReportUsers(ListReport):
         logger.debug('Initializing gui')
         vals = [gui.choiceItem(v.uuid, v.name) for v in Authenticator.objects.all()]
 
-        self.authenticator.setValues(vals)
+        self.authenticator.setChoices(vals)
 
     def generate(self) -> bytes:
         auth = Authenticator.objects.get(uuid=self.authenticator.value)

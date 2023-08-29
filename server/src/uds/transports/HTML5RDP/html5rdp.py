@@ -160,7 +160,7 @@ class HTML5RDPTransport(transports.Transport):
         order=24,
         tooltip=_('File upload/download redirection policy'),
         default='false',
-        values=[
+        choices=[
             {'id': 'false', 'text': _('Disable file sharing')},
             {'id': 'down', 'text': _('Allow download only')},
             {'id': 'up', 'text': _('Allow upload only')},
@@ -173,7 +173,7 @@ class HTML5RDPTransport(transports.Transport):
         order=25,
         tooltip=_('Clipboard redirection policy'),
         default='enabled',
-        values=[
+        choices=[
             {'id': 'disabled', 'text': _('Disable clipboard')},
             {'id': 'dis-copy', 'text': _('Disable copy from remote')},
             {'id': 'dis-paste', 'text': _('Disable paste to remote')},
@@ -187,7 +187,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('Layout'),
         tooltip=_('Keyboard Layout of server'),
         required=True,
-        values=[
+        choices=[
             ui.gui.choiceItem('-', 'default'),
             ui.gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
             ui.gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
@@ -219,7 +219,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('Force new HTML Window'),
         tooltip=_('Select windows behavior for new connections on HTML5'),
         required=True,
-        values=[
+        choices=[
             ui.gui.choiceItem(
                 ui.gui.FALSE,
                 _('Open every connection on the same window, but keeps UDS window.'),
@@ -238,7 +238,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('Security'),
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,
-        values=[
+        choices=[
             ui.gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
             ui.gui.choiceItem(
                 'rdp',

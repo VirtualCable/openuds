@@ -173,7 +173,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         rdonly=False,
         order=113,
         tooltip=_('Enable usb redirection for SPICE'),
-        values=[
+        choices=[
             gui.choiceItem('disabled', 'disabled'),
             gui.choiceItem('native', 'native'),
             # gui.choiceItem('legacy', 'legacy (deprecated)'),
@@ -187,7 +187,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         rdonly=False,
         order=114,
         tooltip=_('Display type (only for administration purposes)'),
-        values=[gui.choiceItem('spice', 'Spice'), gui.choiceItem('vnc', 'Vnc')],
+        choices=[gui.choiceItem('spice', 'Spice'), gui.choiceItem('vnc', 'Vnc')],
         tab=_('Machine'),
         default='1',  # Default value is the ID of the choicefield
     )
@@ -249,14 +249,14 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues(vals)
+        self.machine.setChoices(vals)
 
         clusters = self.parent().getClusters()
         vals = []
         for c in clusters:
             vals.append(gui.choiceItem(c['id'], c['name']))
 
-        self.cluster.setValues(vals)
+        self.cluster.setChoices(vals)
 
     def parent(self) -> 'OVirtProvider':
         return typing.cast('OVirtProvider', super().parent())

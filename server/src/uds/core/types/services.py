@@ -56,3 +56,13 @@ class ServicesCountingType(enum.IntEnum):
             return ServicesCountingType(value)
         except ValueError:
             return ServicesCountingType.STANDARD
+        
+    @staticmethod
+    def fromStr(value: str) -> 'ServicesCountingType':
+        """Returns the MaxServiceCountingMethodType from an str
+        If the str is not a valid value, returns STANDARD
+        """
+        try:
+            return ServicesCountingType[value]
+        except KeyError:
+            return ServicesCountingType.STANDARD

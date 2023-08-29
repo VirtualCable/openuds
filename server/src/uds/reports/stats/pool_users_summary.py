@@ -79,7 +79,7 @@ class UsageSummaryByUsersPool(StatsReport):
     def initGui(self) -> None:
         logger.debug('Initializing gui')
         vals = [gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all()]
-        self.pool.setValues(vals)
+        self.pool.setChoices(vals)
 
     def getPoolData(
         self, pool

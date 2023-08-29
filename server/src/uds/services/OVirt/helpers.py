@@ -49,7 +49,7 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
                     ),
                 }
             )
-    data = [{'name': 'datastore', 'values': res}]
+    data = [{'name': 'datastore', 'choices': res}]
 
     logger.debug('return data: %s', data)
     return data

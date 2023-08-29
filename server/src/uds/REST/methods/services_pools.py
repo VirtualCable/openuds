@@ -283,7 +283,7 @@ class ServicesPools(ModelHandler):
         for f in [
             {
                 'name': 'service_id',
-                'values': [gui.choiceItem('', '')]
+                'choices': [gui.choiceItem('', '')]
                 + gui.sortedChoices(
                     [
                         gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
@@ -298,7 +298,7 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'osmanager_id',
-                'values': [gui.choiceItem(-1, '')]
+                'choices': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
                     [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
                 ),
@@ -350,7 +350,7 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
@@ -362,7 +362,7 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'pool_group_id',
-                'values': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
                         gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
@@ -439,7 +439,7 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'account_id',
-                'values': [gui.choiceItem(-1, '')]
+                'choices': [gui.choiceItem(-1, '')]
                 + gui.sortedChoices(
                     [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
                 ),

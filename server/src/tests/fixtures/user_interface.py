@@ -63,7 +63,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a text autocomplete field',
         required=True,
         default=DEFAULTS['str_auto_field'],
-        values=['Value 1', 'Value 2', 'Value 3'],
+        choices=['Value 1', 'Value 2', 'Value 3'],
     )
     num_field = gui.NumericField(
         label='Numeric Field',
@@ -94,7 +94,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a choice field',
         required=True,
         value=DEFAULTS['choice_field'],
-        values=['Value 1', 'Value 2', 'Value 3'],
+        choices=['Value 1', 'Value 2', 'Value 3'],
     )
     multi_choice_field = gui.MultiChoiceField(
         label='Multi Choice Field',
@@ -102,7 +102,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a multi choice field',
         required=True,
         default=DEFAULTS['multi_choice_field'],
-        values=['Value 1', 'Value 2', 'Value 3'],
+        choices=['Value 1', 'Value 2', 'Value 3'],
     )
     editable_list_field = gui.EditableListField(
         label='Editable List Field',
@@ -124,7 +124,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a image choice field',
         required=True,
         default=DEFAULTS['image_choice_field'],
-        values=['Value 1', 'Value 2', 'Value 3'],
+        choices=['Value 1', 'Value 2', 'Value 3'],
     )
     image_field = gui.ImageField(
         label='Image Field',

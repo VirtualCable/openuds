@@ -162,12 +162,12 @@ class LiveService(services.Service):
         """
 
         t: 'on.types.TemplateType'
-        self.template.setValues(
+        self.template.setChoices(
             [gui.choiceItem(t.id, t.name) for t in self.parent().getTemplates()]
         )
 
         d: 'on.types.StorageType'
-        self.datastore.setValues(
+        self.datastore.setChoices(
             [gui.choiceItem(d.id, d.name) for d in self.parent().getDatastores()]
         )
 

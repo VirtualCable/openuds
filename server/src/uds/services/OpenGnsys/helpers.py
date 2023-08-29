@@ -61,8 +61,8 @@ def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.
     ]
 
     data = [
-        {'name': 'lab', 'values': labs},
-        {'name': 'image', 'values': images},
+        {'name': 'lab', 'choices': labs},
+        {'name': 'image', 'choices': images},
     ]
     logger.debug('Return data: %s', data)
 

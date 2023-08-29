@@ -73,7 +73,7 @@ def tunnelField() -> ui.gui.ChoiceField:
         order=1,
         tooltip=_('Tunnel server to use'),
         required=True,
-        values=functools.partial(_serverGroupValues, [types.servers.ServerType.TUNNEL]),
+        choices=functools.partial(_serverGroupValues, [types.servers.ServerType.TUNNEL]),
         tab=ui.gui.Tab.TUNNEL,
     )
 
@@ -104,7 +104,7 @@ def serverGroupField(
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        values=functools.partial(_serverGroupValues, type, subtype),  # So it gets evaluated at runtime
+        choices=functools.partial(_serverGroupValues, type, subtype),  # So it gets evaluated at runtime
         tab=tab,
     )
 

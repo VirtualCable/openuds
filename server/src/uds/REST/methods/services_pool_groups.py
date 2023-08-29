@@ -90,7 +90,7 @@ class ServicesPoolGroups(ModelHandler):
         for field in [
             {
                 'name': 'image_id',
-                'values': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
                         gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore

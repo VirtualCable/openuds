@@ -125,7 +125,7 @@ class ServiceOne(services.Service):
         tooltip=_('Colour of the field'),
         # In this case, the choice can have none value selected by default
         required=True,
-        values=[
+        choices=[
             gui.choiceItem('red', 'Red'),
             gui.choiceItem('green', 'Green'),
             gui.choiceItem('blue', 'Blue'),

@@ -128,7 +128,7 @@ class ProviderLegacy(ServiceProvider):
         label=_('Access interface'),
         order=5,
         tooltip=_('Access interface to be used'),
-        values=INTERFACE_VALUES,
+        choices=INTERFACE_VALUES,
         default='public',
     )
 

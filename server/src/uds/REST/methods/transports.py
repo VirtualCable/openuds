@@ -98,7 +98,7 @@ class Transports(ModelHandler):
             {
                 'name': 'allowed_oss',
                 'value': [],
-                'values': sorted(
+                'choices': sorted(
                     [
                         {'id': x.name, 'text': x.name}
                         for x in OsDetector.knownOss
@@ -119,7 +119,7 @@ class Transports(ModelHandler):
             {
                 'name': 'pools',
                 'value': [],
-                'values': [
+                'choices': [
                     {'id': x.uuid, 'text': x.name}
                     for x in ServicePool.objects.all().order_by('name')
                     if x.service and transportType.protocol in x.service.getType().allowedProtocols 

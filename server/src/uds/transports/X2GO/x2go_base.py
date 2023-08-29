@@ -79,7 +79,7 @@ class BaseX2GOTransport(transports.Transport):
         order=10,
         tooltip=_('Screen size'),
         default=CommonPrefs.SZ_FULLSCREEN,
-        values=[
+        choices=[
             {'id': CommonPrefs.SZ_640x480, 'text': '640x480'},
             {'id': CommonPrefs.SZ_800x600, 'text': '800x600'},
             {'id': CommonPrefs.SZ_1024x768, 'text': '1024x768'},
@@ -94,7 +94,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Desktop'),
         order=11,
         tooltip=_('Desktop session'),
-        values=[
+        choices=[
             {'id': 'XFCE', 'text': 'Xfce'},
             {'id': 'MATE', 'text': 'Mate'},
             {'id': 'LXDE', 'text': 'Lxde'},
@@ -138,7 +138,7 @@ class BaseX2GOTransport(transports.Transport):
         order=15,
         tooltip=_('Connection speed'),
         default='3',
-        values=[
+        choices=[
             {'id': '0', 'text': 'MODEM'},
             {'id': '1', 'text': 'ISDN'},
             {'id': '2', 'text': 'ADSL'},
@@ -153,7 +153,7 @@ class BaseX2GOTransport(transports.Transport):
         order=30,
         tooltip=_('Sound server'),
         default='pulse',
-        values=[
+        choices=[
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
         ],

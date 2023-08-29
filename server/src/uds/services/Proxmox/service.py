@@ -158,7 +158,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         label=_("GPU Availability"),
         rdonly=False,
         order=112,
-        values={
+        choices={
             '0': _('Do not check'),
             '1': _('Only if available'),
             '2': _('Only if NOT available'),
@@ -209,7 +209,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setValues(
+        self.machine.setChoices(
             [
                 gui.choiceItem(
                     str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})'
@@ -218,11 +218,11 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
-        self.pool.setValues(
+        self.pool.setChoices(
             [gui.choiceItem('', _('None'))]
             + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()]
         )
-        self.ha.setValues(
+        self.ha.setChoices(
             [gui.choiceItem('', _('Enabled')), gui.choiceItem('__', _('Disabled'))]
             + [gui.choiceItem(group, group) for group in self.parent().listHaGroups()]
         )

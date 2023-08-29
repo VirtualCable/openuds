@@ -132,7 +132,7 @@ class SMSMFA(mfas.MFA):
         order=3,
         tooltip=_('Method for sending SMS'),
         required=True,
-        values=('GET', 'POST', 'PUT'),
+        choices=('GET', 'POST', 'PUT'),
         tab=_('HTTP Server'),
     )
 
@@ -177,7 +177,7 @@ class SMSMFA(mfas.MFA):
         order=5,
         tooltip=_('Encoding for SMS'),
         required=True,
-        values=('utf-8', 'utf-16', 'iso-8859-1'),
+        choices=('utf-8', 'utf-16', 'iso-8859-1'),
         tab=_('HTTP Server'),
     )
 
@@ -186,7 +186,7 @@ class SMSMFA(mfas.MFA):
         order=20,
         tooltip=_('Method for sending SMS'),
         required=True,
-        values={
+        choices={
             '0': _('None'),
             '1': _('HTTP Basic Auth'),
             '2': _('HTTP Digest Auth'),
@@ -227,7 +227,7 @@ class SMSMFA(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for SMS response error'),
         required=True,
-        values={
+        choices={
             '0': _('Allow user login'),
             '1': _('Deny user login'),
             '2': _('Allow user to login if its IP is in the networks list'),
@@ -242,7 +242,7 @@ class SMSMFA(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for SMS response error'),
         required=True,
-        values=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -261,7 +261,7 @@ class SMSMFA(mfas.MFA):
 
     def initGui(self) -> None:
         # Populate the networks list
-        self.networks.setValues(
+        self.networks.setChoices(
             [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 

@@ -114,7 +114,7 @@ class RadiusOTP(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for OTP server communication error'),
         required=True,
-        values=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -134,7 +134,7 @@ class RadiusOTP(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for user without defined Radius Challenge'),
         required=True,
-        values=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -143,7 +143,7 @@ class RadiusOTP(mfas.MFA):
 
     def initGui(self) -> None:
         # Populate the networks list
-        self.networks.setValues(
+        self.networks.setChoices(
             [
                 gui.choiceItem(v.uuid, v.name)  # type: ignore
                 for v in models.Network.objects.all().order_by('name')

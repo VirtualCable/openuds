@@ -85,7 +85,7 @@ class UsageByPool(StatsReport):
             for v in ServicePool.objects.all().order_by('name')
             if v.uuid
         ]
-        self.pool.setValues(vals)
+        self.pool.setChoices(vals)
 
     def getData(self) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db

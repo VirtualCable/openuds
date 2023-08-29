@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2022 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -83,7 +83,7 @@ class gui:
            # Other initializations
            # ...
            users = gui.EditableList(label = 'Users', tooltip = 'Select users',
-               order = 1, values = ['user1', 'user2', 'user3', 'user4'])
+               order = 1, choices = ['user1', 'user2', 'user3', 'user4'])
            passw = gui.Password(label='Pass', length=32, tooltip='Password',
                order = 2, required = True, default = '12345')
            # ...
@@ -606,18 +606,28 @@ class gui:
         Values are a list of strings...
         """
 
-        def __init__(self, **options) -> None:
-            super().__init__(**options)
+        def __init__(self, **kwargs) -> None:
+            super().__init__(**kwargs)
             # Update parent type
             self.type = gui.InputField.Types.TEXT_AUTOCOMPLETE
             # And store values in a list
-            self._data['values'] = gui.convertToChoices(options.get('values', []))
+            if 'values' in kwargs:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
+                    kwargs.get('label', ''),
+                    caller.filename,
+                    caller.lineno,
+                )
+                kwargs['choices'] = kwargs['values']
+                
+            self._data['choices'] = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setValues(self, values: typing.List[str]):
+        def setChoices(self, values: typing.List[str]):
             """
             Set the values for this choice field
             """
-            self._data['values'] = gui.convertToChoices(values)
+            self._data['choices'] = gui.convertToChoices(values)
 
     class NumericField(InputField):
         """
@@ -849,7 +859,7 @@ class gui:
 
            .. code-block:: python
 
-              choices = gui.ChoiceField(label="choices", values=[ {'id':'1',
+              choices = gui.ChoiceField(label="choices", choices=[ {'id':'1',
                   'text':'Text 1'}, {'id':'xxx', 'text':'Text 2'}])
 
            You can specify a multi valuated field via id-values, or a
@@ -903,7 +913,7 @@ class gui:
                        # ...initialization and other stuff...
                        if parameters['resourcePool'] != '':
                            # ... do stuff ...
-                       data = [ { 'name' : 'machine', 'values' : 'xxxxxx' } ]
+                       data = [ { 'name' : 'machine', 'choices' : [{'id': 'xxxxxx', 'value': 'yyyy'}] } ]
                        return data
 
                class ModuleVC(services.Service)
@@ -929,33 +939,54 @@ class gui:
 
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.CHOICE)
-            self._data['values'] = gui.convertToChoices(options.get('values'))
-            if 'fills' in options:
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs, type=gui.InputField.Types.CHOICE)
+            # And store values in a list
+            if 'values' in kwargs:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
+                    kwargs.get('label', ''),
+                    caller.filename,
+                    caller.lineno,
+                )
+                kwargs['choices'] = kwargs['values']
+            
+            self._data['choices'] = gui.convertToChoices(kwargs.get('choices'))
+            if 'fills' in kwargs:
                 # Save fnc to register as callback
-                fills = options['fills']
+                fills = kwargs['fills']
                 fnc = fills['function']
                 fills.pop('function')
                 self._data['fills'] = fills
                 gui.callbacks[fills['callbackName']] = fnc
 
-        def setValues(self, values: typing.List['gui.ChoiceType']):
+        def setChoices(self, values: typing.List['gui.ChoiceType']):
             """
             Set the values for this choice field
             """
-            self._data['values'] = values
+            self._data['choices'] = values
 
     class ImageChoiceField(InputField):
-        def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.IMAGE_CHOICE)
-            self._data['values'] = options.get('values', [])
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs, type=gui.InputField.Types.IMAGE_CHOICE)
+            if 'values' in kwargs:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
+                    kwargs.get('label', ''),
+                    caller.filename,
+                    caller.lineno,
+                )
+                kwargs['choices'] = kwargs['values']
+            
+            self._data['choices'] = kwargs.get('choices', [])
 
-        def setValues(self, values: typing.List[typing.Any]):
+        def setChoices(self, values: typing.List[typing.Any]):
             """
             Set the values for this choice field
             """
-            self._data['values'] = values
+            self._data['choices'] = values
 
     class MultiChoiceField(InputField):
         """
@@ -991,18 +1022,28 @@ class gui:
                   )
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.MULTI_CHOICE)
-            if options.get('values') and isinstance(options.get('values'), dict):
-                options['values'] = gui.convertToChoices(options['values'])
-            self._data['values'] = options.get('values', [])
-            self._data['rows'] = options.get('rows', -1)
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs, type=gui.InputField.Types.MULTI_CHOICE)
+            if 'values' in kwargs:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
+                    kwargs.get('label', ''),
+                    caller.filename,
+                    caller.lineno,
+                )
+                kwargs['choices'] = kwargs['values']
+            
+            if kwargs.get('choices') and isinstance(kwargs.get('choices'), dict):
+                kwargs['choices'] = gui.convertToChoices(kwargs['choices'])
+            self._data['choices'] = kwargs.get('choices', [])
+            self._data['rows'] = kwargs.get('rows', -1)
 
-        def setValues(self, values: typing.List[typing.Any]) -> None:
+        def setChoices(self, values: typing.List[typing.Any]) -> None:
             """
             Set the values for this multi choice field
             """
-            self._data['values'] = gui.convertToChoices(values)
+            self._data['choices'] = gui.convertToChoices(values)
 
     class EditableListField(InputField):
         """
@@ -1055,7 +1096,11 @@ class gui:
 
     class InfoField(InputField):
         """
-        Informational field (no input is done)
+        Informational field (no input nor output)
+
+        The current valid info fields are:
+           title: 'name' = 'title', 'default' = 'real title'
+
         """
 
         def __init__(self, **options) -> None:
@@ -1127,10 +1172,10 @@ class UserInterface(metaclass=UserInterfaceType):
 
         self._gui = copy.deepcopy(self._base_gui)
 
-        # If a field has a callable on defined attributes(value, default, values)
+        # If a field has a callable on defined attributes(value, default, choices)
         # update the reference to the new copy
         for attrName, val in self._gui.items():  # And refresh self references to them
-            for field in ['values']:  # ['value', 'default']:
+            for field in ['choices']:  # ['value', 'default']:
                 if field in val._data and callable(val._data[field]):
                     val._data[field] = val._data[field]()
             # val is an InputField instance, so it is a reference to self._gui[key]
@@ -1141,7 +1186,8 @@ class UserInterface(metaclass=UserInterfaceType):
                 if k in values:
                     v.value = values[k]
                 else:
-                    logger.warning('Field %s not found', k)
+                    caller = inspect.stack()[1]
+                    logger.warning('Field %s not found (invoked from %s:%s)', k, caller.filename, caller.lineno)
 
     def initGui(self) -> None:
         """

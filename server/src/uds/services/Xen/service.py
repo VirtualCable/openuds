@@ -224,9 +224,9 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
             for net in self.parent().getNetworks()
         ]
 
-        self.machine.setValues(machines_list)
-        self.datastore.setValues(storages_list)
-        self.network.setValues(network_list)
+        self.machine.setChoices(machines_list)
+        self.datastore.setChoices(storages_list)
+        self.network.setChoices(network_list)
 
     def checkTaskFinished(self, task: str) -> typing.Tuple[bool, str]:
         return self.parent().checkTaskFinished(task)

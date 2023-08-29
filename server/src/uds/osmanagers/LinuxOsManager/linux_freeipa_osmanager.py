@@ -82,7 +82,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         label=_('Client software'),
         order=4,
         tooltip=_('Use specific client software'),
-        values=[
+        choices=[
             {'id': 'automatically', 'text': gettext_lazy('Automatically')},
             {'id': 'sssd', 'text': gettext_lazy('SSSD')},
             {'id': 'winbind', 'text': gettext_lazy('Winbind')},
@@ -94,7 +94,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         label=_('Membership software'),
         order=5,
         tooltip=_('Use specific membership software'),
-        values=[
+        choices=[
             {'id': 'automatically', 'text': gettext_lazy('Automatically')},
             {'id': 'samba', 'text': gettext_lazy('Samba')},
             {'id': 'adcli', 'text': gettext_lazy('adcli')},

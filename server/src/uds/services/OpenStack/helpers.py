@@ -84,11 +84,11 @@ def getResources(
     ]
 
     data = [
-        {'name': 'availabilityZone', 'values': zones},
-        {'name': 'network', 'values': networks},
-        {'name': 'flavor', 'values': flavors},
-        {'name': 'securityGroups', 'values': securityGroups},
-        {'name': 'volumeType', 'values': volumeTypes},
+        {'name': 'availabilityZone', 'choices': zones},
+        {'name': 'network', 'choices': networks},
+        {'name': 'flavor', 'choices': flavors},
+        {'name': 'securityGroups', 'choices': securityGroups},
+        {'name': 'volumeType', 'choices': volumeTypes},
     ]
     logger.debug('Return data: %s', data)
     return data
@@ -108,7 +108,7 @@ def getVolumes(
     ]
 
     data = [
-        {'name': 'volume', 'values': volumes},
+        {'name': 'volume', 'choices': volumes},
     ]
     logger.debug('Return data: %s', data)
     return data

@@ -99,7 +99,7 @@ class PoolPerformanceReport(StatsReport):
             gui.choiceItem(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
         ]
-        self.pools.setValues(vals)
+        self.pools.setChoices(vals)
 
     def getPools(self) -> typing.Iterable[typing.Tuple[str, str]]:
         for p in ServicePool.objects.filter(uuid__in=self.pools.value):

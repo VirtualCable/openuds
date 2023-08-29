@@ -36,6 +36,7 @@ import logging
 import re
 import types
 import typing
+import inspect
 
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
@@ -90,6 +91,17 @@ class BaseModelHandler(Handler):
             for i in field:
                 gui = self.addField(gui, i)
         else:
+            if 'values' in field:
+                caller = inspect.stack()[1]
+                logger.warning(
+                    'Field %s has "values" attribute, this is deprecated and will be removed in future versions. Use "choices" instead. Called from %s:%s',
+                    field.get('name', ''),
+                    caller.filename,
+                    caller.lineno,
+                )
+                choices = field['values']
+            else:
+                choices = field.get('choices', [])
             v = {
                 'name': field.get('name', ''),
                 'value': '',
@@ -105,7 +117,7 @@ class BaseModelHandler(Handler):
                     'rdonly': field.get('rdonly', False),
                     'type': str(field.get('type', uiGui.InputField.Types.TEXT)),
                     'order': field.get('order', 0),
-                    'values': field.get('values', []),
+                    'choices': choices,
                 },
             }
             if field.get('tab', None):
@@ -201,7 +213,7 @@ class BaseModelHandler(Handler):
                 {
                     'name': 'net_filtering',
                     'value': 'n',
-                    'values': [
+                    'choices': [
                         {'id': 'n', 'text': _('No filtering')},
                         {'id': 'a', 'text': _('Allow selected networks')},
                         {'id': 'd', 'text': _('Deny selected networks')},
@@ -220,7 +232,7 @@ class BaseModelHandler(Handler):
                 {
                     'name': 'networks',
                     'value': [],
-                    'values': sorted(
+                    'choices': sorted(
                         [{'id': x.uuid, 'text': x.name} for x in Network.objects.all()],
                         key=lambda x: x['text'].lower(),
                     ),

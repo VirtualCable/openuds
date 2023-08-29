@@ -72,7 +72,7 @@ class EmailMFA(mfas.MFA):
     security = gui.ChoiceField(
         label=_('Security'),
         tooltip=_('Security protocol to use'),
-        values={
+        choices={
             'tls': _('TLS'),
             'ssl': _('SSL'),
             'none': _('None'),
@@ -133,7 +133,7 @@ class EmailMFA(mfas.MFA):
         defaultValue='0',
         tooltip=_('Action for MFA response error'),
         required=True,
-        values=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.valuesForSelect(),
         tab=_('Config'),
     )
 
@@ -206,7 +206,7 @@ class EmailMFA(mfas.MFA):
 
     def initGui(self) -> None:
         # Populate the networks list
-        self.networks.setValues(
+        self.networks.setChoices(
             [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
