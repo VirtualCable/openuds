@@ -35,6 +35,7 @@ import typing
 from uds.core.util import singleton
 from uds.core.util.model import getSqlDatetime
 from uds.models.log import Log
+# from uds.core.workers.log
 
 from .objects import MODEL_TO_TYPE, LogObjectType
 
@@ -73,16 +74,6 @@ class LogManager(metaclass=singleton.Singleton):
         message = str(message)[:4096]
 
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
-        # First, ensure we do not have more than requested logs, and we can put one more log item
-        max_elements = owner_type.get_max_elements()
-        current_elements = qs.count()
-        # If max_elements is greater than 0, database contains equals or more than max_elements, we will delete the oldest ones to ensure we have max_elements - 1
-        if 0 < max_elements <= current_elements:
-            # We will delete the oldest ones
-            for x in qs.order_by('created', 'id')[
-                : current_elements - max_elements + 1
-            ]:
-                x.delete()
 
         if avoidDuplicates:
             lg: typing.Optional['Log'] = Log.objects.filter(
@@ -133,6 +124,7 @@ class LogManager(metaclass=singleton.Singleton):
         source: str,
         avoidDuplicates: bool = True,
         logName: typing.Optional[str] = None,
+        delayInsert: bool = False,
     ):
         """
         Do the logging for the requested object.

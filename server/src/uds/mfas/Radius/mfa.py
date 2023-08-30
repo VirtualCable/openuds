@@ -111,7 +111,7 @@ class RadiusOTP(mfas.MFA):
     responseErrorAction = gui.ChoiceField(
         label=_('Radius OTP communication error action'),
         order=31,
-        defaultValue='0',
+        default='0',
         tooltip=_('Action for OTP server communication error'),
         required=True,
         choices=mfas.LoginAllowed.valuesForSelect(),
@@ -131,7 +131,7 @@ class RadiusOTP(mfas.MFA):
     allowLoginWithoutMFA = gui.ChoiceField(
         label=_('User without defined OTP in server'),
         order=33,
-        defaultValue='0',
+        default='0',
         tooltip=_('Action for user without defined Radius Challenge'),
         required=True,
         choices=mfas.LoginAllowed.valuesForSelect(),

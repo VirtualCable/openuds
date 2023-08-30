@@ -34,6 +34,7 @@ import enum
 
 from django.utils.translation import gettext_noop
 
+
 class Tab(enum.StrEnum):
     ADVANCED = gettext_noop('Advanced')
     PARAMETERS = gettext_noop('Parameters')
@@ -41,6 +42,7 @@ class Tab(enum.StrEnum):
     TUNNEL = gettext_noop('Tunnel')
     DISPLAY = gettext_noop('Display')
     MFA = gettext_noop('MFA')
+
 
 class FieldType(enum.StrEnum):
     TEXT = 'text'
@@ -56,3 +58,37 @@ class FieldType(enum.StrEnum):
     IMAGE = 'image'
     DATE = 'date'
     INFO = 'internal-info'
+
+
+class FillerType(typing.TypedDict):
+    callbackName: str
+    function: typing.Callable[..., typing.Any]
+    parameters: typing.List[str]
+
+
+class ChoiceType(typing.TypedDict):
+    id: str
+    text: str
+
+
+ChoicesType = typing.Union[typing.Callable[[], typing.List[ChoiceType]], typing.List[ChoiceType]]
+
+
+class FieldDataType(typing.TypedDict):
+    length: int
+    required: bool
+    label: str
+    default: str
+    rdonly: bool
+    order: int
+    tooltip: str
+    value: typing.Any
+    type: str
+    multiline: typing.NotRequired[int]
+    pattern: typing.NotRequired[str]
+    tab: typing.NotRequired[str]
+    choices: typing.NotRequired[ChoicesType]
+    minValue: typing.NotRequired[int]
+    maxValue: typing.NotRequired[int]
+    fills: typing.NotRequired[FillerType]
+    rows: typing.NotRequired[int]

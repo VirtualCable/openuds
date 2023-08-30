@@ -49,7 +49,7 @@ from django.utils.translation import gettext_noop
 
 from uds.core import exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
-from uds.core.util import serializer, validators
+from uds.core.util import serializer, validators, ensure
 from uds.core.util.decorators import deprecatedClassValue
 
 logger = logging.getLogger(__name__)
@@ -99,14 +99,10 @@ class gui:
     # Values dict type
     ValuesType = typing.Optional[typing.Dict[str, str]]
 
-    class ChoiceType(typing.TypedDict):
-        id: str
-        text: str
-
     ValuesDictType = typing.Dict[
         str,
         typing.Union[
-            str, bool, typing.List[str], typing.List[ChoiceType], typing.Callable[[], typing.List[ChoiceType]]
+            str, bool, typing.List[str], typing.List[types.ui.ChoiceType], typing.Callable[[], typing.List[types.ui.ChoiceType]]
         ],
     ]
 
@@ -148,7 +144,7 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choiceItem(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'gui.ChoiceType':
+    def choiceItem(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'types.ui.ChoiceType':
         """
         Helper method to create a single choice item.
 
@@ -174,7 +170,7 @@ class gui:
             typing.Dict[str, str],
             None,
         ]
-    ) -> typing.Union[typing.Callable[[], typing.List['gui.ChoiceType']], typing.List['gui.ChoiceType']]:
+    ) -> typing.Union[typing.Callable[[], typing.List['types.ui.ChoiceType']], typing.List['types.ui.ChoiceType']]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
         multichoice, ..
@@ -182,11 +178,12 @@ class gui:
         if not vals:
             return []
 
+        # If it's a callable, do not evaluate it, just return it
         if callable(vals):
             return vals
 
         # Helper to convert an item to a dict
-        def choiceFromValue(val: typing.Union[str, int, typing.Dict[str, str]]) -> 'gui.ChoiceType':
+        def choiceFromValue(val: typing.Union[str, int, typing.Dict[str, str]]) -> 'types.ui.ChoiceType':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
                     raise ValueError(f'Invalid choice dict: {val}')
@@ -208,14 +205,6 @@ class gui:
 
         # This should never happen
         raise ValueError(f'Invalid type for convertToChoices: {vals}')
-
-    @staticmethod
-    def convertToList(vals: typing.Union[str, int, typing.Iterable]) -> typing.List[str]:
-        if vals:
-            if isinstance(vals, (str, int)):
-                return [str(vals)]
-            return [str(v) for v in vals]
-        return []
 
     @staticmethod
     def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> typing.Dict[str, str]:
@@ -301,20 +290,18 @@ class gui:
         # : If length of some fields are not especified, this value is used as default
         DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
-        _data: typing.Dict[str, typing.Any]
+        _data: types.ui.FieldDataType
 
         def __init__(self, **kwargs) -> None:
-            self._data = {}
-            if 'type' in kwargs:
-                self.type = kwargs['type']  # set type first
-
             label = kwargs.get('label', '')
             # if defvalue or defaultValue or defValue in kwargs, emit a warning
             # with the new name (that is "default"), but use the old one
             for i in ('defvalue', 'defaultValue', 'defValue'):
                 if i in kwargs:
-                    caller = inspect.stack()[2]  # bypass this method and the caller (that is a derived class)
-                    logger.warning('Stack: %s', inspect.stack())
+                    try:
+                        caller = inspect.stack()[2]  # bypass this method and the caller (that is a derived class)
+                    except IndexError:
+                        caller = inspect.stack()[1]  # bypass only this method
                     logger.warning(
                         'Field %s: %s parameter is deprecated, use "default" instead. Called from %s:%s',
                         label,
@@ -325,23 +312,23 @@ class gui:
                     kwargs['default'] = kwargs[i]
                     break
             default = kwargs.get('default', '')
-            self._data.update(
-                {
-                    'length': kwargs.get(
-                        'length', gui.InputField.DEFAULT_LENTGH
-                    ),  # Length is not used on some kinds of fields, but present in all anyway
-                    'required': kwargs.get('required', False),
-                    'label': kwargs.get('label', ''),
-                    'default': str(default) if not callable(default) else default,
-                    'rdonly': kwargs.get(
-                        'rdonly',
-                        kwargs.get('readOnly', kwargs.get('readonly', False)),
-                    ),  # This property only affects in "modify" operations
-                    'order': kwargs.get('order', 0),
-                    'tooltip': kwargs.get('tooltip', ''),
-                    'value': kwargs.get('value', default),
-                }
-            )
+            self._data = {
+                'length': kwargs.get(
+                    'length', gui.InputField.DEFAULT_LENTGH
+                ),  # Length is not used on some kinds of fields, but present in all anyway
+                'required': kwargs.get('required', False),
+                'label': kwargs.get('label', ''),
+                'default': str(default) if not callable(default) else default,
+                'rdonly': kwargs.get(
+                    'rdonly',
+                    kwargs.get('readOnly', kwargs.get('readonly', False)),
+                ),  # This property only affects in "modify" operations
+                'order': kwargs.get('order', 0),
+                'tooltip': kwargs.get('tooltip', ''),
+                'value': kwargs.get('value', default),
+                'type': kwargs.get('type', '')
+            }
+
             if 'tab' in kwargs and kwargs['tab']:
                 self._data['tab'] = str(kwargs['tab'])  # Ensure it's a string
 
@@ -406,7 +393,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = self._data.copy()
+            data = typing.cast(dict, self._data.copy())
             if 'value' in data:
                 del data['value']  # We don't want to send value on guiDescription
             data['label'] = _(data['label']) if data['label'] else ''
@@ -539,9 +526,10 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            if isinstance(self._data['pattern'], gui.TextField.PatternType):
+            thePattern = self._data.get('pattern')
+            if isinstance(thePattern, gui.TextField.PatternType):
                 try:
-                    pattern: gui.TextField.PatternType = self._data['pattern']
+                    pattern: gui.TextField.PatternType = thePattern
                     if pattern == gui.TextField.PatternType.IPV4:
                         validators.validateIpv4(self.value)
                     elif pattern == gui.TextField.PatternType.IPV6:
@@ -568,9 +556,9 @@ class gui:
                     return True
                 except exceptions.ValidationError:
                     return False
-            elif isinstance(self._data['pattern'], str):
+            elif isinstance(thePattern, str):
                 # It's a regex
-                return re.match(self._data['pattern'], self.value) is not None
+                return re.match(thePattern, self.value) is not None
             return True  # No pattern, so it's valid
 
         def __str__(self):
@@ -596,7 +584,7 @@ class gui:
                     caller.lineno,
                 )
                 kwargs['choices'] = kwargs['values']
-                
+
             self._data['choices'] = gui.convertToChoices(kwargs.get('choices', []))
 
         def setChoices(self, values: typing.List[str]):
@@ -927,7 +915,7 @@ class gui:
                     caller.lineno,
                 )
                 kwargs['choices'] = kwargs['values']
-            
+
             self._data['choices'] = gui.convertToChoices(kwargs.get('choices'))
             if 'fills' in kwargs:
                 # Save fnc to register as callback
@@ -937,7 +925,7 @@ class gui:
                 self._data['fills'] = fills
                 gui.callbacks[fills['callbackName']] = fnc
 
-        def setChoices(self, values: typing.List['gui.ChoiceType']):
+        def setChoices(self, values: typing.List['types.ui.ChoiceType']):
             """
             Set the values for this choice field
             """
@@ -955,7 +943,7 @@ class gui:
                     caller.lineno,
                 )
                 kwargs['choices'] = kwargs['values']
-            
+
             self._data['choices'] = kwargs.get('choices', [])
 
         def setChoices(self, values: typing.List[typing.Any]):
@@ -1009,7 +997,7 @@ class gui:
                     caller.lineno,
                 )
                 kwargs['choices'] = kwargs['values']
-            
+
             if kwargs.get('choices') and isinstance(kwargs.get('choices'), dict):
                 kwargs['choices'] = gui.convertToChoices(kwargs['choices'])
             self._data['choices'] = kwargs.get('choices', [])
@@ -1053,14 +1041,12 @@ class gui:
 
         def __init__(self, **options) -> None:
             super().__init__(**options, type=types.ui.FieldType.EDITABLE_LIST)
-            self._data['values'] = gui.convertToList(options.get('values', []))
 
         def _setValue(self, value):
             """
             So we can override value setting at descendants
             """
             super()._setValue(value)
-            self._data['values'] = gui.convertToList(value)
 
     class ImageField(InputField):
         """
@@ -1151,10 +1137,12 @@ class UserInterface(metaclass=UserInterfaceType):
         # If a field has a callable on defined attributes(value, default, choices)
         # update the reference to the new copy
         for attrName, val in self._gui.items():  # And refresh self references to them
+            # cast _data to dict, so we can check for deveral values
+            data = typing.cast(typing.Dict[str, typing.Any], val._data)
             for field in ['choices']:  # ['value', 'default']:
-                if field in val._data and callable(val._data[field]):
-                    val._data[field] = val._data[field]()
-            # val is an InputField instance, so it is a reference to self._gui[key]
+                if field in data and callable(data[field]):
+                    data[field] = data[field]()
+            # val is an InputField derived instance, so it is a reference to self._gui[key]
             setattr(self, attrName, val)
 
         if values is not None:
@@ -1215,7 +1203,7 @@ class UserInterface(metaclass=UserInterfaceType):
         dic: gui.ValuesDictType = {}
         for k, v in self._gui.items():
             if v.isType(types.ui.FieldType.EDITABLE_LIST):
-                dic[k] = gui.convertToList(v.value)
+                dic[k] = ensure.is_list(v.value)
             elif v.isType(types.ui.FieldType.MULTI_CHOICE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
@@ -1416,7 +1404,7 @@ class UserInterface(metaclass=UserInterfaceType):
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
             res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
-        logger.debug('theGui description: %s', res)
+        # logger.debug('theGui description: %s', res)
         return res
 
     def errors(self) -> typing.List[ValidationFieldInfo]:

@@ -223,7 +223,7 @@ class BaseModelHandler(Handler):
                     ),
                     'type': 'choice',
                     'order': 100,  # At end
-                    'tab': uiGui.Tab.ADVANCED,
+                    'tab': types.ui.Tab.ADVANCED,
                 },
             )
             self.addField(
@@ -239,7 +239,7 @@ class BaseModelHandler(Handler):
                     'tooltip': _('Networks associated. If No network selected, will mean "all networks"'),
                     'type': 'multichoice',
                     'order': 101,
-                    'tab': uiGui.Tab.ADVANCED,
+                    'tab': types.ui.Tab.ADVANCED,
                 },
             )
 

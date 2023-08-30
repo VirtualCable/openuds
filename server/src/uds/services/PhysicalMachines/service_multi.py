@@ -30,18 +30,18 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle  # nosec # Pickle use is controled by app, never by non admin user input
 import logging
+import pickle  # nosec # Pickle use is controled by app, never by non admin user input
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
 from django.db import transaction
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core.util.model import getSqlDatetimeAsUnix
+from uds.core import exceptions, services, types
 from uds.core.ui import gui
-from uds.core.util import log
-from uds.core.util import net
-from uds.core import services, exceptions, types
+from uds.core.util import ensure, log, net
+from uds.core.util.model import getSqlDatetimeAsUnix
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -174,9 +174,8 @@ class IPMachinesService(IPServiceBase):
 
     def valuesDict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
-
         return {
-            'ipList': gui.convertToList(ips),
+            'ipList': ensure.is_list(ips),
             'token': self._token,
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),

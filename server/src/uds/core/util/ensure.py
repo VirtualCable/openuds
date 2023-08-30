@@ -30,22 +30,21 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 
-T = typing.TypeVar('T')
 
-
-def ensure_list(obj: typing.Union[T, typing.Iterable[T]]) -> typing.List[T]:
+def is_list(obj: typing.Any) -> typing.List[typing.Any]:
     if not obj:
         return []
 
     if isinstance(obj, (str, bytes)):
-        return [typing.cast(T, obj)]
+        return [obj]
 
     try:
-        return list(typing.cast(typing.List[T], obj))
-    except Exception: # Not iterable
-        return [typing.cast(T, obj)]
+        return list(obj)
+    except Exception:  # Not iterable (list will fail)
+        return [obj]
 
-def ensure_iterable(obj: typing.Union[T, typing.Iterable[T]]) -> typing.Generator[T, None, None]:
+
+def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
     """Returns an iterable object from a single object or a list of objects
 
     Args:
@@ -61,9 +60,9 @@ def ensure_iterable(obj: typing.Union[T, typing.Iterable[T]]) -> typing.Generato
         return
 
     if isinstance(obj, (str, bytes)):
-        yield typing.cast(T, obj)
+        yield obj
     else:
         try:
-            yield from typing.cast(typing.List[T], obj)
-        except Exception: # Not iterable
-            yield typing.cast(T, obj)
+            yield from obj
+        except Exception:  # Not iterable
+            yield obj

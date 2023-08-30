@@ -179,11 +179,12 @@ def doLog(
     source: LogSource = LogSource.UNKNOWN,
     avoidDuplicates: bool = True,
     logName: typing.Optional[str] = None,
+    delayInsert: bool = False,
 ) -> None:
     # pylint: disable=import-outside-toplevel
     from uds.core.managers.log import LogManager
 
-    LogManager.manager().doLog(wichObject, level, message, source, avoidDuplicates, logName)
+    LogManager.manager().doLog(wichObject, level, message, source, avoidDuplicates, logName, delayInsert=delayInsert)
 
 
 def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> typing.List[typing.Dict]:
@@ -241,7 +242,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 if record.levelno >= logging.WARNING:
                     # Remove traceback from message, as it will be stored on database
                     notify(msg.splitlines()[0], identificator, logLevel)
-                doLog(None, logLevel, msg, LogSource.LOGS, False, identificator)
+                doLog(None, logLevel, msg, LogSource.LOGS, False, identificator, delayInsert=True)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass
             finally:

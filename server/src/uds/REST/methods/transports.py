@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.core.environment import Environment
 from uds.models import Transport, Network, ServicePool
-from uds.core import transports
+from uds.core import transports, types
 from uds.core.ui import gui
 from uds.core.util import permissions
 from uds.core.util import os_detector as OsDetector
@@ -121,8 +121,8 @@ class Transports(ModelHandler):
                 'value': [],
                 'choices': [
                     {'id': x.uuid, 'text': x.name}
-                    for x in ServicePool.objects.all().order_by('name')
-                    if x.service and transportType.protocol in x.service.getType().allowedProtocols 
+                    for x in ServicePool.objects.filter(service__isnull=False).order_by('name').prefetch_related('service')
+                    if transportType.protocol in x.service.getType().allowedProtocols 
                 ],
                 'label': gettext('Service Pools'),
                 'tooltip': gettext('Currently assigned services pools'),

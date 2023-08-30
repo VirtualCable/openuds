@@ -173,7 +173,7 @@ class SMSMFA(mfas.MFA):
 
     encoding = gui.ChoiceField(
         label=_('SMS encoding'),
-        defaultValue='utf-8',
+        default='utf-8',
         order=5,
         tooltip=_('Encoding for SMS'),
         required=True,
@@ -224,7 +224,7 @@ class SMSMFA(mfas.MFA):
     responseErrorAction = gui.ChoiceField(
         label=_('SMS response error action'),
         order=31,
-        defaultValue='0',
+        default='0',
         tooltip=_('Action for SMS response error'),
         required=True,
         choices={
@@ -239,7 +239,7 @@ class SMSMFA(mfas.MFA):
     allowLoginWithoutMFA = gui.ChoiceField(
         label=_('User without MFA policy'),
         order=33,
-        defaultValue='0',
+        default='0',
         tooltip=_('Action for SMS response error'),
         required=True,
         choices=mfas.LoginAllowed.valuesForSelect(),
