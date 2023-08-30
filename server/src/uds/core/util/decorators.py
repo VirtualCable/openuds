@@ -37,13 +37,19 @@ import time
 import typing
 
 from django.db import transaction
+from uds.REST.exceptions import AccessDenied
+from uds.core import consts
+from uds.core.exceptions import BlockAccess
 
 from uds.core.util.cache import Cache
+from uds.core.util.config import GlobalConfig
+from uds.core.util.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
 
+blockCache = Cache('uds:blocker')  # One year
 
 # Caching statistics
 class StatsType:
@@ -321,3 +327,97 @@ def threaded(func: typing.Callable[..., None]) -> typing.Callable[..., None]:
         thread.start()
 
     return wrapper
+
+
+def blocker(
+    request_attr: typing.Optional[str] = None,
+    max_failures: typing.Optional[int] = None,
+    ignore_block_config: bool = False,
+) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+    """
+    Decorator that will block the actor if it has more than ALLOWED_FAILS failures in BLOCK_ACTOR_TIME seconds
+    GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() --> If true, block actor after ALLOWED_FAILS failures
+    for LOGIN_BLOCK.getInt() seconds
+
+    This decorator is intended only for Classes that, somehow, can provide the "request" object, and only
+    for class methods, that is that have "self" as first parameter
+
+    Args:
+        request_attr: Name of the attribute that contains the request object. If None, it will try to get it from "_request" attribute
+
+    Returns:
+        Decorator
+
+    """
+    max_failures = max_failures or consts.ALLOWED_FAILS
+
+    def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+        @functools.wraps(f)
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
+            if not GlobalConfig.BLOCK_ACTOR_FAILURES.getBool(True) and not ignore_block_config:
+                return f(*args, **kwargs)
+
+            request: typing.Optional['ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)
+
+            # No request object, so we can't block
+            if request is None:
+                return f(*args, **kwargs)
+
+            ip = request.ip
+
+            # if ip is blocked, raise exception
+            failuresCount = blockCache.get(ip, 0)
+            if failuresCount >= max_failures:
+                raise AccessDenied
+
+            try:
+                result = f(*args, **kwargs)
+            except BlockAccess:
+                # Increment
+                blockCache.put(ip, failuresCount + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+                raise AccessDenied
+            # Any other exception will be raised
+            except Exception:
+                raise
+
+            # If we are here, it means that the call was successfull, so we reset the counter
+            blockCache.delete(ip)
+
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+def profile(log_file: typing.Optional[str] = None) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+    """
+    Decorator that will profile the wrapped function and log the results to the provided file
+
+    Args:
+        log_file: File to log the results. If None, it will log to "profile.log" file
+
+    Returns:
+        Decorator
+    """
+    def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+        @functools.wraps(f)
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
+            nonlocal log_file
+            import cProfile
+            import pstats
+            import tempfile
+
+            log_file = log_file or tempfile.gettempdir() + f.__name__ + '.profile'
+
+            profiler = cProfile.Profile()
+            result = profiler.runcall(f, *args, **kwargs)
+            stats = pstats.Stats(profiler)
+            stats.strip_dirs()
+            stats.sort_stats('cumulative')
+            stats.dump_stats(log_file)
+            return result
+
+        return wrapper
+
+    return decorator
