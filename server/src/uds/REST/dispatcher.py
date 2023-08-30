@@ -71,20 +71,13 @@ class Dispatcher(View):
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[typing.MutableMapping[str, typing.Any]] = {'': None}  # Root node
+    services: typing.ClassVar[typing.MutableMapping[str, typing.Any]] = {
+        '': None  # Root node
+    }
 
     # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
     def dispatch(self, request: 'ExtendedHttpRequestWithUser', *args, **kwargs):
-        import cProfile
-
-        profiler = cProfile.Profile()
-        ret = profiler.runcall(self._dispatch, request, *args, **kwargs)
-        profiler.dump_stats('/tmp/uds_rest.prof')
-        return ret
-
-    @method_decorator(csrf_exempt)
-    def _dispatch(self, request: 'ExtendedHttpRequestWithUser', *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
@@ -99,7 +92,9 @@ class Dispatcher(View):
         service = Dispatcher.services
         full_path_lst: typing.List[str] = []
         # Guess content type from content type header (post) or ".xxx" to method
-        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
+        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(
+            ';'
+        )[0]
 
         while path:
             clean_path = path[0]
@@ -119,13 +114,17 @@ class Dispatcher(View):
         logger.debug("REST request: %s (%s)", full_path, content_type)
 
         # Here, service points to the path and the value of '' is the handler
-        cls: typing.Optional[typing.Type[Handler]] = service['']  # Get "root" class, that is stored on
+        cls: typing.Optional[typing.Type[Handler]] = service[
+            ''
+        ]  # Get "root" class, that is stored on
         if not cls:
-            return http.HttpResponseNotFound('Method not found', content_type="text/plain")
+            return http.HttpResponseNotFound(
+                'Method not found', content_type="text/plain"
+            )
 
-        processor = processors.available_processors_mime_dict.get(content_type, processors.default_processor)(
-            request
-        )
+        processor = processors.available_processors_mime_dict.get(
+            content_type, processors.default_processor
+        )(request)
 
         # Obtain method to be invoked
         http_method: str = request.method.lower() if request.method else ''
@@ -160,15 +159,21 @@ class Dispatcher(View):
                 if hasattr(handler, n):
                     allowedMethods.append(n)
             log.logOperation(handler, 405, log.LogLevel.ERROR)
-            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
+            return http.HttpResponseNotAllowed(
+                allowedMethods, content_type="text/plain"
+            )
         except AccessDenied:
             log.logOperation(handler, 403, log.LogLevel.ERROR)
-            return http.HttpResponseForbidden('access denied', content_type="text/plain")
+            return http.HttpResponseForbidden(
+                'access denied', content_type="text/plain"
+            )
         except Exception:
             log.logOperation(handler, 500, log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
-            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
+            return http.HttpResponseServerError(
+                'Unexcepected error', content_type="text/plain"
+            )
 
         # Invokes the handler's operation, add headers to response and returns
         try:
