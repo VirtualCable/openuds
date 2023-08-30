@@ -36,7 +36,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, exceptions, types
-from uds.core.util import blocker
+from uds.core.util import decorators
 from uds.core.util.log import LogLevel
 from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.core.util.os_detector import KnownOS
@@ -103,7 +103,7 @@ class ServerTest(Handler):
     path = 'servers'
     name = 'test'
 
-    @blocker.blocker()
+    @decorators.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         # Test if a token is valid
         try:
@@ -121,7 +121,7 @@ class ServerAction(Handler):
     def action(self, server: models.Server) -> typing.MutableMapping[str, typing.Any]:
         return rest_result('error', error='Base action invoked')
 
-    @blocker.blocker()
+    @decorators.blocker()
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         try:
             server = models.Server.objects.get(token=self._params['token'])
