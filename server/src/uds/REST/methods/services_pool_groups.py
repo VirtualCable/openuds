@@ -33,12 +33,14 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
-from uds.models import ServicePoolGroup, Image
-from uds.core.util.model import processUuid
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+
+from uds.core import types
 from uds.core.ui import gui
 from uds.core.ui.images import DEFAULT_THUMB_BASE64
-
+from uds.core.util.model import processUuid
+from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
 
 logger = logging.getLogger(__name__)
@@ -99,7 +101,7 @@ class ServicesPoolGroups(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.Types.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 102,
             }
         ]:

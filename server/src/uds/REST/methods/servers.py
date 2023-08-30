@@ -36,14 +36,12 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, exceptions, types
-from uds.core.types import permissions
 from uds.core.util import blocker
 from uds.core.util.log import LogLevel
 from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
 from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler
-from uds.REST.exceptions import NotFound, RequestError
-from uds.REST.model import OK, ModelHandler
+from uds.REST.model import ModelHandler
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)

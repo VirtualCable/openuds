@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.core.environment import Environment
 from uds.models import Notifier, LogLevel
-from uds.core import messaging
+from uds.core import messaging, types
 from uds.core.ui import gui
 from uds.core.util import permissions
 
@@ -88,7 +88,7 @@ class Notifiers(ModelHandler):
                 'choices': [gui.choiceItem(i[0], i[1]) for i in LogLevel.interesting()],
                 'label': gettext('Level'),
                 'tooltip': gettext('Level of notifications'),
-                'type': gui.InputField.Types.CHOICE,
+                'type': types.ui.FieldType.CHOICE,
                 'order': 102,
             }
         ]:

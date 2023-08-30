@@ -39,11 +39,10 @@ from uds import models
 from uds.core import types, consts
 from uds.core.types import permissions as permtypes
 from uds.core.types import rest, servers
-from uds.core.ui import gui
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.REST.exceptions import NotFound, RequestError
-from uds.REST.model import OK, DetailHandler, ModelHandler
+from uds.REST.model import DetailHandler, ModelHandler
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +100,7 @@ class ServersTokens(ModelHandler):
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
-        return OK
+        return consts.OK
 
 
 # REST API For servers (except tunnel servers nor actors)
@@ -246,12 +245,12 @@ class ServersGroups(ModelHandler):
                 {
                     'name': 'type',
                     'value': type_,
-                    'type': gui.InputField.Types.HIDDEN,
+                    'type': types.ui.FieldType.HIDDEN,
                 },
                 {
                     'name': 'title',
                     'value': title,
-                    'type': gui.InputField.Types.INFO,
+                    'type': types.ui.FieldType.INFO,
                 },
             ],
         )
@@ -297,4 +296,4 @@ class ServersGroups(ModelHandler):
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
-        return OK
+        return consts.OK

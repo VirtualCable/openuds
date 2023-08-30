@@ -36,6 +36,8 @@ import typing
 
 # We use commit/rollback
 from ...utils.test import UDSTestCase
+
+from uds.core import types
 from uds.core.ui.user_interface import gui
 
 from ...fixtures.user_interface import TestingUserInterface, DEFAULTS
@@ -56,6 +58,7 @@ def oldSerializeForm(ui) -> bytes:
     import pickle  # nosec: Testing
     import codecs
 
+
     from uds.core.managers.crypto import CryptoManager
     from uds.core.ui.user_interface import UDSK
 
@@ -75,24 +78,24 @@ def oldSerializeForm(ui) -> bytes:
     val: typing.Any
     for k, v in ui._gui.items():
         logger.debug('serializing Key: %s/%s', k, v.value)
-        if v.isType(gui.InputField.Types.HIDDEN) and v.isSerializable() is False:
+        if v.isType(types.ui.FieldType.HIDDEN) and v.isSerializable() is False:
             # logger.debug('Field {0} is not serializable'.format(k))
             continue
-        if v.isType(gui.InputField.Types.INFO):
+        if v.isType(types.ui.FieldType.INFO):
             # logger.debug('Field {} is a dummy field and will not be serialized')
             continue
-        if v.isType(gui.InputField.Types.EDITABLE_LIST) or v.isType(
-            gui.InputField.Types.MULTI_CHOICE
+        if v.isType(types.ui.FieldType.EDITABLE_LIST) or v.isType(
+            types.ui.FieldType.MULTI_CHOICE
         ):
             # logger.debug('Serializing value {0}'.format(v.value))
             val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
-        elif v.isType(gui.InputField.Types.PASSWORD):
+        elif v.isType(types.ui.FieldType.PASSWORD):
             val = PASSWORD_FIELD + CryptoManager().AESCrypt(
                 v.value.encode('utf8'), UDSK, True
             )
-        elif v.isType(gui.InputField.Types.NUMERIC):
+        elif v.isType(types.ui.FieldType.NUMERIC):
             val = str(int(v.num())).encode('utf8')
-        elif v.isType(gui.InputField.Types.CHECKBOX):
+        elif v.isType(types.ui.FieldType.CHECKBOX):
             val = v.isTrue()
         else:
             val = v.value.encode('utf8')

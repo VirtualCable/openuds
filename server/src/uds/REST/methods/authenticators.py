@@ -35,9 +35,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
-import uds.core.types.permissions
 from uds.models import Authenticator, Network, MFA
-from uds.core import auths
+from uds.core import auths, types
 from uds.core.environment import Environment
 
 from uds.REST import NotFound
@@ -124,7 +123,7 @@ class Authenticators(ModelHandler):
                         'tooltip': gettext(
                             'Access type for this transport. Disabled means not only hidden, but also not usable as login method.'
                         ),
-                        'type': gui.InputField.Types.CHOICE,
+                        'type': types.ui.FieldType.CHOICE,
                         'order': 107,
                         'tab': gettext('Display'),
                     },
@@ -146,7 +145,7 @@ class Authenticators(ModelHandler):
                             'tooltip': gettext(
                                 'MFA provider to use for this authenticator'
                             ),
-                            'type': gui.InputField.Types.CHOICE,
+                            'type': types.ui.FieldType.CHOICE,
                             'order': 108,
                             'tab': gui.Tab.MFA,
                         },
@@ -193,7 +192,7 @@ class Authenticators(ModelHandler):
 
     # Custom "search" method
     def search(self, item: Authenticator) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
+        self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):

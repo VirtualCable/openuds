@@ -35,9 +35,8 @@ import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
 from uds import models
-from uds.core import mfas
+from uds.core import mfas, types
 from uds.core.environment import Environment
-from uds.core.ui import gui
 from uds.core.util import permissions
 
 from uds.REST.model import ModelHandler
@@ -85,7 +84,7 @@ class MFA(ModelHandler):
                 'tooltip': gettext(
                     'Time in hours to cache device so MFA is not required again. User based.'
                 ),
-                'type': gui.InputField.Types.NUMERIC,
+                'type': types.ui.FieldType.NUMERIC,
                 'order': 111,
             },
         )
@@ -99,7 +98,7 @@ class MFA(ModelHandler):
                 'tooltip': gettext(
                     'Time in minutes to allow MFA code to be used.'
                 ),
-                'type': gui.InputField.Types.NUMERIC,
+                'type': types.ui.FieldType.NUMERIC,
                 'order': 112,
             },
 

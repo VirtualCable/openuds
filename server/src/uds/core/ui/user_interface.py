@@ -40,13 +40,14 @@ import pickle  # nosec: safe usage
 import re
 import time
 import typing
-from collections import abc
+import collections.abc
+import abc
 
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
 from uds.core.util import serializer, validators
 from uds.core.util.decorators import deprecatedClassValue
@@ -205,15 +206,15 @@ class gui:
             return gui.choiceItem(val, val)
 
         # If is a dict
-        if isinstance(vals, abc.Mapping):
+        if isinstance(vals, collections.abc.Mapping):
             return [gui.choiceItem(str(k), v) for k, v in vals.items()]
 
         # if single value, convert to list
-        if not isinstance(vals, abc.Iterable) or isinstance(vals, str):
+        if not isinstance(vals, collections.abc.Iterable) or isinstance(vals, str):
             vals = [vals]
 
         # If is an iterable
-        if isinstance(vals, abc.Iterable):
+        if isinstance(vals, collections.abc.Iterable):
             return [choiceFromValue(v) for v in vals]
 
         # This should never happen
@@ -269,7 +270,7 @@ class gui:
 
     # Classes
 
-    class InputField:
+    class InputField(abc.ABC):
         """
         Class representing an simple input field.
         This class is not directly usable, must be used by any inherited class
@@ -308,21 +309,6 @@ class gui:
         if you use "value", you will get the default value if not set)
         """
 
-        class Types(enum.StrEnum):
-            TEXT = 'text'
-            TEXT_AUTOCOMPLETE = 'text-autocomplete'
-            NUMERIC = 'numeric'
-            PASSWORD = 'password'  # nosec: this is not a password
-            HIDDEN = 'hidden'
-            CHOICE = 'choice'
-            MULTI_CHOICE = 'multichoice'
-            EDITABLE_LIST = 'editlist'
-            CHECKBOX = 'checkbox'
-            IMAGE_CHOICE = 'imgchoice'
-            IMAGE = 'image'
-            DATE = 'date'
-            INFO = 'internal-info'
-
         # : If length of some fields are not especified, this value is used as default
         DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
@@ -338,7 +324,8 @@ class gui:
             # with the new name (that is "default"), but use the old one
             for i in ('defvalue', 'defaultValue', 'defValue'):
                 if i in kwargs:
-                    caller = inspect.stack()[1]
+                    caller = inspect.stack()[2]  # bypass this method and the caller (that is a derived class)
+                    logger.warning('Stack: %s', inspect.stack())
                     logger.warning(
                         'Field %s: %s parameter is deprecated, use "default" instead. Called from %s:%s',
                         label,
@@ -370,11 +357,11 @@ class gui:
                 self._data['tab'] = str(kwargs['tab'])  # Ensure it's a string
 
         @property
-        def type(self) -> 'Types':
-            return gui.InputField.Types(self._data['type'])
+        def type(self) -> 'types.ui.FieldType':
+            return types.ui.FieldType(self._data['type'])
 
         @type.setter
-        def type(self, type_: Types) -> None:
+        def type(self, type_: 'types.ui.FieldType') -> None:
             """
             Sets the type of this field.
 
@@ -383,7 +370,7 @@ class gui:
             """
             self._data['type'] = str(type_)
 
-        def isType(self, type_: typing.Union[Types, str]) -> bool:
+        def isType(self, type_: typing.Union['types.ui.FieldType', str]) -> bool:
             """
             Returns true if this field is of specified type
             """
@@ -536,7 +523,7 @@ class gui:
             NONE = ''
 
         def __init__(self, **options) -> None:
-            super().__init__(**options, type=gui.InputField.Types.TEXT)
+            super().__init__(**options, type=types.ui.FieldType.TEXT)
             self._data['multiline'] = min(max(int(options.get('multiline', 0)), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
@@ -609,7 +596,7 @@ class gui:
         def __init__(self, **kwargs) -> None:
             super().__init__(**kwargs)
             # Update parent type
-            self.type = gui.InputField.Types.TEXT_AUTOCOMPLETE
+            self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             # And store values in a list
             if 'values' in kwargs:
                 caller = inspect.stack()[1]
@@ -652,7 +639,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.NUMERIC)
+            super().__init__(**options, type=types.ui.FieldType.NUMERIC)
             self._data['minValue'] = int(
                 # Marker for no min value, no need to be negative, but one not probably used
                 options.get('minValue', options.get('minvalue', '987654321'))
@@ -688,7 +675,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.DATE)
+            super().__init__(**options, type=types.ui.FieldType.DATE)
 
         def date(self, useMin: bool = True) -> datetime.date:
             """
@@ -749,7 +736,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.PASSWORD)
+            super().__init__(**options, type=types.ui.FieldType.PASSWORD)
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -792,7 +779,7 @@ class gui:
         _isSerializable: bool
 
         def __init__(self, **options) -> None:
-            super().__init__(**options, type=gui.InputField.Types.HIDDEN)
+            super().__init__(**options, type=types.ui.FieldType.HIDDEN)
             self._isSerializable = options.get('serializable', '') != ''
 
         def isSerializable(self) -> bool:
@@ -818,7 +805,7 @@ class gui:
         """
 
         def __init__(self, **options):
-            super().__init__(**options, type=gui.InputField.Types.CHECKBOX)
+            super().__init__(**options, type=types.ui.FieldType.CHECKBOX)
 
         @staticmethod
         def _checkTrue(val: typing.Union[str, bytes, bool]) -> bool:
@@ -940,7 +927,7 @@ class gui:
         """
 
         def __init__(self, **kwargs):
-            super().__init__(**kwargs, type=gui.InputField.Types.CHOICE)
+            super().__init__(**kwargs, type=types.ui.FieldType.CHOICE)
             # And store values in a list
             if 'values' in kwargs:
                 caller = inspect.stack()[1]
@@ -969,7 +956,7 @@ class gui:
 
     class ImageChoiceField(InputField):
         def __init__(self, **kwargs):
-            super().__init__(**kwargs, type=gui.InputField.Types.IMAGE_CHOICE)
+            super().__init__(**kwargs, type=types.ui.FieldType.IMAGE_CHOICE)
             if 'values' in kwargs:
                 caller = inspect.stack()[1]
                 logger.warning(
@@ -1023,7 +1010,7 @@ class gui:
         """
 
         def __init__(self, **kwargs):
-            super().__init__(**kwargs, type=gui.InputField.Types.MULTI_CHOICE)
+            super().__init__(**kwargs, type=types.ui.FieldType.MULTI_CHOICE)
             if 'values' in kwargs:
                 caller = inspect.stack()[1]
                 logger.warning(
@@ -1076,7 +1063,7 @@ class gui:
         SEPARATOR = '\001'
 
         def __init__(self, **options) -> None:
-            super().__init__(**options, type=gui.InputField.Types.EDITABLE_LIST)
+            super().__init__(**options, type=types.ui.FieldType.EDITABLE_LIST)
             self._data['values'] = gui.convertToList(options.get('values', []))
 
         def _setValue(self, value):
@@ -1092,7 +1079,7 @@ class gui:
         """
 
         def __init__(self, **options) -> None:
-            super().__init__(**options, type=gui.InputField.Types.IMAGE)
+            super().__init__(**options, type=types.ui.FieldType.IMAGE)
 
     class InfoField(InputField):
         """
@@ -1104,7 +1091,7 @@ class gui:
         """
 
         def __init__(self, **options) -> None:
-            super().__init__(**options, type=gui.InputField.Types.INFO)
+            super().__init__(**options, type=types.ui.FieldType.INFO)
 
 
 class UserInterfaceType(type):
@@ -1238,9 +1225,9 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         dic: gui.ValuesDictType = {}
         for k, v in self._gui.items():
-            if v.isType(gui.InputField.Types.EDITABLE_LIST):
+            if v.isType(types.ui.FieldType.EDITABLE_LIST):
                 dic[k] = gui.convertToList(v.value)
-            elif v.isType(gui.InputField.Types.MULTI_CHOICE):
+            elif v.isType(types.ui.FieldType.MULTI_CHOICE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
@@ -1263,23 +1250,23 @@ class UserInterface(metaclass=UserInterfaceType):
             return serializer.serialize(value)
 
         fw_converters: typing.Mapping[
-            gui.InputField.Types, typing.Callable[[gui.InputField], typing.Optional[str]]
+            types.ui.FieldType, typing.Callable[[gui.InputField], typing.Optional[str]]
         ] = {
-            gui.InputField.Types.TEXT: lambda x: x.value,
-            gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x.value,
-            gui.InputField.Types.NUMERIC: lambda x: str(int(x.num())),
-            gui.InputField.Types.PASSWORD: lambda x: (
+            types.ui.FieldType.TEXT: lambda x: x.value,
+            types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
+            types.ui.FieldType.NUMERIC: lambda x: str(int(x.num())),
+            types.ui.FieldType.PASSWORD: lambda x: (
                 CryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
-            gui.InputField.Types.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
-            gui.InputField.Types.CHOICE: lambda x: x.value,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            gui.InputField.Types.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
-            gui.InputField.Types.IMAGE_CHOICE: lambda x: x.value,
-            gui.InputField.Types.IMAGE: lambda x: x.value,
-            gui.InputField.Types.DATE: lambda x: x.value,
-            gui.InputField.Types.INFO: lambda x: None,
+            types.ui.FieldType.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
+            types.ui.FieldType.CHOICE: lambda x: x.value,
+            types.ui.FieldType.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            types.ui.FieldType.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            types.ui.FieldType.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
+            types.ui.FieldType.IMAGE_CHOICE: lambda x: x.value,
+            types.ui.FieldType.IMAGE: lambda x: x.value,
+            types.ui.FieldType.DATE: lambda x: x.value,
+            types.ui.FieldType.INFO: lambda x: None,
         }
         # Any unexpected type will raise an exception
         arr = [
@@ -1331,27 +1318,27 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # Set all values to defaults ones
         for k in self._gui:
-            if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
+            if self._gui[k].isType(types.ui.FieldType.HIDDEN) and self._gui[k].isSerializable() is False:
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
             self._gui[k].value = self._gui[k].default
 
-        converters: typing.Mapping[gui.InputField.Types, typing.Callable[[str], typing.Any]] = {
-            gui.InputField.Types.TEXT: lambda x: x,
-            gui.InputField.Types.TEXT_AUTOCOMPLETE: lambda x: x,
-            gui.InputField.Types.NUMERIC: int,
-            gui.InputField.Types.PASSWORD: lambda x: (
+        converters: typing.Mapping[types.ui.FieldType, typing.Callable[[str], typing.Any]] = {
+            types.ui.FieldType.TEXT: lambda x: x,
+            types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
+            types.ui.FieldType.NUMERIC: int,
+            types.ui.FieldType.PASSWORD: lambda x: (
                 CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
             ),
-            gui.InputField.Types.HIDDEN: lambda x: None,
-            gui.InputField.Types.CHOICE: lambda x: x,
-            gui.InputField.Types.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
-            gui.InputField.Types.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
-            gui.InputField.Types.CHECKBOX: lambda x: x,
-            gui.InputField.Types.IMAGE_CHOICE: lambda x: x,
-            gui.InputField.Types.IMAGE: lambda x: x,
-            gui.InputField.Types.DATE: lambda x: x,
-            gui.InputField.Types.INFO: lambda x: None,
+            types.ui.FieldType.HIDDEN: lambda x: None,
+            types.ui.FieldType.CHOICE: lambda x: x,
+            types.ui.FieldType.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            types.ui.FieldType.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            types.ui.FieldType.CHECKBOX: lambda x: x,
+            types.ui.FieldType.IMAGE_CHOICE: lambda x: x,
+            types.ui.FieldType.IMAGE: lambda x: x,
+            types.ui.FieldType.DATE: lambda x: x,
+            types.ui.FieldType.INFO: lambda x: None,
         }
 
         for k, t, v in arr:
@@ -1387,7 +1374,7 @@ class UserInterface(metaclass=UserInterfaceType):
         try:
             # Set all values to defaults ones
             for k in self._gui:
-                if self._gui[k].isType(gui.InputField.Types.HIDDEN) and self._gui[k].isSerializable() is False:
+                if self._gui[k].isType(types.ui.FieldType.HIDDEN) and self._gui[k].isSerializable() is False:
                     # logger.debug('Field {0} is not unserializable'.format(k))
                     continue
                 self._gui[k].value = self._gui[k].default

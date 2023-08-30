@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Image
+from uds.core import types
 from uds.core.ui import gui
 
 from uds.REST.model import ModelHandler
@@ -85,7 +86,7 @@ class Images(ModelHandler):
                 'value': '',
                 'label': gettext('Image'),
                 'tooltip': gettext('Image object'),
-                'type': gui.InputField.Types.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 100,  # At end
             },
         )

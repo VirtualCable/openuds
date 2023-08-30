@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -29,15 +29,30 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import enum
 
-# pylint: disable=unused-import
-from . import connections
-from . import events
-from . import services
-from . import servers
-from . import permissions
-from . import rest
-from . import os
-from . import pools
-from . import ui
-# Preferences must be include explicitly, as it is not a "normal use" type
+from django.utils.translation import gettext_noop
+
+class Tab(enum.StrEnum):
+    ADVANCED = gettext_noop('Advanced')
+    PARAMETERS = gettext_noop('Parameters')
+    CREDENTIALS = gettext_noop('Credentials')
+    TUNNEL = gettext_noop('Tunnel')
+    DISPLAY = gettext_noop('Display')
+    MFA = gettext_noop('MFA')
+
+class FieldType(enum.StrEnum):
+    TEXT = 'text'
+    TEXT_AUTOCOMPLETE = 'text-autocomplete'
+    NUMERIC = 'numeric'
+    PASSWORD = 'password'  # nosec: this is not a password
+    HIDDEN = 'hidden'
+    CHOICE = 'choice'
+    MULTI_CHOICE = 'multichoice'
+    EDITABLE_LIST = 'editlist'
+    CHECKBOX = 'checkbox'
+    IMAGE_CHOICE = 'imgchoice'
+    IMAGE = 'image'
+    DATE = 'date'
+    INFO = 'internal-info'

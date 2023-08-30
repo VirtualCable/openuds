@@ -36,9 +36,8 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.models import Network
-from uds.core.util import net
+from uds.core import types
 from uds.core.util import permissions
-from uds.core.ui import gui
 
 from ..model import ModelHandler
 
@@ -94,7 +93,7 @@ class Networks(ModelHandler):
                 'tooltip': gettext(
                     'Network range. Accepts most network definitions formats (range, subnet, host, etc...'
                 ),
-                'type': gui.InputField.Types.TEXT,
+                'type': types.ui.FieldType.TEXT,
                 'order': 100,  # At end
             },
         )

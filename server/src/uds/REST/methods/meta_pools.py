@@ -158,7 +158,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('Load balancing policy'),
                 'tooltip': gettext('Service pool load balancing policy'),
-                'type': gui.InputField.Types.CHOICE,
+                'type': types.ui.FieldType.CHOICE,
                 'order': 100,
             },
             {
@@ -168,7 +168,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('HA Policy'),
                 'tooltip': gettext('Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!.'),
-                'type': gui.InputField.Types.CHOICE,
+                'type': types.ui.FieldType.CHOICE,
                 'order': 101,
             },
             {
@@ -182,7 +182,7 @@ class MetaPools(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': gui.InputField.Types.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 120,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -199,7 +199,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext(
                     'Pool group for this pool (for pool classify on display)'
                 ),
-                'type': gui.InputField.Types.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 121,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -208,7 +208,7 @@ class MetaPools(ModelHandler):
                 'value': True,
                 'label': gettext('Visible'),
                 'tooltip': gettext('If active, metapool will be visible for users'),
-                'type': gui.InputField.Types.CHECKBOX,
+                'type': types.ui.FieldType.CHECKBOX,
                 'order': 123,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -219,7 +219,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext(
                     'Custom message to be shown to users if access is limited by calendar rules.'
                 ),
-                'type': gui.InputField.Types.TEXT,
+                'type': types.ui.FieldType.TEXT,
                 'order': 124,
                 'tab': gui.Tab.DISPLAY,
             },
@@ -231,7 +231,7 @@ class MetaPools(ModelHandler):
                 ],
                 'label': gettext('Transport Selection'),
                 'tooltip': gettext('Transport selection policy'),
-                'type': gui.InputField.Types.CHOICE,
+                'type': types.ui.FieldType.CHOICE,
                 'order': 125,
                 'tab': gui.Tab.DISPLAY,
             },

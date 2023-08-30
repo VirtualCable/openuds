@@ -34,17 +34,16 @@
 import fnmatch
 import logging
 import re
-import types
+from types import GeneratorType
 import typing
 import inspect
 
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
 
-import uds.core.types.permissions
-import uds.core.types.rest
-from uds.core import exceptions as g_exceptions
-from uds.core.consts import OK
+
+from uds.core import consts, types
+from uds.core import exceptions as udsExceptions
 from uds.core.module import Module
 from uds.core.ui import gui as uiGui
 from uds.core.util import log, permissions
@@ -115,7 +114,7 @@ class BaseModelHandler(Handler):
                     'multiline': field.get('multiline', 0),
                     'tooltip': field.get('tooltip', ''),
                     'rdonly': field.get('rdonly', False),
-                    'type': str(field.get('type', uiGui.InputField.Types.TEXT)),
+                    'type': str(field.get('type', types.ui.FieldType.TEXT)),
                     'order': field.get('order', 0),
                     'choices': choices,
                 },
@@ -249,7 +248,7 @@ class BaseModelHandler(Handler):
     def ensureAccess(
         self,
         obj: models.Model,
-        permission: uds.core.types.permissions.PermissionType,
+        permission: 'types.permissions.PermissionType',
         root: bool = False,
     ) -> None:
         if not permissions.hasAccess(self._user, obj, permission, root):
@@ -271,7 +270,7 @@ class BaseModelHandler(Handler):
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
-        res = uds.core.types.rest.TypeInfo(
+        res = types.rest.TypeInfo(
             name=_(type_.name()),
             type=type_.type(),
             description=_(type_.description()),
@@ -385,7 +384,7 @@ class BaseModelHandler(Handler):
         Utility method to be invoked for simple methods that returns nothing in fact
         """
         logger.debug('Returning success on %s %s', self.__class__, self._args)
-        return OK
+        return consts.OK
 
     def test(self, type_: str) -> None:  # pylint: disable=unused-argument
         """
@@ -541,7 +540,7 @@ class DetailHandler(BaseModelHandler):
         logger.debug('Invoking proper saving detail item %s', item)
         self.saveItem(parent, item)
         # Empty response
-        return rest_result(OK)
+        return rest_result(consts.OK)
 
     def post(self) -> typing.Any:
         """
@@ -565,7 +564,7 @@ class DetailHandler(BaseModelHandler):
 
         self.deleteItem(parent, self._args[0])
 
-        return OK
+        return consts.OK
 
     def fallbackGet(self) -> typing.Any:
         """
@@ -777,7 +776,7 @@ class ModelHandler(BaseModelHandler):
 
     # log related
     def getLogs(self, item: models.Model) -> typing.List[typing.Dict]:
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
+        self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
             return log.getLogs(item)
         except Exception as e:
@@ -824,7 +823,7 @@ class ModelHandler(BaseModelHandler):
             return data
 
         # Filtering a non iterable (list or tuple)
-        if not isinstance(data, (list, tuple, types.GeneratorType)):
+        if not isinstance(data, (list, tuple, GeneratorType)):
             return data
 
         logger.debug('data: %s, fltr: %s', data, self.fltr)
@@ -866,9 +865,9 @@ class ModelHandler(BaseModelHandler):
             # If we do not have access to parent to, at least, read...
 
             if self._operation in ('put', 'post', 'delete'):
-                requiredPermission = uds.core.types.permissions.PermissionType.MANAGEMENT
+                requiredPermission = types.permissions.PermissionType.MANAGEMENT
             else:
-                requiredPermission = uds.core.types.permissions.PermissionType.READ
+                requiredPermission = types.permissions.PermissionType.READ
 
             if permissions.hasAccess(self._user, item, requiredPermission) is False:
                 logger.debug(
@@ -933,7 +932,7 @@ class ModelHandler(BaseModelHandler):
                     permissions.hasAccess(
                         typing.cast('User', self._user),
                         item,
-                        uds.core.types.permissions.PermissionType.READ,
+                        types.permissions.PermissionType.READ,
                     )
                     is False
                 ):
@@ -1012,7 +1011,7 @@ class ModelHandler(BaseModelHandler):
             try:
                 item = self.model.objects.get(uuid=self._args[0].lower())
 
-                self.ensureAccess(item, uds.core.types.permissions.PermissionType.READ)
+                self.ensureAccess(item, types.permissions.PermissionType.READ)
 
                 res = self.item_as_dict(item)
                 self.fillIntanceFields(item, res)
@@ -1081,7 +1080,7 @@ class ModelHandler(BaseModelHandler):
 
         # Here, self.model() indicates an "django model object with default params"
         self.ensureAccess(
-            self.model(), uds.core.types.permissions.PermissionType.ALL, root=True
+            self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
         try:
@@ -1148,7 +1147,7 @@ class ModelHandler(BaseModelHandler):
             raise exceptions.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.RequestError('Element already exists (duplicate key error)') from None
-        except (exceptions.SaveException, g_exceptions.ValidationError) as e:
+        except (exceptions.SaveException, udsExceptions.ValidationError) as e:
             raise exceptions.RequestError(str(e)) from e
         except (exceptions.RequestError, exceptions.ResponseError):
             raise
@@ -1168,7 +1167,7 @@ class ModelHandler(BaseModelHandler):
             raise exceptions.RequestError('Delete need one and only one argument')
 
         self.ensureAccess(
-            self.model(), uds.core.types.permissions.PermissionType.ALL, root=True
+            self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
@@ -1178,7 +1177,7 @@ class ModelHandler(BaseModelHandler):
         except self.model.DoesNotExist:
             raise exceptions.NotFound('Element do not exists') from None
 
-        return OK
+        return consts.OK
 
     def deleteItem(self, item: models.Model) -> None:
         """

@@ -35,12 +35,12 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.types import permissions
 from uds.core.util.log import LogLevel
 from uds.models import Server
 from uds.REST.exceptions import NotFound, RequestError
-from uds.REST.model import OK, ModelHandler
+from uds.REST.model import ModelHandler
 
 logger = logging.getLogger(__name__)
 
@@ -101,4 +101,4 @@ class ActorTokens(ModelHandler):
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
-        return OK
+        return consts.OK

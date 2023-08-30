@@ -170,7 +170,7 @@ class Tunnels(ModelHandler):
                     'tooltip': gettext(
                         'Hostname or IP address of the server where the tunnel is visible by the users'
                     ),
-                    'type': ui.gui.InputField.Types.TEXT,
+                    'type': types.ui.FieldType.TEXT,
                     'order': 100,  # At end
                 },
                 {
@@ -178,7 +178,7 @@ class Tunnels(ModelHandler):
                     'value': 443,
                     'label': gettext('Port'),
                     'tooltip': gettext('Port where the tunnel is visible by the users'),
-                    'type': ui.gui.InputField.Types.NUMERIC,
+                    'type': types.ui.FieldType.NUMERIC,
                     'order': 101,  # At end
                 },
             ],
