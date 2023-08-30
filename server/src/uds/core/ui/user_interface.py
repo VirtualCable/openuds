@@ -115,17 +115,6 @@ class gui:
     # : False string value
     FALSE: typing.ClassVar[str] = 'false'
 
-    class Tab(enum.Enum):
-        ADVANCED = gettext_noop('Advanced')
-        PARAMETERS = gettext_noop('Parameters')
-        CREDENTIALS = gettext_noop('Credentials')
-        TUNNEL = gettext_noop('Tunnel')
-        DISPLAY = gettext_noop('Display')
-        MFA = gettext_noop('MFA')
-
-        def __str__(self) -> str:
-            return str(self.value)
-
     # : For backward compatibility, will be removed in future versions
     # For now, will log a warning if used
     @deprecatedClassValue('types.ui.Tab.ADVANCED')
