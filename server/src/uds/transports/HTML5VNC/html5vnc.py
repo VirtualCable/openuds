@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import transports
+from uds.core import transports, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util import fields, os_detector
@@ -79,13 +79,13 @@ class HTML5VNCTransport(transports.Transport):
         label=_('Username'),
         order=20,
         tooltip=_('Username for VNC connection authentication.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for VNC connection authentication'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     vncPort = gui.NumericField(
@@ -95,7 +95,7 @@ class HTML5VNCTransport(transports.Transport):
         order=2,
         tooltip=_('Port of the VNC server.'),
         required=True,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     colorDepth = gui.ChoiceField(
@@ -111,25 +111,25 @@ class HTML5VNCTransport(transports.Transport):
             gui.choiceItem('32', '33 bits'),
         ],
         default='-',
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     swapRedBlue = gui.CheckBoxField(
         label=_('Swap red/blue'),
         order=27,
         tooltip=_('Use this if your colours seems incorrect (blue appears red, ..) to swap them.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     cursor = gui.CheckBoxField(
         label=_('Remote cursor'),
         order=28,
         tooltip=_('If set, force to show remote cursor'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     readOnly = gui.CheckBoxField(
         label=_('Read only'),
         order=29,
         tooltip=_('If set, the connection will be read only'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     ticketValidity = fields.tunnelTicketValidityField()

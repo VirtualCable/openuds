@@ -32,15 +32,14 @@
 import logging
 import typing
 
-import ldap.filter
 import ldap
-
+import ldap.filter
 from django.utils.translation import gettext_noop as _
 
-from uds.core.ui import gui
-from uds.core import auths
-from uds.core.util import ldaputil
+from uds.core import auths, types
 from uds.core.auths.auth import authLogLogin
+from uds.core.ui import gui
+from uds.core.util import ldaputil
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -80,7 +79,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=4,
         tooltip=_('Username with read privileges on the base selected'),
         required=True,
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     password = gui.PasswordField(
         lenth=32,
@@ -88,7 +87,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=5,
         tooltip=_('Password of the ldap user'),
         required=True,
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     timeout = gui.NumericField(
         length=3,
@@ -98,7 +97,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
         minValue=1,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     verifySsl = gui.CheckBoxField(
         label=_('Verify SSL'),
@@ -107,7 +106,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tooltip=_(
             'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     certificate = gui.TextField(
         length=8192,
@@ -116,7 +115,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=12,
         tooltip=_('Certificate to use for SSL verification'),
         required=False,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     ldapBase = gui.TextField(
@@ -190,7 +189,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.Tab.MFA,
+        tab=types.ui.Tab.MFA,
     )
 
     typeName = _('SimpleLDAP')

@@ -74,7 +74,7 @@ def tunnelField() -> ui.gui.ChoiceField:
         tooltip=_('Tunnel server to use'),
         required=True,
         choices=functools.partial(_serverGroupValues, [types.servers.ServerType.TUNNEL]),
-        tab=ui.gui.Tab.TUNNEL,
+        tab=types.ui.Tab.TUNNEL,
     )
 
 
@@ -87,7 +87,7 @@ def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 def serverGroupField(
     type: typing.Optional[typing.List[types.servers.ServerType]] = None,
     subtype: typing.Optional[str] = None,
-    tab: typing.Optional[ui.gui.Tab] = None,
+    tab: typing.Optional[types.ui.Tab] = None,
 ) -> ui.gui.ChoiceField:
     """Returns a field to select a server group
 
@@ -130,7 +130,7 @@ def tunnelTicketValidityField() -> ui.gui.NumericField:
         ),
         required=True,
         minValue=60,
-        tab=ui.gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
 
@@ -145,5 +145,5 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
         order=order,
         tooltip=_('Maximum time, in seconds, to wait before disable new connections on client tunnel listener'),
         required=True,
-        tab=ui.gui.Tab.TUNNEL,
+        tab=types.ui.Tab.TUNNEL,
     )

@@ -128,29 +128,29 @@ class gui:
 
     # : For backward compatibility, will be removed in future versions
     # For now, will log a warning if used
-    @deprecatedClassValue('gui.Tab.ADVANCED')
+    @deprecatedClassValue('types.ui.Tab.ADVANCED')
     def ADVANCED_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.ADVANCED)
+        return str(types.ui.Tab.ADVANCED)
 
-    @deprecatedClassValue('gui.Tab.PARAMETERS')
+    @deprecatedClassValue('types.ui.Tab.PARAMETERS')
     def PARAMETERS_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.PARAMETERS)
+        return str(types.ui.Tab.PARAMETERS)
 
-    @deprecatedClassValue('gui.Tab.CREDENTIALS')
+    @deprecatedClassValue('types.ui.Tab.CREDENTIALS')
     def CREDENTIALS_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.CREDENTIALS)
+        return str(types.ui.Tab.CREDENTIALS)
 
-    @deprecatedClassValue('gui.Tab.TUNNEL')
+    @deprecatedClassValue('types.ui.Tab.TUNNEL')
     def TUNNEL_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.TUNNEL)
+        return str(types.ui.Tab.TUNNEL)
 
-    @deprecatedClassValue('gui.Tab.DISPLAY')
+    @deprecatedClassValue('types.ui.Tab.DISPLAY')
     def DISPLAY_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.DISPLAY)
+        return str(types.ui.Tab.DISPLAY)
 
-    @deprecatedClassValue('gui.Tab.MFA')
+    @deprecatedClassValue('types.ui.Tab.MFA')
     def MFA_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(gui.Tab.MFA)
+        return str(types.ui.Tab.MFA)
 
     # : Static Callbacks simple registry
     callbacks: typing.Dict[

@@ -32,25 +32,28 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
+from uds.core import types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
+from .service import XenLinkedService
+from .xen_client import XenServer
+
 # from uds.core.util import validators
 
-from .xen_client import XenServer
 
 # from xen_client import XenFailure, XenFault
 
-from .service import XenLinkedService
 
 logger = logging.getLogger(__name__)
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 CACHE_TIME_FOR_SERVER = 1800
 
@@ -129,7 +132,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -140,7 +143,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     macsRange = gui.TextField(
@@ -151,7 +154,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         rdonly=True,
         tooltip=_('Range of valid macs for created machines'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     verifySSL = gui.CheckBoxField(
         label=_('Verify Certificate'),
@@ -159,7 +162,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_(
             'If selected, certificate will be checked against system valid certificate providers'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.FALSE,
     )
 
@@ -170,7 +173,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         tooltip=_(
             'XenServer BACKUP IP or Hostname (used on connection failure to main server)'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         required=False,
     )
 

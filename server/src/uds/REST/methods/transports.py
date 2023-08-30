@@ -110,7 +110,7 @@ class Transports(ModelHandler):
                     'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
                 ),
                 'type': 'multichoice',
-                'tab': gui.Tab.ADVANCED,
+                'tab': types.ui.Tab.ADVANCED,
                 'order': 102,
             },
         )
@@ -142,7 +142,7 @@ class Transports(ModelHandler):
                 ),
                 'type': 'text',
                 'order': 201,
-                'tab': gui.Tab.ADVANCED,
+                'tab': types.ui.Tab.ADVANCED,
             },
         )
 

@@ -34,14 +34,12 @@ import configparser
 import logging
 import typing
 
+import dns.resolver
 from django.utils.translation import gettext_noop as _
 
-import dns.resolver
-
-from uds.core import services, exceptions
+from uds.core import exceptions, services, types
 from uds.core.ui.user_interface import gui
-from uds.core.util import net
-from uds.core.util import log
+from uds.core.util import log, net
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -66,7 +64,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
         order=3,
         tooltip=_('Advanced configuration data for the provider'),
         required=False,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
@@ -114,8 +112,10 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                         _('Invalid url in advanced configuration: ') + key
                     )
 
-    from .service_multi import IPMachinesService  # pylint: disable=import-outside-toplevel
-    from .service_single import IPSingleMachineService  # pylint: disable=import-outside-toplevel
+    from .service_multi import \
+        IPMachinesService  # pylint: disable=import-outside-toplevel
+    from .service_single import \
+        IPSingleMachineService  # pylint: disable=import-outside-toplevel
 
     offers = [IPMachinesService, IPSingleMachineService]
 

@@ -33,7 +33,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services
+
+from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
@@ -44,8 +45,8 @@ from .service import OVirtLinkedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -141,7 +142,7 @@ class OVirtProvider(
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -152,7 +153,7 @@ class OVirtProvider(
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -162,7 +163,7 @@ class OVirtProvider(
         order=90,
         tooltip=_('Timeout in seconds of connection to oVirt'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     macsRange = gui.TextField(
         length=36,
@@ -172,7 +173,7 @@ class OVirtProvider(
         rdonly=True,
         tooltip=_('Range of valid macs for UDS managed machines'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     # Own variables

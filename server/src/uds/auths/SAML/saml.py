@@ -51,6 +51,7 @@ from uds.core import auths, exceptions
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.decorators import cached
 from uds.core.util import security
+from uds.core import types
 
 from . import config
 
@@ -188,7 +189,7 @@ class SAMLAuthenticator(auths.Authenticator):
         default=False,
         order=10,
         tooltip=_('If set, logout from UDS will trigger SAML logout'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     adFS = gui.CheckBoxField(
@@ -196,7 +197,7 @@ class SAMLAuthenticator(auths.Authenticator):
         default=False,
         order=11,
         tooltip=_('If set, enable lowercase url encoding so ADFS can work correctly'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     mfaAttr = gui.TextField(
         length=2048,
@@ -205,7 +206,7 @@ class SAMLAuthenticator(auths.Authenticator):
         order=12,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     checkSSLCertificate = gui.CheckBoxField(

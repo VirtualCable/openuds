@@ -29,12 +29,12 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-import typing
 import logging
+import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import mfas
+from uds.core import mfas, types
 from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
@@ -54,7 +54,7 @@ class SampleMFA(mfas.MFA):
         label=_('Sample useless field'),
         order=90,
         tooltip=_('This is a useless field, for sample and testing pourposes'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
 

@@ -62,19 +62,19 @@ class BaseRDPTransport(transports.Transport):
         label=_('Empty creds'),
         order=11,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     fixedName = gui.TextField(
         label=_('Username'),
         order=12,
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     fixedPassword = gui.PasswordField(
         label=_('Password'),
         order=13,
         tooltip=_('If not empty, this password will be always used as credential'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     withoutDomain = gui.CheckBoxField(
         label=_('Without Domain'),
@@ -82,26 +82,26 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'
         ),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
     fixedDomain = gui.TextField(
         label=_('Domain'),
         order=15,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
 
     allowSmartcards = gui.CheckBoxField(
         label=_('Allow Smartcards'),
         order=20,
         tooltip=_('If checked, this transport will allow the use of smartcards'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     allowPrinters = gui.CheckBoxField(
         label=_('Allow Printers'),
         order=21,
         tooltip=_('If checked, this transport will allow the use of user printers'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     allowDrives = gui.ChoiceField(
         label=_('Local drives policy'),
@@ -113,7 +113,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': 'dynamic', 'text': 'Allow PnP drives'},
             {'id': 'true', 'text': 'Allow any drive'},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     enforceDrives = gui.TextField(
         label=_('Force drives'),
@@ -121,34 +121,34 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_(
             'Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     allowSerials = gui.CheckBoxField(
         label=_('Allow Serials'),
         order=24,
         tooltip=_('If checked, this transport will allow the use of user serial ports'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     allowClipboard = gui.CheckBoxField(
         label=_('Enable clipboard'),
         order=25,
         tooltip=_('If checked, copy-paste functions will be allowed'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
         default=gui.TRUE,
     )
     allowAudio = gui.CheckBoxField(
         label=_('Enable sound'),
         order=26,
         tooltip=_('If checked, sound will be redirected.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
         default=gui.TRUE,
     )
     allowWebcam = gui.CheckBoxField(
         label=_('Enable webcam'),
         order=27,
         tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
         default=gui.FALSE,
     )
     usbRedirection = gui.ChoiceField(
@@ -165,14 +165,14 @@ class BaseRDPTransport(transports.Transport):
             {'id': '{50dd5230-ba8a-11d1-bf5d-0000f805f530}', 'text': 'Smartcards'},
             {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     credssp = gui.CheckBoxField(
         label=_('Credssp Support'),
         order=29,
         tooltip=_('If checked, will enable Credentials Provider Support)'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
         default=gui.TRUE,
     )
     rdpPort = gui.NumericField(
@@ -180,7 +180,7 @@ class BaseRDPTransport(transports.Transport):
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
         required=True,  #: Numeric fields have always a value, so this not really needed
         default='3389',
     )
@@ -206,7 +206,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '5120x2880', 'text': '5120x2880'},
             {'id': '-1x-1', 'text': 'Full screen'},
         ],
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
 
     colorDepth = gui.ChoiceField(
@@ -220,7 +220,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '24', 'text': '24'},
             {'id': '32', 'text': '32'},
         ],
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
 
     wallpaper = gui.CheckBoxField(
@@ -229,7 +229,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_(
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
     multimon = gui.CheckBoxField(
         label=_('Multiple monitors'),
@@ -237,26 +237,26 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_(
             'If checked, all client monitors will be used for displaying (only works on windows clients)'
         ),
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
     aero = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=35,
         tooltip=_('If checked, desktop composition will be allowed'),
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
         default=gui.TRUE,
         order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
     )
     showConnectionBar = gui.CheckBoxField(
         label=_('Connection Bar'),
         order=37,
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
-        tab=gui.Tab.DISPLAY,
+        tab=types.ui.Tab.DISPLAY,
         default=gui.TRUE,
     )
 

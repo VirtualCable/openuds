@@ -147,7 +147,7 @@ class Authenticators(ModelHandler):
                             ),
                             'type': types.ui.FieldType.CHOICE,
                             'order': 108,
-                            'tab': gui.Tab.MFA,
+                            'tab': types.ui.Tab.MFA,
                         },
                     )
                 return field

@@ -35,9 +35,10 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import auths
-from uds.core.util import net
+
+from uds.core import auths, types
 from uds.core.ui import gui
+from uds.core.util import net
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ class IPAuth(auths.Authenticator):
             'If checked, requests via proxy will get FORWARDED ip address'
             ' (take care with this bein checked, can take internal IP addresses from internet)'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     visibleFromNets = gui.TextField(
@@ -64,7 +65,7 @@ class IPAuth(auths.Authenticator):
         tooltip=_(
             'This authenticator will be visible only from these networks. Leave empty to allow all networks'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     typeName = _('IP Authenticator')

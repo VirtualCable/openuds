@@ -80,7 +80,7 @@ class IPMachinesService(IPServiceBase):
         order=2,
         tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     skipTimeOnFailure = gui.NumericField(
         length=6,
@@ -90,7 +90,7 @@ class IPMachinesService(IPServiceBase):
         tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
         minValue=0,
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     maxSessionForMachine = gui.NumericField(
@@ -103,14 +103,14 @@ class IPMachinesService(IPServiceBase):
         ),
         minValue=0,
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     lockByExternalAccess = gui.CheckBoxField(
         label=_('Lock machine by external access'),
         tooltip=_('If checked, UDS will lock the machine if it is accesed from outside UDS.'),
         default=False,
         order=4,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     # Description of service

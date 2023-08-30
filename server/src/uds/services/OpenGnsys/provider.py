@@ -36,19 +36,20 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
+from uds.core import types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
-from uds.core.util.decorators import cached
 from uds.core.util.cache import Cache
+from uds.core.util.decorators import cached
 
-from .service import OGService
 from . import og
+from .service import OGService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +137,7 @@ class OGProvider(ServiceProvider):
         order=6,
         tooltip=_('URL used by OpenGnsys to access UDS. If empty, UDS will guess it.'),
         required=False,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     maxPreparingServices = gui.NumericField(
@@ -148,7 +149,7 @@ class OGProvider(ServiceProvider):
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -159,7 +160,7 @@ class OGProvider(ServiceProvider):
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -169,7 +170,7 @@ class OGProvider(ServiceProvider):
         order=90,
         tooltip=_('Timeout in seconds of connection to OpenGnsys'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     # Own variables

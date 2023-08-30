@@ -33,18 +33,19 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _, gettext_lazy
+from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_noop as _
 
+from uds.core import osmanagers, types
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
-from uds.core import osmanagers
-from uds.core.util.state import State
 from uds.core.util import log
+from uds.core.util.state import State
 
 if typing.TYPE_CHECKING:
-    from uds.models.user_service import UserService
     from uds.core.environment import Environment
     from uds.core.module import Module
+    from uds.models.user_service import UserService
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class LinuxOsManager(osmanagers.OSManager):
         tooltip=_(
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
 

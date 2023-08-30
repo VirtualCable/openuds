@@ -184,7 +184,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext('Image assocciated with this service'),
                 'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 120,
-                'tab': gui.Tab.DISPLAY,
+                'tab': types.ui.Tab.DISPLAY,
             },
             {
                 'name': 'servicesPoolGroup_id',
@@ -201,7 +201,7 @@ class MetaPools(ModelHandler):
                 ),
                 'type': types.ui.FieldType.IMAGE_CHOICE,
                 'order': 121,
-                'tab': gui.Tab.DISPLAY,
+                'tab': types.ui.Tab.DISPLAY,
             },
             {
                 'name': 'visible',
@@ -210,7 +210,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext('If active, metapool will be visible for users'),
                 'type': types.ui.FieldType.CHECKBOX,
                 'order': 123,
-                'tab': gui.Tab.DISPLAY,
+                'tab': types.ui.Tab.DISPLAY,
             },
             {
                 'name': 'calendar_message',
@@ -221,7 +221,7 @@ class MetaPools(ModelHandler):
                 ),
                 'type': types.ui.FieldType.TEXT,
                 'order': 124,
-                'tab': gui.Tab.DISPLAY,
+                'tab': types.ui.Tab.DISPLAY,
             },
             {
                 'name': 'transport_grouping',
@@ -233,7 +233,7 @@ class MetaPools(ModelHandler):
                 'tooltip': gettext('Transport selection policy'),
                 'type': types.ui.FieldType.CHOICE,
                 'order': 125,
-                'tab': gui.Tab.DISPLAY,
+                'tab': types.ui.Tab.DISPLAY,
             },
         ]:
             self.addField(localGUI, field)

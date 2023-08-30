@@ -71,7 +71,7 @@ class BaseX2GOTransport(transports.Transport):
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
 
     screenSize = gui.ChoiceField(
@@ -87,7 +87,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': CommonPrefs.SZ_1920x1080, 'text': '1920x1080'},
             {'id': CommonPrefs.SZ_FULLSCREEN, 'text': gettext_lazy('Full Screen')},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     desktopType = gui.ChoiceField(
@@ -105,7 +105,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'gnome-session-cinnamon2d', 'text': 'Cinnamon 2.2 (see docs)'},
             {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     customCmd = gui.TextField(
@@ -114,7 +114,7 @@ class BaseX2GOTransport(transports.Transport):
         tooltip=_(
             'If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     sound = gui.CheckBoxField(
@@ -122,7 +122,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
         default=gui.TRUE,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     exports = gui.CheckBoxField(
@@ -130,7 +130,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Redirect home folder'),
         tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
         default=gui.FALSE,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     speed = gui.ChoiceField(
@@ -145,7 +145,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': '3', 'text': 'WAN'},
             {'id': '4', 'text': 'LAN'},
         ],
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     soundType = gui.ChoiceField(
@@ -157,7 +157,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'pulse', 'text': 'Pulse'},
             {'id': 'esd', 'text': 'ESD'},
         ],
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     keyboardLayout = gui.TextField(
@@ -165,7 +165,7 @@ class BaseX2GOTransport(transports.Transport):
         order=31,
         tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         default='',
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     # 'nopack', '8', '64', '256', '512', '4k', '32k', '64k', '256k', '2m', '16m'
     # '256-rdp', '256-rdp-compressed', '32k-rdp', '32k-rdp-compressed', '64k-rdp'
@@ -185,7 +185,7 @@ class BaseX2GOTransport(transports.Transport):
         order=32,
         tooltip=_('Pack format. Change with care!'),
         default='16m-jpeg',
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     quality = gui.NumericField(
@@ -197,7 +197,7 @@ class BaseX2GOTransport(transports.Transport):
         minValue=1,
         maxValue=9,
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:

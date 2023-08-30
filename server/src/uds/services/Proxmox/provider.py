@@ -32,22 +32,21 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import services
+from uds.core import services, types
 from uds.core.ui import gui
 from uds.core.util import validators
-from uds.core.util.unique_id_generator import UniqueIDGenerator
-from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
-
-from .service import ProxmoxLinkedService
+from uds.core.util.unique_id_generator import UniqueIDGenerator
+from uds.core.util.unique_mac_generator import UniqueMacGenerator
 
 from . import client
+from .service import ProxmoxLinkedService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +106,7 @@ class ProxmoxProvider(
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -118,7 +117,7 @@ class ProxmoxProvider(
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -128,7 +127,7 @@ class ProxmoxProvider(
         order=90,
         tooltip=_('Timeout in seconds of connection to Proxmox'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     startVmId = gui.NumericField(
@@ -141,7 +140,7 @@ class ProxmoxProvider(
         tooltip=_('Starting machine id on proxmox'),
         required=True,
         rdonly=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     macsRange = gui.TextField(
@@ -154,7 +153,7 @@ class ProxmoxProvider(
             'Range of valid macs for created machines. Any value accepted by Proxmox is valid here.'
         ),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
 

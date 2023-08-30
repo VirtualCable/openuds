@@ -35,10 +35,10 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core.ui import gui
-from uds.core import auths
-from uds.core.managers.crypto import CryptoManager
+from uds.core import auths, types
 from uds.core.auths.auth import authLogLogin
+from uds.core.managers.crypto import CryptoManager
+from uds.core.ui import gui
 
 from . import client
 
@@ -91,7 +91,7 @@ class RadiusAuth(auths.Authenticator):
         order=10,
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     appClassPrefix = gui.TextField(
@@ -100,7 +100,7 @@ class RadiusAuth(auths.Authenticator):
         default='',
         order=11,
         tooltip=_('Application prefix for filtering groups from "Class" attribute'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     globalGroup = gui.TextField(
@@ -109,7 +109,7 @@ class RadiusAuth(auths.Authenticator):
         default='',
         order=12,
         tooltip=_('If set, this value will be added as group for all radius users'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     mfaAttr = gui.TextField(
         length=2048,
@@ -118,7 +118,7 @@ class RadiusAuth(auths.Authenticator):
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),
         required=False,
-        tab=gui.Tab.MFA,
+        tab=types.ui.Tab.MFA,
     )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:

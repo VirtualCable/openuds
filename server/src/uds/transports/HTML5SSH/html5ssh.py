@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import transports
+from uds.core import transports, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util import fields, os_detector
@@ -78,14 +78,14 @@ class HTML5SSHTransport(transports.Transport):
         label=_('Username'),
         order=20,
         tooltip=_('Username for SSH connection authentication.'),
-        tab=gui.Tab.CREDENTIALS,
+        tab=types.ui.Tab.CREDENTIALS,
     )
 
     # password = gui.PasswordField(
     #     label=_('Password'),
     #     order=21,
     #     tooltip=_('Password for SSH connection authentication'),
-    #     tab=gui.Tab.CREDENTIALS,
+    #     tab=types.ui.Tab.CREDENTIALS,
     # )
     # sshPrivateKey = gui.TextField(
     #     label=_('SSH Private Key'),
@@ -94,7 +94,7 @@ class HTML5SSHTransport(transports.Transport):
     #     tooltip=_(
     #         'Private key for SSH authentication. If not provided, password authentication is used.'
     #     ),
-    #     tab=gui.Tab.CREDENTIALS,
+    #     tab=types.ui.Tab.CREDENTIALS,
     # )
     # sshPassphrase = gui.PasswordField(
     #     label=_('SSH Private Key Passphrase'),
@@ -102,7 +102,7 @@ class HTML5SSHTransport(transports.Transport):
     #     tooltip=_(
     #         'Passphrase for SSH private key if it is required. If not provided, but it is needed, user will be prompted for it.'
     #     ),
-    #     tab=gui.Tab.CREDENTIALS,
+    #     tab=types.ui.Tab.CREDENTIALS,
     # )
 
     sshCommand = gui.TextField(
@@ -111,14 +111,14 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_(
             'Command to execute on the remote server. If not provided, an interactive shell will be executed.'
         ),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     enableFileSharing = HTML5RDPTransport.enableFileSharing
     fileSharingRoot = gui.TextField(
         label=_('File Sharing Root'),
         order=32,
         tooltip=_('Root path for file sharing. If not provided, root directory will be used.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     sshPort = gui.NumericField(
         length=40,
@@ -127,13 +127,13 @@ class HTML5SSHTransport(transports.Transport):
         order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     sshHostKey = gui.TextField(
         label=_('SSH Host Key'),
         order=34,
         tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done.'),
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
     serverKeepAlive = gui.NumericField(
         length=3,
@@ -145,7 +145,7 @@ class HTML5SSHTransport(transports.Transport):
         ),
         required=True,
         minValue=0,
-        tab=gui.Tab.PARAMETERS,
+        tab=types.ui.Tab.PARAMETERS,
     )
 
     ticketValidity = fields.tunnelTicketValidityField()

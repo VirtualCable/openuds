@@ -34,18 +34,19 @@ import codecs
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _, gettext_lazy
+from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_noop as _
 
-from uds.core.ui import gui
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.managers.crypto import CryptoManager
+from uds.core.ui import gui
 
 from .linux_osmanager import LinuxOsManager
 
 if typing.TYPE_CHECKING:
-    from uds.models.user_service import UserService
     from uds.core.environment import Environment
     from uds.core.module import Module
+    from uds.models.user_service import UserService
 
 
 logger = logging.getLogger(__name__)
@@ -95,7 +96,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'sssd', 'text': gettext_lazy('SSSD')},
             {'id': 'winbind', 'text': gettext_lazy('Winbind')},
         ],
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
     membershipSoftware = gui.ChoiceField(
@@ -107,7 +108,7 @@ class LinuxOsADManager(LinuxOsManager):
             {'id': 'samba', 'text': gettext_lazy('Samba')},
             {'id': 'adcli', 'text': gettext_lazy('adcli')},
         ],
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
     removeOnExit = gui.CheckBoxField(
@@ -116,21 +117,21 @@ class LinuxOsADManager(LinuxOsManager):
         tooltip=_(
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
     automaticIdMapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
 

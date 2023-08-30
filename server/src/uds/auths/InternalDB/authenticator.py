@@ -37,13 +37,13 @@ import typing
 
 import dns.resolver
 import dns.reversename
-
 from django.utils.translation import gettext_noop as _
-from uds.core import auths
-from uds.core.ui import gui
-from uds.core.managers.crypto import CryptoManager
-from uds.core.util.state import State
+
+from uds.core import auths, types
 from uds.core.auths.auth import authLogLogin
+from uds.core.managers.crypto import CryptoManager
+from uds.core.ui import gui
+from uds.core.util.state import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -73,7 +73,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_('If checked, each host will have a different user name'),
         default='false',
         rdonly=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     reverseDns = gui.CheckBoxField(
         label=_('Reverse DNS'),
@@ -81,7 +81,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_('If checked, the host will be reversed dns'),
         default='false',
         rdonly=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
@@ -90,7 +90,7 @@ class InternalDBAuth(auths.Authenticator):
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     def getIp(self, request: 'ExtendedHttpRequest') -> str:

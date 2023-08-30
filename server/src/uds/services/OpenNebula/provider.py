@@ -34,6 +34,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
+from uds.core import types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -45,8 +47,8 @@ from .service import LiveService
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.module import Module
     from uds.core.environment import Environment
+    from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +121,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -130,7 +132,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -140,7 +142,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         order=90,
         tooltip=_('Timeout in seconds of connection to OpenNebula'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     # Own variables

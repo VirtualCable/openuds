@@ -12,12 +12,14 @@ import codecs
 import logging
 import typing
 
-from django.utils.translation import gettext_noop as _, gettext_lazy
-from uds.core import osmanagers, exceptions
+from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_noop as _
+
+from uds.core import exceptions, osmanagers, types
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
-from uds.core.util.state import State
 from uds.core.util import log
+from uds.core.util.state import State
 from uds.models import TicketStore
 
 # Not imported at runtime, just for type checking
@@ -81,7 +83,7 @@ class WindowsOsManager(osmanagers.OSManager):
         tooltip=_(
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
         default=gui.TRUE,
     )
 

@@ -34,6 +34,8 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+
+from uds.core import types
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -149,7 +151,7 @@ class OpenStackProvider(ServiceProvider):
         order=50,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     maxRemovingServices = gui.NumericField(
         length=3,
@@ -160,7 +162,7 @@ class OpenStackProvider(ServiceProvider):
         order=51,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     timeout = gui.NumericField(
@@ -172,7 +174,7 @@ class OpenStackProvider(ServiceProvider):
         order=99,
         tooltip=_('Timeout in seconds of connection to OpenStack'),
         required=True,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     tenant = gui.TextField(
@@ -184,7 +186,7 @@ class OpenStackProvider(ServiceProvider):
         ),
         required=False,
         default='',
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
     region = gui.TextField(
         length=64,
@@ -193,7 +195,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_('Region for this provider. Set only if required by server.'),
         required=False,
         default='',
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     useSubnetsName = gui.CheckBoxField(
@@ -203,7 +205,7 @@ class OpenStackProvider(ServiceProvider):
             'If checked, the name of the subnets will be used instead of the names of networks'
         ),
         default=gui.FALSE,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     httpsProxy = gui.TextField(
@@ -214,7 +216,7 @@ class OpenStackProvider(ServiceProvider):
             'Proxy used on server connections for HTTPS connections (use PROTOCOL://host:port, i.e. http://10.10.0.1:8080)'
         ),
         required=False,
-        tab=gui.Tab.ADVANCED,
+        tab=types.ui.Tab.ADVANCED,
     )
 
     legacy = False
