@@ -139,7 +139,7 @@ class EmailMFA(mfas.MFA):
 
     networks = gui.MultiChoiceField(
         label=_('Mail OTP Networks'),
-        rdonly=False,
+        readonly=False,
         rows=5,
         order=32,
         tooltip=_('Networks for Email OTP authentication'),

@@ -293,7 +293,7 @@ class ServicesPools(ModelHandler):
                 'label': gettext('Base service'),
                 'tooltip': gettext('Service used as base of this service pool'),
                 'type': types.ui.FieldType.CHOICE,
-                'rdonly': True,
+                'readonly': True,
                 'order': 100,  # Ensures is At end
             },
             {
@@ -305,7 +305,7 @@ class ServicesPools(ModelHandler):
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
                 'type': types.ui.FieldType.CHOICE,
-                'rdonly': True,
+                'readonly': True,
                 'order': 101,
             },
             {

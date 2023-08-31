@@ -120,7 +120,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         label=_('HA'),
         order=2,
         tooltip=_('Select if HA is enabled and HA group for machines of this service'),
-        rdonly=True,
+        readonly=True,
     )
 
     guestShutdown = gui.CheckBoxField(
@@ -147,7 +147,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     datastore = gui.ChoiceField(
         label=_("Storage"),
-        rdonly=False,
+        readonly=False,
         order=111,
         tooltip=_('Storage for publications & machines.'),
         tab=_('Machine'),
@@ -156,7 +156,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     gpu = gui.ChoiceField(
         label=_("GPU Availability"),
-        rdonly=False,
+        readonly=False,
         order=112,
         choices={
             '0': _('Do not check'),
@@ -170,7 +170,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     baseName = gui.TextField(
         label=_('Machine Names'),
-        rdonly=False,
+        readonly=False,
         order=115,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),

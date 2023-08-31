@@ -65,7 +65,7 @@ class IPMachinesService(IPServiceBase):
         ),
         default='',
         required=False,
-        rdonly=False,
+        readonly=False,
     )
 
     ipList = gui.EditableListField(

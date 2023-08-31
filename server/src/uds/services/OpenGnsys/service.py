@@ -150,7 +150,7 @@ class OGService(services.Service):
         minValue=0,
         maxValue=99999,
         default=0,
-        rdonly=False,
+        readonly=False,
         tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
         required=True,
         tab=types.ui.Tab.ADVANCED

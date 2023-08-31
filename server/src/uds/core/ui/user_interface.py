@@ -219,7 +219,7 @@ class gui:
         return sorted(choices, key=lambda item: item['text'].lower())
 
     @staticmethod
-    def toBool(value: typing.Union[str, bool, int]) -> bool:
+    def toBool(value: typing.Union[str, bytes, bool, int]) -> bool:
         """
         Converts the string "true" (case insensitive) to True (boolean).
         Anything else is converted to false
@@ -230,9 +230,7 @@ class gui:
         Returns:
             True if the string is "true" (case insensitive), False else.
         """
-        if value is True or str(value).lower() in [gui.TRUE, '1', 'yes']:
-            return True
-        return False
+        return value in (True, 'True', b'true', b'True', 1, '1', b'1', gui.TRUE)
 
     @staticmethod
     def fromBool(bol: bool) -> str:
@@ -265,7 +263,7 @@ class gui:
             * label: Label used with this field. Defaults to ''
             * dafault: Default value for the field. Defaults to '' (this is
               always an string)
-            * rdonly: If the field is read only on modification. On creation,
+            * readonly: If the field is read only on modification. On creation,
               all fields are "writable". Defaults to False
             * order: order inside the form, defaults to 0 (if two or more fields
               has same order, the output order may be anything)
@@ -278,7 +276,7 @@ class gui:
             * label
             * tooltip
             * default  (if not included, will be ''). Alias for this field is defaultValue
-            * rdonly if can't be modified once it's created. Aliases for this field is readOnly
+            * readonly if can't be modified once it's created. Aliases for this field is readOnly
 
         Any other paremeter needed is indicated in the corresponding field class.
 
@@ -300,47 +298,47 @@ class gui:
             label = kwargs.get('label', '')
             # if defvalue or defaultValue or defValue in kwargs, emit a warning
             # with the new name (that is "default"), but use the old one
-            for i in ('defvalue', 'defaultValue', 'defValue'):
-                if i in kwargs:
-                    try:
-                        caller = inspect.stack()[
-                            2
-                        ]  # bypass this method and the caller (that is a derived class)
-                    except IndexError:
-                        caller = inspect.stack()[1]  # bypass only this method
-                    logger.warning(
-                        'Field %s: %s parameter is deprecated, use "default" instead. Called from %s:%s',
-                        label,
-                        i,
-                        caller.filename,
-                        caller.lineno,
-                    )
-                    kwargs['default'] = kwargs[i]
-                    break
+            for new_name, old_names in (
+                ('default', ('defvalue', 'defaultValue', 'defValue')),
+                ('readonly', ('rdonly, readOnly')),
+            ):
+                for i in old_names:
+                    if i in kwargs:
+                        try:
+                            caller = inspect.stack()[
+                                2
+                            ]  # bypass this method and the caller (that is a derived class)
+                        except IndexError:
+                            caller = inspect.stack()[1]  # bypass only this method
+                        logger.warning(
+                            'Field %s: %s parameter is deprecated, use "%s" instead. Called from %s:%s',
+                            label,
+                            i,
+                            new_name,
+                            caller.filename,
+                            caller.lineno,
+                        )
+                        kwargs[new_name] = kwargs[i]
+                        break
             default = kwargs.get('default', '')
+            # Length is not used on some kinds of fields, but present in all anyway
+            # This property only affects in "modify" operations
             self._data = types.ui.FieldInfoType(
-                length=kwargs.get(
-                    'length', gui.InputField.DEFAULT_LENTGH
-                ),  # Length is not used on some kinds of fields, but present in all anyway
+                length=kwargs.get('length', gui.InputField.DEFAULT_LENTGH),
                 required=kwargs.get('required', False),
                 label=kwargs.get('label', ''),
                 default=str(default) if not callable(default) else default,
-                rdonly=kwargs.get(
-                    'rdonly',
-                    kwargs.get('readOnly', kwargs.get('readonly', False)),
-                ),  # This property only affects in "modify" operations
+                readonly=kwargs.get('readonly', False),
                 order=kwargs.get('order', 0),
                 tooltip=kwargs.get('tooltip', ''),
                 value=kwargs.get('value', default),
-                type=kwargs.get('type', ''),
+                type=types.ui.FieldType.fromStr(kwargs.get('type', '')),
+                tab=types.ui.Tab.fromStr(kwargs.get('tab')),
             )
-
-            if 'tab' in kwargs and kwargs['tab']:
-                self._data['tab'] = str(kwargs['tab'])  # Ensure it's a string
 
         @property
         def type(self) -> 'types.ui.FieldType':
-            return types.ui.FieldType(self._data['type'])
+            return types.ui.FieldType(self._data.type)
 
         @type.setter
         def type(self, type_: 'types.ui.FieldType') -> None:
@@ -350,22 +348,28 @@ class gui:
             Args:
                 type: Type to set (from constants of this class)
             """
-            self._data['type'] = str(type_)
+            self._data.type = type_
 
-        def isType(self, type_: typing.Union['types.ui.FieldType', str]) -> bool:
+        def isType(self, type_: str) -> bool:
             """
             Returns true if this field is of specified type
             """
-            return self._data['type'] == str(type_)
+            return self._data.type == type_
 
         def isSerializable(self) -> bool:
             return True
 
         def num(self) -> int:
-            return -1
+            try:
+                return int(self.value)
+            except Exception:
+                return -1
 
         def isTrue(self) -> bool:
-            return False
+            try:
+                return gui.toBool(self.value)
+            except Exception:
+                return False
 
         @property
         def value(self) -> typing.Any:
@@ -375,9 +379,9 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
-            if callable(self._data['value']):
-                return self._data['value']()
-            return self._data['value'] if self._data['value'] is not None else self.default
+            if callable(self._data.value):
+                return self._data.value()
+            return self._data.value if self._data.value is not None else self.default
 
         @value.setter
         def value(self, value: typing.Any) -> None:
@@ -390,7 +394,7 @@ class gui:
             """
             So we can override value setting at descendants
             """
-            self._data['value'] = value
+            self._data.value = value
 
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
@@ -414,7 +418,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            defValue = self._data['default']
+            defValue = self._data.default
             return defValue() if callable(defValue) else defValue
 
         @default.setter
@@ -428,11 +432,11 @@ class gui:
             Args:
                 value: Default value (string)
             """
-            self._data['default'] = value
+            self._data.default = value
 
         @property
         def label(self) -> str:
-            return self._data['label']
+            return self._data.label
 
         def serialize(self) -> str:
             """Serialize value to an string"""
@@ -444,7 +448,7 @@ class gui:
 
         @property
         def required(self) -> bool:
-            return self._data['required']
+            return self._data.required
 
         def validate(self) -> bool:
             """
@@ -486,26 +490,13 @@ class gui:
               # tooltip "Other info", that is not required, that is not
               # required and that is not editable after creation.
               other = gui.TextField(length=64, label = _('Other'), order = 1,
-                  tooltip = _('Other info'), rdonly = True)
+                  tooltip = _('Other info'), readonly = True)
 
         """
 
-        class PatternType(enum.StrEnum):
-            IPV4 = 'ipv4'
-            IPV6 = 'ipv6'
-            IP = 'ip'
-            MAC = 'mac'
-            URL = 'url'
-            EMAIL = 'email'
-            FQDN = 'fqdn'
-            HOSTNAME = 'hostname'
-            HOST = 'host'
-            PATH = 'path'
-            NONE = ''
-
-        def __init__(self, **options) -> None:
-            super().__init__(**options, type=types.ui.FieldType.TEXT)
-            self._data['multiline'] = min(max(int(options.get('multiline', 0)), 0), 8)
+        def __init__(self, **kwargs) -> None:
+            super().__init__(**kwargs, type=types.ui.FieldType.TEXT)
+            self._data.multiline = min(max(int(kwargs.get('multiline', 0)), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
@@ -520,9 +511,11 @@ class gui:
             #   - 'path'     # Path (absolute or relative, Windows or Unix)
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
-            self._data['pattern'] = options.get('pattern', gui.TextField.PatternType.NONE)
-            if isinstance(self._data['pattern'], str):
-                self._data['pattern'] = gui.TextField.PatternType(self._data['pattern'])
+            if 'pattern' in kwargs:
+                try:
+                    self._data.pattern = types.ui.FieldPatternType(kwargs['pattern'])
+                except ValueError:
+                    self._data.pattern = re.compile(kwargs['pattern'])  # as regex
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -531,39 +524,38 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            thePattern = self._data.pattern
-            if isinstance(thePattern, gui.TextField.PatternType):
+            pattern = self._data.pattern
+            if isinstance(pattern, types.ui.FieldPatternType):
                 try:
-                    pattern: gui.TextField.PatternType = thePattern
-                    if pattern == gui.TextField.PatternType.IPV4:
+                    if pattern == types.ui.FieldPatternType.IPV4:
                         validators.validateIpv4(self.value)
-                    elif pattern == gui.TextField.PatternType.IPV6:
+                    elif pattern == types.ui.FieldPatternType.IPV6:
                         validators.validateIpv6(self.value)
-                    elif pattern == gui.TextField.PatternType.IP:
+                    elif pattern == types.ui.FieldPatternType.IP:
                         validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternType.MAC:
+                    elif pattern == types.ui.FieldPatternType.MAC:
                         validators.validateMac(self.value)
-                    elif pattern == gui.TextField.PatternType.URL:
+                    elif pattern == types.ui.FieldPatternType.URL:
                         validators.validateUrl(self.value)
-                    elif pattern == gui.TextField.PatternType.EMAIL:
+                    elif pattern == types.ui.FieldPatternType.EMAIL:
                         validators.validateEmail(self.value)
-                    elif pattern == gui.TextField.PatternType.FQDN:
+                    elif pattern == types.ui.FieldPatternType.FQDN:
                         validators.validateFqdn(self.value)
-                    elif pattern == gui.TextField.PatternType.HOSTNAME:
+                    elif pattern == types.ui.FieldPatternType.HOSTNAME:
                         validators.validateHostname(self.value)
-                    elif pattern == gui.TextField.PatternType.HOST:
+                    elif pattern == types.ui.FieldPatternType.HOST:
                         try:
                             validators.validateHostname(self.value, allowDomain=True)
                         except exceptions.ValidationError:
                             validators.validateIpv4OrIpv6(self.value)
-                    elif pattern == gui.TextField.PatternType.PATH:
+                    elif pattern == types.ui.FieldPatternType.PATH:
                         validators.validatePath(self.value)
                     return True
                 except exceptions.ValidationError:
                     return False
-            elif isinstance(thePattern, str):
+            elif isinstance(pattern, str):
                 # It's a regex
-                return re.match(thePattern, self.value) is not None
+                return re.match(pattern, self.value) is not None
             return True  # No pattern, so it's valid
 
         def __str__(self):
@@ -590,13 +582,13 @@ class gui:
                 )
                 kwargs['choices'] = kwargs['values']
 
-            self._data['choices'] = gui.convertToChoices(kwargs.get('choices', []))
+            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setChoices(self, values: typing.List[str]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
             """
             Set the values for this choice field
             """
-            self._data['choices'] = gui.convertToChoices(values)
+            self._data.choices = gui.convertToChoices(values)
 
     class NumericField(InputField):
         """
@@ -622,11 +614,11 @@ class gui:
 
         def __init__(self, **options):
             super().__init__(**options, type=types.ui.FieldType.NUMERIC)
-            self._data['minValue'] = int(
+            self._data.minValue = int(
                 # Marker for no min value, no need to be negative, but one not probably used
                 options.get('minValue', options.get('minvalue', '987654321'))
             )
-            self._data['maxValue'] = int(
+            self._data.maxValue = int(
                 # Marker for no max value, no need to too big, but one not probably used
                 options.get('maxValue', options.get('maxvalue', '987654321'))
             )
@@ -640,10 +632,9 @@ class gui:
             Return value as integer
             """
             try:
-                v = int(self.value)
+                return int(self.value)
             except Exception:
-                v = 0
-            return v
+                return 0
 
         @property
         def int_value(self) -> int:
@@ -789,21 +780,17 @@ class gui:
         def __init__(self, **options):
             super().__init__(**options, type=types.ui.FieldType.CHECKBOX)
 
-        @staticmethod
-        def _checkTrue(val: typing.Union[str, bytes, bool]) -> bool:
-            return val in (True, 'true', 'True', b'true', b'True', 1, '1', b'1')
-
         def _setValue(self, value: typing.Union[str, bytes, bool]):
             """
             Override to set value to True or False (bool)
             """
-            self._data['value'] = self._checkTrue(value)
+            self._data.value = gui.toBool(value)
 
         def isTrue(self):
             """
             Checks that the value is true
             """
-            return self.value in (True, 'true', 'True', b'true', b'True')
+            return gui.toBool(self.value)
 
         def asBool(self) -> bool:
             """
@@ -890,7 +877,7 @@ class gui:
                   # stuff
                   # ...
                   resourcePool = gui.ChoiceField(
-                      label=_("Resource Pool"), rdonly = False, order = 5,
+                      label=_("Resource Pool"), readonly = False, order = 5,
                       fills = {
                           'callbackName' : 'vcFillMachinesFromResource',
                           'function' : VCHelpers.getMachines,
@@ -908,7 +895,7 @@ class gui:
 
         """
 
-        def __init__(self, **kwargs):
+        def __init__(self, **kwargs) -> None:
             super().__init__(**kwargs, type=types.ui.FieldType.CHOICE)
             # And store values in a list
             if 'values' in kwargs:
@@ -921,20 +908,24 @@ class gui:
                 )
                 kwargs['choices'] = kwargs['values']
 
-            self._data['choices'] = gui.convertToChoices(kwargs.get('choices'))
+            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
             if 'fills' in kwargs:
                 # Save fnc to register as callback
-                fills = kwargs['fills']
+                fills: types.ui.FillerType = kwargs['fills']
+                if 'function' not in fills or 'callbackName' not in fills:
+                    raise ValueError('Invalid fills parameters')
                 fnc = fills['function']
                 fills.pop('function')
-                self._data['fills'] = fills
-                gui.callbacks[fills['callbackName']] = fnc
+                self._data.fills = fills
+                # Readd it only if not already present
+                if fills['callbackName'] not in gui.callbacks:
+                    gui.callbacks[fills['callbackName']] = fnc
 
-        def setChoices(self, values: typing.List['types.ui.ChoiceType']):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
             """
             Set the values for this choice field
             """
-            self._data['choices'] = values
+            self._data.choices = gui.convertToChoices(values)
 
     class ImageChoiceField(InputField):
         def __init__(self, **kwargs):
@@ -949,13 +940,13 @@ class gui:
                 )
                 kwargs['choices'] = kwargs['values']
 
-            self._data['choices'] = kwargs.get('choices', [])
+            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setChoices(self, values: typing.List[typing.Any]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
             """
             Set the values for this choice field
             """
-            self._data['choices'] = values
+            self._data.choices = gui.convertToChoices(values)
 
     class MultiChoiceField(InputField):
         """
@@ -983,7 +974,7 @@ class gui:
               # this field is required and has 2 selectable items: "datastore0"
               with id "0" and "datastore1" with id "1"
               datastores =  gui.MultiChoiceField(label = _("Datastores"),
-                  rdonly = False, rows = 5, order = 8,
+                  readonly = False, rows = 5, order = 8,
                   tooltip = _('Datastores where to put incrementals'),
                   required = True,
                   values = [ {'id': '0', 'text': 'datastore0' },
@@ -1005,14 +996,14 @@ class gui:
 
             if kwargs.get('choices') and isinstance(kwargs.get('choices'), dict):
                 kwargs['choices'] = gui.convertToChoices(kwargs['choices'])
-            self._data['choices'] = kwargs.get('choices', [])
-            self._data['rows'] = kwargs.get('rows', -1)
+            self._data.rows = kwargs.get('rows', -1)
+            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setChoices(self, values: typing.List[typing.Any]) -> None:
+        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
             """
-            Set the values for this multi choice field
+            Set the values for this choice field
             """
-            self._data['choices'] = gui.convertToChoices(values)
+            self._data.choices = gui.convertToChoices(values)
 
     class EditableListField(InputField):
         """
@@ -1141,14 +1132,14 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # If a field has a callable on defined attributes(value, default, choices)
         # update the reference to the new copy
-        for attrName, val in self._gui.items():  # And refresh self references to them
+        for _, val in self._gui.items():  # And refresh self references to them
             # cast _data to dict, so we can check for deveral values
-            data = typing.cast(typing.Dict[str, typing.Any], val._data)
-            for field in ['choices']:  # ['value', 'default']:
-                if field in data and callable(data[field]):
-                    data[field] = data[field]()
-            # val is an InputField derived instance, so it is a reference to self._gui[key]
-            setattr(self, attrName, val)
+            for field in ['choices', 'value', 'default']:  # ['value', 'default']:
+                logger.debug('Checking field %s', field)
+                attr = getattr(val._data, field, None)
+                if attr and callable(attr):
+                    # val is an InputField derived instance, so it is a reference to self._gui[key]
+                    setattr(val._data, field, attr())
 
         if values is not None:
             for k, v in self._gui.items():

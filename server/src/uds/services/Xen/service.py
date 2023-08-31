@@ -104,7 +104,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # Now the form part
     datastore = gui.ChoiceField(
         label=_("Storage SR"),
-        rdonly=False,
+        readonly=False,
         order=100,
         tooltip=_(
             'Storage where to publish and put incrementals (only shared storages are supported)'
@@ -131,7 +131,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
     network = gui.ChoiceField(
         label=_("Network"),
-        rdonly=False,
+        readonly=False,
         order=111,
         tooltip=_('Network used for virtual machines'),
         tab=_('Machine'),
@@ -142,7 +142,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         label=_("Memory (Mb)"),
         length=4,
         default=512,
-        rdonly=False,
+        readonly=False,
         order=112,
         tooltip=_('Memory assigned to machines'),
         tab=_('Machine'),
@@ -153,7 +153,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         label=_("Shadow"),
         length=1,
         default=1,
-        rdonly=False,
+        readonly=False,
         order=113,
         tooltip=_('Shadow memory multiplier (use with care)'),
         tab=_('Machine'),
@@ -162,7 +162,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
 
     baseName = gui.TextField(
         label=_('Machine Names'),
-        rdonly=False,
+        readonly=False,
         order=114,
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),

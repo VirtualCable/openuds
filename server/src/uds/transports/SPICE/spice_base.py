@@ -129,7 +129,7 @@ class BaseSpiceTransport(transports.Transport):
         ),
         required=False,
         tab=types.ui.Tab.ADVANCED,
-        pattern=gui.TextField.PatternType.URL,
+        pattern=types.ui.FieldPatternType.URL,
     )
 
     overridedProxy = gui.TextField(

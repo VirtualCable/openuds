@@ -139,7 +139,7 @@ class ProxmoxProvider(
         order=91,
         tooltip=_('Starting machine id on proxmox'),
         required=True,
-        rdonly=True,
+        readonly=True,
         tab=types.ui.Tab.ADVANCED,
     )
 
@@ -148,7 +148,7 @@ class ProxmoxProvider(
         label=_('Macs range'),
         default='52:54:00:00:00:00-52:54:00:FF:FF:FF',
         order=91,
-        rdonly=False,
+        readonly=False,
         tooltip=_(
             'Range of valid macs for created machines. Any value accepted by Proxmox is valid here.'
         ),

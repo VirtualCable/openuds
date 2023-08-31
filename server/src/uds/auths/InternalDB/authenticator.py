@@ -72,7 +72,7 @@ class InternalDBAuth(auths.Authenticator):
         order=1,
         tooltip=_('If checked, each host will have a different user name'),
         default='false',
-        rdonly=True,
+        readonly=True,
         tab=types.ui.Tab.ADVANCED,
     )
     reverseDns = gui.CheckBoxField(
@@ -80,7 +80,7 @@ class InternalDBAuth(auths.Authenticator):
         order=2,
         tooltip=_('If checked, the host will be reversed dns'),
         default='false',
-        rdonly=True,
+        readonly=True,
         tab=types.ui.Tab.ADVANCED,
     )
     acceptProxy = gui.CheckBoxField(

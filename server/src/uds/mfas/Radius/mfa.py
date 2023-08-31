@@ -120,7 +120,7 @@ class RadiusOTP(mfas.MFA):
 
     networks = gui.MultiChoiceField(
         label=_('Radius OTP networks'),
-        rdonly=False,
+        readonly=False,
         rows=5,
         order=32,
         tooltip=_('Networks for Radius OTP authentication'),

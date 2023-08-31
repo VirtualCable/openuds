@@ -29,9 +29,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import enum
 import dataclasses
+import enum
+import re
+import typing
 
 from django.utils.translation import gettext_noop
 
@@ -43,6 +44,21 @@ class Tab(enum.StrEnum):
     TUNNEL = gettext_noop('Tunnel')
     DISPLAY = gettext_noop('Display')
     MFA = gettext_noop('MFA')
+
+    @staticmethod
+    def fromStr(value: typing.Optional[str]) -> typing.Union['Tab', str, None]:
+        """Returns a Tab from a string
+        If value is not a valid Tab, returns Tab.PARAMETERS
+
+        Args:
+            value (str): String to convert to Tab
+        """
+        if not value:
+            return None
+        try:
+            return Tab(value)
+        except ValueError:
+            return value
 
 
 class FieldType(enum.StrEnum):
@@ -60,11 +76,38 @@ class FieldType(enum.StrEnum):
     DATE = 'date'
     INFO = 'internal-info'
 
+    @staticmethod
+    def fromStr(value: str) -> 'FieldType':
+        """Returns a FieldType from a string
+        If value is not a valid FieldType, returns FieldType.TEXT
+
+        Args:
+            value (str): String to convert to FieldType
+        """
+        try:
+            return FieldType(value)
+        except ValueError:
+            return FieldType.TEXT
+
+
+class FieldPatternType(enum.StrEnum):
+    IPV4 = 'ipv4'
+    IPV6 = 'ipv6'
+    IP = 'ip'
+    MAC = 'mac'
+    URL = 'url'
+    EMAIL = 'email'
+    FQDN = 'fqdn'
+    HOSTNAME = 'hostname'
+    HOST = 'host'
+    PATH = 'path'
+    NONE = ''
+
 
 class FillerType(typing.TypedDict):
     callbackName: str
-    function: typing.Callable[..., typing.Any]
     parameters: typing.List[str]
+    function: typing.NotRequired[typing.Callable[..., typing.Any]]
 
 
 class ChoiceType(typing.TypedDict):
@@ -75,101 +118,26 @@ class ChoiceType(typing.TypedDict):
 ChoicesType = typing.Union[typing.Callable[[], typing.List[ChoiceType]], typing.List[ChoiceType]]
 
 
-class FieldDataType(typing.TypedDict):
-    length: int
-    required: bool
-    label: str
-    default: str
-    rdonly: bool
-    order: int
-    tooltip: str
-    value: typing.Any
-    type: str
-    multiline: typing.NotRequired[int]
-    pattern: typing.NotRequired[str]
-    tab: typing.NotRequired[str]
-    choices: typing.NotRequired[ChoicesType]
-    minValue: typing.NotRequired[int]
-    maxValue: typing.NotRequired[int]
-    fills: typing.NotRequired[FillerType]
-    rows: typing.NotRequired[int]
-
 @dataclasses.dataclass
 class FieldInfoType:
     length: int
     required: bool
     label: str
-    default: str
-    rdonly: bool
+    default: typing.Union[typing.Callable[[], str], str]
+    readonly: bool
     order: int
     tooltip: str
-    value: typing.Any
-    type: str
+    value: typing.Union[typing.Callable[[], typing.Any], typing.Any]
+    type: FieldType
     multiline: typing.Optional[int] = None
-    pattern: typing.Optional[str] = None
-    tab: typing.Optional[str] = None
+    pattern: typing.Union[FieldPatternType, 're.Pattern'] = FieldPatternType.NONE
+    tab: typing.Union[Tab, str, None] = None
     choices: typing.Optional[ChoicesType] = None
     minValue: typing.Optional[int] = None
     maxValue: typing.Optional[int] = None
     fills: typing.Optional[FillerType] = None
     rows: typing.Optional[int] = None
 
-    # Temporal methods to allow access to dataclass fields
-    # using dict
-    def __getitem__(
-        self,
-        key: typing.Literal[
-            'lentgh',
-            'required',
-            'label',
-            'default',
-            'rdonly',
-            'order',
-            'tooltip',
-            'value',
-            'type',
-            'multiline',
-            'pattern',
-            'tab',
-            'choices',
-            'minValue',
-            'maxValue',
-            'fills',
-            'rows',
-        ],
-    ) -> typing.Any:
-        return getattr(self, key)
-
-    def __setitem__(
-        self,
-        key: typing.Literal[
-            'lentgh',
-            'required',
-            'label',
-            'default',
-            'rdonly',
-            'order',
-            'tooltip',
-            'value',
-            'type',
-            'multiline',
-            'pattern',
-            'tab',
-            'choices',
-            'minValue',
-            'maxValue',
-            'fills',
-            'rows',
-        ],
-        value: typing.Any,
-    ) -> None:
-        setattr(self, key, value)
-        
     def asDict(self) -> typing.Dict[str, typing.Any]:
-        """Returns a dict with all fields that are not None
-        """
-        return {
-            k: v
-            for k, v in dataclasses.asdict(self).items()
-            if v is not None
-        }
+        """Returns a dict with all fields that are not None"""
+        return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}

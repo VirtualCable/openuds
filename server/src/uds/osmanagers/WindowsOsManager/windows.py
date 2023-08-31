@@ -52,7 +52,7 @@ class WindowsOsManager(osmanagers.OSManager):
     onLogout = gui.ChoiceField(
         label=_('Logout Action'),
         order=10,
-        rdonly=True,
+        readonly=True,
         tooltip=_('What to do when user logs out from service'),
         choices=[
             {'id': 'keep', 'text': gettext_lazy('Keep service assigned')},
@@ -69,7 +69,7 @@ class WindowsOsManager(osmanagers.OSManager):
         label=_("Max.Idle time"),
         length=4,
         default=-1,
-        rdonly=False,
+        readonly=False,
         order=11,
         tooltip=_(
             'Maximum idle time (in seconds) before session is automatically closed to the user (<= 0 means no max. idle time)'

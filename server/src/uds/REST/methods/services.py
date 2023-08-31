@@ -309,7 +309,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         'Kind of service counting for calculating if MAX is reached'
                     ),
                     'type': types.ui.FieldType.CHOICE,
-                    'rdonly': False,
+                    'readonly': False,
                     'order': 101,
                 },
             )

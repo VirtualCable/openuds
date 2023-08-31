@@ -103,7 +103,7 @@ class OVirtProvider(
         tooltip=_('oVirt Server Version'),
         # In this case, the choice can have none value selected by default
         required=True,
-        rdonly=False,
+        readonly=False,
         choices=[
             gui.choiceItem('4', '4.x'),
         ],
@@ -170,7 +170,7 @@ class OVirtProvider(
         label=_('Macs range'),
         default='52:54:00:00:00:00-52:54:00:FF:FF:FF',
         order=91,
-        rdonly=True,
+        readonly=True,
         tooltip=_('Range of valid macs for UDS managed machines'),
         required=True,
         tab=types.ui.Tab.ADVANCED,

@@ -72,7 +72,7 @@ class TOTP_MFA(mfas.MFA):
         order=1,
         tooltip=_('Issuer for OTP. Once it\'s created it can\'t be changed'),
         required=True,
-        rdonly=True,  # This is not editable, as it is used to generate the QR code. Once generated, it can't be changed
+        readonly=True,  # This is not editable, as it is used to generate the QR code. Once generated, it can't be changed
     )
 
     validWindow = gui.NumericField(
@@ -88,7 +88,7 @@ class TOTP_MFA(mfas.MFA):
     )
     networks = gui.MultiChoiceField(
         label=_('TOTP networks'),
-        rdonly=False,
+        readonly=False,
         rows=5,
         order=32,
         tooltip=_('Users within these networks will not be asked for OTP'),

@@ -113,7 +113,7 @@ class BaseModelHandler(Handler):
                     'length': field.get('length', 128),
                     'multiline': field.get('multiline', 0),
                     'tooltip': field.get('tooltip', ''),
-                    'rdonly': field.get('rdonly', False),
+                    'readonly': field.get('readonly', False),
                     'type': str(field.get('type', types.ui.FieldType.TEXT)),
                     'order': field.get('order', 0),
                     'choices': choices,

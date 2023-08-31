@@ -111,7 +111,7 @@ class LiveService(services.Service):
         order=1,
         tooltip=_('Service region'),
         required=True,
-        rdonly=True,
+        readonly=True,
     )
     project = gui.ChoiceField(
         label=_('Project'),
@@ -123,7 +123,7 @@ class LiveService(services.Service):
         },
         tooltip=_('Project for this service'),
         required=True,
-        rdonly=True,
+        readonly=True,
     )
     availabilityZone = gui.ChoiceField(
         label=_('Availability Zones'),
@@ -142,7 +142,7 @@ class LiveService(services.Service):
         },
         tooltip=_('Service availability zones'),
         required=True,
-        rdonly=True,
+        readonly=True,
     )
     volume = gui.ChoiceField(
         label=_('Volume'),
@@ -177,7 +177,7 @@ class LiveService(services.Service):
 
     baseName = gui.TextField(
         label=_('Machine Names'),
-        rdonly=False,
+        readonly=False,
         order=9,
         tooltip=_('Base name for clones from this machine'),
         required=True,
