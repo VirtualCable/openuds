@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types
+from uds.core import auths, types, consts
 from uds.core.ui import gui
 from uds.core.util import net
 
@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 class IPAuth(auths.Authenticator):
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         order=50,
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address'

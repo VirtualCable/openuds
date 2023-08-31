@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import transports, types
+from uds.core import transports, types, consts
 from uds.core.ui import gui
 from uds.core.util import fields, os_detector, validators
 from uds.models import TicketStore
@@ -75,7 +75,7 @@ class TRDPTransport(BaseRDPTransport):
         label=_('Force SSL certificate verification'),
         order=23,
         tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.TUNNEL,
     )
 

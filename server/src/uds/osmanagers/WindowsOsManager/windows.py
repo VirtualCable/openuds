@@ -15,7 +15,7 @@ import typing
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, osmanagers, types
+from uds.core import exceptions, osmanagers, types, consts
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log
@@ -84,7 +84,7 @@ class WindowsOsManager(osmanagers.OSManager):
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
         tab=types.ui.Tab.ADVANCED,
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
 
     _onLogout: str

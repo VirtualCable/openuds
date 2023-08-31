@@ -55,9 +55,7 @@ MAC_UNKNOWN: typing.Final[str] = '00:00:00:00:00:00'
 SERVER_DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 
 # REST Related constants
-OK: typing.Final[
-    str
-] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
+OK: typing.Final[str] = 'ok'  # Constant to be returned when result is just "operation complete successfully"
 
 # Maximum number of failures before blocking on REST API
 ALLOWED_FAILS: typing.Final[int] = 5
@@ -66,3 +64,25 @@ ALLOWED_FAILS: typing.Final[int] = 5
 USER_AGENT: typing.Final[str] = f'UDS/{VERSION}'
 COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers
 MIN_SERVER_VERSION: typing.Final[str] = '4.0.0'
+
+# For conversion to boolean
+BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] = {
+    True,
+    'TRUE',
+    'True',
+    b'true',
+    b'True',
+    b'TRUE',
+    1,
+    '1',
+    b'1',
+    'true',
+    'YES',
+    'Yes',
+    'yes',
+    'ENABLED',
+    'Enabled',
+    'enabled',
+}
+TRUE_STR: typing.Final[str] = 'true'
+FALSE_STR: typing.Final[str] = 'false'

@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -204,7 +204,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_(
             'If checked, the name of the subnets will be used instead of the names of networks'
         ),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.ADVANCED,
     )
 

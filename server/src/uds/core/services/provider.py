@@ -33,9 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core.module import Module
-from uds.core.environment import Environment
-
+from uds.core import module, environment, consts
 from uds.core.util import log
 from uds.core.ui import gui
 
@@ -47,7 +45,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ServiceProvider(Module):
+class ServiceProvider(module.Module):
     """
     Base Service Provider Class.
 
@@ -149,8 +147,8 @@ class ServiceProvider(Module):
 
     def __init__(
         self,
-        environment: Environment,
-        values: 'Module.ValuesType' = None,
+        environment: environment.Environment,
+        values: 'module.Module.ValuesType' = None,
         uuid: typing.Optional[str] = None,
     ):
         """
@@ -163,7 +161,7 @@ class ServiceProvider(Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: 'Module.ValuesType') -> None:
+    def initialize(self, values: 'module.Module.ValuesType') -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -214,7 +212,7 @@ class ServiceProvider(Module):
             val = self.ignoreLimits = False
 
         val = getattr(val, 'value', val)
-        return val is True or val == gui.TRUE
+        return val is True or val == consts.TRUE_STR
 
     def doLog(self, level: log.LogLevel, message: str) -> None:
         """

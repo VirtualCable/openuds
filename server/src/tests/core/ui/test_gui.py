@@ -34,10 +34,9 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 # We use commit/rollback
 from ...utils.test import UDSTestCase
 from uds.core.ui.user_interface import gui, UDSB, UDSK
-import time
 
 from django.conf import settings
-
+from uds.core.util import ensure
 
 class GuiTest(UDSTestCase):
     def test_globals(self):
@@ -79,10 +78,10 @@ class GuiTest(UDSTestCase):
         # 1. Empty list
         # 2.- single string
         # 3.- A list of strings
-        self.assertEqual(gui.convertToList([]), [])
-        self.assertEqual(gui.convertToList('aaaa'), ['aaaa'])
-        self.assertEqual(gui.convertToList(['a', 'b']), ['a', 'b'])
-        self.assertEqual(gui.convertToList(1), ['1'])
+        self.assertEqual(ensure.is_list([]), [])
+        self.assertEqual(ensure.is_list('aaaa'), ['aaaa'])
+        self.assertEqual(ensure.is_list(['a', 'b']), ['a', 'b'])
+        self.assertEqual(ensure.is_list(1), [1])
 
     def test_choice_image(self) -> None:
         # id, text, and base64 image
@@ -93,8 +92,8 @@ class GuiTest(UDSTestCase):
 
     def test_to_bool(self) -> None:
         for val in ('true', 'True', 'TRUE', 'yes', 'Yes', 'YES', '1'):
-            self.assertTrue(gui.toBool(val), 'Failed to convert {} to True'.format(val))
+            self.assertTrue(gui.toBool(val), f'Failed to convert "{val}" to True')
         for val in ('false', 'False', 'FALSE', 'no', 'No', 'NO', '0'):
             self.assertFalse(
-                gui.toBool(val), 'Failed to convert {} to False'.format(val)
+                gui.toBool(val), f'Failed to convert "{val}" to False'
             )

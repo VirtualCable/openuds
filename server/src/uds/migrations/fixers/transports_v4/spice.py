@@ -31,7 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 
 from uds.core.ui import gui
-from uds.core import transports
+from uds.core import transports, consts
 
 from . import _migrator
 
@@ -51,10 +51,10 @@ class TSPICETransport(transports.Transport):
     verifyCertificate = gui.CheckBoxField()
     serverCertificate = gui.TextField()
     fullScreen = gui.CheckBoxField()
-    smartCardRedirect = gui.CheckBoxField(default=gui.FALSE)
-    usbShare = gui.CheckBoxField(default=gui.FALSE)
-    autoNewUsbShare = gui.CheckBoxField(default=gui.FALSE)
-    SSLConnection = gui.CheckBoxField(default=gui.TRUE)
+    smartCardRedirect = gui.CheckBoxField(default=consts.FALSE_STR)
+    usbShare = gui.CheckBoxField(default=consts.FALSE_STR)
+    autoNewUsbShare = gui.CheckBoxField(default=consts.FALSE_STR)
+    SSLConnection = gui.CheckBoxField(default=consts.TRUE_STR)
 
     overridedProxy = gui.TextField()
 

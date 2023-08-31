@@ -30,9 +30,9 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
-from uds.core.ui import gui
+from uds.core import consts, transports
 from uds.core.types.preferences import CommonPrefs
-from uds.core import transports
+from uds.core.ui import gui
 
 from . import _migrator
 
@@ -50,13 +50,13 @@ class TX2GOTransport(transports.Transport):
 
     tunnelServer = gui.TextField()
     tunnelWait = gui.NumericField(default='30')
-    verifyCertificate = gui.CheckBoxField(default=gui.FALSE)
+    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
     fixedName = gui.TextField()
     screenSize = gui.ChoiceField(default=CommonPrefs.SZ_FULLSCREEN)
     desktopType = gui.ChoiceField()
     customCmd = gui.TextField()
-    sound = gui.CheckBoxField(default=gui.TRUE)
-    exports = gui.CheckBoxField(default=gui.FALSE)
+    sound = gui.CheckBoxField(default=consts.TRUE_STR)
+    exports = gui.CheckBoxField(default=consts.FALSE_STR)
     speed = gui.ChoiceField(default='3')
     soundType = gui.ChoiceField(default='pulse')
     keyboardLayout = gui.TextField(default='')

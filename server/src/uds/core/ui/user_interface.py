@@ -45,7 +45,7 @@ import abc
 
 from django.utils.translation import gettext as _
 
-from uds.core import exceptions, types
+from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
 from uds.core.util import serializer, validators, ensure
 from uds.core.util.decorators import deprecatedClassValue
@@ -108,11 +108,6 @@ class gui:
         ],
     ]
 
-    # : True string value
-    TRUE: typing.ClassVar[str] = 'true'
-    # : False string value
-    FALSE: typing.ClassVar[str] = 'false'
-
     # : For backward compatibility, will be removed in future versions
     # For now, will log a warning if used
     @deprecatedClassValue('types.ui.Tab.ADVANCED')
@@ -168,7 +163,7 @@ class gui:
     @staticmethod
     def convertToChoices(
         vals: typing.Union[
-            typing.Iterable[typing.Union[str, typing.Dict[str, str]]],
+            typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
             typing.Dict[str, str],
             None,
         ]
@@ -187,7 +182,7 @@ class gui:
             return vals
 
         # Helper to convert an item to a dict
-        def choiceFromValue(val: typing.Union[str, int, typing.Dict[str, str]]) -> 'types.ui.ChoiceType':
+        def choiceFromValue(val: typing.Union[str, int, types.ui.ChoiceType]) -> 'types.ui.ChoiceType':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
                     raise ValueError(f'Invalid choice dict: {val}')
@@ -230,7 +225,7 @@ class gui:
         Returns:
             True if the string is "true" (case insensitive), False else.
         """
-        return value in (True, 'True', b'true', b'True', 1, '1', b'1', gui.TRUE)
+        return value in consts.BOOL_TRUE_VALUES
 
     @staticmethod
     def fromBool(bol: bool) -> str:
@@ -245,8 +240,8 @@ class gui:
             "true" if bol evals to True, "false" if don't.
         """
         if bol:
-            return gui.TRUE
-        return gui.FALSE
+            return consts.TRUE_STR
+        return consts.FALSE_STR
 
     # Classes
 
@@ -460,7 +455,7 @@ class gui:
             return str(self.value)
 
         def __repr__(self):
-            return repr(self._data)
+            return f'{self.__class__.__name__}: {repr(self._data)}'
 
     class TextField(InputField):
         """
@@ -584,7 +579,7 @@ class gui:
 
             self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
@@ -921,7 +916,7 @@ class gui:
                 if fills['callbackName'] not in gui.callbacks:
                     gui.callbacks[fills['callbackName']] = fnc
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
@@ -942,7 +937,7 @@ class gui:
 
             self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
@@ -977,29 +972,42 @@ class gui:
                   readonly = False, rows = 5, order = 8,
                   tooltip = _('Datastores where to put incrementals'),
                   required = True,
-                  values = [ {'id': '0', 'text': 'datastore0' },
+                  choices = [ {'id': '0', 'text': 'datastore0' },
                       {'id': '1', 'text': 'datastore1' } ]
                   )
         """
 
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs, type=types.ui.FieldType.MULTI_CHOICE)
-            if 'values' in kwargs:
-                caller = inspect.stack()[1]
-                logger.warning(
-                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
-                    kwargs.get('label', ''),
-                    caller.filename,
-                    caller.lineno,
-                )
-                kwargs['choices'] = kwargs['values']
+        def __init__(
+            self,
+            label: str = '',
+            readonly: bool = False,
+            rows: typing.Optional[int] = None,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            choices: typing.Union[
+                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Dict[str, str],
+                None,
+            ] = None,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Union[str, typing.Iterable[str]] = '',
+        ):
+            super().__init__(
+                label=label,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                type=types.ui.FieldType.MULTICHOICE,
+                default=default,
+            )
 
-            if kwargs.get('choices') and isinstance(kwargs.get('choices'), dict):
-                kwargs['choices'] = gui.convertToChoices(kwargs['choices'])
-            self._data.rows = kwargs.get('rows', -1)
-            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
+            self._data.rows = rows
+            self._data.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, typing.Dict[str, str]]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
@@ -1085,8 +1093,9 @@ class UserInterfaceType(type):
         # (we will update references on class 'self' to the new copy)
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
+                # Ensure we have a copy of the data, so we can modify it without affecting others
+                attr._data = copy.deepcopy(attr._data)
                 _gui[attrName] = attr
-                _gui[attrName]._data = copy.deepcopy(attr._data)
 
             newClassDict[attrName] = attr
         newClassDict['_base_gui'] = _gui
@@ -1132,8 +1141,10 @@ class UserInterface(metaclass=UserInterfaceType):
 
         # If a field has a callable on defined attributes(value, default, choices)
         # update the reference to the new copy
-        for _, val in self._gui.items():  # And refresh self references to them
-            # cast _data to dict, so we can check for deveral values
+        for key, val in self._gui.items():  # And refresh self references to them
+            setattr(self, key, val)  # Reference to self._gui[key]
+
+            # Check for "callable" fields and update them if needed
             for field in ['choices', 'value', 'default']:  # ['value', 'default']:
                 logger.debug('Checking field %s', field)
                 attr = getattr(val._data, field, None)
@@ -1200,7 +1211,7 @@ class UserInterface(metaclass=UserInterfaceType):
         for k, v in self._gui.items():
             if v.isType(types.ui.FieldType.EDITABLE_LIST):
                 dic[k] = ensure.is_list(v.value)
-            elif v.isType(types.ui.FieldType.MULTI_CHOICE):
+            elif v.isType(types.ui.FieldType.MULTICHOICE):
                 dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
@@ -1233,9 +1244,9 @@ class UserInterface(metaclass=UserInterfaceType):
             ),
             types.ui.FieldType.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
             types.ui.FieldType.CHOICE: lambda x: x.value,
-            types.ui.FieldType.MULTI_CHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            types.ui.FieldType.MULTICHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
             types.ui.FieldType.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.CHECKBOX: lambda x: gui.TRUE if x.isTrue() else gui.FALSE,
+            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if x.isTrue() else consts.FALSE_STR,
             types.ui.FieldType.IMAGE_CHOICE: lambda x: x.value,
             types.ui.FieldType.IMAGE: lambda x: x.value,
             types.ui.FieldType.DATE: lambda x: x.value,
@@ -1305,7 +1316,7 @@ class UserInterface(metaclass=UserInterfaceType):
             ),
             types.ui.FieldType.HIDDEN: lambda x: None,
             types.ui.FieldType.CHOICE: lambda x: x,
-            types.ui.FieldType.MULTI_CHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            types.ui.FieldType.MULTICHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
             types.ui.FieldType.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
             types.ui.FieldType.CHECKBOX: lambda x: x,
             types.ui.FieldType.IMAGE_CHOICE: lambda x: x,

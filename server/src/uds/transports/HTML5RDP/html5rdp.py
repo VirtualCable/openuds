@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import transports, types, ui
+from uds.core import transports, types, ui, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import fields, os_detector
 from uds.core.util.model import getSqlDatetime
@@ -136,7 +136,7 @@ class HTML5RDPTransport(transports.Transport):
         order=21,
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=types.ui.Tab.PARAMETERS,
-        default=ui.gui.TRUE,
+        default=consts.TRUE_STR,
     )
     enableAudioInput = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
@@ -220,16 +220,16 @@ class HTML5RDPTransport(transports.Transport):
         required=True,
         choices=[
             ui.gui.choiceItem(
-                ui.gui.FALSE,
+                consts.FALSE_STR,
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            ui.gui.choiceItem(ui.gui.TRUE, _('Force every connection to be opened on a new window.')),
+            ui.gui.choiceItem(consts.TRUE_STR, _('Force every connection to be opened on a new window.')),
             ui.gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
             ),
         ],
-        default=ui.gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.ADVANCED,
     )
     security = ui.gui.ChoiceField(
@@ -472,7 +472,7 @@ class HTML5RDPTransport(transports.Transport):
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = f'&o_n_w={transport.uuid}'
-        if self.forceNewWindow.value == ui.gui.TRUE:
+        if self.forceNewWindow.value == consts.TRUE_STR:
             onw = f'&o_n_w={userService.deployed_service.uuid}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'

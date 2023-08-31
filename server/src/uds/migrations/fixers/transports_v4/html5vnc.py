@@ -30,8 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts, transports
 from uds.core.ui import gui
-from uds.core import transports
 
 from . import _migrator
 
@@ -57,7 +57,7 @@ class HTML5VNCTransport(transports.Transport):
     cursor = gui.CheckBoxField()
     readOnly = gui.CheckBoxField()
     ticketValidity = gui.NumericField(default='60')
-    forceNewWindow = gui.ChoiceField(default=gui.FALSE)
+    forceNewWindow = gui.ChoiceField(default=consts.FALSE_STR)
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

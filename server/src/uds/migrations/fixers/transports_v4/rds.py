@@ -30,8 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts, transports
 from uds.core.ui import gui
-from uds.core import transports
 
 from . import _migrator
 
@@ -47,7 +47,7 @@ class TRDSTransport(transports.Transport):
         default='30',
     )
 
-    verifyCertificate = gui.CheckBoxField(default=gui.FALSE)
+    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
 
     useEmptyCreds = gui.CheckBoxField()
     withoutDomain = gui.CheckBoxField()
@@ -57,15 +57,15 @@ class TRDSTransport(transports.Transport):
     allowDrives = gui.ChoiceField(default='false')
     enforceDrives = gui.TextField()
     allowSerials = gui.CheckBoxField()
-    allowClipboard = gui.CheckBoxField(default=gui.TRUE)
-    allowAudio = gui.CheckBoxField(default=gui.TRUE)
-    allowWebcam = gui.CheckBoxField(default=gui.FALSE)
-    credssp = gui.CheckBoxField(default=gui.TRUE)
+    allowClipboard = gui.CheckBoxField(default=consts.TRUE_STR)
+    allowAudio = gui.CheckBoxField(default=consts.TRUE_STR)
+    allowWebcam = gui.CheckBoxField(default=consts.FALSE_STR)
+    credssp = gui.CheckBoxField(default=consts.TRUE_STR)
     rdpPort = gui.NumericField(default='3389')
     colorDepth = gui.ChoiceField()
-    smooth = gui.CheckBoxField(default=gui.TRUE)
+    smooth = gui.CheckBoxField(default=consts.TRUE_STR)
     windowState = gui.ChoiceField(default='normal')
-    executeAsShell = gui.CheckBoxField(default=gui.TRUE)
+    executeAsShell = gui.CheckBoxField(default=consts.TRUE_STR)
     multimedia = gui.CheckBoxField()
     alsa = gui.CheckBoxField()
     printerString = gui.TextField()

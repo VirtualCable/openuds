@@ -41,7 +41,7 @@ import ldap
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core.managers.crypto import CryptoManager
-from uds.core import exceptions
+from uds.core import exceptions, consts
 from uds.core.util import log
 from uds.core.util import ldaputil
 
@@ -107,7 +107,7 @@ class WinDomainOsManager(WindowsOsManager):
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
         tab=_('Advanced'),
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
     serverHint = gui.TextField(
         length=64,
@@ -121,7 +121,7 @@ class WinDomainOsManager(WindowsOsManager):
         order=10,
         tooltip=_('If checked,  a ssl connection to Active Directory will be used'),
         tab=_('Advanced'),
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
 
     # Inherits base "onLogout"

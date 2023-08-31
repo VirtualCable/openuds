@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types, services
+from uds.core import types, services, consts
 from uds.core.transports import protocols
 from uds.core.ui import gui
 
@@ -137,7 +137,7 @@ class OGService(services.Service):
 
     startIfUnavailable = gui.CheckBoxField(
         label=_('Start if unavailable'),
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
         order=111,
         tooltip=_(
             'If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'

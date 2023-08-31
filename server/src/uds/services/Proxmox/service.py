@@ -33,7 +33,7 @@ import re
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, types
+from uds.core import services, types, consts
 from uds.core.transports import protocols
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -125,7 +125,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     guestShutdown = gui.CheckBoxField(
         label=_('Try SOFT Shutdown first'),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         order=103,
         tooltip=_(
             'If active, UDS will try to shutdown (soft) the machine using VMWare Guest Tools. Will delay 30 seconds the power off of hanged machines.'

@@ -68,7 +68,7 @@ class FieldType(enum.StrEnum):
     PASSWORD = 'password'  # nosec: this is not a password
     HIDDEN = 'hidden'
     CHOICE = 'choice'
-    MULTI_CHOICE = 'multichoice'
+    MULTICHOICE = 'multichoice'
     EDITABLE_LIST = 'editlist'
     CHECKBOX = 'checkbox'
     IMAGE_CHOICE = 'imgchoice'
@@ -115,7 +115,7 @@ class ChoiceType(typing.TypedDict):
     text: str
 
 
-ChoicesType = typing.Union[typing.Callable[[], typing.List[ChoiceType]], typing.List[ChoiceType]]
+ChoicesType = typing.Union[typing.Callable[[], typing.Iterable[ChoiceType]], typing.Iterable[ChoiceType]]
 
 
 @dataclasses.dataclass

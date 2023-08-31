@@ -30,20 +30,20 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os
 import io
 import logging
+import os
 import typing
 
 import paramiko
+from django.utils.translation import gettext_lazy
+from django.utils.translation import gettext_noop as _
 
-from django.utils.translation import gettext_noop as _, gettext_lazy
+from uds.core import consts, transports, types
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core import transports, types
-from uds.core.util import os_detector
-from uds.core.util import connection
+from uds.core.util import connection, os_detector
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -121,7 +121,7 @@ class BaseX2GOTransport(transports.Transport):
         order=13,
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
         tab=types.ui.Tab.PARAMETERS,
     )
 
@@ -129,7 +129,7 @@ class BaseX2GOTransport(transports.Transport):
         order=14,
         label=_('Redirect home folder'),
         tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.PARAMETERS,
     )
 

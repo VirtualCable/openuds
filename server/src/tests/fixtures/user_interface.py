@@ -33,7 +33,7 @@ import datetime
 
 from uds.core.ui.user_interface import UserInterface, gui
 
-DEFAULTS = {
+DEFAULTS: typing.Dict[str, typing.Union[str, int, typing.List[str]]] = {
     'str_field': 'Default value text',
     'str_auto_field': 'Default value auto',
     'num_field': 50,
@@ -101,7 +101,7 @@ class TestingUserInterface(UserInterface):
         order=5,
         tooltip='This is a multi choice field',
         required=True,
-        default=DEFAULTS['multi_choice_field'],
+        default=typing.cast(typing.List[str], DEFAULTS['multi_choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     editable_list_field = gui.EditableListField(
@@ -139,6 +139,10 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a date field',
         required=True,
         default=DEFAULTS['date_field'],
+    )
+    info_field = gui.InfoField(
+        label='title',
+        default=DEFAULTS['info_field'],
     )
 
 

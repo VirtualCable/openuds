@@ -37,7 +37,7 @@ import typing
 # We use commit/rollback
 from ...utils.test import UDSTestCase
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.ui.user_interface import gui
 
 from ...fixtures.user_interface import TestingUserInterface, DEFAULTS
@@ -85,7 +85,7 @@ def oldSerializeForm(ui) -> bytes:
             # logger.debug('Field {} is a dummy field and will not be serialized')
             continue
         if v.isType(types.ui.FieldType.EDITABLE_LIST) or v.isType(
-            types.ui.FieldType.MULTI_CHOICE
+            types.ui.FieldType.MULTICHOICE
         ):
             # logger.debug('Serializing value {0}'.format(v.value))
             val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
@@ -100,9 +100,9 @@ def oldSerializeForm(ui) -> bytes:
         else:
             val = v.value.encode('utf8')
         if val is True:
-            val = gui.TRUE.encode('utf8')
+            val = consts.TRUE_STR.encode('utf8')
         elif val is False:
-            val = gui.FALSE.encode('utf8')
+            val = consts.FALSE_STR.encode('utf8')
 
         arr.append(k.encode('utf8') + NAME_VALUE_SEPARATOR + val)
     logger.debug('Arr, >>%s<<', arr)
@@ -154,7 +154,7 @@ class UserinterfaceTest(UDSTestCase):
         data = oldSerializeForm(ui)
         ui2 = TestingUserInterface()
         ui2.oldDeserializeForm(data)
-
+        
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
 

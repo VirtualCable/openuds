@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import mfas, types
+from uds.core import mfas, types, consts
 from uds.core.ui import gui
 
 if typing.TYPE_CHECKING:
@@ -55,7 +55,7 @@ class SampleMFA(mfas.MFA):
         order=90,
         tooltip=_('This is a useless field, for sample and testing pourposes'),
         tab=types.ui.Tab.ADVANCED,
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:

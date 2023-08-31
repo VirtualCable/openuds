@@ -34,7 +34,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, transports, types
+from uds.core import exceptions, transports, types, consts
 from uds.core.ui import gui
 from uds.core.util import fields, validators
 from uds.models import TicketStore
@@ -74,7 +74,7 @@ class TSPICETransport(BaseSpiceTransport):
         tooltip=_(
             'If enabled, the certificate of tunnel server will be verified (recommended).'
         ),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.TUNNEL,
     )
 

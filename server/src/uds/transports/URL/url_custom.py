@@ -36,7 +36,7 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import exceptions, transports, types
+from uds.core import exceptions, transports, types, consts
 from uds.core.ui import gui
 from uds.core.util import os_detector as OsDetector
 
@@ -80,7 +80,7 @@ class URLCustomTransport(transports.Transport):
         tooltip=_(
             'If checked, every connection will try to open its own window instead of reusing the "global" one.'
         ),
-        default=gui.FALSE,
+        default=consts.FALSE_STR,
         tab=types.ui.Tab.ADVANCED,
     )
 

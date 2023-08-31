@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext_lazy
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions, types
+from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 
@@ -118,21 +118,21 @@ class LinuxOsADManager(LinuxOsManager):
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
         tab=types.ui.Tab.ADVANCED,
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
         tab=types.ui.Tab.ADVANCED,
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
     automaticIdMapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),
         tab=types.ui.Tab.ADVANCED,
-        default=gui.TRUE,
+        default=consts.TRUE_STR,
     )
 
     # Inherits base "onLogout"

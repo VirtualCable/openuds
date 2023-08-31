@@ -37,7 +37,7 @@ import typing
 
 
 from django.utils.translation import gettext_noop as _
-from uds.core import services, exceptions
+from uds.core import services, exceptions, consts
 from uds.core.ui import gui
 from .service import ServiceOne, ServiceTwo
 
@@ -137,7 +137,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        default=gui.TRUE,  # : By default, at new item, check this
+        default=consts.TRUE_STR,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -145,7 +145,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive BBBB?'),
         tooltip=_('If you fail, this will not get saved BBBB'),
-        default=gui.TRUE,  # : By default, at new item, check this
+        default=consts.TRUE_STR,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -153,7 +153,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive CCCC?'),
         tooltip=_('If you fail, this will not get saved CCCC'),
-        default=gui.TRUE,  # : By default, at new item, check this
+        default=consts.TRUE_STR,  # : By default, at new item, check this
     )
 
     methText = gui.TextField(

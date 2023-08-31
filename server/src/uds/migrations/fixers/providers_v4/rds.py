@@ -75,8 +75,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core import services, types
-from uds.core.environment import Environment
+from uds.core import services,  consts
 from uds.core.ui import gui
 
 from . import _migrator
@@ -95,15 +94,15 @@ class RDSProvider(services.ServiceProvider):
 
     # Gui
     ipList = gui.EditableListField()
-    serverCheck = gui.CheckBoxField(default=gui.FALSE)
+    serverCheck = gui.CheckBoxField(default=consts.FALSE_STR)
 
     # User mapping, classical
-    useUserMapping = gui.CheckBoxField(default=gui.FALSE)
+    useUserMapping = gui.CheckBoxField(default=consts.FALSE_STR)
     userMap = gui.EditableListField()
     userPass = gui.PasswordField()
 
     # User creating, new
-    useUserCreation = gui.CheckBoxField(default=gui.FALSE)
+    useUserCreation = gui.CheckBoxField(default=consts.FALSE_STR)
     adHost = gui.TextField()
     adPort = gui.NumericField(default='636')
     adUsersDn = gui.TextField()

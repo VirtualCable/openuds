@@ -30,8 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts, transports
 from uds.core.ui import gui
-from uds.core import transports
 
 from . import _migrator
 
@@ -56,7 +56,7 @@ class HTML5RDSTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(default=gui.TRUE)
+    enableAudio = gui.CheckBoxField(default=consts.TRUE_STR)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
     enableFileSharing = gui.ChoiceField(default='false')
@@ -64,7 +64,7 @@ class HTML5RDSTransport(transports.Transport):
     serverLayout = gui.ChoiceField(default='-')
     ticketValidity = gui.NumericField(default='60')
 
-    forceNewWindow = gui.ChoiceField(default=gui.FALSE)
+    forceNewWindow = gui.ChoiceField(default=consts.FALSE_STR)
     security = gui.ChoiceField(default='any')
     rdpPort = gui.NumericField(default='3389')
 

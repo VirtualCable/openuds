@@ -30,8 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts, transports
 from uds.core.ui import gui
-from uds.core import transports
 
 from . import _migrator
 
@@ -49,7 +49,7 @@ class TRDPTransport(transports.Transport):
 
     tunnelServer = gui.TextField()
     tunnelWait = gui.NumericField(default='60')
-    verifyCertificate = gui.CheckBoxField(default=gui.FALSE)
+    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
@@ -60,25 +60,25 @@ class TRDPTransport(transports.Transport):
     allowDrives = gui.ChoiceField(default='false')
     enforceDrives = gui.TextField()
     allowSerials = gui.CheckBoxField()
-    allowClipboard = gui.CheckBoxField(default=gui.TRUE)
-    allowAudio = gui.CheckBoxField(default=gui.TRUE)
-    allowWebcam = gui.CheckBoxField(default=gui.FALSE)
+    allowClipboard = gui.CheckBoxField(default=consts.TRUE_STR)
+    allowAudio = gui.CheckBoxField(default=consts.TRUE_STR)
+    allowWebcam = gui.CheckBoxField(default=consts.FALSE_STR)
     usbRedirection = gui.ChoiceField(default='false')
-    credssp = gui.CheckBoxField(default=gui.TRUE)
+    credssp = gui.CheckBoxField(default=consts.TRUE_STR)
     rdpPort = gui.NumericField(default='3389')
     screenSize = gui.ChoiceField(default='-1x-1')
     colorDepth = gui.ChoiceField(default='24')
     wallpaper = gui.CheckBoxField()
     multimon = gui.CheckBoxField()
     aero = gui.CheckBoxField()
-    smooth = gui.CheckBoxField(default=gui.TRUE)
-    showConnectionBar = gui.CheckBoxField(default=gui.TRUE)
+    smooth = gui.CheckBoxField(default=consts.TRUE_STR)
+    showConnectionBar = gui.CheckBoxField(default=consts.TRUE_STR)
     multimedia = gui.CheckBoxField()
     alsa = gui.CheckBoxField()
     printerString = gui.TextField()
     smartcardString = gui.TextField()
     customParameters = gui.TextField()
-    allowMacMSRDC = gui.CheckBoxField(default=gui.FALSE)
+    allowMacMSRDC = gui.CheckBoxField(default=consts.FALSE_STR)
     customParametersMAC = gui.TextField()
     customParametersWindows = gui.TextField()
     optimizeTeams = gui.CheckBoxField()

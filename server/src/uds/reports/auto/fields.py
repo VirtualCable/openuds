@@ -35,6 +35,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
+from uds.core import types
 
 from uds.core.ui import gui
 
@@ -114,7 +115,7 @@ def source_field_data(
     model: typing.Any,
     field: typing.Union[gui.ChoiceField, gui.MultiChoiceField],
 ) -> None:
-    dataList: typing.List[gui.ChoiceType] = [
+    dataList: typing.List[types.ui.ChoiceType] = [
         gui.choiceItem(str(x.uuid), x.name) for x in model.objects.all().order_by('name')
     ]
 

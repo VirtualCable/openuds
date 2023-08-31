@@ -30,8 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 
+from uds.core import consts, transports
 from uds.core.ui import gui
-from uds.core import transports
 
 from . import _migrator
 
@@ -50,7 +50,7 @@ class NICEDCVTunnelTransport(transports.Transport):
     tunnelServer = gui.TextField()
 
     tunnelWait = gui.NumericField(default='60')
-    verifyCertificate = gui.CheckBoxField(default=gui.TRUE)
+    verifyCertificate = gui.CheckBoxField(default=consts.TRUE_STR)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()

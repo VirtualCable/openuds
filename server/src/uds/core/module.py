@@ -30,19 +30,18 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import sys
-import os.path
 import codecs
 import logging
+import os.path
+import sys
 import typing
-
 
 from django.utils.translation import gettext as _
 
 from uds.core.ui.user_interface import UserInterface
 
-from .serializable import Serializable
 from .environment import Environment, Environmentable
+from .serializable import Serializable
 
 logger = logging.getLogger(__name__)
 
