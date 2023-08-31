@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
     )
     from uds import models
     from uds.core.environment import Environment
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
     from .groups_manager import GroupsManager
 
 
@@ -402,7 +402,7 @@ class Authenticator(Module):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
-        from uds.core.util.request import (  # pylint: disable=import-outside-toplevel
+        from uds.core.types.request import (  # pylint: disable=import-outside-toplevel
             ExtendedHttpRequest,
         )
         from uds.models import (  # pylint: disable=import-outside-toplevel

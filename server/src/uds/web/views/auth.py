@@ -57,7 +57,7 @@ from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore
 
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

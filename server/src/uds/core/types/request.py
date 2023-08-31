@@ -29,23 +29,23 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
 
 from django.http import HttpRequest
 
-from uds.core.util.os_detector import DetectedOsInfo
-from uds.models import User
+if typing.TYPE_CHECKING:
+    from uds.core.util.os_detector import DetectedOsInfo
+    from uds.models import User
 
-logger = logging.getLogger(__name__)
 
 class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_version: int
     ip_proxy: str
     os: 'DetectedOsInfo'
-    user: typing.Optional[User]
+    user: typing.Optional['User']
     authorized: bool
 
+
 class ExtendedHttpRequestWithUser(ExtendedHttpRequest):
-    user: User
+    user: 'User'

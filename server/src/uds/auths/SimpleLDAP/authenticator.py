@@ -43,7 +43,7 @@ from uds.core.util import ldaputil
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

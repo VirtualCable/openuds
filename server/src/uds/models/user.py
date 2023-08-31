@@ -46,7 +46,7 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 
 logger = logging.getLogger(__name__)

@@ -41,8 +41,9 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRed
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from uds.core.types.request import ExtendedHttpRequest
 
-from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+from uds.core.types.request import ExtendedHttpRequestWithUser
 from uds.core.auths import auth, exceptions
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager

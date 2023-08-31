@@ -100,7 +100,11 @@ class gui:
     ValuesDictType = typing.Dict[
         str,
         typing.Union[
-            str, bool, typing.List[str], typing.List[types.ui.ChoiceType], typing.Callable[[], typing.List[types.ui.ChoiceType]]
+            str,
+            bool,
+            typing.List[str],
+            typing.List[types.ui.ChoiceType],
+            typing.Callable[[], typing.List[types.ui.ChoiceType]],
         ],
     ]
 
@@ -168,7 +172,9 @@ class gui:
             typing.Dict[str, str],
             None,
         ]
-    ) -> typing.Union[typing.Callable[[], typing.List['types.ui.ChoiceType']], typing.List['types.ui.ChoiceType']]:
+    ) -> typing.Union[
+        typing.Callable[[], typing.List['types.ui.ChoiceType']], typing.List['types.ui.ChoiceType']
+    ]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
         multichoice, ..
@@ -288,7 +294,7 @@ class gui:
         # : If length of some fields are not especified, this value is used as default
         DEFAULT_LENTGH: typing.ClassVar[int] = 64
 
-        _data: types.ui.FieldDataType
+        _data: types.ui.FieldInfoType
 
         def __init__(self, **kwargs) -> None:
             label = kwargs.get('label', '')
@@ -297,7 +303,9 @@ class gui:
             for i in ('defvalue', 'defaultValue', 'defValue'):
                 if i in kwargs:
                     try:
-                        caller = inspect.stack()[2]  # bypass this method and the caller (that is a derived class)
+                        caller = inspect.stack()[
+                            2
+                        ]  # bypass this method and the caller (that is a derived class)
                     except IndexError:
                         caller = inspect.stack()[1]  # bypass only this method
                     logger.warning(
@@ -310,22 +318,22 @@ class gui:
                     kwargs['default'] = kwargs[i]
                     break
             default = kwargs.get('default', '')
-            self._data = {
-                'length': kwargs.get(
+            self._data = types.ui.FieldInfoType(
+                length=kwargs.get(
                     'length', gui.InputField.DEFAULT_LENTGH
                 ),  # Length is not used on some kinds of fields, but present in all anyway
-                'required': kwargs.get('required', False),
-                'label': kwargs.get('label', ''),
-                'default': str(default) if not callable(default) else default,
-                'rdonly': kwargs.get(
+                required=kwargs.get('required', False),
+                label=kwargs.get('label', ''),
+                default=str(default) if not callable(default) else default,
+                rdonly=kwargs.get(
                     'rdonly',
                     kwargs.get('readOnly', kwargs.get('readonly', False)),
                 ),  # This property only affects in "modify" operations
-                'order': kwargs.get('order', 0),
-                'tooltip': kwargs.get('tooltip', ''),
-                'value': kwargs.get('value', default),
-                'type': kwargs.get('type', '')
-            }
+                order=kwargs.get('order', 0),
+                tooltip=kwargs.get('tooltip', ''),
+                value=kwargs.get('value', default),
+                type=kwargs.get('type', ''),
+            )
 
             if 'tab' in kwargs and kwargs['tab']:
                 self._data['tab'] = str(kwargs['tab'])  # Ensure it's a string
@@ -391,7 +399,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = typing.cast(dict, self._data.copy())
+            data = typing.cast(dict, self._data.asDict())
             if 'value' in data:
                 del data['value']  # We don't want to send value on guiDescription
             data['label'] = _(data['label']) if data['label'] else ''
@@ -448,8 +456,7 @@ class gui:
             return str(self.value)
 
         def __repr__(self):
-            args = ','.join([f'{k}="{v}"' for k, v in self._data.items()])
-            return f'{self.__class__.__name__}({args})'
+            return repr(self._data)
 
     class TextField(InputField):
         """
@@ -524,7 +531,7 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            thePattern = self._data.get('pattern')
+            thePattern = self._data.pattern
             if isinstance(thePattern, gui.TextField.PatternType):
                 try:
                     pattern: gui.TextField.PatternType = thePattern

@@ -53,7 +53,7 @@ from uds.web.util import errors
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.util.os_detector import KnownOS
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
     from uds.models import Image
 
 

@@ -44,7 +44,7 @@ from .remote_viewer_file import RemoteViewerFile
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import transports
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
     from uds.core.util import os_detector
 
 logger = logging.getLogger(__name__)

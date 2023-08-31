@@ -49,6 +49,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from uds.core import auths
+from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
 from uds.core.util.config import GlobalConfig
@@ -61,7 +62,7 @@ from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)

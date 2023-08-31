@@ -35,7 +35,7 @@ from django.db import models
 
 from uds.core import types
 from uds.core.util.os_detector import KnownOS
-from uds.core.util.request import ExtendedHttpRequest
+from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import properties, log, resolver, net
 
 from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT

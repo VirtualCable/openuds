@@ -37,13 +37,12 @@ import time
 import typing
 
 from django.db import transaction
-from uds.REST.exceptions import AccessDenied
 from uds.core import consts
 from uds.core.exceptions import BlockAccess
 
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.request import ExtendedHttpRequest
+from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -349,6 +348,7 @@ def blocker(
         Decorator
 
     """
+    from uds.REST.exceptions import AccessDenied  # To avoid circular references
     max_failures = max_failures or consts.ALLOWED_FAILS
 
     def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:

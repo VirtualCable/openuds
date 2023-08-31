@@ -44,7 +44,7 @@ import uds.web.util.errors as errors
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
     from uds.web.forms.LoginForm import LoginForm
 
 logger = logging.getLogger(__name__)

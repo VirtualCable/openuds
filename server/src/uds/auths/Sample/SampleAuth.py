@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core.auths.authenticator import AuthenticationResult, AuthenticationSuccess
+from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core import auths, exceptions
 
@@ -42,7 +43,7 @@ if typing.TYPE_CHECKING:
     from django.http import (
         HttpRequest,
     )  # pylint: disable=ungrouped-imports
-    from uds.core.util.request import ExtendedHttpRequestWithUser, ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequestWithUser
     from uds.core.auths.groups_manager import GroupsManager
 
 

@@ -47,7 +47,7 @@ from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

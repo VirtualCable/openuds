@@ -46,7 +46,7 @@ from .rdp_file import RDPFile
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

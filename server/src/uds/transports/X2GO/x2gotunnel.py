@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
     from uds.core.util.os_detector import DetectedOsInfo
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)

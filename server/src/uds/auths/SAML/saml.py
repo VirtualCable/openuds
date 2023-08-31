@@ -44,6 +44,7 @@ from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from django.utils.translation import gettext_noop as _, gettext
+from uds.core.types.request import ExtendedHttpRequest
 
 from uds.core.util.model import getSqlDatetime
 from uds.core.ui import gui
@@ -58,7 +59,7 @@ from . import config
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
-    from uds.core.util.request import ExtendedHttpRequestWithUser, ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)

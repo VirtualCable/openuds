@@ -53,7 +53,7 @@ except Exception:
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.environment import Environment
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

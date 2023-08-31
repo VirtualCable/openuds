@@ -35,7 +35,7 @@ from . import builder
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

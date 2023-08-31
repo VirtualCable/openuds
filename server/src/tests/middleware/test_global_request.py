@@ -42,7 +42,7 @@ from ..utils.web import test
 
 
 if typing.TYPE_CHECKING:
-    from uds.core.util.request import ExtendedHttpRequestWithUser
+    from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

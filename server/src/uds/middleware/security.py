@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from django.http import HttpResponse
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 # Simple Bot detection
 bot = re.compile(r'bot|spider', re.IGNORECASE)

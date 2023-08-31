@@ -48,7 +48,7 @@ from uds.core.util.state import State
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.util.request import ExtendedHttpRequest
+    from uds.core.types.request import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

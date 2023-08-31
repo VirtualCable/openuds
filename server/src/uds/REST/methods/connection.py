@@ -35,7 +35,7 @@ import logging
 import typing
 
 
-from uds.core.util.request import ExtendedHttpRequestWithUser
+from uds.core.types.request import ExtendedHttpRequestWithUser
 
 from uds.core import types
 from uds.REST import Handler

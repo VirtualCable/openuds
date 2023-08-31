@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
 import enum
+import dataclasses
 
 from django.utils.translation import gettext_noop
 
@@ -92,3 +93,83 @@ class FieldDataType(typing.TypedDict):
     maxValue: typing.NotRequired[int]
     fills: typing.NotRequired[FillerType]
     rows: typing.NotRequired[int]
+
+@dataclasses.dataclass
+class FieldInfoType:
+    length: int
+    required: bool
+    label: str
+    default: str
+    rdonly: bool
+    order: int
+    tooltip: str
+    value: typing.Any
+    type: str
+    multiline: typing.Optional[int] = None
+    pattern: typing.Optional[str] = None
+    tab: typing.Optional[str] = None
+    choices: typing.Optional[ChoicesType] = None
+    minValue: typing.Optional[int] = None
+    maxValue: typing.Optional[int] = None
+    fills: typing.Optional[FillerType] = None
+    rows: typing.Optional[int] = None
+
+    # Temporal methods to allow access to dataclass fields
+    # using dict
+    def __getitem__(
+        self,
+        key: typing.Literal[
+            'lentgh',
+            'required',
+            'label',
+            'default',
+            'rdonly',
+            'order',
+            'tooltip',
+            'value',
+            'type',
+            'multiline',
+            'pattern',
+            'tab',
+            'choices',
+            'minValue',
+            'maxValue',
+            'fills',
+            'rows',
+        ],
+    ) -> typing.Any:
+        return getattr(self, key)
+
+    def __setitem__(
+        self,
+        key: typing.Literal[
+            'lentgh',
+            'required',
+            'label',
+            'default',
+            'rdonly',
+            'order',
+            'tooltip',
+            'value',
+            'type',
+            'multiline',
+            'pattern',
+            'tab',
+            'choices',
+            'minValue',
+            'maxValue',
+            'fills',
+            'rows',
+        ],
+        value: typing.Any,
+    ) -> None:
+        setattr(self, key, value)
+        
+    def asDict(self) -> typing.Dict[str, typing.Any]:
+        """Returns a dict with all fields that are not None
+        """
+        return {
+            k: v
+            for k, v in dataclasses.asdict(self).items()
+            if v is not None
+        }
