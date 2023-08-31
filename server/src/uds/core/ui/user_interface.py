@@ -43,9 +43,7 @@ import typing
 import collections.abc
 import abc
 
-from django.utils.translation import get_language
 from django.utils.translation import gettext as _
-from django.utils.translation import gettext_noop
 
 from uds.core import exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -1398,7 +1396,6 @@ class UserInterface(metaclass=UserInterfaceType):
             obj: If any, object that will get its "initGui" invoked
                     This will only happen (not to be None) in Services.
         """
-        logger.debug('Active language for theGui translation: %s', get_language())
         self.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []

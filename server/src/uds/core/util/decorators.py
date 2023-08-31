@@ -158,8 +158,8 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
                 logger.warning(
                     'Use of deprecated class value %s from %s:%s. Use %s instead.',
                     self.fget.__name__,
-                    caller[1],
-                    caller[2],
+                    caller.filename,
+                    caller.lineno,
                     self.new_var_name,
                 )
             except Exception:

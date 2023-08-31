@@ -70,5 +70,3 @@ class LogMaintenance(Job):
                 for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by('created', 'id')[: count - max_elements + 1]:
                     record.delete()
 
-# class DelayedLog(Job):
-#     pass
