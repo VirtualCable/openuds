@@ -72,7 +72,7 @@ class RegexLdap(auths.Authenticator):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        default='389',
+        default=389,
         order=2,
         tooltip=_('Ldap port (usually 389 for non ssl and 636 for ssl)'),
         required=True,
@@ -103,7 +103,7 @@ class RegexLdap(auths.Authenticator):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='10',
+        default=10,
         order=6,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,

@@ -110,21 +110,21 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
         ),
         tab=types.ui.Tab.ADVANCED,
-        default=consts.TRUE_STR,
+        default=True,
     )
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=7,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
         tab=types.ui.Tab.ADVANCED,
-        default=consts.TRUE_STR,
+        default=True,
     )
     automaticIdMapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=8,
         tooltip=_('If checked, automatic ID mapping'),
         tab=types.ui.Tab.ADVANCED,
-        default=consts.TRUE_STR,
+        default=True,
     )
 
     # Inherits base "onLogout"

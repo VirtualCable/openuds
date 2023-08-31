@@ -123,7 +123,7 @@ def tunnelTicketValidityField() -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Ticket Validity'),
-        default='60',
+        default=60,
         order=90,
         tooltip=_(
             'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
@@ -139,7 +139,7 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
-        default='30',
+        default=30,
         minValue=5,
         maxValue=3600 * 24,
         order=order,

@@ -136,7 +136,7 @@ class OVirtProvider(
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -147,7 +147,7 @@ class OVirtProvider(
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='5',
+        default=5,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -159,7 +159,7 @@ class OVirtProvider(
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='10',
+        default=10,
         order=90,
         tooltip=_('Timeout in seconds of connection to oVirt'),
         required=True,

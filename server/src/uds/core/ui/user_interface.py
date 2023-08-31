@@ -163,6 +163,7 @@ class gui:
     @staticmethod
     def convertToChoices(
         vals: typing.Union[
+            typing.Callable[[], typing.List['types.ui.ChoiceType']],
             typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
             typing.Dict[str, str],
             None,
@@ -284,13 +285,10 @@ class gui:
         if you use "value", you will get the default value if not set)
         """
 
-        # : If length of some fields are not especified, this value is used as default
-        DEFAULT_LENTGH: typing.ClassVar[int] = 64
-
         _data: types.ui.FieldInfoType
 
-        def __init__(self, **kwargs) -> None:
-            label = kwargs.get('label', '')
+        def __init__(self, type: types.ui.FieldType, **kwargs) -> None:
+            label = kwargs.get('label') or ''
             # if defvalue or defaultValue or defValue in kwargs, emit a warning
             # with the new name (that is "default"), but use the old one
             for new_name, old_names in (
@@ -315,19 +313,19 @@ class gui:
                         )
                         kwargs[new_name] = kwargs[i]
                         break
-            default = kwargs.get('default', '')
+            default = kwargs.get('default')
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
             self._data = types.ui.FieldInfoType(
-                length=kwargs.get('length', gui.InputField.DEFAULT_LENTGH),
-                required=kwargs.get('required', False),
-                label=kwargs.get('label', ''),
-                default=str(default) if not callable(default) else default,
-                readonly=kwargs.get('readonly', False),
-                order=kwargs.get('order', 0),
-                tooltip=kwargs.get('tooltip', ''),
-                value=kwargs.get('value', default),
-                type=types.ui.FieldType.fromStr(kwargs.get('type', '')),
+                length=kwargs.get('length'),
+                required=kwargs.get('required') or False,
+                label=label,
+                default=default if not callable(default) else default,
+                readonly=kwargs.get('readonly') or False,
+                order=kwargs.get('order') or 0,
+                tooltip=kwargs.get('tooltip') or '',
+                value=kwargs.get('value') or default,
+                type=type,
                 tab=types.ui.Tab.fromStr(kwargs.get('tab')),
             )
 
@@ -489,9 +487,33 @@ class gui:
 
         """
 
-        def __init__(self, **kwargs) -> None:
-            super().__init__(**kwargs, type=types.ui.FieldType.TEXT)
-            self._data.multiline = min(max(int(kwargs.get('multiline', 0)), 0), 8)
+        def __init__(
+            self,
+            label: str = '',
+            length: int = consts.DEFAULT_TEXT_LENGTH,
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Union[str, typing.Iterable[str]] = '',
+            value: str = '',
+            pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
+            multiline: int = 0,
+        ) -> None:
+            super().__init__(
+                label=label,
+                length=length,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.TEXT,
+            )
+            self._data.multiline = min(max(int(multiline), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
@@ -506,11 +528,12 @@ class gui:
             #   - 'path'     # Path (absolute or relative, Windows or Unix)
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
-            if 'pattern' in kwargs:
-                try:
-                    self._data.pattern = types.ui.FieldPatternType(kwargs['pattern'])
-                except ValueError:
-                    self._data.pattern = re.compile(kwargs['pattern'])  # as regex
+            if pattern:
+                self._data.pattern = (
+                    pattern
+                    if isinstance(pattern, types.ui.FieldPatternType)
+                    else types.ui.FieldPatternType(pattern)
+                )
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -562,22 +585,38 @@ class gui:
         Values are a list of strings...
         """
 
-        def __init__(self, **kwargs) -> None:
-            super().__init__(**kwargs)
+        def __init__(
+            self,
+            label: str = '',
+            length: int = consts.DEFAULT_TEXT_LENGTH,
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Union[str, typing.Iterable[str]] = '',
+            value: str = '',
+            choices: typing.Union[
+                typing.Callable[[], typing.List['types.ui.ChoiceType']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Dict[str, str],
+                None,
+            ] = None,
+        ) -> None:
+            super().__init__(
+                label=label,
+                length=length,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+            )
             # Update parent type
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
-            # And store values in a list
-            if 'values' in kwargs:
-                caller = inspect.stack()[1]
-                logger.warning(
-                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
-                    kwargs.get('label', ''),
-                    caller.filename,
-                    caller.lineno,
-                )
-                kwargs['choices'] = kwargs['values']
-
-            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
+            self._data.choices = gui.convertToChoices(choices or [])
 
         def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
@@ -607,16 +646,34 @@ class gui:
                   required = True)
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=types.ui.FieldType.NUMERIC)
-            self._data.minValue = int(
-                # Marker for no min value, no need to be negative, but one not probably used
-                options.get('minValue', options.get('minvalue', '987654321'))
+        def __init__(
+            self,
+            label: str = '',
+            length: typing.Optional[int] = None,
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: int = 0,
+            value: int = 0,
+            minValue: int = 0,
+            maxValue: int = 987654321,
+        ) -> None:
+            super().__init__(
+                label=label,
+                length=length,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.NUMERIC,
             )
-            self._data.maxValue = int(
-                # Marker for no max value, no need to too big, but one not probably used
-                options.get('maxValue', options.get('maxvalue', '987654321'))
-            )
+            self._data.minValue = minValue
+            self._data.maxValue = maxValue
 
         def _setValue(self, value: typing.Any):
             # Internally stores an string
@@ -746,9 +803,22 @@ class gui:
 
         _isSerializable: bool
 
-        def __init__(self, **options) -> None:
-            super().__init__(**options, type=types.ui.FieldType.HIDDEN)
-            self._isSerializable = options.get('serializable', '') != ''
+        def __init__(
+            self,
+            label: str = '',  # label is optional on hidden fields
+            order: int = 0,
+            default: typing.Any = None,
+            value: typing.Any = None,
+            serializable: bool = False,
+        ) -> None:
+            super().__init__(
+                label=label,
+                order=order,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.HIDDEN,
+            )
+            self._isSerializable = serializable
 
         def isSerializable(self) -> bool:
             return self._isSerializable
@@ -772,8 +842,28 @@ class gui:
 
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=types.ui.FieldType.CHECKBOX)
+        def __init__(
+            self,
+            label: str = '',
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: bool = False,
+            value: bool = False,
+        ):
+            super().__init__(
+                label=label,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.CHECKBOX,
+            )
 
         def _setValue(self, value: typing.Union[str, bytes, bool]):
             """
@@ -890,29 +980,45 @@ class gui:
 
         """
 
-        def __init__(self, **kwargs) -> None:
-            super().__init__(**kwargs, type=types.ui.FieldType.CHOICE)
-            # And store values in a list
-            if 'values' in kwargs:
-                caller = inspect.stack()[1]
-                logger.warning(
-                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
-                    kwargs.get('label', ''),
-                    caller.filename,
-                    caller.lineno,
-                )
-                kwargs['choices'] = kwargs['values']
+        def __init__(
+            self,
+            label: str = '',
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            choices: typing.Union[
+                typing.Callable[[], typing.List['types.ui.ChoiceType']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Dict[str, str],
+                None,
+            ] = None,
+            fills: typing.Optional[types.ui.FillerType] = None,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Optional[str] = None,
+            value: typing.Optional[str] = None,
+        ) -> None:
+            super().__init__(
+                label=label,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.CHOICE,
+            )
 
-            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
-            if 'fills' in kwargs:
-                # Save fnc to register as callback
-                fills: types.ui.FillerType = kwargs['fills']
+            self._data.choices = gui.convertToChoices(choices or [])
+            # if has fillers, set them
+            if fills:
                 if 'function' not in fills or 'callbackName' not in fills:
                     raise ValueError('Invalid fills parameters')
                 fnc = fills['function']
                 fills.pop('function')
                 self._data.fills = fills
-                # Readd it only if not already present
+                # Store it only if not already present
                 if fills['callbackName'] not in gui.callbacks:
                     gui.callbacks[fills['callbackName']] = fnc
 
@@ -923,19 +1029,35 @@ class gui:
             self._data.choices = gui.convertToChoices(values)
 
     class ImageChoiceField(InputField):
-        def __init__(self, **kwargs):
-            super().__init__(**kwargs, type=types.ui.FieldType.IMAGE_CHOICE)
-            if 'values' in kwargs:
-                caller = inspect.stack()[1]
-                logger.warning(
-                    'Field %s: "values" parameter is deprecated, use "choices" instead. Called from %s:%s',
-                    kwargs.get('label', ''),
-                    caller.filename,
-                    caller.lineno,
-                )
-                kwargs['choices'] = kwargs['values']
+        def __init__(
+            self,
+            label: str = '',
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            choices: typing.Union[
+                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Dict[str, str],
+                None,
+            ] = None,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Optional[str] = None,
+            value: typing.Optional[str] = None,
+        ):
+            super().__init__(
+                label=label,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.IMAGECHOICE,
+            )
 
-            self._data.choices = gui.convertToChoices(kwargs.get('choices', []))
+            self._data.choices = gui.convertToChoices(choices or [])
 
         def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
@@ -991,7 +1113,8 @@ class gui:
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[str, typing.Iterable[str]] = '',
+            default: typing.Optional[typing.Iterable[str]] = None,
+            value: typing.Optional[typing.Iterable[str]] = None,
         ):
             super().__init__(
                 label=label,
@@ -1002,6 +1125,7 @@ class gui:
                 tab=tab,
                 type=types.ui.FieldType.MULTICHOICE,
                 default=default,
+                value=value,
             )
 
             self._data.rows = rows
@@ -1040,25 +1164,34 @@ class gui:
 
         """
 
-        # : Constant for separating values at "value" method
-        SEPARATOR = '\001'
-
-        def __init__(self, **options) -> None:
-            super().__init__(**options, type=types.ui.FieldType.EDITABLE_LIST)
+        def __init__(
+            self,
+            label: str = '',
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Optional[typing.Iterable[str]] = None,
+            value: typing.Optional[typing.Iterable[str]] = None,
+        ) -> None:
+            super().__init__(
+                label=label,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.EDITABLELIST,
+            )
 
         def _setValue(self, value):
             """
             So we can override value setting at descendants
             """
             super()._setValue(value)
-
-    class ImageField(InputField):
-        """
-        Image field
-        """
-
-        def __init__(self, **options) -> None:
-            super().__init__(**options, type=types.ui.FieldType.IMAGE)
 
     class InfoField(InputField):
         """
@@ -1069,8 +1202,8 @@ class gui:
 
         """
 
-        def __init__(self, **options) -> None:
-            super().__init__(**options, type=types.ui.FieldType.INFO)
+        def __init__(self, label: str, default: str) -> None:
+            super().__init__(label=label, default=default, type=types.ui.FieldType.INFO)
 
 
 class UserInterfaceType(type):
@@ -1209,7 +1342,7 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         dic: gui.ValuesDictType = {}
         for k, v in self._gui.items():
-            if v.isType(types.ui.FieldType.EDITABLE_LIST):
+            if v.isType(types.ui.FieldType.EDITABLELIST):
                 dic[k] = ensure.is_list(v.value)
             elif v.isType(types.ui.FieldType.MULTICHOICE):
                 dic[k] = gui.convertToChoices(v.value)
@@ -1245,10 +1378,9 @@ class UserInterface(metaclass=UserInterfaceType):
             types.ui.FieldType.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
             types.ui.FieldType.CHOICE: lambda x: x.value,
             types.ui.FieldType.MULTICHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.EDITABLE_LIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
+            types.ui.FieldType.EDITABLELIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
             types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if x.isTrue() else consts.FALSE_STR,
-            types.ui.FieldType.IMAGE_CHOICE: lambda x: x.value,
-            types.ui.FieldType.IMAGE: lambda x: x.value,
+            types.ui.FieldType.IMAGECHOICE: lambda x: x.value,
             types.ui.FieldType.DATE: lambda x: x.value,
             types.ui.FieldType.INFO: lambda x: None,
         }
@@ -1317,10 +1449,9 @@ class UserInterface(metaclass=UserInterfaceType):
             types.ui.FieldType.HIDDEN: lambda x: None,
             types.ui.FieldType.CHOICE: lambda x: x,
             types.ui.FieldType.MULTICHOICE: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
-            types.ui.FieldType.EDITABLE_LIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
+            types.ui.FieldType.EDITABLELIST: lambda x: deserialize(codecs.decode(x.encode(), 'base64')),
             types.ui.FieldType.CHECKBOX: lambda x: x,
-            types.ui.FieldType.IMAGE_CHOICE: lambda x: x,
-            types.ui.FieldType.IMAGE: lambda x: x,
+            types.ui.FieldType.IMAGECHOICE: lambda x: x,
             types.ui.FieldType.DATE: lambda x: x,
             types.ui.FieldType.INFO: lambda x: None,
         }

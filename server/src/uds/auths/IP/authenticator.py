@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 class IPAuth(auths.Authenticator):
     acceptProxy = gui.CheckBoxField(
         label=_('Accept proxy'),
-        default=consts.FALSE_STR,
+        default=False,
         order=50,
         tooltip=_(
             'If checked, requests via proxy will get FORWARDED ip address'

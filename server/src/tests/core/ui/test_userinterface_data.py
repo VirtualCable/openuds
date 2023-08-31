@@ -60,7 +60,6 @@ class UserinterfaceTestInternalData(UDSTestCase):
         self.assertEqual(ui.editable_list_field.value, DEFAULTS['editable_list_field'])
         self.assertEqual(ui.checkbox_field.value, DEFAULTS['checkbox_field'])
         self.assertEqual(ui.image_choice_field.value, DEFAULTS['image_choice_field'])
-        self.assertEqual(ui.image_field.value, DEFAULTS['image_field'])
         self.assertEqual(ui.date_field.value, DEFAULTS['date_field'])
         self.assertEqual(ui.info_field.value, DEFAULTS['info_field'])
 
@@ -75,7 +74,6 @@ class UserinterfaceTestInternalData(UDSTestCase):
         self.assertEqual(ui.editable_list_field.value, ui._gui['editable_list_field'].value)
         self.assertEqual(ui.checkbox_field.value, ui._gui['checkbox_field'].value)
         self.assertEqual(ui.image_choice_field.value, ui._gui['image_choice_field'].value)
-        self.assertEqual(ui.image_field.value, ui._gui['image_field'].value)
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
         self.assertEqual(ui.info_field.value, ui._gui['info_field'].value)
 
@@ -100,8 +98,6 @@ class UserinterfaceTestInternalData(UDSTestCase):
         self.assertEqual(ui.checkbox_field.value, ui._gui['checkbox_field'].value)
         ui.image_choice_field.value = 'New value'
         self.assertEqual(ui.image_choice_field.value, ui._gui['image_choice_field'].value)
-        ui.image_field.value = 'New value'
-        self.assertEqual(ui.image_field.value, ui._gui['image_field'].value)
         ui.date_field.value = '2001-01-01'
         self.assertEqual(ui.date_field.value, ui._gui['date_field'].value)
         ui.info_field.value = 'New value'

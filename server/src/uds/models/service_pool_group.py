@@ -36,7 +36,7 @@ import typing
 from django.db import models
 from django.utils.translation import gettext as _
 
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.consts.images import DEFAULT_THUMB_BASE64
 
 from .uuid_model import UUIDModel
 from .image import Image

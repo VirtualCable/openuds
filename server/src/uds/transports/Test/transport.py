@@ -79,7 +79,7 @@ class TestTransport(transports.Transport):
         tooltip=_(
             'If checked, every connection will try to open its own window instead of reusing the "global" one.'
         ),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.ADVANCED,
     )
 

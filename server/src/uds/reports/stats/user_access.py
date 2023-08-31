@@ -84,7 +84,7 @@ class StatsReportLogin(StatsReport):
         minValue=0,
         maxValue=128,
         tooltip=_('Number of sampling points used in charts'),
-        default='64',
+        default=64,
     )
 
     def initialize(self, values):

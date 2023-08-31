@@ -43,11 +43,9 @@ class TRDSTransport(transports.Transport):
     typeType = 'TRDSTransport'
 
     tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(
-        default='30',
-    )
+    tunnelWait = gui.NumericField(default=30)
 
-    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
+    verifyCertificate = gui.CheckBoxField(default=False)
 
     useEmptyCreds = gui.CheckBoxField()
     withoutDomain = gui.CheckBoxField()
@@ -57,15 +55,15 @@ class TRDSTransport(transports.Transport):
     allowDrives = gui.ChoiceField(default='false')
     enforceDrives = gui.TextField()
     allowSerials = gui.CheckBoxField()
-    allowClipboard = gui.CheckBoxField(default=consts.TRUE_STR)
-    allowAudio = gui.CheckBoxField(default=consts.TRUE_STR)
-    allowWebcam = gui.CheckBoxField(default=consts.FALSE_STR)
-    credssp = gui.CheckBoxField(default=consts.TRUE_STR)
-    rdpPort = gui.NumericField(default='3389')
+    allowClipboard = gui.CheckBoxField(default=True)
+    allowAudio = gui.CheckBoxField(default=True)
+    allowWebcam = gui.CheckBoxField(default=False)
+    credssp = gui.CheckBoxField(default=True)
+    rdpPort = gui.NumericField(default=3389)
     colorDepth = gui.ChoiceField()
-    smooth = gui.CheckBoxField(default=consts.TRUE_STR)
+    smooth = gui.CheckBoxField(default=True)
     windowState = gui.ChoiceField(default='normal')
-    executeAsShell = gui.CheckBoxField(default=consts.TRUE_STR)
+    executeAsShell = gui.CheckBoxField(default=True)
     multimedia = gui.CheckBoxField()
     alsa = gui.CheckBoxField()
     printerString = gui.TextField()

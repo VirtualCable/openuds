@@ -76,7 +76,7 @@ class IPMachinesService(IPServiceBase):
     port = gui.NumericField(
         length=5,
         label=_('Check Port'),
-        default='0',
+        default=0,
         order=2,
         tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
         required=True,
@@ -85,7 +85,7 @@ class IPMachinesService(IPServiceBase):
     skipTimeOnFailure = gui.NumericField(
         length=6,
         label=_('Skip time'),
-        default='0',
+        default=0,
         order=2,
         tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
         minValue=0,
@@ -96,7 +96,7 @@ class IPMachinesService(IPServiceBase):
     maxSessionForMachine = gui.NumericField(
         length=3,
         label=_('Max session per machine'),
-        default='0',
+        default=0,
         order=3,
         tooltip=_(
             'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'

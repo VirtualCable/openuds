@@ -41,7 +41,7 @@ from django.utils.translation import gettext_lazy as _
 from uds.core import types
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui import gui
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.util import log, permissions
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import getSqlDatetime, processUuid
@@ -356,7 +356,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
-                'type': types.ui.FieldType.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGECHOICE,
                 'order': 120,
                 'tab': gettext('Display'),
             },
@@ -371,7 +371,7 @@ class ServicesPools(ModelHandler):
                 ),
                 'label': gettext('Pool group'),
                 'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
-                'type': types.ui.FieldType.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGECHOICE,
                 'order': 121,
                 'tab': gettext('Display'),
             },

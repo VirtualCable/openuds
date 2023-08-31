@@ -48,12 +48,12 @@ class TSNoMachineTransport(transports.Transport):
     typeType = 'TSNoMachineTransport'
 
     tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(default='30')
-    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
+    tunnelWait = gui.NumericField(default=30)
+    verifyCertificate = gui.CheckBoxField(default=False)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()
-    listenPort = gui.NumericField(default='4000')
+    listenPort = gui.NumericField(default=4000)
     windowSize = gui.ChoiceField(default='normal')
 
     # This value is the new "tunnel server"

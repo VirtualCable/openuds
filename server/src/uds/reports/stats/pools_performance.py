@@ -90,7 +90,7 @@ class PoolPerformanceReport(StatsReport):
         minValue=0,
         maxValue=32,
         tooltip=_('Number of sampling points used in charts'),
-        default='8',
+        default=8,
     )
 
     def initGui(self) -> None:

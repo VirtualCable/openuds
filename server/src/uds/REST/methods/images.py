@@ -86,7 +86,7 @@ class Images(ModelHandler):
                 'value': '',
                 'label': gettext('Image'),
                 'tooltip': gettext('Image object'),
-                'type': types.ui.FieldType.IMAGE_CHOICE,
+                'type': types.ui.FieldType.IMAGECHOICE,
                 'order': 100,  # At end
             },
         )

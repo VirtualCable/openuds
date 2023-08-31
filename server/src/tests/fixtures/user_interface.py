@@ -55,14 +55,14 @@ class TestingUserInterface(UserInterface):
         order=0,
         tooltip='This is a text field',
         required=True,
-        value=DEFAULTS['str_field'],
+        value=typing.cast(str, DEFAULTS['str_field']),
     )
     str_auto_field = gui.TextAutocompleteField(
         label='Text Autocomplete Field',
         order=1,
         tooltip='This is a text autocomplete field',
         required=True,
-        default=DEFAULTS['str_auto_field'],
+        default=typing.cast(str, DEFAULTS['str_auto_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     num_field = gui.NumericField(
@@ -70,7 +70,7 @@ class TestingUserInterface(UserInterface):
         order=1,
         tooltip='This is a numeric field',
         required=True,
-        default=DEFAULTS['num_field'],
+        default=typing.cast(int, DEFAULTS['num_field']),
         minValue=0,
         maxValue=100,
     )
@@ -84,8 +84,6 @@ class TestingUserInterface(UserInterface):
     hidden_field = gui.HiddenField(
         label='Hidden Field',
         order=3,
-        tooltip='This is a hidden field',
-        required=True,
         default=DEFAULTS['hidden_field'],
     )
     choice_field = gui.ChoiceField(
@@ -93,7 +91,7 @@ class TestingUserInterface(UserInterface):
         order=4,
         tooltip='This is a choice field',
         required=True,
-        value=DEFAULTS['choice_field'],
+        value=typing.cast(str, DEFAULTS['choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     multi_choice_field = gui.MultiChoiceField(
@@ -109,29 +107,22 @@ class TestingUserInterface(UserInterface):
         order=6,
         tooltip='This is a editable list field',
         required=True,
-        default=DEFAULTS['editable_list_field'],
+        default=typing.cast(typing.List[str], DEFAULTS['editable_list_field']),
     )
     checkbox_field = gui.CheckBoxField(
         label='Checkbox Field',
         order=7,
         tooltip='This is a checkbox field',
         required=True,
-        default=DEFAULTS['checkbox_field'],
+        default=typing.cast(bool, DEFAULTS['checkbox_field']),
     )
     image_choice_field = gui.ImageChoiceField(
         label='Image Choice Field',
         order=8,
         tooltip='This is a image choice field',
         required=True,
-        default=DEFAULTS['image_choice_field'],
+        default=typing.cast(str, DEFAULTS['image_choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
-    )
-    image_field = gui.ImageField(
-        label='Image Field',
-        order=9,
-        tooltip='This is a image field',
-        required=True,
-        default=DEFAULTS['image_field'],
     )
     date_field = gui.DateField(
         label='Date Field',
@@ -142,7 +133,7 @@ class TestingUserInterface(UserInterface):
     )
     info_field = gui.InfoField(
         label='title',
-        default=DEFAULTS['info_field'],
+        default=typing.cast(str, DEFAULTS['info_field']),
     )
 
 
@@ -161,7 +152,6 @@ class TestingUserInterface(UserInterface):
             and self.editable_list_field.value == other.editable_list_field.value
             and self.checkbox_field.value == other.checkbox_field.value
             and self.image_choice_field.value == other.image_choice_field.value
-            and self.image_field.value == other.image_field.value
             and self.date_field.value == other.date_field.value
             # Info field is not compared, because it is not serialized
         )

@@ -78,7 +78,7 @@ class RadiusOTP(mfas.MFA):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        default='1812',
+        default=1812,
         order=2,
         tooltip=_('Radius authentication port (usually 1812)'),
         required=True,

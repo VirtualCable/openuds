@@ -125,7 +125,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     guestShutdown = gui.CheckBoxField(
         label=_('Try SOFT Shutdown first'),
-        default=consts.FALSE_STR,
+        default=False,
         order=103,
         tooltip=_(
             'If active, UDS will try to shutdown (soft) the machine using VMWare Guest Tools. Will delay 30 seconds the power off of hanged machines.'

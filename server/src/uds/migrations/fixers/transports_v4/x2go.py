@@ -49,19 +49,19 @@ class TX2GOTransport(transports.Transport):
     typeType = 'TX2GOTransport'
 
     tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(default='30')
-    verifyCertificate = gui.CheckBoxField(default=consts.FALSE_STR)
+    tunnelWait = gui.NumericField(default=30)
+    verifyCertificate = gui.CheckBoxField(default=False)
     fixedName = gui.TextField()
     screenSize = gui.ChoiceField(default=CommonPrefs.SZ_FULLSCREEN)
     desktopType = gui.ChoiceField()
     customCmd = gui.TextField()
-    sound = gui.CheckBoxField(default=consts.TRUE_STR)
-    exports = gui.CheckBoxField(default=consts.FALSE_STR)
+    sound = gui.CheckBoxField(default=True)
+    exports = gui.CheckBoxField(default=False)
     speed = gui.ChoiceField(default='3')
     soundType = gui.ChoiceField(default='pulse')
     keyboardLayout = gui.TextField(default='')
     pack = gui.TextField(default='16m-jpeg')
-    quality = gui.NumericField(default='6')
+    quality = gui.NumericField(default=6)
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

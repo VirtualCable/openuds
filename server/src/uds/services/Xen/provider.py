@@ -126,7 +126,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -137,7 +137,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='5',
+        default=5,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -163,7 +163,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
             'If selected, certificate will be checked against system valid certificate providers'
         ),
         tab=types.ui.Tab.ADVANCED,
-        default=consts.FALSE_STR,
+        default=False,
     )
 
     hostBackup = gui.TextField(

@@ -84,7 +84,7 @@ def oldSerializeForm(ui) -> bytes:
         if v.isType(types.ui.FieldType.INFO):
             # logger.debug('Field {} is a dummy field and will not be serialized')
             continue
-        if v.isType(types.ui.FieldType.EDITABLE_LIST) or v.isType(
+        if v.isType(types.ui.FieldType.EDITABLELIST) or v.isType(
             types.ui.FieldType.MULTICHOICE
         ):
             # logger.debug('Serializing value {0}'.format(v.value))
@@ -144,7 +144,6 @@ class UserinterfaceTest(UDSTestCase):
             DEFAULTS['image_choice_field'],
             'image_choice_field',
         )
-        self.assertEqual(ui.image_field.value, DEFAULTS['image_field'], 'image_field')
         self.assertEqual(ui.date_field.value, DEFAULTS['date_field'], 'date_field')
 
     def test_old_serialization(self):

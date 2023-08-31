@@ -129,15 +129,15 @@ class OGService(services.Service):
         tooltip=_(
             'Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'
         ),
-        default='2400',  # 1 hundred days
-        minValue='24',
+        default=2400,  # 1 hundred days
+        minValue=24,
         tab=_('Advanced'),
         required=False,
     )
 
     startIfUnavailable = gui.CheckBoxField(
         label=_('Start if unavailable'),
-        default=consts.TRUE_STR,
+        default=True,
         order=111,
         tooltip=_(
             'If active, machines that are not available on user connect (on some OS) will try to power on through OpenGnsys.'

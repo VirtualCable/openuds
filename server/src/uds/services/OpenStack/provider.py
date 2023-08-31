@@ -145,7 +145,7 @@ class OpenStackProvider(ServiceProvider):
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -156,7 +156,7 @@ class OpenStackProvider(ServiceProvider):
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='5',
+        default=5,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -168,7 +168,7 @@ class OpenStackProvider(ServiceProvider):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=128,
         order=99,
@@ -204,7 +204,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_(
             'If checked, the name of the subnets will be used instead of the names of networks'
         ),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.ADVANCED,
     )
 

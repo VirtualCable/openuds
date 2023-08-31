@@ -95,7 +95,7 @@ class Provider(services.ServiceProvider):
     # : Remote host. Here core will translate label and tooltip, remember to
     # : mark them as _ using gettext_noop.
     remoteHost = gui.TextField(
-        oder=1,
+        order=1,
         length=64,
         label=_('Remote host'),
         tooltip=_('This fields contains a remote host'),
@@ -117,7 +117,7 @@ class Provider(services.ServiceProvider):
         length=32,
         label=_('Your pet\'s name'),
         tooltip=_('If you like, write the name of your pet'),
-        requred=False,
+        required=False,
         default='Tux',  # : This will not get translated
     )
     # : Age of Methuselah (matusalén in spanish)
@@ -129,7 +129,7 @@ class Provider(services.ServiceProvider):
         label=_('Age of Methuselah'),
         tooltip=_('If you know it, please, tell me!!!'),
         required=True,  # : Numeric fields have always a value, so this not really needed
-        default='4500',
+        default=4500,
     )
 
     # : Is Methuselah istill alive?
@@ -137,7 +137,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive?'),
         tooltip=_('If you fail, this will not get saved :-)'),
-        default=consts.TRUE_STR,  # : By default, at new item, check this
+        default=True,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -145,7 +145,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive BBBB?'),
         tooltip=_('If you fail, this will not get saved BBBB'),
-        default=consts.TRUE_STR,  # : By default, at new item, check this
+        default=True,  # : By default, at new item, check this
     )
 
     # : Is Methuselah istill alive?
@@ -153,7 +153,7 @@ class Provider(services.ServiceProvider):
         order=5,
         label=_('Is Methuselah still alive CCCC?'),
         tooltip=_('If you fail, this will not get saved CCCC'),
-        default=consts.TRUE_STR,  # : By default, at new item, check this
+        default=True,  # : By default, at new item, check this
     )
 
     methText = gui.TextField(
@@ -162,7 +162,7 @@ class Provider(services.ServiceProvider):
         multiline=5,
         label=_('Text area'),
         tooltip=_('This is a text area'),
-        requred=False,
+        required=False,
         default='Write\nsomething',  # : This will not get translated
     )
 

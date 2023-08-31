@@ -136,7 +136,7 @@ class HTML5RDPTransport(transports.Transport):
         order=21,
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=types.ui.Tab.PARAMETERS,
-        default=consts.TRUE_STR,
+        default=True,
     )
     enableAudioInput = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
@@ -220,16 +220,16 @@ class HTML5RDPTransport(transports.Transport):
         required=True,
         choices=[
             ui.gui.choiceItem(
-                consts.FALSE_STR,
+                'false',
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            ui.gui.choiceItem(consts.TRUE_STR, _('Force every connection to be opened on a new window.')),
+            ui.gui.choiceItem('true', _('Force every connection to be opened on a new window.')),
             ui.gui.choiceItem(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
             ),
         ],
-        default=consts.FALSE_STR,
+        default='true',
         tab=types.ui.Tab.ADVANCED,
     )
     security = ui.gui.ChoiceField(
@@ -267,7 +267,7 @@ class HTML5RDPTransport(transports.Transport):
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         required=True,  #: Numeric fields have always a value, so this not really needed
-        default='3389',
+        default=3389,
         tab=types.ui.Tab.ADVANCED,
     )
 

@@ -51,13 +51,13 @@ class HTML5VNCTransport(transports.Transport):
 
     username = gui.TextField()
     password = gui.PasswordField()
-    vncPort = gui.NumericField(default='5900')
+    vncPort = gui.NumericField(default=5900)
     colorDepth = gui.ChoiceField(default='-')
     swapRedBlue = gui.CheckBoxField()
     cursor = gui.CheckBoxField()
     readOnly = gui.CheckBoxField()
-    ticketValidity = gui.NumericField(default='60')
-    forceNewWindow = gui.ChoiceField(default=consts.FALSE_STR)
+    ticketValidity = gui.NumericField(default=60)
+    forceNewWindow = gui.ChoiceField(default='false')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored

@@ -56,17 +56,17 @@ class HTML5RDSTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(default=consts.TRUE_STR)
+    enableAudio = gui.CheckBoxField(default=True)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
     enableFileSharing = gui.ChoiceField(default='false')
     enableClipboard = gui.ChoiceField(default='enabled')
     serverLayout = gui.ChoiceField(default='-')
-    ticketValidity = gui.NumericField(default='60')
+    ticketValidity = gui.NumericField(default=60)
 
-    forceNewWindow = gui.ChoiceField(default=consts.FALSE_STR)
+    forceNewWindow = gui.ChoiceField(default='false')
     security = gui.ChoiceField(default='any')
-    rdpPort = gui.NumericField(default='3389')
+    rdpPort = gui.NumericField(default=3389)
 
     customGEPath = gui.TextField(default='/')
 
@@ -74,7 +74,7 @@ class HTML5RDSTransport(transports.Transport):
     loadBalancingInfo = gui.TextField(default='')
 
     gatewayHostname = gui.TextField(default='')
-    gatewayPort = gui.NumericField(default='443')
+    gatewayPort = gui.NumericField(default=443)
     gatewayUsername = gui.TextField(default='')
     gatewayPassword = gui.PasswordField(default='')
     gatewayDomain = gui.TextField(default='')

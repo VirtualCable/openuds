@@ -91,7 +91,7 @@ class HTML5VNCTransport(transports.Transport):
     vncPort = gui.NumericField(
         length=22,
         label=_('VNC Server port'),
-        default='5900',
+        default=5900,
         order=2,
         tooltip=_('Port of the VNC server.'),
         required=True,
@@ -197,7 +197,7 @@ class HTML5VNCTransport(transports.Transport):
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''
-        if self.forceNewWindow.value == consts.TRUE_STR:
+        if self.forceNewWindow.value == 'true':
             onw = 'o_n_w={}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = 'o_s_w=yes'

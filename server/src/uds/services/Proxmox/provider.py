@@ -71,12 +71,12 @@ class ProxmoxProvider(
         required=True,
     )
     port = gui.NumericField(
-        lengh=5,
+        length=5,
         label=_('Port'),
         order=2,
         tooltip=_('Proxmox API port (default is 8006)'),
         required=True,
-        default='8006',
+        default=8006,
     )
 
     username = gui.TextField(
@@ -100,7 +100,7 @@ class ProxmoxProvider(
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -111,7 +111,7 @@ class ProxmoxProvider(
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='5',
+        default=5,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -123,7 +123,7 @@ class ProxmoxProvider(
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='20',
+        default=20,
         order=90,
         tooltip=_('Timeout in seconds of connection to Proxmox'),
         required=True,
@@ -133,7 +133,7 @@ class ProxmoxProvider(
     startVmId = gui.NumericField(
         length=3,
         label=_('Starting VmId'),
-        default='10000',
+        default=10000,
         minValue=10000,
         maxValue=100000,
         order=91,

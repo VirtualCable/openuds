@@ -34,7 +34,7 @@ import typing
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
 
-from uds.core.ui.images import DEFAULT_IMAGE
+from uds.core.consts.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Image
 

@@ -96,28 +96,28 @@ class BaseSpiceTransport(transports.Transport):
         order=6,
         label=_('Smartcard Redirect'),
         tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.ADVANCED,
     )
     usbShare = gui.CheckBoxField(
         order=7,
         label=_('Enable USB'),
         tooltip=_('If checked, USB redirection will be allowed.'),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.ADVANCED,
     )
     autoNewUsbShare = gui.CheckBoxField(
         order=8,
         label=_('New USB Auto Sharing'),
         tooltip=_('Auto-redirect USB devices when plugged in.'),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.ADVANCED,
     )
     SSLConnection = gui.CheckBoxField(
         order=9,
         label=_('SSL Connection'),
         tooltip=_('If checked, SPICE protocol will allow SSL connections.'),
-        default=consts.TRUE_STR,
+        default=True,
         tab=types.ui.Tab.ADVANCED,
     )
 

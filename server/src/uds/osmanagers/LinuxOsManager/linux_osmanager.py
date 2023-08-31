@@ -93,7 +93,7 @@ class LinuxOsManager(osmanagers.OSManager):
             'If checked, UDS will try to logout user when the calendar for his current access expires'
         ),
         tab=types.ui.Tab.ADVANCED,
-        default=consts.TRUE_STR,
+        default=True,
     )
 
     def __setProcessUnusedMachines(self) -> None:

@@ -46,7 +46,7 @@ from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
 from uds.REST import RequestError
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.consts.images import DEFAULT_THUMB_BASE64
 
 from uds.REST.model import DetailHandler
 

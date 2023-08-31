@@ -123,7 +123,7 @@ class HTML5SSHTransport(transports.Transport):
     sshPort = gui.NumericField(
         length=40,
         label=_('SSH Server port'),
-        default='22',
+        default=22,
         order=33,
         tooltip=_('Port of the SSH server.'),
         required=True,
@@ -138,7 +138,7 @@ class HTML5SSHTransport(transports.Transport):
     serverKeepAlive = gui.NumericField(
         length=3,
         label=_('Server Keep Alive'),
-        default='30',
+        default=30,
         order=35,
         tooltip=_(
             'Time in seconds between keep alive messages sent to server. If not provided, no keep alive messages are sent.'
@@ -224,7 +224,7 @@ class HTML5SSHTransport(transports.Transport):
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''
-        if self.forceNewWindow.value == consts.TRUE_STR:
+        if self.forceNewWindow.value == 'true':
             onw = 'o_n_w={}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = 'o_s_w=yes'

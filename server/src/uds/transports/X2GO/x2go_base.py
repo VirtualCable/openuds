@@ -121,7 +121,7 @@ class BaseX2GOTransport(transports.Transport):
         order=13,
         label=_('Enable sound'),
         tooltip=_('If checked, sound will be available'),
-        default=consts.TRUE_STR,
+        default=True,
         tab=types.ui.Tab.PARAMETERS,
     )
 
@@ -129,7 +129,7 @@ class BaseX2GOTransport(transports.Transport):
         order=14,
         label=_('Redirect home folder'),
         tooltip=_('If checked, user home folder will be redirected. (On linux, also redirects /media)'),
-        default=consts.FALSE_STR,
+        default=False,
         tab=types.ui.Tab.PARAMETERS,
     )
 
@@ -193,7 +193,7 @@ class BaseX2GOTransport(transports.Transport):
         order=33,
         tooltip=_('Quality value used on some pack formats.'),
         length=1,
-        default='6',
+        default=6,
         minValue=1,
         maxValue=9,
         required=True,

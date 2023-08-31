@@ -47,14 +47,14 @@ class TSPICETransport(transports.Transport):
     typeType = 'TSSPICETransport'
 
     tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(default='30')
+    tunnelWait = gui.NumericField(default=30)
     verifyCertificate = gui.CheckBoxField()
     serverCertificate = gui.TextField()
     fullScreen = gui.CheckBoxField()
-    smartCardRedirect = gui.CheckBoxField(default=consts.FALSE_STR)
-    usbShare = gui.CheckBoxField(default=consts.FALSE_STR)
-    autoNewUsbShare = gui.CheckBoxField(default=consts.FALSE_STR)
-    SSLConnection = gui.CheckBoxField(default=consts.TRUE_STR)
+    smartCardRedirect = gui.CheckBoxField(default=False)
+    usbShare = gui.CheckBoxField(default=False)
+    autoNewUsbShare = gui.CheckBoxField(default=False)
+    SSLConnection = gui.CheckBoxField(default=True)
 
     overridedProxy = gui.TextField()
 

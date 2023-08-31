@@ -44,7 +44,7 @@ from uds.core.util import log
 from uds.core.util import permissions
 from uds.core.util.model import processUuid
 from uds.core.environment import Environment
-from uds.core.ui.images import DEFAULT_THUMB_BASE64
+from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util.state import State
 

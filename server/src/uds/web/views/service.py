@@ -38,7 +38,7 @@ from django.views.decorators.cache import cache_page, never_cache
 from uds.core.auths.auth import webLoginRequired, webPassword
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.request import ExtendedHttpRequest
-from uds.core.ui.images import DEFAULT_IMAGE
+from uds.core.consts.images import DEFAULT_IMAGE
 from uds.core.util.model import processUuid
 from uds.models import Transport, Image
 from uds.core.util import log

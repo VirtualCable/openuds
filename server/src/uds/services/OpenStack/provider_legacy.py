@@ -111,7 +111,7 @@ class ProviderLegacy(ServiceProvider):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        default='5000',
+        default=5000,
         order=2,
         tooltip=_(
             '5000 for older releases, 80/443 (ssl) for releases newer than OCATA'
@@ -161,7 +161,7 @@ class ProviderLegacy(ServiceProvider):
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -172,7 +172,7 @@ class ProviderLegacy(ServiceProvider):
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='5',
+        default=5,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -184,7 +184,7 @@ class ProviderLegacy(ServiceProvider):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=128,
         order=99,

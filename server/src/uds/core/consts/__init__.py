@@ -34,6 +34,8 @@ import typing
 from datetime import datetime
 import time
 
+from . import images
+
 # UDS Version related
 VERSION = '4.x.x-DEVEL'
 VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
@@ -86,3 +88,6 @@ BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] 
 }
 TRUE_STR: typing.Final[str] = 'true'
 FALSE_STR: typing.Final[str] = 'false'
+
+# Default length for Gui Text Fields
+DEFAULT_TEXT_LENGTH: typing.Final[int] = 64

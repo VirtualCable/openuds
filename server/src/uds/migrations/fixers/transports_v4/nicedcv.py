@@ -49,8 +49,8 @@ class NICEDCVTunnelTransport(transports.Transport):
 
     tunnelServer = gui.TextField()
 
-    tunnelWait = gui.NumericField(default='60')
-    verifyCertificate = gui.CheckBoxField(default=consts.TRUE_STR)
+    tunnelWait = gui.NumericField(default=60)
+    verifyCertificate = gui.CheckBoxField(default=True)
     useEmptyCreds = gui.CheckBoxField()
     fixedName = gui.TextField()
     fixedPassword = gui.PasswordField()

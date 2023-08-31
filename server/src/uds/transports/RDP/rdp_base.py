@@ -135,21 +135,21 @@ class BaseRDPTransport(transports.Transport):
         order=25,
         tooltip=_('If checked, copy-paste functions will be allowed'),
         tab=types.ui.Tab.PARAMETERS,
-        default=consts.TRUE_STR,
+        default=True,
     )
     allowAudio = gui.CheckBoxField(
         label=_('Enable sound'),
         order=26,
         tooltip=_('If checked, sound will be redirected.'),
         tab=types.ui.Tab.PARAMETERS,
-        default=consts.TRUE_STR,
+        default=True,
     )
     allowWebcam = gui.CheckBoxField(
         label=_('Enable webcam'),
         order=27,
         tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
         tab=types.ui.Tab.PARAMETERS,
-        default=consts.FALSE_STR,
+        default=False,
     )
     usbRedirection = gui.ChoiceField(
         label=_('USB redirection'),
@@ -173,7 +173,7 @@ class BaseRDPTransport(transports.Transport):
         order=29,
         tooltip=_('If checked, will enable Credentials Provider Support)'),
         tab=types.ui.Tab.PARAMETERS,
-        default=consts.TRUE_STR,
+        default=True,
     )
     rdpPort = gui.NumericField(
         order=30,
@@ -182,7 +182,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
         tab=types.ui.Tab.PARAMETERS,
         required=True,  #: Numeric fields have always a value, so this not really needed
-        default='3389',
+        default=3389,
     )
 
     screenSize = gui.ChoiceField(
@@ -247,7 +247,7 @@ class BaseRDPTransport(transports.Transport):
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
-        default=consts.TRUE_STR,
+        default=True,
         order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=types.ui.Tab.DISPLAY,
@@ -257,7 +257,7 @@ class BaseRDPTransport(transports.Transport):
         order=37,
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
         tab=types.ui.Tab.DISPLAY,
-        default=consts.TRUE_STR,
+        default=True,
     )
 
     multimedia = gui.CheckBoxField(
@@ -301,7 +301,7 @@ class BaseRDPTransport(transports.Transport):
         order=50,
         tooltip=_('If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'),
         tab='Mac OS X',
-        default=consts.FALSE_STR,
+        default=False,
     )
 
     customParametersMAC = gui.TextField(

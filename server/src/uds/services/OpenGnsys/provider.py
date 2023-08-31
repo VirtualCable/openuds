@@ -103,7 +103,7 @@ class OGProvider(ServiceProvider):
     port = gui.NumericField(
         length=5,
         label=_('Port'),
-        default='443',
+        default=443,
         order=2,
         tooltip=_(
             'OpenGnsys Port (default is 443, and only ssl connection is allowed)'
@@ -143,7 +143,7 @@ class OGProvider(ServiceProvider):
     maxPreparingServices = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
-        default='10',
+        default=10,
         minValue=1,
         maxValue=65536,
         order=50,
@@ -154,7 +154,7 @@ class OGProvider(ServiceProvider):
     maxRemovingServices = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
-        default='8',
+        default=8,
         minValue=1,
         maxValue=65536,
         order=51,
@@ -166,7 +166,7 @@ class OGProvider(ServiceProvider):
     timeout = gui.NumericField(
         length=3,
         label=_('Timeout'),
-        default='10',
+        default=10,
         order=90,
         tooltip=_('Timeout in seconds of connection to OpenGnsys'),
         required=True,

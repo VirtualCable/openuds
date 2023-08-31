@@ -60,7 +60,7 @@ class HTML5RDPTransport(transports.Transport):
     wallpaper = gui.CheckBoxField()
     desktopComp = gui.CheckBoxField()
     smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(default=consts.TRUE_STR)
+    enableAudio = gui.CheckBoxField(default=True)
     enableAudioInput = gui.CheckBoxField()
     enablePrinting = gui.CheckBoxField()
     enableFileSharing = gui.ChoiceField(default='false')
@@ -68,12 +68,12 @@ class HTML5RDPTransport(transports.Transport):
 
     serverLayout = gui.ChoiceField(default='-')
 
-    ticketValidity = gui.NumericField(default='60')
+    ticketValidity = gui.NumericField(default=60)
 
-    forceNewWindow = gui.ChoiceField(default=consts.FALSE_STR)
+    forceNewWindow = gui.ChoiceField(default='false')
     security = gui.ChoiceField(default='any')
 
-    rdpPort = gui.NumericField(default='3389')
+    rdpPort = gui.NumericField(default=3389)
 
     customGEPath = gui.TextField(default='/')
 
