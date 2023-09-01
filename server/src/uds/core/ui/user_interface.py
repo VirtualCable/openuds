@@ -576,7 +576,7 @@ class gui:
               # tooltip "Password of the user", that is required,
               # with max length of 32 chars and order = 2, and is
               # editable after creation.
-              passw = gui.PasswordField(lenth=32, label = _('Password'),
+              passw = gui.PasswordField(length=32, label = _('Password'),
                   order = 4, tooltip = _('Password of the user'),
                   required = True)
 

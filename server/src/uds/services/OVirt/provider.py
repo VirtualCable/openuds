@@ -125,7 +125,7 @@ class OVirtProvider(
         defvalue='admin@internal',
     )
     password = gui.PasswordField(
-        lenth=32,
+        length=32,
         label=_('Password'),
         order=4,
         tooltip=_('Password of the user of oVirt'),

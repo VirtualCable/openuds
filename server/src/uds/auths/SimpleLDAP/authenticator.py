@@ -86,7 +86,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tab=gui.CREDENTIALS_TAB,
     )
     password = gui.PasswordField(
-        lenth=32,
+        length=32,
         label=_('Password'),
         order=5,
         tooltip=_('Password of the ldap user'),
