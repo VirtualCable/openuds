@@ -37,7 +37,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import services, types
 from uds.core.transports import protocols
-from uds.core.util import tools, validators
+from uds.core.util import utils, validators
 from uds.core.ui import gui
 
 from .publication import LivePublication

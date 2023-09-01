@@ -135,7 +135,7 @@ class OpenStackProvider(ServiceProvider):
         default='admin',
     )
     password = gui.PasswordField(
-        lenth=32,
+        length=32,
         label=_('Password'),
         order=10,
         tooltip=_('Password of the user of OpenStack'),

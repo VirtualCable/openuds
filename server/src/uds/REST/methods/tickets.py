@@ -40,7 +40,7 @@ from uds.REST import RequestError
 from uds import models
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.model import processUuid
-from uds.core.util import tools
+from uds.core.util import utils
 
 logger = logging.getLogger(__name__)
 
@@ -177,7 +177,7 @@ class Tickets(Handler):
             # Some machines needs password, depending on configuration
 
             groupIds: typing.List[str] = []
-            for groupName in tools.as_list(self.getParam('groups')):
+            for groupName in utils.as_list(self.getParam('groups')):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid or '')
                 except Exception:

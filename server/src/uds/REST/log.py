@@ -93,7 +93,7 @@ def logOperation(
     doLog(
         None,
         level=level,
-        message=f'{handler.request.ip}[{username}]: [{handler.request.method}/{response_code}] {path}'[
+        message=f'{handler.request.ip} [{username}]: [{handler.request.method}/{response_code}] {path}'[
             :4096
         ],
         source=LogSource.REST,

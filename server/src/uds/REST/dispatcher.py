@@ -186,6 +186,8 @@ class Dispatcher(View):
             for k, val in handler.headers().items():
                 response[k] = val
 
+            # Log de operation on the audit log for admin
+            # Exceptiol will also be logged, but with ERROR level
             log.logOperation(handler, response.status_code, log.LogLevel.INFO)
             return response
         except RequestError as e:

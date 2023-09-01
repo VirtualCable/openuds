@@ -30,10 +30,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
+import calendar
 import codecs
 import copy
 import datetime
-import enum
 import inspect
 import logging
 import pickle  # nosec: safe usage
@@ -108,36 +108,16 @@ class gui:
         ],
     ]
 
-    # : For backward compatibility, will be removed in future versions
-    # For now, will log a warning if used
-    @deprecatedClassValue('types.ui.Tab.ADVANCED')
-    def ADVANCED_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.ADVANCED)
-
-    @deprecatedClassValue('types.ui.Tab.PARAMETERS')
-    def PARAMETERS_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.PARAMETERS)
-
-    @deprecatedClassValue('types.ui.Tab.CREDENTIALS')
-    def CREDENTIALS_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.CREDENTIALS)
-
-    @deprecatedClassValue('types.ui.Tab.TUNNEL')
-    def TUNNEL_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.TUNNEL)
-
-    @deprecatedClassValue('types.ui.Tab.DISPLAY')
-    def DISPLAY_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.DISPLAY)
-
-    @deprecatedClassValue('types.ui.Tab.MFA')
-    def MFA_TAB(cls) -> str:  # pylint: disable=no-self-argument
-        return str(types.ui.Tab.MFA)
-
-    # : Static Callbacks simple registry
-    callbacks: typing.Dict[
-        str,
-        typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]],
+    # Static Callbacks simple registry
+    # Note that this works fine, even on several servers
+    # cause the callbacks are registered on field creation, that is done
+    # on clases at server startup, so all servers will have the same
+    # callbacks registered
+    callbacks: typing.ClassVar[
+        typing.Dict[
+            str,
+            typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]],
+        ]
     ] = {}
 
     @staticmethod
@@ -285,10 +265,9 @@ class gui:
         if you use "value", you will get the default value if not set)
         """
 
-        _data: types.ui.FieldInfoType
+        _fieldsInfo: types.ui.FieldInfoType
 
-        def __init__(self, type: types.ui.FieldType, **kwargs) -> None:
-            label = kwargs.get('label') or ''
+        def __init__(self, label: str, type: types.ui.FieldType, **kwargs) -> None:
             # if defvalue or defaultValue or defValue in kwargs, emit a warning
             # with the new name (that is "default"), but use the old one
             for new_name, old_names in (
@@ -316,22 +295,22 @@ class gui:
             default = kwargs.get('default')
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
-            self._data = types.ui.FieldInfoType(
-                length=kwargs.get('length'),
-                required=kwargs.get('required') or False,
-                label=label,
-                default=default if not callable(default) else default,
-                readonly=kwargs.get('readonly') or False,
+            self._fieldsInfo = types.ui.FieldInfoType(
                 order=kwargs.get('order') or 0,
+                label=label,
                 tooltip=kwargs.get('tooltip') or '',
-                value=kwargs.get('value') or default,
                 type=type,
+                length=kwargs.get('length'),
+                required=kwargs.get('required'),
+                default=default if not callable(default) else default,
+                readonly=kwargs.get('readonly'),
+                value=kwargs.get('value') if kwargs.get('value') is not None else default,
                 tab=types.ui.Tab.fromStr(kwargs.get('tab')),
             )
 
         @property
         def type(self) -> 'types.ui.FieldType':
-            return types.ui.FieldType(self._data.type)
+            return types.ui.FieldType(self._fieldsInfo.type)
 
         @type.setter
         def type(self, type_: 'types.ui.FieldType') -> None:
@@ -341,13 +320,13 @@ class gui:
             Args:
                 type: Type to set (from constants of this class)
             """
-            self._data.type = type_
+            self._fieldsInfo.type = type_
 
-        def isType(self, type_: str) -> bool:
+        def isType(self, *type_: types.ui.FieldType) -> bool:
             """
             Returns true if this field is of specified type
             """
-            return self._data.type == type_
+            return self._fieldsInfo.type in type_
 
         def isSerializable(self) -> bool:
             return True
@@ -372,9 +351,9 @@ class gui:
             returns default value instead.
             This is mainly used for hidden fields, so we have correctly initialized
             """
-            if callable(self._data.value):
-                return self._data.value()
-            return self._data.value if self._data.value is not None else self.default
+            if callable(self._fieldsInfo.value):
+                return self._fieldsInfo.value()
+            return self._fieldsInfo.value if self._fieldsInfo.value is not None else self.default
 
         @value.setter
         def value(self, value: typing.Any) -> None:
@@ -385,9 +364,9 @@ class gui:
 
         def _setValue(self, value: typing.Any) -> None:
             """
-            So we can override value setting at descendants
+            So we can override value setter at descendants
             """
-            self._data.value = value
+            self._fieldsInfo.value = value
 
         def guiDescription(self) -> typing.Dict[str, typing.Any]:
             """
@@ -396,7 +375,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = typing.cast(dict, self._data.asDict())
+            data = typing.cast(dict, self._fieldsInfo.asDict())
             if 'value' in data:
                 del data['value']  # We don't want to send value on guiDescription
             data['label'] = _(data['label']) if data['label'] else ''
@@ -411,7 +390,7 @@ class gui:
             """
             Returns the default value for this field
             """
-            defValue = self._data.default
+            defValue = self._fieldsInfo.default
             return defValue() if callable(defValue) else defValue
 
         @default.setter
@@ -425,27 +404,29 @@ class gui:
             Args:
                 value: Default value (string)
             """
-            self._data.default = value
+            self._fieldsInfo.default = value
 
         @property
         def label(self) -> str:
-            return self._data.label
+            return self._fieldsInfo.label
 
-        def serialize(self) -> str:
-            """Serialize value to an string"""
-            return str(self.value)
-
-        def deserialize(self, value) -> None:
-            """Unserialize value from an string"""
-            self.value = value
+        @label.setter
+        def label(self, value: str) -> None:
+            self._fieldsInfo.label = value
 
         @property
         def required(self) -> bool:
-            return self._data.required
+            return self._fieldsInfo.required or False
+
+        @required.setter
+        def required(self, value: bool) -> None:
+            self._fieldsInfo.required = value
 
         def validate(self) -> bool:
             """
             Validates the value of this field.
+
+            Intended to be overriden by descendants
             """
             return True
 
@@ -453,7 +434,7 @@ class gui:
             return str(self.value)
 
         def __repr__(self):
-            return f'{self.__class__.__name__}: {repr(self._data)}'
+            return f'{self.__class__.__name__}: {repr(self._fieldsInfo)}'
 
     class TextField(InputField):
         """
@@ -496,8 +477,8 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[str, typing.Iterable[str]] = '',
-            value: str = '',
+            default: typing.Union[typing.Callable[[], str], str] = '',
+            value: typing.Optional[str] = None,
             pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
             multiline: int = 0,
         ) -> None:
@@ -513,7 +494,7 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.TEXT,
             )
-            self._data.multiline = min(max(int(multiline), 0), 8)
+            self._fieldsInfo.multiline = min(max(int(multiline), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address
@@ -529,7 +510,7 @@ class gui:
             # Note:
             #  Checks are performed on admin side, so they are not 100% reliable.
             if pattern:
-                self._data.pattern = (
+                self._fieldsInfo.pattern = (
                     pattern
                     if isinstance(pattern, types.ui.FieldPatternType)
                     else types.ui.FieldPatternType(pattern)
@@ -542,7 +523,7 @@ class gui:
             return super().validate() and self._validatePattern()
 
         def _validatePattern(self) -> bool:
-            pattern = self._data.pattern
+            pattern = self._fieldsInfo.pattern
             if isinstance(pattern, types.ui.FieldPatternType):
                 try:
                     if pattern == types.ui.FieldPatternType.IPV4:
@@ -594,8 +575,8 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[str, typing.Iterable[str]] = '',
-            value: str = '',
+            default: typing.Union[typing.Callable[[], str], str] = '',
+            value: typing.Optional[str] = None,
             choices: typing.Union[
                 typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
@@ -616,13 +597,13 @@ class gui:
             )
             # Update parent type
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
-            self._data.choices = gui.convertToChoices(choices or [])
+            self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
         def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
-            self._data.choices = gui.convertToChoices(values)
+            self._fieldsInfo.choices = gui.convertToChoices(values)
 
     class NumericField(InputField):
         """
@@ -655,10 +636,10 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: int = 0,
+            default: typing.Union[typing.Callable[[], int], int] = 0,
             value: int = 0,
-            minValue: int = 0,
-            maxValue: int = 987654321,
+            minValue: typing.Optional[int] = None,
+            maxValue: typing.Optional[int] = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -672,8 +653,8 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.NUMERIC,
             )
-            self._data.minValue = minValue
-            self._data.maxValue = maxValue
+            self._fieldsInfo.minValue = minValue
+            self._fieldsInfo.maxValue = maxValue
 
         def _setValue(self, value: typing.Any):
             # Internally stores an string
@@ -699,44 +680,68 @@ class gui:
         The values of parameres are inherited from :py:class:`InputField`
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=types.ui.FieldType.DATE)
+        def __init__(
+            self,
+            label: str = '',
+            length: typing.Optional[int] = None,
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Optional[typing.Union[typing.Callable[[], datetime.date], datetime.date]] = None,
+            value: typing.Optional[typing.Union[str, datetime.date]] = None,
+        ) -> None:
+            super().__init__(
+                label=label,
+                length=length,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.DATE,
+            )
 
-        def date(self, useMin: bool = True) -> datetime.date:
-            """
-            Returns the date this object represents
+        def as_date(self) -> datetime.date:
+            """Alias for "value" property"""
+            return typing.cast(datetime.date, self.value)
 
-            Args:
-                min (bool, optional): If true, in case of invalid date will return "min" date, else "max". Defaults to True.
-
-            Returns:
-                datetime.date: the date that this object holds, or "min" | "max" on error
-            """
-            try:
-                return datetime.datetime.strptime(self.value, '%Y-%m-%d').date()  # ISO Format
-            except Exception:
-                return datetime.date.min if useMin else datetime.date.max
-
-        def datetime(self, useMin: bool = True) -> datetime.datetime:
-            """
-            Returns the date this object represents
-
-            Args:
-                min (bool, optional): If true, in case of invalid date will return "min" date, else "max". Defaults to True.
-
-            Returns:
-                datetime.date: the date that this object holds, or "min" | "max" on error
-            """
-            try:
-                return datetime.datetime.strptime(self.value, '%Y-%m-%d')  # ISO Format
-            except Exception:
-                return datetime.datetime.min if useMin else datetime.datetime.max
+        def as_datetime(self) -> datetime.datetime:
+            """Alias for "value" property, but as datetime.datetime"""
+            # Convert date to datetime
+            return datetime.datetime.combine(
+                typing.cast(datetime.date, self.value), datetime.datetime.min.time()
+            )
 
         def stamp(self) -> int:
+            """Alias for "value" property, but as timestamp"""
             return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
 
+        # Override value setter, so we can convert from datetime.datetime or str to datetime.date
+        def _setValue(self, value: typing.Any) -> None:
+            if isinstance(value, datetime.datetime):
+                value = value.date()
+            elif isinstance(value, datetime.date):
+                value = value
+            elif isinstance(value, str):  # YYYY-MM-DD
+                value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+            else:
+                raise ValueError(f'Invalid value for date: {value}')
+
+            super()._setValue(value)
+
+        def guiDescription(self) -> typing.Dict[str, typing.Any]:
+            theGui = super().guiDescription()
+            # Convert if needed value and default to string (YYYY-MM-DD)
+            if 'default' in theGui:
+                theGui['default'] = str(theGui['default'])
+            return theGui
+
         def __str__(self):
-            return str(self.datetime())
+            return str(f'Datetime: {self.value}')
 
     class PasswordField(InputField):
         """
@@ -754,14 +759,36 @@ class gui:
               # tooltip "Password of the user", that is required,
               # with max length of 32 chars and order = 2, and is
               # editable after creation.
-              passw = gui.PasswordField(lenth=32, label = _('Password'),
+              passw = gui.PasswordField(length=32, label = _('Password'),
                   order = 4, tooltip = _('Password of the user'),
                   required = True)
 
         """
 
-        def __init__(self, **options):
-            super().__init__(**options, type=types.ui.FieldType.PASSWORD)
+        def __init__(
+            self,
+            label: str = '',
+            length: int = consts.DEFAULT_TEXT_LENGTH,
+            readonly: bool = False,
+            order: int = 0,
+            tooltip: str = '',
+            required: bool = False,
+            tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
+            default: typing.Union[typing.Callable[[], str], str] = '',
+            value: typing.Optional[str] = None,
+        ):
+            super().__init__(
+                label=label,
+                length=length,
+                readonly=readonly,
+                order=order,
+                tooltip=tooltip,
+                required=required,
+                tab=tab,
+                default=default,
+                value=value,
+                type=types.ui.FieldType.PASSWORD,
+            )
 
         def cleanStr(self):
             return str(self.value).strip()
@@ -807,7 +834,7 @@ class gui:
             self,
             label: str = '',  # label is optional on hidden fields
             order: int = 0,
-            default: typing.Any = None,
+            default: typing.Any = None,  # May be also callable
             value: typing.Any = None,
             serializable: bool = False,
         ) -> None:
@@ -850,7 +877,7 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: bool = False,
+            default: typing.Union[typing.Callable[[], bool], bool] = False,
             value: bool = False,
         ):
             super().__init__(
@@ -869,7 +896,7 @@ class gui:
             """
             Override to set value to True or False (bool)
             """
-            self._data.value = gui.toBool(value)
+            self._fieldsInfo.value = gui.toBool(value)
 
         def isTrue(self):
             """
@@ -995,7 +1022,7 @@ class gui:
             ] = None,
             fills: typing.Optional[types.ui.FillerType] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Optional[str] = None,
+            default: typing.Union[typing.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
@@ -1010,14 +1037,14 @@ class gui:
                 type=types.ui.FieldType.CHOICE,
             )
 
-            self._data.choices = gui.convertToChoices(choices or [])
+            self._fieldsInfo.choices = gui.convertToChoices(choices or [])
             # if has fillers, set them
             if fills:
                 if 'function' not in fills or 'callbackName' not in fills:
                     raise ValueError('Invalid fills parameters')
                 fnc = fills['function']
                 fills.pop('function')
-                self._data.fills = fills
+                self._fieldsInfo.fills = fills
                 # Store it only if not already present
                 if fills['callbackName'] not in gui.callbacks:
                     gui.callbacks[fills['callbackName']] = fnc
@@ -1026,7 +1053,7 @@ class gui:
             """
             Set the values for this choice field
             """
-            self._data.choices = gui.convertToChoices(values)
+            self._fieldsInfo.choices = gui.convertToChoices(values)
 
     class ImageChoiceField(InputField):
         def __init__(
@@ -1037,12 +1064,13 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             choices: typing.Union[
+                typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
                 typing.Dict[str, str],
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Optional[str] = None,
+            default: typing.Union[typing.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
         ):
             super().__init__(
@@ -1057,13 +1085,13 @@ class gui:
                 type=types.ui.FieldType.IMAGECHOICE,
             )
 
-            self._data.choices = gui.convertToChoices(choices or [])
+            self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
         def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
-            self._data.choices = gui.convertToChoices(values)
+            self._fieldsInfo.choices = gui.convertToChoices(values)
 
     class MultiChoiceField(InputField):
         """
@@ -1108,12 +1136,13 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             choices: typing.Union[
+                typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
                 typing.Dict[str, str],
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Optional[typing.Iterable[str]] = None,
+            default: typing.Union[typing.Callable[[], str], str, None] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ):
             super().__init__(
@@ -1128,14 +1157,14 @@ class gui:
                 value=value,
             )
 
-            self._data.rows = rows
-            self._data.choices = gui.convertToChoices(choices or [])
+            self._fieldsInfo.rows = rows
+            self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
+        def setChoices(self, choices: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
             """
             Set the values for this choice field
             """
-            self._data.choices = gui.convertToChoices(values)
+            self._fieldsInfo.choices = gui.convertToChoices(choices)
 
     class EditableListField(InputField):
         """
@@ -1172,7 +1201,7 @@ class gui:
             tooltip: str = '',
             required: bool = False,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Optional[typing.Iterable[str]] = None,
+            default: typing.Union[typing.Callable[[], str], str, None] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ) -> None:
             super().__init__(
@@ -1227,7 +1256,7 @@ class UserInterfaceType(type):
         for attrName, attr in namespace.items():
             if isinstance(attr, gui.InputField):
                 # Ensure we have a copy of the data, so we can modify it without affecting others
-                attr._data = copy.deepcopy(attr._data)
+                attr._fieldsInfo = copy.deepcopy(attr._fieldsInfo)
                 _gui[attrName] = attr
 
             newClassDict[attrName] = attr
@@ -1278,12 +1307,11 @@ class UserInterface(metaclass=UserInterfaceType):
             setattr(self, key, val)  # Reference to self._gui[key]
 
             # Check for "callable" fields and update them if needed
-            for field in ['choices', 'value', 'default']:  # ['value', 'default']:
-                logger.debug('Checking field %s', field)
-                attr = getattr(val._data, field, None)
+            for field in ['choices', 'default']:  # Update references to self for callable fields
+                attr = getattr(val._fieldsInfo, field, None)
                 if attr and callable(attr):
                     # val is an InputField derived instance, so it is a reference to self._gui[key]
-                    setattr(val._data, field, attr())
+                    setattr(val._fieldsInfo, field, attr())
 
         if values is not None:
             for k, v in self._gui.items():
@@ -1342,10 +1370,8 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         dic: gui.ValuesDictType = {}
         for k, v in self._gui.items():
-            if v.isType(types.ui.FieldType.EDITABLELIST):
+            if v.isType(types.ui.FieldType.EDITABLELIST, types.ui.FieldType.MULTICHOICE):
                 dic[k] = ensure.is_list(v.value)
-            elif v.isType(types.ui.FieldType.MULTICHOICE):
-                dic[k] = gui.convertToChoices(v.value)
             else:
                 dic[k] = v.value
         logger.debug('Values Dict: %s', dic)

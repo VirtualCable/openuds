@@ -121,9 +121,9 @@ class AssignedService(DetailHandler):
             if not item:
                 # First, fetch all properties for all assigned services on this pool
                 # We can cache them, because they are going to be readed anyway...
-                properties = {
+                properties: typing.Dict[str, typing.Any] = {
                     k: v
-                    for k,v in models.Properties.objects.filter(
+                    for k, v in models.Properties.objects.filter(
                         owner_type='userservice',
                         owner_id__in=parent.assignedUserServices().values_list('uuid', flat=True),
                     ).values_list('key', 'value')
@@ -135,7 +135,13 @@ class AssignedService(DetailHandler):
                     .prefetch_related('deployed_service', 'publication', 'user')
                 ]
             return AssignedService.itemToDict(
-                parent.assignedUserServices().get(processUuid(uuid=processUuid(item)))
+                parent.assignedUserServices().get(processUuid(uuid=processUuid(item))),
+                props={
+                    k: v
+                    for k, v in models.Properties.objects.filter(
+                        owner_type='userservice', owner_id=processUuid(item)
+                    ).values_list('key', 'value')
+                },
             )
         except Exception as e:
             logger.exception('getItems')

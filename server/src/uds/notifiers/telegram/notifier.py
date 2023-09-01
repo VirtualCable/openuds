@@ -41,7 +41,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import messaging, exceptions
 from uds.core.ui import gui
 from uds.core.util.model import getSqlDatetime
-from uds.core.util.tools import ignoreExceptions
+from uds.core.util.utils import ignoreExceptions
 
 from . import telegram
 

@@ -29,17 +29,19 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import io
 import csv
 import datetime
+import io
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core.ui import gui
-from uds.core.util.stats import events
 from uds.core.managers.stats import StatsManager
+from uds.core.ui import gui
+from uds.core.util import dateutils
+from uds.core.util.stats import events
 from uds.models import ServicePool
 
 from .base import StatsReport
@@ -64,7 +66,7 @@ class UsageSummaryByUsersPool(StatsReport):
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        default=datetime.date.min,
+        default=dateutils.start_of_month,
         required=True,
     )
 
@@ -72,7 +74,7 @@ class UsageSummaryByUsersPool(StatsReport):
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        default=datetime.date.max,
+        default=dateutils.tomorrow,
         required=True,
     )
 
@@ -147,8 +149,8 @@ class UsageSummaryByUsersPool(StatsReport):
             dct={
                 'data': items,
                 'pool': poolName,
-                'beginning': self.startDate.date(),
-                'ending': self.endDate.date(),
+                'beginning': self.startDate.as_date(),
+                'ending': self.endDate.as_date(),
             },
             header=gettext('Users usage list for {}').format(poolName),
             water=gettext('UDS Report of users in {}').format(poolName),

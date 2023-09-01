@@ -33,7 +33,7 @@ import datetime
 
 from uds.core.ui.user_interface import UserInterface, gui
 
-DEFAULTS: typing.Dict[str, typing.Union[str, int, typing.List[str]]] = {
+DEFAULTS: typing.Dict[str, typing.Union[str, int, typing.List[str], datetime.date]] = {
     'str_field': 'Default value text',
     'str_auto_field': 'Default value auto',
     'num_field': 50,
@@ -45,7 +45,7 @@ DEFAULTS: typing.Dict[str, typing.Union[str, int, typing.List[str]]] = {
     'checkbox_field': True,
     'image_choice_field': 'Default value image choice',
     'image_field': 'Default value image',
-    'date_field': '2009-12-09',
+    'date_field': datetime.date(2009, 12, 9),
     'info_field': 'Default value info',
 }
 
@@ -129,7 +129,7 @@ class TestingUserInterface(UserInterface):
         order=10,
         tooltip='This is a date field',
         required=True,
-        default=DEFAULTS['date_field'],
+        default=typing.cast(datetime.date, DEFAULTS['date_field']),
     )
     info_field = gui.InfoField(
         label='title',

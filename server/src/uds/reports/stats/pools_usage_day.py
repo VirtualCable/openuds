@@ -40,6 +40,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from uds.core.ui import gui
 from uds.core.util.stats import counters
 from uds.core.reports import graphs
+from uds.core.util import dateutils
 from uds.models import ServicePool
 
 
@@ -63,28 +64,23 @@ class CountersPoolAssigned(StatsReport):
         order=2,
         label=_('Date'),
         tooltip=_('Date for report'),
-        default='',
+        default=dateutils.start_of_month,
         required=True,
     )
 
-    pools = gui.MultiChoiceField(
-        order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True
-    )
+    pools = gui.MultiChoiceField(order=1, label=_('Pools'), tooltip=_('Pools for report'), required=True)
 
     def initialize(self, values):
         pass
 
     def initGui(self):
         logger.debug('Initializing gui')
-        vals = [
-            gui.choiceItem(v.uuid, v.name)
-            for v in ServicePool.objects.all().order_by('name')
-        ]
+        vals = [gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
         self.pools.setChoices(vals)
 
     def getData(self) -> typing.List[typing.Dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db
-        start = self.startDate.date()
+        start = self.startDate.as_date()
 
         data = []
 
@@ -101,7 +97,7 @@ class CountersPoolAssigned(StatsReport):
                 pool,
                 counters.CT_ASSIGNED,
                 since=start,
-                to=start+datetime.timedelta(days=1),
+                to=start + datetime.timedelta(days=1),
                 intervals=3600,
                 use_max=True,
                 all=False,
@@ -127,9 +123,7 @@ class CountersPoolAssigned(StatsReport):
             'x': X,
             'xtickFnc': '{:02d}'.format,  # Two digits
             'xlabel': _('Hour'),
-            'y': [
-                {'label': i['name'], 'data': [i['hours'][v] for v in X]} for i in items
-            ],
+            'y': [{'label': i['name'], 'data': [i['hours'][v] for v in X]} for i in items],
             'ylabel': 'Services',
         }
 
@@ -139,11 +133,8 @@ class CountersPoolAssigned(StatsReport):
             'uds/reports/stats/pools-usage-day.html',
             dct={
                 'data': items,
-                'pools': [
-                    v.name
-                    for v in ServicePool.objects.filter(uuid__in=self.pools.value)
-                ],
-                'beginning': self.startDate.date(),
+                'pools': [v.name for v in ServicePool.objects.filter(uuid__in=self.pools.value)],
+                'beginning': self.startDate.as_date(),
             },
             header=gettext('Services usage report for a day'),
             water=gettext('Service usage report'),

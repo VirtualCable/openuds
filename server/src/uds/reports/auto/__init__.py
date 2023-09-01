@@ -73,8 +73,7 @@ class ReportAutoType(UserInterfaceType):
             if attrs.get('dates') == 'single':
                 attrs['date_start'] = fields.single_date_field(order)
                 order += 1
-
-            if attrs.get('dates') == 'range':
+            elif attrs.get('dates') == 'range':
                 attrs['date_start'] = fields.start_date_field(order)
                 order += 1
                 attrs['date_end'] = fields.end_date_field(order)
@@ -178,7 +177,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         return d.strftime('%Y-%b-%d %H:%M:%S')
 
     def startingDate(self) -> datetime.date:
-        return self.adjustDate(self.date_start.date(), False)
+        return self.adjustDate(self.date_start.as_date(), False)
 
     def endingDate(self) -> datetime.date:
-        return self.adjustDate(self.date_end.date(), True)
+        return self.adjustDate(self.date_end.as_date(), True)

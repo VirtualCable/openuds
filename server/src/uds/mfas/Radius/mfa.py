@@ -125,6 +125,10 @@ class RadiusOTP(mfas.MFA):
         order=32,
         tooltip=_('Networks for Radius OTP authentication'),
         required=False,
+        choices=lambda: [
+            gui.choiceItem(v.uuid, v.name)  # type: ignore
+            for v in models.Network.objects.all().order_by('name')
+        ],
         tab=_('Config'),
     )
 
@@ -140,15 +144,6 @@ class RadiusOTP(mfas.MFA):
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
-
-    def initGui(self) -> None:
-        # Populate the networks list
-        self.networks.setChoices(
-            [
-                gui.choiceItem(v.uuid, v.name)  # type: ignore
-                for v in models.Network.objects.all().order_by('name')
-            ]
-        )
 
     def radiusClient(self) -> client.RadiusClient:
         """Return a new radius client ."""

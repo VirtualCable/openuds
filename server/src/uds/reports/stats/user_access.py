@@ -30,22 +30,21 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import csv
-import io
 import datetime
+import io
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
 import django.template.defaultfilters as filters
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core.ui import gui
-from uds.core.util.stats import events
-from uds.core.util import tools
 from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
+from uds.core.ui import gui
+from uds.core.util import dateutils, stats, utils
 
 from .base import StatsReport
-
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +64,7 @@ class StatsReportLogin(StatsReport):
         order=1,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        default=datetime.date.min,
+        default=dateutils.start_of_month,
         required=True,
     )
 
@@ -73,7 +72,7 @@ class StatsReportLogin(StatsReport):
         order=2,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        default=datetime.date.max,
+        default=dateutils.tomorrow,
         required=True,
     )
 
@@ -112,7 +111,9 @@ class StatsReportLogin(StatsReport):
         samplingIntervals: typing.List[typing.Tuple[int, int]] = []
         samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
-            samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))
+            samplingIntervals.append(
+                (int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds))
+            )
 
         data = []
         reportData = []
@@ -121,8 +122,8 @@ class StatsReportLogin(StatsReport):
             val = (
                 StatsManager.manager()
                 .getEvents(
-                    events.OT_AUTHENTICATOR,
-                    events.ET_LOGIN,
+                    stats.events.OT_AUTHENTICATOR,
+                    stats.events.ET_LOGIN,
                     since=interval[0],
                     to=interval[1],
                 )
@@ -131,9 +132,9 @@ class StatsReportLogin(StatsReport):
             data.append((key, val))
             reportData.append(
                 {
-                    'date': tools.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
+                    'date': utils.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
                     + ' - '
-                    + tools.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
+                    + utils.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
                     'users': val,
                 }
             )
@@ -148,7 +149,7 @@ class StatsReportLogin(StatsReport):
         dataHour = [0] * 24
         dataWeekHour = [[0] * 24 for _ in range(7)]
         for val in StatsManager.manager().getEvents(
-            events.OT_AUTHENTICATOR, events.ET_LOGIN, since=start, to=end
+            stats.events.OT_AUTHENTICATOR, stats.events.ET_LOGIN, since=start, to=end
         ):
             s = datetime.datetime.fromtimestamp(val.stamp)
             dataWeek[s.weekday()] += 1
@@ -170,9 +171,7 @@ class StatsReportLogin(StatsReport):
         d = {
             'title': _('Users Access (global)'),
             'x': X,
-            'xtickFnc': lambda l: filters.date(
-                datetime.datetime.fromtimestamp(l), xLabelFormat
-            ),
+            'xtickFnc': lambda l: filters.date(datetime.datetime.fromtimestamp(l), xLabelFormat),
             'xlabel': _('Date'),
             'y': [{'label': 'Users', 'data': [v[1] for v in data]}],
             'ylabel': 'Users',
@@ -245,8 +244,8 @@ class StatsReportLogin(StatsReport):
             'uds/reports/stats/user-access.html',
             dct={
                 'data': reportData,
-                'beginning': self.startDate.date(),
-                'ending': self.endDate.date(),
+                'beginning': self.startDate.as_date(),
+                'ending': self.endDate.as_date(),
                 'intervals': self.samplingPoints.num(),
             },
             header=gettext('Users access to UDS'),

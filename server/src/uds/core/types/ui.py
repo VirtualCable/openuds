@@ -119,14 +119,14 @@ ChoicesType = typing.Union[typing.Callable[[], typing.Iterable[ChoiceType]], typ
 
 @dataclasses.dataclass
 class FieldInfoType:
-    required: bool
     label: str
-    default: typing.Optional[typing.Union[typing.Callable[[], str], str]]
-    readonly: bool
-    order: int
     tooltip: str
-    value: typing.Union[typing.Callable[[], typing.Any], typing.Any]
+    order: int
     type: FieldType
+    readonly: typing.Optional[bool] = None
+    value: typing.Union[typing.Callable[[], typing.Any], typing.Any] = None
+    default: typing.Optional[typing.Union[typing.Callable[[], str], str]] = None
+    required: typing.Optional[bool] = None
     length: typing.Optional[int] = None
     multiline: typing.Optional[int] = None
     pattern: typing.Union[FieldPatternType, 're.Pattern'] = FieldPatternType.NONE

@@ -116,7 +116,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         default='root',
     )
     password = gui.PasswordField(
-        lenth=32,
+        length=32,
         label=_('Password'),
         order=3,
         tooltip=_('Password of the user of XenServer'),

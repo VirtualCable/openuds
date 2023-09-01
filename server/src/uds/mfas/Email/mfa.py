@@ -91,7 +91,7 @@ class EmailMFA(mfas.MFA):
         tab=_('SMTP Server'),
     )
     password = gui.PasswordField(
-        lenth=128,
+        length=128,
         label=_('Password'),
         order=10,
         tooltip=_('Password of the user with access to SMTP server'),

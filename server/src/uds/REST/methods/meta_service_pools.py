@@ -34,10 +34,12 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.models.meta_pool import MetaPool, MetaPoolMember
-from uds.models.service_pool import ServicePool
-from uds.models.user_service import UserService
-from uds.models.user import User
+from uds import models
+
+# from uds.models.meta_pool import MetaPool, MetaPoolMember
+# from uds.models.service_pool import ServicePool
+# from uds.models.user_service import UserService
+# from uds.models.user import User
 
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
@@ -54,7 +56,7 @@ class MetaServicesPool(DetailHandler):
     """
 
     @staticmethod
-    def as_dict(item: MetaPoolMember):
+    def as_dict(item: models.MetaPoolMember):
         return {
             'id': item.uuid,
             'pool_id': item.pool.uuid,
@@ -62,15 +64,11 @@ class MetaServicesPool(DetailHandler):
             'comments': item.pool.comments,
             'priority': item.priority,
             'enabled': item.enabled,
-            'user_services_count': item.pool.userServices.exclude(
-                state__in=State.INFO_STATES
-            ).count(),
-            'user_services_in_preparation': item.pool.userServices.filter(
-                state=State.PREPARING
-            ).count(),
+            'user_services_count': item.pool.userServices.exclude(state__in=State.INFO_STATES).count(),
+            'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def getItems(self, parent: MetaPool, item: typing.Optional[str]):
+    def getItems(self, parent: models.MetaPool, item: typing.Optional[str]):
         try:
             if not item:
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
@@ -80,21 +78,21 @@ class MetaServicesPool(DetailHandler):
             logger.exception('err: %s', item)
             raise self.invalidItemException()
 
-    def getTitle(self, parent: MetaPool) -> str:
+    def getTitle(self, parent: models.MetaPool) -> str:
         return _('Service pools')
 
-    def getFields(self, parent: MetaPool) -> typing.List[typing.Any]:
+    def getFields(self, parent: models.MetaPool) -> typing.List[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Service Pool name')}},
             {'enabled': {'title': _('Enabled')}},
         ]
 
-    def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
+    def saveItem(self, parent: models.MetaPool, item: typing.Optional[str]):
         # If already exists
         uuid = processUuid(item) if item else None
 
-        pool = ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
+        pool = models.ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
         enabled = self._params['enabled'] not in ('false', False, '0', 0)
         priority = int(self._params['priority'])
         priority = priority if priority >= 0 else 0
@@ -112,19 +110,15 @@ class MetaServicesPool(DetailHandler):
             parent,
             log.LogLevel.INFO,
             ("Added" if uuid is None else "Modified")
-            + " meta pool member {}/{}/{} by {}".format(
-                pool.name, priority, enabled, self._user.pretty_name
-            ),
+            + " meta pool member {}/{}/{} by {}".format(pool.name, priority, enabled, self._user.pretty_name),
             log.LogSource.ADMIN,
         )
 
         return self.success()
 
-    def deleteItem(self, parent: MetaPool, item: str):
+    def deleteItem(self, parent: models.MetaPool, item: str):
         member = parent.members.get(uuid=processUuid(self._args[0]))
-        logStr = "Removed meta pool member {} by {}".format(
-            member.pool.name, self._user.pretty_name
-        )
+        logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
 
         member.delete()
 
@@ -137,21 +131,23 @@ class MetaAssignedService(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(metaPool, item):
-        element = AssignedService.itemToDict(item, False)
+    def itemToDict(
+        metaPool: 'models.MetaPool',
+        item: 'models.UserService',
+        props: typing.Optional[typing.Dict[str, typing.Any]],
+    ) -> typing.Dict[str, typing.Any]:
+        element = AssignedService.itemToDict(item, props, False)
         element['pool_id'] = item.deployed_service.uuid
         element['pool_name'] = item.deployed_service.name
         return element
 
-    def _getAssignedService(
-        self, metaPool: MetaPool, userServiceId: str
-    ) -> UserService:
+    def _getAssignedService(self, metaPool: models.MetaPool, userServiceId: str) -> models.UserService:
         """
         Gets an assigned service and checks that it belongs to this metapool
         If not found, raises InvalidItemException
         """
         try:
-            return UserService.objects.filter(
+            return models.UserService.objects.filter(
                 uuid=processUuid(userServiceId),
                 cache_level=0,
                 deployed_service__in=[i.pool for i in metaPool.members.all()],
@@ -159,34 +155,53 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def getItems(self, parent: MetaPool, item: typing.Optional[str]):
-        def assignedUserServicesForPools():
+    def getItems(self, parent: models.MetaPool, item: typing.Optional[str]):
+        def assignedUserServicesForPools() -> (
+            typing.Generator[
+                typing.Tuple[models.UserService, typing.Optional[typing.Dict[str, typing.Any]]], None, None
+            ]
+        ):
             for m in parent.members.filter(enabled=True):
+                properties: typing.Dict[str, typing.Any] = {
+                    k: v
+                    for k, v in models.Properties.objects.filter(
+                        owner_type='userservice',
+                        owner_id__in=m.pool.assignedUserServices().values_list('uuid', flat=True),
+                    ).values_list('key', 'value')
+                }
                 for u in (
                     m.pool.assignedUserServices()
                     .filter(state__in=State.VALID_STATES)
                     .prefetch_related('deployed_service', 'publication')
                 ):
-                    yield u
+                    yield u, properties.get(u.uuid, {})
 
         try:
             if not item:  # All items
                 result = {}
-                for k in assignedUserServicesForPools():
-                    result[k.uuid] = MetaAssignedService.itemToDict(parent, k)
+
+                for k, props in assignedUserServicesForPools():
+                    result[k.uuid] = MetaAssignedService.itemToDict(parent, k, props)
                 return list(result.values())
 
             return MetaAssignedService.itemToDict(
-                parent, self._getAssignedService(parent, item)
+                parent,
+                self._getAssignedService(parent, item),
+                props={
+                    k: v
+                    for k, v in models.Properties.objects.filter(
+                        owner_type='userservice', owner_id=processUuid(item)
+                    ).values_list('key', 'value')
+                },
             )
         except Exception:
             logger.exception('getItems')
             raise self.invalidItemException()
 
-    def getTitle(self, parent: MetaPool) -> str:
+    def getTitle(self, parent: 'models.MetaPool') -> str:
         return _('Assigned services')
 
-    def getFields(self, parent: MetaPool) -> typing.List[typing.Any]:
+    def getFields(self, parent: 'models.MetaPool') -> typing.List[typing.Any]:
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'pool_name': {'title': _('Pool')}},
@@ -207,10 +222,10 @@ class MetaAssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getRowStyle(self, parent: MetaPool) -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'models.MetaPool') -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: MetaPool, item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'models.MetaPool', item: str) -> typing.List[typing.Any]:
         try:
             asignedService = self._getAssignedService(parent, item)
             logger.debug('Getting logs for %s', asignedService)
@@ -218,7 +233,7 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def deleteItem(self, parent: MetaPool, item: str) -> None:
+    def deleteItem(self, parent: 'models.MetaPool', item: str) -> None:
         userService = self._getAssignedService(parent, item)
 
         if userService.user:
@@ -228,9 +243,7 @@ class MetaAssignedService(DetailHandler):
                 self._user.pretty_name,
             )
         else:
-            logStr = 'Deleted cached service {} by {}'.format(
-                userService.friendly_name, self._user.pretty_name
-            )
+            logStr = 'Deleted cached service {} by {}'.format(userService.friendly_name, self._user.pretty_name)
 
         if userService.state in (State.USABLE, State.REMOVING):
             userService.remove()
@@ -244,13 +257,13 @@ class MetaAssignedService(DetailHandler):
         log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
-    def saveItem(self, parent: MetaPool, item: typing.Optional[str]):
+    def saveItem(self, parent: 'models.MetaPool', item: typing.Optional[str]):
         if item is None:
             raise self.invalidItemException()
 
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
         service = self._getAssignedService(parent, item)
-        user: User = User.objects.get(uuid=processUuid(fields['user_id']))
+        user = models.User.objects.get(uuid=processUuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
             service.user.pretty_name if service.user else 'unknown', user.pretty_name, self._user.pretty_name
@@ -265,9 +278,7 @@ class MetaAssignedService(DetailHandler):
             > 0
         ):
             raise self.invalidResponseException(
-                'There is already another user service assigned to {}'.format(
-                    user.pretty_name
-                )
+                'There is already another user service assigned to {}'.format(user.pretty_name)
             )
 
         service.user = user  # type: ignore

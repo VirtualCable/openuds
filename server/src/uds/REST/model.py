@@ -45,7 +45,6 @@ from django.utils.translation import gettext as _
 from uds.core import consts, types
 from uds.core import exceptions as udsExceptions
 from uds.core.module import Module
-from uds.core.ui import gui as uiGui
 from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
 from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
@@ -101,23 +100,16 @@ class BaseModelHandler(Handler):
                 choices = field['values']
             else:
                 choices = field.get('choices', [])
+            # Build gui with non empty values
+            guiDesc: typing.Dict[str, typing.Any] = {}
+            for fld in ('required', 'default', 'minValue', 'maxValue', 'label', 'length', 'multiline', 'tooltip', 'readonly', 'type', 'order', 'choices'):
+                if fld in field and field[fld] is not None:
+                    guiDesc[fld] = field[fld]
+                
             v = {
                 'name': field.get('name', ''),
                 'value': '',
-                'gui': {
-                    'required': field.get('required', False),
-                    'default': field.get('value', ''),
-                    'minValue': field.get('minValue', '987654321'),
-                    'maxValue': field.get('maxValue', '123456789'),
-                    'label': field.get('label', ''),
-                    'length': field.get('length', 128),
-                    'multiline': field.get('multiline', 0),
-                    'tooltip': field.get('tooltip', ''),
-                    'readonly': field.get('readonly', False),
-                    'type': str(field.get('type', types.ui.FieldType.TEXT)),
-                    'order': field.get('order', 0),
-                    'choices': choices,
-                },
+                'gui': guiDesc,
             }
             if field.get('tab', None):
                 v['gui']['tab'] = _(str(field['tab']))

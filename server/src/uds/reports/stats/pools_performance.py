@@ -30,21 +30,22 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import io
 import csv
 import datetime
+import io
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
-from django.db.models import Count
 import django.template.defaultfilters as filters
+from django.db.models import Count
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core.ui import gui
-from uds.core.util.stats import events
-from uds.core.util import tools
 from uds.core.managers.stats import StatsManager
 from uds.core.reports import graphs
+from uds.core.ui import gui
+from uds.core.util import dateutils, utils
+from uds.core.util.stats import events
 from uds.models import ServicePool
 
 from .base import StatsReport
@@ -71,7 +72,7 @@ class PoolPerformanceReport(StatsReport):
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        default=datetime.date.min,
+        default=dateutils.start_of_month,
         required=True,
     )
 
@@ -79,7 +80,7 @@ class PoolPerformanceReport(StatsReport):
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        default=datetime.date.max,
+        default=dateutils.tomorrow,
         required=True,
     )
 
@@ -160,9 +161,9 @@ class PoolPerformanceReport(StatsReport):
                 reportData.append(
                     {
                         'name': p[1],
-                        'date': tools.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
+                        'date': utils.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
                         + ' - '
-                        + tools.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
+                        + utils.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
                         'users': len(q),
                         'accesses': accesses,
                     }
@@ -234,8 +235,8 @@ class PoolPerformanceReport(StatsReport):
             dct={
                 'data': reportData,
                 'pools': [i[1] for i in self.getPools()],
-                'beginning': self.startDate.date(),
-                'ending': self.endDate.date(),
+                'beginning': self.startDate.as_date(),
+                'ending': self.endDate.as_date(),
                 'intervals': self.samplingPoints.num(),
             },
             header=gettext('UDS Pools Performance Report'),

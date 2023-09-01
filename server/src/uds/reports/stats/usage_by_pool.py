@@ -29,21 +29,21 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import io
 import csv
 import datetime
+import io
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core.ui import gui
-from uds.core.util.stats import events
 from uds.core.managers.stats import StatsManager
+from uds.core.ui import gui
+from uds.core.util import dateutils, stats
 from uds.models import ServicePool
 
 from .base import StatsReport
-
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class UsageByPool(StatsReport):
         order=2,
         label=_('Starting date'),
         tooltip=_('starting date for report'),
-        default=datetime.date.min,
+        default=dateutils.start_of_month,
         required=True,
     )
 
@@ -71,7 +71,7 @@ class UsageByPool(StatsReport):
         order=3,
         label=_('Finish date'),
         tooltip=_('finish date for report'),
-        default=datetime.date.max,
+        default=dateutils.end_of_month,
         required=True,
     )
 
@@ -101,8 +101,8 @@ class UsageByPool(StatsReport):
             items = (
                 StatsManager.manager()
                 .getEvents(
-                    events.OT_SERVICEPOOL,
-                    (events.ET_LOGIN, events.ET_LOGOUT),
+                    stats.events.OT_SERVICEPOOL,
+                    (stats.events.ET_LOGIN, stats.events.ET_LOGOUT),
                     owner_id=pool.id,
                     since=start,
                     to=end,
@@ -115,7 +115,7 @@ class UsageByPool(StatsReport):
                 # if '\\' in i.fld1:
                 #    continue
 
-                if i.event_type == events.ET_LOGIN:
+                if i.event_type == stats.events.ET_LOGIN:
                     logins[i.fld4] = i.stamp
                 else:
                     if i.fld4 in logins:

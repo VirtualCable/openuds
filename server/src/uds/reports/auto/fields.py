@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 from uds.core import types
-
+from uds.core.util import dateutils
 from uds.core.ui import gui
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ def start_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Starting date'),
         tooltip=_('Starting date for report'),
-        default=lambda: datetime.date.today().replace(day=1, month=1),
+        default=dateutils.start_of_month,
         required=True,
     )
 
@@ -57,7 +57,7 @@ def single_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Date'),
         tooltip=_('Date for report'),
-        default=datetime.date.today,
+        default=dateutils.today,
         required=True,
     )
 
@@ -67,7 +67,7 @@ def end_date_field(order: int) -> gui.DateField:
         order=order,
         label=_('Ending date'),
         tooltip=_('ending date for report'),
-        default=lambda: datetime.date.today() + datetime.timedelta(days=1),
+        default=dateutils.tomorrow,
         required=True,
     )
 

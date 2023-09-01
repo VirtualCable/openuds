@@ -93,7 +93,7 @@ class RegexLdap(auths.Authenticator):
         tab=types.ui.Tab.CREDENTIALS,
     )
     password = gui.PasswordField(
-        lenth=32,
+        length=32,
         label=_('Password'),
         order=5,
         tooltip=_('Password of the ldap user'),

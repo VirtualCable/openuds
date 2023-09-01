@@ -33,7 +33,7 @@ import logging
 
 from django.db import models
 
-from uds.core.util.tools import secondsToTimeString
+from uds.core.util.utils import secondsToTimeString
 
 from .uuid_model import UUIDModel
 from .account import Account

@@ -46,7 +46,7 @@ from ldap import (
 from django.utils.translation import gettext as _
 from django.conf import settings
 
-from uds.core.util import tools
+from uds.core.util import utils
 
 logger = logging.getLogger(__name__)
 
@@ -207,9 +207,9 @@ def getAsDict(
 
             # Convert back attritutes to test_type ONLY on python2
             dct = (
-                tools.CaseInsensitiveDict((k, ['']) for k in attrList)
+                utils.CaseInsensitiveDict((k, ['']) for k in attrList)
                 if attrList is not None
-                else tools.CaseInsensitiveDict()
+                else utils.CaseInsensitiveDict()
             )
 
             # Convert back result fields to str
