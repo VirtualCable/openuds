@@ -75,7 +75,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core import services,  consts
+from uds.core import services, consts
 from uds.core.ui import gui
 
 from . import _migrator
@@ -93,28 +93,28 @@ class RDSProvider(services.ServiceProvider):
     typeType = 'RDSProvider'
 
     # Gui
-    ipList = gui.EditableListField()
-    serverCheck = gui.CheckBoxField(default=False)
+    ipList = gui.EditableListField(label='')
+    serverCheck = gui.CheckBoxField(label='', default=False)
 
     # User mapping, classical
-    useUserMapping = gui.CheckBoxField(default=False)
-    userMap = gui.EditableListField()
-    userPass = gui.PasswordField()
+    useUserMapping = gui.CheckBoxField(label='', default=False)
+    userMap = gui.EditableListField(label='')
+    userPass = gui.PasswordField(label='')
 
     # User creating, new
-    useUserCreation = gui.CheckBoxField(default=False)
-    adHost = gui.TextField()
-    adPort = gui.NumericField(default=636)
-    adUsersDn = gui.TextField()
-    adUsername = gui.TextField()
-    adPassword = gui.PasswordField()
-    adUserPrefix = gui.TextField(default='UDS_')
-    adDomain = gui.TextField()
-    adGroup = gui.TextField()
-    adCertificate = gui.TextField()
+    useUserCreation = gui.CheckBoxField(label='', default=False)
+    adHost = gui.TextField(label='')
+    adPort = gui.NumericField(label='', default=636)
+    adUsersDn = gui.TextField(label='')
+    adUsername = gui.TextField(label='')
+    adPassword = gui.PasswordField(label='')
+    adUserPrefix = gui.TextField(label='', default='UDS_')
+    adDomain = gui.TextField(label='')
+    adGroup = gui.TextField(label='')
+    adCertificate = gui.TextField(label='')
 
     # This value is the new server group that contains the "ipList"
-    serverGroup = gui.ChoiceField()
+    serverGroup = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

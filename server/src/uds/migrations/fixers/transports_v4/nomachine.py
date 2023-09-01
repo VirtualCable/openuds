@@ -47,18 +47,18 @@ class TSNoMachineTransport(transports.Transport):
 
     typeType = 'TSNoMachineTransport'
 
-    tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(default=30)
-    verifyCertificate = gui.CheckBoxField(default=False)
-    useEmptyCreds = gui.CheckBoxField()
-    fixedName = gui.TextField()
-    fixedPassword = gui.PasswordField()
-    listenPort = gui.NumericField(default=4000)
-    windowSize = gui.ChoiceField(default='normal')
+    tunnelServer = gui.TextField(label='')
+    tunnelWait = gui.NumericField(label='', default=30)
+    verifyCertificate = gui.CheckBoxField(label='', default=False)
+    useEmptyCreds = gui.CheckBoxField(label='')
+    fixedName = gui.TextField(label='')
+    fixedPassword = gui.PasswordField(label='')
+    listenPort = gui.NumericField(label='', default=4000)
+    windowSize = gui.ChoiceField(label='', default='normal')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

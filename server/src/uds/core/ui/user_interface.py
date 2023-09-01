@@ -103,8 +103,6 @@ class gui:
             str,
             bool,
             typing.List[str],
-            typing.List[types.ui.ChoiceType],
-            typing.Callable[[], typing.List[types.ui.ChoiceType]],
         ],
     ]
 
@@ -470,12 +468,12 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             length: int = consts.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
@@ -568,12 +566,12 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             length: int = consts.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
@@ -629,15 +627,15 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             length: typing.Optional[int] = None,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], int], int] = 0,
-            value: int = 0,
+            value: typing.Optional[int] = None,
             minValue: typing.Optional[int] = None,
             maxValue: typing.Optional[int] = None,
         ) -> None:
@@ -682,12 +680,12 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             length: typing.Optional[int] = None,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Optional[typing.Union[typing.Callable[[], datetime.date], datetime.date]] = None,
             value: typing.Optional[typing.Union[str, datetime.date]] = None,
@@ -767,12 +765,12 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             length: int = consts.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
@@ -871,14 +869,14 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], bool], bool] = False,
-            value: bool = False,
+            value: typing.Optional[bool] = None,
         ):
             super().__init__(
                 label=label,
@@ -1009,11 +1007,11 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             choices: typing.Union[
                 typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
@@ -1058,11 +1056,11 @@ class gui:
     class ImageChoiceField(InputField):
         def __init__(
             self,
-            label: str = '',
+            label: str,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             choices: typing.Union[
                 typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
@@ -1129,12 +1127,12 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             readonly: bool = False,
             rows: typing.Optional[int] = None,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             choices: typing.Union[
                 typing.Callable[[], typing.List['types.ui.ChoiceType']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
@@ -1142,7 +1140,9 @@ class gui:
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str, None] = None,
+            default: typing.Union[
+                typing.Callable[[], str], typing.Callable[[], typing.List[str]], typing.List[str], str, None
+            ] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ):
             super().__init__(
@@ -1195,13 +1195,15 @@ class gui:
 
         def __init__(
             self,
-            label: str = '',
+            label: str,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
-            required: bool = False,
+            required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str, None] = None,
+            default: typing.Union[
+                typing.Callable[[], str], typing.Callable[[], typing.List[str]], typing.List[str], str, None
+            ] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ) -> None:
             super().__init__(

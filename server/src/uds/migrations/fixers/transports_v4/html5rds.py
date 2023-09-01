@@ -48,40 +48,40 @@ class HTML5RDSTransport(transports.Transport):
     typeName = 'RDS'
     typeType = 'HTML5RDSTransport'
 
-    guacamoleServer = gui.TextField(default='https://')
-    useGlyptodonTunnel = gui.CheckBoxField()
-    useEmptyCreds = gui.CheckBoxField()
-    withoutDomain = gui.CheckBoxField()
-    fixedDomain = gui.TextField()
-    wallpaper = gui.CheckBoxField()
-    desktopComp = gui.CheckBoxField()
-    smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(default=True)
-    enableAudioInput = gui.CheckBoxField()
-    enablePrinting = gui.CheckBoxField()
-    enableFileSharing = gui.ChoiceField(default='false')
-    enableClipboard = gui.ChoiceField(default='enabled')
-    serverLayout = gui.ChoiceField(default='-')
-    ticketValidity = gui.NumericField(default=60)
+    guacamoleServer = gui.TextField(label='',default='https://')
+    useGlyptodonTunnel = gui.CheckBoxField(label='')
+    useEmptyCreds = gui.CheckBoxField(label='')
+    withoutDomain = gui.CheckBoxField(label='')
+    fixedDomain = gui.TextField(label='')
+    wallpaper = gui.CheckBoxField(label='')
+    desktopComp = gui.CheckBoxField(label='')
+    smooth = gui.CheckBoxField(label='')
+    enableAudio = gui.CheckBoxField(label='',default=True)
+    enableAudioInput = gui.CheckBoxField(label='')
+    enablePrinting = gui.CheckBoxField(label='')
+    enableFileSharing = gui.ChoiceField(label='',default='false')
+    enableClipboard = gui.ChoiceField(label='',default='enabled')
+    serverLayout = gui.ChoiceField(label='',default='-')
+    ticketValidity = gui.NumericField(label='',default=60)
 
-    forceNewWindow = gui.ChoiceField(default='false')
-    security = gui.ChoiceField(default='any')
-    rdpPort = gui.NumericField(default=3389)
+    forceNewWindow = gui.ChoiceField(label='',default='false')
+    security = gui.ChoiceField(label='',default='any')
+    rdpPort = gui.NumericField(label='',default=3389)
 
-    customGEPath = gui.TextField(default='/')
+    customGEPath = gui.TextField(label='',default='/')
 
     # Load balancing info
-    loadBalancingInfo = gui.TextField(default='')
+    loadBalancingInfo = gui.TextField(label='',default='')
 
-    gatewayHostname = gui.TextField(default='')
-    gatewayPort = gui.NumericField(default=443)
-    gatewayUsername = gui.TextField(default='')
-    gatewayPassword = gui.PasswordField(default='')
-    gatewayDomain = gui.TextField(default='')
+    gatewayHostname = gui.TextField(label='',default='')
+    gatewayPort = gui.NumericField(label='',default=443)
+    gatewayUsername = gui.TextField(label='',default='')
+    gatewayPassword = gui.PasswordField(label='',default='')
+    gatewayDomain = gui.TextField(label='',default='')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

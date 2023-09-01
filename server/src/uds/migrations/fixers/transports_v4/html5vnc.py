@@ -47,21 +47,21 @@ class HTML5VNCTransport(transports.Transport):
 
     typeName = 'HTML5 VNC Experimental'
     typeType = 'HTML5VNCTransport'
-    guacamoleServer = gui.TextField(default='https://')
+    guacamoleServer = gui.TextField(label='',default='https://')
 
-    username = gui.TextField()
-    password = gui.PasswordField()
-    vncPort = gui.NumericField(default=5900)
-    colorDepth = gui.ChoiceField(default='-')
-    swapRedBlue = gui.CheckBoxField()
-    cursor = gui.CheckBoxField()
-    readOnly = gui.CheckBoxField()
-    ticketValidity = gui.NumericField(default=60)
-    forceNewWindow = gui.ChoiceField(default='false')
+    username = gui.TextField(label='')
+    password = gui.PasswordField(label='')
+    vncPort = gui.NumericField(label='',default=5900)
+    colorDepth = gui.ChoiceField(label='',default='-')
+    swapRedBlue = gui.CheckBoxField(label='')
+    cursor = gui.CheckBoxField(label='')
+    readOnly = gui.CheckBoxField(label='')
+    ticketValidity = gui.NumericField(label='',default=60)
+    forceNewWindow = gui.ChoiceField(label='',default='false')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

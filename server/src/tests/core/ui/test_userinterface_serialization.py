@@ -44,6 +44,7 @@ from ...fixtures.user_interface import TestingUserInterface, DEFAULTS
 
 logger = logging.getLogger(__name__)
 
+
 def oldSerializeForm(ui) -> bytes:
     """
     All values stored at form fields are serialized and returned as a single
@@ -52,12 +53,16 @@ def oldSerializeForm(ui) -> bytes:
 
     The returned string is zipped and then converted to base 64
 
-    Note: Hidens are not serialized, they are ignored
+    Note:
+      Hiddens are not serialized, they are ignored
+      DateFields has been adapted to convert "new" storage format (as datetime.date)
+      to old one (as string)
+
 
     """
     import pickle  # nosec: Testing
     import codecs
-
+    import datetime
 
     from uds.core.managers.crypto import CryptoManager
     from uds.core.ui.user_interface import UDSK
@@ -69,7 +74,6 @@ def oldSerializeForm(ui) -> bytes:
 
     FIELD_SEPARATOR: typing.Final[bytes] = b'\002'
     NAME_VALUE_SEPARATOR: typing.Final[bytes] = b'\003'
-
 
     # import inspect
     # logger.debug('Caller is : {}'.format(inspect.stack()))
@@ -84,19 +88,17 @@ def oldSerializeForm(ui) -> bytes:
         if v.isType(types.ui.FieldType.INFO):
             # logger.debug('Field {} is a dummy field and will not be serialized')
             continue
-        if v.isType(types.ui.FieldType.EDITABLELIST) or v.isType(
-            types.ui.FieldType.MULTICHOICE
-        ):
+        if v.isType(types.ui.FieldType.EDITABLELIST) or v.isType(types.ui.FieldType.MULTICHOICE):
             # logger.debug('Serializing value {0}'.format(v.value))
             val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
         elif v.isType(types.ui.FieldType.PASSWORD):
-            val = PASSWORD_FIELD + CryptoManager().AESCrypt(
-                v.value.encode('utf8'), UDSK, True
-            )
+            val = PASSWORD_FIELD + CryptoManager().AESCrypt(v.value.encode('utf8'), UDSK, True)
         elif v.isType(types.ui.FieldType.NUMERIC):
             val = str(int(v.num())).encode('utf8')
         elif v.isType(types.ui.FieldType.CHECKBOX):
             val = v.isTrue()
+        elif v.isType(types.ui.FieldType.DATE):
+            val = typing.cast(datetime.date, v.value).isoformat().encode('utf8')
         else:
             val = v.value.encode('utf8')
         if val is True:
@@ -115,17 +117,11 @@ class UserinterfaceTest(UDSTestCase):
     def ensure_values_fine(self, ui: TestingUserInterface) -> None:
         # Ensure that all values are fine for the ui fields
         self.assertEqual(ui.str_field.value, DEFAULTS['str_field'], 'str_field')
-        self.assertEqual(
-            ui.str_auto_field.value, DEFAULTS['str_auto_field'], 'str_auto_field'
-        )
+        self.assertEqual(ui.str_auto_field.value, DEFAULTS['str_auto_field'], 'str_auto_field')
         self.assertEqual(ui.num_field.num(), DEFAULTS['num_field'], 'num_field')
-        self.assertEqual(
-            ui.password_field.value, DEFAULTS['password_field'], 'password_field'
-        )
+        self.assertEqual(ui.password_field.value, DEFAULTS['password_field'], 'password_field')
         # Hidden field is not stored, so it's not checked
-        self.assertEqual(
-            ui.choice_field.value, DEFAULTS['choice_field'], 'choice_field'
-        )
+        self.assertEqual(ui.choice_field.value, DEFAULTS['choice_field'], 'choice_field')
         self.assertEqual(
             ui.multi_choice_field.value,
             DEFAULTS['multi_choice_field'],
@@ -136,9 +132,7 @@ class UserinterfaceTest(UDSTestCase):
             DEFAULTS['editable_list_field'],
             'editable_list_field',
         )
-        self.assertEqual(
-            ui.checkbox_field.value, DEFAULTS['checkbox_field'], 'checkbox_field'
-        )
+        self.assertEqual(ui.checkbox_field.value, DEFAULTS['checkbox_field'], 'checkbox_field')
         self.assertEqual(
             ui.image_choice_field.value,
             DEFAULTS['image_choice_field'],
@@ -153,7 +147,7 @@ class UserinterfaceTest(UDSTestCase):
         data = oldSerializeForm(ui)
         ui2 = TestingUserInterface()
         ui2.oldDeserializeForm(data)
-        
+
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
 

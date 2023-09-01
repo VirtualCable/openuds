@@ -47,22 +47,22 @@ class NICEDCVTunnelTransport(transports.Transport):
 
     typeType = 'NICEDCVTunnelTransport'
 
-    tunnelServer = gui.TextField()
+    tunnelServer = gui.TextField(label='')
 
-    tunnelWait = gui.NumericField(default=60)
-    verifyCertificate = gui.CheckBoxField(default=True)
-    useEmptyCreds = gui.CheckBoxField()
-    fixedName = gui.TextField()
-    fixedPassword = gui.PasswordField()
+    tunnelWait = gui.NumericField(label='',default=60)
+    verifyCertificate = gui.CheckBoxField(label='',default=True)
+    useEmptyCreds = gui.CheckBoxField(label='')
+    fixedName = gui.TextField(label='')
+    fixedPassword = gui.PasswordField(label='')
 
-    fullScreen = gui.CheckBoxField()
+    fullScreen = gui.CheckBoxField(label='')
 
-    multimon = gui.CheckBoxField()
-    port = gui.NumericField(default=8443)
+    multimon = gui.CheckBoxField(label='')
+    port = gui.NumericField(label='',default=8443)
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

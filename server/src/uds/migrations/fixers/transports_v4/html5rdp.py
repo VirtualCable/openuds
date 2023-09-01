@@ -48,38 +48,38 @@ class HTML5RDPTransport(transports.Transport):
     typeName = 'HTML5 RDP'  # Not important here, just for migrations
     typeType = 'HTML5RDPTransport'
 
-    guacamoleServer = gui.TextField()
+    guacamoleServer = gui.TextField(label='')
 
-    useGlyptodonTunnel = gui.CheckBoxField()
+    useGlyptodonTunnel = gui.CheckBoxField(label='')
 
-    useEmptyCreds = gui.CheckBoxField()
-    fixedName = gui.TextField()
-    fixedPassword = gui.PasswordField()
-    withoutDomain = gui.CheckBoxField()
-    fixedDomain = gui.TextField()
-    wallpaper = gui.CheckBoxField()
-    desktopComp = gui.CheckBoxField()
-    smooth = gui.CheckBoxField()
-    enableAudio = gui.CheckBoxField(default=True)
-    enableAudioInput = gui.CheckBoxField()
-    enablePrinting = gui.CheckBoxField()
-    enableFileSharing = gui.ChoiceField(default='false')
-    enableClipboard = gui.ChoiceField(default='enabled')
+    useEmptyCreds = gui.CheckBoxField(label='')
+    fixedName = gui.TextField(label='')
+    fixedPassword = gui.PasswordField(label='')
+    withoutDomain = gui.CheckBoxField(label='')
+    fixedDomain = gui.TextField(label='')
+    wallpaper = gui.CheckBoxField(label='')
+    desktopComp = gui.CheckBoxField(label='')
+    smooth = gui.CheckBoxField(label='')
+    enableAudio = gui.CheckBoxField(label='', default=True)
+    enableAudioInput = gui.CheckBoxField(label='')
+    enablePrinting = gui.CheckBoxField(label='')
+    enableFileSharing = gui.ChoiceField(label='', default='false')
+    enableClipboard = gui.ChoiceField(label='', default='enabled')
 
-    serverLayout = gui.ChoiceField(default='-')
+    serverLayout = gui.ChoiceField(label='', default='-')
 
-    ticketValidity = gui.NumericField(default=60)
+    ticketValidity = gui.NumericField(label='', default=60)
 
-    forceNewWindow = gui.ChoiceField(default='false')
-    security = gui.ChoiceField(default='any')
+    forceNewWindow = gui.ChoiceField(label='', default='false')
+    security = gui.ChoiceField(label='', default='any')
 
-    rdpPort = gui.NumericField(default=3389)
+    rdpPort = gui.NumericField(label='', default=3389)
 
-    customGEPath = gui.TextField(default='/')
+    customGEPath = gui.TextField(label='', default='/')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

@@ -46,21 +46,21 @@ class TSPICETransport(transports.Transport):
 
     typeType = 'TSSPICETransport'
 
-    tunnelServer = gui.TextField()
-    tunnelWait = gui.NumericField(default=30)
-    verifyCertificate = gui.CheckBoxField()
-    serverCertificate = gui.TextField()
-    fullScreen = gui.CheckBoxField()
-    smartCardRedirect = gui.CheckBoxField(default=False)
-    usbShare = gui.CheckBoxField(default=False)
-    autoNewUsbShare = gui.CheckBoxField(default=False)
-    SSLConnection = gui.CheckBoxField(default=True)
+    tunnelServer = gui.TextField(label='')
+    tunnelWait = gui.NumericField(label='', default=30)
+    verifyCertificate = gui.CheckBoxField(label='')
+    serverCertificate = gui.TextField(label='')
+    fullScreen = gui.CheckBoxField(label='')
+    smartCardRedirect = gui.CheckBoxField(label='', default=False)
+    usbShare = gui.CheckBoxField(label='', default=False)
+    autoNewUsbShare = gui.CheckBoxField(label='', default=False)
+    SSLConnection = gui.CheckBoxField(label='', default=True)
 
-    overridedProxy = gui.TextField()
+    overridedProxy = gui.TextField(label='')
 
     # This value is the new "tunnel server"
     # Old guacamoleserver value will be stored also on database, but will be ignored
-    tunnel = gui.ChoiceField()
+    tunnel = gui.ChoiceField(label='')
 
 
 def migrate(apps, schema_editor) -> None:

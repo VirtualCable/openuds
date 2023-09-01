@@ -327,14 +327,7 @@ class BaseModelHandler(Handler):
         if isinstance(item, ManagedObjectModel):
             i = item.getInstance()
             i.initGui()  # Defaults & stuff
-            value: typing.Any
-            for key, value in i.valuesDict().items():
-                if isinstance(value, str):
-                    value = {"true": True, "false": False}.get(
-                        value.lower(), value
-                    )  # Translate "true" & "false" to True & False (booleans)
-                logger.debug('%s = %s', key, value)
-                res[key] = value
+            res.update(i.valuesDict())
         return res
 
     # Exceptions

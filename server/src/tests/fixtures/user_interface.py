@@ -33,7 +33,7 @@ import datetime
 
 from uds.core.ui.user_interface import UserInterface, gui
 
-DEFAULTS: typing.Dict[str, typing.Union[str, int, typing.List[str], datetime.date]] = {
+DEFAULTS: typing.Dict[str, typing.Any] = {
     'str_field': 'Default value text',
     'str_auto_field': 'Default value auto',
     'num_field': 50,
@@ -55,7 +55,7 @@ class TestingUserInterface(UserInterface):
         order=0,
         tooltip='This is a text field',
         required=True,
-        value=typing.cast(str, DEFAULTS['str_field']),
+        default=typing.cast(str, DEFAULTS['str_field']),
     )
     str_auto_field = gui.TextAutocompleteField(
         label='Text Autocomplete Field',
@@ -67,7 +67,7 @@ class TestingUserInterface(UserInterface):
     )
     num_field = gui.NumericField(
         label='Numeric Field',
-        order=1,
+        order=2,
         tooltip='This is a numeric field',
         required=True,
         default=typing.cast(int, DEFAULTS['num_field']),
@@ -76,49 +76,48 @@ class TestingUserInterface(UserInterface):
     )
     password_field = gui.PasswordField(
         label='Password Field',
-        order=2,
+        order=3,
         tooltip='This is a password field',
         required=True,
-        default=DEFAULTS['password_field'],
+        default=typing.cast(str, DEFAULTS['password_field']),
     )
     hidden_field = gui.HiddenField(
         label='Hidden Field',
-        order=3,
+        order=4,
         default=DEFAULTS['hidden_field'],
     )
     choice_field = gui.ChoiceField(
         label='Choice Field',
-        order=4,
+        order=5,
         tooltip='This is a choice field',
-        required=True,
-        value=typing.cast(str, DEFAULTS['choice_field']),
+        required=False,
+        default=typing.cast(str, DEFAULTS['choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     multi_choice_field = gui.MultiChoiceField(
         label='Multi Choice Field',
-        order=5,
+        order=6,
         tooltip='This is a multi choice field',
-        required=True,
         default=typing.cast(typing.List[str], DEFAULTS['multi_choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     editable_list_field = gui.EditableListField(
         label='Editable List Field',
-        order=6,
+        order=7,
         tooltip='This is a editable list field',
-        required=True,
+        required=False,
         default=typing.cast(typing.List[str], DEFAULTS['editable_list_field']),
     )
     checkbox_field = gui.CheckBoxField(
         label='Checkbox Field',
-        order=7,
+        order=8,
         tooltip='This is a checkbox field',
         required=True,
         default=typing.cast(bool, DEFAULTS['checkbox_field']),
     )
     image_choice_field = gui.ImageChoiceField(
         label='Image Choice Field',
-        order=8,
+        order=9,
         tooltip='This is a image choice field',
         required=True,
         default=typing.cast(str, DEFAULTS['image_choice_field']),
@@ -132,7 +131,7 @@ class TestingUserInterface(UserInterface):
         default=typing.cast(datetime.date, DEFAULTS['date_field']),
     )
     info_field = gui.InfoField(
-        label='title',
+        label='Info Field',  # Invalid value for real use, but for testing is ok
         default=typing.cast(str, DEFAULTS['info_field']),
     )
 
