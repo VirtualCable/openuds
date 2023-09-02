@@ -123,6 +123,8 @@ class ServiceProvider(module.Module):
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
     ignoreLimits: typing.Any = None
 
+    _dbObj: typing.Optional['models.Provider'] = None
+
     @classmethod
     def getProvidedServices(cls) -> typing.List[typing.Type['Service']]:
         """
@@ -177,12 +179,15 @@ class ServiceProvider(module.Module):
         Default implementation does nothing
         """
 
-    def getDbObject(self) -> 'models.Provider':
+    def dbObj(self) -> 'models.Provider':
         """
         Returns the database object for this provider
         """
         from uds.models.provider import Provider
-        return Provider.objects.get(uuid=self._uuid)
+
+        if self._dbObj is None:
+            self._dbObj = Provider.objects.get(uuid=self._uuid)
+        return self._dbObj
 
     def getMaxPreparingServices(self) -> int:
         val = self.maxPreparingServices

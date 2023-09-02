@@ -114,11 +114,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
-            return auths.Authenticator(environment.Environment.getTempEnv(), values, dbObj=self)
+            return auths.Authenticator(environment.Environment.getTempEnv(), values, uuid=self.uuid)
 
         auType = self.getType()
         env = self.getEnvironment()
-        auth = auType(env, values, dbObj=self)
+        auth = auType(env, values, uuid=self.uuid)
         self.deserialize(auth, values)
         return auth
 

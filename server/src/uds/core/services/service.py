@@ -195,7 +195,9 @@ class Service(Module):
     # : For example, VDI, VAPP, ...
     servicesTypeProvided: types.services.ServiceType = types.services.ServiceType.VDI
 
-    _provider: 'services.ServiceProvider'
+    _provider: 'services.ServiceProvider'  # Parent instance (not database object)
+
+    _dbObj: typing.Optional['models.Service'] = None  # Database object cache
 
     def __init__(
         self,
@@ -228,6 +230,16 @@ class Service(Module):
 
         Default implementation does nothing
         """
+
+    def dbObj(self) -> 'models.Service':
+        """
+        Returns the database object associated with this service
+        """
+        from uds.models import Service
+
+        if self._dbObj is None:
+            self._dbObj = Service.objects.get(uuid=self.getUuid())
+        return self._dbObj
 
     def parent(self) -> 'services.ServiceProvider':
         """
@@ -314,10 +326,10 @@ class Service(Module):
             assignableId: Id of the assignable element
             user: User to assign to
             userDeployment: User deployment to assign
-            
+
         Note:
             Base implementation does nothing, to be overriden if needed
-            
+
         Returns:
             str: The state of the service after the assignation
 

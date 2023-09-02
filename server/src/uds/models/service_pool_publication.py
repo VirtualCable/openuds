@@ -154,7 +154,6 @@ class ServicePoolPublication(UUIDModel):
             revision=self.revision,
             dsName=self.deployed_service.name,
             uuid=self.uuid,
-            dbPublication=self,
         )
         # Only invokes deserialization if data has something. '' is nothing
         if self.data:

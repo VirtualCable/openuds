@@ -40,7 +40,7 @@ if typing.TYPE_CHECKING:
     from uds.core import services
     from uds.core import osmanagers
     from uds.core.environment import Environment
-    from uds.models import ServicePoolPublication
+    from uds import models
 
 
 class Publication(Environmentable, Serializable):
@@ -85,9 +85,10 @@ class Publication(Environmentable, Serializable):
     _osmanager: typing.Optional['osmanagers.OSManager']
     _service: 'services.Service'
     _revision: int
-    _dbPublication: typing.Optional['ServicePoolPublication']
     _dsName: str
     _uuid: str
+
+    _dbObj: typing.Optional['models.ServicePoolPublication']
 
     def __init__(self, environment: 'Environment', **kwargs):
         """
@@ -99,11 +100,8 @@ class Publication(Environmentable, Serializable):
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
         self._osManager = kwargs.get('osManager', None)
-        self._service = kwargs[
-            'service'
-        ]  # Raises an exception if service is not included
+        self._service = kwargs['service']  # Raises an exception if service is not included
         self._revision = kwargs.get('revision', -1)
-        self._dbPublication = kwargs.get('dbPublication')
         self._dsName = kwargs.get('dsName', 'Unknown')
         self._uuid = kwargs.get('uuid', '')
 
@@ -117,6 +115,16 @@ class Publication(Environmentable, Serializable):
         This will get invoked when all initialization stuff is done, so
         you can here access service, osManager, ...
         """
+
+    def dbObj(self) -> 'models.ServicePoolPublication':
+        """
+        Returns the database object associated with this publication
+        """
+        from uds.models import ServicePoolPublication
+
+        if self._dbObj is None:
+            self._dbObj = ServicePoolPublication.objects.get(uuid=self._uuid)
+        return self._dbObj
 
     def service(self) -> 'services.Service':
         """
@@ -193,9 +201,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'publish method for class {self.__class__.__name__} not provided! '
-        )
+        raise NotImplementedError(f'publish method for class {self.__class__.__name__} not provided! ')
 
     @abc.abstractmethod
     def checkState(self) -> str:
@@ -222,9 +228,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'checkState method for class {self.__class__.__name__} not provided!!!'
-        )
+        raise NotImplementedError(f'checkState method for class {self.__class__.__name__} not provided!!!')
 
     def finish(self) -> None:
         """
@@ -269,9 +273,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'destroy method for class {self.__class__.__name__} not provided!'
-        )
+        raise NotImplementedError(f'destroy method for class {self.__class__.__name__} not provided!')
 
     @abc.abstractmethod
     def cancel(self) -> str:
@@ -292,9 +294,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(
-            f'cancel method for class {self.__class__.__name__} not provided!'
-        )
+        raise NotImplementedError(f'cancel method for class {self.__class__.__name__} not provided!')
 
     def __str__(self):
         """

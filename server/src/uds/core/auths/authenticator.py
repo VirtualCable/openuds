@@ -201,13 +201,13 @@ class Authenticator(Module):
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    _dbObj: 'models.Authenticator'
+    _dbObj: typing.Optional['models.Authenticator']  # Cached dbAuth object
 
     def __init__(
         self,
         environment: 'Environment',
         values: typing.Optional[typing.Dict[str, str]],
-        dbObj: typing.Optional['models.Authenticator'] = None,
+        uuid: typing.Optional[str] = None,
     ):
         """
         Instantiathes the authenticator.
@@ -215,12 +215,7 @@ class Authenticator(Module):
         @param environment: Environment for the authenticator
         @param values: Values passed to element
         """
-        from uds.models import (  # pylint: disable=import-outside-toplevel
-            Authenticator as AuthenticatorModel,
-        )
-
-        self._dbObj = dbObj or AuthenticatorModel()  # Fake dbAuth if not provided
-        super().__init__(environment, values)
+        super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -243,6 +238,10 @@ class Authenticator(Module):
         """
         Helper method to access the Authenticator database object
         """
+        from uds.models import Authenticator  # pylint: disable=import-outside-toplevel
+
+        if self._dbObj is None:
+            self._dbObj = Authenticator.objects.get(uuid=self._uuid)
         return self._dbObj
 
     def recreateGroups(self, user: 'models.User') -> None:
@@ -258,12 +257,10 @@ class Authenticator(Module):
         )
 
         if self.isExternalSource:
-            groupsManager = GroupsManager(self._dbObj)
+            groupsManager = GroupsManager(self.dbObj())
             self.getGroups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
-            typing.cast(typing.Any, user.groups).set(
-                [g.dbGroup() for g in groupsManager.getValidGroups()]
-            )
+            typing.cast(typing.Any, user.groups).set([g.dbGroup() for g in groupsManager.getValidGroups()])
 
     def callbackUrl(self) -> str:
         """
@@ -409,7 +406,7 @@ class Authenticator(Module):
             Authenticator as dbAuth,
         )
 
-        return self._dbObj.state != dbAuth.DISABLED and self._dbObj.isValidForIp(
+        return self.dbObj().state != dbAuth.DISABLED and self.dbObj().isValidForIp(
             typing.cast('ExtendedHttpRequest', request).ip
         )
 
