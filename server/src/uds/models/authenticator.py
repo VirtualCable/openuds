@@ -114,11 +114,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
-            return auths.Authenticator(environment.Environment.getTempEnv(), values, dbAuth=self)
+            return auths.Authenticator(environment.Environment.getTempEnv(), values, dbObj=self)
 
         auType = self.getType()
         env = self.getEnvironment()
-        auth = auType(env, values, dbAuth=self)
+        auth = auType(env, values, dbObj=self)
         self.deserialize(auth, values)
         return auth
 
@@ -182,19 +182,27 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         return user
 
-    def isValidUser(self, username: str, falseIfNotExists: bool = True) -> bool:
+    def isValidUser(self, username: str, returnValueIfNot: bool = True) -> bool:
         """
         Checks the validity of an user
 
         Args:
             username: Name of the user to check
 
-            falseIfNotExists: Defaults to True. It is used so we can return a value defined by caller.
+            returnValueIfNot: Defaults to True. It is used so we can return a value defined by caller.
 
-            One example of falseIfNotExists using as True is for checking that the user is active or it doesn't exists.
+        Note:
+            One example of returnValueIfNot using as True is for checking that the user is active or it doesn't exists.
+            So:
+              * The users exists, but is inactive -> False
+              * The user doesn't exists -> True
+              * The user exists and is active -> True
+
+            The use of this is because we create users on the fly, and we need to check if they exists and are active
+
 
         Returns:
-            True if it exists and is active, falseIfNotExists (param) if it doesn't exists
+            True if it exists and is active, returnValueIfNot (param) if it doesn't exists
 
         This is done so we can check non existing or non blocked users (state != Active, or do not exists)
         """
@@ -202,7 +210,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             usr: 'User' = self.users.get(name=username)
             return State.isActive(usr.state)
         except Exception:
-            return falseIfNotExists
+            return returnValueIfNot
 
     def isValidForIp(self, ipStr: str) -> bool:
         """
@@ -228,7 +236,9 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return True
         ip, version = net.ipToLong(ipStr)
         # Allow
-        exists = self.networks.filter(start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version).exists()
+        exists = self.networks.filter(
+            start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
+        ).exists()
         if self.net_filtering == Authenticator.ALLOW:
             return exists
         # Deny, must not be in any network

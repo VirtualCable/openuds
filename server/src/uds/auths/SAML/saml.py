@@ -610,7 +610,7 @@ class SAMLAuthenticator(auths.Authenticator):
         return info, content_type  # 'application/samlmetadata+xml')
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbAuthenticator().uuid + username  # type: ignore
+        return 'mfa_' + self.dbObj().uuid + username  # type: ignore
 
     def mfaClean(self, username: str):
         self.storage.remove(self.mfaStorageKey(username))

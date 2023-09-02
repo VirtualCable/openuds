@@ -131,7 +131,7 @@ class IPAuth(auths.Authenticator):
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
         self.getGroups(username, groupsManager)
-        if groupsManager.hasValidGroups() and self.dbAuthenticator().isValidUser(
+        if groupsManager.hasValidGroups() and self.dbObj().isValidUser(
             username, True
         ):
             return auths.SUCCESS_AUTH
@@ -148,10 +148,10 @@ class IPAuth(auths.Authenticator):
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
         ip = self.getIp(request)
-        gm = auths.GroupsManager(self.dbAuthenticator())
+        gm = auths.GroupsManager(self.dbObj())
         self.getGroups(ip, gm)
 
-        if gm.hasValidGroups() and self.dbAuthenticator().isValidUser(ip, True):
+        if gm.hasValidGroups() and self.dbObj().isValidUser(ip, True):
             return ('function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
                     '    document.getElementById(element).value = value;\n'
                     '}}\n'

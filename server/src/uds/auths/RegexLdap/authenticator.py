@@ -352,7 +352,7 @@ class RegexLdap(auths.Authenticator):
         return res
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbAuthenticator().uuid + username
+        return 'mfa_' + self.dbObj().uuid + username
 
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
@@ -575,7 +575,7 @@ class RegexLdap(auths.Authenticator):
 
             if usr is None:
                 authLogLogin(
-                    request, self.dbAuthenticator(), username, 'Invalid user'
+                    request, self.dbObj(), username, 'Invalid user'
                 )
                 return auths.FAILED_AUTH
 
@@ -586,7 +586,7 @@ class RegexLdap(auths.Authenticator):
                 )  # Will raise an exception if it can't connect
             except Exception:
                 authLogLogin(
-                    request, self.dbAuthenticator(), username, 'Invalid password'
+                    request, self.dbObj(), username, 'Invalid password'
                 )
                 return auths.FAILED_AUTH
 

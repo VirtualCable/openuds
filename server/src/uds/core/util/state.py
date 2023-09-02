@@ -30,6 +30,8 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+
 from django.utils.translation import gettext_noop as _, gettext_lazy
 
 
@@ -96,67 +98,67 @@ class State:
     PUBLISH_STATES = [LAUNCHING, PREPARING]
 
     @staticmethod
-    def isActive(state):
+    def isActive(state: str) -> bool:
         return state == State.ACTIVE
 
     @staticmethod
-    def isInactive(state):
+    def isInactive(state: str) -> bool:
         return state == State.INACTIVE
 
     @staticmethod
-    def isBlocked(state):
+    def isBlocked(state: str) -> bool:
         return state == State.BLOCKED
 
     @staticmethod
-    def isPreparing(state):
+    def isPreparing(state: str) -> bool:
         return state == State.PREPARING
 
     @staticmethod
-    def isUsable(state):
+    def isUsable(state : str) -> bool:
         return state == State.USABLE
 
     @staticmethod
-    def isRemovable(state):
+    def isRemovable(state: str) -> bool:
         return state == State.REMOVABLE
 
     @staticmethod
-    def isRemoving(state):
+    def isRemoving(state: str) -> bool:
         return state == State.REMOVING
 
     @staticmethod
-    def isRemoved(state):
+    def isRemoved(state: str) -> bool:
         return state == State.REMOVED
 
     @staticmethod
-    def isCanceling(state):
+    def isCanceling(state: str) -> bool:
         return state == State.CANCELING
 
     @staticmethod
-    def isCanceled(state):
+    def isCanceled(state: str) -> bool:
         return state == State.CANCELED
 
     @staticmethod
-    def isErrored(state):
+    def isErrored(state: str) -> bool:
         return state == State.ERROR
 
     @staticmethod
-    def isFinished(state):
+    def isFinished(state: str) -> bool:
         return state == State.FINISHED
 
     @staticmethod
-    def isRuning(state):
+    def isRuning(state: str) -> bool:
         return state == State.RUNNING
 
     @staticmethod
-    def isForExecute(state):
+    def isForExecute(state: str) -> bool:
         return state == State.FOR_EXECUTE
 
     @staticmethod
-    def toString(state):
+    def toString(state: str) -> str:
         return State.string.get(state, '')
 
     @staticmethod
-    def dictionary():
+    def dictionary() -> typing.Dict[str, str]:
         """
         Returns a dictionary with current active locale translation of States to States String
         """

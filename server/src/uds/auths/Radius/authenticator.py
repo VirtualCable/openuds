@@ -135,7 +135,7 @@ class RadiusAuth(auths.Authenticator):
         )
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + str(self.dbAuthenticator().uuid) + username
+        return 'mfa_' + str(self.dbObj().uuid) + username
 
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
@@ -160,7 +160,7 @@ class RadiusAuth(auths.Authenticator):
         except Exception:
             authLogLogin(
                 request,
-                self.dbAuthenticator(),
+                self.dbObj(),
                 username,
                 'Access denied by Raiuds',
             )

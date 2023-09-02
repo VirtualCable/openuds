@@ -108,7 +108,7 @@ class InternalDBAuth(auths.Authenticator):
 
     def mfaIdentifier(self, username: str) -> str:
         try:
-            self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
+            self.dbObj().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
         except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''
@@ -122,7 +122,7 @@ class InternalDBAuth(auths.Authenticator):
                 + username
             )
             # Duplicate basic user into username.
-            auth = self.dbAuthenticator()
+            auth = self.dbObj()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
             # This way also, we protect from using forged "ip" + "username", because those will belong in fact to no group
             # and access will be denied
@@ -150,11 +150,11 @@ class InternalDBAuth(auths.Authenticator):
     ) -> auths.AuthenticationResult:
         username = username.lower()
         logger.debug('Username: %s, Password: %s', username, credentials)
-        dbAuth = self.dbAuthenticator()
+        dbAuth = self.dbObj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
-            authLogLogin(request, self.dbAuthenticator(), username, 'Invalid user')
+            authLogLogin(request, self.dbObj(), username, 'Invalid user')
             return auths.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -165,11 +165,11 @@ class InternalDBAuth(auths.Authenticator):
             groupsManager.validate([g.name for g in user.groups.all()])
             return auths.SUCCESS_AUTH
 
-        authLogLogin(request, self.dbAuthenticator(), username, 'Invalid password')
+        authLogLogin(request, self.dbObj(), username, 'Invalid password')
         return auths.FAILED_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
-        dbAuth = self.dbAuthenticator()
+        dbAuth = self.dbObj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
@@ -180,7 +180,7 @@ class InternalDBAuth(auths.Authenticator):
     def getRealName(self, username: str) -> str:
         # Return the real name of the user, if it is set
         try:
-            user = self.dbAuthenticator().users.get(name=username.lower(), state=State.ACTIVE)
+            user = self.dbObj().users.get(name=username.lower(), state=State.ACTIVE)
             return user.real_name or username
         except Exception:
             return super().getRealName(username)

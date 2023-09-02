@@ -201,13 +201,13 @@ class Authenticator(Module):
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    _dbAuth: 'models.Authenticator'
+    _dbObj: 'models.Authenticator'
 
     def __init__(
         self,
         environment: 'Environment',
         values: typing.Optional[typing.Dict[str, str]],
-        dbAuth: typing.Optional['models.Authenticator'] = None,
+        dbObj: typing.Optional['models.Authenticator'] = None,
     ):
         """
         Instantiathes the authenticator.
@@ -219,7 +219,7 @@ class Authenticator(Module):
             Authenticator as AuthenticatorModel,
         )
 
-        self._dbAuth = dbAuth or AuthenticatorModel()  # Fake dbAuth if not provided
+        self._dbObj = dbObj or AuthenticatorModel()  # Fake dbAuth if not provided
         super().__init__(environment, values)
         self.initialize(values)
 
@@ -239,11 +239,11 @@ class Authenticator(Module):
         Default implementation does nothing
         """
 
-    def dbAuthenticator(self) -> 'models.Authenticator':
+    def dbObj(self) -> 'models.Authenticator':
         """
         Helper method to access the Authenticator database object
         """
-        return self._dbAuth
+        return self._dbObj
 
     def recreateGroups(self, user: 'models.User') -> None:
         """
@@ -258,7 +258,7 @@ class Authenticator(Module):
         )
 
         if self.isExternalSource:
-            groupsManager = GroupsManager(self._dbAuth)
+            groupsManager = GroupsManager(self._dbObj)
             self.getGroups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
             typing.cast(typing.Any, user.groups).set(
@@ -274,7 +274,7 @@ class Authenticator(Module):
         """
         from .auth import authCallbackUrl  # pylint: disable=import-outside-toplevel
 
-        return authCallbackUrl(self.dbAuthenticator())
+        return authCallbackUrl(self.dbObj())
 
     def infoUrl(self) -> str:
         """
@@ -282,7 +282,7 @@ class Authenticator(Module):
         """
         from .auth import authInfoUrl  # pylint: disable=import-outside-toplevel
 
-        return authInfoUrl(self.dbAuthenticator())
+        return authInfoUrl(self.dbObj())
 
     @classmethod
     def isCustom(cls) -> bool:
@@ -409,7 +409,7 @@ class Authenticator(Module):
             Authenticator as dbAuth,
         )
 
-        return self._dbAuth.state != dbAuth.DISABLED and self._dbAuth.isValidForIp(
+        return self._dbObj.state != dbAuth.DISABLED and self._dbObj.isValidForIp(
             typing.cast('ExtendedHttpRequest', request).ip
         )
 

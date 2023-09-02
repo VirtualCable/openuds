@@ -70,7 +70,7 @@ class User:
         returns it.
         """
         if self._grpsManager is None:
-            self._grpsManager = GroupsManager(self._manager.dbAuthenticator())
+            self._grpsManager = GroupsManager(self._manager.dbObj())
         return self._grpsManager
 
     def groups(self) -> typing.List[Group]:

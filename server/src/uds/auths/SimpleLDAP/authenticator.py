@@ -319,7 +319,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._verifySsl = gui.toBool(verifySsl)
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + str(self.dbAuthenticator().uuid) + username
+        return 'mfa_' + str(self.dbObj().uuid) + username
 
     def mfaIdentifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
@@ -453,7 +453,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             user = self.__getUser(username)
 
             if user is None:
-                authLogLogin(request, self.dbAuthenticator(), username, 'Invalid user')
+                authLogLogin(request, self.dbObj(), username, 'Invalid user')
                 return auths.FAILED_AUTH
 
             try:
@@ -463,7 +463,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 )  # Will raise an exception if it can't connect
             except Exception:
                 authLogLogin(
-                    request, self.dbAuthenticator(), username, 'Invalid password'
+                    request, self.dbObj(), username, 'Invalid password'
                 )
                 return auths.FAILED_AUTH
 
