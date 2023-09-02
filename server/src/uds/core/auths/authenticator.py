@@ -201,7 +201,7 @@ class Authenticator(Module):
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    _dbObj: typing.Optional['models.Authenticator']  # Cached dbAuth object
+    _dbObj: typing.Optional['models.Authenticator'] = None # Cached dbAuth object
 
     def __init__(
         self,

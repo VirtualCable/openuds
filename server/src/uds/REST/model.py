@@ -99,16 +99,46 @@ class BaseModelHandler(Handler):
                 )
                 choices = field['values']
             else:
-                choices = field.get('choices', [])
+                choices = field.get('choices', None)
             # Build gui with non empty values
             guiDesc: typing.Dict[str, typing.Any] = {}
-            for fld in ('required', 'default', 'minValue', 'maxValue', 'label', 'length', 'multiline', 'tooltip', 'readonly', 'type', 'order', 'choices'):
+            # First, mandatory fields
+            for fld in ('name', 'type'):
+                if fld not in field:
+                    caller = inspect.stack()[1]
+                    logger.error(
+                        'Field %s does not have mandatory field %s. Called from %s:%s',
+                        field.get('name', ''),
+                        fld,
+                        caller.filename,
+                        caller.lineno,
+                    )
+                    raise exceptions.RequestError(f'Field {fld} is mandatory on {field.get("name", "")} field.')
+
+            if choices:
+                guiDesc['choices'] = choices
+            # "fillable" fields (optional and mandatory on gui)
+            for fld in (
+                'type',
+                'default',
+                'required',
+                'minValue',
+                'maxValue',
+                'length',
+                'multiline',
+                'tooltip',
+                'readonly',
+            ):
                 if fld in field and field[fld] is not None:
                     guiDesc[fld] = field[fld]
-                
+
+            # Order and label optional, but must be present on gui
+            guiDesc['order'] = field.get('order', 0)
+            guiDesc['label'] = field.get('label', field['name'])
+
             v = {
                 'name': field.get('name', ''),
-                'value': '',
+                'value': field.get('value', ''),
                 'gui': guiDesc,
             }
             if field.get('tab', None):
@@ -166,6 +196,7 @@ class BaseModelHandler(Handler):
                 {
                     'name': 'comments',
                     'label': _('Comments'),
+                    'type': 'text',
                     'tooltip': _('Comments for this element'),
                     'length': 256,
                     'order': 0 - 90,
@@ -478,6 +509,10 @@ class DetailHandler(BaseModelHandler):
                 types_ = self.getTypes(parent, None)
                 logger.debug('Types: %s', types_)
                 return types_
+            if self._args[0] == GUI:
+                # Gui without type, valid
+                gui = self.getGui(parent, '')  # No type
+                return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TABLEINFO:
                 return self.processTableFields(
                     self.getTitle(parent),
@@ -621,10 +656,10 @@ class DetailHandler(BaseModelHandler):
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
-        
+
         Args:
             parent (models.Model): Parent object
-        
+
         Return:
             typing.Dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
         """

@@ -36,11 +36,11 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import types, consts
+from uds.core import consts, types
 from uds.core.types import permissions as permtypes
 from uds.core.types import rest, servers
 from uds.core.util import permissions
-from uds.core.util.model import processUuid
+from uds.core.util.model import getSqlDatetime, processUuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
@@ -78,6 +78,7 @@ class ServersTokens(ModelHandler):
             'username': item.username,
             'ip': item.ip,
             'hostname': item.hostname,
+            'listen_port': item.listen_port,
             'mac': item.mac,
             'token': item.token,
             'type': types.servers.ServerType(item.type).as_str(),
@@ -122,6 +123,7 @@ class ServersServers(DetailHandler):
                     'id': i.uuid,
                     'hostname': i.hostname,
                     'ip': i.ip,
+                    'listen_port': i.listen_port,
                     'mac': i.mac if not multi or i.mac != consts.MAC_UNKNOWN else '',
                     'maintenance_mode': i.maintenance_mode,
                 }
@@ -162,24 +164,120 @@ class ServersServers(DetailHandler):
     def getRowStyle(self, parent: 'models.ServerGroup') -> typing.Dict[str, typing.Any]:
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
+    def getGui(self, parent: 'models.ServerGroup', forType: str = '') -> typing.List[typing.Any]:
+        kind, subkind = parent.serverType.name, parent.subtype
+        title = _('of type') + f' {subkind.upper()} {kind}'
+        return self.addField(
+            [],
+            [
+                {
+                    'name': 'hostname',
+                    'value': '',
+                    'label': gettext('Hostname'),
+                    'tooltip': gettext('Hostname of the server. It must be resolvable by UDS'),
+                    'type': types.ui.FieldType.TEXT,
+                    'order': 100,  # At end
+                },
+                {
+                    'name': 'ip',
+                    'value': '',
+                    'label': gettext('IP'),
+                    'tooltip': gettext('IP of the server. Used if hostname is not resolvable by UDS'),
+                    'type': types.ui.FieldType.TEXT,
+                    'order': 101,  # At end
+                },
+                {
+                    'name': 'listen_port',
+                    'value': 0,
+                    'label': gettext('Port'),
+                    'tooltip': gettext('Port of server. 0 means "service default"'),
+                    'type': types.ui.FieldType.NUMERIC,
+                    'order': 102,  # At end
+                },
+                {
+                    'name': 'title',
+                    'value': title,
+                    'type': types.ui.FieldType.INFO,
+                },
+            ],
+        )
+
     def saveItem(self, parent: 'models.ServerGroup', item: typing.Optional[str]) -> None:
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
         if item is None:
-            raise self.invalidItemException('No server specified')
+            # Create new, depending on server type
+            if parent.type == types.servers.ServerType.UNMANAGED:
+                # Create a new one, and add it to group
+                # # Username that registered the server
+                # username = models.CharField(max_length=128)
+                # # Ip from where the server was registered, can be IPv4 or IPv6
+                # ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
+                # # Ip of the server, can be IPv4 or IPv6 (used to communicate with it)
+                # ip = models.CharField(max_length=MAX_IPV6_LENGTH)
 
-        try:
-            server = models.Server.objects.get(uuid=processUuid(item))
-            parent.servers.add(server)
-        except Exception:
-            raise self.invalidItemException() from None
+                # # Hostname. It use depends on the implementation of the service, providers. etc..
+                # # But the normal operations is that hostname has precedence over ip
+                # # * Resolve hostname to ip
+                # # * If fails, use ip
+                # hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
+                # # Port where server listens for connections (if it listens)
+                # listen_port = models.IntegerField(default=SERVER_DEFAULT_LISTEN_PORT)
 
-        raise self.invalidRequestException() from None
+                # # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
+                # token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)
+                # # Simple info field of when the registered server was created or revalidated
+                # stamp = models.DateTimeField()
+
+                # # Type of server. Defaults to tunnel, so we can migrate from previous versions
+                # # Note that a server can register itself several times, so we can have several entries
+                # # for the same server, but with different types.
+                # # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
+                # type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
+                # # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..) so we can group it for
+                # # selections
+                # subtype = models.CharField(max_length=32, default='', db_index=True)
+                # # Version of the UDS API of the server. Starst at 4.0.0
+                # # If version is empty, means that it has no API
+                # version = models.CharField(max_length=32, default='')
+
+                # # If server is in "maintenance mode". Not used on tunnels (Because they are "redirected" by an external load balancer)
+                # # But used on other servers, so we can disable them for maintenance
+                # maintenance_mode = models.BooleanField(default=False, db_index=True)
+
+                server = models.Server.objects.create(
+                    ip_from='::1',
+                    ip=self._params['ip'],
+                    hostname=self._params['hostname'],
+                    listen_port=self._params['listen_port'] or 0,
+                    type=parent.type,
+                    subtype=parent.subtype,
+                    stamp=getSqlDatetime(),
+                )
+                # Add to group
+                parent.servers.add(server)
+                return
+            elif parent.type == types.servers.ServerType.SERVER:
+                # TODO: Implement this
+                pass
+        else:
+            try:
+                server = models.Server.objects.get(uuid=processUuid(item))
+                parent.servers.add(server)
+            except Exception:
+                raise self.invalidItemException() from None
+
+            raise self.invalidRequestException() from None
 
     def deleteItem(self, parent: 'models.ServerGroup', item: str) -> None:
         try:
-            parent.servers.remove(models.Server.objects.get(uuid=processUuid(item)))
+            server = models.Server.objects.get(uuid=processUuid(item))
+            if parent.serverType == types.servers.ServerType.UNMANAGED:
+                parent.servers.remove(server)  # Remove reference
+                server.delete() # and delete server
+            else:
+                parent.servers.remove(server)  # Just remove reference
         except Exception:
             raise self.invalidItemException() from None
 
@@ -275,19 +373,16 @@ class ServersGroups(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def delete(self) -> str:
+    def deleteItem(self, item: str) -> None:
         """
         Processes a DELETE request
         """
-        if len(self._args) != 1:
-            raise RequestError('Delete need one and only one argument')
-
         self.ensureAccess(
             self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
-            obj = models.ServerGroup.objects.get(uuid=processUuid(self._args[0]))
+            obj = models.ServerGroup.objects.get(uuid=processUuid(item))
             if obj.type == types.servers.ServerType.UNMANAGED:
                 # Unmanaged has to remove ALSO the servers
                 for server in obj.servers.all():
@@ -295,5 +390,3 @@ class ServersGroups(ModelHandler):
             obj.delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
-
-        return consts.OK

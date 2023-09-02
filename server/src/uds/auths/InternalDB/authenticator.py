@@ -149,7 +149,6 @@ class InternalDBAuth(auths.Authenticator):
         request: 'ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
         username = username.lower()
-        logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbObj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)

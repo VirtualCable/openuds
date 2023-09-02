@@ -93,6 +93,13 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if self.port == 0:
             return self.host
         return f'{self.host}:{self.port}'
+    
+    @property
+    def serverType(self) -> types.servers.ServerType:
+        try:
+            return types.servers.ServerType(self.type)
+        except ValueError:
+            return types.servers.ServerType.UNMANAGED  # Invalid value, return default
 
     def https_url(self, path: str) -> str:
         if not path.startswith('/'):
@@ -191,6 +198,13 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # For properties
     def ownerIdAndType(self) -> typing.Tuple[str, str]:
         return self.uuid, 'server'
+
+    @property
+    def serverType(self) -> types.servers.ServerType:
+        try:
+            return types.servers.ServerType(self.type)
+        except ValueError:
+            return types.servers.ServerType.UNMANAGED  # Invalid value, return default
 
     @staticmethod
     def create_token() -> str:
