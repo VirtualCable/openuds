@@ -134,7 +134,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     current_users=self.server_stats[uuid].current_users + 1
                 )
 
-                prop_name = self.manager.property_name(userService.user)
+                prop_name = self.manager.propertyName(userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None

@@ -223,7 +223,7 @@ class ServersGroups(ModelHandler):
     def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
         for i in servers.ServerSubType.manager().enum():
             v = rest.TypeInfo(
-                name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=''
+                name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon
             ).asDict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
             yield v
 

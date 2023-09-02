@@ -71,7 +71,7 @@ class ServerManager(metaclass=singleton.Singleton):
             self.clearUnmanagedUsage()
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
-    def property_name(self, user: typing.Optional['models.User']) -> str:
+    def propertyName(self, user: typing.Optional['models.User']) -> str:
         """Returns the property name for a user"""
         return ServerManager.PROPERTY_BASE_NAME + (str(user.uuid) if user else '_')
 
@@ -196,7 +196,7 @@ class ServerManager(metaclass=singleton.Singleton):
             raise exceptions.UDSException(_('No user assigned to service'))
 
         # Look for existint user asignation through properties
-        prop_name = self.property_name(userService.user)
+        prop_name = self.propertyName(userService.user)
         now = model_utils.getSqlDatetime()
         
         excludeServersUUids = excludeServersUUids or set()
@@ -283,7 +283,7 @@ class ServerManager(metaclass=singleton.Singleton):
         if userUuid is None:
             return types.servers.ServerCounterType.empty()  # No user is assigned to this service, nothing to do
 
-        prop_name = self.property_name(userService.user)
+        prop_name = self.propertyName(userService.user)
         with serverGroup.properties as props:
             with transaction.atomic():
                 resetCounter = False
@@ -349,7 +349,7 @@ class ServerManager(metaclass=singleton.Singleton):
             if k.startswith(self.PROPERTY_BASE_NAME):
                 uuid = k[len(self.PROPERTY_BASE_NAME) :]
                 try:
-                    user = models.User.objects.get(uuid=uuid)
+                    models.User.objects.get(uuid=uuid)
                 except Exception:
                     # User does not exists, remove it from counters
                     del serverGroup.properties[k]

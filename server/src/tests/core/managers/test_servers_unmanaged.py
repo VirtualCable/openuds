@@ -100,7 +100,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                     self.fail('Assignation returned None')
                     return  # For mypy
                 uuid, counter = assignation
-                prop_name = self.manager.property_name(userService.user)
+                prop_name = self.manager.propertyName(userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
@@ -163,7 +163,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
-                prop_name = self.manager.property_name(userService.user)
+                prop_name = self.manager.propertyName(userService.user)
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
