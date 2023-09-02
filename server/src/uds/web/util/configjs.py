@@ -218,7 +218,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],
             'transports': [
-                t.name for t in Transport.objects.all() if t.validForIp(request.ip)
+                t.name for t in Transport.objects.all() if t.isValidForIp(request.ip)
             ],
             'ip': request.ip,
             'ip_proxy': request.ip_proxy,

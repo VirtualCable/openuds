@@ -409,7 +409,7 @@ class Authenticator(Module):
             Authenticator as dbAuth,
         )
 
-        return self._dbAuth.state != dbAuth.DISABLED and self._dbAuth.validForIp(
+        return self._dbAuth.state != dbAuth.DISABLED and self._dbAuth.isValidForIp(
             typing.cast('ExtendedHttpRequest', request).ip
         )
 

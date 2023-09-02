@@ -141,7 +141,7 @@ def getServicesData(
         tt = []
         t: Transport
         for t in Transport.objects.all().prefetch_related('networks'):
-            if t.validForIp(request.ip):
+            if t.isValidForIp(request.ip):
                 tt.append(t.name)
         validTrans = ','.join(tt)
 
@@ -232,9 +232,9 @@ def getServicesData(
                     typeTrans = t.getType()
                     if (
                         typeTrans
-                        and t.validForIp(request.ip)
+                        and t.isValidForIp(request.ip)
                         and typeTrans.supportsOs(osType)
-                        and t.validForOs(osType)
+                        and t.isValidForOs(osType)
                     ):
                         metaTransports = [
                             {
@@ -298,7 +298,7 @@ def getServicesData(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
             typeTrans = t.getType()
-            if typeTrans and t.validForIp(request.ip) and typeTrans.supportsOs(osType) and t.validForOs(osType):
+            if typeTrans and t.isValidForIp(request.ip) and typeTrans.supportsOs(osType) and t.isValidForOs(osType):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:

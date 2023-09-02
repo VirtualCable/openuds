@@ -204,7 +204,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         except Exception:
             return falseIfNotExists
 
-    def validForIp(self, ipStr: str) -> bool:
+    def isValidForIp(self, ipStr: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 

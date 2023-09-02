@@ -755,7 +755,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             t: Transport
             for t in userService.deployed_service.transports.order_by('priority'):
                 typeTrans = t.getType()
-                if typeTrans and t.validForIp(srcIp) and typeTrans.supportsOs(os.os) and t.validForOs(os.os):
+                if typeTrans and t.isValidForIp(srcIp) and typeTrans.supportsOs(os.os) and t.isValidForOs(os.os):
                     idTransport = t.uuid
                     break
 
@@ -769,7 +769,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise InvalidServiceException()
 
         # If transport is not available for the request IP...
-        if not transport.validForIp(srcIp):
+        if not transport.isValidForIp(srcIp):
             msg = _('The requested transport {} is not valid for {}').format(transport.name, srcIp)
             logger.error(msg)
             raise InvalidServiceException(msg)
@@ -967,9 +967,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if (
                     typeTrans
                     and t.getType()
-                    and t.validForIp(srcIp)
+                    and t.isValidForIp(srcIp)
                     and typeTrans.supportsOs(os.os)
-                    and t.validForOs(os.os)
+                    and t.isValidForOs(os.os)
                 ):
                     found = (pool, t)
                     break

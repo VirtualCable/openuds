@@ -108,7 +108,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         return transports.factory().lookup(self.data_type) or transports.Transport
 
-    def validForIp(self, ipStr: str) -> bool:
+    def isValidForIp(self, ipStr: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -121,7 +121,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
             False if the ip can't access this Transport.
 
             The check is done using the net_filtering field.
-            if net_filtering is 'x' (disabled), then the result is always True
+            if net_filtering is 'd' (disabled), then the result is always True
             if net_filtering is 'a' (allow), then the result is True is the ip is in the networks
             if net_filtering is 'd' (deny), then the result is True is the ip is not in the networks
         Raises:
@@ -132,12 +132,13 @@ class Transport(ManagedObjectModel, TaggingMixin):
             return True
         ip, version = net.ipToLong(ipStr)
         # Allow
+        exists = self.networks.filter(start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version).exists()
         if self.net_filtering == Transport.ALLOW:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip, version=version).exists()
+            return exists
         # Deny, must not be in any network
-        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
+        return not exists
 
-    def validForOs(self, os: 'KnownOS') -> bool:
+    def isValidForOs(self, os: 'KnownOS') -> bool:
         """If this transport is configured to be valid for the specified OS.
 
         Args:
