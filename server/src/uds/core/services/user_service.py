@@ -126,8 +126,9 @@ class UserService(Environmentable, Serializable):
     _service: 'services.Service'
     _publication: typing.Optional['services.Publication']
     _osmanager: typing.Optional['osmanagers.OSManager']
-    _dbService: typing.Optional['models.UserService']
     _uuid: str
+
+    _dbObj: typing.Optional['models.UserService'] = None
 
     def __init__(self, environment: 'Environment', **kwargs):
         """
@@ -152,11 +153,7 @@ class UserService(Environmentable, Serializable):
         self._service = kwargs['service']  # Raises an exception if service is not included. Parent
         self._publication = kwargs.get('publication', None)
         self._osmanager = kwargs.get('osmanager', None)
-        self._dbService = kwargs.get('dbservice', None)
         self._uuid = kwargs.get('uuid', '')
-        # If it has dbService, got uuid from it
-        if self._dbService:
-            self._uuid = self._dbService.uuid or ''
 
         self.initialize()
 
@@ -168,6 +165,16 @@ class UserService(Environmentable, Serializable):
         This will get invoked when all initialization stuff is done, so
         you can here access publication, service, osManager, ...
         """
+
+    def dbObj(self) -> 'models.UserService':
+        """
+        Returns the database object for this object
+        """
+        from uds.models import UserService
+
+        if self._dbObj is None:
+            self._dbObj = UserService.objects.get(uuid=self._uuid)
+        return self._dbObj
 
     def getName(self) -> str:
         """
@@ -217,22 +224,12 @@ class UserService(Environmentable, Serializable):
     def getUuid(self) -> str:
         return self._uuid
 
-    def dbUserService(self) -> typing.Optional['models.UserService']:
-        """
-        Utility method to access database object for the object this represents.
-
-        Returns:
-
-            Database object that got deserialized to obtain this object.
-        """
-        return self._dbService
-
     def doLog(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this user deployment
         """
-        if self._dbService:
-            log.doLog(self._dbService, level, message, log.LogSource.SERVICE)
+        if self._dbObj:
+            log.doLog(self._dbObj, level, message, log.LogSource.SERVICE)
 
     def macGenerator(self) -> 'UniqueMacGenerator':
         """

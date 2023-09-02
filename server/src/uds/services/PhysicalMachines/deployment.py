@@ -121,7 +121,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
 
         # If not to be managed by a token, autologin user
         if not self.service().getToken():
-            userService = self.dbUserService()
+            userService = self.dbObj()
             if userService:
                 userService.setInUse(True)
 
@@ -136,7 +136,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         self._ip = ip
         self._state = State.FINISHED
         if not self.service().getToken():
-            dbService = self.dbUserService()
+            dbService = self.dbObj()
             if dbService:
                 dbService.setInUse(True)
                 dbService.save()

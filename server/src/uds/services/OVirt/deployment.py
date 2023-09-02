@@ -248,9 +248,9 @@ if sys.platform == 'win32':
 '''
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
-        dbService = self.dbUserService()
-        if dbService:
-            UserServiceManager().sendScript(dbService, script)
+        dbUserService = self.dbObj()
+        if dbUserService:
+            UserServiceManager().sendScript(dbUserService, script)
 
     def notifyReadyFromOsManager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)

@@ -226,7 +226,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             service=serviceInstance,
             publication=publicationInstance,
             osmanager=osmanagerInstance,
-            dbservice=self,
+            uuid=self.uuid,
         )
         if self.data != '' and self.data is not None:
             try:
