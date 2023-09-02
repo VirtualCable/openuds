@@ -34,18 +34,18 @@ import typing
 
 from django.db import models
 
-from uds.core import auths
-from uds.core import environment
+from uds.core import auths, environment
 from uds.core.util import log, net
 from uds.core.util.state import State
 
-from .managed_object_model import ManagedObjectModel
-from .tag import TaggingMixin
 from ..core.consts import NEVER
+from .managed_object_model import ManagedObjectModel
+from .network import Network
+from .tag import TaggingMixin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import User, Group, Network
+    from uds.models import Group, Network, User
 
 
 logger = logging.getLogger(__name__)
@@ -228,10 +228,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return True
         ip, version = net.ipToLong(ipStr)
         # Allow
+        exists = self.networks.filter(start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version).exists()
         if self.net_filtering == Authenticator.ALLOW:
-            return self.networks.filter(net_start__lte=ip, net_end__gte=ip, version=version).exists()
+            return exists
         # Deny, must not be in any network
-        return self.networks.filter(net_start__lte=ip, net_end__gte=ip).exists() is False
+        return not exists
 
     @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':
@@ -247,9 +248,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Special tag name "disabled" is used to exclude customAuth
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.util.config import (
-            GlobalConfig,
-        )
+        from uds.core.util.config import GlobalConfig
 
         if tag is not None:
             authsList = Authenticator.objects.filter(small_name=tag).order_by('priority', 'name')
@@ -277,9 +276,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         :note: If destroy raises an exception, the deletion is not taken.
         """
         # pylint: disable=import-outside-toplevel
-        from uds.core.util.permissions import (
-            clean,
-        )
+        from uds.core.util.permissions import clean
 
         toDelete = kwargs['instance']
 

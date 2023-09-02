@@ -33,7 +33,7 @@ def update_network_model(apps, schema_editor):  # pylint: disable=unused-argumen
             # pylint: disable=protected-access
             net.end = uds.models.network.Network.hexlify(net.net_end)
             net.version = 4  # Previous versions only supported ipv4
-            net.save()
+            net.save(update_fields=['start', 'end', 'version'])
     except Exception as e:
         print(f'Error updating network model: {e}')
 

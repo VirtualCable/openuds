@@ -4,11 +4,10 @@ import string
 # String chars to use in random strings
 STRING_CHARS = string.ascii_letters + string.digits + '_'
 UTF_CHARS = (
-    'abcdefghijklπερισσότεροήλιγότερομεγάλοκείμενογιαχαρακτήρεςmnopqrstuvwxyz或多或少的字符长文本ABCD'
-    'EFGHIJKLنصطويلأكثرأوأقلللأحرفMNOPQRSTUVWXYZ0123456789болееилименеедлинныйтекстдлясимволовàáéíóúñçÀÁÉÍÓÚÑÇ'
+    'abcdefghijkl\u03c0\u03b5\u03c1\u03b9\u03c3\u03c3\u03cc\u03c4\u03b5\u03c1\u03bf\u03ae\u03bb\u03b9\u03b3\u03cc\u03c4\u03b5\u03c1\u03bf\u03bc\u03b5\u03b3\u03ac\u03bb\u03bf\u03ba\u03b5\u03af\u03bc\u03b5\u03bd\u03bf\u03b3\u03b9\u03b1\u03c7\u03b1\u03c1\u03b1\u03ba\u03c4\u03ae\u03c1\u03b5\u03c2mnopqrstuvwxyz\u6216\u591a\u6216\u5c11\u7684\u5b57\u7b26\u957f\u6587\u672cABCD'
+    'EFGHIJKL\u0646\u0635\u0637\u0648\u064a\u0644\u0623\u0643\u062b\u0631\u0623\u0648\u0623\u0642\u0644\u0644\u0644\u0623\u062d\u0631\u0641MNOPQRSTUVWXYZ0123456789\u0431\u043e\u043b\u0435\u0435\u0438\u043b\u0438\u043c\u0435\u043d\u0435\u0435\u0434\u043b\u0438\u043d\u043d\u044b\u0439\u0442\u0435\u043a\u0441\u0442\u0434\u043b\u044f\u0441\u0438\u043c\u0432\u043e\u043b\u043e\u0432\u00e0\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00e7\u00c0\u00c1\u00c9\u00cd\u00d3\u00da\u00d1\u00c7'
 )
 # Invalid string chars
 STRING_CHARS_INVALID = '!@#$%^&*()_+=-[]{}|;\':",./<>? '
 # String chars with invalid chars to use in random strings
 STRING_CHARS_WITH_INVALID = STRING_CHARS + STRING_CHARS_INVALID
-

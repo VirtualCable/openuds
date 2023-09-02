@@ -30,7 +30,6 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import codecs
 import logging
 import os.path
 import sys
@@ -39,6 +38,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core.ui.user_interface import UserInterface
+from uds.core.util import utils
 
 from .environment import Environment, Environmentable
 from .serializable import Serializable
@@ -183,29 +183,11 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'iconFile' class attribute
         """
-        try:
-            with open(
-                os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile,
-                'rb',
-            ) as f:
-                data = f.read()
-        except Exception as e:
-            logger.error('Error reading icon file for module %s: %s', cls.type(), e)
-            # blank png bytes
-            data = codecs.decode(
-                (
-                    b'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEMJKL'
-                    b'/nI4W4R1KlOPtQABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAg'
-                    b'AABAgQIECBAgAABAgQIECBAgAABAgQIEHDfAvLdn4FABR1mAAAAAElFTkSuQmCC'
-                ),
-                'base64',
-            )
-
-        return data
+        return utils.loadIcon(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
 
     @classmethod
     def icon64(cls: typing.Type['Module']) -> str:
-        return codecs.encode(cls.icon(), 'base64').decode()
+        return utils.loadIconBase64(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
 
     @staticmethod
     def test(

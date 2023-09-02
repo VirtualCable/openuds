@@ -37,14 +37,16 @@ from django.db import models
 
 from uds.core.util import net
 
-from .transport import Transport
-from .authenticator import Authenticator
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
 
 
 logger = logging.getLogger(__name__)
 
+if typing.TYPE_CHECKING:
+    from .transport import Transport
+    from .authenticator import Authenticator
+    
 
 class Network(UUIDModel, TaggingMixin):  # type: ignore
     """
@@ -63,10 +65,10 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
     version = models.IntegerField(default=4)  # network type, ipv4 or ipv6
     net_string = models.CharField(max_length=240, default='')
     transports = models.ManyToManyField(
-        Transport, related_name='networks', db_table='uds_net_trans'
+        'Transport', related_name='networks', db_table='uds_net_trans'
     )
     authenticators = models.ManyToManyField(
-        Authenticator, related_name='networks', db_table='uds_net_auths'
+        'Authenticator', related_name='networks', db_table='uds_net_auths'
     )
 
     # "fake" declarations for type checking

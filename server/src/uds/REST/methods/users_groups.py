@@ -145,7 +145,7 @@ class Users(DetailHandler):
             logger.debug('Item: %s', res)
             return res
         except Exception as e:
-            logger.exception('En users')
+            # User not found
             raise self.invalidItemException() from e
 
     def getTitle(self, parent):

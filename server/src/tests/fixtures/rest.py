@@ -90,11 +90,15 @@ class ServicePoolRestStruct(rest.RestStruct):
 
 # Provide a "random" dictionary based on a
 def createUser(**kwargs) -> typing.Dict[str, typing.Any]:
-    return UserRestStruct.random_create(**kwargs).as_dict()
+    data = UserRestStruct.random_create(**kwargs).as_dict()
+    data['state'] = 'A'  # Fix state to 1 char
+    return data
 
 
 def createGroup(**kwargs) -> typing.Dict[str, typing.Any]:
-    return GroupRestStruct.random_create(**kwargs).as_dict()
+    data = GroupRestStruct.random_create(**kwargs).as_dict()
+    data['state'] = 'A'  # Fix state to 1 char
+    return data
 
 
 def createServicePool(**kwargs) -> typing.Dict[str, typing.Any]:

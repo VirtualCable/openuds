@@ -35,6 +35,7 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core.util import singleton
+from uds.core.consts import images
 
 
 class ServerType(enum.IntEnum):
@@ -71,6 +72,7 @@ class ServerSubType(metaclass=singleton.Singleton):
         subtype: str
         description: str
         managed: bool
+        icon: str
 
     registered: typing.Dict[typing.Tuple[ServerType, str], Info]
 
@@ -81,9 +83,18 @@ class ServerSubType(metaclass=singleton.Singleton):
     def manager() -> 'ServerSubType':
         return ServerSubType()
 
-    def register(self, type: ServerType, subtype: str, description: str, managed: bool) -> None:
+    def register(self, type: ServerType, subtype: str, description: str, icon: str, managed: bool) -> None:
+        """Registers a new subtype for a server type
+        
+        Args:
+            type (ServerType): Server type
+            subtype (str): Subtype name
+            description (str): Subtype description
+            icon (str): Subtype icon (base64 encoded)
+            managed (bool): If subtype is managed or not
+        """
         self.registered[(type, subtype)] = ServerSubType.Info(
-            type=type, subtype=subtype, description=description, managed=managed
+            type=type, subtype=subtype, description=description, managed=managed, icon=icon
         )
 
     def enum(self) -> typing.Iterable[Info]:
@@ -96,7 +107,7 @@ class ServerSubType(metaclass=singleton.Singleton):
 # Registering default subtypes (basically, ip unmanaged is the "global" one), any other will be registered by the providers
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
 # The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
-ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', False)
+ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', images.DEFAULT_IMAGE_BASE64, False)
 
 
 class ServerStatsType(typing.NamedTuple):

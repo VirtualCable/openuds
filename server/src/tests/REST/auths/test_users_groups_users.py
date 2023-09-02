@@ -64,9 +64,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         user: typing.Mapping[str, typing.Any]
         for user in users:
             # Locate the user in the auth
-            self.assertTrue(
-                rest.assertions.assertUserIs(self.auth.users.get(name=user['name']), user)
-            )
+            self.assertTrue(rest.assertions.assertUserIs(self.auth.users.get(name=user['name']), user))
 
     def test_users_tableinfo(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users/tableinfo'
@@ -109,9 +107,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             user = response.json()
             self.assertTrue(
                 rest.assertions.assertUserIs(i, user),
-                'User {} {} is not correct'.format(
-                    i, models.User.objects.filter(uuid=i.uuid).values()[0]
-                ),
+                'User {} {} is not correct'.format(i, models.User.objects.filter(uuid=i.uuid).values()[0]),
             )
 
         # invalid user
@@ -140,7 +136,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             url,
             user_dct,
         )
-
+        self.assertEqual(response.status_code, 200)
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
 
@@ -175,9 +171,7 @@ class UsersTest(rest.test.RESTActorTestCase):
 
         # Get user from database and ensure values are correct
         dbusr = self.auth.users.get(name=user_dct['name'])
-        self.assertTrue(
-            rest.assertions.assertUserIs(dbusr, user_dct, compare_password=True)
-        )
+        self.assertTrue(rest.assertions.assertUserIs(dbusr, user_dct, compare_password=True))
 
     def test_user_delete(self) -> None:
         url = f'authenticators/{self.auth.uuid}/users'

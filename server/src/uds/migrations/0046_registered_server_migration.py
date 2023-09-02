@@ -55,10 +55,8 @@ def migrate_old_data(apps, schema_editor) -> None:
         providers_v4.migrate(apps, schema_editor)
         # Old properties to new model
         properties_v4.migrate(apps, schema_editor)
-        
-        
     except Exception as e:
-        if 'no such table' not in str(e):
+        if 'no such table' not in str(e) and " doesn't exist" not in str(e):
             # Pytest is running this method twice??
             raise e
 

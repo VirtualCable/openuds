@@ -30,81 +30,63 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import sys
-import os
-import datetime
-import unicodedata
-import typing
+import base64
 import contextlib
+import datetime
+import logging
+import os
+import sys
+import typing
+import unicodedata
 
+import django.template.defaultfilters as filters
 from django.utils import formats
 from django.utils.translation import gettext
-import django.template.defaultfilters as filters
+
+logger = logging.getLogger(__name__)
 
 
 class CaseInsensitiveDict(dict):
     @classmethod
-    def _k(cls, key):
+    def _k(cls, key: str) -> str:
         return key.lower() if isinstance(key, str) else key
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._convert_keys()
 
-    def __getitem__(self, key):
-        return super().__getitem__(self.__class__._k(key))
+    def __getitem__(self, key: str) -> typing.Any:
+        return super().__getitem__(self.__class__._k(key.lower()))
 
-    def __setitem__(self, key, value):
-        super().__setitem__(self.__class__._k(key), value)
+    def __setitem__(self, key: str, value: typing.Any) -> None:
+        super().__setitem__(self.__class__._k(key.lower()), value)
 
-    def __delitem__(self, key):
-        return super().__delitem__(self.__class__._k(key))
+    def __delitem__(self, key: str) -> None:
+        return super().__delitem__(self.__class__._k(key.lower()))
 
-    def __contains__(self, key):
-        return super().__contains__(self.__class__._k(key))
+    def __contains__(self, key: typing.Any) -> bool:
+        if not isinstance(key, str):
+            return False
+        return super().__contains__(key.lower())
 
-    def pop(self, key, *args, **kwargs):
-        return super().pop(
-            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
-        )
+    def pop(self, key: str, *args, **kwargs) -> typing.Any:
+        return super().pop(self.__class__._k(key.lower()), *args, **kwargs)  # pylint: disable=protected-access
 
-    def get(self, key, *args, **kwargs):
-        return super().get(
-            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
-        )
+    def get(self, key: str, *args, **kwargs) -> typing.Any:
+        return super().get(self.__class__._k(key.lower()), *args, **kwargs)  # pylint: disable=protected-access
 
-    def setdefault(self, key, *args, **kwargs):
+    def setdefault(self, key: str, *args, **kwargs) -> typing.Any:
         return super().setdefault(
-            self.__class__._k(key), *args, **kwargs  # pylint: disable=protected-access
-        )
+            self.__class__._k(key.lower()), *args, **kwargs
+        )  # pylint: disable=protected-access
 
-    def update(self, E=None, **F):
-        if E is None:
-            E = {}
-        super().update(self.__class__(E))
-        super().update(self.__class__(**F))
+    def update(self, other_dct=None, **kwargs):
+        super().update(self.__class__(other_dct or {}, **kwargs))
 
-    def _convert_keys(self):
-        for k in list(self.keys()):
-            v = super().pop(k)
-            self.__setitem__(k, v)  # pylint: disable=unnecessary-dunder-call
-
-
-def as_list(value: typing.Any) -> typing.List[typing.Any]:
-    """If value is not a list, returns a list with value as only element
-
-    Args:
-        value (typing.Any): Value to convert to list
-
-    Returns:
-        typing.List[typing.Any]: List with value as only element
-    """
-    if isinstance(value, (bytes, str, int, float)):
-        return [value]
-    try:
-        return list(value)
-    except Exception:
-        return [value]
+    def _convert_keys(self) -> None:
+        for k in list(self.keys()):  # List is to make a copy of keys, because we are going to change it
+            v = super().pop(k)  # Remove old key-value
+            self.__setitem__(k, v)  # Set new key-value, with lower case key
 
 
 def package_relative_file(moduleName: str, fileName: str) -> str:
@@ -152,13 +134,40 @@ def removeControlCharacters(s: str) -> str:
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")
 
 
+def loadIcon(iconFilename: str) -> bytes:
+    """
+    Loads an icon from icons directory
+    """
+    try:
+        with open(iconFilename, 'rb') as f:
+            data = f.read()
+    except Exception as e:
+        logger.error('Error reading icon file  %s: %s', iconFilename, e)
+        # blank png bytes
+        data = base64.b64decode(
+            (
+                b'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEMJKL'
+                b'/nI4W4R1KlOPtQABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAg'
+                b'AABAgQIECBAgAABAgQIECBAgAABAgQIEHDfAvLdn4FABR1mAAAAAElFTkSuQmCC'
+            )
+        )
+
+    return data
+
+
+def loadIconBase64(iconFilename: str) -> str:
+    """
+    Loads an icon from icons directory
+    """
+    return base64.b64encode(loadIcon(iconFilename)).decode('ascii')
+
+
 @contextlib.contextmanager
 def ignoreExceptions():
     """
-    Ignores exceptions of type exceptions
+    Ignores exceptions
     """
     try:
         yield
     except Exception:  # nosec: want to catch all exceptions
         pass
-    
