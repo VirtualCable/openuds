@@ -238,7 +238,9 @@ class Dispatcher(View):
 
                 service_node[name][''] = cls
             else:
-                Dispatcher.registerSubclasses(cls.__subclasses__())
+                from .model import DetailHandler
+                if cls is not DetailHandler:
+                    Dispatcher.registerSubclasses(cls.__subclasses__())
 
     # Initializes the dispatchers
     @staticmethod
