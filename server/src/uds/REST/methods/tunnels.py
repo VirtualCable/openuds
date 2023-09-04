@@ -42,7 +42,7 @@ from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
 from uds.core.util.stats import events
 
-from .servers import ServerRegister
+from .servers import ServerRegisterBase
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +155,7 @@ class TunnelTicket(Handler):
             raise AccessDenied() from e
 
 
-class TunnelRegister(ServerRegister):
+class TunnelRegister(ServerRegisterBase):
     needs_admin = True
     path = 'tunnel'
     name = 'register'

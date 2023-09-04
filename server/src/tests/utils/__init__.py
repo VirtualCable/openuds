@@ -100,3 +100,27 @@ def ensure_data(
         return False
     
     return True
+
+def random_ip_v4() -> str:
+    """
+    Returns a random ip v4 address
+    """
+    import random
+
+    return '.'.join(str(random.randint(0, 255)) for _ in range(4))
+
+def random_ip_v6() -> str:
+    """
+    Returns a random ip v6 address
+    """
+    import random
+
+    return ':'.join('{:04x}'.format(random.randint(0, 65535)) for _ in range(8))
+
+def random_mac() -> str:
+    """
+    Returns a random mac address
+    """
+    import random
+
+    return ':'.join('{:02x}'.format(random.randint(0, 255)) for _ in range(6))

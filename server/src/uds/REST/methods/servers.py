@@ -48,11 +48,7 @@ logger = logging.getLogger(__name__)
 
 
 # REST API for Server Token Clients interaction
-class ServerRegister(Handler):
-    needs_staff = True
-    path = 'servers'
-    name = 'register'
-
+class ServerRegisterBase(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         serverToken: models.Server
         now = getSqlDatetime()
@@ -74,6 +70,7 @@ class ServerRegister(Handler):
             serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.stamp = now
             serverToken.type = self._params['type']
+            serverToken.mac = self._params.get('mac', consts.MAC_UNKNOWN)
             serverToken.subtype = self._params.get('subtype', '')  # Optional
             serverToken.save()
         except Exception:
@@ -95,6 +92,11 @@ class ServerRegister(Handler):
                 return rest_result('error', error=str(e))
         return rest_result(result=serverToken.token)
 
+class ServerRegister(ServerRegisterBase):
+    needs_staff = True
+    path = 'servers'
+    name = 'register'
+    
 
 # REST handlers for server actions
 class ServerTest(Handler):

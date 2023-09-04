@@ -53,6 +53,7 @@ from .exceptions import (
     ResponseError,
 )
 from .handlers import Handler
+from .model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -223,7 +224,6 @@ class Dispatcher(View):
         """
         Method to register a class as a REST service
         param type_: Class to be registered
-
         """
         if not type_.name:
             name = sys.intern(type_.__name__.lower())
@@ -257,13 +257,18 @@ class Dispatcher(View):
         logger.info('Initializing REST Handlers')
         # Our parent module "REST", because we are in "dispatcher"
         modName = __name__[: __name__.rfind('.')]
+        
+        def checker(x: typing.Type[Handler]) -> bool:
+            # only register if final class, no inherited classes
+            logger.info('Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == [])
+            return not issubclass(x, DetailHandler) and not x.__subclasses__()
 
         # Register all subclasses of Handler
         modfinder.dynamicLoadAndRegisterPackages(
             Dispatcher.registerClass,
             Handler,
             modName=modName,
-            checker=lambda x: not x.__subclasses__(),  # only register if final class, no inherited classes
+            checker=checker,  
             packageName='methods',
         )
 
