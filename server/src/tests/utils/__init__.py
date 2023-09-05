@@ -107,7 +107,7 @@ def random_ip_v4() -> str:
     """
     import random
 
-    return '.'.join(str(random.randint(0, 255)) for _ in range(4))
+    return '.'.join(str(random.randint(0, 255)) for _ in range(4))  # nosec
 
 def random_ip_v6() -> str:
     """
@@ -115,7 +115,7 @@ def random_ip_v6() -> str:
     """
     import random
 
-    return ':'.join('{:04x}'.format(random.randint(0, 65535)) for _ in range(8))
+    return ':'.join('{:04x}'.format(random.randint(0, 65535)) for _ in range(8))  # nosec
 
 def random_mac() -> str:
     """
@@ -123,4 +123,4 @@ def random_mac() -> str:
     """
     import random
 
-    return ':'.join('{:02x}'.format(random.randint(0, 255)) for _ in range(6))
+    return ':'.join('{:02x}'.format(random.randint(0, 255)) for _ in range(6))  # nosec

@@ -33,6 +33,7 @@
 import re
 import logging
 import typing
+import json
 
 from django.utils.translation import gettext as _
 from django.core import validators as dj_validators
@@ -88,20 +89,20 @@ def validateNumeric(
 def validateHostname(hostname: str, maxLength: int = 64, allowDomain=False) -> str:
     if len(hostname) > maxLength:
         raise exceptions.ValidationError(
-            _('{} exceeds maximum host name length.').format(hostname)
+            _('{} is not a valid hostname: maximum host name length exceeded.').format(hostname)
         )
 
     if not allowDomain:
         if '.' in hostname:
             raise exceptions.ValidationError(
-                _('{} is not a valid hostname').format(hostname)
+                _('{} is not a valid hostname: (domains not allowed)').format(hostname)
             )
 
     allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
 
     if not all(allowed.match(x) for x in hostname.split(".")):
         raise exceptions.ValidationError(
-            _('{} is not a valid hostname').format(hostname)
+            _('{} is not a valid hostname: (invalid characters)').format(hostname)
         )
 
     return hostname
@@ -114,7 +115,7 @@ def validateFqdn(fqdn: str, maxLength: int = 255) -> str:
 def validateUrl(url: str, maxLength: int = 1024) -> str:
     if len(url) > maxLength:
         raise exceptions.ValidationError(
-            _('{} exceeds maximum url length.').format(url)
+            _('{} is not a valid URL: exceeds maximum length.').format(url)
         )
 
     try:
@@ -360,3 +361,23 @@ def validateBasename(baseName: str, length: int = -1) -> str:
         raise exceptions.ValidationError(_('The machine name can\'t be only numbers'))
 
     return baseName
+
+def validateJson(jsonData: typing.Optional[str]) -> typing.Any:
+    """
+    Validates that a json data is valid (or empty)
+    
+    Args:
+        jsonData (typing.Optional[str]): Json data to validate
+        
+    Raises:
+        exceptions.ValidationError: If json data is not valid
+        
+    Returns:
+        typing.Any: Json data as python object
+    """
+    if not jsonData:
+        return None
+    try:
+        return json.loads(jsonData)
+    except Exception:
+        raise exceptions.ValidationError(_('Invalid JSON data')) from None

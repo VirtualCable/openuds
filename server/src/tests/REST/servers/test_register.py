@@ -33,10 +33,14 @@ import logging
 
 from uds import models
 from uds.core import types
+from uds.core.managers import crypto
 from uds.core.util import log
 
-from ...utils import rest, constants, random_ip_v4, random_ip_v6, random_mac
 
+from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
+
+if typing.TYPE_CHECKING:
+    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -46,72 +50,126 @@ class ServerRegisterTest(rest.test.RESTTestCase):
     Test server functionality
     """
 
+    _data: typing.Dict[str, typing.Any]
+
+    def setUp(self) -> None:
+        super().setUp()
+        self._data = {
+            'ip': '',  # To be set on tests
+            'type': '',  # To be set on tests
+            'subtype': crypto.CryptoManager.manager().randomString(10),
+            'os': '',  # To be set on tests
+            'hostname': 'test',
+            'log_level': log.LogLevel.INFO.value,
+            'mac': random_mac(),
+        }
+        self.login(as_admin=False)  # As staff
+        
+    def ip_type_os_generator(self) -> typing.Generator[typing.Tuple[str, int, str], None, None]:
+        for ip_v in 4, 6:
+            for type in types.servers.ServerType:
+                for os in types.os.KnownOS:
+                    ip = random_ip_v4() if ip_v == 4 else random_ip_v6()
+                    yield ip, type.value, os.value[0]
+
     def test_valid_register(self) -> None:
         """
         Test server rest api registration
         """
-        data: typing.Dict[str, typing.Any] = {
-            'ip': '',  # To be set on tests
-            'type': '',  # To be set on tests
-            'subtype': 'test',
-            'os': '',  # To be set on tests
-            'hostname': 'test',
-            'log_level': log.LogLevel.INFO.value,
-            'mac': '',  # To be set on tests
-        }
-        response: typing.Any
+        response: 'UDSHttpResponse'
 
-        token = self.login(as_admin=True)  # Token not used, alreade inserted on login
+        for ip, type, os in self.ip_type_os_generator():
+            self._data['ip'] = ip
+            self._data['mac'] = random_mac()
+            self._data['type'] = type
+            self._data['os'] = os
+            response = self.client.rest_post(
+                'servers/register',
+                data=self._data,
+                content_type='application/json',
+            )
+            self.assertEqual(response.status_code, 200)
+            # This is the server token, should exist on self._database
+            token = response.json()['result']
 
-        for ip_v in 4, 6:
-            for type in types.servers.ServerType:
-                for os in types.os.KnownOS:
-                    data['ip'] = random_ip_v4() if ip_v == 4 else random_ip_v6()
-                    data['mac'] = random_mac()
-                    data['type'] = type.value
-                    data['os'] = os.value[0]
-                    response = self.client.post(
-                        '/uds/rest/servers/register',
-                        data=data,
-                        content_type='application/json',
-                    )
-                    self.assertEqual(response.status_code, 200)
-                    # This is the server token, should exist on database
-                    token = response.json()['result']
+            server = models.Server.objects.get(token=token)
+            self.assertEqual(server.ip, self._data['ip'])
+            self.assertEqual(server.type, self._data['type'])
+            self.assertEqual(server.subtype, self._data['subtype'])
+            self.assertEqual(server.mac, self._data['mac'])
+            self.assertEqual(server.hostname, self._data['hostname'])
+            self.assertEqual(server.log_level, self._data['log_level'])
+            self.assertEqual(server.os_type, self._data['os'].lower())
 
-                    server = models.Server.objects.get(token=token)
-                    self.assertEqual(server.ip, data['ip'])
-                    self.assertEqual(server.type, data['type'])
-                    self.assertEqual(server.subtype, data['subtype'])
-                    self.assertEqual(server.mac, data['mac'])
-                    self.assertEqual(server.hostname, data['hostname'])
-                    self.assertEqual(server.log_level, data['log_level'])
-                    self.assertEqual(server.os_type, data['os'].lower())
+            # Second register from same ip and type will update hostname, mac and subtype
+            self._data2 = self._data.copy()
+            self._data2['hostname'] = 'test2'
+            self._data2['subtype'] = 'test2'
+            self._data2['mac'] = random_mac()
+            self._data2['os'] = (
+                types.os.KnownOS.UNKNOWN.value[0]
+                if os != types.os.KnownOS.UNKNOWN
+                else types.os.KnownOS.WINDOWS.value[0]
+            )
+            response = self.client.rest_post(
+                'servers/register',
+                data=self._data2,
+                content_type='application/json',
+            )
 
-                    # Second register from same ip and type will update hostname, mac and subtype
-                    data2 = data.copy()
-                    data2['hostname'] = 'test2'
-                    data2['subtype'] = 'test2'
-                    data2['mac'] = random_mac()
-                    data2['os'] = (
-                        types.os.KnownOS.UNKNOWN.value[0]
-                        if os != types.os.KnownOS.UNKNOWN
-                        else types.os.KnownOS.WINDOWS.value[0]
-                    )
-                    response = self.client.post(
-                        '/uds/rest/servers/register',
-                        data=data2,
-                        content_type='application/json',
-                    )
+            token2 = response.json()['result']  # Same as token
+            self.assertEqual(token, token2)
 
-                    token2 = response.json()['result']  # Same as token
-                    self.assertEqual(token, token2)
+            server = models.Server.objects.get(token=token)
 
-                    server = models.Server.objects.get(token=token)
+            self.assertEqual(server.ip, self._data['ip'])
+            self.assertEqual(server.type, self._data2['type'])
+            self.assertEqual(server.subtype, self._data2['subtype'])
+            self.assertEqual(server.hostname, self._data2['hostname'])
+            self.assertEqual(server.mac, self._data2['mac'])
+            # Rest of fields should be the same
 
-                    self.assertEqual(server.ip, data['ip'])
-                    self.assertEqual(server.type, data2['type'])
-                    self.assertEqual(server.subtype, data2['subtype'])
-                    self.assertEqual(server.hostname, data2['hostname'])
-                    self.assertEqual(server.mac, data2['mac'])
-                    # Rest of fields should be the same
+    def test_invalid_register(self) -> None:
+        response: 'UDSHttpResponse'
+        
+        def _do_test(where: str) -> None:
+            response = self.client.rest_post(
+                'servers/register',
+                data=self._data,
+                content_type='application/json',
+            )
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('valid', response.content.decode().lower(), where) # Not valid or invalid match
+            
+        
+        for ip, type, os in self.ip_type_os_generator():
+            # Invalid IP
+            self._data['ip'] = 'invalid ip'
+            self._data['type'] = type
+            self._data['os'] = os
+            _do_test('invalid ip')
+            # Invalid type
+            self._data['ip'] = ip
+            self._data['type'] = 'x' * 32
+            _do_test('invalid type')
+            # Invalid subtype
+            self._data['type'] = type
+            self._data['subtype'] = 'x' * 32
+            _do_test('invalid subtype')
+            # Invalid os
+            self._data['subtype'] = ''
+            self._data['os'] = 'x' * 32
+            _do_test('invalid os')
+            # Invalid hostname
+            self._data['os'] = os
+            self._data['hostname'] = 'x' * 256
+            _do_test('invalid hostname')
+            # Invalid mac
+            self._data['hostname'] = 'test'
+            self._data['mac'] = 'x' * 32
+            _do_test('invalid mac')
+            # Invalid json
+            self._data['mac'] = random_mac()
+            self._data['data'] = 'invalid json'
+            _do_test('invalid json')
+

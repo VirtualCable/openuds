@@ -98,7 +98,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         """
         user_service = self.user_service_managed
 
-        _, actor_token = self.login_and_register()
+        actor_token = self.login_and_register()
 
         # Get the user service unique_id
         unique_id = self.user_service_managed.getUniqueId()

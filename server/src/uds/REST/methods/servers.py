@@ -36,12 +36,9 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, exceptions, types
-from uds.core.util import decorators
-from uds.core.util.log import LogLevel
-from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
+from uds.core.util import decorators, validators, log, model
 from uds.core.util.os_detector import KnownOS
-from uds.REST import Handler
-from uds.REST.model import ModelHandler
+from uds.REST import Handler, exceptions as rest_exceptions
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
@@ -51,27 +48,53 @@ logger = logging.getLogger(__name__)
 class ServerRegisterBase(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         serverToken: models.Server
-        now = getSqlDatetime()
+        now = model.getSqlDatetime()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
             # If zone is present, remove it
             ip = ip.split('%')[0]
+
+        mac = self._params.get('mac', consts.MAC_UNKNOWN)
+        data = self._params.get('data', None)
+        subtype = self._params.get('subtype', '')
+        os = self._params.get('os', KnownOS.UNKNOWN.os_name()).lower()
+        
+        type = self._params['type']  # MUST be present
+        hostname = self._params['hostname']  # MUST be present
+        # Validate parameters
+        try:
+            try:
+                t = types.servers.ServerType(type)
+            except ValueError:
+                raise ValueError(_('Invalid type. Type must be an integer.'))
+            if len(subtype) > 16:
+                raise ValueError(_('Invalid subtype. Max length is 16.'))
+            if len(os) > 16:
+                raise ValueError(_('Invalid os. Max length is 16.'))
+            if data and len(data) > 2048:
+                raise ValueError(_('Invalid data. Max length is 2048.'))
+            validators.validateIpv4OrIpv6(ip)  # Will raise "validation error"
+            validators.validateFqdn(hostname)
+            validators.validateMac(mac)
+            validators.validateJson(data)
+        except Exception as e:
+            raise rest_exceptions.RequestError(str(e)) from e
 
         try:
             # If already exists a token for this, return it instead of creating a new one, and update the information...
             # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
             # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.Server.objects.get(ip=ip, type=self._params['type'])
+            serverToken = models.Server.objects.get(ip=ip, type=type)
             # Update parameters
             serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.stamp = now
-            serverToken.type = self._params['type']
-            serverToken.mac = self._params.get('mac', consts.MAC_UNKNOWN)
-            serverToken.subtype = self._params.get('subtype', '')  # Optional
+            serverToken.mac = mac
+            serverToken.subtype = subtype  # Optional
+            serverToken.data = data
             serverToken.save()
         except Exception:
             try:
@@ -80,23 +103,24 @@ class ServerRegisterBase(Handler):
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
                     hostname=self._params['hostname'],
-                    log_level=self._params.get('log_level', LogLevel.INFO.value),
+                    log_level=self._params.get('log_level', log.LogLevel.INFO.value),
                     stamp=now,
                     type=self._params['type'],
                     subtype=self._params.get('subtype', ''),  # Optional
                     os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
-                    mac=self._params.get('mac', consts.MAC_UNKNOWN),
-                    data=self._params.get('data', None),
+                    mac=mac,
+                    data=data,
                 )
             except Exception as e:
                 return rest_result('error', error=str(e))
         return rest_result(result=serverToken.token)
 
+
 class ServerRegister(ServerRegisterBase):
     needs_staff = True
     path = 'servers'
     name = 'register'
-    
+
 
 # REST handlers for server actions
 class ServerTest(Handler):

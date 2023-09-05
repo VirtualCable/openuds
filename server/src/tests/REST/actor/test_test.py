@@ -102,13 +102,13 @@ class ActorTestTest(rest.test.RESTActorTestCase):
         self.assertEqual(response.status_code, 403)
     
     def test_test_managed(self) -> None:
-        rest_token, actor_token = self.login_and_register()
+        actor_token = self.login_and_register()
         self.do_test(MANAGED, actor_token)
 
     def test_test_unmanaged(self) -> None:
         # try for a first few services
         service = self.user_service_managed.deployed_service.service
-        rest_token, actor_token = self.login_and_register()
+        actor_token = self.login_and_register()
         # Get service token
         self.do_test(UNMANAGED, service.token or '')
 

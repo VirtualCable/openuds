@@ -62,6 +62,8 @@ class RESTTestCase(test.UDSTransactionTestCase):
     user_service_unmanaged: models.UserService
 
     user_services: typing.List[models.UserService]
+    
+    auth_token: str = ''
 
     def setUp(self) -> None:
         # Set up data for REST Test cases
@@ -128,10 +130,11 @@ class RESTTestCase(test.UDSTransactionTestCase):
 
     def login(
         self, user: typing.Optional[models.User] = None, as_admin: bool = True
-    ) -> str:
+    ) -> None:
         '''
         Login as specified and returns the auth token
         The token is inserted on the header of the client, so it can be used in the rest of the tests
+        Also, it is stored on self.auth_token
         '''
         user = user or (self.admins[0] if as_admin else self.staffs[0])
         response = rest.login(
@@ -144,7 +147,8 @@ class RESTTestCase(test.UDSTransactionTestCase):
         self.assertEqual(response['result'], 'ok', f'Login failed: {response}')
         # Insert token into headers
         self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
-        return response['token']
+        self.auth_token = response['token']
+        
 
 
 class RESTActorTestCase(RESTTestCase):
@@ -153,8 +157,8 @@ class RESTActorTestCase(RESTTestCase):
     # Returns as a tuple the auth token and the actor registration result token:
     #   - The login auth token
     #   - The actor token
-    def login_and_register(self, as_admin: bool = True) -> typing.Tuple[str, str]:
-        token = self.login(
+    def login_and_register(self, as_admin: bool = True) -> str:
+        self.login(
             as_admin=as_admin
         )  # Token not used, alreade inserted on login
         response = self.client.post(
@@ -163,7 +167,7 @@ class RESTActorTestCase(RESTTestCase):
             content_type='application/json',
         )
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
-        return token, response.json()['result']
+        return response.json()['result']
 
     def register_data(
         self, chars: typing.Optional[str] = None
