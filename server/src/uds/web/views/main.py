@@ -56,7 +56,7 @@ from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas, types
 from uds import models
-from uds.core.util.model import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlStampInSeconds
 
 
 logger = logging.getLogger(__name__)
@@ -191,7 +191,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
 
     # Get validity duration
     validity = mfaProvider.validity * 60
-    now = getSqlDatetimeAsUnix()
+    now = getSqlStampInSeconds()
     start_time = request.session.get('mfa_start_time', now)
 
     # If mfa process timed out, we need to start login again

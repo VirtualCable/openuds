@@ -31,7 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import typing
 
 from uds.core.consts import VERSION
-from uds.core.util.model import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlStampInSeconds
 
 
 def rest_result(result: typing.Any, **kwargs) -> typing.Dict[str, typing.Any]:
@@ -39,4 +39,4 @@ def rest_result(result: typing.Any, **kwargs) -> typing.Dict[str, typing.Any]:
     Returns a REST result
     '''
     # A common possible value in kwargs is "error"
-    return {'result': result, 'stamp': getSqlDatetimeAsUnix(), 'version': VERSION, **kwargs}
+    return {'result': result, 'stamp': getSqlStampInSeconds(), 'version': VERSION, **kwargs}

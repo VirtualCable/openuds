@@ -109,7 +109,7 @@ def getSqlDatetime() -> datetime.datetime:
     return TimeTrack.getSqlDatetime()
 
 
-def getSqlDatetimeAsUnix() -> int:
+def getSqlStampInSeconds() -> int:
     """Returns the current date/time of the database server as unix timestamp
 
     Returns:

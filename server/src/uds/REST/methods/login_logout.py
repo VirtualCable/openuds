@@ -43,7 +43,7 @@ from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import getSqlDatetimeAsUnix, processUuid
+from uds.core.util.model import getSqlStampInSeconds, processUuid
 from uds.models import Authenticator
 from uds.REST import AccessDenied, Handler, RequestError
 from uds.REST.utils import rest_result

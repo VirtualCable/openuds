@@ -62,7 +62,6 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
         server = servers_fixtures.createServer()
         userService = self.user_service_managed
 
-        self.login()  # Login as staff
         # Mock the "log.doLog" method (uds.core.util.log.doLog)
         with mock.patch('uds.core.managers.log.manager.LogManager.doLog') as doLog:
             # Now notify to server
@@ -98,7 +97,6 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
 
     def test_event_log_fail(self) -> None:
         server = servers_fixtures.createServer()
-        self.login()
         data = {
             'token': server.token,
             'type': 'log',

@@ -28,24 +28,26 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import logging
-
+import random
+import typing
 from unittest import mock
 
+from uds.core import types
 from uds.core.util import log
 
-from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
 from ...fixtures import servers as servers_fixtures
+from ...utils import random_ip_v4, random_ip_v6, random_mac, rest
 
 if typing.TYPE_CHECKING:
-    from ...utils.test import UDSHttpResponse
     from uds import models
+
+    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 
 
-class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
+class ServerEventsPingTest(rest.test.RESTTestCase):
     """
     Test server functionality
     """
@@ -56,76 +58,69 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         super().setUp()
         self.server = servers_fixtures.createServer()
 
-    def test_login(self) -> None:
-        # REST path: servers/notify  (/uds/rest/...)
-        # loginData = {
-        #     'token': 'server token', # Must be present on all events
-        #     'type': 'login',  # MUST BE PRESENT
-        #     'user_service': 'uuid', # MUST BE PRESENT
-        #     'username': 'username', # Optional
-        # }
-        response = self.client.rest_post(
-            '/servers/event',
-            data={
-                'token': self.server.token,
-                'type': 'login',
-                'user_service': self.user_service_managed.uuid,
-                'username': 'local_user_name',
-            },
+    def test_event_ping_with_stats(self) -> None:
+        # Ping event
+        # Can include "stats"
+        # Stats is like types.servers.ServerStatsType as dict
+        # memused: int = 0  # In bytes
+        # memtotal: int = 0  # In bytes
+        # cpuused: float = 0  # 0-1 (cpu usage)
+        # uptime: int = 0  # In seconds
+        # disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (name, used, total)
+        # connections: int = 0  # Number of connections
+        # current_users: int = 0  # Number of current users
+
+        # Create an stat object
+        memTotal = random.randint(100000000, 1000000000)  # nosec: test data
+        memUsed = random.randint(0, memTotal)  # nosec: test data
+        stats = types.servers.ServerStatsType(
+            memused=memTotal,
+            memtotal=memUsed,
+            cpuused=random.random(),  # nosec: test data
+            uptime=random.randint(0, 1000000),  # nosec: test data
+            disks=[
+                (
+                    'c:\\',
+                    random.randint(0, 100000000),  # nosec: test data
+                    random.randint(100000000, 1000000000),  # nosec: test data
+                ),
+                (
+                    'd:\\',
+                    random.randint(0, 100000000),  # nosec: test data
+                    random.randint(100000000, 1000000000),  # nosec: test data
+                ),
+            ],
+            connections=random.randint(0, 100),  # nosec: test data
+            current_users=random.randint(0, 100),  # nosec: test data
         )
-        self.assertEqual(response.status_code, 200)
-        self.user_service_managed.refresh_from_db()
-        self.assertEqual(self.user_service_managed.in_use, True)
-
-        # TODO: Finish this test
-
-    def test_login_fail(self) -> None:
-        response = self.client.rest_post(
-            '/servers/event',
-            data={
-                'token': self.server.token,
-                'type': 'login',
-                'user_service': 'invalid uuid',
-                'username': 'local_user_name',
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(response.content)
-        self.assertIsNotNone(response.json())
-        self.assertIn('error', response.json())
-
-    def test_logout(self) -> None:
-        # REST path: servers/notify  (/uds/rest/...)
-        # logoutData = {
-        #     'token': 'server token', # Must be present on all events
-        #     'type': 'login',  # MUST BE PRESENT
-        #     'user_service': 'uuid', # MUST BE PRESENT
-        #     'username': 'username', # Optional
-        # }
 
         response = self.client.rest_post(
             '/servers/event',
             data={
                 'token': self.server.token,
-                'type': 'logout',
-                'user_service': self.user_service_managed.uuid,
-                'username': 'local_user_name',
+                'type': 'ping',
+                'stats': stats.asDict(),
             },
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.user_service_managed.in_use, False)
 
-    def test_logout_fail(self) -> None:
+        self.assertEqual(response.status_code, 200)
+
+        server_stats = self.server.properties.get('stats', None)
+        self.assertIsNotNone(server_stats)
+        statsResponse = types.servers.ServerStatsType.fromDict(server_stats)
+        self.assertEqual(statsResponse, stats)
+
+    def test_event_ping_without_stats(self) -> None:
+        # Create an stat object
         response = self.client.rest_post(
             '/servers/event',
             data={
                 'token': self.server.token,
-                'type': 'login',
-                'user_service': 'invalid uuid',
-                'username': 'local_user_name',
+                'type': 'ping',
             },
         )
+
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(response.content)
-        self.assertIsNotNone(response.json())
-        self.assertIn('error', response.json())
+
+        server_stats = self.server.properties.get('stats', None)
+        self.assertIsNone(server_stats)

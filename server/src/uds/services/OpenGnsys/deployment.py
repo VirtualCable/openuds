@@ -37,7 +37,7 @@ from uds.core import services
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.core.util.model import getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlStampInSeconds
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -306,7 +306,7 @@ class OGDeployment(services.UserService):
         self._name = r['name']
         self._mac = r['mac']
         self._ip = r['ip']
-        self._stamp = getSqlDatetimeAsUnix()
+        self._stamp = getSqlStampInSeconds()
 
         self.doLog(
             log.LogLevel.INFO,

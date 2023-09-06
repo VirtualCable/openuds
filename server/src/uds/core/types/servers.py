@@ -30,12 +30,14 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
+import time
 import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core.util import singleton
 from uds.core.consts import images
+from uds.core.util import singleton
+from uds.core.util.model import getSqlStamp
 
 
 class ServerType(enum.IntEnum):
@@ -85,7 +87,7 @@ class ServerSubType(metaclass=singleton.Singleton):
 
     def register(self, type: ServerType, subtype: str, description: str, icon: str, managed: bool) -> None:
         """Registers a new subtype for a server type
-        
+
         Args:
             type (ServerType): Server type
             subtype (str): Subtype name
@@ -107,26 +109,28 @@ class ServerSubType(metaclass=singleton.Singleton):
 # Registering default subtypes (basically, ip unmanaged is the "global" one), any other will be registered by the providers
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
 # The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
-ServerSubType.manager().register(ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', images.DEFAULT_IMAGE_BASE64, False)
+ServerSubType.manager().register(
+    ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', images.DEFAULT_IMAGE_BASE64, False
+)
 
 
 class ServerStatsType(typing.NamedTuple):
-    memused: int = 1  # In bytes
-    memtotal: int = 1  # In bytes
+    memused: int = 0  # In bytes
+    memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
     disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (name, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
-    
+    stamp: float = 0  # Timestamp of this stats
+
     @property
     def cpufree_ratio(self) -> float:
         return (1 - self.cpuused) / (self.current_users + 1)
-    
+
     @property
     def memfree_ratio(self) -> float:
         return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
-        
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
@@ -153,7 +157,14 @@ class ServerStatsType(typing.NamedTuple):
             disks=disks,
             connections=dct.get('connections', 0),
             current_users=dct.get('current_users', 0),
+            stamp=dct.get('stamp', getSqlStamp()),
         )
+
+    def asDict(self) -> typing.Dict[str, typing.Any]:
+        data = self._asdict()
+        # Replace disk as dicts
+        data['disks'] = [{'name': d[0], 'used': d[1], 'total': d[2]} for d in self.disks]
+        return data
 
     @staticmethod
     def empty() -> 'ServerStatsType':
@@ -163,10 +174,11 @@ class ServerStatsType(typing.NamedTuple):
         # Human readable
         return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}'
 
+
 class ServerCounterType(typing.NamedTuple):
     server_uuid: str
     counter: int
-    
+
     @staticmethod
     def fromIterable(data: typing.Optional[typing.Iterable]) -> typing.Optional['ServerCounterType']:
         if data is None:

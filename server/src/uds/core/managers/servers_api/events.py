@@ -30,6 +30,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+
+from uds.core.util.model import getSqlDatetime
 from uds.core import types, consts
 
 from uds.REST.utils import rest_result
@@ -53,14 +55,28 @@ def process_log(data: typing.Dict[str, typing.Any]) -> typing.Any:
 
 
 def process_login(data: typing.Dict[str, typing.Any]) -> typing.Any:
+    userService = models.UserService.objects.get(uuid=data['user_service'])
+    userService.setInUse(True)
+
     return rest_result(consts.OK)
 
 
 def process_logout(data: typing.Dict[str, typing.Any]) -> typing.Any:
+    userService = models.UserService.objects.get(uuid=data['user_service'])
+    userService.setInUse(False)
+
     return rest_result(consts.OK)
 
 
 def process_ping(data: typing.Dict[str, typing.Any]) -> typing.Any:
+    server = models.Server.objects.get(token=data['token'])
+    if 'stats' in data:
+        # Load anc check stats
+        stats = types.servers.ServerStatsType.fromDict(data['stats'])
+        # Set stats on server
+        server.properties['stats'] = stats.asDict()
+    server.properties['last_ping'] = getSqlDatetime()
+
     return rest_result(consts.OK)
 
 

@@ -89,7 +89,7 @@ class Config:
             if value in list(Config.SectionType.values()):
                 return Config.SectionType(value)
             return Config.SectionType(Config.SectionType.OTHER)
-        
+
         @staticmethod
         def values() -> typing.Iterable['Config.SectionType']:
             return Config.SectionType
@@ -164,7 +164,9 @@ class Config:
                     readed = DBConfig.objects.get(section=self._section.name(), key=self._key)
                     self._data = readed.value
                     # Ensure password are not encrypted again on DB, even if legacy values were
-                    self._crypt = (readed.crypt or self._crypt) if self._type != Config.FieldType.PASSWORD else False
+                    self._crypt = (
+                        (readed.crypt or self._crypt) if self._type != Config.FieldType.PASSWORD else False
+                    )
                     self._longText = readed.long
                     if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
@@ -323,10 +325,11 @@ class Config:
                 return False  # Skip non writable elements
 
             if cfg.crypt:
-                value = CryptoManager().encrypt(value)
-            # If field type is a password, store hashed value
-            if cfg.field_type == Config.FieldType.PASSWORD.value:
-                value = CryptoManager().hash(value)
+                # If field type is a password, store hashed value
+                if cfg.field_type == Config.FieldType.PASSWORD.value:
+                    value = CryptoManager().hash(value)
+                else:
+                    value = CryptoManager().encrypt(value)  # Rest, encrypt value (symetrically)
 
             cfg.value = value
             cfg.save()

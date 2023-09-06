@@ -37,7 +37,7 @@ import typing
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
 from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
-from uds.core.util.model import getSqlDatetime, getSqlDatetimeAsUnix
+from uds.core.util.model import getSqlDatetime, getSqlStampInSeconds
 
 if typing.TYPE_CHECKING:
     from django.db import models
@@ -258,7 +258,7 @@ class StatsManager(metaclass=singleton.Singleton):
         logger.debug('Adding event stat')
         stamp = kwargs.get('stamp')
         if stamp is None:
-            stamp = getSqlDatetimeAsUnix()
+            stamp = getSqlStampInSeconds()
         else:
             # To Unix epoch
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
