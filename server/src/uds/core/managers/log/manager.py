@@ -64,7 +64,6 @@ class LogManager(metaclass=singleton.Singleton):
         level: int,
         message: str,
         source: str,
-        avoidDuplicates: bool,
         logName: str
     ):
         """
@@ -74,14 +73,6 @@ class LogManager(metaclass=singleton.Singleton):
         message = str(message)[:4096]
 
         qs = Log.objects.filter(owner_id=owner_id, owner_type=owner_type.value)
-
-        if avoidDuplicates:
-            lg: typing.Optional['Log'] = Log.objects.filter(
-                owner_id=owner_id, owner_type=owner_type.value
-            ).last()
-            if lg and lg.data == message:
-                # Do not log again, already logged
-                return
 
         # now, we add new log
         try:
@@ -122,9 +113,7 @@ class LogManager(metaclass=singleton.Singleton):
         level: int,
         message: str,
         source: str,
-        avoidDuplicates: bool = True,
         logName: typing.Optional[str] = None,
-        delayInsert: bool = False,
     ):
         """
         Do the logging for the requested object.
@@ -142,7 +131,7 @@ class LogManager(metaclass=singleton.Singleton):
         if owner_type is not None:
             try:
                 self._log(
-                    owner_type, objectId, level, message, source, avoidDuplicates, logName
+                    owner_type, objectId, level, message, source, logName
                 )
             except Exception:  # nosec
                 pass  # Can not log,

@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 
 
 class LogMaintenance(Job):
-    frecuency = 120  # Once every two minutes
+    frecuency = 7200  # Once every two hours
     # frecuency_cfg = GlobalConfig.XXXX
     friendly_name = 'Log maintenance'
 
@@ -65,7 +65,7 @@ class LogMaintenance(Job):
                 continue
 
             max_elements = ownerType.get_max_elements()
-            if 0 < max_elements < count:
+            if 0 < max_elements < count:   # Negative max elements means "unlimited"
                 # We will delete the oldest ones
                 for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by('created', 'id')[: count - max_elements + 1]:
                     record.delete()

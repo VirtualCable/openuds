@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
@@ -27,49 +26,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
+import logging
 
-from uds.core.util import singleton
-from uds.core.util.log import LogLevel
+from unittest import mock
+
+from uds.core.util import log
+
+from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
+from ...fixtures import servers as servers_fixtures
 
 if typing.TYPE_CHECKING:
-    from ..messaging import provider
+    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 
 
-class NotificationsManager(metaclass=singleton.Singleton):
+class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
     """
-    This class manages alerts and notifications
+    Test server functionality
     """
 
-    def __init__(self):
+    def test_login(self) -> None:
         pass
-
-    @staticmethod
-    def manager() -> 'NotificationsManager':
-        return NotificationsManager()  # Singleton pattern will return always the same instance
-
-    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
-        from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
-
-        # logger.debug(
-        #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
-        # )
-        # Format the string
-        try:
-            message = message % args
-        except Exception:
-            message = message + ' ' + str(args) + ' (format error)'
-        message = message[:4096]  # Max length of message
-        # Store the notification on local persistent storage
-        # Will be processed by UDS backend
-        try:
-            with Notification.atomicPersistent():
-                notify = Notification(group=group, identificator=identificator, level=level, message=message)
-                notify.savePersistent()
-        except Exception:
-            logger.info('Error saving notification %s, %s, %s, %s', group, identificator, level, message)

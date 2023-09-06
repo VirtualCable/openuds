@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 # Copyright (c) 2022 Virtual Cable S.L.U.
 # All rights reserved.
@@ -27,49 +26,40 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import logging
 import typing
+import logging
 
-from uds.core.util import singleton
-from uds.core.util.log import LogLevel
+from uds import models
+from uds.core import types
+from uds.core.managers import crypto
+from uds.core.util import log
+
+
+from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
+from ...fixtures import servers as servers_fixtures
 
 if typing.TYPE_CHECKING:
-    from ..messaging import provider
+    from ...utils.test import UDSHttpResponse
 
 logger = logging.getLogger(__name__)
 
 
-class NotificationsManager(metaclass=singleton.Singleton):
+class ServerTestTest(rest.test.RESTTestCase):
     """
-    This class manages alerts and notifications
+    Test server functionality
     """
 
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def manager() -> 'NotificationsManager':
-        return NotificationsManager()  # Singleton pattern will return always the same instance
-
-    def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
-        from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
-
-        # logger.debug(
-        #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args
-        # )
-        # Format the string
-        try:
-            message = message % args
-        except Exception:
-            message = message + ' ' + str(args) + ' (format error)'
-        message = message[:4096]  # Max length of message
-        # Store the notification on local persistent storage
-        # Will be processed by UDS backend
-        try:
-            with Notification.atomicPersistent():
-                notify = Notification(group=group, identificator=identificator, level=level, message=message)
-                notify.savePersistent()
-        except Exception:
-            logger.info('Error saving notification %s, %s, %s, %s', group, identificator, level, message)
+    def test_server_test(self) -> None:
+        """
+        Test server rest api registration
+        """
+        server = servers_fixtures.createServer()
+        response = self.client.rest_post(
+            'servers/test',
+            data={
+                'token': server.token,
+            },
+        )
+        self.assertEqual(response.status_code, 200)

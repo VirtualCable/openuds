@@ -39,13 +39,14 @@ from ..utils import generators
 
 
 def createServer(
-    type: 'types.servers.ServerType',
+    type: 'types.servers.ServerType' = types.servers.ServerType.SERVER,
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
     ip: typing.Optional[str] = None,
     listen_port: int = 0,
     data: typing.Any = None,
 ) -> 'models.Server':
+    # Token is created by default on record creation
     return models.Server.objects.create(
         username=generators.random_string(),
         ip_from=ip or '127.0.0.1',
@@ -62,7 +63,7 @@ def createServer(
 
 
 def createServerGroup(
-    type: 'types.servers.ServerType',
+    type: 'types.servers.ServerType' = types.servers.ServerType.SERVER,
     subtype: typing.Optional[str] = None,
     version: typing.Optional[str] = None,
     ip: typing.Optional[str] = None,

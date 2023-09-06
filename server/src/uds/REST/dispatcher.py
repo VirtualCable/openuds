@@ -149,8 +149,8 @@ class Dispatcher(View):
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
 
-            log.logOperation(handler, 500, log.LogLevel.ERROR)
-            return http.HttpResponseServerError(
+            log.logOperation(handler, 400, log.LogLevel.ERROR)
+            return http.HttpResponseBadRequest(
                 f'Invalid parameters invoking {full_path}: {e}',
                 content_type="text/plain",
             )

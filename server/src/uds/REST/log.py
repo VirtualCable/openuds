@@ -97,5 +97,4 @@ def logOperation(
             :4096
         ],
         source=LogSource.REST,
-        avoidDuplicates=False,
     )

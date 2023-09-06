@@ -172,4 +172,16 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             self._data['mac'] = random_mac()
             self._data['data'] = 'invalid json'
             _do_test('invalid json')
+            
+    def test_invalid_user_not_staff_or_admin(self) -> None:
+        self.login(self.plain_users[0])
+        # Login successfull, but not admin or staff
+        # Data is invalid, but we will get a 403 because we are not admin or staff
+        response = self.client.rest_post(
+            'servers/register',
+            data=self._data,
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertIn('denied', response.content.decode().lower())
 

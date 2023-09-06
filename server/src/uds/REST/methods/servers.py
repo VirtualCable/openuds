@@ -45,6 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 # REST API for Server Token Clients interaction
+# Register is split in two because tunnel registration also uses this
 class ServerRegisterBase(Handler):
     def post(self) -> typing.MutableMapping[str, typing.Any]:
         serverToken: models.Server
@@ -58,7 +59,7 @@ class ServerRegisterBase(Handler):
         data = self._params.get('data', None)
         subtype = self._params.get('subtype', '')
         os = self._params.get('os', KnownOS.UNKNOWN.os_name()).lower()
-        
+
         type = self._params['type']  # MUST be present
         hostname = self._params['hostname']  # MUST be present
         # Validate parameters
@@ -139,25 +140,7 @@ class ServerTest(Handler):
             return rest_result('error', error=str(e))
 
 
-# Server related classes/actions
-class ServerAction(Handler):
-    authenticated = False  # Actor requests are not authenticated normally
-    path = 'servers/action'
-
-    def action(self, server: models.Server) -> typing.MutableMapping[str, typing.Any]:
-        return rest_result('error', error='Base action invoked')
-
-    @decorators.blocker()
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
-        try:
-            server = models.Server.objects.get(token=self._params['token'])
-        except models.Server.DoesNotExist:
-            raise exceptions.BlockAccess() from None  # Block access if token is not valid
-
-        return self.action(server)
-
-
-class ServerEvent(ServerAction):
+class ServerEvent(Handler):
     """
     Manages a event notification from a server to UDS Broker
 
@@ -169,7 +152,9 @@ class ServerEvent(ServerAction):
     * log
     """
 
-    name = 'notify'
+    authenticated = False  # Actor requests are not authenticated normally
+    path = 'servers'
+    name = 'event'
 
     def getUserService(self) -> models.UserService:
         '''
@@ -181,7 +166,17 @@ class ServerEvent(ServerAction):
             logger.error('User service not found (params: %s)', self._params)
             raise
 
-    def action(self, server: models.Server) -> typing.MutableMapping[str, typing.Any]:
+    @decorators.blocker()
+    def post(self) -> typing.MutableMapping[str, typing.Any]:
+        # Avoid circular import
+        from uds.core.managers.servers import ServerManager
+
+        try:
+            server = models.Server.objects.get(token=self._params['token'])
+        except models.Server.DoesNotExist:
+            raise exceptions.BlockAccess() from None  # Block access if token is not valid
+        except KeyError:
+            raise rest_exceptions.RequestError('Token not present') from None  # Invalid request if token is not present
         # Notify a server that a new service has been assigned to it
         # Get action from parameters
         # Parameters:
@@ -192,24 +187,7 @@ class ServerEvent(ServerAction):
         #    * Logout: { 'username': 'username'}
         #    * Log: { 'level': 'level', 'message': 'message'}
         try:
-            event = types.events.NotifiableEvents(self._params.get('event', None) or '')
-        except ValueError:
-            return rest_result('error', error='No valid event specified')
-
-        # Extract user service
-        try:
-            userService = self.getUserService()
-        except Exception:
-            return rest_result('error', error='User service not found')
-
-        if event == types.events.NotifiableEvents.LOGIN:
-            # TODO: notify
-            pass
-        elif event == types.events.NotifiableEvents.LOGOUT:
-            # TODO: notify
-            pass
-        elif event == types.events.NotifiableEvents.LOG:
-            # TODO: log
-            pass
-
-        return rest_result(True)
+            return ServerManager.manager().processEvent(server, self._params)
+        except Exception as e:
+            logger.error('Error processing event %s: %s', self._params, e)
+            return rest_result('error', error='Error processing event')

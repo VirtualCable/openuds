@@ -107,7 +107,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             typing.Callable[['models.Server'], typing.Optional['types.servers.ServerStatsType']]
         ] = None,
     ) -> typing.Iterator[mock.Mock]:
-        with mock.patch('uds.core.managers.servers_api.request.ServerApiRequester') as mockServerApiRequester:
+        with mock.patch('uds.core.managers.servers_api.requester.ServerApiRequester') as mockServerApiRequester:
 
             def _getStats() -> typing.Optional[types.servers.ServerStatsType]:
                 # Get first argument from call to init on serverApiRequester

@@ -86,7 +86,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
 
     @contextmanager
     def createMockApiRequester(self) -> typing.Iterator[mock.Mock]:
-        with mock.patch('uds.core.managers.servers_api.request.ServerApiRequester') as mockServerApiRequester:
+        with mock.patch('uds.core.managers.servers_api.requester.ServerApiRequester') as mockServerApiRequester:
             mockServerApiRequester.return_value.getStats.return_value = None
             yield mockServerApiRequester
 

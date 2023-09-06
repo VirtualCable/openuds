@@ -136,6 +136,7 @@ class UDSClient(UDSClientMixin, Client):
 
     def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
         # compose url
+        kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return self.post(self.compose_rest_url(method), *args, **kwargs)
 
     def put(self, *args, **kwargs) -> 'UDSHttpResponse':
@@ -250,8 +251,6 @@ class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
 
 
 # pylint: disable=unused-argument
-def setupClass(
-    cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]
-) -> None:
+def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]) -> None:
     # Nothing right now
     pass

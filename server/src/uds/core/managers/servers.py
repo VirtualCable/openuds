@@ -44,7 +44,7 @@ from uds.core.util import model as model_utils
 from uds.core.util import singleton
 from uds.core.util.storage import StorageAccess, Storage
 
-from .servers_api import request
+from .servers_api import events, requester
 
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
@@ -116,19 +116,24 @@ class ServerManager(metaclass=singleton.Singleton):
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
         if excludeServersUUids:
             fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
-            
+
         # Paralelize stats retrieval
-        cachedStats: typing.List[typing.Tuple[typing.Optional['types.servers.ServerStatsType'], 'models.Server']] = []
+        cachedStats: typing.List[
+            typing.Tuple[typing.Optional['types.servers.ServerStatsType'], 'models.Server']
+        ] = []
+
         def _retrieveStats(server: 'models.Server') -> None:
             try:
-                cachedStats.append((request.ServerApiRequester(server).getStats(), server))  # Store stats for later use
+                cachedStats.append(
+                    (requester.ServerApiRequester(server).getStats(), server)
+                )  # Store stats for later use
             except Exception:
                 cachedStats.append((None, server))
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             for server in fltrs.select_for_update():
                 executor.submit(_retrieveStats, server)
-        
+
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
         for stats, server in cachedStats:
             if stats is None:
@@ -162,7 +167,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # If best was locked, notify it (will be notified again on assign)
         if best[0].locked_until is not None:
-            request.ServerApiRequester(best[0]).notifyRelease(userService)
+            requester.ServerApiRequester(best[0]).notifyRelease(userService)
 
         return best
 
@@ -198,7 +203,7 @@ class ServerManager(metaclass=singleton.Singleton):
         # Look for existint user asignation through properties
         prop_name = self.propertyName(userService.user)
         now = model_utils.getSqlDatetime()
-        
+
         excludeServersUUids = excludeServersUUids or set()
 
         with serverGroup.properties as props:
@@ -207,7 +212,10 @@ class ServerManager(metaclass=singleton.Singleton):
             ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
             # If server is forced, and server is part of the group, use it
             if server:
-                if server.groups.filter(uuid=serverGroup.uuid).exclude(uuid__in=excludeServersUUids).count() == 0:
+                if (
+                    server.groups.filter(uuid=serverGroup.uuid).exclude(uuid__in=excludeServersUUids).count()
+                    == 0
+                ):
                     raise exceptions.UDSException(_('Server is not part of the group'))
                 elif server.maintenance_mode:
                     raise exceptions.UDSException(_('Server is in maintenance mode'))
@@ -259,7 +267,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
-        request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, info.counter)
+        requester.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, info.counter)
         return info
 
     def release(
@@ -288,13 +296,17 @@ class ServerManager(metaclass=singleton.Singleton):
             with transaction.atomic():
                 resetCounter = False
                 # ServerCounterType
-                
-                serverCounter: typing.Optional[types.servers.ServerCounterType] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
+
+                serverCounter: typing.Optional[
+                    types.servers.ServerCounterType
+                ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
                 # If no cached value, get server assignation
                 if serverCounter is None:
                     return types.servers.ServerCounterType.empty()
                 # Ensure counter is at least 1
-                serverCounter = types.servers.ServerCounterType(serverCounter.server_uuid, max(1, serverCounter.counter))
+                serverCounter = types.servers.ServerCounterType(
+                    serverCounter.server_uuid, max(1, serverCounter.counter)
+                )
                 if serverCounter.counter == 1 or unlock:
                     # Last one, remove it
                     del props[prop_name]
@@ -314,20 +326,20 @@ class ServerManager(metaclass=singleton.Singleton):
             if server.type == types.servers.ServerType.UNMANAGED:
                 self.decreaseUnmanagedUsage(server.uuid, forceReset=resetCounter)
 
-            request.ServerApiRequester(server).notifyRelease(userService)
+            requester.ServerApiRequester(server).notifyRelease(userService)
 
         return types.servers.ServerCounterType(serverCounter.server_uuid, serverCounter.counter - 1)
 
     def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
         Get usage information for a server group
-        
+
         Args:
             serverGroup: Server group to get current usage from
-            
+
         Returns:
             Dict of current usage (user uuid, counter for assignations to that user)
-           
+
         """
         res: typing.Dict[str, int] = {}
         for k, v in serverGroup.properties.items():
@@ -363,10 +375,12 @@ class ServerManager(metaclass=singleton.Singleton):
         """
         Notifies preconnect to server
         """
-        request.ServerApiRequester(server).notifyPreconnect(userService, info)
+        requester.ServerApiRequester(server).notifyPreconnect(userService, info)
 
-    def processNotification(self, server: 'models.Server', data: str) -> None:
+    def processEvent(self, server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
         """
         Processes a notification FROM server
+        That is, this is not invoked directly unless a REST request is received from
+        a server.
         """
-        pass
+        return events.process(data)

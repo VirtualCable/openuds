@@ -50,9 +50,9 @@ class RESTTestCase(test.UDSTransactionTestCase):
     auth: models.Authenticator
     simple_groups: typing.List[models.Group]
     meta_groups: typing.List[models.Group]
-    admins: typing.List[models.User]
-    staffs: typing.List[models.User]
-    plain_users: typing.List[models.User]
+    admins: typing.List[models.User]  # Users that are admin
+    staffs: typing.List[models.User]  # Users that are not admin but are staff
+    plain_users: typing.List[models.User]  # Users that are not admin or staff
 
     users = property(lambda self: self.admins + self.staffs + self.plain_users)
     groups = property(lambda self: self.simple_groups + self.meta_groups)
@@ -62,19 +62,15 @@ class RESTTestCase(test.UDSTransactionTestCase):
     user_service_unmanaged: models.UserService
 
     user_services: typing.List[models.UserService]
-    
+
     auth_token: str = ''
 
     def setUp(self) -> None:
         # Set up data for REST Test cases
         # First, the authenticator related
         self.auth = authenticators_fixtures.createAuthenticator()
-        self.simple_groups = authenticators_fixtures.createGroups(
-            self.auth, NUMBER_OF_ITEMS_TO_CREATE
-        )
-        self.meta_groups = authenticators_fixtures.createMetaGroups(
-            self.auth, NUMBER_OF_ITEMS_TO_CREATE
-        )
+        self.simple_groups = authenticators_fixtures.createGroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
+        self.meta_groups = authenticators_fixtures.createMetaGroups(self.auth, NUMBER_OF_ITEMS_TO_CREATE)
         # Create some users, one admin, one staff and one user
         self.admins = authenticators_fixtures.createUsers(
             self.auth,
@@ -106,21 +102,17 @@ class RESTTestCase(test.UDSTransactionTestCase):
             self.groups,
             'managed',
         )
-        self.user_service_unmanaged = (
-            services_fixtures.createOneCacheTestingUserService(
-                self.provider,
-                self.admins[0],
-                self.groups,
-                'unmanaged',
-            )
+        self.user_service_unmanaged = services_fixtures.createOneCacheTestingUserService(
+            self.provider,
+            self.admins[0],
+            self.groups,
+            'unmanaged',
         )
 
         self.user_services = []
         for user in self.users:
             self.user_services.append(
-                services_fixtures.createOneCacheTestingUserService(
-                    self.provider, user, self.groups, 'managed'
-                )
+                services_fixtures.createOneCacheTestingUserService(self.provider, user, self.groups, 'managed')
             )
             self.user_services.append(
                 services_fixtures.createOneCacheTestingUserService(
@@ -128,9 +120,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
                 )
             )
 
-    def login(
-        self, user: typing.Optional[models.User] = None, as_admin: bool = True
-    ) -> None:
+    def login(self, user: typing.Optional[models.User] = None, as_admin: bool = True) -> None:
         '''
         Login as specified and returns the auth token
         The token is inserted on the header of the client, so it can be used in the rest of the tests
@@ -148,19 +138,15 @@ class RESTTestCase(test.UDSTransactionTestCase):
         # Insert token into headers
         self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
         self.auth_token = response['token']
-        
 
 
 class RESTActorTestCase(RESTTestCase):
-
     # Login as admin or staff and register an actor
     # Returns as a tuple the auth token and the actor registration result token:
     #   - The login auth token
     #   - The actor token
     def login_and_register(self, as_admin: bool = True) -> str:
-        self.login(
-            as_admin=as_admin
-        )  # Token not used, alreade inserted on login
+        self.login(as_admin=as_admin)  # Token not used, alreade inserted on login
         response = self.client.post(
             '/uds/rest/actor/v3/register',
             data=self.register_data(constants.STRING_CHARS),
@@ -169,9 +155,7 @@ class RESTActorTestCase(RESTTestCase):
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
         return response.json()['result']
 
-    def register_data(
-        self, chars: typing.Optional[str] = None
-    ) -> typing.Dict[str, str]:
+    def register_data(self, chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
         # Data for registration
         return {
             'username': generators.random_string(size=12, chars=chars)

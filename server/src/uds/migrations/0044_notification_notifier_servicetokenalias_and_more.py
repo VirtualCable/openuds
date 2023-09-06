@@ -35,7 +35,7 @@ def update_network_model(apps, schema_editor):  # pylint: disable=unused-argumen
             net.version = 4  # Previous versions only supported ipv4
             net.save(update_fields=['start', 'end', 'version'])
     except Exception as e:
-        print(f'Error updating network model: {e}')
+        print(f'Error updating network model: {e}')  # Will fail on pytest, but it's ok
 
 
 class Migration(migrations.Migration):
