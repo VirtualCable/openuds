@@ -5,6 +5,18 @@ from django.db import migrations, models
 import django.db.models.deletion
 import uds.core.util.model
 
+# Old UnsavedForeignKey, not user anymore but needed for migrations
+class UnsavedForeignKey(models.ForeignKey):
+    """
+    From 1.8 of django, we need to point to "saved" objects.
+    If dont, will raise an InvalidValue exception.
+
+    We need to trick in some cases, because for example, root user is not in DB
+    """
+
+    # Allows pointing to an unsaved object
+    allow_unsaved_instance_assignment = True
+
 
 # Functions from the following migrations need manual copying.
 # Move them and any dependencies into this file, then update the
@@ -579,12 +591,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='group',
             name='manager',
-            field=uds.core.util.model.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='uds.authenticator'),
+            field=UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='uds.authenticator'),
         ),
         migrations.AlterField(
             model_name='user',
             name='manager',
-            field=uds.core.util.model.UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users', to='uds.authenticator'),
+            field=UnsavedForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='users', to='uds.authenticator'),
         ),
         migrations.AddField(
             model_name='deployedservicepublicationchangelog',
