@@ -276,4 +276,24 @@ class Migration(migrations.Migration):
                 to="uds.servergroup",
             ),
         ),
+        # Remove old UnsavedForeignKey
+        migrations.AlterField(
+            model_name="group",
+            name="manager",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="groups",
+                to="uds.authenticator",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="user",
+            name="manager",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="users",
+                to="uds.authenticator",
+            ),
+        ),
+        
     ]

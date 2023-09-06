@@ -41,7 +41,7 @@ from uds.core.util import log
 from .uuid_model import UUIDModel
 from .authenticator import Authenticator
 from .user import User
-from ..core.util.model import UnsavedForeignKey, getSqlDatetime
+from ..core.util.model import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,7 +57,7 @@ class Group(UUIDModel):
     This class represents a group, associated with one authenticator
     """
 
-    manager: 'models.ForeignKey[Authenticator]' = UnsavedForeignKey(
+    manager: 'models.ForeignKey[Authenticator]' = models.ForeignKey(
         Authenticator, on_delete=models.CASCADE, related_name='groups'
     )
     name = models.CharField(max_length=128, db_index=True)

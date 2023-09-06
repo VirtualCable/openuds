@@ -43,7 +43,7 @@ from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
-CACHE_TIME_TIMEOUT = 60 # Every 60 second, refresh the time from database (to avoid drifts)
+CACHE_TIME_TIMEOUT = 60  # Every 60 second, refresh the time from database (to avoid drifts)
 
 
 # pylint: disable=too-few-public-methods
@@ -52,6 +52,7 @@ class TimeTrack:
     Reduces the queries to database to get the current time
     keeping it cached for CACHE_TIME_TIMEOUT seconds (and adjusting it based on local time)
     """
+
     lock: typing.ClassVar[Lock] = Lock()
     last_check: typing.ClassVar[datetime.datetime] = consts.NEVER
     cached_time: typing.ClassVar[datetime.datetime] = consts.NEVER
@@ -101,19 +102,6 @@ class TimeTrack:
         return TimeTrack.cached_time + (now - TimeTrack.last_check)
 
 
-# pylint: disable=too-few-public-methods
-class UnsavedForeignKey(models.ForeignKey):
-    """
-    From 1.8 of django, we need to point to "saved" objects.
-    If dont, will raise an InvalidValue exception.
-
-    We need to trick in some cases, because for example, root user is not in DB
-    """
-
-    # Allows pointing to an unsaved object
-    # allow_unsaved_instance_assignment = True
-
-
 def getSqlDatetime() -> datetime.datetime:
     """Returns the current date/time of the database server.
     Has been updated to use TimeTrack, which reduces the queries to database to get the current time
@@ -128,6 +116,16 @@ def getSqlDatetimeAsUnix() -> int:
         int: Unix timestamp
     """
     return int(mktime(getSqlDatetime().timetuple()))
+
+
+def getSqlStamp() -> float:
+    """Returns the current date/time of the database server as unix timestamp
+
+    Returns:
+        float: Unix timestamp
+    """
+    return float(mktime(getSqlDatetime().timetuple())) + getSqlDatetime().microsecond / 1000000.0
+
 
 def generateUuid(obj: typing.Any = None) -> str:
     """

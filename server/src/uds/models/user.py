@@ -40,7 +40,7 @@ from uds.core.util import log, storage
 
 from .authenticator import Authenticator
 from ..core.consts import NEVER
-from ..core.util.model import UnsavedForeignKey, getSqlDatetime
+from ..core.util.model import getSqlDatetime
 from .uuid_model import UUIDModel
 
 # Not imported at runtime, just for type checking
@@ -58,7 +58,7 @@ class User(UUIDModel):
     This class represents a single user, associated with one authenticator
     """
 
-    manager: 'models.ForeignKey[Authenticator]' = UnsavedForeignKey(
+    manager: 'models.ForeignKey[Authenticator]' = models.ForeignKey(
         Authenticator, on_delete=models.CASCADE, related_name='users'
     )
     name = models.CharField(max_length=128, db_index=True)
