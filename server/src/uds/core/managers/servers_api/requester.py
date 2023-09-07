@@ -195,14 +195,21 @@ class ServerApiRequester:
         logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
         self.post('removeService', {'userservice': userService.uuid})
 
-    @decorators.cached('reqserver', cacheTimeout=60)
     def getStats(self) -> typing.Optional['types.servers.ServerStatsType']:
         """
         Returns the stats of a server
         """
+        # If stored stats are still valid, return them
+        stats = self.server.stats
+        if stats:
+            return stats
+            
         logger.debug('Getting stats from server %s', self.server.host)
         data = self.get('stats')
         if data is None:
             return None
 
-        return types.servers.ServerStatsType.fromDict(data)
+        stats = types.servers.ServerStatsType.fromDict(data)
+        # Will store stats on property, so no save is needed
+        self.server.stats = stats
+        return stats
