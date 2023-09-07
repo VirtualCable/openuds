@@ -91,3 +91,8 @@ FALSE_STR: typing.Final[str] = 'false'
 
 # Default length for Gui Text Fields
 DEFAULT_TEXT_LENGTH: typing.Final[int] = 64
+
+# Default timeouts, in seconds
+DEFAULT_CACHE_TIMEOUT: typing.Final[int] = 60 * 3  # 3 minutes
+LONG_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT * 20  # 1 hour
+SMALL_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT // 3  # 1 minute

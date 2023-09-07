@@ -163,7 +163,7 @@ class ServersServers(DetailHandler):
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def getGui(self, parent: 'models.ServerGroup', forType: str = '') -> typing.List[typing.Any]:
-        kind, subkind = parent.serverType, parent.subtype
+        kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
         if kind == types.servers.ServerType.UNMANAGED:
             return self.addField(
@@ -301,7 +301,7 @@ class ServersServers(DetailHandler):
     def deleteItem(self, parent: 'models.ServerGroup', item: str) -> None:
         try:
             server = models.Server.objects.get(uuid=processUuid(item))
-            if parent.serverType == types.servers.ServerType.UNMANAGED:
+            if parent.server_type == types.servers.ServerType.UNMANAGED:
                 parent.servers.remove(server)  # Remove reference
                 server.delete()  # and delete server
             else:

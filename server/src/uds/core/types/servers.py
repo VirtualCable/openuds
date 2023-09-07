@@ -30,12 +30,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
-import time
+import datetime
 import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core.consts import images
+from uds.core import consts
 from uds.core.util import singleton
 from uds.core.util.model import getSqlStamp
 
@@ -110,7 +110,7 @@ class ServerSubType(metaclass=singleton.Singleton):
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
 # The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
 ServerSubType.manager().register(
-    ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', images.DEFAULT_IMAGE_BASE64, False
+    ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
 )
 
 
@@ -131,6 +131,16 @@ class ServerStatsType(typing.NamedTuple):
     @property
     def memfree_ratio(self) -> float:
         return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
+    
+    @property
+    def is_valid( self ) -> bool:
+        """If the stamp is lesss than consts.DEFAULT_CACHE_TIMEOUT, it is considered valid
+        
+        Returns:
+            bool: True if valid, False otherwise
+        """
+        return self.stamp > getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT
+        
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
@@ -145,7 +155,9 @@ class ServerStatsType(typing.NamedTuple):
         return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
 
     @staticmethod
-    def fromDict(dct: typing.Dict[str, typing.Any]) -> 'ServerStatsType':
+    def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStatsType':
+        dct = { k:v for k, v in data.items()}  # Make a copy
+        dct.update(kwargs) # and update with kwargs
         disks: typing.List[typing.Tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
             disks.append((disk['name'], disk['used'], disk['total']))

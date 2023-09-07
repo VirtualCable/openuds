@@ -31,12 +31,11 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
-from uds.core.util.model import getSqlDatetime
-from uds.core import types, consts
-
-from uds.REST.utils import rest_result
 from uds import models
+from uds.core import consts, osmanagers, types
 from uds.core.util import log
+from uds.core.util.model import getSqlDatetime, getSqlStamp
+from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
 
@@ -55,15 +54,49 @@ def process_log(data: typing.Dict[str, typing.Any]) -> typing.Any:
 
 
 def process_login(data: typing.Dict[str, typing.Any]) -> typing.Any:
+    server = models.Server.objects.get(token=data['token'])
     userService = models.UserService.objects.get(uuid=data['user_service'])
-    userService.setInUse(True)
+    server.setActorVersion(userService)
 
-    return rest_result(consts.OK)
+    if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+        osmanagers.OSManager.loggedIn(userService, data['username'])
+
+    # Get the source of the connection and a new session id
+    src = userService.getConnectionSource()
+    session_id = userService.initSession()  # creates a session for every login requested
+
+    osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+    maxIdle = osManager.maxIdle() if osManager else None
+
+    logger.debug('Max idle: %s', maxIdle)
+
+    deadLine = deadLine = (
+        userService.deployed_service.getDeadline() if not osManager or osManager.ignoreDeadLine() else None
+    )
+
+    return rest_result(
+        {
+            'ip': src.ip,
+            'hostname': src.hostname,
+            'dead_line': deadLine,
+            'max_idle': maxIdle,
+            'session_id': session_id,
+        }
+    )
 
 
 def process_logout(data: typing.Dict[str, typing.Any]) -> typing.Any:
     userService = models.UserService.objects.get(uuid=data['user_service'])
-    userService.setInUse(False)
+
+    session_id = data['session_id']
+    userService.closeSession(session_id)
+
+    if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+        osmanagers.OSManager.loggedOut(userService, data['username'])
+        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        if not osManager or osManager.isRemovableOnLogout(userService):
+            logger.debug('Removable on logout: %s', osManager)
+            userService.remove()
 
     return rest_result(consts.OK)
 
@@ -71,11 +104,9 @@ def process_logout(data: typing.Dict[str, typing.Any]) -> typing.Any:
 def process_ping(data: typing.Dict[str, typing.Any]) -> typing.Any:
     server = models.Server.objects.get(token=data['token'])
     if 'stats' in data:
-        # Load anc check stats
-        stats = types.servers.ServerStatsType.fromDict(data['stats'])
+        server.stats = types.servers.ServerStatsType.fromDict(data['stats'])
         # Set stats on server
-        server.properties['stats'] = stats.asDict()
-    server.properties['last_ping'] = getSqlDatetime()
+    server.last_ping = getSqlDatetime()
 
     return rest_result(consts.OK)
 
@@ -103,7 +134,7 @@ def process(data: typing.Dict[str, typing.Any]) -> typing.Any:
         return rest_result('error', error=f'Invalid event type {data.get("type", "not_found")}')
 
     try:
-        fnc(data)
+        return fnc(data)
     except Exception as e:
         logger.error('Exception processing event %s: %s', data, e)
         return rest_result('error', error=str(e))

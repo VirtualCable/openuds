@@ -221,7 +221,7 @@ class OSManager(Module):
         '''
         Resets login counter to 0
         '''
-        userService.properties['loginsCounter'] = 0
+        userService.properties['logins_counter'] = 0
         # And execute ready notification method
         self.readyNotified(userService)
 
@@ -235,6 +235,7 @@ class OSManager(Module):
         """
         uniqueId = userService.unique_id
         userService.setInUse(True)
+        userService.properties['last_username'] = userName or 'unknown'  # Store it for convenience
         userServiceInstance = userService.getInstance()
         userServiceInstance.userLoggedIn(userName or 'unknown')
         userService.updateData(userServiceInstance)
@@ -277,8 +278,8 @@ class OSManager(Module):
 
         # Context makes a transaction, so we can use it to update the counter
         with userService.properties as p:
-            counter = int(typing.cast(str, p.get('loginsCounter', 0))) + 1
-            p['loginsCounter'] = counter
+            counter = int(typing.cast(str, p.get('logins_counter', 0))) + 1
+            p['logins_counter'] = counter
 
     @staticmethod
     def loggedOut(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
@@ -289,10 +290,10 @@ class OSManager(Module):
           - Invokes userLoggedIn for user service instance
         """
         with userService.properties as p:
-            counter = int(typing.cast(str, p.get('loginsCounter', 0))) - 1
+            counter = int(typing.cast(str, p.get('logins_counter', 0))) - 1
             if counter > 0:
                 counter -= 1
-            p['loginsCounter'] = counter
+            p['logins_counter'] = counter
 
         if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) and counter > 0:
             return

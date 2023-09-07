@@ -419,7 +419,7 @@ def enableService(
 
         userService, trans = res[1], res[3]
 
-        userService.properties['accessedByClient'] = False  # Reset accesed property to
+        userService.properties['accessed_by_client'] = False  # Reset accesed property to
 
         typeTrans = trans.getType()
 

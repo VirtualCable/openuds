@@ -203,7 +203,7 @@ class Client(Handler):
             # ensures that we mark the service as accessed by client
             # so web interface can show can react to this
             if userService:
-                userService.properties['accessedByClient'] = True
+                userService.properties['accessed_by_client'] = True
 
     def get(self) -> typing.Dict[str, typing.Any]:
         """

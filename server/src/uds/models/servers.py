@@ -28,25 +28,26 @@
 '''
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import typing
+import datetime
 import secrets
+import typing
 
 from django.db import models
 
-from uds.core import types
-from uds.core.util.os_detector import KnownOS
+from uds.core import consts, types
+from uds.core.consts import MAC_UNKNOWN, MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, SERVER_DEFAULT_LISTEN_PORT
 from uds.core.types.request import ExtendedHttpRequest
-from uds.core.util import properties, log, resolver, net
+from uds.core.util import log, net, properties, resolver
+from uds.core.util.model import getSqlStamp
+from uds.core.util.os_detector import KnownOS
 
-from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, MAC_UNKNOWN, SERVER_DEFAULT_LISTEN_PORT
-
-from .uuid_model import UUIDModel
 from .tag import TaggingMixin
-
+from .uuid_model import UUIDModel
 
 if typing.TYPE_CHECKING:
     from uds.models.transport import Transport
     from uds.models.user import User
+    from uds.models.user_service import UserService
 
 
 class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
@@ -93,13 +94,19 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if self.port == 0:
             return self.host
         return f'{self.host}:{self.port}'
-    
+
     @property
-    def serverType(self) -> types.servers.ServerType:
+    def server_type(self) -> types.servers.ServerType:
+        """Returns the server type of this server"""
         try:
             return types.servers.ServerType(self.type)
         except ValueError:
-            return types.servers.ServerType.UNMANAGED  # Invalid value, return default
+            return types.servers.ServerType.UNMANAGED
+
+    @server_type.setter
+    def server_type(self, value: types.servers.ServerType) -> None:
+        """Sets the server type of this server"""
+        self.type = value
 
     def https_url(self, path: str) -> str:
         if not path.startswith('/'):
@@ -200,42 +207,12 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return self.uuid, 'server'
 
     @property
-    def serverType(self) -> types.servers.ServerType:
+    def server_type(self) -> types.servers.ServerType:
+        """Returns the server type of this server"""
         try:
             return types.servers.ServerType(self.type)
         except ValueError:
-            return types.servers.ServerType.UNMANAGED  # Invalid value, return default
-
-    @staticmethod
-    def create_token() -> str:
-        return create_token()  # Return global function
-
-    @staticmethod
-    def validateToken(
-        token: str,
-        serverType: typing.Union[typing.Iterable[types.servers.ServerType], types.servers.ServerType],
-        request: typing.Optional[ExtendedHttpRequest] = None,
-    ) -> bool:
-        # Ensure token is valid
-        try:
-            if isinstance(serverType, types.servers.ServerType):
-                tt = Server.objects.get(token=token, type=serverType.value)
-            else:
-                tt = Server.objects.get(token=token, type__in=[st.value for st in serverType])
-            # We could check the request ip here
-            if request and request.ip != tt.ip:
-                raise Exception('Invalid ip')
-            return True
-        except Server.DoesNotExist:
-            pass
-        except Server.MultipleObjectsReturned:
-            raise Exception('Multiple objects returned for token')
-        return False
-
-    @property
-    def server_type(self) -> types.servers.ServerType:
-        """Returns the server type of this server"""
-        return types.servers.ServerType(self.type)
+            return types.servers.ServerType.UNMANAGED
 
     @server_type.setter
     def server_type(self, value: types.servers.ServerType) -> None:
@@ -245,7 +222,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @property
     def host(self) -> str:
         """Returns the host of this server
-        
+
         Host returns first the IP if it exists, and if not, the hostname (resolved)
         """
         # If hostname exists, try first to resolve it
@@ -261,6 +238,76 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     def ip_version(self) -> int:
         """Returns the ip version of this server"""
         return 6 if ':' in self.ip else 4
+
+    @property
+    def stats(self) -> typing.Optional[types.servers.ServerStatsType]:
+        """Returns the current stats of this server, or None if not available"""
+        statsDct = self.properties.get('stats', None)
+        if statsDct:
+            stats = types.servers.ServerStatsType.fromDict(statsDct)
+            if stats.is_valid:
+                return stats
+        return None
+
+    @stats.setter
+    def stats(self, value: typing.Optional[types.servers.ServerStatsType]) -> None:
+        """Sets the current stats of this server"""
+        if value is None:
+            del self.properties['stats']
+        else:
+            # Set stamp to current time and save it
+            statsDict = value.asDict()
+            statsDict['stamp'] = getSqlStamp()
+            self.properties['stats'] = statsDict
+
+    @property
+    def last_ping(self) -> datetime.datetime:
+        """Returns the last ping of this server"""
+        return self.properties.get('last_ping', consts.NEVER)
+
+    @last_ping.setter
+    def last_ping(self, value: datetime.datetime) -> None:
+        """Sets the last ping of this server"""
+        self.properties['last_ping'] = value
+
+    @staticmethod
+    def create_token() -> str:
+        return create_token()  # Return global function
+
+    @staticmethod
+    def validateToken(
+        token: str,
+        serverType: typing.Union[typing.Iterable[types.servers.ServerType], types.servers.ServerType],
+        request: typing.Optional[ExtendedHttpRequest] = None,
+    ) -> bool:
+        """Ensures that a token is valid for a server type
+
+        Args:
+            token: Token to validate
+            serverType: Server type to validate token for
+            request: Optional request to check ip against token ip
+
+        Returns:
+            True if token is valid for server type, False otherwise
+
+        Note:
+            This allows to keep Tunnels, Servers, Actors.. etc on same table, and validate tokens for each kind
+        """
+        # Ensure token is valid for a kind
+        try:
+            if isinstance(serverType, types.servers.ServerType):
+                tt = Server.objects.get(token=token, type=serverType.value)
+            else:
+                tt = Server.objects.get(token=token, type__in=[st.value for st in serverType])
+            # We could check the request ip here
+            if request and request.ip != tt.ip:
+                raise Exception('Invalid ip')
+            return True
+        except Server.DoesNotExist:
+            pass
+        except Server.MultipleObjectsReturned:
+            raise Exception('Multiple objects returned for token')
+        return False
 
     @staticmethod
     def search(ip_or_host: str) -> typing.Optional['Server']:
@@ -282,6 +329,10 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         else:
             found = Server.objects.filter(hostname=ip_or_host).first()
         return found
+
+    def setActorVersion(self, userService: 'UserService') -> None:
+        """Sets the actor version of this server to the userService"""
+        userService.setActorVersion(f'Server {self.version or "unknown"}')
 
     def getCommsUrl(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
         """

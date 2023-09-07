@@ -33,8 +33,9 @@ import random
 import typing
 from unittest import mock
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.util import log
+from uds.core.util.model import getSqlStamp
 
 from ...fixtures import servers as servers_fixtures
 from ...utils import random_ip_v4, random_ip_v6, random_mac, rest
@@ -107,8 +108,17 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
 
         server_stats = self.server.properties.get('stats', None)
         self.assertIsNotNone(server_stats)
-        statsResponse = types.servers.ServerStatsType.fromDict(server_stats)
+        # Get stats, but clear stamp
+        statsResponse = types.servers.ServerStatsType.fromDict(server_stats, stamp=0)
         self.assertEqual(statsResponse, stats)
+        # Ensure that stamp is not 0 on server_stats dict
+        self.assertNotEqual(server_stats['stamp'], 0)
+
+        # Ensure stat is valid right now
+        statsResponse = types.servers.ServerStatsType.fromDict(server_stats)
+        self.assertTrue(statsResponse.is_valid)
+        statsResponse = types.servers.ServerStatsType.fromDict(server_stats, stamp=getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT - 1)
+        self.assertFalse(statsResponse.is_valid)
 
     def test_event_ping_without_stats(self) -> None:
         # Create an stat object

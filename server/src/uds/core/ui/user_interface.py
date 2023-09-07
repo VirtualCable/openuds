@@ -656,7 +656,7 @@ class gui:
 
         def _setValue(self, value: typing.Any):
             # Internally stores an string
-            super()._setValue(str(value))
+            super()._setValue(value)
 
         def num(self) -> int:
             """
