@@ -32,6 +32,7 @@ Provides useful functions for authenticating, used by web interface.
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import base64
 import logging
 import typing
 import codecs
@@ -455,15 +456,15 @@ def webPassword(request: HttpRequest) -> str:
     session (db) and client browser cookies. This method uses this two values to recompose the user password
     so we can provide it to remote sessions.
     """
-    if hasattr(request, 'session'):
-        passkey = codecs.decode(request.session.get(PASS_KEY, '').encode(), 'base64')
-        return CryptoManager().symDecrpyt(
-            passkey, getUDSCookie(request)
-        )  # recover as original unicode string
-    # No session, get from _session instead, this is an "client" REST request
+    if hasattr(request, '_cryptedpass') and hasattr(request, '_scrambler'):
+        return CryptoManager.manager().symDecrpyt(
+            getattr(request, '_cryptedpass'),
+            getattr(request, '_scrambler'),
+        )
+    passkey = base64.b64decode(request.session.get(PASS_KEY, ''))
     return CryptoManager().symDecrpyt(
-        getattr(request, '_cryptedpass'), getattr(request, '_scrambler')
-    )
+        passkey, getUDSCookie(request)
+    )  # recover as original unicode string
 
 
 def webLogout(
