@@ -54,13 +54,10 @@ class UUIDModel(models.Model):
     class Meta:  # pylint: disable=too-few-public-methods
         abstract = True
 
-    def genUuid(self) -> str:
-        return generateUuid()
-
     # Override default save to add uuid
     def save(self, *args, **kwargs):
         if not self.uuid:
-            self.uuid = self.genUuid()
+            self.uuid = generateUuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = (
                 self.uuid.lower()

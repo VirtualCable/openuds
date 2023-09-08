@@ -383,4 +383,4 @@ class ServerManager(metaclass=singleton.Singleton):
         That is, this is not invoked directly unless a REST request is received from
         a server.
         """
-        return events.process(data)
+        return events.process(server, data)

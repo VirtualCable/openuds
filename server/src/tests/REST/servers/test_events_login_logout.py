@@ -33,6 +33,7 @@ import logging
 
 from unittest import mock
 
+from uds import models
 from uds.core.util import log
 
 from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
@@ -40,7 +41,6 @@ from ...fixtures import servers as servers_fixtures
 
 if typing.TYPE_CHECKING:
     from ...utils.test import UDSHttpResponse
-    from uds import models
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,21 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         self.assertEqual(session.session_id, result['session_id'])
         self.assertEqual(self.user_service_managed.properties.get('last_username', ''), 'local_user_name')
 
-        # TODO: Finish this test
+    def test_login_with_ticket(self) -> None:
+        ticket_uuid = models.TicketStore.create({'user_service': self.user_service_managed.uuid, 'some_value': 'value'})
+        response = self.client.rest_post(
+            '/servers/event',
+            data={
+                'token': self.server.token,
+                'type': 'login',
+                'user_service': self.user_service_managed.uuid,
+                'username': 'local_user_name',
+                'ticket': ticket_uuid,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()['result']
+        self.assertEqual(data['ticket']['some_value'], 'value')
 
     def test_login_fail(self) -> None:
         response = self.client.rest_post(
@@ -191,3 +205,17 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         self.assertEqual(response.status_code, 200)
         self.user_service_managed.refresh_from_db()
         self.assertEqual(self.user_service_managed.in_use, False)
+
+    def test_ticket(self) -> None:
+        ticket_uuid = models.TicketStore.create({'user_service': self.user_service_managed.uuid, 'some_value': 'value'})
+        response = self.client.rest_post(
+            '/servers/event',
+            data={
+                'token': self.server.token,
+                'type': 'ticket',
+                'ticket': ticket_uuid,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()['result']
+        self.assertEqual(data['some_value'], 'value')

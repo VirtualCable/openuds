@@ -70,7 +70,8 @@ VALID_PARAMS = (
 class Tickets(Handler):
     """
     Processes tickets access requests.
-    Tickets are element used to "register" & "allow access" to users.
+    Tickets are element used to "register" & "allow access" to users to a service.
+    Designed to be used by external systems (like web services) to allow access to users to services.
 
     The rest API accepts the following parameters:
        authId: uuid of the authenticator for the user                |  Mutually excluyents
