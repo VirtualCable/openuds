@@ -93,6 +93,8 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             self.fail('Session not found')
         self.assertEqual(session.session_id, result['session_id'])
         self.assertEqual(self.user_service_managed.properties.get('last_username', ''), 'local_user_name')
+        # Must not have ticket
+        self.assertIsNone(result.get('ticket', None))
 
     def test_login_with_ticket(self) -> None:
         ticket_uuid = models.TicketStore.create({'user_service': self.user_service_managed.uuid, 'some_value': 'value'})
