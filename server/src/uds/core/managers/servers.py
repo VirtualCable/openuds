@@ -130,8 +130,11 @@ class ServerManager(metaclass=singleton.Singleton):
             except Exception:
                 cachedStats.append((None, server))
 
+        # Retrieve, in parallel, stats for all servers (not restrained)
         with ThreadPoolExecutor(max_workers=10) as executor:
             for server in fltrs.select_for_update():
+                if server.isRestrained():
+                    continue  # Skip restrained servers
                 executor.submit(_retrieveStats, server)
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
@@ -219,6 +222,8 @@ class ServerManager(metaclass=singleton.Singleton):
                     raise exceptions.UDSException(_('Server is not part of the group'))
                 elif server.maintenance_mode:
                     raise exceptions.UDSException(_('Server is in maintenance mode'))
+                elif server.isRestrained():
+                    raise exceptions.UDSException(_('Server is restrained'))
 
                 # if server.uuid is stored uuid, increase counter (and counters if exits), else store it
                 if info and info.server_uuid == server.uuid:
@@ -230,10 +235,12 @@ class ServerManager(metaclass=singleton.Singleton):
                 self.increaseUnmanagedUsage(server.uuid, onlyIfExists=True)
             else:
                 if info and info.server_uuid:
-                    # If server does not exists, or it is in maintenance, or it is in exclude list,
+                    # If server does not exists, or it is in maintenance, or it is in exclude list or it is restrained,
                     # remove it from saved and use look for another one
                     svr = models.Server.objects.filter(uuid=info.server_uuid).first()
-                    if not svr or (svr.maintenance_mode or svr.uuid in excludeServersUUids):
+                    if not svr or (
+                        svr.maintenance_mode or svr.uuid in excludeServersUUids or svr.isRestrained()
+                    ):
                         info = None
                         del props[prop_name]
                     else:

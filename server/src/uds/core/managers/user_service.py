@@ -755,7 +755,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
             t: Transport
             for t in userService.deployed_service.transports.order_by('priority'):
                 typeTrans = t.getType()
-                if typeTrans and t.isValidForIp(srcIp) and typeTrans.supportsOs(os.os) and t.isValidForOs(os.os):
+                if (
+                    typeTrans
+                    and t.isValidForIp(srcIp)
+                    and typeTrans.supportsOs(os.os)
+                    and t.isValidForOs(os.os)
+                ):
                     idTransport = t.uuid
                     break
 
@@ -1008,6 +1013,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     doTest=False,
                     clientHostname=clientHostName,
                 )
+            # Not usable, will notify that it is not accessible
 
         except Exception:  # No service already assigned, lets find a suitable one
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out

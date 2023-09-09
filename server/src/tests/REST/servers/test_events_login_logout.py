@@ -103,7 +103,6 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             data={
                 'token': self.server.token,
                 'type': 'login',
-                'user_service': self.user_service_managed.uuid,
                 'username': 'local_user_name',
                 'ticket': ticket_uuid,
             },

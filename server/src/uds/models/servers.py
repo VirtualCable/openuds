@@ -38,7 +38,7 @@ from uds.core import consts, types
 from uds.core.consts import MAC_UNKNOWN, MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, SERVER_DEFAULT_LISTEN_PORT
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log, net, properties, resolver
-from uds.core.util.model import getSqlStamp
+from uds.core.util.model import getSqlStamp, getSqlDatetime
 from uds.core.util.os_detector import KnownOS
 
 from .tag import TaggingMixin
@@ -244,9 +244,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """Returns the current stats of this server, or None if not available"""
         statsDct = self.properties.get('stats', None)
         if statsDct:
-            stats = types.servers.ServerStatsType.fromDict(statsDct)
-            if stats.is_valid:
-                return stats
+            return types.servers.ServerStatsType.fromDict(statsDct)
         return None
 
     @stats.setter
@@ -259,6 +257,24 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             statsDict = value.asDict()
             statsDict['stamp'] = getSqlStamp()
             self.properties['stats'] = statsDict
+
+    def isRestrained(self) -> bool:
+        """Returns if this server is restrained or not
+
+        For this, we get the property (if available) "available" (datetime) and compare it with current time
+        If it is not available, we return False, otherwise True
+        """
+        restrainedUntil = self.properties.get('available', consts.NEVER)
+        return restrainedUntil > getSqlDatetime()
+
+    def setRestrainedUntil(self, value: typing.Optional[datetime.datetime] = None) -> None:
+        """Sets the availability of this server
+        If value is None, it will be available right now
+        """
+        if value is None:
+            del self.properties['available']
+        else:
+            self.properties['available'] = value
 
     @property
     def last_ping(self) -> datetime.datetime:

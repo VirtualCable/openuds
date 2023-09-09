@@ -100,7 +100,7 @@ class Image(UUIDModel):
         """
         Resizes an image to the given size
         """
-        image.thumbnail(size=size, resample=PIL.Image.LANCZOS, reducing_gap=3.0)
+        image.thumbnail(size=size, resample=PIL.Image.Resampling.LANCZOS, reducing_gap=3.0)
         output = io.BytesIO()
         image.save(output, 'png')
         return (image.width, image.height, output.getvalue())

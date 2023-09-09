@@ -76,6 +76,12 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
 
 
     """
+    ticket: typing.Any = None
+    if 'ticket' in data:
+        ticket = models.TicketStore.get(data['ticket'], invalidate=True)
+        # If ticket is included, user_service can be inside ticket or in data
+        data['user_service'] = data.get('user_service', ticket['user_service'])
+    
     userService = models.UserService.objects.get(uuid=data['user_service'])
     server.setActorVersion(userService)
 
@@ -101,9 +107,9 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
         'max_idle': maxIdle,
         'session_id': session_id,
     }
-
-    if 'ticket' in data:
-        result['ticket'] = models.TicketStore.get(data['ticket'], invalidate=True)
+    # If ticket is included, add it to result
+    if ticket:
+        result['ticket'] = ticket
 
     return rest_result(result)
 

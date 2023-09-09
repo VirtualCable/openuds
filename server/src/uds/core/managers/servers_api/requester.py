@@ -28,9 +28,8 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import datetime
 import os
-import json
-import base64
 import hashlib
 import tempfile
 import contextlib
@@ -38,8 +37,9 @@ import logging
 import typing
 from uds.core import types, consts
 
-from uds.core.util.security import secureRequestsSession
-from uds.core.util import decorators
+from uds.core.util import security, cache
+from uds.core.util.model import getSqlDatetime
+
 
 if typing.TYPE_CHECKING:
     from uds import models
@@ -48,13 +48,36 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# Restrainer decorator
+# If server is restrained, it will return False
+# If server is not restrained, it will execute the function and return it's result
+# If exception is raised, it will restrain the server and return False
+def restrainServer(func: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:
+    def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        if self.server.isRestrained():
+            return False
+
+        try:
+            return func(self, *args, **kwargs)
+        except Exception as e:
+            logger.error('Error executing %s: %s', func.__name__, e)
+            self.server.setRestrainedUntil(
+                getSqlDatetime() + datetime.timedelta(seconds=consts.FAILURE_TIMEOUT)
+            )  # Block server for a while
+            return False
+
+    return inner
+
+
 class ServerApiRequester:
     server: 'models.Server'
+    cache: 'cache.Cache'
     hash: str
 
     def __init__(self, server: 'models.Server') -> None:
         self.hash = hashlib.sha256((server.token).encode()).hexdigest()
         self.server = server
+        self.cache = cache.Cache('serverapi:' + server.uuid)
 
     @contextlib.contextmanager
     def setupSession(
@@ -72,7 +95,7 @@ class ServerApiRequester:
                 with tempfile.NamedTemporaryFile('w', delete=False) as f:
                     f.write(self.server.certificate)  # Save cert
                     verify = f.name
-            session = secureRequestsSession(verify=verify)
+            session = security.secureRequestsSession(verify=verify)
             # Setup headers
             session.headers.update(
                 {
@@ -99,7 +122,7 @@ class ServerApiRequester:
 
     def getCommsUrl(self, method: str, minVersion: typing.Optional[str]) -> typing.Optional[str]:
         """
-        Returns the url for a method
+        Returns the url for a method on the server
         """
         if self.server.type == types.servers.ServerType.UNMANAGED or (
             self.server.version < (minVersion or consts.MIN_SERVER_VERSION)
@@ -113,42 +136,45 @@ class ServerApiRequester:
         if not url:
             return None
 
-        try:
-            with self.setupSession(minVersion=minVersion) as session:
-                response = session.get(url)
-                if not response.ok:
-                    logger.error(
-                        'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
-                    )
-                    return None
+        with self.setupSession(minVersion=minVersion) as session:
+            response = session.get(url)
+            if not response.ok:
+                logger.error(
+                    'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
+                )
+                return None
 
-                return response.json()
-        except Exception:  # If any error, return None
-            return None
+            return response.json()
 
     def post(self, method: str, data: typing.Any, *, minVersion: typing.Optional[str] = None) -> typing.Any:
         url = self.getCommsUrl(method, minVersion)
         if not url:
             return None
 
-        try:
-            with self.setupSession(minVersion=minVersion) as session:
-                response = session.post(url, json=data)
-                if not response.ok:
-                    logger.error(
-                        'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
-                    )
-                    return None
+        with self.setupSession(minVersion=minVersion) as session:
+            response = session.post(url, json=data)
+            if not response.ok:
+                logger.error(
+                    'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
+                )
+                return None
 
-                return response.json()
-        except Exception:  # If any error, return None
-            return None
+            return response.json()
 
+    @restrainServer
     def notifyAssign(
         self, userService: 'models.UserService', service_type: 'types.services.ServiceType', count: int
-    ) -> None:
+    ) -> bool:
         """
         Notifies assign of user service to server
+
+        Args:
+            userService: User service to notify
+            service_type: Type of service to notify
+            count: Number of "logins" to notify
+
+        Returns:
+            True if notification was sent, False otherwise
         """
         logger.debug('Notifying assign of service %s to server %s', userService.uuid, self.server.host)
         self.post(
@@ -161,12 +187,21 @@ class ServerApiRequester:
                 assignations=count,
             ),
         )
+        return True
 
+    @restrainServer
     def notifyPreconnect(
         self, userService: 'models.UserService', info: 'types.connections.ConnectionDataType'
-    ) -> None:
+    ) -> bool:
         """
         Notifies preconnect to server, if this allows it
+
+        Args:
+            userService: User service to notify
+            info: Connection data to notify
+
+        Returns:
+            True if notification was sent, False otherwise
         """
         src = userService.getConnectionSource()
 
@@ -187,13 +222,17 @@ class ServerApiRequester:
                 userservice_type=info.service_type,
             ).asDict(),
         )
+        return True
 
-    def notifyRelease(self, userService: 'models.UserService') -> None:
+    @restrainServer
+    def notifyRelease(self, userService: 'models.UserService') -> bool:
         """
         Notifies removal of user service to server
         """
         logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
         self.post('removeService', {'userservice': userService.uuid})
+
+        return True
 
     def getStats(self) -> typing.Optional['types.servers.ServerStatsType']:
         """
@@ -201,12 +240,18 @@ class ServerApiRequester:
         """
         # If stored stats are still valid, return them
         stats = self.server.stats
-        if stats:
+        if stats and stats.is_valid:
             return stats
-            
+
         logger.debug('Getting stats from server %s', self.server.host)
-        data = self.get('stats')
-        if data is None:
+        try:
+            data = self.get('stats')  # Unmanaged servers will return None
+            if data is None:
+                return None
+        except Exception as e:
+            logger.error('Error getting stats from server %s: %s', self.server.host, e)
+            if stats:
+                return stats  # Better return old stats than nothing
             return None
 
         stats = types.servers.ServerStatsType.fromDict(data)
