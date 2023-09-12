@@ -41,6 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+    # Log level is an string, as in log.LogLevel
     if 'user_service' in data:  # Log for an user service
         userService = models.UserService.objects.get(uuid=data['user_service'])
         log.doLog(
@@ -58,7 +59,6 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     data: {
         'user_service': 'uuid of user service',
         'username': 'username',
-        'session_id': 'session id',
         'ticket': 'ticket if any' # optional
     }
 
@@ -97,17 +97,17 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
 
     logger.debug('Max idle: %s', maxIdle)
 
-    deadLine = deadLine = (
+    deadLine = (
         userService.deployed_service.getDeadline() if not osManager or osManager.ignoreDeadLine() else None
     )
     result = {
         'ip': src.ip,
         'hostname': src.hostname,
-        'dead_line': deadLine,
-        'max_idle': maxIdle,
         'session_id': session_id,
+        'dead_line': deadLine,  # Can be None
+        'max_idle': maxIdle,  # Can be None
     }
-    # If ticket is included, add it to result
+    # If ticket is included, add it to result (the content of the ticket, not the ticket id itself)
     if ticket:
         result['ticket'] = ticket
 
@@ -152,6 +152,11 @@ def process_ticket(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
     return rest_result(models.TicketStore.get(data['ticket'], invalidate=True))
 
 
+def process_init(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+    # Init like on actor to allow "userServices" to initialize inside server
+    # Currently unimplemented (just an idea, anotated here for future reference)
+    return rest_result(consts.OK)
+
 PROCESSORS: typing.Final[
     typing.Mapping[str, typing.Callable[['models.Server', typing.Dict[str, typing.Any]], typing.Any]]
 ] = {
@@ -160,6 +165,7 @@ PROCESSORS: typing.Final[
     'logout': process_logout,
     'ping': process_ping,
     'ticket': process_ticket,
+    'init': process_init,
 }
 
 

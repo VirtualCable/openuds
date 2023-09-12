@@ -253,7 +253,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if value is None:
             del self.properties['stats']
         else:
-            # Set stamp to current time and save it
+            # Set stamp to current time and save it, overwriting existing stamp if any
             statsDict = value.asDict()
             statsDict['stamp'] = getSqlStamp()
             self.properties['stats'] = statsDict
