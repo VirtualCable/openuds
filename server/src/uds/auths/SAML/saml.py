@@ -314,6 +314,14 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=_('Metadata'),
     )
 
+    allowDeprecatedSignatureAlgorithms = gui.CheckBoxField(
+        label=_('Allow deprecated signature algorithms'),
+        default=True,
+        order=23,
+        tooltip=_('If set, deprecated signature algorithms will be allowed'),
+        tab=_('Security'),
+    )
+
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
@@ -413,18 +421,23 @@ class SAMLAuthenticator(auths.Authenticator):
     ) -> typing.Dict[str, typing.Any]:
         manageUrlObj = urlparse(self.manageUrl.value)
         script_path = manageUrlObj.path
+        host = manageUrlObj.netloc
+        if ':' in host:
+            host, port = host.split(':')
+        else:
+            if manageUrlObj.scheme == 'http':
+                port = '80'
+            else:
+                port = '443'
 
         # If callback parameters are passed, we use them
         if params:
             # Remove next 3 lines, just for testing and debugging
-            # params['http_host'] = '172.27.0.1'
-            # params['server_port'] = '8000'
-            # params['https'] = False
             return {
                 'https': ['off', 'on'][params.get('https', False)],
-                'http_host': params['http_host'],
+                'http_host': host,  # params['http_host'],
                 'script_name': script_path,  # params['path_info'],
-                'server_port': params['server_port'],
+                'server_port': port,  # params['server_port'],
                 'get_data': params['get_data'].copy(),
                 'post_data': params['post_data'].copy(),
                 'lowercase_urlencoding': self.adFS.isTrue(),
@@ -433,9 +446,9 @@ class SAMLAuthenticator(auths.Authenticator):
         # No callback parameters, we use the request
         return {
             'https': 'on' if request.is_secure() else 'off',
-            'http_host': request.META['HTTP_HOST'],
+            'http_host': host,  # request.META['HTTP_HOST'],
             'script_name': script_path,  # request.META['PATH_INFO'],
-            'server_port': request.META['SERVER_PORT'],
+            'server_port': port,  # request.META['SERVER_PORT'],
             'get_data': request.GET.copy(),
             'post_data': request.POST.copy(),
             'lowercase_urlencoding': self.adFS.isTrue(),
@@ -503,7 +516,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 'requestedAuthnContext': self.requestedAuthnContext.isTrue(),
                 "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
                 "digestAlgorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
-                "rejectDeprecatedAlgorithm": True,
+                "rejectDeprecatedAlgorithm": not self.allowDeprecatedSignatureAlgorithms.isTrue(),
             },
             'organization': {
                 'en-US': {
@@ -550,14 +563,14 @@ class SAMLAuthenticator(auths.Authenticator):
         res = []
 
         def getAttr(attrName: str) -> typing.List[str]:
-            val: typing.List[str] = []  
+            val: typing.List[str] = []
             if '+' in attrName:
                 attrList = attrName.split('+')
                 # Check all attributes are present, and has only one value
                 if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
                     logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
                     return val
-            
+
                 val = [''.join([attributes.get(a, [''])[0] for a in attrList])]
             elif ':' in attrName:
                 # Prepend the value after : to value before :
