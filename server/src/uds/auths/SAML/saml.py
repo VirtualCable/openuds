@@ -298,6 +298,14 @@ class SAMLAuthenticator(auths.Authenticator):
         tab=_('Security'),
     )
 
+    allowDeprecatedSignatureAlgorithms = gui.CheckBoxField(
+        label=_('Allow deprecated signature algorithms'),
+        default=True,
+        order=23,
+        tooltip=_('If set, deprecated signature algorithms will be allowed (as SHA1, MD5, etc...)'),
+        tab=_('Security'),
+    )
+
     metadataCacheDuration = gui.NumericField(
         label=_('Metadata cache duration'),
         default=0,
@@ -312,14 +320,6 @@ class SAMLAuthenticator(auths.Authenticator):
         order=22,
         tooltip=_('Duration of metadata validity in seconds'),
         tab=_('Metadata'),
-    )
-
-    allowDeprecatedSignatureAlgorithms = gui.CheckBoxField(
-        label=_('Allow deprecated signature algorithms'),
-        default=True,
-        order=23,
-        tooltip=_('If set, deprecated signature algorithms will be allowed'),
-        tab=_('Security'),
     )
 
     manageUrl = gui.HiddenField(serializable=True)
