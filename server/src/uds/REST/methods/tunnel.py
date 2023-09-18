@@ -43,9 +43,8 @@ from uds.core.util.stats import events
 
 logger = logging.getLogger(__name__)
 
-MAX_SESSION_LENGTH = (
-    60 * 60 * 24 * 7 * 2
-)  # Two weeks is max session length for a tunneled connection
+MAX_SESSION_LENGTH = 60 * 60 * 24 * 7 * 2  # Two weeks is max session length for a tunneled connection
+
 
 # Enclosed methods under /tunnel path
 class TunnelTicket(Handler):
@@ -68,11 +67,14 @@ class TunnelTicket(Handler):
             self._request.ip,
         )
 
-        if (
-            not isTrustedSource(self._request.ip)
-            or len(self._args) != 3
-            or len(self._args[0]) != 48
-        ):
+        if not isTrustedSource(self._request.ip) or len(self._args) != 3 or len(self._args[0]) != 48:
+            logger.warning(
+                'Invalid request from %s: (validArgs: %s, validLength: %s, trustedSource: %s)',
+                self._request.ip,
+                'Yes' if len(self._args) == 3 else 'No',
+                'Yes' if len(self._args[0]) == 48 else 'No',
+                'Yes' if isTrustedSource(self._request.ip) else 'No',
+            )
             # Invalid requests
             raise AccessDenied()
 
@@ -87,9 +89,7 @@ class TunnelTicket(Handler):
 
         # Try to get ticket from DB
         try:
-            user, userService, host, port, extra = models.TicketStore.get_for_tunnel(
-                self._args[0]
-            )
+            user, userService, host, port, extra = models.TicketStore.get_for_tunnel(self._args[0])
             host = host or ''
             data = {}
             if self._args[1][:4] == 'stop':
