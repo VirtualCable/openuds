@@ -16,6 +16,6 @@ Please fell free to contribute to this project.
 
 Notes
 =====
-* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch.
+* Master version is always under heavy development and it is not recommended for use, it will probably have unfixed bugs.  Please use the latest stable branch. (v3.6 right now)
 * From 4.0 onwards (current master), OpenUDS has been splited in serveral repositories and contains submodules. Remember to use "git clone --resursive ..." to fetch it ;-).
 
