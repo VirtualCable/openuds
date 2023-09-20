@@ -42,7 +42,6 @@ from uds.core.util import log, security
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import getSqlDatetime
-from uds.core.util.os_detector import KnownOS
 from uds.core.util.state import State
 from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
@@ -307,7 +306,7 @@ class Register(ActorV3Action):
                 'type': types.servers.ServerType.ACTOR,
                 'subtype': self._params.get('version', ''),
                 'version': '',
-                'os_type': self._params.get('os', KnownOS.UNKNOWN.os_name()),
+                'os_type': self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
                 'stamp': getSqlDatetime(),
             }
@@ -584,7 +583,7 @@ class Login(ActorV3Action):
 
     def action(self) -> typing.Dict[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
-        src = types.connections.ConnectionSourceType('', '')
+        src = types.connections.ConnectionSource('', '')
         deadLine = maxIdle = None
         session_id = ''
 

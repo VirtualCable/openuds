@@ -36,17 +36,16 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import transports, types
+from uds.core import consts, transports, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.core.util import fields, os_detector
+from uds.core.util import fields
 
 from ..HTML5RDP.html5rdp import HTML5RDPTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -66,7 +65,7 @@ class HTML5VNCTransport(transports.Transport):
     iconFile = 'html5vnc.png'
 
     ownLink = True
-    supportedOss = os_detector.allOss
+    supportedOss = consts.os.ALL_OS_LIST
     protocol = transports.protocols.VNC
     group = transports.TUNNELED_GROUP
     experimental = True
@@ -161,7 +160,7 @@ class HTML5VNCTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

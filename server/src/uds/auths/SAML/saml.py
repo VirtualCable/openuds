@@ -30,35 +30,33 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
-from urllib.parse import urlparse
-import xml.sax  # nosec: used to parse trusted xml provided only by administrators
 import datetime
 import logging
+import re
 import typing
+import xml.sax  # nosec: used to parse trusted xml provided only by administrators
+from urllib.parse import urlparse
 
 import requests
-
+from django.utils.translation import gettext
+from django.utils.translation import gettext_noop as _
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
-from django.utils.translation import gettext_noop as _, gettext
-from uds.core.types.request import ExtendedHttpRequest
-
-from uds.core.util.model import getSqlDatetime
-from uds.core.ui import gui
-from uds.core import auths, exceptions
+from uds.core import auths, exceptions, types
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.decorators import cached
-from uds.core.util import security
-from uds.core import types
+from uds.core.types.request import ExtendedHttpRequest
+from uds.core.ui import gui
+from uds.core.util import security, decorators, ensure
+from uds.core.util.model import getSqlDatetime
 
 from . import config
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
+
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 
@@ -310,7 +308,7 @@ class SAMLAuthenticator(auths.Authenticator):
         label=_('Metadata cache duration'),
         default=0,
         order=22,
-        tooltip=_('Duration of metadata cache in seconds'),
+        tooltip=_('Duration of metadata cache in days. 0 means default (ten years)'),
         tab=_('Metadata'),
     )
 
@@ -318,7 +316,7 @@ class SAMLAuthenticator(auths.Authenticator):
         label=_('Metadata validity duration'),
         default=0,
         order=22,
-        tooltip=_('Duration of metadata validity in seconds'),
+        tooltip=_('Duration of metadata validity in days. 0 means default (ten years)'),
         tab=_('Metadata'),
     )
 
@@ -455,7 +453,7 @@ class SAMLAuthenticator(auths.Authenticator):
             'query_string': request.META['QUERY_STRING'],
         }
 
-    @cached(
+    @decorators.cached(
         cachePrefix='idpm',
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600 * 24 * 365,  # 1 year
@@ -499,11 +497,11 @@ class SAMLAuthenticator(auths.Authenticator):
             'security': {
                 'metadataCacheDuration': self.metadataCacheDuration.int_value
                 if self.metadataCacheDuration.int_value > 0
-                else None,
+                else 86400 * 365 * 10,
                 'metadataValidUntil': getSqlDatetime()
                 + datetime.timedelta(seconds=self.metadataValidityDuration.int_value)
                 if self.metadataCacheDuration.int_value > 0
-                else None,
+                else getSqlDatetime() + datetime.timedelta(days=365 * 10),
                 'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
                 'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
                 'logoutRequestSigned': self.logoutRequestSigned.isTrue(),
@@ -527,7 +525,7 @@ class SAMLAuthenticator(auths.Authenticator):
             },
         }
 
-    @cached(
+    @decorators.cached(
         cachePrefix='spm',
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600,  # 1 hour
@@ -567,17 +565,18 @@ class SAMLAuthenticator(auths.Authenticator):
             if '+' in attrName:
                 attrList = attrName.split('+')
                 # Check all attributes are present, and has only one value
-                if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
+                attrValues = [ensure.is_list(attributes.get(a, [''])) for a in attrList]
+                if not all([len(v) <= 1 for v in attrValues]):
                     logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
                     return val
 
-                val = [''.join([attributes.get(a, [''])[0] for a in attrList])]
+                val = [''.join(v) for v in attrValues]  # flatten
             elif ':' in attrName:
-                # Prepend the value after : to value before :
+                # Prepend the value after : to attribute value before :
                 attr, prependable = attrName.split(':')
-                val = [prependable + a for a in attributes.get(attr, [])]
+                val = [prependable + a for a in ensure.is_list(attributes.get(attr, []))]
             else:
-                val = attributes.get(attrName, [])
+                val = ensure.is_list(attributes.get(attrName, []))
             return val
 
         for line in field.splitlines():

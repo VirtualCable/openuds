@@ -32,7 +32,6 @@ import typing
 
 from uds import models
 from uds.core import types
-from uds.core.util import os_detector
 import datetime
 
 from ..utils import generators

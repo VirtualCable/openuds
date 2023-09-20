@@ -40,9 +40,8 @@ from . import x2go_file
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core import transports
+    from uds.core import transports, types
     from uds.core.types.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class X2GOTransport(BaseX2GOTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

@@ -37,7 +37,6 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import consts, exceptions, types
 from uds.core.util import decorators, validators, log, model
-from uds.core.util.os_detector import KnownOS
 from uds.REST import Handler, exceptions as rest_exceptions
 from uds.REST.utils import rest_result
 
@@ -58,7 +57,7 @@ class ServerRegisterBase(Handler):
         mac = self._params.get('mac', consts.MAC_UNKNOWN)
         data = self._params.get('data', None)
         subtype = self._params.get('subtype', '')
-        os = self._params.get('os', KnownOS.UNKNOWN.os_name()).lower()
+        os = self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()).lower()
 
         type = self._params['type']  # MUST be present
         hostname = self._params['hostname']  # MUST be present
@@ -108,7 +107,7 @@ class ServerRegisterBase(Handler):
                     stamp=now,
                     type=self._params['type'],
                     subtype=self._params.get('subtype', ''),  # Optional
-                    os_type=typing.cast(str, self._params.get('os', KnownOS.UNKNOWN.os_name())).lower(),
+                    os_type=typing.cast(str, self._params.get('os', types.os.KnownOS.UNKNOWN.os_name())).lower(),
                     mac=mac,
                     data=data,
                 )

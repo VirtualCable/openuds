@@ -34,7 +34,9 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.util import os_detector
+
+from uds.core import types, consts
+
 from .rdp_base import BaseRDPTransport
 from .rdp_file import RDPFile
 
@@ -102,7 +104,7 @@ class RDPTransport(BaseRDPTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'os_detector.DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -155,7 +157,7 @@ class RDPTransport(BaseRDPTransport):
             'address': r.address,
         }
 
-        if os.os == os_detector.KnownOS.WINDOWS:
+        if os.os == types.os.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -165,7 +167,7 @@ class RDPTransport(BaseRDPTransport):
                     'optimize_teams': self.optimizeTeams.isTrue(),
                 }
             )
-        elif os.os == os_detector.KnownOS.LINUX:
+        elif os.os == types.os.KnownOS.LINUX:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
@@ -173,7 +175,7 @@ class RDPTransport(BaseRDPTransport):
                     'address': r.address,
                 }
             )
-        elif os.os == os_detector.KnownOS.MAC_OS:
+        elif os.os == types.os.KnownOS.MAC_OS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {

@@ -344,7 +344,7 @@ def update_transport_ticket(
                                 uuid=data['ticket-info'].get('userService', None)
                             )
                             UserServiceManager().notifyPreconnect(
-                                userService, types.connections.ConnectionDataType(
+                                userService, types.connections.ConnectionData(
                                     username=username,
                                     protocol=data.get('protocol', ''),
                                     service_type=data['ticket-info'].get('service_type', ''),

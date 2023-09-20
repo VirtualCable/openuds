@@ -34,7 +34,7 @@ import enum
 
 class ServiceType(enum.StrEnum):
     VDI = 'VDI'
-    VAPP = 'VApp'
+    VAPP = 'VAPP'
 
     def asStr(self) -> str:
         """Returns the service type as a string"""

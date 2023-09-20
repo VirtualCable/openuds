@@ -37,10 +37,9 @@ import typing
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.core.environment import Environment
 from uds.models import Transport, Network, ServicePool
-from uds.core import transports, types
+from uds.core import transports, types, consts
 from uds.core.ui import gui
 from uds.core.util import permissions
-from uds.core.util import os_detector as OsDetector
 
 from uds.REST.model import ModelHandler
 
@@ -101,7 +100,7 @@ class Transports(ModelHandler):
                 'choices': sorted(
                     [
                         {'id': x.name, 'text': x.name}
-                        for x in OsDetector.knownOss
+                        for x in consts.os.KNOWN_OS_LIST
                     ],
                     key=lambda x: x['text'].lower(),
                 ),

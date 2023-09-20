@@ -43,7 +43,7 @@ from uds.core import consts, transports, types
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.preferences import CommonPrefs
 from uds.core.ui import gui
-from uds.core.util import connection, os_detector
+from uds.core.util import connection
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -65,7 +65,7 @@ class BaseX2GOTransport(transports.Transport):
 
     iconFile = 'x2go.png'
     protocol = transports.protocols.X2GO
-    supportedOss = (os_detector.KnownOS.LINUX, os_detector.KnownOS.WINDOWS)
+    supportedOss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
 
     fixedName = gui.TextField(
         order=2,
@@ -227,7 +227,7 @@ class BaseX2GOTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         username = user.getUsernameForAuth()
 
         # Get the type of service (VDI, VAPP, ...)
@@ -244,7 +244,7 @@ class BaseX2GOTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionDataType(
+        return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
             service_type=servicesTypeProvided,
@@ -256,7 +256,7 @@ class BaseX2GOTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         return self.processUserPassword(userService, user, password)
 
     def genKeyPairForSsh(self) -> typing.Tuple[str, str]:

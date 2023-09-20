@@ -34,7 +34,7 @@ import typing
 from django.http import HttpRequest
 
 if typing.TYPE_CHECKING:
-    from uds.core.util.os_detector import DetectedOsInfo
+    from uds.core import types
     from uds.models import User
 
 
@@ -42,7 +42,7 @@ class ExtendedHttpRequest(HttpRequest):
     ip: str
     ip_version: int
     ip_proxy: str
-    os: 'DetectedOsInfo'
+    os: 'types.os.DetectedOsInfo'
     user: typing.Optional['User']
     authorized: bool
 

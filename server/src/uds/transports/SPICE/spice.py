@@ -35,17 +35,16 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 
-from .spice_base import BaseSpiceTransport
 from .remote_viewer_file import RemoteViewerFile
+from .spice_base import BaseSpiceTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import transports
     from uds.core.types.request import ExtendedHttpRequestWithUser
-    from uds.core.util import os_detector
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class SPICETransport(BaseSpiceTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'os_detector.DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

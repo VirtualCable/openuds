@@ -37,8 +37,8 @@ import typing
 from unittest import mock
 
 from uds import models
+from uds.core import types, consts
 from uds.web.util import services
-import uds.core.util.os_detector as osd
 
 from ...utils.test import UDSTransactionTestCase
 from ...fixtures import authenticators as fixtures_authenticators
@@ -66,8 +66,8 @@ class TestGetServicesData(UDSTransactionTestCase):
         self.request.ip = '127.0.0.1'
         self.request.ip_version = 4
         self.request.ip_proxy = '127.0.0.1'
-        self.request.os = osd.DetectedOsInfo(
-            osd.KnownOS.LINUX, osd.KnownBrowser.FIREFOX, 'Windows 10'
+        self.request.os = types.os.DetectedOsInfo(
+            types.os.KnownOS.LINUX, types.os.KnownBrowser.FIREFOX, 'Windows 10'
         )
 
         return super().setUp()

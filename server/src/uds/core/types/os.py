@@ -35,9 +35,6 @@ import re
 import logging
 import typing
 
-logger = logging.getLogger(__name__)
-
-
 class DetectedOsInfo(typing.NamedTuple):
     os: 'KnownOS'
     browser: 'KnownBrowser'
@@ -62,17 +59,6 @@ class KnownOS(enum.Enum):
     def __str__(self):
         return self.os_name()
 
-
-knownOss = tuple(os for os in KnownOS if os != KnownOS.UNKNOWN)
-
-allOss = knownOss + (KnownOS.UNKNOWN,)
-desktopOss = (KnownOS.LINUX, KnownOS.WINDOWS, KnownOS.MAC_OS)
-mobileOss = list(set(allOss) - set(desktopOss))
-
-
-DEFAULT_OS = KnownOS.WINDOWS
-
-
 class KnownBrowser(enum.StrEnum):
     # Known browsers
     FIREFOX = 'Firefox'
@@ -84,38 +70,4 @@ class KnownBrowser(enum.StrEnum):
     IEXPLORER = 'Explorer'
     EDGE = 'Edge'
     OTHER = 'Other'
-
-
-knownBrowsers = tuple(KnownBrowser)
-
-browsersREs: typing.Dict[KnownBrowser, typing.Tuple] = {
-    KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
-    KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
-    KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),
-    KnownBrowser.CHROMIUM: (re.compile(r'Chromium/([0-9.]+)'),),
-    KnownBrowser.SAFARI: (re.compile(r'Safari/([0-9.]+)'),),
-    KnownBrowser.OPERA: (
-        re.compile(r'OPR/([0-9.]+)'),
-        re.compile(r'Opera/([0-9.]+)'),
-    ),
-    KnownBrowser.IEXPLORER: (
-        re.compile(r';MSIE ([0-9.]+);'),
-        re.compile(r'Trident/.*rv:([0-9.]+)'),
-    ),
-    KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
-}
-
-browserRules: typing.Dict[KnownBrowser, typing.Tuple] = {
-    KnownBrowser.EDGE: (KnownBrowser.EDGE, ()),
-    KnownBrowser.CHROME: (KnownBrowser.CHROME, (KnownBrowser.CHROMIUM, KnownBrowser.OPERA)),
-    KnownBrowser.FIREFOX: (KnownBrowser.FIREFOX, (KnownBrowser.SEAMONKEY,)),
-    KnownBrowser.IEXPLORER: (KnownBrowser.IEXPLORER, ()),
-    KnownBrowser.CHROMIUM: (KnownBrowser.CHROMIUM, (KnownBrowser.CHROME,)),
-    KnownBrowser.SAFARI: (
-        KnownBrowser.SAFARI,
-        (KnownBrowser.CHROME, KnownBrowser.CHROMIUM, KnownBrowser.OPERA),
-    ),
-    KnownBrowser.SEAMONKEY: (KnownBrowser.SEAMONKEY, (KnownBrowser.FIREFOX,)),
-    KnownBrowser.OPERA: (KnownBrowser.OPERA, ()),
-}
 

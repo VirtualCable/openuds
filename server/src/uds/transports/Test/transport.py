@@ -38,13 +38,11 @@ from django.utils.translation import gettext_noop as _
 from uds import models
 from uds.core import consts, exceptions, transports, types
 from uds.core.ui import gui
-from uds.core.util import os_detector as OsDetector
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
     from uds.core.types.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +58,7 @@ class TestTransport(transports.Transport):
     iconFile = 'transport.png'
 
     ownLink = True
-    supportedOss = OsDetector.allOss
+    supportedOss = consts.os.ALL_OS_LIST
     protocol = transports.protocols.OTHER
     group = transports.DIRECT_GROUP
 
@@ -105,7 +103,7 @@ class TestTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

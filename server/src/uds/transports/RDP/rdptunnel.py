@@ -36,7 +36,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import transports, types, consts
 from uds.core.ui import gui
-from uds.core.util import fields, os_detector, validators
+from uds.core.util import fields, validators
 from uds.models import TicketStore
 
 from .rdp_base import BaseRDPTransport
@@ -124,7 +124,7 @@ class TRDPTransport(BaseRDPTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'os_detector.DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -189,7 +189,7 @@ class TRDPTransport(BaseRDPTransport):
             'this_server': request.build_absolute_uri('/'),
         }
 
-        if os.os == os_detector.KnownOS.WINDOWS:
+        if os.os == types.os.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
             if password:
                 r.password = '{password}'  # nosec: password is not hardcoded
@@ -199,14 +199,14 @@ class TRDPTransport(BaseRDPTransport):
                     'optimize_teams': self.optimizeTeams.isTrue(),
                 }
             )
-        elif os.os == os_detector.KnownOS.LINUX:
+        elif os.os == types.os.KnownOS.LINUX:
             r.customParameters = self.customParameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
                 }
             )
-        elif os.os == os_detector.KnownOS.MAC_OS:
+        elif os.os == types.os.KnownOS.MAC_OS:
             r.customParameters = self.customParametersMAC.value
             sp.update(
                 {

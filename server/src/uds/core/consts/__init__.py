@@ -34,7 +34,7 @@ import typing
 from datetime import datetime
 import time
 
-from . import images
+from . import images, os
 
 # UDS Version related
 VERSION = '4.x.x-DEVEL'
@@ -66,7 +66,7 @@ ALLOWED_FAILS: typing.Final[int] = 5
 USER_AGENT: typing.Final[str] = f'UDS/{VERSION}'
 COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers
 MIN_SERVER_VERSION: typing.Final[str] = '4.0.0'
-FAILURE_TIMEOUT: typing.Final[int] = 60   # In case of failure, wait this time before retrying (where applicable)
+FAILURE_TIMEOUT: typing.Final[int] = 60  # In case of failure, wait this time before retrying (where applicable)
 
 # For conversion to boolean
 BOOL_TRUE_VALUES: typing.Final[typing.Set[typing.Union[bool, str, bytes, int]]] = {

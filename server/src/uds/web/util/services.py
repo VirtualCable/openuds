@@ -52,7 +52,6 @@ from uds.web.util import errors
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.util.os_detector import KnownOS
     from uds.core.types.request import ExtendedHttpRequestWithUser
     from uds.models import Image
 
@@ -133,7 +132,7 @@ def getServicesData(
     nets = ''
     validTrans = ''
 
-    osType: 'KnownOS' = request.os.os
+    osType: 'types.os.KnownOS' = request.os.os
     logger.debug('OS: %s', osType)
 
     if request.user.isStaff():

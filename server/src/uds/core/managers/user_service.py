@@ -31,38 +31,28 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import random
 import operator
+import random
 import typing
 
-from django.utils.translation import gettext as _
-from django.db.models import Q
 from django.db import transaction
+from django.db.models import Q
+from django.utils.translation import gettext as _
 
-from uds.core import types
-from uds.core.services.exceptions import OperationException
-from uds.core.util.state import State
-from uds.core.util import log
+from uds.core import consts, services, transports, types
 from uds.core.services.exceptions import (
-    MaxServicesReachedError,
-    ServiceInMaintenanceMode,
     InvalidServiceException,
-    ServiceNotReadyError,
+    MaxServicesReachedError,
+    OperationException,
     ServiceAccessDeniedByCalendar,
+    ServiceInMaintenanceMode,
+    ServiceNotReadyError,
 )
-from uds.models import (
-    MetaPool,
-    ServicePool,
-    UserService,
-    Transport,
-    User,
-    ServicePoolPublication,
-)
+from uds.core.util import log, singleton
 from uds.core.util.model import getSqlDatetime
-from uds.core import services, transports
-from uds.core.util import singleton
+from uds.core.util.state import State
 from uds.core.util.stats import events
-from uds.core.util.os_detector import DetectedOsInfo
+from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
 
 from .userservice import comms
 from .userservice.opchecker import UserServiceOpChecker
@@ -611,7 +601,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionDataType) -> None:
+    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionData) -> None:
         comms.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
@@ -716,7 +706,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def getService(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,
         user: User,
-        os: DetectedOsInfo,
+        os: 'types.os.DetectedOsInfo',
         srcIp: str,
         idService: str,
         idTransport: typing.Optional[str],
@@ -743,7 +733,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
 
         # Early log of "access try" so we can imagine what is going on
-        userService.setConnectionSource(types.connections.ConnectionSourceType(srcIp, clientHostname or srcIp))
+        userService.setConnectionSource(types.connections.ConnectionSource(srcIp, clientHostname or srcIp))
 
         if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()
@@ -897,7 +887,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         self,
         user: User,
         srcIp: str,
-        os: DetectedOsInfo,
+        os: 'types.os.DetectedOsInfo',
         idMetaPool: str,
         idTransport: str,
         clientHostName: typing.Optional[str] = None,

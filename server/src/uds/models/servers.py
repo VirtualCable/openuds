@@ -39,7 +39,6 @@ from uds.core.consts import MAC_UNKNOWN, MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, S
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log, net, properties, resolver
 from uds.core.util.model import getSqlStamp, getSqlDatetime
-from uds.core.util.os_detector import KnownOS
 
 from .tag import TaggingMixin
 from .uuid_model import UUIDModel
@@ -174,7 +173,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     locked_until = models.DateTimeField(null=True, blank=True, default=None, db_index=True)
 
     # os type of server (linux, windows, etc..)
-    os_type = models.CharField(max_length=32, default=KnownOS.UNKNOWN.os_name())
+    os_type = models.CharField(max_length=32, default=types.os.KnownOS.UNKNOWN.os_name())
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
     mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
     # certificate of server, if any. VDI Actors will have it's certificate on a property of the userService
@@ -372,14 +371,10 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """
         path = path or ''
 
-        if not path.startswith('/'):
-            path = '/' + path
+        path = path.lstrip('/')  # Remove leading slashes
+        pre, post = ('[', ']') if self.ip_version == 6 else ('', '')
 
-        path = f'/{self.server_type.path()}{path}'
-
-        if self.ip_version == 4:
-            return f'https://{self.ip}:{self.listen_port}{path}'
-        return f'https://[{self.ip}]:{self.listen_port}{path}'
+        return f'https://{pre}{self.ip}{post}:{self.listen_port}/{self.server_type.path()}/v1/{path}'
 
     def __str__(self):
         return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'

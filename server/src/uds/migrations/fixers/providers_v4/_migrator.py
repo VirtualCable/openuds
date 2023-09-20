@@ -38,7 +38,7 @@ import dns.reversename
 
 from uds.core import types, consts
 from uds.core.environment import Environment
-from uds.core.util import os_detector, validators
+from uds.core.util import validators
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ def migrate(
                     username='migration',
                     ip_from=svr[0],
                     ip=svr[0],
-                    os_type=os_detector.KnownOS.WINDOWS.os_name(),
+                    os_type=types.os.KnownOS.WINDOWS.os_name(),
                     hostname=svr[1],
                     listen_port=0,
                     type=types.servers.ServerType.UNMANAGED,

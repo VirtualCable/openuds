@@ -37,8 +37,7 @@ import urllib.parse
 import shlex
 import typing
 
-from uds.core.util import os_detector as OsDetector
-
+from uds.core import types
 
 class RDPFile:
     fullScreen = False
@@ -79,7 +78,7 @@ class RDPFile:
         width: typing.Union[str, int],
         height: typing.Union[str, int],
         bpp: str,
-        target: OsDetector.KnownOS = OsDetector.KnownOS.WINDOWS,
+        target: types.os.KnownOS = types.os.KnownOS.WINDOWS,
     ):
         self.width = str(width)
         self.height = str(height)
@@ -89,9 +88,9 @@ class RDPFile:
 
     def get(self):
         if self.target in (
-            OsDetector.KnownOS.WINDOWS,
-            OsDetector.KnownOS.LINUX,
-            OsDetector.KnownOS.MAC_OS,
+            types.os.KnownOS.WINDOWS,
+            types.os.KnownOS.LINUX,
+            types.os.KnownOS.MAC_OS,
         ):
             return self.getGeneric()
         # Unknown target
@@ -121,7 +120,7 @@ class RDPFile:
                 params.append('/smartcard')
 
         if self.redirectAudio:
-            if self.alsa and self.target != OsDetector.KnownOS.MAC_OS:
+            if self.alsa and self.target != types.os.KnownOS.MAC_OS:
                 params.append('/sound:sys:alsa,format:1,quality:high')
                 params.append('/microphone:sys:alsa')
             else:
@@ -133,7 +132,7 @@ class RDPFile:
             params.append('/video')
 
         if self.redirectDrives != 'false':
-            if self.target in (OsDetector.KnownOS.LINUX, OsDetector.KnownOS.MAC_OS):
+            if self.target in (types.os.KnownOS.LINUX, types.os.KnownOS.MAC_OS):
                 params.append('/drive:home,$HOME')
             else:
                 params.append('/drive:Users,/Users')
@@ -159,7 +158,7 @@ class RDPFile:
             params.append('/multimon')
 
         if self.fullScreen:
-            if self.target != OsDetector.KnownOS.MAC_OS:
+            if self.target != types.os.KnownOS.MAC_OS:
                 params.append('/f')
             else:  # On mac, will fix this later...
                 params.append('/w:#WIDTH#')
@@ -194,7 +193,7 @@ class RDPFile:
             params += shlex.split(self.customParameters.strip())
 
         # On MacOSX, /rfx /gfx:rfx are almost inprescindible, as it seems the only way to get a decent performance
-        if self.target == OsDetector.KnownOS.MAC_OS:
+        if self.target == types.os.KnownOS.MAC_OS:
             for i in ('/rfx', '/gfx:rfx'):
                 if i not in params:
                     params.append(i)
@@ -234,7 +233,7 @@ class RDPFile:
         if self.username:
             res += 'username:s:' + self.username + '\n'
             res += 'domain:s:' + self.domain + '\n'
-            if self.target == OsDetector.KnownOS.WINDOWS and not self.optimizeTeams:
+            if self.target == types.os.KnownOS.WINDOWS and not self.optimizeTeams:
                 res += 'password 51:b:' + password + '\n'
 
         res += 'alternate shell:s:' + '\n'
@@ -300,7 +299,7 @@ class RDPFile:
         # res += 'camerastoredirect:s:*\n'
 
         # If target is windows, add customParameters
-        if self.target == OsDetector.KnownOS.WINDOWS:
+        if self.target == types.os.KnownOS.WINDOWS:
             if self.customParameters and self.customParameters.strip() != '':
                 res += self.customParameters.strip() + '\n'
 

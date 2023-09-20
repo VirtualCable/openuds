@@ -46,7 +46,6 @@ from .x2go_base import BaseX2GOTransport
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
-    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 
@@ -100,7 +99,7 @@ class TX2GOTransport(BaseX2GOTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

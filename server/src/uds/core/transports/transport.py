@@ -38,8 +38,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
-from uds.core.util import os_detector as OsDetector
+from uds.core import types, consts
 from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util import net
@@ -47,7 +46,6 @@ from uds.core.util import net
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.types.request import ExtendedHttpRequestWithUser
-    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.environment import Environment
     from uds import models
 
@@ -91,7 +89,7 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supportedOss: typing.Tuple = OsDetector.desktopOss  # Supported operating systems
+    supportedOss: typing.Tuple = consts.os.desktopOss  # Supported operating systems
 
     # If this transport is visible via Web, via Thin Client or both
     webTransport: bool = False
@@ -165,7 +163,7 @@ class Transport(Module):
         return False
 
     @classmethod
-    def supportsOs(cls, osType: OsDetector.KnownOS) -> bool:
+    def supportsOs(cls, osType: types.os.KnownOS) -> bool:
         """
         Helper method to check if transport supports requested operating system.
         Class method
@@ -184,7 +182,7 @@ class Transport(Module):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         """
         This method must provide information about connection.
         We don't have to implement it, but if we wont to allow some types of connections
@@ -208,7 +206,7 @@ class Transport(Module):
             username, password = userService.processUserPassword(user.name, password)
         else:
             username = self.processedUser(userService, user)
-        return types.connections.ConnectionDataType(
+        return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
             service_type=types.services.ServiceType.VDI,
@@ -229,7 +227,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
+        os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -263,7 +261,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
+        os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
@@ -324,7 +322,7 @@ class Transport(Module):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',  # pylint: disable=redefined-outer-name
+        os: 'types.os.DetectedOsInfo',  # pylint: disable=redefined-outer-name
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',

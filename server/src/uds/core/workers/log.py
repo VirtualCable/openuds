@@ -65,8 +65,9 @@ class LogMaintenance(Job):
                 continue
 
             max_elements = ownerType.get_max_elements()
-            if 0 < max_elements < count:   # Negative max elements means "unlimited"
+            if 0 < max_elements < count:  # Negative max elements means "unlimited"
                 # We will delete the oldest ones
-                for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by('created', 'id')[: count - max_elements + 1]:
+                for record in models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).order_by(
+                    'created', 'id'
+                )[: count - max_elements + 1]:
                     record.delete()
-

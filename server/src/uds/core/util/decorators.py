@@ -255,6 +255,7 @@ def cached(
                 # compute cache key
                 cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
 
+                # Get cache from object, or create a new one (generic, common to all objects)
                 cache = getattr(args[0], 'cache', None) or Cache('functionCache')
 
                 # if cacheTimeout is a function, call it

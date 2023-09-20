@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 
-from uds.core import transports
+from uds.core import transports, types
 
 from uds.core.util import net
 
@@ -45,7 +45,6 @@ from .tag import TaggingMixin
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Network, ServicePool
-    from uds.core.util.os_detector import KnownOS
 
 
 logger = logging.getLogger(__name__)
@@ -138,7 +137,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         # Deny, must not be in any network
         return not exists
 
-    def isValidForOs(self, os: 'KnownOS') -> bool:
+    def isValidForOs(self, os: 'types.os.KnownOS') -> bool:
         """If this transport is configured to be valid for the specified OS.
 
         Args:

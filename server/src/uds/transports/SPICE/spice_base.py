@@ -199,7 +199,7 @@ class BaseSpiceTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         username = user.getUsernameForAuth()
 
         if self.fixedName.value:
@@ -214,7 +214,7 @@ class BaseSpiceTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionDataType(
+        return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
             service_type=types.services.ServiceType.VDI,
@@ -226,5 +226,5 @@ class BaseSpiceTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         return self.processUserPassword(userService, user, password)

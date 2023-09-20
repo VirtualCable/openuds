@@ -4,8 +4,8 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 import uds.core.types.servers
+import uds.core.types.os
 import uds.core.util.model
-from uds.core.util.os_detector import KnownOS
 
 from .fixers import properties_v4, transports_v4, providers_v4
 
@@ -27,7 +27,7 @@ def migrate_old_data(apps, schema_editor) -> None:
             server.save(update_fields=['uuid'])
 
         # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
-        Server.objects.all().update(os_type=KnownOS.LINUX.os_name())
+        Server.objects.all().update(os_type=uds.core.types.os.KnownOS.LINUX.os_name())
 
         # Now append actors to registered servers, with "unknown" os type (legacy)
         for token in ActorToken.objects.all():
@@ -39,7 +39,7 @@ def migrate_old_data(apps, schema_editor) -> None:
                 token=token.token,
                 stamp=token.stamp,
                 type=ACTOR_TYPE,
-                os_type=KnownOS.UNKNOWN.os_name(),
+                os_type=uds.core.types.os.KnownOS.UNKNOWN.os_name(),
                 data={
                     'mac': token.mac,
                     'pre_command': token.pre_command,

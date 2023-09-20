@@ -39,13 +39,12 @@ from django.utils.translation import gettext_noop as _
 from uds import models
 from uds.core import transports, types, ui, consts
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util import fields, os_detector
+from uds.core.util import fields
 from uds.core.util.model import getSqlDatetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -64,7 +63,7 @@ class HTML5RDPTransport(transports.Transport):
     iconFile = 'html5.png'
 
     ownLink = True
-    supportedOss = os_detector.allOss
+    supportedOss = consts.os.ALL_OS_LIST
     protocol = transports.protocols.RDP
     group = transports.TUNNELED_GROUP
 
@@ -318,7 +317,7 @@ class HTML5RDPTransport(transports.Transport):
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
         password: str,
-    ) -> types.connections.ConnectionDataType:
+    ) -> types.connections.ConnectionData:
         username = user.getUsernameForAuth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
@@ -365,7 +364,7 @@ class HTML5RDPTransport(transports.Transport):
         # Fix username/password acording to os manager
         username, password = userService.processUserPassword(username, password)
 
-        return types.connections.ConnectionDataType(
+        return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
             service_type=types.services.ServiceType.VDI,
@@ -378,7 +377,7 @@ class HTML5RDPTransport(transports.Transport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',  # pylint: disable=unused-argument
+        os: 'types.os.DetectedOsInfo',  # pylint: disable=unused-argument
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument

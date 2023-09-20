@@ -35,7 +35,7 @@ from .services import ServiceType
 
 
 # For requests to actors/servers
-class PreconnectRequestType(typing.NamedTuple):
+class PreconnectRequest(typing.NamedTuple):
     """
     Information sent on a preconnect request
     """
@@ -55,7 +55,7 @@ class PreconnectRequestType(typing.NamedTuple):
 
 
 # For requests to actors/servers
-class AssignRequestType(typing.NamedTuple):
+class AssignRequest(typing.NamedTuple):
     udsuser: str
     udsuser_uuid: str
     userservice_uuid: str  # UUID of userservice
@@ -66,7 +66,7 @@ class AssignRequestType(typing.NamedTuple):
         return self._asdict()
 
 
-class ConnectionDataType(typing.NamedTuple):
+class ConnectionData(typing.NamedTuple):
     """
     Connection data provided by transports, and contains all the "transformable" information needed to connect to a service
     (such as username, password, domain, etc..)
@@ -87,7 +87,7 @@ class ConnectionDataType(typing.NamedTuple):
         return self._asdict()
 
 
-class ConnectionSourceType(typing.NamedTuple):
+class ConnectionSource(typing.NamedTuple):
     """
     Connection source from where the connection is being done
     """

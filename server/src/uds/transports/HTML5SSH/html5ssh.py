@@ -36,17 +36,16 @@ import typing
 from django.utils.translation import gettext_noop as _
 
 from uds import models
-from uds.core import transports, types
+from uds.core import consts, transports, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.core.util import fields, os_detector
+from uds.core.util import fields
 
 from ..HTML5RDP.html5rdp import HTML5RDPTransport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.util.os_detector import DetectedOsInfo
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -65,7 +64,7 @@ class HTML5SSHTransport(transports.Transport):
     iconFile = 'html5ssh.png'
 
     ownLink = True
-    supportedOss = os_detector.allOss
+    supportedOss = consts.os.ALL_OS_LIST
     # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
     protocol = transports.protocols.SSH
     group = transports.TUNNELED_GROUP
@@ -177,7 +176,7 @@ class HTML5SSHTransport(transports.Transport):
         userService: 'models.UserService',  # pylint: disable=unused-argument
         transport: 'models.Transport',
         ip: str,
-        os: 'DetectedOsInfo',  # pylint: disable=unused-argument
+        os: 'types.os.DetectedOsInfo',  # pylint: disable=unused-argument
         user: 'models.User',  # pylint: disable=unused-argument
         password: str,  # pylint: disable=unused-argument
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument

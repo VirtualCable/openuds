@@ -47,6 +47,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+AUTH_TOKEN = 'X-TOKEN-AUTH'
 
 # Restrainer decorator
 # If server is restrained, it will return False
@@ -103,7 +104,7 @@ class ServerApiRequester:
                     'Accept': 'application/json',
                     'User-Agent': consts.USER_AGENT,
                     'X-UDS-VERSION': consts.VERSION,
-                    'X-AUTH-HASH': self.hash,
+                    AUTH_TOKEN: self.hash,
                 }
             )
         except Exception as e:
@@ -179,7 +180,7 @@ class ServerApiRequester:
         logger.debug('Notifying assign of service %s to server %s', userService.uuid, self.server.host)
         self.post(
             'assign',
-            types.connections.AssignRequestType(
+            types.connections.AssignRequest(
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
@@ -191,7 +192,7 @@ class ServerApiRequester:
 
     @restrainServer
     def notifyPreconnect(
-        self, userService: 'models.UserService', info: 'types.connections.ConnectionDataType'
+        self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
     ) -> bool:
         """
         Notifies preconnect to server, if this allows it
@@ -209,8 +210,8 @@ class ServerApiRequester:
             'Notifying preconnect of service %s to server %s: %s', userService.uuid, self.server.host, info
         )
         self.post(
-            'preConnect',
-            types.connections.PreconnectRequestType(
+            'preconnect',
+            types.connections.PreconnectRequest(
                 user=info.username,
                 protocol=info.protocol,
                 service_type=info.service_type,
@@ -230,7 +231,7 @@ class ServerApiRequester:
         Notifies removal of user service to server
         """
         logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
-        self.post('removeService', {'userservice': userService.uuid})
+        self.post('release', {'userservice': userService.uuid})
 
         return True
 

@@ -46,7 +46,6 @@ from .spice_base import BaseSpiceTransport
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core.module import Module
-    from uds.core.util import os_detector
     from uds.core.types.request import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
@@ -94,7 +93,7 @@ class TSPICETransport(BaseSpiceTransport):
         userService: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
-        os: 'os_detector.DetectedOsInfo',
+        os: 'types.os.DetectedOsInfo',
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
