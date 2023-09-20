@@ -32,15 +32,18 @@
 import logging
 
 from uds.core.jobs import Job
+
 # from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
 
 
-class Notifications(Job):
-    frecuency = 60  # Once every minute
-    # frecuency_cfg = GlobalConfig.XXXX
-    friendly_name = 'Notifications worker'
+# class Notifications(Job):
+#     frecuency = 60  # Once every minute
+#     # frecuency_cfg = GlobalConfig.XXXX
+#     friendly_name = 'Notifications worker'
 
-    def run(self) -> None:
-        pass
+#     def run(self) -> None:
+#         pass
+# Notifications runs on a custom thread on server/src/uds/core/messaging/processor.py
+# Started by the TaskManager on src/uds/core/managers/task.py

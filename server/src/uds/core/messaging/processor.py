@@ -128,12 +128,21 @@ class MessageProcessorThread(BaseThread):
                         # if we are asked to stop, we don't try to send anymore
                         if not self.keepRunning:
                             break
-                        p.notify(
-                            n.group,
-                            n.identificator,
-                            LogLevel.fromInt(n.level),
-                            n.message,
-                        )
+                        try:
+                            p.notify(
+                                n.group,
+                                n.identificator,
+                                LogLevel.fromInt(n.level),
+                                n.message,
+                            )
+                        except Exception:
+                            logger.error(
+                                'Error sending notification %s to %s',
+                                n,
+                                p.typeName,
+                                exc_info=True,
+                            )
+                            continue
 
             for _ in range(WAIT_TIME):
                 if not self.keepRunning:
