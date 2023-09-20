@@ -30,14 +30,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
-import datetime
 import typing
 
 from django.utils.translation import gettext as _
 
 from uds.core import consts
 from uds.core.util import singleton
-from uds.core.util.model import getSqlStamp
 
 
 class ServerType(enum.IntEnum):
@@ -134,6 +132,8 @@ class ServerStatsType(typing.NamedTuple):
     
     @property
     def is_valid( self ) -> bool:
+        from uds.core.util.model import getSqlStamp
+
         """If the stamp is lesss than consts.DEFAULT_CACHE_TIMEOUT, it is considered valid
         
         Returns:
@@ -156,6 +156,8 @@ class ServerStatsType(typing.NamedTuple):
 
     @staticmethod
     def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStatsType':
+        from uds.core.util.model import getSqlStamp  # Avoid circular import
+        
         dct = { k:v for k, v in data.items()}  # Make a copy
         dct.update(kwargs) # and update with kwargs
         disks: typing.List[typing.Tuple[str, int, int]] = []

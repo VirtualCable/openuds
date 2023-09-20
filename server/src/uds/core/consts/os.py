@@ -30,9 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import re
-import logging
 import typing
 
 from uds.core import types
