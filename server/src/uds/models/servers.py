@@ -239,15 +239,15 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return 6 if ':' in self.ip else 4
 
     @property
-    def stats(self) -> typing.Optional[types.servers.ServerStatsType]:
+    def stats(self) -> typing.Optional[types.servers.ServerStats]:
         """Returns the current stats of this server, or None if not available"""
         statsDct = self.properties.get('stats', None)
         if statsDct:
-            return types.servers.ServerStatsType.fromDict(statsDct)
+            return types.servers.ServerStats.fromDict(statsDct)
         return None
 
     @stats.setter
-    def stats(self, value: typing.Optional[types.servers.ServerStatsType]) -> None:
+    def stats(self, value: typing.Optional[types.servers.ServerStats]) -> None:
         """Sets the current stats of this server"""
         if value is None:
             del self.properties['stats']

@@ -36,19 +36,17 @@ from .services import ServiceType
 
 # For requests to actors/servers
 class PreconnectRequest(typing.NamedTuple):
-    """
-    Information sent on a preconnect request
-    """
+    """Information sent on a preconnect request"""
 
-    user: str
+    udsuser: str  # UDS user name
+    udsuser_uuid: str  # UDS user uuid
+    service_type: ServiceType  # VDI or VAPP (as in ServiceType)
+    userservice_uuid: str  # UUID of userservice
+
+    user: str  # user that will login
     protocol: str  # protocol to use, (RDP, SPICE, etc..)
     ip: str  # IP of the client
     hostname: str  # Hostname of the client
-    service_type: ServiceType  # If VDI or APP, Defaults to VDI
-    udsuser: str  # UDS user name
-    udsuser_uuid: str  # UDS user uuid
-    userservice_uuid: str  # UUID of userservice
-    userservice_type: str  # VDI or VAPP (as in ServiceType)
 
     def asDict(self) -> typing.Dict[str, str]:
         return self._asdict()
@@ -56,10 +54,13 @@ class PreconnectRequest(typing.NamedTuple):
 
 # For requests to actors/servers
 class AssignRequest(typing.NamedTuple):
+    """Information sent on a assign request"""
+
     udsuser: str
     udsuser_uuid: str
+    service_type: ServiceType  # VDI or VAPP (as in ServiceType)
     userservice_uuid: str  # UUID of userservice
-    userservice_type: str  # VDI or VAPP (as in ServiceType)
+
     assignations: int  # Number of times this service has been assigned
 
     def asDict(self) -> typing.Dict[str, 'str|int']:

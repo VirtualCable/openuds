@@ -57,7 +57,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.ServerGroup'
-    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounterType]]
+    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounter]]
     all_uuids: typing.List[str]
 
     def setUp(self) -> None:

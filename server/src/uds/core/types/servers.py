@@ -66,7 +66,7 @@ class ServerType(enum.IntEnum):
         ]
 
 
-class ServerSubType(metaclass=singleton.Singleton):
+class ServerSubtype(metaclass=singleton.Singleton):
     class Info(typing.NamedTuple):
         type: ServerType
         subtype: str
@@ -80,8 +80,8 @@ class ServerSubType(metaclass=singleton.Singleton):
         self.registered = {}
 
     @staticmethod
-    def manager() -> 'ServerSubType':
-        return ServerSubType()
+    def manager() -> 'ServerSubtype':
+        return ServerSubtype()
 
     def register(self, type: ServerType, subtype: str, description: str, icon: str, managed: bool) -> None:
         """Registers a new subtype for a server type
@@ -93,7 +93,7 @@ class ServerSubType(metaclass=singleton.Singleton):
             icon (str): Subtype icon (base64 encoded)
             managed (bool): If subtype is managed or not
         """
-        self.registered[(type, subtype)] = ServerSubType.Info(
+        self.registered[(type, subtype)] = ServerSubtype.Info(
             type=type, subtype=subtype, description=description, managed=managed, icon=icon
         )
 
@@ -107,12 +107,12 @@ class ServerSubType(metaclass=singleton.Singleton):
 # Registering default subtypes (basically, ip unmanaged is the "global" one), any other will be registered by the providers
 # I.e. "linuxapp" will be registered by the Linux Applications Provider
 # The main usage of this subtypes is to allow to group servers by type, and to allow to filter by type
-ServerSubType.manager().register(
+ServerSubtype.manager().register(
     ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
 )
 
 
-class ServerStatsType(typing.NamedTuple):
+class ServerStats(typing.NamedTuple):
     memused: int = 0  # In bytes
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
@@ -155,7 +155,7 @@ class ServerStatsType(typing.NamedTuple):
         return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
 
     @staticmethod
-    def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStatsType':
+    def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
         from uds.core.util.model import getSqlStamp  # Avoid circular import
         
         dct = { k:v for k, v in data.items()}  # Make a copy
@@ -163,7 +163,7 @@ class ServerStatsType(typing.NamedTuple):
         disks: typing.List[typing.Tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
             disks.append((disk['name'], disk['used'], disk['total']))
-        return ServerStatsType(
+        return ServerStats(
             memused=dct.get('memused', 1),
             memtotal=dct.get('memtotal', dct.get('mem_free', 1)),  # Avoid division by zero
             cpuused=dct.get('cpuused', 0),
@@ -181,24 +181,24 @@ class ServerStatsType(typing.NamedTuple):
         return data
 
     @staticmethod
-    def empty() -> 'ServerStatsType':
-        return ServerStatsType()
+    def empty() -> 'ServerStats':
+        return ServerStats()
 
     def __str__(self) -> str:
         # Human readable
         return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}'
 
 
-class ServerCounterType(typing.NamedTuple):
+class ServerCounter(typing.NamedTuple):
     server_uuid: str
     counter: int
 
     @staticmethod
-    def fromIterable(data: typing.Optional[typing.Iterable]) -> typing.Optional['ServerCounterType']:
+    def fromIterable(data: typing.Optional[typing.Iterable]) -> typing.Optional['ServerCounter']:
         if data is None:
             return None
-        return ServerCounterType(*data)
+        return ServerCounter(*data)
 
     @staticmethod
-    def empty() -> 'ServerCounterType':
-        return ServerCounterType('', 0)
+    def empty() -> 'ServerCounter':
+        return ServerCounter('', 0)

@@ -46,6 +46,6 @@ class TypeInfo(typing.NamedTuple):
             **extra
         }
     
-class ModelCustomMethodType(typing.NamedTuple):
+class ModelCustomMethod(typing.NamedTuple):
     name: str
     needs_parent: bool = True

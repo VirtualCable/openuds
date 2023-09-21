@@ -74,7 +74,7 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         # Create an stat object
         memTotal = random.randint(100000000, 1000000000)  # nosec: test data
         memUsed = random.randint(0, memTotal)  # nosec: test data
-        stats = types.servers.ServerStatsType(
+        stats = types.servers.ServerStats(
             memused=memTotal,
             memtotal=memUsed,
             cpuused=random.random(),  # nosec: test data
@@ -109,15 +109,15 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         server_stats = self.server.properties.get('stats', None)
         self.assertIsNotNone(server_stats)
         # Get stats, but clear stamp
-        statsResponse = types.servers.ServerStatsType.fromDict(server_stats, stamp=0)
+        statsResponse = types.servers.ServerStats.fromDict(server_stats, stamp=0)
         self.assertEqual(statsResponse, stats)
         # Ensure that stamp is not 0 on server_stats dict
         self.assertNotEqual(server_stats['stamp'], 0)
 
         # Ensure stat is valid right now
-        statsResponse = types.servers.ServerStatsType.fromDict(server_stats)
+        statsResponse = types.servers.ServerStats.fromDict(server_stats)
         self.assertTrue(statsResponse.is_valid)
-        statsResponse = types.servers.ServerStatsType.fromDict(server_stats, stamp=getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT - 1)
+        statsResponse = types.servers.ServerStats.fromDict(server_stats, stamp=getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT - 1)
         self.assertFalse(statsResponse.is_valid)
 
     def test_event_ping_without_stats(self) -> None:

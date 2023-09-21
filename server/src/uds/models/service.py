@@ -48,7 +48,8 @@ from .provider import Provider
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models.service_pool import ServicePool
-    from uds.core import services
+    from uds.models.user_service import UserService
+    from uds.core import services, types
 
 
 logger = logging.getLogger(__name__)
@@ -170,6 +171,20 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return net.testConnection(host, port, timeout)
+
+    def notifyPreconnect(self, userService: 'UserService', info: 'types.connections.ConnectionData') -> None:
+        """
+        Notify preconnect event to service, so it can do whatever it needs to do before connecting
+
+        Args:
+            userService: User service that is going to be connected
+            info: Connection data
+
+        Note:
+            Override this method if you need to do something before connecting to a service
+            (i.e. invoke notifyPreconnect using a Server, or whatever you need to do)
+        """
+        pass
 
     @property
     def oldMaxAccountingMethod(self) -> bool:

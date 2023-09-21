@@ -119,7 +119,7 @@ class gui:
     ] = {}
 
     @staticmethod
-    def choiceItem(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'types.ui.ChoiceType':
+    def choiceItem(id_: typing.Union[str, int], text: typing.Union[str, int]) -> 'types.ui.ChoiceItem':
         """
         Helper method to create a single choice item.
 
@@ -141,13 +141,13 @@ class gui:
     @staticmethod
     def convertToChoices(
         vals: typing.Union[
-            typing.Callable[[], typing.List['types.ui.ChoiceType']],
-            typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+            typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+            typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
             typing.Dict[str, str],
             None,
         ]
     ) -> typing.Union[
-        typing.Callable[[], typing.List['types.ui.ChoiceType']], typing.List['types.ui.ChoiceType']
+        typing.Callable[[], typing.List['types.ui.ChoiceItem']], typing.List['types.ui.ChoiceItem']
     ]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
@@ -161,7 +161,7 @@ class gui:
             return vals
 
         # Helper to convert an item to a dict
-        def choiceFromValue(val: typing.Union[str, int, types.ui.ChoiceType]) -> 'types.ui.ChoiceType':
+        def choiceFromValue(val: typing.Union[str, int, types.ui.ChoiceItem]) -> 'types.ui.ChoiceItem':
             if isinstance(val, dict):
                 if 'id' not in val or 'text' not in val:
                     raise ValueError(f'Invalid choice dict: {val}')
@@ -263,7 +263,7 @@ class gui:
         if you use "value", you will get the default value if not set)
         """
 
-        _fieldsInfo: types.ui.FieldInfoType
+        _fieldsInfo: types.ui.FieldInfo
 
         def __init__(self, label: str, type: types.ui.FieldType, **kwargs) -> None:
             # if defvalue or defaultValue or defValue in kwargs, emit a warning
@@ -293,7 +293,7 @@ class gui:
             default = kwargs.get('default')
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
-            self._fieldsInfo = types.ui.FieldInfoType(
+            self._fieldsInfo = types.ui.FieldInfo(
                 order=kwargs.get('order') or 0,
                 label=label,
                 tooltip=kwargs.get('tooltip') or '',
@@ -576,8 +576,8 @@ class gui:
             default: typing.Union[typing.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceType']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 typing.Dict[str, str],
                 None,
             ] = None,
@@ -597,7 +597,7 @@ class gui:
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1013,12 +1013,12 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceType']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 typing.Dict[str, str],
                 None,
             ] = None,
-            fills: typing.Optional[types.ui.FillerType] = None,
+            fills: typing.Optional[types.ui.Filler] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[typing.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
@@ -1047,7 +1047,7 @@ class gui:
                 if fills['callbackName'] not in gui.callbacks:
                     gui.callbacks[fills['callbackName']] = fnc
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1062,8 +1062,8 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceType']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 typing.Dict[str, str],
                 None,
             ] = None,
@@ -1085,7 +1085,7 @@ class gui:
 
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
+        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1134,8 +1134,8 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceType']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceType]],
+                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 typing.Dict[str, str],
                 None,
             ] = None,
@@ -1160,7 +1160,7 @@ class gui:
             self._fieldsInfo.rows = rows
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, choices: typing.Iterable[typing.Union[str, types.ui.ChoiceType]]):
+        def setChoices(self, choices: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """

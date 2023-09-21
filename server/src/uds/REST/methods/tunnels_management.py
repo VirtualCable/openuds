@@ -136,8 +136,8 @@ class Tunnels(ModelHandler):
     model = models.ServerGroup
     model_filter = {'type': types.servers.ServerType.TUNNEL}
     custom_methods = [
-        types.rest.ModelCustomMethodType('tunnels', needs_parent=True),
-        types.rest.ModelCustomMethodType('assign', needs_parent=True),
+        types.rest.ModelCustomMethod('tunnels', needs_parent=True),
+        types.rest.ModelCustomMethod('assign', needs_parent=True),
     ]
 
     detail = {'servers': TunnelServers}

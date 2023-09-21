@@ -61,9 +61,9 @@ class ServerManagerManagedServersTest(UDSTestCase):
     user_services: typing.List['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.ServerGroup'
-    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounterType]]
+    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounter]]
     all_uuids: typing.List[str]
-    server_stats: typing.Dict[str, 'types.servers.ServerStatsType']
+    server_stats: typing.Dict[str, 'types.servers.ServerStats']
 
     def setUp(self) -> None:
         super().setUp()
@@ -91,7 +91,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         )
 
         self.server_stats = {
-            server.uuid: types.servers.ServerStatsType(
+            server.uuid: types.servers.ServerStats(
                 memused=(NUM_REGISTEREDSERVERS - i) * GB,
                 memtotal=NUM_REGISTEREDSERVERS * 2 * GB,
                 cpuused=(NUM_REGISTEREDSERVERS - i) / NUM_REGISTEREDSERVERS,
@@ -104,12 +104,12 @@ class ServerManagerManagedServersTest(UDSTestCase):
     def createMockApiRequester(
         self,
         getStats: typing.Optional[
-            typing.Callable[['models.Server'], typing.Optional['types.servers.ServerStatsType']]
+            typing.Callable[['models.Server'], typing.Optional['types.servers.ServerStats']]
         ] = None,
     ) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.requester.ServerApiRequester') as mockServerApiRequester:
 
-            def _getStats() -> typing.Optional[types.servers.ServerStatsType]:
+            def _getStats() -> typing.Optional[types.servers.ServerStats]:
                 # Get first argument from call to init on serverApiRequester
                 server = mockServerApiRequester.call_args[0][0]
                 logger.debug('Getting stats for %s', server.host)

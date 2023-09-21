@@ -184,7 +184,7 @@ class ServerApiRequester:
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
-                userservice_type=service_type,
+                service_type=service_type,
                 assignations=count,
             ),
         )
@@ -214,13 +214,12 @@ class ServerApiRequester:
             types.connections.PreconnectRequest(
                 user=info.username,
                 protocol=info.protocol,
-                service_type=info.service_type,
                 ip=src.ip,
                 hostname=src.hostname,
                 udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
-                userservice_type=info.service_type,
+                service_type=info.service_type,
             ).asDict(),
         )
         return True
@@ -235,7 +234,7 @@ class ServerApiRequester:
 
         return True
 
-    def getStats(self) -> typing.Optional['types.servers.ServerStatsType']:
+    def getStats(self) -> typing.Optional['types.servers.ServerStats']:
         """
         Returns the stats of a server
         """
@@ -255,7 +254,7 @@ class ServerApiRequester:
                 return stats  # Better return old stats than nothing
             return None
 
-        stats = types.servers.ServerStatsType.fromDict(data)
+        stats = types.servers.ServerStats.fromDict(data)
         # Will store stats on property, so no save is needed
         self.server.stats = stats
         return stats

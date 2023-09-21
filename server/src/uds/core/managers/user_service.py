@@ -39,7 +39,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
-from uds.core import consts, services, transports, types
+from uds.core import consts, exceptions, services, transports, types
 from uds.core.services.exceptions import (
     InvalidServiceException,
     MaxServicesReachedError,
@@ -602,7 +602,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
             logger.exception('Reseting service')
 
     def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionData) -> None:
-        comms.notifyPreconnect(userService, info)
+        try:
+            comms.notifyPreconnect(userService, info)
+        except exceptions.NoActorComms:  # If no comms url for userService, try with service
+            userService.deployed_service.service.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
         return comms.checkUuid(userService)

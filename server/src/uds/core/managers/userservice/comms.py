@@ -28,14 +28,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import os
-import json
 import base64
-import tempfile
+import json
 import logging
+import os
+import tempfile
 import typing
-from uds.core import types
 
+from uds.core import exceptions, types
 from uds.core.util.security import secureRequestsSession
 
 if typing.TYPE_CHECKING:
@@ -44,14 +44,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 TIMEOUT = 2
-
-
-class NoActorComms(Exception):
-    pass
-
-
-class OldActorVersion(NoActorComms):
-    pass
 
 
 def _requestActor(
@@ -68,16 +60,14 @@ def _requestActor(
     """
     url = userService.getCommsUrl()
     if not url:
-        # Maybe service knows how to do it
-
         # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
-        raise NoActorComms(f'No notification urls for {userService.friendly_name}')
+        raise exceptions.NoActorComms(f'No notification urls for {userService.friendly_name}')
 
     minVersion = minVersion or '3.5.0'
     version = userService.properties.get('actor_version', '0.0.0')
     if '-' in version or version < minVersion:
         logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
-        raise OldActorVersion(
+        raise exceptions.OldActorVersion(
             f'Old actor version {version} for {userService.friendly_name}'.format(
                 version, userService.friendly_name
             )
@@ -135,24 +125,20 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
     """
     src = userService.getConnectionSource()
 
-    try:
-        _requestActor(
-            userService,
-            'preConnect',
-            types.connections.PreconnectRequest(
-                user=info.username,
-                protocol=info.protocol,
-                service_type=info.service_type,
-                ip=src.ip,
-                hostname=src.hostname,
-                udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
-                udsuser_uuid=userService.user.uuid if userService.user else '',
-                userservice_uuid=userService.uuid,
-                userservice_type=info.service_type
-            ).asDict(),
-        )
-    except NoActorComms:
-        pass  # If no preconnect, warning will appear on UDS log
+    _requestActor(
+        userService,
+        'preConnect',
+        types.connections.PreconnectRequest(
+            user=info.username,
+            protocol=info.protocol,
+            ip=src.ip,
+            hostname=src.hostname,
+            udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
+            udsuser_uuid=userService.user.uuid if userService.user else '',
+            userservice_uuid=userService.uuid,
+            service_type=info.service_type
+        ).asDict(),
+    )
 
 
 def checkUuid(userService: 'UserService') -> bool:
@@ -169,7 +155,7 @@ def checkUuid(userService: 'UserService') -> bool:
                 uuid,
             )
             return False
-    except NoActorComms:
+    except exceptions.NoActorComms:
         pass
 
     return True  # Actor does not supports checking
@@ -186,7 +172,7 @@ def requestScreenshot(userService: 'UserService') -> bytes:
         png = _requestActor(
             userService, 'screenshot', minVersion='3.0.0'
         )  # First valid version with screenshot is 3.0
-    except NoActorComms:
+    except exceptions.NoActorComms:
         png = None
 
     return base64.b64decode(png or emptyPng)
@@ -201,7 +187,7 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
         if forUser:
             data['user'] = forUser
         _requestActor(userService, 'script', data=data)
-    except NoActorComms:
+    except exceptions.NoActorComms:
         pass
 
 
@@ -211,7 +197,7 @@ def requestLogoff(userService: 'UserService') -> None:
     """
     try:
         _requestActor(userService, 'logout', data={})
-    except NoActorComms:
+    except exceptions.NoActorComms:
         pass
 
 
@@ -221,5 +207,5 @@ def sendMessage(userService: 'UserService', message: str) -> None:
     """
     try:
         _requestActor(userService, 'message', data={'message': message})
-    except NoActorComms:
+    except exceptions.NoActorComms:
         pass

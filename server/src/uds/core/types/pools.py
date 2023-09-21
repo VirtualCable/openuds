@@ -34,14 +34,15 @@ import typing
 
 from django.utils.translation import gettext as _
 
+
 class LoadBalancingPolicy(enum.IntEnum):
     ROUND_ROBIN = 0
     PRIORITY = 1
     MOST_AVAILABLE_BY_NUMBER = 2
 
     def asStr(self) -> str:
-        return str(self)
-    
+        return self.name.lower()
+
     @staticmethod
     def enumerate() -> typing.List[typing.Tuple[int, str]]:
         return [
@@ -50,14 +51,15 @@ class LoadBalancingPolicy(enum.IntEnum):
             (LoadBalancingPolicy.MOST_AVAILABLE_BY_NUMBER, _('Greater % available')),
         ]
 
+
 class TransportSelectionPolicy(enum.IntEnum):
     AUTO = 0
     COMMON = 1
     LABEL = 2
 
     def asStr(self) -> str:
-        return str(self)
-    
+        return self.name.lower()
+
     @staticmethod
     def enumerate() -> typing.List[typing.Tuple[int, str]]:
         return [
@@ -65,14 +67,15 @@ class TransportSelectionPolicy(enum.IntEnum):
             (TransportSelectionPolicy.COMMON, _('Use only common transports')),
             (TransportSelectionPolicy.LABEL, _('Group Transports by label')),
         ]
-    
+
+
 class HighAvailabilityPolicy(enum.IntEnum):
     DISABLED = 0
     ENABLED = 1
 
     def asStr(self) -> str:
         return str(self)
-    
+
     @staticmethod
     def enumerate() -> typing.List[typing.Tuple[int, str]]:
         return [

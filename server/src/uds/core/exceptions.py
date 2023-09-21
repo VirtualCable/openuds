@@ -54,3 +54,16 @@ class BlockAccess(UDSException):
     """
     Exception used to signal that the access to a resource is blocked
     """
+
+# Actor related exceptions
+class NoActorComms(UDSException):
+    """
+    Exception used to signal that the actor user service does not have comms url
+    """
+    pass
+
+
+class OldActorVersion(NoActorComms):
+    """
+    Exception used to signal that the actor user service version is too old
+    """

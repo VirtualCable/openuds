@@ -103,22 +103,22 @@ class FieldPatternType(enum.StrEnum):
     NONE = ''
 
 
-class FillerType(typing.TypedDict):
+class Filler(typing.TypedDict):
     callbackName: str
     parameters: typing.List[str]
     function: typing.NotRequired[typing.Callable[..., typing.Any]]
 
 
-class ChoiceType(typing.TypedDict):
+class ChoiceItem(typing.TypedDict):
     id: str
     text: str
 
 
-ChoicesType = typing.Union[typing.Callable[[], typing.Iterable[ChoiceType]], typing.Iterable[ChoiceType]]
+ChoicesType = typing.Union[typing.Callable[[], typing.Iterable[ChoiceItem]], typing.Iterable[ChoiceItem]]
 
 
 @dataclasses.dataclass
-class FieldInfoType:
+class FieldInfo:
     label: str
     tooltip: str
     order: int
@@ -134,7 +134,7 @@ class FieldInfoType:
     choices: typing.Optional[ChoicesType] = None
     minValue: typing.Optional[int] = None
     maxValue: typing.Optional[int] = None
-    fills: typing.Optional[FillerType] = None
+    fills: typing.Optional[Filler] = None
     rows: typing.Optional[int] = None
 
     def asDict(self) -> typing.Dict[str, typing.Any]:

@@ -39,9 +39,3 @@ class NotifiableEvents(enum.StrEnum):
     LOGIN = 'login'
     LOGOUT = 'logout'
     LOG = 'log'
-
-    def asStr(self) -> str:
-        """
-        Returns the string representation of the event
-        """
-        return self.value

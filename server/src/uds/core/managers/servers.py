@@ -106,11 +106,11 @@ class ServerManager(metaclass=singleton.Singleton):
         now: datetime.datetime,
         minMemoryMB: int = 0,
         excludeServersUUids: typing.Optional[typing.Set[str]] = None,
-    ) -> typing.Tuple['models.Server', 'types.servers.ServerStatsType']:
+    ) -> typing.Tuple['models.Server', 'types.servers.ServerStats']:
         """
         Finds the best server for a service
         """
-        best: typing.Optional[typing.Tuple['models.Server', 'types.servers.ServerStatsType']] = None
+        best: typing.Optional[typing.Tuple['models.Server', 'types.servers.ServerStats']] = None
         unmanaged_list: typing.List['models.Server'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
@@ -119,7 +119,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Paralelize stats retrieval
         cachedStats: typing.List[
-            typing.Tuple[typing.Optional['types.servers.ServerStatsType'], 'models.Server']
+            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
         ] = []
 
         def _retrieveStats(server: 'models.Server') -> None:
@@ -165,7 +165,7 @@ class ServerManager(metaclass=singleton.Singleton):
             self.increaseUnmanagedUsage(best_with_counter[0].uuid)
             best = (
                 best_with_counter[0],
-                types.servers.ServerStatsType.empty(),
+                types.servers.ServerStats.empty(),
             )
 
         # If best was locked, notify it (will be notified again on assign)
@@ -183,7 +183,7 @@ class ServerManager(metaclass=singleton.Singleton):
         lockTime: typing.Optional[datetime.timedelta] = None,
         server: typing.Optional['models.Server'] = None,  # If not note
         excludeServersUUids: typing.Optional[typing.Set[str]] = None,
-    ) -> typing.Optional[types.servers.ServerCounterType]:
+    ) -> typing.Optional[types.servers.ServerCounter]:
         """
         Select a server for an userservice to be assigned to
 
@@ -211,8 +211,8 @@ class ServerManager(metaclass=singleton.Singleton):
 
         with serverGroup.properties as props:
             info: typing.Optional[
-                types.servers.ServerCounterType
-            ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
+                types.servers.ServerCounter
+            ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
             # If server is forced, and server is part of the group, use it
             if server:
                 if (
@@ -227,10 +227,10 @@ class ServerManager(metaclass=singleton.Singleton):
 
                 # if server.uuid is stored uuid, increase counter (and counters if exits), else store it
                 if info and info.server_uuid == server.uuid:
-                    info = types.servers.ServerCounterType(server.uuid, info.counter + 1)
+                    info = types.servers.ServerCounter(server.uuid, info.counter + 1)
                 else:
                     props[prop_name] = (server.uuid, 0)
-                    info = types.servers.ServerCounterType(server.uuid, 0)
+                    info = types.servers.ServerCounter(server.uuid, 0)
 
                 self.increaseUnmanagedUsage(server.uuid, onlyIfExists=True)
             else:
@@ -258,7 +258,7 @@ class ServerManager(metaclass=singleton.Singleton):
                                 excludeServersUUids=excludeServersUUids,
                             )
 
-                            info = types.servers.ServerCounterType(best[0].uuid, 0)
+                            info = types.servers.ServerCounter(best[0].uuid, 0)
                             best[0].locked_until = now + lockTime if lockTime else None
                             best[0].save(update_fields=['locked_until'])
                     except exceptions.UDSException:  # No more servers
@@ -268,7 +268,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
             # Notify to server
             # Update counter
-            info = types.servers.ServerCounterType(info.server_uuid, info.counter + 1)
+            info = types.servers.ServerCounter(info.server_uuid, info.counter + 1)
             props[prop_name] = info
             bestServer = models.Server.objects.get(uuid=info.server_uuid)
 
@@ -283,7 +283,7 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.ServerGroup',
         unlock: bool = False,
         userUuid: typing.Optional[str] = None,
-    ) -> types.servers.ServerCounterType:
+    ) -> types.servers.ServerCounter:
         """
         Unassigns a server from an user
 
@@ -296,7 +296,7 @@ class ServerManager(metaclass=singleton.Singleton):
         userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
 
         if userUuid is None:
-            return types.servers.ServerCounterType.empty()  # No user is assigned to this service, nothing to do
+            return types.servers.ServerCounter.empty()  # No user is assigned to this service, nothing to do
 
         prop_name = self.propertyName(userService.user)
         with serverGroup.properties as props:
@@ -305,13 +305,13 @@ class ServerManager(metaclass=singleton.Singleton):
                 # ServerCounterType
 
                 serverCounter: typing.Optional[
-                    types.servers.ServerCounterType
-                ] = types.servers.ServerCounterType.fromIterable(props.get(prop_name))
+                    types.servers.ServerCounter
+                ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
                 # If no cached value, get server assignation
                 if serverCounter is None:
-                    return types.servers.ServerCounterType.empty()
+                    return types.servers.ServerCounter.empty()
                 # Ensure counter is at least 1
-                serverCounter = types.servers.ServerCounterType(
+                serverCounter = types.servers.ServerCounter(
                     serverCounter.server_uuid, max(1, serverCounter.counter)
                 )
                 if serverCounter.counter == 1 or unlock:
@@ -335,7 +335,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
             requester.ServerApiRequester(server).notifyRelease(userService)
 
-        return types.servers.ServerCounterType(serverCounter.server_uuid, serverCounter.counter - 1)
+        return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
 
     def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
