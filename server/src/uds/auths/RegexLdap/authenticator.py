@@ -63,7 +63,6 @@ LDAP_RESULT_LIMIT = 100
 
 
 class RegexLdap(auths.Authenticator):
-
     host = gui.TextField(
         length=64,
         label=_('Host'),
@@ -82,9 +81,7 @@ class RegexLdap(auths.Authenticator):
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=3,
-        tooltip=_(
-            'If checked, the connection will be ssl, using port 636 instead of 389'
-        ),
+        tooltip=_('If checked, the connection will be ssl, using port 636 instead of 389'),
     )
     username = gui.TextField(
         length=64,
@@ -116,9 +113,7 @@ class RegexLdap(auths.Authenticator):
         label=_('Verify SSL'),
         defvalue=True,
         order=11,
-        tooltip=_(
-            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
-        ),
+        tooltip=_('If checked, SSL verification will be enforced. If not, SSL verification will be disabled'),
         tab=gui.ADVANCED_TAB,
     )
     certificate = gui.TextField(
@@ -187,9 +182,7 @@ class RegexLdap(auths.Authenticator):
         label=_('Alt. class'),
         defvalue='',
         order=25,
-        tooltip=_(
-            'Class for LDAP objects that will be also checked for groups retrieval (normally empty)'
-        ),
+        tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'),
         required=False,
         tab=_('Advanced'),
     )
@@ -242,12 +235,10 @@ class RegexLdap(auths.Authenticator):
             self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
             self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
             self.__validateField(values['groupNameAttr'], str(self.groupNameAttr.label))
-            
-            for i in 'userNameAttr', 'userIdAttr', 'groupNameAttr':
+
+            for i in ('userNameAttr', 'userIdAttr', 'groupNameAttr'):
                 if ':' in values[i]:
-                    raise auths.Authenticator.ValidationException(
-                        'Invalid character ":" in {0}: {1}'.format(i, values[i])
-                    )
+                    raise auths.Authenticator.ValidationException(f'Invalid character ":" in {i}: {values[i]}')
 
             self._host = values['host']
             self._port = values['port']
@@ -312,18 +303,18 @@ class RegexLdap(auths.Authenticator):
                 if isinstance(val, list):
                     return val
                 return [val]
-            
+
             if '+' in attrName:
                 attrList = attrName.split('+')
                 # Check all attributes are present, and has only one value
                 if not all([len(attributes.get(a, [])) <= 1 for a in attrList]):
                     logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
                     return []
-            
+
                 val = [''.join([asList(attributes.get(a, ['']))[0] for a in attrList])]
             elif '**' in attrName:
                 # Prepend the value after : to value before :
-                attr, prependable = attrName.split('**')
+                attr, prependable = attrName.split('**', 1)
                 val = [prependable + a for a in asList(attributes.get(attr, []))]
             else:
                 val = asList(attributes.get(attrName, []))
@@ -348,9 +339,7 @@ class RegexLdap(auths.Authenticator):
             for v in val:
                 try:
                     logger.debug('Pattern: %s on value %s', pattern, v)
-                    searchResult = re.search(
-                        pattern, v, re.IGNORECASE
-                    )  # @UndefinedVariable
+                    searchResult = re.search(pattern, v, re.IGNORECASE)  # @UndefinedVariable
                     if searchResult is None:
                         continue
                     logger.debug("Found against %s: %s ", v, searchResult.groups())
@@ -410,9 +399,9 @@ class RegexLdap(auths.Authenticator):
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
 
-        self._verifySsl = False # Backward compatibility
-        self._mfaAttr = '' # Backward compatibility
-        self._certificate = '' # Backward compatibility
+        self._verifySsl = False  # Backward compatibility
+        self._mfaAttr = ''  # Backward compatibility
+        self._certificate = ''  # Backward compatibility
 
         # Common
         logger.debug('Common: %s', vals[1:11])
@@ -469,7 +458,7 @@ class RegexLdap(auths.Authenticator):
         @return: Connection established
         @raise exception: If connection could not be established
         """
-        if self._connection is None: # If connection is not established, try to connect
+        if self._connection is None:  # If connection is not established, try to connect
             self._connection = ldaputil.connection(
                 self._username,
                 self._password,
@@ -564,9 +553,7 @@ class RegexLdap(auths.Authenticator):
     def __getUserRealName(self, user: ldaputil.LDAPResultType):
         return ' '.join(self.__processField(self._userNameAttr, user))
 
-    def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
-    ) -> bool:
+    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         """
         Must authenticate the user.
         We can have to different situations here:
@@ -581,20 +568,14 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
-                authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid user'
-                )
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid user')
                 return False
 
             try:
                 # Let's see first if it credentials are fine
-                self.__connectAs(
-                    usr['dn'], credentials
-                )  # Will raise an exception if it can't connect
+                self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
             except:
-                authLogLogin(
-                    getRequest(), self.dbAuthenticator(), username, 'Invalid password'
-                )
+                authLogLogin(getRequest(), self.dbAuthenticator(), username, 'Invalid password')
                 return False
 
             # store the user mfa attribute if it is set
@@ -680,9 +661,7 @@ class RegexLdap(auths.Authenticator):
             return res
         except Exception:
             logger.exception("Exception: ")
-            raise auths.exceptions.AuthenticatorException(
-                _('Too many results, be more specific')
-            )
+            raise auths.exceptions.AuthenticatorException(_('Too many results, be more specific'))
 
     @staticmethod
     def test(env, data):
@@ -690,9 +669,7 @@ class RegexLdap(auths.Authenticator):
             auth = RegexLdap(None, env, data)  # type: ignore  # Regexldap does not use "dbAuth", so it's safe...
             return auth.testConnection()
         except Exception as e:
-            logger.error(
-                'Exception found testing Simple LDAP auth %s: %s', e.__class__, e
-            )
+            logger.error('Exception found testing Simple LDAP auth %s: %s', e.__class__, e)
             return [False, "Error testing connection"]
 
     def testConnection(self):
@@ -721,9 +698,7 @@ class RegexLdap(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user class seems to be incorrect (no user found by that class)'
-                ),
+                _('Ldap user class seems to be incorrect (no user found by that class)'),
             ]
         except Exception:
             # If found 1 or more, all right
@@ -736,8 +711,7 @@ class RegexLdap(auths.Authenticator):
                     con.search_ext_s(
                         base=self._ldapBase,
                         scope=ldap.SCOPE_SUBTREE,  # type: ignore   # ldap.SCOPE_* not resolved due to dynamic creation?
-                        filterstr='(&(objectClass=%s)(%s=*))'
-                        % (self._userClass, self._userIdAttr),
+                        filterstr='(&(objectClass=%s)(%s=*))' % (self._userClass, self._userIdAttr),
                         sizelimit=1,
                     )
                 )
@@ -746,9 +720,7 @@ class RegexLdap(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user id attr is probably wrong (can\'t find any user with both conditions)'
-                ),
+                _('Ldap user id attr is probably wrong (can\'t find any user with both conditions)'),
             ]
         except Exception:
             # If found 1 or more, all right
@@ -775,9 +747,7 @@ class RegexLdap(auths.Authenticator):
                 continue
             return [
                 False,
-                _(
-                    'Ldap group id attribute seems to be incorrect (no group found by that attribute)'
-                ),
+                _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'),
             ]
 
         # Now try to test regular expression to see if it matches anything (
