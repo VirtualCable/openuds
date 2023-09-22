@@ -242,6 +242,12 @@ class RegexLdap(auths.Authenticator):
             self.__validateField(values['userNameAttr'], str(self.userNameAttr.label))
             self.__validateField(values['userIdAttr'], str(self.userIdAttr.label))
             self.__validateField(values['groupNameAttr'], str(self.groupNameAttr.label))
+            
+            for i in 'userNameAttr', 'userIdAttr', 'groupNameAttr':
+                if ':' in values[i]:
+                    raise auths.Authenticator.ValidationException(
+                        'Invalid character ":" in {0}: {1}'.format(i, values[i])
+                    )
 
             self._host = values['host']
             self._port = values['port']
@@ -315,9 +321,9 @@ class RegexLdap(auths.Authenticator):
                     return []
             
                 val = [''.join([asList(attributes.get(a, ['']))[0] for a in attrList])]
-            elif ':' in attrName:
+            elif '**' in attrName:
                 # Prepend the value after : to value before :
-                attr, prependable = attrName.split(':')
+                attr, prependable = attrName.split('**')
                 val = [prependable + a for a in asList(attributes.get(attr, []))]
             else:
                 val = asList(attributes.get(attrName, []))
