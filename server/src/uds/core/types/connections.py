@@ -66,6 +66,12 @@ class AssignRequest(typing.NamedTuple):
     def asDict(self) -> typing.Dict[str, 'str|int']:
         return self._asdict()
 
+class ReleaseRequest(typing.NamedTuple):
+    """Information sent on a release request"""
+    userservice_uuid: str  # UUID of userservice
+
+    def asDict(self) -> typing.Dict[str, str]:
+        return self._asdict()
 
 class ConnectionData(typing.NamedTuple):
     """

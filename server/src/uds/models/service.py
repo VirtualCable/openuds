@@ -184,7 +184,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             Override this method if you need to do something before connecting to a service
             (i.e. invoke notifyPreconnect using a Server, or whatever you need to do)
         """
-        pass
+        logger.warning('No actor notification available for user service %s', userService.friendly_name)
 
     @property
     def oldMaxAccountingMethod(self) -> bool:

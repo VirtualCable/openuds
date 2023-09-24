@@ -57,7 +57,7 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     """Processes the REST login event from a server
 
     data: {
-        'user_service': 'uuid of user service',
+        'user_service_uuid': 'uuid of user service',
         'username': 'username',
         'ticket': 'ticket if any' # optional
     }
@@ -80,9 +80,9 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     if 'ticket' in data:
         ticket = models.TicketStore.get(data['ticket'], invalidate=True)
         # If ticket is included, user_service can be inside ticket or in data
-        data['user_service'] = data.get('user_service', ticket['user_service'])
+        data['user_service_uuid'] = data.get('user_service_uuid', ticket['user_service_uuid'])
     
-    userService = models.UserService.objects.get(uuid=data['user_service'])
+    userService = models.UserService.objects.get(uuid=data['user_service_uuid'])
     server.setActorVersion(userService)
 
     if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
@@ -118,7 +118,7 @@ def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
     """Processes the REST logout event from a server
 
     data: {
-        'user_service': 'uuid of user service',
+        'user_service_uuid': 'uuid of user service',
         'session_id': 'session id',
     }
 
@@ -126,7 +126,7 @@ def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
     """
     userService = models.UserService.objects.get(uuid=data['user_service'])
 
-    session_id = data['session_id']
+    session_id = data['user_service_uuid']
     userService.closeSession(session_id)
 
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)

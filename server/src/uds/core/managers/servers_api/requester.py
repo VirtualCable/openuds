@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 
 AUTH_TOKEN = 'X-TOKEN-AUTH'
 
+
 # Restrainer decorator
 # If server is restrained, it will return False
 # If server is not restrained, it will execute the function and return it's result
@@ -230,7 +231,7 @@ class ServerApiRequester:
         Notifies removal of user service to server
         """
         logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
-        self.post('release', {'userservice': userService.uuid})
+        self.post('release', types.connections.ReleaseRequest(userservice_uuid=userService.uuid).asDict())
 
         return True
 

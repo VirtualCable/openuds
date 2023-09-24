@@ -173,7 +173,7 @@ class ServerManager(metaclass=singleton.Singleton):
             requester.ServerApiRequester(best[0]).notifyRelease(userService)
 
         return best
-
+    
     def assign(
         self,
         userService: 'models.UserService',
@@ -203,7 +203,7 @@ class ServerManager(metaclass=singleton.Singleton):
         if not userService.user:
             raise exceptions.UDSException(_('No user assigned to service'))
 
-        # Look for existint user asignation through properties
+        # Look for existing user asignation through properties
         prop_name = self.propertyName(userService.user)
         now = model_utils.getSqlDatetime()
 
@@ -337,6 +337,19 @@ class ServerManager(metaclass=singleton.Singleton):
 
         return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
 
+    def notifyPreconnect(
+        self,
+        serverGroup: 'models.ServerGroup',
+        userService: 'models.UserService',
+        info: types.connections.ConnectionData,
+    ) -> None:
+        """
+        Notifies preconnect to server
+        """
+        server = self.getServerAssignation(userService, serverGroup)
+        if server:
+            requester.ServerApiRequester(server).notifyPreconnect(userService, info)
+
     def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
         Get usage information for a server group
@@ -355,6 +368,33 @@ class ServerManager(metaclass=singleton.Singleton):
                 res[kk] = res.get(kk, 0) + v[1]
         return res
 
+    def getServerAssignation(
+        self,
+        userService: 'models.UserService',
+        serverGroup: 'models.ServerGroup',
+    ) -> typing.Optional['models.Server']:
+        """
+        Returns the server assigned to an user service
+
+        Args:
+            userService: User service to get server from
+            serverGroup: Server group to get server from
+
+        Returns:
+            Server assigned to user service, or None if no server is assigned
+        """
+        if not userService.user:
+            raise exceptions.UDSException(_('No user assigned to service'))
+
+        prop_name = self.propertyName(userService.user)
+        with serverGroup.properties as props:
+            info: typing.Optional[
+                types.servers.ServerCounter
+            ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
+            if info is None:
+                return None
+            return models.Server.objects.get(uuid=info.server_uuid)
+        
     def doMaintenance(self, serverGroup: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group
 
@@ -372,17 +412,6 @@ class ServerManager(metaclass=singleton.Singleton):
                 except Exception:
                     # User does not exists, remove it from counters
                     del serverGroup.properties[k]
-
-    def notifyPreconnect(
-        self,
-        server: 'models.Server',
-        userService: 'models.UserService',
-        info: types.connections.ConnectionData,
-    ) -> None:
-        """
-        Notifies preconnect to server
-        """
-        requester.ServerApiRequester(server).notifyPreconnect(userService, info)
 
     def processEvent(self, server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
         """

@@ -61,7 +61,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         # loginData = {
         #     'token': 'server token', # Must be present on all events
         #     'type': 'login',  # MUST BE PRESENT
-        #     'user_service': 'uuid', # MUST BE PRESENT
+        #     'user_service_uuid': 'uuid', # MUST BE PRESENT
         #     'username': 'username', # Optional
         # }
         # Returns:
@@ -78,7 +78,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             data={
                 'token': self.server.token,
                 'type': 'login',
-                'user_service': self.user_service_managed.uuid,
+                'user_service_uuid': self.user_service_managed.uuid,
                 'username': 'local_user_name',
             },
         )
