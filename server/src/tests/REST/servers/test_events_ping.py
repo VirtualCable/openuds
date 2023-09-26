@@ -67,7 +67,7 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         # memtotal: int = 0  # In bytes
         # cpuused: float = 0  # 0-1 (cpu usage)
         # uptime: int = 0  # In seconds
-        # disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (name, used, total)
+        # disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (mountpoinr, used, total)
         # connections: int = 0  # Number of connections
         # current_users: int = 0  # Number of current users
 

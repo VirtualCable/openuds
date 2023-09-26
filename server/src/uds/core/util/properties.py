@@ -49,6 +49,7 @@ class PropertyAccessor:
     """
     Property accessor, used to access properties of an object
     """
+
     transaction: 'typing.Optional[transaction.Atomic]'
     owner_id: str
     owner_type: str
@@ -72,9 +73,7 @@ class PropertyAccessor:
             p.value = value
             p.save()
         except Properties.DoesNotExist:
-            Properties.objects.create(
-                owner_id=self.owner_id, owner_type=self.owner_type, key=key, value=value
-            )
+            Properties.objects.create(owner_id=self.owner_id, owner_type=self.owner_type, key=key, value=value)
 
     def __delitem__(self, key: str) -> None:
         try:
@@ -123,12 +122,12 @@ class PropertyAccessor:
             return v
         except KeyError:
             return default
-        
+
     def __enter__(self) -> 'PropertyAccessor':
         self.transaction = transaction.atomic()
         self.transaction.__enter__()
         return self
-    
+
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         if self.transaction:
             self.transaction.__exit__(exc_type, exc_value, traceback)
@@ -140,7 +139,7 @@ class PropertiesMixin:
     def ownerIdAndType(self) -> typing.Tuple[str, str]:
         """Returns the owner id and type of this object
         The owner id and type is used to identify the owner in the properties table
-        
+
         Returns:
             typing.Tuple[str, str]: Owner id and type
         """
@@ -151,7 +150,7 @@ class PropertiesMixin:
     def properties(self) -> PropertyAccessor:
         owner_id, owner_type = self.ownerIdAndType()
         return PropertyAccessor(owner_id=owner_id, owner_type=owner_type)
-        
+
     @staticmethod
     def _deleteSignal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         toDelete: 'PropertiesMixin' = kwargs['instance']
@@ -161,8 +160,11 @@ class PropertiesMixin:
 
     @staticmethod
     def setupSignals(model: 'typing.Type[models.Model]') -> None:
-        # Connects a pre deletion signal to delete properties
-        # Note that this method must be added to every class creation that inherits from PropertiesMixin
-        # Or the properties will not be deleted on deletion of the object
+        """Connects a pre deletion signal to delete properties
+        Note that this method must be added to every class creation that inherits from PropertiesMixin
+        Or the properties will not be deleted on deletion of the object
+
+        Args:
+            model (typing.Type[models.Model]): Model to connect the signal to
+        """
         signals.pre_delete.connect(PropertiesMixin._deleteSignal, sender=model)
-        

@@ -117,7 +117,7 @@ class ServerStats(typing.NamedTuple):
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (name, used, total)
+    disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
     stamp: float = 0  # Timestamp of this stats
@@ -162,10 +162,10 @@ class ServerStats(typing.NamedTuple):
         dct.update(kwargs) # and update with kwargs
         disks: typing.List[typing.Tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
-            disks.append((disk['name'], disk['used'], disk['total']))
+            disks.append((disk['mountpoint'], disk['used'], disk['total']))
         return ServerStats(
             memused=dct.get('memused', 1),
-            memtotal=dct.get('memtotal', dct.get('mem_free', 1)),  # Avoid division by zero
+            memtotal=dct.get('memtotal') or 1,  # Avoid division by zero
             cpuused=dct.get('cpuused', 0),
             uptime=dct.get('uptime', 0),
             disks=disks,
@@ -177,7 +177,7 @@ class ServerStats(typing.NamedTuple):
     def asDict(self) -> typing.Dict[str, typing.Any]:
         data = self._asdict()
         # Replace disk as dicts
-        data['disks'] = [{'name': d[0], 'used': d[1], 'total': d[2]} for d in self.disks]
+        data['disks'] = [{'mountpoint': d[0], 'used': d[1], 'total': d[2]} for d in self.disks]
         return data
 
     @staticmethod

@@ -97,7 +97,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         self.assertIsNone(result.get('ticket', None))
 
     def test_login_with_ticket(self) -> None:
-        ticket_uuid = models.TicketStore.create({'user_service': self.user_service_managed.uuid, 'some_value': 'value'})
+        ticket_uuid = models.TicketStore.create({'user_service_uuid': self.user_service_managed.uuid, 'some_value': 'value'})
         response = self.client.rest_post(
             '/servers/event',
             data={
@@ -117,7 +117,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             data={
                 'token': self.server.token,
                 'type': 'login',
-                'user_service': 'invalid uuid',
+                'user_service_uuid': 'invalid uuid',
                 'username': 'local_user_name',
             },
         )
@@ -183,7 +183,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             data={
                 'token': self.server.token,
                 'type': 'login',
-                'user_service': self.user_service_managed.uuid,
+                'user_service_uuid': self.user_service_managed.uuid,
                 'username': 'local_user_name',
             },
         )
@@ -198,7 +198,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
             data={
                 'token': self.server.token,
                 'type': 'logout',
-                'user_service': self.user_service_managed.uuid,
+                'user_service_uuid': self.user_service_managed.uuid,
                 'username': 'local_user_name',
                 'session_id': session_id,
             },

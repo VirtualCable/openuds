@@ -124,7 +124,7 @@ def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
 
     Returns 'OK' if all went ok ({'result': 'OK', 'stamp': 'stamp'}), or an error if not ({'result': 'error', 'error': 'error description'}})
     """
-    userService = models.UserService.objects.get(uuid=data['user_service'])
+    userService = models.UserService.objects.get(uuid=data['user_service_uuid'])
 
     session_id = data['user_service_uuid']
     userService.closeSession(session_id)

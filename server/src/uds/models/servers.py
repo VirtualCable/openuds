@@ -373,7 +373,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
         path = path.lstrip('/')  # Remove leading slashes
         pre, post = ('[', ']') if self.ip_version == 6 else ('', '')
-
+        # The url is composed of https://[ip]:[port]/[server_type]/v1/[path]
+        # v1 is currently the only version, but we can add more in the future
         return f'https://{pre}{self.ip}{post}:{self.listen_port}/{self.server_type.path()}/v1/{path}'
 
     def __str__(self):
