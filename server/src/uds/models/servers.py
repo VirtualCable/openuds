@@ -177,6 +177,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # mac address of registered server, if any. Important for VDI actor servers mainly, informative for others
     mac = models.CharField(max_length=32, default=MAC_UNKNOWN, db_index=True)
     # certificate of server, if any. VDI Actors will have it's certificate on a property of the userService
+    # In fact CA of the certificate, but self signed will be created most times, so it will be the certificate itself
     certificate = models.TextField(default='', blank=True)
 
     # Log level, so we can filter messages for this server

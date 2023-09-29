@@ -110,6 +110,7 @@ class ServerRegisterBase(Handler):
                     os_type=typing.cast(str, self._params.get('os', types.os.KnownOS.UNKNOWN.os_name())).lower(),
                     mac=mac,
                     data=data,
+                    certificate=self._params.get('certificate', ''),
                 )
             except Exception as e:
                 return rest_result('error', error=str(e))
