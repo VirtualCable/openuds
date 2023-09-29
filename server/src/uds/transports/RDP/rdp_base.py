@@ -193,7 +193,7 @@ class BaseRDPTransport(transports.Transport):
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
         tooltip=_('Use this port as RDP port. Defaults to 3389.'),
-        tab=gui.PARAMETERS_TAB,
+        tab=gui.ADVANCED_TAB,
         required=True,  #: Numeric fields have always a value, so this not really needed
         defvalue='3389',
     )
