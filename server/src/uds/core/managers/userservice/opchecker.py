@@ -33,11 +33,11 @@
 import logging
 import typing
 
+from uds.core import services
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
-from uds.core.util.state import State
 from uds.core.util import log
-from uds.core import services
+from uds.core.util.state import State
 from uds.models import UserService
 
 logger = logging.getLogger(__name__)

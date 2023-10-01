@@ -32,7 +32,7 @@ import typing
 import logging
 
 from uds import models
-from uds.core import types
+from uds.core import types, consts
 from uds.core.managers import crypto
 from uds.core.util import log
 
@@ -56,6 +56,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
         super().setUp()
         self._data = {
             'ip': '',  # To be set on tests
+            'port': consts.SERVER_DEFAULT_LISTEN_PORT,
             'type': '',  # To be set on tests
             'subtype': crypto.CryptoManager.manager().randomString(10),
             'os': '',  # To be set on tests
@@ -80,6 +81,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
 
         for ip, type, os in self.ip_type_os_generator():
             self._data['ip'] = ip
+            self._data['port'] = 1234
             self._data['mac'] = random_mac()
             self._data['type'] = type
             self._data['os'] = os
@@ -94,6 +96,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
 
             server = models.Server.objects.get(token=token)
             self.assertEqual(server.ip, self._data['ip'])
+            self.assertEqual(server.listen_port, self._data['port'])
             self.assertEqual(server.type, self._data['type'])
             self.assertEqual(server.subtype, self._data['subtype'])
             self.assertEqual(server.mac, self._data['mac'])
@@ -148,6 +151,10 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             self._data['type'] = type
             self._data['os'] = os
             _do_test('invalid ip')
+            # Invalid port
+            self._data['ip'] = ip
+            self._data['port'] = 0
+            _do_test('invalid port')
             # Invalid type
             self._data['ip'] = ip
             self._data['type'] = 'x' * 32

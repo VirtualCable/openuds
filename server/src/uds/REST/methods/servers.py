@@ -53,6 +53,7 @@ class ServerRegisterBase(Handler):
         if ':' in ip:
             # If zone is present, remove it
             ip = ip.split('%')[0]
+        port = self._params.get('port', consts.SERVER_DEFAULT_LISTEN_PORT)
 
         mac = self._params.get('mac', consts.MAC_UNKNOWN)
         data = self._params.get('data', None)
@@ -73,6 +74,8 @@ class ServerRegisterBase(Handler):
                 raise ValueError(_('Invalid os. Max length is 16.'))
             if data and len(data) > 2048:
                 raise ValueError(_('Invalid data. Max length is 2048.'))
+            if port < 1 or port > 65535:
+                raise ValueError(_('Invalid port. Must be between 1 and 65535'))
             validators.validateIpv4OrIpv6(ip)  # Will raise "validation error"
             validators.validateFqdn(hostname)
             validators.validateMac(mac)
@@ -91,6 +94,7 @@ class ServerRegisterBase(Handler):
             serverToken.username = self._user.pretty_name
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
+            serverToken.listen_port = port
             serverToken.stamp = now
             serverToken.mac = mac
             serverToken.subtype = subtype  # Optional
@@ -102,6 +106,7 @@ class ServerRegisterBase(Handler):
                     username=self._user.pretty_name,
                     ip_from=self._request.ip.split('%')[0],  # Ensure we do not store zone if IPv6 and present
                     ip=ip,
+                    listen_port=port,
                     hostname=self._params['hostname'],
                     log_level=self._params.get('log_level', log.LogLevel.INFO.value),
                     stamp=now,

@@ -45,7 +45,7 @@ url_validator = dj_validators.URLValidator(['http', 'https'])
 
 
 def validateNumeric(
-    value: str,
+    value: typing.Union[str, int],
     minValue: typing.Optional[int] = None,
     maxValue: typing.Optional[int] = None,
     fieldName: typing.Optional[str] = None,
@@ -59,7 +59,7 @@ def validateNumeric(
     :param fieldName: If present, the name of the field for "Raising" exceptions, defaults to "Numeric value"
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
-    value = value.replace(' ', '')
+    value = str(value).replace(' ', '')
     fieldName = fieldName or _('Numeric')
 
     try:
@@ -220,14 +220,20 @@ def validatePath(
     return path
 
 
-def validatePort(portStr: str) -> int:
+def validatePort(port: typing.Union[str, int]) -> int:
     """
     Validates that a port number is valid
-    :param portStr: port to validate, as string
-    :param returnAsInteger: if True, returns value as integer, if not, as string
-    :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
+    
+    Args:
+        port (typing.Union[str, int]): port to validate
+        
+    Returns:
+        int: port as integer
+    
+    Raises:
+        exceptions.ValidationException: if port is not valid
     """
-    return validateNumeric(portStr, minValue=0, maxValue=65535, fieldName='Port')
+    return validateNumeric(port, minValue=1, maxValue=65535, fieldName='Port')
 
 def validateHost(host: str) -> str:
     """

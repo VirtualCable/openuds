@@ -36,12 +36,11 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.models import Calendar, CalendarAction
-from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.core import types
 from uds.core.util import log
 from uds.core.util.model import processUuid
-
+from uds.models import Calendar, CalendarAction
+from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
