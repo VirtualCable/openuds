@@ -108,6 +108,7 @@ class ServerApiRequester:
                     AUTH_TOKEN: self.hash,
                 }
             )
+            # And timeout
         except Exception as e:
             logger.error('Error setting up request for server %s: %s', self.server.hostname, e)
             raise
@@ -139,7 +140,7 @@ class ServerApiRequester:
             return None
 
         with self.setupSession(minVersion=minVersion) as session:
-            response = session.get(url)
+            response = session.get(url, timeout=(consts.DEFAULT_CONNECT_TIMEOUT, consts.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -154,7 +155,7 @@ class ServerApiRequester:
             return None
 
         with self.setupSession(minVersion=minVersion) as session:
-            response = session.post(url, json=data)
+            response = session.post(url, json=data, timeout=(consts.DEFAULT_CONNECT_TIMEOUT, consts.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -255,7 +256,6 @@ class ServerApiRequester:
                 return stats  # Better return old stats than nothing
             return None
 
-        stats = types.servers.ServerStats.fromDict(data)
         # Will store stats on property, so no save is needed
-        self.server.stats = stats
-        return stats
+        self.server.stats = types.servers.ServerStats.fromDict(data)
+        return self.server.stats

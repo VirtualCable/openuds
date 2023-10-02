@@ -258,6 +258,13 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             statsDict['stamp'] = getSqlStamp()
             self.properties['stats'] = statsDict
 
+    def updateStatsForNewUser(self) -> None:
+        """Simulates, with current stats, the addition of a new user"""
+        stats = self.stats
+        if stats and stats.is_valid:  # If rae invalid, do not waste time recalculating
+            # Avoid replacing current "stamp" value, this is just a "simulation"
+            self.properties['stats'] = stats.adjusted_new_user().asDict()
+
     def isRestrained(self) -> bool:
         """Returns if this server is restrained or not
 

@@ -59,6 +59,8 @@ class ServerRegisterBase(Handler):
         data = self._params.get('data', None)
         subtype = self._params.get('subtype', '')
         os = self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()).lower()
+        certificate = self._params.get('certificate', '')
+        version = self._params.get('version', '')
 
         type = self._params['type']  # MUST be present
         hostname = self._params['hostname']  # MUST be present
@@ -80,6 +82,7 @@ class ServerRegisterBase(Handler):
             validators.validateFqdn(hostname)
             validators.validateMac(mac)
             validators.validateJson(data)
+            validators.validateServerCertificate(certificate)
         except Exception as e:
             raise rest_exceptions.RequestError(str(e)) from e
 
@@ -92,12 +95,14 @@ class ServerRegisterBase(Handler):
             # Update parameters
             serverToken.hostname = self._params['hostname']
             serverToken.username = self._user.pretty_name
+            serverToken.certificate = certificate
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.listen_port = port
             serverToken.stamp = now
             serverToken.mac = mac
             serverToken.subtype = subtype  # Optional
+            serverToken.version = version
             serverToken.data = data
             serverToken.save()
         except Exception:
@@ -108,14 +113,15 @@ class ServerRegisterBase(Handler):
                     ip=ip,
                     listen_port=port,
                     hostname=self._params['hostname'],
+                    certificate=certificate,
                     log_level=self._params.get('log_level', log.LogLevel.INFO.value),
                     stamp=now,
                     type=self._params['type'],
                     subtype=self._params.get('subtype', ''),  # Optional
-                    os_type=typing.cast(str, self._params.get('os', types.os.KnownOS.UNKNOWN.os_name())).lower(),
+                    os_type=typing.cast(str, (self._params.get('os') or types.os.KnownOS.UNKNOWN.os_name())).lower(),
                     mac=mac,
                     data=data,
-                    certificate=self._params.get('certificate', ''),
+                    version = version
                 )
             except Exception as e:
                 return rest_result('error', error=str(e))

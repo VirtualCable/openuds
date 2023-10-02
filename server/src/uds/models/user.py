@@ -111,7 +111,9 @@ class User(UUIDModel):
 
     @property
     def pretty_name(self) -> str:
-        return self.name + '@' + self.manager.name
+        if self.manager.name:
+            return self.name + '@' + self.manager.name
+        return self.name
 
     def getManager(self) -> 'auths.Authenticator':
         """

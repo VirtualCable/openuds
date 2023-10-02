@@ -132,14 +132,14 @@ class ServerStats(typing.NamedTuple):
     
     @property
     def is_valid( self ) -> bool:
-        from uds.core.util.model import getSqlStamp
-
-        """If the stamp is lesss than consts.DEFAULT_CACHE_TIMEOUT, it is considered valid
+        """If the stamp is lesss than consts.SMALL_CACHE_TIMEOUT, it is considered valid
         
         Returns:
             bool: True if valid, False otherwise
         """
-        return self.stamp > getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT
+        from uds.core.util.model import getSqlStamp  # To avoid circular import
+
+        return self.stamp > getSqlStamp() - consts.SMALL_CACHE_TIMEOUT
         
 
     def weight(self, minMemory: int = 0) -> float:
@@ -153,6 +153,33 @@ class ServerStats(typing.NamedTuple):
 
         # Higher weight is worse
         return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
+    
+    def adjusted_new_user(self) -> 'ServerStats':
+        """
+        Fix the current stats as if a new user is consuming resources
+        
+        Does not updates the stamp, this is just a "simulation" of a new user
+        Real data will be eventually updated by the server itself, but this allows
+        to have a more accurate weight of the server
+        """
+        if not self.is_valid:
+            return self
+
+        new_users = self.current_users + 1
+        new_memused = self.memused + (self.memtotal - self.memused) / new_users
+        # Ensure memused is not greater than memtotal
+        if new_memused > self.memtotal:
+            new_memused = self.memtotal - 1
+        new_cpuused = self.cpuused / self.current_users * new_users
+        if new_cpuused > 1:
+            new_cpuused = 1
+        
+        return self._replace(
+            current_users=new_users,
+            memused=new_memused,
+            cpuused=new_cpuused,
+        )
+            
 
     @staticmethod
     def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
@@ -186,7 +213,7 @@ class ServerStats(typing.NamedTuple):
 
     def __str__(self) -> str:
         # Human readable
-        return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}'
+        return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}, valid: {self.is_valid}'
 
 
 class ServerCounter(typing.NamedTuple):

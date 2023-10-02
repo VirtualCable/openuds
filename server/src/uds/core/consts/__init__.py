@@ -97,3 +97,6 @@ DEFAULT_TEXT_LENGTH: typing.Final[int] = 64
 DEFAULT_CACHE_TIMEOUT: typing.Final[int] = 60 * 3  # 3 minutes
 LONG_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT * 20  # 1 hour
 SMALL_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT // 3  # 1 minute
+
+DEFAULT_REQUEST_TIMEOUT: typing.Final[int] = 20  # In seconds
+DEFAULT_CONNECT_TIMEOUT: typing.Final[int] = 4   # In seconds

@@ -194,3 +194,15 @@ def secureRequestsSession(
     session.headers.update({"User-Agent": consts.USER_AGENT})
 
     return session
+
+def checkServerCertificateIsValid(cert: str) -> bool:
+    """
+    Checks if a certificate is valid.
+    All parameters must be keyword arguments.
+    Borh must be in PEM format.
+    """
+    try:
+        x509.load_pem_x509_certificate(cert.encode(), default_backend())
+        return True
+    except Exception:
+        return False
