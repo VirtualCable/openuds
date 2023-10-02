@@ -37,7 +37,7 @@ from uds.core.managers import crypto
 from uds.core.util import log
 
 
-from ...utils import rest, random_ip_v4, random_ip_v6, random_mac
+from ...utils import rest, random_ip_v4, random_ip_v6, random_mac, random_hostname
 
 if typing.TYPE_CHECKING:
     from ...utils.test import UDSHttpResponse
@@ -80,6 +80,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
         response: 'UDSHttpResponse'
 
         for ip, type, os in self.ip_type_os_generator():
+            self._data['hostname'] = random_hostname()
             self._data['ip'] = ip
             self._data['port'] = 1234
             self._data['mac'] = random_mac()
@@ -106,7 +107,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
 
             # Second register from same ip and type will update hostname, mac and subtype
             self._data2 = self._data.copy()
-            self._data2['hostname'] = 'test2'
+            self._data2['ip'] = random_ip_v4()
             self._data2['subtype'] = 'test2'
             self._data2['mac'] = random_mac()
             self._data2['os'] = (
@@ -125,7 +126,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
 
             server = models.Server.objects.get(token=token)
 
-            self.assertEqual(server.ip, self._data['ip'])
+            self.assertEqual(server.hostname, self._data['hostname'])
             self.assertEqual(server.type, self._data2['type'])
             self.assertEqual(server.subtype, self._data2['subtype'])
             self.assertEqual(server.hostname, self._data2['hostname'])

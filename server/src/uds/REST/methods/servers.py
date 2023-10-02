@@ -91,7 +91,12 @@ class ServerRegisterBase(Handler):
             # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
             # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.Server.objects.get(hostname=hostname, type=type)
+            serverTokens = models.Server.objects.filter(hostname=hostname, type=type)
+            if serverTokens.count() > 1:
+                return rest_result('error', error='More than one server with same hostname and type')
+            if serverTokens.count() == 0:
+                raise models.Server.DoesNotExist()  # Force creation of a new one
+            serverToken = serverTokens[0]
             # Update parameters
             # serverToken.hostname = self._params['hostname'] 
             serverToken.username = self._user.pretty_name

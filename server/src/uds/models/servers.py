@@ -142,6 +142,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # But the normal operations is that hostname has precedence over ip
     # * Resolve hostname to ip
     # * If fails, use ip
+    # Note that although hostname is not unique, if you try to register a server with a hostname
+    # that has more than one record, it will fail
     hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
     # Port where server listens for connections (if it listens)
     listen_port = models.IntegerField(default=SERVER_DEFAULT_LISTEN_PORT)
@@ -225,9 +227,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
         Host returns first the IP if it exists, and if not, the hostname (resolved)
         """
-        # If hostname exists, try first to resolve it
         if net.isValidIp(self.ip):
             return self.ip
+        # If hostname exists, try to resolve it
         if self.hostname:
             ips = resolver.resolve(self.hostname)
             if ips:

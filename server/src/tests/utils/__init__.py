@@ -124,3 +124,12 @@ def random_mac() -> str:
     import random
 
     return ':'.join('{:02x}'.format(random.randint(0, 255)) for _ in range(6))  # nosec
+
+def random_hostname() -> str:
+    """
+    Returns a random hostname
+    """
+    import random
+    import string
+
+    return ''.join(random.choice(string.ascii_lowercase) for _ in range(15))  # nosec
