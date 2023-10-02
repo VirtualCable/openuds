@@ -129,18 +129,21 @@ class ServerStats(typing.NamedTuple):
     @property
     def memfree_ratio(self) -> float:
         return (self.memtotal - self.memused) / (self.memtotal or 1) / (self.current_users + 1)
-    
+
     @property
-    def is_valid( self ) -> bool:
-        """If the stamp is lesss than consts.SMALL_CACHE_TIMEOUT, it is considered valid
-        
+    def is_valid(self) -> bool:
+        """If the stamp is lesss than consts.DEFAULT_CACHE_TIMEOUT, it is considered valid
+
         Returns:
             bool: True if valid, False otherwise
+            
+        Note:
+            In normal situations, the stats of a server will be uptated ever minute or so, so this will be valid
+            most time. If the server is down, it will be valid for 3 minutes, so it will be used as a "last known" stats
         """
         from uds.core.util.model import getSqlStamp  # To avoid circular import
 
-        return self.stamp > getSqlStamp() - consts.SMALL_CACHE_TIMEOUT
-        
+        return self.stamp > getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
@@ -153,40 +156,41 @@ class ServerStats(typing.NamedTuple):
 
         # Higher weight is worse
         return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
-    
-    def adjusted_new_user(self) -> 'ServerStats':
+
+    def adjust(self, users_increment: int) -> 'ServerStats':
         """
-        Fix the current stats as if a new user is consuming resources
-        
-        Does not updates the stamp, this is just a "simulation" of a new user
+        Fix the current stats as if new users are assigned or removed
+
+        Does not updates the stamp, this is just a "simulation" of the stats with new users
         Real data will be eventually updated by the server itself, but this allows
         to have a more accurate weight of the server
         """
-        if not self.is_valid:
+        if not self.is_valid or users_increment == 0:
             return self
 
-        new_users = self.current_users + 1
-        new_memused = self.memused + (self.memtotal - self.memused) / new_users
-        # Ensure memused is not greater than memtotal
-        if new_memused > self.memtotal:
-            new_memused = self.memtotal - 1
-        new_cpuused = self.cpuused / self.current_users * new_users
-        if new_cpuused > 1:
-            new_cpuused = 1
+        current_users = max(1, self.current_users)
+        new_users = max(1, current_users + users_increment)
         
+        new_memused = self.memused * new_users / current_users
+        # Ensure memused is in range 0-memtotal
+        new_memused = min(max(0, new_memused), self.memtotal - 1)
+
+        new_cpuused = self.cpuused * new_users / current_users
+        # Ensure cpuused is in range 0-1
+        new_cpuused = min(max(0, new_cpuused), 1) 
+
         return self._replace(
             current_users=new_users,
             memused=new_memused,
             cpuused=new_cpuused,
         )
-            
 
     @staticmethod
     def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
         from uds.core.util.model import getSqlStamp  # Avoid circular import
-        
-        dct = { k:v for k, v in data.items()}  # Make a copy
-        dct.update(kwargs) # and update with kwargs
+
+        dct = {k: v for k, v in data.items()}  # Make a copy
+        dct.update(kwargs)  # and update with kwargs
         disks: typing.List[typing.Tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
             disks.append((disk['mountpoint'], disk['used'], disk['total']))

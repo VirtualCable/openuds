@@ -275,7 +275,7 @@ class ServerManager(metaclass=singleton.Singleton):
             # Ensure next assignation will have updated stats
             # This is a simple simulation on cached stats, will be updated on next stats retrieval
             # (currently, cache time is 1 minute)
-            bestServer.updateStatsForNewUser()
+            bestServer.newAssignation()
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
@@ -337,6 +337,11 @@ class ServerManager(metaclass=singleton.Singleton):
             # If unmanaged, decrease usage
             if server.type == types.servers.ServerType.UNMANAGED:
                 self.decreaseUnmanagedUsage(server.uuid, forceReset=resetCounter)
+
+            # Ensure next assignation will have updated stats
+            # This is a simple simulation on cached stats, will be updated on next stats retrieval
+            # (currently, cache time is 1 minute)
+            server.newRelease()
 
             requester.ServerApiRequester(server).notifyRelease(userService)
 

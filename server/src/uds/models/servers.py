@@ -258,12 +258,19 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             statsDict['stamp'] = getSqlStamp()
             self.properties['stats'] = statsDict
 
-    def updateStatsForNewUser(self) -> None:
+    def newAssignation(self) -> None:
         """Simulates, with current stats, the addition of a new user"""
         stats = self.stats
         if stats and stats.is_valid:  # If rae invalid, do not waste time recalculating
             # Avoid replacing current "stamp" value, this is just a "simulation"
-            self.properties['stats'] = stats.adjusted_new_user().asDict()
+            self.properties['stats'] = stats.adjust(users_increment=1).asDict()
+            
+    def newRelease(self) -> None:
+        """Simulates, with current stats, the release of a user"""
+        stats = self.stats
+        if stats and stats.is_valid:
+            # Avoid replacing current "stamp" value, this is just a "simulation"
+            self.properties['stats'] = stats.adjust(users_increment=-1).asDict()
 
     def isRestrained(self) -> bool:
         """Returns if this server is restrained or not
@@ -286,12 +293,13 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @property
     def last_ping(self) -> datetime.datetime:
         """Returns the last ping of this server"""
-        return self.properties.get('last_ping', consts.NEVER)
+        last: float = self.properties.get('last_ping', consts.NEVER_UNIX)
+        return datetime.datetime.fromtimestamp(last)
 
     @last_ping.setter
     def last_ping(self, value: datetime.datetime) -> None:
         """Sets the last ping of this server"""
-        self.properties['last_ping'] = value
+        self.properties['last_ping'] = value.timestamp()
 
     @staticmethod
     def create_token() -> str:
