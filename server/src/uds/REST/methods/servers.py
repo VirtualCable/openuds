@@ -91,14 +91,15 @@ class ServerRegisterBase(Handler):
             # Note that if the same IP (validated by a login) requests a new token, the old one will be sent instead of creating a new one
             # Note that we use IP (with type) to identify the server, so if any of them changes, a new token will be created
             # MAC is just informative, and data is used to store any other information that may be needed
-            serverToken = models.Server.objects.get(ip=ip, type=type)
+            serverToken = models.Server.objects.get(hostname=hostname, type=type)
             # Update parameters
-            serverToken.hostname = self._params['hostname']
+            # serverToken.hostname = self._params['hostname'] 
             serverToken.username = self._user.pretty_name
             serverToken.certificate = certificate
             # Ensure we do not store zone if IPv6 and present
             serverToken.ip_from = self._request.ip.split('%')[0]
             serverToken.listen_port = port
+            serverToken.ip = ip
             serverToken.stamp = now
             serverToken.mac = mac
             serverToken.subtype = subtype  # Optional
