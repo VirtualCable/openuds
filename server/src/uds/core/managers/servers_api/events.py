@@ -42,8 +42,8 @@ logger = logging.getLogger(__name__)
 
 def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
     # Log level is an string, as in log.LogLevel
-    if 'user_service' in data:  # Log for an user service
-        userService = models.UserService.objects.get(uuid=data['user_service'])
+    if 'userservice_uuid' in data:  # Log for an user service
+        userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
         log.doLog(
             userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
         )
@@ -57,7 +57,7 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     """Processes the REST login event from a server
 
     data: {
-        'user_service_uuid': 'uuid of user service',
+        'userservice_uuid': 'uuid of user service',
         'username': 'username',
         'ticket': 'ticket if any' # optional
     }
@@ -80,9 +80,9 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     if 'ticket' in data:
         ticket = models.TicketStore.get(data['ticket'], invalidate=True)
         # If ticket is included, user_service can be inside ticket or in data
-        data['user_service_uuid'] = data.get('user_service_uuid', ticket['user_service_uuid'])
+        data['userservice_uuid'] = data.get('userservice_uuid', ticket['userservice_uuid'])
     
-    userService = models.UserService.objects.get(uuid=data['user_service_uuid'])
+    userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
     server.setActorVersion(userService)
 
     if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
@@ -118,15 +118,15 @@ def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
     """Processes the REST logout event from a server
 
     data: {
-        'user_service_uuid': 'uuid of user service',
+        'userservice_uuid': 'uuid of user service',
         'session_id': 'session id',
     }
 
     Returns 'OK' if all went ok ({'result': 'OK', 'stamp': 'stamp'}), or an error if not ({'result': 'error', 'error': 'error description'}})
     """
-    userService = models.UserService.objects.get(uuid=data['user_service_uuid'])
+    userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
 
-    session_id = data['user_service_uuid']
+    session_id = data['userservice_uuid']
     userService.closeSession(session_id)
 
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)

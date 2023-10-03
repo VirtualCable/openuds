@@ -83,7 +83,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
                 'servers/event',
                 data={
                     'token': server.token,
-                    'user_service': userService.uuid,
+                    'userservice_uuid': userService.uuid,
                     'type': 'log',
                     'level': 'info',
                     'message': 'test message userservice',
