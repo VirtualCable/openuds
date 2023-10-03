@@ -208,7 +208,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         self.assertEqual(self.user_service_managed.in_use, False)
 
     def test_ticket(self) -> None:
-        ticket_uuid = models.TicketStore.create({'user_service': self.user_service_managed.uuid, 'some_value': 'value'})
+        ticket_uuid = models.TicketStore.create({'user_service_uuid': self.user_service_managed.uuid, 'some_value': 'value'})
         response = self.client.rest_post(
             '/servers/event',
             data={

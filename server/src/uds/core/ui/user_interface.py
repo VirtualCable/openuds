@@ -103,6 +103,7 @@ class gui:
             str,
             bool,
             typing.List[str],
+            types.ui.ChoiceItem,
         ],
     ]
 
