@@ -295,5 +295,10 @@ class Migration(migrations.Migration):
                 to="uds.authenticator",
             ),
         ),
+        # Remove unused validator field from ticket store
+        migrations.RemoveField(
+            model_name="ticketstore",
+            name="validator",
+        ),
         
     ]
