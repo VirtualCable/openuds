@@ -46,11 +46,17 @@ from ldap import (
 from django.utils.translation import gettext as _
 from django.conf import settings
 
+from ldap.ldapobject import LDAPObject
+
 from uds.core.util import utils
 
 logger = logging.getLogger(__name__)
 
 LDAPResultType = typing.MutableMapping[str, typing.Any]
+
+# About ldap filters: (just for reference)
+# https://ldap.com/ldap-filters/
+
 
 class LDAPError(Exception):
     @staticmethod
@@ -63,7 +69,7 @@ class LDAPError(Exception):
         raise LDAPError(_str) from e
 
 
-def escape(value: str):
+def escape(value: str) -> str:
     """
     Escape filter chars for ldap search filter
     """
@@ -81,18 +87,34 @@ def connection(
     debug: bool = False,
     verify_ssl: bool = False,
     certificate: typing.Optional[str] = None,  # Content of the certificate, not the file itself
-) -> typing.Any:
+) -> 'LDAPObject':
     """
     Tries to connect to ldap. If username is None, it tries to connect using user provided credentials.
-    @param username: Username for connection validation
-    @param password: Password for connection validation
-    @return: Connection established
+
+    Args:
+        username (str): Username to use for connection
+        passwd (typing.Union[str, bytes]): Password to use for connection
+        host (str): Host to connect to
+        port (int, optional): Port to connect to. Defaults to -1.
+        ssl (bool, optional): If connection is ssl. Defaults to False.
+        timeout (int, optional): Timeout for connection. Defaults to 3 seconds.
+        debug (bool, optional): If debug is enabled. Defaults to False.
+        verify_ssl (bool, optional): If ssl certificate must be verified. Defaults to False.
+        certificate (typing.Optional[str], optional): Certificate to use for connection. Defaults to None. (only if ssl and verify_ssl are True)
+
+    returns:
+        LDAPObject: Connection object
+
+    Raises:
+        LDAPError: If connection could not be established
+
+
     @raise exception: If connection could not be established
     """
     logger.debug('Login in to %s as user %s', host, username)
-    l = None
     password = passwd.encode('utf-8') if isinstance(passwd, str) else passwd
 
+    l: 'LDAPObject'
     try:
         if debug:
             ldap.set_option(ldap.OPT_DEBUG_LEVEL, 8191)  # type: ignore
@@ -119,7 +141,7 @@ def connection(
                 cert_filename = os.path.join(tempfile.gettempdir(), f'ldap-cert-{host}.pem')
                 with open(cert_filename, 'w') as f:
                     f.write(certificate)
-                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename) # type: ignore
+                l.set_option(ldap.OPT_X_TLS_CACERTFILE, cert_filename)  # type: ignore
                 # If enforced on settings, do no change it here
                 if not getattr(settings, 'LDAP_CIPHER_SUITE', None):
                     cipher_suite = 'PFS'
@@ -129,13 +151,16 @@ def connection(
             # Disable TLS1 and TLS1.1
             # 0x304 = TLS1.3, 0x303 = TLS1.2, 0x302 = TLS1.1, 0x301 = TLS1.0, but use ldap module constants
             # Ensure that libldap is compiled with TLS1.3 support
+            minVersion = getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2')
             if hasattr(ldap, 'OPT_X_TLS_PROTOCOL_TLS1_3'):
                 tls_version = {
-                    '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2, # type: ignore
-                    '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3, # type: ignore
-                }.get(getattr(settings, 'SECURE_MIN_TLS_VERSION', '1.2'), ldap.OPT_X_TLS_PROTOCOL_TLS1_2) # type: ignore
-                
-                l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)   # type: ignore
+                    '1.2': ldap.OPT_X_TLS_PROTOCOL_TLS1_2,  # type: ignore
+                    '1.3': ldap.OPT_X_TLS_PROTOCOL_TLS1_3,  # type: ignore
+                }.get(
+                    minVersion, ldap.OPT_X_TLS_PROTOCOL_TLS1_2  # type: ignore
+                )
+
+                l.set_option(ldap.OPT_X_TLS_PROTOCOL_MIN, tls_version)  # type: ignore
             # Cipher suites are from GNU TLS, not OpenSSL
             # https://gnutls.org/manual/html_node/Priority-Strings.html for more info
             # i.e.:
@@ -143,7 +168,7 @@ def connection(
             #  * NORMAL:-VERS-TLS-ALL:+VERS-TLS1.2:+VERS-TLS1.3
             #  * PFS
             #  * SECURE256
-            #  
+            #
             #  Note: Your distro could have compiled libldap with OpenSSL, so this will not work
             #  You can simply use OpenSSL cipher suites, but you will need to test them
             try:
@@ -153,6 +178,9 @@ def connection(
                 logger.info('Cipher suite %s not supported by libldap', cipher_suite)
 
         l.simple_bind_s(who=username, cred=password)
+
+        logger.debug('Connection was successful')
+        return l
     except ldap.SERVER_DOWN as e:  # type: ignore
         raise LDAPError(_('Can\'t contact LDAP server') + f': {e}') from e
     except ldap.LDAPError as e:  # type: ignore
@@ -161,17 +189,16 @@ def connection(
         logger.exception('Exception connection:')
         raise LDAPError(str(e)) from e
 
-    logger.debug('Connection was successful')
-    return l
+    raise LDAPError(_('Unknown error'))
 
 
 def getAsDict(
-    con: typing.Any,
+    con: 'LDAPObject',
     base: str,
     ldapFilter: str,
     attrList: typing.Optional[typing.Iterable[str]] = None,
     sizeLimit: int = 100,
-    scope=SCOPE_SUBTREE,
+    scope: typing.Any = SCOPE_SUBTREE,
 ) -> typing.Generator[LDAPResultType, None, None]:
     """
     Makes a search on LDAP, adjusting string to required type (ascii on python2, str on python3).
@@ -222,7 +249,7 @@ def getAsDict(
 
 
 def getFirst(
-    con: typing.Any,
+    con: 'LDAPObject',
     base: str,
     objectClass: str,
     field: str,
@@ -253,18 +280,18 @@ def getFirst(
 
 
 # Recursive delete
-def recursive_delete(con: typing.Any, base_dn: str) -> None:
-    search = con.search_s(base_dn, SCOPE_ONELEVEL)  # type: ignore
-
-    for dn, _ in search:
-        # recursive_delete(conn, dn)
-        # RIGHT NOW IS NOT RECURSIVE, JUST 1 LEVEL BELOW!!!
-        con.delete_s(dn)
+def recursive_delete(con: 'LDAPObject', base_dn: str) -> None:
+    search = con.search_s(base_dn, SCOPE_ONELEVEL)
+    if search:
+        for found in search:
+            # recursive_delete(conn, dn)
+            # RIGHT NOW IS NOT RECURSIVE, JUST 1 LEVEL BELOW!!!
+            con.delete_s(found[0])
 
     con.delete_s(base_dn)
 
 
-def getRootDSE(con: typing.Any) -> typing.Optional[LDAPResultType]:
+def getRootDSE(con: 'LDAPObject') -> typing.Optional[LDAPResultType]:
     """
     Gets the root DSE of the LDAP server
     @param cont: Connection to LDAP server
