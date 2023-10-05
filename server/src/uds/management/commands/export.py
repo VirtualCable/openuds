@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2022 Virtual Cable S.L.U.
+# Copyright (c) 2022-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -98,6 +98,14 @@ def service_exporter(service: models.Service) -> typing.Dict[str, typing.Any]:
     s['provider'] = service.provider.uuid
     s['token'] = service.token
     return s
+
+
+def mfa_exporter(mfa: models.MFA) -> typing.Dict[str, typing.Any]:
+    """
+    Exports a mfa to a dict
+    """
+    m = managed_object_exporter(mfa)
+    return m
 
 
 def authenticator_exporter(
@@ -197,6 +205,7 @@ def osmanager_exporter(osmanager: models.OSManager) -> typing.Dict[str, typing.A
     o = managed_object_exporter(osmanager)
     return o
 
+
 def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]:
     """
     Exports a calendar to a dict
@@ -210,6 +219,7 @@ def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]
         }
     )
     return c
+
 
 def calendar_rule_exporter(calendar_rule: models.CalendarRule) -> typing.Dict[str, typing.Any]:
     """
@@ -231,6 +241,7 @@ def calendar_rule_exporter(calendar_rule: models.CalendarRule) -> typing.Dict[st
     )
     return c
 
+
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
 
@@ -246,6 +257,7 @@ class Command(BaseCommand):
             'authenticators': self.export_authenticators,
             'users': self.export_users,
             'groups': self.export_groups,
+            'mfa': self.export_mfa,
             'networks': self.export_networks,
             'transports': self.export_transports,
             'osmanagers': self.export_osmanagers,
@@ -323,9 +335,7 @@ class Command(BaseCommand):
         if self.verbose:
             self.stderr.write(f'Exported to {options["output"]}')
 
-    def apply_filter(
-        self, model: typing.Type[ModelType]
-    ) -> typing.Iterable[ModelType]:
+    def apply_filter(self, model: typing.Type[ModelType]) -> typing.Iterator[ModelType]:
         """
         Applies a filter to a model
         """
@@ -336,12 +346,13 @@ class Command(BaseCommand):
             self.stderr.write("\n  ".join(values))
         # Generate "OR" filter with all kwargs
         if self.filter_args:
-            return model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args)))
-        return model.objects.all()
+            return typing.cast(
+                'typing.Iterator[ModelType]',
+                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),
+            )
+        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())
 
-    def output_count(
-        self, message: str, iterable: typing.Iterable[T]
-    ) -> typing.Iterable[T]:
+    def output_count(self, message: str, iterable: typing.Iterable[T]) -> typing.Iterable[T]:
         """
         Outputs the count of an iterable
         """
@@ -365,34 +376,28 @@ class Command(BaseCommand):
 
     def export_services(self) -> str:
         # First, locate providers for services with the filter
-        services_list = list(
-            self.output_count(
-                'Filtering services', self.apply_filter(models.Service)
-            )
-        )
-        providers_list = set(
-            [
-                s.provider
-                for s in self.output_count('Filtering providers', services_list)
-            ]
-        )
+        services_list = list(self.output_count('Filtering services', self.apply_filter(models.Service)))
+        providers_list = set([s.provider for s in self.output_count('Filtering providers', services_list)])
         # Now, export those providers
-        providers = [
-            provider_exporter(p)
-            for p in self.output_count('Saving providers', providers_list)
-        ]
+        providers = [provider_exporter(p) for p in self.output_count('Saving providers', providers_list)]
 
         # Then, export services with the filter
-        services = [
-            service_exporter(s)
-            for s in self.output_count('Saving services', services_list)
-        ]
+        services = [service_exporter(s) for s in self.output_count('Saving services', services_list)]
 
-        return (
-            '# Providers\n'
-            + yaml.safe_dump(providers)
-            + '# Services\n'
-            + yaml.safe_dump(services)
+        return '# Providers\n' + yaml.safe_dump(providers) + '# Services\n' + yaml.safe_dump(services)
+    
+    def export_mfa(self) -> str:
+        """
+        Exports all mfa to a list of dicts
+        """
+        return '# MFA\n' + yaml.safe_dump(
+            [
+                mfa_exporter(m)
+                for m in self.output_count(
+                    'Saving mfa',
+                    self.apply_filter(models.MFA),
+                )
+            ]
         )
 
     def export_authenticators(self) -> str:
@@ -414,16 +419,9 @@ class Command(BaseCommand):
         Exports all users to a list of dicts
         """
         # first, locate authenticators for users with the filter
-        users_list = list(
-            self.output_count(
-                'Filtering users', self.apply_filter(models.User)
-            )
-        )
+        users_list = list(self.output_count('Filtering users', self.apply_filter(models.User)))
         authenticators_list = set(
-            [
-                u.manager
-                for u in self.output_count('Filtering authenticators', users_list)
-            ]
+            [u.manager for u in self.output_count('Filtering authenticators', users_list)]
         )
         # Now, groups that contains those users
         groups_list = set()
@@ -432,19 +430,14 @@ class Command(BaseCommand):
 
         # now, export those authenticators
         authenticators = [
-            authenticator_exporter(a)
-            for a in self.output_count('Saving authenticators', authenticators_list)
+            authenticator_exporter(a) for a in self.output_count('Saving authenticators', authenticators_list)
         ]
 
         # then, export those groups
-        groups = [
-            group_export(g) for g in self.output_count('Saving groups', groups_list)
-        ]
+        groups = [group_export(g) for g in self.output_count('Saving groups', groups_list)]
 
         # finally, export users with the filter
-        users = [
-            user_exporter(u) for u in self.output_count('Saving users', users_list)
-        ]
+        users = [user_exporter(u) for u in self.output_count('Saving users', users_list)]
         return (
             '# Authenticators\n'
             + yaml.safe_dump(authenticators)
@@ -459,33 +452,18 @@ class Command(BaseCommand):
         Exports all groups to a list of dicts
         """
         # First export authenticators for groups with the filter
-        groups_list = list(
-            self.output_count(
-                'Filtering groups', self.apply_filter(models.Group)
-            )
-        )
+        groups_list = list(self.output_count('Filtering groups', self.apply_filter(models.Group)))
         authenticators_list = set(
-            [
-                g.manager
-                for g in self.output_count('Filtering authenticators', groups_list)
-            ]
+            [g.manager for g in self.output_count('Filtering authenticators', groups_list)]
         )
         authenticators = [
-            authenticator_exporter(a)
-            for a in self.output_count('Saving authenticators', authenticators_list)
+            authenticator_exporter(a) for a in self.output_count('Saving authenticators', authenticators_list)
         ]
 
         # then, export groups with the filter
-        groups = [
-            group_export(g) for g in self.output_count('Saving groups', groups_list)
-        ]
+        groups = [group_export(g) for g in self.output_count('Saving groups', groups_list)]
 
-        return (
-            '# Authenticators\n'
-            + yaml.safe_dump(authenticators)
-            + '# Groups\n'
-            + yaml.safe_dump(groups)
-        )
+        return '# Authenticators\n' + yaml.safe_dump(authenticators) + '# Groups\n' + yaml.safe_dump(groups)
 
     def export_networks(self) -> str:
         """
@@ -494,9 +472,7 @@ class Command(BaseCommand):
         return '# Networks\n' + yaml.safe_dump(
             [
                 network_exporter(n)
-                for n in self.output_count(
-                    'Saving networks', self.apply_filter(models.Network)
-                )
+                for n in self.output_count('Saving networks', self.apply_filter(models.Network))
             ]
         )
 
@@ -505,31 +481,16 @@ class Command(BaseCommand):
         Exports all transports to a list of dicts
         """
         # First, export networks for transports with the filter
-        transports_list = list(
-            self.output_count(
-                'Filtering transports', self.apply_filter(models.Transport)
-            )
-        )
+        transports_list = list(self.output_count('Filtering transports', self.apply_filter(models.Transport)))
         networks_list = set()
         for t in self.output_count('Filtering networks', transports_list):
             networks_list.update(t.networks.all())
-        networks = [
-            network_exporter(n)
-            for n in self.output_count('Saving networks', networks_list)
-        ]
+        networks = [network_exporter(n) for n in self.output_count('Saving networks', networks_list)]
 
         # then, export transports with the filter
-        transports = [
-            transport_exporter(t)
-            for t in self.output_count('Saving transports', transports_list)
-        ]
+        transports = [transport_exporter(t) for t in self.output_count('Saving transports', transports_list)]
 
-        return (
-            '# Networks\n'
-            + yaml.safe_dump(networks)
-            + '# Transports\n'
-            + yaml.safe_dump(transports)
-        )
+        return '# Networks\n' + yaml.safe_dump(networks) + '# Transports\n' + yaml.safe_dump(transports)
 
     def export_osmanagers(self) -> str:
         """
@@ -538,9 +499,7 @@ class Command(BaseCommand):
         return '# OSManagers\n' + yaml.safe_dump(
             [
                 osmanager_exporter(o)
-                for o in self.output_count(
-                    'Saving osmanagers', self.apply_filter(models.OSManager)
-                )
+                for o in self.output_count('Saving osmanagers', self.apply_filter(models.OSManager))
             ]
         )
 
