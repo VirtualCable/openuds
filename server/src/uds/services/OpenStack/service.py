@@ -100,7 +100,7 @@ class LiveService(services.Service):
     # : Types of deploys (services in cache and/or assigned to users)
     userServiceType = LiveDeployment
 
-    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC_VDI + (protocols.SPICE,)
     servicesTypeProvided = types.services.ServiceType.VDI
 
 

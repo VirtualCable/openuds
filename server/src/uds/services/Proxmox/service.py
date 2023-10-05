@@ -102,7 +102,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : Types of deploys (services in cache and/or assigned to users)
     userServiceType = ProxmoxDeployment
 
-    allowedProtocols = protocols.GENERIC + (protocols.SPICE,)
+    allowedProtocols = protocols.GENERIC_VDI + (protocols.SPICE,)
     servicesTypeProvided = types.services.ServiceType.VDI
 
 

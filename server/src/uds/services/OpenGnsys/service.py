@@ -91,7 +91,7 @@ class OGService(services.Service):
     # : Types of deploys (services in cache and/or assigned to users)
     userServiceType = OGDeployment
 
-    allowedProtocols = protocols.GENERIC
+    allowedProtocols = protocols.GENERIC_VDI
     servicesTypeProvided = types.services.ServiceType.VDI
 
 

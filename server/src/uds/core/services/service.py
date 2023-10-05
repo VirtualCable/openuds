@@ -180,7 +180,7 @@ class Service(Module):
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowedProtocols: typing.Iterable = protocols.GENERIC
+    allowedProtocols: typing.Iterable = protocols.GENERIC_VDI
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
@@ -342,6 +342,17 @@ class Service(Module):
         (for example, those for static pool of machines) can communicate with UDS services for
         several actor.
         By default, services does not have a token
+        """
+        return None
+    
+    def getVappLauncher(self, userService: 'models.UserService') -> typing.Optional[typing.Tuple[str, str]]:
+        """Returns the vapp launcher for this service, if any
+        
+        Args:
+            userService (UserService): User service to get the vapp launcher from
+            
+        Returns:
+            typing.Optional[typing.Tuple[str, str]]: A tuple with the vapp launcher name and the vapp launcher path on server
         """
         return None
 
