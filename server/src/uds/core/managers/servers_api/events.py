@@ -31,10 +31,12 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
+from django.conf import settings
+
 from uds import models
 from uds.core import consts, osmanagers, types
 from uds.core.util import log
-from uds.core.util.model import getSqlDatetime, getSqlStamp
+from uds.core.util.model import getSqlDatetime
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
@@ -78,7 +80,8 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     """
     ticket: typing.Any = None
     if 'ticket' in data:
-        ticket = models.TicketStore.get(data['ticket'], invalidate=True)
+        # Do not invalidate tickets on debug mode, the will last for 1000 hours (41 days and 16 hours)
+        ticket = models.TicketStore.get(data['ticket'], invalidate=not getattr(settings, 'DEBUG', False))
         # If ticket is included, user_service can be inside ticket or in data
         data['userservice_uuid'] = data.get('userservice_uuid', ticket['userservice_uuid'])
     

@@ -100,6 +100,14 @@ def service_exporter(service: models.Service) -> typing.Dict[str, typing.Any]:
     return s
 
 
+def mfa_exporter(mfa: models.MFA) -> typing.Dict[str, typing.Any]:
+    """
+    Exports a mfa to a dict
+    """
+    m = managed_object_exporter(mfa)
+    return m
+
+
 def authenticator_exporter(
     authenticator: models.Authenticator,
 ) -> typing.Dict[str, typing.Any]:
@@ -252,6 +260,7 @@ class Command(BaseCommand):
             'authenticators': self.export_authenticators,
             'users': self.export_users,
             'groups': self.export_groups,
+            'mfa': self.export_mfa,
             'networks': self.export_networks,
             'transports': self.export_transports,
             'osmanagers': self.export_osmanagers,
@@ -272,7 +281,7 @@ class Command(BaseCommand):
             '--output',
             action='store',
             dest='output',
-            default='/tmp/export.yaml',  # nosec: This is a default value
+            default='/tmp/export.yaml',
             help='Output file name. Defaults to /tmp/export.yaml',
         )
 
@@ -329,7 +338,7 @@ class Command(BaseCommand):
         if self.verbose:
             self.stderr.write(f'Exported to {options["output"]}')
 
-    def apply_filter(self, model: typing.Type[ModelType]) -> typing.Iterable[ModelType]:
+    def apply_filter(self, model: typing.Type[ModelType]) -> typing.Iterator[ModelType]:
         """
         Applies a filter to a model
         """
@@ -340,14 +349,13 @@ class Command(BaseCommand):
             self.stderr.write("\n  ".join(values))
         # Generate "OR" filter with all kwargs
         if self.filter_args:
-            return model.objects.filter(
-                reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))
+            return typing.cast(
+                'typing.Iterator[ModelType]',
+                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),
             )
-        return model.objects.all()
+        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())
 
-    def output_count(
-        self, message: str, iterable: typing.Iterable[T]
-    ) -> typing.Iterable[T]:
+    def output_count(self, message: str, iterable: typing.Iterable[T]) -> typing.Iterable[T]:
         """
         Outputs the count of an iterable
         """
@@ -394,6 +402,19 @@ class Command(BaseCommand):
             + yaml.safe_dump(providers)
             + '# Services\n'
             + yaml.safe_dump(services)
+    
+    def export_mfa(self) -> str:
+        """
+        Exports all mfa to a list of dicts
+        """
+        return '# MFA\n' + yaml.safe_dump(
+            [
+                mfa_exporter(m)
+                for m in self.output_count(
+                    'Saving mfa',
+                    self.apply_filter(models.MFA),
+                )
+            ]
         )
 
     def export_authenticators(self) -> str:
