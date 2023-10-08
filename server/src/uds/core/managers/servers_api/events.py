@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import typing
 
+
 from django.conf import settings
 
 from uds import models
@@ -44,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
     # Log level is an string, as in log.LogLevel
-    if 'userservice_uuid' in data:  # Log for an user service
+    if data.get('userservice_uuid', None):  # Log for an user service
         userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
         log.doLog(
             userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
@@ -75,8 +76,6 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
         'ticket': 'ticket if any' # optional
 
     }
-
-
     """
     ticket: typing.Any = None
     if 'ticket' in data:
@@ -84,7 +83,7 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
         ticket = models.TicketStore.get(data['ticket'], invalidate=not getattr(settings, 'DEBUG', False))
         # If ticket is included, user_service can be inside ticket or in data
         data['userservice_uuid'] = data.get('userservice_uuid', ticket['userservice_uuid'])
-    
+
     userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
     server.setActorVersion(userService)
 
@@ -159,6 +158,7 @@ def process_init(server: 'models.Server', data: typing.Dict[str, typing.Any]) ->
     # Init like on actor to allow "userServices" to initialize inside server
     # Currently unimplemented (just an idea, anotated here for future reference)
     return rest_result(consts.OK)
+
 
 PROCESSORS: typing.Final[
     typing.Mapping[str, typing.Callable[['models.Server', typing.Dict[str, typing.Any]], typing.Any]]
