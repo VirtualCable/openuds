@@ -102,7 +102,7 @@ def main():
     parser.add_argument(
         '--auth-uuid',
         help='UUID of authenticator to use',
-        required=True,
+        default='00000000-0000-0000-0000-000000000000',
     )
     parser.add_argument(
         '--username',
