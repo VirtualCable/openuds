@@ -127,7 +127,9 @@ class RadiusClient:
         return typing.cast(pyrad.packet.AuthPacket, self.radiusServer.SendPacket(req))
 
     # Second element of return value is the mfa code from field
-    def authenticate(self, username: str, password: str, mfaField: str) -> typing.Tuple[typing.List[str], str]:
+    def authenticate(
+        self, username: str, password: str, mfaField: str = ''
+    ) -> typing.Tuple[typing.List[str], str]:
         reply = self.sendAccessRequest(username, password)
 
         if reply.code not in (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
@@ -173,6 +175,7 @@ class RadiusClient:
         # user/pwd rejected
         return RadiusResult(
             pwd=RadiusStates.INCORRECT,
+            state=typing.cast(typing.List[bytes], reply.get('State') or [b''])[0],
         )
 
     def challenge_only(self, username: str, otp: str, state: bytes = b'0000000000000000') -> RadiusResult:
@@ -194,6 +197,7 @@ class RadiusClient:
         # incorrect OTP challenge
         return RadiusResult(
             otp=RadiusStates.INCORRECT,
+            state=typing.cast(typing.List[bytes], reply.get('State') or [b''])[0],
         )
 
     def authenticate_and_challenge(self, username: str, password: str, otp: str) -> RadiusResult:
@@ -201,7 +205,7 @@ class RadiusClient:
 
         if reply.code == pyrad.packet.AccessChallenge:
             state = typing.cast(typing.List[bytes], reply.get('State') or [b''])[0]
-            replyMessage = typing.cast(typing.List[bytes], reply.get('Reply-Message') or [''])[0]
+            # replyMessage = typing.cast(typing.List[bytes], reply.get('Reply-Message') or [''])[0]
             return self.challenge_only(username, otp, state=state)
 
         # user/pwd accepted: but this user does not have challenge data
@@ -211,6 +215,7 @@ class RadiusClient:
             return RadiusResult(
                 pwd=RadiusStates.CORRECT,
                 otp_needed=RadiusStates.NOT_NEEDED,
+                state=typing.cast(typing.List[bytes], reply.get('State') or [b''])[0],
             )
 
         # TODO: accept more AccessChallenge authentications (as RFC says)
@@ -219,7 +224,7 @@ class RadiusClient:
         return RadiusResult()
 
     def authenticate_challenge(
-        self, username: str, password: str = '', otp: str = '', state: bytes = b''
+        self, username: str, password: str = '', otp: str = '', state: typing.Optional[bytes] = None
     ) -> RadiusResult:
         '''
         wrapper for above 3 functions: authenticate_only, challenge_only, authenticate_and_challenge
@@ -227,6 +232,7 @@ class RadiusClient:
         '''
         # clean input data
         # Keep only numbers in otp
+        state = state or b'0000000000000000'
         otp = ''.join([x for x in otp if x in string.digits])
         username = username.strip()
         password = password.strip()
@@ -239,6 +245,6 @@ class RadiusClient:
             return self.authenticate_only(username, password)
         if otp and not password:
             # check only otp with static/invented state. allow this ?
-            return self.challenge_only(username, otp, state=b'0000000000000000')
+            return self.challenge_only(username, otp, state=state)
         # otp and password
         return self.authenticate_and_challenge(username, password, otp)
