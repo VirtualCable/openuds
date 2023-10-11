@@ -2,6 +2,7 @@ import io
 import logging
 import enum
 import typing
+import string
 
 from pyrad.client import Client
 from pyrad.dictionary import Dictionary
@@ -105,16 +106,12 @@ class RadiusClient:
     def extractAccessChallenge(self, reply: pyrad.packet.AuthPacket) -> RadiusResult:
         return RadiusResult(
             pwd=RadiusStates.CORRECT,
-            replyMessage=typing.cast(
-                typing.List[bytes], reply.get('Reply-Message') or ['']
-            )[0],
+            replyMessage=typing.cast(typing.List[bytes], reply.get('Reply-Message') or [''])[0],
             state=typing.cast(typing.List[bytes], reply.get('State') or [b''])[0],
             otp_needed=RadiusStates.NEEDED,
         )
 
-    def sendAccessRequest(
-        self, username: str, password: str, **kwargs
-    ) -> pyrad.packet.AuthPacket:
+    def sendAccessRequest(self, username: str, password: str, **kwargs) -> pyrad.packet.AuthPacket:
         req: pyrad.packet.AuthPacket = self.radiusServer.CreateAuthPacket(
             code=pyrad.packet.AccessRequest,
             User_Name=username,
@@ -130,12 +127,10 @@ class RadiusClient:
         return typing.cast(pyrad.packet.AuthPacket, self.radiusServer.SendPacket(req))
 
     # Second element of return value is the mfa code from field
-    def authenticate(
-        self, username: str, password: str, mfaField: str
-    ) -> typing.Tuple[typing.List[str], str]:
+    def authenticate(self, username: str, password: str, mfaField: str) -> typing.Tuple[typing.List[str], str]:
         reply = self.sendAccessRequest(username, password)
 
-        if reply.code not in  (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
+        if reply.code not in (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
             raise RadiusAuthenticationError('Access denied')
 
         # User accepted, extract groups...
@@ -180,14 +175,15 @@ class RadiusClient:
             pwd=RadiusStates.INCORRECT,
         )
 
-    def challenge_only(
-        self, username: str, otp: str, state: bytes = b'0000000000000000'
-    ) -> RadiusResult:
-
+    def challenge_only(self, username: str, otp: str, state: bytes = b'0000000000000000') -> RadiusResult:
         # clean otp code
-        otp = ''.join([x for x in otp if x in '0123456789'])
+        otp = ''.join([x for x in otp if x in string.digits])
+
+        logger.debug('Sending AccessChallenge request wit otp [%s]', otp)
 
         reply = self.sendAccessRequest(username, otp, State=state)
+
+        logger.debug('Received AccessChallenge reply: %s', reply)
 
         # correct OTP challenge
         if reply.code == pyrad.packet.AccessAccept:
@@ -200,24 +196,18 @@ class RadiusClient:
             otp=RadiusStates.INCORRECT,
         )
 
-    def authenticate_and_challenge(
-        self, username: str, password: str, otp: str
-    ) -> RadiusResult:
+    def authenticate_and_challenge(self, username: str, password: str, otp: str) -> RadiusResult:
         reply = self.sendAccessRequest(username, password)
 
         if reply.code == pyrad.packet.AccessChallenge:
             state = typing.cast(typing.List[bytes], reply.get('State') or [b''])[0]
-            replyMessage = typing.cast(
-                typing.List[bytes], reply.get('Reply-Message') or ['']
-            )[0]
+            replyMessage = typing.cast(typing.List[bytes], reply.get('Reply-Message') or [''])[0]
             return self.challenge_only(username, otp, state=state)
 
         # user/pwd accepted: but this user does not have challenge data
         # we should not be here...
         if reply.code == pyrad.packet.AccessAccept:
-            logger.warning(
-                "Radius OTP error: cheking for OTP for not needed user [%s]", username
-            )
+            logger.warning("Radius OTP error: cheking for OTP for not needed user [%s]", username)
             return RadiusResult(
                 pwd=RadiusStates.CORRECT,
                 otp_needed=RadiusStates.NOT_NEEDED,
@@ -236,7 +226,8 @@ class RadiusClient:
         calls wrapped functions based on passed input values: (pwd/otp/state)
         '''
         # clean input data
-        otp = ''.join([x for x in otp if x in '0123456789'])
+        # Keep only numbers in otp
+        otp = ''.join([x for x in otp if x in string.digits])
         username = username.strip()
         password = password.strip()
         state = state.strip()

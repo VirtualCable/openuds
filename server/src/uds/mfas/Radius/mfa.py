@@ -214,7 +214,7 @@ class RadiusOTP(mfas.MFA):
         and get also radius State value (otp session)
         '''
         # if we are in a "all-users-otp" policy, avoid this step and go directly to ask for OTP
-        if self.all_users_otp.value:
+        if self.all_users_otp.isTrue():
             return mfas.MFA.RESULT.OK
 
         web_pwd = webPassword(request)
