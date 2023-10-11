@@ -223,6 +223,9 @@ class RadiusOTP(mfas.MFA):
             )
             return self.checkResult(self.allowLoginWithoutMFA.value, request)
 
+        # Store state for later use, related to this user
+        request.session['radius_state'] = auth_reply.state or b''
+
         # correct password and otp_needed
         return mfas.MFA.RESULT.OK
 
@@ -251,7 +254,14 @@ class RadiusOTP(mfas.MFA):
             web_pwd = webPassword(request)
             try:
                 connection = self.radiusClient()
-                auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
+                state = request.session.get('radius_state', b'')
+                if state:
+                    # Remove state from session
+                    del request.session['radius_state']
+                    # Use state to validate
+                    auth_reply = connection.authenticate_challenge(username, otp=code, state=state)
+                else:  # No state, so full authentication
+                    auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
             except Exception as e:
                 logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
                 if mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
