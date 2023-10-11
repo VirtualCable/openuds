@@ -10,13 +10,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-23 16:16+0200\n"
+"POT-Creation-Date: 2023-10-12 01:26+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -616,10 +617,10 @@ msgid "Check certificate"
 msgstr "Egiaztatu ziurtagiria"
 
 #: REST/methods/proxies.py:88
-#: auths/ActiveDirectory_enterprise/authenticator.py:52
+#: auths/ActiveDirectory_enterprise/authenticator.py:53
 #: auths/EDirectory_enterprise/authenticator.py:47
-#: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
+#: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:68
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:73
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -636,8 +637,8 @@ msgid "Server (IP or FQDN) that will serve as proxy."
 msgstr "Proxy gisa erabiliko den zerbitzaria (IP edo FQDN)."
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
-#: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:73
+#: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:75
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:80
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -656,9 +657,9 @@ msgid "Port of proxy server"
 msgstr "Proxy zerbitzariaren portua"
 
 #: REST/methods/proxies.py:105
-#: auths/ActiveDirectory_enterprise/authenticator.py:58
+#: auths/ActiveDirectory_enterprise/authenticator.py:59
 #: auths/EDirectory_enterprise/authenticator.py:61
-#: auths/RegexLdap/authenticator.py:83 auths/SimpleLDAP/authenticator.py:74
+#: auths/RegexLdap/authenticator.py:82 auths/SimpleLDAP/authenticator.py:74
 #: osmanagers/WindowsOsManager/windows_domain.py:124
 #: services/OpenNebula/provider.py:89 services/OpenStack/provider_legacy.py:119
 msgid "Use SSL"
@@ -689,8 +690,8 @@ msgstr "Txosten erabilgarriak"
 #: auths/ActiveDirectory_enterprise/authenticator.py:212
 #: auths/AzureAD_enterprise/azure_ad.py:97
 #: auths/EDirectory_enterprise/authenticator.py:133
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
-#: auths/SAML_enterprise/saml.py:108 auths/SimpleLDAP/authenticator.py:212
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:212
+#: auths/SAML_enterprise/saml.py:111 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "Taldea"
@@ -746,7 +747,7 @@ msgstr "Suebaki baten atzean zerbitzuen proxya"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:194 core/ui/user_interface.py:101
+#: auths/RegexLdap/authenticator.py:187 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -1055,11 +1056,11 @@ msgid "Staff member"
 msgstr "Langile Kidea"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
-#: auths/ActiveDirectory_enterprise/authenticator.py:79
+#: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
-#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:105 reports/lists/audit.py:120
+#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:88
+#: auths/SAML_enterprise/saml.py:108 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1078,7 +1079,7 @@ msgstr "Momentuko erabiltzaileak"
 #: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:210
 #: auths/EDirectory_enterprise/authenticator.py:131
-#: auths/RegexLdap/authenticator.py:217 auths/SimpleLDAP/authenticator.py:210
+#: auths/RegexLdap/authenticator.py:210 auths/SimpleLDAP/authenticator.py:210
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
@@ -1092,7 +1093,7 @@ msgstr "Momentuko erabiltzaileak"
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
-#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
+#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:77
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
 #: web/forms/LoginForm.py:44
 msgid "Username"
@@ -1200,26 +1201,26 @@ msgstr "Ezinezko eragiketa"
 msgid "requested a template that do not exist"
 msgstr "Existitzen ez den txantiloia eskatu da"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:54
+#: auths/ActiveDirectory_enterprise/authenticator.py:55
 msgid "Active Directory Server IP or Hostname"
 msgstr "\"Active Directory\" zerbitzariaren IP-a edota izena"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:60
+#: auths/ActiveDirectory_enterprise/authenticator.py:61
 #: osmanagers/WindowsOsManager/windows_domain.py:126
 msgid "If checked,  a ssl connection to Active Directory will be used"
 msgstr ""
 "Aktibo izanez gero, ssl bidez ezarriko da konexioa \"Active Directory\"-ra"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:63
+#: auths/ActiveDirectory_enterprise/authenticator.py:64
 #: services/VCloud_enterprise/provider.py:71
 msgid "Compatibility"
 msgstr "Konpatibilitatea"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:66
+#: auths/ActiveDirectory_enterprise/authenticator.py:67
 msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr "AD konexio konpatibilitatea (Windows 2000 edo gerokoak)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:81
+#: auths/ActiveDirectory_enterprise/authenticator.py:82
 msgid ""
 "Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
 "for this)"
@@ -1227,10 +1228,10 @@ msgstr ""
 "Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea (erabil "
 "USER@DOMAIN.DOM)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:87
+#: auths/ActiveDirectory_enterprise/authenticator.py:88
 #: auths/ActiveDirectory_enterprise/authenticator.py:214
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:221
+#: auths/RegexLdap/authenticator.py:96 auths/RegexLdap/authenticator.py:214
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:214
 #: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
@@ -1247,23 +1248,23 @@ msgstr ""
 #: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
-#: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
+#: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:83
 #: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:46
 #: web/forms/LoginForm.py:47
 msgid "Password"
 msgstr "Pasahitza"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:89
+#: auths/ActiveDirectory_enterprise/authenticator.py:90
 #: auths/EDirectory_enterprise/authenticator.py:79
-#: auths/RegexLdap/authenticator.py:101 auths/SimpleLDAP/authenticator.py:92
+#: auths/RegexLdap/authenticator.py:98 auths/SimpleLDAP/authenticator.py:92
 msgid "Password of the ldap user"
 msgstr "LDAP erabiltzailearen pasahitza"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:95
+#: auths/ActiveDirectory_enterprise/authenticator.py:96
 msgid "Override Base"
 msgstr "Gainidatzi Base"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
+#: auths/ActiveDirectory_enterprise/authenticator.py:98
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
@@ -1271,11 +1272,11 @@ msgstr ""
 "Ez bada hutsik, AD bilaketa-oinarria gainidatziko du balio honekin "
 "(formatua: dc = ..., dc = ...)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:104
+#: auths/ActiveDirectory_enterprise/authenticator.py:105
 msgid "Default domain"
 msgstr "Domeinu lehenetsia"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:107
+#: auths/ActiveDirectory_enterprise/authenticator.py:108
 msgid ""
 "Domain used for users without domain (if empty, will use the domain of the "
 "user) if compat mode is not \"Windows NT\""
@@ -1284,11 +1285,11 @@ msgstr ""
 "erabiltzailearen domeinua erabiliko du) konpatiazio modua \"Windows NT\" ez "
 "bada"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:116
+#: auths/ActiveDirectory_enterprise/authenticator.py:117
 msgid "Backup servers"
 msgstr "Backup zerbitzariak"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:119
+#: auths/ActiveDirectory_enterprise/authenticator.py:120
 msgid ""
 "If not empty, this host will be used in case main host server is not "
 "reachable"
@@ -1296,9 +1297,9 @@ msgstr ""
 "Hutsik ez badago, ostalari hau erabiliko da ostalari zerbitzari nagusia "
 "heltzen ez bada"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:127
+#: auths/ActiveDirectory_enterprise/authenticator.py:128
 #: auths/EDirectory_enterprise/authenticator.py:85
-#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
+#: auths/RegexLdap/authenticator.py:104 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
 #: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:141
@@ -1312,20 +1313,20 @@ msgstr ""
 msgid "Timeout"
 msgstr "Demboraz kampo"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:130
+#: auths/ActiveDirectory_enterprise/authenticator.py:131
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "Denbora-muga, Active Directory-en konexioaren segundotan"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: auths/ActiveDirectory_enterprise/authenticator.py:137
 #: auths/EDirectory_enterprise/authenticator.py:94
-#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:113 auths/SimpleLDAP/authenticator.py:107
 #: services/Vmware_enterprise/provider.py:121
 msgid "Verify SSL"
 msgstr "Egiaztatu SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:139
+#: auths/ActiveDirectory_enterprise/authenticator.py:140
 #: auths/EDirectory_enterprise/authenticator.py:98
-#: auths/RegexLdap/authenticator.py:120 auths/SimpleLDAP/authenticator.py:111
+#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:111
 #: services/Vmware_enterprise/provider.py:125
 msgid ""
 "If checked, SSL verification will be enforced. If not, SSL verification will "
@@ -1334,24 +1335,24 @@ msgstr ""
 "Hautatzen bada, SSL egiaztapena ezarriko da. Hala ez bada, SSL egiaztapena "
 "desgaitu egingo da"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#: auths/ActiveDirectory_enterprise/authenticator.py:147
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:126
+#: auths/RegexLdap/authenticator.py:122 auths/SAML_enterprise/saml.py:129
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "Ziurtagiria"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:148
+#: auths/ActiveDirectory_enterprise/authenticator.py:149
 #: auths/EDirectory_enterprise/authenticator.py:107
-#: auths/RegexLdap/authenticator.py:129 auths/SimpleLDAP/authenticator.py:120
+#: auths/RegexLdap/authenticator.py:124 auths/SimpleLDAP/authenticator.py:120
 msgid "Certificate to use for SSL verification"
 msgstr "SSL egiaztatzeko erabili beharreko ziurtagiria"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 msgid "Host translation list"
 msgstr "Ostalari itzulpenen zerrenda"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:160
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid ""
 "If not empty, this list of key=value pairs will be used to translate the "
 "host name from AD to an resolvable hostname."
@@ -1359,11 +1360,11 @@ msgstr ""
 "Hutsik ez badago, gako=balio bikoteen zerrenda hau erabiliko da ostalari-"
 "izena AD-etik konpon daitekeen ostalari-izen batera itzultzeko."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:168
+#: auths/ActiveDirectory_enterprise/authenticator.py:169
 msgid "Ignore domains"
 msgstr "Ez ikusi domeinuei"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:172
+#: auths/ActiveDirectory_enterprise/authenticator.py:173
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
@@ -1371,11 +1372,11 @@ msgstr ""
 "Hutsik ez badago, domeinu-zerrenda hau baztertu egingo da erabiltzaileak "
 "bilatzean. Komaz bereizitako balioak."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:180
+#: auths/ActiveDirectory_enterprise/authenticator.py:181
 msgid "Redirect On Expired"
 msgstr "Birbideratzea Iraungi da"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:182
+#: auths/ActiveDirectory_enterprise/authenticator.py:183
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
@@ -1383,17 +1384,17 @@ msgstr ""
 "Hutsik ez badago, erabiltzailearen pasahitza iraungi bada, automatikoki "
 "birbideratuko da URL honetara"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:191
+#: auths/ActiveDirectory_enterprise/authenticator.py:192
 #: auths/EDirectory_enterprise/authenticator.py:114
-#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:200 auths/SimpleLDAP/authenticator.py:192
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:193
+#: auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "MFA atributua"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:193
+#: auths/ActiveDirectory_enterprise/authenticator.py:194
 #: auths/EDirectory_enterprise/authenticator.py:116
-#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:202 auths/SimpleLDAP/authenticator.py:194
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:195
+#: auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "Atributua nondik atera MFA kodea"
 
@@ -1406,11 +1407,11 @@ msgid "Authenticate against Active Directory"
 msgstr "Active Directory-aren kontra autentikatu"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:260
-#: auths/ActiveDirectory_enterprise/authenticator.py:918
+#: auths/ActiveDirectory_enterprise/authenticator.py:961
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "Erabiltzailea USERNAME@DOMAIN.DOM formatuan jarri behar da "
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:520
+#: auths/ActiveDirectory_enterprise/authenticator.py:551
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
@@ -1418,50 +1419,50 @@ msgstr ""
 "Ezin izan da AD zerbitzari batera konektatu. Egiaztatu zure konfigurazioa "
 "(zerbitzaria, ssl ziurtagiriak, ...)."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:793
-#: auths/ActiveDirectory_enterprise/authenticator.py:842
-#: auths/AzureAD_enterprise/azure_ad.py:318
+#: auths/ActiveDirectory_enterprise/authenticator.py:826
+#: auths/ActiveDirectory_enterprise/authenticator.py:875
+#: auths/AzureAD_enterprise/azure_ad.py:321
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
-#: auths/RegexLdap/authenticator.py:619 auths/RegexLdap/authenticator.py:650
+#: auths/RegexLdap/authenticator.py:606 auths/RegexLdap/authenticator.py:637
 #: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "Erabiltzaile ez da aurkitu"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:826
+#: auths/ActiveDirectory_enterprise/authenticator.py:859
 #: auths/SimpleLDAP/authenticator.py:541
 msgid "Group not found"
 msgstr "Ez da aurkitu talderik"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:873
-#: auths/ActiveDirectory_enterprise/authenticator.py:897
+#: auths/ActiveDirectory_enterprise/authenticator.py:910
+#: auths/ActiveDirectory_enterprise/authenticator.py:939
 #: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:678 auths/SimpleLDAP/authenticator.py:576
+#: auths/RegexLdap/authenticator.py:664 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "konkretuagoa izan, emaitz gehiegi daude eta."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:929
+#: auths/ActiveDirectory_enterprise/authenticator.py:972
 msgid "Domain seems to be incorrect, please check it"
 msgstr "Domeinua txarto omen dago, egiazta ezazu."
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:947
+#: auths/ActiveDirectory_enterprise/authenticator.py:990
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr ""
 "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du erabiltzaile "
 "objeturik)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:968
+#: auths/ActiveDirectory_enterprise/authenticator.py:1011
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr ""
 "Zerbitzaria ez omen da Active Directory Zerbitzari bat (ez du talde "
 "objeturik)"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:976
+#: auths/ActiveDirectory_enterprise/authenticator.py:1019
 #: auths/EDirectory_enterprise/authenticator.py:492
-#: auths/RegexLdap/authenticator.py:788 auths/SimpleLDAP/authenticator.py:759
+#: auths/RegexLdap/authenticator.py:764 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "Konexio parametruak ondo daudela dirudi, proba ondo joan da."
 
@@ -1552,20 +1553,21 @@ msgid "Office 365 logout"
 msgstr "Office 365 saioa amaitzea"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-msgid "SAML Authenticator does not support white spaces on field NAME"
-msgstr "SAML autetikatzaileak ez du NAME eremuan espaziorik onartzen"
+#| msgid "SAML Authenticator does not support white spaces on field NAME"
+msgid "AzureAD Authenticator does not support white spaces on field NAME"
+msgstr "AzureAD Authenticator-ek ez du onartzen IZENA eremuan zuriune zuriak"
 
-#: auths/AzureAD_enterprise/azure_ad.py:328
-#: auths/AzureAD_enterprise/azure_ad.py:354
-#: auths/AzureAD_enterprise/azure_ad.py:364
+#: auths/AzureAD_enterprise/azure_ad.py:331
+#: auths/AzureAD_enterprise/azure_ad.py:357
+#: auths/AzureAD_enterprise/azure_ad.py:367
 msgid "Authenticator exception:"
 msgstr "Autentikatzaile salbuespena:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:56
+#: auths/AzureAD_enterprise/azure_ad.py:402 core/util/ldaputil.py:60
 msgid "Connection error: "
 msgstr "Konexioaren errorea:"
 
-#: auths/AzureAD_enterprise/azure_ad.py:402
+#: auths/AzureAD_enterprise/azure_ad.py:405
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "Konexioaren parametak zuzena dirudi, proba ondo exekutatu da"
 
@@ -1574,12 +1576,12 @@ msgid "EDirectory Server IP or Hostname"
 msgstr "EDirectory zerbitzariaren IP-a edota izena"
 
 #: auths/EDirectory_enterprise/authenticator.py:57
-#: auths/RegexLdap/authenticator.py:79 auths/SimpleLDAP/authenticator.py:70
+#: auths/RegexLdap/authenticator.py:78 auths/SimpleLDAP/authenticator.py:70
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr "LDAP portua (389 SSL-rik gabe edo 636 SSL-arekin)"
 
 #: auths/EDirectory_enterprise/authenticator.py:64
-#: auths/RegexLdap/authenticator.py:86 auths/SimpleLDAP/authenticator.py:77
+#: auths/RegexLdap/authenticator.py:84 auths/SimpleLDAP/authenticator.py:77
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr ""
 "Egiaztatuta badago, konexioa ssl izango da, 636 ataka erabiliz 389 ordez"
@@ -1589,7 +1591,7 @@ msgid "Username with read privileges on the eDirectory"
 msgstr "eDirectory-an irakurtzeko pribilegioa daukan erabiltzailea"
 
 #: auths/EDirectory_enterprise/authenticator.py:88
-#: auths/RegexLdap/authenticator.py:110 auths/SimpleLDAP/authenticator.py:101
+#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:101
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "Denbora-muga LDAP konexio segundotan"
 
@@ -1606,12 +1608,12 @@ msgid "Edirectory connection error: {}"
 msgstr "Zuzendaritza konexioaren errorea: {}"
 
 #: auths/EDirectory_enterprise/authenticator.py:392
-#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:621
+#: auths/RegexLdap/authenticator.py:684 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "LDAP bilaketa oinarria txarto dago"
 
 #: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/RegexLdap/authenticator.py:719 auths/SimpleLDAP/authenticator.py:629
+#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr ""
 "LDAP erabiltzaile mota txarto dagoela dirudi (ez da aurkitu mota horretako "
@@ -1710,27 +1712,27 @@ msgstr "Autentikatzailea ondo dagoela dirudi "
 msgid "Radius Authenticator"
 msgstr "Erradioaren autentifikatzailea"
 
-#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:68
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:75
 msgid "Radius Server IP or Hostname"
 msgstr "Radius Server IP edo Ostalari izena"
 
-#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:76
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:83
 msgid "Radius authentication port (usually 1812)"
 msgstr "Erradioaren autentifikazio ataka (normalean 1812)"
 
-#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:81
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:88
 msgid "Secret"
 msgstr "Sekretua"
 
-#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:83
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:90
 msgid "Radius client secret"
 msgstr "Erradioaren bezeroaren sekretua"
 
-#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:97
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:104
 msgid "NAS Identifier"
 msgstr "NAS identifikatzailea"
 
-#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:100
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:107
 msgid "NAS Identifier for Radius Server"
 msgstr "NAS identifikatzailea Radius Server zerbitzariarentzat"
 
@@ -1764,55 +1766,55 @@ msgstr "Radius zerbitzarirako konexioak huts egin du"
 msgid "Connection to Radius server seems ok"
 msgstr "Badirudi Radius zerbitzarirako konexioa ondo dagoela"
 
-#: auths/RegexLdap/authenticator.py:71
+#: auths/RegexLdap/authenticator.py:70
 msgid "Ldap Server Host"
 msgstr "LDAP zerbitzaria"
 
-#: auths/RegexLdap/authenticator.py:93 auths/SimpleLDAP/authenticator.py:84
+#: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:84
 msgid "Username with read privileges on the base selected"
 msgstr "Aukeratutako oinarrian irakurtzeko pribilegioa daukan erabiltzailea"
 
-#: auths/RegexLdap/authenticator.py:135 auths/SimpleLDAP/authenticator.py:127
+#: auths/RegexLdap/authenticator.py:130 auths/SimpleLDAP/authenticator.py:127
 #: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "Oinarria "
 
-#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:129
+#: auths/RegexLdap/authenticator.py:132 auths/SimpleLDAP/authenticator.py:129
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr ""
 "Bilaketa-oinarri arrunta (\"erabiltzaileentzat\" eta \"taldeentzat\" "
 "erabiltzen dena)"
 
-#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:148
-#: auths/RegexLdap/authenticator.py:157 auths/RegexLdap/authenticator.py:169
-#: auths/RegexLdap/authenticator.py:181 auths/SimpleLDAP/authenticator.py:131
+#: auths/RegexLdap/authenticator.py:134 auths/RegexLdap/authenticator.py:143
+#: auths/RegexLdap/authenticator.py:152 auths/RegexLdap/authenticator.py:164
+#: auths/RegexLdap/authenticator.py:176 auths/SimpleLDAP/authenticator.py:131
 #: auths/SimpleLDAP/authenticator.py:140 auths/SimpleLDAP/authenticator.py:149
 #: auths/SimpleLDAP/authenticator.py:160 auths/SimpleLDAP/authenticator.py:169
 #: auths/SimpleLDAP/authenticator.py:178 auths/SimpleLDAP/authenticator.py:187
 msgid "Ldap info"
 msgstr "Ldap informazioa"
 
-#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:135
+#: auths/RegexLdap/authenticator.py:138 auths/SimpleLDAP/authenticator.py:135
 msgid "User class"
 msgstr "Erabiltzaile mota"
 
-#: auths/RegexLdap/authenticator.py:146 auths/SimpleLDAP/authenticator.py:138
+#: auths/RegexLdap/authenticator.py:141 auths/SimpleLDAP/authenticator.py:138
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "LDAP erabiltzailearen mota (posixAccount normalean)"
 
-#: auths/RegexLdap/authenticator.py:152 auths/SimpleLDAP/authenticator.py:144
+#: auths/RegexLdap/authenticator.py:147 auths/SimpleLDAP/authenticator.py:144
 msgid "User Id Attr"
 msgstr "Erabiltzaile ID atributua"
 
-#: auths/RegexLdap/authenticator.py:155 auths/SimpleLDAP/authenticator.py:147
+#: auths/RegexLdap/authenticator.py:150 auths/SimpleLDAP/authenticator.py:147
 msgid "Attribute that contains the user id"
 msgstr "Erabiltzaile ID-a daukan atributua"
 
-#: auths/RegexLdap/authenticator.py:161 auths/SimpleLDAP/authenticator.py:153
+#: auths/RegexLdap/authenticator.py:156 auths/SimpleLDAP/authenticator.py:153
 msgid "User Name Attr"
 msgstr "Erabiltzailea-izen atributua"
 
-#: auths/RegexLdap/authenticator.py:166
+#: auths/RegexLdap/authenticator.py:161
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
@@ -1820,11 +1822,11 @@ msgstr ""
 "Erabiltzaile izenaren atributuak edo atributu ereduak (lerro bakoitzeko bat) "
 "dituzten atributuak"
 
-#: auths/RegexLdap/authenticator.py:173
+#: auths/RegexLdap/authenticator.py:168
 msgid "Group Name Attr"
 msgstr "Talde-izen atributua"
 
-#: auths/RegexLdap/authenticator.py:178
+#: auths/RegexLdap/authenticator.py:173
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
@@ -1832,11 +1834,11 @@ msgstr ""
 "Taldearen izen atributuak edo atributu ereduak (lerro bakoitzeko bat) dituen "
 "atributua"
 
-#: auths/RegexLdap/authenticator.py:187
+#: auths/RegexLdap/authenticator.py:182
 msgid "Alt. class"
 msgstr "Alt. class"
 
-#: auths/RegexLdap/authenticator.py:191
+#: auths/RegexLdap/authenticator.py:185
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
@@ -1844,15 +1846,15 @@ msgstr ""
 "Taldeak berreskuratzeko hautatutako taldeentzako LDAP objektuentzako klase "
 "(normalean hutsik dago)"
 
-#: auths/RegexLdap/authenticator.py:207
+#: auths/RegexLdap/authenticator.py:200
 msgid "Regex LDAP Authenticator"
 msgstr "Regex LDAP autentikatzailea"
 
-#: auths/RegexLdap/authenticator.py:209
+#: auths/RegexLdap/authenticator.py:202
 msgid "Regular Expressions LDAP authenticator"
 msgstr "LDAP autentikatzailearen adierazpen erregularrak"
 
-#: auths/RegexLdap/authenticator.py:744
+#: auths/RegexLdap/authenticator.py:723
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
@@ -1860,7 +1862,7 @@ msgstr ""
 "LDAP erabiltzairen ID atributua txarto dagoela dirudi (ez da aurkitu "
 "balditza biak betetzen dituen erabiltzailerik)"
 
-#: auths/RegexLdap/authenticator.py:773 auths/SimpleLDAP/authenticator.py:698
+#: auths/RegexLdap/authenticator.py:750 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
@@ -1868,19 +1870,19 @@ msgstr ""
 "LDAP taldearen ID atributua txarto dagoela dirudi (ez da talderik aurkitu "
 "atributu horrekin )"
 
-#: auths/SAML_enterprise/saml.py:75
+#: auths/SAML_enterprise/saml.py:78
 msgid "SAML Authenticator"
 msgstr "SAML autentikatzailea"
 
-#: auths/SAML_enterprise/saml.py:87
+#: auths/SAML_enterprise/saml.py:90
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML (v2.0) autentikatzailea"
 
-#: auths/SAML_enterprise/saml.py:117
+#: auths/SAML_enterprise/saml.py:120
 msgid "Private key"
 msgstr "Gako pribatua"
 
-#: auths/SAML_enterprise/saml.py:119
+#: auths/SAML_enterprise/saml.py:122
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
@@ -1888,11 +1890,11 @@ msgstr ""
 "Seinale eta enkripzioan erabilitako gako pribatua, oinarrian sortutako 64 "
 "ataka irekitik"
 
-#: auths/SAML_enterprise/saml.py:121 auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "Ziurtagiriak"
 
-#: auths/SAML_enterprise/saml.py:129
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
@@ -1900,80 +1902,211 @@ msgstr ""
 "Sartu eta erregistratzeko (gako pribatuaren aurreko atal publikoa) "
 "erabilitako gako publikoa, oinarrian sortua 64 ataka irekitik"
 
-#: auths/SAML_enterprise/saml.py:137
+#: auths/SAML_enterprise/saml.py:140
 msgid "IDP Metadata"
 msgstr "IDP Metadata"
 
-#: auths/SAML_enterprise/saml.py:139
+#: auths/SAML_enterprise/saml.py:142
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "Hemen sar dezakezu URLa edo IDP metadatuak edo metadatu bera (xml)"
 
-#: auths/SAML_enterprise/saml.py:141 auths/SAML_enterprise/saml.py:148
+#: auths/SAML_enterprise/saml.py:144 auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:285 auths/SAML_enterprise/saml.py:293
 msgid "Metadata"
 msgstr "Metadata"
 
-#: auths/SAML_enterprise/saml.py:145
+#: auths/SAML_enterprise/saml.py:148
 msgid "Entity ID"
 msgstr "Erakunde IDa"
 
-#: auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:150
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr ""
 "SP IDa. Utzi hutsik badaude, zerbitzariaren URLa automatikoki sortuko da"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:157
 msgid "User name attrs"
 msgstr "Erabiltzaile-izen atributuak"
 
-#: auths/SAML_enterprise/saml.py:156
+#: auths/SAML_enterprise/saml.py:159
 msgid "Fields from where to extract user name"
 msgstr "Erabiltzaile izena ateratzeko eremuak"
 
-#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:168
-#: auths/SAML_enterprise/saml.py:178
+#: auths/SAML_enterprise/saml.py:161 auths/SAML_enterprise/saml.py:171
+#: auths/SAML_enterprise/saml.py:181
 msgid "Attributes"
 msgstr "Atributuak"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:167
 msgid "Group name attrs"
 msgstr "Talde-izen atributuak"
 
-#: auths/SAML_enterprise/saml.py:166
+#: auths/SAML_enterprise/saml.py:169
 msgid "Fields from where to extract the groups"
 msgstr "Taldeak ateratzeko eremuak"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:177
 msgid "Real name attrs"
 msgstr "Benetazko izenaren atributuak"
 
-#: auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:179
 msgid "Fields from where to extract the real name"
 msgstr "Izen erreala ateratzeko eremuetatik"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:185
 msgid "Global logout"
 msgstr "Amaitzeko saioa globala"
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:188
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "Ezarrita badago, UDStik saioa egiteak SAML saioa amaituko du"
 
-#: auths/SAML_enterprise/saml.py:190
+#: auths/SAML_enterprise/saml.py:193
 msgid "ADFS compatibility"
 msgstr "ADFS bateragarritasuna"
 
-#: auths/SAML_enterprise/saml.py:193
+#: auths/SAML_enterprise/saml.py:196
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr ""
 "Ezarrita badago, gaitu minuskulak url kodeketa, ADFS behar bezala funtziona "
 "dezan"
 
-#: auths/SAML_enterprise/saml.py:223
+#: auths/SAML_enterprise/saml.py:201
+#| msgid "Friendly name"
+msgid "Encripted nameID"
+msgstr "Idaztutako izena ID"
+
+#: auths/SAML_enterprise/saml.py:204
+#| msgid "If set, the connection will be read only"
+msgid "If set, nameID will be encripted"
+msgstr "Ezartzen bada, nameID idatziko da"
+
+#: auths/SAML_enterprise/saml.py:205 auths/SAML_enterprise/saml.py:213
+#: auths/SAML_enterprise/saml.py:221 auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:237 auths/SAML_enterprise/saml.py:245
+#: auths/SAML_enterprise/saml.py:253 auths/SAML_enterprise/saml.py:261
+#: auths/SAML_enterprise/saml.py:269 auths/SAML_enterprise/saml.py:277
+#: auths/SAML_enterprise/saml.py:301 mfas/Email/mfa.py:74
+#: transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDS_enterprise/html5rds.py:256
+msgid "Security"
+msgstr "Segurtasuna"
+
+#: auths/SAML_enterprise/saml.py:209
+msgid "Authn requests signed"
+msgstr "Authn eskaerak sinatu dira"
+
+#: auths/SAML_enterprise/saml.py:212
+#| msgid "If set, the connection will be read only"
+msgid "If set, authn requests will be signed"
+msgstr "Ezartzen bada, autentifikazio-eskaerak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:217
+msgid "Logout requests signed"
+msgstr "Amaitzeko eskaerak sinatu dira"
+
+#: auths/SAML_enterprise/saml.py:220
+msgid "If set, logout requests will be signed"
+msgstr "Ezartzen bada, saioa amaitzeko eskaerak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:225
+msgid "Logout responses signed"
+msgstr "Amaitzeko saioaren erantzunak sinatuta"
+
+#: auths/SAML_enterprise/saml.py:228
+#| msgid "If set, the connection will be read only"
+msgid "If set, logout responses will be signed"
+msgstr "Ezartzen bada, saioa amaitzeko erantzunak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:233
+#| msgid "Metadata"
+msgid "Sign metadata"
+msgstr "Sinatu metadatuak"
+
+#: auths/SAML_enterprise/saml.py:236
+msgid "If set, metadata will be signed"
+msgstr "Ezartzen bada, metadatuak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:241
+msgid "Want messages signed"
+msgstr "Mezuak sinatu nahi dituzu"
+
+#: auths/SAML_enterprise/saml.py:244
+msgid "If set, messages will be signed"
+msgstr "Ezartzen bada, mezuak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:249
+msgid "Want assertions signed"
+msgstr "Baieztapenak sinatu nahi dituzu"
+
+#: auths/SAML_enterprise/saml.py:252
+#| msgid "If set, the connection will be read only"
+msgid "If set, assertions will be signed"
+msgstr "Ezartzen bada, baieztapenak sinatuko dira"
+
+#: auths/SAML_enterprise/saml.py:257
+msgid "Want assertions encrypted"
+msgstr "Baieztapenak zifratuta nahi dituzu"
+
+#: auths/SAML_enterprise/saml.py:260
+#| msgid "If set, the connection will be read only"
+msgid "If set, assertions will be encrypted"
+msgstr "Ezartzen bada, baieztapenak enkriptatuko dira"
+
+#: auths/SAML_enterprise/saml.py:265
+msgid "Want nameID encrypted"
+msgstr "nameID enkriptatu nahi duzu"
+
+#: auths/SAML_enterprise/saml.py:268
+#| msgid "If set, the connection will be read only"
+msgid "If set, nameID will be encrypted"
+msgstr "Ezartzen bada, nameID enkriptatu egingo da"
+
+#: auths/SAML_enterprise/saml.py:273
+#| msgid "requested a template that do not exist"
+msgid "Requested authn context"
+msgstr "Eskatutako authn testuingurua"
+
+#: auths/SAML_enterprise/saml.py:276
+#| msgid "If set, the connection will be read only"
+msgid "If set, requested authn context will be sent"
+msgstr "Ezartzen bada, eskatutako autentifikazio-testuingurua bidaliko da"
+
+#: auths/SAML_enterprise/saml.py:281
+msgid "Metadata cache duration"
+msgstr "Metadatuen cachearen iraupena"
+
+#: auths/SAML_enterprise/saml.py:284
+msgid "Duration of metadata cache in days. 0 means default (ten years)"
+msgstr ""
+"Metadatuen cachearen iraupena egunetan. 0 lehenetsia esan nahi du (hamar "
+"urte)"
+
+#: auths/SAML_enterprise/saml.py:289
+msgid "Metadata validity duration"
+msgstr "Metadatuen balio-iraupena"
+
+#: auths/SAML_enterprise/saml.py:292
+msgid "Duration of metadata validity in days. 0 means default (ten years)"
+msgstr ""
+"Metadatuen indarraldiaren iraupena egunetan. 0 lehenetsia esan nahi du ("
+"hamar urte)"
+
+#: auths/SAML_enterprise/saml.py:297
+msgid "Allow deprecated signature algorithms"
+msgstr "Baimendu zaharkitutako sinadura algoritmoak"
+
+#: auths/SAML_enterprise/saml.py:300
+#| msgid "If checked, fonts smoothing will be allowed"
+msgid "If set, deprecated signature algorithms will be allowed"
+msgstr "Ezartzen bada, zaharkitutako sinadura algoritmoak onartuko dira"
+
+#: auths/SAML_enterprise/saml.py:320
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "Authenticator mota honek ez ditu zuriunerik onartzen IZENA eremuan"
 
-#: auths/SAML_enterprise/saml.py:233
+#: auths/SAML_enterprise/saml.py:330
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
@@ -1981,11 +2114,11 @@ msgstr ""
 "Zerbitzariaren ziurtagiria PEM baliagarria izan behar da (PEM ziurtagiriak "
 "hasi behar dira ----- ZIURTATUEI BEGIN -----)"
 
-#: auths/SAML_enterprise/saml.py:240
+#: auths/SAML_enterprise/saml.py:337
 msgid "Invalid server certificate. "
 msgstr "Baliogabeko zerbitzari ziiurtagiria"
 
-#: auths/SAML_enterprise/saml.py:248
+#: auths/SAML_enterprise/saml.py:345
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
@@ -1993,48 +2126,48 @@ msgstr ""
 "Gako pribatua PEM baliagarria izan behar da (PEM gako pribatuak hasten dira "
 "----- BEGIN RSA PRIBATUA KEY -----"
 
-#: auths/SAML_enterprise/saml.py:255
+#: auths/SAML_enterprise/saml.py:352
 msgid "Invalid private key. "
 msgstr "Gako pribatua baliogabea da."
 
-#: auths/SAML_enterprise/saml.py:260
+#: auths/SAML_enterprise/saml.py:357
 msgid "Certificate and private key do not match"
 msgstr "Ziurtagiria eta gako pribatua ez datoz bat"
 
-#: auths/SAML_enterprise/saml.py:278
+#: auths/SAML_enterprise/saml.py:375
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "Ezin da URL {0} eskuratu: {1}"
 
-#: auths/SAML_enterprise/saml.py:287
+#: auths/SAML_enterprise/saml.py:384
 msgid " (obtained from URL)"
 msgstr "(URLetik lortzen da)"
 
-#: auths/SAML_enterprise/saml.py:289
+#: auths/SAML_enterprise/saml.py:386
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML IDP Metadata ez da baliozkoa"
 
-#: auths/SAML_enterprise/saml.py:346
+#: auths/SAML_enterprise/saml.py:448
 msgid "Can't access idp metadata"
 msgstr "Ezin dira idp metadatuak atzitu"
 
-#: auths/SAML_enterprise/saml.py:411
+#: auths/SAML_enterprise/saml.py:520
 msgid "Error validating SP metadata: "
 msgstr "Errore bat gertatu da SP metadatuak baliozkotzean:"
 
-#: auths/SAML_enterprise/saml.py:535
+#: auths/SAML_enterprise/saml.py:644
 msgid "Error processing SLO: "
 msgstr "Errore bat gertatu da SLO prozesatzen:"
 
-#: auths/SAML_enterprise/saml.py:561
+#: auths/SAML_enterprise/saml.py:665
 msgid "Error processing SAML response: "
 msgstr "Errore bat gertatu da SAML erantzuna prozesatzen:"
 
-#: auths/SAML_enterprise/saml.py:569
+#: auths/SAML_enterprise/saml.py:673
 msgid "SAML response not authenticated"
 msgstr "SAML erantzuna ez da autentifikatu"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:702
 msgid "No attributes returned from IdP"
 msgstr "Ez da atributurik itzuli IdPtik"
 
@@ -2133,11 +2266,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "Ezin da edozein taldek aurkitu zehaztutako partaidetza atributuarekin"
 
-#: core/auths/auth.py:111
+#: core/auths/auth.py:113
 msgid "System Administrator"
 msgstr "Sistema-administratzaileak"
 
-#: core/auths/auth.py:164
+#: core/auths/auth.py:158
 msgid "Forbidden"
 msgstr "Debekatuta"
 
@@ -2271,7 +2404,7 @@ msgstr "Egiaztagiria"
 msgid "Tunnel"
 msgstr "Tunela"
 
-#: core/util/ldaputil.py:131
+#: core/util/ldaputil.py:158
 msgid "Can't contact LDAP server"
 msgstr "Ezin da LDAP zerbitzariarekin kontaktatu"
 
@@ -2544,11 +2677,6 @@ msgstr ""
 msgid "SMTP Server"
 msgstr "SMTP zerbitzaria"
 
-#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:265
-#: transports/HTML5RDS_enterprise/html5rds.py:256
-msgid "Security"
-msgstr "Segurtasuna"
-
 #: mfas/Email/mfa.py:75
 msgid "Security protocol to use"
 msgstr "Erabili beharreko segurtasun-protokoloa"
@@ -2579,8 +2707,8 @@ msgstr "Posta elektronikoaren gaia"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
-#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
-#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
+#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:123 mfas/Radius/mfa.py:133
+#: mfas/Radius/mfa.py:148 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
 #: mfas/SMS/mfa.py:262 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "Konfig"
@@ -2609,21 +2737,21 @@ msgstr "MFA laguntzarik gabeko erabiltzaileentzako politika"
 msgid "Action for MFA response error"
 msgstr "MFA erantzunaren errorearen ekintza"
 
-#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
+#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:118 mfas/Radius/mfa.py:143
 #: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "Baimendu erabiltzaileari saioa hasteko"
 
-#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:119 mfas/Radius/mfa.py:144
 #: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "Ukatu erabiltzailearen saioa"
 
-#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:120 mfas/Radius/mfa.py:145
 msgid "Allow user to login if it IP is in the networks list"
 msgstr "Baimendu erabiltzaileari saioa hasteko IP sareen zerrendan badago"
 
-#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:121 mfas/Radius/mfa.py:146
 msgid "Deny user to login if it IP is in the networks list"
 msgstr "Ukatu erabiltzaileari saioa hasteko IP sareen zerrendan badago"
 
@@ -2685,15 +2813,15 @@ msgstr ""
 "<p>Saioa hasteko saiakera bat egin da <b>{ip}</b> -tik.</p><p> Jarraitzeko, "
 "eman egiaztapen-kodea <b>{code}</b></p>"
 
-#: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
+#: mfas/Radius/mfa.py:66 mfas/Radius/mfa.py:68
 msgid "Radius OTP Challenge"
 msgstr "Radius OTP Erronka"
 
-#: mfas/Radius/mfa.py:87
+#: mfas/Radius/mfa.py:94
 msgid "All users must send OTP"
 msgstr "Erabiltzaile guztiek OTP bidali behar dute"
 
-#: mfas/Radius/mfa.py:91
+#: mfas/Radius/mfa.py:98
 msgid ""
 "If unchecked, an authentication step is needed in order to know if this user "
 "must enter OTP. If checked, all users must enter OTP, so authentication step "
@@ -2703,43 +2831,43 @@ msgstr ""
 "OTP sartu behar duen jakiteko. Hautatzen bada, erabiltzaile guztiek OTP "
 "sartu beharko dute, beraz, autentifikazio-urratsak saltatzen dira."
 
-#: mfas/Radius/mfa.py:105
+#: mfas/Radius/mfa.py:112
 msgid "Radius OTP communication error action"
 msgstr "Radius OTP komunikazio-errorearen ekintza"
 
-#: mfas/Radius/mfa.py:108
+#: mfas/Radius/mfa.py:115
 msgid "Action for OTP server communication error"
 msgstr "OTP zerbitzariaren komunikazio-errorearen ekintza"
 
-#: mfas/Radius/mfa.py:120
+#: mfas/Radius/mfa.py:127
 msgid "Radius OTP networks"
 msgstr "Radius OTP sareak"
 
-#: mfas/Radius/mfa.py:124
+#: mfas/Radius/mfa.py:131
 msgid "Networks for Radius OTP authentication"
 msgstr "Radius OTP autentifikaziorako sareak"
 
-#: mfas/Radius/mfa.py:130
+#: mfas/Radius/mfa.py:137
 msgid "User without defined OTP in server"
 msgstr "Zerbitzarian OTP definitu gabeko erabiltzailea"
 
-#: mfas/Radius/mfa.py:133
+#: mfas/Radius/mfa.py:140
 msgid "Action for user without defined Radius Challenge"
 msgstr "Radius Challenge definitu gabeko erabiltzaileentzako ekintza"
 
-#: mfas/Radius/mfa.py:193
+#: mfas/Radius/mfa.py:200
 msgid "OTP Code"
 msgstr "OTP kodea"
 
-#: mfas/Radius/mfa.py:201
+#: mfas/Radius/mfa.py:208
 msgid "Please enter OTP"
 msgstr "Mesedez, sartu OTP"
 
-#: mfas/Radius/mfa.py:229 mfas/Radius/mfa.py:291
+#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
 msgid "Radius OTP connection error"
 msgstr "Radius OTP konexio-errorea"
 
-#: mfas/Radius/mfa.py:278
+#: mfas/Radius/mfa.py:288
 msgid "Invalid OTP code"
 msgstr "OTP kodea baliogabea"
 
@@ -2920,7 +3048,7 @@ msgstr "Ezin izan da SMS bidaltzean"
 msgid "SMS response error"
 msgstr "SMS erantzunaren errorea"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:316
+#: mfas/SMS/mfa.py:397 web/views/modern.py:315
 msgid "MFA Code"
 msgstr "MFA kodea"
 
@@ -3366,7 +3494,7 @@ msgstr "Os Manager domeinuko leiho makinak kontrolatzeko."
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
-#: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
+#: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:97
 #: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "Domeinua"
@@ -4072,7 +4200,7 @@ msgstr "Makina honetarako erabili beharreko gako bikotea"
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
 #: services/Proxmox/service.py:172 services/VCloud_enterprise/service.py:108
-#: services/Vmware_enterprise/service_linked.py:186 services/Xen/service.py:166
+#: services/Vmware_enterprise/service_linked.py:162 services/Xen/service.py:166
 msgid "Machine Names"
 msgstr "Makina izenak"
 
@@ -4084,7 +4212,7 @@ msgstr "Makina izenak"
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
 #: services/Proxmox/service.py:175 services/VCloud_enterprise/service.py:111
-#: services/Vmware_enterprise/service_linked.py:189 services/Xen/service.py:169
+#: services/Vmware_enterprise/service_linked.py:165 services/Xen/service.py:169
 msgid "Base name for clones from this machine"
 msgstr "Makinaren klonak oinarrizko izena"
 
@@ -4096,7 +4224,7 @@ msgstr "Makinaren klonak oinarrizko izena"
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
 #: services/Proxmox/service.py:182 services/VCloud_enterprise/service.py:117
-#: services/Vmware_enterprise/service_linked.py:195 services/Xen/service.py:176
+#: services/Vmware_enterprise/service_linked.py:171 services/Xen/service.py:176
 msgid "Name Length"
 msgstr "Izen luzeera"
 
@@ -4108,7 +4236,7 @@ msgstr "Izen luzeera"
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
 #: services/Proxmox/service.py:185 services/VCloud_enterprise/service.py:120
-#: services/Vmware_enterprise/service_linked.py:198 services/Xen/service.py:179
+#: services/Vmware_enterprise/service_linked.py:174 services/Xen/service.py:179
 msgid "Size of numeric part for the names of these machines"
 msgstr "Makina horien izenetarako zati numerikoaren tamaina"
 
@@ -4355,13 +4483,13 @@ msgstr "Datastoreak non igoerak eta argitalpenak jarri"
 
 #: services/HyperV_enterprise/legacy/service.py:95
 #: services/HyperV_enterprise/service.py:94 services/OVirt/service.py:133
-#: services/Vmware_enterprise/service_linked.py:205 services/Xen/service.py:119
+#: services/Vmware_enterprise/service_linked.py:181 services/Xen/service.py:119
 msgid "Reserved Space"
 msgstr "Erreserbatutako espazioa"
 
 #: services/HyperV_enterprise/legacy/service.py:98
 #: services/HyperV_enterprise/service.py:97 services/OVirt/service.py:137
-#: services/Vmware_enterprise/service_linked.py:208 services/Xen/service.py:122
+#: services/Vmware_enterprise/service_linked.py:184 services/Xen/service.py:122
 msgid "Minimal free space in GB"
 msgstr "Gutxieneko doako espazioa GB-an"
 
@@ -4370,7 +4498,7 @@ msgstr "Gutxieneko doako espazioa GB-an"
 #: services/NutanixPrism_enterprise/service.py:69
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:142
 #: services/Proxmox/service.py:136
-#: services/Vmware_enterprise/service_linked.py:130 services/Xen/service.py:127
+#: services/Vmware_enterprise/service_linked.py:106 services/Xen/service.py:127
 msgid "Base Machine"
 msgstr "Oinarri makina"
 
@@ -4416,15 +4544,15 @@ msgstr "Oinarrizko makina zerbitzua"
 #: services/Proxmox/service.py:153 services/Proxmox/service.py:167
 #: services/Proxmox/service.py:176 services/Proxmox/service.py:186
 #: services/Vmware_enterprise/service_full.py:81
-#: services/Vmware_enterprise/service_linked.py:116
-#: services/Vmware_enterprise/service_linked.py:134
-#: services/Vmware_enterprise/service_linked.py:145
-#: services/Vmware_enterprise/service_linked.py:155
-#: services/Vmware_enterprise/service_linked.py:164
-#: services/Vmware_enterprise/service_linked.py:173
-#: services/Vmware_enterprise/service_linked.py:183
-#: services/Vmware_enterprise/service_linked.py:191
-#: services/Vmware_enterprise/service_linked.py:200 services/Xen/service.py:130
+#: services/Vmware_enterprise/service_linked.py:101
+#: services/Vmware_enterprise/service_linked.py:110
+#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:131
+#: services/Vmware_enterprise/service_linked.py:140
+#: services/Vmware_enterprise/service_linked.py:149
+#: services/Vmware_enterprise/service_linked.py:159
+#: services/Vmware_enterprise/service_linked.py:167
+#: services/Vmware_enterprise/service_linked.py:176 services/Xen/service.py:130
 #: services/Xen/service.py:139 services/Xen/service.py:150
 #: services/Xen/service.py:161 services/Xen/service.py:170
 #: services/Xen/service.py:180
@@ -4443,13 +4571,13 @@ msgstr ""
 #: services/HyperV_enterprise/service.py:119
 #: services/NutanixPrism_enterprise/service.py:76
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:150
-#: services/Vmware_enterprise/service_linked.py:138 services/Xen/service.py:144
+#: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:144
 msgid "Memory (Mb)"
 msgstr "Memoria (Mb)"
 
 #: services/HyperV_enterprise/legacy/service.py:127
 #: services/HyperV_enterprise/service.py:124
-#: services/Vmware_enterprise/service_linked.py:143
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Memory for machines deployed from this service"
 msgstr "Zerbitzu honetatik zabaldutako makina memoria"
 
@@ -4548,7 +4676,6 @@ msgid "Enable Compatibility for Migration"
 msgstr "Gaitu Migraziorako bateragarritasuna"
 
 #: services/HyperV_enterprise/service.py:149
-#| msgid "If checked, nested virtualization will be enabled for this service"
 msgid ""
 "If checked, compatibility for migration will be enabled for this service"
 msgstr ""
@@ -4641,7 +4768,7 @@ msgstr ""
 #: services/NutanixPrism_enterprise/service.py:131
 #: services/Nutanix_enterprise/service.py:127
 #: services/VCloud_enterprise/service.py:64
-#: services/Vmware_enterprise/service_linked.py:90
+#: services/Vmware_enterprise/service_linked.py:189
 msgid "Remove found duplicates"
 msgstr "Kendu aurkitu diren bikoiztuak"
 
@@ -4653,13 +4780,13 @@ msgstr ""
 "Aktibo badago, zerbitzu hauetarako bikoiztuak diren vApps aurkitu egingo dira"
 
 #: services/NutanixPrism_enterprise/service.py:138
-#: services/Nutanix_enterprise/service.py:134 services/Proxmox/service.py:127
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Nutanix_enterprise/service.py:135 services/Proxmox/service.py:127
+#: services/Vmware_enterprise/service_linked.py:207
 msgid "Try SOFT Shutdown first"
 msgstr "Saiatu SOFT Shutdown lehenik"
 
 #: services/NutanixPrism_enterprise/service.py:142
-#: services/Nutanix_enterprise/service.py:138
+#: services/Nutanix_enterprise/service.py:139
 msgid ""
 "If active, UDS will try to shutdown (soft) the machine using Nutanix ACPI. "
 "Will delay 30 seconds the power off of hanged machines."
@@ -4668,7 +4795,7 @@ msgstr ""
 "erabiliz. Zintzilikatutako makinen itzalaldia 30 segundo atzeratuko du."
 
 #: services/NutanixPrism_enterprise/service.py:167
-#: services/Nutanix_enterprise/service.py:158
+#: services/Nutanix_enterprise/service.py:170
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "VCPU bakoitzeko Nukleoak eta VCPUS kopurua behar dira"
 
@@ -4717,6 +4844,20 @@ msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr "Makinen sarea (sortutako makina bakoitza sare honetara atxikiko da)"
+
+#: services/Nutanix_enterprise/service.py:145
+#: services/Vmware_enterprise/service_linked.py:198
+msgid "Keep on error"
+msgstr "Akatsak mantendu"
+
+#: services/Nutanix_enterprise/service.py:149
+#: services/Vmware_enterprise/service_linked.py:202
+#| msgid "If active, access errors found on machine will not mark is as error."
+msgid ""
+"If active, access errors found on machine will not be considered errors."
+msgstr ""
+"Aktibatuta badago, makinan aurkitutako sarbide-erroreak ez dira akatstzat "
+"hartuko."
 
 #: services/OVirt/provider.py:80
 msgid "oVirt/RHEV Platform Provider"
@@ -5372,7 +5513,7 @@ msgid "Select if HA is enabled and HA group for machines of this service"
 msgstr "Hautatu HA gaituta badago eta HA taldea zerbitzu honetako makinentzat"
 
 #: services/Proxmox/service.py:131
-#: services/Vmware_enterprise/service_linked.py:125
+#: services/Vmware_enterprise/service_linked.py:211
 msgid ""
 "If active, UDS will try to shutdown (soft) the machine using VMWare Guest "
 "Tools. Will delay 30 seconds the power off of hanged machines."
@@ -5850,7 +5991,7 @@ msgid "vApp template for the service"
 msgstr "Zerbitzuaren txantiloia vApp"
 
 #: services/VCloud_enterprise/service.py:96
-#: services/Vmware_enterprise/service_linked.py:148
+#: services/Vmware_enterprise/service_linked.py:124
 msgid "Main Network"
 msgstr "Sare nagusia"
 
@@ -5953,7 +6094,7 @@ msgid "Datacenter containing base machine"
 msgstr "Base-makina duen datacenter-a"
 
 #: services/Vmware_enterprise/service_fixed.py:75
-#: services/Vmware_enterprise/service_linked.py:106
+#: services/Vmware_enterprise/service_linked.py:91
 msgid "Resource Pool"
 msgstr "Baliabide Pool-a"
 
@@ -6031,29 +6172,15 @@ msgstr "Argitalpen Datastore-ak"
 msgid "Datastores where to put publications"
 msgstr "Argitalpenak jarri non datastore"
 
-#: services/Vmware_enterprise/service_linked.py:94
-msgid "If active, found duplicates clones for this service will be removed"
-msgstr "Aktibo badago, aurkitu dira bikoiztuak klonak zerbitzu honetarako"
-
-#: services/Vmware_enterprise/service_linked.py:98
-msgid "Keep on error"
-msgstr "Akatsak mantendu"
-
-#: services/Vmware_enterprise/service_linked.py:102
-msgid "If active, access errors found on machine will not mark is as error."
-msgstr ""
-"Aktibatuta badago, makinan aurkitutako errore-akatsak ez dira markatuko "
-"errore gisa."
-
-#: services/Vmware_enterprise/service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:99
 msgid "Resource Pool containing base machine"
 msgstr "Oinarrizko makina duen baliabide-pool-a"
 
-#: services/Vmware_enterprise/service_linked.py:132
+#: services/Vmware_enterprise/service_linked.py:108
 msgid "Base machine for this service"
 msgstr "Zerbitzu honen oinarrizko makina"
 
-#: services/Vmware_enterprise/service_linked.py:152
+#: services/Vmware_enterprise/service_linked.py:128
 msgid ""
 "Main network used by the machine. The first interface found in base machine "
 "in this network, will be switched to publication network"
@@ -6061,29 +6188,33 @@ msgstr ""
 "Makinak erabiltzen duen sare nagusia. Sare honetako oinarrizko makinan "
 "aurkitutako lehen interfazea argitalpen sarera aldatuko da"
 
-#: services/Vmware_enterprise/service_linked.py:159
+#: services/Vmware_enterprise/service_linked.py:135
 msgid "Pub. Network"
 msgstr "Argitalpen sarea"
 
-#: services/Vmware_enterprise/service_linked.py:162
+#: services/Vmware_enterprise/service_linked.py:138
 msgid "Network on which the machine will be deployed"
 msgstr "Makina zabalduko duen sarea"
 
-#: services/Vmware_enterprise/service_linked.py:168
+#: services/Vmware_enterprise/service_linked.py:144
 msgid "Clones Folder"
 msgstr "Klonen karpeta"
 
-#: services/Vmware_enterprise/service_linked.py:171
+#: services/Vmware_enterprise/service_linked.py:147
 msgid "Folder where deploy clones"
 msgstr "Klonak ezartzeko karpeta"
 
-#: services/Vmware_enterprise/service_linked.py:177
+#: services/Vmware_enterprise/service_linked.py:153
 msgid "Inc.Datastores"
 msgstr "Inc.Datastores"
 
-#: services/Vmware_enterprise/service_linked.py:181
+#: services/Vmware_enterprise/service_linked.py:157
 msgid "Datastores where to put incrementals"
 msgstr "Datastoreak non igoerak jarri"
+
+#: services/Vmware_enterprise/service_linked.py:193
+msgid "If active, found duplicates clones for this service will be removed"
+msgstr "Aktibo badago, aurkitu dira bikoiztuak klonak zerbitzu honetarako"
 
 #: services/Xen/provider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
@@ -6164,47 +6295,47 @@ msgstr "Itzala"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "Itzal memoria biderkatzailea (erabili arretaz)"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:126
 msgid "Spanish"
 msgstr "Gaztelera"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:127
 msgid "English"
 msgstr "English"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:128
 msgid "French"
 msgstr "Frantses"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:129
 msgid "German"
 msgstr "Aleman"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:130
 msgid "Portuguese"
 msgstr "Portugesa"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:131
 msgid "Italian"
 msgstr "Italiera"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:132
 msgid "Basque"
 msgstr "Euskera"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:133
 msgid "Arabic"
 msgstr "Arabiera"
 
-#: temp_for_locales.py:133
+#: temp_for_locales.py:134
 msgid "Russian"
 msgstr "Errusiera"
 
-#: temp_for_locales.py:134
+#: temp_for_locales.py:135
 msgid "Catalan"
 msgstr "Katalan"
 
-#: temp_for_locales.py:135
+#: temp_for_locales.py:136
 msgid "Chinese"
 msgstr "Txinera"
 
@@ -6351,7 +6482,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "Kreditu hutsak"
 
@@ -6359,7 +6490,7 @@ msgstr "Kreditu hutsak"
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "Egiaztatuta badago, konektatzeko kredentzialak emtpy izango dira"
@@ -6367,7 +6498,7 @@ msgstr "Egiaztatuta badago, konektatzeko kredentzialak emtpy izango dira"
 #: transports/HTML5RDP/html5rdp.py:102
 #: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
-#: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
+#: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:79
 #: transports/SPICE/spice_base.py:70 transports/X2GO/x2go_base.py:71
 msgid "If not empty, this username will be always used as credential"
 msgstr ""
@@ -6376,13 +6507,13 @@ msgstr ""
 #: transports/HTML5RDP/html5rdp.py:108
 #: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
-#: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
+#: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:85
 #: transports/SPICE/spice_base.py:76
 msgid "If not empty, this password will be always used as credential"
 msgstr "Ez bada hutsik, pasahitza beti erabiliko da kredentzial gisa"
 
 #: transports/HTML5RDP/html5rdp.py:112
-#: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
+#: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:89
 #: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "Domainik gabe"
@@ -6398,8 +6529,8 @@ msgstr ""
 "(konektatzeko, xrdp adibidez beharrezkoa da)"
 
 #: transports/HTML5RDP/html5rdp.py:123
-#: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:62
+#: transports/HTML5RDS_enterprise/html5rds.py:116
+#: transports/RDP/rdp_base.py:100 transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as "
 "DOMAIN\\user)"
@@ -6414,7 +6545,7 @@ msgstr "Erakutsi horma-papera"
 
 #: transports/HTML5RDP/html5rdp.py:131
 #: transports/HTML5RDS_enterprise/html5rds.py:124
-#: transports/RDP/rdp_base.py:241
+#: transports/RDP/rdp_base.py:243
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -6424,25 +6555,25 @@ msgstr ""
 
 #: transports/HTML5RDP/html5rdp.py:136
 #: transports/HTML5RDS_enterprise/html5rds.py:129
-#: transports/RDP/rdp_base.py:254
+#: transports/RDP/rdp_base.py:256
 msgid "Allow Desk.Comp."
 msgstr "Baimendu Desk.Comp."
 
 #: transports/HTML5RDP/html5rdp.py:138
 #: transports/HTML5RDS_enterprise/html5rds.py:131
-#: transports/RDP/rdp_base.py:256
+#: transports/RDP/rdp_base.py:258
 msgid "If checked, desktop composition will be allowed"
 msgstr "Egiaztatuta badago, mahaigaineko konposizioa onartuko da"
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
+#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:158
 msgid "Font Smoothing"
 msgstr "Letra tipoaren leuntzea"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:152
+#: transports/RDS_enterprise/rds_base.py:161
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr ""
 "Egiaztatuta badago, letra-tipoak leuntzeko aukera izango dute (leiho "
@@ -6553,7 +6684,7 @@ msgstr "Desgaitu itsatsi urruneko moduan"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "Arbelean gaitu"
 
@@ -6741,11 +6872,15 @@ msgstr ""
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS (Garraioaren segurtasunaren geruza enkriptatzea)"
 
-#: transports/HTML5RDP/html5rdp.py:297 transports/RDP/rdp_base.py:192
+#: transports/HTML5RDP/html5rdp.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:306
+#: transports/RDP/rdp_base.py:194 transports/RDS_enterprise/rds_base.py:136
 msgid "RDP Port"
 msgstr "RDP ataka"
 
-#: transports/HTML5RDP/html5rdp.py:298 transports/RDP/rdp_base.py:193
+#: transports/HTML5RDP/html5rdp.py:298
+#: transports/HTML5RDS_enterprise/html5rds.py:307
+#: transports/RDP/rdp_base.py:195 transports/RDS_enterprise/rds_base.py:137
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "Erabili ataka hau RDP ataka gisa. 3389 balio lehenetsia."
 
@@ -6764,7 +6899,7 @@ msgstr ""
 "Enterprise Tunnelerako soilik balio du)"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:365
+#: transports/HTML5RDS_enterprise/html5rds.py:374
 #: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "Zerbitzariak http edo https izan behar du"
@@ -6789,11 +6924,11 @@ msgstr ""
 "Karga orekatzeko informazioa. Normalean, eremu hau hutsik dago. Egiaztatu "
 "zure orekatzailearen dokumentazioa."
 
-#: transports/HTML5RDS_enterprise/html5rds.py:305
+#: transports/HTML5RDS_enterprise/html5rds.py:314
 msgid "Gateway Hostname"
 msgstr "Gateway ostalari-izena"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:308
+#: transports/HTML5RDS_enterprise/html5rds.py:317
 msgid ""
 "Hostname or IP address of the gateway server. if ommited, no gateway will be "
 "used"
@@ -6801,19 +6936,19 @@ msgstr ""
 "Pasabide-zerbitzariaren ostalari-izena edo IP helbidea. kenduz gero, ez da "
 "atebiderik erabiliko"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:316
+#: transports/HTML5RDS_enterprise/html5rds.py:325
 msgid "Gateway Port"
 msgstr "Gateway Portua"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:318
+#: transports/HTML5RDS_enterprise/html5rds.py:327
 msgid "Port of the gateway server."
 msgstr "Pasabide zerbitzariaren ataka."
 
-#: transports/HTML5RDS_enterprise/html5rds.py:326
+#: transports/HTML5RDS_enterprise/html5rds.py:335
 msgid "Gateway Username"
 msgstr "Gateway Erabiltzaile-izena"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:329
+#: transports/HTML5RDS_enterprise/html5rds.py:338
 msgid ""
 "Username for the gateway server. Normally, this will be blank, and the "
 "username will be taken from the connection parameters."
@@ -6821,11 +6956,11 @@ msgstr ""
 "Atebide-zerbitzariaren erabiltzaile-izena. Normalean, hau hutsik egongo da, "
 "eta erabiltzaile-izena konexio-parametroetatik hartuko da."
 
-#: transports/HTML5RDS_enterprise/html5rds.py:337
+#: transports/HTML5RDS_enterprise/html5rds.py:346
 msgid "Gateway Password"
 msgstr "Pasahitza pasahitza"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:340
+#: transports/HTML5RDS_enterprise/html5rds.py:349
 msgid ""
 "Password for the gateway server. Normally, this will be blank, and the "
 "password will be taken from the connection parameters."
@@ -6833,11 +6968,11 @@ msgstr ""
 "Pasahitza atebideko zerbitzariaren pasahitza. Normalean, hau hutsik egongo "
 "da, eta pasahitza konexio-parametroetatik hartuko da."
 
-#: transports/HTML5RDS_enterprise/html5rds.py:348
+#: transports/HTML5RDS_enterprise/html5rds.py:357
 msgid "Gateway Domain"
 msgstr "Gateway domeinua"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:351
+#: transports/HTML5RDS_enterprise/html5rds.py:360
 msgid ""
 "Domain for the gateway server. Normally, this will be blank, and the domain "
 "will be taken from the connection parameters."
@@ -6845,7 +6980,7 @@ msgstr ""
 "Atebideko zerbitzariaren domeinua. Normalean, hau hutsik egongo da, eta "
 "domeinua konexio-parametroetatik hartuko da."
 
-#: transports/HTML5RDS_enterprise/html5rds.py:370
+#: transports/HTML5RDS_enterprise/html5rds.py:379
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -6944,8 +7079,8 @@ msgstr "VNC zerbitzariaren ataka"
 msgid "Port of the VNC server."
 msgstr "VNC zerbitzariaren ataka."
 
-#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:135
+#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:226
+#: transports/RDS_enterprise/rds_base.py:144
 msgid "Color depth"
 msgstr "Koloreen sakonera"
 
@@ -6999,12 +7134,12 @@ msgid "If checked, the connection will be opened in full screen mode"
 msgstr "Markatuta badago, konexioa pantaila osoko moduan irekiko da"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:66
-#: transports/RDP/rdp_base.py:246
+#: transports/RDP/rdp_base.py:248
 msgid "Multiple monitors"
 msgstr "Hainbat monitore"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:69
-#: transports/RDP/rdp_base.py:249
+#: transports/RDP/rdp_base.py:251
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -7060,7 +7195,7 @@ msgstr ""
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:127
 #: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "Tunnel zerbitzariaren eremuan HOSTALARI : PORTUA erabili behar da "
@@ -7115,15 +7250,15 @@ msgstr "PCoIP protokoloa Teradici Cloud Access erabiliz."
 msgid "If not empty, this domain will be always used as credential domain"
 msgstr "Ez bada hutsik, domeinu hau beti kredentzial domeinu gisa erabiliko da"
 
-#: transports/RDP/rdp.py:57 transports/RDP/rdptunnel.py:62
+#: transports/RDP/rdp.py:59 transports/RDP/rdptunnel.py:62
 msgid "RDP"
 msgstr "RDP"
 
-#: transports/RDP/rdp.py:59
+#: transports/RDP/rdp.py:61
 msgid "RDP Protocol. Direct connection."
 msgstr "RDP protokoloa. Zuzeneko konexioa."
 
-#: transports/RDP/rdp_base.py:90
+#: transports/RDP/rdp_base.py:92
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
@@ -7131,39 +7266,39 @@ msgstr ""
 "Egiaztatuta badago, domeinuaren zati hori beti hustu egingo da (xrdp-rekin "
 "konektatzeko adibidez beharrezkoa da)"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "Onartu txartel adimendunak"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:108 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr ""
 "Egiaztatuta badago, garraio honek txartel adimendunak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "Onartu inprimagailuak"
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
+#: transports/RDP/rdp_base.py:114 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr ""
 "Egiaztatuta badago, garraio honek erabiltzailearen inprimagailuak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "Tokiko gidalerroen politika"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
+#: transports/RDP/rdp_base.py:120 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "Tokiko giden birbanaketa politika"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "Indar unitateak"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:133 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
@@ -7171,129 +7306,129 @@ msgstr ""
 "Erabili komaz bereizitako balioak, adibidez \"C:, D:\". Drive gidalerroak ez "
 "badira onartzen, hau alde batera utziko da"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "Baimendu serialak"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
+#: transports/RDP/rdp_base.py:141 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr ""
 "Egiaztatuta badago, garraio honek erabiltzailearen serieko atakak erabiltzea "
 "ahalbidetuko du"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "Hautatuta badago, kopiatu eta itsasteko funtzioak onartuko dira"
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "Gaitu soinua"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
+#: transports/RDP/rdp_base.py:154 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "Egiaztatuta badago, soinua birbideratuko da."
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "Gaitu webcam"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
+#: transports/RDP/rdp_base.py:161 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "Markatuta badago, webcam-a birbideratuko da (Windows BAKARRIK)."
 
-#: transports/RDP/rdp_base.py:164
+#: transports/RDP/rdp_base.py:166
 msgid "USB redirection"
 msgstr "USB birbideratzea"
 
-#: transports/RDP/rdp_base.py:166
+#: transports/RDP/rdp_base.py:168
 msgid "USB redirection policy"
 msgstr "USB birbideratze politika"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "Credssp laguntza"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
+#: transports/RDP/rdp_base.py:187 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "Hautatuta badago, kredentzialak hornitzailearen euskarria gaituko du)"
 
-#: transports/RDP/rdp_base.py:200
+#: transports/RDP/rdp_base.py:202
 msgid "Screen Size"
 msgstr "Pantaila-neurria"
 
-#: transports/RDP/rdp_base.py:202
+#: transports/RDP/rdp_base.py:204
 msgid "Screen size for this transport"
 msgstr "Garraioaren tamainaren tamaina"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
+#: transports/RDP/rdp_base.py:228 transports/RDS_enterprise/rds_base.py:146
 msgid "Color depth for this connection"
 msgstr "Kolorearen sakontasuna konexio honetarako"
 
-#: transports/RDP/rdp_base.py:238
+#: transports/RDP/rdp_base.py:240
 msgid "Wallpaper/theme"
 msgstr "Wallpaper / gaiaren"
 
-#: transports/RDP/rdp_base.py:263
+#: transports/RDP/rdp_base.py:265
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "Egiaztatuta badago, letra-tipoak leuntzeko aukera izango da"
 
-#: transports/RDP/rdp_base.py:267
+#: transports/RDP/rdp_base.py:269
 msgid "Connection Bar"
 msgstr "Konexio barra"
 
-#: transports/RDP/rdp_base.py:269
+#: transports/RDP/rdp_base.py:271
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr ""
 "Egiaztatuta badago, konexioaren barra agertuko da (Windows bezeroetan soilik)"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
+#: transports/RDP/rdp_base.py:277 transports/RDS_enterprise/rds_base.py:189
 msgid "Multimedia sync"
 msgstr "Multimedia sinkronizazioa"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
+#: transports/RDP/rdp_base.py:280 transports/RDS_enterprise/rds_base.py:192
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr ""
 "Egiaztatuta badago. Linux bezeroak xfreerdp-ren multimedia parametroa "
 "erabiliko du"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
+#: transports/RDP/rdp_base.py:285 transports/RDS_enterprise/rds_base.py:197
 msgid "Use Alsa"
 msgstr "Erabili Alsa"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
+#: transports/RDP/rdp_base.py:288 transports/RDS_enterprise/rds_base.py:200
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr ""
 "Egiaztatuta badago, Linux bezeroak ALSA erabiliko du, bestela Pulse "
 "erabiliko da"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
+#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:205
 msgid "Printer string"
 msgstr "Inprimagailuen katea"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
+#: transports/RDP/rdp_base.py:296 transports/RDS_enterprise/rds_base.py:208
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr ""
 "Inprimagailua hautatuta badago, xfreerdp bezeroarekin erabiliko den "
 "inprimagailuaren katea"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
+#: transports/RDP/rdp_base.py:302 transports/RDS_enterprise/rds_base.py:214
 msgid "Smartcard string"
 msgstr "Smartcard katea"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
+#: transports/RDP/rdp_base.py:305 transports/RDS_enterprise/rds_base.py:217
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr ""
 "Smartcard egiaztatzen bada, xfreerdp bezeroarekin erabilitako smartcard katea"
 
-#: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
-#: transports/RDS_enterprise/rds_base.py:224
+#: transports/RDP/rdp_base.py:311 transports/RDP/rdp_base.py:331
+#: transports/RDP/rdp_base.py:341 transports/RDS_enterprise/rds_base.py:223
+#: transports/RDS_enterprise/rds_base.py:233
 msgid "Custom parameters"
 msgstr "Parametro pertsonalizatuak"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
+#: transports/RDP/rdp_base.py:314 transports/RDS_enterprise/rds_base.py:226
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -7301,11 +7436,11 @@ msgstr ""
 "Ez bada hutsik, parametro gehigarria Linux Client-era sartzeko (adibidez / "
 "usb: id, dev: 054c: 0268 edo zure xfreerdp bezeroarekin bateragarria)"
 
-#: transports/RDP/rdp_base.py:319
+#: transports/RDP/rdp_base.py:321
 msgid "Allow Microsoft Rdp Client"
 msgstr "Baimendu Microsoft Rdp bezeroa"
 
-#: transports/RDP/rdp_base.py:322
+#: transports/RDP/rdp_base.py:324
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
@@ -7313,7 +7448,7 @@ msgstr ""
 "Markatuta badago, Microsoft Remote Desktop Client erabiltzeko baimena ematen "
 "du. PASAHITZA AHAL IZANGO DA!"
 
-#: transports/RDP/rdp_base.py:332
+#: transports/RDP/rdp_base.py:334
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -7323,10 +7458,21 @@ msgstr ""
 "parametro gehigarria (adibidez / usb: id, dev: 054c: 0268 edo zure xfreerdp "
 "bezeroarekin bateragarria dena)"
 
-#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
+#: transports/RDP/rdp_base.py:344 transports/RDS_enterprise/rds_base.py:236
 msgid "If not empty, extra parameters to include for Windows Client"
 msgstr ""
 "Hutsik ez badago, Windows Bezeroarentzat sartzeko parametro gehigarriak"
+
+#: transports/RDP/rdp_base.py:352
+msgid "Optimize Teams"
+msgstr "Taldeak optimizatu"
+
+#: transports/RDP/rdp_base.py:354
+#| msgid "If checked, connection bar will be shown (only on Windows clients)"
+msgid "If checked, Teams will be optimized (only works on Windows clients)"
+msgstr ""
+"Hautatzen bada, taldeak optimizatuko dira (Windows bezeroetan bakarrik "
+"funtzionatzen du)"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
@@ -7341,31 +7487,31 @@ msgstr "RDAs for vApps"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "RDS sarbidea vPps bidez RDP erabiliz. Zuzeneko konexioa."
 
-#: transports/RDS_enterprise/rds_base.py:156
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Window state"
 msgstr "Leihoaren egoera"
 
-#: transports/RDS_enterprise/rds_base.py:159
+#: transports/RDS_enterprise/rds_base.py:168
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "UDS aplikazioa egoera horretan leihoarekin exekutatzen saiatuko da"
 
-#: transports/RDS_enterprise/rds_base.py:163
+#: transports/RDS_enterprise/rds_base.py:172
 msgid "Normal"
 msgstr "Normala"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:173
 msgid "Maximized"
 msgstr "Maximizatuta"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:174
 msgid "Minimized"
 msgstr "Minimizatua"
 
-#: transports/RDS_enterprise/rds_base.py:171
+#: transports/RDS_enterprise/rds_base.py:180
 msgid "Execute as shell"
 msgstr "Exekutatu shell gisa"
 
-#: transports/RDS_enterprise/rds_base.py:175
+#: transports/RDS_enterprise/rds_base.py:184
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -7722,10 +7868,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Autentikatzaileak ez du informaziorik eman."
 
-#: web/views/modern.py:307
+#: web/views/modern.py:306
 msgid "{} days"
 msgstr "{} egun"
 
-#: web/views/modern.py:309
+#: web/views/modern.py:308
 msgid "{} hours"
 msgstr "{} ordu"

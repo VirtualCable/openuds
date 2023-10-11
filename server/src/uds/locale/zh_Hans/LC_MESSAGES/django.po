@@ -10,11 +10,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-23 16:16+0200\n"
+"POT-Creation-Date: 2023-10-12 01:26+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -605,10 +606,10 @@ msgid "Check certificate"
 msgstr "检查证书"
 
 #: REST/methods/proxies.py:88
-#: auths/ActiveDirectory_enterprise/authenticator.py:52
+#: auths/ActiveDirectory_enterprise/authenticator.py:53
 #: auths/EDirectory_enterprise/authenticator.py:47
-#: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:69
-#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:66
+#: auths/Radius/authenticator.py:67 auths/RegexLdap/authenticator.py:68
+#: auths/SimpleLDAP/authenticator.py:60 mfas/Radius/mfa.py:73
 #: services/HyperV_enterprise/legacy/provider.py:88
 #: services/HyperV_enterprise/provider.py:64
 #: services/NutanixPrism_enterprise/provider.py:39
@@ -625,8 +626,8 @@ msgid "Server (IP or FQDN) that will serve as proxy."
 msgstr "将充当代理的服务器（IP或FQDN）。"
 
 #: REST/methods/proxies.py:97 auths/EDirectory_enterprise/authenticator.py:54
-#: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:76
-#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:73
+#: auths/Radius/authenticator.py:74 auths/RegexLdap/authenticator.py:75
+#: auths/SimpleLDAP/authenticator.py:67 mfas/Radius/mfa.py:80
 #: services/HyperV_enterprise/legacy/provider.py:95
 #: services/HyperV_enterprise/provider.py:136
 #: services/NutanixPrism_enterprise/provider.py:46
@@ -645,9 +646,9 @@ msgid "Port of proxy server"
 msgstr "代理服务器端口"
 
 #: REST/methods/proxies.py:105
-#: auths/ActiveDirectory_enterprise/authenticator.py:58
+#: auths/ActiveDirectory_enterprise/authenticator.py:59
 #: auths/EDirectory_enterprise/authenticator.py:61
-#: auths/RegexLdap/authenticator.py:83 auths/SimpleLDAP/authenticator.py:74
+#: auths/RegexLdap/authenticator.py:82 auths/SimpleLDAP/authenticator.py:74
 #: osmanagers/WindowsOsManager/windows_domain.py:124
 #: services/OpenNebula/provider.py:89 services/OpenStack/provider_legacy.py:119
 msgid "Use SSL"
@@ -676,8 +677,8 @@ msgstr "可用报告"
 #: auths/ActiveDirectory_enterprise/authenticator.py:212
 #: auths/AzureAD_enterprise/azure_ad.py:97
 #: auths/EDirectory_enterprise/authenticator.py:133
-#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:219
-#: auths/SAML_enterprise/saml.py:108 auths/SimpleLDAP/authenticator.py:212
+#: auths/Radius/authenticator.py:63 auths/RegexLdap/authenticator.py:212
+#: auths/SAML_enterprise/saml.py:111 auths/SimpleLDAP/authenticator.py:212
 #: models/calendar_action.py:147 models/calendar_action.py:154
 msgid "Group"
 msgstr "组"
@@ -731,7 +732,7 @@ msgstr "防火墙后面的服务代理"
 #: REST/methods/services.py:318 REST/methods/services_pools.py:359
 #: REST/methods/services_pools.py:370 REST/methods/services_pools.py:381
 #: REST/methods/services_pools.py:489 REST/methods/services_pools.py:501
-#: auths/RegexLdap/authenticator.py:194 core/ui/user_interface.py:101
+#: auths/RegexLdap/authenticator.py:187 core/ui/user_interface.py:101
 #: osmanagers/WindowsOsManager/windows_domain.py:105
 #: osmanagers/WindowsOsManager/windows_domain.py:113
 #: osmanagers/WindowsOsManager/windows_domain.py:121
@@ -1025,11 +1026,11 @@ msgid "Staff member"
 msgstr "工作人员"
 
 #: REST/methods/users_groups.py:115 REST/methods/users_groups.py:138
-#: auths/ActiveDirectory_enterprise/authenticator.py:79
+#: auths/ActiveDirectory_enterprise/authenticator.py:80
 #: auths/AzureAD_enterprise/azure_ad.py:96
 #: auths/EDirectory_enterprise/authenticator.py:69
-#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:91
-#: auths/SAML_enterprise/saml.py:105 reports/lists/audit.py:120
+#: auths/Radius/authenticator.py:62 auths/RegexLdap/authenticator.py:88
+#: auths/SAML_enterprise/saml.py:108 reports/lists/audit.py:120
 #: reports/stats/pool_users_summary.py:177 reports/stats/usage_by_pool.py:172
 #: templates/uds/reports/stats/pool-users-summary.html:14
 #: templates/uds/reports/stats/usage-by-pool.html:15
@@ -1048,7 +1049,7 @@ msgstr "目前的用户"
 #: REST/methods/users_groups.py:162
 #: auths/ActiveDirectory_enterprise/authenticator.py:210
 #: auths/EDirectory_enterprise/authenticator.py:131
-#: auths/RegexLdap/authenticator.py:217 auths/SimpleLDAP/authenticator.py:210
+#: auths/RegexLdap/authenticator.py:210 auths/SimpleLDAP/authenticator.py:210
 #: mfas/Email/mfa.py:87 services/HyperV_enterprise/legacy/provider.py:103
 #: services/HyperV_enterprise/provider.py:86
 #: services/NutanixPrism_enterprise/provider.py:54
@@ -1062,7 +1063,7 @@ msgstr "目前的用户"
 #: transports/HTML5VNC/html5vnc.py:87
 #: transports/NICEDCV_enterprise/nicedcv_base.py:46
 #: transports/NoMachine_enterprise/nomachine_base.py:63
-#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:75
+#: transports/PCoIP_enterprise/pcoip.py:61 transports/RDP/rdp_base.py:77
 #: transports/SPICE/spice_base.py:69 transports/X2GO/x2go_base.py:70
 #: web/forms/LoginForm.py:44
 msgid "Username"
@@ -1170,34 +1171,34 @@ msgstr "操作不受支持"
 msgid "requested a template that do not exist"
 msgstr "请求一个不存在的模板"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:54
+#: auths/ActiveDirectory_enterprise/authenticator.py:55
 msgid "Active Directory Server IP or Hostname"
 msgstr "Active Directory服务器IP或主机名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:60
+#: auths/ActiveDirectory_enterprise/authenticator.py:61
 #: osmanagers/WindowsOsManager/windows_domain.py:126
 msgid "If checked,  a ssl connection to Active Directory will be used"
 msgstr "如果选中，将使用与Active Directory的ssl连接"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:63
+#: auths/ActiveDirectory_enterprise/authenticator.py:64
 #: services/VCloud_enterprise/provider.py:71
 msgid "Compatibility"
 msgstr "兼容性"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:66
+#: auths/ActiveDirectory_enterprise/authenticator.py:67
 msgid "Compatibility of AD connection (Usually windows 2000 and later)"
 msgstr "AD连接的兼容性（通常是Windows 2000及更高版本）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:81
+#: auths/ActiveDirectory_enterprise/authenticator.py:82
 msgid ""
 "Username with read privileges on the base selected (use USER@DOMAIN.DOM form "
 "for this)"
 msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM表单）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:87
+#: auths/ActiveDirectory_enterprise/authenticator.py:88
 #: auths/ActiveDirectory_enterprise/authenticator.py:214
 #: auths/EDirectory_enterprise/authenticator.py:77
-#: auths/RegexLdap/authenticator.py:99 auths/RegexLdap/authenticator.py:221
+#: auths/RegexLdap/authenticator.py:96 auths/RegexLdap/authenticator.py:214
 #: auths/SimpleLDAP/authenticator.py:90 auths/SimpleLDAP/authenticator.py:214
 #: core/auths/authenticator.py:147 mfas/Email/mfa.py:96
 #: osmanagers/WindowsOsManager/windows_domain.py:85
@@ -1214,52 +1215,52 @@ msgstr "在所选基础上具有读取权限的用户名（使用USER@DOMAIN.DOM
 #: transports/HTML5RDP/html5rdp.py:106 transports/HTML5VNC/html5vnc.py:93
 #: transports/NICEDCV_enterprise/nicedcv_base.py:52
 #: transports/NoMachine_enterprise/nomachine_base.py:69
-#: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:81
+#: transports/PCoIP_enterprise/pcoip.py:67 transports/RDP/rdp_base.py:83
 #: transports/SPICE/spice_base.py:75 web/forms/LoginForm.py:46
 #: web/forms/LoginForm.py:47
 msgid "Password"
 msgstr "密码"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:89
+#: auths/ActiveDirectory_enterprise/authenticator.py:90
 #: auths/EDirectory_enterprise/authenticator.py:79
-#: auths/RegexLdap/authenticator.py:101 auths/SimpleLDAP/authenticator.py:92
+#: auths/RegexLdap/authenticator.py:98 auths/SimpleLDAP/authenticator.py:92
 msgid "Password of the ldap user"
 msgstr "ldap用户的密码"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:95
+#: auths/ActiveDirectory_enterprise/authenticator.py:96
 msgid "Override Base"
 msgstr "覆盖基础"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:97
+#: auths/ActiveDirectory_enterprise/authenticator.py:98
 msgid ""
 "If not empty, will override AD search base with this value (format: dc=..., "
 "dc=...)"
 msgstr "如果不为空，将使用此值覆盖AD搜索库（格式：dc = ...，dc = ...）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:104
+#: auths/ActiveDirectory_enterprise/authenticator.py:105
 msgid "Default domain"
 msgstr "默认域"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:107
+#: auths/ActiveDirectory_enterprise/authenticator.py:108
 msgid ""
 "Domain used for users without domain (if empty, will use the domain of the "
 "user) if compat mode is not \"Windows NT\""
 msgstr ""
 "用于没有域的用户的域（如果为空，将使用用户的域）如果兼容模式不是“Windows NT”"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:116
+#: auths/ActiveDirectory_enterprise/authenticator.py:117
 msgid "Backup servers"
 msgstr "备份服务器"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:119
+#: auths/ActiveDirectory_enterprise/authenticator.py:120
 msgid ""
 "If not empty, this host will be used in case main host server is not "
 "reachable"
 msgstr "如果不为空，则在无法访问主主机服务器的情况下将使用此主机"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:127
+#: auths/ActiveDirectory_enterprise/authenticator.py:128
 #: auths/EDirectory_enterprise/authenticator.py:85
-#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:98
+#: auths/RegexLdap/authenticator.py:104 auths/SimpleLDAP/authenticator.py:98
 #: services/AWS_enterprise/provider.py:76
 #: services/Azure_enterprise/provider.py:98
 #: services/HyperV_enterprise/legacy/provider.py:141
@@ -1273,80 +1274,80 @@ msgstr "如果不为空，则在无法访问主主机服务器的情况下将使
 msgid "Timeout"
 msgstr "超时"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:130
+#: auths/ActiveDirectory_enterprise/authenticator.py:131
 msgid "Timeout in seconds of connection to Active Directory"
 msgstr "连接到Active Directory的超时（以秒为单位）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:136
+#: auths/ActiveDirectory_enterprise/authenticator.py:137
 #: auths/EDirectory_enterprise/authenticator.py:94
-#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:107
+#: auths/RegexLdap/authenticator.py:113 auths/SimpleLDAP/authenticator.py:107
 #: services/Vmware_enterprise/provider.py:121
 msgid "Verify SSL"
 msgstr "验证 SSL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:139
+#: auths/ActiveDirectory_enterprise/authenticator.py:140
 #: auths/EDirectory_enterprise/authenticator.py:98
-#: auths/RegexLdap/authenticator.py:120 auths/SimpleLDAP/authenticator.py:111
+#: auths/RegexLdap/authenticator.py:116 auths/SimpleLDAP/authenticator.py:111
 #: services/Vmware_enterprise/provider.py:125
 msgid ""
 "If checked, SSL verification will be enforced. If not, SSL verification will "
 "be disabled"
 msgstr "如果选中，将强制执行 SSL 验证。否则，SSL 验证将被禁用"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:146
+#: auths/ActiveDirectory_enterprise/authenticator.py:147
 #: auths/EDirectory_enterprise/authenticator.py:105
-#: auths/RegexLdap/authenticator.py:127 auths/SAML_enterprise/saml.py:126
+#: auths/RegexLdap/authenticator.py:122 auths/SAML_enterprise/saml.py:129
 #: auths/SimpleLDAP/authenticator.py:118 transports/SPICE/spice_base.py:83
 msgid "Certificate"
 msgstr "证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:148
+#: auths/ActiveDirectory_enterprise/authenticator.py:149
 #: auths/EDirectory_enterprise/authenticator.py:107
-#: auths/RegexLdap/authenticator.py:129 auths/SimpleLDAP/authenticator.py:120
+#: auths/RegexLdap/authenticator.py:124 auths/SimpleLDAP/authenticator.py:120
 msgid "Certificate to use for SSL verification"
 msgstr "用于 SSL 验证的证书"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:155
+#: auths/ActiveDirectory_enterprise/authenticator.py:156
 msgid "Host translation list"
 msgstr "主机翻译列表"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:160
+#: auths/ActiveDirectory_enterprise/authenticator.py:161
 msgid ""
 "If not empty, this list of key=value pairs will be used to translate the "
 "host name from AD to an resolvable hostname."
 msgstr "如果不为空，则此键=值对列表将用于将主机名从 AD 转换为可解析的主机名。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:168
+#: auths/ActiveDirectory_enterprise/authenticator.py:169
 msgid "Ignore domains"
 msgstr "忽略域"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:172
+#: auths/ActiveDirectory_enterprise/authenticator.py:173
 msgid ""
 "If not empty, this list of domains will be ignored when searching for users. "
 "Comma separated values."
 msgstr "如果不为空，则在搜索用户时将忽略此域列表。逗号分隔值。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:180
+#: auths/ActiveDirectory_enterprise/authenticator.py:181
 msgid "Redirect On Expired"
 msgstr "重定向过期"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:182
+#: auths/ActiveDirectory_enterprise/authenticator.py:183
 msgid ""
 "If not empty, if user password is expired, will be automatically redirected "
 "to this URL"
 msgstr "如果不为空，如果用户密码过期，会自动重定向到这个URL"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:191
+#: auths/ActiveDirectory_enterprise/authenticator.py:192
 #: auths/EDirectory_enterprise/authenticator.py:114
-#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:200
-#: auths/SAML_enterprise/saml.py:200 auths/SimpleLDAP/authenticator.py:192
+#: auths/Radius/authenticator.py:118 auths/RegexLdap/authenticator.py:193
+#: auths/SimpleLDAP/authenticator.py:192
 msgid "MFA attribute"
 msgstr "MFA 属性"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:193
+#: auths/ActiveDirectory_enterprise/authenticator.py:194
 #: auths/EDirectory_enterprise/authenticator.py:116
-#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:202
-#: auths/SAML_enterprise/saml.py:202 auths/SimpleLDAP/authenticator.py:194
+#: auths/Radius/authenticator.py:120 auths/RegexLdap/authenticator.py:195
+#: auths/SimpleLDAP/authenticator.py:194
 msgid "Attribute from where to extract the MFA code"
 msgstr "从哪里提取 MFA 代码的属性"
 
@@ -1359,56 +1360,56 @@ msgid "Authenticate against Active Directory"
 msgstr "针对Active Directory进行身份验证"
 
 #: auths/ActiveDirectory_enterprise/authenticator.py:260
-#: auths/ActiveDirectory_enterprise/authenticator.py:918
+#: auths/ActiveDirectory_enterprise/authenticator.py:961
 msgid "Must specify the username in the form USERNAME@DOMAIN.DOM"
 msgstr "必须以USERNAME@DOMAIN.DOM格式指定用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:520
+#: auths/ActiveDirectory_enterprise/authenticator.py:551
 msgid ""
 "Could not connect to any AD server. Check your configuration (server, ssl "
 "certificates, ...)."
 msgstr "无法连接到任何 AD 服务器。检查您的配置（服务器、ssl 证书等）。"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:793
-#: auths/ActiveDirectory_enterprise/authenticator.py:842
-#: auths/AzureAD_enterprise/azure_ad.py:318
+#: auths/ActiveDirectory_enterprise/authenticator.py:826
+#: auths/ActiveDirectory_enterprise/authenticator.py:875
+#: auths/AzureAD_enterprise/azure_ad.py:321
 #: auths/EDirectory_enterprise/authenticator.py:316
 #: auths/EDirectory_enterprise/authenticator.py:347
-#: auths/RegexLdap/authenticator.py:619 auths/RegexLdap/authenticator.py:650
+#: auths/RegexLdap/authenticator.py:606 auths/RegexLdap/authenticator.py:637
 #: auths/SimpleLDAP/authenticator.py:508 auths/SimpleLDAP/authenticator.py:551
 msgid "Username not found"
 msgstr "找不到用户名"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:826
+#: auths/ActiveDirectory_enterprise/authenticator.py:859
 #: auths/SimpleLDAP/authenticator.py:541
 msgid "Group not found"
 msgstr "未找到组"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:873
-#: auths/ActiveDirectory_enterprise/authenticator.py:897
+#: auths/ActiveDirectory_enterprise/authenticator.py:910
+#: auths/ActiveDirectory_enterprise/authenticator.py:939
 #: auths/EDirectory_enterprise/authenticator.py:369
-#: auths/RegexLdap/authenticator.py:678 auths/SimpleLDAP/authenticator.py:576
+#: auths/RegexLdap/authenticator.py:664 auths/SimpleLDAP/authenticator.py:576
 #: auths/SimpleLDAP/authenticator.py:596
 msgid "Too many results, be more specific"
 msgstr "结果太多，更具体"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:929
+#: auths/ActiveDirectory_enterprise/authenticator.py:972
 msgid "Domain seems to be incorrect, please check it"
 msgstr "域似乎不正确，请检查它"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:947
+#: auths/ActiveDirectory_enterprise/authenticator.py:990
 msgid ""
 "Server does not seem an Active Directory (it does not have user objects)"
 msgstr "服务器似乎不是Active Directory（它没有用户对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:968
+#: auths/ActiveDirectory_enterprise/authenticator.py:1011
 msgid ""
 "Server does not seem an Active Directory (it does not have group objects)"
 msgstr "服务器似乎不是Active Directory（它没有组对象）"
 
-#: auths/ActiveDirectory_enterprise/authenticator.py:976
+#: auths/ActiveDirectory_enterprise/authenticator.py:1019
 #: auths/EDirectory_enterprise/authenticator.py:492
-#: auths/RegexLdap/authenticator.py:788 auths/SimpleLDAP/authenticator.py:759
+#: auths/RegexLdap/authenticator.py:764 auths/SimpleLDAP/authenticator.py:759
 msgid "Connection params seem correct, test was succesfully executed"
 msgstr "连接参数似乎正确，测试成功执行"
 
@@ -1497,20 +1498,21 @@ msgid "Office 365 logout"
 msgstr "Office 365 注销"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-msgid "SAML Authenticator does not support white spaces on field NAME"
-msgstr "SAML身份验证器不支持字段NAME上的空格"
+#| msgid "SAML Authenticator does not support white spaces on field NAME"
+msgid "AzureAD Authenticator does not support white spaces on field NAME"
+msgstr "AzureAD 身份验证器不支持字段 NAME 上的空格"
 
-#: auths/AzureAD_enterprise/azure_ad.py:328
-#: auths/AzureAD_enterprise/azure_ad.py:354
-#: auths/AzureAD_enterprise/azure_ad.py:364
+#: auths/AzureAD_enterprise/azure_ad.py:331
+#: auths/AzureAD_enterprise/azure_ad.py:357
+#: auths/AzureAD_enterprise/azure_ad.py:367
 msgid "Authenticator exception:"
 msgstr "验证者例外："
 
-#: auths/AzureAD_enterprise/azure_ad.py:399 core/util/ldaputil.py:56
+#: auths/AzureAD_enterprise/azure_ad.py:402 core/util/ldaputil.py:60
 msgid "Connection error: "
 msgstr "连接错误："
 
-#: auths/AzureAD_enterprise/azure_ad.py:402
+#: auths/AzureAD_enterprise/azure_ad.py:405
 msgid "Connection params seems correct, test was succesfully executed"
 msgstr "连接参数似乎是正确的，测试成功执行"
 
@@ -1519,12 +1521,12 @@ msgid "EDirectory Server IP or Hostname"
 msgstr "EDirectory服务器IP或主机名"
 
 #: auths/EDirectory_enterprise/authenticator.py:57
-#: auths/RegexLdap/authenticator.py:79 auths/SimpleLDAP/authenticator.py:70
+#: auths/RegexLdap/authenticator.py:78 auths/SimpleLDAP/authenticator.py:70
 msgid "Ldap port (usually 389 for non ssl and 636 for ssl)"
 msgstr "Ldap端口（非ssl通常为389，ssl为636）"
 
 #: auths/EDirectory_enterprise/authenticator.py:64
-#: auths/RegexLdap/authenticator.py:86 auths/SimpleLDAP/authenticator.py:77
+#: auths/RegexLdap/authenticator.py:84 auths/SimpleLDAP/authenticator.py:77
 msgid "If checked, the connection will be ssl, using port 636 instead of 389"
 msgstr "如果选中，则连接将为ssl，使用端口636而不是389"
 
@@ -1533,7 +1535,7 @@ msgid "Username with read privileges on the eDirectory"
 msgstr "具有eDirectory读取权限的用户名"
 
 #: auths/EDirectory_enterprise/authenticator.py:88
-#: auths/RegexLdap/authenticator.py:110 auths/SimpleLDAP/authenticator.py:101
+#: auths/RegexLdap/authenticator.py:107 auths/SimpleLDAP/authenticator.py:101
 msgid "Timeout in seconds of connection to LDAP"
 msgstr "连接到LDAP的超时（以秒为单位）"
 
@@ -1550,12 +1552,12 @@ msgid "Edirectory connection error: {}"
 msgstr "电子目录连接错误：{}"
 
 #: auths/EDirectory_enterprise/authenticator.py:392
-#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:621
+#: auths/RegexLdap/authenticator.py:684 auths/SimpleLDAP/authenticator.py:621
 msgid "Ldap search base is incorrect"
 msgstr "Ldap搜索库不正确"
 
 #: auths/EDirectory_enterprise/authenticator.py:410
-#: auths/RegexLdap/authenticator.py:719 auths/SimpleLDAP/authenticator.py:629
+#: auths/RegexLdap/authenticator.py:701 auths/SimpleLDAP/authenticator.py:629
 msgid "Ldap user class seems to be incorrect (no user found by that class)"
 msgstr "Ldap用户类似乎不正确（该类没有找到用户）"
 
@@ -1645,27 +1647,27 @@ msgstr "在验证器中一切似乎都很好。"
 msgid "Radius Authenticator"
 msgstr "半径验证器"
 
-#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:68
+#: auths/Radius/authenticator.py:69 mfas/Radius/mfa.py:75
 msgid "Radius Server IP or Hostname"
 msgstr "Radius 服务器 IP 或主机名"
 
-#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:76
+#: auths/Radius/authenticator.py:77 mfas/Radius/mfa.py:83
 msgid "Radius authentication port (usually 1812)"
 msgstr "Radius 认证端口（通常为 1812）"
 
-#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:81
+#: auths/Radius/authenticator.py:82 mfas/Radius/mfa.py:88
 msgid "Secret"
 msgstr "秘密"
 
-#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:83
+#: auths/Radius/authenticator.py:84 mfas/Radius/mfa.py:90
 msgid "Radius client secret"
 msgstr "Radius 客户端机密"
 
-#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:97
+#: auths/Radius/authenticator.py:90 mfas/Radius/mfa.py:104
 msgid "NAS Identifier"
 msgstr "NAS 标识符"
 
-#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:100
+#: auths/Radius/authenticator.py:93 mfas/Radius/mfa.py:107
 msgid "NAS Identifier for Radius Server"
 msgstr "Radius 服务器的 NAS 标识符"
 
@@ -1697,255 +1699,382 @@ msgstr "连接到 Radius 服务器失败"
 msgid "Connection to Radius server seems ok"
 msgstr "连接到 Radius 服务器似乎没问题"
 
-#: auths/RegexLdap/authenticator.py:71
+#: auths/RegexLdap/authenticator.py:70
 msgid "Ldap Server Host"
 msgstr "Ldap服务器主机"
 
-#: auths/RegexLdap/authenticator.py:93 auths/SimpleLDAP/authenticator.py:84
+#: auths/RegexLdap/authenticator.py:90 auths/SimpleLDAP/authenticator.py:84
 msgid "Username with read privileges on the base selected"
 msgstr "在所选基础上具有读取权限的用户名"
 
-#: auths/RegexLdap/authenticator.py:135 auths/SimpleLDAP/authenticator.py:127
+#: auths/RegexLdap/authenticator.py:130 auths/SimpleLDAP/authenticator.py:127
 #: services/Nutanix_enterprise/provider.py:118
 msgid "Base"
 msgstr "基础"
 
-#: auths/RegexLdap/authenticator.py:137 auths/SimpleLDAP/authenticator.py:129
+#: auths/RegexLdap/authenticator.py:132 auths/SimpleLDAP/authenticator.py:129
 msgid "Common search base (used for \"users\" and \"groups\")"
 msgstr "通用搜索库（用于“用户”和“组”）"
 
-#: auths/RegexLdap/authenticator.py:139 auths/RegexLdap/authenticator.py:148
-#: auths/RegexLdap/authenticator.py:157 auths/RegexLdap/authenticator.py:169
-#: auths/RegexLdap/authenticator.py:181 auths/SimpleLDAP/authenticator.py:131
+#: auths/RegexLdap/authenticator.py:134 auths/RegexLdap/authenticator.py:143
+#: auths/RegexLdap/authenticator.py:152 auths/RegexLdap/authenticator.py:164
+#: auths/RegexLdap/authenticator.py:176 auths/SimpleLDAP/authenticator.py:131
 #: auths/SimpleLDAP/authenticator.py:140 auths/SimpleLDAP/authenticator.py:149
 #: auths/SimpleLDAP/authenticator.py:160 auths/SimpleLDAP/authenticator.py:169
 #: auths/SimpleLDAP/authenticator.py:178 auths/SimpleLDAP/authenticator.py:187
 msgid "Ldap info"
 msgstr "Ldap信息"
 
-#: auths/RegexLdap/authenticator.py:143 auths/SimpleLDAP/authenticator.py:135
+#: auths/RegexLdap/authenticator.py:138 auths/SimpleLDAP/authenticator.py:135
 msgid "User class"
 msgstr "用户类"
 
-#: auths/RegexLdap/authenticator.py:146 auths/SimpleLDAP/authenticator.py:138
+#: auths/RegexLdap/authenticator.py:141 auths/SimpleLDAP/authenticator.py:138
 msgid "Class for LDAP users (normally posixAccount)"
 msgstr "LDAP用户的类（通常为posixAccount）"
 
-#: auths/RegexLdap/authenticator.py:152 auths/SimpleLDAP/authenticator.py:144
+#: auths/RegexLdap/authenticator.py:147 auths/SimpleLDAP/authenticator.py:144
 msgid "User Id Attr"
 msgstr "用户ID Attr"
 
-#: auths/RegexLdap/authenticator.py:155 auths/SimpleLDAP/authenticator.py:147
+#: auths/RegexLdap/authenticator.py:150 auths/SimpleLDAP/authenticator.py:147
 msgid "Attribute that contains the user id"
 msgstr "包含用户标识的属性"
 
-#: auths/RegexLdap/authenticator.py:161 auths/SimpleLDAP/authenticator.py:153
+#: auths/RegexLdap/authenticator.py:156 auths/SimpleLDAP/authenticator.py:153
 msgid "User Name Attr"
 msgstr "用户名Attr"
 
-#: auths/RegexLdap/authenticator.py:166
+#: auths/RegexLdap/authenticator.py:161
 msgid ""
 "Attributes that contains the user name attributes or attribute patterns (one "
 "for each line)"
 msgstr "包含用户名属性或属性模式的属性（每行一个）"
 
-#: auths/RegexLdap/authenticator.py:173
+#: auths/RegexLdap/authenticator.py:168
 msgid "Group Name Attr"
 msgstr "集团名称Attr"
 
-#: auths/RegexLdap/authenticator.py:178
+#: auths/RegexLdap/authenticator.py:173
 msgid ""
 "Attribute that contains the group name attributes or attribute patterns (one "
 "for each line)"
 msgstr "包含组名属性或属性模式的属性（每行一个）"
 
-#: auths/RegexLdap/authenticator.py:187
+#: auths/RegexLdap/authenticator.py:182
 msgid "Alt. class"
 msgstr "Alt键。类"
 
-#: auths/RegexLdap/authenticator.py:191
+#: auths/RegexLdap/authenticator.py:185
 msgid ""
 "Class for LDAP objects that will be also checked for groups retrieval "
 "(normally empty)"
 msgstr "LDAP对象的类，也将检查组检索（通常为空）"
 
-#: auths/RegexLdap/authenticator.py:207
+#: auths/RegexLdap/authenticator.py:200
 msgid "Regex LDAP Authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
-#: auths/RegexLdap/authenticator.py:209
+#: auths/RegexLdap/authenticator.py:202
 msgid "Regular Expressions LDAP authenticator"
 msgstr "正则表达式LDAP身份验证器"
 
-#: auths/RegexLdap/authenticator.py:744
+#: auths/RegexLdap/authenticator.py:723
 msgid ""
 "Ldap user id attr is probably wrong (can't find any user with both "
 "conditions)"
 msgstr "Ldap用户ID attr可能是错误的（找不到具有这两个条件的任何用户）"
 
-#: auths/RegexLdap/authenticator.py:773 auths/SimpleLDAP/authenticator.py:698
+#: auths/RegexLdap/authenticator.py:750 auths/SimpleLDAP/authenticator.py:698
 msgid ""
 "Ldap group id attribute seems to be incorrect (no group found by that "
 "attribute)"
 msgstr "Ldap组id属性似乎不正确（该属性找不到任何组）"
 
-#: auths/SAML_enterprise/saml.py:75
+#: auths/SAML_enterprise/saml.py:78
 msgid "SAML Authenticator"
 msgstr "SAML身份验证器"
 
-#: auths/SAML_enterprise/saml.py:87
+#: auths/SAML_enterprise/saml.py:90
 msgid "SAML (v2.0) Authenticator"
 msgstr "SAML（v2.0）身份验证器"
 
-#: auths/SAML_enterprise/saml.py:117
+#: auths/SAML_enterprise/saml.py:120
 msgid "Private key"
 msgstr "私钥"
 
-#: auths/SAML_enterprise/saml.py:119
+#: auths/SAML_enterprise/saml.py:122
 msgid ""
 "Private key used for sign and encription, as generated in base 64 from "
 "openssl"
 msgstr "用于签名和登记的私钥，由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:121 auths/SAML_enterprise/saml.py:132
+#: auths/SAML_enterprise/saml.py:124 auths/SAML_enterprise/saml.py:135
 msgid "Certificates"
 msgstr "证书"
 
-#: auths/SAML_enterprise/saml.py:129
+#: auths/SAML_enterprise/saml.py:132
 msgid ""
 "Public key used for sign and encription (public part of previous private "
 "key), as generated in base 64 from openssl"
 msgstr "用于签名和登记的公钥（前一个私钥的公共部分），由openssl在base 64中生成"
 
-#: auths/SAML_enterprise/saml.py:137
+#: auths/SAML_enterprise/saml.py:140
 msgid "IDP Metadata"
 msgstr "IDP元数据"
 
-#: auths/SAML_enterprise/saml.py:139
+#: auths/SAML_enterprise/saml.py:142
 msgid ""
 "You can enter here the URL or the IDP metadata or the metadata itself (xml)"
 msgstr "您可以在此处输入URL或IDP元数据或元数据本身（xml）"
 
-#: auths/SAML_enterprise/saml.py:141 auths/SAML_enterprise/saml.py:148
+#: auths/SAML_enterprise/saml.py:144 auths/SAML_enterprise/saml.py:151
+#: auths/SAML_enterprise/saml.py:285 auths/SAML_enterprise/saml.py:293
 msgid "Metadata"
 msgstr "元数据"
 
-#: auths/SAML_enterprise/saml.py:145
+#: auths/SAML_enterprise/saml.py:148
 msgid "Entity ID"
 msgstr "实体ID"
 
-#: auths/SAML_enterprise/saml.py:147
+#: auths/SAML_enterprise/saml.py:150
 msgid "ID of the SP. If left blank, this will be autogenerated from server URL"
 msgstr "SP的ID。如果留空，则会从服务器URL自动生成"
 
-#: auths/SAML_enterprise/saml.py:154
+#: auths/SAML_enterprise/saml.py:157
 msgid "User name attrs"
 msgstr "用户名attrs"
 
-#: auths/SAML_enterprise/saml.py:156
+#: auths/SAML_enterprise/saml.py:159
 msgid "Fields from where to extract user name"
 msgstr "从哪里提取用户名的字段"
 
-#: auths/SAML_enterprise/saml.py:158 auths/SAML_enterprise/saml.py:168
-#: auths/SAML_enterprise/saml.py:178
+#: auths/SAML_enterprise/saml.py:161 auths/SAML_enterprise/saml.py:171
+#: auths/SAML_enterprise/saml.py:181
 msgid "Attributes"
 msgstr "属性"
 
-#: auths/SAML_enterprise/saml.py:164
+#: auths/SAML_enterprise/saml.py:167
 msgid "Group name attrs"
 msgstr "集团名称attrs"
 
-#: auths/SAML_enterprise/saml.py:166
+#: auths/SAML_enterprise/saml.py:169
 msgid "Fields from where to extract the groups"
 msgstr "从哪里提取组的字段"
 
-#: auths/SAML_enterprise/saml.py:174
+#: auths/SAML_enterprise/saml.py:177
 msgid "Real name attrs"
 msgstr "真名牌"
 
-#: auths/SAML_enterprise/saml.py:176
+#: auths/SAML_enterprise/saml.py:179
 msgid "Fields from where to extract the real name"
 msgstr "字段从哪里提取真实姓名"
 
-#: auths/SAML_enterprise/saml.py:182
+#: auths/SAML_enterprise/saml.py:185
 msgid "Global logout"
 msgstr "全局注销"
 
-#: auths/SAML_enterprise/saml.py:185
+#: auths/SAML_enterprise/saml.py:188
 msgid "If set, logout from UDS will trigger SAML logout"
 msgstr "如果设置，从 UDS 注销将触发 SAML 注销"
 
-#: auths/SAML_enterprise/saml.py:190
+#: auths/SAML_enterprise/saml.py:193
 msgid "ADFS compatibility"
 msgstr "ADFS 兼容性"
 
-#: auths/SAML_enterprise/saml.py:193
+#: auths/SAML_enterprise/saml.py:196
 msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "如果设置，则启用小写 url 编码，以便 ADFS 可以正常工作"
 
-#: auths/SAML_enterprise/saml.py:223
+#: auths/SAML_enterprise/saml.py:201
+#| msgid "Friendly name"
+msgid "Encripted nameID"
+msgstr "加密的nameID"
+
+#: auths/SAML_enterprise/saml.py:204
+#| msgid "If set, the connection will be read only"
+msgid "If set, nameID will be encripted"
+msgstr "如果设置，nameID 将被加密"
+
+#: auths/SAML_enterprise/saml.py:205 auths/SAML_enterprise/saml.py:213
+#: auths/SAML_enterprise/saml.py:221 auths/SAML_enterprise/saml.py:229
+#: auths/SAML_enterprise/saml.py:237 auths/SAML_enterprise/saml.py:245
+#: auths/SAML_enterprise/saml.py:253 auths/SAML_enterprise/saml.py:261
+#: auths/SAML_enterprise/saml.py:269 auths/SAML_enterprise/saml.py:277
+#: auths/SAML_enterprise/saml.py:301 mfas/Email/mfa.py:74
+#: transports/HTML5RDP/html5rdp.py:265
+#: transports/HTML5RDS_enterprise/html5rds.py:256
+msgid "Security"
+msgstr "安全"
+
+#: auths/SAML_enterprise/saml.py:209
+msgid "Authn requests signed"
+msgstr "Authn 请求已签名"
+
+#: auths/SAML_enterprise/saml.py:212
+#| msgid "If set, the connection will be read only"
+msgid "If set, authn requests will be signed"
+msgstr "如果设置，将对身份验证请求进行签名"
+
+#: auths/SAML_enterprise/saml.py:217
+msgid "Logout requests signed"
+msgstr "已签署注销请求"
+
+#: auths/SAML_enterprise/saml.py:220
+msgid "If set, logout requests will be signed"
+msgstr "如果设置，注销请求将被签名"
+
+#: auths/SAML_enterprise/saml.py:225
+msgid "Logout responses signed"
+msgstr "已签署注销响应"
+
+#: auths/SAML_enterprise/saml.py:228
+#| msgid "If set, the connection will be read only"
+msgid "If set, logout responses will be signed"
+msgstr "如果设置，注销响应将被签名"
+
+#: auths/SAML_enterprise/saml.py:233
+#| msgid "Metadata"
+msgid "Sign metadata"
+msgstr "签署元数据"
+
+#: auths/SAML_enterprise/saml.py:236
+msgid "If set, metadata will be signed"
+msgstr "如果设置，元数据将被签名"
+
+#: auths/SAML_enterprise/saml.py:241
+msgid "Want messages signed"
+msgstr "想要签名的消息"
+
+#: auths/SAML_enterprise/saml.py:244
+msgid "If set, messages will be signed"
+msgstr "如果设置，消息将被签名"
+
+#: auths/SAML_enterprise/saml.py:249
+msgid "Want assertions signed"
+msgstr "希望签署断言"
+
+#: auths/SAML_enterprise/saml.py:252
+#| msgid "If set, the connection will be read only"
+msgid "If set, assertions will be signed"
+msgstr "如果设置，断言将被签名"
+
+#: auths/SAML_enterprise/saml.py:257
+msgid "Want assertions encrypted"
+msgstr "想要加密断言"
+
+#: auths/SAML_enterprise/saml.py:260
+#| msgid "If set, the connection will be read only"
+msgid "If set, assertions will be encrypted"
+msgstr "如果设置，断言将被加密"
+
+#: auths/SAML_enterprise/saml.py:265
+msgid "Want nameID encrypted"
+msgstr "想要对 nameID 进行加密"
+
+#: auths/SAML_enterprise/saml.py:268
+#| msgid "If set, the connection will be read only"
+msgid "If set, nameID will be encrypted"
+msgstr "如果设置，nameID 将被加密"
+
+#: auths/SAML_enterprise/saml.py:273
+#| msgid "requested a template that do not exist"
+msgid "Requested authn context"
+msgstr "请求的身份验证上下文"
+
+#: auths/SAML_enterprise/saml.py:276
+#| msgid "If set, the connection will be read only"
+msgid "If set, requested authn context will be sent"
+msgstr "如果设置，将发送请求的身份验证上下文"
+
+#: auths/SAML_enterprise/saml.py:281
+msgid "Metadata cache duration"
+msgstr "元数据缓存持续时间"
+
+#: auths/SAML_enterprise/saml.py:284
+msgid "Duration of metadata cache in days. 0 means default (ten years)"
+msgstr "元数据缓存的持续时间（以天为单位）。 0 表示默认（十年）"
+
+#: auths/SAML_enterprise/saml.py:289
+msgid "Metadata validity duration"
+msgstr "元数据有效期"
+
+#: auths/SAML_enterprise/saml.py:292
+msgid "Duration of metadata validity in days. 0 means default (ten years)"
+msgstr "元数据有效期（以天为单位）。 0 表示默认（十年）"
+
+#: auths/SAML_enterprise/saml.py:297
+msgid "Allow deprecated signature algorithms"
+msgstr "允许已弃用的签名算法"
+
+#: auths/SAML_enterprise/saml.py:300
+#| msgid "If checked, fonts smoothing will be allowed"
+msgid "If set, deprecated signature algorithms will be allowed"
+msgstr "如果设置，将允许已弃用的签名算法"
+
+#: auths/SAML_enterprise/saml.py:320
 msgid "This kind of Authenticator does not support white spaces on field NAME"
 msgstr "这种 Authenticator 不支持字段 NAME 上的空格"
 
-#: auths/SAML_enterprise/saml.py:233
+#: auths/SAML_enterprise/saml.py:330
 msgid ""
 "Server certificate should be a valid PEM (PEM certificates starts with -----"
 "BEGIN CERTIFICATE-----)"
 msgstr ""
 "服务器证书应该是有效的PEM（PEM证书以----- BEGIN CERTIFICATE -----开头）"
 
-#: auths/SAML_enterprise/saml.py:240
+#: auths/SAML_enterprise/saml.py:337
 msgid "Invalid server certificate. "
 msgstr "服务器证书无效。"
 
-#: auths/SAML_enterprise/saml.py:248
+#: auths/SAML_enterprise/saml.py:345
 msgid ""
 "Private key should be a valid PEM (PEM private keys starts with -----BEGIN "
 "RSA PRIVATE KEY-----"
 msgstr "私钥应该是有效的PEM（PEM私钥以----- BEGIN RSA私钥开头-----"
 
-#: auths/SAML_enterprise/saml.py:255
+#: auths/SAML_enterprise/saml.py:352
 msgid "Invalid private key. "
 msgstr "私钥无效。"
 
-#: auths/SAML_enterprise/saml.py:260
+#: auths/SAML_enterprise/saml.py:357
 msgid "Certificate and private key do not match"
 msgstr "证书和私钥不匹配"
 
-#: auths/SAML_enterprise/saml.py:278
+#: auths/SAML_enterprise/saml.py:375
 #, python-brace-format
 msgid "Can't fetch url {0}: {1}"
 msgstr "无法获取网址{0}：{1}"
 
-#: auths/SAML_enterprise/saml.py:287
+#: auths/SAML_enterprise/saml.py:384
 msgid " (obtained from URL)"
 msgstr "（从URL获得）"
 
-#: auths/SAML_enterprise/saml.py:289
+#: auths/SAML_enterprise/saml.py:386
 msgid "XML does not seem valid for IDP Metadata "
 msgstr "XML似乎对IDP元数据无效"
 
-#: auths/SAML_enterprise/saml.py:346
+#: auths/SAML_enterprise/saml.py:448
 msgid "Can't access idp metadata"
 msgstr "无法访问idp元数据"
 
-#: auths/SAML_enterprise/saml.py:411
+#: auths/SAML_enterprise/saml.py:520
 msgid "Error validating SP metadata: "
 msgstr "验证 SP 元数据时出错："
 
-#: auths/SAML_enterprise/saml.py:535
+#: auths/SAML_enterprise/saml.py:644
 msgid "Error processing SLO: "
 msgstr "处理 SLO 时出错："
 
-#: auths/SAML_enterprise/saml.py:561
+#: auths/SAML_enterprise/saml.py:665
 msgid "Error processing SAML response: "
 msgstr "处理 SAML 响应时出错："
 
-#: auths/SAML_enterprise/saml.py:569
+#: auths/SAML_enterprise/saml.py:673
 msgid "SAML response not authenticated"
 msgstr "SAML 响应未通过身份验证"
 
-#: auths/SAML_enterprise/saml.py:598
+#: auths/SAML_enterprise/saml.py:702
 msgid "No attributes returned from IdP"
 msgstr "没有从 IdP 返回的属性"
 
@@ -2037,11 +2166,11 @@ msgstr "Ldap组类或组ID attr可能是错误的（找不到具有这两个条�
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "找不到指定了成员资格属性的任何组"
 
-#: core/auths/auth.py:111
+#: core/auths/auth.py:113
 msgid "System Administrator"
 msgstr "系统管理员"
 
-#: core/auths/auth.py:164
+#: core/auths/auth.py:158
 msgid "Forbidden"
 msgstr "被禁止"
 
@@ -2172,7 +2301,7 @@ msgstr "证书"
 msgid "Tunnel"
 msgstr "隧道"
 
-#: core/util/ldaputil.py:131
+#: core/util/ldaputil.py:158
 msgid "Can't contact LDAP server"
 msgstr "无法联系LDAP服务器"
 
@@ -2441,11 +2570,6 @@ msgstr ""
 msgid "SMTP Server"
 msgstr "SMTP 服务器"
 
-#: mfas/Email/mfa.py:74 transports/HTML5RDP/html5rdp.py:265
-#: transports/HTML5RDS_enterprise/html5rds.py:256
-msgid "Security"
-msgstr "安全"
-
 #: mfas/Email/mfa.py:75
 msgid "Security protocol to use"
 msgstr "使用的安全协议"
@@ -2476,8 +2600,8 @@ msgstr "电子邮件的主题"
 
 #: mfas/Email/mfa.py:111 mfas/Email/mfa.py:120 mfas/Email/mfa.py:128
 #: mfas/Email/mfa.py:143 mfas/Email/mfa.py:153 mfas/Email/mfa.py:164
-#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:116 mfas/Radius/mfa.py:126
-#: mfas/Radius/mfa.py:141 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
+#: mfas/Email/mfa.py:175 mfas/Radius/mfa.py:123 mfas/Radius/mfa.py:133
+#: mfas/Radius/mfa.py:148 mfas/SMS/mfa.py:237 mfas/SMS/mfa.py:252
 #: mfas/SMS/mfa.py:262 mfas/TOTP/mfa.py:86 mfas/TOTP/mfa.py:95
 msgid "Config"
 msgstr "配置"
@@ -2506,21 +2630,21 @@ msgstr "针对没有 MFA 支持的用户的策略"
 msgid "Action for MFA response error"
 msgstr "针对 MFA 响应错误的操作"
 
-#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:111 mfas/Radius/mfa.py:136
+#: mfas/Email/mfa.py:138 mfas/Radius/mfa.py:118 mfas/Radius/mfa.py:143
 #: mfas/SMS/mfa.py:232 mfas/SMS/mfa.py:247
 msgid "Allow user login"
 msgstr "允许用户登录"
 
-#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:112 mfas/Radius/mfa.py:137
+#: mfas/Email/mfa.py:139 mfas/Radius/mfa.py:119 mfas/Radius/mfa.py:144
 #: mfas/SMS/mfa.py:233 mfas/SMS/mfa.py:248
 msgid "Deny user login"
 msgstr "拒绝用户登录"
 
-#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:113 mfas/Radius/mfa.py:138
+#: mfas/Email/mfa.py:140 mfas/Radius/mfa.py:120 mfas/Radius/mfa.py:145
 msgid "Allow user to login if it IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则允许用户登录"
 
-#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:114 mfas/Radius/mfa.py:139
+#: mfas/Email/mfa.py:141 mfas/Radius/mfa.py:121 mfas/Radius/mfa.py:146
 msgid "Deny user to login if it IP is in the networks list"
 msgstr "如果 IP 在网络列表中，则拒绝用户登录"
 
@@ -2575,15 +2699,15 @@ msgid ""
 msgstr ""
 "<p>已从<b>{ip}</b>进行登录尝试。</p><p>要继续，请提供验证码<b>{code}</b></p>"
 
-#: mfas/Radius/mfa.py:59 mfas/Radius/mfa.py:61
+#: mfas/Radius/mfa.py:66 mfas/Radius/mfa.py:68
 msgid "Radius OTP Challenge"
 msgstr "半径 OTP 挑战"
 
-#: mfas/Radius/mfa.py:87
+#: mfas/Radius/mfa.py:94
 msgid "All users must send OTP"
 msgstr "所有用户必须发送 OTP"
 
-#: mfas/Radius/mfa.py:91
+#: mfas/Radius/mfa.py:98
 msgid ""
 "If unchecked, an authentication step is needed in order to know if this user "
 "must enter OTP. If checked, all users must enter OTP, so authentication step "
@@ -2592,43 +2716,43 @@ msgstr ""
 "如果未选中，则需要进行身份验证步骤以了解此用户是否必须输入 OTP。如果选中，所"
 "有用户都必须输入 OTP，因此跳过验证步骤。"
 
-#: mfas/Radius/mfa.py:105
+#: mfas/Radius/mfa.py:112
 msgid "Radius OTP communication error action"
 msgstr "Radius OTP 通讯错误动作"
 
-#: mfas/Radius/mfa.py:108
+#: mfas/Radius/mfa.py:115
 msgid "Action for OTP server communication error"
 msgstr "OTP 服务器通信错误的措施"
 
-#: mfas/Radius/mfa.py:120
+#: mfas/Radius/mfa.py:127
 msgid "Radius OTP networks"
 msgstr "半径 OTP 网络"
 
-#: mfas/Radius/mfa.py:124
+#: mfas/Radius/mfa.py:131
 msgid "Networks for Radius OTP authentication"
 msgstr "Radius OTP 身份验证的网络"
 
-#: mfas/Radius/mfa.py:130
+#: mfas/Radius/mfa.py:137
 msgid "User without defined OTP in server"
 msgstr "服务器中未定义 OTP 的用户"
 
-#: mfas/Radius/mfa.py:133
+#: mfas/Radius/mfa.py:140
 msgid "Action for user without defined Radius Challenge"
 msgstr "未定义 Radius Challenge 的用户操作"
 
-#: mfas/Radius/mfa.py:193
+#: mfas/Radius/mfa.py:200
 msgid "OTP Code"
 msgstr "一次性密码"
 
-#: mfas/Radius/mfa.py:201
+#: mfas/Radius/mfa.py:208
 msgid "Please enter OTP"
 msgstr "请输入一次性密码"
 
-#: mfas/Radius/mfa.py:229 mfas/Radius/mfa.py:291
+#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
 msgid "Radius OTP connection error"
 msgstr "半径 OTP 连接错误"
 
-#: mfas/Radius/mfa.py:278
+#: mfas/Radius/mfa.py:288
 msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
@@ -2804,7 +2928,7 @@ msgstr "短信发送失败"
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:316
+#: mfas/SMS/mfa.py:397 web/views/modern.py:315
 msgid "MFA Code"
 msgstr "MFA 代码"
 
@@ -3240,7 +3364,7 @@ msgstr "Os Manager用于控制带域的Windows机器。"
 #: services/OpenStack/provider.py:119 services/OpenStack/provider_legacy.py:136
 #: transports/HTML5RDP/html5rdp.py:120
 #: transports/HTML5RDS_enterprise/html5rds.py:113
-#: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:95
+#: transports/PCoIP_enterprise/pcoip.py:73 transports/RDP/rdp_base.py:97
 #: transports/RDS_enterprise/rds_base.py:59
 msgid "Domain"
 msgstr "域"
@@ -3923,7 +4047,7 @@ msgstr "本机使用的密钥对"
 #: services/Nutanix_enterprise/service.py:110 services/OVirt/service.py:197
 #: services/OpenNebula/service.py:125 services/OpenStack/service.py:179
 #: services/Proxmox/service.py:172 services/VCloud_enterprise/service.py:108
-#: services/Vmware_enterprise/service_linked.py:186 services/Xen/service.py:166
+#: services/Vmware_enterprise/service_linked.py:162 services/Xen/service.py:166
 msgid "Machine Names"
 msgstr "机器名称"
 
@@ -3935,7 +4059,7 @@ msgstr "机器名称"
 #: services/Nutanix_enterprise/service.py:113 services/OVirt/service.py:200
 #: services/OpenNebula/service.py:128 services/OpenStack/service.py:182
 #: services/Proxmox/service.py:175 services/VCloud_enterprise/service.py:111
-#: services/Vmware_enterprise/service_linked.py:189 services/Xen/service.py:169
+#: services/Vmware_enterprise/service_linked.py:165 services/Xen/service.py:169
 msgid "Base name for clones from this machine"
 msgstr "来自此计算机的克隆的基本名称"
 
@@ -3947,7 +4071,7 @@ msgstr "来自此计算机的克隆的基本名称"
 #: services/Nutanix_enterprise/service.py:119 services/OVirt/service.py:207
 #: services/OpenNebula/service.py:135 services/OpenStack/service.py:189
 #: services/Proxmox/service.py:182 services/VCloud_enterprise/service.py:117
-#: services/Vmware_enterprise/service_linked.py:195 services/Xen/service.py:176
+#: services/Vmware_enterprise/service_linked.py:171 services/Xen/service.py:176
 msgid "Name Length"
 msgstr "名称长度"
 
@@ -3959,7 +4083,7 @@ msgstr "名称长度"
 #: services/Nutanix_enterprise/service.py:122 services/OVirt/service.py:210
 #: services/OpenNebula/service.py:138 services/OpenStack/service.py:192
 #: services/Proxmox/service.py:185 services/VCloud_enterprise/service.py:120
-#: services/Vmware_enterprise/service_linked.py:198 services/Xen/service.py:179
+#: services/Vmware_enterprise/service_linked.py:174 services/Xen/service.py:179
 msgid "Size of numeric part for the names of these machines"
 msgstr "这些机器名称的数字部分的大小"
 
@@ -4200,13 +4324,13 @@ msgstr "数据存储放置增量和出版物的位置"
 
 #: services/HyperV_enterprise/legacy/service.py:95
 #: services/HyperV_enterprise/service.py:94 services/OVirt/service.py:133
-#: services/Vmware_enterprise/service_linked.py:205 services/Xen/service.py:119
+#: services/Vmware_enterprise/service_linked.py:181 services/Xen/service.py:119
 msgid "Reserved Space"
 msgstr "预留空间"
 
 #: services/HyperV_enterprise/legacy/service.py:98
 #: services/HyperV_enterprise/service.py:97 services/OVirt/service.py:137
-#: services/Vmware_enterprise/service_linked.py:208 services/Xen/service.py:122
+#: services/Vmware_enterprise/service_linked.py:184 services/Xen/service.py:122
 msgid "Minimal free space in GB"
 msgstr "GB中最小的可用空间"
 
@@ -4215,7 +4339,7 @@ msgstr "GB中最小的可用空间"
 #: services/NutanixPrism_enterprise/service.py:69
 #: services/Nutanix_enterprise/service.py:55 services/OVirt/service.py:142
 #: services/Proxmox/service.py:136
-#: services/Vmware_enterprise/service_linked.py:130 services/Xen/service.py:127
+#: services/Vmware_enterprise/service_linked.py:106 services/Xen/service.py:127
 msgid "Base Machine"
 msgstr "基础机器"
 
@@ -4261,15 +4385,15 @@ msgstr "服务基础机器"
 #: services/Proxmox/service.py:153 services/Proxmox/service.py:167
 #: services/Proxmox/service.py:176 services/Proxmox/service.py:186
 #: services/Vmware_enterprise/service_full.py:81
-#: services/Vmware_enterprise/service_linked.py:116
-#: services/Vmware_enterprise/service_linked.py:134
-#: services/Vmware_enterprise/service_linked.py:145
-#: services/Vmware_enterprise/service_linked.py:155
-#: services/Vmware_enterprise/service_linked.py:164
-#: services/Vmware_enterprise/service_linked.py:173
-#: services/Vmware_enterprise/service_linked.py:183
-#: services/Vmware_enterprise/service_linked.py:191
-#: services/Vmware_enterprise/service_linked.py:200 services/Xen/service.py:130
+#: services/Vmware_enterprise/service_linked.py:101
+#: services/Vmware_enterprise/service_linked.py:110
+#: services/Vmware_enterprise/service_linked.py:121
+#: services/Vmware_enterprise/service_linked.py:131
+#: services/Vmware_enterprise/service_linked.py:140
+#: services/Vmware_enterprise/service_linked.py:149
+#: services/Vmware_enterprise/service_linked.py:159
+#: services/Vmware_enterprise/service_linked.py:167
+#: services/Vmware_enterprise/service_linked.py:176 services/Xen/service.py:130
 #: services/Xen/service.py:139 services/Xen/service.py:150
 #: services/Xen/service.py:161 services/Xen/service.py:170
 #: services/Xen/service.py:180
@@ -4286,13 +4410,13 @@ msgstr "如果在计算机中找到多个接口，请在此网络上使用一个
 #: services/HyperV_enterprise/service.py:119
 #: services/NutanixPrism_enterprise/service.py:76
 #: services/Nutanix_enterprise/service.py:62 services/OVirt/service.py:150
-#: services/Vmware_enterprise/service_linked.py:138 services/Xen/service.py:144
+#: services/Vmware_enterprise/service_linked.py:114 services/Xen/service.py:144
 msgid "Memory (Mb)"
 msgstr "记忆（Mb）"
 
 #: services/HyperV_enterprise/legacy/service.py:127
 #: services/HyperV_enterprise/service.py:124
-#: services/Vmware_enterprise/service_linked.py:143
+#: services/Vmware_enterprise/service_linked.py:119
 msgid "Memory for machines deployed from this service"
 msgstr "从此服务部署的计算机的内存"
 
@@ -4385,7 +4509,6 @@ msgid "Enable Compatibility for Migration"
 msgstr "启用迁移兼容性"
 
 #: services/HyperV_enterprise/service.py:149
-#| msgid "If checked, nested virtualization will be enabled for this service"
 msgid ""
 "If checked, compatibility for migration will be enabled for this service"
 msgstr "如果选中，将为此服务启用迁移兼容性"
@@ -4473,7 +4596,7 @@ msgstr "vcpus的数量（“ -1表示”保持每个vcpu的原始计算机核心
 #: services/NutanixPrism_enterprise/service.py:131
 #: services/Nutanix_enterprise/service.py:127
 #: services/VCloud_enterprise/service.py:64
-#: services/Vmware_enterprise/service_linked.py:90
+#: services/Vmware_enterprise/service_linked.py:189
 msgid "Remove found duplicates"
 msgstr "删除找到的重复项"
 
@@ -4484,13 +4607,13 @@ msgid "If active, found duplicates vApps for this service will be removed"
 msgstr "如果处于活动状态，则会删除此服务的重复vApp"
 
 #: services/NutanixPrism_enterprise/service.py:138
-#: services/Nutanix_enterprise/service.py:134 services/Proxmox/service.py:127
-#: services/Vmware_enterprise/service_linked.py:121
+#: services/Nutanix_enterprise/service.py:135 services/Proxmox/service.py:127
+#: services/Vmware_enterprise/service_linked.py:207
 msgid "Try SOFT Shutdown first"
 msgstr "先尝试软关机"
 
 #: services/NutanixPrism_enterprise/service.py:142
-#: services/Nutanix_enterprise/service.py:138
+#: services/Nutanix_enterprise/service.py:139
 msgid ""
 "If active, UDS will try to shutdown (soft) the machine using Nutanix ACPI. "
 "Will delay 30 seconds the power off of hanged machines."
@@ -4499,7 +4622,7 @@ msgstr ""
 "机断电。"
 
 #: services/NutanixPrism_enterprise/service.py:167
-#: services/Nutanix_enterprise/service.py:158
+#: services/Nutanix_enterprise/service.py:170
 msgid "Both Cores per VCPU and Number of VCPUS are required"
 msgstr "每个VCPU的内核数和VCPUS数都是必需的"
 
@@ -4548,6 +4671,18 @@ msgid ""
 "Network for the machines (every machine created will be attached to this "
 "network)"
 msgstr "机器网络（创建的每台机器都将连接到该网络）"
+
+#: services/Nutanix_enterprise/service.py:145
+#: services/Vmware_enterprise/service_linked.py:198
+msgid "Keep on error"
+msgstr "继续出错"
+
+#: services/Nutanix_enterprise/service.py:149
+#: services/Vmware_enterprise/service_linked.py:202
+#| msgid "If active, access errors found on machine will not mark is as error."
+msgid ""
+"If active, access errors found on machine will not be considered errors."
+msgstr "如果处于活动状态，则在计算机上发现的访问错误将不会被视为错误。"
 
 #: services/OVirt/provider.py:80
 msgid "oVirt/RHEV Platform Provider"
@@ -5171,7 +5306,7 @@ msgid "Select if HA is enabled and HA group for machines of this service"
 msgstr "选择是否启用此服务的计算机的HA以及HA组"
 
 #: services/Proxmox/service.py:131
-#: services/Vmware_enterprise/service_linked.py:125
+#: services/Vmware_enterprise/service_linked.py:211
 msgid ""
 "If active, UDS will try to shutdown (soft) the machine using VMWare Guest "
 "Tools. Will delay 30 seconds the power off of hanged machines."
@@ -5625,7 +5760,7 @@ msgid "vApp template for the service"
 msgstr "该服务的vApp模板"
 
 #: services/VCloud_enterprise/service.py:96
-#: services/Vmware_enterprise/service_linked.py:148
+#: services/Vmware_enterprise/service_linked.py:124
 msgid "Main Network"
 msgstr "主网"
 
@@ -5722,7 +5857,7 @@ msgid "Datacenter containing base machine"
 msgstr "包含基本机器的数据中心"
 
 #: services/Vmware_enterprise/service_fixed.py:75
-#: services/Vmware_enterprise/service_linked.py:106
+#: services/Vmware_enterprise/service_linked.py:91
 msgid "Resource Pool"
 msgstr "资源池"
 
@@ -5794,56 +5929,48 @@ msgstr "Pub.Datastores"
 msgid "Datastores where to put publications"
 msgstr "数据存储放置出版物的位置"
 
-#: services/Vmware_enterprise/service_linked.py:94
-msgid "If active, found duplicates clones for this service will be removed"
-msgstr "如果处于活动状态，则会删除此服务的重复克隆"
-
-#: services/Vmware_enterprise/service_linked.py:98
-msgid "Keep on error"
-msgstr "继续出错"
-
-#: services/Vmware_enterprise/service_linked.py:102
-msgid "If active, access errors found on machine will not mark is as error."
-msgstr "如果处于活动状态，则机器上发现的访问错误将不会标记为错误。"
-
-#: services/Vmware_enterprise/service_linked.py:114
+#: services/Vmware_enterprise/service_linked.py:99
 msgid "Resource Pool containing base machine"
 msgstr "包含基本机器的资源池"
 
-#: services/Vmware_enterprise/service_linked.py:132
+#: services/Vmware_enterprise/service_linked.py:108
 msgid "Base machine for this service"
 msgstr "这项服务的基础机器"
 
-#: services/Vmware_enterprise/service_linked.py:152
+#: services/Vmware_enterprise/service_linked.py:128
 msgid ""
 "Main network used by the machine. The first interface found in base machine "
 "in this network, will be switched to publication network"
 msgstr ""
 "机器使用的主网络。在本网络的base机器中找到的第一个接口，将切换到发布网络"
 
-#: services/Vmware_enterprise/service_linked.py:159
+#: services/Vmware_enterprise/service_linked.py:135
 msgid "Pub. Network"
 msgstr "酒吧。网络"
 
-#: services/Vmware_enterprise/service_linked.py:162
+#: services/Vmware_enterprise/service_linked.py:138
 msgid "Network on which the machine will be deployed"
 msgstr "将部署计算机的网络"
 
-#: services/Vmware_enterprise/service_linked.py:168
+#: services/Vmware_enterprise/service_linked.py:144
 msgid "Clones Folder"
 msgstr "克隆文件夹"
 
-#: services/Vmware_enterprise/service_linked.py:171
+#: services/Vmware_enterprise/service_linked.py:147
 msgid "Folder where deploy clones"
 msgstr "部署克隆的文件夹"
 
-#: services/Vmware_enterprise/service_linked.py:177
+#: services/Vmware_enterprise/service_linked.py:153
 msgid "Inc.Datastores"
 msgstr "Inc.Datastores"
 
-#: services/Vmware_enterprise/service_linked.py:181
+#: services/Vmware_enterprise/service_linked.py:157
 msgid "Datastores where to put incrementals"
 msgstr "数据存储放置增量的位置"
+
+#: services/Vmware_enterprise/service_linked.py:193
+msgid "If active, found duplicates clones for this service will be removed"
+msgstr "如果处于活动状态，则会删除此服务的重复克隆"
 
 #: services/Xen/provider.py:79
 msgid "Xenserver/XCP-NG Platforms Provider"
@@ -5918,47 +6045,47 @@ msgstr "阴影"
 msgid "Shadow memory multiplier (use with care)"
 msgstr "影子内存倍增器（谨慎使用）"
 
-#: temp_for_locales.py:125
+#: temp_for_locales.py:126
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: temp_for_locales.py:126
+#: temp_for_locales.py:127
 msgid "English"
 msgstr "英语"
 
-#: temp_for_locales.py:127
+#: temp_for_locales.py:128
 msgid "French"
 msgstr "法国"
 
-#: temp_for_locales.py:128
+#: temp_for_locales.py:129
 msgid "German"
 msgstr "德语"
 
-#: temp_for_locales.py:129
+#: temp_for_locales.py:130
 msgid "Portuguese"
 msgstr "葡萄牙语"
 
-#: temp_for_locales.py:130
+#: temp_for_locales.py:131
 msgid "Italian"
 msgstr "意大利"
 
-#: temp_for_locales.py:131
+#: temp_for_locales.py:132
 msgid "Basque"
 msgstr "巴斯克"
 
-#: temp_for_locales.py:132
+#: temp_for_locales.py:133
 msgid "Arabic"
 msgstr "阿拉伯"
 
-#: temp_for_locales.py:133
+#: temp_for_locales.py:134
 msgid "Russian"
 msgstr "俄语"
 
-#: temp_for_locales.py:134
+#: temp_for_locales.py:135
 msgid "Catalan"
 msgstr "加泰罗尼亚"
 
-#: temp_for_locales.py:135
+#: temp_for_locales.py:136
 msgid "Chinese"
 msgstr "中文"
 
@@ -6103,7 +6230,7 @@ msgstr ""
 #: transports/HTML5RDS_enterprise/html5rds.py:99
 #: transports/NICEDCV_enterprise/nicedcv_base.py:40
 #: transports/NoMachine_enterprise/nomachine_base.py:57
-#: transports/RDP/rdp_base.py:69 transports/RDS_enterprise/rds_base.py:45
+#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:45
 msgid "Empty creds"
 msgstr "空的信誉"
 
@@ -6111,7 +6238,7 @@ msgstr "空的信誉"
 #: transports/HTML5RDS_enterprise/html5rds.py:101
 #: transports/NICEDCV_enterprise/nicedcv_base.py:42
 #: transports/NoMachine_enterprise/nomachine_base.py:59
-#: transports/RDP/rdp_base.py:71 transports/RDS_enterprise/rds_base.py:47
+#: transports/RDP/rdp_base.py:73 transports/RDS_enterprise/rds_base.py:47
 #: transports/SPICE/spice_base.py:64
 msgid "If checked, the credentials used to connect will be emtpy"
 msgstr "如果选中，则用于连接的凭据将为emtpy"
@@ -6119,7 +6246,7 @@ msgstr "如果选中，则用于连接的凭据将为emtpy"
 #: transports/HTML5RDP/html5rdp.py:102
 #: transports/NICEDCV_enterprise/nicedcv_base.py:48
 #: transports/NoMachine_enterprise/nomachine_base.py:65
-#: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:77
+#: transports/PCoIP_enterprise/pcoip.py:63 transports/RDP/rdp_base.py:79
 #: transports/SPICE/spice_base.py:70 transports/X2GO/x2go_base.py:71
 msgid "If not empty, this username will be always used as credential"
 msgstr "如果不为空，则此用户名将始终用作凭据"
@@ -6127,13 +6254,13 @@ msgstr "如果不为空，则此用户名将始终用作凭据"
 #: transports/HTML5RDP/html5rdp.py:108
 #: transports/NICEDCV_enterprise/nicedcv_base.py:54
 #: transports/NoMachine_enterprise/nomachine_base.py:71
-#: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:83
+#: transports/PCoIP_enterprise/pcoip.py:69 transports/RDP/rdp_base.py:85
 #: transports/SPICE/spice_base.py:76
 msgid "If not empty, this password will be always used as credential"
 msgstr "如果不为空，则此密码将始终用作凭证"
 
 #: transports/HTML5RDP/html5rdp.py:112
-#: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:87
+#: transports/HTML5RDS_enterprise/html5rds.py:105 transports/RDP/rdp_base.py:89
 #: transports/RDS_enterprise/rds_base.py:51
 msgid "Without Domain"
 msgstr "没有域名"
@@ -6147,8 +6274,8 @@ msgid ""
 msgstr "如果选中，则域部分将始终清空（例如，需要连接到xrdp）"
 
 #: transports/HTML5RDP/html5rdp.py:123
-#: transports/HTML5RDS_enterprise/html5rds.py:116 transports/RDP/rdp_base.py:98
-#: transports/RDS_enterprise/rds_base.py:62
+#: transports/HTML5RDS_enterprise/html5rds.py:116
+#: transports/RDP/rdp_base.py:100 transports/RDS_enterprise/rds_base.py:62
 msgid ""
 "If not empty, this domain will be always used as credential (used as "
 "DOMAIN\\user)"
@@ -6161,7 +6288,7 @@ msgstr "显示壁纸"
 
 #: transports/HTML5RDP/html5rdp.py:131
 #: transports/HTML5RDS_enterprise/html5rds.py:124
-#: transports/RDP/rdp_base.py:241
+#: transports/RDP/rdp_base.py:243
 msgid ""
 "If checked, the wallpaper and themes will be shown on machine (better user "
 "experience, more bandwidth)"
@@ -6169,25 +6296,25 @@ msgstr "如果选中，壁纸和主题将显示在机器上（更好的用户体
 
 #: transports/HTML5RDP/html5rdp.py:136
 #: transports/HTML5RDS_enterprise/html5rds.py:129
-#: transports/RDP/rdp_base.py:254
+#: transports/RDP/rdp_base.py:256
 msgid "Allow Desk.Comp."
 msgstr "允许Desk.Comp。"
 
 #: transports/HTML5RDP/html5rdp.py:138
 #: transports/HTML5RDS_enterprise/html5rds.py:131
-#: transports/RDP/rdp_base.py:256
+#: transports/RDP/rdp_base.py:258
 msgid "If checked, desktop composition will be allowed"
 msgstr "如果选中，则允许桌面合成"
 
 #: transports/HTML5RDP/html5rdp.py:142
 #: transports/HTML5RDS_enterprise/html5rds.py:135
-#: transports/RDP/rdp_base.py:260 transports/RDS_enterprise/rds_base.py:149
+#: transports/RDP/rdp_base.py:262 transports/RDS_enterprise/rds_base.py:158
 msgid "Font Smoothing"
 msgstr "字体平滑"
 
 #: transports/HTML5RDP/html5rdp.py:144
 #: transports/HTML5RDS_enterprise/html5rds.py:137
-#: transports/RDS_enterprise/rds_base.py:152
+#: transports/RDS_enterprise/rds_base.py:161
 msgid "If checked, fonts smoothing will be allowed (windows clients only)"
 msgstr "如果选中，将允许字体平滑（仅限Windows客户端）"
 
@@ -6290,7 +6417,7 @@ msgstr "禁用粘贴到远程"
 
 #: transports/HTML5RDP/html5rdp.py:194
 #: transports/HTML5RDS_enterprise/html5rds.py:187
-#: transports/RDP/rdp_base.py:143 transports/RDS_enterprise/rds_base.py:106
+#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:106
 msgid "Enable clipboard"
 msgstr "启用剪贴板"
 
@@ -6474,11 +6601,15 @@ msgstr "NLA 扩展（网络层身份验证。需要有效的用户名和密码�
 msgid "TLS (Transport Security Layer encryption)"
 msgstr "TLS（传输安全层加密）"
 
-#: transports/HTML5RDP/html5rdp.py:297 transports/RDP/rdp_base.py:192
+#: transports/HTML5RDP/html5rdp.py:297
+#: transports/HTML5RDS_enterprise/html5rds.py:306
+#: transports/RDP/rdp_base.py:194 transports/RDS_enterprise/rds_base.py:136
 msgid "RDP Port"
 msgstr "RDP 端口"
 
-#: transports/HTML5RDP/html5rdp.py:298 transports/RDP/rdp_base.py:193
+#: transports/HTML5RDP/html5rdp.py:298
+#: transports/HTML5RDS_enterprise/html5rds.py:307
+#: transports/RDP/rdp_base.py:195 transports/RDS_enterprise/rds_base.py:137
 msgid "Use this port as RDP port. Defaults to 3389."
 msgstr "将此端口用作 RDP 端口。默认为 3389。"
 
@@ -6497,7 +6628,7 @@ msgstr ""
 "效）"
 
 #: transports/HTML5RDP/html5rdp.py:323
-#: transports/HTML5RDS_enterprise/html5rds.py:365
+#: transports/HTML5RDS_enterprise/html5rds.py:374
 #: transports/HTML5SSH/html5ssh.py:214 transports/HTML5VNC/html5vnc.py:187
 msgid "The server must be http or https"
 msgstr "服务器必须是http或https"
@@ -6520,55 +6651,55 @@ msgid ""
 "for your balancer."
 msgstr "负载平衡信息。通常，此字段为空白。检查您的平衡器的文档。"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:305
+#: transports/HTML5RDS_enterprise/html5rds.py:314
 msgid "Gateway Hostname"
 msgstr "网关主机名"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:308
+#: transports/HTML5RDS_enterprise/html5rds.py:317
 msgid ""
 "Hostname or IP address of the gateway server. if ommited, no gateway will be "
 "used"
 msgstr "网关服务器的主机名或 IP 地址。如果省略，将不使用网关"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:316
+#: transports/HTML5RDS_enterprise/html5rds.py:325
 msgid "Gateway Port"
 msgstr "网关端口"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:318
+#: transports/HTML5RDS_enterprise/html5rds.py:327
 msgid "Port of the gateway server."
 msgstr "网关服务器的端口。"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:326
+#: transports/HTML5RDS_enterprise/html5rds.py:335
 msgid "Gateway Username"
 msgstr "网关用户名"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:329
+#: transports/HTML5RDS_enterprise/html5rds.py:338
 msgid ""
 "Username for the gateway server. Normally, this will be blank, and the "
 "username will be taken from the connection parameters."
 msgstr "网关服务器的用户名。通常，这将是空白的，用户名将从连接参数中获取。"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:337
+#: transports/HTML5RDS_enterprise/html5rds.py:346
 msgid "Gateway Password"
 msgstr "网关密码"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:340
+#: transports/HTML5RDS_enterprise/html5rds.py:349
 msgid ""
 "Password for the gateway server. Normally, this will be blank, and the "
 "password will be taken from the connection parameters."
 msgstr "网关服务器的密码。通常，这将是空白的，密码将从连接参数中获取。"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:348
+#: transports/HTML5RDS_enterprise/html5rds.py:357
 msgid "Gateway Domain"
 msgstr "网关域"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:351
+#: transports/HTML5RDS_enterprise/html5rds.py:360
 msgid ""
 "Domain for the gateway server. Normally, this will be blank, and the domain "
 "will be taken from the connection parameters."
 msgstr "网关服务器的域。通常，这将是空白的，域将从连接参数中获取。"
 
-#: transports/HTML5RDS_enterprise/html5rds.py:370
+#: transports/HTML5RDS_enterprise/html5rds.py:379
 msgid ""
 "Empty credentials (on Credentials tab) is only allowed with Security level "
 "(on Parameters tab) set to \"RDP\""
@@ -6661,8 +6792,8 @@ msgstr "VNC服务器端口"
 msgid "Port of the VNC server."
 msgstr "VNC服务器的端口。"
 
-#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:224
-#: transports/RDS_enterprise/rds_base.py:135
+#: transports/HTML5VNC/html5vnc.py:111 transports/RDP/rdp_base.py:226
+#: transports/RDS_enterprise/rds_base.py:144
 msgid "Color depth"
 msgstr "颜色深度"
 
@@ -6713,12 +6844,12 @@ msgid "If checked, the connection will be opened in full screen mode"
 msgstr "如果选中，将以全屏模式打开连接"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:66
-#: transports/RDP/rdp_base.py:246
+#: transports/RDP/rdp_base.py:248
 msgid "Multiple monitors"
 msgstr "多个显示器"
 
 #: transports/NICEDCV_enterprise/nicedcv_base.py:69
-#: transports/RDP/rdp_base.py:249
+#: transports/RDP/rdp_base.py:251
 msgid ""
 "If checked, all client monitors will be used for displaying (only works on "
 "windows clients)"
@@ -6770,7 +6901,7 @@ msgstr "如果启用，将验证隧道服务器的证书（推荐）。"
 
 #: transports/NICEDCV_enterprise/nicedcvtunnel.py:91
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:114
-#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:126
+#: transports/RDP/rdptunnel.py:137 transports/RDS_enterprise/rdstunnel.py:127
 #: transports/SPICE/spice_tunnel.py:108 transports/X2GO/x2go_tunnel.py:116
 msgid "Must use HOST:PORT in Tunnel Server Field"
 msgstr "必须在隧道服务器字段中使用HOST：PORT"
@@ -6824,168 +6955,168 @@ msgstr "使用Teradici Cloud Access的PCoIP协议。"
 msgid "If not empty, this domain will be always used as credential domain"
 msgstr "如果不为空，则此域将始终用作凭据域"
 
-#: transports/RDP/rdp.py:57 transports/RDP/rdptunnel.py:62
+#: transports/RDP/rdp.py:59 transports/RDP/rdptunnel.py:62
 msgid "RDP"
 msgstr "RDP"
 
-#: transports/RDP/rdp.py:59
+#: transports/RDP/rdp.py:61
 msgid "RDP Protocol. Direct connection."
 msgstr "RDP协议。直接连接。"
 
-#: transports/RDP/rdp_base.py:90
+#: transports/RDP/rdp_base.py:92
 msgid ""
 "If checked, the domain part will always be emptied (to connect to xrdp for "
 "example is needed)"
 msgstr "如果选中，域部分将始终清空（例如，需要连接到xrdp）"
 
-#: transports/RDP/rdp_base.py:104 transports/RDS_enterprise/rds_base.py:67
+#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:67
 msgid "Allow Smartcards"
 msgstr "允许智能卡"
 
-#: transports/RDP/rdp_base.py:106 transports/RDS_enterprise/rds_base.py:69
+#: transports/RDP/rdp_base.py:108 transports/RDS_enterprise/rds_base.py:69
 msgid "If checked, this transport will allow the use of smartcards"
 msgstr "如果选中，此传输将允许使用智能卡"
 
-#: transports/RDP/rdp_base.py:110 transports/RDS_enterprise/rds_base.py:73
+#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:73
 msgid "Allow Printers"
 msgstr "允许打印机"
 
-#: transports/RDP/rdp_base.py:112 transports/RDS_enterprise/rds_base.py:75
+#: transports/RDP/rdp_base.py:114 transports/RDS_enterprise/rds_base.py:75
 msgid "If checked, this transport will allow the use of user printers"
 msgstr "如果选中，则此传输将允许使用用户打印机"
 
-#: transports/RDP/rdp_base.py:116 transports/RDS_enterprise/rds_base.py:79
+#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:79
 msgid "Local drives policy"
 msgstr "本地驱动器策略"
 
-#: transports/RDP/rdp_base.py:118 transports/RDS_enterprise/rds_base.py:81
+#: transports/RDP/rdp_base.py:120 transports/RDS_enterprise/rds_base.py:81
 msgid "Local drives redirection policy"
 msgstr "本地驱动器重定向策略"
 
-#: transports/RDP/rdp_base.py:128 transports/RDS_enterprise/rds_base.py:91
+#: transports/RDP/rdp_base.py:130 transports/RDS_enterprise/rds_base.py:91
 msgid "Force drives"
 msgstr "强制驱动"
 
-#: transports/RDP/rdp_base.py:131 transports/RDS_enterprise/rds_base.py:94
+#: transports/RDP/rdp_base.py:133 transports/RDS_enterprise/rds_base.py:94
 msgid ""
 "Use comma separated values, for example \"C:,D:\". If drives policy is "
 "disallowed, this will be ignored"
 msgstr ""
 "使用逗号分隔的值，例如“ C：，D：”。如果不允许使用驱动器策略，则将忽略该策略"
 
-#: transports/RDP/rdp_base.py:137 transports/RDS_enterprise/rds_base.py:100
+#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:100
 msgid "Allow Serials"
 msgstr "允许序列号"
 
-#: transports/RDP/rdp_base.py:139 transports/RDS_enterprise/rds_base.py:102
+#: transports/RDP/rdp_base.py:141 transports/RDS_enterprise/rds_base.py:102
 msgid "If checked, this transport will allow the use of user serial ports"
 msgstr "如果选中，则此传输将允许使用用户串行端口"
 
-#: transports/RDP/rdp_base.py:145 transports/RDS_enterprise/rds_base.py:108
+#: transports/RDP/rdp_base.py:147 transports/RDS_enterprise/rds_base.py:108
 msgid "If checked, copy-paste functions will be allowed"
 msgstr "如果选中，则允许复制粘贴功能"
 
-#: transports/RDP/rdp_base.py:150 transports/RDS_enterprise/rds_base.py:113
+#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:113
 #: transports/X2GO/x2go_base.py:120
 msgid "Enable sound"
 msgstr "启用声音"
 
-#: transports/RDP/rdp_base.py:152 transports/RDS_enterprise/rds_base.py:115
+#: transports/RDP/rdp_base.py:154 transports/RDS_enterprise/rds_base.py:115
 msgid "If checked, sound will be redirected."
 msgstr "如果选中，则会重定向声音。"
 
-#: transports/RDP/rdp_base.py:157 transports/RDS_enterprise/rds_base.py:120
+#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:120
 msgid "Enable webcam"
 msgstr "启用网络摄像头"
 
-#: transports/RDP/rdp_base.py:159 transports/RDS_enterprise/rds_base.py:122
+#: transports/RDP/rdp_base.py:161 transports/RDS_enterprise/rds_base.py:122
 msgid "If checked, webcam will be redirected (ONLY Windows)."
 msgstr "如果选中，网络摄像头将被重定向（仅Windows）。"
 
-#: transports/RDP/rdp_base.py:164
+#: transports/RDP/rdp_base.py:166
 msgid "USB redirection"
 msgstr "USB 重定向"
 
-#: transports/RDP/rdp_base.py:166
+#: transports/RDP/rdp_base.py:168
 msgid "USB redirection policy"
 msgstr "USB 重定向策略"
 
-#: transports/RDP/rdp_base.py:183 transports/RDS_enterprise/rds_base.py:127
+#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:127
 msgid "Credssp Support"
 msgstr "Credssp支持"
 
-#: transports/RDP/rdp_base.py:185 transports/RDS_enterprise/rds_base.py:129
+#: transports/RDP/rdp_base.py:187 transports/RDS_enterprise/rds_base.py:129
 msgid "If checked, will enable Credentials Provider Support)"
 msgstr "如果选中，将启用凭据提供程序支持）"
 
-#: transports/RDP/rdp_base.py:200
+#: transports/RDP/rdp_base.py:202
 msgid "Screen Size"
 msgstr "屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:202
+#: transports/RDP/rdp_base.py:204
 msgid "Screen size for this transport"
 msgstr "此运输的屏幕尺寸"
 
-#: transports/RDP/rdp_base.py:226 transports/RDS_enterprise/rds_base.py:137
+#: transports/RDP/rdp_base.py:228 transports/RDS_enterprise/rds_base.py:146
 msgid "Color depth for this connection"
 msgstr "此连接的颜色深度"
 
-#: transports/RDP/rdp_base.py:238
+#: transports/RDP/rdp_base.py:240
 msgid "Wallpaper/theme"
 msgstr "壁纸/主题"
 
-#: transports/RDP/rdp_base.py:263
+#: transports/RDP/rdp_base.py:265
 msgid "If checked, fonts smoothing will be allowed"
 msgstr "如果选中，则允许字体平滑"
 
-#: transports/RDP/rdp_base.py:267
+#: transports/RDP/rdp_base.py:269
 msgid "Connection Bar"
 msgstr "连接栏"
 
-#: transports/RDP/rdp_base.py:269
+#: transports/RDP/rdp_base.py:271
 msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgstr "如果选中，将显示连接栏（仅在Windows客户端上）"
 
-#: transports/RDP/rdp_base.py:275 transports/RDS_enterprise/rds_base.py:180
+#: transports/RDP/rdp_base.py:277 transports/RDS_enterprise/rds_base.py:189
 msgid "Multimedia sync"
 msgstr "多媒体同步"
 
-#: transports/RDP/rdp_base.py:278 transports/RDS_enterprise/rds_base.py:183
+#: transports/RDP/rdp_base.py:280 transports/RDS_enterprise/rds_base.py:192
 msgid "If checked. Linux client will use multimedia parameter for xfreerdp"
 msgstr "如果选中。 Linux客户端将使用xfreerdp的多媒体参数"
 
-#: transports/RDP/rdp_base.py:283 transports/RDS_enterprise/rds_base.py:188
+#: transports/RDP/rdp_base.py:285 transports/RDS_enterprise/rds_base.py:197
 msgid "Use Alsa"
 msgstr "使用Alsa"
 
-#: transports/RDP/rdp_base.py:286 transports/RDS_enterprise/rds_base.py:191
+#: transports/RDP/rdp_base.py:288 transports/RDS_enterprise/rds_base.py:200
 msgid ""
 "If checked, Linux client will try to use ALSA, otherwise Pulse will be used"
 msgstr "如果选中，Linux客户端将尝试使用ALSA，否则将使用Pulse"
 
-#: transports/RDP/rdp_base.py:291 transports/RDS_enterprise/rds_base.py:196
+#: transports/RDP/rdp_base.py:293 transports/RDS_enterprise/rds_base.py:205
 msgid "Printer string"
 msgstr "打印机字符串"
 
-#: transports/RDP/rdp_base.py:294 transports/RDS_enterprise/rds_base.py:199
+#: transports/RDP/rdp_base.py:296 transports/RDS_enterprise/rds_base.py:208
 msgid "If printer is checked, the printer string used with xfreerdp client"
 msgstr "如果选中打印机，则打印机字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:300 transports/RDS_enterprise/rds_base.py:205
+#: transports/RDP/rdp_base.py:302 transports/RDS_enterprise/rds_base.py:214
 msgid "Smartcard string"
 msgstr "智能卡字符串"
 
-#: transports/RDP/rdp_base.py:303 transports/RDS_enterprise/rds_base.py:208
+#: transports/RDP/rdp_base.py:305 transports/RDS_enterprise/rds_base.py:217
 msgid "If smartcard is checked, the smartcard string used with xfreerdp client"
 msgstr "如果选中智能卡，则智能卡字符串与xfreerdp客户端一起使用"
 
-#: transports/RDP/rdp_base.py:309 transports/RDP/rdp_base.py:329
-#: transports/RDP/rdp_base.py:339 transports/RDS_enterprise/rds_base.py:214
-#: transports/RDS_enterprise/rds_base.py:224
+#: transports/RDP/rdp_base.py:311 transports/RDP/rdp_base.py:331
+#: transports/RDP/rdp_base.py:341 transports/RDS_enterprise/rds_base.py:223
+#: transports/RDS_enterprise/rds_base.py:233
 msgid "Custom parameters"
 msgstr "自定义参数"
 
-#: transports/RDP/rdp_base.py:312 transports/RDS_enterprise/rds_base.py:217
+#: transports/RDP/rdp_base.py:314 transports/RDS_enterprise/rds_base.py:226
 msgid ""
 "If not empty, extra parameter to include for Linux Client (for example /usb:"
 "id,dev:054c:0268, or aything compatible with your xfreerdp client)"
@@ -6993,17 +7124,17 @@ msgstr ""
 "如果不为空，则为Linux客户端包含额外参数（例如/usb：id，dev：054c：0268，或者"
 "与xfreerdp客户端兼容的东西）"
 
-#: transports/RDP/rdp_base.py:319
+#: transports/RDP/rdp_base.py:321
 msgid "Allow Microsoft Rdp Client"
 msgstr "允许 Microsoft Rdp 客户端"
 
-#: transports/RDP/rdp_base.py:322
+#: transports/RDP/rdp_base.py:324
 msgid ""
 "If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE "
 "PROMPTED!"
 msgstr "如果选中，则允许使用 Microsoft 远程桌面客户端。密码将被提示！"
 
-#: transports/RDP/rdp_base.py:332
+#: transports/RDP/rdp_base.py:334
 msgid ""
 "If not empty, extra parameter to include for Mac OS X Freerdp Client (for "
 "example /usb:id,dev:054c:0268, or aything compatible with your xfreerdp "
@@ -7012,9 +7143,18 @@ msgstr ""
 "如果不为空，则为 Mac OS X Freerdp 客户端包含的额外参数（例如 /usb:id,"
 "dev:054c:0268，或与您的 xfreerdp 客户端兼容的任何内容）"
 
-#: transports/RDP/rdp_base.py:342 transports/RDS_enterprise/rds_base.py:227
+#: transports/RDP/rdp_base.py:344 transports/RDS_enterprise/rds_base.py:236
 msgid "If not empty, extra parameters to include for Windows Client"
 msgstr "如果不为空，Windows 客户端要包含的额外参数"
+
+#: transports/RDP/rdp_base.py:352
+msgid "Optimize Teams"
+msgstr "优化团队"
+
+#: transports/RDP/rdp_base.py:354
+#| msgid "If checked, connection bar will be shown (only on Windows clients)"
+msgid "If checked, Teams will be optimized (only works on Windows clients)"
+msgstr "如果选中，Teams 将得到优化（仅适用于 Windows 客户端）"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
@@ -7029,31 +7169,31 @@ msgstr "适用于vApp的RDS"
 msgid "RDS access using RDP for vApps. Direct connection."
 msgstr "使用RDP为vApp进行RDS访问。直接连接。"
 
-#: transports/RDS_enterprise/rds_base.py:156
+#: transports/RDS_enterprise/rds_base.py:165
 msgid "Window state"
 msgstr "窗口状态"
 
-#: transports/RDS_enterprise/rds_base.py:159
+#: transports/RDS_enterprise/rds_base.py:168
 msgid "UDS Will try to execute the applicaiton with the window in this state"
 msgstr "UDS 将尝试在此状态下使用窗口执行应用程序"
 
-#: transports/RDS_enterprise/rds_base.py:163
+#: transports/RDS_enterprise/rds_base.py:172
 msgid "Normal"
 msgstr "普通的"
 
-#: transports/RDS_enterprise/rds_base.py:164
+#: transports/RDS_enterprise/rds_base.py:173
 msgid "Maximized"
 msgstr "最大化"
 
-#: transports/RDS_enterprise/rds_base.py:165
+#: transports/RDS_enterprise/rds_base.py:174
 msgid "Minimized"
 msgstr "最小化"
 
-#: transports/RDS_enterprise/rds_base.py:171
+#: transports/RDS_enterprise/rds_base.py:180
 msgid "Execute as shell"
 msgstr "作为 shell 执行"
 
-#: transports/RDS_enterprise/rds_base.py:175
+#: transports/RDS_enterprise/rds_base.py:184
 msgid ""
 "If checked, Linux client will execute application in a session instead of a "
 "remoteapp"
@@ -7392,10 +7532,10 @@ msgstr "我们正在创建您的服务，请等待几秒钟。）"
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
-#: web/views/modern.py:307
+#: web/views/modern.py:306
 msgid "{} days"
 msgstr "{} 天"
 
-#: web/views/modern.py:309
+#: web/views/modern.py:308
 msgid "{} hours"
 msgstr "{} 小时"
