@@ -149,7 +149,10 @@ class RadiusAuth(auths.Authenticator):
     ) -> auths.AuthenticationResult:
         try:
             connection = self.radiusClient()
-            groups, mfaCode = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
+            groups, mfaCode, state = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
+            # If state, store in session
+            if state:
+                request.session[client.STATE_VAR_NAME] = state.decode()
             # store the user mfa attribute if it is set
             if mfaCode:
                 self.storage.putPickle(

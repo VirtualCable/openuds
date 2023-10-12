@@ -171,7 +171,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
         logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
-    mfaProvider: typing.Optional['models.MFA'] = request.user.manager.mfa
+    mfaProvider = typing.cast('None|models.MFA', request.user.manager.mfa)
     if not mfaProvider:
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
@@ -187,7 +187,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
 
     # Obtain MFA data
     authInstance = request.user.manager.getInstance()
-    mfaInstance: 'mfas.MFA' = mfaProvider.getInstance()
+    mfaInstance = typing.cast('mfas.MFA', mfaProvider.getInstance())
 
     # Get validity duration
     validity = mfaProvider.validity * 60

@@ -52,6 +52,8 @@ ATTRIBUTE   Framed-AppleTalk-Zone   39  string"""
 NOT_CHECKED, INCORRECT, CORRECT = -1, 0, 1  # for pwd and otp
 NOT_NEEDED, NEEDED = INCORRECT, CORRECT  # for otp_needed
 
+STATE_VAR_NAME = 'radius_state'
+
 
 class RadiusAuthenticationError(Exception):
     pass
@@ -129,7 +131,7 @@ class RadiusClient:
     # Second element of return value is the mfa code from field
     def authenticate(
         self, username: str, password: str, mfaField: str = ''
-    ) -> typing.Tuple[typing.List[str], str]:
+    ) -> typing.Tuple[typing.List[str], str, bytes]:
         reply = self.sendAccessRequest(username, password)
 
         if reply.code not in (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
@@ -147,7 +149,7 @@ class RadiusClient:
             ]
         else:
             logger.info('No "Class (25)" attribute found')
-            return ([], '')
+            return ([], '', b'')
 
         # ...and mfa code
         mfaCode = ''
@@ -157,7 +159,7 @@ class RadiusClient:
                 for i in typing.cast(typing.Iterable[bytes], reply['Class'])
                 if i.startswith(groupClassPrefix)
             )
-        return (groups, mfaCode)
+        return (groups, mfaCode, typing.cast(typing.List[bytes], reply.get('State') or [b''])[0])
 
     def authenticate_only(self, username: str, password: str) -> RadiusResult:
         reply = self.sendAccessRequest(username, password)
