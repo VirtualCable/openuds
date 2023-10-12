@@ -173,8 +173,7 @@ class RadiusOTP(mfas.MFA):
     def checkAction(self, action: str, request: 'ExtendedHttpRequest') -> bool:
         def checkIp() -> bool:
             return any(
-                i.ipInNetwork(request.ip)
-                for i in models.Network.objects.filter(uuid__in=self.networks.value)
+                i.ipInNetwork(request.ip) for i in models.Network.objects.filter(uuid__in=self.networks.value)
             )
 
         if action == '0':
@@ -229,9 +228,7 @@ class RadiusOTP(mfas.MFA):
             connection = self.radiusClient()
             auth_reply = connection.authenticate_challenge(username, password=web_pwd)
         except Exception as e:
-            logger.error(
-                "Exception found connecting to Radius OTP %s: %s", e.__class__, e
-            )
+            logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
             if not self.checkAction(self.responseErrorAction.value, request):
                 raise Exception(_('Radius OTP connection error'))
             logger.warning(
@@ -260,7 +257,7 @@ class RadiusOTP(mfas.MFA):
             return self.checkResult(self.allowLoginWithoutMFA.value, request)
 
         # Store state for later use, related to this user
-        request.session['radius_state'] = auth_reply.state or b''
+        request.session[client.STATE_VAR_NAME] = auth_reply.state or b''
 
         # correct password and otp_needed
         return mfas.MFA.RESULT.OK
@@ -290,18 +287,16 @@ class RadiusOTP(mfas.MFA):
             web_pwd = webPassword(request)
             try:
                 connection = self.radiusClient()
-                state = request.session.get('radius_state', b'')
+                state = request.session.get(client.STATE_VAR_NAME, b'')
                 if state:
                     # Remove state from session
-                    del request.session['radius_state']
+                    del request.session[client.STATE_VAR_NAME]
                     # Use state to validate
                     auth_reply = connection.authenticate_challenge(username, otp=code, state=state)
                 else:  # No state, so full authentication
                     auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
             except Exception as e:
-                logger.error(
-                    "Exception found connecting to Radius OTP %s: %s", e.__class__, e
-                )
+                logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
                 if not self.checkAction(self.responseErrorAction.value, request):
                     raise Exception(_('Radius OTP connection error'))
                 logger.warning(
