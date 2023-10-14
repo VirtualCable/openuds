@@ -129,7 +129,7 @@ objectTypes: typing.Mapping[typing.Type[Model], int] = {
 }
 
 # Titles of types
-titles: typing.Mapping[int, str] = {
+titles: typing.Mapping[int, typing.Any] = {
     CT_ASSIGNED: _('Assigned'),
     CT_INUSE: _('In use'),
     CT_LOAD: _('Load'),
