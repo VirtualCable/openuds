@@ -81,31 +81,21 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
-    service: 'models.ForeignKey[Service]' = models.ForeignKey(
+    service = models.ForeignKey(
         Service,
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    osmanager: 'models.ForeignKey[OSManager | None]' = models.ForeignKey(
+    osmanager = models.ForeignKey(
         OSManager,
         null=True,
         blank=True,
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    transports: 'models.ManyToManyField[Transport, ServicePool]' = (
-        models.ManyToManyField(
-            Transport, related_name='deployedServices', db_table='uds__ds_trans'
-        )
-    )
-    assignedGroups: 'models.ManyToManyField[Group, ServicePool]' = (
-        models.ManyToManyField(
-            Group, related_name='deployedServices', db_table='uds__ds_grps'
-        )
-    )
-    state = models.CharField(
-        max_length=1, default=states.servicePool.ACTIVE, db_index=True
-    )
+    transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
+    assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
+    state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
@@ -114,7 +104,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     ignores_unused = models.BooleanField(default=False)
 
-    image: 'models.ForeignKey[Image | None]' = models.ForeignKey(
+    image = models.ForeignKey(
         Image,
         null=True,
         blank=True,
@@ -122,7 +112,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         on_delete=models.SET_NULL,
     )
 
-    servicesPoolGroup: 'models.ForeignKey[ServicePoolGroup | None]' = models.ForeignKey(
+    servicesPoolGroup = models.ForeignKey(
         ServicePoolGroup,
         null=True,
         blank=True,
@@ -136,7 +126,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
 
     # Usage accounting
-    account: 'models.ForeignKey[Account | None]' = models.ForeignKey(
+    account = models.ForeignKey(
         Account,
         null=True,
         blank=True,
@@ -192,7 +182,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return self.osmanager.getType().transformsUserOrPasswordForService()
         return False
 
-    def processUserPassword(self, username: str, password:str ) -> typing.Tuple[str, str]:
+    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
         """
         This method is provided for consistency between UserService and ServicePool
         There is no posibility to check the username and password that a user will use to
@@ -218,16 +208,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 ServicePool.objects.none()
             )  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = getSqlDatetime() - timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
         for v in (
-            UserService.objects.filter(
-                state=states.userService.ERROR, state_date__gt=date
-            )
+            UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date)
             .values('deployed_service')
             .annotate(how_many=Count('deployed_service'))
             .order_by('deployed_service')
@@ -246,9 +232,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug(
-            "SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name
-        )
+        logger.debug("SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name)
         if self.short_name and str(self.short_name).strip():
             return str(self.short_name.strip())
         return str(self.name)
@@ -274,13 +258,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = typing.cast(datetime, getSqlDatetime()) - timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         if (
-            self.userServices.filter(
-                state=states.userService.ERROR, state_date__gt=date
-            ).count()
+            self.userServices.filter(state=states.userService.ERROR, state_date__gt=date).count()
             >= GlobalConfig.RESTRAINT_COUNT.getInt()
         ):
             return True
@@ -295,9 +275,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def isUsable(self) -> bool:
         return (
-            self.state == states.servicePool.ACTIVE
-            and not self.isInMaintenance()
-            and not self.isRestrained()
+            self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
         )
 
     def toBeReplaced(self, forUser: 'User') -> typing.Optional[datetime]:
@@ -314,9 +292,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         try:
             found = typing.cast(
                 'UserService',
-                self.assignedUserServices().filter(
-                    user=forUser, state__in=states.userService.VALID_STATES
-                )[
+                self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[
                     0
                 ],  # type: ignore  # Slicing is not supported by pylance right now
             )
@@ -340,18 +316,14 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in sorted(
-            self.calendarAccess.all(), key=operator.attrgetter('priority')
-        ):
+        for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
             if calendar.CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found
 
         return access == states.action.ALLOW
 
-    def getDeadline(
-        self, chkDateTime: typing.Optional[datetime] = None
-    ) -> typing.Optional[int]:
+    def getDeadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
         """Gets the deadline for an access on chkDateTime in seconds
 
         Keyword Arguments:
@@ -369,19 +341,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         deadLine = None
 
         for ac in self.calendarAccess.all():
-            if (
-                ac.access == states.action.ALLOW
-                and self.fallbackAccess == states.action.DENY
-            ):
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(
-                    chkDateTime, False
-                )
+            if ac.access == states.action.ALLOW and self.fallbackAccess == states.action.DENY:
+                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
             elif ac.access == states.action.DENY:  # DENY
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(
-                    chkDateTime, True
-                )
+                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
 
@@ -472,19 +437,15 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         userService: 'UserService'
 
         if activePub is None:
-            logger.error(
-                'No active publication, don\'t know what to erase!!! (ds = %s)', self
-            )
+            logger.error('No active publication, don\'t know what to erase!!! (ds = %s)', self)
             return
         for nonActivePub in self.publications.exclude(id=activePub.id):
-            for userService in nonActivePub.userServices.filter(
-                state=states.userService.PREPARING
-            ):
+            for userService in nonActivePub.userServices.filter(state=states.userService.PREPARING):
                 userService.cancel()
             with transaction.atomic():
-                nonActivePub.userServices.exclude(cache_level=0).filter(
-                    state=states.userService.USABLE
-                ).update(state=states.userService.REMOVABLE, state_date=now)
+                nonActivePub.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(
+                    state=states.userService.REMOVABLE, state_date=now
+                )
                 if not skipAssigned:
                     nonActivePub.userServices.filter(
                         cache_level=0, state=states.userService.USABLE, in_use=False
@@ -516,7 +477,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def validateTransport(self, transport) -> None:
         if (
-            self.transports.filter(id=transport.id).count()    # pylint: disable=no-member
+            self.transports.filter(id=transport.id).count()  # pylint: disable=no-member
             == 0  # pylint: disable=no-member
         ):  # pylint: disable=no-member
             raise InvalidServiceException()
@@ -556,9 +517,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        servicesNotNeedingPub = [
-            t.type() for t in services.factory().servicesThatDoNotNeedPublication()
-        ]
+        servicesNotNeedingPub = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
@@ -615,8 +574,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         servicePool: 'ServicePool'
         for servicePool in query:
             if typing.cast(typing.Any, servicePool).pubs_active or (
-                servicePool.service
-                and servicePool.service.data_type in servicesNotNeedingPub
+                servicePool.service and servicePool.service.data_type in servicesNotNeedingPub
             ):
                 yield servicePool
 
@@ -685,17 +643,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return 0
 
         if cachedValue == -1:
-            cachedValue = (
-                self.assignedUserServices()
-                .filter(state__in=states.userService.VALID_STATES)
-                .count()
-            )
+            cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
         return 100 * cachedValue // maxs
 
-    def testServer(
-        self, host: str, port: typing.Union[str, int], timeout: float = 4
-    ) -> bool:
+    def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return bool(self.service) and self.service.testServer(host, port, timeout)
 
     # Utility for logging
@@ -712,7 +664,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import (    # pylint: disable=import-outside-toplevel
+        from uds.core.util.permissions import (  # pylint: disable=import-outside-toplevel
             clean,
         )
 

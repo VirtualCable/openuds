@@ -225,8 +225,8 @@ CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
 
 
 class CalendarAction(UUIDModel):
-    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(Calendar, on_delete=models.CASCADE)
-    service_pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
+    calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
+    service_pool = models.ForeignKey(ServicePool, on_delete=models.CASCADE)
     action = models.CharField(max_length=64, default='')
     at_start = models.BooleanField(default=False)  # If false, action is done at end of event
     events_offset = models.IntegerField(default=0)  # In minutes

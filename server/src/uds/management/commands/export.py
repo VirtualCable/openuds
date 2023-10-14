@@ -402,6 +402,7 @@ class Command(BaseCommand):
             + yaml.safe_dump(providers)
             + '# Services\n'
             + yaml.safe_dump(services)
+        )
     
     def export_mfa(self) -> str:
         """

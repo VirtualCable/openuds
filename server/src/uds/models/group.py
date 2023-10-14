@@ -57,7 +57,7 @@ class Group(UUIDModel):
     This class represents a group, associated with one authenticator
     """
 
-    manager: 'models.ForeignKey[Authenticator]' = models.ForeignKey(
+    manager = models.ForeignKey(
         Authenticator, on_delete=models.CASCADE, related_name='groups'
     )
     name = models.CharField(max_length=128, db_index=True)

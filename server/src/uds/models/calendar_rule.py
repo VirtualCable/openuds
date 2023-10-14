@@ -110,7 +110,7 @@ class CalendarRule(UUIDModel):
     duration = models.IntegerField(default=0)  # Duration in "duration_unit" units
     duration_unit = models.CharField(choices=dunits, default='MINUTES', max_length=32)
 
-    calendar: 'models.ForeignKey[Calendar]' = models.ForeignKey(
+    calendar = models.ForeignKey(
         Calendar, related_name='rules', on_delete=models.CASCADE
     )
 

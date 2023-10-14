@@ -63,6 +63,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     """
     A meta pool is a pool that has pool members
     """
+
     name = models.CharField(max_length=128, default='')
     short_name = models.CharField(max_length=32, default='')
     comments = models.CharField(max_length=256, default='')
@@ -81,9 +82,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         related_name='metaPools',
         on_delete=models.SET_NULL,
     )
-    assignedGroups = models.ManyToManyField(
-        Group, related_name='metaPools', db_table='uds__meta_grps'
-    )
+    assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
@@ -140,9 +139,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 maintenance += 1
         return total == maintenance
 
-    def isAccessAllowed(
-        self, chkDateTime: typing.Optional['datetime.datetime'] = None
-    ) -> bool:
+    def isAccessAllowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -151,9 +148,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
-        for ac in sorted(
-            self.calendarAccess.all(), key=operator.attrgetter('priority')
-        ):
+        for ac in sorted(self.calendarAccess.all(), key=operator.attrgetter('priority')):
             if CalendarChecker(ac.calendar).check(chkDateTime):
                 access = ac.access
                 break  # Stops on first rule match found
@@ -162,9 +157,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug(
-            'SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name
-        )
+        logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
         sn = str(self.short_name).strip()
         return sn if sn else self.name
 
@@ -226,8 +219,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        from uds.core.util.permissions import \
-            clean  # pylint: disable=import-outside-toplevel
+        from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
         toDelete = kwargs['instance']
 
@@ -246,12 +238,8 @@ signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):
-    pool: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
-        ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE
-    )
-    meta_pool: 'models.ForeignKey[MetaPool]' = models.ForeignKey(
-        MetaPool, related_name='members', on_delete=models.CASCADE
-    )
+    pool = models.ForeignKey(ServicePool, related_name='memberOfMeta', on_delete=models.CASCADE)
+    meta_pool = models.ForeignKey(MetaPool, related_name='members', on_delete=models.CASCADE)
     priority = models.PositiveIntegerField(default=0)
     enabled = models.BooleanField(default=True)
 

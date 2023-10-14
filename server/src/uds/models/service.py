@@ -75,9 +75,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     Server configuration).
     """
 
-    provider: 'models.ForeignKey[Provider]' = models.ForeignKey(
-        Provider, related_name='services', on_delete=models.CASCADE
-    )
+    provider = models.ForeignKey(Provider, related_name='services', on_delete=models.CASCADE)
 
     token = models.CharField(max_length=64, default=None, null=True, blank=True, unique=True)
 

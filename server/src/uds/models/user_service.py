@@ -64,13 +64,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
     # The reference to deployed service is used to accelerate the queries for different methods, in fact its redundant cause we can access to the deployed service
     # through publication, but queries are much more simple
-    deployed_service: 'models.ForeignKey["ServicePool"]' = models.ForeignKey(
-        ServicePool, on_delete=models.CASCADE, related_name='userServices'
-    )
+    deployed_service = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='userServices')
     # Althoug deployed_services has its publication, the user service is bound to a specific publication
     # so we need to store the publication id here (or the revision, but we need to store something)
     # storing the id simplifies the queries
-    publication: 'models.ForeignKey[ServicePoolPublication | None]' = models.ForeignKey(
+    publication = models.ForeignKey(
         ServicePoolPublication,
         on_delete=models.CASCADE,
         null=True,

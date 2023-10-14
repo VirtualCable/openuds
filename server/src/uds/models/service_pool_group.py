@@ -53,7 +53,7 @@ class ServicePoolGroup(UUIDModel):
     name = models.CharField(max_length=128, default='', db_index=True, unique=True)
     comments = models.CharField(max_length=256, default='')
     priority = models.IntegerField(default=0, db_index=True)
-    image: 'models.ForeignKey[Image | None]' = models.ForeignKey(
+    image = models.ForeignKey(
         Image,
         null=True,
         blank=True,

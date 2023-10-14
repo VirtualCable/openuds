@@ -86,14 +86,14 @@ class StatsCounters(models.Model):
         if q.count() == 0:
             return
 
-        since = kwargs.get('since')
+        since = typing.cast('int', kwargs.get('since'))
         if isinstance(since, datetime.datetime):
             # Convert to unix timestamp
             since = int(since.timestamp())
         if not since:
             # Get first timestamp from table, we knwo table has at least one record
             since = StatsCounters.objects.order_by('stamp').first().stamp  # type: ignore
-        to = kwargs.get('to')
+        to = typing.cast('int', kwargs.get('to'))
         if isinstance(to, datetime.datetime):
             # Convert to unix timestamp
             to = int(to.timestamp())
@@ -125,7 +125,7 @@ class StatsCounters(models.Model):
         fnc = models.Avg('value') if not kwargs.get('use_max') else models.Max('value')
 
         q = (
-            q.order_by('group_by_stamp')
+            q.order_by('group_by_stamp')  # type: ignore  # group_by_stamp is added by extra
             .values('group_by_stamp')
             .annotate(
                 value=fnc,

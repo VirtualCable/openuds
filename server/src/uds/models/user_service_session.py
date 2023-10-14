@@ -61,7 +61,7 @@ class UserServiceSession(models.Model):  # pylint: disable=too-many-public-metho
     start = models.DateTimeField(default=getSqlDatetime)
     end = models.DateTimeField(null=True, blank=True)
 
-    user_service: 'models.ForeignKey[UserService]' = models.ForeignKey(
+    user_service = models.ForeignKey(
         UserService, on_delete=models.CASCADE, related_name='sessions'
     )
 

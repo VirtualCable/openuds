@@ -55,9 +55,7 @@ logger = logging.getLogger(__name__)
 
 class ServicePoolPublicationChangelog(models.Model):
     # This should be "servicePool"
-    publication: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
-        ServicePool, on_delete=models.CASCADE, related_name='changelog'
-    )
+    publication = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='changelog')
     stamp = models.DateTimeField()
     revision = models.PositiveIntegerField(default=1)
     log = models.TextField(default='')
@@ -82,9 +80,7 @@ class ServicePoolPublication(UUIDModel):
     A deployed service publication keep track of data needed by services that needs "preparation". (i.e. Virtual machine --> base machine --> children of base machines)
     """
 
-    deployed_service: 'models.ForeignKey[ServicePool]' = models.ForeignKey(
-        ServicePool, on_delete=models.CASCADE, related_name='publications'
-    )
+    deployed_service = models.ForeignKey(ServicePool, on_delete=models.CASCADE, related_name='publications')
     publish_date = models.DateTimeField(db_index=True)
     # data_type = models.CharField(max_length=128) # The data type is specified by the service itself
     data = models.TextField(default='')
@@ -225,10 +221,10 @@ class ServicePoolPublication(UUIDModel):
         logger.debug('Deleted publication %s', toDelete)
 
     def __str__(self) -> str:
-        return f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.toString(self.state)}'
+        return (
+            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.toString(self.state)}'
+        )
 
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(
-    ServicePoolPublication.beforeDelete, sender=ServicePoolPublication
-)
+models.signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)

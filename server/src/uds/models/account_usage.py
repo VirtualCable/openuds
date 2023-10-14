@@ -62,14 +62,14 @@ class AccountUsage(UUIDModel):
     pool_uuid = models.CharField(max_length=50, db_index=True, default='')
     start = models.DateTimeField(default=NEVER)
     end = models.DateTimeField(default=NEVER)
-    user_service: 'models.OneToOneField[UserService | None]' = models.OneToOneField(
+    user_service = models.OneToOneField(
         UserService,
         null=True,
         blank=True,
         related_name='accounting',
         on_delete=models.SET_NULL,
     )
-    account: 'models.ForeignKey[Account]' = models.ForeignKey(
+    account = models.ForeignKey(
         Account, related_name='usages', on_delete=models.CASCADE
     )
 
