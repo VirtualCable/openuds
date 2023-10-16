@@ -131,7 +131,7 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
         authLogLogin(request, authenticator, user.name, 'Federated login')
 
         request.session['OS'] = os
-        
+
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
         if authenticator.getType().providesMfa() and authenticator.mfa:
@@ -279,6 +279,7 @@ def ticketAuth(
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))
         else:
+            logger.warning('No service pool provided, redirecting to index: %s', data)
             response = HttpResponseRedirect(reverse('page.index'))
 
         # Now ensure uds cookie is at response
