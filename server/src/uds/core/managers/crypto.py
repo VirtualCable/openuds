@@ -42,7 +42,7 @@ import typing
 import secrets
 
 # For password secrets
-from argon2 import PasswordHasher
+from argon2 import PasswordHasher, Type as ArgonType
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -84,12 +84,14 @@ class CryptoManager(metaclass=singleton.Singleton):
     @staticmethod
     def AESKey(key: typing.Union[str, bytes], length: int) -> bytes:
         if isinstance(key, str):
-            key = key.encode('utf8')
+            bkey = key.encode('utf8')
+        else:
+            bkey = key
 
         while len(key) < length:
-            key += key  # Dup key
+            key += key  # type: ignore  # Pylance complains about types??
 
-        kl: typing.List[int] = list(key)
+        kl: typing.List[int] = list(key)  # type: ignore  # Pylance complains about types??
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]
@@ -180,7 +182,8 @@ class CryptoManager(metaclass=singleton.Singleton):
             key = key.encode('utf-8')
         mult = len(value) // len(key) + 1
         value_array = array.array('B', value)
-        key_array = array.array('B', key * mult)  # Ensure key array is at least as long as value_array
+        # Ensure key array is at least as long as value_array
+        key_array = array.array('B', key * mult)  # type: ignore  # Pylance complains about types??
         # We must return binary in xor, because result is in fact binary
         return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
 
@@ -246,7 +249,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             value = value.encode()
 
         # Argon2
-        return '{ARGON2}' + PasswordHasher().hash(value.decode())
+        return '{ARGON2}' + PasswordHasher(type=ArgonType.ID).hash(value)
 
     def checkHash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
         if isinstance(value, str):
@@ -264,9 +267,9 @@ class CryptoManager(metaclass=singleton.Singleton):
             return secrets.compare_digest(hashlib.sha3_256(value).hexdigest(), hashValue[28:])
         # Argon2
         if hashValue[:8] == '{ARGON2}':
-            ph = PasswordHasher()
+            ph = PasswordHasher()  # Type is implicit in hash
             try:
-                ph.verify(hashValue[8:], value.decode())
+                ph.verify(hashValue[8:], value)
                 return True
             except Exception:
                 return False  # Verify will raise an exception if not valid
@@ -279,7 +282,7 @@ class CryptoManager(metaclass=singleton.Singleton):
                     value
                 ).hexdigest()  # nosec: Old SHA1 password, not used anymore but need to be supported
             ),
-        ) 
+        )
 
     def uuid(self, obj: typing.Any = None) -> str:
         """Generates an uuid from obj. (lower case)
