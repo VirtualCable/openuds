@@ -50,6 +50,7 @@ from django.utils.translation import ugettext as _
 from uds.core import auths
 from uds.core.util import log
 from uds.core.util import net
+from uds.core.util import config
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
@@ -414,7 +415,12 @@ def webLogout(request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = N
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
-    exit_url = exit_url or reverse('page.login')
+    tag = request.session.get('tag', None)
+    if tag and config.GlobalConfig.REDIRECT_TO_TAG_ON_LOGOUT.getBool(False):
+        exit_page = reverse('page.login.tag', kwargs={'tag': tag})
+    else:
+        exit_page = reverse('page.login')
+    exit_url = exit_url or exit_page
     try:
         if request.user:
             authenticator = request.user.manager.getInstance()
@@ -429,7 +435,7 @@ def webLogout(request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = N
                     srcip=request.ip,
                 )
         else:  # No user, redirect to /
-            return HttpResponseRedirect(reverse('page.login'))
+            return HttpResponseRedirect(exit_page)
     except Exception:
         raise
     finally:

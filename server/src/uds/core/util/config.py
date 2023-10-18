@@ -124,9 +124,7 @@ class Config:
                         section=self._section.name(), key=self._key
                     )  # @UndefinedVariable
                     self._data = readed.value
-                    self._crypt = [self._crypt, True][
-                        readed.crypt
-                    ]  # True has "higher" precedende than False
+                    self._crypt = [self._crypt, True][readed.crypt]  # True has "higher" precedende than False
                     self._longText = readed.long
                     if self._type != -1 and self._type != readed.field_type:
                         readed.field_type = self._type
@@ -140,11 +138,7 @@ class Config:
                     self.set(self._default)
                 self._data = self._default
             except Exception as e:
-                logger.info(
-                    'Error accessing db config {0}.{1}'.format(
-                        self._section.name(), self._key
-                    )
-                )
+                logger.info('Error accessing db config {0}.{1}'.format(self._section.name(), self._key))
                 logger.exception(e)
                 self._data = self._default
 
@@ -207,9 +201,7 @@ class Config:
 
             # Editable here means that this configuration value can be edited by admin directly (generally, that this is a "clean text" value)
 
-            logger.debug(
-                'Saving config %s.%s as %s', self._section.name(), self._key, value
-            )
+            logger.debug('Saving config %s.%s as %s', self._section.name(), self._key, value)
             try:
                 obj, _ = DBConfig.objects.get_or_create(
                     section=self._section.name(), key=self._key
@@ -222,9 +214,7 @@ class Config:
                 )
                 obj.save()
             except Exception:
-                if (
-                    'migrate' in sys.argv
-                ):  # During migration, set could be saved as part of initialization...
+                if 'migrate' in sys.argv:  # During migration, set could be saved as part of initialization...
                     return
                 logger.exception('Exception')
                 # Probably a migration issue, just ignore it
@@ -256,12 +246,7 @@ class Config:
 
     @staticmethod
     def value(
-        section: Section,
-        key: str,
-        default: str,
-        crypt: bool = False,
-        longText: bool = False,
-        **kwargs
+        section: Section, key: str, default: str, crypt: bool = False, longText: bool = False, **kwargs
     ) -> 'Config.Value':
         return Config.Value(section, key, default, crypt, longText, **kwargs)
 
@@ -286,9 +271,7 @@ class Config:
     def update(section, key, value, checkType=False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
-            cfg = DBConfig.objects.filter(section=section, key=key)[
-                0
-            ]  # @UndefinedVariable
+            cfg = DBConfig.objects.filter(section=section, key=key)[0]  # @UndefinedVariable
             if checkType and cfg.field_type in (Config.READ_FIELD, Config.HIDDEN_FIELD):
                 return False  # Skip non writable elements
 
@@ -438,6 +421,13 @@ class GlobalConfig:
     REDIRECT_TO_HTTPS: Config.Value = Config.section(GLOBAL_SECTION).value(
         'redirectToHttps', '1', type=Config.BOOLEAN_FIELD
     )
+    # If logged in using a tag, redirect to same tag on logout
+    REDIRECT_TO_TAG_ON_LOGOUT: Config.Value = Config.section(GLOBAL_SECTION).value(
+        'Redirect to tag on logout',
+        '0',
+        type=Config.BOOLEAN_FIELD,
+    )
+
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME: Config.Value = Config.section(GLOBAL_SECTION).value(
@@ -561,9 +551,7 @@ class GlobalConfig:
     SITE_LOGO_NAME: Config.Value = Config.section(CUSTOM_SECTION).value(
         'Logo name', 'UDS', type=Config.TEXT_FIELD
     )
-    SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value(
-        'CSS', '', type=Config.LONGTEXT_FIELD
-    )
+    SITE_CSS: Config.Value = Config.section(CUSTOM_SECTION).value('CSS', '', type=Config.LONGTEXT_FIELD)
     SITE_INFO: Config.Value = Config.section(CUSTOM_SECTION).value(
         'Site information', '', type=Config.LONGTEXT_FIELD
     )
@@ -621,6 +609,4 @@ class GlobalConfig:
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
 
             except Exception:
-                logger.debug(
-                    'Config table do not exists!!!, maybe we are installing? :-)'
-                )
+                logger.debug('Config table do not exists!!!, maybe we are installing? :-)')

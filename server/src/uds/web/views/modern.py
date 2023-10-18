@@ -114,8 +114,6 @@ def login(
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
             auth.webLogin(request, response, user, data)  # data is user password here
-            # And restore tag
-            request.session['tag'] = tag
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
