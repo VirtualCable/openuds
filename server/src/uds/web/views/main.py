@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import re
 import time
 import logging
 import typing
@@ -44,7 +45,7 @@ from django.utils.translation import gettext as _
 from uds.core.types.request import ExtendedHttpRequest
 
 from uds.core.types.request import ExtendedHttpRequestWithUser
-from uds.core.auths import auth, exceptions
+from uds.core.auths import auth, exceptions, AuthenticationSuccess
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
@@ -55,7 +56,7 @@ from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas, types
-from uds import models
+from uds import auths, models
 from uds.core.util.model import getSqlStampInSeconds
 
 
@@ -97,12 +98,14 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 @never_cache
 def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
+    tag = tag or request.session.get('tag', None)
+    
     logger.debug('Tag: %s', tag)
     response: typing.Optional[HttpResponse] = None
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
         request.authorized = False  # Ensure that on login page, user is unauthorized first
-
+        
         form = LoginForm(request.POST, tag=tag)
         loginResult = checkLogin(request, form, tag)
         if loginResult.user:
@@ -112,8 +115,6 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
             auth.webLogin(
                 request, response, loginResult.user, loginResult.password
             )  # data is user password here
-            # And restore tag
-            request.session['tag'] = tag
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
@@ -150,7 +151,9 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
-    return auth.webLogout(request, logoutResponse.url or request.session.get('logouturl', None))
+    url = logoutResponse.url if logoutResponse.success == AuthenticationSuccess.REDIRECT else None
+        
+    return auth.webLogout(request, url or request.session.get('logouturl', None))
 
 
 @never_cache

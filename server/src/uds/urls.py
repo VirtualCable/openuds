@@ -59,7 +59,7 @@ urlpatterns = [
     ),
     path(
         r'logout/',
-        RedirectView.as_view(pattern_name='page.logut'),
+        RedirectView.as_view(pattern_name='page.logout'),
         name='page.logout.compat',
     ),
     # Backwards compatibility with REST API path

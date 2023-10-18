@@ -520,6 +520,13 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Redirect HTTP to HTTPS on connection to UDS'),
     )
+    REDIRECT_TO_TAG_ON_LOGOUT: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
+        'Redirect to tag on logout',
+        '0',
+        type=Config.FieldType.BOOLEAN,
+        help=_('Redirects login page to the tag used when logged in if active.'),
+    )
+    
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
@@ -603,7 +610,6 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Notify user of existence of a new version of a service on new publication'),
     )
-
     # Allowed "trusted sources" for request
     TRUSTED_SOURCES: Config.Value = Config.section(Config.SectionType.SECURITY).value(
         'Trusted Hosts',

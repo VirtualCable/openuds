@@ -160,7 +160,11 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
     """
     try:
         logger.debug('Getting info for %s', authName)
-        authenticator = Authenticator.objects.get(name=authName)
+        authenticator = (
+            Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+        )
+        if not authenticator:
+            raise Exception('Authenticator not found')
         authInstance = authenticator.getInstance()
         if typing.cast(typing.Any, authInstance.getInfo) == auths.Authenticator.getInfo:
             raise Exception()  # This authenticator do not provides info

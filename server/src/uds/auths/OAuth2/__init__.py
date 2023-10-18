@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -26,19 +27,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 """
+Sample authenticator. We import here the module, and uds.auths module will
+take care of registering it as provider
+
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-
-# pylint: disable=unused-import
-from . import connections
-from . import events
-from . import services
-from . import servers
-from . import permissions
-from . import request
-from . import rest
-from . import os
-from . import pools
-from . import ui
-# Preferences must be include explicitly, as it is not a "normal use" type
+from .authenticator import OAuth2Authenticator

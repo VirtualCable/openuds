@@ -53,6 +53,7 @@ from uds.core import auths
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
+from uds.core.util import config
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
@@ -378,7 +379,7 @@ def authCallbackUrl(authenticator: models.Authenticator) -> str:
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
-    return reverse('page.auth.callback', kwargs={'authName': authenticator.name})
+    return reverse('page.auth.callback', kwargs={'authName': authenticator.small_name})
 
 
 def authInfoUrl(authenticator: typing.Union[str, bytes, models.Authenticator]) -> str:
@@ -390,7 +391,7 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, models.Authenticator]) -
     elif isinstance(authenticator, bytes):
         name = authenticator.decode('utf8')
     else:
-        name = authenticator.name
+        name = typing.cast('models.Authenticator', authenticator).small_name
 
     return reverse('page.auth.info', kwargs={'authName': name})
 
@@ -474,7 +475,12 @@ def webLogout(
     Helper function to clear user related data from session. If this method is not used, the session we be cleaned anyway
     by django in regular basis.
     """
-    exit_url = exit_url or reverse('page.login')
+    tag = request.session.get('tag', None)
+    if tag and config.GlobalConfig.REDIRECT_TO_TAG_ON_LOGOUT.getBool(False):
+        exit_page = reverse('page.login.tag', kwargs={'tag': tag})
+    else:
+        exit_page = reverse('page.login')
+    exit_url = exit_url or exit_page
     try:
         if request.user:
             authenticator = request.user.manager.getInstance()
@@ -491,7 +497,7 @@ def webLogout(
                     srcip=request.ip,
                 )
         else:  # No user, redirect to /
-            return HttpResponseRedirect(reverse('page.login'))
+            return HttpResponseRedirect(exit_page)
     finally:
         # Try to delete session
         request.session.flush()
