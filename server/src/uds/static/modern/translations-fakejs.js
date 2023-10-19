@@ -56,7 +56,7 @@ gettext("About");
 gettext("UDS Client");
 gettext("About");
 gettext("Login Verification");
-gettext("Remember me for {{ api.config.mfa.remember_device }}");
+gettext("Remember me for");
 gettext("Submit");
 gettext("Username");
 gettext("Password");
