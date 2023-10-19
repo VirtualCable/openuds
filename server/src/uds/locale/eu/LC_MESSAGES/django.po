@@ -11,13 +11,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -1553,7 +1554,6 @@ msgid "Office 365 logout"
 msgstr "Office 365 saioa amaitzea"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-#| msgid "SAML Authenticator does not support white spaces on field NAME"
 msgid "AzureAD Authenticator does not support white spaces on field NAME"
 msgstr "AzureAD Authenticator-ek ez du onartzen IZENA eremuan zuriune zuriak"
 
@@ -1754,15 +1754,15 @@ msgstr ""
 "Ezartzen bada, balio hori talde gisa gehituko da erradioko erabiltzaile "
 "guztientzat"
 
-#: auths/Radius/authenticator.py:196
+#: auths/Radius/authenticator.py:198
 msgid "Error testing connection"
 msgstr "Errorea konexioa probatzean"
 
-#: auths/Radius/authenticator.py:208
+#: auths/Radius/authenticator.py:210
 msgid "Connection to Radius server failed"
 msgstr "Radius zerbitzarirako konexioak huts egin du"
 
-#: auths/Radius/authenticator.py:209
+#: auths/Radius/authenticator.py:211
 msgid "Connection to Radius server seems ok"
 msgstr "Badirudi Radius zerbitzarirako konexioa ondo dagoela"
 
@@ -1973,12 +1973,10 @@ msgstr ""
 "dezan"
 
 #: auths/SAML_enterprise/saml.py:201
-#| msgid "Friendly name"
 msgid "Encripted nameID"
 msgstr "Idaztutako izena ID"
 
 #: auths/SAML_enterprise/saml.py:204
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encripted"
 msgstr "Ezartzen bada, nameID idatziko da"
 
@@ -1998,7 +1996,6 @@ msgid "Authn requests signed"
 msgstr "Authn eskaerak sinatu dira"
 
 #: auths/SAML_enterprise/saml.py:212
-#| msgid "If set, the connection will be read only"
 msgid "If set, authn requests will be signed"
 msgstr "Ezartzen bada, autentifikazio-eskaerak sinatuko dira"
 
@@ -2015,12 +2012,10 @@ msgid "Logout responses signed"
 msgstr "Amaitzeko saioaren erantzunak sinatuta"
 
 #: auths/SAML_enterprise/saml.py:228
-#| msgid "If set, the connection will be read only"
 msgid "If set, logout responses will be signed"
 msgstr "Ezartzen bada, saioa amaitzeko erantzunak sinatuko dira"
 
 #: auths/SAML_enterprise/saml.py:233
-#| msgid "Metadata"
 msgid "Sign metadata"
 msgstr "Sinatu metadatuak"
 
@@ -2041,7 +2036,6 @@ msgid "Want assertions signed"
 msgstr "Baieztapenak sinatu nahi dituzu"
 
 #: auths/SAML_enterprise/saml.py:252
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be signed"
 msgstr "Ezartzen bada, baieztapenak sinatuko dira"
 
@@ -2050,7 +2044,6 @@ msgid "Want assertions encrypted"
 msgstr "Baieztapenak zifratuta nahi dituzu"
 
 #: auths/SAML_enterprise/saml.py:260
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be encrypted"
 msgstr "Ezartzen bada, baieztapenak enkriptatuko dira"
 
@@ -2059,17 +2052,14 @@ msgid "Want nameID encrypted"
 msgstr "nameID enkriptatu nahi duzu"
 
 #: auths/SAML_enterprise/saml.py:268
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encrypted"
 msgstr "Ezartzen bada, nameID enkriptatu egingo da"
 
 #: auths/SAML_enterprise/saml.py:273
-#| msgid "requested a template that do not exist"
 msgid "Requested authn context"
 msgstr "Eskatutako authn testuingurua"
 
 #: auths/SAML_enterprise/saml.py:276
-#| msgid "If set, the connection will be read only"
 msgid "If set, requested authn context will be sent"
 msgstr "Ezartzen bada, eskatutako autentifikazio-testuingurua bidaliko da"
 
@@ -2090,15 +2080,14 @@ msgstr "Metadatuen balio-iraupena"
 #: auths/SAML_enterprise/saml.py:292
 msgid "Duration of metadata validity in days. 0 means default (ten years)"
 msgstr ""
-"Metadatuen indarraldiaren iraupena egunetan. 0 lehenetsia esan nahi du ("
-"hamar urte)"
+"Metadatuen indarraldiaren iraupena egunetan. 0 lehenetsia esan nahi du "
+"(hamar urte)"
 
 #: auths/SAML_enterprise/saml.py:297
 msgid "Allow deprecated signature algorithms"
 msgstr "Baimendu zaharkitutako sinadura algoritmoak"
 
 #: auths/SAML_enterprise/saml.py:300
-#| msgid "If checked, fonts smoothing will be allowed"
 msgid "If set, deprecated signature algorithms will be allowed"
 msgstr "Ezartzen bada, zaharkitutako sinadura algoritmoak onartuko dira"
 
@@ -2266,11 +2255,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "Ezin da edozein taldek aurkitu zehaztutako partaidetza atributuarekin"
 
-#: core/auths/auth.py:113
+#: core/auths/auth.py:114
 msgid "System Administrator"
 msgstr "Sistema-administratzaileak"
 
-#: core/auths/auth.py:158
+#: core/auths/auth.py:159
 msgid "Forbidden"
 msgstr "Debekatuta"
 
@@ -2855,19 +2844,19 @@ msgstr "Zerbitzarian OTP definitu gabeko erabiltzailea"
 msgid "Action for user without defined Radius Challenge"
 msgstr "Radius Challenge definitu gabeko erabiltzaileentzako ekintza"
 
-#: mfas/Radius/mfa.py:200
+#: mfas/Radius/mfa.py:199
 msgid "OTP Code"
 msgstr "OTP kodea"
 
-#: mfas/Radius/mfa.py:208
+#: mfas/Radius/mfa.py:207
 msgid "Please enter OTP"
 msgstr "Mesedez, sartu OTP"
 
-#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
+#: mfas/Radius/mfa.py:233 mfas/Radius/mfa.py:301
 msgid "Radius OTP connection error"
 msgstr "Radius OTP konexio-errorea"
 
-#: mfas/Radius/mfa.py:288
+#: mfas/Radius/mfa.py:285
 msgid "Invalid OTP code"
 msgstr "OTP kodea baliogabea"
 
@@ -3048,7 +3037,7 @@ msgstr "Ezin izan da SMS bidaltzean"
 msgid "SMS response error"
 msgstr "SMS erantzunaren errorea"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:315
+#: mfas/SMS/mfa.py:397 web/views/modern.py:313
 msgid "MFA Code"
 msgstr "MFA kodea"
 
@@ -4852,7 +4841,6 @@ msgstr "Akatsak mantendu"
 
 #: services/Nutanix_enterprise/service.py:149
 #: services/Vmware_enterprise/service_linked.py:202
-#| msgid "If active, access errors found on machine will not mark is as error."
 msgid ""
 "If active, access errors found on machine will not be considered errors."
 msgstr ""
@@ -7468,7 +7456,6 @@ msgid "Optimize Teams"
 msgstr "Taldeak optimizatu"
 
 #: transports/RDP/rdp_base.py:354
-#| msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgid "If checked, Teams will be optimized (only works on Windows clients)"
 msgstr ""
 "Hautatzen bada, taldeak optimizatuko dira (Windows bezeroetan bakarrik "
@@ -7868,10 +7855,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Autentikatzaileak ez du informaziorik eman."
 
-#: web/views/modern.py:306
+#: web/views/modern.py:304
 msgid "{} days"
 msgstr "{} egun"
 
-#: web/views/modern.py:308
+#: web/views/modern.py:306
 msgid "{} hours"
 msgstr "{} ordu"

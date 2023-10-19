@@ -11,6 +11,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Andrés Schumann <aschumann@virtualcable.es>, 2023
@@ -19,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: French (http://app.transifex.com/openuds/openuds/language/"
@@ -1575,7 +1576,6 @@ msgid "Office 365 logout"
 msgstr "Déconnexion Office 365"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-#| msgid "SAML Authenticator does not support white spaces on field NAME"
 msgid "AzureAD Authenticator does not support white spaces on field NAME"
 msgstr ""
 "AzureAD Authenticator ne prend pas en charge les espaces blancs sur le champ "
@@ -1784,15 +1784,15 @@ msgstr ""
 "Si elle est définie, cette valeur sera ajoutée en tant que groupe pour tous "
 "les utilisateurs du rayon"
 
-#: auths/Radius/authenticator.py:196
+#: auths/Radius/authenticator.py:198
 msgid "Error testing connection"
 msgstr "Erreur de test de connexion"
 
-#: auths/Radius/authenticator.py:208
+#: auths/Radius/authenticator.py:210
 msgid "Connection to Radius server failed"
 msgstr "Échec de la connexion au serveur Radius"
 
-#: auths/Radius/authenticator.py:209
+#: auths/Radius/authenticator.py:211
 msgid "Connection to Radius server seems ok"
 msgstr "La connexion au serveur Radius semble correcte"
 
@@ -2006,12 +2006,10 @@ msgstr ""
 "puisse fonctionner correctement"
 
 #: auths/SAML_enterprise/saml.py:201
-#| msgid "Friendly name"
 msgid "Encripted nameID"
 msgstr "ID de nom chiffré"
 
 #: auths/SAML_enterprise/saml.py:204
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encripted"
 msgstr "S&#39;il est défini, le nameID sera crypté"
 
@@ -2031,7 +2029,6 @@ msgid "Authn requests signed"
 msgstr "Demandes d&#39;authentification signées"
 
 #: auths/SAML_enterprise/saml.py:212
-#| msgid "If set, the connection will be read only"
 msgid "If set, authn requests will be signed"
 msgstr "Si défini, les demandes d&#39;authentification seront signées"
 
@@ -2048,12 +2045,10 @@ msgid "Logout responses signed"
 msgstr "Réponses de déconnexion signées"
 
 #: auths/SAML_enterprise/saml.py:228
-#| msgid "If set, the connection will be read only"
 msgid "If set, logout responses will be signed"
 msgstr "Si défini, les réponses de déconnexion seront signées"
 
 #: auths/SAML_enterprise/saml.py:233
-#| msgid "Metadata"
 msgid "Sign metadata"
 msgstr "Signer les métadonnées"
 
@@ -2074,7 +2069,6 @@ msgid "Want assertions signed"
 msgstr "Je veux que les affirmations soient signées"
 
 #: auths/SAML_enterprise/saml.py:252
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be signed"
 msgstr "Si défini, les assertions seront signées"
 
@@ -2083,7 +2077,6 @@ msgid "Want assertions encrypted"
 msgstr "Vous voulez que les assertions soient cryptées"
 
 #: auths/SAML_enterprise/saml.py:260
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be encrypted"
 msgstr "Si défini, les assertions seront chiffrées"
 
@@ -2092,17 +2085,14 @@ msgid "Want nameID encrypted"
 msgstr "Vous souhaitez que le nom soit chiffré"
 
 #: auths/SAML_enterprise/saml.py:268
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encrypted"
 msgstr "S&#39;il est défini, nameID sera crypté"
 
 #: auths/SAML_enterprise/saml.py:273
-#| msgid "requested a template that do not exist"
 msgid "Requested authn context"
 msgstr "Contexte d&#39;authentification demandé"
 
 #: auths/SAML_enterprise/saml.py:276
-#| msgid "If set, the connection will be read only"
 msgid "If set, requested authn context will be sent"
 msgstr ""
 "S&#39;il est défini, le contexte d&#39;authentification demandé sera envoyé"
@@ -2121,14 +2111,14 @@ msgstr "Durée de validité des métadonnées"
 
 #: auths/SAML_enterprise/saml.py:292
 msgid "Duration of metadata validity in days. 0 means default (ten years)"
-msgstr "Durée de validité des métadonnées en jours. 0 signifie défaut (dix ans)"
+msgstr ""
+"Durée de validité des métadonnées en jours. 0 signifie défaut (dix ans)"
 
 #: auths/SAML_enterprise/saml.py:297
 msgid "Allow deprecated signature algorithms"
 msgstr "Autoriser les algorithmes de signature obsolètes"
 
 #: auths/SAML_enterprise/saml.py:300
-#| msgid "If checked, fonts smoothing will be allowed"
 msgid "If set, deprecated signature algorithms will be allowed"
 msgstr ""
 "S&#39;ils sont définis, les algorithmes de signature obsolètes seront "
@@ -2303,11 +2293,11 @@ msgstr ""
 "Impossible de localiser un groupe avec l&#39;attribut d&#39;appartenance "
 "spécifié"
 
-#: core/auths/auth.py:113
+#: core/auths/auth.py:114
 msgid "System Administrator"
 msgstr "Administrateur système"
 
-#: core/auths/auth.py:158
+#: core/auths/auth.py:159
 msgid "Forbidden"
 msgstr "Interdit"
 
@@ -2899,19 +2889,19 @@ msgstr "Utilisateur sans OTP défini sur le serveur"
 msgid "Action for user without defined Radius Challenge"
 msgstr "Action pour l&#39;utilisateur sans défi Radius défini"
 
-#: mfas/Radius/mfa.py:200
+#: mfas/Radius/mfa.py:199
 msgid "OTP Code"
 msgstr "Code OTP"
 
-#: mfas/Radius/mfa.py:208
+#: mfas/Radius/mfa.py:207
 msgid "Please enter OTP"
 msgstr "Veuillez entrer OTP"
 
-#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
+#: mfas/Radius/mfa.py:233 mfas/Radius/mfa.py:301
 msgid "Radius OTP connection error"
 msgstr "Erreur de connexion Radius OTP"
 
-#: mfas/Radius/mfa.py:288
+#: mfas/Radius/mfa.py:285
 msgid "Invalid OTP code"
 msgstr "Code OTP invalide"
 
@@ -3098,7 +3088,7 @@ msgstr "L&#39;envoi du SMS a échoué"
 msgid "SMS response error"
 msgstr "Erreur de réponse SMS"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:315
+#: mfas/SMS/mfa.py:397 web/views/modern.py:313
 msgid "MFA Code"
 msgstr "Code MFA"
 
@@ -4927,7 +4917,6 @@ msgstr "Garder en cas d’erreur"
 
 #: services/Nutanix_enterprise/service.py:149
 #: services/Vmware_enterprise/service_linked.py:202
-#| msgid "If active, access errors found on machine will not mark is as error."
 msgid ""
 "If active, access errors found on machine will not be considered errors."
 msgstr ""
@@ -7572,7 +7561,6 @@ msgid "Optimize Teams"
 msgstr "Optimiser les équipes"
 
 #: transports/RDP/rdp_base.py:354
-#| msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgid "If checked, Teams will be optimized (only works on Windows clients)"
 msgstr ""
 "Si coché, Teams sera optimisé (fonctionne uniquement sur les clients Windows)"
@@ -7979,10 +7967,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Authentificateur ne fournit pas d'informations"
 
-#: web/views/modern.py:306
+#: web/views/modern.py:304
 msgid "{} days"
 msgstr "{} journées"
 
-#: web/views/modern.py:308
+#: web/views/modern.py:306
 msgid "{} hours"
 msgstr "{} heures"

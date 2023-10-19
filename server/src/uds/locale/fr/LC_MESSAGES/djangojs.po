@@ -9,6 +9,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Andrés Schumann <aschumann@virtualcable.es>, 2023
@@ -20,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: French (http://app.transifex.com/openuds/openuds/language/"
@@ -1798,8 +1799,9 @@ msgid "Login Verification"
 msgstr "Identification"
 
 #: static/modern/translations-fakejs.js:59
-msgid "Remember me for {{ api.config.mfa.remember_device }}"
-msgstr "Se souvenir de moi pour {{ api.config.mfa.remember_device }}"
+#| msgid "Remove member pool"
+msgid "Remember me for"
+msgstr "Souviens-toi de moi pour"
 
 #: static/modern/translations-fakejs.js:60
 msgid "Submit"

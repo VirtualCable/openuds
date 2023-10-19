@@ -11,11 +11,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -1498,7 +1499,6 @@ msgid "Office 365 logout"
 msgstr "Office 365 注销"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-#| msgid "SAML Authenticator does not support white spaces on field NAME"
 msgid "AzureAD Authenticator does not support white spaces on field NAME"
 msgstr "AzureAD 身份验证器不支持字段 NAME 上的空格"
 
@@ -1687,15 +1687,15 @@ msgstr "全球组"
 msgid "If set, this value will be added as group for all radius users"
 msgstr "如果设置，此值将作为所有半径用户的组添加"
 
-#: auths/Radius/authenticator.py:196
+#: auths/Radius/authenticator.py:198
 msgid "Error testing connection"
 msgstr "错误测试连接"
 
-#: auths/Radius/authenticator.py:208
+#: auths/Radius/authenticator.py:210
 msgid "Connection to Radius server failed"
 msgstr "连接到 Radius 服务器失败"
 
-#: auths/Radius/authenticator.py:209
+#: auths/Radius/authenticator.py:211
 msgid "Connection to Radius server seems ok"
 msgstr "连接到 Radius 服务器似乎没问题"
 
@@ -1887,12 +1887,10 @@ msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "如果设置，则启用小写 url 编码，以便 ADFS 可以正常工作"
 
 #: auths/SAML_enterprise/saml.py:201
-#| msgid "Friendly name"
 msgid "Encripted nameID"
 msgstr "加密的nameID"
 
 #: auths/SAML_enterprise/saml.py:204
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encripted"
 msgstr "如果设置，nameID 将被加密"
 
@@ -1912,7 +1910,6 @@ msgid "Authn requests signed"
 msgstr "Authn 请求已签名"
 
 #: auths/SAML_enterprise/saml.py:212
-#| msgid "If set, the connection will be read only"
 msgid "If set, authn requests will be signed"
 msgstr "如果设置，将对身份验证请求进行签名"
 
@@ -1929,12 +1926,10 @@ msgid "Logout responses signed"
 msgstr "已签署注销响应"
 
 #: auths/SAML_enterprise/saml.py:228
-#| msgid "If set, the connection will be read only"
 msgid "If set, logout responses will be signed"
 msgstr "如果设置，注销响应将被签名"
 
 #: auths/SAML_enterprise/saml.py:233
-#| msgid "Metadata"
 msgid "Sign metadata"
 msgstr "签署元数据"
 
@@ -1955,7 +1950,6 @@ msgid "Want assertions signed"
 msgstr "希望签署断言"
 
 #: auths/SAML_enterprise/saml.py:252
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be signed"
 msgstr "如果设置，断言将被签名"
 
@@ -1964,7 +1958,6 @@ msgid "Want assertions encrypted"
 msgstr "想要加密断言"
 
 #: auths/SAML_enterprise/saml.py:260
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be encrypted"
 msgstr "如果设置，断言将被加密"
 
@@ -1973,17 +1966,14 @@ msgid "Want nameID encrypted"
 msgstr "想要对 nameID 进行加密"
 
 #: auths/SAML_enterprise/saml.py:268
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encrypted"
 msgstr "如果设置，nameID 将被加密"
 
 #: auths/SAML_enterprise/saml.py:273
-#| msgid "requested a template that do not exist"
 msgid "Requested authn context"
 msgstr "请求的身份验证上下文"
 
 #: auths/SAML_enterprise/saml.py:276
-#| msgid "If set, the connection will be read only"
 msgid "If set, requested authn context will be sent"
 msgstr "如果设置，将发送请求的身份验证上下文"
 
@@ -2008,7 +1998,6 @@ msgid "Allow deprecated signature algorithms"
 msgstr "允许已弃用的签名算法"
 
 #: auths/SAML_enterprise/saml.py:300
-#| msgid "If checked, fonts smoothing will be allowed"
 msgid "If set, deprecated signature algorithms will be allowed"
 msgstr "如果设置，将允许已弃用的签名算法"
 
@@ -2166,11 +2155,11 @@ msgstr "Ldap组类或组ID attr可能是错误的（找不到具有这两个条�
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "找不到指定了成员资格属性的任何组"
 
-#: core/auths/auth.py:113
+#: core/auths/auth.py:114
 msgid "System Administrator"
 msgstr "系统管理员"
 
-#: core/auths/auth.py:158
+#: core/auths/auth.py:159
 msgid "Forbidden"
 msgstr "被禁止"
 
@@ -2740,19 +2729,19 @@ msgstr "服务器中未定义 OTP 的用户"
 msgid "Action for user without defined Radius Challenge"
 msgstr "未定义 Radius Challenge 的用户操作"
 
-#: mfas/Radius/mfa.py:200
+#: mfas/Radius/mfa.py:199
 msgid "OTP Code"
 msgstr "一次性密码"
 
-#: mfas/Radius/mfa.py:208
+#: mfas/Radius/mfa.py:207
 msgid "Please enter OTP"
 msgstr "请输入一次性密码"
 
-#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
+#: mfas/Radius/mfa.py:233 mfas/Radius/mfa.py:301
 msgid "Radius OTP connection error"
 msgstr "半径 OTP 连接错误"
 
-#: mfas/Radius/mfa.py:288
+#: mfas/Radius/mfa.py:285
 msgid "Invalid OTP code"
 msgstr "无效的 OTP 代码"
 
@@ -2928,7 +2917,7 @@ msgstr "短信发送失败"
 msgid "SMS response error"
 msgstr "短信回复错误"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:315
+#: mfas/SMS/mfa.py:397 web/views/modern.py:313
 msgid "MFA Code"
 msgstr "MFA 代码"
 
@@ -4679,7 +4668,6 @@ msgstr "继续出错"
 
 #: services/Nutanix_enterprise/service.py:149
 #: services/Vmware_enterprise/service_linked.py:202
-#| msgid "If active, access errors found on machine will not mark is as error."
 msgid ""
 "If active, access errors found on machine will not be considered errors."
 msgstr "如果处于活动状态，则在计算机上发现的访问错误将不会被视为错误。"
@@ -7152,7 +7140,6 @@ msgid "Optimize Teams"
 msgstr "优化团队"
 
 #: transports/RDP/rdp_base.py:354
-#| msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgid "If checked, Teams will be optimized (only works on Windows clients)"
 msgstr "如果选中，Teams 将得到优化（仅适用于 Windows 客户端）"
 
@@ -7532,10 +7519,10 @@ msgstr "我们正在创建您的服务，请等待几秒钟。）"
 msgid "Authenticator does not provide information"
 msgstr "Authenticator不提供信息"
 
-#: web/views/modern.py:306
+#: web/views/modern.py:304
 msgid "{} days"
 msgstr "{} 天"
 
-#: web/views/modern.py:308
+#: web/views/modern.py:306
 msgid "{} hours"
 msgstr "{} 小时"

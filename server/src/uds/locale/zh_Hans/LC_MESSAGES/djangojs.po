@@ -9,12 +9,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -1773,8 +1774,9 @@ msgid "Login Verification"
 msgstr "登录验证"
 
 #: static/modern/translations-fakejs.js:59
-msgid "Remember me for {{ api.config.mfa.remember_device }}"
-msgstr "请记住我的 {{ api.config.mfa.remember_device }}"
+#| msgid "Remove member pool"
+msgid "Remember me for"
+msgstr "记住我为"
 
 #: static/modern/translations-fakejs.js:60
 msgid "Submit"

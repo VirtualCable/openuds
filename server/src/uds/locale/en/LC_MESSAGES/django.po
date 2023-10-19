@@ -11,6 +11,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo GÃ³mez <dkmaster at dkmon dot com>, 2012
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # blafuente <blafuente@virtualcable.es>, 2014
@@ -20,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-12 01:26+0200\n"
+"POT-Creation-Date: 2023-10-19 14:53+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: English (http://app.transifex.com/openuds/openuds/language/"
@@ -1542,10 +1543,8 @@ msgid "Office 365 logout"
 msgstr "Office 365 logout"
 
 #: auths/AzureAD_enterprise/azure_ad.py:178
-#, fuzzy
-#| msgid "SAML Authenticator does not support white spaces on field NAME"
 msgid "AzureAD Authenticator does not support white spaces on field NAME"
-msgstr "SAML Authenticator does not support white spaces on field NAME"
+msgstr "AzureAD Authenticator does not support white spaces on field NAME"
 
 #: auths/AzureAD_enterprise/azure_ad.py:331
 #: auths/AzureAD_enterprise/azure_ad.py:357
@@ -1737,15 +1736,15 @@ msgstr "Global group"
 msgid "If set, this value will be added as group for all radius users"
 msgstr "If set, this value will be added as group for all radius users"
 
-#: auths/Radius/authenticator.py:196
+#: auths/Radius/authenticator.py:198
 msgid "Error testing connection"
 msgstr "Error testing connection"
 
-#: auths/Radius/authenticator.py:208
+#: auths/Radius/authenticator.py:210
 msgid "Connection to Radius server failed"
 msgstr "Connection to Radius server failed"
 
-#: auths/Radius/authenticator.py:209
+#: auths/Radius/authenticator.py:211
 msgid "Connection to Radius server seems ok"
 msgstr "Connection to Radius server seems ok"
 
@@ -1953,16 +1952,12 @@ msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "If set, enable lowercase url encoding so ADFS can work correctly"
 
 #: auths/SAML_enterprise/saml.py:201
-#, fuzzy
-#| msgid "Friendly name"
 msgid "Encripted nameID"
-msgstr "Friendly name"
+msgstr "Encripted nameID"
 
 #: auths/SAML_enterprise/saml.py:204
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encripted"
-msgstr "If set, the connection will be read only"
+msgstr "If set, nameID will be encripted"
 
 #: auths/SAML_enterprise/saml.py:205 auths/SAML_enterprise/saml.py:213
 #: auths/SAML_enterprise/saml.py:221 auths/SAML_enterprise/saml.py:229
@@ -1977,117 +1972,99 @@ msgstr "Security"
 
 #: auths/SAML_enterprise/saml.py:209
 msgid "Authn requests signed"
-msgstr ""
+msgstr "Authn requests signed"
 
 #: auths/SAML_enterprise/saml.py:212
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, authn requests will be signed"
-msgstr "If set, the connection will be read only"
+msgstr "If set, authn requests will be signed"
 
 #: auths/SAML_enterprise/saml.py:217
 msgid "Logout requests signed"
-msgstr ""
+msgstr "Logout requests signed"
 
 #: auths/SAML_enterprise/saml.py:220
 msgid "If set, logout requests will be signed"
-msgstr ""
+msgstr "If set, logout requests will be signed"
 
 #: auths/SAML_enterprise/saml.py:225
 msgid "Logout responses signed"
-msgstr ""
+msgstr "Logout responses signed"
 
 #: auths/SAML_enterprise/saml.py:228
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, logout responses will be signed"
-msgstr "If set, the connection will be read only"
+msgstr "If set, logout responses will be signed"
 
 #: auths/SAML_enterprise/saml.py:233
-#, fuzzy
-#| msgid "Metadata"
 msgid "Sign metadata"
-msgstr "Metadata"
+msgstr "Sign metadata"
 
 #: auths/SAML_enterprise/saml.py:236
 msgid "If set, metadata will be signed"
-msgstr ""
+msgstr "If set, metadata will be signed"
 
 #: auths/SAML_enterprise/saml.py:241
 msgid "Want messages signed"
-msgstr ""
+msgstr "Want messages signed"
 
 #: auths/SAML_enterprise/saml.py:244
 msgid "If set, messages will be signed"
-msgstr ""
+msgstr "If set, messages will be signed"
 
 #: auths/SAML_enterprise/saml.py:249
 msgid "Want assertions signed"
-msgstr ""
+msgstr "Want assertions signed"
 
 #: auths/SAML_enterprise/saml.py:252
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be signed"
-msgstr "If set, the connection will be read only"
+msgstr "If set, assertions will be signed"
 
 #: auths/SAML_enterprise/saml.py:257
 msgid "Want assertions encrypted"
-msgstr ""
+msgstr "Want assertions encrypted"
 
 #: auths/SAML_enterprise/saml.py:260
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, assertions will be encrypted"
-msgstr "If set, the connection will be read only"
+msgstr "If set, assertions will be encrypted"
 
 #: auths/SAML_enterprise/saml.py:265
 msgid "Want nameID encrypted"
-msgstr ""
+msgstr "Want nameID encrypted"
 
 #: auths/SAML_enterprise/saml.py:268
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, nameID will be encrypted"
-msgstr "If set, the connection will be read only"
+msgstr "If set, nameID will be encrypted"
 
 #: auths/SAML_enterprise/saml.py:273
-#, fuzzy
-#| msgid "requested a template that do not exist"
 msgid "Requested authn context"
-msgstr "requested a template that do not exist"
+msgstr "Requested authn context"
 
 #: auths/SAML_enterprise/saml.py:276
-#, fuzzy
-#| msgid "If set, the connection will be read only"
 msgid "If set, requested authn context will be sent"
-msgstr "If set, the connection will be read only"
+msgstr "If set, requested authn context will be sent"
 
 #: auths/SAML_enterprise/saml.py:281
 msgid "Metadata cache duration"
-msgstr ""
+msgstr "Metadata cache duration"
 
 #: auths/SAML_enterprise/saml.py:284
 msgid "Duration of metadata cache in days. 0 means default (ten years)"
-msgstr ""
+msgstr "Duration of metadata cache in days. 0 means default (ten years)"
 
 #: auths/SAML_enterprise/saml.py:289
 msgid "Metadata validity duration"
-msgstr ""
+msgstr "Metadata validity duration"
 
 #: auths/SAML_enterprise/saml.py:292
 msgid "Duration of metadata validity in days. 0 means default (ten years)"
-msgstr ""
+msgstr "Duration of metadata validity in days. 0 means default (ten years)"
 
 #: auths/SAML_enterprise/saml.py:297
 msgid "Allow deprecated signature algorithms"
-msgstr ""
+msgstr "Allow deprecated signature algorithms"
 
 #: auths/SAML_enterprise/saml.py:300
-#, fuzzy
-#| msgid "If checked, fonts smoothing will be allowed"
 msgid "If set, deprecated signature algorithms will be allowed"
-msgstr "If checked, fonts smoothing will be allowed"
+msgstr "If set, deprecated signature algorithms will be allowed"
 
 #: auths/SAML_enterprise/saml.py:320
 msgid "This kind of Authenticator does not support white spaces on field NAME"
@@ -2251,11 +2228,11 @@ msgstr ""
 msgid "Can't locate any group with the membership attribute specified"
 msgstr "Can't locate any group with the membership attribute specified"
 
-#: core/auths/auth.py:113
+#: core/auths/auth.py:114
 msgid "System Administrator"
 msgstr "System Administrator"
 
-#: core/auths/auth.py:158
+#: core/auths/auth.py:159
 msgid "Forbidden"
 msgstr "Forbidden"
 
@@ -2833,19 +2810,19 @@ msgstr "User without defined OTP in server"
 msgid "Action for user without defined Radius Challenge"
 msgstr "Action for user without defined Radius Challenge"
 
-#: mfas/Radius/mfa.py:200
+#: mfas/Radius/mfa.py:199
 msgid "OTP Code"
 msgstr "OTP Code"
 
-#: mfas/Radius/mfa.py:208
+#: mfas/Radius/mfa.py:207
 msgid "Please enter OTP"
 msgstr "Please enter OTP"
 
-#: mfas/Radius/mfa.py:236 mfas/Radius/mfa.py:306
+#: mfas/Radius/mfa.py:233 mfas/Radius/mfa.py:301
 msgid "Radius OTP connection error"
 msgstr "Radius OTP connection error"
 
-#: mfas/Radius/mfa.py:288
+#: mfas/Radius/mfa.py:285
 msgid "Invalid OTP code"
 msgstr "Invalid OTP code"
 
@@ -3032,7 +3009,7 @@ msgstr "SMS sending failed"
 msgid "SMS response error"
 msgstr "SMS response error"
 
-#: mfas/SMS/mfa.py:397 web/views/modern.py:315
+#: mfas/SMS/mfa.py:397 web/views/modern.py:313
 msgid "MFA Code"
 msgstr "MFA Code"
 
@@ -4814,11 +4791,10 @@ msgstr "Keep on error"
 
 #: services/Nutanix_enterprise/service.py:149
 #: services/Vmware_enterprise/service_linked.py:202
-#, fuzzy
-#| msgid "If active, access errors found on machine will not mark is as error."
 msgid ""
 "If active, access errors found on machine will not be considered errors."
-msgstr "If active, access errors found on machine will not mark is as error."
+msgstr ""
+"If active, access errors found on machine will not be considered errors."
 
 #: services/OVirt/provider.py:80
 msgid "oVirt/RHEV Platform Provider"
@@ -7369,13 +7345,11 @@ msgstr "If not empty, extra parameters to include for Windows Client"
 
 #: transports/RDP/rdp_base.py:352
 msgid "Optimize Teams"
-msgstr ""
+msgstr "Optimize Teams"
 
 #: transports/RDP/rdp_base.py:354
-#, fuzzy
-#| msgid "If checked, connection bar will be shown (only on Windows clients)"
 msgid "If checked, Teams will be optimized (only works on Windows clients)"
-msgstr "If checked, connection bar will be shown (only on Windows clients)"
+msgstr "If checked, Teams will be optimized (only works on Windows clients)"
 
 #: transports/RDP/rdptunnel.py:64
 msgid "RDP Protocol. Tunneled connection."
@@ -7768,10 +7742,10 @@ msgstr ""
 msgid "Authenticator does not provide information"
 msgstr "Authenticator does not provide information"
 
-#: web/views/modern.py:306
+#: web/views/modern.py:304
 msgid "{} days"
 msgstr "{} days"
 
-#: web/views/modern.py:308
+#: web/views/modern.py:306
 msgid "{} hours"
 msgstr "{} hours"
