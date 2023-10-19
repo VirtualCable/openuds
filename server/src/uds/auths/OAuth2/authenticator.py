@@ -31,31 +31,52 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import token
 import typing
 import urllib.parse
 from base64 import b64decode
+from weakref import ref
 
+import defusedxml.ElementTree as etree
+import jwt
+import requests
+from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_der_x509_certificate
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
-import defusedxml.ElementTree as etree
-
-import jwt
-
-from cryptography.hazmat.backends import default_backend
-from cryptography.x509 import load_der_x509_certificate
-
-from uds.core import auths, exceptions, types
+from uds.core import auths, consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.web.views import auth
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
+
     from uds.core.auths.groups_manager import GroupsManager
 
 
 logger = logging.getLogger(__name__)
+
+
+class TokenInfo(typing.NamedTuple):
+    access_token: str
+    token_type: str
+    expires_in: int
+    refresh_token: str
+    scope: str
+    info: typing.Dict[str, typing.Any]
+
+    @staticmethod
+    def fromJson(json: typing.Dict[str, typing.Any]) -> 'TokenInfo':
+        return TokenInfo(
+            access_token=json['access_token'],
+            token_type=json['token_type'],
+            expires_in=json['expires_in'],
+            refresh_token=json['refresh_token'],
+            scope=json['scope'],
+            info=json.get('info', {}),
+        )
 
 
 class OAuth2Authenticator(auths.Authenticator):
@@ -74,14 +95,15 @@ class OAuth2Authenticator(auths.Authenticator):
         order=10,
         tooltip=_('Authorization endpoint for OAuth2.'),
         required=True,
+        tab=_('Server'),
     )
-
     clientId = gui.TextField(
         length=64,
         label=_('Client ID'),
         order=2,
         tooltip=_('Obtained from App created on Azure for UDS Enterprise'),
         required=True,
+        tab=_('Server'),
     )
     clientSecret = gui.TextField(
         length=64,
@@ -89,21 +111,31 @@ class OAuth2Authenticator(auths.Authenticator):
         order=3,
         tooltip=_('Obtained from App created on Azure for UDS Enteprise - Keys'),
         required=True,
+        tab=_('Server'),
     )
-    publicKey = gui.TextField(
-        length=16384,
-        lines=6,
-        label=_('Public Key'),
+    scope = gui.TextField(
+        length=64,
+        label=_('Scope'),
         order=4,
-        tooltip=_('Provided by Oauth2 provider'),
+        tooltip=_('Scope for OAuth2.'),
         required=True,
+        tab=_('Server'),
+    )
+    commonGroups = gui.TextField(
+        length=64,
+        label=_('Common Groups'),
+        order=5,
+        tooltip=_('User will be assigned to this groups once authenticated. Comma separated list of groups'),
+        required=False,
+        tab=_('Server'),
     )
 
+    # Advanced options
     redirectionEndpoint = gui.TextField(
         length=64,
         label=_('Redirection endpoint'),
         order=90,
-        tooltip=_('Redirection endpoint for OAuth2.  (Filled by UDS, fix this only if necesary!!)'),
+        tooltip=_('Redirection endpoint for OAuth2.  (Filled by UDS)'),
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
@@ -128,6 +160,23 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
+    infoEndpoint = gui.TextField(
+        length=64,
+        label=_('User information endpoint'),
+        order=93,
+        tooltip=_('User information endpoint for OAuth2. Only required for "code" response type.'),
+        required=False,
+        tab=types.ui.Tab.ADVANCED,
+    )
+    publicKey = gui.TextField(
+        length=16384,
+        lines=3,
+        label=_('Public Key'),
+        order=94,
+        tooltip=_('Provided by Oauth2 provider'),
+        required=False,
+        tab=types.ui.Tab.ADVANCED,
+    )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
@@ -137,18 +186,20 @@ class OAuth2Authenticator(auths.Authenticator):
             raise exceptions.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
-            
-        if self.responseType.value == 'code' and self.tokenEndpoint.value.strip() == '':
-            raise exceptions.ValidationError(
-                gettext('Token endpoint is required for "code" response type')
-            )
+
+        if self.responseType.value == 'code':
+            if self.commonGroups.value.strip() == '':
+                raise exceptions.ValidationError(gettext('Common groups is required for "code" response type'))
+            if self.tokenEndpoint.value.strip() == '':
+                raise exceptions.ValidationError(gettext('Token endpoint is required for "code" response type'))
+            # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
 
         request: 'HttpRequest' = values['_request']
 
         if self.redirectionEndpoint.value.strip() == '' and self.dbObj():
             self.redirectionEndpoint.value = request.build_absolute_uri(self.callbackUrl())
 
-    def _getLoginURL(self, request: 'HttpRequest'):
+    def _getLoginURL(self, request: 'HttpRequest') -> str:
         """
         :type request: django.http.request.HttpRequest
         """
@@ -159,24 +210,47 @@ class OAuth2Authenticator(auths.Authenticator):
 
         param_dict = {
             'response_type': self.responseType.value,
-            'response_mode': 'form_post',
-            'scope': 'openid',
+            'scope': self.scope.value,
             'client_id': self.clientId.value,
             'redirect_uri': self.redirectionEndpoint.value,
-            'nonce': nonce,
             'state': state,
         }
+
+        # Nonce only is used
+        if False:
+            param_dict['nonce'] = nonce
+
+        if False:
+            param_dict['response_mode'] = 'form_post'  # ['query', 'fragment', 'form_post']
 
         params = urllib.parse.urlencode(param_dict)
 
         return self.authorizationEndpoint.value + '?' + params
 
+    def requestToken(self, request: 'HttpRequest', code: str) -> TokenInfo:
+        param_dict = {
+            'grant_type': 'authorization_code',
+            'client_id': self.clientId.value,
+            'client_secret': self.clientSecret.value,
+            'redirect_uri': self.redirectionEndpoint.value,
+            'code': code,
+        }
+
+        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.COMMS_TIMEOUT)
+
+        if not req.ok:
+            raise Exception('Error requesting token: {}'.format(req.text))
+
+        return TokenInfo.fromJson(req.json())
+
     def authCallback(
         self,
-        parameters: typing.Dict[str, typing.Any],
+        parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
+        if self.responseType.value == 'code':
+            return self.authCallbackCode(parameters, gm, request)
         return auths.SUCCESS_AUTH
 
     def logout(
@@ -191,3 +265,36 @@ class OAuth2Authenticator(auths.Authenticator):
         We will here compose the azure request and send it via http-redirect
         """
         return f'window.location="{self._getLoginURL(request)}";'
+
+    def authCallbackCode(
+        self,
+        parameters: 'types.auth.AuthCallbackParams',
+        gm: 'auths.GroupsManager',
+        request: 'types.request.ExtendedHttpRequest',
+    ) -> auths.AuthenticationResult:
+        # Check state
+        state = parameters.get_params.get('state', '')
+        if self.cache.get(state) is None:
+            logger.warning('Invalid state received on OAuth2 callback')
+            return auths.FAILED_AUTH
+
+        # Remove state from cache
+        self.cache.remove(state)
+
+        # Get the code
+        code = parameters.get_params.get('code', '')
+        if code == '':
+            logger.warning('Invalid code received on OAuth2 callback')
+            return auths.FAILED_AUTH
+
+        token = self.requestToken(request, code)
+
+        # Validate common groups
+        groups = self.commonGroups.value.split(',')
+        gm.validate(groups)
+
+        # We don't mind about the token, we only need  to authenticate user
+        # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
+        return auths.AuthenticationResult(
+            auths.AuthenticationSuccess.OK, username=parameters.get_params.get('username', '')
+        )

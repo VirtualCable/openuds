@@ -49,7 +49,7 @@ from django.urls import reverse
 
 from django.utils.translation import gettext as _
 
-from uds.core import auths
+from uds.core import auths, types
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
@@ -332,7 +332,7 @@ def authenticate(
 
 def authenticateViaCallback(
     authenticator: models.Authenticator,
-    params: typing.Any,
+    params: 'types.auth.AuthCallbackParams',
     request: 'ExtendedHttpRequestWithUser',
 ) -> AuthResult:
     """
@@ -371,6 +371,8 @@ def authenticateViaCallback(
 
     if result.username:
         return registerUser(authenticator, authInstance, result.username or '', request)
+    else:
+        logger.warning('Authenticator %s returned empty username', authenticator.name)
 
     raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 

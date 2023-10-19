@@ -40,6 +40,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 
 from uds import models
+from uds.core import consts
 
 if typing.TYPE_CHECKING:
     import argparse
@@ -117,8 +118,8 @@ def authenticator_exporter(
     a = managed_object_exporter(authenticator)
     a['priority'] = authenticator.priority
     a['provider'] = authenticator.small_name
-    a['visible'] = authenticator.state == models.Authenticator.VISIBLE
-    a['enabled'] = authenticator.state != models.Authenticator.DISABLED
+    a['visible'] = authenticator.state == consts.auth.VISIBLE
+    a['enabled'] = authenticator.state != consts.auth.DISABLED
     return a
 
 
@@ -351,9 +352,9 @@ class Command(BaseCommand):
         if self.filter_args:
             return typing.cast(
                 'typing.Iterator[ModelType]',
-                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),
+                model.objects.filter(reduce(operator.or_, (Q(**{k: v}) for k, v in self.filter_args))),  # type: ignore
             )
-        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())
+        return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())  # type: ignore
 
     def output_count(self, message: str, iterable: typing.Iterable[T]) -> typing.Iterable[T]:
         """
@@ -444,7 +445,7 @@ class Command(BaseCommand):
             u.manager for u in self.output_count('Filtering authenticators', users_list)
         }
         # Now, groups that contains those users
-        groups_list = set()
+        groups_list: typing.Set[models.Group] = set()
         for u in self.output_count('Filtering groups', users_list):
             groups_list.update(u.groups.all())
 
@@ -524,7 +525,7 @@ class Command(BaseCommand):
                 'Filtering transports', self.apply_filter(models.Transport)
             )
         )
-        networks_list = set()
+        networks_list: typing.Set['models.Network'] = set()
         for t in self.output_count('Filtering networks', transports_list):
             networks_list.update(t.networks.all())
         networks = [

@@ -31,8 +31,6 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
-import re
-import logging
 import typing
 
 class DetectedOsInfo(typing.NamedTuple):

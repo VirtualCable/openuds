@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -29,17 +30,17 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
-# pylint: disable=unused-import
-from . import auth
-from . import connections
-from . import events
-from . import os
-from . import permissions
-from . import pools
-from . import request
-from . import rest
-from . import services
-from . import servers
-from . import ui
-# Preferences must be include explicitly, as it is not a "normal use" type
+# Constants for Visibility
+VISIBLE: typing.Final[str] = 'v'
+HIDDEN: typing.Final[str] = 'h'
+DISABLED: typing.Final[str] = 'd'
+
+# net_filter
+# Note: this are STANDARD values used on "default field" networks on RESP API
+# Named them for better reading, but cannot be changed, since they are used on RESP API
+NO_FILTERING: typing.Final[str] = 'n'
+ALLOW: typing.Final[str] = 'a'
+DENY: typing.Final[str] = 'd'
+

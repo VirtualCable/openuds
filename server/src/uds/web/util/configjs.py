@@ -41,6 +41,7 @@ from django.templatetags.static import static
 
 from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
+from uds.core import consts
 from uds.core.consts import VERSION
 from uds.core.managers import downloadsManager
 from uds.core.util.config import GlobalConfig
@@ -86,7 +87,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     tag = request.session.get('tag', None)
     logger.debug('Tag config: %s', tag)
     # Initial list of authenticators (all except disabled ones)
-    auths = Authenticator.objects.exclude(state=Authenticator.DISABLED)
+    auths = Authenticator.objects.exclude(state=consts.auth.DISABLED)
     authenticators: typing.List[Authenticator] = []
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
@@ -98,7 +99,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             authenticators = []
     else:
         if not tag:  # If no tag, remove hidden auths
-            auths = auths.filter(state=Authenticator.VISIBLE)
+            auths = auths.filter(state=consts.auth.VISIBLE)
         authenticators = list(
             auths
         )
@@ -125,7 +126,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     if not authenticators and tag != 'disabled':
         try:
             authenticators = []
-            for a in Authenticator.objects.exclude(state=Authenticator.DISABLED).order_by('priority'):
+            for a in Authenticator.objects.exclude(state=consts.auth.DISABLED).order_by('priority'):
                 if a.getInstance().isAccesibleFrom(request):
                     authenticators.append(a)
                     break

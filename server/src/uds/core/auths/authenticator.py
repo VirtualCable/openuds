@@ -40,6 +40,7 @@ from django.utils.translation import gettext_noop as _
 from django.urls import reverse
 
 from uds.core.module import Module
+from uds.core import consts
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -49,7 +50,7 @@ if typing.TYPE_CHECKING:
     )
     from uds import models
     from uds.core.environment import Environment
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core import types
     from .groups_manager import GroupsManager
 
 
@@ -354,7 +355,7 @@ class Authenticator(Module):
         username: str,
         credentials: str,
         groupsManager: 'GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'types.request.ExtendedHttpRequest',
     ) -> AuthenticationResult:
         """
         This method must be overriden, and is responsible for authenticating
@@ -399,21 +400,14 @@ class Authenticator(Module):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
-        from uds.core.types.request import (  # pylint: disable=import-outside-toplevel
-            ExtendedHttpRequest,
-        )
-        from uds.models import (  # pylint: disable=import-outside-toplevel
-            Authenticator as dbAuth,
-        )
-
-        return self.dbObj().state != dbAuth.DISABLED and self.dbObj().isValidForIp(
-            typing.cast('ExtendedHttpRequest', request).ip
+        return self.dbObj().state != consts.auth.DISABLED and self.dbObj().isValidForIp(
+            typing.cast('types.request.ExtendedHttpRequest', request).ip
         )
 
     def transformUsername(
         self,
         username: str,
-        request: 'ExtendedHttpRequest',
+        request: 'types.request.ExtendedHttpRequest',
     ) -> str:
         """
         On login, this method get called so we can "transform" provided user name.
@@ -434,7 +428,7 @@ class Authenticator(Module):
         username: str,
         credentials: str,
         groupsManager: 'GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'types.request.ExtendedHttpRequest',
     ) -> AuthenticationResult:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
@@ -473,7 +467,7 @@ class Authenticator(Module):
 
     def logout(
         self,
-        request: 'ExtendedHttpRequest',
+        request: 'types.request.ExtendedHttpRequest',
         username: str,
     ) -> AuthenticationResult:
         """
@@ -569,9 +563,9 @@ class Authenticator(Module):
 
     def authCallback(
         self,
-        parameters: typing.Dict[str, typing.Any],
+        parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
-        request: 'ExtendedHttpRequest',
+        request: 'types.request.ExtendedHttpRequest',
     ) -> AuthenticationResult:
         """
         There is a view inside UDS, an url, that will redirect the petition

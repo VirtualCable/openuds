@@ -36,7 +36,7 @@ import typing
 
 from django.utils.translation import gettext, gettext_lazy as _
 from uds.models import Authenticator, Network, MFA
-from uds.core import auths, types
+from uds.core import auths, consts, types
 from uds.core.environment import Environment
 
 from uds.REST import NotFound
@@ -63,7 +63,7 @@ class Authenticators(ModelHandler):
     detail = {'users': Users, 'groups': Groups}
     save_fields = ['name', 'comments', 'tags', 'priority', 'small_name', 'mfa_id:_']
 
-    table_title = _('Authenticators')
+    table_title = typing.cast(str, _('Authenticators'))
     table_fields = [
         {'numeric_id': {'title': _('Id'), 'visible': True}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
@@ -113,11 +113,11 @@ class Authenticators(ModelHandler):
                     field,
                     {
                         'name': 'state',
-                        'value': Authenticator.VISIBLE,
+                        'value': consts.auth.VISIBLE,
                         'choices': [
-                            {'id': Authenticator.VISIBLE, 'text': _('Visible')},
-                            {'id': Authenticator.HIDDEN, 'text': _('Hidden')},
-                            {'id': Authenticator.DISABLED, 'text': _('Disabled')},
+                            {'id': consts.auth.VISIBLE, 'text': _('Visible')},
+                            {'id': consts.auth.HIDDEN, 'text': _('Hidden')},
+                            {'id': consts.auth.DISABLED, 'text': _('Disabled')},
                         ],
                         'label': gettext('Access'),
                         'tooltip': gettext(

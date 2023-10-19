@@ -34,11 +34,10 @@ import typing
 
 from django.db import models
 
-from uds.core import auths, environment
+from uds.core import auths, environment, consts
 from uds.core.util import log, net
 from uds.core.util.state import State
 
-from ..core.consts import NEVER
 from .managed_object_model import ManagedObjectModel
 from .network import Network
 from .tag import TaggingMixin
@@ -57,23 +56,11 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     Sample authenticators are LDAP, Active Directory, SAML, ...
     """
 
-    # Constants for Visibility
-    VISIBLE = 'v'
-    HIDDEN = 'h'
-    DISABLED = 'd'
-
-    # net_filter
-    # Note: this are STANDARD values used on "default field" networks on RESP API
-    # Named them for better reading, but cannot be changed, since they are used on RESP API
-    NO_FILTERING = 'n'
-    ALLOW = 'a'
-    DENY = 'd'
-
     priority = models.IntegerField(default=0, db_index=True)
     small_name = models.CharField(max_length=32, default='', db_index=True)
-    state = models.CharField(max_length=1, default=VISIBLE, db_index=True)
+    state = models.CharField(max_length=1, default=consts.auth.VISIBLE, db_index=True)
     # "visible" is removed from 4.0, state will do this functionality, but is more flexible
-    net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
+    net_filtering = models.CharField(max_length=1, default=consts.auth.NO_FILTERING, db_index=True)
 
     # "fake" relations declarations for type checking
     # objects: 'models.manager.Manager["Authenticator"]'
@@ -170,7 +157,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             name=username,
             defaults={
                 'real_name': realName,
-                'last_access': NEVER,
+                'last_access': consts.NEVER,
                 'state': State.ACTIVE,
             },
         )
@@ -232,14 +219,14 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         :note: Ip addresses has been only tested with IPv4 addresses
         """
-        if self.net_filtering == Authenticator.NO_FILTERING:
+        if self.net_filtering == consts.auth.NO_FILTERING:
             return True
         ip, version = net.ipToLong(ipStr)
         # Allow
         exists = self.networks.filter(
             start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
         ).exists()
-        if self.net_filtering == Authenticator.ALLOW:
+        if self.net_filtering == consts.auth.ALLOW:
             return exists
         # Deny, must not be in any network
         return not exists

@@ -29,17 +29,35 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
-# pylint: disable=unused-import
-from . import auth
-from . import connections
-from . import events
-from . import os
-from . import permissions
-from . import pools
-from . import request
-from . import rest
-from . import services
-from . import servers
-from . import ui
-# Preferences must be include explicitly, as it is not a "normal use" type
+if typing.TYPE_CHECKING:
+    from django.http import HttpRequest
+    from django.http.request import QueryDict
+
+
+class AuthCallbackParams(typing.NamedTuple):
+    '''Parameters passed to auth callback stage2
+
+    This are the parameters that will be passes to the authenticator callback
+    '''
+
+    https: bool
+    host: str
+    path: str
+    port: str
+    get_params: 'QueryDict'
+    post_params: 'QueryDict'
+    query_string: str
+
+    @staticmethod
+    def fromRequest(request: 'HttpRequest') -> 'AuthCallbackParams':
+        return AuthCallbackParams(
+            https=request.is_secure(),
+            host=request.META['HTTP_HOST'],
+            path=request.META['PATH_INFO'],
+            port=request.META['SERVER_PORT'],
+            get_params=request.GET.copy(),
+            post_params=request.POST.copy(),
+            query_string=request.META['QUERY_STRING'],
+        )

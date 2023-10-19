@@ -101,7 +101,7 @@ class GroupsManager:
                     )
                 )
 
-    def _checkAllGroups(self, groupName: str) -> typing.Iterable[int]:
+    def _checkAllGroups(self, groupName: str) -> typing.Generator[int, None, None]:
         """
         Returns true if this groups manager contains the specified group name (string)
         """
@@ -119,7 +119,7 @@ class GroupsManager:
                 if grp.matches(name):  # If group name matches
                     yield n
 
-    def getGroupsNames(self) -> typing.Iterable[str]:
+    def getGroupsNames(self) -> typing.Generator[str, None, None]:
         """
         Return all groups names managed by this groups manager. The names are returned
         as where inserted inside Database (most probably using administration interface)
@@ -127,7 +127,7 @@ class GroupsManager:
         for g in self._groups:
             yield g.group.dbGroup().name
 
-    def getValidGroups(self) -> typing.Iterable[Group]:
+    def getValidGroups(self) -> typing.Generator['Group', None, None]:
         """
         returns the list of valid groups (:py:class:uds.core.auths.group.Group)
         """
@@ -156,7 +156,7 @@ class GroupsManager:
                 # This group matches
                 yield Group(db_group)
 
-    def hasValidGroups(self):
+    def hasValidGroups(self) -> bool:
         """
         Checks if this groups manager has at least one group that has been
         validated (using :py:meth:.validate)
@@ -174,9 +174,8 @@ class GroupsManager:
 
         return None
 
-    def validate(self, groupName: typing.Union[str, typing.Iterable]):
-        """
-        Validates that the group groupName passed in is valid for this group manager.
+    def validate(self, groupName: typing.Union[str, typing.Iterable[str]]) -> None:
+        """Validates that the group (or groups) groupName passed in is valid for this group manager.
 
         It check that the group specified is known by this group manager.
 
@@ -203,5 +202,5 @@ class GroupsManager:
                 return True
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Groupsmanager: {self._groups}'

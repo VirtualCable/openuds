@@ -34,7 +34,7 @@ import typing
 from datetime import datetime
 import time
 
-from . import images, os
+from . import auth, images, os
 
 # UDS Version related
 VERSION = '4.x.x-DEVEL'

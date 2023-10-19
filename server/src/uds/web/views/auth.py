@@ -39,7 +39,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds.web.util import errors
-from uds.core import auths
+from uds.core import auths, types
 from uds.core.auths.auth import (
     webLogin,
     webLogout,
@@ -86,17 +86,9 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         if not authenticator:
             raise Exception('Authenticator not found')
 
-        params = {
-            'https': request.is_secure(),
-            'http_host': request.META['HTTP_HOST'],
-            'path_info': request.META['PATH_INFO'],
-            'server_port': request.META['SERVER_PORT'],
-            'get_data': request.GET.copy(),
-            'post_data': request.POST.copy(),
-            'query_string': request.META['QUERY_STRING'],
-        }
+        params = types.auth.AuthCallbackParams.fromRequest(request)
 
-        logger.debug('Auth callback for %s with params %s', authenticator, params.keys())
+        logger.debug('Auth callback for %s with params %s', authenticator, params)
 
         ticket = TicketStore.create({'params': params, 'auth': authenticator.uuid})
         return HttpResponseRedirect(reverse('page.auth.callback_stage2', args=[ticket]))
@@ -107,8 +99,8 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
 
 def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
     try:
-        ticket = TicketStore.get(ticketId)
-        params: typing.Dict[str, typing.Any] = ticket['params'].copy()
+        ticket = TicketStore.get(ticketId, invalidate=True)
+        params: types.auth.AuthCallbackParams = ticket['params']
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
 
@@ -186,7 +178,7 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
 # Gets the javascript from the custom authtenticator
 @never_cache
 def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
-    res = ''
+    res: typing.Optional[str] = ''
     try:
         try:
             auth = Authenticator.objects.get(uuid=processUuid(idAuth))

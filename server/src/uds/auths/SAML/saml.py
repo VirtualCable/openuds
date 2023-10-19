@@ -415,7 +415,7 @@ class SAMLAuthenticator(auths.Authenticator):
     def getReqFromRequest(
         self,
         request: 'ExtendedHttpRequest',
-        params: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        params: typing.Optional['types.auth.AuthCallbackParams'] = None,
     ) -> typing.Dict[str, typing.Any]:
         manageUrlObj = urlparse(self.manageUrl.value)
         script_path = manageUrlObj.path
@@ -432,14 +432,14 @@ class SAMLAuthenticator(auths.Authenticator):
         if params:
             # Remove next 3 lines, just for testing and debugging
             return {
-                'https': ['off', 'on'][params.get('https', False)],
+                'https': ['off', 'on'][params.https],
                 'http_host': host,  # params['http_host'],
                 'script_name': script_path,  # params['path_info'],
                 'server_port': port,  # params['server_port'],
-                'get_data': params['get_data'].copy(),
-                'post_data': params['post_data'].copy(),
+                'get_data': params.get_params.copy(),
+                'post_data': params.post_params.copy(),
                 'lowercase_urlencoding': self.adFS.isTrue(),
-                'query_string': params['query_string'],
+                'query_string': params.query_string,
             }
         # No callback parameters, we use the request
         return {
@@ -560,6 +560,7 @@ class SAMLAuthenticator(auths.Authenticator):
     def processField(self, field: str, attributes: typing.Dict[str, typing.List[str]]) -> typing.List[str]:
         try:
             res: typing.List[str] = []
+
             def getAttr(attrName: str) -> typing.List[str]:
                 try:
                     val: typing.List[str] = []
@@ -568,7 +569,9 @@ class SAMLAuthenticator(auths.Authenticator):
                         # Check all attributes are present, and has only one value
                         attrValues = [ensure.is_list(attributes.get(a, [''])) for a in attrList]
                         if not all([len(v) <= 1 for v in attrValues]):
-                            logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
+                            logger.warning(
+                                'Attribute %s do not has exactly one value, skipping %s', attrName, line
+                            )
                             return val
 
                         val = [''.join(v) for v in attrValues]  # flatten
@@ -679,13 +682,13 @@ class SAMLAuthenticator(auths.Authenticator):
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     def authCallback(
         self,
-        parameters: typing.Dict[str, typing.Any],
+        parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'ExtendedHttpRequestWithUser',
     ) -> auths.AuthenticationResult:
         req = self.getReqFromRequest(request, params=parameters)
 
-        if 'logout' in parameters['get_data']:
+        if 'logout' in parameters.get_params:
             return self.logoutFromCallback(req, request)
 
         try:
