@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
+import re
 import token
 import typing
 import urllib.parse
@@ -48,7 +49,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import auths, consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.web.views import auth
+from uds.core.util import auth as auth_utils
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
@@ -177,6 +178,25 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
+    
+    # Attributes info fields
+    userAttribute = gui.TextField(
+        length=64,
+        label=_('Username attribute'),
+        order=100,
+        tooltip=_('Attribute that contains the username'),
+        required=True,
+        tab=_('Attributes'),
+    )
+    groupsAttributes = gui.TextField(
+        length=64,
+        label=_('Groups attribute'),
+        order=101,
+        tooltip=_('Attribute that contains the groups'),
+        required=True,
+        tab=_('Attributes'),
+    )
+    
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
@@ -186,6 +206,10 @@ class OAuth2Authenticator(auths.Authenticator):
             raise exceptions.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
+            
+        auth_utils.validateRegexField(self.userAttribute)
+        auth_utils.validateRegexField(self.userAttribute)
+            
 
         if self.responseType.value == 'code':
             if self.commonGroups.value.strip() == '':
@@ -227,7 +251,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return self.authorizationEndpoint.value + '?' + params
 
-    def requestToken(self, request: 'HttpRequest', code: str) -> TokenInfo:
+    def _requestToken(self, request: 'HttpRequest', code: str) -> TokenInfo:
         param_dict = {
             'grant_type': 'authorization_code',
             'client_id': self.clientId.value,
@@ -242,6 +266,7 @@ class OAuth2Authenticator(auths.Authenticator):
             raise Exception('Error requesting token: {}'.format(req.text))
 
         return TokenInfo.fromJson(req.json())
+    
 
     def authCallback(
         self,
@@ -287,7 +312,20 @@ class OAuth2Authenticator(auths.Authenticator):
             logger.warning('Invalid code received on OAuth2 callback')
             return auths.FAILED_AUTH
 
-        token = self.requestToken(request, code)
+        token = self._requestToken(request, code)
+        
+        userInfo: typing.Dict[str, typing.Any]
+        
+        if self.infoEndpoint.value.strip() == '':
+            if not token.info:
+                raise Exception('No user info received')
+            userInfo = token.info
+        else:
+            # Get user info
+            req = requests.get(self.infoEndpoint.value, headers={'Authorization': 'Bearer ' + token.access_token}, timeout=consts.COMMS_TIMEOUT)
+            if not req.ok:
+                raise Exception('Error requesting user info: {}'.format(req.text))
+            userInfo = req.json()
 
         # Validate common groups
         groups = self.commonGroups.value.split(',')

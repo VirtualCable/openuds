@@ -48,7 +48,7 @@ from uds.core import auths, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core.util import security, decorators, ensure
+from uds.core.util import security, decorators, ensure, auth as auth_utils
 from uds.core.util.model import getSqlDatetime
 
 from . import config
@@ -408,9 +408,9 @@ class SAMLAuthenticator(auths.Authenticator):
             raise exceptions.ValidationError(gettext('XML does not seem valid for IDP Metadata ') + msg)
 
         # Now validate regular expressions, if they exists
-        self.validateField(self.userNameAttr)
-        self.validateField(self.groupNameAttr)
-        self.validateField(self.realNameAttr)
+        auth_utils.validateRegexField(self.userNameAttr)
+        auth_utils.validateRegexField(self.groupNameAttr)
+        auth_utils.validateRegexField(self.realNameAttr)
 
     def getReqFromRequest(
         self,
@@ -542,78 +542,6 @@ class SAMLAuthenticator(auths.Authenticator):
             return metadata
         return typing.cast(bytes, metadata).decode()
 
-    def validateField(self, field: gui.TextField):
-        """
-        Validates the multi line fields refering to attributes
-        """
-        value: str = field.value
-        for line in value.splitlines():
-            if line.find('=') != -1:
-                pattern = line.split('=')[0:2][1]
-                if pattern.find('(') == -1:
-                    pattern = '(' + pattern + ')'
-                try:
-                    re.search(pattern, '')
-                except Exception as e:
-                    raise exceptions.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
-
-    def processField(self, field: str, attributes: typing.Dict[str, typing.List[str]]) -> typing.List[str]:
-        try:
-            res: typing.List[str] = []
-
-            def getAttr(attrName: str) -> typing.List[str]:
-                try:
-                    val: typing.List[str] = []
-                    if '+' in attrName:
-                        attrList = attrName.split('+')
-                        # Check all attributes are present, and has only one value
-                        attrValues = [ensure.is_list(attributes.get(a, [''])) for a in attrList]
-                        if not all([len(v) <= 1 for v in attrValues]):
-                            logger.warning(
-                                'Attribute %s do not has exactly one value, skipping %s', attrName, line
-                            )
-                            return val
-
-                        val = [''.join(v) for v in attrValues]  # flatten
-                    elif '**' in attrName:
-                        # Prepend the value after : to attribute value before :
-                        attr, prependable = attrName.split('**')
-                        val = [prependable + a for a in ensure.is_list(attributes.get(attr, []))]
-                    else:
-                        val = ensure.is_list(attributes.get(attrName, []))
-                    return val
-                except Exception as e:
-                    logger.warning('Error processing attribute %s (%s): %s', attrName, attributes, e)
-                    return []
-
-            for line in field.splitlines():
-                equalPos = line.find('=')
-                if equalPos != -1:
-                    attr, pattern = (line[:equalPos], line[equalPos + 1 :])
-                    # if pattern do not have groups, define one with full re
-                    if pattern.find('(') == -1:
-                        pattern = '(' + pattern + ')'
-
-                    val = getAttr(attr)
-
-                    for v in val:
-                        try:
-                            logger.debug('Pattern: %s on value %s', pattern, v)
-                            srch = re.search(pattern, v)
-                            if srch is None:
-                                continue
-                            res.append(''.join(srch.groups()))
-                        except Exception as e:
-                            logger.warning('Invalid regular expression')
-                            logger.debug(e)
-                            break
-                else:
-                    res += getAttr(line)
-                logger.debug('Result: %s', res)
-            return res
-        except Exception as e:
-            logger.warning('Error processing field %s (%s): %s', field, attributes, e)
-            return []
 
     def getInfo(
         self, parameters: typing.Mapping[str, str]
@@ -735,14 +663,14 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # Now that we have attributes, we can extract values from this, map groups, etc...
         username = ''.join(
-            self.processField(self.userNameAttr.value, attributes)
+            auth_utils.processRegexField(self.userNameAttr.value, attributes)
         )  # in case of multiple values is returned, join them
         logger.debug('Username: %s', username)
 
-        groups = self.processField(self.groupNameAttr.value, attributes)
+        groups = auth_utils.processRegexField(self.groupNameAttr.value, attributes)
         logger.debug('Groups: %s', groups)
 
-        realName = ' '.join(self.processField(self.realNameAttr.value, attributes))
+        realName = ' '.join(auth_utils.processRegexField(self.realNameAttr.value, attributes))
         logger.debug('Real name: %s', realName)
 
         # store groups for this username at storage, so we can check it at a later stage
@@ -752,7 +680,7 @@ class SAMLAuthenticator(auths.Authenticator):
         if self.mfaAttr.value.strip():
             self.storage.putPickle(
                 self.mfaStorageKey(username),
-                ''.join(self.processField(self.mfaAttr.value, attributes)),
+                ''.join(auth_utils.processRegexField(self.mfaAttr.value, attributes)),
             )  # in case multipel values is returned, join them
         else:
             self.storage.remove(self.mfaStorageKey(username))
