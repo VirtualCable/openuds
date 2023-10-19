@@ -89,7 +89,7 @@ class HTML5SSHTransport(transports.Transport):
     # sshPrivateKey = gui.TextField(
     #     label=_('SSH Private Key'),
     #     order=22,
-    #     multiline=4,
+    #     lines=4,
     #     tooltip=_(
     #         'Private key for SSH authentication. If not provided, password authentication is used.'
     #     ),

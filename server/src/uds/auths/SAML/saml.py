@@ -118,7 +118,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     privateKey = gui.TextField(
         length=4096,
-        multiline=10,
+        lines=10,
         label=_('Private key'),
         order=1,
         tooltip=_('Private key used for sign and encription, as generated in base 64 from openssl'),
@@ -127,7 +127,7 @@ class SAMLAuthenticator(auths.Authenticator):
     )
     serverCertificate = gui.TextField(
         length=4096,
-        multiline=10,
+        lines=10,
         label=_('Certificate'),
         order=2,
         tooltip=_(
@@ -138,7 +138,7 @@ class SAMLAuthenticator(auths.Authenticator):
     )
     idpMetadata = gui.TextField(
         length=8192,
-        multiline=4,
+        lines=4,
         label=_('IDP Metadata'),
         order=3,
         tooltip=_('You can enter here the URL or the IDP metadata or the metadata itself (xml)'),
@@ -155,7 +155,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     userNameAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('User name attrs'),
         order=5,
         tooltip=_('Fields from where to extract user name'),
@@ -165,7 +165,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     groupNameAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('Group name attrs'),
         order=6,
         tooltip=_('Fields from where to extract the groups'),
@@ -175,7 +175,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     realNameAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('Real name attrs'),
         order=7,
         tooltip=_('Fields from where to extract the real name'),
@@ -200,7 +200,7 @@ class SAMLAuthenticator(auths.Authenticator):
     )
     mfaAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('MFA attribute'),
         order=12,
         tooltip=_('Attribute from where to extract the MFA code'),

@@ -159,7 +159,7 @@ class Provider(services.ServiceProvider):
     methText = gui.TextField(
         order=6,
         length=512,
-        multiline=5,
+        lines=5,
         label=_('Text area'),
         tooltip=_('This is a text area'),
         required=False,

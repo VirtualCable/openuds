@@ -79,7 +79,7 @@ class BaseSpiceTransport(transports.Transport):
     serverCertificate = gui.TextField(
         order=4,
         length=4096,
-        multiline=4,
+        lines=4,
         label=_('Certificate'),
         tooltip=_(
             'Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'

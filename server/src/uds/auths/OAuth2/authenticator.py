@@ -92,7 +92,7 @@ class OAuth2Authenticator(auths.Authenticator):
     )
     publicKey = gui.TextField(
         length=16384,
-        multiline=6,
+        lines=6,
         label=_('Public Key'),
         order=4,
         tooltip=_('Provided by Oauth2 provider'),

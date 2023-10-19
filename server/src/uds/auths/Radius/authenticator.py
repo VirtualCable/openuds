@@ -113,7 +113,7 @@ class RadiusAuth(auths.Authenticator):
     )
     mfaAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('MFA attribute'),
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),

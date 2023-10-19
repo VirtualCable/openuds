@@ -59,7 +59,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
     # No extra data needed
     config = gui.TextField(
         length=8192,
-        multiline=6,
+        lines=6,
         label=_('Advanced configuration'),
         order=3,
         tooltip=_('Advanced configuration data for the provider'),

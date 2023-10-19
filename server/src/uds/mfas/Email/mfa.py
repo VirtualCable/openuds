@@ -151,7 +151,7 @@ class EmailMFA(mfas.MFA):
         length=1024,
         label=_('Mail text'),
         order=33,
-        multiline=4,
+        lines=4,
         tooltip=_('Text of the email. If empty, a default text will be used')
         + '\n'
         + _('Allowed variables are: ')
@@ -165,7 +165,7 @@ class EmailMFA(mfas.MFA):
         length=1024,
         label=_('Mail HTML'),
         order=34,
-        multiline=4,
+        lines=4,
         tooltip=_('HTML of the email. If empty, a default HTML will be used')
         + '\n'
         + _('Allowed variables are: ')

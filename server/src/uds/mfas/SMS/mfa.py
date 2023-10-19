@@ -138,7 +138,7 @@ class SMSMFA(mfas.MFA):
 
     headersParameters = gui.TextField(
         length=4096,
-        multiline=4,
+        lines=4,
         label=_('Headers for SMS requests'),
         order=4,
         tooltip=_(
@@ -156,7 +156,7 @@ class SMSMFA(mfas.MFA):
 
     sendingParameters = gui.TextField(
         length=4096,
-        multiline=5,
+        lines=5,
         label=_('Parameters for SMS POST/PUT sending'),
         order=4,
         tooltip=_(

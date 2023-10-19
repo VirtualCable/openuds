@@ -110,7 +110,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     )
     certificate = gui.TextField(
         length=8192,
-        multiline=4,
+        lines=4,
         label=_('Certificate'),
         order=12,
         tooltip=_('Certificate to use for SSL verification'),
@@ -184,7 +184,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     )
     mfaAttr = gui.TextField(
         length=2048,
-        multiline=2,
+        lines=2,
         label=_('MFA attribute'),
         order=13,
         tooltip=_('Attribute from where to extract the MFA code'),

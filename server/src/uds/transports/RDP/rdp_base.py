@@ -319,7 +319,7 @@ class BaseRDPTransport(transports.Transport):
         order=45,
         tooltip=_('If not empty, extra parameters to include for Windows Client'),
         length=4096,
-        multiline=10,
+        lines=10,
         tab='Windows Client',
     )
 

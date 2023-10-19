@@ -125,7 +125,7 @@ class BaseModelHandler(Handler):
                 'minValue',
                 'maxValue',
                 'length',
-                'multiline',
+                'lines',
                 'tooltip',
                 'readonly',
             ):
@@ -197,6 +197,7 @@ class BaseModelHandler(Handler):
                     'name': 'comments',
                     'label': _('Comments'),
                     'type': 'text',
+                    'lines': 3,
                     'tooltip': _('Comments for this element'),
                     'length': 256,
                     'order': 0 - 90,

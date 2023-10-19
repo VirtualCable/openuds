@@ -444,7 +444,7 @@ class gui:
         Additionally to standard parameters, the length parameter is a
         recommended one for this kind of field.
 
-        You can specify that this is a multiline text box with **multiline**
+        You can specify that this is a lines text box with **lines**
         parameter. If it exists, and is greater than 1, indicates how much
         lines will be used to display field. (Max number is 8)
 
@@ -479,7 +479,7 @@ class gui:
             default: typing.Union[typing.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
             pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
-            multiline: int = 0,
+            lines: int = 0,
         ) -> None:
             super().__init__(
                 label=label,
@@ -493,7 +493,7 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.TEXT,
             )
-            self._fieldsInfo.multiline = min(max(int(multiline), 0), 8)
+            self._fieldsInfo.lines = min(max(int(lines), 0), 8)
             # Pattern to validate the value
             # Can contain an regex or PatternType
             #   - 'ipv4'     # IPv4 address

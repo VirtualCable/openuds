@@ -128,7 +128,7 @@ class FieldInfo:
     default: typing.Optional[typing.Union[typing.Callable[[], str], str]] = None
     required: typing.Optional[bool] = None
     length: typing.Optional[int] = None
-    multiline: typing.Optional[int] = None
+    lines: typing.Optional[int] = None
     pattern: typing.Union[FieldPatternType, 're.Pattern'] = FieldPatternType.NONE
     tab: typing.Union[Tab, str, None] = None
     choices: typing.Optional[ChoicesType] = None
