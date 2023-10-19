@@ -178,25 +178,36 @@ class OAuth2Authenticator(auths.Authenticator):
         required=False,
         tab=types.ui.Tab.ADVANCED,
     )
-    
-    # Attributes info fields
-    userAttribute = gui.TextField(
-        length=64,
-        label=_('Username attribute'),
+
+    userNameAttr = gui.TextField(
+        length=2048,
+        lines=2,
+        label=_('User name attrs'),
         order=100,
-        tooltip=_('Attribute that contains the username'),
+        tooltip=_('Fields from where to extract user name'),
         required=True,
         tab=_('Attributes'),
     )
-    groupsAttributes = gui.TextField(
-        length=64,
-        label=_('Groups attribute'),
+
+    groupNameAttr = gui.TextField(
+        length=2048,
+        lines=2,
+        label=_('Group name attrs'),
         order=101,
-        tooltip=_('Attribute that contains the groups'),
-        required=True,
+        tooltip=_('Fields from where to extract the groups'),
+        required=False,
         tab=_('Attributes'),
     )
-    
+
+    realNameAttr = gui.TextField(
+        length=2048,
+        lines=2,
+        label=_('Real name attrs'),
+        order=102,
+        tooltip=_('Fields from where to extract the real name'),
+        required=False,
+        tab=_('Attributes'),
+    )
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
@@ -206,10 +217,9 @@ class OAuth2Authenticator(auths.Authenticator):
             raise exceptions.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
-            
-        auth_utils.validateRegexField(self.userAttribute)
-        auth_utils.validateRegexField(self.userAttribute)
-            
+
+        auth_utils.validateRegexField(self.userNameAttr)
+        auth_utils.validateRegexField(self.userNameAttr)
 
         if self.responseType.value == 'code':
             if self.commonGroups.value.strip() == '':
@@ -266,7 +276,6 @@ class OAuth2Authenticator(auths.Authenticator):
             raise Exception('Error requesting token: {}'.format(req.text))
 
         return TokenInfo.fromJson(req.json())
-    
 
     def authCallback(
         self,
@@ -291,6 +300,18 @@ class OAuth2Authenticator(auths.Authenticator):
         """
         return f'window.location="{self._getLoginURL(request)}";'
 
+    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+        data = self.storage.getPickle(username)
+        if not data:
+            return
+        groupsManager.validate(data[1])
+
+    def getRealName(self, username: str) -> str:
+        data = self.storage.getPickle(username)
+        if not data:
+            return username
+        return data[0]
+
     def authCallbackCode(
         self,
         parameters: 'types.auth.AuthCallbackParams',
@@ -313,26 +334,41 @@ class OAuth2Authenticator(auths.Authenticator):
             return auths.FAILED_AUTH
 
         token = self._requestToken(request, code)
-        
+
         userInfo: typing.Dict[str, typing.Any]
-        
+
         if self.infoEndpoint.value.strip() == '':
             if not token.info:
                 raise Exception('No user info received')
             userInfo = token.info
         else:
             # Get user info
-            req = requests.get(self.infoEndpoint.value, headers={'Authorization': 'Bearer ' + token.access_token}, timeout=consts.COMMS_TIMEOUT)
+            req = requests.get(
+                self.infoEndpoint.value,
+                headers={'Authorization': 'Bearer ' + token.access_token},
+                timeout=consts.COMMS_TIMEOUT,
+            )
             if not req.ok:
                 raise Exception('Error requesting user info: {}'.format(req.text))
             userInfo = req.json()
 
+        username = ''.join(auth_utils.processRegexField(self.userNameAttr.value, userInfo)).replace(' ', '_')
+        if len(username) == 0:
+            raise Exception('No username received')
+
+        realName = ''.join(auth_utils.processRegexField(self.realNameAttr.value, userInfo))
+
+        # Get groups
+        groups = auth_utils.processRegexField(self.groupNameAttr.value, userInfo)
+        # Append common groups
+        groups.extend(self.commonGroups.value.split(','))
+
+        # store groups for this username at storage, so we can check it at a later stage
+        self.storage.putPickle(username, [realName, groups])
+
         # Validate common groups
-        groups = self.commonGroups.value.split(',')
         gm.validate(groups)
 
         # We don't mind about the token, we only need  to authenticate user
         # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
-        return auths.AuthenticationResult(
-            auths.AuthenticationSuccess.OK, username=parameters.get_params.get('username', '')
-        )
+        return auths.AuthenticationResult(auths.AuthenticationSuccess.OK, username=username)

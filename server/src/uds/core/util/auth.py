@@ -38,11 +38,15 @@ from uds.core.util import ensure
 
 logger = logging.getLogger(__name__)
 
+
 def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str] = None):
     """
     Validates the multi line fields refering to attributes
     """
     value: str = fieldValue or field.value
+    if value.strip() == '':
+        return  # Ok, empty
+
     for line in value.splitlines():
         if line.find('=') != -1:
             pattern = line.split('=')[0:2][1]
@@ -53,15 +57,21 @@ def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str]
             except Exception as e:
                 raise exceptions.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
 
-def processRegexField(field: str, attributes: typing.Mapping[str, typing.Union[str, typing.List[str]]]) -> typing.List[str]:
+
+def processRegexField(
+    field: str, attributes: typing.Mapping[str, typing.Union[str, typing.List[str]]]
+) -> typing.List[str]:
     """Proccesses a field, that can be a multiline field, and returns a list of values
-    
+
     Args:
         field (str): Field to process
         attributes (typing.Dict[str, typing.List[str]]): Attributes to use on processing
     """
     try:
         res: typing.List[str] = []
+        field = field.strip()
+        if field == '':
+            return res
 
         def getAttr(attrName: str) -> typing.List[str]:
             try:
@@ -71,9 +81,7 @@ def processRegexField(field: str, attributes: typing.Mapping[str, typing.Union[s
                     # Check all attributes are present, and has only one value
                     attrValues = [ensure.is_list(attributes.get(a, [''])) for a in attrList]
                     if not all([len(v) <= 1 for v in attrValues]):
-                        logger.warning(
-                            'Attribute %s do not has exactly one value, skipping %s', attrName, line
-                        )
+                        logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
                         return val
 
                     val = [''.join(v) for v in attrValues]  # flatten
