@@ -194,6 +194,7 @@ class ProxmoxPublication(services.Publication):
             self._task = ','.join((task.node, task.upid))
             return State.RUNNING
         except Exception as e:
+            self._reason = str(e)  # Store reason of error
             logger.warning('Problem destroying publication %s: %s. Please, check machine state On Proxmox', self.machine(), e)
             return State.ERROR
 
