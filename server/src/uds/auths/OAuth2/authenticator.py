@@ -42,7 +42,6 @@ from base64 import b64decode
 import defusedxml.ElementTree as etree
 import jwt
 import requests
-from cryptography.hazmat.backends import default_backend
 from cryptography.x509 import load_pem_x509_certificate
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
@@ -50,7 +49,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import auths, consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.core.util import model, auth as auth_utils
+from uds.core.util import fields, model, auth as auth_utils
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
@@ -232,19 +231,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if self.publicKey.value.strip() == '':
             return []
 
-        # Get certificates in PEM format
-        pemCerts = self.publicKey.value.split('-----END CERTIFICATE-----')
-        # Remove empty strings
-        pemCerts = [cert for cert in pemCerts if cert.strip() != '']
-        # Add back the "-----END CERTIFICATE-----" part
-        pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
-
-        # Convert to DER format
-        derCerts: typing.List[typing.Any] = []  # PublicKey...
-        for pemCert in pemCerts:
-            derCerts.append(load_pem_x509_certificate(pemCert.encode(), None).public_key())
-
-        return derCerts
+        return [cert.public_key() for cert in fields.getCertificatesFromField(self.publicKey)]
 
     def _codeVerifierAndChallenge(self) -> typing.Tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE
@@ -253,8 +240,11 @@ class OAuth2Authenticator(auths.Authenticator):
             typing.Tuple[str, str]: Code verifier and code challenge
         """
         codeVerifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
-        codeChallenge = hashlib.sha256(codeVerifier.encode('ascii')).digest()
-        codeChallenge = b64decode(codeChallenge, altchars=b'-_').decode().rstrip('=')  # remove padding
+        codeChallenge = (
+            b64decode(hashlib.sha256(codeVerifier.encode('ascii')).digest(), altchars=b'-_')
+            .decode()
+            .rstrip('=')  # remove padding
+        )
 
         return codeVerifier, codeChallenge
 
@@ -409,7 +399,7 @@ class OAuth2Authenticator(auths.Authenticator):
         # We don't mind about the token, we only need  to authenticate user
         # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
         return auths.AuthenticationResult(auths.AuthenticationState.SUCCESS, username=username)
-    
+
     def _processTokenOpenId(
         self, token_id: str, nonce: str, gm: 'auths.GroupsManager'
     ) -> auths.AuthenticationResult:
@@ -444,7 +434,6 @@ class OAuth2Authenticator(auths.Authenticator):
         logger.error('Invalid token received on OAuth2 callback')
 
         return auths.FAILED_AUTH
-        
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
@@ -458,12 +447,21 @@ class OAuth2Authenticator(auths.Authenticator):
         auth_utils.validateRegexField(self.userNameAttr)
         auth_utils.validateRegexField(self.userNameAttr)
 
-        if self.responseType.value == 'code':
+        if self.responseType.value in ('code', 'pkce', 'openid+code'):
             if self.commonGroups.value.strip() == '':
-                raise exceptions.ValidationError(gettext('Common groups is required for "code" response type'))
+                raise exceptions.ValidationError(gettext('Common groups is required for "code" response types'))
             if self.tokenEndpoint.value.strip() == '':
-                raise exceptions.ValidationError(gettext('Token endpoint is required for "code" response type'))
+                raise exceptions.ValidationError(
+                    gettext('Token endpoint is required for "code" response types')
+                )
             # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
+
+        if self.responseType.value == 'openid+token_id':
+            # Ensure we have a public key
+            if self.publicKey.value.strip() == '':
+                raise exceptions.ValidationError(
+                    gettext('Public key is required for "openid+token_id" response type')
+                )
 
         request: 'HttpRequest' = values['_request']
 
@@ -615,11 +613,11 @@ class OAuth2Authenticator(auths.Authenticator):
         if not state or not nonce:
             logger.error('Invalid state received on OAuth2 callback')
             return auths.FAILED_AUTH
-        
+
         # Get the id_token
         id_token = parameters.post_params.get('id_token', '')
         if id_token == '':
             logger.error('Invalid id_token received on OAuth2 callback')
             return auths.FAILED_AUTH
-        
+
         return self._processTokenOpenId(id_token, nonce, gm)

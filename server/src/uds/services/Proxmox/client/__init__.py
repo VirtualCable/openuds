@@ -293,7 +293,7 @@ class ProxmoxClient:
         cachingKeyFnc=cachingKeyHelper,
     )
     def nodeGpuDevices(self, node: str, **kwargs) -> typing.List[str]:
-        return [device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if 'mdev' in device]
+        return [device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')]
 
     @ensureConnected
     def getNodeVGPUs(self, node: str, **kwargs) -> typing.List[typing.Any]:

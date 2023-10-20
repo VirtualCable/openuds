@@ -308,6 +308,7 @@ def getServicesData(
         if not trans:
             continue
 
+ 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
         in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user

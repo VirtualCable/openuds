@@ -38,6 +38,8 @@ import json
 from django.utils.translation import gettext as _
 from django.core import validators as dj_validators
 
+from cryptography.x509 import load_pem_x509_certificate
+
 from uds.core import exceptions
 from uds.core.util import security
 
@@ -386,3 +388,25 @@ def validateServerCertificate(cert: typing.Optional[str]) -> str:
     except Exception as e:
         raise exceptions.ValidationError(_('Invalid certificate') + f' :{e}') from e
     return cert
+
+
+def validateServerCertificateMulti(value: typing.Optional[str]) -> str:
+    """
+    Validates the multi line fields refering to attributes
+    """
+    if not value:
+        return ''  # Ok, empty
+
+    pemCerts = value.split('-----END CERTIFICATE-----')
+    # Remove empty strings
+    pemCerts = [cert for cert in pemCerts if cert.strip() != '']
+    # Add back the "-----END CERTIFICATE-----" part
+    pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
+
+    for pemCert in pemCerts:
+        try:
+            load_pem_x509_certificate(pemCert.encode())
+        except Exception as e:
+            raise exceptions.ValidationError(_('Invalid certificate') + f' :{e}') from e
+
+    return value

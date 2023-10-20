@@ -28,15 +28,22 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import functools
+import logging
+import typing
 
 from django.utils.translation import gettext as _
 from django.db.models import Q
 
+from cryptography.x509 import load_pem_x509_certificate
+
 from uds import models
 from uds.core import types, ui
 
+if typing.TYPE_CHECKING:
+    from cryptography.x509 import Certificate
+
+logger = logging.getLogger(__name__)
 
 # ******************************************************
 # Tunnel related common use fields and related functions
@@ -147,3 +154,28 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
         required=True,
         tab=types.ui.Tab.TUNNEL,
     )
+
+
+# Get certificates from field
+def getCertificatesFromField(
+    field: ui.gui.TextField, fieldValue: typing.Optional[str] = None
+) -> typing.List['Certificate']:
+    # Get certificates in self.publicKey.value, encoded as PEM
+    # Return a list of certificates in DER format
+    value = (fieldValue or field.value).strip()
+    if value == '':
+        return []
+
+    # Get certificates in PEM format
+    pemCerts = value.split('-----END CERTIFICATE-----')
+    # Remove empty strings
+    pemCerts = [cert for cert in pemCerts if cert.strip() != '']
+    # Add back the "-----END CERTIFICATE-----" part
+    pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
+
+    # Convert to DER format
+    certs: typing.List['Certificate'] = []  # PublicKey...
+    for pemCert in pemCerts:
+        certs.append(load_pem_x509_certificate(pemCert.encode('ascii'), None))
+
+    return certs

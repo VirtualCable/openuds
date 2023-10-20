@@ -188,10 +188,14 @@ class ProxmoxPublication(services.Publication):
         self.state = State.RUNNING
         self._operation = 'd'
         self._destroyAfter = ''
-        self.service()
-        task = self.service().removeMachine(self.machine())
-        self._task = ','.join((task.node, task.upid))
-        return State.RUNNING
+        try:
+            task = self.service().removeMachine(self.machine())
+            self._task = ','.join((task.node, task.upid))
+            return State.RUNNING
+        except Exception as e:
+            self._reason = str(e)  # Store reason of error
+            logger.warning('Problem destroying publication %s: %s. Please, check machine state On Proxmox', self.machine(), e)
+            return State.ERROR
 
     def cancel(self) -> str:
         return self.destroy()
