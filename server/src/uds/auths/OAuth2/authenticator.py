@@ -31,52 +31,60 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import re
-import token
+import hashlib
+import secrets
+import string
 import typing
+import datetime
 import urllib.parse
 from base64 import b64decode
-from weakref import ref
 
 import defusedxml.ElementTree as etree
 import jwt
 import requests
 from cryptography.hazmat.backends import default_backend
-from cryptography.x509 import load_der_x509_certificate
+from cryptography.x509 import load_pem_x509_certificate
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.core.util import auth as auth_utils
+from uds.core.util import model, auth as auth_utils
 
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
-    from uds.core.auths.groups_manager import GroupsManager
-
+    from cryptography.x509 import Certificate
 
 logger = logging.getLogger(__name__)
+
+# Alphabet used for PKCE
+PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
+# Length of the State parameter
+STATE_LENGTH: typing.Final[int] = 16
 
 
 class TokenInfo(typing.NamedTuple):
     access_token: str
     token_type: str
-    expires_in: int
+    expires: datetime.datetime
     refresh_token: str
     scope: str
     info: typing.Dict[str, typing.Any]
+    id_token: typing.Optional[str]
 
     @staticmethod
     def fromJson(json: typing.Dict[str, typing.Any]) -> 'TokenInfo':
+        # expires is -10 to avoid problems with clock sync
         return TokenInfo(
             access_token=json['access_token'],
             token_type=json['token_type'],
-            expires_in=json['expires_in'],
+            expires=model.getSqlDatetime() + datetime.timedelta(seconds=json['expires_in'] - 10),
             refresh_token=json['refresh_token'],
             scope=json['scope'],
             info=json.get('info', {}),
+            id_token=json.get('id_token', None),
         )
 
 
@@ -147,8 +155,17 @@ class OAuth2Authenticator(auths.Authenticator):
         required=True,
         default='code',
         choices=[
-            {'id': 'code', 'text': _('Code')},
-            {'id': 'token', 'text': _('Token')},
+            {'id': 'code', 'text': _('Code (authorization code flow)')},
+            {'id': 'pkce', 'text': _('PKCE (authorization code flow with PKCE)')},
+            {'id': 'token', 'text': _('Token (implicit flow)')},
+            {
+                'id': 'openid+token_id',
+                'text': _('OpenID Connect Token (implicit flow with OpenID Connect)'),
+            },
+            {
+                'id': 'openid+code',
+                'text': _('OpenID Connect Code (authorization code flow with OpenID Connect)'),
+            },
         ],
         tab=types.ui.Tab.ADVANCED,
     )
@@ -209,6 +226,226 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
+    def _getPublicKeys(self) -> typing.List[typing.Any]:  # In fact, any of the PublicKey types
+        # Get certificates in self.publicKey.value, encoded as PEM
+        # Return a list of certificates in DER format
+        if self.publicKey.value.strip() == '':
+            return []
+
+        # Get certificates in PEM format
+        pemCerts = self.publicKey.value.split('-----END CERTIFICATE-----')
+        # Remove empty strings
+        pemCerts = [cert for cert in pemCerts if cert.strip() != '']
+        # Add back the "-----END CERTIFICATE-----" part
+        pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
+
+        # Convert to DER format
+        derCerts: typing.List[typing.Any] = []  # PublicKey...
+        for pemCert in pemCerts:
+            derCerts.append(load_pem_x509_certificate(pemCert.encode(), None).public_key())
+
+        return derCerts
+
+    def _codeVerifierAndChallenge(self) -> typing.Tuple[str, str]:
+        """Generate a code verifier and a code challenge for PKCE
+
+        Returns:
+            typing.Tuple[str, str]: Code verifier and code challenge
+        """
+        codeVerifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
+        codeChallenge = hashlib.sha256(codeVerifier.encode('ascii')).digest()
+        codeChallenge = b64decode(codeChallenge, altchars=b'-_').decode().rstrip('=')  # remove padding
+
+        return codeVerifier, codeChallenge
+
+    def _getResponseTypeString(self) -> str:
+        match self.responseType.value:
+            case 'code':
+                return 'code'
+            case 'pkce':
+                return 'code'
+            case 'token':
+                return 'token'
+            case 'openid+token_id':
+                return 'id_token'
+            case 'openid+code':
+                return 'code'
+            case _:
+                raise Exception('Invalid response type')
+
+    def _getLoginURL(self, request: 'HttpRequest') -> str:
+        """
+        :type request: django.http.request.HttpRequest
+        """
+        state: str = secrets.token_urlsafe(STATE_LENGTH)
+
+        param_dict = {
+            'response_type': self._getResponseTypeString(),
+            'client_id': self.clientId.value,
+            'redirect_uri': self.redirectionEndpoint.value,
+            'scope': self.scope.value.replace(',', ' '),
+            'state': state,
+        }
+
+        match self.responseType.value:
+            case 'code' | 'token':
+                # Code or token flow
+                # Simply store state, no code_verifier, store "none" as code_verifier to later restore it
+                self.cache.put(state, 'none', 3600)
+            case 'openid+code' | 'openid+token_id':
+                # OpenID flow
+                nonce = secrets.token_urlsafe(STATE_LENGTH)
+                self.cache.put(state, nonce, 3600)  # Store nonce
+                # Fix scope
+                param_dict['scope'] = 'openid ' + param_dict['scope']
+                # Append nonce
+                param_dict['nonce'] = nonce
+                # Add response_mode
+                param_dict['response_mode'] = 'form_post'  # ['query', 'fragment', 'form_post']
+
+            case 'pkce':
+                # PKCE flow
+                codeVerifier, codeChallenge = self._codeVerifierAndChallenge()
+                param_dict['code_challenge'] = codeChallenge
+                param_dict['code_challenge_method'] = 'S256'
+                self.cache.put(state, codeVerifier, 3600)
+
+            case _:
+                raise Exception('Invalid response type')
+
+        # Nonce only is used
+        if False:
+            param_dict['nonce'] = nonce
+
+        if False:
+            param_dict['response_mode'] = 'form_post'  # ['query', 'fragment', 'form_post']
+
+        params = urllib.parse.urlencode(param_dict)
+
+        return self.authorizationEndpoint.value + '?' + params
+
+    def _requestToken(self, code: str, code_verifier: typing.Optional[str] = None) -> TokenInfo:
+        """Request a token from the token endpoint using the code received from the authorization endpoint
+
+        Args:
+            code (str): Code received from the authorization endpoint
+
+        Returns:
+            TokenInfo: Token received from the token endpoint
+        """
+        param_dict = {
+            'grant_type': 'authorization_code',
+            'client_id': self.clientId.value,
+            'client_secret': self.clientSecret.value,
+            'redirect_uri': self.redirectionEndpoint.value,
+            'code': code,
+        }
+        if code_verifier:
+            param_dict['code_verifier'] = code_verifier
+
+        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.COMMS_TIMEOUT)
+        logger.debug('Token request: %s %s', req.status_code, req.text)
+
+        if not req.ok:
+            raise Exception('Error requesting token: {}'.format(req.text))
+
+        return TokenInfo.fromJson(req.json())
+
+    def _requestInfo(self, token: 'TokenInfo') -> typing.Dict[str, typing.Any]:
+        """Request user info from the info endpoint using the token received from the token endpoint
+
+        If the token endpoint returns the user info, this method will not be used
+
+        Args:
+            token (TokenInfo): Token received from the token endpoint
+
+        Returns:
+            typing.Dict[str, typing.Any]: User info received from the info endpoint
+        """
+        userInfo: typing.Dict[str, typing.Any]
+
+        if self.infoEndpoint.value.strip() == '':
+            if not token.info:
+                raise Exception('No user info received')
+            userInfo = token.info
+        else:
+            # Get user info
+            req = requests.get(
+                self.infoEndpoint.value,
+                headers={'Authorization': 'Bearer ' + token.access_token},
+                timeout=consts.COMMS_TIMEOUT,
+            )
+            logger.debug('User info request: %s %s', req.status_code, req.text)
+
+            if not req.ok:
+                raise Exception('Error requesting user info: {}'.format(req.text))
+
+            userInfo = req.json()
+        return userInfo
+
+    def _processToken(
+        self, userInfo: typing.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
+    ) -> auths.AuthenticationResult:
+        # After this point, we don't mind about the token, we only need to authenticate user
+        # and get some basic info from it
+
+        username = ''.join(auth_utils.processRegexField(self.userNameAttr.value, userInfo)).replace(' ', '_')
+        if len(username) == 0:
+            raise Exception('No username received')
+
+        realName = ''.join(auth_utils.processRegexField(self.realNameAttr.value, userInfo))
+
+        # Get groups
+        groups = auth_utils.processRegexField(self.groupNameAttr.value, userInfo)
+        # Append common groups
+        groups.extend(self.commonGroups.value.split(','))
+
+        # store groups for this username at storage, so we can check it at a later stage
+        self.storage.putPickle(username, [realName, groups])
+
+        # Validate common groups
+        gm.validate(groups)
+
+        # We don't mind about the token, we only need  to authenticate user
+        # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
+        return auths.AuthenticationResult(auths.AuthenticationState.SUCCESS, username=username)
+    
+    def _processTokenOpenId(
+        self, token_id: str, nonce: str, gm: 'auths.GroupsManager'
+    ) -> auths.AuthenticationResult:
+        # Get token headers, to extract algorithm
+        info = jwt.get_unverified_header(token_id)
+        logger.debug('Token headers: %s', info)
+
+        # We may have multiple public keys, try them all
+        # (We should only have one, but just in case)
+        for key in self._getPublicKeys():
+            logger.debug('Key = %s', key)
+            try:
+                payload = jwt.decode(token, key=key, audience=self.clientId.value, algorithms=[info.get('alg', 'RSA256')])  # type: ignore
+                # If reaches here, token is valid, raises jwt.InvalidTokenError otherwise
+                logger.debug('Payload: %s', payload)
+                if payload.get('nonce') != nonce:
+                    logger.error('Nonce does not match: %s != %s', payload.get('nonce'), nonce)
+                else:
+                    logger.debug('Payload: %s', payload)
+                    # All is fine, get user & look for groups
+
+                # Process attributes from payload
+                return self._processToken(payload, gm)
+            except (jwt.InvalidTokenError, IndexError):
+                # logger.debug('Data was invalid: %s', e)
+                pass
+            except Exception as e:
+                logger.error('Error decoding token: %s', e)
+                return auths.FAILED_AUTH
+
+        # All keys tested, none worked
+        logger.error('Invalid token received on OAuth2 callback')
+
+        return auths.FAILED_AUTH
+        
+
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
             return
@@ -233,58 +470,23 @@ class OAuth2Authenticator(auths.Authenticator):
         if self.redirectionEndpoint.value.strip() == '' and self.dbObj():
             self.redirectionEndpoint.value = request.build_absolute_uri(self.callbackUrl())
 
-    def _getLoginURL(self, request: 'HttpRequest') -> str:
-        """
-        :type request: django.http.request.HttpRequest
-        """
-        nonce: str = CryptoManager.manager().uuid()
-        state: str = CryptoManager.manager().uuid()
-
-        self.cache.put(state, nonce, 3600)
-
-        param_dict = {
-            'response_type': self.responseType.value,
-            'scope': self.scope.value,
-            'client_id': self.clientId.value,
-            'redirect_uri': self.redirectionEndpoint.value,
-            'state': state,
-        }
-
-        # Nonce only is used
-        if False:
-            param_dict['nonce'] = nonce
-
-        if False:
-            param_dict['response_mode'] = 'form_post'  # ['query', 'fragment', 'form_post']
-
-        params = urllib.parse.urlencode(param_dict)
-
-        return self.authorizationEndpoint.value + '?' + params
-
-    def _requestToken(self, request: 'HttpRequest', code: str) -> TokenInfo:
-        param_dict = {
-            'grant_type': 'authorization_code',
-            'client_id': self.clientId.value,
-            'client_secret': self.clientSecret.value,
-            'redirect_uri': self.redirectionEndpoint.value,
-            'code': code,
-        }
-
-        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.COMMS_TIMEOUT)
-
-        if not req.ok:
-            raise Exception('Error requesting token: {}'.format(req.text))
-
-        return TokenInfo.fromJson(req.json())
-
     def authCallback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
-        if self.responseType.value == 'code':
-            return self.authCallbackCode(parameters, gm, request)
+        match self.responseType.value:
+            case 'code' | 'pkce':
+                return self.authCallbackCode(parameters, gm, request)
+            case 'token':
+                return self.authCallbackToken(parameters, gm, request)
+            case 'openid+code':
+                return self.authCallbackOpenIdCode(parameters, gm, request)
+            case 'openid+token_id':
+                return self.authCallbackOpenIdIdToken(parameters, gm, request)
+            case _:
+                raise Exception('Invalid response type')
         return auths.SUCCESS_AUTH
 
     def logout(
@@ -318,57 +520,106 @@ class OAuth2Authenticator(auths.Authenticator):
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
     ) -> auths.AuthenticationResult:
-        # Check state
+        """Process the callback for code authorization flow"""
         state = parameters.get_params.get('state', '')
-        if self.cache.get(state) is None:
-            logger.warning('Invalid state received on OAuth2 callback')
-            return auths.FAILED_AUTH
-
         # Remove state from cache
+        code_verifier = self.cache.get(state)
         self.cache.remove(state)
+
+        if not state or not code_verifier:
+            logger.error('Invalid state received on OAuth2 callback')
+            return auths.FAILED_AUTH
 
         # Get the code
         code = parameters.get_params.get('code', '')
         if code == '':
-            logger.warning('Invalid code received on OAuth2 callback')
+            logger.error('Invalid code received on OAuth2 callback')
             return auths.FAILED_AUTH
 
-        token = self._requestToken(request, code)
+        # Restore code_verifier "none" to None
+        if code_verifier == 'none':
+            code_verifier = None
 
-        userInfo: typing.Dict[str, typing.Any]
+        token = self._requestToken(code, code_verifier)
+        return self._processToken(self._requestInfo(token), gm)
 
-        if self.infoEndpoint.value.strip() == '':
-            if not token.info:
-                raise Exception('No user info received')
-            userInfo = token.info
-        else:
-            # Get user info
-            req = requests.get(
-                self.infoEndpoint.value,
-                headers={'Authorization': 'Bearer ' + token.access_token},
-                timeout=consts.COMMS_TIMEOUT,
-            )
-            if not req.ok:
-                raise Exception('Error requesting user info: {}'.format(req.text))
-            userInfo = req.json()
+    def authCallbackToken(
+        self,
+        parameters: 'types.auth.AuthCallbackParams',
+        gm: 'auths.GroupsManager',
+        request: 'types.request.ExtendedHttpRequest',
+    ) -> auths.AuthenticationResult:
+        """Process the callback for PKCE authorization flow"""
+        state = parameters.get_params.get('state', '')
+        stateValue = self.cache.get(state)
+        self.cache.remove(state)
 
-        username = ''.join(auth_utils.processRegexField(self.userNameAttr.value, userInfo)).replace(' ', '_')
-        if len(username) == 0:
-            raise Exception('No username received')
+        if not state or not stateValue:
+            logger.error('Invalid state received on OAuth2 callback')
+            return auths.FAILED_AUTH
 
-        realName = ''.join(auth_utils.processRegexField(self.realNameAttr.value, userInfo))
+        # Get the token, token_type, expires
+        token = TokenInfo(
+            access_token=parameters.get_params.get('access_token', ''),
+            token_type=parameters.get_params.get('token_type', ''),
+            expires=model.getSqlDatetime()
+            + datetime.timedelta(seconds=int(parameters.get_params.get('expires_in', 0))),
+            refresh_token=parameters.get_params.get('refresh_token', ''),
+            scope=parameters.get_params.get('scope', ''),
+            info={},
+            id_token=None,
+        )
+        return self._processToken(self._requestInfo(token), gm)
 
-        # Get groups
-        groups = auth_utils.processRegexField(self.groupNameAttr.value, userInfo)
-        # Append common groups
-        groups.extend(self.commonGroups.value.split(','))
+    def authCallbackOpenIdCode(
+        self,
+        parameters: 'types.auth.AuthCallbackParams',
+        gm: 'auths.GroupsManager',
+        request: 'types.request.ExtendedHttpRequest',
+    ) -> auths.AuthenticationResult:
+        """Process the callback for OpenID authorization flow"""
+        state = parameters.post_params.get('state', '')
+        nonce = self.cache.get(state)
+        self.cache.remove(state)
 
-        # store groups for this username at storage, so we can check it at a later stage
-        self.storage.putPickle(username, [realName, groups])
+        if not state or not nonce:
+            logger.error('Invalid state received on OAuth2 callback')
+            return auths.FAILED_AUTH
 
-        # Validate common groups
-        gm.validate(groups)
+        # Get the code
+        code = parameters.post_params.get('code', '')
+        if code == '':
+            logger.error('Invalid code received on OAuth2 callback')
+            return auths.FAILED_AUTH
 
-        # We don't mind about the token, we only need  to authenticate user
-        # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
-        return auths.AuthenticationResult(auths.AuthenticationSuccess.OK, username=username)
+        # Get the token, token_type, expires
+        token = self._requestToken(code)
+
+        if not token.id_token:
+            logger.error('No id_token received on OAuth2 callback')
+            return auths.FAILED_AUTH
+
+        return self._processTokenOpenId(token.id_token, nonce, gm)
+
+    def authCallbackOpenIdIdToken(
+        self,
+        parameters: 'types.auth.AuthCallbackParams',
+        gm: 'auths.GroupsManager',
+        request: 'types.request.ExtendedHttpRequest',
+    ) -> auths.AuthenticationResult:
+        """Process the callback for OpenID authorization flow"""
+        state = parameters.post_params.get('state', '')
+        nonce = self.cache.get(state)
+        self.cache.remove(state)
+
+        if not state or not nonce:
+            logger.error('Invalid state received on OAuth2 callback')
+            return auths.FAILED_AUTH
+        
+        # Get the id_token
+        id_token = parameters.post_params.get('id_token', '')
+        if id_token == '':
+            logger.error('Invalid id_token received on OAuth2 callback')
+            return auths.FAILED_AUTH
+        
+        return self._processTokenOpenId(id_token, nonce, gm)

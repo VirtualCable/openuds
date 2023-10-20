@@ -35,7 +35,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from .authenticator import (
     Authenticator,
     AuthenticationResult,
-    AuthenticationSuccess,
+    AuthenticationState,
     AuthenticationInternalUrl,
     SUCCESS_AUTH,
     FAILED_AUTH,

@@ -309,12 +309,12 @@ def authenticate(
     else:
         res = authInstance.internalAuthenticate(username, password, gm, request)
 
-    if res.success == auths.AuthenticationSuccess.FAIL:
+    if res.success == auths.AuthenticationState.FAIL:
         logger.debug('Authentication failed')
         # Maybe it's an redirection on auth failed?
         return AuthResult()
 
-    if res.success == auths.AuthenticationSuccess.REDIRECT:
+    if res.success == auths.AuthenticationState.REDIRECT:
         return AuthResult(url=res.url)
 
     logger.debug('Groups manager: %s', gm)
@@ -361,12 +361,12 @@ def authenticateViaCallback(
         raise auths.exceptions.InvalidAuthenticatorException()
 
     result = authInstance.authCallback(params, gm, request)
-    if result.success == auths.AuthenticationSuccess.FAIL or (
-        result.success == auths.AuthenticationSuccess.OK and not gm.hasValidGroups()
+    if result.success == auths.AuthenticationState.FAIL or (
+        result.success == auths.AuthenticationState.SUCCESS and not gm.hasValidGroups()
     ):
         raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
 
-    if result.success == auths.AuthenticationSuccess.REDIRECT:
+    if result.success == auths.AuthenticationState.REDIRECT:
         return AuthResult(url=result.url)
 
     if result.username:
@@ -488,7 +488,7 @@ def webLogout(
             authenticator = request.user.manager.getInstance()
             username = request.user.name
             logout = authenticator.logout(request, username)
-            if logout and logout.success == auths.AuthenticationSuccess.REDIRECT:
+            if logout and logout.success == auths.AuthenticationState.REDIRECT:
                 exit_url = logout.url or exit_url
             if request.user.id != ROOT_ID:
                 # Log the event if not root user

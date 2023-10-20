@@ -57,13 +57,13 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AuthenticationSuccess(enum.IntEnum):
+class AuthenticationState(enum.IntEnum):
     """
     Enumeration for authentication success
     """
 
     FAIL = 0
-    OK = 1
+    SUCCESS = 1
     REDIRECT = 2
 
 
@@ -82,13 +82,13 @@ class AuthenticationInternalUrl(enum.Enum):
 
 
 class AuthenticationResult(typing.NamedTuple):
-    success: AuthenticationSuccess
+    success: AuthenticationState
     url: typing.Optional[str] = None
     username: typing.Optional[str] = None
 
 
-FAILED_AUTH = AuthenticationResult(success=AuthenticationSuccess.FAIL)
-SUCCESS_AUTH = AuthenticationResult(success=AuthenticationSuccess.OK)
+FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
+SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
 
 
 class Authenticator(Module):

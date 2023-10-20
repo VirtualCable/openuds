@@ -34,7 +34,7 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.auths.authenticator import AuthenticationResult, AuthenticationSuccess
+from uds.core.auths.authenticator import AuthenticationResult, AuthenticationState
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core import auths, exceptions
@@ -301,7 +301,7 @@ class SampleAuth(auths.Authenticator):
         """
         user = parameters.get('user', None)
 
-        return AuthenticationResult(AuthenticationSuccess.OK, username=user)
+        return AuthenticationResult(AuthenticationState.SUCCESS, username=user)
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """

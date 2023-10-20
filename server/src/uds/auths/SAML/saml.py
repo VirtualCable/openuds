@@ -603,7 +603,7 @@ class SAMLAuthenticator(auths.Authenticator):
             self.mfaClean(request.user.name)
 
         return auths.AuthenticationResult(
-            success=auths.AuthenticationSuccess.REDIRECT,
+            success=auths.AuthenticationState.REDIRECT,
             url=url or auths.AuthenticationInternalUrl.LOGIN.getUrl(),
         )
 
@@ -689,7 +689,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         gm.validate(groups)
 
-        return auths.AuthenticationResult(success=auths.AuthenticationSuccess.OK, username=username)
+        return auths.AuthenticationResult(success=auths.AuthenticationState.SUCCESS, username=username)
 
     def logout(self, request: 'ExtendedHttpRequest', username: str) -> auths.AuthenticationResult:
         if not self.globalLogout.isTrue():
@@ -713,7 +713,7 @@ class SAMLAuthenticator(auths.Authenticator):
             return auths.SUCCESS_AUTH
 
         return auths.AuthenticationResult(
-            success=auths.AuthenticationSuccess.REDIRECT,
+            success=auths.AuthenticationState.REDIRECT,
             url=auth.logout(
                 name_id=saml.get('nameid'),
                 session_index=saml.get('session_index'),

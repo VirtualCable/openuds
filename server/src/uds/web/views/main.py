@@ -45,7 +45,7 @@ from django.utils.translation import gettext as _
 from uds.core.types.request import ExtendedHttpRequest
 
 from uds.core.types.request import ExtendedHttpRequestWithUser
-from uds.core.auths import auth, exceptions, AuthenticationSuccess
+from uds.core.auths import auth, exceptions, AuthenticationState
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
@@ -151,7 +151,7 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
-    url = logoutResponse.url if logoutResponse.success == AuthenticationSuccess.REDIRECT else None
+    url = logoutResponse.url if logoutResponse.success == AuthenticationState.REDIRECT else None
         
     return auth.webLogout(request, url or request.session.get('logouturl', None))
 
