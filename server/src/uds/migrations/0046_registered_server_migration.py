@@ -300,5 +300,24 @@ class Migration(migrations.Migration):
             model_name="ticketstore",
             name="validator",
         ),
-        
+        migrations.AlterField(
+            model_name="servicepool",
+            name="name",
+            field=models.CharField(default="", max_length=192),
+        ),
+        migrations.AlterField(
+            model_name="servicepool",
+            name="short_name",
+            field=models.CharField(default="", max_length=96),
+        ),        
+        migrations.AlterField(
+            model_name="metapool",
+            name="name",
+            field=models.CharField(default="", max_length=192),
+        ),
+        migrations.AlterField(
+            model_name="metapool",
+            name="short_name",
+            field=models.CharField(default="", max_length=96),
+        ),        
     ]

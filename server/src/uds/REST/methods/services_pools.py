@@ -278,9 +278,18 @@ class ServicesPools(ModelHandler):
         if Service.objects.count() < 1:
             raise ResponseError(gettext('Create at least a service before creating a new service pool'))
 
-        g = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
+        g = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for f in [
+            {
+                'name': 'short_name',
+                'type': 'text',
+                'label': _('Short name'),
+                'tooltip': _('Short name for user service visualization'),
+                'required': False,
+                'length': 64,
+                'order': 0 - 95,
+            },
             {
                 'name': 'service_id',
                 'choices': [gui.choiceItem('', '')]
@@ -457,6 +466,18 @@ class ServicesPools(ModelHandler):
     # pylint: disable=too-many-statements
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
+        def macro_fld_len(x) -> int:
+            w = x
+            for i in ('{use}', '{total}', '{usec}', '{left}'):
+                w = w.replace(i, 'xx')
+            return len(w)
+                
+        if macro_fld_len(fields['name']) > 128:
+            raise RequestError(gettext('Name too long'))
+        
+        if macro_fld_len(fields['short_name']) > 32:
+            raise RequestError(gettext('Short name too long'))
+
         try:
             try:
                 service = Service.objects.get(uuid=processUuid(fields['service_id']))

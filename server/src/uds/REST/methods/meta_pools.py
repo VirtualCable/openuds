@@ -148,9 +148,18 @@ class MetaPools(ModelHandler):
 
     # Gui related
     def getGui(self, type_: str) -> typing.List[typing.Any]:
-        localGUI = self.addDefaultFields([], ['name', 'short_name', 'comments', 'tags'])
+        localGUI = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for field in [
+            {
+                'name': 'short_name',
+                'type': 'text',
+                'label': _('Short name'),
+                'tooltip': _('Short name for user service visualization'),
+                'required': False,
+                'length': 32,
+                'order': 0 - 95,
+            },
             {
                 'name': 'policy',
                 'choices': [

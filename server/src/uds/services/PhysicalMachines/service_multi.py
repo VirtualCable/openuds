@@ -31,12 +31,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
-import pickle  # nosec # Pickle use is controled by app, never by non admin user input
+import pickle
+import random  # nosec # Pickle use is controled by app, never by non admin user input
 import typing
 
 from django.db import transaction
-from django.utils.translation import gettext
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import exceptions, services, types
 from uds.core.ui import gui
@@ -112,6 +112,13 @@ class IPMachinesService(IPServiceBase):
         order=4,
         tab=types.ui.Tab.ADVANCED,
     )
+    useRandomIp = gui.CheckBoxField(
+        label=_('Use random IP'),
+        tooltip=_('If checked, UDS will use a random IP from the list of servers.'),
+        default=False,
+        order=5,
+        tab=types.ui.Tab.ADVANCED,
+    )
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -135,6 +142,7 @@ class IPMachinesService(IPServiceBase):
     _skipTimeOnFailure: int = 0
     _maxSessionForMachine: int = 0
     _lockByExternalAccess: bool = False
+    _useRandomIp: bool = False
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -168,6 +176,7 @@ class IPMachinesService(IPServiceBase):
         self._skipTimeOnFailure = self.skipTimeOnFailure.num()
         self._maxSessionForMachine = self.maxSessionForMachine.num()
         self._lockByExternalAccess = self.lockByExternalAccess.isTrue()
+        self._useRandomIp = self.useRandomIp.isTrue()
 
     def getToken(self):
         return self._token or None
@@ -181,18 +190,20 @@ class IPMachinesService(IPServiceBase):
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
             'lockByExternalAccess': gui.fromBool(self._lockByExternalAccess),
+            'useRandomIp': gui.fromBool(self._useRandomIp),
         }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
         return b'\0'.join(
             [
-                b'v6',
+                b'v7',
                 self._token.encode(),
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
                 gui.fromBool(self._lockByExternalAccess).encode(),
+                gui.fromBool(self._useRandomIp).encode(),
             ]
         )
 
@@ -208,14 +219,16 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         if values[0] != b'v1':
             self._token = values[1].decode()
-            if values[0] in (b'v3', b'v4', b'v5', b'v6'):
+            if values[0] in (b'v3', b'v4', b'v5', b'v6', b'v7'):
                 self._port = int(values[2].decode())
-            if values[0] in (b'v4', b'v5', b'v6'):
+            if values[0] in (b'v4', b'v5', b'v6', b'v7'):
                 self._skipTimeOnFailure = int(values[3].decode())
-            if values[0] in (b'v5', b'v6'):
+            if values[0] in (b'v5', b'v6', b'v7'):
                 self._maxSessionForMachine = int(values[4].decode())
-            if values[0] in (b'v6',):
+            if values[0] in (b'v6', b'v7'):
                 self._lockByExternalAccess = gui.toBool(values[5].decode())
+            if values[0] in (b'v7',):
+                self._useRandomIp = gui.toBool(values[6].decode())
 
         # Sets maximum services for this
         self.maxUserServices = len(self._ips)
@@ -243,7 +256,12 @@ class IPMachinesService(IPServiceBase):
         try:
             now = getSqlStampInSeconds()
 
-            for ip in self._ips:
+            # Reorder ips, so we do not always get the same one if requested
+            allIps = self._ips[:]
+            if self._useRandomIp:
+                random.shuffle(allIps)
+
+            for ip in allIps:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
                 locked = self.storage.getPickle(theIP)

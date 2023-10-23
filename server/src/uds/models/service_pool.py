@@ -78,8 +78,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     A deployed service is the Service produced element that is assigned finally to an user (i.e. a Virtual Machine, etc..)
     """
 
-    name = models.CharField(max_length=128, default='')
-    short_name = models.CharField(max_length=32, default='')
+    name = models.CharField(max_length=192, default='')  # Give enouth space for "macros"
+    short_name = models.CharField(max_length=96, default='')  # Give enouth space for "macros"
     comments = models.CharField(max_length=256, default='')
     service = models.ForeignKey(
         Service,

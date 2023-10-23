@@ -177,19 +177,6 @@ class BaseModelHandler(Handler):
                     'order': 0 - 100,
                 },
             )
-        if 'short_name' in flds:
-            self.addField(
-                gui,
-                {
-                    'name': 'short_name',
-                    'type': 'text',
-                    'label': _('Short name'),
-                    'tooltip': _('Short name for user service visualization'),
-                    'required': False,
-                    'length': 32,
-                    'order': 0 - 95,
-                },
-            )
         if 'comments' in flds:
             self.addField(
                 gui,

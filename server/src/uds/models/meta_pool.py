@@ -64,8 +64,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     A meta pool is a pool that has pool members
     """
 
-    name = models.CharField(max_length=128, default='')
-    short_name = models.CharField(max_length=32, default='')
+    name = models.CharField(max_length=192, default='')  # Give enouth space for "macros"
+    short_name = models.CharField(max_length=96, default='')  # Give enouth space for "macros"
     comments = models.CharField(max_length=256, default='')
     visible = models.BooleanField(default=True)
     image = models.ForeignKey(
