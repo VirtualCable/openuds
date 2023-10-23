@@ -33,6 +33,7 @@
 import pickle
 import logging
 import typing
+import random
 
 from django.utils.translation import gettext, gettext_lazy as _
 from django.db import transaction
@@ -79,9 +80,7 @@ class IPMachinesService(IPServiceBase):
         label=_('Check Port'),
         defvalue='0',
         order=2,
-        tooltip=_(
-            'If non zero, only hosts responding to connection on that port will be served.'
-        ),
+        tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
         required=True,
         tab=gui.ADVANCED_TAB,
     )
@@ -115,6 +114,13 @@ class IPMachinesService(IPServiceBase):
         order=4,
         tab=gui.ADVANCED_TAB,
     )
+    useRandomIp = gui.CheckBoxField(
+        label=_('Use random IP'),
+        tooltip=_('If checked, UDS will use a random IP from the list of servers.'),
+        defvalue=False,
+        order=5,
+        tab=gui.ADVANCED_TAB,
+    )
 
     # Description of service
     typeName = _('Static Multiple IP')
@@ -141,6 +147,7 @@ class IPMachinesService(IPServiceBase):
     _skipTimeOnFailure: int = 0
     _maxSessionForMachine: int = 0
     _lockByExternalAccess: bool = False
+    _useRandomIp: bool = False
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values is None:
@@ -153,22 +160,18 @@ class IPMachinesService(IPServiceBase):
             for v in values['ipList']:
                 if not net.isValidHost(v.split(';')[0]):  # Get only IP/hostname
                     raise IPServiceBase.ValidationException(
-                        gettext('Invalid value detected on servers list: "{}"').format(
-                            v
-                        )
+                        gettext('Invalid value detected on servers list: "{}"').format(v)
                     )
             self._ips = [
-                '{}~{}'.format(str(ip).strip(), i)
-                for i, ip in enumerate(values['ipList'])
-                if str(ip).strip()
+                '{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()
             ]  # Allow duplicates right now
             # Current stored data, if it exists
             d = self.storage.readData('ips')
             old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []
             # dissapeared ones
-            dissapeared = set(
-                IPServiceBase.getIp(i.split('~')[0]) for i in old_ips
-            ) - set(i.split('~')[0] for i in self._ips)
+            dissapeared = set(IPServiceBase.getIp(i.split('~')[0]) for i in old_ips) - set(
+                i.split('~')[0] for i in self._ips
+            )
             with transaction.atomic():
                 for removable in dissapeared:
                     self.storage.remove(removable)
@@ -178,6 +181,7 @@ class IPMachinesService(IPServiceBase):
         self._skipTimeOnFailure = self.skipTimeOnFailure.num()
         self._maxSessionForMachine = self.maxSessionForMachine.num()
         self._lockByExternalAccess = self.lockByExternalAccess.isTrue()
+        self._useRandomIp = self.useRandomIp.isTrue()
 
     def getToken(self):
         return self._token or None
@@ -192,18 +196,20 @@ class IPMachinesService(IPServiceBase):
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
             'lockByExternalAccess': gui.boolToStr(self._lockByExternalAccess),
+            'useRandomIp': gui.boolToStr(self._useRandomIp),
         }
 
     def marshal(self) -> bytes:
         self.storage.saveData('ips', pickle.dumps(self._ips))
         return b'\0'.join(
             [
-                b'v6',
+                b'v7',
                 self._token.encode(),
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
                 gui.boolToStr(self._lockByExternalAccess).encode(),
+                gui.boolToStr(self._useRandomIp).encode(),
             ]
         )
 
@@ -219,14 +225,16 @@ class IPMachinesService(IPServiceBase):
             self._ips = []
         if values[0] != b'v1':
             self._token = values[1].decode()
-            if values[0] in (b'v3', b'v4', b'v5', b'v6'):
+            if values[0] in (b'v3', b'v4', b'v5', b'v6', b'v7'):
                 self._port = int(values[2].decode())
-            if values[0] in (b'v4', b'v5', b'v6'):
+            if values[0] in (b'v4', b'v5', b'v6', b'v7'):
                 self._skipTimeOnFailure = int(values[3].decode())
-            if values[0] in (b'v5', b'v6'):
+            if values[0] in (b'v5', b'v6', b'v7'):
                 self._maxSessionForMachine = int(values[4].decode())
-            if values[0] in (b'v6',):
+            if values[0] in (b'v6', b'v7'):
                 self._lockByExternalAccess = gui.strToBool(values[5].decode())
+            if values[0] in (b'v7',):
+                self._useRandomIp = gui.strToBool(values[6].decode())
 
         # Sets maximum services for this
         self.maxDeployed = len(self._ips)
@@ -254,7 +262,11 @@ class IPMachinesService(IPServiceBase):
         try:
             now = getSqlDatetimeAsUnix()
 
-            for ip in self._ips:
+            # Reorder ips, so we do not always get the same one if requested
+            allIps = self._ips[:]
+            if self._useRandomIp:
+                random.shuffle(allIps)
+            for ip in allIps:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
                 locked = self.storage.getPickle(theIP)
@@ -269,19 +281,12 @@ class IPMachinesService(IPServiceBase):
                     # Is WOL enabled?
                     wolENABLED = bool(self.parent().wolURL(theIP, theMAC))
                     # Now, check if it is available on port, if required...
-                    if (
-                        self._port > 0 and not wolENABLED
-                    ):  # If configured WOL, check is a nonsense
-                        if (
-                            connection.testServer(theIP, self._port, timeOut=0.5)
-                            is False
-                        ):
+                    if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
+                        if connection.testServer(theIP, self._port, timeOut=0.5) is False:
                             # Log into logs of provider, so it can be "shown" on services logs
                             self.parent().doLog(
                                 log.WARN,
-                                'Host {} not accesible on port {}'.format(
-                                    theIP, self._port
-                                ),
+                                'Host {} not accesible on port {}'.format(theIP, self._port),
                             )
                             logger.warning(
                                 'Static Machine check on %s:%s failed. Will be ignored for %s minutes.',
@@ -312,11 +317,7 @@ class IPMachinesService(IPServiceBase):
             logger.exception("Exception at getUnassignedMachine")
 
     def listAssignables(self):
-        return [
-            (ip, ip.split('~')[0])
-            for ip in self._ips
-            if self.storage.readData(ip) is None
-        ]
+        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.readData(ip) is None]
 
     def assignFromAssignables(
         self,
@@ -324,9 +325,7 @@ class IPMachinesService(IPServiceBase):
         user: 'models.User',
         userDeployment: 'services.UserDeployment',
     ) -> str:
-        userServiceInstance: IPMachineDeployed = typing.cast(
-            IPMachineDeployed, userDeployment
-        )
+        userServiceInstance: IPMachineDeployed = typing.cast(IPMachineDeployed, userDeployment)
         theIP = IPServiceBase.getIp(assignableId)
         theMAC = IPServiceBase.getMac(assignableId)
 
@@ -369,7 +368,7 @@ class IPMachinesService(IPServiceBase):
     def notifyInitialization(self, id: str) -> None:
         '''
         Notify that a machine has been initialized.
-        Normally, this means that 
+        Normally, this means that
         '''
         logger.debug('Notify initialization for %s: %s', self, id)
         self.unassignMachine(id)
@@ -378,7 +377,7 @@ class IPMachinesService(IPServiceBase):
         # If locking not allowed, return None
         if self._lockByExternalAccess is False:
             return None
-        # Look for the first valid id on our list       
+        # Look for the first valid id on our list
         for ip in self._ips:
             theIP = IPServiceBase.getIp(ip)
             theMAC = IPServiceBase.getMac(ip)
