@@ -12,6 +12,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Andrés Schumann <aschumann@virtualcable.es>, 2023
@@ -20,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: French (http://app.transifex.com/openuds/openuds/language/"
@@ -5405,12 +5406,12 @@ msgstr "Static IP Machines Provider"
 msgid "Provides connection to machines by IP"
 msgstr "Fournit une connexion aux machines par IP"
 
-#: services/PhysicalMachines/service_multi.py:62
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Jeton de service"
 
-#: services/PhysicalMachines/service_multi.py:65
+#: services/PhysicalMachines/service_multi.py:66
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -5419,16 +5420,16 @@ msgstr ""
 "Jeton de service qui sera utilisé par les acteurs pour communiquer avec le "
 "service. Laissez vide pour une affectation persistante."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:74
 #: services/RDS_enterprise/provider.py:51
 msgid "List of servers"
 msgstr "Liste des serveurs"
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 msgid "List of servers available for this service"
 msgstr "Liste des serveurs disponibles pour ce service"
 
-#: services/PhysicalMachines/service_multi.py:79
+#: services/PhysicalMachines/service_multi.py:80
 msgid "Check Port"
 msgstr "Vérifier le port"
 
@@ -5439,21 +5440,21 @@ msgstr ""
 "Si différent de zéro, seuls les hôtes répondant à la connexion sur ce port "
 "seront servis."
 
-#: services/PhysicalMachines/service_multi.py:90
+#: services/PhysicalMachines/service_multi.py:89
 msgid "Skip time"
 msgstr "Passer le temps"
 
-#: services/PhysicalMachines/service_multi.py:93
+#: services/PhysicalMachines/service_multi.py:92
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Si un hôte ne parvient pas à vérifier, ignorez-le pendant cette période (en "
 "minutes)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:100
 msgid "Max session per machine"
 msgstr "Session max par machine"
 
-#: services/PhysicalMachines/service_multi.py:105
+#: services/PhysicalMachines/service_multi.py:104
 msgid ""
 "Maximum session duration before UDS thinks this machine got locked and "
 "releases it (hours). 0 means \"never\"."
@@ -5461,26 +5462,37 @@ msgstr ""
 "Durée maximale de la session avant qu&#39;UDS pense que cette machine s&#39;"
 "est verrouillée et la libère (heures). 0 signifie \"jamais\"."
 
-#: services/PhysicalMachines/service_multi.py:112
+#: services/PhysicalMachines/service_multi.py:111
 msgid "Lock machine by external access"
 msgstr "Verrouillage de la machine par accès externe"
 
-#: services/PhysicalMachines/service_multi.py:113
+#: services/PhysicalMachines/service_multi.py:112
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr ""
 "Si coché, UDS verrouillera la machine si elle est accessible depuis l&#39;"
 "extérieur de l&#39;UDS."
 
-#: services/PhysicalMachines/service_multi.py:120
+#: services/PhysicalMachines/service_multi.py:118
+msgid "Use random IP"
+msgstr "Utiliser une adresse IP aléatoire"
+
+#: services/PhysicalMachines/service_multi.py:119
+#| msgid "If checked, this transport will allow the use of user printers"
+msgid "If checked, UDS will use a random IP from the list of servers."
+msgstr ""
+"Si cette case est cochée, UDS utilisera une adresse IP aléatoire parmi la "
+"liste des serveurs."
+
+#: services/PhysicalMachines/service_multi.py:126
 msgid "Static Multiple IP"
 msgstr "IP statique multiple"
 
-#: services/PhysicalMachines/service_multi.py:122
+#: services/PhysicalMachines/service_multi.py:128
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Ce service fournit un accès aux machines sous tension par IP"
 
-#: services/PhysicalMachines/service_multi.py:156
+#: services/PhysicalMachines/service_multi.py:163
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "Valeur non valide détectée sur la liste des serveurs : \"{}\""
 

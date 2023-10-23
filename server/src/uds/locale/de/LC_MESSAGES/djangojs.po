@@ -10,6 +10,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Thorsten Latka <thorsten.latka@aktobis.de>, 2020
 # Víctor Alonso <valonso@virtualcable.net>, 2020,2022
@@ -19,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
@@ -1794,7 +1795,6 @@ msgid "Login Verification"
 msgstr "Anmeldebestätigung"
 
 #: static/modern/translations-fakejs.js:59
-#| msgid "Remove member pool"
 msgid "Remember me for"
 msgstr "Erinnere dich an mich"
 

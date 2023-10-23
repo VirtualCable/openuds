@@ -12,13 +12,14 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Adolfo Gómez <dkmaster@dkmon.com>, 2015\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -5319,12 +5320,12 @@ msgstr "IP Makinen hornitzaile estatikoa"
 msgid "Provides connection to machines by IP"
 msgstr "Makinen konexioa eskaintzen du IP bidez"
 
-#: services/PhysicalMachines/service_multi.py:62
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Zerbitzuaren tokena"
 
-#: services/PhysicalMachines/service_multi.py:65
+#: services/PhysicalMachines/service_multi.py:66
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -5333,16 +5334,16 @@ msgstr ""
 "Aktoreek zerbitzuarekin komunikatzeko erabiliko duten token zerbitzua. Utzi "
 "hutsik iraunkorra esleitzeko."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:74
 #: services/RDS_enterprise/provider.py:51
 msgid "List of servers"
 msgstr "Zerbitzari zerrenda"
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 msgid "List of servers available for this service"
 msgstr "Zerbitzu honetarako erabilgarri dauden zerbitzuen zerrenda"
 
-#: services/PhysicalMachines/service_multi.py:79
+#: services/PhysicalMachines/service_multi.py:80
 msgid "Check Port"
 msgstr "Begiratu Portua"
 
@@ -5353,21 +5354,21 @@ msgstr ""
 "Zero ez bada, portu horretako konexioei erantzuten dieten ostalariak soilik "
 "zerbitzatuko dira."
 
-#: services/PhysicalMachines/service_multi.py:90
+#: services/PhysicalMachines/service_multi.py:89
 msgid "Skip time"
 msgstr "Saltatu denbora"
 
-#: services/PhysicalMachines/service_multi.py:93
+#: services/PhysicalMachines/service_multi.py:92
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr ""
 "Ostalari batek huts egiten badu egiaztatzen bada, salta ezazu oraingoan "
 "(minutu batzuetan)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:100
 msgid "Max session per machine"
 msgstr "Makina bakoitzeko gehienezko saioa"
 
-#: services/PhysicalMachines/service_multi.py:105
+#: services/PhysicalMachines/service_multi.py:104
 msgid ""
 "Maximum session duration before UDS thinks this machine got locked and "
 "releases it (hours). 0 means \"never\"."
@@ -5375,24 +5376,34 @@ msgstr ""
 "Saioaren gehieneko iraupena, UDSk makina hau blokeatu egin dela eta askatu "
 "(orduak) pentsatu aurretik. 0 \"inoiz\" esan nahi du."
 
-#: services/PhysicalMachines/service_multi.py:112
+#: services/PhysicalMachines/service_multi.py:111
 msgid "Lock machine by external access"
 msgstr "Blokeatu makina kanpoko sarbidearen bidez"
 
-#: services/PhysicalMachines/service_multi.py:113
+#: services/PhysicalMachines/service_multi.py:112
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr "Markatuta badago, UDS blokeatuko du makina UDS kanpotik sartzen bada."
 
-#: services/PhysicalMachines/service_multi.py:120
+#: services/PhysicalMachines/service_multi.py:118
+msgid "Use random IP"
+msgstr "Erabili ausazko IP"
+
+#: services/PhysicalMachines/service_multi.py:119
+#| msgid "If checked, this transport will allow the use of user printers"
+msgid "If checked, UDS will use a random IP from the list of servers."
+msgstr ""
+"Hautatzen bada, UDS-k zerbitzarien zerrendako ausazko IP bat erabiliko du."
+
+#: services/PhysicalMachines/service_multi.py:126
 msgid "Static Multiple IP"
 msgstr "IP estatiko anitz"
 
-#: services/PhysicalMachines/service_multi.py:122
+#: services/PhysicalMachines/service_multi.py:128
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Zerbitzu honek POWERED-ON makinak IP bidez sarbidea eskaintzen du"
 
-#: services/PhysicalMachines/service_multi.py:156
+#: services/PhysicalMachines/service_multi.py:163
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "Zerbitzari zerrendan hautemandako balio baliogabea: \"{}\""
 

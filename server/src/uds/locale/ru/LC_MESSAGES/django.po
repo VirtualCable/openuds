@@ -12,6 +12,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -25,9 +26,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Александр Бурматов, 2022\n"
+"Last-Translator: Elena Mishina, 2022-2023\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
 "ru/)\n"
 "Language: ru\n"
@@ -2077,12 +2078,13 @@ msgstr "Если установлено, запрошенный контекст
 
 #: auths/SAML_enterprise/saml.py:281
 msgid "Metadata cache duration"
-msgstr "Продолжительность кэша метаданных"
+msgstr "Продолжительность кэширования метаданных"
 
 #: auths/SAML_enterprise/saml.py:284
 msgid "Duration of metadata cache in days. 0 means default (ten years)"
 msgstr ""
-"Продолжительность кэша метаданных в днях. 0 означает дефолт (десять лет)"
+"Продолжительность кэширования метаданных в днях. 0 означает значение по "
+"умолчанию (десять лет)"
 
 #: auths/SAML_enterprise/saml.py:289
 msgid "Metadata validity duration"
@@ -2090,7 +2092,9 @@ msgstr "Срок действия метаданных"
 
 #: auths/SAML_enterprise/saml.py:292
 msgid "Duration of metadata validity in days. 0 means default (ten years)"
-msgstr "Срок действия метаданных в днях. 0 означает дефолт (десять лет)"
+msgstr ""
+"Срок действия метаданных в днях. 0 означает значение по умолчанию (десять "
+"лет)"
 
 #: auths/SAML_enterprise/saml.py:297
 msgid "Allow deprecated signature algorithms"
@@ -5341,12 +5345,12 @@ msgstr "Поставщик машин статических IP"
 msgid "Provides connection to machines by IP"
 msgstr "Обеспечивает подключение к машинам по IP"
 
-#: services/PhysicalMachines/service_multi.py:62
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "Ключ услуги"
 
-#: services/PhysicalMachines/service_multi.py:65
+#: services/PhysicalMachines/service_multi.py:66
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -5355,16 +5359,16 @@ msgstr ""
 "Ключ услуги, который будет использоваться клиентами для связи с сервисом. "
 "Оставьте пустым для постоянного назначения."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:74
 #: services/RDS_enterprise/provider.py:51
 msgid "List of servers"
 msgstr "Список серверов"
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 msgid "List of servers available for this service"
 msgstr "Список серверов, доступных для этой услуги"
 
-#: services/PhysicalMachines/service_multi.py:79
+#: services/PhysicalMachines/service_multi.py:80
 msgid "Check Port"
 msgstr "Проверьте порт"
 
@@ -5375,19 +5379,19 @@ msgstr ""
 "Если не ноль, будут обслуживаться только хосты, отвечающие соединениям на "
 "этом порту"
 
-#: services/PhysicalMachines/service_multi.py:90
+#: services/PhysicalMachines/service_multi.py:89
 msgid "Skip time"
 msgstr "Пропустить время"
 
-#: services/PhysicalMachines/service_multi.py:93
+#: services/PhysicalMachines/service_multi.py:92
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr "Если хост не может проверить, пропустите его на это время (в минутах)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:100
 msgid "Max session per machine"
 msgstr "Максимальное количество сеансов на машину"
 
-#: services/PhysicalMachines/service_multi.py:105
+#: services/PhysicalMachines/service_multi.py:104
 msgid ""
 "Maximum session duration before UDS thinks this machine got locked and "
 "releases it (hours). 0 means \"never\"."
@@ -5395,26 +5399,37 @@ msgstr ""
 "Максимальная продолжительность сеанса, прежде чем UDS решит, что эта машина "
 "заблокирована, и освободит ее (часы). 0 означает «никогда»."
 
-#: services/PhysicalMachines/service_multi.py:112
+#: services/PhysicalMachines/service_multi.py:111
 msgid "Lock machine by external access"
 msgstr "Блокировка машины внешним доступом"
 
-#: services/PhysicalMachines/service_multi.py:113
+#: services/PhysicalMachines/service_multi.py:112
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr ""
 "Если отмечено, UDS заблокирует машину, если доступ к ней будет "
 "осуществляться извне UDS."
 
-#: services/PhysicalMachines/service_multi.py:120
+#: services/PhysicalMachines/service_multi.py:118
+msgid "Use random IP"
+msgstr "Использовать случайный IP"
+
+#: services/PhysicalMachines/service_multi.py:119
+#| msgid "If checked, this transport will allow the use of user printers"
+msgid "If checked, UDS will use a random IP from the list of servers."
+msgstr ""
+"Если этот флажок установлен, UDS будет использовать случайный IP-адрес из "
+"списка серверов."
+
+#: services/PhysicalMachines/service_multi.py:126
 msgid "Static Multiple IP"
 msgstr "Статический множественный IP-адрес"
 
-#: services/PhysicalMachines/service_multi.py:122
+#: services/PhysicalMachines/service_multi.py:128
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "Эта услуга обеспечивает доступ к включенным машинам по IP"
 
-#: services/PhysicalMachines/service_multi.py:156
+#: services/PhysicalMachines/service_multi.py:163
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "В списке серверов обнаружено недопустимое значение: \"{}\""
 

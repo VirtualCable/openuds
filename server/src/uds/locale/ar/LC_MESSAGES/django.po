@@ -12,12 +12,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -5243,12 +5244,12 @@ msgstr "ثابت IP آلات مزود"
 msgid "Provides connection to machines by IP"
 msgstr "يوفر اتصال إلى الأجهزة عن طريق IP"
 
-#: services/PhysicalMachines/service_multi.py:62
+#: services/PhysicalMachines/service_multi.py:63
 #: services/Vmware_enterprise/service_fixed.py:55
 msgid "Service Token"
 msgstr "رمز الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:65
+#: services/PhysicalMachines/service_multi.py:66
 #: services/Vmware_enterprise/service_fixed.py:57
 msgid ""
 "Service token that will be used by actors to communicate with service. Leave "
@@ -5257,16 +5258,16 @@ msgstr ""
 "رمز الخدمة الذي سيتم استخدامه بواسطة الجهات الفاعلة للتواصل مع الخدمة. اتركه "
 "فارغًا للتخصيص المستمر."
 
-#: services/PhysicalMachines/service_multi.py:73
+#: services/PhysicalMachines/service_multi.py:74
 #: services/RDS_enterprise/provider.py:51
 msgid "List of servers"
 msgstr "قائمة ملقمات"
 
-#: services/PhysicalMachines/service_multi.py:74
+#: services/PhysicalMachines/service_multi.py:75
 msgid "List of servers available for this service"
 msgstr "قائمة الخوادم المتاحة لهذه الخدمة"
 
-#: services/PhysicalMachines/service_multi.py:79
+#: services/PhysicalMachines/service_multi.py:80
 msgid "Check Port"
 msgstr "تحقق من المنفذ"
 
@@ -5277,19 +5278,19 @@ msgstr ""
 "إذا لم تكن صفرية ، فسيتم تقديم المضيفين الذين يستجيبون للاتصال على هذا "
 "المنفذ فقط."
 
-#: services/PhysicalMachines/service_multi.py:90
+#: services/PhysicalMachines/service_multi.py:89
 msgid "Skip time"
 msgstr "تخطي الوقت"
 
-#: services/PhysicalMachines/service_multi.py:93
+#: services/PhysicalMachines/service_multi.py:92
 msgid "If a host fails to check, skip it for this time (in minutes)."
 msgstr "إذا فشل مضيف في التحقق ، فتخطه لهذا الوقت (بالدقائق)."
 
-#: services/PhysicalMachines/service_multi.py:101
+#: services/PhysicalMachines/service_multi.py:100
 msgid "Max session per machine"
 msgstr "أقصى جلسة لكل آلة"
 
-#: services/PhysicalMachines/service_multi.py:105
+#: services/PhysicalMachines/service_multi.py:104
 msgid ""
 "Maximum session duration before UDS thinks this machine got locked and "
 "releases it (hours). 0 means \"never\"."
@@ -5297,24 +5298,33 @@ msgstr ""
 "المدة القصوى للجلسة قبل أن تعتقد UDS أن هذا الجهاز قد تم قفله وتحريره "
 "(ساعات). 0 يعني \"أبدًا\"."
 
-#: services/PhysicalMachines/service_multi.py:112
+#: services/PhysicalMachines/service_multi.py:111
 msgid "Lock machine by external access"
 msgstr "قفل الجهاز عن طريق الوصول الخارجي"
 
-#: services/PhysicalMachines/service_multi.py:113
+#: services/PhysicalMachines/service_multi.py:112
 msgid ""
 "If checked, UDS will lock the machine if it is accesed from outside UDS."
 msgstr "إذا تم تحديده ، فستقوم UDS بقفل الجهاز إذا تم الوصول إليه من خارج UDS."
 
-#: services/PhysicalMachines/service_multi.py:120
+#: services/PhysicalMachines/service_multi.py:118
+msgid "Use random IP"
+msgstr "استخدم IP عشوائي"
+
+#: services/PhysicalMachines/service_multi.py:119
+#| msgid "If checked, this transport will allow the use of user printers"
+msgid "If checked, UDS will use a random IP from the list of servers."
+msgstr "إذا تم تحديده، فسوف يستخدم UDS عنوان IP عشوائيًا من قائمة الخوادم."
+
+#: services/PhysicalMachines/service_multi.py:126
 msgid "Static Multiple IP"
 msgstr "IP ثابت متعدد."
 
-#: services/PhysicalMachines/service_multi.py:122
+#: services/PhysicalMachines/service_multi.py:128
 msgid "This service provides access to POWERED-ON Machines by IP"
 msgstr "توفر هذه الخدمة إمكانية الوصول إلى آلات مشتغلة ب IP"
 
-#: services/PhysicalMachines/service_multi.py:156
+#: services/PhysicalMachines/service_multi.py:163
 msgid "Invalid value detected on servers list: \"{}\""
 msgstr "تم اكتشاف قيمة غير صالحة في قائمة الخوادم: \"{}\""
 

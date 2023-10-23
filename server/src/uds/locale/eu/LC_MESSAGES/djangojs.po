@@ -10,6 +10,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2015
 # Lanmedia Comunicaciones <jetxaniz@lanmedia.es>, 2016-2017,2020
 # Naroa Uriarte <nuriarte@lanmedia.es>, 2017
@@ -21,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-19 14:53+0200\n"
+"POT-Creation-Date: 2023-10-23 17:29+0200\n"
 "PO-Revision-Date: 2014-03-26 02:16+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020\n"
 "Language-Team: Basque (http://app.transifex.com/openuds/openuds/language/"
@@ -1790,7 +1791,6 @@ msgid "Login Verification"
 msgstr "Saioa hasteko egiaztapena"
 
 #: static/modern/translations-fakejs.js:59
-#| msgid "Remove member pool"
 msgid "Remember me for"
 msgstr "Gogoratu nitaz"
 
