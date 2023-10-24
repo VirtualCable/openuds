@@ -57,7 +57,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
     """
 
     priority = models.IntegerField(default=0, db_index=True)
-    small_name = models.CharField(max_length=32, default='', db_index=True)
+    small_name = models.CharField(max_length=128, default='', db_index=True)
     state = models.CharField(max_length=1, default=consts.auth.VISIBLE, db_index=True)
     # "visible" is removed from 4.0, state will do this functionality, but is more flexible
     net_filtering = models.CharField(max_length=1, default=consts.auth.NO_FILTERING, db_index=True)

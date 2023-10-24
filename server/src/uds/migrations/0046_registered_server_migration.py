@@ -320,4 +320,9 @@ class Migration(migrations.Migration):
             name="short_name",
             field=models.CharField(default="", max_length=96),
         ),        
+        migrations.AlterField(
+            model_name="authenticator",
+            name="small_name",
+            field=models.CharField(db_index=True, default="", max_length=128),
+        ),
     ]
