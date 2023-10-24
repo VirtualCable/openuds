@@ -166,7 +166,10 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 512 * 1024  # 512 Kb
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 's5ky!7b5f#s35!e38xv%e-+iey6yi-#630x)kk3kk5_j8rie2*'  # nosec: sample key, Remember to change it on production!!
-# This is a very long string, an RSA KEY (this can be changed, but if u loose it, all encription will be lost)
+# **** NOTE!: The provided RSA Key is a Sample, a very old generated one and probably will not be accepted by your implementation  of criptography ****
+# **** You MUST change this key to a new one, generated with the following command: ****
+# openssl genrsa -out private.pem 2048
+# **** And then, you must copy the contents of the file private.pem into the following variable ****
 RSA_KEY = '-----BEGIN RSA PRIVATE KEY-----\nMIICXgIBAAKBgQC0qe1GlriQbHFYdKYRPBFDSS8Ne/TEKI2mtPKJf36XZTy6rIyH\nvUpT1gMScVjHjOISLNJQqktyv0G+ZGzLDmfkCUBev6JBlFwNeX3Dv/97Q0BsEzJX\noYHiDANUkuB30ukmGvG0sg1v4ccl+xs2Su6pFSc5bGINBcQ5tO0ZI6Q1nQIDAQAB\nAoGBAKA7Octqb+T/mQOX6ZXNjY38wXOXJb44LXHWeGnEnvUNf/Aci0L0epCidfUM\nfG33oKX4BMwwTVxHDrsa/HaXn0FZtbQeBVywZqMqWpkfL/Ho8XJ8Rsq8OfElrwek\nOCPXgxMzQYxoNHw8V97k5qhfupQ+h878BseN367xSyQ8plahAkEAuPgAi6aobwZ5\nFZhx/+6rmQ8sM8FOuzzm6bclrvfuRAUFa9+kMM2K48NAneAtLPphofqI8wDPCYgQ\nTl7O96GXVQJBAPoKtWIMuBHJXKCdUNOISmeEvEzJMPKduvyqnUYv17tM0JTV0uzO\nuDpJoNIwVPq5c3LJaORKeCZnt3dBrdH1FSkCQQC3DK+1hIvhvB0uUvxWlIL7aTmM\nSny47Y9zsc04N6JzbCiuVdeueGs/9eXHl6f9gBgI7eCD48QAocfJVygphqA1AkEA\nrvzZjcIK+9+pJHqUO0XxlFrPkQloaRK77uHUaW9IEjui6dZu4+2T/q7SjubmQgWR\nZy7Pap03UuFZA2wCoqJbaQJAUG0FVrnyUORUnMQvdDjAWps2sXoPvA8sbQY1W8dh\nR2k4TCFl2wD7LutvsdgdkiH0gWdh5tc1c4dRmSX1eQ27nA==\n-----END RSA PRIVATE KEY-----'
 
 # Trusted cyphers
