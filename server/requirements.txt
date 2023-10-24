@@ -1,4 +1,4 @@
-Django==3.2.19
+Django==3.2.22
 bitarray
 html5lib
 six
