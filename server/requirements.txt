@@ -19,3 +19,4 @@ webencodings
 xml-marshaller
 pycrypto>=2.6.1
 cryptography
+Pillow==9.5.0
