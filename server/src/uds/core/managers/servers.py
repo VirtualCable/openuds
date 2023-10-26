@@ -54,7 +54,7 @@ operationsLogger = logging.getLogger('operationsLog')
 class ServerManager(metaclass=singleton.Singleton):
     STORAGE_NAME: typing.Final[str] = 'uds.servers'
     MAX_COUNTERS_AGE: typing.Final[datetime.timedelta] = datetime.timedelta(days=3)
-    PROPERTY_BASE_NAME: typing.Final[str] = 'usr_'
+    BASE_PROPERTY_NAME: typing.Final[str] = 'sm_usr_'
 
     last_counters_clean: datetime.datetime
 
@@ -71,9 +71,11 @@ class ServerManager(metaclass=singleton.Singleton):
             self.clearUnmanagedUsage()
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
-    def propertyName(self, user: typing.Optional['models.User']) -> str:
+    def propertyName(self, user: typing.Optional[typing.Union[str, 'models.User']]) -> str:
         """Returns the property name for a user"""
-        return ServerManager.PROPERTY_BASE_NAME + (str(user.uuid) if user else '_')
+        if isinstance(user, str):
+            return ServerManager.BASE_PROPERTY_NAME + user
+        return ServerManager.BASE_PROPERTY_NAME + (str(user.uuid) if user else '_')
 
     def clearUnmanagedUsage(self) -> None:
         with self.cntStorage() as counters:
@@ -279,7 +281,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Notify assgination in every case, even if reassignation to same server is made
         # This lets the server to keep track, if needed, of multi-assignations
-        requester.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, info.counter)
+        self.notifyAssign(bestServer, userService, serviceType, info.counter)
         return info
 
     def release(
@@ -343,7 +345,7 @@ class ServerManager(metaclass=singleton.Singleton):
             # (currently, cache time is 1 minute)
             server.newRelease()
 
-            requester.ServerApiRequester(server).notifyRelease(userService)
+            self.notifyRelease(server, userService)
 
         return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
 
@@ -359,6 +361,28 @@ class ServerManager(metaclass=singleton.Singleton):
         server = self.getServerAssignation(userService, serverGroup)
         if server:
             requester.ServerApiRequester(server).notifyPreconnect(userService, info)
+            
+    def notifyAssign(
+        self,
+        server: 'models.Server',
+        userService: 'models.UserService',
+        serviceType: types.services.ServiceType,
+        counter: int,
+    ) -> None:
+        """
+        Notifies assign to server
+        """
+        requester.ServerApiRequester(server).notifyAssign(userService, serviceType, counter)
+        
+    def notifyRelease(
+        self,
+        server: 'models.Server',
+        userService: 'models.UserService',
+    ) -> None:
+        """
+        Notifies release to server
+        """
+        requester.ServerApiRequester(server).notifyRelease(userService)
 
     def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
         """
@@ -373,8 +397,8 @@ class ServerManager(metaclass=singleton.Singleton):
         """
         res: typing.Dict[str, int] = {}
         for k, v in serverGroup.properties.items():
-            if k.startswith(self.PROPERTY_BASE_NAME):
-                kk = k[len(self.PROPERTY_BASE_NAME) :]  # Skip base name
+            if k.startswith(self.BASE_PROPERTY_NAME):
+                kk = k[len(self.BASE_PROPERTY_NAME) :]  # Skip base name
                 res[kk] = res.get(kk, 0) + v[1]
         return res
 
@@ -415,8 +439,8 @@ class ServerManager(metaclass=singleton.Singleton):
             serverGroup: Server group to realize maintenance on
         """
         for k, v in serverGroup.properties.items():
-            if k.startswith(self.PROPERTY_BASE_NAME):
-                uuid = k[len(self.PROPERTY_BASE_NAME) :]
+            if k.startswith(self.BASE_PROPERTY_NAME):
+                uuid = k[len(self.BASE_PROPERTY_NAME) :]
                 try:
                     models.User.objects.get(uuid=uuid)
                 except Exception:

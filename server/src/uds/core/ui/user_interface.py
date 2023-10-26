@@ -1569,7 +1569,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
-            res.append({'name': key, 'gui': val.guiDescription(), 'value': ''})
+            res.append({'name': key, 'gui': val.guiDescription(), 'value': None})
         # logger.debug('theGui description: %s', res)
         return res
 

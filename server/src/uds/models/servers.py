@@ -280,7 +280,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         For this, we get the property (if available) "available" (datetime) and compare it with current time
         If it is not available, we return False, otherwise True
         """
-        restrainedUntil = self.properties.get('available', consts.NEVER)
+        restrainedUntil = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
         return restrainedUntil > getSqlDatetime()
 
     def setRestrainedUntil(self, value: typing.Optional[datetime.datetime] = None) -> None:
@@ -290,7 +290,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if value is None:
             del self.properties['available']
         else:
-            self.properties['available'] = value
+            self.properties['available'] = value.timestamp()  # Encode as timestamp
 
     @property
     def last_ping(self) -> datetime.datetime:

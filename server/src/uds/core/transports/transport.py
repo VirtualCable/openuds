@@ -315,7 +315,7 @@ class Transport(Module):
         """
         Returns a script for the given os and type
         """
-        return self.getRelativeScript(f'scripts/{osName}/{type}.py', params)
+        return self.getRelativeScript(f'scripts/{osName.lower()}/{type}.py', params)
 
     def getLink(
         self,

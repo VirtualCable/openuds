@@ -150,7 +150,7 @@ class RDPTransport(BaseRDPTransport):
         r.optimizeTeams = self.optimizeTeams.isTrue()
 
         sp: typing.MutableMapping[str, typing.Any] = {
-            'password': password,
+            'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,
             'port': self.rdpPort.value,  # As string, because we need to use it in the template
@@ -159,7 +159,7 @@ class RDPTransport(BaseRDPTransport):
 
         if os.os == types.os.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
-            if password:
+            if ci.password:
                 r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
                 {

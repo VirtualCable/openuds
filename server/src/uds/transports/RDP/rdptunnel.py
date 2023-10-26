@@ -185,13 +185,13 @@ class TRDPTransport(BaseRDPTransport):
             'tunWait': self.tunnelWait.num(),
             'tunChk': self.verifyCertificate.isTrue(),
             'ticket': ticket,
-            'password': password,
+            'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
         }
 
         if os.os == types.os.KnownOS.WINDOWS:
             r.customParameters = self.customParametersWindows.value
-            if password:
+            if ci.password:
                 r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
                 {

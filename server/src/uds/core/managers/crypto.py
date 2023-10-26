@@ -271,7 +271,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             try:
                 ph.verify(hashValue[8:], value)
                 return True
-            except Exception:
+            except Exception as e:
                 return False  # Verify will raise an exception if not valid
 
         # Old sha1

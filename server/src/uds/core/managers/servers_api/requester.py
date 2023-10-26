@@ -188,7 +188,7 @@ class ServerApiRequester:
                 userservice_uuid=userService.uuid,
                 service_type=service_type,
                 assignations=count,
-            ),
+            ).asDict(),
         )
         return True
 
