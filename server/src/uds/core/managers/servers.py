@@ -46,6 +46,9 @@ from uds.core.util.storage import StorageAccess, Storage
 
 from .servers_api import events, requester
 
+if typing.TYPE_CHECKING:
+    from django.db.models.query import QuerySet
+
 logger = logging.getLogger(__name__)
 traceLogger = logging.getLogger('traceLog')
 operationsLogger = logging.getLogger('operationsLog')
@@ -100,6 +103,35 @@ class ServerManager(metaclass=singleton.Singleton):
         with self.cntStorage() as counters:
             if not onlyIfExists or uuid in counters:
                 counters[uuid] = counters.get(uuid, 0) + 1
+                
+    def getServerStats(self, serversFltr: 'QuerySet[models.Server]') -> typing.List[
+            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
+        ]:
+        """
+        Returns a list of stats for a list of servers
+        """       
+        # Paralelize stats retrieval
+        retrievedStats: typing.List[
+            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
+        ] = []
+
+        def _retrieveStats(server: 'models.Server') -> None:
+            try:
+                retrievedStats.append(
+                    (requester.ServerApiRequester(server).getStats(), server)
+                )  # Store stats for later use
+            except Exception:
+                retrievedStats.append((None, server))
+
+        # Retrieve, in parallel, stats for all servers (not restrained)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for server in serversFltr.select_for_update():
+                if server.isRestrained():
+                    continue  # Skip restrained servers
+                executor.submit(_retrieveStats, server)
+
+        
+        return retrievedStats
 
     def _findBestServer(
         self,
@@ -119,28 +151,10 @@ class ServerManager(metaclass=singleton.Singleton):
         if excludeServersUUids:
             fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
 
-        # Paralelize stats retrieval
-        cachedStats: typing.List[
-            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
-        ] = []
-
-        def _retrieveStats(server: 'models.Server') -> None:
-            try:
-                cachedStats.append(
-                    (requester.ServerApiRequester(server).getStats(), server)
-                )  # Store stats for later use
-            except Exception:
-                cachedStats.append((None, server))
-
-        # Retrieve, in parallel, stats for all servers (not restrained)
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            for server in fltrs.select_for_update():
-                if server.isRestrained():
-                    continue  # Skip restrained servers
-                executor.submit(_retrieveStats, server)
+        serversStats = self.getServerStats(fltrs)
 
         # Now, cachedStats has a list of tuples (stats, server), use it to find the best server
-        for stats, server in cachedStats:
+        for stats, server in serversStats:
             if stats is None:
                 unmanaged_list.append(server)
                 continue
@@ -175,7 +189,7 @@ class ServerManager(metaclass=singleton.Singleton):
             requester.ServerApiRequester(best[0]).notifyRelease(userService)
 
         return best
-    
+
     def assign(
         self,
         userService: 'models.UserService',
@@ -212,9 +226,9 @@ class ServerManager(metaclass=singleton.Singleton):
         excludeServersUUids = excludeServersUUids or set()
 
         with serverGroup.properties as props:
-            info: typing.Optional[
-                types.servers.ServerCounter
-            ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
+            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.fromIterable(
+                props.get(prop_name)
+            )
             # If server is forced, and server is part of the group, use it
             if server:
                 if (
@@ -273,7 +287,7 @@ class ServerManager(metaclass=singleton.Singleton):
             info = types.servers.ServerCounter(info.server_uuid, info.counter + 1)
             props[prop_name] = info
             bestServer = models.Server.objects.get(uuid=info.server_uuid)
-            
+
             # Ensure next assignation will have updated stats
             # This is a simple simulation on cached stats, will be updated on next stats retrieval
             # (currently, cache time is 1 minute)
@@ -361,7 +375,7 @@ class ServerManager(metaclass=singleton.Singleton):
         server = self.getServerAssignation(userService, serverGroup)
         if server:
             requester.ServerApiRequester(server).notifyPreconnect(userService, info)
-            
+
     def notifyAssign(
         self,
         server: 'models.Server',
@@ -373,7 +387,7 @@ class ServerManager(metaclass=singleton.Singleton):
         Notifies assign to server
         """
         requester.ServerApiRequester(server).notifyAssign(userService, serviceType, counter)
-        
+
     def notifyRelease(
         self,
         server: 'models.Server',
@@ -422,13 +436,44 @@ class ServerManager(metaclass=singleton.Singleton):
 
         prop_name = self.propertyName(userService.user)
         with serverGroup.properties as props:
-            info: typing.Optional[
-                types.servers.ServerCounter
-            ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
+            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.fromIterable(
+                props.get(prop_name)
+            )
             if info is None:
                 return None
             return models.Server.objects.get(uuid=info.server_uuid)
+
+    def getSortedServers(
+        self,
+        serverGroup: 'models.ServerGroup',
+        excludeServersUUids: typing.Optional[typing.Set[str]] = None,
+    ) -> typing.List['models.Server']:
+        """
+        Returns a list of servers sorted by usage
+
+        Args:
+            serverGroup: Server group to get servers from
+
+        Returns:
+            List of servers sorted by usage
+        """
+        now = model_utils.getSqlDatetime()
+        fltrs = serverGroup.servers.filter(maintenance_mode=False)
+        fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
+        if excludeServersUUids:
+            fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
+            
+        # Get the stats for all servers, but in parallel
+        serverStats = self.getServerStats(fltrs)
+        # Sort by weight, lower first (lower is better)
+        return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
         
+        
+        return sorted(
+            serverGroup.servers.filter(maintenance_mode=False),
+            key=lambda x: self.getUnmanagedUsage(x.uuid),
+        )
+
     def doMaintenance(self, serverGroup: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group
 

@@ -233,42 +233,6 @@ class ServersServers(DetailHandler):
             # Create new, depending on server type
             if parent.type == types.servers.ServerType.UNMANAGED:
                 # Create a new one, and add it to group
-                # # Username that registered the server
-                # username = models.CharField(max_length=128)
-                # # Ip from where the server was registered, can be IPv4 or IPv6
-                # ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
-                # # Ip of the server, can be IPv4 or IPv6 (used to communicate with it)
-                # ip = models.CharField(max_length=MAX_IPV6_LENGTH)
-
-                # # Hostname. It use depends on the implementation of the service, providers. etc..
-                # # But the normal operations is that hostname has precedence over ip
-                # # * Resolve hostname to ip
-                # # * If fails, use ip
-                # hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
-                # # Port where server listens for connections (if it listens)
-                # listen_port = models.IntegerField(default=SERVER_DEFAULT_LISTEN_PORT)
-
-                # # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
-                # token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)
-                # # Simple info field of when the registered server was created or revalidated
-                # stamp = models.DateTimeField()
-
-                # # Type of server. Defaults to tunnel, so we can migrate from previous versions
-                # # Note that a server can register itself several times, so we can have several entries
-                # # for the same server, but with different types.
-                # # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
-                # type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
-                # # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..) so we can group it for
-                # # selections
-                # subtype = models.CharField(max_length=32, default='', db_index=True)
-                # # Version of the UDS API of the server. Starst at 4.0.0
-                # # If version is empty, means that it has no API
-                # version = models.CharField(max_length=32, default='')
-
-                # # If server is in "maintenance mode". Not used on tunnels (Because they are "redirected" by an external load balancer)
-                # # But used on other servers, so we can disable them for maintenance
-                # maintenance_mode = models.BooleanField(default=False, db_index=True)
-
                 server = models.Server.objects.create(
                     ip_from='::1',
                     ip=self._params['ip'],
@@ -285,6 +249,10 @@ class ServersServers(DetailHandler):
                 # Get server
                 try:
                     server = models.Server.objects.get(uuid=processUuid(self._params['server']))
+                    # Check server type is also SERVER
+                    if server.type != types.servers.ServerType.SERVER:
+                        logger.error('Server type for %s is not SERVER', server.host)
+                        raise self.invalidRequestException() from None
                     parent.servers.add(server)
                 except Exception:
                     raise self.invalidItemException() from None

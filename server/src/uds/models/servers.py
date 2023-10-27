@@ -67,6 +67,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # These are not the servers ports itself, and it depends on the type of server
     # For example, for tunnel server groups, has an internet address and port that will be used
     # But for APP Servers, host and port are ununsed
+    # Note that servers type are always considered same as group type
     type = models.IntegerField(default=types.servers.ServerType.UNMANAGED, db_index=True)
     # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..). so we can filter/group them
     subtype = models.CharField(max_length=32, default='', db_index=True)
@@ -157,6 +158,8 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # Note that a server can register itself several times, so we can have several entries
     # for the same server, but with different types.
     # (So, for example, an APP_SERVER can be also a TUNNEL_SERVER, because will use both APP API and TUNNEL API)
+    # We store the type, because we need to filter in order to add to a type of server group.
+    # All servers inside a server group must be of the same type. (Not checked on database, but on code when creating a server group)
     type = models.IntegerField(default=types.servers.ServerType.TUNNEL.value, db_index=True)
     # Subtype of server, if any (I.E. LinuxDocker, RDS, etc..) so we can group it for
     # selections

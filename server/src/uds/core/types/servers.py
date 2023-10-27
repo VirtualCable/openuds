@@ -154,7 +154,7 @@ class ServerStats(typing.NamedTuple):
         if self.memtotal - self.memused < minMemory:
             return 1000000000  # At the end of the list
 
-        # Higher weight is worse
+        # Lower is better
         return 1 / ((self.cpufree_ratio * 1.3 + self.memfree_ratio) or 1)
 
     def adjust(self, users_increment: int) -> 'ServerStats':
