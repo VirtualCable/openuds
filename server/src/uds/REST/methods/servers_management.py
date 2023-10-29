@@ -58,7 +58,7 @@ class ServersTokens(ModelHandler):
     path = 'servers'
     name = 'tokens'
 
-    table_title = _('Registered Servers')
+    table_title = typing.cast('str', _('Registered Servers'))
     table_fields = [
         {'hostname': {'title': _('Hostname')}},
         {'ip': {'title': _('IP')}},

@@ -102,7 +102,7 @@ class Reports(model.BaseModelHandler):
             (
                 (model.TABLEINFO,),
                 lambda: self.processTableFields(
-                    self.table_title, self.table_fields, self.table_row_style
+                    str(self.table_title), self.table_fields, self.table_row_style
                 ),
             ),
             ((model.GUI, '<report>'), lambda report: self.getGui(report)),
