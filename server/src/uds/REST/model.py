@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -32,18 +32,18 @@
 # pylint: disable=too-many-public-methods
 
 import fnmatch
+import inspect
 import logging
 import re
-from types import GeneratorType
 import typing
-import inspect
+from types import GeneratorType
 
 from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
 
-
-from uds.core import consts, types
+from uds.core import consts
 from uds.core import exceptions as udsExceptions
+from uds.core import types
 from uds.core.module import Module
 from uds.core.util import log, permissions
 from uds.core.util.model import processUuid
@@ -926,7 +926,7 @@ class ModelHandler(BaseModelHandler):
             del kwargs['query']
         else:
             logger.debug('Args: %s, kwargs: %s', args, kwargs)
-            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)
+            query = self.model.objects.filter(*args, **kwargs).prefetch_related(*prefetch)  # type: ignore  # mypy complains about type of model
 
         if self.model_filter is not None:
             query = query.filter(**self.model_filter)
@@ -978,7 +978,7 @@ class ModelHandler(BaseModelHandler):
                     item = operation = None
                     try:
                         operation = getattr(self, self._args[1])
-                        item = self.model.objects.get(uuid=self._args[0].lower())
+                        item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
                     except Exception as e:
                         logger.error(
                             'Invalid custom method exception %s/%s/%s: %s',
@@ -1017,7 +1017,7 @@ class ModelHandler(BaseModelHandler):
 
             # get item ID
             try:
-                item = self.model.objects.get(uuid=self._args[0].lower())
+                item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
 
                 self.ensureAccess(item, types.permissions.PermissionType.READ)
 
@@ -1046,9 +1046,10 @@ class ModelHandler(BaseModelHandler):
             if nArgs != 2:
                 raise self.invalidRequestException()
             try:
-                item = self.model.objects.get(
+                # DB maybe case sensitive??, anyway, uuids are stored in lowercase
+                item = self.model.objects.get(  # type: ignore  # mypy complains about type of model
                     uuid=self._args[0].lower()
-                )  # DB maybe case sensitive??, anyway, uuids are stored in lowercase
+                )
                 return self.getLogs(item)
             except Exception as e:
                 raise self.invalidItemException() from e
@@ -1106,11 +1107,11 @@ class ModelHandler(BaseModelHandler):
             deleteOnError = False
             item: models.Model
             if not self._args:  # create new?
-                item = self.model.objects.create(**args)
+                item = self.model.objects.create(**args)  # type: ignore  # mypy complains about type of model
                 deleteOnError = True
             else:  # Must have 1 arg
                 # We have to take care with this case, update will efectively update records on db
-                item = self.model.objects.get(uuid=self._args[0].lower())
+                item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
                 for v in self.remove_fields:
                     if v in args:
                         del args[v]
@@ -1151,7 +1152,7 @@ class ModelHandler(BaseModelHandler):
 
             return res
 
-        except self.model.DoesNotExist:
+        except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
             raise exceptions.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.RequestError('Element already exists (duplicate key error)') from None
@@ -1179,10 +1180,10 @@ class ModelHandler(BaseModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            item = self.model.objects.get(uuid=self._args[0].lower())
+            item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
             self.checkDelete(item)
             self.deleteItem(item)
-        except self.model.DoesNotExist:
+        except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
             raise exceptions.NotFound('Element do not exists') from None
 
         return consts.OK
