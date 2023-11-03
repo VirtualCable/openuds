@@ -42,6 +42,9 @@ from uds.models import Server
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /osm path
@@ -51,7 +54,7 @@ class ActorTokens(ModelHandler):
     model = Server
     model_filter = {'type': types.servers.ServerType.ACTOR}
 
-    table_title = _('Actor tokens')
+    table_title = typing.cast(str, _('Actor tokens'))
     table_fields = [
         # {'token': {'title': _('Token')}},
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
@@ -64,7 +67,8 @@ class ActorTokens(ModelHandler):
         {'log_level': {'title': _('Log level')}},
     ]
 
-    def item_as_dict(self, item: Server) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
+        item = typing.cast(Server, item_)
         data = item.data or {}
         log_level_int = data.get('log_level', 2)
         if log_level_int < 10000:  # Old log level

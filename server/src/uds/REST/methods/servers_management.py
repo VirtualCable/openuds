@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, types, ui
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 from uds.core.util.model import getSqlDatetime, processUuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
@@ -140,15 +140,15 @@ class ServersServers(DetailHandler):
             logger.exception('REST servers')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent_: 'Model') -> str:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
             return str(_('Servers'))
 
-    def getFields(self, parent_: 'Model') -> typing.List[typing.Any]:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         return [
             {
                 'hostname': {
@@ -166,12 +166,12 @@ class ServersServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent_: 'Model') -> typing.Dict[str, typing.Any]:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def getGui(self, parent_: 'Model', forType: str = '') -> typing.List[typing.Any]:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def getGui(self, parent: 'Model', forType: str = '') -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
         if kind == types.servers.ServerType.UNMANAGED:
@@ -234,8 +234,8 @@ class ServersServers(DetailHandler):
                 ],
             )
 
-    def saveItem(self, parent_: 'Model', item: typing.Optional[str]) -> None:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
@@ -276,8 +276,8 @@ class ServersServers(DetailHandler):
 
             raise self.invalidRequestException() from None
 
-    def deleteItem(self, parent_: 'Model', item: str) -> None:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             server = models.Server.objects.get(uuid=processUuid(item))
             if parent.server_type == types.servers.ServerType.UNMANAGED:
@@ -289,8 +289,8 @@ class ServersServers(DetailHandler):
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent_: 'Model', id: str) -> typing.Any:
-        parent = typing.cast('models.ServerGroup', parent_)
+    def maintenance(self, parent: 'Model', id: str) -> typing.Any:
+        parent = ensure.is_instance(parent, models.ServerGroup)
         """
         Custom method that swaps maintenance mode state for a tunnel server
         :param item:
@@ -368,8 +368,8 @@ class ServersGroups(ModelHandler):
         fields['subtype'] = subtype
         return super().beforeSave(fields)
 
-    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
-        item = typing.cast('models.ServerGroup', item_)  # We will receive for sure
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, models.ServerGroup)
         return {
             'id': item.uuid,
             'name': item.name,
@@ -382,8 +382,8 @@ class ServersGroups(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def deleteItem(self, item_: 'Model') -> None:
-        item = typing.cast('models.ServerGroup', item_)  # We will receive for sure
+    def deleteItem(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, models.ServerGroup)
         """
         Processes a DELETE request
         """

@@ -37,9 +37,12 @@ from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Image
 from uds.core import types
 from uds.core.ui import gui
+from uds.core.util import ensure
 
 from uds.REST.model import ModelHandler
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +58,7 @@ class Images(ModelHandler):
     model = Image
     save_fields = ['name', 'data']
 
-    table_title = _('Image Gallery')
+    table_title = typing.cast(str, _('Image Gallery'))
     table_fields = [
         {
             'thumb': {
@@ -72,7 +75,8 @@ class Images(ModelHandler):
     def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
         fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
 
-    def afterSave(self, item: Image) -> None:
+    def afterSave(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, Image)
         # Updates the thumbnail and re-saves it
         logger.debug('After save: item = %s', item)
         item.updateThumbnail()
@@ -91,14 +95,16 @@ class Images(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: Image) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,
             'name': item.name,
             'data': item.data64,
         }
 
-    def item_as_dict_overview(self, item: Image) -> typing.Dict[str, typing.Any]:
+    def item_as_dict_overview(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,
             'size': '{}x{}, {} bytes (thumb {} bytes)'.format(

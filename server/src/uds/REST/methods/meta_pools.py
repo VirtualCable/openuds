@@ -37,9 +37,9 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types
-from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.util import permissions
+from uds.core.ui import gui
+from uds.core.util import ensure, permissions
 from uds.core.util.model import processUuid
 from uds.core.util.state import State
 from uds.models import Image, MetaPool, ServicePoolGroup
@@ -49,6 +49,9 @@ from uds.REST.model import ModelHandler
 
 from .meta_service_pools import MetaAssignedService, MetaServicesPool
 from .user_services import Groups
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -80,12 +83,24 @@ class MetaPools(ModelHandler):
         'transport_grouping',
     ]
 
-    table_title = _('Meta Pools')
+    table_title = typing.cast(str, _('Meta Pools'))
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
-        {'policy': {'title': _('Policy'), 'type': 'dict', 'dict': dict(types.pools.LoadBalancingPolicy.enumerate())}},
-        {'ha_policy': {'title': _('HA Policy'), 'type': 'dict', 'dict': dict(types.pools.HighAvailabilityPolicy.enumerate())}},
+        {
+            'policy': {
+                'title': _('Policy'),
+                'type': 'dict',
+                'dict': dict(types.pools.LoadBalancingPolicy.enumerate()),
+            }
+        },
+        {
+            'ha_policy': {
+                'title': _('HA Policy'),
+                'type': 'dict',
+                'dict': dict(types.pools.HighAvailabilityPolicy.enumerate()),
+            }
+        },
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'visible': {'title': _('Visible'), 'type': 'callback'}},
@@ -96,11 +111,12 @@ class MetaPools(ModelHandler):
 
     custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
 
-    def item_as_dict(self, item: MetaPool) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
         poolGroupId = None
-        poolGroupName = _('Default')
+        poolGroupName = typing.cast(str, _('Default'))
         poolGroupThumb = DEFAULT_THUMB_BASE64
         if item.servicesPoolGroup is not None:
             poolGroupId = item.servicesPoolGroup.uuid
@@ -110,14 +126,10 @@ class MetaPools(ModelHandler):
 
         allPools = item.members.all()
         userServicesCount = sum(
-            (
-                i.pool.userServices.exclude(state__in=State.INFO_STATES).count()
-                for i in allPools
-            )
+            (i.pool.userServices.exclude(state__in=State.INFO_STATES).count() for i in allPools)
         )
         userServicesInPreparation = sum(
-            (i.pool.userServices.filter(state=State.PREPARING).count())
-            for i in allPools
+            (i.pool.userServices.filter(state=State.PREPARING).count()) for i in allPools
         )
 
         val = {
@@ -126,9 +138,7 @@ class MetaPools(ModelHandler):
             'short_name': item.short_name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'thumb': item.image.thumb64
-            if item.image is not None
-            else DEFAULT_THUMB_BASE64,
+            'thumb': item.image.thumb64 if item.image is not None else DEFAULT_THUMB_BASE64,
             'image_id': item.image.uuid if item.image is not None else None,
             'servicesPoolGroup_id': poolGroupId,
             'pool_group_name': poolGroupName,
@@ -162,9 +172,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'policy',
-                'choices': [
-                    gui.choiceItem(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()
-                ],
+                'choices': [gui.choiceItem(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
                 'label': gettext('Load balancing policy'),
                 'tooltip': gettext('Service pool load balancing policy'),
                 'type': types.ui.FieldType.CHOICE,
@@ -176,7 +184,9 @@ class MetaPools(ModelHandler):
                     gui.choiceItem(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
                 ],
                 'label': gettext('HA Policy'),
-                'tooltip': gettext('Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!.'),
+                'tooltip': gettext(
+                    'Service pool High Availability policy. If enabled and a pool fails, it will be restarted in another pool. Enable with care!.'
+                ),
                 'type': types.ui.FieldType.CHOICE,
                 'order': 101,
             },
@@ -184,10 +194,7 @@ class MetaPools(ModelHandler):
                 'name': 'image_id',
                 'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
-                    [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
-                        for v in Image.objects.all()
-                    ]
+                    [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -197,7 +204,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'servicesPoolGroup_id',
-                'choices': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                'choices': [gui.choiceImage(-1, typing.cast(str, _('Default')), DEFAULT_THUMB_BASE64)]
                 + gui.sortedChoices(
                     [
                         gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
@@ -205,9 +212,7 @@ class MetaPools(ModelHandler):
                     ]
                 ),
                 'label': gettext('Pool group'),
-                'tooltip': gettext(
-                    'Pool group for this pool (for pool classify on display)'
-                ),
+                'tooltip': gettext('Pool group for this pool (for pool classify on display)'),
                 'type': types.ui.FieldType.IMAGECHOICE,
                 'order': 121,
                 'tab': types.ui.Tab.DISPLAY,
@@ -235,8 +240,7 @@ class MetaPools(ModelHandler):
             {
                 'name': 'transport_grouping',
                 'choices': [
-                    gui.choiceItem(k, str(v))
-                    for k, v in types.pools.TransportSelectionPolicy.enumerate()
+                    gui.choiceItem(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],
                 'label': gettext('Transport Selection'),
                 'tooltip': gettext('Transport selection policy'),
@@ -281,7 +285,8 @@ class MetaPools(ModelHandler):
 
         logger.debug('Fields: %s', fields)
 
-    def deleteItem(self, item: MetaPool) -> None:
+    def deleteItem(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, MetaPool)
         item.delete()
 
     # Set fallback status

@@ -43,9 +43,12 @@ from uds import models
 
 from uds.core.util.state import State
 from uds.core.util.model import processUuid
-from uds.core.util import log
+from uds.core.util import log, ensure
 from uds.REST.model import DetailHandler
 from .user_services import AssignedService
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +59,7 @@ class MetaServicesPool(DetailHandler):
     """
 
     @staticmethod
-    def as_dict(item: models.MetaPoolMember):
+    def as_dict(item: models.MetaPoolMember) -> typing.Dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'pool_id': item.pool.uuid,
@@ -68,7 +71,8 @@ class MetaServicesPool(DetailHandler):
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def getItems(self, parent: models.MetaPool, item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, models.MetaPool)
         try:
             if not item:
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
@@ -78,17 +82,18 @@ class MetaServicesPool(DetailHandler):
             logger.exception('err: %s', item)
             raise self.invalidItemException()
 
-    def getTitle(self, parent: models.MetaPool) -> str:
+    def getTitle(self, parent: 'Model') -> str:
         return _('Service pools')
 
-    def getFields(self, parent: models.MetaPool) -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Service Pool name')}},
             {'enabled': {'title': _('Enabled')}},
         ]
 
-    def saveItem(self, parent: models.MetaPool, item: typing.Optional[str]):
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, models.MetaPool)
         # If already exists
         uuid = processUuid(item) if item else None
 
@@ -116,7 +121,8 @@ class MetaServicesPool(DetailHandler):
 
         return self.success()
 
-    def deleteItem(self, parent: models.MetaPool, item: str):
+    def deleteItem(self, parent: 'Model', item: str):
+        parent = ensure.is_instance(parent, models.MetaPool)
         member = parent.members.get(uuid=processUuid(self._args[0]))
         logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
 
@@ -155,7 +161,8 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def getItems(self, parent: models.MetaPool, item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, models.MetaPool)
         def assignedUserServicesForPools() -> (
             typing.Generator[
                 typing.Tuple[models.UserService, typing.Optional[typing.Dict[str, typing.Any]]], None, None
@@ -198,10 +205,12 @@ class MetaAssignedService(DetailHandler):
             logger.exception('getItems')
             raise self.invalidItemException()
 
-    def getTitle(self, parent: 'models.MetaPool') -> str:
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, models.MetaPool)
         return _('Assigned services')
 
-    def getFields(self, parent: 'models.MetaPool') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, models.MetaPool)
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'pool_name': {'title': _('Pool')}},
@@ -222,10 +231,12 @@ class MetaAssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getRowStyle(self, parent: 'models.MetaPool') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+        parent = ensure.is_instance(parent, models.MetaPool)
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'models.MetaPool', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, models.MetaPool)
         try:
             asignedService = self._getAssignedService(parent, item)
             logger.debug('Getting logs for %s', asignedService)
@@ -233,7 +244,8 @@ class MetaAssignedService(DetailHandler):
         except Exception:
             raise self.invalidItemException()
 
-    def deleteItem(self, parent: 'models.MetaPool', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, models.MetaPool)
         userService = self._getAssignedService(parent, item)
 
         if userService.user:
@@ -257,7 +269,8 @@ class MetaAssignedService(DetailHandler):
         log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
-    def saveItem(self, parent: 'models.MetaPool', item: typing.Optional[str]):
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, models.MetaPool)
         if item is None:
             raise self.invalidItemException()
 

@@ -32,15 +32,12 @@
 """
 import logging
 import typing
-import uds.core.types.permissions
 
+import uds.core.types.permissions
+from uds import models
 from uds.core.util import permissions
 from uds.core.util.rest.tools import match
-
-from uds import models
-
-from uds.REST import Handler
-from uds.REST import RequestError
+from uds.REST import Handler, RequestError
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

@@ -33,14 +33,17 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+
 from uds import models
 from uds.core import mfas, types
 from uds.core.environment import Environment
-from uds.core.util import permissions
-
+from uds.core.util import ensure, permissions
 from uds.REST.model import ModelHandler
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +54,7 @@ class MFA(ModelHandler):
     model = models.MFA
     save_fields = ['name', 'comments', 'tags', 'remember_device', 'validity']
 
-    table_title = _('Multi Factor Authentication')
+    table_title = typing.cast(str, _('Multi Factor Authentication'))
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
@@ -71,9 +74,7 @@ class MFA(ModelHandler):
         # Create a temporal instance to get the gui
         mfa = mfaType(Environment.getTempEnv(), None)
 
-        localGui = self.addDefaultFields(
-            mfa.guiDescription(), ['name', 'comments', 'tags']
-        )
+        localGui = self.addDefaultFields(mfa.guiDescription(), ['name', 'comments', 'tags'])
         self.addField(
             localGui,
             {
@@ -81,9 +82,7 @@ class MFA(ModelHandler):
                 'value': '0',
                 'minValue': '0',
                 'label': gettext('Device Caching'),
-                'tooltip': gettext(
-                    'Time in hours to cache device so MFA is not required again. User based.'
-                ),
+                'tooltip': gettext('Time in hours to cache device so MFA is not required again. User based.'),
                 'type': types.ui.FieldType.NUMERIC,
                 'order': 111,
             },
@@ -95,18 +94,16 @@ class MFA(ModelHandler):
                 'value': '5',
                 'minValue': '0',
                 'label': gettext('MFA code validity'),
-                'tooltip': gettext(
-                    'Time in minutes to allow MFA code to be used.'
-                ),
+                'tooltip': gettext('Time in minutes to allow MFA code to be used.'),
                 'type': types.ui.FieldType.NUMERIC,
                 'order': 112,
             },
-
         )
 
         return localGui
 
-    def item_as_dict(self, item: models.MFA) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, models.MFA)
         type_ = item.getType()
         return {
             'id': item.uuid,

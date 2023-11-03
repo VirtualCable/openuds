@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -37,9 +37,12 @@ from django.utils.translation import gettext_lazy as _, gettext
 
 from uds.models import Network
 from uds.core import types
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 
 from ..model import ModelHandler
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +58,7 @@ class Networks(ModelHandler):
     model = Network
     save_fields = ['name', 'net_string', 'tags']
 
-    table_title = _('Networks')
+    table_title = typing.cast(str, _('Networks'))
     table_fields = [
         {
             'name': {
@@ -98,7 +101,8 @@ class Networks(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: Network) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Network)
         return {
             'id': item.uuid,
             'name': item.name,

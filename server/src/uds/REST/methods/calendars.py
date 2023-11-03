@@ -35,10 +35,13 @@ import typing
 
 from django.utils.translation import gettext_lazy as _
 from uds.models import Calendar
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 
 from uds.REST.model import ModelHandler
 from .calendarrules import CalendarRules
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 
 logger = logging.getLogger(__name__)
@@ -56,7 +59,7 @@ class Calendars(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Calendars')
+    table_title = typing.cast(str, _('Calendars'))
     table_fields = [
         {
             'name': {
@@ -74,17 +77,17 @@ class Calendars(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: Calendar) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Calendar)
         return {
             'id': item.uuid,
             'name': item.name,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'modified': item.modified,
-            'number_rules': item.rules.count(), 
+            'number_rules': item.rules.count(),
             'number_access': item.calendaraccess_set.all().values('service_pool').distinct().count(),
             'number_actions': item.calendaraction_set.all().values('service_pool').distinct().count(),
-
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 

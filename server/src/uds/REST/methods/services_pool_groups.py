@@ -37,13 +37,17 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from uds.core import types
-from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
+from uds.core.ui import gui
+from uds.core.util import ensure
 from uds.core.util.model import processUuid
 from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
 
 logger = logging.getLogger(__name__)
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 # Enclosed methods under /item path
 
@@ -59,7 +63,7 @@ class ServicesPoolGroups(ModelHandler):
     model = ServicePoolGroup
     save_fields = ['name', 'comments', 'image_id', 'priority']
 
-    table_title = _('Services Pool Groups')
+    table_title = typing.cast(str, _('Services Pool Groups'))
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {
@@ -109,7 +113,8 @@ class ServicesPoolGroups(ModelHandler):
 
         return localGui
 
-    def item_as_dict(self, item: ServicePoolGroup) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,
             'priority': item.priority,
@@ -119,8 +124,9 @@ class ServicesPoolGroups(ModelHandler):
         }
 
     def item_as_dict_overview(
-        self, item: ServicePoolGroup
+        self, item: 'Model'
     ) -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,
             'priority': item.priority,

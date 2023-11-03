@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017-2019 Virtual Cable S.L.
+# Copyright (c) 2017-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -35,14 +35,15 @@ import typing
 
 from django.utils.translation import gettext as _
 
-from uds.core.util import permissions
+from uds.core.util import ensure, permissions
 from uds.core.util.model import processUuid
+from uds.models import Account, AccountUsage
 from uds.REST import RequestError
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Account, AccountUsage
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,8 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Account', item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -87,7 +89,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             raise self.invalidItemException()
 
-    def getFields(self, parent: 'Account') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {'pool_name': {'title': _('Pool name')}},
             {'user_name': {'title': _('User name')}},
@@ -98,13 +100,14 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def getRowStyle(self, parent: 'Account') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
         return {'field': 'running', 'prefix': 'row-running-'}
 
-    def saveItem(self, parent: 'Account', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
         raise RequestError('Accounts usage cannot be edited')
 
-    def deleteItem(self, parent: 'Account', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, Account)
         logger.debug('Deleting account usage %s from %s', item, parent)
         try:
             usage = parent.usages.get(uuid=processUuid(item))
@@ -113,7 +116,8 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Exception')
             raise self.invalidItemException()
 
-    def getTitle(self, parent: 'Account') -> str:
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, Account)
         try:
             return _('Usages of {0}').format(parent.name)
         except Exception:

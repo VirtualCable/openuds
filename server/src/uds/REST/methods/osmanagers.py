@@ -37,10 +37,13 @@ from django.utils.translation import gettext, gettext_lazy as _
 
 from uds.core import osmanagers
 from uds.core.environment import Environment
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 from uds.models import OSManager
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +54,7 @@ class OsManagers(ModelHandler):
     model = OSManager
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('OS Managers')
+    table_title = typing.cast(str, _('OS Managers'))
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
@@ -74,10 +77,12 @@ class OsManagers(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, osm),
         }
 
-    def item_as_dict(self, item: OSManager) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, OSManager)
         return self.osmToDict(item)
 
-    def checkDelete(self, item: OSManager) -> None:
+    def checkDelete(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, OSManager)
         # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
             raise RequestError(

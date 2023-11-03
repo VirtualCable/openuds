@@ -41,7 +41,7 @@ from uds.core.util.state import State
 
 from uds.core.auths.exceptions import AuthenticatorException
 from uds.core.auths.user import User as aUser
-from uds.core.util import log
+from uds.core.util import log, ensure
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
@@ -51,6 +51,9 @@ from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.REST.model import DetailHandler
 
 from .user_services import AssignedService
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 
 logger = logging.getLogger(__name__)
@@ -62,7 +65,7 @@ if typing.TYPE_CHECKING:
     from uds.models import UserService
 
 
-def getGroupsFromMeta(groups):
+def getGroupsFromMeta(groups) -> typing.Iterable[Group]:
     for g in groups:
         if g.is_meta:
             for x in g.groups.all():
@@ -79,10 +82,11 @@ def getPoolsForGroups(groups):
 class Users(DetailHandler):
     custom_methods = ['servicesPools', 'userServices', 'cleanRelated']
 
-    def getItems(self, parent: Authenticator, item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+        parent = ensure.is_instance(parent, Authenticator)
         # processes item to change uuid key for id
         def uuid_to_id(
-            iterable: typing.Iterable[typing.MutableMapping[str, typing.Any]]
+            iterable: typing.Iterable[typing.Any]  # will get values from a queryset
         ):
             for v in iterable:
                 v['id'] = v['uuid']
@@ -148,7 +152,7 @@ class Users(DetailHandler):
             # User not found
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent):
+    def getTitle(self, parent: 'Model') -> str:
         try:
             return _('Users of {0}').format(
                 Authenticator.objects.get(
@@ -158,7 +162,7 @@ class Users(DetailHandler):
         except Exception:
             return _('Current users')
 
-    def getFields(self, parent: Authenticator):
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {
                 'name': {
@@ -181,10 +185,11 @@ class Users(DetailHandler):
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
         ]
 
-    def getRowStyle(self, parent):
+    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: Authenticator, item: str):
+    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, Authenticator)
         user = None
         try:
             user = parent.users.get(uuid=processUuid(item))
@@ -193,7 +198,8 @@ class Users(DetailHandler):
 
         return log.getLogs(user)
 
-    def saveItem(self, parent: Authenticator, item):
+    def saveItem(self, parent: 'Model', item):
+        parent = ensure.is_instance(parent, Authenticator)
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
             'name',
@@ -260,7 +266,8 @@ class Users(DetailHandler):
 
         return self.getItems(parent, user.uuid)
 
-    def deleteItem(self, parent: Authenticator, item: str):
+    def deleteItem(self, parent: 'Model', item: str):
+        parent = ensure.is_instance(parent, Authenticator)
         try:
             user = parent.users.get(uuid=processUuid(item))
             if not self._user.is_admin and (user.is_admin or user.staff_member):
@@ -292,7 +299,8 @@ class Users(DetailHandler):
 
         return 'deleted'
 
-    def servicesPools(self, parent: Authenticator, item: str):
+    def servicesPools(self, parent: 'Model', item: str):
+        parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         res = []
@@ -314,7 +322,8 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent: Authenticator, item: str):
+    def userServices(self, parent: 'Authenticator', item: str) -> typing.List[typing.Dict]:
+        parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         res = []
@@ -327,7 +336,7 @@ class Users(DetailHandler):
 
         return res
 
-    def cleanRelated(self, parent: Authenticator, item: str) -> typing.Dict:
+    def cleanRelated(self, parent: 'Authenticator', item: str) -> typing.Dict[str, str]:
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         user.cleanRelated()
@@ -337,7 +346,8 @@ class Users(DetailHandler):
 class Groups(DetailHandler):
     custom_methods = ['servicesPools', 'users']
 
-    def getItems(self, parent: Authenticator, item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False
             if item is None:
@@ -373,13 +383,14 @@ class Groups(DetailHandler):
             logger.exception('REST groups')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: Authenticator) -> str:
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, Authenticator)
         try:
             return _('Groups of {0}').format(parent.name)
         except Exception:
             return _('Current groups')
 
-    def getFields(self, parent):
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {
                 'name': {
@@ -396,7 +407,8 @@ class Groups(DetailHandler):
             },
         ]
 
-    def getTypes(self, parent: Authenticator, forType: typing.Optional[str]):
+    def getTypes(self, parent: 'Model', forType: typing.Optional[str]):
+        parent = ensure.is_instance(parent, Authenticator)
         tDct = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
             'meta': {'name': _('Meta group'), 'description': _('UDS Meta Group')},
@@ -419,7 +431,8 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidRequestException() from None
 
-    def saveItem(self, parent: Authenticator, item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, Authenticator)
         group = None  # Avoid warning on reference before assignment
         try:
             is_meta = self._params['type'] == 'meta'
@@ -484,7 +497,8 @@ class Groups(DetailHandler):
             logger.exception('Saving group')
             raise self.invalidRequestException() from e
 
-    def deleteItem(self, parent: Authenticator, item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, Authenticator)
         try:
             group = parent.groups.get(uuid=item)
 
@@ -493,8 +507,9 @@ class Groups(DetailHandler):
             raise self.invalidItemException() from None
 
     def servicesPools(
-        self, parent: Authenticator, item: str
+        self, parent: 'Model', item: str
     ) -> typing.List[typing.Mapping[str, typing.Any]]:
+        parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
         res: typing.List[typing.Mapping[str, typing.Any]] = []
@@ -516,9 +531,10 @@ class Groups(DetailHandler):
         return res
 
     def users(
-        self, parent: Authenticator, item: str
+        self, parent: 'Model', item: str
     ) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
+        parent = ensure.is_instance(parent, Authenticator)
         group = parent.groups.get(uuid=processUuid(uuid))
 
         def info(user):
@@ -549,6 +565,6 @@ class Groups(DetailHandler):
             users = list(tmpSet or {}) if tmpSet else []
             tmpSet = None
         else:
-            users = group.users.all()
+            users = list(group.users.all())
 
         return [info(i) for i in users]

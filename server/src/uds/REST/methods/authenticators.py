@@ -41,7 +41,7 @@ from uds.core.environment import Environment
 
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 from uds.core.util.model import processUuid
 from uds.core.ui import gui
 
@@ -49,7 +49,7 @@ from .users_groups import Users, Groups
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.db import models
+    from django.db.models import Model
     from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
@@ -134,17 +134,12 @@ class Authenticators(ModelHandler):
                         field,
                         {
                             'name': 'mfa_id',
-                            'choices': [gui.choiceItem('', _('None'))]
+                            'choices': [gui.choiceItem('', typing.cast(str, _('None')))]
                             + gui.sortedChoices(
-                                [
-                                    gui.choiceItem(v.uuid or '', v.name)
-                                    for v in MFA.objects.all()
-                                ]
+                                [gui.choiceItem(v.uuid or '', v.name) for v in MFA.objects.all()]
                             ),
                             'label': gettext('MFA Provider'),
-                            'tooltip': gettext(
-                                'MFA provider to use for this authenticator'
-                            ),
+                            'tooltip': gettext('MFA provider to use for this authenticator'),
                             'type': types.ui.FieldType.CHOICE,
                             'order': 108,
                             'tab': types.ui.Tab.MFA,
@@ -156,7 +151,8 @@ class Authenticators(ModelHandler):
             logger.info('Type not found: %s', e)
             raise NotFound('type not found') from e
 
-    def item_as_dict(self, item: Authenticator) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Authenticator)
         type_ = item.getType()
         return {
             'numeric_id': item.id,
@@ -177,21 +173,21 @@ class Authenticators(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def afterSave(self, item: Authenticator) -> None:
+    def afterSave(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, Authenticator)
         try:
             networks = self._params['networks']
         except Exception:  # No networks passed in, this is ok
             logger.debug('No networks')
             return
-        if (
-            networks is None
-        ):  # None is not provided, empty list is ok and means no networks
+        if networks is None:  # None is not provided, empty list is ok and means no networks
             return
         logger.debug('Networks: %s', networks)
         item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
 
     # Custom "search" method
-    def search(self, item: Authenticator) -> typing.List[typing.Dict]:
+    def search(self, item: 'Model') -> typing.List[typing.Dict]:
+        item = ensure.is_instance(item, Authenticator)
         self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
@@ -250,11 +246,12 @@ class Authenticators(ModelHandler):
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
             raise self.invalidRequestException(
-                _('Label must contain only letters, numbers, or symbols: - : .')
+                typing.cast(str, _('Label must contain only letters, numbers, or symbols: - : .'))
             )
 
-    def deleteItem(self, item: Authenticator):
+    def deleteItem(self, item: 'Model'):
         # For every user, remove assigned services (mark them for removal)
+        item = ensure.is_instance(item, Authenticator)
 
         for user in item.users.all():
             for userService in user.userServices.all():

@@ -34,20 +34,19 @@ import datetime
 import logging
 import typing
 
-from django.utils.translation import gettext as _
 from django.db import IntegrityError
+from django.utils.translation import gettext as _
 
-
-from uds.models.calendar_rule import freqs, CalendarRule
-from uds.core.util.model import getSqlDatetime
-
-from uds.core.util import permissions
-from uds.core.util.model import processUuid
-from uds.REST.model import DetailHandler
+from uds.core.util import ensure, permissions
+from uds.core.util.model import getSqlDatetime, processUuid
+from uds.models.calendar_rule import CalendarRule, freqs
 from uds.REST import RequestError
+from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
     from uds.models import Calendar
 
 logger = logging.getLogger(__name__)
@@ -80,7 +79,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Calendar', item: typing.Optional[str]) -> typing.Any:
+    def getItems(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+        parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -92,7 +92,9 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             raise self.invalidItemException() from e
 
-    def getFields(self, parent: 'Calendar') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, Calendar)
+
         return [
             {'name': {'title': _('Rule name')}},
             {'start': {'title': _('Starts'), 'type': 'datetime'}},
@@ -109,7 +111,9 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'comments': {'title': _('Comments')}},
         ]
 
-    def saveItem(self, parent: 'Calendar', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, Calendar)
+
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule %s / %s', parent, item)
@@ -150,7 +154,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Saving calendar')
             raise RequestError(f'incorrect invocation to PUT: {e}') from e
 
-    def deleteItem(self, parent: 'Calendar', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
             calRule = parent.rules.get(uuid=processUuid(item))
@@ -161,7 +166,8 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Exception')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'Calendar') -> str:
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, Calendar)
         try:
             return _('Rules of {0}').format(parent.name)
         except Exception:

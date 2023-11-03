@@ -65,7 +65,7 @@ class Reports(model.BaseModelHandler):
 
     needs_admin = True  # By default, staff is lower level needed
 
-    table_title = _('Available reports')
+    table_title = typing.cast(str, _('Available reports'))
     table_fields = [
         {'group': {'title': _('Group')}},
         {'name': {'title': _('Name')}},

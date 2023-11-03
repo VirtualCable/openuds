@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2014-2019 Virtual Cable S.L.
+# Copyright (c) 2014-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -42,7 +42,7 @@ from uds.core import types
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
-from uds.core.util import log, permissions
+from uds.core.util import log, permissions, ensure
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import getSqlDatetime, processUuid
 from uds.core.util.state import State
@@ -64,6 +64,9 @@ from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
 from .user_services import (AssignedService, CachedService, Changelog, Groups,
                             Publications, Transports)
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +112,7 @@ class ServicesPools(ModelHandler):
 
     remove_fields = ['osmanager_id', 'service_id']
 
-    table_title = _('Service Pools')
+    table_title = typing.cast(str, _('Service Pools'))
     table_fields = [
         {'name': {'title': _('Name')}},
         {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.dictionary()}},
@@ -133,7 +136,7 @@ class ServicesPools(ModelHandler):
         ('createFromAssignable', True),
     ]
 
-    def getItems(self, *args, **kwargs):
+    def getItems(self, *args, **kwargs) -> typing.Generator[typing.Any, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = getSqlDatetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         return super().getItems(
@@ -180,7 +183,8 @@ class ServicesPools(ModelHandler):
         # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).getItems(*args, **kwargs)
 
-    def item_as_dict(self, item: ServicePool) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -576,14 +580,16 @@ class ServicesPools(ModelHandler):
         except Exception as e:
             raise RequestError(str(e)) from e
 
-    def afterSave(self, item: ServicePool) -> None:
+    def afterSave(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, ServicePool)
         if self._params.get('publish_on_save', False) is True:
             try:
                 item.publish()
             except Exception as e:
                 logger.error('Could not publish service pool %s: %s', item.name, e)
 
-    def deleteItem(self, item: ServicePool) -> None:
+    def deleteItem(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, ServicePool)
         try:
             logger.debug('Deleting %s', item)
             item.remove()  # This will mark it for deletion, but in fact will not delete it directly
@@ -592,14 +598,16 @@ class ServicesPools(ModelHandler):
             logger.exception('deleting service pool')
 
     # Logs
-    def getLogs(self, item: ServicePool) -> typing.List[typing.Dict]:
+    def getLogs(self, item: 'Model') -> typing.List[typing.Dict]:
+        item = ensure.is_instance(item, ServicePool)
         try:
             return log.getLogs(item)
         except Exception:
             return []
 
     # Set fallback status
-    def setFallbackAccess(self, item: ServicePool):
+    def setFallbackAccess(self, item: 'Model'):
+        item = ensure.is_instance(item, ServicePool)
         self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
@@ -609,11 +617,13 @@ class ServicesPools(ModelHandler):
             item.save()
         return item.fallbackAccess
 
-    def getFallbackAccess(self, item: ServicePool):
+    def getFallbackAccess(self, item: 'Model'):
+        item = ensure.is_instance(item, ServicePool)
         return item.fallbackAccess
 
     #  Returns the action list based on current element, for calendar
-    def actionsList(self, item: ServicePool) -> typing.Any:
+    def actionsList(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, ServicePool)
         validActions: typing.Tuple[typing.Dict, ...] = ()
         itemInfo = item.service.getType()  # type: ignore
         if itemInfo.usesCache is True:
@@ -646,11 +656,13 @@ class ServicesPools(ModelHandler):
         )
         return validActions
 
-    def listAssignables(self, item: ServicePool) -> typing.Any:
+    def listAssignables(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, ServicePool)
         service = item.service.getInstance()  # type: ignore
         return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
 
-    def createFromAssignable(self, item: ServicePool) -> typing.Any:
+    def createFromAssignable(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, ServicePool)
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
             return self.invalidRequestException('Invalid parameters')
 

@@ -30,19 +30,21 @@
 '''
 @itemor: Adolfo Gómez, dkmaster at dkmon dot com
 '''
-import re
 import logging
+import re
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
-from uds.core.environment import Environment
-from uds.models import Transport, Network, ServicePool
-from uds.core import transports, types, consts
-from uds.core.ui import gui
-from uds.core.util import permissions
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
+from uds.core import consts, transports, types
+from uds.core.environment import Environment
+from uds.core.util import ensure, permissions
+from uds.models import Network, ServicePool, Transport
 from uds.REST.model import ModelHandler
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +63,7 @@ class Transports(ModelHandler):
         'label',
     ]
 
-    table_title = _('Transports')
+    table_title = typing.cast(str, _('Transports'))
     table_fields = [
         {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
@@ -147,7 +149,8 @@ class Transports(ModelHandler):
 
         return field
 
-    def item_as_dict(self, item: Transport) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Transport)
         type_ = item.getType()
         pools = [{'id': x.uuid} for x in item.deployedServices.all()]
         return {
@@ -178,10 +181,11 @@ class Transports(ModelHandler):
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
             raise self.invalidRequestException(
-                _('Label must contain only letters, numbers, ":" and "-"')
+                gettext('Label must contain only letters, numbers, ":" and "-"')
             )
 
-    def afterSave(self, item: Transport) -> None:
+    def afterSave(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, Transport)
         try:
             networks = self._params['networks']
         except Exception:  # No networks passed in, this is ok

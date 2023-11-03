@@ -33,15 +33,15 @@
 import logging
 import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
-from uds.core.environment import Environment
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+
 import uds.core.types.permissions
-
-from uds.models import Provider, Service, UserService
 from uds.core import services
+from uds.core.environment import Environment
+from uds.core.util import ensure, permissions
 from uds.core.util.state import State
-from uds.core.util import permissions
-
+from uds.models import Provider, Service, UserService
 from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
@@ -51,7 +51,7 @@ from .services_usage import ServicesUsage
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from django.db import models
+    from django.db.models import Model
 
 
 class Providers(ModelHandler):
@@ -66,7 +66,7 @@ class Providers(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Service providers')
+    table_title = typing.cast(str, _('Service providers'))
 
     # Table info fields
     table_fields = [
@@ -111,7 +111,8 @@ class Providers(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def checkDelete(self, item: Provider) -> None:
+    def checkDelete(self, item: 'Model') -> None:
+        item = ensure.is_instance(item, Provider)
         if item.services.count() > 0:
             raise RequestError(gettext('Can\'t delete providers with services'))
 
@@ -152,11 +153,12 @@ class Providers(ModelHandler):
             # logger.exception('Exception')
             return {}
 
-    def maintenance(self, item: Provider) -> typing.Dict:
+    def maintenance(self, item: 'Model') -> typing.Dict:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:
         """
+        item = ensure.is_instance(item, Provider)
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()

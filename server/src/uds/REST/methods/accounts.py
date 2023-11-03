@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2017-2019 Virtual Cable S.L.
+# Copyright (c) 2017-2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from uds.REST.model import ModelHandler
 import uds.core.types.permissions
-from uds.core.util import permissions
+from uds.core.util import permissions, ensure
 from uds.models import Account
 from .accountsusage import AccountsUsage
 
@@ -70,8 +70,8 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item_: 'Model'):
-        item = typing.cast(Account, item_)
+    def item_as_dict(self, item: 'Model'):
+        item = ensure.is_instance(item, Account)
         return {
             'id': item.uuid,
             'name': item.name,
@@ -84,11 +84,13 @@ class Accounts(ModelHandler):
     def getGui(self, type_: str) -> typing.List[typing.Any]:
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
 
-    def timemark(self, item: Account):
+    def timemark(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, Account)
         item.time_mark = datetime.datetime.now()
         item.save()
         return ''
 
-    def clear(self, item: Account):
+    def clear(self, item: 'Model') -> typing.Any:
+        item = ensure.is_instance(item, Account)
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

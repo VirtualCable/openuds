@@ -40,8 +40,7 @@ from uds import models
 
 from uds.core import exceptions, types
 import uds.core.types.permissions
-from uds.core.util import log
-from uds.core.util import permissions
+from uds.core.util import log, permissions, ensure
 from uds.core.util.model import processUuid
 from uds.core.environment import Environment
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
@@ -54,7 +53,7 @@ from uds.REST import NotFound, ResponseError, RequestError, AccessDenied
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Provider
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +117,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Provider', item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.getEffectivePermission(self._user, parent)
         try:
@@ -131,7 +131,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.error('Error getting services for %s: %s', parent, e)
             raise self.invalidItemException() from e
 
-    def getRowStyle(self, parent: 'Provider') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+        parent = ensure.is_instance(parent, models.Provider)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def _deleteIncompleteService(
@@ -147,7 +148,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             except Exception:  # nosec: This is a delete, we don't care about exceptions
                 pass
 
-    def saveItem(self, parent: 'Provider', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
@@ -210,7 +212,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
 
-    def deleteItem(self, parent: 'Provider', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, models.Provider)
         try:
             service = parent.services.get(uuid=processUuid(item))
             if service.deployedServices.count() == 0:
@@ -222,13 +225,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         raise RequestError('Item has associated deployed services')
 
-    def getTitle(self, parent: 'Provider') -> str:
+    def getTitle(self, parent: 'Model') -> str:
+        parent = ensure.is_instance(parent, models.Provider)
         try:
             return _('Services of {}').format(parent.name)
         except Exception:
             return _('Current services')
 
-    def getFields(self, parent: 'Provider') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
@@ -251,8 +255,9 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         ]
 
     def getTypes(
-        self, parent: 'Provider', forType: typing.Optional[str]
+        self, parent: 'Model', forType: typing.Optional[str]
     ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+        parent = ensure.is_instance(parent, models.Provider)
         logger.debug('getTypes parameters: %s, %s', parent, forType)
         offers: typing.List[typing.Dict[str, typing.Any]] = []
         if forType is None:
@@ -282,7 +287,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return offers  # Default is that details do not have types
 
-    def getGui(self, parent: 'Provider', forType: str) -> typing.Iterable[typing.Any]:
+    def getGui(self, parent: 'Model', forType: str) -> typing.Iterable[typing.Any]:
+        parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
             parentInstance = parent.getInstance()
@@ -320,7 +326,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('getGui')
             raise ResponseError(str(e)) from e
 
-    def getLogs(self, parent: 'Provider', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+        parent = ensure.is_instance(parent, models.Provider)
         try:
             service = parent.services.get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
@@ -328,7 +335,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             raise self.invalidItemException() from None
 
-    def servicesPools(self, parent: 'Provider', item: str) -> typing.Any:
+    def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
+        parent = ensure.is_instance(parent, models.Provider)
         service = parent.services.get(uuid=processUuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         res = []

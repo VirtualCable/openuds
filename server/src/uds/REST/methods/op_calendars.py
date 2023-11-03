@@ -37,15 +37,15 @@ import typing
 from django.utils.translation import gettext as _
 
 from uds.core import types
-from uds.core.util import log
+from uds.core.util import log, ensure
 from uds.core.util.model import processUuid
-from uds.models import Calendar, CalendarAction
+from uds.models import Calendar, CalendarAction, CalendarAccess, ServicePool
 from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import CalendarAccess, ServicePool
+    from django.db.models import Model
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,8 @@ class AccessCalendars(DetailHandler):
             'priority': item.priority,
         }
 
-    def getItems(self, parent: 'ServicePool', item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, ServicePool)
         try:
             if not item:
                 return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
@@ -75,17 +76,18 @@ class AccessCalendars(DetailHandler):
             logger.exception('err: %s', item)
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'ServicePool'):
+    def getTitle(self, parent: 'Model'):
         return _('Access restrictions by calendar')
 
-    def getFields(self, parent: 'ServicePool') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'calendar': {'title': _('Calendar')}},
             {'access': {'title': _('Access')}},
         ]
 
-    def saveItem(self, parent: 'ServicePool', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, ServicePool)
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
@@ -121,7 +123,8 @@ class AccessCalendars(DetailHandler):
             log.LogSource.ADMIN,
         )
 
-    def deleteItem(self, parent: 'ServicePool', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, ServicePool)
         calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
@@ -156,7 +159,8 @@ class ActionsCalendars(DetailHandler):
             'lastExecution': item.last_execution,
         }
 
-    def getItems(self, parent: 'ServicePool', item: typing.Optional[str]):
+    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+        parent = ensure.is_instance(parent, ServicePool)
         try:
             if item is None:
                 return [
@@ -167,10 +171,10 @@ class ActionsCalendars(DetailHandler):
         except Exception as e:
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'ServicePool'):
+    def getTitle(self, parent: 'Model'):
         return _('Scheduled actions')
 
-    def getFields(self, parent: 'ServicePool') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
         return [
             {'calendar': {'title': _('Calendar')}},
             {'actionDescription': {'title': _('Action')}},
@@ -181,7 +185,8 @@ class ActionsCalendars(DetailHandler):
             {'lastExecution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
-    def saveItem(self, parent: 'ServicePool', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+        parent = ensure.is_instance(parent, ServicePool)
         # If already exists
         uuid = processUuid(item) if item is not None else None
 
@@ -221,7 +226,8 @@ class ActionsCalendars(DetailHandler):
 
         log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
-    def deleteItem(self, parent: 'ServicePool', item: str) -> None:
+    def deleteItem(self, parent: 'Model', item: str) -> None:
+        parent = ensure.is_instance(parent, ServicePool)
         calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
         logStr = (
             f'Removed scheduled action "{calendarAction.calendar.name},'
@@ -234,7 +240,8 @@ class ActionsCalendars(DetailHandler):
 
         log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
-    def execute(self, parent: 'ServicePool', item: str):
+    def execute(self, parent: 'Model', item: str):
+        parent = ensure.is_instance(parent, ServicePool)
         logger.debug('Launching action')
         uuid = processUuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)

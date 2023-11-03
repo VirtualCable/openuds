@@ -33,14 +33,18 @@
 import logging
 import typing
 
-from django.utils.translation import gettext_lazy as _, gettext
-from uds.core.environment import Environment
-from uds.models import Notifier, LogLevel
-from uds.core import messaging, types
-from uds.core.ui import gui
-from uds.core.util import permissions
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
+from uds.core import messaging, types
+from uds.core.environment import Environment
+from uds.core.ui import gui
+from uds.core.util import ensure, permissions
+from uds.models import LogLevel, Notifier
 from uds.REST.model import ModelHandler
+
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
 
 
 logger = logging.getLogger(__name__)
@@ -58,7 +62,7 @@ class Notifiers(ModelHandler):
         'tags',
     ]
 
-    table_title = _('Notifiers')
+    table_title = typing.cast(str, _('Notifiers'))
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
@@ -96,7 +100,8 @@ class Notifiers(ModelHandler):
 
         return localGui
 
-    def item_as_dict(self, item: Notifier) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+        item = ensure.is_instance(item, Notifier)
         type_ = item.getType()
         return {
             'id': item.uuid,
