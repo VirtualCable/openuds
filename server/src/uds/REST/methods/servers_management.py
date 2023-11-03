@@ -42,6 +42,9 @@ from uds.core.util.model import getSqlDatetime, processUuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +71,8 @@ class ServersTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item: 'models.Server') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
+        item = typing.cast('models.Server', item_)  # We will receive for sure
         return {
             'id': item.uuid,
             'name': str(_('Token isued by {} from {}')).format(item.username, item.ip),
@@ -106,7 +110,8 @@ class ServersTokens(ModelHandler):
 class ServersServers(DetailHandler):
     custom_methods = ['maintenance']
 
-    def getItems(self, parent: 'models.ServerGroup', item: typing.Optional[str]):
+    def getItems(self, parent_: 'Model', item: typing.Optional[str]):
+        parent = typing.cast('models.ServerGroup', parent_)  # We will receive for sure
         try:
             multi = False
             if item is None:
@@ -135,13 +140,15 @@ class ServersServers(DetailHandler):
             logger.exception('REST servers')
             raise self.invalidItemException() from e
 
-    def getTitle(self, parent: 'models.ServerGroup') -> str:
+    def getTitle(self, parent_: 'Model') -> str:
+        parent = typing.cast('models.ServerGroup', parent_)
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
-            return _('Servers')
+            return str(_('Servers'))
 
-    def getFields(self, parent: 'models.ServerGroup') -> typing.List[typing.Any]:
+    def getFields(self, parent_: 'Model') -> typing.List[typing.Any]:
+        parent = typing.cast('models.ServerGroup', parent_)
         return [
             {
                 'hostname': {
@@ -159,10 +166,12 @@ class ServersServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'models.ServerGroup') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent_: 'Model') -> typing.Dict[str, typing.Any]:
+        parent = typing.cast('models.ServerGroup', parent_)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def getGui(self, parent: 'models.ServerGroup', forType: str = '') -> typing.List[typing.Any]:
+    def getGui(self, parent_: 'Model', forType: str = '') -> typing.List[typing.Any]:
+        parent = typing.cast('models.ServerGroup', parent_)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
         if kind == types.servers.ServerType.UNMANAGED:
@@ -225,7 +234,8 @@ class ServersServers(DetailHandler):
                 ],
             )
 
-    def saveItem(self, parent: 'models.ServerGroup', item: typing.Optional[str]) -> None:
+    def saveItem(self, parent_: 'Model', item: typing.Optional[str]) -> None:
+        parent = typing.cast('models.ServerGroup', parent_)
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
@@ -266,7 +276,8 @@ class ServersServers(DetailHandler):
 
             raise self.invalidRequestException() from None
 
-    def deleteItem(self, parent: 'models.ServerGroup', item: str) -> None:
+    def deleteItem(self, parent_: 'Model', item: str) -> None:
+        parent = typing.cast('models.ServerGroup', parent_)
         try:
             server = models.Server.objects.get(uuid=processUuid(item))
             if parent.server_type == types.servers.ServerType.UNMANAGED:
@@ -278,7 +289,8 @@ class ServersServers(DetailHandler):
             raise self.invalidItemException() from None
 
     # Custom methods
-    def maintenance(self, parent: 'models.ServerGroup', id: str) -> typing.Any:
+    def maintenance(self, parent_: 'Model', id: str) -> typing.Any:
+        parent = typing.cast('models.ServerGroup', parent_)
         """
         Custom method that swaps maintenance mode state for a tunnel server
         :param item:
@@ -304,7 +316,7 @@ class ServersGroups(ModelHandler):
     name = 'groups'
 
     save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on beforeSave
-    table_title = _('Servers Groups')
+    table_title = typing.cast(str, _('Servers Groups'))
     table_fields = [
         {'name': {'title': _('Name')}},
         {'comments': {'title': _('Comments')}},
@@ -326,9 +338,9 @@ class ServersGroups(ModelHandler):
             type_ += '@default'
         kind, subkind = type_.split('@')[:2]
         if kind == types.servers.ServerType.SERVER.name:
-            kind = _('Standard')
+            kind = typing.cast(str, _('Standard'))
         elif kind == types.servers.ServerType.UNMANAGED.name:
-            kind = _('Unmanaged')
+            kind = typing.cast(str, _('Unmanaged'))
         title = _('of type') + f' {subkind.upper()} {kind}'
         return self.addField(
             self.addDefaultFields(
@@ -356,7 +368,8 @@ class ServersGroups(ModelHandler):
         fields['subtype'] = subtype
         return super().beforeSave(fields)
 
-    def item_as_dict(self, item: 'models.ServerGroup') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
+        item = typing.cast('models.ServerGroup', item_)  # We will receive for sure
         return {
             'id': item.uuid,
             'name': item.name,
@@ -369,7 +382,8 @@ class ServersGroups(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def deleteItem(self, item: str) -> None:
+    def deleteItem(self, item_: 'Model') -> None:
+        item = typing.cast('models.ServerGroup', item_)  # We will receive for sure
         """
         Processes a DELETE request
         """
@@ -378,11 +392,10 @@ class ServersGroups(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            obj = models.ServerGroup.objects.get(uuid=processUuid(item))
-            if obj.type == types.servers.ServerType.UNMANAGED:
+            if item.type == types.servers.ServerType.UNMANAGED:
                 # Unmanaged has to remove ALSO the servers
-                for server in obj.servers.all():
+                for server in item.servers.all():
                     server.delete()
-            obj.delete()
+            item.delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None

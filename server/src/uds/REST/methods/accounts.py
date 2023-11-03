@@ -42,6 +42,9 @@ from uds.core.util import permissions
 from uds.models import Account
 from .accountsusage import AccountsUsage
 
+if typing.TYPE_CHECKING:
+    from django.db.models import Model
+
 logger = logging.getLogger(__name__)
 
 # Enclosed methods under /item path
@@ -59,7 +62,7 @@ class Accounts(ModelHandler):
 
     save_fields = ['name', 'comments', 'tags']
 
-    table_title = _('Accounts')
+    table_title = typing.cast(str, _('Accounts'))
     table_fields = [
         {'name': {'title': _('Name'), 'visible': True}},
         {'comments': {'title': _('Comments')}},
@@ -67,7 +70,8 @@ class Accounts(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: Account):
+    def item_as_dict(self, item_: 'Model'):
+        item = typing.cast(Account, item_)
         return {
             'id': item.uuid,
             'name': item.name,
