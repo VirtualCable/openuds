@@ -106,7 +106,7 @@ class TSPICETransport(BaseSpiceTransport):
             raise
 
         if not con:
-            raise exceptions.TransportError(
+            raise exceptions.service.TransportError(
                 _('No console connection data received'),
             )
 

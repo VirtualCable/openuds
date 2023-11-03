@@ -55,7 +55,7 @@ def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str]
             try:
                 re.search(pattern, '')
             except Exception as e:
-                raise exceptions.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
+                raise exceptions.validation.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
 
 
 def processRegexField(

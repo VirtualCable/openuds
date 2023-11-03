@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,40 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
+from . import common
 
-# Constants for Visibility
-VISIBLE: typing.Final[str] = 'v'
-HIDDEN: typing.Final[str] = 'h'
-DISABLED: typing.Final[str] = 'd'
+class AuthenticatorException(common.UDSException):
+    """
+    Generic authentication exception
+    """
 
-# net_filter
-# Note: this are STANDARD values used on "default field" networks on RESP API
-# Named them for better reading, but cannot be changed, since they are used on RESP API
-NO_FILTERING: typing.Final[str] = 'n'
-ALLOW: typing.Final[str] = 'a'
-DENY: typing.Final[str] = 'd'
+
+class InvalidUserException(AuthenticatorException):
+    """
+    Invalid user specified. The user cant access the requested service
+    """
+
+
+class InvalidAuthenticatorException(AuthenticatorException):
+    """
+    Invalida authenticator has been specified
+    """
+
+
+class Redirect(AuthenticatorException):
+    """
+    This exception indicates that a redirect is required.
+    Used in authUrlCallback to indicate that redirect is needed
+    """
+
+
+class Logout(AuthenticatorException):
+    """
+    This exceptions redirects logouts an user and redirects to an url
+    """
+
+
+class MFAError(AuthenticatorException):
+    """
+    This exceptions indicates than an MFA error has ocurred
+    """

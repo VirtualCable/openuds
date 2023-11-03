@@ -49,7 +49,7 @@ from django.urls import reverse
 
 from django.utils.translation import gettext as _
 
-from uds.core import auths, types
+from uds.core import auths, types, exceptions
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
@@ -58,7 +58,7 @@ from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
 from uds.core.util.state import State
 from uds.core.managers.crypto import CryptoManager
-from uds.core.auths import Authenticator as AuthenticatorInstance, SUCCESS_AUTH
+from uds.core.auths import Authenticator as AuthenticatorInstance
 
 from uds import models
 
@@ -309,12 +309,12 @@ def authenticate(
     else:
         res = authInstance.internalAuthenticate(username, password, gm, request)
 
-    if res.success == auths.AuthenticationState.FAIL:
+    if res.success == types.auth.AuthenticationState.FAIL:
         logger.debug('Authentication failed')
         # Maybe it's an redirection on auth failed?
         return AuthResult()
 
-    if res.success == auths.AuthenticationState.REDIRECT:
+    if res.success == types.auth.AuthenticationState.REDIRECT:
         return AuthResult(url=res.url)
 
     logger.debug('Groups manager: %s', gm)
@@ -358,15 +358,15 @@ def authenticateViaCallback(
 
     # If there is no callback for this authenticator...
     if authInstance.authCallback is auths.Authenticator.authCallback:
-        raise auths.exceptions.InvalidAuthenticatorException()
+        raise exceptions.auth.InvalidAuthenticatorException()
 
     result = authInstance.authCallback(params, gm, request)
-    if result.success == auths.AuthenticationState.FAIL or (
-        result.success == auths.AuthenticationState.SUCCESS and not gm.hasValidGroups()
+    if result.success == types.auth.AuthenticationState.FAIL or (
+        result.success == types.auth.AuthenticationState.SUCCESS and not gm.hasValidGroups()
     ):
-        raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
+        raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
 
-    if result.success == auths.AuthenticationState.REDIRECT:
+    if result.success == types.auth.AuthenticationState.REDIRECT:
         return AuthResult(url=result.url)
 
     if result.username:
@@ -374,7 +374,7 @@ def authenticateViaCallback(
     else:
         logger.warning('Authenticator %s returned empty username', authenticator.name)
 
-    raise auths.exceptions.InvalidUserException('User doesn\'t has access to UDS')
+    raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
 
 
 def authCallbackUrl(authenticator: models.Authenticator) -> str:
@@ -488,7 +488,7 @@ def webLogout(
             authenticator = request.user.manager.getInstance()
             username = request.user.name
             logout = authenticator.logout(request, username)
-            if logout and logout.success == auths.AuthenticationState.REDIRECT:
+            if logout and logout.success == types.auth.AuthenticationState.REDIRECT:
                 exit_url = logout.url or exit_url
             if request.user.id != ROOT_ID:
                 # Log the event if not root user

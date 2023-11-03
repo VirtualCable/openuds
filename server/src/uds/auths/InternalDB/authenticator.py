@@ -39,7 +39,7 @@ import dns.resolver
 import dns.reversename
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types
+from uds.core import auths, types, exceptions, consts
 from uds.core.auths.auth import authLogLogin
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
@@ -147,25 +147,25 @@ class InternalDBAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         username = username.lower()
         dbAuth = self.dbObj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
             authLogLogin(request, self.dbObj(), username, 'Invalid user')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
         if CryptoManager().checkHash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
-            return auths.SUCCESS_AUTH
+            return types.auth.SUCCESS_AUTH
 
         authLogLogin(request, self.dbObj(), username, 'Invalid password')
-        return auths.FAILED_AUTH
+        return types.auth.FAILED_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         dbAuth = self.dbObj()

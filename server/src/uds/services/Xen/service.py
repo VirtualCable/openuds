@@ -190,7 +190,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
             validators.validateBasename(self.baseName.value, self.lenName.num())
 
             if int(self.memory.value) < 256:
-                raise exceptions.ValidationError(
+                raise exceptions.validation.ValidationError(
                     _('The minimum allowed memory is 256 Mb')
                 )
 

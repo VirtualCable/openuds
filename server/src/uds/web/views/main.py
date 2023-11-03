@@ -45,7 +45,7 @@ from django.utils.translation import gettext as _
 from uds.core.types.request import ExtendedHttpRequest
 
 from uds.core.types.request import ExtendedHttpRequestWithUser
-from uds.core.auths import auth, exceptions, AuthenticationState
+from uds.core.auths import auth
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
@@ -55,7 +55,7 @@ from uds.web.forms.MFAForm import MFAForm
 from uds.web.util.authentication import checkLogin
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
-from uds.core import mfas, types
+from uds.core import mfas, types, exceptions
 from uds import auths, models
 from uds.core.util.model import getSqlStampInSeconds
 
@@ -151,7 +151,7 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
-    url = logoutResponse.url if logoutResponse.success == AuthenticationState.REDIRECT else None
+    url = logoutResponse.url if logoutResponse.success == types.auth.AuthenticationState.REDIRECT else None
         
     return auth.webLogout(request, url or request.session.get('logouturl', None))
 
@@ -256,7 +256,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
                     )
 
                 return response
-            except exceptions.MFAError as e:
+            except exceptions.auth.MFAError as e:
                 logger.error('MFA error: %s', e)
                 tries += 1
                 request.session['mfa_tries'] = tries

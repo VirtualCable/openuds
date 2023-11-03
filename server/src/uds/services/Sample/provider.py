@@ -181,7 +181,7 @@ class Provider(services.ServiceProvider):
         # values are only passed from administration client. Internals
         # instantiations are always empty.
         if values and self.methAlive.isTrue():
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 _('Methuselah is not alive!!! :-)')
             )
 
@@ -222,7 +222,7 @@ class Provider(services.ServiceProvider):
                 instance.methAge.value,
                 instance.methAlive.value,
             )
-        except exceptions.ValidationError as e:
+        except exceptions.validation.ValidationError as e:
             # If we say that meth is alive, instantiation will
             return [False, str(e)]
         except Exception as e:

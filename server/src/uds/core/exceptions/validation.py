@@ -30,16 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 
-# Constants for Visibility
-VISIBLE: typing.Final[str] = 'v'
-HIDDEN: typing.Final[str] = 'h'
-DISABLED: typing.Final[str] = 'd'
+from .common import UDSException
 
-# net_filter
-# Note: this are STANDARD values used on "default field" networks on RESP API
-# Named them for better reading, but cannot be changed, since they are used on RESP API
-NO_FILTERING: typing.Final[str] = 'n'
-ALLOW: typing.Final[str] = 'a'
-DENY: typing.Final[str] = 'd'
+class ValidationError(UDSException):
+    """
+    Exception used to indicate that the params assigned are invalid
+    """

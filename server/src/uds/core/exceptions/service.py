@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2012-2019 Virtual Cable S.L.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -31,39 +31,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+from .common import UDSException
 
-class AuthenticatorException(Exception):
+class TransportError(UDSException):
     """
-    Generic authentication exception
-    """
-
-
-class InvalidUserException(AuthenticatorException):
-    """
-    Invalid user specified. The user cant access the requested service
+    Exception used to indicate that the transport is not available
     """
 
-
-class InvalidAuthenticatorException(AuthenticatorException):
-    """
-    Invalida authenticator has been specified
-    """
-
-
-class Redirect(AuthenticatorException):
-    """
-    This exception indicates that a redirect is required.
-    Used in authUrlCallback to indicate that redirect is needed
-    """
-
-
-class Logout(AuthenticatorException):
-    """
-    This exceptions redirects logouts an user and redirects to an url
-    """
-
-
-class MFAError(AuthenticatorException):
-    """
-    This exceptions indicates than an MFA error has ocurred
-    """

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #
 # Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
@@ -29,74 +30,15 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
-import enum
-
-from django.urls import reverse
-
-if typing.TYPE_CHECKING:
-    from django.http import HttpRequest
-    from django.http.request import QueryDict
 
 
-class AuthenticationState(enum.IntEnum):
+class UDSException(Exception):
     """
-    Enumeration for authentication success
+    Base class for all UDS exceptions
     """
 
-    FAIL = 0
-    SUCCESS = 1
-    REDIRECT = 2
-
-
-class AuthenticationInternalUrl(enum.Enum):
+class BlockAccess(UDSException):
     """
-    Enumeration for authentication success
+    Exception used to signal that the access to a resource is blocked
     """
-
-    LOGIN = 'page.login'
-    LOGOUT = 'page.logout'
-
-    def getUrl(self) -> str:
-        """
-        Returns the url for the given internal url
-        """
-        return reverse(self.value)
-
-
-class AuthenticationResult(typing.NamedTuple):
-    success: AuthenticationState
-    url: typing.Optional[str] = None
-    username: typing.Optional[str] = None
-
-# Comodity values
-FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
-SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
-
-
-class AuthCallbackParams(typing.NamedTuple):
-    '''Parameters passed to auth callback stage2
-
-    This are the parameters that will be passes to the authenticator callback
-    '''
-
-    https: bool
-    host: str
-    path: str
-    port: str
-    get_params: 'QueryDict'
-    post_params: 'QueryDict'
-    query_string: str
-
-    @staticmethod
-    def fromRequest(request: 'HttpRequest') -> 'AuthCallbackParams':
-        return AuthCallbackParams(
-            https=request.is_secure(),
-            host=request.META['HTTP_HOST'],
-            path=request.META['PATH_INFO'],
-            port=request.META['SERVER_PORT'],
-            get_params=request.GET.copy(),
-            post_params=request.POST.copy(),
-            query_string=request.META['QUERY_STRING'],
-        )
 

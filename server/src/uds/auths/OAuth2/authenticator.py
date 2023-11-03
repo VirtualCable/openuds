@@ -375,7 +375,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
     def _processToken(
         self, userInfo: typing.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         # After this point, we don't mind about the token, we only need to authenticate user
         # and get some basic info from it
 
@@ -398,11 +398,11 @@ class OAuth2Authenticator(auths.Authenticator):
 
         # We don't mind about the token, we only need  to authenticate user
         # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
-        return auths.AuthenticationResult(auths.AuthenticationState.SUCCESS, username=username)
+        return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=username)
 
     def _processTokenOpenId(
         self, token_id: str, nonce: str, gm: 'auths.GroupsManager'
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         # Get token headers, to extract algorithm
         info = jwt.get_unverified_header(token_id)
         logger.debug('Token headers: %s', info)
@@ -428,19 +428,19 @@ class OAuth2Authenticator(auths.Authenticator):
                 pass
             except Exception as e:
                 logger.error('Error decoding token: %s', e)
-                return auths.FAILED_AUTH
+                return types.auth.FAILED_AUTH
 
         # All keys tested, none worked
         logger.error('Invalid token received on OAuth2 callback')
 
-        return auths.FAILED_AUTH
+        return types.auth.FAILED_AUTH
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         if not values:
             return
 
         if ' ' in values['name']:
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
@@ -449,9 +449,9 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if self.responseType.value in ('code', 'pkce', 'openid+code'):
             if self.commonGroups.value.strip() == '':
-                raise exceptions.ValidationError(gettext('Common groups is required for "code" response types'))
+                raise exceptions.validation.ValidationError(gettext('Common groups is required for "code" response types'))
             if self.tokenEndpoint.value.strip() == '':
-                raise exceptions.ValidationError(
+                raise exceptions.validation.ValidationError(
                     gettext('Token endpoint is required for "code" response types')
                 )
             # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
@@ -459,7 +459,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if self.responseType.value == 'openid+token_id':
             # Ensure we have a public key
             if self.publicKey.value.strip() == '':
-                raise exceptions.ValidationError(
+                raise exceptions.validation.ValidationError(
                     gettext('Public key is required for "openid+token_id" response type')
                 )
 
@@ -473,7 +473,7 @@ class OAuth2Authenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         match self.responseType.value:
             case 'code' | 'pkce':
                 return self.authCallbackCode(parameters, gm, request)
@@ -491,8 +491,8 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         request: 'types.request.ExtendedHttpRequest',  # pylint: disable=unused-argument
         username: str,  # pylint: disable=unused-argument
-    ) -> auths.AuthenticationResult:
-        return auths.SUCCESS_AUTH
+    ) -> types.auth.AuthenticationResult:
+        return types.auth.SUCCESS_AUTH
 
     def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
         """
@@ -517,7 +517,7 @@ class OAuth2Authenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """Process the callback for code authorization flow"""
         state = parameters.get_params.get('state', '')
         # Remove state from cache
@@ -526,13 +526,13 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if not state or not code_verifier:
             logger.error('Invalid state received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Get the code
         code = parameters.get_params.get('code', '')
         if code == '':
             logger.error('Invalid code received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Restore code_verifier "none" to None
         if code_verifier == 'none':
@@ -546,7 +546,7 @@ class OAuth2Authenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """Process the callback for PKCE authorization flow"""
         state = parameters.get_params.get('state', '')
         stateValue = self.cache.get(state)
@@ -554,7 +554,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if not state or not stateValue:
             logger.error('Invalid state received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Get the token, token_type, expires
         token = TokenInfo(
@@ -574,7 +574,7 @@ class OAuth2Authenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
         nonce = self.cache.get(state)
@@ -582,20 +582,20 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if not state or not nonce:
             logger.error('Invalid state received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Get the code
         code = parameters.post_params.get('code', '')
         if code == '':
             logger.error('Invalid code received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Get the token, token_type, expires
         token = self._requestToken(code)
 
         if not token.id_token:
             logger.error('No id_token received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         return self._processTokenOpenId(token.id_token, nonce, gm)
 
@@ -604,7 +604,7 @@ class OAuth2Authenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
         nonce = self.cache.get(state)
@@ -612,12 +612,12 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if not state or not nonce:
             logger.error('Invalid state received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         # Get the id_token
         id_token = parameters.post_params.get('id_token', '')
         if id_token == '':
             logger.error('Invalid id_token received on OAuth2 callback')
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         return self._processTokenOpenId(id_token, nonce, gm)

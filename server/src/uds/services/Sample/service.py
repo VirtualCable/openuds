@@ -164,7 +164,7 @@ class ServiceOne(services.Service):
         # so we only need to validate params if values is not None
         if values:
             if self.colour.value == 'nonsense':
-                raise exceptions.ValidationError(
+                raise exceptions.validation.ValidationError(
                     'The selected colour is invalid!!!'
                 )
 

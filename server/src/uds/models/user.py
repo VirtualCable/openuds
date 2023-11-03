@@ -35,7 +35,7 @@ import typing
 
 from django.db import models
 from django.db.models import Count, Q, signals
-from uds.core import auths, mfas
+from uds.core import auths, mfas, types
 from uds.core.util import log, storage
 
 from .authenticator import Authenticator
@@ -136,7 +136,7 @@ class User(UUIDModel):
         self.last_access = getSqlDatetime()
         self.save(update_fields=['last_access'])
 
-    def logout(self, request: 'ExtendedHttpRequest') -> auths.AuthenticationResult:
+    def logout(self, request: 'ExtendedHttpRequest') -> types.auth.AuthenticationResult:
         """
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used

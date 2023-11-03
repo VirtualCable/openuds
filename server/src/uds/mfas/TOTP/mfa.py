@@ -40,10 +40,8 @@ from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
 from uds.core.util.model import getSqlDatetime
-from uds.core import mfas
+from uds.core import mfas, exceptions
 from uds.core.ui import gui
-
-from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -201,7 +199,7 @@ class TOTP_MFA(mfas.MFA):
             return
 
         if self.cache.get(userId + code) is not None:
-            raise exceptions.MFAError(gettext('Code is already used. Wait a minute and try again.'))
+            raise exceptions.auth.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
         secret, qrShown = self._userData(userId)
@@ -210,7 +208,7 @@ class TOTP_MFA(mfas.MFA):
         if not self.getTOTP(userId, username).verify(
             code, valid_window=self.validWindow.num(), for_time=getSqlDatetime()
         ):
-            raise exceptions.MFAError(gettext('Invalid code'))
+            raise exceptions.auth.MFAError(gettext('Invalid code'))
 
         self.cache.put(userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1))
 

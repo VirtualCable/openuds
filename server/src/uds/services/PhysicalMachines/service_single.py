@@ -80,7 +80,7 @@ class IPSingleMachineService(IPServiceBase):
             return
 
         if not net.isValidHost(self.ip.value):
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 gettext('Invalid server used: "{}"'.format(self.ip.value))
             )
 

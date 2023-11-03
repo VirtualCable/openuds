@@ -142,15 +142,15 @@ class WinDomainOsManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['domain'] == '':
-                raise exceptions.ValidationError(_('Must provide a domain!'))
+                raise exceptions.validation.ValidationError(_('Must provide a domain!'))
             # if values['domain'].find('.') == -1:
             #    raise exceptions.ValidationException(_('Must provide domain in FQDN'))
             if values['account'] == '':
-                raise exceptions.ValidationError(_('Must provide an account to add machines to domain!'))
+                raise exceptions.validation.ValidationError(_('Must provide an account to add machines to domain!'))
             if values['account'].find('\\') != -1:
-                raise exceptions.ValidationError(_('DOM\\USER form is not allowed!'))
+                raise exceptions.validation.ValidationError(_('DOM\\USER form is not allowed!'))
             if values['password'] == '':
-                raise exceptions.ValidationError(_('Must provide a password for the account!'))
+                raise exceptions.validation.ValidationError(_('Must provide a password for the account!'))
             self._domain = values['domain']
             self._ou = values['ou'].strip()
             self._account = values['account']

@@ -34,10 +34,9 @@ import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from uds.core.auths.authenticator import AuthenticationResult, AuthenticationState
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
-from uds.core import auths, exceptions
+from uds.core import auths, exceptions, types, consts
 
 if typing.TYPE_CHECKING:
     from django.http import (
@@ -119,9 +118,7 @@ class SampleAuth(auths.Authenticator):
     # : We will define a simple form where we will use a simple
     # : list editor to allow entering a few group names
 
-    groups = gui.EditableListField(
-        label=_('Groups'), default=['Gods', 'Daemons', 'Mortals']
-    )
+    groups = gui.EditableListField(label=_('Groups'), default=['Gods', 'Daemons', 'Mortals'])
 
     def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
         """
@@ -134,7 +131,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise exceptions.ValidationError(_('We need more than two groups!'))
+            raise exceptions.validation.ValidationError(_('We need more than two groups!'))
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         """
@@ -175,7 +172,7 @@ class SampleAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         This method is invoked by UDS whenever it needs an user to be authenticated.
         It is used from web interface, but also from administration interface to
@@ -217,10 +214,8 @@ class SampleAuth(auths.Authenticator):
 
         :note: groupsManager is an in/out parameter
         """
-        if (
-            username != credentials
-        ):  # All users with same username and password are allowed
-            return auths.FAILED_AUTH
+        if username != credentials:  # All users with same username and password are allowed
+            return types.auth.FAILED_AUTH
 
         # Now the tricky part. We will make this user belong to groups that contains at leat
         # two letters equals to the groups names known by UDS
@@ -230,7 +225,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-        return auths.SUCCESS_AUTH
+        return types.auth.SUCCESS_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         """
@@ -247,9 +242,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-    def getJavascript(
-        self, request: 'HttpRequest'   # pylint: disable=unused-argument
-    ) -> typing.Optional[str]: 
+    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:  # pylint: disable=unused-argument
         """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.
@@ -272,20 +265,16 @@ class SampleAuth(auths.Authenticator):
         # I know, this is a bit ugly, but this is just a sample :-)
 
         res = '<p>Login name: <input id="logname" type="text"/></p>'
-        res += (
-            '<p><a href="" onclick="window.location.replace(\''
-            + self.callbackUrl()
-            + '?user='
-        )
+        res += '<p><a href="" onclick="window.location.replace(\'' + self.callbackUrl() + '?user='
         res += '\' + $(\'#logname\').val()); return false;">Login</a></p>'
         return res
 
     def authCallback(
         self,
         parameters: typing.Dict[str, typing.Any],
-        gm: 'auths.GroupsManager',               # pylint: disable=unused-argument
+        gm: 'auths.GroupsManager',  # pylint: disable=unused-argument
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
-    ) -> AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         We provide this as a sample of callback for an user.
         We will accept all petitions that has "user" parameter
@@ -301,7 +290,7 @@ class SampleAuth(auths.Authenticator):
         """
         user = parameters.get('user', None)
 
-        return AuthenticationResult(AuthenticationState.SUCCESS, username=user)
+        return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=user)
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """

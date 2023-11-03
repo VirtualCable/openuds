@@ -39,14 +39,13 @@ from django.core.exceptions import ValidationError
 
 from uds.core.util.state import State
 
-from uds.core.auths.exceptions import AuthenticatorException
 from uds.core.auths.user import User as aUser
 from uds.core.util import log, ensure
 from uds.core.util.model import processUuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
 from uds.REST import RequestError
-from uds.core.consts.images import DEFAULT_THUMB_BASE64
+from uds.core import consts, exceptions
 
 from uds.REST.model import DetailHandler
 
@@ -84,10 +83,9 @@ class Users(DetailHandler):
 
     def getItems(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
+
         # processes item to change uuid key for id
-        def uuid_to_id(
-            iterable: typing.Iterable[typing.Any]  # will get values from a queryset
-        ):
+        def uuid_to_id(iterable: typing.Iterable[typing.Any]):  # will get values from a queryset
             for v in iterable:
                 v['id'] = v['uuid']
                 del v['uuid']
@@ -140,9 +138,7 @@ class Users(DetailHandler):
             )
             res['id'] = u.uuid
             res['role'] = (
-                res['staff_member']
-                and (res['is_admin'] and _('Admin') or _('Staff member'))
-                or _('User')
+                res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
             )
             usr = aUser(u)
             res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
@@ -155,9 +151,7 @@ class Users(DetailHandler):
     def getTitle(self, parent: 'Model') -> str:
         try:
             return _('Users of {0}').format(
-                Authenticator.objects.get(
-                    uuid=processUuid(self._kwargs['parent_id'])
-                ).name
+                Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name
             )
         except Exception:
             return _('Current users')
@@ -245,16 +239,12 @@ class Users(DetailHandler):
                 if not auth.isExternalSource and not user.parent:
                     groups = self.readFieldsFromParams(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
-                    user.groups.set(
-                        g
-                        for g in parent.groups.filter(uuid__in=groups)
-                        if g.is_meta is False
-                    )
+                    user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
         except User.DoesNotExist:
             raise self.invalidItemException() from None
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)')) from None
-        except AuthenticatorException as e:
+        except exceptions.auth.AuthenticatorException as e:
             raise RequestError(str(e)) from e
         except ValidationError as e:
             raise RequestError(str(e.message)) from e
@@ -310,9 +300,7 @@ class Users(DetailHandler):
                 {
                     'id': i.uuid,
                     'name': i.name,
-                    'thumb': i.image.thumb64
-                    if i.image is not None
-                    else DEFAULT_THUMB_BASE64,
+                    'thumb': i.image.thumb64 if i.image is not None else consts.images.DEFAULT_THUMB_BASE64,
                     'user_services_count': i.userServices.exclude(
                         state__in=(State.REMOVED, State.ERROR)
                     ).count(),
@@ -367,9 +355,7 @@ class Groups(DetailHandler):
                     'meta_if_any': i.meta_if_any,
                 }
                 if i.is_meta:
-                    val['groups'] = list(
-                        x.uuid for x in i.groups.all().order_by('name')
-                    )
+                    val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
                 res.append(val)
             if multi:
                 return res
@@ -475,9 +461,7 @@ class Groups(DetailHandler):
             if is_meta:
                 # Do not allow to add meta groups to meta groups
                 group.groups.set(
-                    i
-                    for i in parent.groups.filter(uuid__in=self._params['groups'])
-                    if i.is_meta is False
+                    i for i in parent.groups.filter(uuid__in=self._params['groups']) if i.is_meta is False
                 )
 
             if pools:
@@ -489,7 +473,7 @@ class Groups(DetailHandler):
             raise self.invalidItemException() from None
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)')) from None
-        except AuthenticatorException as e:
+        except exceptions.auth.AuthenticatorException as e:
             raise RequestError(str(e)) from e
         except RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
@@ -506,9 +490,7 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidItemException() from None
 
-    def servicesPools(
-        self, parent: 'Model', item: str
-    ) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def servicesPools(self, parent: 'Model', item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
@@ -518,9 +500,7 @@ class Groups(DetailHandler):
                 {
                     'id': i.uuid,
                     'name': i.name,
-                    'thumb': i.image.thumb64
-                    if i.image is not None
-                    else DEFAULT_THUMB_BASE64,
+                    'thumb': i.image.thumb64 if i.image is not None else consts.images.DEFAULT_THUMB_BASE64,
                     'user_services_count': i.userServices.exclude(
                         state__in=(State.REMOVED, State.ERROR)
                     ).count(),
@@ -530,9 +510,7 @@ class Groups(DetailHandler):
 
         return res
 
-    def users(
-        self, parent: 'Model', item: str
-    ) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def users(self, parent: 'Model', item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         parent = ensure.is_instance(parent, Authenticator)
         group = parent.groups.get(uuid=processUuid(uuid))

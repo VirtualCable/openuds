@@ -40,8 +40,8 @@ import typing
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core.module import Module
 from uds.core.util.model import getSqlDatetime
-from uds.core.auths import exceptions
 from uds.models.network import Network
+from uds.core import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -205,7 +205,7 @@ class MFA(Module):
         If raises an error, the MFA code was not sent, and the user needs to enter the MFA code.
         """
         logger.error('MFA.sendCode not implemented')
-        raise exceptions.MFAError('MFA.sendCode not implemented')
+        raise exceptions.auth.MFAError('MFA.sendCode not implemented')
 
     def _getData(
         self, request: 'ExtendedHttpRequest', userId: str
@@ -326,7 +326,7 @@ class MFA(Module):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
                     self._removeData(request, userId)
-                    raise exceptions.MFAError('MFA Code expired')
+                    raise exceptions.auth.MFAError('MFA Code expired')
 
                 # Check if the code is valid
                 if data[1] == code:
@@ -337,7 +337,7 @@ class MFA(Module):
             # Any error means invalid code
             err = str(e)
 
-        raise exceptions.MFAError(err)
+        raise exceptions.auth.MFAError(err)
 
     def resetData(
         self,
@@ -355,7 +355,7 @@ class MFA(Module):
         """
         mfa = user.manager.mfa
         if not mfa:
-            raise exceptions.MFAError('MFA is not enabled')
+            raise exceptions.auth.MFAError('MFA is not enabled')
 
         return hashlib.sha3_256(
             (user.name + (user.uuid or '') + mfa.uuid).encode()

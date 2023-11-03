@@ -86,9 +86,9 @@ class WinRandomPassManager(WindowsOsManager):
         super().__init__(environment, values)
         if values:
             if values['userAccount'] == '':
-                raise exceptions.ValidationError(_('Must provide an user account!!!'))
+                raise exceptions.validation.ValidationError(_('Must provide an user account!!!'))
             if values['password'] == '':
-                raise exceptions.ValidationError(_('Must provide a password for the account!!!'))
+                raise exceptions.validation.ValidationError(_('Must provide a password for the account!!!'))
             self._userAccount = values['userAccount']
             self._password = values['password']
         else:

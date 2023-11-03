@@ -104,12 +104,12 @@ class IPAuth(auths.Authenticator):
         credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         if username == self.getIp(request):
             self.getGroups(username, groupsManager)
-            return auths.SUCCESS_AUTH
-        return auths.FAILED_AUTH
+            return types.auth.SUCCESS_AUTH
+        return types.auth.FAILED_AUTH
 
     def isAccesibleFrom(self, request: 'ExtendedHttpRequest'):
         """
@@ -127,15 +127,15 @@ class IPAuth(auths.Authenticator):
         credentials: str,  # pylint: disable=unused-argument
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
         self.getGroups(username, groupsManager)
         if groupsManager.hasValidGroups() and self.dbObj().isValidUser(
             username, True
         ):
-            return auths.SUCCESS_AUTH
-        return auths.FAILED_AUTH
+            return types.auth.SUCCESS_AUTH
+        return types.auth.FAILED_AUTH
 
     @staticmethod
     def test(env, data):  # pylint: disable=unused-argument

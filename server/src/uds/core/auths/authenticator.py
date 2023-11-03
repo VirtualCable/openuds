@@ -32,15 +32,13 @@ Base module for all authenticators
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import logging
 import typing
 
 from django.utils.translation import gettext_noop as _
-from django.urls import reverse
 
 from uds.core.module import Module
-from uds.core import consts
+from uds.core import consts, types
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -55,40 +53,6 @@ if typing.TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-
-
-class AuthenticationState(enum.IntEnum):
-    """
-    Enumeration for authentication success
-    """
-
-    FAIL = 0
-    SUCCESS = 1
-    REDIRECT = 2
-
-
-class AuthenticationInternalUrl(enum.Enum):
-    """
-    Enumeration for authentication success
-    """
-
-    LOGIN = 'page.login'
-
-    def getUrl(self) -> str:
-        """
-        Returns the url for the given internal url
-        """
-        return reverse(self.value)
-
-
-class AuthenticationResult(typing.NamedTuple):
-    success: AuthenticationState
-    url: typing.Optional[str] = None
-    username: typing.Optional[str] = None
-
-
-FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
-SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
 
 
 class Authenticator(Module):
@@ -202,7 +166,7 @@ class Authenticator(Module):
     # : group class
     groupType: typing.ClassVar[typing.Type[Group]] = Group
 
-    _dbObj: typing.Optional['models.Authenticator'] = None # Cached dbAuth object
+    _dbObj: typing.Optional['models.Authenticator'] = None  # Cached dbAuth object
 
     def __init__(
         self,
@@ -356,7 +320,7 @@ class Authenticator(Module):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         This method must be overriden, and is responsible for authenticating
         users.
@@ -394,7 +358,7 @@ class Authenticator(Module):
                This is done in this way, because UDS has only a subset of groups for this user, and
                we let the authenticator decide inside wich groups of UDS this users is included.
         """
-        return FAILED_AUTH
+        return types.auth.FAILED_AUTH
 
     def isAccesibleFrom(self, request: 'HttpRequest') -> bool:
         """
@@ -429,7 +393,7 @@ class Authenticator(Module):
         credentials: str,
         groupsManager: 'GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
         the username/credentials in an alternative way.
@@ -469,7 +433,7 @@ class Authenticator(Module):
         self,
         request: 'types.request.ExtendedHttpRequest',
         username: str,
-    ) -> AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         Invoked whenever an user logs out.
 
@@ -495,7 +459,7 @@ class Authenticator(Module):
                invoked if user requests "log out", but maybe it will never be invoked.
 
         """
-        return SUCCESS_AUTH
+        return types.auth.SUCCESS_AUTH
 
     def webLogoutHook(
         self,
@@ -566,7 +530,7 @@ class Authenticator(Module):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
         request: 'types.request.ExtendedHttpRequest',
-    ) -> AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         There is a view inside UDS, an url, that will redirect the petition
         to this callback.
@@ -603,7 +567,7 @@ class Authenticator(Module):
                There will be calls to getGroups one an again, and also to getRealName, not just
                at login, but at future (from admin interface, at user editing for example)
         """
-        return FAILED_AUTH
+        return types.auth.FAILED_AUTH
 
     def getInfo(
         self, parameters: typing.Mapping[str, str]

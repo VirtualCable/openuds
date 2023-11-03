@@ -52,6 +52,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from django.conf import settings
+from regex import E
 
 from uds.core.util import singleton
 
@@ -293,14 +294,21 @@ class CryptoManager(metaclass=singleton.Singleton):
         elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To string
         else:
-            obj = str(obj)
+            try:
+                obj = str(obj)
+            except Exception:
+                obj = str(hash(obj))  # Get hash of object
 
         return str(
             uuid.uuid5(self._namespace, obj)
         ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
-    def randomString(self, length: int = 40, digits: bool = True) -> str:
-        base = string.ascii_letters + (string.digits if digits else '')
+    def randomString(self, length: int = 40, digits: bool = True, punctuation: bool = False) -> str:
+        base = (
+            string.ascii_letters
+            + (string.digits if digits else '')
+            + (string.punctuation if punctuation else '')
+        )
         return ''.join(secrets.choice(base) for _ in range(length))
 
     def unique(self) -> str:

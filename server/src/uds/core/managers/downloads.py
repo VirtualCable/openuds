@@ -63,20 +63,17 @@ class DownloadsManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def manager() -> 'DownloadsManager':
-        return (
-            DownloadsManager()
-        )  # Singleton pattern will return always the same instance
+        # Singleton pattern will return always the same instance
+        return DownloadsManager()
 
-    def registerDownloadable(
-        self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'
-    ):
+    def registerDownloadable(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
         """
         Registers a downloadable file.
         @param name: name shown
         @param path: path to file
         @params zip: If download as zip
         """
-        _id = CryptoManager().uuid(name)
+        _id = CryptoManager.manager().uuid(name)
         self._downloadables[_id] = {
             'name': name,
             'comment': comment,
@@ -89,9 +86,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
 
     def send(self, request, _id) -> HttpResponse:
         if _id not in self._downloadables:
-            logger.error(
-                'Downloadable id %s not found in %s!!!', _id, self._downloadables
-            )
+            logger.error('Downloadable id %s not found in %s!!!', _id, self._downloadables)
             raise Http404
         return self._send_file(
             request,
@@ -106,8 +101,12 @@ class DownloadsManager(metaclass=singleton.Singleton):
         memory at once. The FileWrapper will turn the file object into an
         iterator for chunks of 8KB.
         """
-        wrapper = FileWrapper(open(filename, 'rb'))  # pylint: disable=consider-using-with
-        response = HttpResponse(wrapper, content_type=mime)
-        response['Content-Length'] = os.path.getsize(filename)
-        response['Content-Disposition'] = 'attachment; filename=' + name
-        return response
+        try:
+            wrapper = FileWrapper(open(filename, 'rb'))  # pylint: disable=consider-using-with
+            response = HttpResponse(wrapper, content_type=mime)
+            response['Content-Length'] = os.path.getsize(filename)
+            response['Content-Disposition'] = 'attachment; filename=' + name
+            return response
+        except Exception as e:
+            logger.error('Error sending file %s: %s', filename, e)
+            raise Http404

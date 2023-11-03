@@ -36,7 +36,7 @@ import ldap
 import ldap.filter
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types
+from uds.core import auths, types, consts, exceptions
 from uds.core.auths.auth import authLogLogin
 from uds.core.ui import gui
 from uds.core.util import ldaputil
@@ -48,6 +48,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 LDAP_RESULT_LIMIT = 100
+
 
 # pylint: disable=too-many-instance-attributes
 class SimpleLDAPAuthenticator(auths.Authenticator):
@@ -69,9 +70,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=3,
-        tooltip=_(
-            'If checked, the connection will be ssl, using port 636 instead of 389'
-        ),
+        tooltip=_('If checked, the connection will be ssl, using port 636 instead of 389'),
     )
     username = gui.TextField(
         length=64,
@@ -103,9 +102,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         label=_('Verify SSL'),
         default=True,
         order=11,
-        tooltip=_(
-            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
-        ),
+        tooltip=_('If checked, SSL verification will be enforced. If not, SSL verification will be disabled'),
         tab=types.ui.Tab.ADVANCED,
     )
     certificate = gui.TextField(
@@ -149,9 +146,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         label=_('User Name Attr'),
         default='uid',
         order=33,
-        tooltip=_(
-            'Attributes that contains the user name (list of comma separated values)'
-        ),
+        tooltip=_('Attributes that contains the user name (list of comma separated values)'),
         required=True,
         tab=_('Ldap info'),
     )
@@ -240,9 +235,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._userIdAttr = values['userIdAttr']
             self._groupIdAttr = values['groupIdAttr']
             self._memberAttr = values['memberAttr']
-            self._userNameAttr = values['userNameAttr'].replace(
-                ' ', ''
-            )  # Removes white spaces
+            self._userNameAttr = values['userNameAttr'].replace(' ', '')  # Removes white spaces
             self._mfaAttr = values['mfaAttr']
             self._verifySsl = gui.toBool(values['verifySsl'])
             self._certificate = values['certificate']
@@ -438,7 +431,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         '''
         Must authenticate the user.
         We can have to different situations here:
@@ -454,18 +447,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             if user is None:
                 authLogLogin(request, self.dbObj(), username, 'Invalid user')
-                return auths.FAILED_AUTH
+                return types.auth.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
-                self.__connectAs(
-                    user['dn'], credentials
-                )  # Will raise an exception if it can't connect
+                self.__connectAs(user['dn'], credentials)  # Will raise an exception if it can't connect
             except Exception:
-                authLogLogin(
-                    request, self.dbObj(), username, 'Invalid password'
-                )
-                return auths.FAILED_AUTH
+                authLogLogin(request, self.dbObj(), username, 'Invalid password')
+                return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set
             if self._mfaAttr:
@@ -476,10 +465,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             groupsManager.validate(self.__getGroups(user))
 
-            return auths.SUCCESS_AUTH
+            return types.auth.SUCCESS_AUTH
 
         except Exception:
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         '''
@@ -489,7 +478,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         res = self.__getUser(usrData['name'])
         if res is None:
-            raise auths.exceptions.AuthenticatorException(_('Username not found'))
+            raise exceptions.auth.AuthenticatorException(_('Username not found'))
         # Fills back realName field
         usrData['real_name'] = self.__getUserRealName(res)
 
@@ -522,7 +511,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         res = self.__getGroup(groupData['name'])
         if res is None:
-            raise auths.exceptions.AuthenticatorException(_('Group not found'))
+            raise exceptions.auth.AuthenticatorException(_('Group not found'))
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
         '''
@@ -532,7 +521,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         user = self.__getUser(username)
         if user is None:
-            raise auths.exceptions.AuthenticatorException(_('Username not found'))
+            raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self.__getGroups(user))
 
     def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
@@ -555,9 +544,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return res
         except Exception as e:
             logger.exception("Exception: ")
-            raise auths.exceptions.AuthenticatorException(
-                _('Too many results, be more specific')
-            ) from e
+            raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
     def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
         try:
@@ -574,9 +561,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return res
         except Exception as e:
             logger.exception("Exception: ")
-            raise auths.exceptions.AuthenticatorException(
-                _('Too many results, be more specific')
-            ) from e
+            raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
     @staticmethod
     def test(env, data) -> typing.List[typing.Any]:
@@ -589,9 +574,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def testConnection(
         self,
-    ) -> typing.List[
-        typing.Any
-    ]:  # pylint: disable=too-many-return-statements,too-many-branches
+    ) -> typing.List[typing.Any]:  # pylint: disable=too-many-return-statements,too-many-branches
         try:
             con = self.__connection()
         except Exception as e:
@@ -617,9 +600,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user class seems to be incorrect (no user found by that class)'
-                ),
+                _('Ldap user class seems to be incorrect (no user found by that class)'),
             ]
         except Exception:  # nosec: Flow control
             # If found 1 or more, all right
@@ -640,9 +621,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap group class seems to be incorrect (no group found by that class)'
-                ),
+                _('Ldap group class seems to be incorrect (no group found by that class)'),
             ]
         except Exception:  # nosec: Flow control
             # If found 1 or more, all right
@@ -663,9 +642,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user id attribute seems to be incorrect (no user found by that attribute)'
-                ),
+                _('Ldap user id attribute seems to be incorrect (no user found by that attribute)'),
             ]
         except Exception:  # nosec: Flow control
             # If found 1 or more, all right
@@ -686,9 +663,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap group id attribute seems to be incorrect (no group found by that attribute)'
-                ),
+                _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'),
             ]
         except Exception:  # nosec: Flow control
             # If found 1 or more, all right
@@ -738,9 +713,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                     ok = True
                     break
             if ok is False:
-                raise Exception(
-                    _('Can\'t locate any group with the membership attribute specified')
-                )
+                raise Exception(_('Can\'t locate any group with the membership attribute specified'))
         except Exception as e:
             return [False, str(e)]
 

@@ -35,7 +35,7 @@ import typing
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types
+from uds.core import auths, types, consts
 from uds.core.auths.auth import authLogLogin
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
@@ -146,7 +146,7 @@ class RadiusAuth(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         try:
             connection = self.radiusClient()
             groups, mfaCode, state = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
@@ -167,7 +167,7 @@ class RadiusAuth(auths.Authenticator):
                 username,
                 'Access denied by Raiuds',
             )
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
         if self.globalGroup.value.strip():
             groups.append(self.globalGroup.value.strip())
@@ -179,7 +179,7 @@ class RadiusAuth(auths.Authenticator):
         # Validate groups
         groupsManager.validate(groups)
 
-        return auths.SUCCESS_AUTH
+        return types.auth.SUCCESS_AUTH
 
     def getGroups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         with self.storage.map() as storage:

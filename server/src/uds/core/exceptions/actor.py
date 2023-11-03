@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2019 Virtual Cable S.L.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,40 +30,25 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from . import common
 
 
-class UDSException(Exception):
+class ActorException(common.UDSException):
     """
-    Base class for all UDS exceptions
-    """
-
-
-class ValidationError(UDSException):
-    """
-    Exception used to indicate that the params assigned are invalid
+    Base class for all Actor exceptions
     """
 
-
-class TransportError(UDSException):
-    """
-    Exception used to indicate that the transport is not available
-    """
-
-
-class BlockAccess(UDSException):
-    """
-    Exception used to signal that the access to a resource is blocked
-    """
 
 # Actor related exceptions
-class NoActorComms(UDSException):
+class NoActorComms(ActorException):
     """
     Exception used to signal that the actor user service does not have comms url
     """
+
     pass
 
 
-class OldActorVersion(NoActorComms):
+class OldActorVersion(ActorException):
     """
     Exception used to signal that the actor user service version is too old
     """

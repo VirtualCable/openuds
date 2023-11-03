@@ -36,7 +36,7 @@ import logging
 from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
-from uds.core import mfas
+from uds.core import mfas, exceptions
 from uds.core.ui import gui
 
 from uds.auths.Radius import client
@@ -48,7 +48,6 @@ from uds.auths.Radius.client import (
     # NEEDED
 )
 from uds.core.auths.auth import webPassword
-from uds.core.auths import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
@@ -291,4 +290,4 @@ class RadiusOTP(mfas.MFA):
             username,
             request.ip,
         )
-        raise exceptions.MFAError(err)
+        raise exceptions.auth.MFAError(err)

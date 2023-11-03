@@ -112,47 +112,56 @@ class Login(Handler):
             raise AccessDenied('Too many fails')
 
         try:
-            if (
-                'auth_id' not in self._params
-                and 'authId' not in self._params
-                and 'auth_id' not in self._params
-                and 'authSmallName' not in self._params
-                and 'authLabel' not in self._params
-                and 'auth_label' not in self._params
-                and 'auth' not in self._params
+            # if (
+            #     'auth_id' not in self._params
+            #     and 'authId' not in self._params
+            #     and 'auth_id' not in self._params
+            #     and 'authSmallName' not in self._params
+            #     and 'authLabel' not in self._params
+            #     and 'auth_label' not in self._params
+            #     and 'auth' not in self._params
+            # ):
+            #     raise RequestError('Invalid parameters (no auth)')
+
+            # Check if we have a valid auth
+            if not any(
+                i in self._params
+                for i in ('auth_id', 'authId', 'authSmallName', 'authLabel', 'auth_label', 'auth')
             ):
                 raise RequestError('Invalid parameters (no auth)')
 
-            scrambler: str = ''.join(
-                random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)
+            authId: typing.Optional[str] = self._params.get(
+                'auth_id',
+                self._params.get('authId', None),  # Old compat, alias
             )
-            authId: typing.Optional[str] = self._params.get('authId', self._params.get('auth_id', None))
             authLabel: typing.Optional[str] = self._params.get(
                 'auth_label',
-                self._params.get('authSmallName', None),
+                self._params.get(
+                    'authSmallName',  # Old compat name
+                    self._params.get('authLabel', None),  # Old compat name
+                ),
             )
             authName: typing.Optional[str] = self._params.get('auth', None)
             platform: str = self._params.get('platform', self._request.os.os.value[0])
 
-            username: str
-            password: str
-
-            username, password = self._params['username'], self._params['password']
+            username: str = self._params['username']
+            password: str = self._params['password']
             locale: str = self._params.get('locale', 'en')
-            if authName == 'admin' or authLabel == 'admin' or authId == '00000000-0000-0000-0000-000000000000':
+
+            # Generate a random scrambler
+            scrambler: str = CryptoManager.manager().randomString(32)
+            if (
+                authName == 'admin'
+                or authLabel == 'admin'
+                or authId == '00000000-0000-0000-0000-000000000000'
+                or (not authId and not authName and not authLabel)
+            ):
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().checkHash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
                     self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
                     return Login.result(result='ok', token=self.getAuthToken())
                 return Login.result(error='Invalid credentials')
-
-            # invalid login
-            if (
-                functools.reduce(lambda a, b: (a << 4) + b, [i for i in username.encode()])
-                == 474216907296766572900491101513
-            ):
-                return Login.result(result=bytes([i ^ 64 for i in b'\x13(%+(`-!`3()%2!+)`!..)']).decode())
 
             # Will raise an exception if no auth found
             if authId:
@@ -162,8 +171,8 @@ class Login(Handler):
             else:
                 auth = Authenticator.objects.get(small_name=authLabel)
 
-            if not password:
-                password = 'xdaf44tgas4xd5ñasdłe4g€@#½|«ð2'  # nosec: Extrange password if credential left empty. Value is not important, just not empty
+            # No matter in fact the password, just not empty (so it can be encrypted, but will be invalid anyway)
+            password = password or CryptoManager().randomString(32)
 
             logger.debug('Auth obj: %s', auth)
             authResult = authenticate(username, password, auth, self._request, True)
@@ -218,19 +227,22 @@ class Auths(Handler):
     authenticated = False  # By default, all handlers needs authentication
 
     def auths(self) -> typing.Iterable[typing.Dict[str, typing.Any]]:
-        paramAll: bool = self._params.get('all', 'false') == 'true'
+        paramAll: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():
             theType = auth.getType()
             if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
                 yield {
-                    'authId': auth.uuid,
+                    'authId': auth.uuid,  # Deprecated, use 'auth_id'
+                    'auth_id': auth.uuid,
                     'authSmallName': str(auth.small_name),  # Deprecated
-                    'authLabel': str(auth.small_name),
+                    'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
+                    'auth_label': str(auth.small_name),
                     'auth': auth.name,
                     'type': theType.typeType,
                     'priority': auth.priority,
-                    'isCustom': theType.isCustom(),
+                    'isCustom': theType.isCustom(), # Deprecated, use 'custom'
+                    'custom': theType.isCustom(),
                 }
 
     def get(self) -> typing.List[typing.Dict[str, typing.Any]]:

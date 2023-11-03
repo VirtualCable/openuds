@@ -44,7 +44,7 @@ from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.idp_metadata_parser import OneLogin_Saml2_IdPMetadataParser
 from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
-from uds.core import auths, exceptions, types
+from uds.core import auths, exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
@@ -335,7 +335,7 @@ class SAMLAuthenticator(auths.Authenticator):
             return
 
         if ' ' in values['name']:
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
@@ -344,7 +344,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # This is in fact not needed, but we may say something useful to user if we check this
         if self.serverCertificate.value.startswith('-----BEGIN CERTIFICATE-----\n') is False:
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 gettext(
                     'Server certificate should be a valid PEM (PEM certificates starts with -----BEGIN CERTIFICATE-----)'
                 )
@@ -353,13 +353,13 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             CryptoManager().loadCertificate(self.serverCertificate.value)
         except Exception as e:
-            raise exceptions.ValidationError(gettext('Invalid server certificate. ') + str(e))
+            raise exceptions.validation.ValidationError(gettext('Invalid server certificate. ') + str(e))
 
         if (
             self.privateKey.value.startswith('-----BEGIN RSA PRIVATE KEY-----\n') is False
             and self.privateKey.value.startswith('-----BEGIN PRIVATE KEY-----\n') is False
         ):
-            raise exceptions.ValidationError(
+            raise exceptions.validation.ValidationError(
                 gettext(
                     'Private key should be a valid PEM (PEM private keys starts with -----BEGIN RSA PRIVATE KEY-----'
                 )
@@ -368,12 +368,12 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             CryptoManager().loadPrivateKey(self.privateKey.value)
         except Exception as e:
-            raise exceptions.ValidationError(gettext('Invalid private key. ') + str(e))
+            raise exceptions.validation.ValidationError(gettext('Invalid private key. ') + str(e))
 
         if not security.checkCertificateMatchPrivateKey(
             cert=self.serverCertificate.value, key=self.privateKey.value
         ):
-            raise exceptions.ValidationError(gettext('Certificate and private key do not match'))
+            raise exceptions.validation.ValidationError(gettext('Certificate and private key do not match'))
 
         request: 'ExtendedHttpRequest' = values['_request']
 
@@ -394,7 +394,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 )
                 idpMetadata = resp.content.decode()
             except Exception as e:
-                raise exceptions.ValidationError(
+                raise exceptions.validation.ValidationError(
                     gettext('Can\'t fetch url {0}: {1}').format(self.idpMetadata.value, str(e))
                 )
             fromUrl = True
@@ -405,7 +405,7 @@ class SAMLAuthenticator(auths.Authenticator):
             xml.sax.parseString(idpMetadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if fromUrl else '') + str(e)
-            raise exceptions.ValidationError(gettext('XML does not seem valid for IDP Metadata ') + msg)
+            raise exceptions.validation.ValidationError(gettext('XML does not seem valid for IDP Metadata ') + msg)
 
         # Now validate regular expressions, if they exists
         auth_utils.validateRegexField(self.userNameAttr)
@@ -469,7 +469,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 val = resp.content.decode()
             except Exception as e:
                 logger.error('Error fetching idp metadata: %s', e)
-                raise auths.exceptions.AuthenticatorException(gettext('Can\'t access idp metadata'))
+                raise exceptions.auth.AuthenticatorException(gettext('Can\'t access idp metadata'))
         else:
             val = self.idpMetadata.value
 
@@ -535,7 +535,7 @@ class SAMLAuthenticator(auths.Authenticator):
         metadata = saml_settings.get_sp_metadata()
         errors = saml_settings.validate_metadata(metadata)
         if len(errors) > 0:
-            raise auths.exceptions.AuthenticatorException(
+            raise exceptions.auth.AuthenticatorException(
                 gettext('Error validating SP metadata: ') + str(errors)
             )
         if isinstance(metadata, str):
@@ -572,7 +572,7 @@ class SAMLAuthenticator(auths.Authenticator):
         self,
         req: typing.Dict[str, typing.Any],
         request: 'ExtendedHttpRequestWithUser',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         # Convert HTTP-POST to HTTP-REDIRECT on SAMLResponse, for just in case...
         if 'SAMLResponse' in req['post_data']:
             if isinstance(req['post_data']['SAMLResponse'], list):
@@ -596,15 +596,15 @@ class SAMLAuthenticator(auths.Authenticator):
             logger.debug('Error on SLO: %s', auth.get_last_response_xml())
             logger.debug('post_data: %s', req['post_data'])
             logger.info('Errors processing logout request: %s', errors)
-            raise auths.exceptions.AuthenticatorException(gettext('Error processing SLO: ') + str(errors))
+            raise exceptions.auth.AuthenticatorException(gettext('Error processing SLO: ') + str(errors))
 
         # Remove MFA related data
         if request.user:
             self.mfaClean(request.user.name)
 
-        return auths.AuthenticationResult(
-            success=auths.AuthenticationState.REDIRECT,
-            url=url or auths.AuthenticationInternalUrl.LOGIN.getUrl(),
+        return types.auth.AuthenticationResult(
+            success=types.auth.AuthenticationState.REDIRECT,
+            url=url or types.auth.AuthenticationInternalUrl.LOGIN.getUrl(),
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
@@ -613,7 +613,7 @@ class SAMLAuthenticator(auths.Authenticator):
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
         request: 'ExtendedHttpRequestWithUser',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         req = self.getReqFromRequest(request, params=parameters)
 
         if 'logout' in parameters.get_params:
@@ -624,13 +624,13 @@ class SAMLAuthenticator(auths.Authenticator):
             auth = OneLogin_Saml2_Auth(req, settings)
             auth.process_response()
         except Exception as e:
-            raise auths.exceptions.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
+            raise exceptions.auth.AuthenticatorException(gettext('Error processing SAML response: ') + str(e))
         errors = auth.get_errors()
         if errors:
-            raise auths.exceptions.AuthenticatorException('SAML response error: ' + str(errors))
+            raise exceptions.auth.AuthenticatorException('SAML response error: ' + str(errors))
 
         if not auth.is_authenticated():
-            raise auths.exceptions.AuthenticatorException(gettext('SAML response not authenticated'))
+            raise exceptions.auth.AuthenticatorException(gettext('SAML response not authenticated'))
 
         # Store SAML attributes
         request.session['SAML'] = {
@@ -648,7 +648,7 @@ class SAMLAuthenticator(auths.Authenticator):
         #     'RelayState' in req['post_data']
         #     and OneLogin_Saml2_Utils.get_self_url(req) != req['post_data']['RelayState']
         # ):
-        #     return auths.AuthenticationResult(
+        #     return types.auth.AuthenticationResult(
         #         success=auths.AuthenticationSuccess.REDIRECT,
         #         url=auth.redirect_to(req['post_data']['RelayState'])
         #     )
@@ -658,7 +658,7 @@ class SAMLAuthenticator(auths.Authenticator):
         attributes.update(auth.get_friendlyname_attributes())
 
         if not attributes:
-            raise auths.exceptions.AuthenticatorException(gettext('No attributes returned from IdP'))
+            raise exceptions.auth.AuthenticatorException(gettext('No attributes returned from IdP'))
         logger.debug("Attributes: %s", attributes)
 
         # Now that we have attributes, we can extract values from this, map groups, etc...
@@ -689,11 +689,11 @@ class SAMLAuthenticator(auths.Authenticator):
 
         gm.validate(groups)
 
-        return auths.AuthenticationResult(success=auths.AuthenticationState.SUCCESS, username=username)
+        return types.auth.AuthenticationResult(success=types.auth.AuthenticationState.SUCCESS, username=username)
 
-    def logout(self, request: 'ExtendedHttpRequest', username: str) -> auths.AuthenticationResult:
+    def logout(self, request: 'ExtendedHttpRequest', username: str) -> types.auth.AuthenticationResult:
         if not self.globalLogout.isTrue():
-            return auths.SUCCESS_AUTH
+            return types.auth.SUCCESS_AUTH
 
         req = self.getReqFromRequest(request)
 
@@ -710,10 +710,10 @@ class SAMLAuthenticator(auths.Authenticator):
         self.mfaClean(username)
 
         if not saml:
-            return auths.SUCCESS_AUTH
+            return types.auth.SUCCESS_AUTH
 
-        return auths.AuthenticationResult(
-            success=auths.AuthenticationState.REDIRECT,
+        return types.auth.AuthenticationResult(
+            success=types.auth.AuthenticationState.REDIRECT,
             url=auth.logout(
                 name_id=saml.get('nameid'),
                 session_index=saml.get('session_index'),

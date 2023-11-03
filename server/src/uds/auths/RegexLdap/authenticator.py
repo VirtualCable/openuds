@@ -38,7 +38,7 @@ import typing
 import ldap
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, exceptions, types
+from uds.core import auths, exceptions, types, consts
 from uds.core.auths.auth import authLogLogin
 from uds.core.ui import gui
 from uds.core.util import ldaputil, auth as auth_utils
@@ -61,7 +61,6 @@ LDAP_RESULT_LIMIT = 100
 
 
 class RegexLdap(auths.Authenticator):
-
     host = gui.TextField(
         length=64,
         label=_('Host'),
@@ -80,9 +79,7 @@ class RegexLdap(auths.Authenticator):
     ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=3,
-        tooltip=_(
-            'If checked, the connection will be ssl, using port 636 instead of 389'
-        ),
+        tooltip=_('If checked, the connection will be ssl, using port 636 instead of 389'),
     )
     username = gui.TextField(
         length=64,
@@ -113,9 +110,7 @@ class RegexLdap(auths.Authenticator):
         label=_('Verify SSL'),
         default=True,
         order=11,
-        tooltip=_(
-            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
-        ),
+        tooltip=_('If checked, SSL verification will be enforced. If not, SSL verification will be disabled'),
         tab=types.ui.Tab.ADVANCED,
     )
     certificate = gui.TextField(
@@ -184,9 +179,7 @@ class RegexLdap(auths.Authenticator):
         label=_('Alt. class'),
         default='',
         order=25,
-        tooltip=_(
-            'Class for LDAP objects that will be also checked for groups retrieval (normally empty)'
-        ),
+        tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'),
         required=False,
         tab=_('Advanced'),
     )
@@ -327,9 +320,9 @@ class RegexLdap(auths.Authenticator):
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
 
-        self._verifySsl = False # Backward compatibility
-        self._mfaAttr = '' # Backward compatibility
-        self._certificate = '' # Backward compatibility
+        self._verifySsl = False  # Backward compatibility
+        self._mfaAttr = ''  # Backward compatibility
+        self._certificate = ''  # Backward compatibility
 
         # Common
         logger.debug('Common: %s', vals[1:11])
@@ -386,7 +379,7 @@ class RegexLdap(auths.Authenticator):
         @return: Connection established
         @raise exception: If connection could not be established
         """
-        if self._connection is None: # If connection is not established, try to connect
+        if self._connection is None:  # If connection is not established, try to connect
             self._connection = ldaputil.connection(
                 self._username,
                 self._password,
@@ -485,7 +478,7 @@ class RegexLdap(auths.Authenticator):
         credentials: str,
         groupsManager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
-    ) -> auths.AuthenticationResult:
+    ) -> types.auth.AuthenticationResult:
         """
         Must authenticate the user.
         We can have to different situations here:
@@ -500,21 +493,15 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
-                authLogLogin(
-                    request, self.dbObj(), username, 'Invalid user'
-                )
-                return auths.FAILED_AUTH
+                authLogLogin(request, self.dbObj(), username, 'Invalid user')
+                return types.auth.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
-                self.__connectAs(
-                    usr['dn'], credentials
-                )  # Will raise an exception if it can't connect
+                self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
             except Exception:
-                authLogLogin(
-                    request, self.dbObj(), username, 'Invalid password'
-                )
-                return auths.FAILED_AUTH
+                authLogLogin(request, self.dbObj(), username, 'Invalid password')
+                return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set
             if self._mfaAttr:
@@ -525,10 +512,10 @@ class RegexLdap(auths.Authenticator):
 
             groupsManager.validate(self.__getGroups(usr))
 
-            return auths.SUCCESS_AUTH
+            return types.auth.SUCCESS_AUTH
 
         except Exception:
-            return auths.FAILED_AUTH
+            return types.auth.FAILED_AUTH
 
     def createUser(self, usrData: typing.Dict[str, str]) -> None:
         """
@@ -541,7 +528,7 @@ class RegexLdap(auths.Authenticator):
         """
         res = self.__getUser(usrData['name'])
         if res is None:
-            raise auths.exceptions.AuthenticatorException(_('Username not found'))
+            raise exceptions.auth.AuthenticatorException(_('Username not found'))
         # Fills back realName field
         usrData['real_name'] = self.__getUserRealName(res)
 
@@ -572,7 +559,7 @@ class RegexLdap(auths.Authenticator):
         """
         user = self.__getUser(username)
         if user is None:
-            raise auths.exceptions.AuthenticatorException(_('Username not found'))
+            raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groups = self.__getGroups(user)
         groupsManager.validate(groups)
 
@@ -597,9 +584,7 @@ class RegexLdap(auths.Authenticator):
             return res
         except Exception as e:
             logger.exception("Exception: ")
-            raise auths.exceptions.AuthenticatorException(
-                _('Too many results, be more specific')
-            ) from e
+            raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
     @staticmethod
     def test(env, data):
@@ -607,9 +592,7 @@ class RegexLdap(auths.Authenticator):
             auth = RegexLdap(None, env, data)  # type: ignore  # Regexldap does not use "dbAuth", so it's safe...
             return auth.testConnection()
         except Exception as e:
-            logger.error(
-                'Exception found testing Simple LDAP auth %s: %s', e.__class__, e
-            )
+            logger.error('Exception found testing Simple LDAP auth %s: %s', e.__class__, e)
             return [False, "Error testing connection"]
 
     def testConnection(self):
@@ -638,9 +621,7 @@ class RegexLdap(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user class seems to be incorrect (no user found by that class)'
-                ),
+                _('Ldap user class seems to be incorrect (no user found by that class)'),
             ]
         except Exception:  # nosec: Control flow
             # If found 1 or more, all right
@@ -662,9 +643,7 @@ class RegexLdap(auths.Authenticator):
                 raise Exception()
             return [
                 False,
-                _(
-                    'Ldap user id attr is probably wrong (can\'t find any user with both conditions)'
-                ),
+                _('Ldap user id attr is probably wrong (can\'t find any user with both conditions)'),
             ]
         except Exception:  # nosec: Control flow
             # If found 1 or more, all right
@@ -691,9 +670,7 @@ class RegexLdap(auths.Authenticator):
                 continue
             return [
                 False,
-                _(
-                    'Ldap group id attribute seems to be incorrect (no group found by that attribute)'
-                ),
+                _('Ldap group id attribute seems to be incorrect (no group found by that attribute)'),
             ]
 
         # Now try to test regular expression to see if it matches anything (
