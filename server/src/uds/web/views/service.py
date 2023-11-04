@@ -55,18 +55,14 @@ logger = logging.getLogger(__name__)
 
 
 @webLoginRequired(admin=False)
-def transportOwnLink(
-    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
-):
+def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
     response: typing.MutableMapping[str, typing.Any] = {}
 
     # If userService is not owned by user, will raise an exception
 
     # For type checkers to "be happy"
     try:
-        res = UserServiceManager().getService(
-            request.user, request.os, request.ip, idService, idTransport
-        )
+        res = UserServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
         ip, userService, iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
@@ -89,6 +85,7 @@ def transportOwnLink(
 
     return HttpResponse(content=json.dumps(response), content_type='application/json')
 
+
 # pylint: disable=unused-argument
 @cache_page(3600, key_prefix='img', cache='memory')
 def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
@@ -96,9 +93,7 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
         transport: Transport
         if idTrans[:6] == 'LABEL:':
             # Get First label
-            transport = Transport.objects.filter(label=idTrans[6:]).order_by(
-                'priority'
-            )[
+            transport = Transport.objects.filter(label=idTrans[6:]).order_by('priority')[
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
         else:
@@ -129,24 +124,23 @@ def userServiceEnabler(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
 ) -> HttpResponse:
     return HttpResponse(
-        json.dumps(
-            services.enableService(
-                request, idService=idService, idTransport=idTransport
-            )
-        ),
+        json.dumps(services.enableService(request, idService=idService, idTransport=idTransport)),
         content_type='application/json',
     )
 
 
 def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
-    return HttpResponse('<html><body onload="window.close()"></body></html>')
+    """Returns a page that closes itself (used by transports)"""
+    return HttpResponse(
+        '<html><head><script>window.close();</script></head><body></body></html>',
+        content_type='text/html',
+    )
+    # return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 
 @webLoginRequired(admin=False)
 @never_cache
-def userServiceStatus(
-    request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
-) -> HttpResponse:
+def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
     '''
     Returns;
      'running' if not ready
@@ -160,9 +154,7 @@ def userServiceStatus(
     status = 'running'
     # If service exists (meta or not)
     if UserServiceManager().isMetaService(idService):
-        userService = UserServiceManager().locateMetaService(
-            user=request.user, idService=idService
-        )
+        userService = UserServiceManager().locateMetaService(user=request.user, idService=idService)
     else:
         userService = UserServiceManager().locateUserService(
             user=request.user, idService=idService, create=False
@@ -190,24 +182,15 @@ def userServiceStatus(
 
 @webLoginRequired(admin=False)
 @never_cache
-def action(
-    request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str
-) -> HttpResponse:
-    userService = UserServiceManager().locateMetaService(
-        request.user, idService
-    )
+def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
+    userService = UserServiceManager().locateMetaService(request.user, idService)
     if not userService:
-        userService = UserServiceManager().locateUserService(
-            request.user, idService, create=False
-        )
+        userService = UserServiceManager().locateUserService(request.user, idService, create=False)
 
     response: typing.Any = None
     rebuild: bool = False
     if userService:
-        if (
-            actionString == 'release'
-            and userService.deployed_service.allow_users_remove
-        ):
+        if actionString == 'release' and userService.deployed_service.allow_users_remove:
             rebuild = True
             log.doLog(
                 userService.deployed_service,
@@ -235,7 +218,6 @@ def action(
             )
             # UserServiceManager().requestLogoff(userService)
             UserServiceManager().reset(userService)
-            
 
     if rebuild:
         # Rebuild services data, but return only "this" service

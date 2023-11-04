@@ -38,7 +38,7 @@ from django.utils.translation import gettext as _
 class LoadBalancingPolicy(enum.IntEnum):
     ROUND_ROBIN = 0
     PRIORITY = 1
-    MOST_AVAILABLE_BY_NUMBER = 2
+    GREATER_PERCENT_FREE = 2
 
     def asStr(self) -> str:
         return self.name.lower()
@@ -48,7 +48,7 @@ class LoadBalancingPolicy(enum.IntEnum):
         return [
             (LoadBalancingPolicy.ROUND_ROBIN, _('Evenly distributed')),
             (LoadBalancingPolicy.PRIORITY, _('Priority')),
-            (LoadBalancingPolicy.MOST_AVAILABLE_BY_NUMBER, _('Greater % available')),
+            (LoadBalancingPolicy.GREATER_PERCENT_FREE, _('Greater % available')),
         ]
 
 

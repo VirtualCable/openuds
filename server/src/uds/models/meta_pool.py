@@ -155,6 +155,41 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         return access == states.action.ALLOW
 
+    def usage(self, cachedValue=-1) -> typing.Tuple[int, int, int]:
+        """
+        Returns the % used services, then count and the max related to "maximum" user services
+        If no "maximum" number of services, will return 0% ofc
+        cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
+        """
+        query = (
+            ServicePool.objects.filter(
+                memberOfMeta__meta_pool=self,
+                state=states.servicePool.ACTIVE,
+            )
+            .annotate(
+                usage_count=models.Count(
+                    'userServices',
+                    filter=models.Q(
+                        userServices__state__in=states.userService.VALID_STATES,
+                        userServices__cache_level=0,
+                    ),
+                    distinct=True,
+                )
+            )
+            .prefetch_related(
+                'service',
+            )
+        )
+        
+        usage_count = 0
+        max_count = 0
+        for pool in query:
+            p, u, m = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
+            usage_count += u
+            max_count += m
+
+        return (usage_count * 100 // max_count, usage_count, max_count)
+
     @property
     def visual_name(self) -> str:
         logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
@@ -206,6 +241,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                     ),
                 )
             )
+
         # May we can include some other filters?
         return meta
 

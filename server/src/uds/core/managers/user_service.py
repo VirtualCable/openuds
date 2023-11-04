@@ -917,7 +917,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Sort pools based on meta selection
         if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
-        elif meta.policy == types.pools.LoadBalancingPolicy.MOST_AVAILABLE_BY_NUMBER:
+        elif meta.policy == types.pools.LoadBalancingPolicy.GREATER_PERCENT_FREE:
             sortPools = [(p.pool.usage(), p.pool) for p in poolMembers]
         else:
             sortPools = [

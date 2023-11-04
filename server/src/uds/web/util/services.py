@@ -187,6 +187,29 @@ def getServicesData(
 
         inAll: typing.Optional[typing.Set[str]] = None
         tmpSet: typing.Set[str]
+        
+        # If no macro on names, skip calculation (and set to empty)
+        if '{' in meta.name or '{' in meta.visual_name:
+            up, uc, max_s = meta.usage()
+            use_percent = str(up) + '%' 
+            use_count = str(uc)
+            left_count = str(max_s - up)
+            max_srvs = str(max_s)
+        else:
+            max_srvs = ''
+            use_percent = ''
+            use_count = ''
+            left_count = ''
+
+        # pylint: disable=cell-var-from-loop
+        def macro_info(x: str) -> str:
+            return (
+                x.replace('{use}', use_percent)
+                .replace('{total}', max_srvs)
+                .replace('{usec}', use_count)
+                .replace('{left}', left_count)
+            )
+        
         if meta.transport_grouping == types.pools.TransportSelectionPolicy.COMMON:
             # only keep transports that are in ALL members
             for member in meta.members.all().order_by('priority'):
@@ -264,8 +287,8 @@ def getServicesData(
                 _serviceInfo(
                     uuid=meta.uuid,
                     is_meta=True,
-                    name=meta.name,
-                    visual_name=meta.visual_name,
+                    name=macro_info(meta.name),
+                    visual_name=macro_info(meta.visual_name),
                     description=meta.comments,
                     group=group,
                     transports=metaTransports,
@@ -287,10 +310,28 @@ def getServicesData(
         # Skip pools that are part of meta pools
         if sPool.owned_by_meta:
             continue
+        
+        # If no macro on names, skip calculation
+        if '{' in sPool.name or '{' in sPool.visual_name:
+            up, uc, max_s = sPool.usage(sPool.usage_count) # type: ignore # anotated value
+            use_percent = str(up) + '%'  # type: ignore # anotated value
+            use_count = str(uc)  # type: ignore # anotated value
+            left_count = str(max_s - up)  # type: ignore # anotated value
+            max_srvs = str(max_s)
+        else:
+            max_srvs = ''
+            use_percent = ''
+            use_count = ''
+            left_count = ''
 
-        use_percent = str(sPool.usage(sPool.usage_count)) + '%'  # type: ignore # anotated value
-        use_count = str(sPool.usage_count)  # type: ignore # anotated value
-        left_count = str(sPool.max_srvs - sPool.usage_count)  # type: ignore # anotated value
+        # pylint: disable=cell-var-from-loop
+        def macro_info(x: str) -> str:
+            return (
+                x.replace('{use}', use_percent)
+                .replace('{total}', max_srvs)
+                .replace('{usec}', use_count)
+                .replace('{left}', left_count)
+            )
 
         trans: typing.List[typing.Mapping[str, typing.Any]] = []
         for t in sorted(
@@ -337,27 +378,13 @@ def getServicesData(
             toBeReplaced = None
             toBeReplacedTxt = ''
 
-        # Calculate max deployed
-        maxUserServices = str(sPool.max_srvs)
-        # if sPool.service.getType().usesCache is False:
-        #    maxUserServices = sPool.service.getInstance().maxUserServices
-
-        # pylint: disable=cell-var-from-loop
-        def datator(x) -> str:
-            return (
-                x.replace('{use}', use_percent)
-                .replace('{total}', str(sPool.max_srvs))
-                .replace('{usec}', use_count)
-                .replace('{left}', left_count)
-            )
-
         services.append(
             _serviceInfo(
                 uuid=sPool.uuid,
                 is_meta=False,
-                name=datator(sPool.name),
-                visual_name=datator(
-                    sPool.visual_name.replace('{use}', use_percent).replace('{total}', maxUserServices)
+                name=macro_info(sPool.name),
+                visual_name=macro_info(
+                    sPool.visual_name
                 ),
                 description=sPool.comments,
                 group=group,

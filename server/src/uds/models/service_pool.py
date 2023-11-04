@@ -36,6 +36,7 @@ import operator
 from datetime import datetime, timedelta
 
 from django.db import models, transaction
+from uds.core import exceptions
 
 from uds.core.environment import Environment
 from uds.core.util import log, states, calendar, serializer
@@ -461,7 +462,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if not set(groups) & set(
             self.assignedGroups.all()  # pylint: disable=no-member
         ):  # pylint: disable=no-member
-            raise auths.exceptions.InvalidUserException()
+            raise exceptions.auth.InvalidUserException()
 
     def validatePublication(self) -> None:
         """
@@ -629,9 +630,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self, cachedValue=-1) -> int:
+    def usage(self, cachedValue=-1) -> typing.Tuple[int, int, int]:
         """
-        Returns the % used services, related to "maximum" user services
+        Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
@@ -640,12 +641,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             maxs = self.service.getInstance().maxUserServices
 
         if maxs <= 0:
-            return 0
+            return 0, 0, 0
 
         if cachedValue == -1:
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
-        return 100 * cachedValue // maxs
+        return 100 * cachedValue // maxs, cachedValue, maxs
 
     def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return bool(self.service) and self.service.testServer(host, port, timeout)
