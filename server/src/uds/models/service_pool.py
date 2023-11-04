@@ -655,26 +655,23 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self, cachedValue=-1) -> int:
+    def usage(self, cachedValue=-1) -> typing.Tuple[int, int, int]:
         """
-        Returns the % used services, related to "maximum" user services
+        Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
+        cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
         maxs = self.max_srvs
-        if maxs == 0:
-            maxs = self.service.getInstance().maxDeployed  # type: ignore
+        if maxs == 0 and self.service:
+            maxs = self.service.getInstance().maxUserServices
 
         if maxs <= 0:
-            return 0
+            return 0, 0, 0
 
         if cachedValue == -1:
-            cachedValue = (
-                self.assignedUserServices()
-                .filter(state__in=states.userService.VALID_STATES)
-                .count()
-            )
+            cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
-        return 100 * cachedValue // maxs
+        return 100 * cachedValue // maxs, cachedValue, maxs
 
     def testServer(self, host, port, timeout=4) -> bool:
         return self.service.testServer(host, port, timeout)  # type: ignore
