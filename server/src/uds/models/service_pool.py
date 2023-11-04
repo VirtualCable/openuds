@@ -74,6 +74,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
 # pylint: disable=too-many-public-methods
 class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     """
@@ -97,15 +98,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         related_name='deployedServices',
         on_delete=models.CASCADE,
     )
-    transports = models.ManyToManyField(
-        Transport, related_name='deployedServices', db_table='uds__ds_trans'
-    )
-    assignedGroups = models.ManyToManyField(
-        Group, related_name='deployedServices', db_table='uds__ds_grps'
-    )
-    state = models.CharField(
-        max_length=1, default=states.servicePool.ACTIVE, db_index=True
-    )
+    transports = models.ManyToManyField(Transport, related_name='deployedServices', db_table='uds__ds_trans')
+    assignedGroups = models.ManyToManyField(Group, related_name='deployedServices', db_table='uds__ds_grps')
+    state = models.CharField(max_length=1, default=states.servicePool.ACTIVE, db_index=True)
     state_date = models.DateTimeField(default=NEVER)
     show_transports = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
@@ -122,14 +117,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         on_delete=models.SET_NULL,
     )
 
-    servicesPoolGroup: 'models.ForeignKey[ServicePoolGroup|None]' = (
-        models.ForeignKey(
-            ServicePoolGroup,
-            null=True,
-            blank=True,
-            related_name='servicesPools',
-            on_delete=models.SET_NULL,
-        )
+    servicesPoolGroup: 'models.ForeignKey[ServicePoolGroup|None]' = models.ForeignKey(
+        ServicePoolGroup,
+        null=True,
+        blank=True,
+        related_name='servicesPools',
+        on_delete=models.SET_NULL,
     )
 
     # Message if access denied
@@ -219,16 +212,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 ServicePool.objects.none()
             )  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = getSqlDatetime() - timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
         for v in (
-            UserService.objects.filter(
-                state=states.userService.ERROR, state_date__gt=date
-            )
+            UserService.objects.filter(state=states.userService.ERROR, state_date__gt=date)
             .values('deployed_service')
             .annotate(how_many=Count('deployed_service'))
             .order_by('deployed_service')
@@ -247,9 +236,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @property
     def visual_name(self) -> str:
-        logger.debug(
-            "SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name
-        )
+        logger.debug("SHORT: %s %s %s", self.short_name, self.short_name is not None, self.name)
         if self.short_name and str(self.short_name).strip():
             return str(self.short_name.strip())
         return str(self.name)
@@ -273,13 +260,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = typing.cast(datetime, getSqlDatetime()) - timedelta(
-            seconds=GlobalConfig.RESTRAINT_TIME.getInt()
-        )
+        date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         if (
-            self.userServices.filter(
-                state=states.userService.ERROR, state_date__gt=date
-            ).count()
+            self.userServices.filter(state=states.userService.ERROR, state_date__gt=date).count()
             >= GlobalConfig.RESTRAINT_COUNT.getInt()
         ):
             return True
@@ -294,9 +277,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def isUsable(self) -> bool:
         return (
-            self.state == states.servicePool.ACTIVE
-            and not self.isInMaintenance()
-            and not self.isRestrained()
+            self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
         )
 
     def toBeReplaced(self, forUser: 'User') -> typing.Optional[datetime]:
@@ -313,9 +294,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         try:
             found = typing.cast(
                 'UserService',
-                self.assignedUserServices().filter(
-                    user=forUser, state__in=states.userService.VALID_STATES
-                )[0],
+                self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[0],
             )
             if activePub and found.publication and activePub.id != found.publication.id:
                 ret = self.recoverValue('toBeReplacedIn')
@@ -343,9 +322,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return access == states.action.ALLOW
 
-    def getDeadline(
-        self, chkDateTime: typing.Optional[datetime] = None
-    ) -> typing.Optional[int]:
+    def getDeadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
         """Gets the deadline for an access on chkDateTime in seconds
 
         Keyword Arguments:
@@ -363,10 +340,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         deadLine = None
 
         for ac in self.calendarAccess.all():
-            if (
-                ac.access == states.action.ALLOW
-                and self.fallbackAccess == states.action.DENY
-            ):
+            if ac.access == states.action.ALLOW and self.fallbackAccess == states.action.DENY:
                 nextE = CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
@@ -462,19 +436,15 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         userService: 'UserService'
 
         if activePub is None:
-            logger.error(
-                'No active publication, don\'t know what to erase!!! (ds = %s)', self
-            )
+            logger.error('No active publication, don\'t know what to erase!!! (ds = %s)', self)
             return
         for nonActivePub in self.publications.exclude(id=activePub.id):
-            for userService in nonActivePub.userServices.filter(
-                state=states.userService.PREPARING
-            ):
+            for userService in nonActivePub.userServices.filter(state=states.userService.PREPARING):
                 userService.cancel()
             with transaction.atomic():
-                nonActivePub.userServices.exclude(cache_level=0).filter(
-                    state=states.userService.USABLE
-                ).update(state=states.userService.REMOVABLE, state_date=now)
+                nonActivePub.userServices.exclude(cache_level=0).filter(state=states.userService.USABLE).update(
+                    state=states.userService.REMOVABLE, state_date=now
+                )
                 if not skipAssigned:
                     nonActivePub.userServices.filter(
                         cache_level=0, state=states.userService.USABLE, in_use=False
@@ -542,9 +512,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services
 
-        servicesNotNeedingPub = [
-            t.type() for t in services.factory().servicesThatDoNotNeedPublication()
-        ]
+        servicesNotNeedingPub = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
@@ -663,13 +631,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0 and self.service:
-            maxs = self.service.getInstance().maxUserServices
-
-        if maxs <= 0:
-            return 0, 0, 0
+            maxs = self.service.getInstance().maxDeployed
 
         if cachedValue == -1:
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
+
+        if maxs <= 0:
+            return 0, cachedValue, maxs
 
         return 100 * cachedValue // maxs, cachedValue, maxs
 

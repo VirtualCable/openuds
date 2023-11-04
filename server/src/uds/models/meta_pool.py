@@ -208,8 +208,14 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         for pool in query:
             p, u, m = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
             usage_count += u
-            max_count += m
+            if max_count == -1 or m == -1:
+                max_count = -1
+            else:
+                max_count += m
 
+        if max_count == -1:
+            return (0, usage_count, max_count)
+        
         return (usage_count * 100 // max_count, usage_count, max_count)
 
     @property
