@@ -640,11 +640,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if maxs == 0 and self.service:
             maxs = self.service.getInstance().maxUserServices
 
-        if maxs <= 0:
-            return 0, 0, 0
-
         if cachedValue == -1:
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
+
+        if maxs <= 0:
+            return 0, cachedValue, maxs
 
         return 100 * cachedValue // maxs, cachedValue, maxs
 
