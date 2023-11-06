@@ -38,7 +38,7 @@ from django.db import models
 from django.db.models import QuerySet, signals
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
+from uds.core import consts, types
 from uds.core.util import log, states
 from uds.core.util.calendar import CalendarChecker
 
@@ -178,6 +178,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             )
             .prefetch_related(
                 'service',
+                'service__provider',
             )
         )
         
@@ -186,13 +187,14 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         for pool in query:
             p, u, m = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
             usage_count += u
-            if max_count <= 0  or m <= 0:
-                max_count = -1
+            # If any of the pools has no max, then max is -1
+            if max_count == consts.UNLIMITED  or m == consts.UNLIMITED:
+                max_count = consts.UNLIMITED
             else:
                 max_count += m
 
-        if max_count <= 0:
-            return (0, usage_count, max_count)
+        if max_count == 0 or max_count == consts.UNLIMITED:
+            return (0, usage_count, consts.UNLIMITED)
 
         return (usage_count * 100 // max_count, usage_count, max_count)
 

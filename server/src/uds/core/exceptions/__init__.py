@@ -30,9 +30,10 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from . import actor
 from . import auth
-from . import validation
 from . import service
+from . import validation
 
 # Common exceptions inserted here
 from .common import UDSException, BlockAccess

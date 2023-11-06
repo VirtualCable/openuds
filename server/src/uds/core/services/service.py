@@ -40,7 +40,7 @@ from uds.core.transports import protocols
 from uds.core.util.state import State
 from uds.core.util import log
 
-from uds.core import types
+from uds.core import types, consts
 
 
 if typing.TYPE_CHECKING:
@@ -93,9 +93,6 @@ class Service(Module):
 
     """
 
-    # : Constant for indicating that max elements this service can deploy is unlimited.
-    UNLIMITED: int = -1
-
     # : Name of type, used at administration interface to identify this
     # : service (i.e. Xen server, oVirt Server, ...)
     # : This string will be translated when provided to admin interface
@@ -125,7 +122,7 @@ class Service(Module):
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
     # : for providing deployed services to users. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    maxUserServices: int = UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    maxUserServices: int = consts.UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
@@ -271,10 +268,10 @@ class Service(Module):
             try:
                 self.maxUserServices = getattr(self, 'maxServices').num()
             except Exception:
-                self.maxUserServices = Service.UNLIMITED
+                self.maxUserServices = consts.UNLIMITED
 
             if self.maxUserServices < 1:
-                self.maxUserServices = Service.UNLIMITED
+                self.maxUserServices = consts.UNLIMITED
 
         # Keep untouched if maxServices is not present
 

@@ -109,7 +109,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         serviceInstance = service.getInstance()
         # Early return, so no database count is needed
-        if serviceInstance.maxUserServices == services.Service.UNLIMITED:
+        if serviceInstance.maxUserServices == consts.UNLIMITED:
             return False
 
         if self.getExistingUserServices(service) >= (serviceInstance.maxUserServices or 1):
@@ -604,7 +604,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionData) -> None:
         try:
             comms.notifyPreconnect(userService, info)
-        except exceptions.NoActorComms:  # If no comms url for userService, try with service
+        except exceptions.actor.NoActorComms:  # If no comms url for userService, try with service
             userService.deployed_service.service.notifyPreconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
@@ -918,7 +918,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
         elif meta.policy == types.pools.LoadBalancingPolicy.GREATER_PERCENT_FREE:
-            sortPools = [(p.pool.usage(), p.pool) for p in poolMembers]
+            sortPools = [(p.pool.usage()[0], p.pool) for p in poolMembers]
         else:
             sortPools = [
                 (

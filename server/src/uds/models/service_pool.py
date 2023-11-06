@@ -55,6 +55,7 @@ from .account import Account
 
 from ..core.consts import NEVER
 from ..core.util.model import getSqlDatetime
+from uds.core import consts
 
 
 # Not imported at runtime, just for type checking
@@ -643,8 +644,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if cachedValue == -1:
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
-        if maxs <= 0:
-            return 0, cachedValue, maxs
+        if maxs == 0 or max == consts.UNLIMITED:
+            return 0, cachedValue, consts.UNLIMITED
 
         return 100 * cachedValue // maxs, cachedValue, maxs
 
