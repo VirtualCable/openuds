@@ -102,9 +102,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         related_name='metaPools',
         on_delete=models.SET_NULL,
     )
-    assignedGroups = models.ManyToManyField(
-        Group, related_name='metaPools', db_table='uds__meta_grps'
-    )
+    assignedGroups = models.ManyToManyField(Group, related_name='metaPools', db_table='uds__meta_grps')
 
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
@@ -159,9 +157,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 maintenance += 1
         return total == maintenance
 
-    def isAccessAllowed(
-        self, chkDateTime: typing.Optional['datetime.datetime'] = None
-    ) -> bool:
+    def isAccessAllowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -200,9 +196,10 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
             )
             .prefetch_related(
                 'service',
+                'service__provider',
             )
         )
-        
+
         usage_count = 0
         max_count = 0
         for pool in query:
@@ -215,14 +212,12 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         if max_count == -1:
             return (0, usage_count, max_count)
-        
+
         return (usage_count * 100 // max_count, usage_count, max_count)
 
     @property
     def visual_name(self) -> str:
-        logger.debug(
-            'SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name
-        )
+        logger.debug('SHORT: %s %s %s', self.short_name, self.short_name is not None, self.name)
         if self.short_name.strip():
             return self.short_name
         return self.name
@@ -325,6 +320,4 @@ class MetaPoolMember(UUIDModel):
         app_label = 'uds'
 
     def __str__(self) -> str:
-        return '{}/{} {} {}'.format(
-            self.pool.name, self.meta_pool.name, self.priority, self.enabled
-        )
+        return '{}/{} {} {}'.format(self.pool.name, self.meta_pool.name, self.priority, self.enabled)
