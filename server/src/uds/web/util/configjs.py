@@ -95,7 +95,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         except Exception as e:
             authenticators = []
     else:
-        authenticators = Authenticator.objects.all().exclude(visible=False)
+        authenticators = list(Authenticator.objects.all().exclude(visible=False))
 
     # Filter out non visible authenticators
     authenticators = [a for a in authenticators if a.getInstance().isVisibleFrom(request)]
