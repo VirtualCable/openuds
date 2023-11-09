@@ -28,9 +28,11 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from email.mime import base
 import io
-import codecs
+import base64
 import logging
+from operator import ne
 import typing
 
 
@@ -41,8 +43,8 @@ from django.http import HttpResponse
 
 
 from .uuid_model import UUIDModel
-from ..core.util.model import getSqlDatetime
-
+from uds.core.util.model import getSqlDatetime
+from uds.core import consts
 
 logger = logging.getLogger(__name__)
 
@@ -86,17 +88,7 @@ class Image(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def encode64(data: bytes) -> str:
-        return codecs.encode(data, 'base64').decode().replace('\n', '')
-
-    @staticmethod
-    def decode64(data64: str) -> bytes:
-        return codecs.decode(data64.encode(), 'base64')
-
-    @staticmethod
-    def resizeAndConvert(
-        image: PIL.Image.Image, size: typing.Tuple[int, int]
-    ) -> typing.Tuple[int, int, bytes]:
+    def resizeAndConvert(image: PIL.Image.Image, size: typing.Tuple[int, int]) -> typing.Tuple[int, int, bytes]:
         """
         Resizes an image to the given size
         """
@@ -110,10 +102,8 @@ class Image(UUIDModel):
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
-        except (
-            Exception
-        ):  # Image data is incorrect, replace as a simple transparent image
-            image = PIL.Image.new('RGBA', (128, 128))
+        except Exception:  # Image data is incorrect, replace as a simple transparent image
+            image = PIL.Image.new('RGBA', Image.MAX_IMAGE_SIZE)
 
         # Max image size, keeping aspect and using antialias
         return Image.resizeAndConvert(image, Image.MAX_IMAGE_SIZE)
@@ -123,28 +113,14 @@ class Image(UUIDModel):
         """
         Returns the value of the image (data) as a base 64 encoded string
         """
-        return Image.encode64(self.data)
-
-    @data64.setter
-    def data64(self, value: str) -> None:
-        """
-        Sets the value of image (data) from a base 64 encoded string
-        """
-        self.data = Image.decode64(value)
+        return base64.b64encode(typing.cast(bytes, self.data)).decode()
 
     @property
     def thumb64(self) -> str:
         """
         Returns the value of the image (data) as a base 64 encoded string
         """
-        return Image.encode64(self.thumb)
-
-    @thumb64.setter
-    def thumb64(self, value: str) -> None:
-        """
-        Sets the value of image (data) from a base 64 encoded string
-        """
-        self.thumb = Image.decode64(value)
+        return base64.b64encode(self.thumb).decode()
 
     @property
     def image(self) -> PIL.Image.Image:
@@ -157,6 +133,49 @@ class Image(UUIDModel):
         except Exception:  # Image data is incorrect, fix as a simple transparent image
             return PIL.Image.new('RGBA', Image.MAX_IMAGE_SIZE)
 
+    @image.setter
+    def image(self, value: typing.Union[bytes, str, PIL.Image.Image]) -> None:
+        """Set image from bytes, base64 string or PIL Image
+        Bytes: raw data
+        String: base64 encoded data
+        Image: PIL Image
+
+        Args:
+            value (typing.Union[bytes, str, Image.Image]): Image data
+
+        Raises:
+            ValueError: Invalid image type
+
+        Note:
+            This method also creates the thumbnail
+            Not saved to database until save() is called
+        """
+        data: bytes = b''
+        if value:
+            if isinstance(value, bytes):
+                data = value
+            elif isinstance(value, str):
+                data = base64.b64decode(value)
+            elif isinstance(value, PIL.Image.Image):
+                with io.BytesIO() as output:
+                    value.save(output, format='PNG')
+                    data = output.getvalue()
+            else:
+                raise ValueError('Invalid image type')
+
+            self.width, self.height, self.data = Image.prepareForDb(data)
+
+            # Setup thumbnail
+            with io.BytesIO(data) as input:
+                with PIL.Image.open(input) as img:
+                    img.thumbnail(Image.THUMBNAIL_SIZE, PIL.Image.LANCZOS)
+                    with io.BytesIO() as output:
+                        img.save(output, format='PNG')
+                        self.thumb = output.getvalue()
+        else:
+            self.data = consts.images.DEFAULT_IMAGE
+            self.thumb = consts.images.DEFAULT_THUMB
+
     @property
     def size(self) -> typing.Tuple[int, int]:
         """
@@ -164,24 +183,12 @@ class Image(UUIDModel):
         """
         return self.width, self.height
 
-    def updateThumbnail(self) -> None:
-        img = self.image
-        _, _, self.thumb = Image.resizeAndConvert(img, Image.THUMBNAIL_SIZE)
-
-    def _processImageStore(self) -> None:
-        self.width, self.height, self.data = Image.prepareForDb(self.data)
-        self.updateThumbnail()
-
-    def storeImageFromBinary(self, data: bytes) -> None:
-        self.data = data
-        self._processImageStore()
-
-    def storeImageFromBase64(self, data64: str):
+    @property
+    def length(self) -> int:
         """
-        Stores an image, passed as base64 string, resizing it as necessary
+        Returns the image size
         """
-        self.data64 = data64
-        self._processImageStore()
+        return len(self.data)
 
     def imageResponse(self) -> HttpResponse:
         return HttpResponse(self.data, content_type='image/png')

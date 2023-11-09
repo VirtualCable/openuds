@@ -325,7 +325,7 @@ class Command(BaseCommand):
                 gallery[galleryItem.name] = {
                     'size': f'{galleryItem.width}x{galleryItem.height}',
                     'stamp': galleryItem.stamp,
-                    'length': len(galleryItem.data),
+                    'length': galleryItem.length,
                 }
 
             tree[counter('GALLERY')] = gallery
