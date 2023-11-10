@@ -69,7 +69,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             'name': item.name,
             'comments': item.comments,
             'start': item.start,
-            'end': item.end,
+            'end': datetime.datetime.combine(item.end, datetime.time.max) if item.end else None,
             'frequency': item.frequency,
             'interval': item.interval,
             'duration': item.duration,

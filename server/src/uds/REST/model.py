@@ -1115,9 +1115,9 @@ class ModelHandler(BaseModelHandler):
                 for v in self.remove_fields:
                     if v in args:
                         del args[v]
+                # Upadte fields from args
                 for k, v in args.items():
                     setattr(item, k, v)
-                # item.__dict__.update(args)  # Update fields from args
 
             # Now if tags, update them
             if isinstance(item, TaggingMixin):
