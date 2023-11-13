@@ -40,14 +40,13 @@ from django.utils.translation import gettext as _
 from uds.core.util import ensure, permissions
 from uds.core.util.model import getSqlDatetime, processUuid
 from uds.models.calendar_rule import CalendarRule, freqs
+from uds.models.calendar import Calendar
 from uds.REST import RequestError
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
-
-    from uds.models import Calendar
 
 logger = logging.getLogger(__name__)
 

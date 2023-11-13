@@ -46,15 +46,17 @@ from ..core.util.model import getSqlDatetime
 
 logger = logging.getLogger(__name__)
 
-WEEKDAYS = 'WEEKDAYS'
+WEEKDAYS: typing.Final[str] = 'WEEKDAYS'
+NEVER: typing.Final[str] = 'NEVER'
 
 # Frequencies
 freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
-    ('YEARLY', _('Yearly')),
-    ('MONTHLY', _('Monthly')),
-    ('WEEKLY', _('Weekly')),
-    ('DAILY', _('Daily')),
-    (WEEKDAYS, _('Weekdays')),
+    ('YEARLY', typing.cast(str, _('Yearly'))),
+    ('MONTHLY', typing.cast(str, _('Monthly'))),
+    ('WEEKLY', typing.cast(str, _('Weekly'))),
+    ('DAILY', typing.cast(str, _('Daily'))),
+    (WEEKDAYS, typing.cast(str, _('Weekdays'))),
+    (NEVER, typing.cast(str, _('Never'))),
 )
 
 frq_to_rrl: typing.Mapping[str, int] = {
@@ -62,6 +64,7 @@ frq_to_rrl: typing.Mapping[str, int] = {
     'MONTHLY': rules.MONTHLY,
     'WEEKLY': rules.WEEKLY,
     'DAILY': rules.DAILY,
+    'NEVER': rules.YEARLY,
 }
 
 frq_to_mins: typing.Mapping[str, int] = {
@@ -69,6 +72,7 @@ frq_to_mins: typing.Mapping[str, int] = {
     'MONTHLY': 31 * 24 * 60,
     'WEEKLY': 7 * 24 * 60,
     'DAILY': 24 * 60,
+    'NEVER': 1000* 1000 * 24 * 60,
 }
 
 dunits: typing.Tuple[typing.Tuple[str, str], ...] = (
@@ -142,6 +146,8 @@ class CalendarRule(UUIDModel):
                     dw.append(weekdays[i])
                 l >>= 1
             return rules.rrule(rules.DAILY, byweekday=dw, dtstart=dstart, until=end)
+        if self.frequency == NEVER:  # do not repeat
+            return rules.rrule(rules.YEARLY, interval=1000, dtstart=dstart, until=dstart+datetime.timedelta(days=1))
         return rules.rrule(
             frq_to_rrl[self.frequency],
             interval=self.interval,

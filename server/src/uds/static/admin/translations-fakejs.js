@@ -80,6 +80,7 @@ gettext("year");
 gettext("years");
 gettext("Yearly");
 gettext("Weekdays");
+gettext("Never");
 gettext("Minutes");
 gettext("Hours");
 gettext("Days");
