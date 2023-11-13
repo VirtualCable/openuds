@@ -193,7 +193,7 @@ def getServicesData(
             up, uc, max_s = meta.usage()
             use_percent = str(up) + '%' 
             use_count = str(uc)
-            left_count = str(max_s - up)
+            left_count = str(max_s - uc)
             max_srvs = str(max_s)
         else:
             max_srvs = ''
@@ -316,7 +316,7 @@ def getServicesData(
             up, uc, max_s = sPool.usage(sPool.usage_count) # type: ignore # anotated value
             use_percent = str(up) + '%'  # type: ignore # anotated value
             use_count = str(uc)  # type: ignore # anotated value
-            left_count = str(max_s - up)  # type: ignore # anotated value
+            left_count = str(max_s - uc)  # type: ignore # anotated value
             max_srvs = str(max_s)
         else:
             max_srvs = ''
