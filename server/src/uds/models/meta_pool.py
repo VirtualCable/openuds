@@ -155,16 +155,16 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
         return access == states.action.ALLOW
 
-    def usage(self, cachedValue=-1) -> typing.Tuple[int, int, int]:
+    def usage(self, cachedValue=-1) -> types.pools.UsageInfo:
         """
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
-        # If no pools, return 0, 0, 0
+        # If no pools, return 0%
         if self.members.count() == 0:
-            return (0, 0, 0)
-        
+            return types.pools.UsageInfo(0, 0)
+
         query = (
             ServicePool.objects.filter(
                 memberOfMeta__meta_pool=self,
@@ -185,22 +185,22 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 'service__provider',
             )
         )
-        
+
         usage_count = 0
         max_count = 0
         for pool in query:
-            p, u, m = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
-            usage_count += u
+            poolInfo = pool.usage(pool.usage_count)  # type:ignore  # Anotated field
+            usage_count += poolInfo.used
             # If any of the pools has no max, then max is -1
-            if max_count == consts.UNLIMITED  or m == consts.UNLIMITED:
+            if max_count == consts.UNLIMITED or poolInfo.total == consts.UNLIMITED:
                 max_count = consts.UNLIMITED
             else:
-                max_count += m
+                max_count += poolInfo.total
 
         if max_count == 0 or max_count == consts.UNLIMITED:
-            return (0, usage_count, consts.UNLIMITED)
+            return types.pools.UsageInfo(usage_count, consts.UNLIMITED)
 
-        return (usage_count * 100 // max_count, usage_count, max_count)
+        return types.pools.UsageInfo(usage_count, max_count)
 
     @property
     def visual_name(self) -> str:

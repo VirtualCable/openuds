@@ -36,7 +36,7 @@ import operator
 from datetime import datetime, timedelta
 
 from django.db import models, transaction
-from uds.core import exceptions
+from uds.core import exceptions, types
 
 from uds.core.environment import Environment
 from uds.core.util import log, states, calendar, serializer
@@ -631,7 +631,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0, user=None)
 
-    def usage(self, cachedValue=-1) -> typing.Tuple[int, int, int]:
+    def usage(self, cachedValue=-1) -> types.pools.UsageInfo:
         """
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
@@ -645,9 +645,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
 
         if maxs == 0 or max == consts.UNLIMITED:
-            return 0, cachedValue, consts.UNLIMITED
+            return types.pools.UsageInfo(cachedValue, consts.UNLIMITED)
 
-        return 100 * cachedValue // maxs, cachedValue, maxs
+        return types.pools.UsageInfo(cachedValue, maxs)
 
     def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return bool(self.service) and self.service.testServer(host, port, timeout)

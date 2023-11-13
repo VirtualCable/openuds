@@ -187,14 +187,14 @@ def getServicesData(
 
         inAll: typing.Optional[typing.Set[str]] = None
         tmpSet: typing.Set[str]
-        
+
         # If no macro on names, skip calculation (and set to empty)
         if '{' in meta.name or '{' in meta.visual_name:
-            up, uc, max_s = meta.usage()
-            use_percent = str(up) + '%' 
-            use_count = str(uc)
-            left_count = str(max_s - uc)
-            max_srvs = str(max_s)
+            poolUsageInfo = meta.usage()
+            use_percent = str(poolUsageInfo.percent) + '%'
+            use_count = str(poolUsageInfo.used)
+            left_count = str(poolUsageInfo.total - poolUsageInfo.used)
+            max_srvs = str(poolUsageInfo.total)
         else:
             max_srvs = ''
             use_percent = ''
@@ -209,7 +209,7 @@ def getServicesData(
                 .replace('{usec}', use_count)
                 .replace('{left}', left_count)
             )
-        
+
         if meta.transport_grouping == types.pools.TransportSelectionPolicy.COMMON:
             # only keep transports that are in ALL members
             for member in meta.members.all().order_by('priority'):
@@ -310,14 +310,16 @@ def getServicesData(
         # Skip pools that are part of meta pools
         if sPool.owned_by_meta:
             continue
-        
+
         # If no macro on names, skip calculation
         if '{' in sPool.name or '{' in sPool.visual_name:
-            up, uc, max_s = sPool.usage(sPool.usage_count) # type: ignore # anotated value
-            use_percent = str(up) + '%'  # type: ignore # anotated value
-            use_count = str(uc)  # type: ignore # anotated value
-            left_count = str(max_s - uc)  # type: ignore # anotated value
-            max_srvs = str(max_s)
+            poolUsageInfo = sPool.usage(
+                sPool.usage_count,  # type: ignore # anotated value
+            )
+            use_percent = str(poolUsageInfo.percent) + '%'
+            use_count = str(poolUsageInfo.used)
+            left_count = str(poolUsageInfo.total - poolUsageInfo.used)
+            max_srvs = str(poolUsageInfo.total)
         else:
             max_srvs = ''
             use_percent = ''
@@ -338,7 +340,12 @@ def getServicesData(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
             typeTrans = t.getType()
-            if typeTrans and t.isValidForIp(request.ip) and typeTrans.supportsOs(osType) and t.isValidForOs(osType):
+            if (
+                typeTrans
+                and t.isValidForIp(request.ip)
+                and typeTrans.supportsOs(osType)
+                and t.isValidForOs(osType)
+            ):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
@@ -349,7 +356,6 @@ def getServicesData(
         if not trans:
             continue
 
- 
         # Locate if user service has any already assigned user service for this. Use "pre cached" number of assignations in this pool to optimize
         in_use = typing.cast(typing.Any, sPool).number_in_use > 0
         # if svr.number_in_use:  # Anotated value got from getDeployedServicesForGroups(...). If 0, no assignation for this user
@@ -383,9 +389,7 @@ def getServicesData(
                 uuid=sPool.uuid,
                 is_meta=False,
                 name=macro_info(sPool.name),
-                visual_name=macro_info(
-                    sPool.visual_name
-                ),
+                visual_name=macro_info(sPool.visual_name),
                 description=sPool.comments,
                 group=group,
                 transports=trans,

@@ -82,3 +82,12 @@ class HighAvailabilityPolicy(enum.IntEnum):
             (HighAvailabilityPolicy.DISABLED, _('Disabled')),
             (HighAvailabilityPolicy.ENABLED, _('Enabled')),
         ]
+
+
+class UsageInfo(typing.NamedTuple):
+    used: int
+    total: int
+
+    @property
+    def percent(self) -> int:
+        return (self.used * 100 // self.total) if self.total > 0 else 0
