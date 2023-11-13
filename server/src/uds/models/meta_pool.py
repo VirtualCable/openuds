@@ -161,6 +161,10 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
         """
+        # If no pools, return 0, 0, 0
+        if self.members.count() == 0:
+            return (0, 0, 0)
+        
         query = (
             ServicePool.objects.filter(
                 memberOfMeta__meta_pool=self,
