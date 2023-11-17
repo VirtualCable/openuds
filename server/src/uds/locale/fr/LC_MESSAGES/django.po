@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2016,2018
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Andrés Schumann <aschumann@virtualcable.es>, 2023
@@ -21,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2023\n"
 "Language-Team: French (http://app.transifex.com/openuds/openuds/language/"
@@ -3605,8 +3606,13 @@ msgid "Server Hint"
 msgstr "Soupçon de serveur"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "Dans le cas de plusieurs serveurs AD, lequel est préféré."
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"En cas de plusieurs serveurs AD, lequel est préféré (utilisé uniquement pour "
+"les opérations de suppression de groupes et de comptes)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5478,7 +5484,6 @@ msgid "Use random IP"
 msgstr "Utiliser une adresse IP aléatoire"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Si cette case est cochée, UDS utilisera une adresse IP aléatoire parmi la "
@@ -7953,7 +7958,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Code d&#39;authentification multifacteur invalide"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7962,12 +7967,12 @@ msgstr ""
 "Veuillez fermer la session avant {} et sauvegarder tout votre travail pour "
 "éviter de le perdre."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr ""
 "Service n'est pas prêt. S'il vous plaît, essayez à nouveau dans un instant."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

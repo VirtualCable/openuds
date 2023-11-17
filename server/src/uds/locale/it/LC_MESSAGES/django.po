@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
 # Javier Gomez <jgomez@virtualcable.es>, 2023
 # Massimo Vignone, 2020
@@ -25,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2019\n"
 "Language-Team: Italian (http://app.transifex.com/openuds/openuds/language/"
@@ -3572,8 +3573,13 @@ msgid "Server Hint"
 msgstr "Suggerimento per il server"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "In caso di diversi server AD, indicare quale preferire"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"In caso di più server AD, quale è quello preferito (utilizzato solo per "
+"operazioni di rimozione di gruppi e account)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5429,7 +5435,6 @@ msgid "Use random IP"
 msgstr "Utilizza IP casuale"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Se selezionato, UDS utilizzerà un IP casuale dall&#39;elenco dei server."
@@ -7892,7 +7897,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Codice di autenticazione a più fattori non valido"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7901,11 +7906,11 @@ msgstr ""
 "chiudi la sessione prima di {} e salva tutto il tuo lavoro per evitare di "
 "perdere dati."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "Servizio non pronto. Per favore, riprova di nuovo."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

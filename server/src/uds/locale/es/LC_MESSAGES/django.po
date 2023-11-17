@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012-2014
 # Adolfo Gómez <dkmaster@dkmon.com>, 2014-2015,2017-2020,2022
 # Adolfo Gómez <dkmaster@dkmon.com>, 2019
@@ -32,9 +33,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
-"Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2020,2022\n"
+"Last-Translator: Javier Gomez <jgomez@virtualcable.es>, 2021-2023\n"
 "Language-Team: Spanish (http://app.transifex.com/openuds/openuds/language/"
 "es/)\n"
 "Language: es\n"
@@ -3582,8 +3583,13 @@ msgid "Server Hint"
 msgstr "Sugerencia de Server"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "En el caso de varios servidores de AD, cuál es el preferido"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"En caso de varios servidores AD, cuál es el preferido (solo se usa para "
+"operaciones de eliminación de grupos y cuentas)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5439,7 +5445,6 @@ msgid "Use random IP"
 msgstr "Usar IP aleatoria"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Si está marcado, UDS utilizará una IP aleatoria de la lista de servidores."
@@ -7516,7 +7521,7 @@ msgstr ""
 
 #: transports/RDP/rdp_base.py:352
 msgid "Optimize Teams"
-msgstr "Optimizar equipos"
+msgstr "Optimizar Teams"
 
 #: transports/RDP/rdp_base.py:354
 msgid "If checked, Teams will be optimized (only works on Windows clients)"
@@ -7899,7 +7904,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Código de autenticación multifactor no válido"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7908,11 +7913,11 @@ msgstr ""
 "favor, cierre la sesión antes de {} y guarde todo su trabajo para evitar "
 "perderlo."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "El servicio no está listo. Por favor, pruebe otra vez en un rato."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

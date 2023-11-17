@@ -13,12 +13,13 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Abdel Baaddi <abaaddi@virtualcable.es>, 2017-2018\n"
 "Language-Team: Arabic (http://app.transifex.com/openuds/openuds/language/"
@@ -3500,8 +3501,13 @@ msgid "Server Hint"
 msgstr "تلميح ملقم "
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "في حالة وجود عدة ملقمات إعلانات، احدها هو المفضل"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"في حالة وجود عدة خوادم AD، أي واحد هو المفضل (يستخدم فقط لعمليات إزالة "
+"المجموعة والحساب)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5312,7 +5318,6 @@ msgid "Use random IP"
 msgstr "استخدم IP عشوائي"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr "إذا تم تحديده، فسوف يستخدم UDS عنوان IP عشوائيًا من قائمة الخوادم."
 
@@ -7702,7 +7707,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "رمز المصادقة متعدد العوامل غير صالح"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7710,11 +7715,11 @@ msgstr ""
 "هذه الخدمة هي على وشك أن تحل محلها الإصدار الجديد. من فضلك، إغلاق جلسة قبل "
 "{} وحفظ كل ما تبذلونه من العمل لتجنب فقدان ذلك."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "الخدمة ليست جاهزة. من فضلك، حاول مرة أخرى في حين."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

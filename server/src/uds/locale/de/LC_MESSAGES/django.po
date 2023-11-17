@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster at dkmon dot com>, 2012
 # Víctor Alonso <valonso@virtualcable.net>, 2022
 # Víctor Alonso <valonso@virtualcable.net>, 2022
@@ -20,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Víctor Alonso <valonso@virtualcable.net>, 2022\n"
 "Language-Team: German (http://app.transifex.com/openuds/openuds/language/"
@@ -3585,8 +3586,13 @@ msgid "Server Hint"
 msgstr "Server Hinweis"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "Bei mehreren AD-Servern wird dieser bevorzugt"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"Im Falle mehrerer AD-Server, welcher wird bevorzugt (wird nur für Gruppen- "
+"und Kontoentfernungsvorgänge verwendet)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5449,7 +5455,6 @@ msgid "Use random IP"
 msgstr "Verwenden Sie eine zufällige IP"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Wenn diese Option aktiviert ist, verwendet UDS eine zufällige IP aus der "
@@ -7937,7 +7942,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Ungültiger Multi-Factor Authentication-Code"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7945,11 +7950,11 @@ msgstr ""
 "Dieser Dienst wird durch eine neue Version ersetzt. Schließen Sie die "
 "Sitzung vor {} und speichern Sie Ihre Arbeit, um einen Verlust zu vermeiden."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "Service nicht bereit. Bitte versuchen Sie es in einer Weile erneut."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

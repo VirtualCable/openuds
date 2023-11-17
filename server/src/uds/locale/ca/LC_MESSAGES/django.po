@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2018
 # albert clar <albert.clar@uib.cat>, 2017-2018,2020-2021
 # Javier <jgonzalez@virtualcable.es>, 2020
@@ -20,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2020\n"
 "Language-Team: Catalan (http://app.transifex.com/openuds/openuds/language/"
@@ -3570,9 +3571,13 @@ msgid "Server Hint"
 msgstr "Pista del servidor"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
 msgstr ""
-"En cas de tenir varis servidors de Directori Actiu , a quin s'accedeix primer"
+"En el cas de diversos servidors AD, quin és el preferit (només s&#39;"
+"utilitza per a operacions d&#39;eliminació de grups i comptes)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5433,7 +5438,6 @@ msgid "Use random IP"
 msgstr "Utilitzeu IP aleatòria"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Si està marcat, UDS utilitzarà una IP aleatòria de la llista de servidors."
@@ -7907,7 +7911,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Codi d&#39;autenticació multifactor no vàlid"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7915,11 +7919,11 @@ msgstr ""
 "Aquest servei està a punt de ser reemplaçat per una nova versió. Si us plau, "
 "tanqueu la sessió abans {} i deseu tot el treball per evitar-ne pèrdues."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "Servei no disponible ara mateix. Si us plau, intenteu-ho més tard"
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

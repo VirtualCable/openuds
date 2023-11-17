@@ -13,11 +13,12 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Javier <jgonzalez@virtualcable.es>, 2014\n"
 "Language-Team: Chinese (http://app.transifex.com/openuds/openuds/language/"
@@ -3410,8 +3411,11 @@ msgid "Server Hint"
 msgstr "服务器提示"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "对于多个AD服务器，哪一个是首选"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr "如果有多台 AD 服务器，优先选择哪一台（仅用于组和帐户删除操作）"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5188,7 +5192,6 @@ msgid "Use random IP"
 msgstr "使用随机IP"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr "如果选中，UDS 将使用服务器列表中的随机 IP。"
 
@@ -7509,17 +7512,17 @@ msgstr "不支持重新加载此页面。请从原点重新开始服务。"
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "无效的多重身份验证代码"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
 msgstr "该服务即将被新版本取代。请在{}之前关闭会话并保存所有工作以避免丢失。"
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "服务没准备好。请稍后再试一次。"
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"

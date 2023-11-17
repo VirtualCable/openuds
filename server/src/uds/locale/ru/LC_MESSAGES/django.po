@@ -13,6 +13,7 @@
 # Translators:
 # Translators:
 # Translators:
+# Translators:
 # Adolfo Gómez <dkmaster@dkmon.com>, 2022
 # Alexander <ag@kub.tel>, 2020
 # Alexey Shabalin <a.shabalin@gmail.com>, 2019
@@ -26,7 +27,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenUDS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-23 17:29+0200\n"
+"POT-Creation-Date: 2023-11-17 16:09+0100\n"
 "PO-Revision-Date: 2014-03-26 02:14+0000\n"
 "Last-Translator: Elena Mishina, 2022-2023\n"
 "Language-Team: Russian (http://app.transifex.com/openuds/openuds/language/"
@@ -2766,7 +2767,7 @@ msgstr "Почтовые сети OTP"
 
 #: mfas/Email/mfa.py:151
 msgid "Networks for Email OTP authentication"
-msgstr "Сети для проверки подлинности электронной почты OTP"
+msgstr "Сети для OTP-аутентификации через электронную почту"
 
 #: mfas/Email/mfa.py:158
 msgid "Mail text"
@@ -3565,8 +3566,13 @@ msgid "Server Hint"
 msgstr "Предпочитаемый сервер"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:120
-msgid "In case of several AD servers, which one is preferred"
-msgstr "В случае нескольких серверов AD, какой из них предпочтительнее"
+#| msgid "In case of several AD servers, which one is preferred"
+msgid ""
+"In case of several AD servers, which one is preferred (only used for group "
+"and account removal operations)"
+msgstr ""
+"В случае нескольких серверов AD, какой из них предпочтительнее (используется "
+"только для операций удаления групп и учетных записей)"
 
 #: osmanagers/WindowsOsManager/windows_domain.py:150
 msgid "Must provide a domain!"
@@ -5415,7 +5421,6 @@ msgid "Use random IP"
 msgstr "Использовать случайный IP"
 
 #: services/PhysicalMachines/service_multi.py:119
-#| msgid "If checked, this transport will allow the use of user printers"
 msgid "If checked, UDS will use a random IP from the list of servers."
 msgstr ""
 "Если этот флажок установлен, UDS будет использовать случайный IP-адрес из "
@@ -7878,7 +7883,7 @@ msgstr ""
 msgid "Invalid Multi-Factor Authentication code"
 msgstr "Неверный код многофакторной аутентификации"
 
-#: web/util/services.py:319
+#: web/util/services.py:360
 msgid ""
 "This service is about to be replaced by a new version. Please, close the "
 "session before {} and save all your work to avoid loosing it."
@@ -7886,11 +7891,11 @@ msgstr ""
 "Эта услуга будет заменена новой версией. Закройте сеанс до {} и сохраните "
 "всю свою работу, чтобы не потерять ее."
 
-#: web/util/services.py:396
+#: web/util/services.py:422
 msgid "Service not ready. Please, try again in a while."
 msgstr "Сервис не готов. Повторите попытку через некоторое время."
 
-#: web/util/services.py:434
+#: web/util/services.py:460
 msgid ""
 "Your service is being created, please, wait for a few seconds while we "
 "complete it.)"
