@@ -45,7 +45,7 @@ _saveLater: typing.List[typing.Tuple['Config.Value', typing.Any]] = []
 _getLater: typing.List['Config.Value'] = []
 
 # For custom params (for choices mainly)
-_configParams = {}
+_configParams: typing.Dict[str, typing.Any] = {}
 
 # Pair of section/value removed from current UDS version
 # Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043

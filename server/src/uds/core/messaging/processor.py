@@ -69,7 +69,7 @@ class MessageProcessorThread(BaseThread):
             or time.time() - self._cached_stamp > CACHE_TIMEOUT
         ):
             self._cached_providers = [
-                (p.level, p.getInstance()) for p in Notifier.objects.all()
+                (p.level, p.getInstance()) for p in Notifier.objects.filter(enabled=True)
             ]
             self._cached_stamp = time.time()
         return self._cached_providers

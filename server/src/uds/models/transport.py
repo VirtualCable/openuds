@@ -56,6 +56,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
     Sample of transports are RDP, Spice, Web file uploader, etc...
     """
+
     # Constants for net_filter
     NO_FILTERING = 'n'
     ALLOW = 'a'
@@ -89,9 +90,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
-    ) -> 'transports.Transport':
+    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
     def getType(self) -> typing.Type['transports.Transport']:
@@ -127,11 +126,16 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
         :note: Ip addresses has been only tested with IPv4 addresses
         """
+        # Avoid circular import
+        from uds.models import Network  # pylint: disable=import-outside-toplevel
+
         if self.net_filtering == Transport.NO_FILTERING:
             return True
         ip, version = net.ipToLong(ipStr)
         # Allow
-        exists = self.networks.filter(start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version).exists()
+        exists = self.networks.filter(
+            start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
+        ).exists()
         if self.net_filtering == Transport.ALLOW:
             return exists
         # Deny, must not be in any network

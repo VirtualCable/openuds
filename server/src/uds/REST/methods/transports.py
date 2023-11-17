@@ -37,7 +37,7 @@ import typing
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import consts, transports, types
+from uds.core import consts, transports, types, ui
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
 from uds.models import Network, ServicePool, Transport
@@ -100,17 +100,14 @@ class Transports(ModelHandler):
                 'name': 'allowed_oss',
                 'value': [],
                 'choices': sorted(
-                    [
-                        {'id': x.name, 'text': x.name}
-                        for x in consts.os.KNOWN_OS_LIST
-                    ],
+                    [ui.gui.choiceItem(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
                     key=lambda x: x['text'].lower(),
                 ),
                 'label': gettext('Allowed Devices'),
                 'tooltip': gettext(
                     'If empty, any kind of device compatible with this transport will be allowed. Else, only devices compatible with selected values will be allowed'
                 ),
-                'type': 'multichoice',
+                'type': types.ui.FieldType.MULTICHOICE,
                 'tab': types.ui.Tab.ADVANCED,
                 'order': 102,
             },
@@ -121,13 +118,15 @@ class Transports(ModelHandler):
                 'name': 'pools',
                 'value': [],
                 'choices': [
-                    {'id': x.uuid, 'text': x.name}
-                    for x in ServicePool.objects.filter(service__isnull=False).order_by('name').prefetch_related('service')
-                    if transportType.protocol in x.service.getType().allowedProtocols 
+                    ui.gui.choiceItem(x.uuid, x.name)
+                    for x in ServicePool.objects.filter(service__isnull=False)
+                    .order_by('name')
+                    .prefetch_related('service')
+                    if transportType.protocol in x.service.getType().allowedProtocols
                 ],
                 'label': gettext('Service Pools'),
                 'tooltip': gettext('Currently assigned services pools'),
-                'type': 'multichoice',
+                'type': types.ui.FieldType.MULTICHOICE,
                 'order': 103,
             },
         )
@@ -138,10 +137,8 @@ class Transports(ModelHandler):
                 'length': 32,
                 'value': '',
                 'label': gettext('Label'),
-                'tooltip': gettext(
-                    'Metapool transport label (only used on metapool transports grouping)'
-                ),
-                'type': 'text',
+                'tooltip': gettext('Metapool transport label (only used on metapool transports grouping)'),
+                'type': types.ui.FieldType.TEXT,
                 'order': 201,
                 'tab': types.ui.Tab.ADVANCED,
             },
@@ -152,7 +149,7 @@ class Transports(ModelHandler):
     def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
         item = ensure.is_instance(item, Transport)
         type_ = item.getType()
-        pools = [{'id': x.uuid} for x in item.deployedServices.all()]
+        pools = list(item.deployedServices.all().values_list('uuid', flat=True))
         return {
             'id': item.uuid,
             'name': item.name,
@@ -161,10 +158,8 @@ class Transports(ModelHandler):
             'priority': item.priority,
             'label': item.label,
             'net_filtering': item.net_filtering,
-            'networks': [{'id': n.uuid} for n in item.networks.all()],
-            'allowed_oss': [{'id': x} for x in item.allowed_oss.split(',')]
-            if item.allowed_oss != ''
-            else [],
+            'networks': list(item.networks.all().values_list('uuid', flat=True)),
+            'allowed_oss': [x for x in item.allowed_oss.split(',')] if item.allowed_oss != '' else [],
             'pools': pools,
             'pools_count': len(pools),
             'deployed_count': item.deployedServices.count(),
@@ -180,9 +175,7 @@ class Transports(ModelHandler):
         fields['label'] = fields['label'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
-            raise self.invalidRequestException(
-                gettext('Label must contain only letters, numbers, ":" and "-"')
-            )
+            raise self.invalidRequestException(gettext('Label must contain only letters, numbers, ":" and "-"'))
 
     def afterSave(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Transport)

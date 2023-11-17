@@ -61,13 +61,13 @@ def _requestActor(
     url = userService.getCommsUrl()
     if not url:
         # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
-        raise exceptions.NoActorComms(f'No notification urls for {userService.friendly_name}')
+        raise exceptions.actor.NoActorComms(f'No notification urls for {userService.friendly_name}')
 
     minVersion = minVersion or '3.5.0'
     version = userService.properties.get('actor_version', '0.0.0')
     if '-' in version or version < minVersion:
         logger.warning('Pool %s has old actors (%s)', userService.deployed_service.name, version)
-        raise exceptions.OldActorVersion(
+        raise exceptions.actor.OldActorVersion(
             f'Old actor version {version} for {userService.friendly_name}'.format(
                 version, userService.friendly_name
             )
@@ -155,7 +155,7 @@ def checkUuid(userService: 'UserService') -> bool:
                 uuid,
             )
             return False
-    except exceptions.NoActorComms:
+    except exceptions.actor.NoActorComms:
         pass
 
     return True  # Actor does not supports checking
@@ -172,7 +172,7 @@ def requestScreenshot(userService: 'UserService') -> bytes:
         png = _requestActor(
             userService, 'screenshot', minVersion='3.0.0'
         )  # First valid version with screenshot is 3.0
-    except exceptions.NoActorComms:
+    except exceptions.actor.NoActorComms:
         png = None
 
     return base64.b64decode(png or emptyPng)
@@ -187,7 +187,7 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
         if forUser:
             data['user'] = forUser
         _requestActor(userService, 'script', data=data)
-    except exceptions.NoActorComms:
+    except exceptions.actor.NoActorComms:
         pass
 
 
@@ -197,7 +197,7 @@ def requestLogoff(userService: 'UserService') -> None:
     """
     try:
         _requestActor(userService, 'logout', data={})
-    except exceptions.NoActorComms:
+    except exceptions.actor.NoActorComms:
         pass
 
 
@@ -207,5 +207,5 @@ def sendMessage(userService: 'UserService', message: str) -> None:
     """
     try:
         _requestActor(userService, 'message', data={'message': message})
-    except exceptions.NoActorComms:
+    except exceptions.actor.NoActorComms:
         pass

@@ -457,14 +457,15 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns:
             List of servers sorted by usage
         """
-        now = model_utils.getSqlDatetime()
-        fltrs = serverGroup.servers.filter(maintenance_mode=False)
-        fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
-        if excludeServersUUids:
-            fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
-            
-        # Get the stats for all servers, but in parallel
-        serverStats = self.getServerStats(fltrs)
+        with transaction.atomic():
+            now = model_utils.getSqlDatetime()
+            fltrs = serverGroup.servers.filter(maintenance_mode=False)
+            fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
+            if excludeServersUUids:
+                fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
+                
+            # Get the stats for all servers, but in parallel
+            serverStats = self.getServerStats(fltrs)
         # Sort by weight, lower first (lower is better)
         return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
         

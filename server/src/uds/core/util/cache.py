@@ -73,7 +73,7 @@ class Cache:
     ] = _basic_deserialize
 
     def __init__(self, owner: typing.Union[str, bytes]):
-        self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
+        self._owner = typing.cast(str, owner.decode('utf-8') if isinstance(owner, bytes) else owner)
         self._bowner = self._owner.encode('utf8')
 
     def __getKey(self, key: typing.Union[str, bytes]) -> str:

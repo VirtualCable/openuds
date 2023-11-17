@@ -35,6 +35,7 @@ import typing
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from traitlets import default
 
 from uds.core import messaging, types
 from uds.core.environment import Environment
@@ -60,6 +61,7 @@ class Notifiers(ModelHandler):
         'comments',
         'level',
         'tags',
+        'enabled',
     ]
 
     table_title = typing.cast(str, _('Notifiers'))
@@ -67,6 +69,7 @@ class Notifiers(ModelHandler):
         {'name': {'title': _('Name'), 'visible': True, 'type': 'iconType'}},
         {'type_name': {'title': _('Type')}},
         {'level': {'title': _('Level')}},
+        {'enabled': {'title': _('Enabled')}},
         {'comments': {'title': _('Comments')}},
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
@@ -94,6 +97,14 @@ class Notifiers(ModelHandler):
                 'tooltip': gettext('Level of notifications'),
                 'type': types.ui.FieldType.CHOICE,
                 'order': 102,
+            },
+            {
+                'name': 'enabled',
+                'label': gettext('Enabled'),
+                'tooltip': gettext('If checked, this notifier will be used'),
+                'type': types.ui.FieldType.CHECKBOX,
+                'order': 103,
+                'default': True,
             }
         ]:
             self.addField(localGui, field)
@@ -106,7 +117,8 @@ class Notifiers(ModelHandler):
         return {
             'id': item.uuid,
             'name': item.name,
-            'level': item.level,
+            'level': str(item.level),
+            'enabled': item.enabled,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'type': type_.type(),

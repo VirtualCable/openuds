@@ -91,7 +91,7 @@ def logOperation(
 
     username = handler.request.user.pretty_name if handler.request.user else 'Unknown'
     doLog(
-        None,
+        None,  # > None Objects goes to SYSLOG (global log)
         level=level,
         message=f'{handler.request.ip} [{username}]: [{handler.request.method}/{response_code}] {path}'[
             :4096
