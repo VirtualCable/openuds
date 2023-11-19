@@ -52,7 +52,10 @@ def initialize() -> None:
     for _, name, _ in pkgutil.iter_modules([pkgpath]):  # type: ignore
         logger.debug('Importing worker %s', name)
         # __import__(name, globals(), locals(), [], 1)
-        importlib.import_module('.' + name, __name__)  # import module
+        try:
+            importlib.import_module('.' + name, __name__)  # import module
+        except Exception as e:
+            logger.error('Error importing worker %s: %s', name, e)
 
     importlib.invalidate_caches()
 
