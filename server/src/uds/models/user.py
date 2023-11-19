@@ -36,7 +36,7 @@ import typing
 from django.db import models
 from django.db.models import Count, Q, signals
 from uds.core import auths, mfas, types
-from uds.core.util import log, storage
+from uds.core.util import log, storage, properties
 
 from .authenticator import Authenticator
 from ..core.consts import NEVER
@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=no-member
-class User(UUIDModel):
+class User(UUIDModel, properties.PropertiesMixin):
     """
     This class represents a single user, associated with one authenticator
     """
@@ -97,6 +97,10 @@ class User(UUIDModel):
                 fields=['manager', 'name'], name='u_usr_manager_name'
             )
         ]
+
+    # For properties
+    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+        return self.uuid, 'user'
 
     def getUsernameForAuth(self) -> str:
         """
@@ -255,5 +259,8 @@ class User(UUIDModel):
 
         logger.debug('Deleted user %s', toDelete)
 
-
+# Connect to pre delete signal
 signals.pre_delete.connect(User.beforeDelete, sender=User)
+
+# Connects the properties signals
+properties.PropertiesMixin.setupSignals(User)

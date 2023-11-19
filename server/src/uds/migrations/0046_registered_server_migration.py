@@ -325,4 +325,19 @@ class Migration(migrations.Migration):
             name="small_name",
             field=models.CharField(db_index=True, default="", max_length=128),
         ),
+        migrations.AlterField(
+            model_name="calendarrule",
+            name="frequency",
+            field=models.CharField(
+                choices=[
+                    ("YEARLY", "Yearly"),
+                    ("MONTHLY", "Monthly"),
+                    ("WEEKLY", "Weekly"),
+                    ("DAILY", "Daily"),
+                    ("WEEKDAYS", "Weekdays"),
+                    ("NEVER", "Never"),
+                ],
+                max_length=32,
+            ),
+        ),
     ]

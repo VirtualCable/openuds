@@ -113,7 +113,7 @@ class WinDomainOsManager(WindowsOsManager):
         length=64,
         label=_('Server Hint'),
         order=9,
-        tooltip=_('In case of several AD servers, which one is preferred'),
+        tooltip=_('In case of several AD servers, which one is preferred (only used for group and account removal operations)'),        
         tab=_('Advanced'),
     )
     ssl = gui.CheckBoxField(

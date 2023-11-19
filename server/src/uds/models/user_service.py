@@ -575,6 +575,12 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     ) -> typing.Optional[str]:  # pylint: disable=unused-argument
         # path is not used, but to keep compat with Server "getCommUrl" method
         return self.properties.get('comms_url', None)
+    
+    def notifyPreconnect(self) -> None:
+        """
+        Notifies preconnect to userService
+        """
+        
 
     def logIP(self, ip: typing.Optional[str] = None) -> None:
         self.properties['ip'] = ip

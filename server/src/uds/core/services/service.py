@@ -35,6 +35,7 @@ import typing
 import logging
 
 from django.utils.translation import gettext_noop as _
+from uds.core.managers.userservice.comms import notifyPreconnect
 from uds.core.module import Module
 from uds.core.transports import protocols
 from uds.core.util.state import State
@@ -421,6 +422,19 @@ class Service(Module):
         if value and delete:
             self.storage.delete('__nfo_' + id)
         return value
+    
+    def notifyPreconnect(self, userService: 'models.UserService', info: 'types.connections.ConnectionData') -> bool:
+        """
+        Notifies preconnect to server, if this allows it
+
+        Args:
+            userService: User service to notify
+            info: Connection data to notify
+
+        Returns:
+            True if notification was sent, False otherwise
+        """
+        return False
 
     def doLog(self, level: log.LogLevel, message: str) -> None:
         """

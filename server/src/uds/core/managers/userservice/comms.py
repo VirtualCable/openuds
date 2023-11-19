@@ -60,7 +60,6 @@ def _requestActor(
     """
     url = userService.getCommsUrl()
     if not url:
-        # logger.warning('No notification is made because agent does not supports notifications: %s', userService.friendly_name)
         raise exceptions.actor.NoActorComms(f'No notification urls for {userService.friendly_name}')
 
     minVersion = minVersion or '3.5.0'
@@ -124,6 +123,8 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
     Notifies a preconnect to an user service
     """
     src = userService.getConnectionSource()
+    if userService.deployed_service.service.getInstance().notifyPreconnect(userService, info) is True:
+        return  # Ok, service handled it
 
     _requestActor(
         userService,
@@ -136,7 +137,7 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
             udsuser=userService.user.name + '@' + userService.user.manager.name if userService.user else '',
             udsuser_uuid=userService.user.uuid if userService.user else '',
             userservice_uuid=userService.uuid,
-            service_type=info.service_type
+            service_type=info.service_type,
         ).asDict(),
     )
 

@@ -103,13 +103,13 @@ class ServerManager(metaclass=singleton.Singleton):
         with self.cntStorage() as counters:
             if not onlyIfExists or uuid in counters:
                 counters[uuid] = counters.get(uuid, 0) + 1
-                
-    def getServerStats(self, serversFltr: 'QuerySet[models.Server]') -> typing.List[
-            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
-        ]:
+
+    def getServerStats(
+        self, serversFltr: 'QuerySet[models.Server]'
+    ) -> typing.List[typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
         """
         Returns a list of stats for a list of servers
-        """       
+        """
         # Paralelize stats retrieval
         retrievedStats: typing.List[
             typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
@@ -130,7 +130,6 @@ class ServerManager(metaclass=singleton.Singleton):
                     continue  # Skip restrained servers
                 executor.submit(_retrieveStats, server)
 
-        
         return retrievedStats
 
     def _findBestServer(
@@ -368,11 +367,16 @@ class ServerManager(metaclass=singleton.Singleton):
         serverGroup: 'models.ServerGroup',
         userService: 'models.UserService',
         info: types.connections.ConnectionData,
+        server: typing.Optional[
+            'models.Server'
+        ] = None,  # Forced server instead of selecting one from serverGroup
     ) -> None:
         """
         Notifies preconnect to server
         """
-        server = self.getServerAssignation(userService, serverGroup)
+        if not server:
+            server = self.getServerAssignation(userService, serverGroup)
+
         if server:
             requester.ServerApiRequester(server).notifyPreconnect(userService, info)
 
@@ -463,13 +467,12 @@ class ServerManager(metaclass=singleton.Singleton):
             fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
             if excludeServersUUids:
                 fltrs = fltrs.exclude(uuid__in=excludeServersUUids)
-                
+
             # Get the stats for all servers, but in parallel
             serverStats = self.getServerStats(fltrs)
         # Sort by weight, lower first (lower is better)
         return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
-        
-        
+
         return sorted(
             serverGroup.servers.filter(maintenance_mode=False),
             key=lambda x: self.getUnmanagedUsage(x.uuid),
