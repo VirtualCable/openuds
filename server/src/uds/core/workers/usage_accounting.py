@@ -33,7 +33,8 @@ import logging
 
 from django.db import transaction
 
-from uds.models import AccountUsage, getSqlDatetime
+from uds.models import AccountUsage
+from uds.core.util.model import getSqlDatetime
 from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)

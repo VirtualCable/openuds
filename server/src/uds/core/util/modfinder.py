@@ -38,6 +38,8 @@ import importlib
 import logging
 import typing
 
+from django.conf import settings
+
 from uds.core import module
 
 logger = logging.getLogger(__name__)
@@ -102,8 +104,13 @@ def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> 
 
     logger.info('* Importing modules from %s', pkgpath)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
-        logger.info('   - Importing module %s.%s ', modName, name)
-        importlib.import_module('.' + name, modName)  # import module
+        try:
+            logger.info('   - Importing module %s.%s ', modName, name)
+            importlib.import_module('.' + name, modName)  # import module
+        except Exception as e:
+            if settings.DEBUG:
+                logger.exception('***** Error importing module %s.%s: %s *****', modName, name, e)
+            logger.error('   - Error importing module %s.%s: %s', modName, name, e)
     logger.info('* Done importing modules from %s', pkgpath)
 
     importlib.invalidate_caches()

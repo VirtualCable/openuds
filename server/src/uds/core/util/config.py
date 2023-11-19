@@ -430,7 +430,7 @@ class GlobalConfig:
     # Number of services to initiate removal per run of CacheCleaner
     USER_SERVICE_CLEAN_NUMBER: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'userServiceCleanNumber',
-        '8',
+        '24',
         type=Config.FieldType.NUMERIC,
         help=_('Number of services to initiate removal per run of CacheCleaner'),
     )  # Defaults to 3 per wun
