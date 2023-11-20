@@ -101,8 +101,8 @@ class DeployedServiceStatsCollector(Job):
                 userServices__state__in=State.INFO_STATES
             )
             users = auth.users.all().count()
-            users_with_service = fltr.distinct().count()
-            number_assigned_services = fltr.count()
+            users_with_service = fltr.values('id').distinct().count()  # Use "values" to simplify query (only id)
+            number_assigned_services = fltr.values('id').count()
             # Global counters
             totalUsers += users
             totalAssigned += number_assigned_services

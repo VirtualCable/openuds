@@ -82,11 +82,7 @@ class CalendarChecker:
         for rule in self.calendar.rules.all():
             rr = rule.as_rrule()
 
-            r_end = (
-                datetime.datetime.combine(rule.end, datetime.datetime.max.time())
-                if rule.end
-                else None
-            )
+            r_end = datetime.datetime.combine(rule.end, datetime.datetime.max.time()) if rule.end else None
 
             ruleDurationMinutes = rule.duration_as_minutes
             ruleFrequencyMinutes = rule.frequency_as_minutes
@@ -97,14 +93,8 @@ class CalendarChecker:
 
             # Relative start, rrule can "spawn" the days, so we get the start at least the ruleDurationMinutes of rule to see if it "matches"
             # This means, we need the previous matching day to be "executed" so we can get the "actives" correctly
-            diff = (
-                ruleFrequencyMinutes
-                if ruleFrequencyMinutes > ruleDurationMinutes
-                else ruleDurationMinutes
-            )
-            _start = (start if start > rule.start else rule.start) - datetime.timedelta(
-                minutes=diff
-            )
+            diff = ruleFrequencyMinutes if ruleFrequencyMinutes > ruleDurationMinutes else ruleDurationMinutes
+            _start = (start if start > rule.start else rule.start) - datetime.timedelta(minutes=diff)
 
             _end = end if r_end is None or end < r_end else r_end
 
@@ -138,7 +128,7 @@ class CalendarChecker:
             else:
                 event = rule.as_rrule_end().after(checkFrom)  # At end
 
-            if next_event is None or next_event > event:
+            if event and (next_event is None or next_event > event):
                 next_event = event
 
         return next_event
@@ -156,10 +146,7 @@ class CalendarChecker:
 
         # First, try to get data from cache if it is valid
         cacheKey = CalendarChecker._cacheKey(
-            str(self.calendar.modified)
-            + str(dtime.date())
-            + (self.calendar.uuid or '')
-            + 'checker'
+            str(self.calendar.modified) + str(dtime.date()) + (self.calendar.uuid or '') + 'checker'
         )
         # First, check "local memory cache", and if not found, from DB cache
         cached = memCache.get(cacheKey)
@@ -206,9 +193,7 @@ class CalendarChecker:
             + 'event'
             + ('x' if startEvent else '_')
         )
-        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(
-            cacheKey, None
-        )
+        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(cacheKey, None)
         if not next_event:
             logger.debug('Regenerating cached nextEvent')
             next_event = self._updateEvents(
@@ -230,6 +215,4 @@ class CalendarChecker:
     def _cacheKey(key: str) -> str:
         # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
         # Simple, fastest algorihm is to use md5
-        return hashlib.md5(
-            key.encode('utf-8')
-        ).hexdigest()  # nosec  simple fast algorithm for cache keys
+        return hashlib.md5(key.encode('utf-8')).hexdigest()  # nosec  simple fast algorithm for cache keys
