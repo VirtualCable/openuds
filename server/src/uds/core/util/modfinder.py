@@ -159,7 +159,12 @@ def dynamicLoadAndRegisterPackages(
                 continue
 
             logger.info('   - Registering %s.%s', cls.__module__, cls.__name__)
-            adder(cls)
+            try:
+                adder(cls)
+            except Exception as e:
+                if settings.DEBUG:
+                    logger.exception('***** Error registering %s.%s: %s *****', cls.__module__, cls.__name__, e)
+                logger.error('   - Error registering %s.%s: %s', cls.__module__, cls.__name__, e)
 
     logger.info('* Start registering %s', modName)
     process(type_.__subclasses__())
