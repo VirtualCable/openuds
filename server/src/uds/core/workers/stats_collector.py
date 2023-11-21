@@ -97,7 +97,7 @@ class DeployedServiceStatsCollector(Job):
 
         totalUsers, totalAssigned, totalWithService = 0, 0, 0
         for auth in models.Authenticator.objects.all():
-            fltr = auth.users.filter(userServices__isnull=False).exclude(
+            fltr = auth.users.order_by().filter(userServices__isnull=False).exclude(
                 userServices__state__in=State.INFO_STATES
             )
             users = auth.users.all().count()

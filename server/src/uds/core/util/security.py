@@ -191,7 +191,7 @@ def secureRequestsSession(
     session.mount("https://", UDSHTTPAdapter())
 
     # Add user agent header to session
-    session.headers.update({"User-Agent": consts.USER_AGENT})
+    session.headers.update({"User-Agent": consts.system.USER_AGENT})
 
     return session
 

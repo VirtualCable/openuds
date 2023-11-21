@@ -40,6 +40,8 @@ import typing
 
 from django.http import HttpResponse
 
+from uds.core import consts
+
 # from xml_marshaller import xml_marshaller
 
 logger = logging.getLogger(__name__)
@@ -130,9 +132,14 @@ class MarshallerProcessor(ContentProcessor):
 
     def processParameters(self) -> typing.Dict[str, typing.Any]:
         try:
-            if self._request.META.get('CONTENT_LENGTH', '0') == '0' or not self._request.body:
+            length = int(self._request.META.get('CONTENT_LENGTH', '0'))
+            if length == 0 or not self._request.body:
                 return self.processGetParameters()
+            
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
+            if length > consts.system.MAX_REQUEST_SIZE or length > len(self._request.body):
+                raise ParametersException('Request size too big')
+            
             res = self.marshaller.loads(self._request.body.decode('utf8'))
             logger.debug('Unmarshalled content: %s', res)
             return res

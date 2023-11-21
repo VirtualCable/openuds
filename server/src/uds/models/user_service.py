@@ -36,8 +36,7 @@ import typing
 from django.db import models
 from django.db.models import signals
 
-from uds.core import types
-from uds.core.consts import MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, NEVER
+from uds.core import types, consts
 from uds.core.environment import Environment
 from uds.core.util import log, unique, properties
 from uds.core.util.model import getSqlDatetime
@@ -97,14 +96,14 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         default=None,
     )
     in_use = models.BooleanField(default=False)
-    in_use_date = models.DateTimeField(default=NEVER)
+    in_use_date = models.DateTimeField(default=consts.NEVER)
     cache_level = models.PositiveSmallIntegerField(
         db_index=True, default=0
     )  # Cache level must be 1 for L1 or 2 for L2, 0 if it is not cached service
 
-    src_hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
+    src_hostname = models.CharField(max_length=consts.system.MAX_DNS_NAME_LENGTH, default='')
     src_ip = models.CharField(
-        max_length=MAX_IPV6_LENGTH, default=''
+        max_length=consts.system.MAX_IPV6_LENGTH, default=''
     )  # Source IP of the user connecting to the service. Max length is 45 chars (ipv6)
 
     # "fake" declarations for type checking
@@ -311,10 +310,10 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns:
             Nothing
         """
-        self.src_ip = src.ip[:MAX_IPV6_LENGTH]
-        self.src_hostname = src.hostname[:MAX_DNS_NAME_LENGTH]
+        self.src_ip = src.ip[:consts.system.MAX_IPV6_LENGTH]
+        self.src_hostname = src.hostname[:consts.system.MAX_DNS_NAME_LENGTH]
 
-        if len(src.ip) > MAX_IPV6_LENGTH or len(src.hostname) > MAX_DNS_NAME_LENGTH:
+        if len(src.ip) > consts.system.MAX_IPV6_LENGTH or len(src.hostname) > consts.system.MAX_DNS_NAME_LENGTH:
             logger.info(
                 'Truncated connection source data to %s/%s',
                 self.src_ip,

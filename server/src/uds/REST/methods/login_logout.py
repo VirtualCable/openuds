@@ -37,7 +37,7 @@ import string
 import time
 import typing
 
-from uds.core.consts import VERSION as UDS_VERSION
+from uds.core.consts.system import VERSION as UDS_VERSION
 from uds.core import consts
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
@@ -103,7 +103,7 @@ class Login(Handler):
         # Checks if client is "blocked"
         fail_cache = Cache('RESTapi')
         fails = fail_cache.get(self._request.ip) or 0
-        if fails > consts.ALLOWED_FAILS:
+        if fails > consts.system.ALLOWED_FAILS:
             logger.info(
                 'Access to REST API %s is blocked for %s seconds since last fail',
                 self._request.ip,

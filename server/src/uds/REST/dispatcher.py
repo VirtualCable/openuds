@@ -39,8 +39,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
-from uds.core.consts import VERSION_STAMP
-from uds.core.consts import VERSION
+from uds.core import consts
 from uds.core.util import modfinder
 
 from . import processors, log
@@ -183,7 +182,7 @@ class Dispatcher(View):
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
                 response = processor.getResponse(response)
             # Set response headers
-            response['UDS-Version'] = f'{VERSION};{VERSION_STAMP}'
+            response['UDS-Version'] = f'{consts.system.VERSION};{consts.system.VERSION_STAMP}'
             for k, val in handler.headers().items():
                 response[k] = val
 

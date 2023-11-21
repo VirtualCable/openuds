@@ -333,7 +333,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if code_verifier:
             param_dict['code_verifier'] = code_verifier
 
-        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.COMMS_TIMEOUT)
+        req = requests.post(self.tokenEndpoint.value, data=param_dict, timeout=consts.system.COMMS_TIMEOUT)
         logger.debug('Token request: %s %s', req.status_code, req.text)
 
         if not req.ok:
@@ -363,7 +363,7 @@ class OAuth2Authenticator(auths.Authenticator):
             req = requests.get(
                 self.infoEndpoint.value,
                 headers={'Authorization': 'Bearer ' + token.access_token},
-                timeout=consts.COMMS_TIMEOUT,
+                timeout=consts.system.COMMS_TIMEOUT,
             )
             logger.debug('User info request: %s %s', req.status_code, req.text)
 

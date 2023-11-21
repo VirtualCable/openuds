@@ -33,7 +33,7 @@ import functools
 import logging
 
 from uds import models
-from uds.core.consts import VERSION
+from uds.core.consts.system import VERSION
 
 from ...utils import rest
 

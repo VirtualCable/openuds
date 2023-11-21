@@ -53,7 +53,7 @@ class ServerRegisterBase(Handler):
         if ':' in ip:
             # If zone is present, remove it
             ip = ip.split('%')[0]
-        port = self._params.get('port', consts.SERVER_DEFAULT_LISTEN_PORT)
+        port = self._params.get('port', consts.system.SERVER_DEFAULT_LISTEN_PORT)
 
         mac = self._params.get('mac', consts.MAC_UNKNOWN)
         data = self._params.get('data', None)

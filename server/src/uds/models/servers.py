@@ -35,7 +35,7 @@ import typing
 from django.db import models
 
 from uds.core import consts, types
-from uds.core.consts import MAC_UNKNOWN, MAX_DNS_NAME_LENGTH, MAX_IPV6_LENGTH, SERVER_DEFAULT_LISTEN_PORT
+from uds.core.consts import MAC_UNKNOWN
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log, net, properties, resolver
 from uds.core.util.model import getSqlStamp, getSqlDatetime
@@ -74,7 +74,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     # On some cases, the group will have a host and port that will be used to connect to the servers
     # I.e. UDS Tunnels can be a lot of them, but have a load balancer that redirects to them
-    host = models.CharField(max_length=MAX_DNS_NAME_LENGTH, default='')
+    host = models.CharField(max_length=consts.system.MAX_DNS_NAME_LENGTH, default='')
     port = models.IntegerField(default=0)
 
     # 'Fake' declarations for type checking
@@ -135,9 +135,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # Username that registered the server
     username = models.CharField(max_length=128)
     # Ip from where the server was registered, can be IPv4 or IPv6
-    ip_from = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip_from = models.CharField(max_length=consts.system.MAX_IPV6_LENGTH)
     # Ip of the server, can be IPv4 or IPv6 (used to communicate with it)
-    ip = models.CharField(max_length=MAX_IPV6_LENGTH)
+    ip = models.CharField(max_length=consts.system.MAX_IPV6_LENGTH)
 
     # Hostname. It use depends on the implementation of the service, providers. etc..
     # But the normal operations is that hostname has precedence over ip
@@ -145,9 +145,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # * If fails, use ip
     # Note that although hostname is not unique, if you try to register a server with a hostname
     # that has more than one record, it will fail
-    hostname = models.CharField(max_length=MAX_DNS_NAME_LENGTH)
+    hostname = models.CharField(max_length=consts.system.MAX_DNS_NAME_LENGTH)
     # Port where server listens for connections (if it listens)
-    listen_port = models.IntegerField(default=SERVER_DEFAULT_LISTEN_PORT)
+    listen_port = models.IntegerField(default=consts.system.SERVER_DEFAULT_LISTEN_PORT)
 
     # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
     token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)

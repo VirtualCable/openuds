@@ -64,7 +64,7 @@ def restrainServer(func: typing.Callable[..., typing.Any]) -> typing.Callable[..
         except Exception as e:
             logger.error('Error executing %s: %s', func.__name__, e)
             self.server.setRestrainedUntil(
-                getSqlDatetime() + datetime.timedelta(seconds=consts.FAILURE_TIMEOUT)
+                getSqlDatetime() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
             )  # Block server for a while
             return False
 
@@ -88,7 +88,7 @@ class ServerApiRequester:
         """
         Sets up the request for the server
         """
-        minVersion = minVersion or consts.MIN_SERVER_VERSION
+        minVersion = minVersion or consts.system.MIN_SERVER_VERSION
         # If server has a cert, save it to a file
         verify: typing.Union[str, bool] = False
         try:
@@ -103,8 +103,8 @@ class ServerApiRequester:
                 {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'User-Agent': consts.USER_AGENT,
-                    'X-UDS-VERSION': consts.VERSION,
+                    'User-Agent': consts.system.USER_AGENT,
+                    'X-UDS-VERSION': consts.system.VERSION,
                     AUTH_TOKEN: self.hash,
                 }
             )
@@ -128,7 +128,7 @@ class ServerApiRequester:
         Returns the url for a method on the server
         """
         if self.server.type == types.servers.ServerType.UNMANAGED or (
-            self.server.version < (minVersion or consts.MIN_SERVER_VERSION)
+            self.server.version < (minVersion or consts.system.MIN_SERVER_VERSION)
         ):
             return None
 
@@ -140,7 +140,7 @@ class ServerApiRequester:
             return None
 
         with self.setupSession(minVersion=minVersion) as session:
-            response = session.get(url, timeout=(consts.DEFAULT_CONNECT_TIMEOUT, consts.DEFAULT_REQUEST_TIMEOUT))
+            response = session.get(url, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -155,7 +155,7 @@ class ServerApiRequester:
             return None
 
         with self.setupSession(minVersion=minVersion) as session:
-            response = session.post(url, json=data, timeout=(consts.DEFAULT_CONNECT_TIMEOUT, consts.DEFAULT_REQUEST_TIMEOUT))
+            response = session.post(url, json=data, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text

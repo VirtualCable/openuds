@@ -31,8 +31,7 @@
 import logging
 import typing
 
-from uds.core.consts import VERSION_STAMP
-from uds.core.consts import VERSION
+from uds.core import consts
 
 from ..handlers import Handler
 
@@ -44,4 +43,4 @@ class UDSVersion(Handler):
     name = 'version'
 
     def get(self) -> typing.MutableMapping[str, typing.Any]:
-        return {'version': VERSION, 'build': VERSION_STAMP}
+        return {'version': consts.system.VERSION, 'build': consts.system.VERSION_STAMP}

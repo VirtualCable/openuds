@@ -37,9 +37,8 @@ from django.db import models
 
 from uds.core.util.state import State
 from uds.core.environment import Environment
-from uds.core import jobs
+from uds.core import jobs, consts
 
-from ..core.consts import NEVER, MAX_DNS_NAME_LENGTH
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +65,8 @@ class Scheduler(models.Model):
     name = models.CharField(max_length=64, unique=True)
     frecuency = models.PositiveIntegerField(default=DAY)
     last_execution = models.DateTimeField(db_index=True)
-    next_execution = models.DateTimeField(default=NEVER, db_index=True)
-    owner_server = models.CharField(max_length=MAX_DNS_NAME_LENGTH, db_index=True, default='')
+    next_execution = models.DateTimeField(default=consts.NEVER, db_index=True)
+    owner_server = models.CharField(max_length=consts.system.MAX_DNS_NAME_LENGTH, db_index=True, default='')
     state = models.CharField(max_length=1, default=State.FOR_EXECUTE, db_index=True)
 
     # primary key id declaration (for type checking)

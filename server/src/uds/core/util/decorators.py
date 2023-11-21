@@ -350,7 +350,7 @@ def blocker(
 
     """
     from uds.REST.exceptions import AccessDenied  # To avoid circular references
-    max_failures = max_failures or consts.ALLOWED_FAILS
+    max_failures = max_failures or consts.system.ALLOWED_FAILS
 
     def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
         @functools.wraps(f)

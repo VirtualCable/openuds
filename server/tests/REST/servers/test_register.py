@@ -56,7 +56,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
         super().setUp()
         self._data = {
             'ip': '',  # To be set on tests
-            'port': consts.SERVER_DEFAULT_LISTEN_PORT,
+            'port': consts.system.SERVER_DEFAULT_LISTEN_PORT,
             'type': '',  # To be set on tests
             'subtype': crypto.CryptoManager.manager().randomString(10),
             'os': '',  # To be set on tests

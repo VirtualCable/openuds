@@ -92,7 +92,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
 
         # We have ALLOWED_FAILS until we get blocked for a while
         # Next one will give 403
-        for a in range(consts.ALLOWED_FAILS):
+        for a in range(consts.system.ALLOWED_FAILS):
             response = invalid()
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()['error'], 'invalid token')

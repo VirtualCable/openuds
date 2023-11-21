@@ -42,10 +42,8 @@ from django.templatetags.static import static
 from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
 from uds.core import consts
-from uds.core.consts import VERSION
 from uds.core.managers import downloadsManager
 from uds.core.util.config import GlobalConfig
-from uds.core.consts import VERSION_STAMP
 from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking
@@ -151,8 +149,8 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         }
 
     config = {
-        'version': VERSION,
-        'version_stamp': VERSION_STAMP,
+        'version': consts.system.VERSION,
+        'version_stamp': consts.system.VERSION_STAMP,
         'language': get_language(),
         'available_languages': [
             {'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES

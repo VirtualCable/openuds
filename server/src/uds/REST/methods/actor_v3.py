@@ -97,7 +97,7 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
     if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
         return
     fails = cache.get(request.ip) or 0
-    if fails >= consts.ALLOWED_FAILS:
+    if fails >= consts.system.ALLOWED_FAILS:
         logger.info(
             'Access to actor from %s is blocked for %s seconds since last fail',
             request.ip,

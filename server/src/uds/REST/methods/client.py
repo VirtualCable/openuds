@@ -36,7 +36,7 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from uds.REST import Handler
 from uds.REST import RequestError
-from uds.core.consts import VERSION as UDS_VERSION
+from uds.core import consts
 from uds.models import TicketStore
 from uds.models import User
 from uds.web.util import errors
@@ -44,7 +44,6 @@ from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core.consts import REQUIRED_CLIENT_VERSION
 from uds.core.util.rest.tools import match
 
 if typing.TYPE_CHECKING:
@@ -52,7 +51,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-CLIENT_VERSION = UDS_VERSION
+CLIENT_VERSION = consts.system.VERSION
 
 
 # Enclosed methods under /client path
@@ -115,7 +114,7 @@ class Client(Handler):
         version = self._params.get('version', '0.0.0')
         srcIp = self._request.ip
 
-        if version < REQUIRED_CLIENT_VERSION:
+        if version < consts.system.REQUIRED_CLIENT_VERSION:
             return Client.result(error='Client version not supported.\n Please, upgrade it.')
 
         # Ip is optional,
@@ -218,7 +217,7 @@ class Client(Handler):
             return Client.result(
                 {
                     'availableVersion': CLIENT_VERSION,
-                    'requiredVersion': REQUIRED_CLIENT_VERSION,
+                    'requiredVersion': consts.system.REQUIRED_CLIENT_VERSION,
                     'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
             )

@@ -470,7 +470,7 @@ class gui:
         def __init__(
             self,
             label: str,
-            length: int = consts.DEFAULT_TEXT_LENGTH,
+            length: int = consts.system.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
@@ -568,7 +568,7 @@ class gui:
         def __init__(
             self,
             label: str,
-            length: int = consts.DEFAULT_TEXT_LENGTH,
+            length: int = consts.system.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
@@ -767,7 +767,7 @@ class gui:
         def __init__(
             self,
             label: str,
-            length: int = consts.DEFAULT_TEXT_LENGTH,
+            length: int = consts.system.DEFAULT_TEXT_LENGTH,
             readonly: bool = False,
             order: int = 0,
             tooltip: str = '',
