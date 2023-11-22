@@ -73,6 +73,21 @@ class HandlerNode(typing.NamedTuple):
     name: str
     handler: typing.Optional[typing.Type[Handler]]
     children: typing.MutableMapping[str, 'HandlerNode']
+    
+    def __str__(self) -> str:
+        return f'HandlerNode({self.name}, {self.handler}, {self.children})'
+    
+    def __repr__(self) -> str:
+        return str(self)
+    
+    def tree(self, level: int = 0) -> str:
+        """
+        Returns a string representation of the tree
+        """
+        ret = f'{"  " * level}{self.name} ({self.handler.__name__ if self.handler else "None"})\n'
+        for child in self.children.values():
+            ret += child.tree(level + 1)
+        return ret
 
 
 class Dispatcher(View):
@@ -228,7 +243,7 @@ class Dispatcher(View):
 
         # Fill the service_node tree with the class
         service_node = Dispatcher.services  # Root path
-        # If path, ensure that the path exists
+        # If path, ensure that the path exists on the tree
         if type_.path:
             logger.info('Path: /%s/%s', type_.path, name)
             for k in type_.path.split('/'):
@@ -269,7 +284,6 @@ class Dispatcher(View):
             modName=modName,
             checker=checker,
             packageName='methods',
-        )
-
+        )       
 
 Dispatcher.initialize()
