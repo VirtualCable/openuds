@@ -112,7 +112,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if serviceInstance.maxUserServices == consts.UNLIMITED:
             return False
 
-        if self.getExistingUserServices(service) >= (serviceInstance.maxUserServices or 1):
+        if self.getExistingUserServices(service) >= serviceInstance.maxUserServices:
             return True
 
         return False

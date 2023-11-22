@@ -31,13 +31,14 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+from ast import If
 import typing
 import logging
 
 from django.utils.translation import gettext_noop as _
-from uds.core.managers.userservice.comms import notifyPreconnect
 from uds.core.module import Module
 from uds.core.transports import protocols
+from uds.core.ui.user_interface import gui
 from uds.core.util.state import State
 from uds.core.util import log
 
@@ -121,12 +122,26 @@ class Service(Module):
     # Functional related data
 
     # : Normally set to UNLIMITED. This attribute indicates if the service has some "limitation"
-    # : for providing deployed services to users. This attribute can be set here or
+    # : for providing user services. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
-    maxUserServices: int = consts.UNLIMITED  # : If the service provides more than 1 "provided service" (-1 = no limit, 0 = ???? (do not use it!!!), N = max number to deploy
+    # : Note: you can override this value on service instantiation by providing a "maxService":
+    # :      - If maxServices is an integer, it will be used as maxUserServices
+    # :      - If maxServices is a gui.NumericField, it will be used as maxUserServices (.num() will be called)
+    # :      - If maxServices is a callable, it will be called and the result will be used as maxUserServices
+    # :      - If maxServices is None, maxUserServices will be set to consts.UNLIMITED (as default)
+    maxUserServices: int = (
+        consts.UNLIMITED
+    )  
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
+    # : Example:
+    # :    cacheConstrains = {
+    # :        'cache_l2_srvs': 10,
+    # :        'cache_l1_srvs': 20,
+    # :    }
+    # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
+    # : on a save invocation to REST api for ServicePool
     cacheConstrains: typing.Optional[typing.MutableMapping[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
@@ -267,11 +282,20 @@ class Service(Module):
         if hasattr(self, 'maxServices'):
             # Fix self "maxUserServices" value after loading fields
             try:
-                self.maxUserServices = getattr(self, 'maxServices').num()
+                maxServices = getattr(self, 'maxServices', None)
+                if isinstance(maxServices, int):
+                    self.maxUserServices = maxServices
+                elif isinstance(maxServices, gui.NumericField):
+                    self.maxUserServices = maxServices.num()
+                elif callable(maxServices):
+                    self.maxUserServices = maxServices()
+                else:
+                    self.maxUserServices = consts.UNLIMITED
             except Exception:
                 self.maxUserServices = consts.UNLIMITED
 
-            if self.maxUserServices < 1:
+            # Ensure that maxUserServices is not negative
+            if self.maxUserServices < 0:
                 self.maxUserServices = consts.UNLIMITED
 
         # Keep untouched if maxServices is not present
@@ -342,13 +366,13 @@ class Service(Module):
         By default, services does not have a token
         """
         return None
-    
+
     def getVappLauncher(self, userService: 'models.UserService') -> typing.Optional[typing.Tuple[str, str]]:
         """Returns the vapp launcher for this service, if any
-        
+
         Args:
             userService (UserService): User service to get the vapp launcher from
-            
+
         Returns:
             typing.Optional[typing.Tuple[str, str]]: A tuple with the vapp launcher name and the vapp launcher path on server
         """
@@ -422,8 +446,10 @@ class Service(Module):
         if value and delete:
             self.storage.delete('__nfo_' + id)
         return value
-    
-    def notifyPreconnect(self, userService: 'models.UserService', info: 'types.connections.ConnectionData') -> bool:
+
+    def notifyPreconnect(
+        self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
+    ) -> bool:
         """
         Notifies preconnect to server, if this allows it
 

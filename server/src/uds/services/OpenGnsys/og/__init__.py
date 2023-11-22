@@ -47,7 +47,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.cache import Cache
 
 # Fake part
-FAKE = False
+FAKE = True
 CACHE_VALIDITY = 180
 TIMEOUT = 10
 
