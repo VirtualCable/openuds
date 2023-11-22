@@ -65,15 +65,23 @@ __all__ = ['Handler', 'Dispatcher']
 AUTH_TOKEN_HEADER = 'X-Auth-Token'  # nosec: this is not a password, but a header name
 
 
+class HandlerNode(typing.NamedTuple):
+    """
+    Represents a node on the handler tree
+    """
+
+    name: str
+    handler: typing.Optional[typing.Type[Handler]]
+    children: typing.MutableMapping[str, 'HandlerNode']
+
+
 class Dispatcher(View):
     """
     This class is responsible of dispatching REST requests
     """
 
     # This attribute will contain all paths--> handler relations, filled at Initialized method
-    services: typing.ClassVar[typing.MutableMapping[str, typing.Any]] = {
-        '': None  # Root node
-    }
+    services: typing.ClassVar[HandlerNode] = HandlerNode('', None, {})  # type: ignore
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request: 'http.request.HttpRequest', *args, **kwargs):
@@ -92,9 +100,7 @@ class Dispatcher(View):
         service = Dispatcher.services
         full_path_lst: typing.List[str] = []
         # Guess content type from content type header (post) or ".xxx" to method
-        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(
-            ';'
-        )[0]
+        content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
         while path:
             clean_path = path[0]
@@ -103,8 +109,8 @@ class Dispatcher(View):
                 path = path[1:]
                 continue
 
-            if clean_path in service:  # if we have a node for this path, walk down
-                service = service[clean_path]  # Update service pointer
+            if clean_path in service.children:  # if we have a node for this path, walk down
+                service = service.children[clean_path]
                 full_path_lst.append(path[0])  # Add this path to full path
                 path = path[1:]  # Remove first part of path
             else:
@@ -115,17 +121,13 @@ class Dispatcher(View):
 
         # Now, service points to the class that will process the request
         # We get the '' node, that is the "current" node, and get the class from it
-        cls: typing.Optional[typing.Type[Handler]] = service[
-            ''
-        ]  # Get "root" class, that is stored on
+        cls: typing.Optional[typing.Type[Handler]] = service.handler
         if not cls:
-            return http.HttpResponseNotFound(
-                'Method not found', content_type="text/plain"
-            )
+            return http.HttpResponseNotFound('Method not found', content_type="text/plain")
 
-        processor = processors.available_processors_mime_dict.get(
-            content_type, processors.default_processor
-        )(request)
+        processor = processors.available_processors_mime_dict.get(content_type, processors.default_processor)(
+            request
+        )
 
         # Obtain method to be invoked
         http_method: str = request.method.lower() if request.method else ''
@@ -160,21 +162,15 @@ class Dispatcher(View):
                 if hasattr(handler, n):
                     allowedMethods.append(n)
             log.logOperation(handler, 405, log.LogLevel.ERROR)
-            return http.HttpResponseNotAllowed(
-                allowedMethods, content_type="text/plain"
-            )
+            return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
         except AccessDenied:
             log.logOperation(handler, 403, log.LogLevel.ERROR)
-            return http.HttpResponseForbidden(
-                'access denied', content_type="text/plain"
-            )
+            return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
             log.logOperation(handler, 500, log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
-            return http.HttpResponseServerError(
-                'Unexcepected error', content_type="text/plain"
-            )
+            return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
 
         # Invokes the handler's operation, add headers to response and returns
         try:
@@ -237,15 +233,16 @@ class Dispatcher(View):
             logger.info('Path: /%s/%s', type_.path, name)
             for k in type_.path.split('/'):
                 intern_k = sys.intern(k)
-                if k not in service_node:
-                    service_node[intern_k] = {'': None}
-                service_node = service_node[intern_k]
+                if intern_k not in service_node.children:
+                    service_node.children[intern_k] = HandlerNode(k, None, {})
+                service_node = service_node.children[intern_k]
         else:
             logger.info('Path: /%s', name)
-        if name not in service_node:
-            service_node[name] = {'': None}
 
-        service_node[name][sys.intern('')] = type_
+        if name not in service_node.children:
+            service_node.children[name] = HandlerNode(name, None, {})
+
+        service_node.children[name] = service_node.children[name]._replace(handler=type_)
 
     # Initializes the dispatchers
     @staticmethod
@@ -257,10 +254,12 @@ class Dispatcher(View):
         logger.info('Initializing REST Handlers')
         # Our parent module "REST", because we are in "dispatcher"
         modName = __name__[: __name__.rfind('.')]
-        
+
         def checker(x: typing.Type[Handler]) -> bool:
             # only register if final class, no inherited classes
-            logger.info('Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == [])
+            logger.info(
+                'Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == []
+            )
             return not issubclass(x, DetailHandler) and not x.__subclasses__()
 
         # Register all subclasses of Handler
@@ -268,7 +267,7 @@ class Dispatcher(View):
             Dispatcher.registerClass,
             Handler,
             modName=modName,
-            checker=checker,  
+            checker=checker,
             packageName='methods',
         )
 
