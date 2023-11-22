@@ -31,6 +31,7 @@
 """
 # import traceback
 import typing
+import logging
 
 from uds.core.util import singleton
 from uds.core.util.model import getSqlDatetime
@@ -44,6 +45,7 @@ if typing.TYPE_CHECKING:
     from django.db.models import Model
     from uds import models
 
+logger = logging.getLogger(__name__)
 
 class LogManager(metaclass=singleton.Singleton):
     """
@@ -109,7 +111,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def doLog(
         self,
-        wichObject: typing.Optional['Model'],
+        whichObject: typing.Optional['Model'],
         level: int,
         message: str,
         source: str,
@@ -121,11 +123,11 @@ class LogManager(metaclass=singleton.Singleton):
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
         owner_type = (
-            MODEL_TO_TYPE.get(type(wichObject), None)
-            if wichObject
+            MODEL_TO_TYPE.get(type(whichObject), None)
+            if whichObject
             else LogObjectType.SYSLOG
         )
-        objectId = getattr(wichObject, 'id', -1)
+        objectId = getattr(whichObject, 'id', -1)
         logName = logName or ''
 
         if owner_type is not None:
@@ -133,8 +135,8 @@ class LogManager(metaclass=singleton.Singleton):
                 self._log(
                     owner_type, objectId, level, message, source, logName
                 )
-            except Exception:  # nosec
-                pass  # Can not log,
+            except Exception as e:
+                logger.error('Error logging %s.%s-%s %s: %s (%s)', whichObject.__class__, objectId, source, level, message, e)
 
     def getLogs(
         self, wichObject: typing.Optional['Model'], limit: int = -1
@@ -149,7 +151,7 @@ class LogManager(metaclass=singleton.Singleton):
             else LogObjectType.SYSLOG
         )
 
-        if owner_type:  # 0 is valid owner type
+        if owner_type is not None:  # 0 is valid owner type, so we must check for None
             return self._getLogs(
                 owner_type,
                 getattr(wichObject, 'id', -1),

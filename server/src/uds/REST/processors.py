@@ -132,7 +132,7 @@ class MarshallerProcessor(ContentProcessor):
 
     def processParameters(self) -> typing.Dict[str, typing.Any]:
         try:
-            length = int(self._request.META.get('CONTENT_LENGTH', '0'))
+            length = int(self._request.META.get('CONTENT_LENGTH') or '0')
             if length == 0 or not self._request.body:
                 return self.processGetParameters()
             

@@ -75,12 +75,12 @@ class Dispatcher(View):
         '': None  # Root node
     }
 
-    # pylint: disable=too-many-locals, too-many-return-statements, too-many-branches, too-many-statements
     @method_decorator(csrf_exempt)
-    def dispatch(self, request: 'ExtendedHttpRequestWithUser', *args, **kwargs):
+    def dispatch(self, request: 'http.request.HttpRequest', *args, **kwargs):
         """
         Processes the REST request and routes it wherever it needs to be routed
         """
+        request = typing.cast('ExtendedHttpRequestWithUser', request)  # Reconverting to typed request
         # Remove session from request, so response middleware do nothing with this
         del request.session
 
@@ -113,7 +113,8 @@ class Dispatcher(View):
         full_path = '/'.join(full_path_lst)
         logger.debug("REST request: %s (%s)", full_path, content_type)
 
-        # Here, service points to the path and the value of '' is the handler
+        # Now, service points to the class that will process the request
+        # We get the '' node, that is the "current" node, and get the class from it
         cls: typing.Optional[typing.Type[Handler]] = service[
             ''
         ]  # Get "root" class, that is stored on

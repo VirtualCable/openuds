@@ -46,12 +46,16 @@ logger = logging.getLogger(__name__)
 def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
     # Log level is an string, as in log.LogLevel
     if data.get('userservice_uuid', None):  # Log for an user service
-        userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
-        log.doLog(
-            userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
-        )
-    else:
-        log.doLog(server, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER)
+        try:
+            userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
+            log.doLog(
+                userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
+            )
+            return rest_result(consts.OK)
+        except models.UserService.DoesNotExist:
+            pass  # If not found, log on server
+
+    log.doLog(server, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER)
 
     return rest_result(consts.OK)
 
@@ -151,7 +155,7 @@ def process_ping(server: 'models.Server', data: typing.Dict[str, typing.Any]) ->
 
 
 def process_ticket(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
-    return rest_result(models.TicketStore.get(data['ticket'], invalidate=True))
+    return rest_result(models.TicketStore.get(data['ticket'], invalidate=False))
 
 
 def process_init(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:

@@ -143,7 +143,7 @@ class ServerStats(typing.NamedTuple):
         """
         from uds.core.util.model import getSqlStamp  # To avoid circular import
 
-        return self.stamp > getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT
+        return self.stamp > getSqlStamp() - consts.system.DEFAULT_CACHE_TIMEOUT
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
