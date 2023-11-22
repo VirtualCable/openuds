@@ -38,7 +38,7 @@ from django.db.models import Count, Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types
+from uds.core import consts, types
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
@@ -525,10 +525,10 @@ class ServicesPools(ModelHandler):
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
-                    if serviceType.maxUserServices != -1:
-                        fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxUserServices))
-                        fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxUserServices)
-                        fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxUserServices)
+                    # if serviceType.maxUserServices != consts.UNLIMITED:
+                    #    fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxUserServices))
+                    #    fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxUserServices)
+                    #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxUserServices)
             except Exception as e:
                 raise RequestError(gettext('This service requires an OS Manager')) from e
 
