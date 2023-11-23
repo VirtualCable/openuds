@@ -62,16 +62,17 @@ class ObjectType(enum.Enum):
     STATS_EVENTS = ObjTypeInfo(12, models.StatsEvents)
     CALENDAR = ObjTypeInfo(13, models.Calendar)
     CALENDAR_RULE = ObjTypeInfo(14, models.CalendarRule)
-    # PROXY_TYPE = (15, models.Proxy)  has been removed
-    METAPOOL = ObjTypeInfo(16, models.MetaPool)
-    ACCOUNT = ObjTypeInfo(17, models.Account)
-    REGISTERED_SERVER = ObjTypeInfo(19, models.Server)
-    ACCOUNT_USAGE = ObjTypeInfo(20, models.AccountUsage)
-    IMAGE = ObjTypeInfo(21, models.Image)
-    LOG = ObjTypeInfo(22, models.Log)
-    NOTIFICATION = ObjTypeInfo(23, models.Notification)
-    TICKET_STORE = ObjTypeInfo(24, models.TicketStore)
-    REGISTERED_SERVER_GROUP = ObjTypeInfo(26, models.ServerGroup)
+    METAPOOL = ObjTypeInfo(15, models.MetaPool)
+    ACCOUNT = ObjTypeInfo(16, models.Account)
+    # Actor and Tunnel tokens are now on REGISTERED_SERVER, so removed
+    MFA = ObjTypeInfo(19, models.MFA)
+    REGISTERED_SERVER = ObjTypeInfo(20, models.Server)
+    REGISTERED_SERVER_GROUP = ObjTypeInfo(21, models.ServerGroup)
+    ACCOUNT_USAGE = ObjTypeInfo(22, models.AccountUsage)
+    IMAGE = ObjTypeInfo(23, models.Image)
+    LOG = ObjTypeInfo(24, models.Log)
+    NOTIFICATION = ObjTypeInfo(25, models.Notification)
+    TICKET_STORE = ObjTypeInfo(26, models.TicketStore)
 
     @property
     def model(self) -> typing.Type['Model']:
