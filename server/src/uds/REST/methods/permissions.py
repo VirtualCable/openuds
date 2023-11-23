@@ -68,6 +68,7 @@ class Permissions(Handler):
             'calendars': models.Calendar,
             'metapools': models.MetaPool,
             'accounts': models.Account,
+            'mfa': models.MFA,
         }.get(arg, None)
 
         if cls is None:

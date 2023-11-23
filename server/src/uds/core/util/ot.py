@@ -61,6 +61,7 @@ METAPOOL_TYPE = 15
 ACCOUNT_TYPE = 16
 ACTOR_TOKEN_TYPE = 17
 TUNNEL_TOKEN_TYPE = 18
+MFA_TYPE = 19
 
 objTypeDict: typing.Dict[typing.Type['Model'], int] = {
     models.Provider: PROVIDER_TYPE,
@@ -82,6 +83,7 @@ objTypeDict: typing.Dict[typing.Type['Model'], int] = {
     models.Account: ACCOUNT_TYPE,
     models.ActorToken: ACTOR_TOKEN_TYPE,
     models.TunnelToken: TUNNEL_TOKEN_TYPE,
+    models.MFA: MFA_TYPE,
 }
 
 
