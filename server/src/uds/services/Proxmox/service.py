@@ -36,7 +36,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import services, types, consts
 from uds.core.transports import protocols
 from uds.core.ui import gui
-from uds.core.util import validators
+from uds.core.util import validators, log
 from uds.core.util.cache import Cache
 from uds.core.util.decorators import cached
 
@@ -204,8 +204,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.ov.default = self.parent().serialize()
-        self.ev.default = self.parent().env.key
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env.key
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
@@ -295,7 +295,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             self.disableHA(vmId)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmId, e)
-            self.doLog(level=logging.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
+            self.doLog(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
             
         # And remove it
         return self.parent().removeMachine(vmId)

@@ -816,14 +816,15 @@ class gui:
 
 
            After that, at initGui method of module, we can store a value inside
-           using setDefault as shown here:
+           using value as shown here:
 
            .. code-block:: python
 
               def initGui(self):
                   # always set default using self, cause we only want to store
                   # value for current instance
-                  self.hidden.setDefault(self.parent().serialize())
+                  self.hidden.value = self.parent().serialize()
+                  # Note, you can use setDefault for legacy compat
 
         """
 
@@ -848,6 +849,17 @@ class gui:
 
         def isSerializable(self) -> bool:
             return self._isSerializable
+        
+        def setDefault(self, value: typing.Any) -> None:
+            """
+            Sets the default value of the field. Overriden for HiddenField
+
+            Args:
+                value: Default value (string)
+            """
+            super().setDefault(value)
+            self.value = value
+        
 
     class CheckBoxField(InputField):
         """
@@ -1569,7 +1581,8 @@ class UserInterface(metaclass=UserInterfaceType):
 
         res: typing.List[typing.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
-            res.append({'name': key, 'gui': val.guiDescription(), 'value': None})
+            # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
+            res.append({'name': key, 'gui': val.guiDescription(), 'value': val.value if val.isType(types.ui.FieldType.HIDDEN) else None })
         # logger.debug('theGui description: %s', res)
         return res
 

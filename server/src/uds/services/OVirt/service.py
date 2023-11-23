@@ -239,8 +239,8 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
-        self.ov.default = self.parent().serialize()
-        self.ev.default = self.parent().env.key
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env.key
 
         machines = self.parent().getMachines()
         vals = []

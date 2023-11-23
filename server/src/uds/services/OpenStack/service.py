@@ -251,9 +251,9 @@ class LiveService(services.Service):
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())
 
-        self.ov.setDefault(self.parent().serialize())
-        self.ev.setDefault(self.parent().env.key)
-        self.legacy.setDefault(self.parent().legacy and 'true' or 'false')
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env.key
+        self.legacy.value = gui.fromBool(self.parent().legacy)
 
     @property
     def api(self) -> 'openstack.Client':

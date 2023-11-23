@@ -168,8 +168,8 @@ class OGService(services.Service):
         ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
         self.ou.setChoices(ous)
 
-        self.ov.setDefault(self.parent().serialize())
-        self.ev.setDefault(self.parent().env.key)
+        self.ov.value = self.parent().serialize()
+        self.ev.value = self.parent().env.key
 
     def parent(self) -> 'OGProvider':
         return typing.cast('OGProvider', super().parent())
