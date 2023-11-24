@@ -253,11 +253,12 @@ def getDisplayConnection(
         except Exception:
             passwd = ''
 
+        lastChild: typing.Any = md.getElementsByTagName('HISTORY_RECORDS')[0].lastChild
         host = (
-            md.getElementsByTagName('HISTORY_RECORDS')[0]
-            .lastChild.getElementsByTagName('HOSTNAME')[0]
+            lastChild.getElementsByTagName('HOSTNAME')[0]
             .childNodes[0]
             .data
+            if lastChild else ''
         )
         return {'type': type_, 'host': host, 'port': int(port), 'passwd': passwd}
 
