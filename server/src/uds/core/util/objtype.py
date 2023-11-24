@@ -46,7 +46,7 @@ class ObjTypeInfo(typing.NamedTuple):
     type: int
     model: typing.Type['Model']
     
-
+@enum.unique
 class ObjectType(enum.Enum):
     PROVIDER = ObjTypeInfo(1, models.Provider)
     SERVICE = ObjTypeInfo(2, models.Service)
