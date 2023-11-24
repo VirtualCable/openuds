@@ -80,7 +80,7 @@ class ObjectType(enum.Enum):
 
     @property
     def type(self) -> int:
-        """Returns the integer value of this object type"""
+        """Returns the integer value of this object type. (The "type" id)"""
         return self.value.type
 
     @staticmethod
@@ -98,5 +98,15 @@ class ObjectType(enum.Enum):
 
         Returns:
             bool: True if equal, False otherwise
+            
+        Examples:
+            >>> ObjectType.PROVIDER == ObjectType.PROVIDER
+            True
+            >>> ObjectType.PROVIDER == 1
+            True
+            >>> ObjectType.PROVIDER == ObjectType.SERVICE
+            False
+            >>> ObjectType.PROVIDER == 2
+            False
         """
-        return super().__eq__(__o) or self.value[0] == __o
+        return super().__eq__(__o) or self.value.type == __o

@@ -80,6 +80,7 @@ class Permissions(Handler):
         perms: typing.Iterable[models.Permissions],
     ) -> typing.List[typing.Dict[str, str]]:
         res = []
+        entity: typing.Optional[typing.Union[models.User, models.Group]]
         for perm in perms:
             if perm.user is None:
                 kind = 'group'
