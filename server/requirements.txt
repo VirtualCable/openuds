@@ -51,4 +51,3 @@ dnspython
 aiohttp
 uvloop
 argon2-cffi
-regex

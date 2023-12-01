@@ -52,7 +52,6 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from django.conf import settings
-from regex import E
 
 from uds.core.util import singleton
 
