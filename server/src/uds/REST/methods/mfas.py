@@ -113,7 +113,7 @@ class MFA(ModelHandler):
             'validity': item.validity,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'type': type_.type(),
+            'type': type_.getType(),
             'type_name': type_.name(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }

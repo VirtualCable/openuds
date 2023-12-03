@@ -520,7 +520,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        servicesNotNeedingPub = [t.type() for t in services.factory().servicesThatDoNotNeedPublication()]
+        servicesNotNeedingPub = [t.getType() for t in services.factory().servicesThatDoNotNeedPublication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(

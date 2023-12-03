@@ -144,7 +144,7 @@ class ServiceProvider(module.Module):
                the typeType that Service has.
         """
         for _type in cls.offers:
-            if _type.type() == typeName:
+            if _type.getType() == typeName:
                 return _type
         return None
 

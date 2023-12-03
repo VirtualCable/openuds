@@ -284,7 +284,7 @@ class BaseModelHandler(Handler):
         """
         res = types.rest.TypeInfo(
             name=_(type_.name()),
-            type=type_.type(),
+            type=type_.getType(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
         ).asDict(**self.typeInfo(type_))

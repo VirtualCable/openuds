@@ -89,7 +89,7 @@ class Providers(ModelHandler):
         offers = [
             {
                 'name': gettext(t.name()),
-                'type': t.type(),
+                'type': t.getType(),
                 'description': gettext(t.description()),
                 'icon': t.icon64().replace('\n', ''),
             }
@@ -106,7 +106,7 @@ class Providers(ModelHandler):
             .count(),
             'maintenance_mode': item.maintenance_mode,
             'offers': offers,
-            'type': type_.type(),
+            'type': type_.getType(),
             'type_name': type_.name(),
             'comments': item.comments,
             'permission': permissions.getEffectivePermission(self._user, item),

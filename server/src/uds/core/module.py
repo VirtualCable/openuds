@@ -125,10 +125,12 @@ class Module(UserInterface, Environmentable, Serializable):
     # if this modules is marked as "Experimental"
     experimental: typing.ClassVar[bool] = False
 
+    # uuid of this module, if any
+    # Maybe used by some modules to identify themselves
     _uuid: str
 
     @classmethod
-    def name(cls: typing.Type['Module']) -> str:
+    def name(cls: type['Module']) -> str:
         """
         Returns "translated" typeName, using gettext for transforming
         cls.typeName
@@ -142,7 +144,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeName)
 
     @classmethod
-    def type(cls: typing.Type['Module']) -> str:
+    def getType(cls: type['Module']) -> str:
         """
         Returns typeType
 
@@ -155,7 +157,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return cls.typeType
 
     @classmethod
-    def description(cls: typing.Type['Module']) -> str:
+    def description(cls: type['Module']) -> str:
         """
         This method returns the "translated" description, that is, using
         gettext for transforming cls.typeDescription.
@@ -170,7 +172,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeDescription)
 
     @classmethod
-    def icon(cls: typing.Type['Module']) -> bytes:
+    def icon(cls: type['Module']) -> bytes:
         """
         Reads the file specified by iconFile at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
@@ -187,7 +189,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return utils.loadIcon(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
 
     @classmethod
-    def icon64(cls: typing.Type['Module']) -> str:
+    def icon64(cls: type['Module']) -> str:
         return utils.loadIconBase64(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
 
     @staticmethod

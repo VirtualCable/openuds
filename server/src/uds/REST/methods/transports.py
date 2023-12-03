@@ -164,7 +164,7 @@ class Transports(ModelHandler):
             'pools': pools,
             'pools_count': len(pools),
             'deployed_count': item.deployedServices.count(),
-            'type': type_.type(),
+            'type': type_.getType(),
             'type_name': type_.name(),
             'protocol': type_.protocol,
             'permission': permissions.getEffectivePermission(self._user, item),
