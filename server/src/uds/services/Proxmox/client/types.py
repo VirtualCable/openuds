@@ -16,7 +16,7 @@ conversors: collections.abc.MutableMapping[typing.Type, collections.abc.Callable
 
 
 def convertFromDict(
-    type: typing.Type[typing.Any],
+    type: type[typing.Any],
     dictionary: collections.abc.MutableMapping[str, typing.Any],
     extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
 ) -> typing.Any:

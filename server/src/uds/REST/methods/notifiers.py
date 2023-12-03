@@ -75,7 +75,7 @@ class Notifiers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[typing.Type[messaging.Notifier]]:
+    def enum_types(self) -> typing.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
     def getGui(self, type_: str) -> list[typing.Any]:

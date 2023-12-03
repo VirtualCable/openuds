@@ -72,7 +72,7 @@ class HandlerNode(typing.NamedTuple):
     """
 
     name: str
-    handler: typing.Optional[typing.Type[Handler]]
+    handler: typing.Optional[type[Handler]]
     children: collections.abc.MutableMapping[str, 'HandlerNode']
     
     def __str__(self) -> str:
@@ -137,7 +137,7 @@ class Dispatcher(View):
 
         # Now, service points to the class that will process the request
         # We get the '' node, that is the "current" node, and get the class from it
-        cls: typing.Optional[typing.Type[Handler]] = service.handler
+        cls: typing.Optional[type[Handler]] = service.handler
         if not cls:
             return http.HttpResponseNotFound('Method not found', content_type="text/plain")
 
@@ -232,7 +232,7 @@ class Dispatcher(View):
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod
-    def registerClass(type_: typing.Type[Handler]) -> None:
+    def registerClass(type_: type[Handler]) -> None:
         """
         Method to register a class as a REST service
         param type_: Class to be registered
@@ -271,7 +271,7 @@ class Dispatcher(View):
         # Our parent module "REST", because we are in "dispatcher"
         modName = __name__[: __name__.rfind('.')]
 
-        def checker(x: typing.Type[Handler]) -> bool:
+        def checker(x: type[Handler]) -> bool:
             # only register if final class, no inherited classes
             logger.info(
                 'Checking %s - %s - %s', x.__name__, issubclass(x, DetailHandler), x.__subclasses__() == []

@@ -181,7 +181,7 @@ class OSManager(Module):
         return False
 
     @classmethod
-    def transformsUserOrPasswordForService(cls: typing.Type['OSManager']) -> bool:
+    def transformsUserOrPasswordForService(cls: type['OSManager']) -> bool:
         """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool

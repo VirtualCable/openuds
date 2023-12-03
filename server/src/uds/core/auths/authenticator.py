@@ -160,12 +160,12 @@ class Authenticator(Module):
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
     # : user class
-    userType: typing.ClassVar[typing.Type[User]] = User
+    userType: typing.ClassVar[type[User]] = User
 
     # : The type of group provided, normally standard group will be enough
     # : This is here so if we need it in some case, we can write our own
     # : group class
-    groupType: typing.ClassVar[typing.Type[Group]] = Group
+    groupType: typing.ClassVar[type[Group]] = Group
 
     _dbObj: typing.Optional['models.Authenticator'] = None  # Cached dbAuth object
 

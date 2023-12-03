@@ -110,7 +110,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         self.deserialize(auth, values)
         return auth
 
-    def getType(self) -> typing.Type[auths.Authenticator]:
+    def getType(self) -> type[auths.Authenticator]:
         """
         Get the type of the object this record represents.
 

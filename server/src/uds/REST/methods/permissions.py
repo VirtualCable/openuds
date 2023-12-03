@@ -56,7 +56,7 @@ class Permissions(Handler):
     needs_admin = True
 
     @staticmethod
-    def getClass(arg: str) -> typing.Type['Model']:
+    def getClass(arg: str) -> type['Model']:
         cls = {
             'providers': models.Provider,
             'service': models.Service,

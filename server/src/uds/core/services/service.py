@@ -182,14 +182,14 @@ class Service(Module):
     # : provide a publication type
     # : This refers to class that provides the logic for publication, you can see
     # : :py:class:uds.core.services.Publication
-    publicationType: typing.ClassVar[typing.Optional[typing.Type['Publication']]] = None
+    publicationType: typing.ClassVar[typing.Optional[type['Publication']]] = None
 
     # : Types of deploys (services in cache and/or assigned to users)
     # : This is ALWAYS a MUST. You mast indicate the class responsible
     # : for managing the user deployments (user consumable services generated
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
-    userServiceType: typing.ClassVar[typing.Optional[typing.Type['UserService']]] = None
+    userServiceType: typing.ClassVar[typing.Optional[type['UserService']]] = None
 
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports

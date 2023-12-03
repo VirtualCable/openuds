@@ -52,7 +52,7 @@ ReportAutoModel = typing.Union[
     models.Provider,
 ]
 
-reportAutoModelDct: collections.abc.Mapping[str, typing.Type[ReportAutoModel]] = {  # type: ignore
+reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {  # type: ignore
     'ServicePool': models.ServicePool,
     'Authenticator': models.Authenticator,
     'Service': models.Service,
@@ -109,7 +109,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     # If True, will allow selection of multiple "source" elements
     multiple: bool = False
 
-    def getModel(self) -> typing.Type[ReportAutoModel]:
+    def getModel(self) -> type[ReportAutoModel]:
         data_source = self.data_source.split('.', maxsplit=1)[0]
 
         return reportAutoModelDct[data_source]

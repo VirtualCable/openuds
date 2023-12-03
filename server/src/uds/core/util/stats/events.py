@@ -92,7 +92,7 @@ TYPES_NAMES: collections.abc.Mapping[int, str] = {
     OT_OSMANAGER: 'OS Manager',
 }
 
-MODEL_TO_EVENT: collections.abc.Mapping[typing.Type['models.Model'], int] = {
+MODEL_TO_EVENT: collections.abc.Mapping[type['models.Model'], int] = {
     ServicePool: OT_SERVICEPOOL,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,

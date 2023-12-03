@@ -144,7 +144,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         return obj
 
-    def getType(self) -> typing.Type['services.Service']:
+    def getType(self) -> type['services.Service']:
         """
         Get the type of the object this record represents.
 
@@ -157,7 +157,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel,redefined-outer-name
 
-        prov: typing.Type['services.ServiceProvider'] = self.provider.getType()
+        prov: type['services.ServiceProvider'] = self.provider.getType()
         return prov.getServiceByType(self.data_type) or services.Service
 
     @property

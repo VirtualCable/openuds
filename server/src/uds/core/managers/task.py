@@ -94,7 +94,7 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Caught term signal, finishing task manager")
         TaskManager.manager().keepRunning = False
 
-    def registerJob(self, jobType: typing.Type[jobs.Job]) -> None:
+    def registerJob(self, jobType: type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
         jobs.factory().put(jobName, jobType)
 

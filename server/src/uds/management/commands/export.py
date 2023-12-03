@@ -340,7 +340,7 @@ class Command(BaseCommand):
         if self.verbose:
             self.stderr.write(f'Exported to {options["output"]}')
 
-    def apply_filter(self, model: typing.Type[ModelType]) -> typing.Iterator[ModelType]:
+    def apply_filter(self, model: type[ModelType]) -> typing.Iterator[ModelType]:
         """
         Applies a filter to a model
         """

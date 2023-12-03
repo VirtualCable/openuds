@@ -66,7 +66,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     ) -> 'mfas.MFA':
         return typing.cast('mfas.MFA', super().getInstance(values=values))
 
-    def getType(self) -> typing.Type['mfas.MFA']:
+    def getType(self) -> type['mfas.MFA']:
         """Get the type of the object this record represents.
 
         The type is a Python type, it obtains this MFA and associated record field.

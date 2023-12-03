@@ -68,7 +68,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getType(self) -> typing.Type['ServiceProvider']:
+    def getType(self) -> type['ServiceProvider']:
         """
         Get the type of the object this record represents.
 

@@ -35,7 +35,7 @@ class LogObjectType(enum.IntEnum):
         return GlobalConfig.INDIVIDIAL_LOG_MAX_ELEMENTS.getInt()
 
 # Dict for translations
-MODEL_TO_TYPE: collections.abc.Mapping[typing.Type['Model'], LogObjectType] = {
+MODEL_TO_TYPE: collections.abc.Mapping[type['Model'], LogObjectType] = {
     models.UserService: LogObjectType.USERSERVICE,
     models.ServicePoolPublication: LogObjectType.PUBLICATION,
     models.ServicePool: LogObjectType.SERVICEPOOL,

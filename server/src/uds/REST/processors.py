@@ -180,11 +180,11 @@ class JsonProcessor(MarshallerProcessor):
 
 
 processors_list = (JsonProcessor,)
-default_processor: typing.Type[ContentProcessor] = JsonProcessor
-available_processors_mime_dict: dict[str, typing.Type[ContentProcessor]] = {
+default_processor: type[ContentProcessor] = JsonProcessor
+available_processors_mime_dict: dict[str, type[ContentProcessor]] = {
     cls.mime_type: cls for cls in processors_list
 }
-available_processors_ext_dict: dict[str, typing.Type[ContentProcessor]] = {}
+available_processors_ext_dict: dict[str, type[ContentProcessor]] = {}
 for cls in processors_list:
     for ext in cls.extensions:
         available_processors_ext_dict[ext] = cls

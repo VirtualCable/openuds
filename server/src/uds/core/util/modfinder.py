@@ -118,21 +118,21 @@ def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> 
 
 
 def dynamicLoadAndRegisterPackages(
-    adder: collections.abc.Callable[[typing.Type[V]], None],
-    type_: typing.Type[V],
+    adder: collections.abc.Callable[[type[V]], None],
+    type_: type[V],
     modName: str,
     *,
     packageName: typing.Optional[str] = None,
-    checker: typing.Optional[collections.abc.Callable[[typing.Type[V]], bool]] = None,
+    checker: typing.Optional[collections.abc.Callable[[type[V]], bool]] = None,
 ) -> None:
     '''  Loads all packages from a given package that are subclasses of the given type
 
     Args:
-        adder (collections.abc.Callable[[typing.Type[V]], None]): Function to use to add the objects, must support "insert" method
-        type_ (typing.Type[V]): Type of the objects to load
+        adder (collections.abc.Callable[[type[V]], None]): Function to use to add the objects, must support "insert" method
+        type_ (type[V]): Type of the objects to load
         modName (str): Name of the package to load
         packageName (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
-        checker (collections.abc.Callable[[typing.Type[V]], bool], optional): Function to use to check if the class is registrable. Defaults to None.
+        checker (collections.abc.Callable[[type[V]], bool], optional): Function to use to check if the class is registrable. Defaults to None.
 
     Notes:
         The checker function must return True if the class is registrable, False otherwise.
@@ -148,7 +148,7 @@ def dynamicLoadAndRegisterPackages(
     checkFnc = checker or (lambda x: True)
 
     def process(classes: typing.Iterable[typing.Type]) -> None:
-        cls: typing.Type[V]
+        cls: type[V]
         for cls in classes:
             clsSubCls = cls.__subclasses__()
 
@@ -174,7 +174,7 @@ def dynamicLoadAndRegisterPackages(
 
 def dynamicLoadAndRegisterModules(
     factory: 'ModuleFactory',
-    type_: typing.Type[T],
+    type_: type[T],
     modName: str,
 ) -> None:
     ''' Loads and registers all modules from a given package that are subclasses of the given type
@@ -183,7 +183,7 @@ def dynamicLoadAndRegisterModules(
 
     Args:
         factory (ModuleFactory): Factory to use to create the objects, must support "insert" method
-        type_ (typing.Type[T]): Type of the objects to load
+        type_ (type[T]): Type of the objects to load
         modName (str): Name of the package to load
     '''
     dynamicLoadAndRegisterPackages(

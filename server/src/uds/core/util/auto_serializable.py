@@ -104,10 +104,10 @@ def fernet_key(crypt_key: bytes) -> str:
 # pylint: disable=unnecessary-dunder-call
 class _SerializableField(typing.Generic[T]):
     name: str
-    type: typing.Type[T]
+    type: type[T]
     default: DefaultValueType
 
-    def __init__(self, type: typing.Type[T], default: DefaultValueType = UNASSIGNED):
+    def __init__(self, type: type[T], default: DefaultValueType = UNASSIGNED):
         self.type = type
         self.default = default
 
@@ -121,7 +121,7 @@ class _SerializableField(typing.Generic[T]):
     def __get__(
         self,
         instance: 'AutoSerializable',
-        objtype: typing.Optional[typing.Type['AutoSerializable']] = None,
+        objtype: typing.Optional[type['AutoSerializable']] = None,
     ) -> T:
         """Get field value
 

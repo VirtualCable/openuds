@@ -270,7 +270,7 @@ class BaseModelHandler(Handler):
         return permissions.getEffectivePermission(self._user, obj, root)
 
     def typeInfo(
-        self, type_: typing.Type['Module']  # pylint: disable=unused-argument
+        self, type_: type['Module']  # pylint: disable=unused-argument
     ) -> dict[str, typing.Any]:
         """
         Returns info about the type
@@ -278,7 +278,7 @@ class BaseModelHandler(Handler):
         """
         return {}
 
-    def typeAsDict(self, type_: typing.Type['Module']) -> dict[str, typing.Any]:
+    def typeAsDict(self, type_: type['Module']) -> dict[str, typing.Any]:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
@@ -708,7 +708,7 @@ class ModelHandler(BaseModelHandler):
     needs_staff = True
 
     # Which model does this manage, must be a django model ofc
-    model: 'typing.ClassVar[typing.Type[models.Model]]'
+    model: 'typing.ClassVar[type[models.Model]]'
     # If the model is filtered (for overviews)
     model_filter: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
     # Same, but for exclude
@@ -725,7 +725,7 @@ class ModelHandler(BaseModelHandler):
     ] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
     detail: typing.ClassVar[
-        typing.Optional[dict[str, typing.Type[DetailHandler]]]
+        typing.Optional[dict[str, type[DetailHandler]]]
     ] = None  # Dictionary containing detail routing
     # Fields that are going to be saved directly
     # * If a field is in the form "field:default" and field is not present in the request, default will be used
@@ -759,7 +759,7 @@ class ModelHandler(BaseModelHandler):
         return self.item_as_dict(item)
 
     # types related
-    def enum_types(self) -> typing.Iterable[typing.Type['Module']]:  # override this
+    def enum_types(self) -> typing.Iterable[type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports

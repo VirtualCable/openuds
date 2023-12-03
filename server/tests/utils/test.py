@@ -252,6 +252,6 @@ class UDSTransactionTestCase(UDSTestCaseMixin, TransactionTestCase):
 
 
 # pylint: disable=unused-argument
-def setupClass(cls: typing.Union[typing.Type[UDSTestCase], typing.Type[UDSTransactionTestCase]]) -> None:
+def setupClass(cls: typing.Union[type[UDSTestCase], type[UDSTransactionTestCase]]) -> None:
     # Nothing right now
     pass

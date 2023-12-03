@@ -81,7 +81,7 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def __doCleanup(
         self,
-        model: typing.Type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
+        model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
         minTime = time.mktime(
             (getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple()

@@ -52,7 +52,7 @@ class Job(Environmentable):
     friendly_name: typing.ClassVar[str] = 'Unknown'
 
     @classmethod
-    def setup(cls: typing.Type['Job']) -> None:
+    def setup(cls: type['Job']) -> None:
         """
         Sets ups frequency from configuration values
         """

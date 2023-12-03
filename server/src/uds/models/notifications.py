@@ -101,7 +101,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         db_table = 'uds_notify_prov'
         app_label = 'uds'
 
-    def getType(self) -> typing.Type['NotificationProviderModule']:
+    def getType(self) -> type['NotificationProviderModule']:
         """
         Get the type of the object this record represents.
 

@@ -118,7 +118,7 @@ class Providers(ModelHandler):
             raise RequestError(gettext('Can\'t delete providers with services'))
 
     # Types related
-    def enum_types(self) -> typing.Iterable[typing.Type[services.ServiceProvider]]:
+    def enum_types(self) -> typing.Iterable[type[services.ServiceProvider]]:
         return services.factory().providers().values()
 
     # Gui related

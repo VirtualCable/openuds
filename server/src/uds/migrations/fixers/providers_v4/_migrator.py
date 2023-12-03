@@ -49,18 +49,18 @@ if typing.TYPE_CHECKING:
 
 
 def migrate(
-    apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Type, subtype: str, ipListAttr: str
+    apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str
 ) -> None:
     try:
-        Table: typing.Type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
-        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model(
+        Table: type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
+        ServerGroup: 'type[uds.models.ServerGroup]' = apps.get_model(
             'uds', 'ServerGroup'
         )
-        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
+        Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # For testing
         # from uds.models import Provider, Server, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.typeType):
+        for record in Table.objects.filter(data_type=DataType.typeType):  # type: ignore
             # Extract data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)
@@ -125,19 +125,19 @@ def migrate(
         print(e)
         logger.exception('Exception found while migrating HTML5RDP transports')
 
-def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Type, subtype: str, ipListAttr: str) -> None:
+def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typing.Any, subtype: str, ipListAttr: str) -> None:
     """
     "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
     """
     try:
-        Table: typing.Type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
-        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model(
+        Table: type['uds.models.ManagedObjectModel'] = apps.get_model('uds', model)
+        ServerGroup: 'type[uds.models.ServerGroup]' = apps.get_model(
             'uds', 'ServerGroup'
         )
         # For testing
         # from uds.models import Transport, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.typeType):
+        for record in Table.objects.filter(data_type=DataType.typeType):  # type: ignore
             # Extranct data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)

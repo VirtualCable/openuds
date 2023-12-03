@@ -81,10 +81,10 @@ class Authenticators(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[typing.Type[auths.Authenticator]]:
+    def enum_types(self) -> typing.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def typeInfo(self, type_: typing.Type['Module']) -> dict[str, typing.Any]:
+    def typeInfo(self, type_: type['Module']) -> dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
                 'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,  # type: ignore

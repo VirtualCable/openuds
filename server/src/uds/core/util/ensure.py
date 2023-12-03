@@ -70,12 +70,12 @@ def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
 
 T = typing.TypeVar('T')
 
-def is_instance(obj: typing.Any, cls: typing.Type[T]) -> T:
+def is_instance(obj: typing.Any, cls: type[T]) -> T:
     """Checks if an object is an instance of a class or a list of instances of a class
 
     Args:
         obj (typing.Union[T, typing.Iterable[T]]): object to be checked
-        cls (typing.Type[T]): Class to check
+        cls (type[T]): Class to check
 
     Returns:
         T: The object if it's an instance of the class, casted to the class if it's a list of instances of the class

@@ -69,7 +69,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
     ) -> 'osmanagers.OSManager':
         return typing.cast('osmanagers.OSManager', super().getInstance(values=values))
 
-    def getType(self) -> typing.Type['osmanagers.OSManager']:
+    def getType(self) -> type['osmanagers.OSManager']:
         """
         Get the type of the object this record represents.
 

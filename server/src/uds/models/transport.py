@@ -94,7 +94,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
     def getInstance(self, values: typing.Optional[dict[str, str]] = None) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
-    def getType(self) -> typing.Type['transports.Transport']:
+    def getType(self) -> type['transports.Transport']:
         """
         Get the type of the object this record represents.
 

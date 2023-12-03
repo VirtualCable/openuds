@@ -81,7 +81,7 @@ class Transports(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[typing.Type[transports.Transport]]:
+    def enum_types(self) -> typing.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 
     def getGui(self, type_: str) -> list[typing.Any]:

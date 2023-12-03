@@ -1259,7 +1259,7 @@ class UserInterfaceType(type):
     """
 
     def __new__(
-        mcs: typing.Type['UserInterfaceType'],
+        mcs: type['UserInterfaceType'],
         classname: str,
         bases: typing.Tuple[type, ...],
         namespace: dict[str, typing.Any],

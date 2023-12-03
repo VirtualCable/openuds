@@ -132,8 +132,8 @@ class StatsCountersAccum(models.Model):
 
         # Assign values depending on interval type
         model: typing.Union[
-            typing.Type['StatsCountersAccum'],
-            typing.Type['StatsCounters'],
+            type['StatsCountersAccum'],
+            type['StatsCounters'],
         ]
         if interval_type == StatsCountersAccum.IntervalType.HOUR:
             model = StatsCounters

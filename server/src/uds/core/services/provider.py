@@ -83,7 +83,7 @@ class ServiceProvider(module.Module):
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
     # : Service, that are childs of this provider
-    offers: list[typing.Type['Service']] = []
+    offers: list[type['Service']] = []
 
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)
@@ -127,14 +127,14 @@ class ServiceProvider(module.Module):
     _dbObj: typing.Optional['models.Provider'] = None
 
     @classmethod
-    def getProvidedServices(cls) -> list[typing.Type['Service']]:
+    def getProvidedServices(cls) -> list[type['Service']]:
         """
         Returns what type of services this provider offers
         """
         return cls.offers
 
     @classmethod
-    def getServiceByType(cls, typeName: str) -> typing.Optional[typing.Type['Service']]:
+    def getServiceByType(cls, typeName: str) -> typing.Optional[type['Service']]:
         """
         Tries to locate a child service which type corresponds with the
         one provided.

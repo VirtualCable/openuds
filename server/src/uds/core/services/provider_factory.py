@@ -51,7 +51,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
     It provides a way to register and recover providers providers.
     """
 
-    def insert(self, type_: typing.Type[ServiceProvider]) -> None:
+    def insert(self, type_: type[ServiceProvider]) -> None:
         """
         Inserts type_ as a service provider
         """
@@ -88,7 +88,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         super().insert(type_)
 
 
-    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[typing.Type[Service]]:
+    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[type[Service]]:
         """
         Returns a list of all service providers registered that do not need
         to be published

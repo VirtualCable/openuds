@@ -47,7 +47,7 @@ from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
-availableReports: list[typing.Type['reports.Report']] = []
+availableReports: list[type['reports.Report']] = []
 
 
 def __loadModules() -> None:
@@ -56,7 +56,7 @@ def __loadModules() -> None:
     """
     alreadyAdded: typing.Set[str] = set()
 
-    def addReportCls(cls: typing.Type[reports.Report]) -> None:
+    def addReportCls(cls: type[reports.Report]) -> None:
         alreadyAdded.add(cls.uuid)
         availableReports.append(cls)
 

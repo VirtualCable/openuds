@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 class ObjTypeInfo(typing.NamedTuple):
     type: int
-    model: typing.Type['Model']
+    model: type['Model']
     
 @enum.unique
 class ObjectType(enum.Enum):
@@ -76,7 +76,7 @@ class ObjectType(enum.Enum):
     TICKET_STORE = ObjTypeInfo(26, models.TicketStore)
 
     @property
-    def model(self) -> typing.Type['Model']:
+    def model(self) -> type['Model']:
         return self.value.model
 
     @property

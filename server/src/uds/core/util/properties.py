@@ -160,12 +160,12 @@ class PropertiesMixin:
         toDelete.properties.clear()
 
     @staticmethod
-    def setupSignals(model: 'typing.Type[models.Model]') -> None:
+    def setupSignals(model: 'type[models.Model]') -> None:
         """Connects a pre deletion signal to delete properties
         Note that this method must be added to every class creation that inherits from PropertiesMixin
         Or the properties will not be deleted on deletion of the object
 
         Args:
-            model (typing.Type[models.Model]): Model to connect the signal to
+            model (type[models.Model]): Model to connect the signal to
         """
         signals.pre_delete.connect(PropertiesMixin._deleteSignal, sender=model)

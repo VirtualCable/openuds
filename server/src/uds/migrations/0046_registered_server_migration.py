@@ -18,7 +18,7 @@ if typing.TYPE_CHECKING:
 
 def migrate_old_data(apps, schema_editor) -> None:
     try:
-        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
+        Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # Not typed, disappeared on this migration
         ActorToken = apps.get_model('uds', 'ActorToken')
 
@@ -63,7 +63,7 @@ def migrate_old_data(apps, schema_editor) -> None:
 
 
 def rollback_old_data(apps, schema_editor) -> None:
-    Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
+    Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
     ActorToken = apps.get_model('uds', 'ActorToken')
     for server in Server.objects.filter(type=ACTOR_TYPE):
         if not server.data:

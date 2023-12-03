@@ -114,7 +114,7 @@ class ManagedObjectModel(UUIDModel):
 
         return obj
 
-    def getType(self) -> typing.Type[Module]:
+    def getType(self) -> type[Module]:
         """
         Returns the type of self (as python type)
         Must be overriden!!!

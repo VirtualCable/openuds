@@ -63,7 +63,7 @@ class MFA(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[typing.Type[mfas.MFA]]:
+    def enum_types(self) -> typing.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
     def getGui(self, type_: str) -> list[typing.Any]:

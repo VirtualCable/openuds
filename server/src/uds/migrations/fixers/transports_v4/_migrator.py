@@ -15,9 +15,9 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
     Migrates an old tunnel transport to a new one (with tunnelServer)
     """
     try:
-        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
-        Server: 'typing.Type[uds.models.Server]' = apps.get_model('uds', 'Server')
+        Transport: 'type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+        ServerGroup: 'type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
+        Server: 'type[uds.models.Server]' = apps.get_model('uds', 'Server')
         # For testing
         # from uds.models import Transport, ServerGroup, Server
 
@@ -74,8 +74,8 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
     "Un-Migrates" an new tunnel transport to an old one (without tunnelServer)
     """
     try:
-        Transport: 'typing.Type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
-        ServerGroup: 'typing.Type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
+        Transport: 'type[uds.models.Transport]' = apps.get_model('uds', 'Transport')
+        ServerGroup: 'type[uds.models.ServerGroup]' = apps.get_model('uds', 'ServerGroup')
         # For testing
         # from uds.models import Transport, ServerGroup
 

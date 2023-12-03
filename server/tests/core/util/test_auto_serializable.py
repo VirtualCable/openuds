@@ -75,10 +75,10 @@ class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted
 class AutoSerializable(UDSTestCase):
     def basic_check(
         self,
-        cls1: typing.Type[
+        cls1: type[
             'AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'
         ],
-        cls2: typing.Type[
+        cls2: type[
             'AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'
         ],
     ) -> None:
