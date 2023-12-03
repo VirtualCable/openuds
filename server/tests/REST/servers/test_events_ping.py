@@ -117,7 +117,7 @@ class ServerEventsPingTest(rest.test.RESTTestCase):
         # Ensure stat is valid right now
         statsResponse = types.servers.ServerStats.fromDict(server_stats)
         self.assertTrue(statsResponse.is_valid)
-        statsResponse = types.servers.ServerStats.fromDict(server_stats, stamp=getSqlStamp() - consts.DEFAULT_CACHE_TIMEOUT - 1)
+        statsResponse = types.servers.ServerStats.fromDict(server_stats, stamp=getSqlStamp() - consts.system.DEFAULT_CACHE_TIMEOUT - 1)
         self.assertFalse(statsResponse.is_valid)
 
     def test_event_ping_without_stats(self) -> None:

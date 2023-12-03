@@ -49,7 +49,7 @@ from django.urls import reverse
 
 from django.utils.translation import gettext as _
 
-from uds.core import auths, types, exceptions
+from uds.core import auths, types, exceptions, consts
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
@@ -131,8 +131,9 @@ def getRootUser() -> models.User:
     user.manager = models.Authenticator()  # type: ignore
     # Fake overwrite some methods, a bit cheating? maybe? :)
     user.getGroups = lambda: []  # type: ignore
-    user.updateLastAccess = lambda: None  # type: ignore
-    user.logout = lambda x: SUCCESS_AUTH  # type: ignore
+    user.updateLastAccess = lambda: None
+    # Override logout method to do nothing for this user
+    user.logout = lambda request: types.auth.SUCCESS_AUTH
     return user
 
 

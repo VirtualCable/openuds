@@ -177,6 +177,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         # Delete all userServices
         self.servicePool.userServices.all().delete()
 
-        # Now, set provider limit to 0. Minumum aceptable is 1, so 1 will be created
+        # We again allow masUserServices to be zero (meaning that no service will be created)
+        # This allows us to "honor" some external providers that, in some cases, will not have services available...
         TestServiceCache.maxUserServices = 0
-        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 1)
+        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 0)

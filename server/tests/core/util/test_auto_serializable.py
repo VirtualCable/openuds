@@ -42,7 +42,7 @@ UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
 
 
 class AutoSerializableClass(auto_serializable.AutoSerializable):
-    int_field = auto_serializable.IntField()
+    int_field = auto_serializable.IntegerField()
     str_field = auto_serializable.StringField()
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
@@ -52,7 +52,7 @@ class AutoSerializableClass(auto_serializable.AutoSerializable):
 
 
 class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompressed):
-    int_field = auto_serializable.IntField()
+    int_field = auto_serializable.IntegerField()
     str_field = auto_serializable.StringField()
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
@@ -62,7 +62,7 @@ class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompress
 
 
 class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted):
-    int_field = auto_serializable.IntField()
+    int_field = auto_serializable.IntegerField()
     str_field = auto_serializable.StringField()
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
