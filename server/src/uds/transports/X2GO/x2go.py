@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from .x2go_base import BaseX2GOTransport

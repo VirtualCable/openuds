@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds import models
 from uds.core.util import properties
@@ -44,7 +45,7 @@ NUM_USERSERVICES = 8
 
 
 class PropertiesTest(UDSTestCase):
-    user_services: typing.List['models.UserService']
+    user_services: list['models.UserService']
 
     def setUp(self) -> None:
         super().setUp()

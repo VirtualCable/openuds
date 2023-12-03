@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 
@@ -90,7 +91,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values: typing.Optional[typing.Dict[str, str]] = None) -> 'transports.Transport':
+    def getInstance(self, values: typing.Optional[dict[str, str]] = None) -> 'transports.Transport':
         return typing.cast('transports.Transport', super().getInstance(values=values))
 
     def getType(self) -> typing.Type['transports.Transport']:

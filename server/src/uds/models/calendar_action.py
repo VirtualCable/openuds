@@ -35,6 +35,7 @@ import datetime
 import json
 import logging
 import typing
+import collections.abc
 
 
 from django.utils.translation import gettext_lazy as _
@@ -60,12 +61,12 @@ logger = logging.getLogger(__name__)
 
 # Current posible actions
 #
-CALENDAR_ACTION_PUBLISH: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_PUBLISH: dict[str, typing.Any] = {
     'id': 'PUBLISH',
     'description': _('Publish'),
     'params': (),
 }
-CALENDAR_ACTION_CACHE_L1: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_CACHE_L1: dict[str, typing.Any] = {
     'id': 'CACHEL1',
     'description': _('Set cache size'),
     'params': (
@@ -77,7 +78,7 @@ CALENDAR_ACTION_CACHE_L1: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_CACHE_L2: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_CACHE_L2: dict[str, typing.Any] = {
     'id': 'CACHEL2',
     'description': _('Set L2 cache size'),
     'params': (
@@ -89,7 +90,7 @@ CALENDAR_ACTION_CACHE_L2: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_INITIAL: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_INITIAL: dict[str, typing.Any] = {
     'id': 'INITIAL',
     'description': _('Set initial services'),
     'params': (
@@ -101,7 +102,7 @@ CALENDAR_ACTION_INITIAL: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_MAX: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_MAX: dict[str, typing.Any] = {
     'id': 'MAX',
     'description': _('Set maximum number of services'),
     'params': (
@@ -113,7 +114,7 @@ CALENDAR_ACTION_MAX: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_ADD_TRANSPORT: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_ADD_TRANSPORT: dict[str, typing.Any] = {
     'id': 'ADD_TRANSPORT',
     'description': _('Add a transport'),
     'params': (
@@ -125,7 +126,7 @@ CALENDAR_ACTION_ADD_TRANSPORT: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_DEL_TRANSPORT: dict[str, typing.Any] = {
     'id': 'REMOVE_TRANSPORT',
     'description': _('Remove a transport'),
     'params': (
@@ -137,27 +138,27 @@ CALENDAR_ACTION_DEL_TRANSPORT: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_DEL_ALL_TRANSPORTS: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_DEL_ALL_TRANSPORTS: dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_TRANSPORTS',
     'description': _('Remove all transports'),
     'params': (),
 }
-CALENDAR_ACTION_ADD_GROUP: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_ADD_GROUP: dict[str, typing.Any] = {
     'id': 'ADD_GROUP',
     'description': _('Add a group'),
     'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
 }
-CALENDAR_ACTION_DEL_GROUP: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_DEL_GROUP: dict[str, typing.Any] = {
     'id': 'REMOVE_GROUP',
     'description': _('Remove a group'),
     'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
 }
-CALENDAR_ACTION_DEL_ALL_GROUPS: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_DEL_ALL_GROUPS: dict[str, typing.Any] = {
     'id': 'REMOVE_ALL_GROUPS',
     'description': _('Remove all groups'),
     'params': (),
 }
-CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_IGNORE_UNUSED: dict[str, typing.Any] = {
     'id': 'IGNORE_UNUSED',
     'description': _('Sets the ignore unused'),
     'params': (
@@ -169,13 +170,13 @@ CALENDAR_ACTION_IGNORE_UNUSED: typing.Dict[str, typing.Any] = {
         },
     ),
 }
-CALENDAR_ACTION_REMOVE_USERSERVICES: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_REMOVE_USERSERVICES: dict[str, typing.Any] = {
     'id': 'REMOVE_USERSERVICES',
     'description': _('Remove ALL assigned user service. USE WITH CAUTION!'),
     'params': (),
 }
 
-CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: dict[str, typing.Any] = {
     'id': 'STUCK_USERSERVICES',
     'description': _('Remove OLD assigned user services.'),
     'params': (
@@ -188,20 +189,20 @@ CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: typing.Dict[str, typing.Any] = {
     ),
 }
 
-CALENDAR_ACTION_CLEAN_CACHE_L1: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_CLEAN_CACHE_L1: dict[str, typing.Any] = {
     'id': 'CLEAN_CACHE_L1',
     'description': _('Clean L1 cache'),
     'params': (),
 }
 
-CALENDAR_ACTION_CLEAN_CACHE_L2: typing.Dict[str, typing.Any] = {
+CALENDAR_ACTION_CLEAN_CACHE_L2: dict[str, typing.Any] = {
     'id': 'CLEAN_CACHE_L2',
     'description': _('Clean L2 cache'),
     'params': (),
 }
 
 
-CALENDAR_ACTION_DICT: typing.Dict[str, typing.Dict] = {
+CALENDAR_ACTION_DICT: dict[str, dict] = {
     c['id']: c
     for c in (
         CALENDAR_ACTION_PUBLISH,
@@ -387,7 +388,7 @@ class CalendarAction(UUIDModel):
             except Exception:
                 self.service_pool.log('Scheduled action not executed because group is not available anymore')
 
-        actions: typing.Mapping[str, typing.Tuple[typing.Callable[[], None], bool]] = {
+        actions: typing.Mapping[str, typing.Tuple[collections.abc.Callable[[], None], bool]] = {
             # Id, actions (lambda), saveServicePool (bool)
             CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
             CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),

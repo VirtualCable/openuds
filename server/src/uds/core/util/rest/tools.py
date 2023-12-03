@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 
 logger = logging.getLogger(__name__)
@@ -49,8 +50,8 @@ T = typing.TypeVar('T', bound=typing.Any)
 # And the literals will be ignored
 def match(
     arg_list: typing.Iterable[str],
-    error: typing.Callable[..., typing.Any],
-    *args: typing.Tuple[typing.Tuple[str, ...], typing.Callable[..., T]],
+    error: collections.abc.Callable[..., typing.Any],
+    *args: typing.Tuple[typing.Tuple[str, ...], collections.abc.Callable[..., T]],
 ) -> typing.Any:
     """
     Matches a list of arguments against a list of matchers.

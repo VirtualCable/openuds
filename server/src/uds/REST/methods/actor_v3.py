@@ -33,6 +33,7 @@ import functools
 import logging
 import time
 import typing
+import collections.abc
 
 # from uds.core import VERSION
 from uds.core import consts, exceptions, osmanagers, types
@@ -74,12 +75,12 @@ class NotifyActionType(enum.StrEnum):
     DATA = 'data'
 
     @staticmethod
-    def valid_names() -> typing.List[str]:
+    def valid_names() -> list[str]:
         return [e.value for e in NotifyActionType]
 
 
 # Helpers
-def fixIdsList(idsList: typing.List[str]) -> typing.List[str]:
+def fixIdsList(idsList: list[str]) -> list[str]:
     """
     Params:
         idsList: List of ids to fix
@@ -114,7 +115,7 @@ def incFailedIp(request: 'ExtendedHttpRequest') -> None:
 
 
 # Decorator that clears failed counter for the IP if succeeds
-def clearIfSuccess(func: typing.Callable) -> typing.Callable:
+def clearIfSuccess(func: collections.abc.Callable) -> collections.abc.Callable:
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         _self = typing.cast('ActorV3Action', args[0])
@@ -136,7 +137,7 @@ class ActorV3Action(Handler):
     path = 'actor/v3'
 
     @staticmethod
-    def actorResult(result: typing.Any = None, **kwargs: typing.Any) -> typing.Dict[str, typing.Any]:
+    def actorResult(result: typing.Any = None, **kwargs: typing.Any) -> dict[str, typing.Any]:
         return rest_result(result=result, **kwargs)
 
     @staticmethod
@@ -153,10 +154,10 @@ class ActorV3Action(Handler):
             logger.error('User service not found (params: %s)', self._params)
             raise BlockAccess() from None
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         return ActorV3Action.actorResult(error='Base action invoked')
 
-    def post(self) -> typing.Dict[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         try:
             checkBlockedIp(self._request)
             result = self.action()
@@ -218,7 +219,7 @@ class Test(ActorV3Action):
 
     name = 'test'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         # First, try to locate an user service providing this token.
         try:
             if self._params.get('type') == UNMANAGED:
@@ -258,7 +259,7 @@ class Register(ActorV3Action):
 
     name = 'register'
 
-    def post(self) -> typing.Dict[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         # If already exists a token for this MAC, return it instead of creating a new one, and update the information...
         # For actors we use MAC instead of IP, because VDI normally is a dynamic IP, and we do "our best" to locate the existing actor
         # Look for a token for this mac. mac is "inside" data, so we must filter first by type and then ensure mac is inside data
@@ -324,7 +325,7 @@ class Initialize(ActorV3Action):
 
     name = 'initialize'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         """
         Initialize method expect a json POST with this fields:
             * type: Actor type. (Currently "managed" or "unmanaged")
@@ -368,7 +369,7 @@ class Initialize(ActorV3Action):
             unique_id: typing.Optional[str],
             os: typing.Any,
             alias_token: typing.Optional[str],
-        ) -> typing.Dict[str, typing.Any]:
+        ) -> dict[str, typing.Any]:
             return ActorV3Action.actorResult(
                 {
                     'own_token': own_token,
@@ -445,7 +446,7 @@ class BaseReadyChange(ActorV3Action):
 
     name = 'notused'  # Not really important, this is not a "leaf" class and will not be directly available
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         """
         BaseReady method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
@@ -517,7 +518,7 @@ class Ready(BaseReadyChange):
 
     name = 'ready'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         """
         Ready method expect a json POST with this fields:
             * token: str -> Valid Actor "own_token" (if invalid, will return an error).
@@ -548,7 +549,7 @@ class Version(ActorV3Action):
 
     name = 'version'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
         userService.setActorVersion(self._params['version'])
@@ -581,7 +582,7 @@ class Login(ActorV3Action):
             osmanagers.OSManager.loggedIn(userService, username)
         return osManager
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
         src = types.connections.ConnectionSource('', '')
         deadLine = maxIdle = None
@@ -653,7 +654,7 @@ class Logout(ActorV3Action):
             else:
                 userService.remove()
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         isManaged = self._params.get('type') != UNMANAGED
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -682,7 +683,7 @@ class Log(ActorV3Action):
 
     name = 'log'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
         if userService.getActorVersion() < '4.0.0':
@@ -707,7 +708,7 @@ class Ticket(ActorV3Action):
 
     name = 'ticket'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
 
         try:
@@ -727,7 +728,7 @@ class Ticket(ActorV3Action):
 class Unmanaged(ActorV3Action):
     name = 'unmanaged'
 
-    def action(self) -> typing.Dict[str, typing.Any]:
+    def action(self) -> dict[str, typing.Any]:
         """
         unmanaged method expect a json POST with this fields:
             * id: List[dict] -> List of dictionary containing ip and mac:
@@ -787,7 +788,7 @@ class Unmanaged(ActorV3Action):
 
         # Generates a certificate and send it to client.
         privateKey, certificate, password = security.selfSignedCert(ip)
-        cert: typing.Dict[str, str] = {
+        cert: dict[str, str] = {
             'private_key': privateKey,
             'server_certificate': certificate,
             'password': password,
@@ -816,7 +817,7 @@ class Unmanaged(ActorV3Action):
 class Notify(ActorV3Action):
     name = 'notify'
 
-    def post(self) -> typing.Dict[str, typing.Any]:
+    def post(self) -> dict[str, typing.Any]:
         # Raplaces original post (non existent here)
         raise AccessDenied('Access denied')
 

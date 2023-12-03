@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 import codecs
 
@@ -80,18 +81,18 @@ class Handler:
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[typing.List[typing.Tuple[str, str]]] = []
+    help_paths: typing.ClassVar[list[typing.Tuple[str, str]]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
-    _params: typing.Dict[str, typing.Any]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
+    _params: dict[str, typing.Any]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
     _args: typing.Tuple[
         str, ...
     ]  # This are the "path" split by /, that is, the REST invocation arguments
-    _kwargs: typing.Dict
-    _headers: typing.Dict[str, str]
+    _kwargs: dict
+    _headers: dict[str, str]
     _session: typing.Optional[SessionStore]
     _authToken: typing.Optional[str]
     _user: 'User'
@@ -102,7 +103,7 @@ class Handler:
         request: 'ExtendedHttpRequestWithUser',
         path: str,
         method: str,
-        params: typing.Dict[str, typing.Any],
+        params: dict[str, typing.Any],
         *args: str,
         **kwargs,
     ):
@@ -152,7 +153,7 @@ class Handler:
         else:
             self._user = User()  # Empty user for non authenticated handlers
 
-    def headers(self) -> typing.Dict[str, str]:
+    def headers(self) -> dict[str, str]:
         """
         Returns the headers of the REST request (all)
         """

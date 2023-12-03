@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.util.state import State
@@ -70,7 +71,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
     _mac: str = ''
     _vmid: str = ''
     _reason: str = ''
-    _queue: typing.List[int] = []
+    _queue: list[int] = []
 
     # : Recheck every this seconds by default (for task methods)
     suggestedTime = 5
@@ -267,7 +268,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Callable[[], str]] = {
+        fncs: dict[int, collections.abc.Callable[[], str]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -398,7 +399,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Callable[[], str]] = {
+        fncs: dict[int, collections.abc.Callable[[], str]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,

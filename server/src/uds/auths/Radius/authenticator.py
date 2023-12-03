@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -121,7 +122,7 @@ class RadiusAuth(auths.Authenticator):
         tab=types.ui.Tab.MFA,
     )
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         pass
 
     def radiusClient(self) -> client.RadiusClient:
@@ -185,7 +186,7 @@ class RadiusAuth(auths.Authenticator):
         with self.storage.map() as storage:
             groupsManager.validate(storage.get(username, []))
 
-    def createUser(self, usrData: typing.Dict[str, str]) -> None:
+    def createUser(self, usrData: dict[str, str]) -> None:
         pass
 
     def removeUser(self, username: str) -> None:

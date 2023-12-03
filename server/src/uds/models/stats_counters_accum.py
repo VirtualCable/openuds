@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import enum
 import datetime
 import logging
@@ -217,7 +218,7 @@ class StatsCountersAccum(models.Model):
 
         # Stores accumulated data in StatsCountersAccum
         # Acummulate data, only register if there is data
-        accumulated: typing.List[StatsCountersAccum] = [
+        accumulated: list[StatsCountersAccum] = [
             StatsCountersAccum(
                 owner_type=rec['owner_type'],
                 owner_id=rec['owner_id'],

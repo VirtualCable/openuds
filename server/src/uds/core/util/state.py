@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _, gettext_lazy
 
@@ -158,7 +159,7 @@ class State:
         return State.string.get(state, '')
 
     @staticmethod
-    def dictionary() -> typing.Dict[str, str]:
+    def dictionary() -> dict[str, str]:
         """
         Returns a dictionary with current active locale translation of States to States String
         """

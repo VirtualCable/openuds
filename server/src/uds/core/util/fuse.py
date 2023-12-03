@@ -22,6 +22,7 @@ import os
 import ctypes
 import errno
 import typing
+import collections.abc
 import logging
 
 from ctypes.util import find_library
@@ -787,7 +788,7 @@ class FUSE:
         self.__critical_exception: BaseException = Exception()
 
         # string arguments
-        sargs: typing.List[str] = ['fuse']
+        sargs: list[str] = ['fuse']
 
         # Convert options to fuse flags
         sargs.extend(flag for arg, flag in self.OPTIONS if kwargs.pop(arg, False))
@@ -797,7 +798,7 @@ class FUSE:
         sargs.append(','.join(FUSE._normalize_fuse_options(**kwargs)))
         sargs.append(mountpoint)
 
-        args: typing.List[bytes] = [arg.encode(encoding) for arg in sargs]
+        args: list[bytes] = [arg.encode(encoding) for arg in sargs]
         argv = (ctypes.c_char_p * len(args))(*args)
 
         fuse_ops = FuseOperations()
@@ -851,7 +852,7 @@ class FUSE:
                 yield f'{key}={value}'
 
     @staticmethod
-    def _wrapper(func: typing.Callable, *args, **kwargs) -> int:
+    def _wrapper(func: collections.abc.Callable, *args, **kwargs) -> int:
         'Decorator for the methods that follow'
 
         try:
@@ -1305,7 +1306,7 @@ class Operations:
 
     def getattr(
         self, path: typing.Optional[str], fh: typing.Any = None
-    ) -> typing.Dict[str, int]:
+    ) -> dict[str, int]:
         '''
         Returns a dictionary with keys identical to the stat C structure of
         stat(2).
@@ -1339,7 +1340,7 @@ class Operations:
 
         raise FuseOSError(errno.EROFS)
 
-    def listxattr(self, path: str) -> typing.List[str]:
+    def listxattr(self, path: str) -> list[str]:
         return []
 
     def lock(
@@ -1379,7 +1380,7 @@ class Operations:
     def readdir(
         self, path: str, fh: typing.Any
     ) -> typing.Union[
-        typing.List[str], typing.List[typing.Tuple[str, typing.Dict[str, int], int]]
+        list[str], list[typing.Tuple[str, dict[str, int], int]]
     ]:
         '''
         Can return either a list of names, or a list of (name, attrs, offset)
@@ -1411,7 +1412,7 @@ class Operations:
     ) -> None:
         raise FuseOSError(ENOTSUP)
 
-    def statfs(self, path: str) -> typing.Dict[str, typing.Union[int, float]]:
+    def statfs(self, path: str) -> dict[str, typing.Union[int, float]]:
         '''
         Returns a dictionary with keys identical to the statvfs C structure of
         statvfs(3).

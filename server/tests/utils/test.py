@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 
 from django.test import TestCase, TransactionTestCase
@@ -55,7 +56,7 @@ class UDSHttpResponse(HttpResponse):
 
 
 class UDSClientMixin:
-    uds_headers: typing.Dict[str, str]
+    uds_headers: dict[str, str]
     ip_version: int = 4
 
     def initialize(self):
@@ -90,7 +91,7 @@ class UDSClientMixin:
     def enable_ipv6(self):
         self.ip_version = 6
 
-    def append_remote_addr(self, kwargs: typing.Dict[str, typing.Any]) -> None:
+    def append_remote_addr(self, kwargs: dict[str, typing.Any]) -> None:
         if self.ip_version == 4:
             kwargs['REMOTE_ADDR'] = '127.0.0.1'
         elif self.ip_version == 6:

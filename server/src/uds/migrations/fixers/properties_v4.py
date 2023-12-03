@@ -1,4 +1,5 @@
 import typing
+import collections.abc
 import logging
 
 if typing.TYPE_CHECKING:

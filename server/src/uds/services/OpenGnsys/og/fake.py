@@ -34,6 +34,7 @@ import copy
 import random
 import logging
 import typing
+import collections.abc
 
 from . import urls
 
@@ -106,7 +107,7 @@ IMAGES = [
     },
 ]
 
-RESERVE: typing.Dict[str, typing.Any] = {
+RESERVE: dict[str, typing.Any] = {
     "id": 4,
     "name": "pcpruebas",
     "mac": "4061860521FE",

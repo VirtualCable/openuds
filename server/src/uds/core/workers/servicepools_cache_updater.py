@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import transaction
 from django.db.models import Q
@@ -72,7 +73,7 @@ class ServiceCacheUpdater(Job):
 
     def servicesPoolsNeedingCacheUpdate(
         self,
-    ) -> typing.List[typing.Tuple[ServicePool, int, int, int]]:
+    ) -> list[typing.Tuple[ServicePool, int, int, int]]:
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
         # We start filtering out the deployed services that do not need caching at all.
@@ -87,7 +88,7 @@ class ServiceCacheUpdater(Job):
         )
 
         # We will get the one that proportionally needs more cache
-        servicesPools: typing.List[typing.Tuple[ServicePool, int, int, int]] = []
+        servicesPools: list[typing.Tuple[ServicePool, int, int, int]] = []
         for servicePool in servicePoolsNeedingCaching:
             servicePool.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
@@ -293,7 +294,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Reducing L1 cache erasing a service in cache for %s", servicePool)
         # We will try to destroy the newest cacheL1 element that is USABLE if the deployer can't cancel a new service creation
         # Here, we will take into account the "remove_after" marked user services, so we don't try to remove them
-        cacheItems: typing.List[UserService] = [
+        cacheItems: list[UserService] = [
             i
             for i in servicePool.cachedUserServices()
             .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))

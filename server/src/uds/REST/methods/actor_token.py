@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 
@@ -67,7 +68,7 @@ class ActorTokens(ModelHandler):
         {'log_level': {'title': _('Log level')}},
     ]
 
-    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item_: 'Model') -> dict[str, typing.Any]:
         item = typing.cast(Server, item_)
         data = item.data or {}
         log_level_int = data.get('log_level', 2)

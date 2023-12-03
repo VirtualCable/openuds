@@ -30,6 +30,7 @@
 """
 import datetime
 import typing
+import collections.abc
 
 from uds import models
 from uds.core import environment, types
@@ -89,7 +90,7 @@ def createService(
 def createOsManager() -> models.OSManager:
     from uds.osmanagers.Test import TestOSManager
 
-    values: typing.Dict[str, typing.Any] = {
+    values: dict[str, typing.Any] = {
         'onLogout': 'remove',
         'idle': 300,
     }
@@ -124,8 +125,8 @@ def createServicePoolGroup(
 def createServicePool(
     service: models.Service,
     osmanager: typing.Optional[models.OSManager] = None,
-    groups: typing.Optional[typing.List[models.Group]] = None,
-    transports: typing.Optional[typing.List[models.Transport]] = None,
+    groups: typing.Optional[list[models.Group]] = None,
+    transports: typing.Optional[list[models.Transport]] = None,
     servicePoolGroup: typing.Optional[models.ServicePoolGroup] = None,
 ) -> models.ServicePool:
     from uds.services.Test.service import TestServiceCache, TestServiceNoCache
@@ -206,8 +207,8 @@ def createUserService(
 
 
 def createMetaPool(
-    service_pools: typing.List[models.ServicePool],
-    groups: typing.List[models.Group],
+    service_pools: list[models.ServicePool],
+    groups: list[models.Group],
     round_policy: int = types.pools.LoadBalancingPolicy.ROUND_ROBIN,
     transport_grouping: int = types.pools.TransportSelectionPolicy.AUTO,
     ha_policy: int = types.pools.HighAvailabilityPolicy.ENABLED,
@@ -234,7 +235,7 @@ def createMetaPool(
 def createOneCacheTestingUserService(
     provider: 'models.Provider',
     user: 'models.User',
-    groups: typing.List['models.Group'],
+    groups: list['models.Group'],
     type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
 ) -> 'models.UserService':
     from uds.services.Test.service import TestServiceCache, TestServiceNoCache
@@ -263,15 +264,15 @@ def createCacheTestingUserServices(
     count: int = 1,
     type_: typing.Literal['managed', 'unmanaged'] = 'managed',
     user: typing.Optional['models.User'] = None,
-    groups: typing.Optional[typing.List['models.Group']] = None,
-) -> typing.List[models.UserService]:
+    groups: typing.Optional[list['models.Group']] = None,
+) -> list[models.UserService]:
     from . import authenticators
 
     if not user or not groups:
         auth = authenticators.createAuthenticator()
         groups = authenticators.createGroups(auth, 3)
         user = authenticators.createUsers(auth, 1, groups=groups)[0]
-    user_services: typing.List[models.UserService] = []
+    user_services: list[models.UserService] = []
     for _ in range(count):
         user_services.append(
             createOneCacheTestingUserService(createProvider(), user, groups, type_)

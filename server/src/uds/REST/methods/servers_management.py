@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -71,7 +72,7 @@ class ServersTokens(ModelHandler):
         {'stamp': {'title': _('Date'), 'type': 'datetime'}},
     ]
 
-    def item_as_dict(self, item_: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item_: 'Model') -> dict[str, typing.Any]:
         item = typing.cast('models.Server', item_)  # We will receive for sure
         return {
             'id': item.uuid,
@@ -147,7 +148,7 @@ class ServersServers(DetailHandler):
         except Exception:
             return str(_('Servers'))
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return [
             {
@@ -166,11 +167,11 @@ class ServersServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def getGui(self, parent: 'Model', forType: str = '') -> typing.List[typing.Any]:
+    def getGui(self, parent: 'Model', forType: str = '') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
@@ -326,14 +327,14 @@ class ServersGroups(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+    def getTypes(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
             v = types.rest.TypeInfo(
                 name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon
             ).asDict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
             yield v
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         if '@' not in type_:  # If no subtype, use default
             type_ += '@default'
         kind, subkind = type_.split('@')[:2]
@@ -361,14 +362,14 @@ class ServersGroups(ModelHandler):
             ],
         )
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         # Update type and subtype to correct values
         type, subtype = fields['type'].split('@')
         fields['type'] = types.servers.ServerType[type.upper()].value
         fields['subtype'] = subtype
         return super().beforeSave(fields)
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, models.ServerGroup)
         return {
             'id': item.uuid,

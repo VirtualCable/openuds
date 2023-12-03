@@ -31,6 +31,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.http import HttpResponseForbidden
 from django.utils import timezone

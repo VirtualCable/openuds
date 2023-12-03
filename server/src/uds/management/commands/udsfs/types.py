@@ -33,6 +33,7 @@ import stat
 import time
 import logging
 import typing
+import collections.abc
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ class StatType(typing.NamedTuple):
     st_mtime: int = time.time_ns()
     st_atime: int = time.time_ns()
 
-    def as_dict(self) -> typing.Dict[str, int]:
+    def as_dict(self) -> dict[str, int]:
         rst = {
             'st_mode': self.st_mode,
             'st_ctime': self.st_ctime,
@@ -86,23 +87,23 @@ class UDSFSInterface:
     Base Class for UDS Info File system
     """
 
-    def getattr(self, path: typing.List[str]) -> StatType:
+    def getattr(self, path: list[str]) -> StatType:
         """
         Get file attributes. Path is the full path to the file, already splitted.
         """
         raise NotImplementedError
 
-    def readdir(self, path: typing.List[str]) -> typing.List[str]:
+    def readdir(self, path: list[str]) -> list[str]:
         """
         Get a list of files in the directory. Path is the full path to the directory, already splitted.
         """
         raise NotImplementedError
 
-    def read(self, path: typing.List[str], size: int, offset: int) -> bytes:
+    def read(self, path: list[str], size: int, offset: int) -> bytes:
         """
         Read a file. Path is the full path to the file, already splitted.
         """
         raise NotImplementedError
 
-    def flush(self, path: typing.List[str]) -> None:  # pylint: disable=unused-argument
+    def flush(self, path: list[str]) -> None:  # pylint: disable=unused-argument
         return

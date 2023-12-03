@@ -33,6 +33,7 @@ UDS managers (downloads, users publications, ...)
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 # Imports for type checking only (not on runtime), we have later to get rid of false "redefined outer names" for pylint
 if typing.TYPE_CHECKING:

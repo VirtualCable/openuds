@@ -32,6 +32,7 @@
 import logging
 import random
 import typing
+import collections.abc
 
 from django.test import SimpleTestCase
 from django.test.client import Client
@@ -101,7 +102,7 @@ class uuid_type:
 
 
 RestFieldType = typing.Tuple[str, typing.Union[typing.Type, typing.Tuple[str, ...]]]
-RestFieldReference = typing.Final[typing.List[RestFieldType]]
+RestFieldReference = typing.Final[list[RestFieldType]]
 
 # pylint: disable=too-many-return-statements
 def random_value(
@@ -121,17 +122,17 @@ def random_value(
         return generators.random_uuid()
     if isinstance(field_type, tuple):
         return random.choice(field_type)  # nosec
-    if field_type == typing.List[str]:
+    if field_type == list[str]:
         return [generators.random_string() for _ in range(generators.random_int(1, 10))]
-    if field_type == typing.List[uuid_type]:
+    if field_type == list[uuid_type]:
         return [generators.random_uuid() for _ in range(generators.random_int(1, 10))]
-    if field_type == typing.List[int]:
+    if field_type == list[int]:
         return [generators.random_int() for _ in range(generators.random_int(1, 10))]
-    if field_type == typing.List[bool]:
+    if field_type == list[bool]:
         return [
             random.choice([True, False]) for _ in range(generators.random_int(1, 10))  # nosec: test values
         ]
-    if field_type == typing.List[typing.Tuple[str, str]]:
+    if field_type == list[typing.Tuple[str, str]]:
         return [
             (generators.random_utf8_string(), generators.random_utf8_string())
             for _ in range(generators.random_int(1, 10))
@@ -145,7 +146,7 @@ class RestStruct:
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def as_dict(self, **kwargs) -> typing.Dict[str, typing.Any]:
+    def as_dict(self, **kwargs) -> dict[str, typing.Any]:
         # Use kwargs to override values
         res = {k: kwargs.get(k, getattr(self, k)) for k in self.__annotations__}  # pylint: disable=no-member
         # Remove None values for optional fields

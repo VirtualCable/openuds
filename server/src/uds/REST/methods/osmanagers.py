@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -63,7 +64,7 @@ class OsManagers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def osmToDict(self, osm: OSManager) -> typing.Dict[str, typing.Any]:
+    def osmToDict(self, osm: OSManager) -> dict[str, typing.Any]:
         type_ = osm.getType()
         return {
             'id': osm.uuid,
@@ -77,7 +78,7 @@ class OsManagers(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, osm),
         }
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, OSManager)
         return self.osmToDict(item)
 
@@ -94,7 +95,7 @@ class OsManagers(ModelHandler):
         return osmanagers.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         try:
             osmanagerType = osmanagers.factory().lookup(type_)
 

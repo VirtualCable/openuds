@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 import uds.core.types.permissions
 from uds import models
@@ -78,7 +79,7 @@ class Permissions(Handler):
     @staticmethod
     def permsToDict(
         perms: typing.Iterable[models.Permissions],
-    ) -> typing.List[typing.Dict[str, str]]:
+    ) -> list[dict[str, str]]:
         res = []
         entity: typing.Optional[typing.Union[models.User, models.Group]]
         for perm in perms:
@@ -122,7 +123,7 @@ class Permissions(Handler):
 
         return Permissions.permsToDict(permissions.getPermissions(obj))
 
-    def put(self) -> typing.List[typing.Dict]:
+    def put(self) -> list[dict]:
         """
         Processes put requests
         """
@@ -132,21 +133,21 @@ class Permissions(Handler):
 
         perm = uds.core.types.permissions.PermissionType.from_str(self._params.get('perm', '0'))
 
-        def add_user_permission(cls_param: str, obj_param: str, user_param: str) -> typing.List[typing.Dict]:
+        def add_user_permission(cls_param: str, obj_param: str, user_param: str) -> list[dict]:
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             user = models.User.objects.get(uuid=user_param)
             permissions.addUserPermission(user, obj, perm)
             return Permissions.permsToDict(permissions.getPermissions(obj))
 
-        def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> typing.List[typing.Dict]:
+        def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> list[dict]:
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             group = models.Group.objects.get(uuid=group_param)
             permissions.addGroupPermission(group, obj, perm)
             return Permissions.permsToDict(permissions.getPermissions(obj))
 
-        def revoke() -> typing.List[typing.Dict]:
+        def revoke() -> list[dict]:
             for permId in self._params.get('items', []):
                 permissions.revokePermissionById(permId)
             return []

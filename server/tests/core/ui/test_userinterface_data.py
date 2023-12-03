@@ -33,6 +33,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 # We use commit/rollback
 from ...utils.test import UDSTestCase

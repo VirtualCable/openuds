@@ -32,6 +32,7 @@
 from datetime import timedelta
 import logging
 import typing
+import collections.abc
 
 from django.db import transaction
 from uds.core.managers.user_service import UserServiceManager

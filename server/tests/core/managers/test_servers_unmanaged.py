@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from contextlib import contextmanager
 import typing
+import collections.abc
 import datetime
 import time
 from unittest import mock
@@ -54,11 +55,11 @@ NUM_USERSERVICES = NUM_REGISTEREDSERVERS + 1
 
 
 class ServerManagerUnmanagedServersTest(UDSTestCase):
-    user_services: typing.List['models.UserService']
+    user_services: list['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.ServerGroup'
-    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounter]]
-    all_uuids: typing.List[str]
+    assign: collections.abc.Callable[..., typing.Optional[types.servers.ServerCounter]]
+    all_uuids: list[str]
 
     def setUp(self) -> None:
         super().setUp()
@@ -80,7 +81,7 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
             serverGroup=self.registered_servers_group,
             serviceType=types.services.ServiceType.VDI,
         )
-        self.all_uuids: typing.List[str] = list(
+        self.all_uuids: list[str] = list(
             self.registered_servers_group.servers.all().values_list('uuid', flat=True)
         )
 

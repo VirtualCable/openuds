@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
 import typing
+import collections.abc
 
 from defusedxml import minidom
 
@@ -237,7 +238,7 @@ def getNetInfo(
 
 def getDisplayConnection(
     api: 'client.OpenNebulaClient', machineId: str
-) -> typing.Optional[typing.Dict[str, typing.Any]]:
+) -> typing.Optional[dict[str, typing.Any]]:
     '''
     If machine is not running or there is not a display, will return NONE
     SPICE connections should check that 'type' is 'SPICE'

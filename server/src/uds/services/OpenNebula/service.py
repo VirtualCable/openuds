@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types
@@ -312,12 +313,12 @@ class LiveService(services.Service):
         """
         return self.lenName.num()
 
-    def getConsoleConnection(self, machineId: str) -> typing.Dict[str, typing.Any]:
+    def getConsoleConnection(self, machineId: str) -> dict[str, typing.Any]:
         return self.parent().getConsoleConnection(machineId)
 
     def desktopLogin(
         self, machineId: str, username: str, password: str, domain: str
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         return self.parent().desktopLogin(machineId, username, password, domain)
 
     def isAvailable(self) -> bool:

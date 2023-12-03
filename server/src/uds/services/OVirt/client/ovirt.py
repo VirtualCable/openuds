@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import threading
 import logging
 import typing
+import collections.abc
 
 import ovirtsdk4 as ovirt
 
@@ -156,7 +157,7 @@ class Client:
 
     def getVms(
         self, force: bool = False
-    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside ovirt that do aren't part of uds
 
@@ -186,7 +187,7 @@ class Client:
 
             logger.debug('oVirt VMS: %s', vms)
 
-            res: typing.List[typing.MutableMapping[str, typing.Any]] = []
+            res: list[typing.MutableMapping[str, typing.Any]] = []
 
             for vm in vms:
                 try:
@@ -211,7 +212,7 @@ class Client:
 
     def getClusters(
         self, force: bool = False
-    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside ovirt
 
@@ -238,9 +239,9 @@ class Client:
 
             api = self.__getApi()
 
-            clusters: typing.List[typing.Any] = api.system_service().clusters_service().list()  # type: ignore
+            clusters: list[typing.Any] = api.system_service().clusters_service().list()  # type: ignore
 
-            res: typing.List[typing.MutableMapping[str, typing.Any]] = []
+            res: list[typing.MutableMapping[str, typing.Any]] = []
 
             cluster: typing.Any
             for cluster in clusters:

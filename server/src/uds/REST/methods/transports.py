@@ -33,6 +33,7 @@
 import logging
 import re
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -83,7 +84,7 @@ class Transports(ModelHandler):
     def enum_types(self) -> typing.Iterable[typing.Type[transports.Transport]]:
         return transports.factory().providers().values()
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         transportType = transports.factory().lookup(type_)
 
         if not transportType:
@@ -146,7 +147,7 @@ class Transports(ModelHandler):
 
         return field
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Transport)
         type_ = item.getType()
         pools = list(item.deployedServices.all().values_list('uuid', flat=True))
@@ -169,7 +170,7 @@ class Transports(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
         # If label has spaces, replace them with underscores
         fields['label'] = fields['label'].strip().replace(' ', '-')

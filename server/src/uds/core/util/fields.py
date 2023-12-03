@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import functools
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 from django.db.models import Q
@@ -52,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 def _serverGroupValues(
     types_: typing.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
-) -> typing.List[types.ui.ChoiceItem]:
+) -> list[types.ui.ChoiceItem]:
     fltr = models.ServerGroup.objects.filter(
         functools.reduce(lambda x, y: x | y, [Q(type=type_) for type_ in types_])
     )
@@ -92,7 +93,7 @@ def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 # Server group field
 def serverGroupField(
-    type: typing.Optional[typing.List[types.servers.ServerType]] = None,
+    type: typing.Optional[list[types.servers.ServerType]] = None,
     subtype: typing.Optional[str] = None,
     tab: typing.Optional[types.ui.Tab] = None,
 ) -> ui.gui.ChoiceField:
@@ -159,7 +160,7 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
 # Get certificates from field
 def getCertificatesFromField(
     field: ui.gui.TextField, fieldValue: typing.Optional[str] = None
-) -> typing.List['Certificate']:
+) -> list['Certificate']:
     # Get certificates in self.publicKey.value, encoded as PEM
     # Return a list of certificates in DER format
     value = (fieldValue or field.value).strip()
@@ -174,7 +175,7 @@ def getCertificatesFromField(
     pemCerts = [cert + '-----END CERTIFICATE-----' for cert in pemCerts]
 
     # Convert to DER format
-    certs: typing.List['Certificate'] = []  # PublicKey...
+    certs: list['Certificate'] = []  # PublicKey...
     for pemCert in pemCerts:
         certs.append(load_pem_x509_certificate(pemCert.encode('ascii'), None))
 

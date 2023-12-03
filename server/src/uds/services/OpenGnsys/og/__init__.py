@@ -34,6 +34,7 @@ import re
 import json
 import logging
 import typing
+import collections.abc
 
 from uds.core.util import security
 
@@ -55,7 +56,7 @@ RT = typing.TypeVar('RT')
 
 
 # Decorator
-def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def ensureConnected(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     def inner(*args, **kwargs) -> RT:
         args[0].connect()
         return fnc(*args, **kwargs)
@@ -206,7 +207,7 @@ class OpenGnsysClient:
         return self._get(urls.OUS, errMsg='Getting list of ous')
 
     @ensureConnected
-    def getLabs(self, ou: str) -> typing.List[typing.MutableMapping[str, str]]:
+    def getLabs(self, ou: str) -> list[typing.MutableMapping[str, str]]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
@@ -218,7 +219,7 @@ class OpenGnsysClient:
         ]
 
     @ensureConnected
-    def getImages(self, ou: str) -> typing.List[typing.MutableMapping[str, str]]:
+    def getImages(self, ou: str) -> list[typing.MutableMapping[str, str]]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.

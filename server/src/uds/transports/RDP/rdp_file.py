@@ -36,6 +36,7 @@ Created on Jul 29, 2011
 import urllib.parse
 import shlex
 import typing
+import collections.abc
 
 from uds.core import types
 

@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models, transaction
 
@@ -117,7 +118,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         return kind
 
     def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
+        self, values: typing.Optional[dict[str, str]] = None
     ) -> 'NotificationProviderModule':
         return typing.cast(
             'NotificationProviderModule', super().getInstance(values=values)

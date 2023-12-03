@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core.auths.auth import webLoginRequired
 from uds.core.managers import downloadsManager

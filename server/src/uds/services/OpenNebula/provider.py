@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -181,7 +182,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def sanitizeVmName(self, name: str) -> str:
         return on.sanitizeName(name)
 
-    def testConnection(self) -> typing.List[typing.Any]:
+    def testConnection(self) -> list[typing.Any]:
         '''
         Test that conection to OpenNebula server is fine
 
@@ -313,7 +314,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
         '''
         return on.vm.getNetInfo(self.api, machineId, networkId)
 
-    def getConsoleConnection(self, machineId: str) -> typing.Dict[str, typing.Any]:
+    def getConsoleConnection(self, machineId: str) -> dict[str, typing.Any]:
         display = on.vm.getDisplayConnection(self.api, machineId)
 
         if display is None:
@@ -329,14 +330,14 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
             'ticket': {'value': display['passwd'], 'expiry': ''},
         }
 
-    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> typing.Dict[str, typing.Any]:
+    def desktopLogin(self, machineId: str, username: str, password: str, domain: str) -> dict[str, typing.Any]:
         '''
         Not provided by OpenNebula API right now
         '''
         return dict()
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
+    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         return OpenNebulaProvider(env, data).testConnection()
 
     @cached('reachable', Cache.SHORT_VALIDITY)

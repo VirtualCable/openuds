@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import secrets
 import typing
+import collections.abc
 
 from django.db import models
 

@@ -35,6 +35,7 @@ import re
 import urllib3.exceptions
 import urllib.parse
 import typing
+import collections.abc
 import logging
 
 import requests
@@ -292,11 +293,11 @@ class ProxmoxClient:
         cachingKWArgs=['node'],
         cachingKeyFnc=cachingKeyHelper,
     )
-    def nodeGpuDevices(self, node: str, **kwargs) -> typing.List[str]:
+    def nodeGpuDevices(self, node: str, **kwargs) -> list[str]:
         return [device['id'] for device in self._get(f'nodes/{node}/hardware/pci')['data'] if device.get('mdev')]
 
     @ensureConnected
-    def getNodeVGPUs(self, node: str, **kwargs) -> typing.List[typing.Any]:
+    def getNodeVGPUs(self, node: str, **kwargs) -> list[typing.Any]:
         return [
             {
                 'name': gpu['name'],
@@ -394,7 +395,7 @@ class ProxmoxClient:
         if linkedClone and not vmInfo.template:
             linkedClone = False
 
-        params: typing.List[typing.Tuple[str, str]] = [
+        params: list[typing.Tuple[str, str]] = [
             ('newid', str(newVmId)),
             ('name', name),
             ('target', toNode),
@@ -423,7 +424,7 @@ class ProxmoxClient:
 
     @ensureConnected
     @cached('hagrps', CACHE_DURATION, cachingKeyFnc=cachingKeyHelper)
-    def listHAGroups(self) -> typing.List[str]:
+    def listHAGroups(self) -> list[str]:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
     @ensureConnected
@@ -449,7 +450,7 @@ class ProxmoxClient:
 
     @ensureConnected
     def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        params: typing.List[typing.Tuple[str, str]] = [
+        params: list[typing.Tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
         node = node or self.getVmInfo(vmId).node
@@ -474,7 +475,7 @@ class ProxmoxClient:
         cachingKWArgs='node',
         cachingKeyFnc=cachingKeyHelper,
     )
-    def listVms(self, node: typing.Union[None, str, typing.Iterable[str]] = None) -> typing.List[types.VMInfo]:
+    def listVms(self, node: typing.Union[None, str, typing.Iterable[str]] = None) -> list[types.VMInfo]:
         nodeList: typing.Iterable[str]
         if node is None:
             nodeList = [n.name for n in self.getClusterInfo().nodes if n.online]
@@ -643,7 +644,7 @@ class ProxmoxClient:
         node: typing.Union[None, str, typing.Iterable[str]] = None,
         content: typing.Optional[str] = None,
         **kwargs,
-    ) -> typing.List[types.StorageInfo]:
+    ) -> list[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it..."""
         nodeList: typing.Iterable[str]
         if node is None:
@@ -653,7 +654,7 @@ class ProxmoxClient:
         else:
             nodeList = node
         params = '' if not content else '?content={}'.format(urllib.parse.quote(content))
-        result: typing.List[types.StorageInfo] = []
+        result: list[types.StorageInfo] = []
 
         for nodeName in nodeList:
             for storage in self._get('nodes/{}/storage{}'.format(nodeName, params))['data']:
@@ -665,14 +666,14 @@ class ProxmoxClient:
 
     @ensureConnected
     @cached('nodeStats', CACHE_INFO_DURATION, cachingKeyFnc=cachingKeyHelper)
-    def getNodesStats(self, **kwargs) -> typing.List[types.NodeStats]:
+    def getNodesStats(self, **kwargs) -> list[types.NodeStats]:
         return [
             types.NodeStats.fromDict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
     @ensureConnected
     @cached('pools', CACHE_DURATION // 6, cachingKeyFnc=cachingKeyHelper)
-    def listPools(self) -> typing.List[types.PoolInfo]:
+    def listPools(self) -> list[types.PoolInfo]:
         return [types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']]
 
     @ensureConnected

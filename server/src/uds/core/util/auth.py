@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import re
 import logging
 
@@ -59,23 +60,23 @@ def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str]
 
 
 def processRegexField(
-    field: str, attributes: typing.Mapping[str, typing.Union[str, typing.List[str]]]
-) -> typing.List[str]:
+    field: str, attributes: typing.Mapping[str, typing.Union[str, list[str]]]
+) -> list[str]:
     """Proccesses a field, that can be a multiline field, and returns a list of values
 
     Args:
         field (str): Field to process
-        attributes (typing.Dict[str, typing.List[str]]): Attributes to use on processing
+        attributes (dict[str, list[str]]): Attributes to use on processing
     """
     try:
-        res: typing.List[str] = []
+        res: list[str] = []
         field = field.strip()
         if field == '':
             return res
 
-        def getAttr(attrName: str) -> typing.List[str]:
+        def getAttr(attrName: str) -> list[str]:
             try:
-                val: typing.List[str] = []
+                val: list[str] = []
                 if '+' in attrName:
                     attrList = attrName.split('+')
                     # Check all attributes are present, and has only one value

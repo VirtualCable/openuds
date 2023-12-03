@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import json
 import typing
+import collections.abc
 
 # import dateutil.parser
 
@@ -82,7 +83,7 @@ def ensureResponseIsValid(
 def getRecurringUrlJson(
     url: str,
     session: 'requests.Session',
-    headers: typing.Dict[str, str],
+    headers: dict[str, str],
     key: str,
     params: typing.Optional[typing.Mapping[str, str]] = None,
     errMsg: typing.Optional[str] = None,
@@ -112,7 +113,7 @@ def getRecurringUrlJson(
 RT = typing.TypeVar('RT')
 
 # Decorators
-def authRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def authRequired(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     def ensurer(obj: 'Client', *args, **kwargs) -> RT:
         obj.ensureAuthenticated()
         try:
@@ -124,7 +125,7 @@ def authRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     return ensurer
 
 
-def authProjectRequired(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def authProjectRequired(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     def ensurer(obj, *args, **kwargs) -> RT:
         if obj._projectId is None:  # pylint: disable=protected-access
             raise Exception('Need a project for method {}'.format(func))
@@ -142,7 +143,7 @@ class Client:  # pylint: disable=too-many-public-methods
     _authenticatedProjectId: typing.Optional[str]
     _authUrl: str
     _tokenId: typing.Optional[str]
-    _catalog: typing.Optional[typing.List[typing.Dict[str, typing.Any]]]
+    _catalog: typing.Optional[list[dict[str, typing.Any]]]
     _isLegacy: bool
     _volume: str
     _access: typing.Optional[str]
@@ -216,7 +217,7 @@ class Client:  # pylint: disable=too-many-public-methods
                 pass
         raise Exception('No endpoint url found')
 
-    def _requestHeaders(self) -> typing.Dict[str, str]:
+    def _requestHeaders(self) -> dict[str, str]:
         headers = {'content-type': 'application/json'}
         if self._tokenId:
             headers['X-Auth-Token'] = self._tokenId
@@ -225,7 +226,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
     def authPassword(self) -> None:
         # logger.debug('Authenticating...')
-        data: typing.Dict[str, typing.Any] = {
+        data: dict[str, typing.Any] = {
             'auth': {
                 'identity': {
                     'methods': ['password'],
@@ -320,7 +321,7 @@ class Client:  # pylint: disable=too-many-public-methods
     def listServers(
         self,
         detail: bool = False,
-        params: typing.Optional[typing.Dict[str, str]] = None,
+        params: typing.Optional[dict[str, str]] = None,
     ) -> typing.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
@@ -368,7 +369,7 @@ class Client:  # pylint: disable=too-many-public-methods
 
     @authProjectRequired
     def listVolumeSnapshots(
-        self, volumeId: typing.Optional[typing.Dict[str, typing.Any]] = None
+        self, volumeId: typing.Optional[dict[str, typing.Any]] = None
     ) -> typing.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
             self._getEndpointFor(self._volume) + '/snapshots',
@@ -475,7 +476,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def getServer(self, serverId: str) -> typing.Dict[str, typing.Any]:
+    def getServer(self, serverId: str) -> dict[str, typing.Any]:
         r = self._session.get(
             self._getEndpointFor('compute', 'compute_legacy')
             + '/servers/{server_id}'.format(server_id=serverId),
@@ -486,7 +487,7 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['server']
 
     @authProjectRequired
-    def getVolume(self, volumeId: str) -> typing.Dict[str, typing.Any]:
+    def getVolume(self, volumeId: str) -> dict[str, typing.Any]:
         r = self._session.get(
             self._getEndpointFor(self._volume)
             + '/volumes/{volume_id}'.format(volume_id=volumeId),
@@ -499,7 +500,7 @@ class Client:  # pylint: disable=too-many-public-methods
         return r.json()['volume']
 
     @authProjectRequired
-    def getSnapshot(self, snapshotId: str) -> typing.Dict[str, typing.Any]:
+    def getSnapshot(self, snapshotId: str) -> dict[str, typing.Any]:
         """
         States are:
             creating, available, deleting, error,  error_deleting
@@ -521,8 +522,8 @@ class Client:  # pylint: disable=too-many-public-methods
         snapshotId: str,
         name: typing.Optional[str] = None,
         description: typing.Optional[str] = None,
-    ) -> typing.Dict[str, typing.Any]:
-        data: typing.Dict[str, typing.Any] = {'snapshot': {}}
+    ) -> dict[str, typing.Any]:
+        data: dict[str, typing.Any] = {'snapshot': {}}
         if name:
             data['snapshot']['name'] = name
 
@@ -544,7 +545,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def createVolumeSnapshot(
         self, volumeId: str, name: str, description: typing.Optional[str] = None
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         description = description or 'UDS Snapshot'
         data = {
             'snapshot': {
@@ -573,7 +574,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def createVolumeFromSnapshot(
         self, snapshotId: str, name: str, description: typing.Optional[str] = None
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         description = description or 'UDS Volume'
         data = {
             'volume': {
@@ -605,7 +606,7 @@ class Client:  # pylint: disable=too-many-public-methods
         networkId: str,
         securityGroupsIdsList: typing.Iterable[str],
         count: int = 1,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         data = {
             'server': {
                 'name': name,

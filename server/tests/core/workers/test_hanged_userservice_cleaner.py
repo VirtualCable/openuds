@@ -31,6 +31,7 @@
 """
 import datetime
 import typing
+import collections.abc
 
 from uds import models
 from uds.core.util import model
@@ -47,7 +48,7 @@ TEST_SERVICES = 5 * 5  # Ensure multiple of 5 for testing
 
 
 class HangedCleanerTest(UDSTestCase):
-    userServices: typing.List[models.UserService]
+    userServices: list[models.UserService]
 
     def setUp(self):
         config.GlobalConfig.MAX_INITIALIZING_TIME.set(MAX_INIT)

@@ -34,6 +34,7 @@ import codecs
 import pickle  # nosec: This is fine, we are not loading untrusted data
 import logging
 import typing
+import collections.abc
 
 from uds.core.serializable import Serializable
 

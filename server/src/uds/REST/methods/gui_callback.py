@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core.ui import gui
 from uds.REST import Handler, RequestError, NotFound
@@ -47,7 +48,7 @@ class Callback(Handler):
     authenticated = True
     needs_staff = True
 
-    def get(self) -> typing.List[typing.Dict[str, typing.Any]]:
+    def get(self) -> list[dict[str, typing.Any]]:
         if len(self._args) != 1:
             raise RequestError('Invalid Request')
 

@@ -35,6 +35,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import base64
 import logging
 import typing
+import collections.abc
 import codecs
 
 from functools import wraps
@@ -140,8 +141,8 @@ def getRootUser() -> models.User:
 # Decorator to make easier protect pages that needs to be logged in
 def webLoginRequired(
     admin: typing.Union[bool, typing.Literal['admin']] = False
-) -> typing.Callable[
-    [typing.Callable[..., HttpResponse]], typing.Callable[..., HttpResponse]
+) -> collections.abc.Callable[
+    [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
 ]:
     """Decorator to set protection to access page
     Look for samples at uds.core.web.views
@@ -152,7 +153,7 @@ def webLoginRequired(
         admin (bool, optional): If True, needs admin or staff. Is it's "admin" literal, needs admin . Defaults to False (any user).
 
     Returns:
-        typing.Callable[[typing.Callable[..., HttpResponse]], typing.Callable[..., HttpResponse]]: Decorator
+        collections.abc.Callable[[collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]]: Decorator
 
     Note:
         This decorator is used to protect pages that needs to be logged in.
@@ -160,8 +161,8 @@ def webLoginRequired(
     """
 
     def decorator(
-        view_func: typing.Callable[..., HttpResponse]
-    ) -> typing.Callable[..., HttpResponse]:
+        view_func: collections.abc.Callable[..., HttpResponse]
+    ) -> collections.abc.Callable[..., HttpResponse]:
         @wraps(view_func)
         def _wrapped_view(
             request: 'ExtendedHttpRequest', *args, **kwargs
@@ -193,8 +194,8 @@ def isTrustedSource(ip: str) -> bool:
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
 def trustedSourceRequired(
-    view_func: typing.Callable[..., HttpResponse]
-) -> typing.Callable[..., HttpResponse]:
+    view_func: collections.abc.Callable[..., HttpResponse]
+) -> collections.abc.Callable[..., HttpResponse]:
     """
     Decorator to set protection to access page
     """
@@ -221,8 +222,8 @@ def trustedSourceRequired(
 # The difference with webLoginRequired is that this one does not redirect to login page
 # it's designed to be used in ajax calls mainly
 def denyNonAuthenticated(
-    view_func: typing.Callable[..., RT]
-) -> typing.Callable[..., RT]:
+    view_func: collections.abc.Callable[..., RT]
+) -> collections.abc.Callable[..., RT]:
     @wraps(view_func)
     def _wrapped_view(request: 'ExtendedHttpRequest', *args, **kwargs) -> RT:
         if not request.user or not request.authorized:

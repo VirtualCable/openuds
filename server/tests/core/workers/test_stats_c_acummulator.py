@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import datetime
 import random
 
@@ -121,7 +122,7 @@ class StatsAcummulatorTest(UDSTestCase):
         self.assertEqual(day_stats.count(), total_day_stats)
 
         # Calculate sum of stats, by hour
-        data: typing.Dict[str, typing.Dict[int, typing.List[int]]] = {}
+        data: dict[str, dict[int, list[int]]] = {}
         for i in base_stats.order_by('owner_id', 'counter_type', 'stamp'):
             stamp = i.stamp - (i.stamp % 3600) + 3600  # Round to hour and to next hour
             d = data.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})
@@ -139,7 +140,7 @@ class StatsAcummulatorTest(UDSTestCase):
             self.assertEqual(stat.v_count, len(d[stamp]))
 
         # Recalculate sum of stats, now from StatsCountersAccum (dayly)
-        data_d: typing.Dict[str, typing.Dict[int, typing.List[typing.Dict[str, int]]]] = {}
+        data_d: dict[str, dict[int, list[dict[str, int]]]] = {}
         for i in hour_stats.order_by('owner_id', 'counter_type', 'stamp'):
             stamp = i.stamp - (i.stamp % (3600 * 24)) + 3600 * 24  # Round to day and to next day
             dd = data_d.setdefault(f'{i.owner_id:03d}{i.counter_type}', {})

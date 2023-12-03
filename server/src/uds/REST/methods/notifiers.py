@@ -32,6 +32,7 @@
 '''
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -77,7 +78,7 @@ class Notifiers(ModelHandler):
     def enum_types(self) -> typing.Iterable[typing.Type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         notifierType = messaging.factory().lookup(type_)
 
         if not notifierType:
@@ -111,7 +112,7 @@ class Notifiers(ModelHandler):
 
         return localGui
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Notifier)
         type_ = item.getType()
         return {

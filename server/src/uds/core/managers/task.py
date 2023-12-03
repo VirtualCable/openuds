@@ -33,6 +33,7 @@ import time
 import signal
 import logging
 import typing
+import collections.abc
 
 from django.db import connection
 from uds.core.jobs.scheduler import Scheduler
@@ -70,7 +71,7 @@ class TaskManager(metaclass=singleton.Singleton):
     __slots__ = ('threads', 'keepRunning')
 
     keepRunning: bool
-    threads: typing.List[BaseThread]
+    threads: list[BaseThread]
 
     def __init__(self):
         self.keepRunning = True

@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 import tempfile
 import os.path
 

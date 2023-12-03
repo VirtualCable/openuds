@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 from django.db.models import Count, Q, signals
@@ -161,7 +162,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         else:
             usr = self
 
-        grps: typing.List[int] = []
+        grps: list[int] = []
 
         for g in usr.groups.filter(is_meta=False):
             grps.append(g.id)

@@ -36,6 +36,7 @@ import random
 import string
 import time
 import typing
+import collections.abc
 
 from uds.core.consts.system import VERSION as UDS_VERSION
 from uds.core import consts
@@ -226,7 +227,7 @@ class Auths(Handler):
     path = 'auth'
     authenticated = False  # By default, all handlers needs authentication
 
-    def auths(self) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+    def auths(self) -> typing.Iterable[dict[str, typing.Any]]:
         paramAll: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():
@@ -245,5 +246,5 @@ class Auths(Handler):
                     'custom': theType.isCustom(),
                 }
 
-    def get(self) -> typing.List[typing.Dict[str, typing.Any]]:
+    def get(self) -> list[dict[str, typing.Any]]:
         return list(self.auths())

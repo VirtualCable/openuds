@@ -6,6 +6,7 @@ Created on Nov 15, 2012-2019
 import logging
 
 import typing
+import collections.abc
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -14,7 +15,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
+def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     """
     This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
     """

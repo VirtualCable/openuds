@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 import datetime
 
@@ -48,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 
 class StuckCleanerTest(UDSTestCase):
-    userServices: typing.List['models.UserService']
+    userServices: list['models.UserService']
 
     def setUp(self) -> None:
         StuckCleaner.setup()

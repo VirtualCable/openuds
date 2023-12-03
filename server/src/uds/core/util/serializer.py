@@ -31,13 +31,14 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import pickle  # nosec:  Used with care :)
 import lzma
 
 from uds.core.managers.crypto import CryptoManager
 
 CURRENT_SERIALIZER_VERSION = b'v1'
-DESERIALIZERS: typing.Final[typing.Mapping[bytes, typing.Callable[[bytes], bytes]]] = {
+DESERIALIZERS: typing.Final[typing.Mapping[bytes, collections.abc.Callable[[bytes], bytes]]] = {
     b'v1': CryptoManager().fastDecrypt,
 }
 

@@ -1,4 +1,5 @@
 import typing
+import collections.abc
 import logging
 
 import requests
@@ -60,13 +61,13 @@ class Telegram:
     def request(
         self,
         method,
-        params: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        params: typing.Optional[dict[str, typing.Any]] = None,
         *,
         stream: bool = False,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         params = params or {}
         params['token'] = self.token
-        kwargs: typing.Dict[str, typing.Any] = {'params': params}
+        kwargs: dict[str, typing.Any] = {'params': params}
         if stream:
             kwargs['stream'] = True
         # If params has a timeout, use the max of that and our own timeout
@@ -78,7 +79,7 @@ class Telegram:
         )
         return response.json()
 
-    def sendMessage(self, chat_id: int, text: str) -> typing.Dict[str, typing.Any]:
+    def sendMessage(self, chat_id: int, text: str) -> dict[str, typing.Any]:
         return self.request('sendMessage', {'chat_id': chat_id, 'text': text})
 
     def getUpdates(self, offset: int = 0, timeout: int = 0) -> typing.Iterable[Message]:

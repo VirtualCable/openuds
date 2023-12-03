@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.managers.user_service import UserServiceManager
@@ -87,7 +88,7 @@ class OVirtLinkedDeployment(services.UserService):
     _mac: str
     _vmid: str
     _reason: str
-    _queue: typing.List[int]
+    _queue: list[int]
 
     # Utility overrides for type checking...
     def service(self) -> 'OVirtLinkedService':
@@ -284,7 +285,7 @@ if sys.platform == 'win32':
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(
-        self, chkState: typing.Union[typing.List[str], typing.Tuple[str, ...], str]
+        self, chkState: typing.Union[list[str], typing.Tuple[str, ...], str]
     ) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',
@@ -354,7 +355,7 @@ if sys.platform == 'win32':
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -366,7 +367,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error(
@@ -572,7 +573,7 @@ if sys.platform == 'win32':
 
         try:
             chkFnc: typing.Optional[
-                typing.Optional[typing.Callable[[], str]]
+                typing.Optional[collections.abc.Callable[[], str]]
             ] = fncs.get(op, None)
 
             if chkFnc is None:

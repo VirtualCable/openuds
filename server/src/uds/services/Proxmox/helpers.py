@@ -29,6 +29,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core.environment import Environment 
 
@@ -38,7 +39,7 @@ from django.utils.translation import gettext as _
 logger = logging.getLogger(__name__)
 
 
-def getStorage(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
+def getStorage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)

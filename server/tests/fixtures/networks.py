@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from uds import models
 from uds.core.util import states

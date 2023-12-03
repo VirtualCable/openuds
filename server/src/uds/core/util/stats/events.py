@@ -34,6 +34,7 @@ import datetime
 import time
 import logging
 import typing
+import collections.abc
 
 from uds.core.managers.stats import StatsManager, REVERSE_FLDS_EQUIV
 from uds.models import Provider, Service, ServicePool, Authenticator, OSManager

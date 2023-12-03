@@ -34,6 +34,7 @@
 import logging
 import re
 import typing
+import collections.abc
 
 import ldap
 from django.utils.translation import gettext_noop as _
@@ -227,7 +228,7 @@ class RegexLdap(auths.Authenticator):
     _verifySsl: bool = True
     _certificate: str = ''
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
             auth_utils.validateRegexField(self.userNameAttr, values['userNameAttr'])
             auth_utils.validateRegexField(self.userIdAttr, values['userIdAttr'])
@@ -250,7 +251,7 @@ class RegexLdap(auths.Authenticator):
             self._verifySsl = gui.toBool(values['verifySsl'])
             self._certificate = values['certificate']
 
-    def __getAttrsFromField(self, field: str) -> typing.List[str]:
+    def __getAttrsFromField(self, field: str) -> list[str]:
         res = []
         for line in field.splitlines():
             equalPos = line.find('=')
@@ -517,7 +518,7 @@ class RegexLdap(auths.Authenticator):
         except Exception:
             return types.auth.FAILED_AUTH
 
-    def createUser(self, usrData: typing.Dict[str, str]) -> None:
+    def createUser(self, usrData: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has the user  cause they are managed externally, so, it can at most test if the users exists on external source
@@ -541,7 +542,7 @@ class RegexLdap(auths.Authenticator):
             return username
         return self.__getUserRealName(res)
 
-    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
+    def modifyUser(self, usrData: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
@@ -563,7 +564,7 @@ class RegexLdap(auths.Authenticator):
         groups = self.__getGroups(user)
         groupsManager.validate(groups)
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(

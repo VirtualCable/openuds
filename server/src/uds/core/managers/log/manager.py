@@ -31,6 +31,7 @@
 """
 # import traceback
 import typing
+import collections.abc
 import logging
 
 from uds.core.util import singleton
@@ -93,7 +94,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def _getLogs(
         self, owner_type: LogObjectType, owner_id: int, limit: int
-    ) -> typing.List[typing.Dict]:
+    ) -> list[dict]:
         """
         Get all logs associated with an user service, ordered by date
         """
@@ -140,7 +141,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def getLogs(
         self, wichObject: typing.Optional['Model'], limit: int = -1
-    ) -> typing.List[typing.Dict]:
+    ) -> list[dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """

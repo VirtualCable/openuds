@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import functools
 import logging
 
@@ -51,7 +52,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         type_: typing.Union[typing.Literal['managed'], typing.Literal['unmanaged']],
         token: str,
         mac: str,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         response = self.client.post(
             '/uds/rest/actor/v3/initialize',
             data={
@@ -73,7 +74,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         token: str,
         mac: str,
         expectForbbiden: bool,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         response = self.client.post(
             '/uds/rest/actor/v3/initialize',
             data={

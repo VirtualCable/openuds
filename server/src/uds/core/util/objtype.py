@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 import enum
 
 from uds import models

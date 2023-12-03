@@ -32,6 +32,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import get_language
 from django.utils import formats
@@ -85,7 +86,7 @@ def dateToLiteral(date) -> str:
     return date
 
 
-def extractKey(dictionary: typing.Dict, key: typing.Any, **kwargs) -> str:
+def extractKey(dictionary: dict, key: typing.Any, **kwargs) -> str:
     format_ = kwargs.get('format', '{0}')
     default = kwargs.get('default', '')
 

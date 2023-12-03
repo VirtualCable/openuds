@@ -32,6 +32,7 @@
 import logging
 import sys
 import typing
+import collections.abc
 import traceback
 
 from django import http
@@ -108,12 +109,12 @@ class Dispatcher(View):
         del request.session
 
         # Now we extract method and possible variables from path
-        path: typing.List[str] = kwargs['arguments'].split('/')
+        path: list[str] = kwargs['arguments'].split('/')
         del kwargs['arguments']
 
         # Transverse service nodes, so we can locate class processing this path
         service = Dispatcher.services
-        full_path_lst: typing.List[str] = []
+        full_path_lst: list[str] = []
         # Guess content type from content type header (post) or ".xxx" to method
         content_type: str = request.META.get('CONTENT_TYPE', 'application/json').split(';')[0]
 
@@ -161,7 +162,7 @@ class Dispatcher(View):
                 *args,
                 **kwargs,
             )
-            operation: typing.Callable[[], typing.Any] = getattr(handler, http_method)
+            operation: collections.abc.Callable[[], typing.Any] = getattr(handler, http_method)
         except processors.ParametersException as e:
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)

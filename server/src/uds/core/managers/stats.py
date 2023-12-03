@@ -33,6 +33,7 @@ import datetime
 import time
 import logging
 import typing
+import collections.abc
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton

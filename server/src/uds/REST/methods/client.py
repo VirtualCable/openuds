@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -68,7 +69,7 @@ class Client(Handler):
         error: typing.Optional[typing.Union[str, int]] = None,
         errorCode: int = 0,
         retryable: bool = False,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Helper method to create a "result" set for actor response
 
@@ -102,13 +103,13 @@ class Client(Handler):
 
         return res
 
-    def test(self) -> typing.Dict[str, typing.Any]:
+    def test(self) -> dict[str, typing.Any]:
         """
         Executes and returns the test
         """
         return Client.result(_('Correct'))
 
-    def process(self, ticket: str, scrambler: str) -> typing.Dict[str, typing.Any]:
+    def process(self, ticket: str, scrambler: str) -> dict[str, typing.Any]:
         userService: typing.Optional['UserService'] = None
         hostname = self._params.get('hostname', '')  # Or if hostname is not included...
         version = self._params.get('version', '0.0.0')
@@ -204,7 +205,7 @@ class Client(Handler):
             if userService:
                 userService.properties['accessed_by_client'] = True
 
-    def get(self) -> typing.Dict[str, typing.Any]:
+    def get(self) -> dict[str, typing.Any]:
         """
         Processes get requests
         """
@@ -213,7 +214,7 @@ class Client(Handler):
         def error() -> None:
             raise RequestError('Invalid request')
 
-        def noargs() -> typing.Dict[str, typing.Any]:
+        def noargs() -> dict[str, typing.Any]:
             return Client.result(
                 {
                     'availableVersion': CLIENT_VERSION,

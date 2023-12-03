@@ -32,6 +32,7 @@ import datetime
 import logging
 import datetime
 import typing
+import collections.abc
 from concurrent.futures import ThreadPoolExecutor
 
 from django.db import transaction
@@ -106,12 +107,12 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def getServerStats(
         self, serversFltr: 'QuerySet[models.Server]'
-    ) -> typing.List[typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
+    ) -> list[typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
         """
         Returns a list of stats for a list of servers
         """
         # Paralelize stats retrieval
-        retrievedStats: typing.List[
+        retrievedStats: list[
             typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
         ] = []
 
@@ -144,7 +145,7 @@ class ServerManager(metaclass=singleton.Singleton):
         Finds the best server for a service
         """
         best: typing.Optional[typing.Tuple['models.Server', 'types.servers.ServerStats']] = None
-        unmanaged_list: typing.List['models.Server'] = []
+        unmanaged_list: list['models.Server'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
         if excludeServersUUids:
@@ -402,7 +403,7 @@ class ServerManager(metaclass=singleton.Singleton):
         """
         requester.ServerApiRequester(server).notifyRelease(userService)
 
-    def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> typing.Dict[str, int]:
+    def getAssignInformation(self, serverGroup: 'models.ServerGroup') -> dict[str, int]:
         """
         Get usage information for a server group
 
@@ -413,7 +414,7 @@ class ServerManager(metaclass=singleton.Singleton):
             Dict of current usage (user uuid, counter for assignations to that user)
 
         """
-        res: typing.Dict[str, int] = {}
+        res: dict[str, int] = {}
         for k, v in serverGroup.properties.items():
             if k.startswith(self.BASE_PROPERTY_NAME):
                 kk = k[len(self.BASE_PROPERTY_NAME) :]  # Skip base name
@@ -451,7 +452,7 @@ class ServerManager(metaclass=singleton.Singleton):
         self,
         serverGroup: 'models.ServerGroup',
         excludeServersUUids: typing.Optional[typing.Set[str]] = None,
-    ) -> typing.List['models.Server']:
+    ) -> list['models.Server']:
         """
         Returns a list of servers sorted by usage
 
@@ -496,7 +497,7 @@ class ServerManager(metaclass=singleton.Singleton):
                     # User does not exists, remove it from counters
                     del serverGroup.properties[k]
 
-    def processEvent(self, server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+    def processEvent(self, server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
         """
         Processes a notification FROM server
         That is, this is not invoked directly unless a REST request is received from

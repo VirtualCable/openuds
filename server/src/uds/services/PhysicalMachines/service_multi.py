@@ -34,6 +34,7 @@ import logging
 import pickle
 import random  # nosec # Pickle use is controled by app, never by non admin user input
 import typing
+import collections.abc
 
 from django.db import transaction
 from django.utils.translation import gettext, gettext_lazy as _
@@ -136,7 +137,7 @@ class IPMachinesService(IPServiceBase):
     servicesTypeProvided = types.services.ServiceType.VDI
 
 
-    _ips: typing.List[str] = []
+    _ips: list[str] = []
     _token: str = ''
     _port: int = 0
     _skipTimeOnFailure: int = 0
@@ -208,7 +209,7 @@ class IPMachinesService(IPServiceBase):
         )
 
     def unmarshal(self, data: bytes) -> None:
-        values: typing.List[bytes] = data.split(b'\0')
+        values: list[bytes] = data.split(b'\0')
         d = self.storage.readData('ips')
         if isinstance(d, bytes):
             self._ips = pickle.loads(d)  # nosec: pickle is safe here

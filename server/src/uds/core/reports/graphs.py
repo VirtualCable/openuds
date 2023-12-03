@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import io
 import typing
+import collections.abc
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure

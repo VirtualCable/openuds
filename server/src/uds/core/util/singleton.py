@@ -1,4 +1,5 @@
 import typing
+import collections.abc
 
 
 class Singleton(type):

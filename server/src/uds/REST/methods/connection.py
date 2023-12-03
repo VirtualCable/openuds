@@ -33,6 +33,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 
 from uds.core.types.request import ExtendedHttpRequestWithUser
@@ -68,7 +69,7 @@ class Connection(Handler):
         error: typing.Optional[typing.Union[str, int]] = None,
         errorCode: int = 0,
         retryable: bool = False,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Helper method to create a "result" set for connection response
         :param result: Result value to return (can be None, in which case it is converted to empty string '')
@@ -89,7 +90,7 @@ class Connection(Handler):
 
         return res
 
-    def serviceList(self) -> typing.Dict[str, typing.Any]:
+    def serviceList(self) -> dict[str, typing.Any]:
         # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
         # Ensure user is present on request, used by web views methods
         self._request.user = self._user
@@ -98,7 +99,7 @@ class Connection(Handler):
             result=services.getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request))
         )
 
-    def connection(self, idService: str, idTransport: str, skip: str = '') -> typing.Dict[str, typing.Any]:
+    def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:
         doNotCheck = skip in ('doNotCheck', 'do_not_check', 'no_check', 'nocheck')
         try:
             (
@@ -136,7 +137,7 @@ class Connection(Handler):
 
     def script(
         self, idService: str, idTransport: str, scrambler: str, hostname: str
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         try:
             res = UserServiceManager().getService(
                 self._user, self._request.os, self._request.ip, idService, idTransport
@@ -179,10 +180,10 @@ class Connection(Handler):
 
     def getTicketContent(
         self, ticketId: str
-    ) -> typing.Dict[str, typing.Any]:  # pylint: disable=unused-argument
+    ) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
         return {}
 
-    def getUdsLink(self, idService: str, idTransport: str) -> typing.Dict[str, typing.Any]:
+    def getUdsLink(self, idService: str, idTransport: str) -> dict[str, typing.Any]:
         # Returns the UDS link for the user & transport
         self._request.user = self._user  # type: ignore
         setattr(self._request, '_cryptedpass', self._session['REST']['password'])  # type: ignore  # pylint: disable=protected-access
@@ -192,13 +193,13 @@ class Connection(Handler):
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])
 
-    def get(self) -> typing.Dict[str, typing.Any]:
+    def get(self) -> dict[str, typing.Any]:
         """
         Processes get requests
         """
         logger.debug('Connection args for GET: %s', self._args)
 
-        def error() -> typing.Dict[str, typing.Any]:
+        def error() -> dict[str, typing.Any]:
             raise RequestError('Invalid Request')
 
         return match(

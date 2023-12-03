@@ -44,6 +44,7 @@ import pkgutil
 import importlib
 import sys
 import typing
+import collections.abc
 
 
 import logging

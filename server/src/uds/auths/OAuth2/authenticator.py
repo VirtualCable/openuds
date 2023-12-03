@@ -35,6 +35,7 @@ import hashlib
 import secrets
 import string
 import typing
+import collections.abc
 import datetime
 import urllib.parse
 from base64 import b64decode
@@ -70,11 +71,11 @@ class TokenInfo(typing.NamedTuple):
     expires: datetime.datetime
     refresh_token: str
     scope: str
-    info: typing.Dict[str, typing.Any]
+    info: dict[str, typing.Any]
     id_token: typing.Optional[str]
 
     @staticmethod
-    def fromJson(json: typing.Dict[str, typing.Any]) -> 'TokenInfo':
+    def fromJson(json: dict[str, typing.Any]) -> 'TokenInfo':
         # expires is -10 to avoid problems with clock sync
         return TokenInfo(
             access_token=json['access_token'],
@@ -225,7 +226,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
-    def _getPublicKeys(self) -> typing.List[typing.Any]:  # In fact, any of the PublicKey types
+    def _getPublicKeys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM
         # Return a list of certificates in DER format
         if self.publicKey.value.strip() == '':
@@ -341,7 +342,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return TokenInfo.fromJson(req.json())
 
-    def _requestInfo(self, token: 'TokenInfo') -> typing.Dict[str, typing.Any]:
+    def _requestInfo(self, token: 'TokenInfo') -> dict[str, typing.Any]:
         """Request user info from the info endpoint using the token received from the token endpoint
 
         If the token endpoint returns the user info, this method will not be used
@@ -350,9 +351,9 @@ class OAuth2Authenticator(auths.Authenticator):
             token (TokenInfo): Token received from the token endpoint
 
         Returns:
-            typing.Dict[str, typing.Any]: User info received from the info endpoint
+            dict[str, typing.Any]: User info received from the info endpoint
         """
-        userInfo: typing.Dict[str, typing.Any]
+        userInfo: dict[str, typing.Any]
 
         if self.infoEndpoint.value.strip() == '':
             if not token.info:
@@ -435,7 +436,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return types.auth.FAILED_AUTH
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if not values:
             return
 

@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -221,7 +222,7 @@ class OGProvider(ServiceProvider):
     def resetApi(self) -> None:
         self._api = None
 
-    def testConnection(self) -> typing.List[typing.Any]:
+    def testConnection(self) -> list[typing.Any]:
         """
         Test that conection to OpenGnsys server is fine
 
@@ -244,7 +245,7 @@ class OGProvider(ServiceProvider):
         return [True, _('OpenGnsys test connection passed')]
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
+    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         """
         Test ovirt Connectivity
 

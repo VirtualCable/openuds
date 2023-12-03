@@ -30,6 +30,7 @@
 '''
 import logging
 import typing
+import collections.abc
 
 from django.urls import reverse
 from django.utils import formats
@@ -67,7 +68,7 @@ def _serviceInfo(
     visual_name: str,
     description: str,
     group: typing.Mapping[str, typing.Any],
-    transports: typing.List[typing.Mapping[str, typing.Any]],
+    transports: list[typing.Mapping[str, typing.Any]],
     image: typing.Optional['Image'],
     show_transports: bool,
     allow_users_remove: bool,
@@ -103,14 +104,14 @@ def _serviceInfo(
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def getServicesData(
     request: 'ExtendedHttpRequestWithUser',
-) -> typing.Dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
+) -> dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
 
     Arguments:
         request {ExtendedHttpRequest} -- request from where to xtract credentials
 
     Returns:
-        typing.Dict[str, typing.Any] --  Keys has this:
+        dict[str, typing.Any] --  Keys has this:
             'services': services,
             'ip': request.ip,
             'nets': nets,
@@ -164,7 +165,7 @@ def getServicesData(
 
     def buildMetaTransports(
         transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
-    ) -> typing.List[typing.Mapping[str, typing.Any]]:
+    ) -> list[typing.Mapping[str, typing.Any]]:
         def idd(i):
             return i.uuid if not isLabel else 'LABEL:' + i.label
 
@@ -182,7 +183,7 @@ def getServicesData(
     # Add meta pools data first
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
-        metaTransports: typing.List[typing.Mapping[str, typing.Any]] = []
+        metaTransports: list[typing.Mapping[str, typing.Any]] = []
         in_use = meta.number_in_use > 0  # type: ignore # anotated value
 
         inAll: typing.Optional[typing.Set[str]] = None
@@ -335,7 +336,7 @@ def getServicesData(
                 .replace('{left}', left_count)
             )
 
-        trans: typing.List[typing.Mapping[str, typing.Any]] = []
+        trans: list[typing.Mapping[str, typing.Any]] = []
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array

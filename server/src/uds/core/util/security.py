@@ -4,6 +4,7 @@ import random
 import secrets
 import ssl
 import typing
+import collections.abc
 from datetime import datetime, timedelta
 
 import certifi

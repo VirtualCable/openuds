@@ -34,6 +34,7 @@ import logging
 import os
 import tempfile
 import typing
+import collections.abc
 
 from uds.core import exceptions, types
 from uds.core.util.security import secureRequestsSession

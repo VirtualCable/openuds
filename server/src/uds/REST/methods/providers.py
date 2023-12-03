@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -81,7 +82,7 @@ class Providers(ModelHandler):
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
     table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def item_as_dict(self, item: 'Provider') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Provider') -> dict[str, typing.Any]:
         type_ = item.getType()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
@@ -121,14 +122,14 @@ class Providers(ModelHandler):
         return services.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         providerType = services.factory().lookup(type_)
         if providerType:
             provider = providerType(Environment.getTempEnv(), None)
             return self.addDefaultFields(provider.guiDescription(), ['name', 'comments', 'tags'])
         raise NotFound('Type not found!')
 
-    def allservices(self) -> typing.Generator[typing.Dict, None, None]:
+    def allservices(self) -> typing.Generator[dict, None, None]:
         """
         Custom method that returns "all existing services", no mater who's his daddy :)
         """
@@ -140,7 +141,7 @@ class Providers(ModelHandler):
             except Exception:
                 logger.exception('Passed service cause type is unknown')
 
-    def service(self) -> typing.Dict:
+    def service(self) -> dict:
         """
         Custom method that returns a service by its uuid, no matter who's his daddy
         """
@@ -153,7 +154,7 @@ class Providers(ModelHandler):
             # logger.exception('Exception')
             return {}
 
-    def maintenance(self, item: 'Model') -> typing.Dict:
+    def maintenance(self, item: 'Model') -> dict:
         """
         Custom method that swaps maintenance mode state for a provider
         :param item:

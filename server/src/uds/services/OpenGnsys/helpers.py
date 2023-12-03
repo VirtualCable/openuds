@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -43,7 +44,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def getResources(parameters: typing.Any) -> typing.List[typing.Dict[str, typing.Any]]:
+def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     from .provider import OGProvider
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)

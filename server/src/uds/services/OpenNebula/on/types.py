@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 import typing
+import collections.abc
 
 
 class VmState(enum.Enum):  # pylint: disable=too-few-public-methods

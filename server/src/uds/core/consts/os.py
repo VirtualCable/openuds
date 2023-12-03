@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import re
 import typing
+import collections.abc
 
 from uds.core import types
 
@@ -54,7 +55,7 @@ DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
 
 knownBrowsers = tuple(types.os.KnownBrowser)
 
-browsersREs: typing.Dict[types.os.KnownBrowser, typing.Tuple] = {
+browsersREs: dict[types.os.KnownBrowser, typing.Tuple] = {
     types.os.KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
     types.os.KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
     types.os.KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),
@@ -71,7 +72,7 @@ browsersREs: typing.Dict[types.os.KnownBrowser, typing.Tuple] = {
     types.os.KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
 }
 
-browserRules: typing.Dict[types.os.KnownBrowser, typing.Tuple] = {
+browserRules: dict[types.os.KnownBrowser, typing.Tuple] = {
     types.os.KnownBrowser.EDGE: (types.os.KnownBrowser.EDGE, ()),
     types.os.KnownBrowser.CHROME: (
         types.os.KnownBrowser.CHROME,

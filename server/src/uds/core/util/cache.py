@@ -32,6 +32,7 @@
 import datetime
 import codecs
 import typing
+import collections.abc
 import logging
 
 
@@ -67,9 +68,9 @@ class Cache:
     def _basic_deserialize(value: str) -> typing.Any:
         return serializer.deserialize(codecs.decode(value.encode(), 'base64'))
 
-    _serializer: typing.ClassVar[typing.Callable[[typing.Any], str]] = _basic_serialize
+    _serializer: typing.ClassVar[collections.abc.Callable[[typing.Any], str]] = _basic_serialize
     _deserializer: typing.ClassVar[
-        typing.Callable[[str], typing.Any]
+        collections.abc.Callable[[str], typing.Any]
     ] = _basic_deserialize
 
     def __init__(self, owner: typing.Union[str, bytes]):

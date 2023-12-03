@@ -37,6 +37,7 @@ import logging
 import os
 import sys
 import typing
+import collections.abc
 import unicodedata
 
 import django.template.defaultfilters as filters

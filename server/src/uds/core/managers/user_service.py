@@ -34,6 +34,7 @@ import logging
 import operator
 import random
 import typing
+import collections.abc
 
 from django.db import transaction
 from django.db.models import Q
@@ -389,7 +390,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Now try to locate 1 from cache already "ready" (must be usable and at level 1)
         with transaction.atomic():
             caches = typing.cast(
-                typing.List[UserService],
+                list[UserService],
                 servicePool.cachedUserServices()
                 .select_for_update()
                 .filter(
@@ -418,7 +419,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if not cache:
             with transaction.atomic():
                 caches = typing.cast(
-                    typing.List[UserService],
+                    list[UserService],
                     servicePool.cachedUserServices()
                     .select_for_update()
                     .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[
@@ -522,7 +523,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=0)
         return self.createAssignedFor(servicePool, user)
 
-    def getUserServicesInStatesForProvider(self, provider: 'models.Provider', states: typing.List[str]) -> int:
+    def getUserServicesInStatesForProvider(self, provider: 'models.Provider', states: list[str]) -> int:
         """
         Returns the number of services of a service provider in the state indicated
         """
@@ -913,7 +914,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Get pool members. Just pools "visible" and "usable"
         poolMembers = [p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()]
         # Sort pools array. List of tuples with (priority, pool)
-        sortPools: typing.List[typing.Tuple[int, ServicePool]]
+        sortPools: list[typing.Tuple[int, ServicePool]]
         # Sort pools based on meta selection
         if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
@@ -934,8 +935,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # split resuult in two lists, 100% full and not 100% full
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         sortedPools = sorted(sortPools, key=operator.itemgetter(0))  # sort by priority (first element)
-        pools: typing.List[ServicePool] = []
-        poolsFull: typing.List[ServicePool] = []
+        pools: list[ServicePool] = []
+        poolsFull: list[ServicePool] = []
         for p in sortedPools:
             if not p[1].isUsable():
                 continue

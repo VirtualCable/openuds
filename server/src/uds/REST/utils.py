@@ -29,12 +29,13 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 
 from uds.core.consts.system import VERSION
 from uds.core.util.model import getSqlStampInSeconds
 
 
-def rest_result(result: typing.Any, **kwargs) -> typing.Dict[str, typing.Any]:
+def rest_result(result: typing.Any, **kwargs) -> dict[str, typing.Any]:
     '''
     Returns a REST result
     '''

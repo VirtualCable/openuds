@@ -32,6 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import uds.core.types.permissions
 
 from uds.core.util import permissions
@@ -48,10 +49,10 @@ from ...fixtures import (
 
 class PermissionsTest(UDSTestCase):
     authenticator: models.Authenticator
-    groups: typing.List[models.Group]
-    users: typing.List[models.User]
-    admins: typing.List[models.User]
-    staffs: typing.List[models.User]
+    groups: list[models.Group]
+    users: list[models.User]
+    admins: list[models.User]
+    staffs: list[models.User]
     userService: models.UserService
     servicePool: models.ServicePool
     service: models.Service

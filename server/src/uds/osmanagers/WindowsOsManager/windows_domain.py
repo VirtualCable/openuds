@@ -34,6 +34,7 @@
 import codecs
 import logging
 import typing
+import collections.abc
 
 import dns.resolver
 import ldap
@@ -400,7 +401,7 @@ class WinDomainOsManager(WindowsOsManager):
 
     # pylint: disable=protected-access
     @staticmethod
-    def test(env: 'Environment', data: typing.Dict[str, str]) -> typing.List[typing.Any]:
+    def test(env: 'Environment', data: dict[str, str]) -> list[typing.Any]:
         logger.debug('Test invoked')
         wd = WinDomainOsManager(env, data)
         logger.debug(wd)

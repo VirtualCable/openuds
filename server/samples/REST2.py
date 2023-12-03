@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 import requests
 
 REST_URL: typing.Final[str] = 'http://172.27.0.1:8000/rest/'
@@ -90,7 +91,7 @@ def logout():
 #        u'restrained': False}
 # ]
 
-def request_services() -> typing.Dict[str, typing.Any]:
+def request_services() -> dict[str, typing.Any]:
     response = session.get(REST_URL + 'connection')
     if response.status_code // 100 != 2:
         print("Error requesting services %s" % response.status_code)

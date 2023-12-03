@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core import module, environment, consts
 from uds.core.util import log
@@ -82,7 +83,7 @@ class ServiceProvider(module.Module):
     # : Services that we offers. Here is a list of service types (python types) that
     # : this class will provide. This types are the python clases, derived from
     # : Service, that are childs of this provider
-    offers: typing.List[typing.Type['Service']] = []
+    offers: list[typing.Type['Service']] = []
 
     # : Name of type, used at administration interface to identify this
     # : provider (i.e. Xen server, oVirt Server, ...)
@@ -126,7 +127,7 @@ class ServiceProvider(module.Module):
     _dbObj: typing.Optional['models.Provider'] = None
 
     @classmethod
-    def getProvidedServices(cls) -> typing.List[typing.Type['Service']]:
+    def getProvidedServices(cls) -> list[typing.Type['Service']]:
         """
         Returns what type of services this provider offers
         """

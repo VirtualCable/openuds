@@ -31,6 +31,7 @@
 """
 import datetime
 import typing
+import collections.abc
 import logging
 
 from uds import models
@@ -51,7 +52,7 @@ NUM_USERSERVICES = 8
 
 
 class ModelAccountTest(UDSTestCase):
-    user_services: typing.List['models.UserService']
+    user_services: list['models.UserService']
 
     def setUp(self) -> None:
         super().setUp()

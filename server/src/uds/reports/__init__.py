@@ -40,13 +40,14 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core import reports
 from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
-availableReports: typing.List[typing.Type['reports.Report']] = []
+availableReports: list[typing.Type['reports.Report']] = []
 
 
 def __loadModules() -> None:

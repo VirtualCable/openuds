@@ -32,6 +32,7 @@
 """
 import enum
 import typing
+import collections.abc
 
 class DetectedOsInfo(typing.NamedTuple):
     os: 'KnownOS'

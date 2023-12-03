@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 
 from uds import models
@@ -50,7 +51,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
     Test server functionality
     """
 
-    _data: typing.Dict[str, typing.Any]
+    _data: dict[str, typing.Any]
 
     def setUp(self) -> None:
         super().setUp()

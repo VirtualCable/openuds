@@ -33,6 +33,7 @@
 import configparser
 import logging
 import typing
+import collections.abc
 
 import dns.resolver
 from django.utils.translation import gettext_noop as _

@@ -35,6 +35,7 @@ import random
 import string
 import dataclasses
 import typing
+import collections.abc
 
 
 from django.utils.translation import gettext_noop as _
@@ -97,8 +98,8 @@ class TestProvider(services.ServiceProvider):
 
     @staticmethod
     def test(
-        env: 'Environment', data: typing.Dict[str, str]
-    ) -> typing.List[typing.Any]:
+        env: 'Environment', data: dict[str, str]
+    ) -> list[typing.Any]:
         return [True, _('Nothing tested, but all went fine..')]
 
     def getName(self) -> str:

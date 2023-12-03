@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from .group import Group
 from .groups_manager import GroupsManager
@@ -55,7 +56,7 @@ class User:
     _manager: 'AuthenticatorInstance'
     _grpsManager: typing.Optional['GroupsManager']
     _dbUser: 'DBUser'
-    _groups: typing.Optional[typing.List[Group]]
+    _groups: typing.Optional[list[Group]]
 
     def __init__(self, dbUser):
         self._manager = dbUser.getManager()
@@ -73,7 +74,7 @@ class User:
             self._grpsManager = GroupsManager(self._manager.dbObj())
         return self._grpsManager
 
-    def groups(self) -> typing.List[Group]:
+    def groups(self) -> list[Group]:
         """
         Returns the valid groups for this user.
         To do this, it will validate groups through authenticator instance using

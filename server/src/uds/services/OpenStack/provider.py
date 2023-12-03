@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -51,7 +52,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-INTERFACE_VALUES: typing.List[types.ui.ChoiceItem] = [
+INTERFACE_VALUES: list[types.ui.ChoiceItem] = [
     gui.choiceItem('public', 'public'),
     gui.choiceItem('private', 'private'),
     gui.choiceItem('admin', 'admin'),

@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 # from django.utils.translation import gettext as _
 
@@ -52,7 +53,7 @@ def clean(obj: 'Model') -> None:
     models.Permissions.cleanPermissions(objtype.ObjectType.from_model(obj).type, obj.pk)
 
 
-def getPermissions(obj: 'Model') -> typing.List[models.Permissions]:
+def getPermissions(obj: 'Model') -> list[models.Permissions]:
     return list(
         models.Permissions.enumeratePermissions(
             object_type=objtype.ObjectType.from_model(obj).type, object_id=obj.pk

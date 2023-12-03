@@ -33,6 +33,7 @@
 from importlib import import_module
 import logging
 import typing
+import collections.abc
 
 from django.conf import settings
 from uds.core.util.cache import Cache

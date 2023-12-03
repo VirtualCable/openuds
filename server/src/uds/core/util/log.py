@@ -34,6 +34,7 @@ import os
 import logging
 import logging.handlers
 import typing
+import collections.abc
 import enum
 import re
 
@@ -108,12 +109,12 @@ class LogLevel(enum.IntEnum):
 
     # Return all Log levels as tuples of (level value, level name)
     @staticmethod
-    def all() -> typing.List[typing.Tuple[int, str]]:
+    def all() -> list[typing.Tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel]
 
     # Rteturns "interesting" log levels
     @staticmethod
-    def interesting() -> typing.List[typing.Tuple[int, str]]:
+    def interesting() -> list[typing.Tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
 
 
@@ -186,7 +187,7 @@ def doLog(
     LogManager.manager().doLog(wichObject, level, message, source, logName)
 
 
-def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> typing.List[typing.Dict]:
+def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """

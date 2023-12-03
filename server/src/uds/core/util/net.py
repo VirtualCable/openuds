@@ -34,6 +34,7 @@ import re
 import socket
 import logging
 import typing
+import collections.abc
 import ipaddress
 
 
@@ -224,7 +225,7 @@ def networkFromString(
 def networksFromString(
     nets: str,
     version: typing.Literal[0, 4, 6] = 0,
-) -> typing.List[NetworkType]:
+) -> list[NetworkType]:
     """
     If allowMultipleNetworks is True, it allows ',' and ';' separators (and, ofc, more than 1 network)
     Returns a list of networks tuples in the form [(start1, end1), (start2, end2) ...]
@@ -237,7 +238,7 @@ def networksFromString(
 
 
 def contains(
-    networks: typing.Union[str, NetworkType, typing.List[NetworkType]],
+    networks: typing.Union[str, NetworkType, list[NetworkType]],
     ip: typing.Union[str, int],
     version: typing.Literal[0, 4, 6] = 0,
 ) -> bool:

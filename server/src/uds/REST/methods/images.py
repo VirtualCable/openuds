@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _, gettext
 from uds.models import Image
@@ -72,7 +73,7 @@ class Images(ModelHandler):
         {'size': {'title': _('Size')}},
     ]
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
         del fields['data']
         #fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
@@ -84,7 +85,7 @@ class Images(ModelHandler):
         #item.updateThumbnail()
         #item.save()
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return self.addField(
             self.addDefaultFields([], ['name']),
             {
@@ -97,7 +98,7 @@ class Images(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,
@@ -105,7 +106,7 @@ class Images(ModelHandler):
             'data': item.data64,
         }
 
-    def item_as_dict_overview(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict_overview(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Image)
         return {
             'id': item.uuid,

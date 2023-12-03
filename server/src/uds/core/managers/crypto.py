@@ -39,6 +39,7 @@ import re
 import string
 import logging
 import typing
+import collections.abc
 import secrets
 
 # For password secrets
@@ -91,7 +92,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         while len(key) < length:
             key += key  # type: ignore  # Pylance complains about types??
 
-        kl: typing.List[int] = list(key)  # type: ignore  # Pylance complains about types??
+        kl: list[int] = list(key)  # type: ignore  # Pylance complains about types??
         pos = 0
         while len(kl) > length:
             kl[pos] ^= kl[length]

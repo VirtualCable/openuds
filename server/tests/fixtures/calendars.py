@@ -30,6 +30,7 @@
 """
 import copy
 import typing
+import collections.abc
 import datetime
 import random
 
@@ -38,7 +39,7 @@ from uds.models.calendar_rule import freqs, dunits
 
 
 # fixtures for calendars and calendar rules
-CALENDAR_DATA: typing.Mapping[str, typing.List[typing.Dict[str, typing.Union[str,int,None]]]] = {
+CALENDAR_DATA: typing.Mapping[str, list[dict[str, typing.Union[str,int,None]]]] = {
     'calendars': [
         {
             "modified": "2015-09-18T00:04:31.792",
@@ -219,9 +220,9 @@ CALENDAR_DATA: typing.Mapping[str, typing.List[typing.Dict[str, typing.Union[str
     ],
 }
 
-def createCalendars() -> typing.Tuple[typing.List[models.Calendar], typing.List[models.CalendarRule]]:
-    calendars: typing.List[models.Calendar] = []
-    rules: typing.List[models.CalendarRule] = []
+def createCalendars() -> typing.Tuple[list[models.Calendar], list[models.CalendarRule]]:
+    calendars: list[models.Calendar] = []
+    rules: list[models.CalendarRule] = []
     for calendar in CALENDAR_DATA["calendars"]:
         calendars.append(models.Calendar.objects.create(**calendar))
     for r in CALENDAR_DATA["rules"]:

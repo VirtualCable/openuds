@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from datetime import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core.services import Publication

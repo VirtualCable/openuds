@@ -34,6 +34,7 @@
 import os
 import logging
 import typing
+import collections.abc
 
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse, Http404
@@ -56,7 +57,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
                                                         'application/x-msdos-program')
     """
 
-    _downloadables: typing.Dict[str, typing.Dict[str, str]] = {}
+    _downloadables: dict[str, dict[str, str]] = {}
 
     def __init__(self):
         self._downloadables = {}
@@ -81,7 +82,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
             'mime': mime,
         }
 
-    def getDownloadables(self) -> typing.Dict[str, typing.Dict[str, str]]:
+    def getDownloadables(self) -> dict[str, dict[str, str]]:
         return self._downloadables
 
     def send(self, request, _id) -> HttpResponse:

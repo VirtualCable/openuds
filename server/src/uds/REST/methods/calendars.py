@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from uds.models import Calendar
@@ -77,7 +78,7 @@ class Calendars(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Calendar)
         return {
             'id': item.uuid,
@@ -91,5 +92,5 @@ class Calendars(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return self.addDefaultFields([], ['name', 'comments', 'tags'])

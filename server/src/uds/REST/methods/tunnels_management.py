@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -90,7 +91,7 @@ class TunnelServers(DetailHandler):
         except Exception:
             return gettext('Servers')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return [
             {
@@ -109,7 +110,7 @@ class TunnelServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
@@ -160,7 +161,7 @@ class Tunnels(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return self.addField(
             self.addDefaultFields(
                 [],
@@ -188,7 +189,7 @@ class Tunnels(ModelHandler):
             ],
         )
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, models.ServerGroup)
         return {
             'id': item.uuid,
@@ -202,7 +203,7 @@ class Tunnels(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         fields['type'] = types.servers.ServerType.TUNNEL.value
         fields['port'] = int(fields['port'])
         # Ensure host is a valid IP(4 or 6) or hostname

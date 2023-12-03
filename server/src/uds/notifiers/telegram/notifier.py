@@ -34,6 +34,7 @@ import logging
 import datetime
 import secrets
 import typing
+import collections.abc
 import time
 
 from django.utils.translation import gettext_noop as _

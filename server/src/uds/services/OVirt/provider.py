@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -231,7 +232,7 @@ class OVirtProvider(
 
     def getMachines(
         self, force: bool = False
-    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
@@ -251,7 +252,7 @@ class OVirtProvider(
 
     def getClusters(
         self, force: bool = False
-    ) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[typing.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside oVirt.
 
@@ -517,7 +518,7 @@ class OVirtProvider(
         return self.testConnection()
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
+    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         """
         Test ovirt Connectivity
 

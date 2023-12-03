@@ -30,6 +30,7 @@
 @author: dkmaster@dkmon.com
 """
 import typing
+import collections.abc
 
 from collections import defaultdict
 import defusedxml.ElementTree as ET

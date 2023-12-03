@@ -31,10 +31,11 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 
 class StateQueue:
-    _queue: typing.List[typing.Any]
+    _queue: list[typing.Any]
     _current: typing.Optional[typing.Any]
 
     def __init__(self):

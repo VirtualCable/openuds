@@ -34,6 +34,7 @@ import datetime
 import hashlib
 import time
 import typing
+import collections.abc
 import logging
 
 import bitarray

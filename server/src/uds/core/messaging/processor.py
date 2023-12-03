@@ -32,6 +32,7 @@ import datetime
 import time
 import logging
 import typing
+import collections.abc
 
 from uds.core.managers.task import BaseThread
 
@@ -50,7 +51,7 @@ class MessageProcessorThread(BaseThread):
     keepRunning: bool = True
 
     _cached_providers: typing.Optional[
-        typing.List[typing.Tuple[int, NotificationProviderModule]]
+        list[typing.Tuple[int, NotificationProviderModule]]
     ]
     _cached_stamp: float
 
@@ -61,7 +62,7 @@ class MessageProcessorThread(BaseThread):
         self._cached_stamp = 0.0
 
     @property
-    def providers(self) -> typing.List[typing.Tuple[int, NotificationProviderModule]]:
+    def providers(self) -> list[typing.Tuple[int, NotificationProviderModule]]:
         # If _cached_providers is invalid or _cached_time is older than CACHE_TIMEOUT,
         # we need to refresh it
         if (

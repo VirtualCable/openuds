@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.util.state import State
@@ -64,7 +65,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
     _mac: str = ''
     _vmid: str = ''
     _reason: str = ''
-    _queue: typing.List[int]
+    _queue: list[int]
 
     def initialize(self):
         self._name = ''
@@ -150,7 +151,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def getConsoleConnection(self) -> typing.Dict[str, typing.Any]:
+    def getConsoleConnection(self) -> dict[str, typing.Any]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(self, username: str, password: str, domain: str = ''):
@@ -264,7 +265,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -274,7 +275,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error(
@@ -405,7 +406,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,
@@ -415,7 +416,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         }
 
         try:
-            chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            chkFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self.__error(

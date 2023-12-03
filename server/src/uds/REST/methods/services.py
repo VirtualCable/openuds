@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
@@ -66,7 +67,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     custom_methods = ['servicesPools']
 
     @staticmethod
-    def serviceInfo(item: models.Service) -> typing.Dict[str, typing.Any]:
+    def serviceInfo(item: models.Service) -> dict[str, typing.Any]:
         info = item.getType()
 
         return {
@@ -88,7 +89,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     @staticmethod
     def serviceToDict(
         item: models.Service, perm: int, full: bool = False
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Convert a service db item to a dict for a rest response
         :param item: Service item (db)
@@ -131,7 +132,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.error('Error getting services for %s: %s', parent, e)
             raise self.invalidItemException() from e
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
@@ -232,7 +233,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except Exception:
             return _('Current services')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
@@ -256,10 +257,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTypes(
         self, parent: 'Model', forType: typing.Optional[str]
-    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+    ) -> typing.Iterable[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, models.Provider)
         logger.debug('getTypes parameters: %s, %s', parent, forType)
-        offers: typing.List[typing.Dict[str, typing.Any]] = []
+        offers: list[dict[str, typing.Any]] = []
         if forType is None:
             offers = [
                 {
@@ -326,7 +327,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('getGui')
             raise ResponseError(str(e)) from e
 
-    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             service = parent.services.get(uuid=processUuid(item))

@@ -35,6 +35,7 @@ import tempfile
 import contextlib
 import logging
 import typing
+import collections.abc
 from uds.core import types, consts
 
 from uds.core.util import security, cache
@@ -54,7 +55,7 @@ AUTH_TOKEN = 'X-TOKEN-AUTH'
 # If server is restrained, it will return False
 # If server is not restrained, it will execute the function and return it's result
 # If exception is raised, it will restrain the server and return False
-def restrainServer(func: typing.Callable[..., typing.Any]) -> typing.Callable[..., typing.Any]:
+def restrainServer(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
     def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         if self.server.isRestrained():
             return False

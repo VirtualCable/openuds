@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 
 if typing.TYPE_CHECKING:
@@ -55,12 +56,12 @@ class Environment:
     _key: str
     _cache: 'Cache'
     _storage: 'Storage'
-    _idGenerators: typing.Dict[str, 'UniqueIDGenerator']
+    _idGenerators: dict[str, 'UniqueIDGenerator']
 
     def __init__(
         self,
         uniqueKey: str,
-        idGenerators: typing.Optional[typing.Dict[str, 'UniqueIDGenerator']] = None,
+        idGenerators: typing.Optional[dict[str, 'UniqueIDGenerator']] = None,
     ):
         """
         Initialized the Environment for the specified id
@@ -126,7 +127,7 @@ class Environment:
     def getEnvForTableElement(
         tblName,
         id_,
-        idGeneratorsTypes: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        idGeneratorsTypes: typing.Optional[dict[str, typing.Any]] = None,
     ) -> 'Environment':
         """
         From a table name, and a id, tries to load the associated environment or creates a new

@@ -29,6 +29,7 @@ import ssl
 import xmlrpc.client
 import logging
 import typing
+import collections.abc
 
 import XenAPI
 
@@ -50,7 +51,7 @@ class XenFailure(XenAPI.Failure, XenFault):
     exHostIsSlave = 'HOST_IS_SLAVE'
     exSRError = 'SR_BACKEND_FAILURE_44'
 
-    def __init__(self, details: typing.Optional[typing.List] = None):
+    def __init__(self, details: typing.Optional[list] = None):
         details = [] if details is None else details
         super(XenFailure, self).__init__(details)
 
@@ -458,7 +459,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         Mac address should be in the range 02:xx:xx:xx:xx (recommended, but not a "have to")
         """
-        mac: typing.Optional[typing.Dict[str, str]] = kwargs.get('mac', None)
+        mac: typing.Optional[dict[str, str]] = kwargs.get('mac', None)
         memory: typing.Optional[typing.Union[str, int]] = kwargs.get('memory', None)
 
         # If requested mac address change

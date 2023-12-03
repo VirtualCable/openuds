@@ -33,6 +33,7 @@ import io
 import csv
 import datetime
 import typing
+import collections.abc
 import logging
 
 from django.utils.translation import gettext, gettext_lazy as _
@@ -62,7 +63,7 @@ class PoolsUsageSummary(UsageByPool):
     ]:
         orig, poolNames = super().getData()  # pylint: disable=unused-variable  # Keep name for reference
 
-        pools: typing.Dict[str, typing.Dict] = {}
+        pools: dict[str, dict] = {}
         totalTime: int = 0
         totalCount: int = 0
 

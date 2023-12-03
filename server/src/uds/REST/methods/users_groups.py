@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 from django.forms.models import model_to_dict
@@ -156,7 +157,7 @@ class Users(DetailHandler):
         except Exception:
             return _('Current users')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {
                 'name': {
@@ -179,10 +180,10 @@ class Users(DetailHandler):
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, Authenticator)
         user = None
         try:
@@ -310,7 +311,7 @@ class Users(DetailHandler):
 
         return res
 
-    def userServices(self, parent: 'Authenticator', item: str) -> typing.List[typing.Dict]:
+    def userServices(self, parent: 'Authenticator', item: str) -> list[dict]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
@@ -324,7 +325,7 @@ class Users(DetailHandler):
 
         return res
 
-    def cleanRelated(self, parent: 'Authenticator', item: str) -> typing.Dict[str, str]:
+    def cleanRelated(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = processUuid(item)
         user = parent.users.get(uuid=processUuid(uuid))
         user.cleanRelated()
@@ -376,7 +377,7 @@ class Groups(DetailHandler):
         except Exception:
             return _('Current groups')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {
                 'name': {
@@ -490,11 +491,11 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidItemException() from None
 
-    def servicesPools(self, parent: 'Model', item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def servicesPools(self, parent: 'Model', item: str) -> list[typing.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
-        res: typing.List[typing.Mapping[str, typing.Any]] = []
+        res: list[typing.Mapping[str, typing.Any]] = []
         for i in getPoolsForGroups((group,)):
             res.append(
                 {
@@ -510,7 +511,7 @@ class Groups(DetailHandler):
 
         return res
 
-    def users(self, parent: 'Model', item: str) -> typing.List[typing.Mapping[str, typing.Any]]:
+    def users(self, parent: 'Model', item: str) -> list[typing.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         parent = ensure.is_instance(parent, Authenticator)
         group = parent.groups.get(uuid=processUuid(uuid))

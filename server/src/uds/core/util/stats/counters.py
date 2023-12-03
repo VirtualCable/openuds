@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from django.db.models import Model
@@ -89,7 +90,7 @@ def _get_P_S_DS_Ids(provider) -> typing.Tuple:
 
 
 idRetriever: typing.Mapping[
-    typing.Type[Model], typing.Mapping[int, typing.Callable]
+    typing.Type[Model], typing.Mapping[int, collections.abc.Callable]
 ] = {
     Provider: {
         CT_LOAD: _get_Id,

@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import json
 
 
@@ -45,7 +46,7 @@ class SessionSerializer:
         return json.dumps(data, separators=(',', ':')).encode()
 
 
-    def loads(self, data: bytes) -> typing.Dict[str, typing.Any]:
+    def loads(self, data: bytes) -> dict[str, typing.Any]:
         """
         Deserialize data from a session.
         """

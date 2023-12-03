@@ -31,6 +31,7 @@
 
 import logging
 import typing
+import collections.abc
 
 from django.test import SimpleTestCase
 from django.test.client import Client

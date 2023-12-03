@@ -32,6 +32,7 @@
 from datetime import timedelta
 import logging
 import typing
+import collections.abc
 
 from uds.core.managers import publicationManager
 from uds.core.util.config import GlobalConfig

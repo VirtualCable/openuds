@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from contextlib import contextmanager
 import typing
+import collections.abc
 import datetime
 import time
 from unittest import mock
@@ -58,12 +59,12 @@ MIN_TEST_MEMORY_MB: typing.Final[int] = 512
 
 
 class ServerManagerManagedServersTest(UDSTestCase):
-    user_services: typing.List['models.UserService']
+    user_services: list['models.UserService']
     manager: 'servers.ServerManager'
     registered_servers_group: 'models.ServerGroup'
-    assign: typing.Callable[..., typing.Optional[types.servers.ServerCounter]]
-    all_uuids: typing.List[str]
-    server_stats: typing.Dict[str, 'types.servers.ServerStats']
+    assign: collections.abc.Callable[..., typing.Optional[types.servers.ServerCounter]]
+    all_uuids: list[str]
+    server_stats: dict[str, 'types.servers.ServerStats']
 
     def setUp(self) -> None:
         super().setUp()
@@ -86,7 +87,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             serviceType=types.services.ServiceType.VDI,
             minMemoryMB=MIN_TEST_MEMORY_MB,
         )
-        self.all_uuids: typing.List[str] = list(
+        self.all_uuids: list[str] = list(
             self.registered_servers_group.servers.all().values_list('uuid', flat=True)
         )
 
@@ -104,7 +105,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
     def createMockApiRequester(
         self,
         getStats: typing.Optional[
-            typing.Callable[['models.Server'], typing.Optional['types.servers.ServerStats']]
+            collections.abc.Callable[['models.Server'], typing.Optional['types.servers.ServerStats']]
         ] = None,
     ) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.requester.ServerApiRequester') as mockServerApiRequester:

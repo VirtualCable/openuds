@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 
 
@@ -57,7 +58,7 @@ class NetTest(UDSTestCase):
             ('192.168.0.1-192.168.0.87', 3232235521, 3232235607),
             ('192.168.0.1 netmask 255.255.255.0', 3232235520, 3232235775),
         ):
-            multiple_net: typing.List[net.NetworkType] = net.networksFromString(n[0])
+            multiple_net: list[net.NetworkType] = net.networksFromString(n[0])
             self.assertEqual(
                 len(multiple_net),
                 1,
@@ -150,7 +151,7 @@ class NetTest(UDSTestCase):
                 338620831926207318622244848606417780735,
             ),
         ):
-            multiple_net: typing.List[net.NetworkType] = net.networksFromString(
+            multiple_net: list[net.NetworkType] = net.networksFromString(
                 n[0], version=(6 if n[0] == '*' else 0)
             )
             self.assertEqual(

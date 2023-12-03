@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from .services import ServiceType
 
@@ -48,7 +49,7 @@ class PreconnectRequest(typing.NamedTuple):
     ip: str  # IP of the client
     hostname: str  # Hostname of the client
 
-    def asDict(self) -> typing.Dict[str, str]:
+    def asDict(self) -> dict[str, str]:
         return self._asdict()
 
 
@@ -63,14 +64,14 @@ class AssignRequest(typing.NamedTuple):
 
     assignations: int  # Number of times this service has been assigned
 
-    def asDict(self) -> typing.Dict[str, 'str|int']:
+    def asDict(self) -> dict[str, 'str|int']:
         return self._asdict()
 
 class ReleaseRequest(typing.NamedTuple):
     """Information sent on a release request"""
     userservice_uuid: str  # UUID of userservice
 
-    def asDict(self) -> typing.Dict[str, str]:
+    def asDict(self) -> dict[str, str]:
         return self._asdict()
 
 class ConnectionData(typing.NamedTuple):
@@ -90,7 +91,7 @@ class ConnectionData(typing.NamedTuple):
 
     # sso: bool = False  # For future sso implementation
 
-    def asDict(self) -> typing.Dict[str, str]:
+    def asDict(self) -> dict[str, str]:
         return self._asdict()
 
 
@@ -102,5 +103,5 @@ class ConnectionSource(typing.NamedTuple):
     ip: str  # IP of the client
     hostname: str  # Hostname of the client
 
-    def asDict(self) -> typing.Dict[str, str]:
+    def asDict(self) -> dict[str, str]:
         return self._asdict()

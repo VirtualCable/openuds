@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -171,7 +172,7 @@ class Authenticator(Module):
     def __init__(
         self,
         environment: 'Environment',
-        values: typing.Optional[typing.Dict[str, str]],
+        values: typing.Optional[dict[str, str]],
         uuid: typing.Optional[str] = None,
     ):
         """
@@ -183,7 +184,7 @@ class Authenticator(Module):
         super().__init__(environment, values, uuid=uuid)
         self.initialize(values)
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         """
         This method will be invoked from __init__ constructor.
         This is provided so you don't have to provide your own __init__ method,
@@ -260,7 +261,7 @@ class Authenticator(Module):
         """
         return cls.authenticate is not Authenticator.authenticate
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -280,7 +281,7 @@ class Authenticator(Module):
         """
         return []
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)
@@ -589,7 +590,7 @@ class Authenticator(Module):
         """
         return username
 
-    def createUser(self, usrData: typing.Dict[str, str]) -> None:
+    def createUser(self, usrData: dict[str, str]) -> None:
         """
         This method is used when creating an user to allow the authenticator:
 
@@ -621,7 +622,7 @@ class Authenticator(Module):
 
         """
 
-    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
+    def modifyUser(self, usrData: dict[str, str]) -> None:
         """
         This method is used when modifying an user to allow the authenticator:
 
@@ -647,7 +648,7 @@ class Authenticator(Module):
                data of users.
         """
 
-    def createGroup(self, groupData: typing.Dict[str, str]) -> None:
+    def createGroup(self, groupData: dict[str, str]) -> None:
         """
         This method is used when creating a new group to allow the authenticator:
 
@@ -673,7 +674,7 @@ class Authenticator(Module):
             name (group name) to a new one!
         """
 
-    def modifyGroup(self, groupData: typing.Dict[str, str]) -> None:
+    def modifyGroup(self, groupData: dict[str, str]) -> None:
         """
         This method is used when modifying group to allow the authenticator:
 

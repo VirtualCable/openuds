@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -64,9 +65,9 @@ class AssignedService(DetailHandler):
     @staticmethod
     def itemToDict(
         item: models.UserService,
-        props: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        props: typing.Optional[dict[str, typing.Any]] = None,
         is_cache: bool = False,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -123,7 +124,7 @@ class AssignedService(DetailHandler):
             if not item:
                 # First, fetch all properties for all assigned services on this pool
                 # We can cache them, because they are going to be readed anyway...
-                properties: typing.Dict[str, typing.Any] = {
+                properties: dict[str, typing.Any] = {
                     k: v
                     for k, v in models.Properties.objects.filter(
                         owner_type='userservice',
@@ -152,7 +153,7 @@ class AssignedService(DetailHandler):
     def getTitle(self, parent: 'Model') -> str:
         return _('Assigned services')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
@@ -174,10 +175,10 @@ class AssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             userService: models.UserService = parent.assignedUserServices().get(uuid=processUuid(item))
@@ -250,7 +251,7 @@ class CachedService(AssignedService):
     Rest handler for Cached Services, wich parent is Service
     """
 
-    custom_methods: typing.ClassVar[typing.List[str]] = []  # Remove custom methods from assigned services
+    custom_methods: typing.ClassVar[list[str]] = []  # Remove custom methods from assigned services
 
     def getItems(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -272,7 +273,7 @@ class CachedService(AssignedService):
     def getTitle(self, parent: 'Model') -> str:
         return _('Cached services')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'revision': {'title': _('Revision')}},
@@ -290,7 +291,7 @@ class CachedService(AssignedService):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
             userService = parent.cachedUserServices().get(uuid=processUuid(item))
@@ -326,7 +327,7 @@ class Groups(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         return _('Assigned groups')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             # Note that this field is "self generated" on client table
             {
@@ -351,7 +352,7 @@ class Groups(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -407,7 +408,7 @@ class Transports(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         return _('Assigned transports')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Name')}},
@@ -520,7 +521,7 @@ class Publications(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         return _('Publications')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
             {'publish_date': {'title': _('Publish date'), 'type': 'datetime'}},
@@ -534,7 +535,7 @@ class Publications(DetailHandler):
             {'reason': {'title': _('Reason')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
 
@@ -558,7 +559,7 @@ class Changelog(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         return _(f'Changelog')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'revision': {'title': _('Revision'), 'type': 'numeric', 'width': '6em'}},
             {'stamp': {'title': _('Publish date'), 'type': 'datetime'}},

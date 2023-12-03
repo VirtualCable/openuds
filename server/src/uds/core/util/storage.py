@@ -35,6 +35,7 @@ import hashlib
 import codecs
 from collections.abc import MutableMapping
 import typing
+import collections.abc
 import logging
 
 from django.db import transaction, models

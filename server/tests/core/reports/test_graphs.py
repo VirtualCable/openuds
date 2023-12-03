@@ -31,6 +31,7 @@
 """
 import io
 import typing
+import collections.abc
 import logging
 
 from unittest.mock import Mock
@@ -43,8 +44,8 @@ logger = logging.getLogger(__name__)
 
 
 class GraphsTest(UDSTestCase):
-    data1: typing.Dict[str, typing.Any]
-    data2: typing.Dict[str, typing.Any]
+    data1: dict[str, typing.Any]
+    data2: dict[str, typing.Any]
 
     def setUp(self):
         # Data must be a dict with the following keys:

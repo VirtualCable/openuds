@@ -33,6 +33,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 
@@ -81,7 +82,7 @@ class Accounts(ModelHandler):
             'permission': permissions.getEffectivePermission(self._user, item),
         }
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return self.addDefaultFields([], ['name', 'comments', 'tags'])
 
     def timemark(self, item: 'Model') -> typing.Any:

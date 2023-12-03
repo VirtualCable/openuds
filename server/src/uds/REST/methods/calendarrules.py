@@ -33,6 +33,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
@@ -57,7 +58,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def ruleToDict(item: CalendarRule, perm: int) -> typing.Dict[str, typing.Any]:
+    def ruleToDict(item: CalendarRule, perm: int) -> dict[str, typing.Any]:
         """
         Convert a calRule db item to a dict for a rest response
         :param item: Rule item (db)
@@ -91,7 +92,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             raise self.invalidItemException() from e
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, Calendar)
 
         return [

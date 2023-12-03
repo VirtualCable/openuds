@@ -32,6 +32,7 @@
 import random
 import uuid
 import typing
+import collections.abc
 
 from . import constants
 

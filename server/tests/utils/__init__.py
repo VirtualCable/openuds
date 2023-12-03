@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 
@@ -39,11 +40,11 @@ logger = logging.getLogger(__name__)
 def compare_dicts(
     expected: typing.Mapping[str, typing.Any],
     actual: typing.Mapping[str, typing.Any],
-    ignore_keys: typing.Optional[typing.List[str]] = None,
-    ignore_values: typing.Optional[typing.List[str]] = None,
-    ignore_keys_startswith: typing.Optional[typing.List[str]] = None,
-    ignore_values_startswith: typing.Optional[typing.List[str]] = None,
-) -> typing.List[typing.Tuple[str, str]]:
+    ignore_keys: typing.Optional[list[str]] = None,
+    ignore_values: typing.Optional[list[str]] = None,
+    ignore_keys_startswith: typing.Optional[list[str]] = None,
+    ignore_values_startswith: typing.Optional[list[str]] = None,
+) -> list[typing.Tuple[str, str]]:
     """
     Compares two dictionaries, returning a list of differences
     """
@@ -80,8 +81,8 @@ def compare_dicts(
 def ensure_data(
     item: models.Model,
     dct: typing.Mapping[str, typing.Any],
-    ignore_keys: typing.Optional[typing.List[str]] = None,
-    ignore_values: typing.Optional[typing.List[str]] = None,
+    ignore_keys: typing.Optional[list[str]] = None,
+    ignore_values: typing.Optional[list[str]] = None,
 ) -> bool:
     """
     Reads model as dict, fix some fields if needed and compares to dct

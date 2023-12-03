@@ -33,6 +33,7 @@ import stat
 import calendar
 import datetime
 import typing
+import collections.abc
 import logging
 
 from uds import models
@@ -68,7 +69,7 @@ class VirtualFileInfo(typing.NamedTuple):
 
 
 # Dispatcher needs an Interval, an extensio, the size and the offset
-DispatcherType = typing.Callable[[StatInterval, str, int, int], bytes]
+DispatcherType = collections.abc.Callable[[StatInterval, str, int, int], bytes]
 
 
 class StatsFS(types.UDSFSInterface):
@@ -113,7 +114,7 @@ class StatsFS(types.UDSFSInterface):
 
     # Splits the filename and returns a tuple with "dispatcher", "interval", "extension"
     def getFilenameComponents(
-        self, filename: typing.List[str]
+        self, filename: list[str]
     ) -> typing.Tuple[DispatcherType, StatInterval, str]:
         if len(filename) != 1:
             raise FileNotFoundError()
@@ -161,7 +162,7 @@ class StatsFS(types.UDSFSInterface):
             extension,
         )
 
-    def readdir(self, path: typing.List[str]) -> typing.List[str]:
+    def readdir(self, path: list[str]) -> list[str]:
         # If len(path) == 0, return the list of possible stats files (from _dispatchers)
         # else, raise an FileNotFoundError
         if len(path) == 0:
@@ -180,7 +181,7 @@ class StatsFS(types.UDSFSInterface):
 
         raise FileNotFoundError
 
-    def getattr(self, path: typing.List[str]) -> types.StatType:
+    def getattr(self, path: list[str]) -> types.StatType:
         logger.debug('Getting attributes for %s', path)
         # stats folder
         if len(path) == 0:
@@ -215,7 +216,7 @@ class StatsFS(types.UDSFSInterface):
             st_mtime=interval.start_timestamp,
         )
 
-    def read(self, path: typing.List[str], size: int, offset: int) -> bytes:
+    def read(self, path: list[str], size: int, offset: int) -> bytes:
         logger.debug('Reading data from %s: offset: %s, size: %s', path, offset, size)
 
         dispatcher, interval, extension = self.getFilenameComponents(path)

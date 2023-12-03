@@ -37,6 +37,7 @@ import sys
 import importlib
 import logging
 import typing
+import collections.abc
 
 from django.conf import settings
 
@@ -47,18 +48,18 @@ logger = logging.getLogger(__name__)
 T = typing.TypeVar('T', bound=module.Module)
 V = typing.TypeVar('V')
 
-patterns: typing.List[typing.Any] = []
+patterns: list[typing.Any] = []
 
 
 if typing.TYPE_CHECKING:
     from uds.core.util.factory import ModuleFactory
 
 
-def loadModulesUrls() -> typing.List[typing.Any]:
+def loadModulesUrls() -> list[typing.Any]:
     """Loads dipatcher modules urls to add to django urlpatterns
 
     Returns:
-        typing.List[typing.Any]: List of urlpatterns to add to django urlpatterns
+        list[typing.Any]: List of urlpatterns to add to django urlpatterns
     """
     logger.debug('Looking for dispatching modules')
     if not patterns:
@@ -70,7 +71,7 @@ def loadModulesUrls() -> typing.List[typing.Any]:
                 fullModName = f'{modName}.{name}.urls'
                 try:
                     mod = importlib.import_module(fullModName)
-                    urlpatterns: typing.List[typing.Any] = getattr(mod, 'urlpatterns')
+                    urlpatterns: list[typing.Any] = getattr(mod, 'urlpatterns')
                     logger.debug('Loaded mod %s, url %s', mod, urlpatterns)
                     # Append patters from mod
                     for up in urlpatterns:
@@ -117,21 +118,21 @@ def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> 
 
 
 def dynamicLoadAndRegisterPackages(
-    adder: typing.Callable[[typing.Type[V]], None],
+    adder: collections.abc.Callable[[typing.Type[V]], None],
     type_: typing.Type[V],
     modName: str,
     *,
     packageName: typing.Optional[str] = None,
-    checker: typing.Optional[typing.Callable[[typing.Type[V]], bool]] = None,
+    checker: typing.Optional[collections.abc.Callable[[typing.Type[V]], bool]] = None,
 ) -> None:
     '''  Loads all packages from a given package that are subclasses of the given type
 
     Args:
-        adder (typing.Callable[[typing.Type[V]], None]): Function to use to add the objects, must support "insert" method
+        adder (collections.abc.Callable[[typing.Type[V]], None]): Function to use to add the objects, must support "insert" method
         type_ (typing.Type[V]): Type of the objects to load
         modName (str): Name of the package to load
         packageName (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
-        checker (typing.Callable[[typing.Type[V]], bool], optional): Function to use to check if the class is registrable. Defaults to None.
+        checker (collections.abc.Callable[[typing.Type[V]], bool], optional): Function to use to check if the class is registrable. Defaults to None.
 
     Notes:
         The checker function must return True if the class is registrable, False otherwise.

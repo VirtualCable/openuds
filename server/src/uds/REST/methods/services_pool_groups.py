@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -78,7 +79,7 @@ class ServicesPoolGroups(ModelHandler):
         {'comments': {'title': _('Comments')}},
     ]
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         imgId = fields['image_id']
         fields['image_id'] = None
         logger.debug('Image id: %s', imgId)
@@ -90,7 +91,7 @@ class ServicesPoolGroups(ModelHandler):
             logger.exception('At image recovering')
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         localGui = self.addDefaultFields([], ['name', 'comments', 'priority'])
 
         for field in [
@@ -113,7 +114,7 @@ class ServicesPoolGroups(ModelHandler):
 
         return localGui
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,
@@ -125,7 +126,7 @@ class ServicesPoolGroups(ModelHandler):
 
     def item_as_dict_overview(
         self, item: 'Model'
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         item = ensure.is_instance(item, ServicePoolGroup)
         return {
             'id': item.uuid,

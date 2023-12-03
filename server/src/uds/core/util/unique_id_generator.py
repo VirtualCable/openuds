@@ -33,6 +33,7 @@
 import logging
 import time
 import typing
+import collections.abc
 
 from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError

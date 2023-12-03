@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import json
 import logging
 import typing
+import collections.abc
 
 from django import template
 from django.conf import settings
@@ -77,7 +78,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         if request.session.get('restricted', False):
             role = 'restricted'
 
-    profile: typing.Dict[str, typing.Any] = {
+    profile: dict[str, typing.Any] = {
         'user': user.name if user else None,
         'role': role,
     }
@@ -86,7 +87,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     logger.debug('Tag config: %s', tag)
     # Initial list of authenticators (all except disabled ones)
     auths = Authenticator.objects.exclude(state=consts.auth.DISABLED)
-    authenticators: typing.List[Authenticator] = []
+    authenticators: list[Authenticator] = []
     if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
@@ -286,7 +287,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
     #     'legacy': False  # True = Gray, False = White
     # })
 
-    actors: typing.List[typing.Dict[str, str]] = []
+    actors: list[dict[str, str]] = []
 
     if user and user.isStaff():  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
@@ -316,7 +317,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'vnc_userservices': vnc_userservices,
         }
 
-    errors: typing.List = []
+    errors: list = []
     if 'errors' in request.session:
         errors = request.session['errors']
         del request.session['errors']

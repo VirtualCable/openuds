@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from uds import models
 from uds.core import consts
@@ -62,7 +63,7 @@ class ServicePoolTest(rest.test.RESTTestCase):
         self.assertEqual(response.status_code, 200)
         # Get the list of service pools from DB
         db_pools_len = models.ServicePool.objects.all().count()
-        re_pools: typing.List[typing.Dict[str, typing.Any]] = response.json()
+        re_pools: list[dict[str, typing.Any]] = response.json()
 
         self.assertIsInstance(re_pools, list)
         self.assertEqual(db_pools_len, len(re_pools))

@@ -36,6 +36,7 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 

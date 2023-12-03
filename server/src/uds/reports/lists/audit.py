@@ -36,6 +36,7 @@ import io
 import logging
 import re
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _

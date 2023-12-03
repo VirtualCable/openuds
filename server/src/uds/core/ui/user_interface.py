@@ -41,6 +41,7 @@ import re
 import time
 import typing
 import collections.abc
+import collections.abc
 import abc
 
 from django.utils.translation import gettext as _
@@ -95,14 +96,14 @@ class gui:
     """
 
     # Values dict type
-    ValuesType = typing.Optional[typing.Dict[str, str]]
+    ValuesType = typing.Optional[dict[str, str]]
 
-    ValuesDictType = typing.Dict[
+    ValuesDictType = dict[
         str,
         typing.Union[
             str,
             bool,
-            typing.List[str],
+            list[str],
             types.ui.ChoiceItem,
         ],
     ]
@@ -113,9 +114,9 @@ class gui:
     # on clases at server startup, so all servers will have the same
     # callbacks registered
     callbacks: typing.ClassVar[
-        typing.Dict[
+        dict[
             str,
-            typing.Callable[[typing.Dict[str, str]], typing.List[typing.Dict[str, str]]],
+            collections.abc.Callable[[dict[str, str]], list[dict[str, str]]],
         ]
     ] = {}
 
@@ -142,13 +143,13 @@ class gui:
     @staticmethod
     def convertToChoices(
         vals: typing.Union[
-            typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+            collections.abc.Callable[[], list['types.ui.ChoiceItem']],
             typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-            typing.Dict[str, str],
+            dict[str, str],
             None,
         ]
     ) -> typing.Union[
-        typing.Callable[[], typing.List['types.ui.ChoiceItem']], typing.List['types.ui.ChoiceItem']
+        collections.abc.Callable[[], list['types.ui.ChoiceItem']], list['types.ui.ChoiceItem']
     ]:
         """
         Helper to convert from array of strings (or dictionaries) to the same dict used in choice,
@@ -186,7 +187,7 @@ class gui:
         raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
-    def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> typing.Dict[str, str]:
+    def choiceImage(id_: typing.Union[str, int], text: str, img: str) -> dict[str, str]:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod
@@ -367,7 +368,7 @@ class gui:
             """
             self._fieldsInfo.value = value
 
-        def guiDescription(self) -> typing.Dict[str, typing.Any]:
+        def guiDescription(self) -> dict[str, typing.Any]:
             """
             Returns the dictionary with the description of this item.
             We copy it, cause we need to translate the label and tooltip fields
@@ -476,7 +477,7 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str] = '',
+            default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
             pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
             lines: int = 0,
@@ -574,12 +575,12 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str] = '',
+            default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                typing.Dict[str, str],
+                dict[str, str],
                 None,
             ] = None,
         ) -> None:
@@ -635,7 +636,7 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], int], int] = 0,
+            default: typing.Union[collections.abc.Callable[[], int], int] = 0,
             value: typing.Optional[int] = None,
             minValue: typing.Optional[int] = None,
             maxValue: typing.Optional[int] = None,
@@ -688,7 +689,7 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Optional[typing.Union[typing.Callable[[], datetime.date], datetime.date]] = None,
+            default: typing.Optional[typing.Union[collections.abc.Callable[[], datetime.date], datetime.date]] = None,
             value: typing.Optional[typing.Union[str, datetime.date]] = None,
         ) -> None:
             super().__init__(
@@ -732,7 +733,7 @@ class gui:
 
             super()._setValue(value)
 
-        def guiDescription(self) -> typing.Dict[str, typing.Any]:
+        def guiDescription(self) -> dict[str, typing.Any]:
             theGui = super().guiDescription()
             # Convert if needed value and default to string (YYYY-MM-DD)
             if 'default' in theGui:
@@ -773,7 +774,7 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str] = '',
+            default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
         ):
             super().__init__(
@@ -888,7 +889,7 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], bool], bool] = False,
+            default: typing.Union[collections.abc.Callable[[], bool], bool] = False,
             value: typing.Optional[bool] = None,
         ):
             super().__init__(
@@ -1026,14 +1027,14 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                typing.Dict[str, str],
+                dict[str, str],
                 None,
             ] = None,
             fills: typing.Optional[types.ui.Filler] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str, None] = None,
+            default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
@@ -1075,13 +1076,13 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                typing.Dict[str, str],
+                dict[str, str],
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
-            default: typing.Union[typing.Callable[[], str], str, None] = None,
+            default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
         ):
             super().__init__(
@@ -1147,14 +1148,14 @@ class gui:
             tooltip: str = '',
             required: typing.Optional[bool] = None,
             choices: typing.Union[
-                typing.Callable[[], typing.List['types.ui.ChoiceItem']],
+                collections.abc.Callable[[], list['types.ui.ChoiceItem']],
                 typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
-                typing.Dict[str, str],
+                dict[str, str],
                 None,
             ] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[
-                typing.Callable[[], str], typing.Callable[[], typing.List[str]], typing.List[str], str, None
+                collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ):
@@ -1215,7 +1216,7 @@ class gui:
             required: typing.Optional[bool] = None,
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[
-                typing.Callable[[], str], typing.Callable[[], typing.List[str]], typing.List[str], str, None
+                collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[typing.Iterable[str]] = None,
         ) -> None:
@@ -1261,7 +1262,7 @@ class UserInterfaceType(type):
         mcs: typing.Type['UserInterfaceType'],
         classname: str,
         bases: typing.Tuple[type, ...],
-        namespace: typing.Dict[str, typing.Any],
+        namespace: dict[str, typing.Any],
     ) -> 'UserInterfaceType':
         newClassDict = {}
         _gui: typing.MutableMapping[str, gui.InputField] = {}
@@ -1296,11 +1297,11 @@ class UserInterface(metaclass=UserInterfaceType):
         error: str
 
     # Class variable that will hold the gui fields description
-    _base_gui: typing.ClassVar[typing.Dict[str, gui.InputField]]
+    _base_gui: typing.ClassVar[dict[str, gui.InputField]]
 
     # instance variable that will hold the gui fields description
     # this allows us to modify the gui fields values at runtime without affecting other instances
-    _gui: typing.Dict[str, gui.InputField]
+    _gui: dict[str, gui.InputField]
 
     def __init__(self, values: gui.ValuesType = None) -> None:
         # : If there is an array of elements to initialize, simply try to store
@@ -1394,7 +1395,7 @@ class UserInterface(metaclass=UserInterfaceType):
 
     def serializeForm(
         self,
-        opt_serializer: typing.Optional[typing.Callable[[typing.Any], bytes]] = None,
+        opt_serializer: typing.Optional[collections.abc.Callable[[typing.Any], bytes]] = None,
     ) -> bytes:
         """New form serialization
 
@@ -1408,7 +1409,7 @@ class UserInterface(metaclass=UserInterfaceType):
             return serializer.serialize(value)
 
         fw_converters: typing.Mapping[
-            types.ui.FieldType, typing.Callable[[gui.InputField], typing.Optional[str]]
+            types.ui.FieldType, collections.abc.Callable[[gui.InputField], typing.Optional[str]]
         ] = {
             types.ui.FieldType.TEXT: lambda x: x.value,
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
@@ -1437,7 +1438,7 @@ class UserInterface(metaclass=UserInterfaceType):
     def deserializeForm(
         self,
         values: bytes,
-        opt_deserializer: typing.Optional[typing.Callable[[bytes], typing.Any]] = None,
+        opt_deserializer: typing.Optional[collections.abc.Callable[[bytes], typing.Any]] = None,
     ) -> None:
         """New form unserialization
 
@@ -1445,7 +1446,7 @@ class UserInterface(metaclass=UserInterfaceType):
             values {bytes} -- serialized form (zipped)
 
         Keyword Arguments:
-            serializer {typing.Optional[typing.Callable[[str], typing.Any]]} -- deserializer (default: {None})
+            serializer {typing.Optional[collections.abc.Callable[[str], typing.Any]]} -- deserializer (default: {None})
         """
 
         def deserialize(value: bytes) -> typing.Any:
@@ -1480,7 +1481,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 continue
             self._gui[k].value = self._gui[k].default
 
-        converters: typing.Mapping[types.ui.FieldType, typing.Callable[[str], typing.Any]] = {
+        converters: typing.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]] = {
             types.ui.FieldType.TEXT: lambda x: x,
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
             types.ui.FieldType.NUMERIC: int,
@@ -1567,7 +1568,7 @@ class UserInterface(metaclass=UserInterfaceType):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    def guiDescription(self) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+    def guiDescription(self) -> list[typing.MutableMapping[str, typing.Any]]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
@@ -1579,15 +1580,15 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         self.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
-        res: typing.List[typing.MutableMapping[str, typing.Any]] = []
+        res: list[typing.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
             # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
             res.append({'name': key, 'gui': val.guiDescription(), 'value': val.value if val.isType(types.ui.FieldType.HIDDEN) else None })
         # logger.debug('theGui description: %s', res)
         return res
 
-    def errors(self) -> typing.List[ValidationFieldInfo]:
-        found_errors: typing.List[UserInterface.ValidationFieldInfo] = []
+    def errors(self) -> list[ValidationFieldInfo]:
+        found_errors: list[UserInterface.ValidationFieldInfo] = []
         for key, val in self._gui.items():
             if val.required and not val.value:
                 found_errors.append(UserInterface.ValidationFieldInfo(key, 'Field is required'))

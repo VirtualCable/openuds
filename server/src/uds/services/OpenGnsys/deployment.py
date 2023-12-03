@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.managers.crypto import CryptoManager
@@ -72,7 +73,7 @@ class OGDeployment(services.UserService):
     _stamp: int = 0
     _reason: str = ''
 
-    _queue: typing.List[
+    _queue: list[
         int
     ]  # Do not initialize mutable, just declare and it is initialized on "initialize"
     _uuid: str
@@ -248,7 +249,7 @@ class OGDeployment(services.UserService):
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opRemove: self.__remove,
@@ -256,7 +257,7 @@ class OGDeployment(services.UserService):
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op)
+            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op)
 
             if execFnc is None:
                 return self.__error(
@@ -369,7 +370,7 @@ class OGDeployment(services.UserService):
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opRemove: self.__checkRemoved,
@@ -378,7 +379,7 @@ class OGDeployment(services.UserService):
 
         try:
             chkFnc: typing.Optional[
-                typing.Optional[typing.Callable[[], str]]
+                typing.Optional[collections.abc.Callable[[], str]]
             ] = fncs.get(op)
 
             if chkFnc is None:

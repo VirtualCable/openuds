@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import time
 import typing
+import collections.abc
 
 from django.conf import settings
 

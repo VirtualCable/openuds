@@ -31,9 +31,10 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 import asyncio
 import aiohttp
-import typing
+import collections.abc
 
 
 REST_URL: typing.Final[str] = 'http://172.27.0.1:8000/uds/rest/'
@@ -97,7 +98,7 @@ async def logout(session: aiohttp.ClientSession) -> None:
 # ]
 
 
-async def request_pools(session: aiohttp.ClientSession) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+async def request_pools(session: aiohttp.ClientSession) -> list[collections.abc.MutableMapping[str, typing.Any]]:
     response = await session.get(REST_URL + 'servicespools/overview')
     if not response.ok:
         raise RESTException('Error requesting pools')
@@ -108,12 +109,12 @@ async def request_ticket(
     session: aiohttp.ClientSession,
     username: str,
     authSmallName: str,
-    groups: typing.Union[typing.List[str], str],
+    groups: typing.Union[list[str], str],
     servicePool: str,
     realName: typing.Optional[str] = None,
     transport: typing.Optional[str] = None,
     force: bool = False
-) -> typing.MutableMapping[str, typing.Any]:
+) -> collections.abc.MutableMapping[str, typing.Any]:
     data = {
         'username': username,
         'authSmallName': authSmallName,

@@ -34,6 +34,7 @@ import codecs
 import json
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render

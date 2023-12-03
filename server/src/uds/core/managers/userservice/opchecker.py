@@ -32,6 +32,7 @@
 '''
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.jobs.delayed_task import DelayedTask

@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 
@@ -84,7 +85,7 @@ class ManagedObjectModel(UUIDModel):
         self._cachedInstance = None  # Ensures returns correct value on getInstance
 
     def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
+        self, values: typing.Optional[dict[str, str]] = None
     ) -> Module:
         """
         Instantiates the object this record contains.

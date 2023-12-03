@@ -32,6 +32,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 import asyncio
 import aiohttp
 import enum
@@ -113,7 +114,7 @@ async def add_calendar_action(
     calendar_id: str,
     at_start: bool = True,
     events_offset: int = 0,
-    params: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    params: typing.Optional[dict[str, typing.Any]] = None,
 ) -> None:
     data = {
         'action': action,

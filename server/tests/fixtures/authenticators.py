@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import random  # nosec: testing only
 
 from uds import models
@@ -65,8 +66,8 @@ def createUsers(
     is_staff: bool = False,
     is_admin: bool = False,
     enabled: bool = True,
-    groups: typing.Optional[typing.List[models.Group]] = None,
-) -> typing.List[models.User]:
+    groups: typing.Optional[list[models.Group]] = None,
+) -> list[models.User]:
     """
     Creates some ramdon users
     password is same as username
@@ -96,7 +97,7 @@ def createUsers(
 
 def createGroups(
     authenticator: models.Authenticator, number_of_groups: int = 1
-) -> typing.List[models.Group]:
+) -> list[models.Group]:
     """
     Creates a bunch of groups
     """
@@ -116,7 +117,7 @@ def createGroups(
 
 def createMetaGroups(
     authenticator: models.Authenticator, number_of_meta: int = 1
-) -> typing.List[models.Group]:
+) -> list[models.Group]:
     """
     Creates a bunch of meta groups
     """

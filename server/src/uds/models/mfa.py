@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 
@@ -61,7 +62,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     authenticators: 'models.manager.RelatedManager[Authenticator]'
 
     def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
+        self, values: typing.Optional[dict[str, str]] = None
     ) -> 'mfas.MFA':
         return typing.cast('mfas.MFA', super().getInstance(values=values))
 

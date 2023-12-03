@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 import yaml
 
@@ -51,7 +52,7 @@ if typing.TYPE_CHECKING:
 
 def getSerializedFromManagedObject(
     mod: 'models.ManagedObjectModel',
-    removableFields: typing.Optional[typing.List[str]] = None,
+    removableFields: typing.Optional[list[str]] = None,
 ) -> typing.Mapping[str, typing.Any]:
     try:
         obj = mod.getInstance()
@@ -80,8 +81,8 @@ def getSerializedFromManagedObject(
 
 def getSerializedFromModel(
     mod: 'dbmodels.Model',
-    removableFields: typing.Optional[typing.List[str]] = None,
-    passwordFields: typing.Optional[typing.List[str]] = None,
+    removableFields: typing.Optional[list[str]] = None,
+    passwordFields: typing.Optional[list[str]] = None,
 ) -> typing.Mapping[str, typing.Any]:
     removableFields = removableFields or []
     passwordFields = passwordFields or []
@@ -176,7 +177,7 @@ class Command(BaseCommand):
                         totalUserServices += numberOfUserServices
 
                         # get publications
-                        publications: typing.Dict[str, typing.Any] = {}
+                        publications: dict[str, typing.Any] = {}
                         for publication in servicePool.publications.all():
                             # Get all changelogs for this publication
                             try:
@@ -240,10 +241,10 @@ class Command(BaseCommand):
             tree[counter('PROVIDERS')] = providers
 
             # authenticators
-            authenticators: typing.Dict[str, typing.Any] = {}
+            authenticators: dict[str, typing.Any] = {}
             for authenticator in models.Authenticator.objects.all():
                 # Groups
-                grps: typing.Dict[str, typing.Any] = {}
+                grps: dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
                     grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
                 authenticators[authenticator.name] = {
@@ -254,7 +255,7 @@ class Command(BaseCommand):
             tree[counter('AUTHENTICATORS')] = authenticators
 
             # transports
-            transports: typing.Dict[str, typing.Any] = {}
+            transports: dict[str, typing.Any] = {}
             for transport in models.Transport.objects.all():
                 transports[transport.name] = getSerializedFromManagedObject(transport)
 
@@ -271,14 +272,14 @@ class Command(BaseCommand):
             tree[counter('NETWORKS')] = networks
 
             # os managers
-            osManagers: typing.Dict[str, typing.Any] = {}
+            osManagers: dict[str, typing.Any] = {}
             for osManager in models.OSManager.objects.all():
                 osManagers[osManager.name] = getSerializedFromManagedObject(osManager)
 
             tree[counter('OSMANAGERS')] = osManagers
 
             # calendars
-            calendars: typing.Dict[str, typing.Any] = {}
+            calendars: dict[str, typing.Any] = {}
             for calendar in models.Calendar.objects.all():
                 # calendar rules
                 rules = {}
@@ -293,14 +294,14 @@ class Command(BaseCommand):
             tree[counter('CALENDARS')] = calendars
 
             # Metapools
-            metapools: typing.Dict[str, typing.Any] = {}
+            metapools: dict[str, typing.Any] = {}
             for metapool in models.MetaPool.objects.all():
                 metapools[metapool.name] = getSerializedFromModel(metapool)
 
             tree[counter('METAPOOLS')] = metapools
 
             # accounts
-            accounts: typing.Dict[str, typing.Any] = {}
+            accounts: dict[str, typing.Any] = {}
             for account in models.Account.objects.all():
                 accounts[account.name] = {
                     '_': getSerializedFromModel(account),
@@ -331,7 +332,7 @@ class Command(BaseCommand):
             tree[counter('GALLERY')] = gallery
 
             # Rest of registerd servers
-            registeredServers: typing.Dict[str, typing.Any] = {}
+            registeredServers: dict[str, typing.Any] = {}
             for i, registeredServer in enumerate(models.Server.objects.all()):
                 registeredServers[f'{i}'] = getSerializedFromModel(registeredServer)
 

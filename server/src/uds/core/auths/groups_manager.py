@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import re
 import logging
 import typing
+import collections.abc
 
 from uds.core.util.state import State
 from .group import Group
@@ -76,7 +77,7 @@ class GroupsManager:
     Managed groups names are compared using case insensitive comparison.
     """
 
-    _groups: typing.List[_LocalGrp]
+    _groups: list[_LocalGrp]
 
     def __init__(self, dbAuthenticator: 'DBAuthenticator'):
         """
@@ -135,7 +136,7 @@ class GroupsManager:
             Group as DBGroup,
         )
 
-        valid_id_list: typing.List[int] = []
+        valid_id_list: list[int] = []
         for group in self._groups:
             if group.is_valid:
                 valid_id_list.append(group.group.dbGroup().id)

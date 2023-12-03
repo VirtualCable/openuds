@@ -35,6 +35,7 @@ import logging
 import threading
 import time
 import typing
+import collections.abc
 
 from django.db import transaction
 from uds.core import consts
@@ -110,7 +111,7 @@ class CacheInfo(typing.NamedTuple):
     exec_time: int
 
 
-def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
@@ -133,7 +134,7 @@ def deprecated(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
     return new_func
 
 
-def deprecatedClassValue(newVarName: str) -> typing.Callable:
+def deprecatedClassValue(newVarName: str) -> collections.abc.Callable:
     """
     Decorator to make a class value deprecated and warn about it
 
@@ -144,10 +145,10 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
     """
 
     class innerDeprecated:
-        fget: typing.Callable
+        fget: collections.abc.Callable
         new_var_name: str
 
-        def __init__(self, method: typing.Callable, newVarName: str) -> None:
+        def __init__(self, method: collections.abc.Callable, newVarName: str) -> None:
             self.new_var_name = newVarName
             self.fget = method  # type: ignore
 
@@ -169,7 +170,7 @@ def deprecatedClassValue(newVarName: str) -> typing.Callable:
     return functools.partial(innerDeprecated, newVarName=newVarName)
 
 
-def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def ensureConnected(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
@@ -184,11 +185,11 @@ def ensureConnected(func: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
     cachePrefix: str,
-    cacheTimeout: typing.Union[typing.Callable[[], int], int] = -1,
+    cacheTimeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
     cachingArgs: typing.Optional[typing.Union[typing.Iterable[int], int]] = None,
     cachingKWArgs: typing.Optional[typing.Union[typing.Iterable[str], str]] = None,
-    cachingKeyFnc: typing.Optional[typing.Callable[[typing.Any], str]] = None,
-) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+    cachingKeyFnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
+) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on db.
     The "cached" element must provide a "cache" variable, which is a cache object
 
@@ -204,10 +205,10 @@ def cached(
 
     """
     cacheTimeout = Cache.DEFAULT_VALIDITY if cacheTimeout == -1 else cacheTimeout
-    cachingArgList: typing.List[int] = (
+    cachingArgList: list[int] = (
         [cachingArgs] if isinstance(cachingArgs, int) else list(cachingArgs or [])
     )
-    cachingKwargList: typing.List[str] = (
+    cachingKwargList: list[str] = (
         isinstance(cachingKWArgs, str) and [cachingKWArgs] or list(cachingKWArgs or [])
     )
 
@@ -215,7 +216,7 @@ def cached(
 
     hits = misses = exec_time = 0
 
-    def allowCacheDecorator(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    def allowCacheDecorator(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
         try:
@@ -318,7 +319,7 @@ def cached(
 
 
 # Decorator to execute method in a thread
-def threaded(func: typing.Callable[..., None]) -> typing.Callable[..., None]:
+def threaded(func: collections.abc.Callable[..., None]) -> collections.abc.Callable[..., None]:
     """Decorator to execute method in a thread"""
 
     @functools.wraps(func)
@@ -333,7 +334,7 @@ def blocker(
     request_attr: typing.Optional[str] = None,
     max_failures: typing.Optional[int] = None,
     ignore_block_config: bool = False,
-) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """
     Decorator that will block the actor if it has more than ALLOWED_FAILS failures in BLOCK_ACTOR_TIME seconds
     GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() --> If true, block actor after ALLOWED_FAILS failures
@@ -352,7 +353,7 @@ def blocker(
     from uds.REST.exceptions import AccessDenied  # To avoid circular references
     max_failures = max_failures or consts.system.ALLOWED_FAILS
 
-    def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.getBool(True) and not ignore_block_config:
@@ -391,7 +392,7 @@ def blocker(
     return decorator
 
 
-def profile(log_file: typing.Optional[str] = None) -> typing.Callable[[typing.Callable[..., RT]], typing.Callable[..., RT]]:
+def profile(log_file: typing.Optional[str] = None) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """
     Decorator that will profile the wrapped function and log the results to the provided file
 
@@ -401,7 +402,7 @@ def profile(log_file: typing.Optional[str] = None) -> typing.Callable[[typing.Ca
     Returns:
         Decorator
     """
-    def decorator(f: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+    def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
             nonlocal log_file

@@ -34,6 +34,7 @@ from functools import reduce
 import logging
 import operator
 import typing
+import collections.abc
 import yaml
 
 from django.core.management.base import BaseCommand
@@ -53,7 +54,7 @@ ModelType = typing.TypeVar('ModelType', bound='UUIDModel')
 T = typing.TypeVar('T')
 
 
-def uuid_object_exporter(obj: 'UUIDModel') -> typing.Dict[str, typing.Any]:
+def uuid_object_exporter(obj: 'UUIDModel') -> dict[str, typing.Any]:
     """
     Exports a uuid model to a dict
     """
@@ -64,7 +65,7 @@ def uuid_object_exporter(obj: 'UUIDModel') -> typing.Dict[str, typing.Any]:
 
 def managed_object_exporter(
     obj: models.ManagedObjectModel,
-) -> typing.Dict[str, typing.Any]:
+) -> dict[str, typing.Any]:
     """
     Exports a managed object to a dict
     """
@@ -82,7 +83,7 @@ def managed_object_exporter(
     return m
 
 
-def provider_exporter(provider: models.Provider) -> typing.Dict[str, typing.Any]:
+def provider_exporter(provider: models.Provider) -> dict[str, typing.Any]:
     """
     Exports a provider to a dict
     """
@@ -91,7 +92,7 @@ def provider_exporter(provider: models.Provider) -> typing.Dict[str, typing.Any]
     return p
 
 
-def service_exporter(service: models.Service) -> typing.Dict[str, typing.Any]:
+def service_exporter(service: models.Service) -> dict[str, typing.Any]:
     """
     Exports a service to a dict
     """
@@ -101,7 +102,7 @@ def service_exporter(service: models.Service) -> typing.Dict[str, typing.Any]:
     return s
 
 
-def mfa_exporter(mfa: models.MFA) -> typing.Dict[str, typing.Any]:
+def mfa_exporter(mfa: models.MFA) -> dict[str, typing.Any]:
     """
     Exports a mfa to a dict
     """
@@ -111,7 +112,7 @@ def mfa_exporter(mfa: models.MFA) -> typing.Dict[str, typing.Any]:
 
 def authenticator_exporter(
     authenticator: models.Authenticator,
-) -> typing.Dict[str, typing.Any]:
+) -> dict[str, typing.Any]:
     """
     Exports an authenticator to a dict
     """
@@ -123,7 +124,7 @@ def authenticator_exporter(
     return a
 
 
-def user_exporter(user: models.User) -> typing.Dict[str, typing.Any]:
+def user_exporter(user: models.User) -> dict[str, typing.Any]:
     """
     Exports a user to a dict
     """
@@ -148,7 +149,7 @@ def user_exporter(user: models.User) -> typing.Dict[str, typing.Any]:
     return u
 
 
-def group_export(group: models.Group) -> typing.Dict[str, typing.Any]:
+def group_export(group: models.Group) -> dict[str, typing.Any]:
     """
     Exports a group to a dict
     """
@@ -167,7 +168,7 @@ def group_export(group: models.Group) -> typing.Dict[str, typing.Any]:
     return g
 
 
-def transport_exporter(transport: models.Transport) -> typing.Dict[str, typing.Any]:
+def transport_exporter(transport: models.Transport) -> dict[str, typing.Any]:
     """
     Exports a transport to a dict
     """
@@ -184,7 +185,7 @@ def transport_exporter(transport: models.Transport) -> typing.Dict[str, typing.A
     return t
 
 
-def network_exporter(network: models.Network) -> typing.Dict[str, typing.Any]:
+def network_exporter(network: models.Network) -> dict[str, typing.Any]:
     """
     Exports a network to a dict
     """
@@ -200,7 +201,7 @@ def network_exporter(network: models.Network) -> typing.Dict[str, typing.Any]:
     return n
 
 
-def osmanager_exporter(osmanager: models.OSManager) -> typing.Dict[str, typing.Any]:
+def osmanager_exporter(osmanager: models.OSManager) -> dict[str, typing.Any]:
     """
     Exports an osmanager to a dict
     """
@@ -208,7 +209,7 @@ def osmanager_exporter(osmanager: models.OSManager) -> typing.Dict[str, typing.A
     return o
 
 
-def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]:
+def calendar_exporter(calendar: models.Calendar) -> dict[str, typing.Any]:
     """
     Exports a calendar to a dict
     """
@@ -225,7 +226,7 @@ def calendar_exporter(calendar: models.Calendar) -> typing.Dict[str, typing.Any]
 
 def calendar_rule_exporter(
     calendar_rule: models.CalendarRule,
-) -> typing.Dict[str, typing.Any]:
+) -> dict[str, typing.Any]:
     """
     Exports a calendar rule to a dict
     """
@@ -249,9 +250,9 @@ def calendar_rule_exporter(
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
 
-    VALID_ENTITIES: typing.Mapping[str, typing.Callable[[], str]]
+    VALID_ENTITIES: typing.Mapping[str, collections.abc.Callable[[], str]]
     verbose: bool = True
-    filter_args: typing.List[typing.Tuple[str, str]] = []
+    filter_args: list[typing.Tuple[str, str]] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -559,11 +560,11 @@ class Command(BaseCommand):
             ]
         )
 
-    def remove_reduntant_entities(self, entities: typing.List[str]) -> typing.List[str]:
+    def remove_reduntant_entities(self, entities: list[str]) -> list[str]:
         """
         Removes redundant entities from the list
         """
-        REPLACES: typing.Mapping[str, typing.List[str]] = {
+        REPLACES: typing.Mapping[str, list[str]] = {
             'users': ['authenticators', 'groups'],
             'groups': ['authenticators'],
             'authenticators': [],

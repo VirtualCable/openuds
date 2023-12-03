@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -54,7 +55,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     """
 
     @staticmethod
-    def usageToDict(item: 'AccountUsage', perm: int) -> typing.Dict[str, typing.Any]:
+    def usageToDict(item: 'AccountUsage', perm: int) -> dict[str, typing.Any]:
         """
         Convert an account usage to a dictionary
         :param item: Account usage item (db)
@@ -89,7 +90,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('itemId %s', item)
             raise self.invalidItemException()
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'pool_name': {'title': _('Pool name')}},
             {'user_name': {'title': _('User name')}},
@@ -100,7 +101,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'running', 'prefix': 'row-running-'}
 
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:

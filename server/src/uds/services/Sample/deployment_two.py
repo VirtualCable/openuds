@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import codecs
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.util.state import State
@@ -128,7 +129,7 @@ class SampleUserServiceTwo(services.UserService):
         """
         We unmarshal the content.
         """
-        values: typing.List[str] = codecs.decode(data, 'zip').decode().split('\t')  # type: ignore
+        values: list[str] = codecs.decode(data, 'zip').decode().split('\t')  # type: ignore
         # Data Version check
         # If we include some new data at some point in a future, we can
         # add "default" values at v1 check, and load new values at 'v2' check.

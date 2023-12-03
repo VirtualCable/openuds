@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: controled data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.managers.user_service import UserServiceManager
@@ -93,7 +94,7 @@ class ProxmoxDeployment(services.UserService):
     _task: str
     _vmid: str
     _reason: str
-    _queue: typing.List[int]
+    _queue: list[int]
 
     # Utility overrides for type checking...
     def service(self) -> 'ProxmoxLinkedService':
@@ -316,7 +317,7 @@ if sys.platform == 'win32':
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Mapping[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: typing.Mapping[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -329,7 +330,7 @@ if sys.platform == 'win32':
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error(
@@ -582,7 +583,7 @@ if sys.platform == 'win32':
 
         try:
             chkFnc: typing.Optional[
-                typing.Optional[typing.Callable[[], str]]
+                typing.Optional[collections.abc.Callable[[], str]]
             ] = fncs.get(op, None)
 
             if chkFnc is None:

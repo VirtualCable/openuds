@@ -37,6 +37,7 @@ import logging
 import time
 import types
 import typing
+import collections.abc
 
 from django.http import HttpResponse
 
@@ -67,7 +68,7 @@ class ContentProcessor:
     def __init__(self, request: 'HttpRequest'):
         self._request = request
 
-    def processGetParameters(self) -> typing.Dict[str, typing.Any]:
+    def processGetParameters(self) -> dict[str, typing.Any]:
         """
         returns parameters based on request method
         GET parameters are understood
@@ -77,7 +78,7 @@ class ContentProcessor:
 
         return {k: v[0] if len(v) == 1 else v for k, v in self._request.GET.lists()}
 
-    def processParameters(self) -> typing.Dict[str, typing.Any]:
+    def processParameters(self) -> dict[str, typing.Any]:
         """
         Returns the parameter from the request
         """
@@ -130,7 +131,7 @@ class MarshallerProcessor(ContentProcessor):
 
     marshaller: typing.ClassVar[typing.Any] = None
 
-    def processParameters(self) -> typing.Dict[str, typing.Any]:
+    def processParameters(self) -> dict[str, typing.Any]:
         try:
             length = int(self._request.META.get('CONTENT_LENGTH') or '0')
             if length == 0 or not self._request.body:
@@ -180,10 +181,10 @@ class JsonProcessor(MarshallerProcessor):
 
 processors_list = (JsonProcessor,)
 default_processor: typing.Type[ContentProcessor] = JsonProcessor
-available_processors_mime_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {
+available_processors_mime_dict: dict[str, typing.Type[ContentProcessor]] = {
     cls.mime_type: cls for cls in processors_list
 }
-available_processors_ext_dict: typing.Dict[str, typing.Type[ContentProcessor]] = {}
+available_processors_ext_dict: dict[str, typing.Type[ContentProcessor]] = {}
 for cls in processors_list:
     for ext in cls.extensions:
         available_processors_ext_dict[ext] = cls

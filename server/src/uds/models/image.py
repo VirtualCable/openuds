@@ -34,6 +34,7 @@ import base64
 import logging
 from operator import ne
 import typing
+import collections.abc
 
 
 import PIL.Image

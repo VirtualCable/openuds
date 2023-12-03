@@ -33,6 +33,7 @@
 """
 # We use commit/rollback
 import typing
+import collections.abc
 
 from ...utils.test import UDSTestCase
 from uds.core.util import auto_serializable

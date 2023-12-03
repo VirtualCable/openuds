@@ -34,6 +34,7 @@ import datetime
 import io
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -85,7 +86,7 @@ class UsageSummaryByUsersPool(StatsReport):
 
     def getPoolData(
         self, pool
-    ) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
+    ) -> typing.Tuple[list[dict[str, typing.Any]], str]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         logger.debug(self.pool.value)
@@ -102,8 +103,8 @@ class UsageSummaryByUsersPool(StatsReport):
             .order_by('stamp')
         )
 
-        logins: typing.Dict[str, int] = {}
-        users: typing.Dict[str, typing.Dict] = {}
+        logins: dict[str, int] = {}
+        users: dict[str, dict] = {}
         for i in items:
             # if '\\' in i.fld1:
             #    continue
@@ -138,7 +139,7 @@ class UsageSummaryByUsersPool(StatsReport):
 
         return data, pool.name
 
-    def getData(self) -> typing.Tuple[typing.List[typing.Dict[str, typing.Any]], str]:
+    def getData(self) -> typing.Tuple[list[dict[str, typing.Any]], str]:
         return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
 
     def generate(self) -> bytes:

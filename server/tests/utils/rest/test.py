@@ -29,6 +29,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from uds import models
 from uds.core.util import log
@@ -48,11 +49,11 @@ NUMBER_OF_ITEMS_TO_CREATE = 4
 class RESTTestCase(test.UDSTransactionTestCase):
     # Authenticators related
     auth: models.Authenticator
-    simple_groups: typing.List[models.Group]
-    meta_groups: typing.List[models.Group]
-    admins: typing.List[models.User]  # Users that are admin
-    staffs: typing.List[models.User]  # Users that are not admin but are staff
-    plain_users: typing.List[models.User]  # Users that are not admin or staff
+    simple_groups: list[models.Group]
+    meta_groups: list[models.Group]
+    admins: list[models.User]  # Users that are admin
+    staffs: list[models.User]  # Users that are not admin but are staff
+    plain_users: list[models.User]  # Users that are not admin or staff
 
     users = property(lambda self: self.admins + self.staffs + self.plain_users)
     groups = property(lambda self: self.simple_groups + self.meta_groups)
@@ -61,7 +62,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
     user_service_managed: models.UserService
     user_service_unmanaged: models.UserService
 
-    user_services: typing.List[models.UserService]
+    user_services: list[models.UserService]
 
     auth_token: str = ''
 
@@ -155,7 +156,7 @@ class RESTActorTestCase(RESTTestCase):
         self.assertEqual(response.status_code, 200, 'Actor registration failed')
         return response.json()['result']
 
-    def register_data(self, chars: typing.Optional[str] = None) -> typing.Dict[str, str]:
+    def register_data(self, chars: typing.Optional[str] = None) -> dict[str, str]:
         # Data for registration
         return {
             'username': generators.random_string(size=12, chars=chars)

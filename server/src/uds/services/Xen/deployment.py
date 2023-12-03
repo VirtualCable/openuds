@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import pickle  # nosec: not insecure, we are loading our own data
 import logging
 import typing
+import collections.abc
 
 from uds.core import services
 from uds.core.util.state import State
@@ -77,7 +78,7 @@ class XenLinkedDeployment(services.UserService):
     _vmid: str = ''
     _reason: str = ''
     _task = ''
-    _queue: typing.List[int]
+    _queue: list[int]
 
     def initialize(self) -> None:
         self._queue = []
@@ -253,7 +254,7 @@ class XenLinkedDeployment(services.UserService):
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,
@@ -267,7 +268,7 @@ class XenLinkedDeployment(services.UserService):
         }
 
         try:
-            execFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            execFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if execFnc is None:
                 return self.__error(
@@ -469,7 +470,7 @@ class XenLinkedDeployment(services.UserService):
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Dict[int, typing.Optional[typing.Callable[[], str]]] = {
+        fncs: dict[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__checkCreate,
             opRetry: self.__retry,
             opWait: self.__wait,
@@ -483,7 +484,7 @@ class XenLinkedDeployment(services.UserService):
         }
 
         try:
-            chkFnc: typing.Optional[typing.Callable[[], str]] = fncs.get(op, None)
+            chkFnc: typing.Optional[collections.abc.Callable[[], str]] = fncs.get(op, None)
 
             if chkFnc is None:
                 return self.__error(

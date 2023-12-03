@@ -36,6 +36,7 @@ import inspect
 import logging
 import re
 import typing
+import collections.abc
 from types import GeneratorType
 
 from django.db import IntegrityError, models
@@ -76,8 +77,8 @@ class BaseModelHandler(Handler):
     """
 
     def addField(
-        self, gui: typing.List[typing.Any], field: typing.Union[FieldType, typing.List[FieldType]]
-    ) -> typing.List[typing.Any]:
+        self, gui: list[typing.Any], field: typing.Union[FieldType, list[FieldType]]
+    ) -> list[typing.Any]:
         """
         Add a field to a "gui" description.
         This method checks that every required field element is in there.
@@ -101,7 +102,7 @@ class BaseModelHandler(Handler):
             else:
                 choices = field.get('choices', None)
             # Build gui with non empty values
-            guiDesc: typing.Dict[str, typing.Any] = {}
+            guiDesc: dict[str, typing.Any] = {}
             # First, mandatory fields
             for fld in ('name', 'type'):
                 if fld not in field:
@@ -146,7 +147,7 @@ class BaseModelHandler(Handler):
             gui.append(v)
         return gui
 
-    def addDefaultFields(self, gui: typing.List[typing.Any], flds: typing.List[str]) -> typing.List[typing.Any]:
+    def addDefaultFields(self, gui: list[typing.Any], flds: list[str]) -> list[typing.Any]:
         """
         Adds default fields (based in a list) to a "gui" description
         :param gui: Gui list where the "default" fielsds will be added
@@ -270,14 +271,14 @@ class BaseModelHandler(Handler):
 
     def typeInfo(
         self, type_: typing.Type['Module']  # pylint: disable=unused-argument
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Returns info about the type
         In fact, right now, it returns an empty dict, that will be extended by typeAsDict
         """
         return {}
 
-    def typeAsDict(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
+    def typeAsDict(self, type_: typing.Type['Module']) -> dict[str, typing.Any]:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
@@ -294,10 +295,10 @@ class BaseModelHandler(Handler):
     def processTableFields(
         self,
         title: str,
-        fields: typing.List[typing.Any],
+        fields: list[typing.Any],
         row_style: typing.MutableMapping[str, typing.Any],
         subtitle: typing.Optional[str] = None,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Returns a dict containing the table fields description
         """
@@ -308,13 +309,13 @@ class BaseModelHandler(Handler):
             'subtitle': subtitle or '',
         }
 
-    def readFieldsFromParams(self, fldList: typing.List[str]) -> typing.Dict[str, typing.Any]:
+    def readFieldsFromParams(self, fldList: list[str]) -> dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
         :param fldList: List of required fields
         :return: A dictionary containing all required fields
         """
-        args: typing.Dict[str, str] = {}
+        args: dict[str, str] = {}
         default: typing.Optional[str]
         try:
             for key in fldList:
@@ -335,8 +336,8 @@ class BaseModelHandler(Handler):
         return args
 
     def fillIntanceFields(
-        self, item: 'models.Model', res: typing.Dict[str, typing.Any]
-    ) -> typing.Dict[str, typing.Any]:
+        self, item: 'models.Model', res: dict[str, typing.Any]
+    ) -> dict[str, typing.Any]:
         """
         For Managed Objects (db element that contains a serialized object), fills a dictionary with the "field" parameters values.
         For non managed objects, it does nothing
@@ -423,12 +424,12 @@ class DetailHandler(BaseModelHandler):
     Also accepts GET methods for "custom" methods
     """
 
-    custom_methods: typing.ClassVar[typing.List[str]] = []
+    custom_methods: typing.ClassVar[list[str]] = []
     _parent: typing.Optional['ModelHandler']
     _path: str
     _params: typing.Any  # _params is deserialized object from request
     _args: typing.Tuple[str, ...]
-    _kwargs: typing.Dict[str, typing.Any]
+    _kwargs: dict[str, typing.Any]
     _user: 'User'
 
     def __init__(
@@ -585,7 +586,7 @@ class DetailHandler(BaseModelHandler):
     # Default (as sample) getItems
     def getItems(
         self, parent: models.Model, item: typing.Optional[str]
-    ) -> typing.Union[typing.List[typing.Dict], typing.Dict]:
+    ) -> typing.Union[list[dict], dict]:
         """
         This MUST be overridden by derived classes
         Excepts to return a list of dictionaries or a single dictionary, depending on "item" param
@@ -631,7 +632,7 @@ class DetailHandler(BaseModelHandler):
         """
         return ''
 
-    def getFields(self, parent: models.Model) -> typing.List[typing.Any]:
+    def getFields(self, parent: models.Model) -> list[typing.Any]:
         """
         A "generic" list of fields for a view based on this detail.
         If not overridden, defaults to emty list
@@ -640,7 +641,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []
 
-    def getRowStyle(self, parent: models.Model) -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: models.Model) -> dict[str, typing.Any]:
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
@@ -649,7 +650,7 @@ class DetailHandler(BaseModelHandler):
             parent (models.Model): Parent object
 
         Return:
-            typing.Dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
+            dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
         """
         return {}
 
@@ -666,7 +667,7 @@ class DetailHandler(BaseModelHandler):
 
     def getTypes(
         self, parent: models.Model, forType: typing.Optional[str]
-    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+    ) -> typing.Iterable[dict[str, typing.Any]]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
@@ -676,7 +677,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []  # Default is that details do not have types
 
-    def getLogs(self, parent: models.Model, item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: models.Model, item: str) -> list[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
         :param parent:
@@ -720,37 +721,37 @@ class ModelHandler(BaseModelHandler):
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
     custom_methods: typing.ClassVar[
-        typing.List[typing.Tuple[str, bool]]
+        list[typing.Tuple[str, bool]]
     ] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
     detail: typing.ClassVar[
-        typing.Optional[typing.Dict[str, typing.Type[DetailHandler]]]
+        typing.Optional[dict[str, typing.Type[DetailHandler]]]
     ] = None  # Dictionary containing detail routing
     # Fields that are going to be saved directly
     # * If a field is in the form "field:default" and field is not present in the request, default will be used
     # * If the "default" is the string "None", then the default will be None
     # * If the "default" is _ (underscore), then the field will be ignored (not saved) if not present in the request
     # Note that these fields has to be present in the model, and they can be "edited" in the beforeSave method
-    save_fields: typing.ClassVar[typing.List[str]] = []
+    save_fields: typing.ClassVar[list[str]] = []
     # Put removable fields before updating
-    remove_fields: typing.ClassVar[typing.List[str]] = []
+    remove_fields: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
-    table_fields: typing.ClassVar[typing.List[typing.Any]] = []
-    table_row_style: typing.ClassVar[typing.Dict] = {}
+    table_fields: typing.ClassVar[list[typing.Any]] = []
+    table_row_style: typing.ClassVar[dict] = {}
     table_title: typing.ClassVar[str] = ''
     table_subtitle: typing.ClassVar[str] = ''
 
     # This methods must be override, depending on what is provided
 
     # Data related
-    def item_as_dict(self, item: models.Model) -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: models.Model) -> dict[str, typing.Any]:
         """
         Must be overriden by descendants.
         Expects the return of an item as a dictionary
         """
         return {}
 
-    def item_as_dict_overview(self, item: models.Model) -> typing.Dict[str, typing.Any]:
+    def item_as_dict_overview(self, item: models.Model) -> dict[str, typing.Any]:
         """
         Invoked when request is an "overview"
         default behavior is return item_as_dict
@@ -765,11 +766,11 @@ class ModelHandler(BaseModelHandler):
         """
         return []
 
-    def getTypes(self, *args, **kwargs) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+    def getTypes(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
         for type_ in self.enum_types():
             yield self.typeAsDict(type_)
 
-    def getType(self, type_: str) -> typing.Dict[str, typing.Any]:
+    def getType(self, type_: str) -> dict[str, typing.Any]:
         found = None
         for v in self.getTypes():
             if v['type'] == type_:
@@ -783,7 +784,7 @@ class ModelHandler(BaseModelHandler):
         return found
 
     # log related
-    def getLogs(self, item: models.Model) -> typing.List[typing.Dict]:
+    def getLogs(self, item: models.Model) -> list[dict]:
         self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
             return log.getLogs(item)
@@ -792,7 +793,7 @@ class ModelHandler(BaseModelHandler):
             return []
 
     # gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return []
         # raise self.invalidRequestException()
 
@@ -807,7 +808,7 @@ class ModelHandler(BaseModelHandler):
         pass
 
     # Invoked to possibily fix fields (or add new one, or check
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         pass
 
     # Invoked right after saved an item (no matter if new or edition)

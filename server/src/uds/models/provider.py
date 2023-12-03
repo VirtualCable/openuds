@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import models
 from django.db.models import signals
@@ -81,7 +82,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return services.factory().lookup(self.data_type) or services.ServiceProvider
 
     def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
+        self, values: typing.Optional[dict[str, str]] = None
     ) -> 'ServiceProvider':
         prov: 'ServiceProvider' = typing.cast(
             'ServiceProvider', super().getInstance(values=values)

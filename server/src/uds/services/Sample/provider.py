@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 
 from django.utils.translation import gettext_noop as _
@@ -192,8 +193,8 @@ class Provider(services.ServiceProvider):
 
     @staticmethod
     def test(
-        env: 'Environment', data: typing.Dict[str, str]
-    ) -> typing.List[typing.Any]:
+        env: 'Environment', data: dict[str, str]
+    ) -> list[typing.Any]:
         """
         Create your test method here so the admin can push the "check" button
         and this gets executed.

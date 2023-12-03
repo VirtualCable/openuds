@@ -34,6 +34,7 @@ import codecs
 import datetime
 import logging
 import typing
+import collections.abc
 
 from weasyprint import HTML, CSS, default_url_fetcher
 
@@ -95,7 +96,7 @@ class Report(UserInterface):
         html: str,
         header: typing.Optional[str] = None,
         water: typing.Optional[str] = None,
-        images: typing.Optional[typing.Dict[str, bytes]] = None,
+        images: typing.Optional[dict[str, bytes]] = None,
     ) -> bytes:
         """
         Renders an html as PDF.
@@ -105,7 +106,7 @@ class Report(UserInterface):
         # url fetcher for weasyprint
         def report_fetcher(
             url: str, timeout=10, ssl_context=None  # pylint: disable=unused-argument
-        ) -> typing.Dict:
+        ) -> dict:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
                 imagePath = stock.getStockImagePath(url[8:])

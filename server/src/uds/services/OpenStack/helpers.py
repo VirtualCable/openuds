@@ -31,6 +31,7 @@
 '''
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core.ui import gui
@@ -40,7 +41,7 @@ from . import openstack
 logger = logging.getLogger(__name__)
 
 
-def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, bool]:
+def getApi(parameters: dict[str, str]) -> typing.Tuple[openstack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
     from uds.core.environment import Environment
@@ -63,8 +64,8 @@ def getApi(parameters: typing.Dict[str, str]) -> typing.Tuple[openstack.Client, 
 
 
 def getResources(
-    parameters: typing.Dict[str, str]
-) -> typing.List[typing.Dict[str, typing.Any]]:
+    parameters: dict[str, str]
+) -> list[dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Project Selector
     '''
@@ -95,8 +96,8 @@ def getResources(
 
 
 def getVolumes(
-    parameters: typing.Dict[str, str]
-) -> typing.List[typing.Dict[str, typing.Any]]:
+    parameters: dict[str, str]
+) -> list[dict[str, typing.Any]]:
     '''
     This helper is designed as a callback for Zone Selector
     '''

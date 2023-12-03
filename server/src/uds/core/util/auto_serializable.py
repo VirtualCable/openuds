@@ -46,6 +46,7 @@ class UserDeploymentService(AutoSerializable, services.UserDeployment):
 
 import itertools
 import typing
+import collections.abc
 import logging
 import json
 import zlib
@@ -69,7 +70,7 @@ class _Unassigned:
 UNASSIGNED = _Unassigned()
 
 T = typing.TypeVar('T')
-DefaultValueType = typing.Union[T, typing.Callable[[], T], _Unassigned]
+DefaultValueType = typing.Union[T, collections.abc.Callable[[], T], _Unassigned]
 
 logger = logging.getLogger(__name__)
 
@@ -211,7 +212,7 @@ class BoolField(_SerializableField[bool]):
         self.__set__(instance, data == b'1')
 
 
-class ListField(_SerializableField[typing.List]):
+class ListField(_SerializableField[list]):
     """List field
 
     Note:
@@ -220,7 +221,7 @@ class ListField(_SerializableField[typing.List]):
 
     def __init__(
         self,
-        default: typing.Union[typing.List, typing.Callable[[], typing.List]] = lambda: [],
+        default: typing.Union[list, collections.abc.Callable[[], list]] = lambda: [],
     ):
         super().__init__(list, default)
 
@@ -231,7 +232,7 @@ class ListField(_SerializableField[typing.List]):
         self.__set__(instance, json.loads(data))
 
 
-class DictField(_SerializableField[typing.Dict]):
+class DictField(_SerializableField[dict]):
     """Dict field
 
     Note:
@@ -240,7 +241,7 @@ class DictField(_SerializableField[typing.Dict]):
 
     def __init__(
         self,
-        default: typing.Union[typing.Dict, typing.Callable[[], typing.Dict]] = lambda: {},
+        default: typing.Union[dict, collections.abc.Callable[[], dict]] = lambda: {},
     ):
         super().__init__(dict, default)
 
@@ -333,7 +334,7 @@ class AutoSerializable(metaclass=_FieldNameSetter):
         ...     d = ListField(defalut=lambda: [1, 2, 3])
     """
 
-    _fields: typing.Dict[str, typing.Any]
+    _fields: dict[str, typing.Any]
 
     def process_data(self, header: bytes, data: bytes) -> bytes:
         """Process data before marshalling

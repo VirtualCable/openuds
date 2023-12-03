@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import functools
 
 import dns.resolver
@@ -36,12 +37,12 @@ import dns.reversename
 
 
 @functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
-def resolve(hostname: str) -> typing.List[str]:
+def resolve(hostname: str) -> list[str]:
     """
     Resolves a hostname to a list of ips
     First items are ipv4, then ipv6
     """
-    ips: typing.List[str] = []
+    ips: list[str] = []
     for i in ('A', 'AAAA'):
         try:
             ips.extend([str(ip) for ip in dns.resolver.resolve(hostname, i)])  # type: ignore
@@ -50,7 +51,7 @@ def resolve(hostname: str) -> typing.List[str]:
     return ips
 
 @functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
-def reverse(ip: str) -> typing.List[str]:
+def reverse(ip: str) -> list[str]:
     """
     Resolves an ip to a list of hostnames
     """

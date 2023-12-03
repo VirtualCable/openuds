@@ -34,6 +34,7 @@ import io
 import logging
 import os
 import typing
+import collections.abc
 
 import paramiko
 from django.utils.translation import gettext_lazy

@@ -1,11 +1,12 @@
 import datetime
 import re
 import typing
+import collections.abc
 
 networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
-conversors: typing.MutableMapping[typing.Type, typing.Callable] = {
+conversors: typing.MutableMapping[typing.Type, collections.abc.Callable] = {
     str: lambda x: str(x),
     bool: lambda x: bool(x),
     int: lambda x: int(x or '0'),
@@ -93,11 +94,11 @@ class NodeStats(typing.NamedTuple):
 
 class ClusterStatus(typing.NamedTuple):
     cluster: typing.Optional[Cluster]
-    nodes: typing.List[Node]
+    nodes: list[Node]
 
     @staticmethod
     def fromJson(dictionary: typing.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
-        nodes: typing.List[Node] = []
+        nodes: list[Node] = []
         cluster: typing.Optional[Cluster] = None
 
         for i in dictionary['data']:
@@ -228,13 +229,13 @@ class VMConfiguration(typing.NamedTuple):
     cores: int
     vmgenid: str
     digest: str
-    networks: typing.List[NetworkConfiguration]
+    networks: list[NetworkConfiguration]
 
     template: bool
 
     @staticmethod
     def fromDict(src: typing.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
-        nets: typing.List[NetworkConfiguration] = []
+        nets: list[NetworkConfiguration] = []
         for k in src.keys():
             if k[:3] == 'net':
                 nets.append(NetworkConfiguration.fromString(k, src[k]))

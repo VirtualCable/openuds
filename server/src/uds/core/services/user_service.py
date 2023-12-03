@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable

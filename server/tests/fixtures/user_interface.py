@@ -29,11 +29,12 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import datetime
 
 from uds.core.ui.user_interface import UserInterface, gui
 
-DEFAULTS: typing.Dict[str, typing.Any] = {
+DEFAULTS: dict[str, typing.Any] = {
     'str_field': 'Default value text',
     'str_auto_field': 'Default value auto',
     'num_field': 50,
@@ -98,7 +99,7 @@ class TestingUserInterface(UserInterface):
         label='Multi Choice Field',
         order=6,
         tooltip='This is a multi choice field',
-        default=typing.cast(typing.List[str], DEFAULTS['multi_choice_field']),
+        default=typing.cast(list[str], DEFAULTS['multi_choice_field']),
         choices=['Value 1', 'Value 2', 'Value 3'],
     )
     editable_list_field = gui.EditableListField(
@@ -106,7 +107,7 @@ class TestingUserInterface(UserInterface):
         order=7,
         tooltip='This is a editable list field',
         required=False,
-        default=typing.cast(typing.List[str], DEFAULTS['editable_list_field']),
+        default=typing.cast(list[str], DEFAULTS['editable_list_field']),
     )
     checkbox_field = gui.CheckBoxField(
         label='Checkbox Field',

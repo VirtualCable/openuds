@@ -33,6 +33,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 
 from uds.REST import Handler
@@ -94,7 +95,7 @@ class Tickets(Handler):
     @staticmethod
     def result(
         result: str = '', error: typing.Optional[str] = None
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Returns a result for a Ticket request
         """
@@ -144,7 +145,7 @@ class Tickets(Handler):
     # Must be invoked as '/rest/ticket/create, with "username", ("authId" or "auth_id") or ("auth_tag" or "authSmallName" or "authTag"), "groups" (array) and optionally "time" (in seconds) as paramteres
     def put(
         self,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         """
         Processes put requests, currently only under "create"
         """
@@ -177,7 +178,7 @@ class Tickets(Handler):
             password: str = self.getParam('password')
             # Some machines needs password, depending on configuration
 
-            groupIds: typing.List[str] = []
+            groupIds: list[str] = []
             for groupName in ensure.is_list(self.getParam('groups')):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid or '')

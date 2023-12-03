@@ -33,6 +33,7 @@
 import json
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -79,7 +80,7 @@ class AccessCalendars(DetailHandler):
     def getTitle(self, parent: 'Model'):
         return _('Access restrictions by calendar')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'calendar': {'title': _('Calendar')}},
@@ -142,7 +143,7 @@ class ActionsCalendars(DetailHandler):
     ]
 
     @staticmethod
-    def as_dict(item: 'CalendarAction') -> typing.Dict[str, typing.Any]:
+    def as_dict(item: 'CalendarAction') -> dict[str, typing.Any]:
         action = CALENDAR_ACTION_DICT.get(item.action, {})
         params = json.loads(item.params)
         return {
@@ -174,7 +175,7 @@ class ActionsCalendars(DetailHandler):
     def getTitle(self, parent: 'Model'):
         return _('Scheduled actions')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'calendar': {'title': _('Calendar')}},
             {'actionDescription': {'title': _('Action')}},

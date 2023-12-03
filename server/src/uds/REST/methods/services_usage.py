@@ -33,6 +33,7 @@
 
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -55,7 +56,7 @@ class ServicesUsage(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(item: UserService) -> typing.Dict[str, typing.Any]:
+    def itemToDict(item: UserService) -> dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -115,7 +116,7 @@ class ServicesUsage(DetailHandler):
     def getTitle(self, parent: 'Model') -> str:
         return _('Services Usage')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             # {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'state_date': {'title': _('Access'), 'type': 'datetime'}},
@@ -129,7 +130,7 @@ class ServicesUsage(DetailHandler):
             {'source_host': {'title': _('Src Host')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
     def deleteItem(self, parent: 'Model', item: str) -> None:

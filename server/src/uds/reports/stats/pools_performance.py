@@ -35,6 +35,7 @@ import datetime
 import io
 import logging
 import typing
+import collections.abc
 
 import django.template.defaultfilters as filters
 from django.db.models import Count
@@ -108,7 +109,7 @@ class PoolPerformanceReport(StatsReport):
 
     def getRangeData(
         self,
-    ) -> typing.Tuple[str, typing.List, typing.List]:  # pylint: disable=too-many-locals
+    ) -> typing.Tuple[str, list, list]:  # pylint: disable=too-many-locals
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         if self.samplingPoints.num() < 2:
@@ -124,7 +125,7 @@ class PoolPerformanceReport(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals: typing.List[typing.Tuple[int, int]] = []
+        samplingIntervals: list[typing.Tuple[int, int]] = []
         samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
             samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))

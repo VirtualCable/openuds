@@ -34,6 +34,7 @@ import logging
 import os.path
 import sys
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -104,7 +105,7 @@ class Module(UserInterface, Environmentable, Serializable):
 
     # Types
     ValuesType = typing.Optional[
-        typing.Dict[str, typing.Any]
+        dict[str, typing.Any]
     ]  # values type value will be str or list[str] int most cases
 
     # : Which coded to use to encode module by default.
@@ -191,8 +192,8 @@ class Module(UserInterface, Environmentable, Serializable):
 
     @staticmethod
     def test(
-        env: Environment, data: typing.Dict[str, str]
-    ) -> typing.List[typing.Any]:  # pylint: disable=unused-argument
+        env: Environment, data: dict[str, str]
+    ) -> list[typing.Any]:  # pylint: disable=unused-argument
         """
         Test if the connection data is ok.
 

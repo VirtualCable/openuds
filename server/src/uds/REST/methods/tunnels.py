@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds import models
 from uds.core import consts, types

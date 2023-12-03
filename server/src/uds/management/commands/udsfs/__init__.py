@@ -34,6 +34,7 @@ import stat
 import os.path
 import logging
 import typing
+import collections.abc
 
 
 from django.core.management.base import BaseCommand
@@ -50,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 
 class UDSFS(Operations):
-    dispatchers: typing.ClassVar[typing.Dict[str, types.UDSFSInterface]] = {
+    dispatchers: typing.ClassVar[dict[str, types.UDSFSInterface]] = {
         'events': events.EventFS(),
         'stats': stats.StatsFS(),
     }
@@ -73,7 +74,7 @@ class UDSFS(Operations):
 
         raise FuseOSError(errno.ENOENT)
 
-    def getattr(self, path: typing.Optional[str], fh: typing.Any = None) -> typing.Dict[str, int]:
+    def getattr(self, path: typing.Optional[str], fh: typing.Any = None) -> dict[str, int]:
         # If root folder, return service creation date
         if path == '/':
             return self._own_stats.as_dict()
@@ -89,14 +90,14 @@ class UDSFS(Operations):
         logger.debug('Getting attr %s from %s (%s)', name, path, position)
         return ''
 
-    def readdir(self, path: str, fh: typing.Any) -> typing.List[str]:
+    def readdir(self, path: str, fh: typing.Any) -> list[str]:
         '''
         Read directory, that is composed of the dispatcher names and the "dot" entries
         in case of the root folder, otherwise call the dispatcher with the rest of the path
         '''
         if path == '/':
             return ['.', '..'] + list(self.dispatchers.keys())
-        return typing.cast(typing.List[str], self._dispatch(path, 'readdir'))
+        return typing.cast(list[str], self._dispatch(path, 'readdir'))
 
     def read(self, path: typing.Optional[str], size: int, offset: int, fh: typing.Any) -> bytes:
         '''

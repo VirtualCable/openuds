@@ -33,6 +33,7 @@ import dataclasses
 import enum
 import re
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop
 
@@ -105,8 +106,8 @@ class FieldPatternType(enum.StrEnum):
 
 class Filler(typing.TypedDict):
     callbackName: str
-    parameters: typing.List[str]
-    function: typing.NotRequired[typing.Callable[..., typing.Any]]
+    parameters: list[str]
+    function: typing.NotRequired[collections.abc.Callable[..., typing.Any]]
 
 
 class ChoiceItem(typing.TypedDict):
@@ -114,7 +115,7 @@ class ChoiceItem(typing.TypedDict):
     text: str
 
 
-ChoicesType = typing.Union[typing.Callable[[], typing.Iterable[ChoiceItem]], typing.Iterable[ChoiceItem]]
+ChoicesType = typing.Union[collections.abc.Callable[[], typing.Iterable[ChoiceItem]], typing.Iterable[ChoiceItem]]
 
 
 @dataclasses.dataclass
@@ -124,8 +125,8 @@ class FieldInfo:
     order: int
     type: FieldType
     readonly: typing.Optional[bool] = None
-    value: typing.Union[typing.Callable[[], typing.Any], typing.Any] = None
-    default: typing.Optional[typing.Union[typing.Callable[[], str], str]] = None
+    value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
+    default: typing.Optional[typing.Union[collections.abc.Callable[[], str], str]] = None
     required: typing.Optional[bool] = None
     length: typing.Optional[int] = None
     lines: typing.Optional[int] = None
@@ -137,6 +138,6 @@ class FieldInfo:
     fills: typing.Optional[Filler] = None
     rows: typing.Optional[int] = None
 
-    def asDict(self) -> typing.Dict[str, typing.Any]:
+    def asDict(self) -> dict[str, typing.Any]:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}

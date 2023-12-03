@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.db import IntegrityError, models
 
@@ -64,7 +65,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         app_label = 'uds'
 
     def getInstance(
-        self, values: typing.Optional[typing.Dict[str, str]] = None
+        self, values: typing.Optional[dict[str, str]] = None
     ) -> 'osmanagers.OSManager':
         return typing.cast('osmanagers.OSManager', super().getInstance(values=values))
 

@@ -33,6 +33,7 @@
 import re
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext, gettext_lazy as _
 from uds.models import Authenticator, Network, MFA
@@ -83,7 +84,7 @@ class Authenticators(ModelHandler):
     def enum_types(self) -> typing.Iterable[typing.Type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def typeInfo(self, type_: typing.Type['Module']) -> typing.Dict[str, typing.Any]:
+    def typeInfo(self, type_: typing.Type['Module']) -> dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
                 'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,  # type: ignore
@@ -99,7 +100,7 @@ class Authenticators(ModelHandler):
         # Not of my type
         return {}
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         try:
             authType = auths.factory().lookup(type_)
             if authType:
@@ -151,7 +152,7 @@ class Authenticators(ModelHandler):
             logger.info('Type not found: %s', e)
             raise NotFound('type not found') from e
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Authenticator)
         type_ = item.getType()
         return {
@@ -186,7 +187,7 @@ class Authenticators(ModelHandler):
         item.networks.set(Network.objects.filter(uuid__in=networks))  # type: ignore  # set is not part of "queryset"
 
     # Custom "search" method
-    def search(self, item: 'Model') -> typing.List[typing.Dict]:
+    def search(self, item: 'Model') -> list[dict]:
         item = ensure.is_instance(item, Authenticator)
         self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
@@ -229,7 +230,7 @@ class Authenticators(ModelHandler):
         return res[1]
 
     def beforeSave(
-        self, fields: typing.Dict[str, typing.Any]
+        self, fields: dict[str, typing.Any]
     ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         logger.debug(self._params)
         if fields.get('mfa_id'):

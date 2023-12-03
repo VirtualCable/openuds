@@ -34,6 +34,7 @@ import io
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -78,7 +79,7 @@ class CountersPoolAssigned(StatsReport):
         vals = [gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
         self.pools.setChoices(vals)
 
-    def getData(self) -> typing.List[typing.Dict[str, typing.Any]]:
+    def getData(self) -> list[dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.as_date()
 

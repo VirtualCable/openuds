@@ -31,6 +31,7 @@
 """
 import sys
 import typing
+import collections.abc
 import logging
 import enum
 
@@ -41,11 +42,11 @@ from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
-_saveLater: typing.List[typing.Tuple['Config.Value', typing.Any]] = []
-_getLater: typing.List['Config.Value'] = []
+_saveLater: list[typing.Tuple['Config.Value', typing.Any]] = []
+_getLater: list['Config.Value'] = []
 
 # For custom params (for choices mainly)
-_configParams: typing.Dict[str, typing.Any] = {}
+_configParams: dict[str, typing.Any] = {}
 
 # Pair of section/value removed from current UDS version
 # Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
@@ -345,7 +346,7 @@ class Config:
         """
         Returns a dictionary with all config values
         """
-        res: typing.Dict[str, typing.Dict[str, typing.Any]] = {}
+        res: dict[str, dict[str, typing.Any]] = {}
         for cfg in Config.enumerate():
             # Skip removed configuration values, even if they are in database
             logger.debug('Key: %s, val: %s', cfg.section(), cfg.key())

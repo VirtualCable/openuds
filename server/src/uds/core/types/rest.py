@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 class TypeInfo(typing.NamedTuple):
     name: str
@@ -37,7 +38,7 @@ class TypeInfo(typing.NamedTuple):
     description: str
     icon: str
 
-    def asDict(self, **extra) -> typing.Dict[str, typing.Any]:
+    def asDict(self, **extra) -> dict[str, typing.Any]:
         return {
             'name': self.name,
             'type': self.type,

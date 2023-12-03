@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -111,7 +112,7 @@ class MetaPools(ModelHandler):
 
     custom_methods = [('setFallbackAccess', True), ('getFallbackAccess', True)]
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, MetaPool)
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
         # Access from dict will raise an exception, and item will be skipped
@@ -157,7 +158,7 @@ class MetaPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         localGUI = self.addDefaultFields([], ['name', 'comments', 'tags'])
 
         for field in [
@@ -253,7 +254,7 @@ class MetaPools(ModelHandler):
 
         return localGUI
 
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             # **** IMAGE ***

@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -57,7 +58,7 @@ class ServerType(enum.IntEnum):
         }[self]
 
     @staticmethod
-    def enumerate() -> typing.List[typing.Tuple[int, str]]:
+    def enumerate() -> list[typing.Tuple[int, str]]:
         return [
             (ServerType.TUNNEL, _('Tunnel')),
             (ServerType.ACTOR, _('Actor')),
@@ -74,7 +75,7 @@ class ServerSubtype(metaclass=singleton.Singleton):
         managed: bool
         icon: str
 
-    registered: typing.Dict[typing.Tuple[ServerType, str], Info]
+    registered: dict[typing.Tuple[ServerType, str], Info]
 
     def __init__(self) -> None:
         self.registered = {}
@@ -117,7 +118,7 @@ class ServerStats(typing.NamedTuple):
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    disks: typing.List[typing.Tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
+    disks: list[typing.Tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
     stamp: float = 0  # Timestamp of this stats
@@ -191,7 +192,7 @@ class ServerStats(typing.NamedTuple):
 
         dct = {k: v for k, v in data.items()}  # Make a copy
         dct.update(kwargs)  # and update with kwargs
-        disks: typing.List[typing.Tuple[str, int, int]] = []
+        disks: list[typing.Tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
             disks.append((disk['mountpoint'], disk['used'], disk['total']))
         return ServerStats(
@@ -205,7 +206,7 @@ class ServerStats(typing.NamedTuple):
             stamp=dct.get('stamp', getSqlStamp()),
         )
 
-    def asDict(self) -> typing.Dict[str, typing.Any]:
+    def asDict(self) -> dict[str, typing.Any]:
         data = self._asdict()
         # Replace disk as dicts
         data['disks'] = [{'mountpoint': d[0], 'used': d[1], 'total': d[2]} for d in self.disks]

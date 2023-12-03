@@ -34,6 +34,7 @@ import enum
 import re
 import logging
 import typing
+import collections.abc
 
 from uds.core import types, consts
 

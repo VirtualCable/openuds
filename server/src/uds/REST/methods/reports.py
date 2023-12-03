@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _
 
@@ -141,14 +142,14 @@ class Reports(model.BaseModelHandler):
             raise self.invalidRequestException(str(e))
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         report = self._findReport(type_)
         return sorted(report.guiDescription(), key=lambda f: f['gui']['order'])
 
     # Returns the list of
     def getItems(
         self, *args, **kwargs
-    ) -> typing.Generator[typing.Dict[str, typing.Any], None, None]:
+    ) -> typing.Generator[dict[str, typing.Any], None, None]:
         for i in reports.availableReports:
             yield {
                 'id': i.getUuid(),

@@ -32,6 +32,7 @@ import datetime
 import logging
 import secrets
 import typing
+import collections.abc
 
 import dns.resolver
 import dns.reversename
@@ -64,11 +65,11 @@ def migrate(
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)
 
-            servers: typing.List[str] = getattr(obj, ipListAttr).value
+            servers: list[str] = getattr(obj, ipListAttr).value
             # Clean up servers, removing empty ones
             servers = [s.strip() for s in servers if s.strip()]
             # Try dns lookup if servers contains hostnames
-            server_ip_hostname: typing.List[typing.Tuple[str, str]] = []
+            server_ip_hostname: list[typing.Tuple[str, str]] = []
             for server in servers:
                 try:
                     validators.validateIpv4OrIpv6(server)

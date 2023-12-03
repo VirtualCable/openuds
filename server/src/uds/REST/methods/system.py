@@ -35,6 +35,7 @@ import datetime
 import codecs
 import logging
 import typing
+import collections.abc
 
 from uds import models
 import uds.core.types.permissions
@@ -65,7 +66,7 @@ def getServicesPoolsCounters(
     servicePool: typing.Optional[models.ServicePool],
     counter_type: int,
     since_days: int = SINCE,
-) -> typing.List[typing.Mapping[str, typing.Any]]:
+) -> list[typing.Mapping[str, typing.Any]]:
     try:
         cacheKey = (
             (servicePool and str(servicePool.id) or 'all')
@@ -83,7 +84,7 @@ def getServicesPoolsCounters(
                 us.id = -1  # Global stats
             else:
                 us = servicePool
-            val: typing.List[typing.Mapping[str, typing.Any]] = []
+            val: list[typing.Mapping[str, typing.Any]] = []
             for x in counters.getCounters(
                 us,
                 counter_type,

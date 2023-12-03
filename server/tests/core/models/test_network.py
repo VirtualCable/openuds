@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import logging
 
 from uds.models import Network
@@ -42,7 +43,7 @@ NET_IPV6_TEMPLATE = '2001:db8:85a3:8d3:13{:02x}::/64'
 logger = logging.getLogger(__name__)
 
 class NetworkModelTest(UDSTestCase):
-    nets: 'typing.List[Network]'
+    nets: 'list[Network]'
 
     def setUp(self) -> None:
         super().setUp()

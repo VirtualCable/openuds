@@ -35,6 +35,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import xmlrpc.client
 import logging
 import typing
+import collections.abc
 
 from uds.core.util import xml2dict
 
@@ -45,7 +46,7 @@ logger = logging.getLogger(__name__)
 RT = typing.TypeVar('RT')
 
 # Decorator
-def ensureConnected(fnc: typing.Callable[..., RT]) -> typing.Callable[..., RT]:
+def ensureConnected(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     def inner(*args, **kwargs) -> RT:
         args[0].connect()
         return fnc(*args, **kwargs)
@@ -81,7 +82,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
     password: str
     endpoint: str
     connection: xmlrpc.client.ServerProxy
-    cachedVersion: typing.Optional[typing.List[str]]
+    cachedVersion: typing.Optional[list[str]]
 
     def __init__(self, username: str, password: str, endpoint: str) -> None:
         self.username = username
@@ -97,7 +98,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
 
     @property  # type: ignore
     @ensureConnected
-    def version(self) -> typing.List[str]:
+    def version(self) -> list[str]:
         if self.cachedVersion is None:
             # Retrieve Version & keep it
             result = self.connection.one.system.version(self.sessionString)

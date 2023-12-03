@@ -33,6 +33,7 @@
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.db.models import Count, Q
 from django.utils.translation import gettext
@@ -183,7 +184,7 @@ class ServicesPools(ModelHandler):
         # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
         # return super(ServicesPools, self).getItems(*args, **kwargs)
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, ServicePool)
         summary = 'summarize' in self._params
         # if item does not have an associated service, hide it (the case, for example, for a removed service)
@@ -276,7 +277,7 @@ class ServicesPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
@@ -468,7 +469,7 @@ class ServicesPools(ModelHandler):
         return g
 
     # pylint: disable=too-many-statements
-    def beforeSave(self, fields: typing.Dict[str, typing.Any]) -> None:
+    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         def macro_fld_len(x) -> int:
             w = x
@@ -598,7 +599,7 @@ class ServicesPools(ModelHandler):
             logger.exception('deleting service pool')
 
     # Logs
-    def getLogs(self, item: 'Model') -> typing.List[typing.Dict]:
+    def getLogs(self, item: 'Model') -> list[dict]:
         item = ensure.is_instance(item, ServicePool)
         try:
             return log.getLogs(item)
@@ -624,7 +625,7 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        validActions: typing.Tuple[typing.Dict, ...] = ()
+        validActions: typing.Tuple[dict, ...] = ()
         itemInfo = item.service.getType()  # type: ignore
         if itemInfo.usesCache is True:
             validActions += (

@@ -30,6 +30,7 @@
 """
 import time
 import typing
+import collections.abc
 import functools
 import logging
 
@@ -79,7 +80,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         self.assertIn('row-style', tableinfo)
 
         # Ensure at least name, role, real_name comments, state and last_access are present on tableinfo['fields']
-        fields: typing.List[typing.Mapping[str, typing.Any]] = tableinfo['fields']
+        fields: list[typing.Mapping[str, typing.Any]] = tableinfo['fields']
         self.assertTrue(
             functools.reduce(
                 lambda x, y: x and y,

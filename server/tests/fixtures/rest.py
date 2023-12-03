@@ -29,6 +29,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 from ..utils import rest
 
@@ -42,7 +43,7 @@ class UserRestStruct(rest.RestStruct):
     state: str
     is_admin: bool
     staff_member: bool
-    groups: typing.List[rest.uuid_type]
+    groups: list[rest.uuid_type]
     mfa_data: typing.Optional[str]
     password: typing.Optional[str]
 
@@ -63,7 +64,7 @@ class ServicePoolRestStruct(rest.RestStruct):
     id: rest.uuid_type
     name: str
     short_name: str
-    tags: typing.List[str]
+    tags: list[str]
     parent: str
     parent_type: str
     comments: str
@@ -84,22 +85,22 @@ class ServicePoolRestStruct(rest.RestStruct):
     allow_users_reset: bool
     ignores_unused: bool
     fallbackAccess: str
-    meta_member: typing.List[typing.Dict[str, rest.uuid_type]]
+    meta_member: list[dict[str, rest.uuid_type]]
     calendar_message: str
 
 
 # Provide a "random" dictionary based on a
-def createUser(**kwargs) -> typing.Dict[str, typing.Any]:
+def createUser(**kwargs) -> dict[str, typing.Any]:
     data = UserRestStruct.random_create(**kwargs).as_dict()
     data['state'] = 'A'  # Fix state to 1 char
     return data
 
 
-def createGroup(**kwargs) -> typing.Dict[str, typing.Any]:
+def createGroup(**kwargs) -> dict[str, typing.Any]:
     data = GroupRestStruct.random_create(**kwargs).as_dict()
     data['state'] = 'A'  # Fix state to 1 char
     return data
 
 
-def createServicePool(**kwargs) -> typing.Dict[str, typing.Any]:
+def createServicePool(**kwargs) -> dict[str, typing.Any]:
     return ServicePoolRestStruct.random_create(**kwargs).as_dict()

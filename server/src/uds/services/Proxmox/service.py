@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import re
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types, consts

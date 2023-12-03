@@ -34,6 +34,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 import dns.resolver
 import dns.reversename

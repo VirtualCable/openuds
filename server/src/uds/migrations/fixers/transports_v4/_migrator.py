@@ -1,4 +1,5 @@
 import typing
+import collections.abc
 import logging
 
 from uds.core.environment import Environment

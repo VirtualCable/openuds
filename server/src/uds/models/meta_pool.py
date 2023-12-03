@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 import operator
 import typing
+import collections.abc
 
 from django.db import models
 from django.db.models import QuerySet, signals

@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.urls import reverse
 from django.db.models import Q
@@ -218,7 +219,7 @@ def ticketAuth(
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
         # Add user to groups, if they exists...
-        grps: typing.List = []
+        grps: list = []
         for g in groups:
             try:
                 grps.append(auth.groups.get(uuid=g))

@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_lazy as _, gettext
 
@@ -86,7 +87,7 @@ class Networks(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getGui(self, type_: str) -> typing.List[typing.Any]:
+    def getGui(self, type_: str) -> list[typing.Any]:
         return self.addField(
             self.addDefaultFields([], ['name', 'tags']),
             {
@@ -101,7 +102,7 @@ class Networks(ModelHandler):
             },
         )
 
-    def item_as_dict(self, item: 'Model') -> typing.Dict[str, typing.Any]:
+    def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Network)
         return {
             'id': item.uuid,

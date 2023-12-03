@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 from django.http import HttpResponseRedirect
 
 from django.utils.translation import gettext as _

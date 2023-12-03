@@ -36,6 +36,7 @@ import enum
 import hashlib
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core.module import Module

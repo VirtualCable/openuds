@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 
 from ast import If
 import typing
+import collections.abc
 import logging
 
 from django.utils.translation import gettext_noop as _
@@ -334,7 +335,7 @@ class Service(Module):
         If not overriden, means that it cannot assign manually
 
         Returns:
-            typing.List[typing.Tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
+            list[typing.Tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
         """
         return []
 

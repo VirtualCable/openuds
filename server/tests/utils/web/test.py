@@ -31,6 +31,7 @@
 
 import logging
 import typing
+import collections.abc
 
 from uds import models
 
@@ -45,10 +46,10 @@ NUMBER_OF_ITEMS_TO_CREATE = 4
 class WEBTestCase(test.UDSTransactionTestCase):
     # Authenticators related
     auth: models.Authenticator
-    groups: typing.List[models.Group]
-    admins: typing.List[models.User]
-    staffs: typing.List[models.User]
-    plain_users: typing.List[models.User]
+    groups: list[models.Group]
+    admins: list[models.User]
+    staffs: list[models.User]
+    plain_users: list[models.User]
 
     def setUp(self) -> None:
         # Set up data for REST Test cases

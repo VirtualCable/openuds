@@ -32,6 +32,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core.types.request import ExtendedHttpRequest
@@ -120,7 +121,7 @@ class SampleAuth(auths.Authenticator):
 
     groups = gui.EditableListField(label=_('Groups'), default=['Gods', 'Daemons', 'Mortals'])
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         """
         Simply check if we have
         at least one group in the list
@@ -133,7 +134,7 @@ class SampleAuth(auths.Authenticator):
         if values and len(self.groups.value) < 2:
             raise exceptions.validation.ValidationError(_('We need more than two groups!'))
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         """
         Here we will receive a pattern for searching users.
 
@@ -151,7 +152,7 @@ class SampleAuth(auths.Authenticator):
             for a in range(1, 10)
         ]
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         """
         Here we we will receive a patter for searching groups.
 
@@ -271,7 +272,7 @@ class SampleAuth(auths.Authenticator):
 
     def authCallback(
         self,
-        parameters: typing.Dict[str, typing.Any],
+        parameters: dict[str, typing.Any],
         gm: 'auths.GroupsManager',  # pylint: disable=unused-argument
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> types.auth.AuthenticationResult:
@@ -292,7 +293,7 @@ class SampleAuth(auths.Authenticator):
 
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=user)
 
-    def createUser(self, usrData: typing.Dict[str, str]) -> None:
+    def createUser(self, usrData: dict[str, str]) -> None:
         """
         This method provides a "check oportunity" to authenticators for users created
         manually at administration interface.
@@ -313,7 +314,7 @@ class SampleAuth(auths.Authenticator):
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 
-    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
+    def modifyUser(self, usrData: dict[str, str]) -> None:
         """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.

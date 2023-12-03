@@ -1,4 +1,5 @@
 import typing
+import collections.abc
 import functools
 import enum
 

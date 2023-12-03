@@ -34,6 +34,7 @@ import datetime
 import logging
 import re
 import typing
+import collections.abc
 import xml.sax  # nosec: used to parse trusted xml provided only by administrators
 from urllib.parse import urlparse
 
@@ -322,7 +323,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     manageUrl = gui.HiddenField(serializable=True)
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         """
         Simply check if we have
         at least one group in the list
@@ -416,7 +417,7 @@ class SAMLAuthenticator(auths.Authenticator):
         self,
         request: 'ExtendedHttpRequest',
         params: typing.Optional['types.auth.AuthCallbackParams'] = None,
-    ) -> typing.Dict[str, typing.Any]:
+    ) -> dict[str, typing.Any]:
         manageUrlObj = urlparse(self.manageUrl.value)
         script_path = manageUrlObj.path
         host = manageUrlObj.netloc
@@ -458,7 +459,7 @@ class SAMLAuthenticator(auths.Authenticator):
         cachingKeyFnc=CACHING_KEY_FNC,
         cacheTimeout=3600 * 24 * 365,  # 1 year
     )
-    def getIdpMetadataDict(self) -> typing.Dict[str, typing.Any]:
+    def getIdpMetadataDict(self) -> dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
             try:
                 resp = requests.get(
@@ -475,7 +476,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return OneLogin_Saml2_IdPMetadataParser.parse(val)
 
-    def oneLoginSettings(self) -> typing.Dict[str, typing.Any]:
+    def oneLoginSettings(self) -> dict[str, typing.Any]:
         return {
             'strict': True,
             'debug': True,
@@ -570,7 +571,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     def logoutFromCallback(
         self,
-        req: typing.Dict[str, typing.Any],
+        req: dict[str, typing.Any],
         request: 'ExtendedHttpRequestWithUser',
     ) -> types.auth.AuthenticationResult:
         # Convert HTTP-POST to HTTP-REDIRECT on SAMLResponse, for just in case...

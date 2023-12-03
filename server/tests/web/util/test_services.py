@@ -34,6 +34,7 @@
 # We use commit/rollback
 import datetime
 import typing
+import collections.abc
 from unittest import mock
 
 from uds import models
@@ -48,7 +49,7 @@ from ...fixtures import services as fixtures_services
 class TestGetServicesData(UDSTransactionTestCase):
     request: mock.Mock
     auth: models.Authenticator
-    groups: typing.List[models.Group]
+    groups: list[models.Group]
     user: models.User
 
     def setUp(self) -> None:
@@ -74,7 +75,7 @@ class TestGetServicesData(UDSTransactionTestCase):
 
     def test_get_services_data(self) -> None:
         # Create 10 services, for this user
-        user_services: typing.List[models.ServicePool] = []
+        user_services: list[models.ServicePool] = []
         for i in range(10):
             user_services.append(
                 fixtures_services.createCacheTestingUserServices(
@@ -93,7 +94,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         #     'autorun': autorun,
         # }
         result_services: typing.Final[
-            typing.List[typing.Mapping[str, typing.Any]]
+            list[typing.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 10)
         self.assertEqual(data['ip'], '127.0.0.1')
@@ -165,7 +166,7 @@ class TestGetServicesData(UDSTransactionTestCase):
 
     def test_get_meta_services_data(self) -> None:
         # Create 10 services, for this user
-        user_services: typing.List[models.ServicePool] = []
+        user_services: list[models.ServicePool] = []
         for i in range(100):
             user_services.append(
                 fixtures_services.createCacheTestingUserServices(
@@ -174,7 +175,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
 
         # Create 10 meta services, for this user
-        meta_services: typing.List[models.MetaPool] = []
+        meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
                 fixtures_services.createMetaPool(
@@ -187,7 +188,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         now = datetime.datetime.now()
 
         result_services: typing.Final[
-            typing.List[typing.Mapping[str, typing.Any]]
+            list[typing.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 10)
         self.assertEqual(data['ip'], '127.0.0.1')
@@ -220,7 +221,7 @@ class TestGetServicesData(UDSTransactionTestCase):
 
     def test_get_meta_and_not_services_data(self) -> None:
         # Create 10 services, for this user
-        user_services: typing.List[models.ServicePool] = []
+        user_services: list[models.ServicePool] = []
         for i in range(110):
             user_services.append(
                 fixtures_services.createCacheTestingUserServices(
@@ -229,7 +230,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
 
         # Create 10 meta services, for this user, last 10 user_services will not be added to meta pools
-        meta_services: typing.List[models.MetaPool] = []
+        meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
                 fixtures_services.createMetaPool(
@@ -242,7 +243,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         now = datetime.datetime.now()
 
         result_services: typing.Final[
-            typing.List[typing.Mapping[str, typing.Any]]
+            list[typing.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 20)  # 10 metas and 10 normal pools
         # Some checks are ommited, because are already tested in other tests

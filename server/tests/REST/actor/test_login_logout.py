@@ -30,6 +30,7 @@
 """
 import random
 import typing
+import collections.abc
 
 
 from ...fixtures import authenticators as fixtures_authenticators

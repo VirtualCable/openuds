@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 import logging
 
 from django.http import HttpResponse, HttpRequest
@@ -105,7 +106,7 @@ def opengnsys(
             logger.debug('Processing logout from OpenGnsys %s', userService.friendly_name)
             actor_v3.Logout.process_logout(userService, 'OpenGnsys', '')  # Close all sessions
 
-    fnc: typing.Optional[typing.Callable[[], None]] = {
+    fnc: typing.Optional[collections.abc.Callable[[], None]] = {
         'login': login,
         'logout': logout,
         'release': release,

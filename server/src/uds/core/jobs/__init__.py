@@ -33,6 +33,7 @@ UDS jobs related modules
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 from .job import Job
 from .delayed_task import DelayedTask
 

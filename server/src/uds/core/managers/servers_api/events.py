@@ -30,6 +30,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 
 from django.conf import settings
@@ -43,7 +44,7 @@ from uds.REST.utils import rest_result
 logger = logging.getLogger(__name__)
 
 
-def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_log(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     # Log level is an string, as in log.LogLevel
     if data.get('userservice_uuid', None):  # Log for an user service
         try:
@@ -60,7 +61,7 @@ def process_log(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> 
     return rest_result(consts.OK)
 
 
-def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     """Processes the REST login event from a server
 
     data: {
@@ -120,7 +121,7 @@ def process_login(server: 'models.Server', data: typing.Dict[str, typing.Any]) -
     return rest_result(result)
 
 
-def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     """Processes the REST logout event from a server
 
     data: {
@@ -145,7 +146,7 @@ def process_logout(server: 'models.Server', data: typing.Dict[str, typing.Any]) 
     return rest_result(consts.OK)
 
 
-def process_ping(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_ping(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     if 'stats' in data:
         server.stats = types.servers.ServerStats.fromDict(data['stats'])
         # Set stats on server
@@ -154,18 +155,18 @@ def process_ping(server: 'models.Server', data: typing.Dict[str, typing.Any]) ->
     return rest_result(consts.OK)
 
 
-def process_ticket(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_ticket(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     return rest_result(models.TicketStore.get(data['ticket'], invalidate=False))
 
 
-def process_init(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process_init(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     # Init like on actor to allow "userServices" to initialize inside server
     # Currently unimplemented (just an idea, anotated here for future reference)
     return rest_result(consts.OK)
 
 
 PROCESSORS: typing.Final[
-    typing.Mapping[str, typing.Callable[['models.Server', typing.Dict[str, typing.Any]], typing.Any]]
+    typing.Mapping[str, collections.abc.Callable[['models.Server', dict[str, typing.Any]], typing.Any]]
 ] = {
     'log': process_log,
     'login': process_login,
@@ -176,7 +177,7 @@ PROCESSORS: typing.Final[
 }
 
 
-def process(server: 'models.Server', data: typing.Dict[str, typing.Any]) -> typing.Any:
+def process(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     """Processes the event data
     Valid events are (in key 'type'):
     * log: A log message (to server or userService)

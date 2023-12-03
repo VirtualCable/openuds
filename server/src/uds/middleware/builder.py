@@ -30,6 +30,7 @@
 """
 import logging
 import typing
+import collections.abc
 import asyncio
 
 from django.utils.decorators import sync_and_async_middleware
@@ -46,14 +47,14 @@ logger = logging.getLogger(__name__)
 # How often to check the requests cache for stuck objects
 CHECK_SECONDS = 3600 * 24  # Once a day is more than enough
 
-RequestMiddelwareProcessorType = typing.Callable[['ExtendedHttpRequest'], typing.Optional['HttpResponse']]
-ResponseMiddelwareProcessorType = typing.Callable[['ExtendedHttpRequest', 'HttpResponse'], 'HttpResponse']
+RequestMiddelwareProcessorType = collections.abc.Callable[['ExtendedHttpRequest'], typing.Optional['HttpResponse']]
+ResponseMiddelwareProcessorType = collections.abc.Callable[['ExtendedHttpRequest', 'HttpResponse'], 'HttpResponse']
 
 
 def build_middleware(
     request_processor: RequestMiddelwareProcessorType,
     response_processor: ResponseMiddelwareProcessorType,
-) -> typing.Callable[[typing.Any], typing.Union[typing.Callable, typing.Coroutine]]:
+) -> collections.abc.Callable[[typing.Any], typing.Union[collections.abc.Callable, typing.Coroutine]]:
     """
     Creates a method to be used as a middleware, synchronously or asynchronously.
     Currently, the is forced to sync an production, but it will be changed in the future to allow async
@@ -62,7 +63,7 @@ def build_middleware(
     @sync_and_async_middleware
     def middleware(
         get_response: typing.Any,
-    ) -> typing.Union[typing.Callable, typing.Coroutine]:
+    ) -> typing.Union[collections.abc.Callable, typing.Coroutine]:
         if settings.DEBUG and asyncio.iscoroutinefunction(get_response):
 
             async def async_middleware(

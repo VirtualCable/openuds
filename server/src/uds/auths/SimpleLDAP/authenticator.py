@@ -31,6 +31,7 @@
 '''
 import logging
 import typing
+import collections.abc
 
 import ldap
 import ldap.filter
@@ -221,7 +222,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     _verifySsl: bool = True
     _certificate: str = ''
 
-    def initialize(self, values: typing.Optional[typing.Dict[str, typing.Any]]) -> None:
+    def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
             self._host = values['host']
             self._port = values['port']
@@ -390,7 +391,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def __getGroups(self, user: ldaputil.LDAPResultType):
         try:
-            groups: typing.List[str] = []
+            groups: list[str] = []
 
             filter_ = f'(&(objectClass={self._groupClass})(|({self._memberAttr}={user["_id"]})({self._memberAttr}={user["dn"]})))'
             for d in ldaputil.getAsDict(
@@ -470,7 +471,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         except Exception:
             return types.auth.FAILED_AUTH
 
-    def createUser(self, usrData: typing.Dict[str, str]) -> None:
+    def createUser(self, usrData: dict[str, str]) -> None:
         '''
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
@@ -491,7 +492,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return username
         return self.__getUserRealName(res)
 
-    def modifyUser(self, usrData: typing.Dict[str, str]) -> None:
+    def modifyUser(self, usrData: dict[str, str]) -> None:
         '''
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
@@ -501,7 +502,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         '''
         return self.createUser(usrData)
 
-    def createGroup(self, groupData: typing.Dict[str, str]) -> None:
+    def createGroup(self, groupData: dict[str, str]) -> None:
         '''
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has its own groups and, at most, it can check if it exists on external source before accepting it
@@ -524,7 +525,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self.__getGroups(user))
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(
@@ -546,7 +547,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             logger.exception("Exception: ")
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[typing.Dict[str, str]]:
+    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(
@@ -564,7 +565,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
     @staticmethod
-    def test(env, data) -> typing.List[typing.Any]:
+    def test(env, data) -> list[typing.Any]:
         try:
             auth = SimpleLDAPAuthenticator(None, env, data)  # type: ignore
             return auth.testConnection()
@@ -574,7 +575,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
     def testConnection(
         self,
-    ) -> typing.List[typing.Any]:  # pylint: disable=too-many-return-statements,too-many-branches
+    ) -> list[typing.Any]:  # pylint: disable=too-many-return-statements,too-many-branches
         try:
             con = self.__connection()
         except Exception as e:

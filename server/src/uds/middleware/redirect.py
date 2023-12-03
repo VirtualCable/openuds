@@ -31,6 +31,7 @@
 
 import logging
 import typing
+import collections.abc
 
 from django.urls import reverse
 from django.http import HttpResponsePermanentRedirect

@@ -31,6 +31,7 @@
 """
 
 import typing
+import collections.abc
 import logging
 
 from django.utils.translation import gettext_noop as _, gettext

@@ -74,6 +74,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core import services, consts
 from uds.core.ui import gui

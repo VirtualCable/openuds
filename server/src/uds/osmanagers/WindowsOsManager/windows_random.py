@@ -36,6 +36,7 @@ import random
 import string
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui

@@ -33,6 +33,7 @@ import stat
 import calendar
 import datetime
 import typing
+import collections.abc
 import logging
 
 from django.db.models import QuerySet
@@ -68,7 +69,7 @@ class EventFS(types.UDSFSInterface):
     _directory_stats: typing.ClassVar[types.StatType] = types.StatType(
         st_mode=(stat.S_IFDIR | 0o755), st_nlink=1
     )
-    _months: typing.ClassVar[typing.List[str]] = [
+    _months: typing.ClassVar[list[str]] = [
         '01',
         '02',
         '03',
@@ -86,7 +87,7 @@ class EventFS(types.UDSFSInterface):
     def __init__(self):
         pass
 
-    def getattr(self, path: typing.List[str]) -> types.StatType:
+    def getattr(self, path: list[str]) -> types.StatType:
         if len(path) < 1:
             return EventFS._directory_stats
 
@@ -106,7 +107,7 @@ class EventFS(types.UDSFSInterface):
 
         raise FileNotFoundError('No such file or directory')
 
-    def readdir(self, path: typing.List[str]) -> typing.List[str]:
+    def readdir(self, path: list[str]) -> list[str]:
         if len(path) == 0:
             # List ., .. and last 4 years as folders
             return ['.', '..'] + EventFS.last_years()
@@ -123,7 +124,7 @@ class EventFS(types.UDSFSInterface):
 
         raise FileNotFoundError('No such file or directory')
 
-    def read(self, path: typing.List[str], size: int, offset: int) -> bytes:
+    def read(self, path: list[str], size: int, offset: int) -> bytes:
         logger.debug('Reading events for %s: offset: %s, size: %s', path, offset, size)
         # Compose
         # Everly line is 256, calculate skip
@@ -149,7 +150,7 @@ class EventFS(types.UDSFSInterface):
         return b''.join(theLines)[offset : offset + size]
 
     @staticmethod
-    def last_years() -> typing.List[str]:
+    def last_years() -> list[str]:
         return [str(x) for x in range(datetime.datetime.now().year - 4, datetime.datetime.now().year + 1)]
 
     @staticmethod

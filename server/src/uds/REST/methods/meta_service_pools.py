@@ -31,6 +31,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext as _
 
@@ -59,7 +60,7 @@ class MetaServicesPool(DetailHandler):
     """
 
     @staticmethod
-    def as_dict(item: models.MetaPoolMember) -> typing.Dict[str, typing.Any]:
+    def as_dict(item: models.MetaPoolMember) -> dict[str, typing.Any]:
         return {
             'id': item.uuid,
             'pool_id': item.pool.uuid,
@@ -85,7 +86,7 @@ class MetaServicesPool(DetailHandler):
     def getTitle(self, parent: 'Model') -> str:
         return _('Service pools')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Service Pool name')}},
@@ -140,8 +141,8 @@ class MetaAssignedService(DetailHandler):
     def itemToDict(
         metaPool: 'models.MetaPool',
         item: 'models.UserService',
-        props: typing.Optional[typing.Dict[str, typing.Any]],
-    ) -> typing.Dict[str, typing.Any]:
+        props: typing.Optional[dict[str, typing.Any]],
+    ) -> dict[str, typing.Any]:
         element = AssignedService.itemToDict(item, props, False)
         element['pool_id'] = item.deployed_service.uuid
         element['pool_name'] = item.deployed_service.name
@@ -165,11 +166,11 @@ class MetaAssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.MetaPool)
         def assignedUserServicesForPools() -> (
             typing.Generator[
-                typing.Tuple[models.UserService, typing.Optional[typing.Dict[str, typing.Any]]], None, None
+                typing.Tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None
             ]
         ):
             for m in parent.members.filter(enabled=True):
-                properties: typing.Dict[str, typing.Any] = {
+                properties: dict[str, typing.Any] = {
                     k: v
                     for k, v in models.Properties.objects.filter(
                         owner_type='userservice',
@@ -209,7 +210,7 @@ class MetaAssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.MetaPool)
         return _('Assigned services')
 
-    def getFields(self, parent: 'Model') -> typing.List[typing.Any]:
+    def getFields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
@@ -231,11 +232,11 @@ class MetaAssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> typing.Dict[str, typing.Any]:
+    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'Model', item: str) -> typing.List[typing.Any]:
+    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             asignedService = self._getAssignedService(parent, item)

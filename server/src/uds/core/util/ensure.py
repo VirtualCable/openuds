@@ -29,9 +29,10 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 
 
-def is_list(obj: typing.Any) -> typing.List[typing.Any]:
+def is_list(obj: typing.Any) -> list[typing.Any]:
     if not obj:
         return []
 

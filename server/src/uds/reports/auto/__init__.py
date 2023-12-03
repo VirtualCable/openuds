@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import datetime
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext, gettext_noop as _
 
@@ -133,8 +134,8 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     def getIntervalInHours(self):
         return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[self.interval.value]
 
-    def getIntervalsList(self) -> typing.List[typing.Tuple[datetime.datetime, datetime.datetime]]:
-        intervals: typing.List[typing.Tuple[datetime.datetime, datetime.datetime]] = []
+    def getIntervalsList(self) -> list[typing.Tuple[datetime.datetime, datetime.datetime]]:
+        intervals: list[typing.Tuple[datetime.datetime, datetime.datetime]] = []
         # Convert start and end dates to datetime objects from date objects
         start = datetime.datetime.combine(self.startingDate(), datetime.time.min)
         to = datetime.datetime.combine(self.endingDate(), datetime.time.max)

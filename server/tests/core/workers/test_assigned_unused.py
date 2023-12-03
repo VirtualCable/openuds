@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import collections.abc
 import datetime
 
 from uds import models
@@ -44,7 +45,7 @@ from ...fixtures import services as fixtures_services
 
 
 class AssignedAndUnusedTest(UDSTestCase):
-    userServices: typing.List[models.UserService]
+    userServices: list[models.UserService]
 
     def setUp(self):
         config.GlobalConfig.CHECK_UNUSED_TIME.set('600')

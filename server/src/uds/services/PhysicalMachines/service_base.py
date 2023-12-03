@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import collections.abc
 
 from uds.core.util import security
 from uds.core import services

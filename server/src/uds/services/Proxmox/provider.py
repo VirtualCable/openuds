@@ -29,6 +29,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import logging
 import typing
+import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
@@ -206,7 +207,7 @@ class ProxmoxProvider(
 
         return self._getApi().test()
 
-    def listMachines(self) -> typing.List[client.types.VMInfo]:
+    def listMachines(self) -> list[client.types.VMInfo]:
         return self._getApi().listVms()
 
     def getMachineInfo(
@@ -222,10 +223,10 @@ class ProxmoxProvider(
 
     def listStorages(
         self, node: typing.Optional[str]
-    ) -> typing.List[client.types.StorageInfo]:
+    ) -> list[client.types.StorageInfo]:
         return self._getApi().listStorages(node=node, content='images')
 
-    def listPools(self) -> typing.List[client.types.PoolInfo]:
+    def listPools(self) -> list[client.types.PoolInfo]:
         return self._getApi().listPools()
 
     def makeTemplate(self, vmId: int) -> None:
@@ -294,7 +295,7 @@ class ProxmoxProvider(
     ) -> None:
         self._getApi().setProtection(vmId, node, protection)
 
-    def listHaGroups(self) -> typing.List[str]:
+    def listHaGroups(self) -> list[str]:
         return self._getApi().listHAGroups()
 
     def getConsoleConnection(
@@ -317,7 +318,7 @@ class ProxmoxProvider(
         return self.macsRange.value
 
     @staticmethod
-    def test(env: 'Environment', data: 'Module.ValuesType') -> typing.List[typing.Any]:
+    def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         """
         Test Proxmox Connectivity
 

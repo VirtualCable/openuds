@@ -31,6 +31,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
+import collections.abc
 import asyncio
 import aiohttp
 
@@ -85,7 +86,7 @@ async def logout(session: aiohttp.ClientSession) -> None:
 
 async def list_services(
     session: aiohttp.ClientSession,
-) -> typing.List[typing.MutableMapping[str, typing.Any]]:
+) -> list[typing.MutableMapping[str, typing.Any]]:
     response = await session.get(
         REST_URL + 'connection',
     )

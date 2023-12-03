@@ -33,6 +33,7 @@
 import re
 import logging
 import typing
+import collections.abc
 import json
 
 from django.utils.translation import gettext as _
