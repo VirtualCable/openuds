@@ -6,7 +6,7 @@ import collections.abc
 networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
-conversors: typing.MutableMapping[typing.Type, collections.abc.Callable] = {
+conversors: collections.abc.MutableMapping[typing.Type, collections.abc.Callable] = {
     str: lambda x: str(x),
     bool: lambda x: bool(x),
     int: lambda x: int(x or '0'),
@@ -17,8 +17,8 @@ conversors: typing.MutableMapping[typing.Type, collections.abc.Callable] = {
 
 def convertFromDict(
     type: typing.Type[typing.Any],
-    dictionary: typing.MutableMapping[str, typing.Any],
-    extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+    dictionary: collections.abc.MutableMapping[str, typing.Any],
+    extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
 ) -> typing.Any:
     extra = extra or {}
     return type(
@@ -39,7 +39,7 @@ class Cluster(typing.NamedTuple):
     quorate: int
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'Cluster':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Cluster':
         return convertFromDict(Cluster, dictionary)
 
 
@@ -53,7 +53,7 @@ class Node(typing.NamedTuple):
     id: str
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'Node':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
         return convertFromDict(Node, dictionary)
 
 
@@ -71,7 +71,7 @@ class NodeStats(typing.NamedTuple):
     maxcpu: int
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'NodeStats':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'NodeStats':
         dictionary['name'] = dictionary['node']
         return convertFromDict(NodeStats, dictionary)
 
@@ -97,7 +97,7 @@ class ClusterStatus(typing.NamedTuple):
     nodes: list[Node]
 
     @staticmethod
-    def fromJson(dictionary: typing.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
+    def fromJson(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
         nodes: list[Node] = []
         cluster: typing.Optional[Cluster] = None
 
@@ -121,7 +121,7 @@ class UPID(typing.NamedTuple):
     upid: str
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'UPID':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'UPID':
         upid = dictionary['data']
         d = upid.split(':')
         return UPID(
@@ -149,7 +149,7 @@ class TaskStatus(typing.NamedTuple):
     id: str
 
     @staticmethod
-    def fromJson(dictionary: typing.MutableMapping[str, typing.Any]) -> 'TaskStatus':
+    def fromJson(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'TaskStatus':
         return convertFromDict(TaskStatus, dictionary['data'])
 
     def isRunning(self) -> bool:
@@ -204,7 +204,7 @@ class VMInfo(typing.NamedTuple):
     vgpu_type: typing.Optional[str]
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'VMInfo':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
         vgpu_type = None
         # Look for vgpu type if present
         for k, v in dictionary.items():
@@ -234,7 +234,7 @@ class VMConfiguration(typing.NamedTuple):
     template: bool
 
     @staticmethod
-    def fromDict(src: typing.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
+    def fromDict(src: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: list[NetworkConfiguration] = []
         for k in src.keys():
             if k[:3] == 'net':
@@ -264,7 +264,7 @@ class StorageInfo(typing.NamedTuple):
     used_fraction: float
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'StorageInfo':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
         return convertFromDict(StorageInfo, dictionary)
 
 
@@ -273,5 +273,5 @@ class PoolInfo(typing.NamedTuple):
     comments: str
 
     @staticmethod
-    def fromDict(dictionary: typing.MutableMapping[str, typing.Any]) -> 'PoolInfo':
+    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
         return convertFromDict(PoolInfo, dictionary)

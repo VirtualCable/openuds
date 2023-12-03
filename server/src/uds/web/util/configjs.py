@@ -213,7 +213,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         'min_for_filter': GlobalConfig.SITE_FILTER_MIN.getInt(True),
     }
 
-    info: typing.Optional[typing.MutableMapping] = None
+    info: typing.Optional[collections.abc.MutableMapping] = None
     if user and user.isStaff():
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],

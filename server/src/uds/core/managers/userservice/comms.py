@@ -50,7 +50,7 @@ TIMEOUT = 2
 def _requestActor(
     userService: 'UserService',
     method: str,
-    data: typing.Optional[typing.MutableMapping[str, typing.Any]] = None,
+    data: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None,
     minVersion: typing.Optional[str] = None,
 ) -> typing.Any:
     """
@@ -185,7 +185,7 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
     If allowed, send script to user service
     """
     try:
-        data: typing.MutableMapping[str, typing.Any] = {'script': script}
+        data: collections.abc.MutableMapping[str, typing.Any] = {'script': script}
         if forUser:
             data['user'] = forUser
         _requestActor(userService, 'script', data=data)

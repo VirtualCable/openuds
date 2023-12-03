@@ -679,7 +679,7 @@ class ProxmoxClient:
     @ensureConnected
     def getConsoleConnection(
         self, vmId: int, node: typing.Optional[str] = None
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Gets the connetion info for the specified machine
         """

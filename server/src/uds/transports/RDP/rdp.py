@@ -150,7 +150,7 @@ class RDPTransport(BaseRDPTransport):
         r.redirectUSB = self.usbRedirection.value
         r.optimizeTeams = self.optimizeTeams.isTrue()
 
-        sp: typing.MutableMapping[str, typing.Any] = {
+        sp: collections.abc.MutableMapping[str, typing.Any] = {
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,

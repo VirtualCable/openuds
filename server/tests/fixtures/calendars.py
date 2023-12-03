@@ -39,7 +39,7 @@ from uds.models.calendar_rule import freqs, dunits
 
 
 # fixtures for calendars and calendar rules
-CALENDAR_DATA: typing.Mapping[str, list[dict[str, typing.Union[str,int,None]]]] = {
+CALENDAR_DATA: collections.abc.Mapping[str, list[dict[str, typing.Union[str,int,None]]]] = {
     'calendars': [
         {
             "modified": "2015-09-18T00:04:31.792",

@@ -491,11 +491,11 @@ class Groups(DetailHandler):
         except Exception:
             raise self.invalidItemException() from None
 
-    def servicesPools(self, parent: 'Model', item: str) -> list[typing.Mapping[str, typing.Any]]:
+    def servicesPools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
         uuid = processUuid(item)
         group = parent.groups.get(uuid=processUuid(uuid))
-        res: list[typing.Mapping[str, typing.Any]] = []
+        res: list[collections.abc.Mapping[str, typing.Any]] = []
         for i in getPoolsForGroups((group,)):
             res.append(
                 {
@@ -511,7 +511,7 @@ class Groups(DetailHandler):
 
         return res
 
-    def users(self, parent: 'Model', item: str) -> list[typing.Mapping[str, typing.Any]]:
+    def users(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         uuid = processUuid(item)
         parent = ensure.is_instance(parent, Authenticator)
         group = parent.groups.get(uuid=processUuid(uuid))

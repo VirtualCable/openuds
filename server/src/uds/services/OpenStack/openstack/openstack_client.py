@@ -85,7 +85,7 @@ def getRecurringUrlJson(
     session: 'requests.Session',
     headers: dict[str, str],
     key: str,
-    params: typing.Optional[typing.Mapping[str, str]] = None,
+    params: typing.Optional[collections.abc.Mapping[str, str]] = None,
     errMsg: typing.Optional[str] = None,
     timeout: int = 10,
 ) -> typing.Iterable[typing.Any]:
@@ -170,7 +170,7 @@ class Client:  # pylint: disable=too-many-public-methods
         projectId: typing.Optional[str] = None,
         region: typing.Optional[str] = None,
         access: typing.Optional[str] = None,
-        proxies: typing.Optional[typing.MutableMapping[str, str]] = None,
+        proxies: typing.Optional[collections.abc.MutableMapping[str, str]] = None,
     ):
         self._session = security.secureRequestsSession(verify=VERIFY_SSL)
         if proxies:

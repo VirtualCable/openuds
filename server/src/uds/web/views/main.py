@@ -333,7 +333,7 @@ def update_transport_ticket(
             if password:
                 password = CryptoManager().symCrypt(password, scrambler)
 
-            def checkValidTicket(data: typing.Mapping[str, typing.Any]) -> bool:
+            def checkValidTicket(data: collections.abc.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' in data:
                     try:
                         user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))

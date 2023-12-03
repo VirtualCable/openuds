@@ -120,7 +120,7 @@ class OpenGnsysClient:
         self.cachedVersion = None
 
     @property
-    def headers(self) -> typing.MutableMapping[str, str]:
+    def headers(self) -> collections.abc.MutableMapping[str, str]:
         headers = {'content-type': 'application/json'}
         if self.auth:
             headers['Authorization'] = self.auth
@@ -207,7 +207,7 @@ class OpenGnsysClient:
         return self._get(urls.OUS, errMsg='Getting list of ous')
 
     @ensureConnected
-    def getLabs(self, ou: str) -> list[typing.MutableMapping[str, str]]:
+    def getLabs(self, ou: str) -> list[collections.abc.MutableMapping[str, str]]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/labs
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
@@ -219,7 +219,7 @@ class OpenGnsysClient:
         ]
 
     @ensureConnected
-    def getImages(self, ou: str) -> list[typing.MutableMapping[str, str]]:
+    def getImages(self, ou: str) -> list[collections.abc.MutableMapping[str, str]]:
         # Returns a list of available labs on an ou
         # /ous/{ouid}/images
         # Take into accout that we must exclude the ones with "inremotepc" set to false.
@@ -233,7 +233,7 @@ class OpenGnsysClient:
     @ensureConnected
     def reserve(
         self, ou: str, image: str, lab: int = 0, maxtime: int = 24
-    ) -> typing.MutableMapping[str, typing.Union[str, int]]:
+    ) -> collections.abc.MutableMapping[str, typing.Union[str, int]]:
         # This method is inteded to "get" a machine from OpenGnsys
         # The method used is POST
         # invokes /ous/{ouid}}/images/{imageid}/reserve

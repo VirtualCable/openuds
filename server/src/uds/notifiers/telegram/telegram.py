@@ -28,7 +28,7 @@ class Message(typing.NamedTuple):
     text: str
 
     @staticmethod
-    def fromDict(data: typing.Mapping[str, typing.Any]) -> 'Message':
+    def fromDict(data: collections.abc.Mapping[str, typing.Any]) -> 'Message':
         print(data)
         return Message(
             Chat(

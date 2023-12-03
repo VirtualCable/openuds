@@ -232,7 +232,7 @@ class OVirtProvider(
 
     def getMachines(
         self, force: bool = False
-    ) -> list[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside oVirt.
         Machines starting with UDS are filtered out
@@ -252,7 +252,7 @@ class OVirtProvider(
 
     def getClusters(
         self, force: bool = False
-    ) -> list[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside oVirt.
 
@@ -272,7 +272,7 @@ class OVirtProvider(
 
     def getClusterInfo(
         self, clusterId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the cluster info
 
@@ -292,7 +292,7 @@ class OVirtProvider(
 
     def getDatacenterInfo(
         self, datacenterId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the datacenter info
 
@@ -322,7 +322,7 @@ class OVirtProvider(
 
     def getStorageInfo(
         self, storageId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the storage info
 
@@ -507,7 +507,7 @@ class OVirtProvider(
 
     def getConsoleConnection(
         self, machineId: str
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
 
     @cached('reachable', Cache.SHORT_VALIDITY)

@@ -183,7 +183,7 @@ class LinuxOsADManager(LinuxOsManager):
             self._ssl = 'n'
             self._automaticIdMapping = 'n'
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userService.getName(),

@@ -187,7 +187,7 @@ class ServerStats(typing.NamedTuple):
         )
 
     @staticmethod
-    def fromDict(data: typing.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
+    def fromDict(data: collections.abc.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
         from uds.core.util.model import getSqlStamp  # Avoid circular import
 
         dct = {k: v for k, v in data.items()}  # Make a copy

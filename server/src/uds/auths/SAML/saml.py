@@ -545,7 +545,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
 
     def getInfo(
-        self, parameters: typing.Mapping[str, str]
+        self, parameters: collections.abc.Mapping[str, str]
     ) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
         """
         Althought this is mainly a get info callback, this can be used for any other purpuse we like.

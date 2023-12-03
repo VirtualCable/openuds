@@ -714,7 +714,7 @@ def time_of_timespec(ts: c_timespec, use_ns=False):
     return ts.tv_sec * 10**9 + ts.tv_nsec  # type: ignore
 
 
-def set_st_attrs(st: c_stat, attrs: typing.Mapping[str, int]) -> None:
+def set_st_attrs(st: c_stat, attrs: collections.abc.Mapping[str, int]) -> None:
     for key, val in attrs.items():
         if key in ('st_atime', 'st_mtime', 'st_ctime', 'st_birthtime'):
             timespec: typing.Optional[c_timespec] = getattr(st, key + 'spec', None)

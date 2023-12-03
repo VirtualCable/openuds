@@ -73,7 +73,7 @@ class HandlerNode(typing.NamedTuple):
 
     name: str
     handler: typing.Optional[typing.Type[Handler]]
-    children: typing.MutableMapping[str, 'HandlerNode']
+    children: collections.abc.MutableMapping[str, 'HandlerNode']
     
     def __str__(self) -> str:
         return f'HandlerNode({self.name}, {self.handler}, {self.children})'

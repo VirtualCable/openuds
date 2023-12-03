@@ -68,7 +68,7 @@ if typing.TYPE_CHECKING:
 ) = range(11)
 
 # Events names
-EVENT_NAMES: typing.Mapping[int, str] = {
+EVENT_NAMES: collections.abc.Mapping[int, str] = {
     ET_LOGIN: 'Login',
     ET_LOGOUT: 'Logout',
     ET_ACCESS: 'Access',
@@ -84,7 +84,7 @@ EVENT_NAMES: typing.Mapping[int, str] = {
 
 (OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR, OT_OSMANAGER) = range(5)
 
-TYPES_NAMES: typing.Mapping[int, str] = {
+TYPES_NAMES: collections.abc.Mapping[int, str] = {
     OT_PROVIDER: 'Provider',
     OT_SERVICE: 'Service',
     OT_SERVICEPOOL: 'Deployed',
@@ -92,7 +92,7 @@ TYPES_NAMES: typing.Mapping[int, str] = {
     OT_OSMANAGER: 'OS Manager',
 }
 
-MODEL_TO_EVENT: typing.Mapping[typing.Type['models.Model'], int] = {
+MODEL_TO_EVENT: collections.abc.Mapping[typing.Type['models.Model'], int] = {
     ServicePool: OT_SERVICEPOOL,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,

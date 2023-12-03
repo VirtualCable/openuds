@@ -424,7 +424,7 @@ class Initialize(ActorV3Action):
             # Managed by UDS, get initialization data from osmanager and return it
             # Set last seen actor version
             userService.setActorVersion(self._params['version'])
-            osData: typing.MutableMapping[str, typing.Any] = {}
+            osData: collections.abc.MutableMapping[str, typing.Any] = {}
             osManager = userService.getOsManagerInstance()
             if osManager:
                 osData = osManager.actorData(userService)
@@ -821,7 +821,7 @@ class Notify(ActorV3Action):
         # Raplaces original post (non existent here)
         raise AccessDenied('Access denied')
 
-    def get(self) -> typing.MutableMapping[str, typing.Any]:
+    def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
             action = NotifyActionType(self._params['action'])

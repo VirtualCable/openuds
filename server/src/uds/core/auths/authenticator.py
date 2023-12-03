@@ -571,7 +571,7 @@ class Authenticator(Module):
         return types.auth.FAILED_AUTH
 
     def getInfo(
-        self, parameters: typing.Mapping[str, str]
+        self, parameters: collections.abc.Mapping[str, str]
     ) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator

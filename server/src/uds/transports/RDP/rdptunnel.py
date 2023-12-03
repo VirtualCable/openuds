@@ -180,7 +180,7 @@ class TRDPTransport(BaseRDPTransport):
         r.redirectUSB = self.usbRedirection.value
         r.optimizeTeams = self.optimizeTeams.isTrue()
 
-        sp: typing.MutableMapping[str, typing.Any] = {
+        sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
             'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),

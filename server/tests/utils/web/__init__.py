@@ -49,7 +49,7 @@ def login(
     password: str,
     expectedResponseCode: int = 200,
     errorMessage: typing.Optional[str] = None,
-) -> typing.Mapping[str, typing.Any]:
+) -> collections.abc.Mapping[str, typing.Any]:
     response = client.post(
         '/uds/rest/auth/login',
         {

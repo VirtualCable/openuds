@@ -1265,7 +1265,7 @@ class UserInterfaceType(type):
         namespace: dict[str, typing.Any],
     ) -> 'UserInterfaceType':
         newClassDict = {}
-        _gui: typing.MutableMapping[str, gui.InputField] = {}
+        _gui: collections.abc.MutableMapping[str, gui.InputField] = {}
 
         # Make a copy of gui fields description
         # (we will update references on class 'self' to the new copy)
@@ -1408,7 +1408,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 return opt_serializer(value)
             return serializer.serialize(value)
 
-        fw_converters: typing.Mapping[
+        fw_converters: collections.abc.Mapping[
             types.ui.FieldType, collections.abc.Callable[[gui.InputField], typing.Optional[str]]
         ] = {
             types.ui.FieldType.TEXT: lambda x: x.value,
@@ -1481,7 +1481,7 @@ class UserInterface(metaclass=UserInterfaceType):
                 continue
             self._gui[k].value = self._gui[k].default
 
-        converters: typing.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]] = {
+        converters: collections.abc.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]] = {
             types.ui.FieldType.TEXT: lambda x: x,
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
             types.ui.FieldType.NUMERIC: int,
@@ -1568,7 +1568,7 @@ class UserInterface(metaclass=UserInterfaceType):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    def guiDescription(self) -> list[typing.MutableMapping[str, typing.Any]]:
+    def guiDescription(self) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
@@ -1580,7 +1580,7 @@ class UserInterface(metaclass=UserInterfaceType):
         """
         self.initGui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
-        res: list[typing.MutableMapping[str, typing.Any]] = []
+        res: list[collections.abc.MutableMapping[str, typing.Any]] = []
         for key, val in self._gui.items():
             # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
             res.append({'name': key, 'gui': val.guiDescription(), 'value': val.value if val.isType(types.ui.FieldType.HIDDEN) else None })

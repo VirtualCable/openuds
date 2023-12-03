@@ -53,7 +53,7 @@ from uds.core.util import utils
 
 logger = logging.getLogger(__name__)
 
-LDAPResultType = typing.MutableMapping[str, typing.Any]
+LDAPResultType = collections.abc.MutableMapping[str, typing.Any]
 
 # About ldap filters: (just for reference)
 # https://ldap.com/ldap-filters/

@@ -231,7 +231,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def setHost(self, host: str) -> None:
         self._host = host
 
-    def getTaskInfo(self, task: str) -> typing.MutableMapping[str, typing.Any]:
+    def getTaskInfo(self, task: str) -> collections.abc.MutableMapping[str, typing.Any]:
         progress = 0
         result = None
         destroyTask = False
@@ -274,7 +274,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return {'result': result, 'progress': progress, 'status': str(status)}
 
-    def getSRs(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getSRs(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         for srId in self.SR.get_all():
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
@@ -296,7 +296,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
                     'used': XenServer.toMb(self.SR.get_physical_utilisation(srId)),
                 }
 
-    def getSRInfo(self, srId: str) -> typing.MutableMapping[str, typing.Any]:
+    def getSRInfo(self, srId: str) -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'id': srId,
             'name': self.SR.get_name_label(srId),
@@ -304,7 +304,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             'used': XenServer.toMb(self.SR.get_physical_utilisation(srId)),
         }
 
-    def getNetworks(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getNetworks(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         for netId in self.network.get_all():
             if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
                 yield {
@@ -312,10 +312,10 @@ class XenServer:  # pylint: disable=too-many-public-methods
                     'name': self.network.get_name_label(netId),
                 }
 
-    def getNetworkInfo(self, netId: str) -> typing.MutableMapping[str, typing.Any]:
+    def getNetworkInfo(self, netId: str) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'id': netId, 'name': self.network.get_name_label(netId)}
 
-    def getVMs(self) -> typing.Iterable[typing.MutableMapping[str, typing.Any]]:
+    def getVMs(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         try:
             vms = self.VM.get_all()
             for vm in vms:

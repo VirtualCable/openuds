@@ -388,7 +388,7 @@ class CalendarAction(UUIDModel):
             except Exception:
                 self.service_pool.log('Scheduled action not executed because group is not available anymore')
 
-        actions: typing.Mapping[str, typing.Tuple[collections.abc.Callable[[], None], bool]] = {
+        actions: collections.abc.Mapping[str, typing.Tuple[collections.abc.Callable[[], None], bool]] = {
             # Id, actions (lambda), saveServicePool (bool)
             CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
             CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),

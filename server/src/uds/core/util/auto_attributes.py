@@ -74,7 +74,7 @@ class AutoAttributes(Serializable):
     Access attrs as "self._attr1, self._attr2"
     """
 
-    attrs: typing.MutableMapping[str, Attribute]
+    attrs: collections.abc.MutableMapping[str, Attribute]
 
     def __init__(self, **kwargs):
         Serializable.__init__(self)
@@ -93,7 +93,7 @@ class AutoAttributes(Serializable):
             super().__setattr__(name, value)
 
     def declare(self, **kwargs) -> None:
-        d: typing.MutableMapping[str, Attribute] = {}
+        d: collections.abc.MutableMapping[str, Attribute] = {}
         for key, typ in kwargs.items():
             d[key] = Attribute(typ)
         self.attrs = d

@@ -143,7 +143,7 @@ class Service(Module):
     # :    }
     # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
     # : on a save invocation to REST api for ServicePool
-    cacheConstrains: typing.Optional[typing.MutableMapping[str, typing.Any]] = None
+    cacheConstrains: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access

@@ -63,7 +63,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
         self.assertEqual(
             len(groups), rest.test.NUMBER_OF_ITEMS_TO_CREATE * 2  # simple + meta
         )
-        group: typing.Mapping[str, typing.Any]
+        group: collections.abc.Mapping[str, typing.Any]
         for group in groups:
             # Locate the group in the auth
             dbgrp = self.auth.groups.get(name=group['name'])
@@ -84,7 +84,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
         self.assertIn('row-style', tableinfo)
 
         # Ensure at least name, comments ans state are present on tableinfo['fields']
-        fields: list[typing.Mapping[str, typing.Any]] = tableinfo['fields']
+        fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
         self.assertTrue(
             functools.reduce(
                 lambda x, y: x and y,

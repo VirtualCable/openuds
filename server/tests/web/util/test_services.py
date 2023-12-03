@@ -94,7 +94,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         #     'autorun': autorun,
         # }
         result_services: typing.Final[
-            list[typing.Mapping[str, typing.Any]]
+            list[collections.abc.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 10)
         self.assertEqual(data['ip'], '127.0.0.1')
@@ -188,7 +188,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         now = datetime.datetime.now()
 
         result_services: typing.Final[
-            list[typing.Mapping[str, typing.Any]]
+            list[collections.abc.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 10)
         self.assertEqual(data['ip'], '127.0.0.1')
@@ -243,7 +243,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         now = datetime.datetime.now()
 
         result_services: typing.Final[
-            list[typing.Mapping[str, typing.Any]]
+            list[collections.abc.Mapping[str, typing.Any]]
         ] = data['services']
         self.assertEqual(len(result_services), 20)  # 10 metas and 10 normal pools
         # Some checks are ommited, because are already tested in other tests

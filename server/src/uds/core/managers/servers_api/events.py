@@ -166,7 +166,7 @@ def process_init(server: 'models.Server', data: dict[str, typing.Any]) -> typing
 
 
 PROCESSORS: typing.Final[
-    typing.Mapping[str, collections.abc.Callable[['models.Server', dict[str, typing.Any]], typing.Any]]
+    collections.abc.Mapping[str, collections.abc.Callable[['models.Server', dict[str, typing.Any]], typing.Any]]
 ] = {
     'log': process_log,
     'login': process_login,

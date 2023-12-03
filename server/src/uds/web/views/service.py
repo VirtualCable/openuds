@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 
 @webLoginRequired(admin=False)
 def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
-    response: typing.MutableMapping[str, typing.Any] = {}
+    response: collections.abc.MutableMapping[str, typing.Any] = {}
 
     # If userService is not owned by user, will raise an exception
 

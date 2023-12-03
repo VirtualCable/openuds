@@ -38,8 +38,8 @@ logger = logging.getLogger(__name__)
 
 
 def compare_dicts(
-    expected: typing.Mapping[str, typing.Any],
-    actual: typing.Mapping[str, typing.Any],
+    expected: collections.abc.Mapping[str, typing.Any],
+    actual: collections.abc.Mapping[str, typing.Any],
     ignore_keys: typing.Optional[list[str]] = None,
     ignore_values: typing.Optional[list[str]] = None,
     ignore_keys_startswith: typing.Optional[list[str]] = None,
@@ -80,7 +80,7 @@ def compare_dicts(
 
 def ensure_data(
     item: models.Model,
-    dct: typing.Mapping[str, typing.Any],
+    dct: collections.abc.Mapping[str, typing.Any],
     ignore_keys: typing.Optional[list[str]] = None,
     ignore_values: typing.Optional[list[str]] = None,
 ) -> bool:

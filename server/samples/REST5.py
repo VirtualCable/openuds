@@ -86,7 +86,7 @@ async def logout(session: aiohttp.ClientSession) -> None:
 
 async def list_services(
     session: aiohttp.ClientSession,
-) -> list[typing.MutableMapping[str, typing.Any]]:
+) -> list[collections.abc.MutableMapping[str, typing.Any]]:
     response = await session.get(
         REST_URL + 'connection',
     )

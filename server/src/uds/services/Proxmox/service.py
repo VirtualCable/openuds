@@ -339,7 +339,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     def getConsoleConnection(
         self, machineId: str
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
 
     @cached('reachable', Cache.SHORT_VALIDITY)

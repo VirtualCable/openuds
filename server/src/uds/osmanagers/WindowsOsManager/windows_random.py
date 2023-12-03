@@ -124,7 +124,7 @@ class WinRandomPassManager(WindowsOsManager):
             )
         return randomPass
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
             'name': userService.getName(),

@@ -375,7 +375,7 @@ class OAuth2Authenticator(auths.Authenticator):
         return userInfo
 
     def _processToken(
-        self, userInfo: typing.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
+        self, userInfo: collections.abc.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
     ) -> types.auth.AuthenticationResult:
         # After this point, we don't mind about the token, we only need to authenticate user
         # and get some basic info from it

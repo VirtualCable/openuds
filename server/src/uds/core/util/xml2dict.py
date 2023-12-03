@@ -39,8 +39,8 @@ if typing.TYPE_CHECKING:
     from xml.etree.ElementTree import Element  # nosec: Only type checking
 
 
-def etree_to_dict(tree: 'Element') -> typing.Mapping[str, typing.Any]:
-    dct: typing.MutableMapping[str, typing.Any] = {}
+def etree_to_dict(tree: 'Element') -> collections.abc.Mapping[str, typing.Any]:
+    dct: collections.abc.MutableMapping[str, typing.Any] = {}
     if tree.attrib:
         dct.update({tree.tag: {}})
 
@@ -63,5 +63,5 @@ def etree_to_dict(tree: 'Element') -> typing.Mapping[str, typing.Any]:
     return dct
 
 
-def parse(xml_string: str) -> typing.Mapping[str, typing.Any]:
+def parse(xml_string: str) -> collections.abc.Mapping[str, typing.Any]:
     return etree_to_dict(ET.XML(xml_string))

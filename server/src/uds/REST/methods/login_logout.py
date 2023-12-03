@@ -67,7 +67,7 @@ class Login(Handler):
         result: str = 'error',
         token: typing.Optional[str] = None,
         **kwargs: typing.Any,
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         # Valid kwargs are: error, scrambler
         return rest_result(result, token=token, **kwargs)
 

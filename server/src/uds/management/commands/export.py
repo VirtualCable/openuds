@@ -250,7 +250,7 @@ def calendar_rule_exporter(
 class Command(BaseCommand):
     help = 'Export entities from UDS to be imported in another UDS instance'
 
-    VALID_ENTITIES: typing.Mapping[str, collections.abc.Callable[[], str]]
+    VALID_ENTITIES: collections.abc.Mapping[str, collections.abc.Callable[[], str]]
     verbose: bool = True
     filter_args: list[typing.Tuple[str, str]] = []
 
@@ -564,7 +564,7 @@ class Command(BaseCommand):
         """
         Removes redundant entities from the list
         """
-        REPLACES: typing.Mapping[str, list[str]] = {
+        REPLACES: collections.abc.Mapping[str, list[str]] = {
             'users': ['authenticators', 'groups'],
             'groups': ['authenticators'],
             'authenticators': [],

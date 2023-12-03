@@ -300,7 +300,7 @@ class ProxmoxProvider(
 
     def getConsoleConnection(
         self, machineId: str
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self._getApi().getConsoleConnection(machineId)
 
     def getNewVmId(self) -> int:

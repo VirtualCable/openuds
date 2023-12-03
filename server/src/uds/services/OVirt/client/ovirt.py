@@ -157,7 +157,7 @@ class Client:
 
     def getVms(
         self, force: bool = False
-    ) -> list[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside ovirt that do aren't part of uds
 
@@ -187,7 +187,7 @@ class Client:
 
             logger.debug('oVirt VMS: %s', vms)
 
-            res: list[typing.MutableMapping[str, typing.Any]] = []
+            res: list[collections.abc.MutableMapping[str, typing.Any]] = []
 
             for vm in vms:
                 try:
@@ -212,7 +212,7 @@ class Client:
 
     def getClusters(
         self, force: bool = False
-    ) -> list[typing.MutableMapping[str, typing.Any]]:
+    ) -> list[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of clusters inside ovirt
 
@@ -241,7 +241,7 @@ class Client:
 
             clusters: list[typing.Any] = api.system_service().clusters_service().list()  # type: ignore
 
-            res: list[typing.MutableMapping[str, typing.Any]] = []
+            res: list[collections.abc.MutableMapping[str, typing.Any]] = []
 
             cluster: typing.Any
             for cluster in clusters:
@@ -269,7 +269,7 @@ class Client:
 
     def getClusterInfo(
         self, clusterId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the cluster info
 
@@ -311,7 +311,7 @@ class Client:
 
     def getDatacenterInfo(
         self, datacenterId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the datacenter info
 
@@ -385,7 +385,7 @@ class Client:
 
     def getStorageInfo(
         self, storageId: str, force: bool = False
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Obtains the datacenter info
 
@@ -810,7 +810,7 @@ class Client:
 
     def getConsoleConnection(
         self, machineId: str
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Gets the connetion info for the specified machine
         """

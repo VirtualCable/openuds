@@ -52,7 +52,7 @@ ReportAutoModel = typing.Union[
     models.Provider,
 ]
 
-reportAutoModelDct: typing.Mapping[str, typing.Type[ReportAutoModel]] = {  # type: ignore
+reportAutoModelDct: collections.abc.Mapping[str, typing.Type[ReportAutoModel]] = {  # type: ignore
     'ServicePool': models.ServicePool,
     'Authenticator': models.Authenticator,
     'Service': models.Service,

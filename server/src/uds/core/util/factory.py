@@ -17,12 +17,12 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
     Generic factory class.
     '''
 
-    _objects: typing.MutableMapping[str, typing.Type[V]]
+    _objects: collections.abc.MutableMapping[str, typing.Type[V]]
 
     def __init__(self) -> None:
         self._objects = {}
 
-    def objects(self) -> typing.Mapping[str, typing.Type[V]]:
+    def objects(self) -> collections.abc.Mapping[str, typing.Type[V]]:
         '''
         Returns all providers.
         '''
@@ -54,7 +54,7 @@ class ModuleFactory(Factory[T]):
     Module Factory class.
     '''
 
-    def providers(self) -> typing.Mapping[str, typing.Type[T]]:
+    def providers(self) -> collections.abc.Mapping[str, typing.Type[T]]:
         '''
         Returns all providers.
         '''

@@ -45,14 +45,14 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-FLDS_EQUIV: typing.Mapping[str, typing.Iterable[str]] = {
+FLDS_EQUIV: collections.abc.Mapping[str, typing.Iterable[str]] = {
     'fld1': ('username', 'platform', 'duration'),
     'fld2': ('source', 'srcip', 'browser', 'sent'),
     'fld3': ('destination', 'dstip', 'received'),
     'fld4': ('uniqueid', 'tunnel'),
 }
 
-REVERSE_FLDS_EQUIV: typing.Mapping[str, str] = {i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases}
+REVERSE_FLDS_EQUIV: collections.abc.Mapping[str, str] = {i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases}
 
 
 class AccumStat(typing.NamedTuple):

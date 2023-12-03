@@ -60,7 +60,7 @@ freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
     (NEVER, typing.cast(str, _('Never'))),
 )
 
-frq_to_rrl: typing.Mapping[str, int] = {
+frq_to_rrl: collections.abc.Mapping[str, int] = {
     'YEARLY': rules.YEARLY,
     'MONTHLY': rules.MONTHLY,
     'WEEKLY': rules.WEEKLY,
@@ -68,7 +68,7 @@ frq_to_rrl: typing.Mapping[str, int] = {
     'NEVER': rules.YEARLY,
 }
 
-frq_to_mins: typing.Mapping[str, int] = {
+frq_to_mins: collections.abc.Mapping[str, int] = {
     'YEARLY': 366 * 24 * 60,
     'MONTHLY': 31 * 24 * 60,
     'WEEKLY': 7 * 24 * 60,
@@ -83,7 +83,7 @@ dunits: typing.Tuple[typing.Tuple[str, str], ...] = (
     ('WEEKS', _('Weeks')),
 )
 
-dunit_to_mins: typing.Mapping[str, int] = {
+dunit_to_mins: collections.abc.Mapping[str, int] = {
     'MINUTES': 1,
     'HOURS': 60,
     'DAYS': 60 * 24,

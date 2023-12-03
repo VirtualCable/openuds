@@ -103,7 +103,7 @@ class OSManager(Module):
     # These methods must be overriden
     def actorData(
         self, userService: 'UserService'  # pylint: disable=unused-argument
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
         Currently exists 3 types of os managers actions

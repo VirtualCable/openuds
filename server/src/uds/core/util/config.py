@@ -342,7 +342,7 @@ class Config:
     @staticmethod
     def getConfigValues(
         addCrypt: bool = False,
-    ) -> typing.Mapping[str, typing.Mapping[str, typing.Mapping[str, typing.Any]]]:
+    ) -> collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, typing.Any]]]:
         """
         Returns a dictionary with all config values
         """

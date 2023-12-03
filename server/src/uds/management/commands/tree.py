@@ -53,7 +53,7 @@ if typing.TYPE_CHECKING:
 def getSerializedFromManagedObject(
     mod: 'models.ManagedObjectModel',
     removableFields: typing.Optional[list[str]] = None,
-) -> typing.Mapping[str, typing.Any]:
+) -> collections.abc.Mapping[str, typing.Any]:
     try:
         obj = mod.getInstance()
         gui = {i['name']: i['gui']['type'] for i in obj.guiDescription()}
@@ -83,7 +83,7 @@ def getSerializedFromModel(
     mod: 'dbmodels.Model',
     removableFields: typing.Optional[list[str]] = None,
     passwordFields: typing.Optional[list[str]] = None,
-) -> typing.Mapping[str, typing.Any]:
+) -> collections.abc.Mapping[str, typing.Any]:
     removableFields = removableFields or []
     passwordFields = passwordFields or []
     try:
@@ -133,7 +133,7 @@ class Command(BaseCommand):
 
         max_items = int(options['maxitems'])
 
-        tree = {}
+        tree: dict[str, typing.Any] = {}
         try:
             providers = {}
             for provider in models.Provider.objects.all():
@@ -178,20 +178,14 @@ class Command(BaseCommand):
 
                         # get publications
                         publications: dict[str, typing.Any] = {}
-                        for publication in servicePool.publications.all():
-                            # Get all changelogs for this publication
-                            try:
-                                changelogs = models.ServicePoolPublicationChangelog.objects.filter(
-                                    publication=publication
-                                ).values('stamp', 'revision', 'log')
-                                changelogs = list(changelogs)
-                            except Exception:
-                                changelogs = []
+                        changeLogs = models.ServicePoolPublicationChangelog.objects.filter(
+                            publication=servicePool
+                        ).values('stamp', 'revision', 'log')
 
+                        for publication in servicePool.publications.all():
                             publications[str(publication.revision)] = getSerializedFromModel(
                                 publication, ['data']
                             )
-                            publications[str(publication.revision)]['changelogs'] = changelogs
 
                         # get assigned groups
                         groups = []
@@ -222,6 +216,7 @@ class Command(BaseCommand):
                             'calendarActions': calendarActions,
                             'groups': groups,
                             'publications': publications,
+                            'publicationChangelog': list(changeLogs),
                         }
 
                     numberOfServicePools = len(servicePools)
@@ -321,7 +316,7 @@ class Command(BaseCommand):
             tree[counter('SERVICEPOOLGROUPS')] = servicePoolGroups
 
             # Gallery
-            gallery = {}
+            gallery: dict[str, typing.Any] = {}
             for galleryItem in models.Image.objects.all():
                 gallery[galleryItem.name] = {
                     'size': f'{galleryItem.width}x{galleryItem.height}',

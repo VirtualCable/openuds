@@ -62,7 +62,7 @@ class UsersTest(rest.test.RESTActorTestCase):
             len(users), rest.test.NUMBER_OF_ITEMS_TO_CREATE * 3
         )  # 3 because will create admins, staff and plain users
         # Ensure values are correct
-        user: typing.Mapping[str, typing.Any]
+        user: collections.abc.Mapping[str, typing.Any]
         for user in users:
             # Locate the user in the auth
             self.assertTrue(rest.assertions.assertUserIs(self.auth.users.get(name=user['name']), user))
@@ -80,7 +80,7 @@ class UsersTest(rest.test.RESTActorTestCase):
         self.assertIn('row-style', tableinfo)
 
         # Ensure at least name, role, real_name comments, state and last_access are present on tableinfo['fields']
-        fields: list[typing.Mapping[str, typing.Any]] = tableinfo['fields']
+        fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
         self.assertTrue(
             functools.reduce(
                 lambda x, y: x and y,

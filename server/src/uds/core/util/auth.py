@@ -60,7 +60,7 @@ def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str]
 
 
 def processRegexField(
-    field: str, attributes: typing.Mapping[str, typing.Union[str, list[str]]]
+    field: str, attributes: collections.abc.Mapping[str, typing.Union[str, list[str]]]
 ) -> list[str]:
     """Proccesses a field, that can be a multiline field, and returns a list of values
 

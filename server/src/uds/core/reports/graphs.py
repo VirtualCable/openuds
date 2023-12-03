@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 def barChart(
     size: typing.Tuple[float, float, int],
-    data: typing.Mapping[str, typing.Any],
+    data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,
 ) -> None:
     """
@@ -109,7 +109,7 @@ def barChart(
 
 def lineChart(
     size: typing.Tuple[float, float, int],
-    data: typing.Mapping[str, typing.Any],
+    data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,
 ) -> None:
     """
@@ -166,7 +166,7 @@ def lineChart(
 
 def surfaceChart(
     size: typing.Tuple[float, float, int],
-    data: typing.Mapping[str, typing.Any],
+    data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,
 ) -> None:
     """

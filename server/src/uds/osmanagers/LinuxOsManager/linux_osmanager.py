@@ -152,7 +152,7 @@ class LinuxOsManager(osmanagers.OSManager):
 
     def actorData(
         self, userService: 'UserService'
-    ) -> typing.MutableMapping[str, typing.Any]:
+    ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.getName()}  # No custom data
 
     def processUnused(self, userService: 'UserService') -> None:

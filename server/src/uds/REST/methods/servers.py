@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 # REST API for Server Token Clients interaction
 # Register is split in two because tunnel registration also uses this
 class ServerRegisterBase(Handler):
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         serverToken: models.Server
         now = model.getSqlDatetime()
         ip = self._params.get('ip', self.request.ip)
@@ -149,7 +149,7 @@ class ServerTest(Handler):
     name = 'test'
 
     @decorators.blocker()
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         # Test if a token is valid
         try:
             models.Server.objects.get(token=self._params['token'])
@@ -185,7 +185,7 @@ class ServerEvent(Handler):
             raise
 
     @decorators.blocker()
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         # Avoid circular import
         from uds.core.managers.servers import ServerManager
 

@@ -87,7 +87,7 @@ class LoginAllowed(enum.StrEnum):
         }.get(action, False)
 
     @staticmethod
-    def valuesForSelect() -> typing.Mapping[str, str]:
+    def valuesForSelect() -> collections.abc.Mapping[str, str]:
         return {
             LoginAllowed.ALLOWED.value: gettext('Allow user login'),
             LoginAllowed.DENIED.value: gettext('Deny user login'),

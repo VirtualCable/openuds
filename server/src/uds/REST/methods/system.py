@@ -66,7 +66,7 @@ def getServicesPoolsCounters(
     servicePool: typing.Optional[models.ServicePool],
     counter_type: int,
     since_days: int = SINCE,
-) -> list[typing.Mapping[str, typing.Any]]:
+) -> list[collections.abc.Mapping[str, typing.Any]]:
     try:
         cacheKey = (
             (servicePool and str(servicePool.id) or 'all')
@@ -84,7 +84,7 @@ def getServicesPoolsCounters(
                 us.id = -1  # Global stats
             else:
                 us = servicePool
-            val: list[typing.Mapping[str, typing.Any]] = []
+            val: list[collections.abc.Mapping[str, typing.Any]] = []
             for x in counters.getCounters(
                 us,
                 counter_type,

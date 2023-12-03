@@ -233,7 +233,7 @@ class OVirtLinkedDeployment(services.UserService):
 
     def getConsoleConnection(
         self,
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(

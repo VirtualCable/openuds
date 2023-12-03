@@ -67,7 +67,7 @@ TABLEINFO: typing.Final[str] = 'tableinfo'
 GUI: typing.Final[str] = 'gui'
 LOG: typing.Final[str] = 'log'
 
-FieldType = typing.Mapping[str, typing.Any]
+FieldType = collections.abc.Mapping[str, typing.Any]
 
 
 # pylint: disable=unused-argument
@@ -296,7 +296,7 @@ class BaseModelHandler(Handler):
         self,
         title: str,
         fields: list[typing.Any],
-        row_style: typing.MutableMapping[str, typing.Any],
+        row_style: collections.abc.MutableMapping[str, typing.Any],
         subtitle: typing.Optional[str] = None,
     ) -> dict[str, typing.Any]:
         """
@@ -710,9 +710,9 @@ class ModelHandler(BaseModelHandler):
     # Which model does this manage, must be a django model ofc
     model: 'typing.ClassVar[typing.Type[models.Model]]'
     # If the model is filtered (for overviews)
-    model_filter: 'typing.ClassVar[typing.Optional[typing.Mapping[str, typing.Any]]]' = None
+    model_filter: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
     # Same, but for exclude
-    model_exclude: 'typing.ClassVar[typing.Optional[typing.Mapping[str, typing.Any]]]' = None
+    model_exclude: 'typing.ClassVar[typing.Optional[collections.abc.Mapping[str, typing.Any]]]' = None
 
     # By default, filter is empty
     fltr: typing.Optional[str] = None
@@ -848,7 +848,7 @@ class ModelHandler(BaseModelHandler):
 
             r = re.compile(s + fnmatch.translate(pattern) + e, re.RegexFlag.IGNORECASE)
 
-            def fltr_function(item: typing.MutableMapping[str, typing.Any]):
+            def fltr_function(item: collections.abc.MutableMapping[str, typing.Any]):
                 try:
                     if fld not in item or r.match(item[fld]) is None:
                         return False
@@ -907,7 +907,7 @@ class ModelHandler(BaseModelHandler):
             logger.error('Exception processing detail: %s', e)
             raise self.invalidRequestException() from e
 
-    def getItems(self, *args, **kwargs) -> typing.Generator[typing.MutableMapping[str, typing.Any], None, None]:
+    def getItems(self, *args, **kwargs) -> typing.Generator[collections.abc.MutableMapping[str, typing.Any], None, None]:
         if 'overview' in kwargs:
             overview = kwargs['overview']
             del kwargs['overview']

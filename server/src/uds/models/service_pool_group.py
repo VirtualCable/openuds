@@ -77,7 +77,7 @@ class ServicePoolGroup(UUIDModel):
         return f'Service Pool group {self.name}({self.comments}): {self.image.name if self.image else ""}'
 
     @property
-    def as_dict(self) -> typing.MutableMapping[str, typing.Any]:
+    def as_dict(self) -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'id': self.uuid,
             'name': self.name,

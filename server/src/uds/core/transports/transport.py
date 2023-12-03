@@ -62,7 +62,7 @@ class TransportScript(typing.NamedTuple):
         typing.Literal['python'], typing.Literal['lua']
     ] = 'python'  # currently only python is supported
     signature_b64: str = ''  # Signature of the script in base64
-    parameters: typing.Mapping[str, typing.Any] = {}
+    parameters: collections.abc.Mapping[str, typing.Any] = {}
 
     @property
     def encoded_parameters(self) -> str:
@@ -281,7 +281,7 @@ class Transport(Module):
             parameters=transport_script.parameters,
         )
 
-    def getRelativeScript(self, scriptName: str, params: typing.Mapping[str, typing.Any]) -> 'TransportScript':
+    def getRelativeScript(self, scriptName: str, params: collections.abc.Mapping[str, typing.Any]) -> 'TransportScript':
         """Returns a script that will be executed on client, but will be downloaded from server
 
         Args:
@@ -311,7 +311,7 @@ class Transport(Module):
         self,
         osName: str,
         type: typing.Literal['tunnel', 'direct'],
-        params: typing.Mapping[str, typing.Any],
+        params: collections.abc.Mapping[str, typing.Any],
     ) -> 'TransportScript':
         """
         Returns a script for the given os and type

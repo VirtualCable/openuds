@@ -53,7 +53,7 @@ CONTENT_TYPE = 'text/plain'
 # We will use the cache to "hold" the tickets valid for users
 
 
-def dict2resp(dct: typing.Mapping[typing.Any, typing.Any]) -> str:
+def dict2resp(dct: collections.abc.Mapping[typing.Any, typing.Any]) -> str:
     result = '\r'.join((str(k) + '\t' + str(v) for k, v in dct.items()))
     logger.debug('Guacamole response: %s', result.replace('\r', ',').replace('\t', '='))
     return result
@@ -70,11 +70,11 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
         tunnelId, scrambler = tunnelId.split('.')
 
         # All strings excetp "ticket-info", that is fixed if it exists later
-        val = typing.cast(typing.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
+        val = typing.cast(collections.abc.MutableMapping[str, str], TicketStore.get(tunnelId, invalidate=False))
 
         # Extra check that the ticket data belongs to original requested user service/user
         if 'ticket-info' in val:
-            ti = typing.cast(typing.Mapping[str, str], val['ticket-info'])  # recast to dict
+            ti = typing.cast(collections.abc.Mapping[str, str], val['ticket-info'])  # recast to dict
             del val['ticket-info']  # Do not send this data to guacamole!! :)
 
             try:

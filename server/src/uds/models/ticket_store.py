@@ -223,7 +223,7 @@ class TicketStore(UUIDModel):
         userService: 'UserService',
         port: int,
         host: typing.Optional[str] = None,
-        extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
+        extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
         validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
     ) -> str:
         owner = CryptoManager().randomString(length=8)
@@ -254,7 +254,7 @@ class TicketStore(UUIDModel):
         'UserService',
         typing.Optional[str],
         int,
-        typing.Optional[typing.Mapping[str, typing.Any]],
+        typing.Optional[collections.abc.Mapping[str, typing.Any]],
     ]:
         """
         Returns the ticket for a tunneled connection

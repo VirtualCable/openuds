@@ -232,7 +232,7 @@ class WinDomainOsManager(WindowsOsManager):
     def __getGroup(self, ldapConnection: typing.Any) -> typing.Optional[str]:
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
         group = ldaputil.escape(self._group)
-        obj: typing.Optional[typing.MutableMapping[str, typing.Any]]
+        obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
             obj = next(
                 ldaputil.getAsDict(
@@ -258,7 +258,7 @@ class WinDomainOsManager(WindowsOsManager):
         base = ','.join(['DC=' + i for i in self._domain.split('.')])
 
         fltr = f'(&(objectClass=computer)(sAMAccountName={ldaputil.escape(machineName)}$))'
-        obj: typing.Optional[typing.MutableMapping[str, typing.Any]]
+        obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
             obj = next(ldaputil.getAsDict(ldapConnection, base, fltr, ['dn'], sizeLimit=50))
         except StopIteration:
@@ -437,7 +437,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return [True, _("All parameters seem to work fine.")]
 
-    def actorData(self, userService: 'UserService') -> typing.MutableMapping[str, typing.Any]:
+    def actorData(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userService.getName(),

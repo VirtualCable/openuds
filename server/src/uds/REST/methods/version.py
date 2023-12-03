@@ -43,5 +43,5 @@ class UDSVersion(Handler):
     authenticated = False  # Version requests are public
     name = 'version'
 
-    def get(self) -> typing.MutableMapping[str, typing.Any]:
+    def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'version': consts.system.VERSION, 'build': consts.system.VERSION_STAMP}

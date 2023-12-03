@@ -208,7 +208,7 @@ class ProxmoxDeployment(services.UserService):
 
     def getConsoleConnection(
         self,
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
 
     def desktopLogin(
@@ -317,7 +317,7 @@ if sys.platform == 'win32':
         if op == opFinish:
             return State.FINISHED
 
-        fncs: typing.Mapping[int, typing.Optional[collections.abc.Callable[[], str]]] = {
+        fncs: collections.abc.Mapping[int, typing.Optional[collections.abc.Callable[[], str]]] = {
             opCreate: self.__create,
             opRetry: self.__retry,
             opStart: self.__startMachine,

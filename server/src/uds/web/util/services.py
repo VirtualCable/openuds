@@ -67,8 +67,8 @@ def _serviceInfo(
     name: str,
     visual_name: str,
     description: str,
-    group: typing.Mapping[str, typing.Any],
-    transports: list[typing.Mapping[str, typing.Any]],
+    group: collections.abc.Mapping[str, typing.Any],
+    transports: list[collections.abc.Mapping[str, typing.Any]],
     image: typing.Optional['Image'],
     show_transports: bool,
     allow_users_remove: bool,
@@ -165,7 +165,7 @@ def getServicesData(
 
     def buildMetaTransports(
         transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
-    ) -> list[typing.Mapping[str, typing.Any]]:
+    ) -> list[collections.abc.Mapping[str, typing.Any]]:
         def idd(i):
             return i.uuid if not isLabel else 'LABEL:' + i.label
 
@@ -183,7 +183,7 @@ def getServicesData(
     # Add meta pools data first
     for meta in availMetaPools:
         # Check that we have access to at least one transport on some of its children
-        metaTransports: list[typing.Mapping[str, typing.Any]] = []
+        metaTransports: list[collections.abc.Mapping[str, typing.Any]] = []
         in_use = meta.number_in_use > 0  # type: ignore # anotated value
 
         inAll: typing.Optional[typing.Set[str]] = None
@@ -228,7 +228,7 @@ def getServicesData(
                 Transport.objects.filter(uuid__in=inAll or []), isLabel=False, meta=meta
             )
         elif meta.transport_grouping == types.pools.TransportSelectionPolicy.LABEL:
-            ltrans: typing.MutableMapping[str, Transport] = {}
+            ltrans: collections.abc.MutableMapping[str, Transport] = {}
             for member in meta.members.all().order_by('priority'):
                 tmpSet = set()
                 # if first pool, get all its transports and check that are valid
@@ -280,7 +280,7 @@ def getServicesData(
 
         # If no usable pools, this is not visible
         if metaTransports:
-            group: typing.MutableMapping[str, typing.Any] = (
+            group: collections.abc.MutableMapping[str, typing.Any] = (
                 meta.servicesPoolGroup.as_dict if meta.servicesPoolGroup else ServicePoolGroup.default().as_dict
             )
 
@@ -336,7 +336,7 @@ def getServicesData(
                 .replace('{left}', left_count)
             )
 
-        trans: list[typing.Mapping[str, typing.Any]] = []
+        trans: list[collections.abc.Mapping[str, typing.Any]] = []
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
@@ -434,7 +434,7 @@ def getServicesData(
 
 def enableService(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
-) -> typing.Mapping[str, typing.Any]:
+) -> collections.abc.Mapping[str, typing.Any]:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)
     logger.debug('idService: %s, idTransport: %s', idService, idTransport)
     url = ''

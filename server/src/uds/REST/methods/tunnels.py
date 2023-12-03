@@ -60,7 +60,7 @@ class TunnelTicket(Handler):
     path = 'tunnel'
     name = 'ticket'
 
-    def get(self) -> typing.MutableMapping[str, typing.Any]:
+    def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         Processes get requests
         """
@@ -161,7 +161,7 @@ class TunnelRegister(ServerRegisterBase):
     name = 'register'
 
     # Just a compatibility method for old tunnel servers
-    def post(self) -> typing.MutableMapping[str, typing.Any]:
+    def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         self._params['type'] = types.servers.ServerType.TUNNEL
         self._params['os'] = self._params.get('os', types.os.KnownOS.LINUX.os_name())  # Legacy tunnels are always linux
         self._params['version'] = ''  # No version for legacy tunnels, does not respond to API requests from UDS

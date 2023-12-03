@@ -67,7 +67,7 @@ def checkResultRaw(lst: typing.Any) -> str:
     return str(lst[1])
 
 
-def checkResult(lst: typing.Any) -> typing.Tuple[typing.Mapping[str, typing.Any], str]:
+def checkResult(lst: typing.Any) -> typing.Tuple[collections.abc.Mapping[str, typing.Any], str]:
     return xml2dict.parse(checkResultRaw(lst)), lst[1]
 
 

@@ -89,8 +89,8 @@ def _get_P_S_DS_Ids(provider) -> typing.Tuple:
     return res
 
 
-idRetriever: typing.Mapping[
-    typing.Type[Model], typing.Mapping[int, collections.abc.Callable]
+idRetriever: collections.abc.Mapping[
+    typing.Type[Model], collections.abc.Mapping[int, collections.abc.Callable]
 ] = {
     Provider: {
         CT_LOAD: _get_Id,
@@ -111,7 +111,7 @@ idRetriever: typing.Mapping[
     },
 }
 
-counterTypes: typing.Mapping[int, typing.Tuple[typing.Type[Model], ...]] = {
+counterTypes: collections.abc.Mapping[int, typing.Tuple[typing.Type[Model], ...]] = {
     CT_LOAD: (Provider,),
     CT_STORAGE: (Service,),
     CT_ASSIGNED: (ServicePool,),
@@ -122,7 +122,7 @@ counterTypes: typing.Mapping[int, typing.Tuple[typing.Type[Model], ...]] = {
     CT_CACHED: (ServicePool,),
 }
 
-objectTypes: typing.Mapping[typing.Type[Model], int] = {
+objectTypes: collections.abc.Mapping[typing.Type[Model], int] = {
     ServicePool: OT_SERVICEPOOL,
     Service: OT_SERVICE,
     Provider: OT_PROVIDER,
@@ -130,7 +130,7 @@ objectTypes: typing.Mapping[typing.Type[Model], int] = {
 }
 
 # Titles of types
-titles: typing.Mapping[int, typing.Any] = {
+titles: collections.abc.Mapping[int, typing.Any] = {
     CT_ASSIGNED: _('Assigned'),
     CT_INUSE: _('In use'),
     CT_LOAD: _('Load'),

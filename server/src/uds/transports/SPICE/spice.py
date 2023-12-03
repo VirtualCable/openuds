@@ -84,7 +84,7 @@ class SPICETransport(BaseSpiceTransport):
     ) -> 'transports.TransportScript':
         try:
             userServiceInstance = userService.getInstance()
-            con: typing.Optional[typing.MutableMapping[str, typing.Any]] = userServiceInstance.getConsoleConnection()
+            con: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise

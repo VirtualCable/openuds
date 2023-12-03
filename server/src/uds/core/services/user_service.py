@@ -594,7 +594,7 @@ class UserService(Environmentable, Serializable):
 
     def getConsoleConnection(
         self,
-    ) -> typing.Optional[typing.MutableMapping[str, typing.Any]]:
+    ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """
         This method is invoked by any connection that needs special connection data
         to connenct to it using, for example, SPICE protocol. (that currently is the only one)
