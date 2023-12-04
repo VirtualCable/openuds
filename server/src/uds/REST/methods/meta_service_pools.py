@@ -166,7 +166,7 @@ class MetaAssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.MetaPool)
         def assignedUserServicesForPools() -> (
             typing.Generator[
-                typing.Tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None
+                tuple[models.UserService, typing.Optional[dict[str, typing.Any]]], None, None
             ]
         ):
             for m in parent.members.filter(enabled=True):

@@ -134,7 +134,7 @@ class SampleAuth(auths.Authenticator):
         if values and len(self.groups.value) < 2:
             raise exceptions.validation.ValidationError(_('We need more than two groups!'))
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Here we will receive a pattern for searching users.
 
@@ -152,7 +152,7 @@ class SampleAuth(auths.Authenticator):
             for a in range(1, 10)
         ]
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Here we we will receive a patter for searching groups.
 

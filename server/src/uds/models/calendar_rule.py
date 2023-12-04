@@ -51,7 +51,7 @@ WEEKDAYS: typing.Final[str] = 'WEEKDAYS'
 NEVER: typing.Final[str] = 'NEVER'
 
 # Frequencies
-freqs: typing.Tuple[typing.Tuple[str, str], ...] = (
+freqs: tuple[tuple[str, str], ...] = (
     ('YEARLY', typing.cast(str, _('Yearly'))),
     ('MONTHLY', typing.cast(str, _('Monthly'))),
     ('WEEKLY', typing.cast(str, _('Weekly'))),
@@ -76,7 +76,7 @@ frq_to_mins: collections.abc.Mapping[str, int] = {
     'NEVER': 1000* 1000 * 24 * 60,
 }
 
-dunits: typing.Tuple[typing.Tuple[str, str], ...] = (
+dunits: tuple[tuple[str, str], ...] = (
     ('MINUTES', _('Minutes')),
     ('HOURS', _('Hours')),
     ('DAYS', _('Days')),
@@ -90,7 +90,7 @@ dunit_to_mins: collections.abc.Mapping[str, int] = {
     'WEEKS': 60 * 24 * 7,
 }
 
-weekdays: typing.Tuple[rules.weekday, ...] = (
+weekdays: tuple[rules.weekday, ...] = (
     rules.SU,
     rules.MO,
     rules.TU,

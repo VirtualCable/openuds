@@ -78,7 +78,7 @@ class Permissions(Handler):
 
     @staticmethod
     def permsToDict(
-        perms: typing.Iterable[models.Permissions],
+        perms: collections.abc.Iterable[models.Permissions],
     ) -> list[dict[str, str]]:
         res = []
         entity: typing.Optional[typing.Union[models.User, models.Group]]

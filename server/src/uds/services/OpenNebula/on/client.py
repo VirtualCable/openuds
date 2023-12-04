@@ -67,11 +67,11 @@ def checkResultRaw(lst: typing.Any) -> str:
     return str(lst[1])
 
 
-def checkResult(lst: typing.Any) -> typing.Tuple[collections.abc.Mapping[str, typing.Any], str]:
+def checkResult(lst: typing.Any) -> tuple[collections.abc.Mapping[str, typing.Any], str]:
     return xml2dict.parse(checkResultRaw(lst)), lst[1]
 
 
-def asIterable(element: RT) -> typing.Iterable[RT]:
+def asIterable(element: RT) -> collections.abc.Iterable[RT]:
     if isinstance(element, (tuple, list)):
         return element
     return (element,)
@@ -112,7 +112,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         self.connection = xmlrpc.client.ServerProxy(self.endpoint)
 
     @ensureConnected
-    def enumStorage(self, storageType: int = 0) -> typing.Iterable[types.StorageType]:
+    def enumStorage(self, storageType: int = 0) -> collections.abc.Iterable[types.StorageType]:
         sstorageType = str(storageType)  # Ensure it is an string
         # Invoke datastore pools info, no parameters except connection string
         result, _ = checkResult(
@@ -125,7 +125,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
                 )
 
     @ensureConnected
-    def enumTemplates(self) -> typing.Iterable[types.TemplateType]:
+    def enumTemplates(self) -> collections.abc.Iterable[types.TemplateType]:
         """
         Invoke templates pools info, with this parameters:
         1.- Session string
@@ -145,7 +145,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
                 pass
 
     @ensureConnected
-    def enumImages(self) -> typing.Iterable[types.ImageType]:
+    def enumImages(self) -> collections.abc.Iterable[types.ImageType]:
         """
         Invoke images pools info, with this parameters:
         1.- Session string
@@ -316,7 +316,7 @@ class OpenNebulaClient:  # pylint: disable=too-many-public-methods
         )
 
     @ensureConnected
-    def enumVMs(self) -> typing.Iterable[types.VirtualMachineType]:
+    def enumVMs(self) -> collections.abc.Iterable[types.VirtualMachineType]:
         """
         Invoke vm pools info, with this parameters:
         1.- Session string

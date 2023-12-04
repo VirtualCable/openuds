@@ -119,7 +119,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         fields.source_field_data(self.getModel(), self.source)
         logger.debug('Source field data: %s', self.source)
 
-    def getModelItems(self) -> typing.Iterable[ReportAutoModel]:
+    def getModelItems(self) -> collections.abc.Iterable[ReportAutoModel]:
         model = self.getModel()
 
         filters = [self.source.value] if isinstance(self.source, gui.ChoiceField) else self.source.value
@@ -134,8 +134,8 @@ class ReportAuto(Report, metaclass=ReportAutoType):
     def getIntervalInHours(self):
         return {'hour': 1, 'day': 24, 'week': 24 * 7, 'month': 24 * 30}[self.interval.value]
 
-    def getIntervalsList(self) -> list[typing.Tuple[datetime.datetime, datetime.datetime]]:
-        intervals: list[typing.Tuple[datetime.datetime, datetime.datetime]] = []
+    def getIntervalsList(self) -> list[tuple[datetime.datetime, datetime.datetime]]:
+        intervals: list[tuple[datetime.datetime, datetime.datetime]] = []
         # Convert start and end dates to datetime objects from date objects
         start = datetime.datetime.combine(self.startingDate(), datetime.time.min)
         to = datetime.datetime.combine(self.endingDate(), datetime.time.max)

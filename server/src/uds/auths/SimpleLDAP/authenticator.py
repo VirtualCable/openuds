@@ -525,7 +525,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self.__getGroups(user))
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(
@@ -547,7 +547,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             logger.exception("Exception: ")
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(

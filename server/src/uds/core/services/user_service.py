@@ -584,7 +584,7 @@ class UserService(Environmentable, Serializable):
         base method does nothing
         """
 
-    def getConnectionData(self) -> typing.Optional[typing.Tuple[str, str, str]]:
+    def getConnectionData(self) -> typing.Optional[tuple[str, str, str]]:
         """
         This method is only invoked on some user deployments that needs to provide
         Credentials based on deployment itself

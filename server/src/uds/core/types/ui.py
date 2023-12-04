@@ -115,7 +115,7 @@ class ChoiceItem(typing.TypedDict):
     text: str
 
 
-ChoicesType = typing.Union[collections.abc.Callable[[], typing.Iterable[ChoiceItem]], typing.Iterable[ChoiceItem]]
+ChoicesType = typing.Union[collections.abc.Callable[[], collections.abc.Iterable[ChoiceItem]], collections.abc.Iterable[ChoiceItem]]
 
 
 @dataclasses.dataclass

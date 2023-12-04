@@ -95,7 +95,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return self.maintenance_mode
 
     @staticmethod
-    def typeFilter(type_: str) -> typing.Iterable['Provider']:
+    def typeFilter(type_: str) -> collections.abc.Iterable['Provider']:
         for i in Provider.objects.filter(data_type=type):
             yield i
 

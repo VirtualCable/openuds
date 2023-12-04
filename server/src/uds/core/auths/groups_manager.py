@@ -175,7 +175,7 @@ class GroupsManager:
 
         return None
 
-    def validate(self, groupName: typing.Union[str, typing.Iterable[str]]) -> None:
+    def validate(self, groupName: typing.Union[str, collections.abc.Iterable[str]]) -> None:
         """Validates that the group (or groups) groupName passed in is valid for this group manager.
 
         It check that the group specified is known by this group manager.

@@ -252,7 +252,7 @@ class Command(BaseCommand):
 
     VALID_ENTITIES: collections.abc.Mapping[str, collections.abc.Callable[[], str]]
     verbose: bool = True
-    filter_args: list[typing.Tuple[str, str]] = []
+    filter_args: list[tuple[str, str]] = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -357,7 +357,7 @@ class Command(BaseCommand):
             )
         return typing.cast('typing.Iterator[ModelType]', model.objects.all().iterator())  # type: ignore
 
-    def output_count(self, message: str, iterable: typing.Iterable[T]) -> typing.Iterable[T]:
+    def output_count(self, message: str, iterable: collections.abc.Iterable[T]) -> collections.abc.Iterable[T]:
         """
         Outputs the count of an iterable
         """

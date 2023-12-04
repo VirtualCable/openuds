@@ -179,7 +179,7 @@ def removeMachine(api: 'client.OpenNebulaClient', machineId: str) -> None:
 
 def enumerateMachines(
     api: 'client.OpenNebulaClient',
-) -> typing.Iterable[types.VirtualMachineType]:
+) -> collections.abc.Iterable[types.VirtualMachineType]:
     '''
     Obtains the list of machines inside OpenNebula.
     Machines starting with UDS are filtered out
@@ -201,7 +201,7 @@ def getNetInfo(
     api: 'client.OpenNebulaClient',
     machineId: str,
     networkId: typing.Optional[str] = None,
-) -> typing.Tuple[str, str]:
+) -> tuple[str, str]:
     '''
     Get the MAC and the IP for the network and machine. If network is None, for the first network
     '''

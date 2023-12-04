@@ -197,7 +197,7 @@ def getAsDict(
     con: 'LDAPObject',
     base: str,
     ldapFilter: str,
-    attrList: typing.Optional[typing.Iterable[str]] = None,
+    attrList: typing.Optional[collections.abc.Iterable[str]] = None,
     sizeLimit: int = 100,
     scope: typing.Any = SCOPE_SUBTREE,
 ) -> typing.Generator[LDAPResultType, None, None]:
@@ -255,7 +255,7 @@ def getFirst(
     objectClass: str,
     field: str,
     value: str,
-    attributes: typing.Optional[typing.Iterable[str]] = None,
+    attributes: typing.Optional[collections.abc.Iterable[str]] = None,
     sizeLimit: int = 50,
 ) -> typing.Optional[LDAPResultType]:
     """

@@ -61,7 +61,7 @@ class ContentProcessor:
     """
 
     mime_type: typing.ClassVar[str] = ''
-    extensions: typing.ClassVar[typing.Iterable[str]] = []
+    extensions: typing.ClassVar[collections.abc.Iterable[str]] = []
 
     _request: 'HttpRequest'
 

@@ -99,7 +99,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return int(number, 16)
 
     @staticmethod
-    def networksFor(ip: str) -> typing.Iterable['Network']:
+    def networksFor(ip: str) -> collections.abc.Iterable['Network']:
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """

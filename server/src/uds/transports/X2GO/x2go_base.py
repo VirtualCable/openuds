@@ -216,7 +216,7 @@ class BaseX2GOTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getScreenSize(self) -> typing.Tuple[int, int]:
+    def getScreenSize(self) -> tuple[int, int]:
         return CommonPrefs.getWidthHeight(self.screenSize.value)
 
     def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
@@ -260,7 +260,7 @@ class BaseX2GOTransport(transports.Transport):
     ) -> types.connections.ConnectionData:
         return self.processUserPassword(userService, user, password)
 
-    def genKeyPairForSsh(self) -> typing.Tuple[str, str]:
+    def genKeyPairForSsh(self) -> tuple[str, str]:
         """
         Generates a key pair for use with x2go
         The private part is used by client
@@ -288,7 +288,7 @@ class BaseX2GOTransport(transports.Transport):
 
         return data.replace('__USER__', user).replace('__KEY__', pubKey)
 
-    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> typing.Tuple[str, str]:
+    def getAndPushKey(self, userName: str, userService: 'models.UserService') -> tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
         authScript = self.getAuthorizeScript(userName, pub)
         UserServiceManager().sendScript(userService, authScript)

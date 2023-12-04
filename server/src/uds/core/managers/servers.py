@@ -107,13 +107,13 @@ class ServerManager(metaclass=singleton.Singleton):
 
     def getServerStats(
         self, serversFltr: 'QuerySet[models.Server]'
-    ) -> list[typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
+    ) -> list[tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']]:
         """
         Returns a list of stats for a list of servers
         """
         # Paralelize stats retrieval
         retrievedStats: list[
-            typing.Tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
+            tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
         ] = []
 
         def _retrieveStats(server: 'models.Server') -> None:
@@ -140,11 +140,11 @@ class ServerManager(metaclass=singleton.Singleton):
         now: datetime.datetime,
         minMemoryMB: int = 0,
         excludeServersUUids: typing.Optional[typing.Set[str]] = None,
-    ) -> typing.Tuple['models.Server', 'types.servers.ServerStats']:
+    ) -> tuple['models.Server', 'types.servers.ServerStats']:
         """
         Finds the best server for a service
         """
-        best: typing.Optional[typing.Tuple['models.Server', 'types.servers.ServerStats']] = None
+        best: typing.Optional[tuple['models.Server', 'types.servers.ServerStats']] = None
         unmanaged_list: list['models.Server'] = []
         fltrs = serverGroup.servers.filter(maintenance_mode=False)
         fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers

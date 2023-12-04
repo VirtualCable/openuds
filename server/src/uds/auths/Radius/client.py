@@ -132,7 +132,7 @@ class RadiusClient:
     # Second element of return value is the mfa code from field
     def authenticate(
         self, username: str, password: str, mfaField: str = ''
-    ) -> typing.Tuple[list[str], str, bytes]:
+    ) -> tuple[list[str], str, bytes]:
         reply = self.sendAccessRequest(username, password)
 
         if reply.code not in (pyrad.packet.AccessAccept, pyrad.packet.AccessChallenge):
@@ -145,7 +145,7 @@ class RadiusClient:
         if 'Class' in reply:
             groups = [
                 i[groupClassPrefixLen:].decode()
-                for i in typing.cast(typing.Iterable[bytes], reply['Class'])
+                for i in typing.cast(collections.abc.Iterable[bytes], reply['Class'])
                 if i.startswith(groupClassPrefix)
             ]
         else:
@@ -157,7 +157,7 @@ class RadiusClient:
         if mfaField and mfaField in reply:
             mfaCode = ''.join(
                 i[groupClassPrefixLen:].decode()
-                for i in typing.cast(typing.Iterable[bytes], reply['Class'])
+                for i in typing.cast(collections.abc.Iterable[bytes], reply['Class'])
                 if i.startswith(groupClassPrefix)
             )
         return (groups, mfaCode, typing.cast(list[bytes], reply.get('State') or [b''])[0])

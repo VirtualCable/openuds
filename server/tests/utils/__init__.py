@@ -44,7 +44,7 @@ def compare_dicts(
     ignore_values: typing.Optional[list[str]] = None,
     ignore_keys_startswith: typing.Optional[list[str]] = None,
     ignore_values_startswith: typing.Optional[list[str]] = None,
-) -> list[typing.Tuple[str, str]]:
+) -> list[tuple[str, str]]:
     """
     Compares two dictionaries, returning a list of differences
     """

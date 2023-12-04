@@ -205,7 +205,7 @@ class Command(BaseCommand):
                             }
 
                         # get calendar access
-                        calendarAccess = {}
+                        calendarAccess: dict[str, typing.Any] = {}
                         for ca in models.CalendarAccess.objects.filter(service_pool=servicePool):
                             calendarAccess[ca.calendar.name] = ca.access
 

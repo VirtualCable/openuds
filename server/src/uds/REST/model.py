@@ -428,7 +428,7 @@ class DetailHandler(BaseModelHandler):
     _parent: typing.Optional['ModelHandler']
     _path: str
     _params: typing.Any  # _params is deserialized object from request
-    _args: typing.Tuple[str, ...]
+    _args: tuple[str, ...]
     _kwargs: dict[str, typing.Any]
     _user: 'User'
 
@@ -654,7 +654,7 @@ class DetailHandler(BaseModelHandler):
         """
         return {}
 
-    def getGui(self, parent: models.Model, forType: str) -> typing.Iterable[typing.Any]:
+    def getGui(self, parent: models.Model, forType: str) -> collections.abc.Iterable[typing.Any]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -667,7 +667,7 @@ class DetailHandler(BaseModelHandler):
 
     def getTypes(
         self, parent: models.Model, forType: typing.Optional[str]
-    ) -> typing.Iterable[dict[str, typing.Any]]:
+    ) -> collections.abc.Iterable[dict[str, typing.Any]]:
         """
         The default is that detail element will not have any types (they are "homogeneous")
         but we provided this method, that can be overridden, in case one detail needs it
@@ -721,7 +721,7 @@ class ModelHandler(BaseModelHandler):
     # For example ('services', True) -- > .../id_parent/services
     #             ('services', False) --> ..../services
     custom_methods: typing.ClassVar[
-        list[typing.Tuple[str, bool]]
+        list[tuple[str, bool]]
     ] = []  # If this model respond to "custom" methods, we will declare them here
     # If this model has details, which ones
     detail: typing.ClassVar[
@@ -759,7 +759,7 @@ class ModelHandler(BaseModelHandler):
         return self.item_as_dict(item)
 
     # types related
-    def enum_types(self) -> typing.Iterable[type['Module']]:  # override this
+    def enum_types(self) -> collections.abc.Iterable[type['Module']]:  # override this
         """
         Must be overriden by desdencents if they support types
         Excpetcs the list of types that the handler supports

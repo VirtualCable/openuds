@@ -103,13 +103,13 @@ class PoolPerformanceReport(StatsReport):
         ]
         self.pools.setChoices(vals)
 
-    def getPools(self) -> typing.Iterable[typing.Tuple[str, str]]:
+    def getPools(self) -> collections.abc.Iterable[tuple[str, str]]:
         for p in ServicePool.objects.filter(uuid__in=self.pools.value):
             yield (str(p.id), p.name)
 
     def getRangeData(
         self,
-    ) -> typing.Tuple[str, list, list]:  # pylint: disable=too-many-locals
+    ) -> tuple[str, list, list]:  # pylint: disable=too-many-locals
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         if self.samplingPoints.num() < 2:
@@ -125,7 +125,7 @@ class PoolPerformanceReport(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals: list[typing.Tuple[int, int]] = []
+        samplingIntervals: list[tuple[int, int]] = []
         samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
             samplingIntervals.append((int(start + i * samplingIntervalSeconds), int(start + (i + 1) * samplingIntervalSeconds)))

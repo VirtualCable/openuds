@@ -110,7 +110,7 @@ class PropertyAccessor:
     def values(self) -> typing.Iterator[typing.Any]:
         return iter(self._filter().values_list('value', flat=True))
 
-    def items(self) -> typing.Iterator[typing.Tuple[str, typing.Any]]:
+    def items(self) -> typing.Iterator[tuple[str, typing.Any]]:
         return iter(self._filter().values_list('key', 'value'))
 
     def clear(self) -> None:
@@ -137,12 +137,12 @@ class PropertyAccessor:
 class PropertiesMixin:
     """Mixin to add properties to a model"""
 
-    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+    def ownerIdAndType(self) -> tuple[str, str]:
         """Returns the owner id and type of this object
         The owner id and type is used to identify the owner in the properties table
 
         Returns:
-            typing.Tuple[str, str]: Owner id and type
+            tuple[str, str]: Owner id and type
         """
         # Default implementation does not provide any owner id or type
         return '', self.__class__.__name__

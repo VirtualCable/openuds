@@ -236,7 +236,7 @@ def validateHost(host: str) -> str:
         return validateFqdn(host)
 
 
-def validateHostPortPair(hostPortPair: str) -> typing.Tuple[str, int]:
+def validateHostPortPair(hostPortPair: str) -> tuple[str, int]:
     """
     Validates that a host:port pair is valid
     :param hostPortPair: host:port pair to validate

@@ -204,12 +204,12 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     def getDatastores(
         self, datastoreType: int = 0
-    ) -> typing.Iterable[on.types.StorageType]:
+    ) -> collections.abc.Iterable[on.types.StorageType]:
         yield from on.storage.enumerateDatastores(self.api, datastoreType)
 
     def getTemplates(
         self, force: bool = False
-    ) -> typing.Iterable[on.types.TemplateType]:
+    ) -> collections.abc.Iterable[on.types.TemplateType]:
         yield from on.template.getTemplates(self.api, force)
 
     def makeTemplate(self, fromTemplateId: str, name, toDataStore: str) -> str:
@@ -308,7 +308,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
 
     def getNetInfo(
         self, machineId: str, networkId: typing.Optional[str] = None
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         '''
         Changes the mac address of first nic of the machine to the one specified
         '''

@@ -295,7 +295,7 @@ class LiveService(services.Service):
 
     def getNetInfo(
         self, machineId: str, networkId: typing.Optional[str] = None
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         """
         Changes the mac address of first nic of the machine to the one specified
         """

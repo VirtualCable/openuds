@@ -82,7 +82,7 @@ class StatsFS(types.UDSFSInterface):
     )
     # Dictionary containing a mapping between a relative day and the corresponding
     # today start timestamp + first element of tuple, today start timestamp + second element of tuple
-    _interval: typing.ClassVar[collections.abc.Mapping[str, typing.Tuple[datetime.timedelta, datetime.timedelta]]] = {
+    _interval: typing.ClassVar[collections.abc.Mapping[str, tuple[datetime.timedelta, datetime.timedelta]]] = {
         'today': (
             datetime.timedelta(days=0),
             datetime.timedelta(days=1),
@@ -101,7 +101,7 @@ class StatsFS(types.UDSFSInterface):
         ),
     }
 
-    _dispatchers: collections.abc.Mapping[str, typing.Tuple[DispatcherType, bool]]
+    _dispatchers: collections.abc.Mapping[str, tuple[DispatcherType, bool]]
     _cache: typing.ClassVar[Cache] = Cache('fsevents')
 
     def __init__(self) -> None:
@@ -115,7 +115,7 @@ class StatsFS(types.UDSFSInterface):
     # Splits the filename and returns a tuple with "dispatcher", "interval", "extension"
     def getFilenameComponents(
         self, filename: list[str]
-    ) -> typing.Tuple[DispatcherType, StatInterval, str]:
+    ) -> tuple[DispatcherType, StatInterval, str]:
         if len(filename) != 1:
             raise FileNotFoundError()
 

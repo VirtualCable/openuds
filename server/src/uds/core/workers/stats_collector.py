@@ -56,7 +56,7 @@ class DeployedServiceStatsCollector(Job):
     def run(self) -> None:
         logger.debug('Starting Deployed service stats collector')
 
-        servicePoolsToCheck: typing.Iterable[
+        servicePoolsToCheck: collections.abc.Iterable[
             models.ServicePool
         ] = models.ServicePool.objects.filter(state=State.ACTIVE).iterator()
         stamp = model.getSqlDatetime()

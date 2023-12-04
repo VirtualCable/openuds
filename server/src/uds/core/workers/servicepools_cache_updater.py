@@ -73,11 +73,11 @@ class ServiceCacheUpdater(Job):
 
     def servicesPoolsNeedingCacheUpdate(
         self,
-    ) -> list[typing.Tuple[ServicePool, int, int, int]]:
+    ) -> list[tuple[ServicePool, int, int, int]]:
         # State filter for cached and inAssigned objects
         # First we get all deployed services that could need cache generation
         # We start filtering out the deployed services that do not need caching at all.
-        servicePoolsNeedingCaching: typing.Iterable[ServicePool] = (
+        servicePoolsNeedingCaching: collections.abc.Iterable[ServicePool] = (
             ServicePool.objects.filter(Q(initial_srvs__gte=0) | Q(cache_l1_srvs__gte=0))
             .filter(
                 max_srvs__gt=0,
@@ -88,7 +88,7 @@ class ServiceCacheUpdater(Job):
         )
 
         # We will get the one that proportionally needs more cache
-        servicesPools: list[typing.Tuple[ServicePool, int, int, int]] = []
+        servicesPools: list[tuple[ServicePool, int, int, int]] = []
         for servicePool in servicePoolsNeedingCaching:
             servicePool.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it

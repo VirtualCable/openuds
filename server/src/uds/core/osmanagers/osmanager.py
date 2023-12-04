@@ -193,7 +193,7 @@ class OSManager(Module):
         userService: 'UserService',  # pylint: disable=unused-argument
         username: str,
         password: str,
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         """
         This will be invoked prior to passsing username/password to Transport.
 

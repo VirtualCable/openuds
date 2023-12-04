@@ -45,7 +45,7 @@ class LoadBalancingPolicy(enum.IntEnum):
         return self.name.lower()
 
     @staticmethod
-    def enumerate() -> list[typing.Tuple[int, str]]:
+    def enumerate() -> list[tuple[int, str]]:
         return [
             (LoadBalancingPolicy.ROUND_ROBIN, _('Evenly distributed')),
             (LoadBalancingPolicy.PRIORITY, _('Priority')),
@@ -62,7 +62,7 @@ class TransportSelectionPolicy(enum.IntEnum):
         return self.name.lower()
 
     @staticmethod
-    def enumerate() -> list[typing.Tuple[int, str]]:
+    def enumerate() -> list[tuple[int, str]]:
         return [
             (TransportSelectionPolicy.AUTO, _('Automatic selection')),
             (TransportSelectionPolicy.COMMON, _('Use only common transports')),
@@ -78,7 +78,7 @@ class HighAvailabilityPolicy(enum.IntEnum):
         return str(self)
 
     @staticmethod
-    def enumerate() -> list[typing.Tuple[int, str]]:
+    def enumerate() -> list[tuple[int, str]]:
         return [
             (HighAvailabilityPolicy.DISABLED, _('Disabled')),
             (HighAvailabilityPolicy.ENABLED, _('Enabled')),

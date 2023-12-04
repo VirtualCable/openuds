@@ -88,7 +88,7 @@ class UsageByPool(StatsReport):
         ]
         self.pool.setChoices(vals)
 
-    def getData(self) -> typing.Tuple[list[dict[str, typing.Any]], str]:
+    def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db
         start = self.startDate.stamp()
         end = self.endDate.stamp()

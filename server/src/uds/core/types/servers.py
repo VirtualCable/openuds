@@ -58,7 +58,7 @@ class ServerType(enum.IntEnum):
         }[self]
 
     @staticmethod
-    def enumerate() -> list[typing.Tuple[int, str]]:
+    def enumerate() -> list[tuple[int, str]]:
         return [
             (ServerType.TUNNEL, _('Tunnel')),
             (ServerType.ACTOR, _('Actor')),
@@ -75,7 +75,7 @@ class ServerSubtype(metaclass=singleton.Singleton):
         managed: bool
         icon: str
 
-    registered: dict[typing.Tuple[ServerType, str], Info]
+    registered: dict[tuple[ServerType, str], Info]
 
     def __init__(self) -> None:
         self.registered = {}
@@ -98,7 +98,7 @@ class ServerSubtype(metaclass=singleton.Singleton):
             type=type, subtype=subtype, description=description, managed=managed, icon=icon
         )
 
-    def enum(self) -> typing.Iterable[Info]:
+    def enum(self) -> collections.abc.Iterable[Info]:
         return self.registered.values()
 
     def get(self, type: ServerType, subtype: str) -> typing.Optional[Info]:
@@ -118,7 +118,7 @@ class ServerStats(typing.NamedTuple):
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    disks: list[typing.Tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
+    disks: list[tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
     stamp: float = 0  # Timestamp of this stats
@@ -192,7 +192,7 @@ class ServerStats(typing.NamedTuple):
 
         dct = {k: v for k, v in data.items()}  # Make a copy
         dct.update(kwargs)  # and update with kwargs
-        disks: list[typing.Tuple[str, int, int]] = []
+        disks: list[tuple[str, int, int]] = []
         for disk in dct.get('disks', []):
             disks.append((disk['mountpoint'], disk['used'], disk['total']))
         return ServerStats(
@@ -226,7 +226,7 @@ class ServerCounter(typing.NamedTuple):
     counter: int
 
     @staticmethod
-    def fromIterable(data: typing.Optional[typing.Iterable]) -> typing.Optional['ServerCounter']:
+    def fromIterable(data: typing.Optional[collections.abc.Iterable]) -> typing.Optional['ServerCounter']:
         if data is None:
             return None
         return ServerCounter(*data)

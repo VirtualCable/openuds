@@ -83,7 +83,7 @@ class StuckCleaner(Job):
         )
 
         # Info states are removed on UserServiceCleaner and VALID_STATES are ok, or if "hanged", checked on "HangedCleaner"
-        def stuckUserServices(servicePool: ServicePool) -> typing.Iterable[UserService]:
+        def stuckUserServices(servicePool: ServicePool) -> collections.abc.Iterable[UserService]:
             q = servicePool.userServices.filter(state_date__lt=since_state)
             # Get all that are not in valid or info states, AND the ones that are "PREPARING" with
             # "destroy_after" property set (exists) (that means that are waiting to be destroyed after initializations)

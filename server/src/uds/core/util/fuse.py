@@ -1218,7 +1218,7 @@ class FUSE:
         return self.operations.lock(self._decode_optional_path(path), fh, cmd, lock)
 
     def utimens(self, path: bytes, buf: typing.Any) -> int:
-        times: typing.Optional[typing.Tuple[int, int]] = None
+        times: typing.Optional[tuple[int, int]] = None
         times = (
             (
                 time_of_timespec(buf.contents.actime),
@@ -1380,7 +1380,7 @@ class Operations:
     def readdir(
         self, path: str, fh: typing.Any
     ) -> typing.Union[
-        list[str], list[typing.Tuple[str, dict[str, int], int]]
+        list[str], list[tuple[str, dict[str, int], int]]
     ]:
         '''
         Can return either a list of names, or a list of (name, attrs, offset)
@@ -1437,7 +1437,7 @@ class Operations:
         raise FuseOSError(errno.EROFS)
 
     def utimens(
-        self, path, times: typing.Optional[typing.Tuple[float, float]] = None
+        self, path, times: typing.Optional[tuple[float, float]] = None
     ) -> int:
         'Times is a (atime, mtime) tuple. If None use current time.'
 

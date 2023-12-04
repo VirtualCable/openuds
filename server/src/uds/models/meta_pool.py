@@ -211,7 +211,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
     @staticmethod
     def getForGroups(
-        groups: typing.Iterable['Group'], user: typing.Optional['User'] = None
+        groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None
     ) -> 'QuerySet[MetaPool]':
         """
         Return deployed services with publications for the groups requested.

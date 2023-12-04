@@ -81,14 +81,14 @@ class Handler:
 
     # For implementing help
     # A list of pairs of (path, help) for subpaths on this handler
-    help_paths: typing.ClassVar[list[typing.Tuple[str, str]]] = []
+    help_paths: typing.ClassVar[list[tuple[str, str]]] = []
     help_text: typing.ClassVar[str] = 'No help available'
 
     _request: 'ExtendedHttpRequestWithUser'  # It's a modified HttpRequest
     _path: str
     _operation: str
     _params: dict[str, typing.Any]  # This is a deserliazied object from request. Can be anything as 'a' or {'a': 1} or ....
-    _args: typing.Tuple[
+    _args: tuple[
         str, ...
     ]  # This are the "path" split by /, that is, the REST invocation arguments
     _kwargs: dict
@@ -199,7 +199,7 @@ class Handler:
         return self._params
 
     @property
-    def args(self) -> typing.Tuple[str, ...]:
+    def args(self) -> tuple[str, ...]:
         """
         Returns the args object
         """

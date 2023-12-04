@@ -66,7 +66,7 @@ class LoginAllowed(enum.StrEnum):
     def checkAction(
         action: 'LoginAllowed|str',
         request: 'ExtendedHttpRequest',
-        networks: typing.Optional[typing.Iterable[str]] = None,
+        networks: typing.Optional[collections.abc.Iterable[str]] = None,
     ) -> bool:
         def checkIp() -> bool:
             if networks is None:
@@ -210,7 +210,7 @@ class MFA(Module):
 
     def _getData(
         self, request: 'ExtendedHttpRequest', userId: str
-    ) -> typing.Optional[typing.Tuple[datetime.datetime, str]]:
+    ) -> typing.Optional[tuple[datetime.datetime, str]]:
         """
         Internal method to get the data from storage
         """

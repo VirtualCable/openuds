@@ -419,7 +419,7 @@ class LiveService(services.Service):
         """
         self.api.deleteServer(machineId)
 
-    def getNetInfo(self, machineId: str) -> typing.Tuple[str, str]:
+    def getNetInfo(self, machineId: str) -> tuple[str, str]:
         """
         Gets the mac address of first nic of the machine
         """

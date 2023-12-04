@@ -81,7 +81,7 @@ class Authenticators(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def enum_types(self) -> typing.Iterable[type[auths.Authenticator]]:
+    def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
     def typeInfo(self, type_: type['Module']) -> dict[str, typing.Any]:

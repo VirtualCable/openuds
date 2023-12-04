@@ -109,12 +109,12 @@ class LogLevel(enum.IntEnum):
 
     # Return all Log levels as tuples of (level value, level name)
     @staticmethod
-    def all() -> list[typing.Tuple[int, str]]:
+    def all() -> list[tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel]
 
     # Rteturns "interesting" log levels
     @staticmethod
-    def interesting() -> list[typing.Tuple[int, str]]:
+    def interesting() -> list[tuple[int, str]]:
         return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
 
 

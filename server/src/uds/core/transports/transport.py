@@ -90,7 +90,7 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supportedOss: typing.Tuple = consts.os.desktopOss  # Supported operating systems
+    supportedOss: tuple = consts.os.desktopOss  # Supported operating systems
 
     # If this transport is visible via Web, via Thin Client or both
     webTransport: bool = False
@@ -154,7 +154,7 @@ class Transport(Module):
         return f'Not accessible (using service ip {ip})'
 
     @classmethod
-    def supportsProtocol(cls, protocol: typing.Union[typing.Iterable, str]):
+    def supportsProtocol(cls, protocol: typing.Union[collections.abc.Iterable, str]):
         if isinstance(protocol, str):
             return protocol.lower() == cls.protocol.lower()
         # Not string group of strings

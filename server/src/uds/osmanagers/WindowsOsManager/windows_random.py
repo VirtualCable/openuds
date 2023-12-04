@@ -98,7 +98,7 @@ class WinRandomPassManager(WindowsOsManager):
 
     def processUserPassword(
         self, userService: 'UserService', username: str, password: str
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         if username == self._userAccount:
             password = userService.recoverValue('winOsRandomPass')
 

@@ -220,7 +220,7 @@ CALENDAR_DATA: collections.abc.Mapping[str, list[dict[str, typing.Union[str,int,
     ],
 }
 
-def createCalendars() -> typing.Tuple[list[models.Calendar], list[models.CalendarRule]]:
+def createCalendars() -> tuple[list[models.Calendar], list[models.CalendarRule]]:
     calendars: list[models.Calendar] = []
     rules: list[models.CalendarRule] = []
     for calendar in CALENDAR_DATA["calendars"]:

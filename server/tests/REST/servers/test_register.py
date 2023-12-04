@@ -67,7 +67,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
         }
         self.login(as_admin=False)  # As staff
         
-    def ip_type_os_generator(self) -> typing.Generator[typing.Tuple[str, int, str], None, None]:
+    def ip_type_os_generator(self) -> typing.Generator[tuple[str, int, str], None, None]:
         for ip_v in 4, 6:
             for type in types.servers.ServerType:
                 for os in types.os.KnownOS:

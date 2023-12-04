@@ -176,7 +176,7 @@ class WinDomainOsManager(WindowsOsManager):
             if self._ou.lower().find(lpath) == -1:
                 self._ou += ',' + lpath
 
-    def __getServerList(self) -> typing.Iterable[typing.Tuple[str, int]]:
+    def __getServerList(self) -> collections.abc.Iterable[tuple[str, int]]:
         if self._serverHint != '':
             yield (self._serverHint, 389)
 
@@ -194,7 +194,7 @@ class WinDomainOsManager(WindowsOsManager):
             yield (str(server.target)[:-1], server.port)
 
     def __connectLdap(
-        self, servers: typing.Optional[typing.Iterable[typing.Tuple[str, int]]] = None
+        self, servers: typing.Optional[collections.abc.Iterable[tuple[str, int]]] = None
     ) -> typing.Any:
         """
         Tries to connect to LDAP

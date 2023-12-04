@@ -58,7 +58,7 @@ class PoolsUsageSummary(UsageByPool):
 
     def processedData(
         self,
-    ) -> typing.Tuple[
+    ) -> tuple[
         typing.ValuesView[collections.abc.MutableMapping[str, typing.Any]], int, int, int
     ]:
         orig, poolNames = super().getData()  # pylint: disable=unused-variable  # Keep name for reference

@@ -89,7 +89,7 @@ class Image(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def resizeAndConvert(image: PIL.Image.Image, size: typing.Tuple[int, int]) -> typing.Tuple[int, int, bytes]:
+    def resizeAndConvert(image: PIL.Image.Image, size: tuple[int, int]) -> tuple[int, int, bytes]:
         """
         Resizes an image to the given size
         """
@@ -99,7 +99,7 @@ class Image(UUIDModel):
         return (image.width, image.height, output.getvalue())
 
     @staticmethod
-    def prepareForDb(data: bytes) -> typing.Tuple[int, int, bytes]:
+    def prepareForDb(data: bytes) -> tuple[int, int, bytes]:
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
@@ -178,7 +178,7 @@ class Image(UUIDModel):
             self.thumb = consts.images.DEFAULT_THUMB
 
     @property
-    def size(self) -> typing.Tuple[int, int]:
+    def size(self) -> tuple[int, int]:
         """
         Returns the image size
         """

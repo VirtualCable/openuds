@@ -124,17 +124,17 @@ class TOTP_MFA(mfas.MFA):
     def label(self) -> str:
         return gettext('Authentication Code')
 
-    def _userData(self, userId: str) -> typing.Tuple[str, bool]:
+    def _userData(self, userId: str) -> tuple[str, bool]:
         # Get data from storage related to this user
         # Data contains the secret and if the user has already logged in already some time
         # so we show the QR code only once
-        data: typing.Optional[typing.Tuple[str, bool]] = self.storage.getPickle(userId)
+        data: typing.Optional[tuple[str, bool]] = self.storage.getPickle(userId)
         if data is None:
             data = (pyotp.random_base32(), False)
             self._saveUserData(userId, data)
         return data
 
-    def _saveUserData(self, userId: str, data: typing.Tuple[str, bool]) -> None:
+    def _saveUserData(self, userId: str, data: tuple[str, bool]) -> None:
         self.storage.putPickle(userId, data)
 
     def _removeUserData(self, userId: str) -> None:

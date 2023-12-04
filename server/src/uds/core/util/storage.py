@@ -62,12 +62,12 @@ def _encodeValue(key: str, value: typing.Any, compat: bool = False) -> str:
     return base64.b64encode(pickle.dumps(value)).decode()
 
 
-def _decodeValue(dbk: str, value: typing.Optional[str]) -> typing.Tuple[str, typing.Any]:
+def _decodeValue(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.Any]:
     if value:
         try:
             v = pickle.loads(base64.b64decode(value.encode()))  # nosec: This is e controled pickle loading
             if isinstance(v, tuple) and v[0] == MARK:
-                return typing.cast(typing.Tuple[str, typing.Any], v[1:])
+                return typing.cast(tuple[str, typing.Any], v[1:])
             # Fix value so it contains also the "key" (in this case, the original key is lost, we have only the hash value...)
             return ('#' + dbk, v)
         except Exception:
@@ -312,8 +312,8 @@ class Storage:
         except Exception:
             return None
 
-    def remove(self, skey: typing.Union[typing.Iterable[typing.Union[str, bytes]], str, bytes]) -> None:
-        keys: typing.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
+    def remove(self, skey: typing.Union[collections.abc.Iterable[typing.Union[str, bytes]], str, bytes]) -> None:
+        keys: collections.abc.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
         try:
             # Process several keys at once
             DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
@@ -342,7 +342,7 @@ class Storage:
     ) -> StorageAccess:
         return StorageAccess(self._owner, group=group, atomic=atomic, compat=compat)
 
-    def locateByAttr1(self, attr1: typing.Union[typing.Iterable[str], str]) -> typing.Iterable[bytes]:
+    def locateByAttr1(self, attr1: typing.Union[collections.abc.Iterable[str], str]) -> collections.abc.Iterable[bytes]:
         if isinstance(attr1, str):
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
@@ -353,7 +353,7 @@ class Storage:
 
     def filter(
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
-    ) -> typing.Iterable[typing.Tuple[str, bytes, 'str|None']]:
+    ) -> collections.abc.Iterable[tuple[str, bytes, 'str|None']]:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
@@ -367,7 +367,7 @@ class Storage:
 
     def filterPickle(
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
-    ) -> typing.Iterable[typing.Tuple[str, typing.Any, 'str|None']]:
+    ) -> collections.abc.Iterable[tuple[str, typing.Any, 'str|None']]:
         for v in self.filter(attr1, forUpdate):
             yield (v[0], pickle.loads(v[1]), v[2])  # nosec: secure pickle load
 

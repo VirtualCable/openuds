@@ -546,7 +546,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
     def getInfo(
         self, parameters: collections.abc.Mapping[str, str]
-    ) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
+    ) -> typing.Optional[tuple[str, typing.Optional[str]]]:
         """
         Althought this is mainly a get info callback, this can be used for any other purpuse we like.
         In this case, we use it to provide logout callback also

@@ -41,7 +41,7 @@ from uds.models import Provider, Service, ServicePool, Authenticator, OSManager
 
 logger = logging.getLogger(__name__)
 
-# EventTupleType = typing.Tuple[datetime.datetime, str, str, str, str, int]
+# EventTupleType = tuple[datetime.datetime, str, str, str, str, int]
 
 if typing.TYPE_CHECKING:
     from django.db import models

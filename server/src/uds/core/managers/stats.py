@@ -45,7 +45,7 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-FLDS_EQUIV: collections.abc.Mapping[str, typing.Iterable[str]] = {
+FLDS_EQUIV: collections.abc.Mapping[str, collections.abc.Iterable[str]] = {
     'fld1': ('username', 'platform', 'duration'),
     'fld2': ('source', 'srcip', 'browser', 'sent'),
     'fld3': ('destination', 'dstip', 'received'),
@@ -136,14 +136,14 @@ class StatsManager(metaclass=singleton.Singleton):
         self,
         ownerType: int,
         counterType: int,
-        ownerIds: typing.Union[typing.Iterable[int], int, None],
+        ownerIds: typing.Union[collections.abc.Iterable[int], int, None],
         since: datetime.datetime,
         to: datetime.datetime,
         interval: typing.Optional[int],
         max_intervals: typing.Optional[int],
         limit: typing.Optional[int],
         use_max: bool = False,
-    ) -> typing.Iterable:
+    ) -> collections.abc.Iterable:
         """
         Retrieves counters from item
 
@@ -297,8 +297,8 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def getEvents(
         self,
-        ownerType: typing.Union[int, typing.Iterable[int]],
-        eventType: typing.Union[int, typing.Iterable[int]],
+        ownerType: typing.Union[int, collections.abc.Iterable[int]],
+        eventType: typing.Union[int, collections.abc.Iterable[int]],
         **kwargs
     ) -> 'models.QuerySet[StatsEvents]':
         """

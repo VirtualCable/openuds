@@ -149,7 +149,7 @@ def getServicesData(
     services = []
 
     # Metapool helpers
-    def transportIterator(member) -> typing.Iterable[Transport]:
+    def transportIterator(member) -> collections.abc.Iterable[Transport]:
         for t in member.pool.transports.all().order_by('priority'):
             try:
                 typeTrans = t.getType()
@@ -164,7 +164,7 @@ def getServicesData(
                 logger.warning('Transport %s of %s not found. Ignoring. (%s)', t, member.pool, e)
 
     def buildMetaTransports(
-        transports: typing.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
+        transports: collections.abc.Iterable[Transport], isLabel: bool, meta: 'MetaPool'
     ) -> list[collections.abc.Mapping[str, typing.Any]]:
         def idd(i):
             return i.uuid if not isLabel else 'LABEL:' + i.label

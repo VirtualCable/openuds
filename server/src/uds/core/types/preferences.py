@@ -53,7 +53,7 @@ class CommonPrefs:
     BYPASS_PREF = 'bypassPluginDetection'
 
     @staticmethod
-    def getWidthHeight(size: str) -> typing.Tuple[int, int]:
+    def getWidthHeight(size: str) -> tuple[int, int]:
         """
         Get width based on screenSizePref value
         """

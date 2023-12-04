@@ -84,7 +84,7 @@ class DeployedServiceRemover(Job):
         for pub in publishing:
             pub.cancel()
         # Now all publishments are canceling, let's try to cancel cache and assigned
-        uServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+        uServices: collections.abc.Iterable[UserService] = servicePool.userServices.filter(
             state=State.PREPARING
         )
         for userService in uServices:
@@ -109,7 +109,7 @@ class DeployedServiceRemover(Job):
 
         try:
             # Now all publications are canceling, let's try to cancel cache and assigned also
-            uServices: typing.Iterable[UserService] = servicePool.userServices.filter(
+            uServices: collections.abc.Iterable[UserService] = servicePool.userServices.filter(
                 state=State.PREPARING
             )
             for userService in uServices:
@@ -168,7 +168,7 @@ class DeployedServiceRemover(Job):
 
     def run(self) -> None:
         # First check if there is someone in "removable" estate
-        removableServicePools: typing.Iterable[
+        removableServicePools: collections.abc.Iterable[
             ServicePool
         ] = ServicePool.objects.filter(state=State.REMOVABLE).order_by('state_date')[
             :10
@@ -186,7 +186,7 @@ class DeployedServiceRemover(Job):
                 except Exception as e2:
                     logger.error('Could not delete %s', e2)
 
-        removingServicePools: typing.Iterable[ServicePool] = ServicePool.objects.filter(
+        removingServicePools: collections.abc.Iterable[ServicePool] = ServicePool.objects.filter(
             state=State.REMOVING
         ).order_by('state_date')[:10]
         # Check if they have been removing for a long time.

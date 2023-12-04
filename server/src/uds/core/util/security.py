@@ -35,7 +35,7 @@ except Exception:  # nosec: simple check for disabling warnings,
     pass
 
 
-def selfSignedCert(ip: str) -> typing.Tuple[str, str, str]:
+def selfSignedCert(ip: str) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
     This method is mainly intended to be used for generating/saving Actor certificates.

@@ -285,7 +285,7 @@ if sys.platform == 'win32':
             self._queue = [opCreate, opChangeMac, opStart, opWait, opSuspend, opFinish]
 
     def __checkMachineState(
-        self, chkState: typing.Union[list[str], typing.Tuple[str, ...], str]
+        self, chkState: typing.Union[list[str], tuple[str, ...], str]
     ) -> str:
         logger.debug(
             'Checking that state of machine %s (%s) is %s',

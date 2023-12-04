@@ -220,7 +220,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         """
         self.__getApi().test()
 
-    def checkTaskFinished(self, task: typing.Optional[str]) -> typing.Tuple[bool, str]:
+    def checkTaskFinished(self, task: typing.Optional[str]) -> tuple[bool, str]:
         """
         Checks a task state.
         Returns None if task is Finished
@@ -242,7 +242,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     def getMachines(
         self, force: bool = False
-    ) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of machines inside XenServer.
         Machines starting with UDS are filtered out
@@ -265,7 +265,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     def getStorages(
         self, force: bool = False
-    ) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         """
         Obtains the list of storages inside XenServer.
 
@@ -308,7 +308,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
 
     def getNetworks(
         self, force: bool = False
-    ) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    ) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         return self.__getApi().getNetworks()
 
     def cloneForTemplate(self, name: str, comments: str, machineId: str, sr: str):

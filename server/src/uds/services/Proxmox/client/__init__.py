@@ -92,7 +92,7 @@ def cachingKeyHelper(obj: 'ProxmoxClient') -> str:
 class ProxmoxClient:
     _host: str
     _port: int
-    _credentials: typing.Tuple[typing.Tuple[str, str], typing.Tuple[str, str]]
+    _credentials: tuple[tuple[str, str], tuple[str, str]]
     _url: str
     _validateCert: bool
     _timeout: int
@@ -176,7 +176,7 @@ class ProxmoxClient:
     def _post(
         self,
         path: str,
-        data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
+        data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
             result = security.secureRequestsSession(verify=self._validateCert).post(
@@ -196,7 +196,7 @@ class ProxmoxClient:
     def _delete(
         self,
         path: str,
-        data: typing.Optional[typing.Iterable[typing.Tuple[str, str]]] = None,
+        data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
             result = security.secureRequestsSession(verify=self._validateCert).delete(
@@ -395,7 +395,7 @@ class ProxmoxClient:
         if linkedClone and not vmInfo.template:
             linkedClone = False
 
-        params: list[typing.Tuple[str, str]] = [
+        params: list[tuple[str, str]] = [
             ('newid', str(newVmId)),
             ('name', name),
             ('target', toNode),
@@ -450,7 +450,7 @@ class ProxmoxClient:
 
     @ensureConnected
     def setProtection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        params: list[typing.Tuple[str, str]] = [
+        params: list[tuple[str, str]] = [
             ('protection', str(int(protection))),
         ]
         node = node or self.getVmInfo(vmId).node
@@ -475,8 +475,8 @@ class ProxmoxClient:
         cachingKWArgs='node',
         cachingKeyFnc=cachingKeyHelper,
     )
-    def listVms(self, node: typing.Union[None, str, typing.Iterable[str]] = None) -> list[types.VMInfo]:
-        nodeList: typing.Iterable[str]
+    def listVms(self, node: typing.Union[None, str, collections.abc.Iterable[str]] = None) -> list[types.VMInfo]:
+        nodeList: collections.abc.Iterable[str]
         if node is None:
             nodeList = [n.name for n in self.getClusterInfo().nodes if n.online]
         elif isinstance(node, str):
@@ -641,12 +641,12 @@ class ProxmoxClient:
     )
     def listStorages(
         self,
-        node: typing.Union[None, str, typing.Iterable[str]] = None,
+        node: typing.Union[None, str, collections.abc.Iterable[str]] = None,
         content: typing.Optional[str] = None,
         **kwargs,
     ) -> list[types.StorageInfo]:
         """We use a list for storage instead of an iterator, so we can cache it..."""
-        nodeList: typing.Iterable[str]
+        nodeList: collections.abc.Iterable[str]
         if node is None:
             nodeList = [n.name for n in self.getClusterInfo().nodes if n.online]
         elif isinstance(node, str):

@@ -69,8 +69,8 @@ class StatsEvents(models.Model):
 
     @staticmethod
     def get_stats(
-        owner_type: typing.Union[int, typing.Iterable[int]],
-        event_type: typing.Union[int, typing.Iterable[int]],
+        owner_type: typing.Union[int, collections.abc.Iterable[int]],
+        event_type: typing.Union[int, collections.abc.Iterable[int]],
         **kwargs,
     ) -> 'models.QuerySet[StatsEvents]':
         """

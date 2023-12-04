@@ -369,7 +369,7 @@ class IPMachinesService(IPServiceBase):
         logger.debug('Notify initialization for %s: %s', self, id)
         self.unassignMachine(id)
 
-    def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
+    def getValidId(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
         # If locking not allowed, return None
         if self._lockByExternalAccess is False:
             return None

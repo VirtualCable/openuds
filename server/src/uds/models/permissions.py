@@ -142,7 +142,7 @@ class Permissions(UUIDModel):
         object_type: 'objtype.ObjectType',
         object_id: typing.Optional[int] = None,
         user: typing.Optional['User'] = None,
-        groups: typing.Optional[typing.Iterable['Group']] = None,
+        groups: typing.Optional[collections.abc.Iterable['Group']] = None,
     ) -> PermissionType:
         """
         Retrieves the permission for a given object

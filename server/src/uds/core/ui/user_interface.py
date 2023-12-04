@@ -144,7 +144,7 @@ class gui:
     def convertToChoices(
         vals: typing.Union[
             collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-            typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
+            collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
             dict[str, str],
             None,
         ]
@@ -191,7 +191,7 @@ class gui:
         return {'id': str(id_), 'text': str(text), 'img': img}
 
     @staticmethod
-    def sortedChoices(choices: typing.Iterable):
+    def sortedChoices(choices: collections.abc.Iterable):
         return sorted(choices, key=lambda item: item['text'].lower())
 
     @staticmethod
@@ -579,7 +579,7 @@ class gui:
             value: typing.Optional[str] = None,
             choices: typing.Union[
                 collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
+                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 dict[str, str],
                 None,
             ] = None,
@@ -599,7 +599,7 @@ class gui:
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def setChoices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1028,7 +1028,7 @@ class gui:
             required: typing.Optional[bool] = None,
             choices: typing.Union[
                 collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
+                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 dict[str, str],
                 None,
             ] = None,
@@ -1061,7 +1061,7 @@ class gui:
                 if fills['callbackName'] not in gui.callbacks:
                     gui.callbacks[fills['callbackName']] = fnc
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def setChoices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1077,7 +1077,7 @@ class gui:
             required: typing.Optional[bool] = None,
             choices: typing.Union[
                 collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
+                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 dict[str, str],
                 None,
             ] = None,
@@ -1099,7 +1099,7 @@ class gui:
 
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, values: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def setChoices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1149,7 +1149,7 @@ class gui:
             required: typing.Optional[bool] = None,
             choices: typing.Union[
                 collections.abc.Callable[[], list['types.ui.ChoiceItem']],
-                typing.Iterable[typing.Union[str, types.ui.ChoiceItem]],
+                collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]],
                 dict[str, str],
                 None,
             ] = None,
@@ -1157,7 +1157,7 @@ class gui:
             default: typing.Union[
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
-            value: typing.Optional[typing.Iterable[str]] = None,
+            value: typing.Optional[collections.abc.Iterable[str]] = None,
         ):
             super().__init__(
                 label=label,
@@ -1174,7 +1174,7 @@ class gui:
             self._fieldsInfo.rows = rows
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
 
-        def setChoices(self, choices: typing.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
+        def setChoices(self, choices: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """
             Set the values for this choice field
             """
@@ -1218,7 +1218,7 @@ class gui:
             default: typing.Union[
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
-            value: typing.Optional[typing.Iterable[str]] = None,
+            value: typing.Optional[collections.abc.Iterable[str]] = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -1261,7 +1261,7 @@ class UserInterfaceType(type):
     def __new__(
         mcs: type['UserInterfaceType'],
         classname: str,
-        bases: typing.Tuple[type, ...],
+        bases: tuple[type, ...],
         namespace: dict[str, typing.Any],
     ) -> 'UserInterfaceType':
         newClassDict = {}

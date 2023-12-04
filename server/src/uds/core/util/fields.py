@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 def _serverGroupValues(
-    types_: typing.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
+    types_: collections.abc.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
 ) -> list[types.ui.ChoiceItem]:
     fltr = models.ServerGroup.objects.filter(
         functools.reduce(lambda x, y: x | y, [Q(type=type_) for type_ in types_])

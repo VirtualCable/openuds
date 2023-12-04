@@ -82,7 +82,7 @@ class Telegram:
     def sendMessage(self, chat_id: int, text: str) -> dict[str, typing.Any]:
         return self.request('sendMessage', {'chat_id': chat_id, 'text': text})
 
-    def getUpdates(self, offset: int = 0, timeout: int = 0) -> typing.Iterable[Message]:
+    def getUpdates(self, offset: int = 0, timeout: int = 0) -> collections.abc.Iterable[Message]:
         self.lastOffset = offset or self.lastOffset
         res = self.request('getUpdates', {'offset': self.lastOffset, 'timeout': timeout}, stream=True)
         if res['ok'] and res['result']:  # if ok and there are results

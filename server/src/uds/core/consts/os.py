@@ -37,17 +37,17 @@ import collections.abc
 from uds.core import types
 
 
-KNOWN_OS_LIST: typing.Final[typing.Tuple[types.os.KnownOS, ...]] = tuple(
+KNOWN_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(
     os for os in types.os.KnownOS if os != types.os.KnownOS.UNKNOWN
 )
 
-ALL_OS_LIST: typing.Final[typing.Tuple[types.os.KnownOS, ...]] = KNOWN_OS_LIST + (types.os.KnownOS.UNKNOWN,)
-desktopOss: typing.Final[typing.Tuple[types.os.KnownOS, ...]] = (
+ALL_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = KNOWN_OS_LIST + (types.os.KnownOS.UNKNOWN,)
+desktopOss: typing.Final[tuple[types.os.KnownOS, ...]] = (
     types.os.KnownOS.LINUX,
     types.os.KnownOS.WINDOWS,
     types.os.KnownOS.MAC_OS,
 )
-MOBILE_OS_LIST: typing.Final[typing.Tuple[types.os.KnownOS, ...]] = tuple(set(ALL_OS_LIST) - set(desktopOss))
+MOBILE_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(set(ALL_OS_LIST) - set(desktopOss))
 
 
 DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
@@ -55,7 +55,7 @@ DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
 
 knownBrowsers = tuple(types.os.KnownBrowser)
 
-browsersREs: dict[types.os.KnownBrowser, typing.Tuple] = {
+browsersREs: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
     types.os.KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
     types.os.KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),
@@ -72,7 +72,7 @@ browsersREs: dict[types.os.KnownBrowser, typing.Tuple] = {
     types.os.KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
 }
 
-browserRules: dict[types.os.KnownBrowser, typing.Tuple] = {
+browserRules: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.EDGE: (types.os.KnownBrowser.EDGE, ()),
     types.os.KnownBrowser.CHROME: (
         types.os.KnownBrowser.CHROME,

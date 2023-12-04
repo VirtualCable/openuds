@@ -64,8 +64,8 @@ class StatsCounters(models.Model):
 
     @staticmethod
     def get_grouped(
-        owner_type: typing.Union[int, typing.Iterable[int]], counter_type: int, **kwargs
-    ) -> typing.Generator[typing.Tuple[int, int], None, None]:
+        owner_type: typing.Union[int, collections.abc.Iterable[int]], counter_type: int, **kwargs
+    ) -> typing.Generator[tuple[int, int], None, None]:
         """
         Returns a QuerySet of counters grouped by owner_type and counter_type
         """

@@ -149,7 +149,7 @@ class Client:
         finally:
             lock.release()
 
-    def isFullyFunctionalVersion(self) -> typing.Tuple[bool, str]:
+    def isFullyFunctionalVersion(self) -> tuple[bool, str]:
         """
         '4.0 version is always functional (right now...)
         """
@@ -183,7 +183,7 @@ class Client:
 
             api = self.__getApi()
 
-            vms: typing.Iterable[typing.Any] = api.system_service().vms_service().list()  # type: ignore
+            vms: collections.abc.Iterable[typing.Any] = api.system_service().vms_service().list()  # type: ignore
 
             logger.debug('oVirt VMS: %s', vms)
 
@@ -353,7 +353,7 @@ class Client:
             d: typing.Any = datacenter_service.get()  # type: ignore
 
             storage = []
-            for dd in typing.cast(typing.Iterable, datacenter_service.storage_domains_service().list()):  # type: ignore
+            for dd in typing.cast(collections.abc.Iterable, datacenter_service.storage_domains_service().list()):  # type: ignore
                 try:
                     active = dd.status.value
                 except Exception:
@@ -835,10 +835,10 @@ class Client:
                 cert_subject = display.certificate.subject
             else:
                 for i in typing.cast(
-                    typing.Iterable, api.system_service().hosts_service().list()
+                    collections.abc.Iterable, api.system_service().hosts_service().list()
                 ):
                     for k in typing.cast(
-                        typing.Iterable,
+                        collections.abc.Iterable,
                         api.system_service()
                         .hosts_service()
                         .service(i.id)

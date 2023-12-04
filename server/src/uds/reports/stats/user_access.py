@@ -93,7 +93,7 @@ class StatsReportLogin(StatsReport):
     def initGui(self):
         pass
 
-    def getRangeData(self) -> typing.Tuple[str, list, list]:
+    def getRangeData(self) -> tuple[str, list, list]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         if self.samplingPoints.num() < 2:
@@ -109,7 +109,7 @@ class StatsReportLogin(StatsReport):
         else:
             xLabelFormat = 'SHORT_DATETIME_FORMAT'
 
-        samplingIntervals: list[typing.Tuple[int, int]] = []
+        samplingIntervals: list[tuple[int, int]] = []
         samplingIntervalSeconds = (end - start) / samplingPoints
         for i in range(samplingPoints):
             samplingIntervals.append(

@@ -625,7 +625,7 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        validActions: typing.Tuple[dict, ...] = ()
+        validActions: tuple[dict, ...] = ()
         itemInfo = item.service.getType()  # type: ignore
         if itemInfo.usesCache is True:
             validActions += (

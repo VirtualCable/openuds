@@ -564,7 +564,7 @@ class RegexLdap(auths.Authenticator):
         groups = self.__getGroups(user)
         groupsManager.validate(groups)
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(

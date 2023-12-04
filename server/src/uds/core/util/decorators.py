@@ -186,8 +186,8 @@ def ensureConnected(func: collections.abc.Callable[..., RT]) -> collections.abc.
 def cached(
     cachePrefix: str,
     cacheTimeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
-    cachingArgs: typing.Optional[typing.Union[typing.Iterable[int], int]] = None,
-    cachingKWArgs: typing.Optional[typing.Union[typing.Iterable[str], str]] = None,
+    cachingArgs: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
+    cachingKWArgs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
     cachingKeyFnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on db.

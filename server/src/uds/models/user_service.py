@@ -125,7 +125,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         ]
 
     # For properties
-    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+    def ownerIdAndType(self) -> tuple[str, str]:
         return self.uuid, 'userservice'
 
     @property
@@ -358,7 +358,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         return self.deployed_service.transformsUserOrPasswordForService()
 
-    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(self, username: str, password: str) -> tuple[str, str]:
         """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport

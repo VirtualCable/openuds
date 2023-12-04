@@ -274,7 +274,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
 
         return {'result': result, 'progress': progress, 'status': str(status)}
 
-    def getSRs(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    def getSRs(self) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         for srId in self.SR.get_all():
             # Only valid SR shared, non iso
             name_label = self.SR.get_name_label(srId)
@@ -304,7 +304,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
             'used': XenServer.toMb(self.SR.get_physical_utilisation(srId)),
         }
 
-    def getNetworks(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    def getNetworks(self) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         for netId in self.network.get_all():
             if self.network.get_other_config(netId).get('is_host_internal_management_network', False) is False:
                 yield {
@@ -315,7 +315,7 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def getNetworkInfo(self, netId: str) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'id': netId, 'name': self.network.get_name_label(netId)}
 
-    def getVMs(self) -> typing.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
+    def getVMs(self) -> collections.abc.Iterable[collections.abc.MutableMapping[str, typing.Any]]:
         try:
             vms = self.VM.get_all()
             for vm in vms:

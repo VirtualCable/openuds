@@ -42,7 +42,7 @@ from uds.core.managers.crypto import CryptoManager
 
 logger = logging.getLogger(__name__)
 
-_saveLater: list[typing.Tuple['Config.Value', typing.Any]] = []
+_saveLater: list[tuple['Config.Value', typing.Any]] = []
 _getLater: list['Config.Value'] = []
 
 # For custom params (for choices mainly)
@@ -92,7 +92,7 @@ class Config:
             return Config.SectionType(Config.SectionType.OTHER)
 
         @staticmethod
-        def values() -> typing.Iterable['Config.SectionType']:
+        def values() -> collections.abc.Iterable['Config.SectionType']:
             return Config.SectionType
 
     class Section:
@@ -296,7 +296,7 @@ class Config:
         return Config.Value(section, key, default, crypt, longText, **kwargs)
 
     @staticmethod
-    def enumerate() -> typing.Iterable['Config.Value']:
+    def enumerate() -> collections.abc.Iterable['Config.Value']:
         GlobalConfig.initialize()  # Ensures DB contains all values
         for cfg in DBConfig.objects.all().order_by('key'):  # @UndefinedVariable
             # Skip sections with name starting with "__" (not to be editted on configuration)

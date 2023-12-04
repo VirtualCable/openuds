@@ -229,7 +229,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         self.datastore.setChoices(storages_list)
         self.network.setChoices(network_list)
 
-    def checkTaskFinished(self, task: str) -> typing.Tuple[bool, str]:
+    def checkTaskFinished(self, task: str) -> tuple[bool, str]:
         return self.parent().checkTaskFinished(task)
 
     def datastoreHasSpace(self) -> None:

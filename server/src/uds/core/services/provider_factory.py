@@ -88,7 +88,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         super().insert(type_)
 
 
-    def servicesThatDoNotNeedPublication(self) -> typing.Iterable[type[Service]]:
+    def servicesThatDoNotNeedPublication(self) -> collections.abc.Iterable[type[Service]]:
         """
         Returns a list of all service providers registered that do not need
         to be published

@@ -716,7 +716,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         idTransport: typing.Optional[str],
         doTest: bool = True,
         clientHostname: typing.Optional[str] = None,
-    ) -> typing.Tuple[
+    ) -> tuple[
         typing.Optional[str],
         UserService,
         typing.Optional['services.UserService'],
@@ -895,7 +895,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         idMetaPool: str,
         idTransport: str,
         clientHostName: typing.Optional[str] = None,
-    ) -> typing.Tuple[
+    ) -> tuple[
         typing.Optional[str],
         UserService,
         typing.Optional['services.UserService'],
@@ -914,7 +914,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Get pool members. Just pools "visible" and "usable"
         poolMembers = [p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()]
         # Sort pools array. List of tuples with (priority, pool)
-        sortPools: list[typing.Tuple[int, ServicePool]]
+        sortPools: list[tuple[int, ServicePool]]
         # Sort pools based on meta selection
         if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
@@ -947,12 +947,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         logger.debug('Pools: %s/%s', pools, poolsFull)
 
-        usable: typing.Optional[typing.Tuple[ServicePool, Transport]] = None
+        usable: typing.Optional[tuple[ServicePool, Transport]] = None
         # Now, Lets find first if there is one assigned in ANY pool
 
         def ensureTransport(
             pool: ServicePool,
-        ) -> typing.Optional[typing.Tuple[ServicePool, Transport]]:
+        ) -> typing.Optional[tuple[ServicePool, Transport]]:
             found = None
             t: Transport
             if idTransport == 'meta':  # Autoselected:

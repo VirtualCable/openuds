@@ -85,7 +85,7 @@ class UserServiceRemover(Job):
             removeFrom = getSqlDatetime() - timedelta(
                 seconds=10
             )  # We keep at least 10 seconds the machine before removing it, so we avoid connections errors
-            removableUserServices: typing.Iterable[
+            removableUserServices: collections.abc.Iterable[
                 UserService
             ] = UserService.objects.filter(
                 state=State.REMOVABLE,

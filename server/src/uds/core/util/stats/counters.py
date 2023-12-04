@@ -74,16 +74,16 @@ def _get_Id(obj):
     return obj.id if obj.id != -1 else None
 
 
-def _get_P_S_Ids(provider) -> typing.Tuple:
+def _get_P_S_Ids(provider) -> tuple:
     return tuple(i.id for i in provider.services.all())
 
 
-def _get_S_DS_Ids(service) -> typing.Tuple:
+def _get_S_DS_Ids(service) -> tuple:
     return tuple(i.id for i in service.deployedServices.all())
 
 
-def _get_P_S_DS_Ids(provider) -> typing.Tuple:
-    res: typing.Tuple = ()
+def _get_P_S_DS_Ids(provider) -> tuple:
+    res: tuple = ()
     for i in provider.services.all():
         res += _get_S_DS_Ids(i)
     return res
@@ -111,7 +111,7 @@ idRetriever: collections.abc.Mapping[
     },
 }
 
-counterTypes: collections.abc.Mapping[int, typing.Tuple[type[Model], ...]] = {
+counterTypes: collections.abc.Mapping[int, tuple[type[Model], ...]] = {
     CT_LOAD: (Provider,),
     CT_STORAGE: (Service,),
     CT_ASSIGNED: (ServicePool,),
@@ -174,7 +174,7 @@ def addCounter(
 
 def getCounters(
     obj: CounterClass, counterType: int, **kwargs
-) -> typing.Generator[typing.Tuple[datetime.datetime, int], None, None]:
+) -> typing.Generator[tuple[datetime.datetime, int], None, None]:
     """
     Get counters
 

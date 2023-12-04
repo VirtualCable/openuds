@@ -185,7 +185,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return self.osmanager.getType().transformsUserOrPasswordForService()
         return False
 
-    def processUserPassword(self, username: str, password: str) -> typing.Tuple[str, str]:
+    def processUserPassword(self, username: str, password: str) -> tuple[str, str]:
         """
         This method is provided for consistency between UserService and ServicePool
         There is no posibility to check the username and password that a user will use to
@@ -454,7 +454,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                         cache_level=0, state=states.userService.USABLE, in_use=False
                     ).update(state=states.userService.REMOVABLE, state_date=now)
 
-    def validateGroups(self, groups: typing.Iterable['Group']) -> None:
+    def validateGroups(self, groups: collections.abc.Iterable['Group']) -> None:
         """
         Ensures that at least a group of groups (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
@@ -507,8 +507,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     @staticmethod
     def getDeployedServicesForGroups(
-        groups: typing.Iterable['Group'], user: typing.Optional['User'] = None
-    ) -> typing.Iterable['ServicePool']:
+        groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None
+    ) -> collections.abc.Iterable['ServicePool']:
         """
         Return deployed services with publications for the groups requested.
 

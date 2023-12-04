@@ -69,7 +69,7 @@ class PublicationCleaner(Job):
     friendly_name = 'Publication Cleaner'
 
     def run(self) -> None:
-        removables: typing.Iterable[
+        removables: collections.abc.Iterable[
             ServicePoolPublication
         ] = ServicePoolPublication.objects.filter(
             state=State.REMOVABLE,

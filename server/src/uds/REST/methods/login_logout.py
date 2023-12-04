@@ -227,7 +227,7 @@ class Auths(Handler):
     path = 'auth'
     authenticated = False  # By default, all handlers needs authentication
 
-    def auths(self) -> typing.Iterable[dict[str, typing.Any]]:
+    def auths(self) -> collections.abc.Iterable[dict[str, typing.Any]]:
         paramAll: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():

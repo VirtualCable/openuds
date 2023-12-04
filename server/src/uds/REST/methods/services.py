@@ -257,7 +257,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def getTypes(
         self, parent: 'Model', forType: typing.Optional[str]
-    ) -> typing.Iterable[dict[str, typing.Any]]:
+    ) -> collections.abc.Iterable[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, models.Provider)
         logger.debug('getTypes parameters: %s, %s', parent, forType)
         offers: list[dict[str, typing.Any]] = []
@@ -288,7 +288,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return offers  # Default is that details do not have types
 
-    def getGui(self, parent: 'Model', forType: str) -> typing.Iterable[typing.Any]:
+    def getGui(self, parent: 'Model', forType: str) -> collections.abc.Iterable[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)

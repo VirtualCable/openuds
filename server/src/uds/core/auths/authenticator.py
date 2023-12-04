@@ -261,7 +261,7 @@ class Authenticator(Module):
         """
         return cls.authenticate is not Authenticator.authenticate
 
-    def searchUsers(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -281,7 +281,7 @@ class Authenticator(Module):
         """
         return []
 
-    def searchGroups(self, pattern: str) -> typing.Iterable[dict[str, str]]:
+    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)
@@ -572,7 +572,7 @@ class Authenticator(Module):
 
     def getInfo(
         self, parameters: collections.abc.Mapping[str, str]
-    ) -> typing.Optional[typing.Tuple[str, typing.Optional[str]]]:
+    ) -> typing.Optional[tuple[str, typing.Optional[str]]]:
         """
         This method is invoked whenever the authinfo url is invoked, with the name of the authenticator
         If this is implemented, information returned by this will be shown via web.

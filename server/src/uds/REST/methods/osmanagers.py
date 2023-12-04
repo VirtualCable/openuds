@@ -91,7 +91,7 @@ class OsManagers(ModelHandler):
             )
 
     # Types related
-    def enum_types(self) -> typing.Iterable[type[osmanagers.OSManager]]:
+    def enum_types(self) -> collections.abc.Iterable[type[osmanagers.OSManager]]:
         return osmanagers.factory().providers().values()
 
     # Gui related

@@ -65,7 +65,7 @@ if typing.TYPE_CHECKING:
     from uds.models import UserService
 
 
-def getGroupsFromMeta(groups) -> typing.Iterable[Group]:
+def getGroupsFromMeta(groups) -> collections.abc.Iterable[Group]:
     for g in groups:
         if g.is_meta:
             for x in g.groups.all():
@@ -86,7 +86,7 @@ class Users(DetailHandler):
         parent = ensure.is_instance(parent, Authenticator)
 
         # processes item to change uuid key for id
-        def uuid_to_id(iterable: typing.Iterable[typing.Any]):  # will get values from a queryset
+        def uuid_to_id(iterable: collections.abc.Iterable[typing.Any]):  # will get values from a queryset
             for v in iterable:
                 v['id'] = v['uuid']
                 del v['uuid']

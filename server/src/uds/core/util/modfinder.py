@@ -147,7 +147,7 @@ def dynamicLoadAndRegisterPackages(
 
     checkFnc = checker or (lambda x: True)
 
-    def process(classes: typing.Iterable[typing.Type]) -> None:
+    def process(classes: collections.abc.Iterable[typing.Type]) -> None:
         cls: type[V]
         for cls in classes:
             clsSubCls = cls.__subclasses__()

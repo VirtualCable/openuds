@@ -51,7 +51,7 @@ class MessageProcessorThread(BaseThread):
     keepRunning: bool = True
 
     _cached_providers: typing.Optional[
-        list[typing.Tuple[int, NotificationProviderModule]]
+        list[tuple[int, NotificationProviderModule]]
     ]
     _cached_stamp: float
 
@@ -62,7 +62,7 @@ class MessageProcessorThread(BaseThread):
         self._cached_stamp = 0.0
 
     @property
-    def providers(self) -> list[typing.Tuple[int, NotificationProviderModule]]:
+    def providers(self) -> list[tuple[int, NotificationProviderModule]]:
         # If _cached_providers is invalid or _cached_time is older than CACHE_TIMEOUT,
         # we need to refresh it
         if (

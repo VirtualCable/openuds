@@ -69,7 +69,7 @@ def migrate(
             # Clean up servers, removing empty ones
             servers = [s.strip() for s in servers if s.strip()]
             # Try dns lookup if servers contains hostnames
-            server_ip_hostname: list[typing.Tuple[str, str]] = []
+            server_ip_hostname: list[tuple[str, str]] = []
             for server in servers:
                 try:
                     validators.validateIpv4OrIpv6(server)

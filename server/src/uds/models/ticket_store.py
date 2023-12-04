@@ -249,7 +249,7 @@ class TicketStore(UUIDModel):
     @staticmethod
     def get_for_tunnel(
         ticket: str,
-    ) -> typing.Tuple[
+    ) -> tuple[
         'User',
         'UserService',
         typing.Optional[str],

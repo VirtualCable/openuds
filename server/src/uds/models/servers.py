@@ -83,7 +83,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     servers: 'models.manager.RelatedManager[Server]'
 
     # For properties
-    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+    def ownerIdAndType(self) -> tuple[str, str]:
         return self.uuid, 'servergroup'
 
     class Meta:
@@ -209,7 +209,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         app_label = 'uds'
 
     # For properties
-    def ownerIdAndType(self) -> typing.Tuple[str, str]:
+    def ownerIdAndType(self) -> tuple[str, str]:
         return self.uuid, 'server'
 
     @property
@@ -314,7 +314,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     @staticmethod
     def validateToken(
         token: str,
-        serverType: typing.Union[typing.Iterable[types.servers.ServerType], types.servers.ServerType],
+        serverType: typing.Union[collections.abc.Iterable[types.servers.ServerType], types.servers.ServerType],
         request: typing.Optional[ExtendedHttpRequest] = None,
     ) -> bool:
         """Ensures that a token is valid for a server type

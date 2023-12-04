@@ -234,11 +234,11 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return [cert.public_key() for cert in fields.getCertificatesFromField(self.publicKey)]
 
-    def _codeVerifierAndChallenge(self) -> typing.Tuple[str, str]:
+    def _codeVerifierAndChallenge(self) -> tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE
 
         Returns:
-            typing.Tuple[str, str]: Code verifier and code challenge
+            tuple[str, str]: Code verifier and code challenge
         """
         codeVerifier = ''.join(secrets.choice(PKCE_ALPHABET) for _ in range(128))
         codeChallenge = (

@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 def getTemplates(
     api: 'client.OpenNebulaClient', force: bool = False
-) -> typing.Iterable[types.TemplateType]:
+) -> collections.abc.Iterable[types.TemplateType]:
     for t in api.enumTemplates():
         if t.name[:4] != 'UDSP':
             yield t

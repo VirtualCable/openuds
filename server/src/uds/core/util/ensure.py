@@ -49,7 +49,7 @@ def is_iterable(obj: typing.Any) -> typing.Generator[typing.Any, None, None]:
     """Returns an iterable object from a single object or a list of objects
 
     Args:
-        obj (typing.Union[T, typing.Iterable[T]]): object to be converted to iterable
+        obj (typing.Union[T, collections.abc.Iterable[T]]): object to be converted to iterable
 
     Returns:
         typing.Generator[T, None, None]: Iterable object
@@ -74,7 +74,7 @@ def is_instance(obj: typing.Any, cls: type[T]) -> T:
     """Checks if an object is an instance of a class or a list of instances of a class
 
     Args:
-        obj (typing.Union[T, typing.Iterable[T]]): object to be checked
+        obj (typing.Union[T, collections.abc.Iterable[T]]): object to be checked
         cls (type[T]): Class to check
 
     Returns:

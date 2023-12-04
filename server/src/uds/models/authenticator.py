@@ -240,7 +240,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def getByTag(tag=None) -> typing.Iterable['Authenticator']:
+    def getByTag(tag=None) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth

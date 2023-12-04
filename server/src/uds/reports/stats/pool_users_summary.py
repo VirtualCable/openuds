@@ -86,7 +86,7 @@ class UsageSummaryByUsersPool(StatsReport):
 
     def getPoolData(
         self, pool
-    ) -> typing.Tuple[list[dict[str, typing.Any]], str]:
+    ) -> tuple[list[dict[str, typing.Any]], str]:
         start = self.startDate.stamp()
         end = self.endDate.stamp()
         logger.debug(self.pool.value)
@@ -139,7 +139,7 @@ class UsageSummaryByUsersPool(StatsReport):
 
         return data, pool.name
 
-    def getData(self) -> typing.Tuple[list[dict[str, typing.Any]], str]:
+    def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
         return self.getPoolData(ServicePool.objects.get(uuid=self.pool.value))
 
     def generate(self) -> bytes:

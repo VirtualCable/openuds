@@ -87,7 +87,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
     def processUserPassword(
         self, userService: 'UserService', username: str, password: str
-    ) -> typing.Tuple[str, str]:
+    ) -> tuple[str, str]:
         if username == self._userAccount:
             return (username, userService.recoverValue('linOsRandomPass'))
         return username, password

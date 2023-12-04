@@ -253,7 +253,7 @@ class VmCreationResult(typing.NamedTuple):
 class StorageInfo(typing.NamedTuple):
     node: str
     storage: str
-    content: typing.Tuple[str, ...]
+    content: tuple[str, ...]
     type: str
 
     shared: bool

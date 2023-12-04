@@ -88,7 +88,7 @@ def getRecurringUrlJson(
     params: typing.Optional[collections.abc.Mapping[str, str]] = None,
     errMsg: typing.Optional[str] = None,
     timeout: int = 10,
-) -> typing.Iterable[typing.Any]:
+) -> collections.abc.Iterable[typing.Any]:
     counter = 0
     while True:
         counter += 1
@@ -296,7 +296,7 @@ class Client:  # pylint: disable=too-many-public-methods
             self.authPassword()
 
     @authRequired
-    def listProjects(self) -> typing.Iterable[typing.Any]:
+    def listProjects(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/users/{user_id}/projects'.format(user_id=self._userId),
             self._session,
@@ -307,7 +307,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authRequired
-    def listRegions(self) -> typing.Iterable[typing.Any]:
+    def listRegions(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._authUrl + 'v3/regions/',
             self._session,
@@ -322,7 +322,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self,
         detail: bool = False,
         params: typing.Optional[dict[str, str]] = None,
-    ) -> typing.Iterable[typing.Any]:
+    ) -> collections.abc.Iterable[typing.Any]:
         path = '/servers/' + 'detail' if detail is True else ''
         return getRecurringUrlJson(
             self._getEndpointFor('compute', 'compute_legacy') + path,
@@ -335,7 +335,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listImages(self) -> typing.Iterable[typing.Any]:
+    def listImages(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('image') + '/v2/images?status=active',
             self._session,
@@ -346,7 +346,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listVolumeTypes(self) -> typing.Iterable[typing.Any]:
+    def listVolumeTypes(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor(self._volume) + '/types',
             self._session,
@@ -357,7 +357,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listVolumes(self) -> typing.Iterable[typing.Any]:
+    def listVolumes(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor(self._volume) + '/volumes/detail',
             self._session,
@@ -370,7 +370,7 @@ class Client:  # pylint: disable=too-many-public-methods
     @authProjectRequired
     def listVolumeSnapshots(
         self, volumeId: typing.Optional[dict[str, typing.Any]] = None
-    ) -> typing.Iterable[typing.Any]:
+    ) -> collections.abc.Iterable[typing.Any]:
         for s in getRecurringUrlJson(
             self._getEndpointFor(self._volume) + '/snapshots',
             self._session,
@@ -383,7 +383,7 @@ class Client:  # pylint: disable=too-many-public-methods
                 yield s
 
     @authProjectRequired
-    def listAvailabilityZones(self) -> typing.Iterable[typing.Any]:
+    def listAvailabilityZones(self) -> collections.abc.Iterable[typing.Any]:
         for az in getRecurringUrlJson(
             self._getEndpointFor('compute', 'compute_legacy') + '/os-availability-zone',
             self._session,
@@ -396,7 +396,7 @@ class Client:  # pylint: disable=too-many-public-methods
                 yield az['zoneName']
 
     @authProjectRequired
-    def listFlavors(self) -> typing.Iterable[typing.Any]:
+    def listFlavors(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute', 'compute_legacy') + '/flavors',
             self._session,
@@ -407,7 +407,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listNetworks(self, nameFromSubnets=False) -> typing.Iterable[typing.Any]:
+    def listNetworks(self, nameFromSubnets=False) -> collections.abc.Iterable[typing.Any]:
         nets = getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/networks',
             self._session,
@@ -432,7 +432,7 @@ class Client:  # pylint: disable=too-many-public-methods
                 yield net
 
     @authProjectRequired
-    def listSubnets(self) -> typing.Iterable[typing.Any]:
+    def listSubnets(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('network') + '/v2.0/subnets',
             self._session,
@@ -447,7 +447,7 @@ class Client:  # pylint: disable=too-many-public-methods
         self,
         networkId: typing.Optional[str] = None,
         ownerId: typing.Optional[str] = None,
-    ) -> typing.Iterable[typing.Any]:
+    ) -> collections.abc.Iterable[typing.Any]:
         params = {}
         if networkId is not None:
             params['network_id'] = networkId
@@ -465,7 +465,7 @@ class Client:  # pylint: disable=too-many-public-methods
         )
 
     @authProjectRequired
-    def listSecurityGroups(self) -> typing.Iterable[typing.Any]:
+    def listSecurityGroups(self) -> collections.abc.Iterable[typing.Any]:
         return getRecurringUrlJson(
             self._getEndpointFor('compute', 'compute_legacy') + '/os-security-groups',
             self._session,
@@ -604,7 +604,7 @@ class Client:  # pylint: disable=too-many-public-methods
         availabilityZone: str,
         flavorId: str,
         networkId: str,
-        securityGroupsIdsList: typing.Iterable[str],
+        securityGroupsIdsList: collections.abc.Iterable[str],
         count: int = 1,
     ) -> dict[str, typing.Any]:
         data = {

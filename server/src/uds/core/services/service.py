@@ -194,7 +194,7 @@ class Service(Module):
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowedProtocols: typing.Iterable = protocols.GENERIC_VDI
+    allowedProtocols: collections.abc.Iterable = protocols.GENERIC_VDI
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
@@ -301,7 +301,7 @@ class Service(Module):
 
         # Keep untouched if maxServices is not present
 
-    def requestServicesForAssignation(self, **kwargs) -> typing.Iterable['UserService']:
+    def requestServicesForAssignation(self, **kwargs) -> collections.abc.Iterable['UserService']:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -329,13 +329,13 @@ class Service(Module):
         """
         return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
 
-    def listAssignables(self) -> typing.Iterable[typing.Tuple[str, str]]:
+    def listAssignables(self) -> collections.abc.Iterable[tuple[str, str]]:
         """
         If overrided, will provide list of assignables elements, so we can "add" an element manually to the list of assigned user services
         If not overriden, means that it cannot assign manually
 
         Returns:
-            list[typing.Tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
+            list[tuple[str, str]] -- List of asignables services, first element is id, second is name of the element
         """
         return []
 
@@ -368,23 +368,23 @@ class Service(Module):
         """
         return None
 
-    def getVappLauncher(self, userService: 'models.UserService') -> typing.Optional[typing.Tuple[str, str]]:
+    def getVappLauncher(self, userService: 'models.UserService') -> typing.Optional[tuple[str, str]]:
         """Returns the vapp launcher for this service, if any
 
         Args:
             userService (UserService): User service to get the vapp launcher from
 
         Returns:
-            typing.Optional[typing.Tuple[str, str]]: A tuple with the vapp launcher name and the vapp launcher path on server
+            typing.Optional[tuple[str, str]]: A tuple with the vapp launcher name and the vapp launcher path on server
         """
         return None
 
-    def getValidId(self, idsList: typing.Iterable[str]) -> typing.Optional[str]:
+    def getValidId(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
         """
         Looks for an "owned" id in the provided list. If found, returns it, else return None
 
         Args:
-            idsList (typing.Iterable[str]): List of IPs and MACs that acts as
+            idsList (collections.abc.Iterable[str]): List of IPs and MACs that acts as
 
         Returns:
             typing.Optional[str]: [description]

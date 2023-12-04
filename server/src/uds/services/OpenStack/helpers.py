@@ -41,7 +41,7 @@ from . import openstack
 logger = logging.getLogger(__name__)
 
 
-def getApi(parameters: dict[str, str]) -> typing.Tuple[openstack.Client, bool]:
+def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     from .provider_legacy import ProviderLegacy
     from .provider import OpenStackProvider
     from uds.core.environment import Environment

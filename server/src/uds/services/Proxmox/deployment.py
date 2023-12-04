@@ -265,7 +265,7 @@ if sys.platform == 'win32':
     def __setTask(self, upid: 'client.types.UPID'):
         self._task = ','.join([upid.node, upid.upid])
 
-    def __getTask(self) -> typing.Tuple[str, str]:
+    def __getTask(self) -> tuple[str, str]:
         vals = self._task.split(',')
         return (vals[0], vals[1])
 
