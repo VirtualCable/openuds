@@ -288,6 +288,9 @@ class Service(Module):
                     self.maxUserServices = maxServices
                 elif isinstance(maxServices, gui.NumericField):
                     self.maxUserServices = maxServices.num()
+                    # For 0 values on maxUserServices field, we will set it to UNLIMITED
+                    if self.maxUserServices == 0:
+                        self.maxUserServices = consts.UNLIMITED
                 elif callable(maxServices):
                     self.maxUserServices = maxServices()
                 else:
