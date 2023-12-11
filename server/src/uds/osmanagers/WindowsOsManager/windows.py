@@ -56,11 +56,11 @@ class WindowsOsManager(osmanagers.OSManager):
         readonly=True,
         tooltip=_('What to do when user logs out from service'),
         choices=[
-            {'id': 'keep', 'text': gettext_lazy('Keep service assigned')},
-            {'id': 'remove', 'text': gettext_lazy('Remove service')},
+            {'id': 'keep', 'text': typing.cast(str, gettext_lazy('Keep service assigned'))},
+            {'id': 'remove', 'text': typing.cast(str, gettext_lazy('Remove service'))},
             {
                 'id': 'keep-always',
-                'text': gettext_lazy('Keep service assigned even on new publication'),
+                'text': typing.cast(str, gettext_lazy('Keep service assigned even on new publication')),
             },
         ],
         default='keep',
@@ -178,7 +178,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
             creds = {'username': username, 'password': password, 'domain': domain}
             ticket = TicketStore.create(
-                creds, validatorFnc=None, validity=300
+                creds,validity=300
             )  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
 

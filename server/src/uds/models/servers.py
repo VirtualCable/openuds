@@ -199,12 +199,6 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         related_name='servers',
     )
 
-    def parent(self) -> typing.Optional['Server']:
-        """
-        Returns the parent group (not valid for Tunnel Servers, that can belong to more than one group)
-        """
-        return self.groups.first()
-
     class Meta:  # pylint: disable=too-few-public-methods
         app_label = 'uds'
 

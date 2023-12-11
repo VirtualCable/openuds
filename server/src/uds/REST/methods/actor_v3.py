@@ -35,6 +35,8 @@ import time
 import typing
 import collections.abc
 
+from django.conf import settings
+
 # from uds.core import VERSION
 from uds.core import consts, exceptions, osmanagers, types
 from uds.core.managers.crypto import CryptoManager
@@ -143,6 +145,19 @@ class ActorV3Action(Handler):
     @staticmethod
     def setCommsUrl(userService: UserService, ip: str, port: int, secret: str):
         userService.setCommsUrl(f'https://{ip}:{port}/actor/{secret}')
+
+    @staticmethod
+    def actorCertResult(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
+        return ActorV3Action.actorResult(
+            {
+                'private_key': key,  # To be removed on 5.0
+                'key': key,
+                'server_certificate': certificate,  # To be removed on 5.0
+                'certificate': certificate,
+                'password': password,
+                'ciphers': getattr(settings, 'SECURE_CIPHERS', None),
+            }
+        )
 
     def getUserService(self) -> UserService:
         '''
@@ -372,10 +387,10 @@ class Initialize(ActorV3Action):
         ) -> dict[str, typing.Any]:
             return ActorV3Action.actorResult(
                 {
-                    'own_token': own_token,
+                    'own_token': alias_token or own_token,  # Compat with old actor versions, TBR on 5.0
+                    'token': alias_token or own_token,  # New token, will be used from now onwards
                     'unique_id': unique_id,
                     'os': os,
-                    'alias_token': alias_token,
                 }
             )
 
@@ -494,13 +509,7 @@ class BaseReadyChange(ActorV3Action):
         userService.properties['priv'] = privateKey
         userService.properties['priv_passwd'] = password
 
-        return ActorV3Action.actorResult(
-            {
-                'private_key': privateKey,
-                'server_certificate': cert,
-                'password': password,
-            }
-        )
+        return ActorV3Action.actorCertResult(privateKey, cert, password)
 
 
 class IpChange(BaseReadyChange):
@@ -568,11 +577,9 @@ class Login(ActorV3Action):
     # payload received
     #   {
     #        'type': actor_type or types.MANAGED,
-    #        'id': [{'mac': i.mac, 'ip': i.ip} for i in interfaces],
     #        'token': token,
     #        'username': username,
     #        'session_type': sessionType,
-    #        'secret': secret or '',
     #    }
 
     @staticmethod
@@ -786,13 +793,9 @@ class Unmanaged(ActorV3Action):
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
-        # Generates a certificate and send it to client.
+        # Generates a certificate and send it to client (actor).
         privateKey, certificate, password = security.selfSignedCert(ip)
-        cert: dict[str, str] = {
-            'private_key': privateKey,
-            'server_certificate': certificate,
-            'password': password,
-        }
+
         if validId:
             # If id is assigned to an user service, notify "logout" to it
             if userService:
@@ -811,7 +814,7 @@ class Unmanaged(ActorV3Action):
                 },
             )
 
-        return ActorV3Action.actorResult(cert)
+        return ActorV3Action.actorCertResult(privateKey, certificate, password)
 
 
 class Notify(ActorV3Action):

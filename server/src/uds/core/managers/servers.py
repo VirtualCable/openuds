@@ -112,9 +112,7 @@ class ServerManager(metaclass=singleton.Singleton):
         Returns a list of stats for a list of servers
         """
         # Paralelize stats retrieval
-        retrievedStats: list[
-            tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']
-        ] = []
+        retrievedStats: list[tuple[typing.Optional['types.servers.ServerStats'], 'models.Server']] = []
 
         def _retrieveStats(server: 'models.Server') -> None:
             try:
@@ -473,11 +471,6 @@ class ServerManager(metaclass=singleton.Singleton):
             serverStats = self.getServerStats(fltrs)
         # Sort by weight, lower first (lower is better)
         return [s[1] for s in sorted(serverStats, key=lambda x: x[0].weight() if x[0] else 999999999)]
-
-        return sorted(
-            serverGroup.servers.filter(maintenance_mode=False),
-            key=lambda x: self.getUnmanagedUsage(x.uuid),
-        )
 
     def doMaintenance(self, serverGroup: 'models.ServerGroup') -> None:
         """Realizes maintenance on server group

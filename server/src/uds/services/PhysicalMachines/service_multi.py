@@ -59,10 +59,13 @@ class IPMachinesService(IPServiceBase):
     # Gui
     token = gui.TextField(
         order=1,
-        label=_('Service Token'),
+        label=typing.cast(str, _('Service Token')),
         length=64,
-        tooltip=_(
-            'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
+        tooltip=typing.cast(
+            str,
+            _(
+                'Service token that will be used by actors to communicate with service. Leave empty for persistent assignation.'
+            ),
         ),
         default='',
         required=False,
@@ -70,25 +73,27 @@ class IPMachinesService(IPServiceBase):
     )
 
     ipList = gui.EditableListField(
-        label=_('List of servers'),
-        tooltip=_('List of servers available for this service'),
+        label=typing.cast(str, _('List of servers')),
+        tooltip=typing.cast(str, _('List of servers available for this service')),
     )
 
     port = gui.NumericField(
         length=5,
-        label=_('Check Port'),
+        label=typing.cast(str, _('Check Port')),
         default=0,
         order=2,
-        tooltip=_('If non zero, only hosts responding to connection on that port will be served.'),
+        tooltip=typing.cast(
+            str, _('If non zero, only hosts responding to connection on that port will be served.')
+        ),
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )
     skipTimeOnFailure = gui.NumericField(
         length=6,
-        label=_('Skip time'),
+        label=typing.cast(str, _('Skip time')),
         default=0,
         order=2,
-        tooltip=_('If a host fails to check, skip it for this time (in minutes).'),
+        tooltip=typing.cast(str, _('If a host fails to check, skip it for this time (in minutes).')),
         minValue=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
@@ -96,35 +101,38 @@ class IPMachinesService(IPServiceBase):
 
     maxSessionForMachine = gui.NumericField(
         length=3,
-        label=_('Max session per machine'),
+        label=typing.cast(str, _('Max session per machine')),
         default=0,
         order=3,
-        tooltip=_(
-            'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
+        tooltip=typing.cast(
+            str,
+            _(
+                'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
+            ),
         ),
         minValue=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )
     lockByExternalAccess = gui.CheckBoxField(
-        label=_('Lock machine by external access'),
-        tooltip=_('If checked, UDS will lock the machine if it is accesed from outside UDS.'),
+        label=typing.cast(str, _('Lock machine by external access')),
+        tooltip=typing.cast(str, _('If checked, UDS will lock the machine if it is accesed from outside UDS.')),
         default=False,
         order=4,
         tab=types.ui.Tab.ADVANCED,
     )
     useRandomIp = gui.CheckBoxField(
-        label=_('Use random IP'),
-        tooltip=_('If checked, UDS will use a random IP from the list of servers.'),
+        label=typing.cast(str, _('Use random IP')),
+        tooltip=typing.cast(str, _('If checked, UDS will use a random IP from the list of servers.')),
         default=False,
         order=5,
         tab=types.ui.Tab.ADVANCED,
     )
 
     # Description of service
-    typeName = _('Static Multiple IP')
+    typeName = typing.cast(str, _('Static Multiple IP'))
     typeType = 'IPMachinesService'
-    typeDescription = _('This service provides access to POWERED-ON Machines by IP')
+    typeDescription = typing.cast(str, _('This service provides access to POWERED-ON Machines by IP'))
     iconFile = 'machines.png'
 
     usesCache = False  # Cache are running machine awaiting to be assigned
@@ -135,7 +143,6 @@ class IPMachinesService(IPServiceBase):
     userServiceType = IPMachineDeployed
 
     servicesTypeProvided = types.services.ServiceType.VDI
-
 
     _ips: list[str] = []
     _token: str = ''
