@@ -362,13 +362,15 @@ class Initialize(ActorV3Action):
         Will return on field "result" a dictinary with:
             * own_token: Optional[str] -> Personal uuid for the service (That, on service, will be used from now onwards). If None, there is no own_token
             * unique_id: Optional[str] -> If not None, unique id for the service (normally, mac adress of recognized interface)
-            * max_idle: Optional[int] -> If not None, max configured Idle for the vm. Remember it can be a null value
             * os: Optional[dict] -> Data returned by os manager for setting up this service.
         Example:
             {
                 'own_token' 'asdfasdfasdffsadfasfd'
-                'unique_ids': 'aa:bb:cc:dd:ee:ff'
-                'maxIdle': 34
+                'unique_id': 'aa:bb:cc:dd:ee:ff'
+                'os': {
+                    'action': 'rename',
+                    'name': 'new_name'
+                }
             }
         On  error, will return Empty (None) result, and error field
         """
