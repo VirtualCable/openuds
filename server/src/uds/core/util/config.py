@@ -117,7 +117,7 @@ class Config:
             return self._sectionName
 
     class Value:
-        _section: 'Config.Section'  # type: ignore  # mypy bug?
+        _section: 'Config.Section'  # type: ignore  # mypy complains??
         _type: int
         _key: str
         _crypt: bool
@@ -446,7 +446,7 @@ class GlobalConfig:
         'superUser', 'root', type=Config.FieldType.TEXT, help=_('Superuser username')
     )
     # Superuser password (do not need to be at database!!!)
-    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).value(
+    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).valueCrypt(
         'rootPass', 'udsmam0', type=Config.FieldType.PASSWORD, help=_('Superuser password')
     )
     SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(Config.SectionType.SECURITY).value(

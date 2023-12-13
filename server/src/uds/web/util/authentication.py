@@ -94,7 +94,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
                 uuid=processUuid(form.cleaned_data['authenticator'])
             )
         except Exception:
-            authenticator = Authenticator()
+            authenticator = Authenticator.nullAuthenticator()
         userName = form.cleaned_data['user']
         if GlobalConfig.LOWERCASE_USERNAME.getBool(True) is True:
             userName = userName.lower()

@@ -78,9 +78,9 @@ def index(request: HttpRequest) -> HttpResponse:
         csrf_token = str(csrf_token)
 
     response = render(
-        request,
-        'uds/modern/index.html',
-        {'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
+        request=request,
+        template_name='uds/modern/index.html',
+        context={'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
     )
 
     # Ensure UDS cookie is present

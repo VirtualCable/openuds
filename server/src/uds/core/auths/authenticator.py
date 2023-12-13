@@ -207,6 +207,8 @@ class Authenticator(Module):
         from uds.models import Authenticator  # pylint: disable=import-outside-toplevel
 
         if self._dbObj is None:
+            if not self._uuid:
+                return Authenticator.nullAuthenticator()
             self._dbObj = Authenticator.objects.get(uuid=self._uuid)
         return self._dbObj
 
@@ -365,6 +367,9 @@ class Authenticator(Module):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
+        # Maybe "internal for root", if this is the case, it is valid for all ips
+        if not self.dbObj().id:
+            return True
         return self.dbObj().state != consts.auth.DISABLED and self.dbObj().isValidForIp(
             typing.cast('types.request.ExtendedHttpRequest', request).ip
         )

@@ -132,9 +132,9 @@ def getRootUser() -> models.User:
     user.manager = models.Authenticator()  # type: ignore
     # Fake overwrite some methods, a bit cheating? maybe? :)
     user.getGroups = lambda: []  # type: ignore
-    user.updateLastAccess = lambda: None
+    user.updateLastAccess = lambda: None  # type: ignore
     # Override logout method to do nothing for this user
-    user.logout = lambda request: types.auth.SUCCESS_AUTH
+    user.logout = lambda request: types.auth.SUCCESS_AUTH  # type: ignore
     return user
 
 

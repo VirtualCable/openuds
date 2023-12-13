@@ -231,6 +231,13 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             return exists
         # Deny, must not be in any network
         return not exists
+    
+    @staticmethod
+    def nullAuthenticator() -> 'Authenticator':
+        """
+        Returns a null authenticator, that is, an authenticator that does nothing
+        """
+        return Authenticator(uuid='')
 
     @staticmethod
     def all() -> 'models.QuerySet[Authenticator]':

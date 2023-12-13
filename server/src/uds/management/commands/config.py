@@ -44,6 +44,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser) -> None:
         parser.add_argument('name_value', nargs='+', type=str)
+        # if force crypt is specified, we will force crypting of passwords
+        parser.add_argument('--force-crypt', action='store_true', default=False, help='Force crypting of passwords')
+        
+        
 
     def handle(self, *args, **options) -> None:
         logger.debug("Handling settings")
@@ -60,7 +64,10 @@ class Command(BaseCommand):
                 if (
                     Config.update(mod, name, value) is False
                 ):  # If not exists, try to store value without any special parameters
-                    Config.section(mod).value(name, value).get()
+                    if options['force_crypt']:
+                        value = Config.section(mod).valueCrypt(name, value).get()
+                    else:
+                        Config.section(mod).value(name, value).get()
         except Exception as e:
             self.stderr.write(f'The command could not be processed: {e}')
             logger.exception('Exception processing %s', args)
