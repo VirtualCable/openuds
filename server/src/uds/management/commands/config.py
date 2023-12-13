@@ -46,6 +46,8 @@ class Command(BaseCommand):
         parser.add_argument('name_value', nargs='+', type=str)
         # if force crypt is specified, we will force crypting of passwords
         parser.add_argument('--force-crypt', action='store_true', default=False, help='Force crypting of passwords')
+        # If set as "password field"
+        parser.add_argument('--password', action='store_true', default=False, help='Set as password field')
         
         
 
@@ -64,6 +66,9 @@ class Command(BaseCommand):
                 if (
                     Config.update(mod, name, value) is False
                 ):  # If not exists, try to store value without any special parameters
+                    kwargs = {}
+                    if options['password']:
+                        kwargs['type'] = Config.FieldType.PASSWORD
                     if options['force_crypt']:
                         value = Config.section(mod).valueCrypt(name, value).get()
                     else:
