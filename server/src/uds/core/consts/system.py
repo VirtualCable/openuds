@@ -37,8 +37,8 @@ import collections.abc
 from django.conf import settings
 
 # UDS Version related
-VERSION = '4.x.x-DEVEL'
-VERSION_STAMP = f'{time.strftime("%Y%m%d")}-DEVEL'
+VERSION = '4.0.0'
+VERSION_STAMP = f'{time.strftime("%Y%m%d")}'
 # Minimal uds client version required to connect to this server
 REQUIRED_CLIENT_VERSION = '3.6.0'
 
