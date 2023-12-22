@@ -1003,10 +1003,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Remove "full" pools (100%) from result and pools in maintenance mode, not ready pools, etc...
         sortedPools = sorted(sortPools, key=lambda x: x[0])
         pools: typing.List[ServicePool] = [
-            p[1] for p in sortedPools if p[1].usage() < 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage()[0] < 100 and p[1].isUsable()
         ]
         poolsFull: typing.List[ServicePool] = [
-            p[1] for p in sortedPools if p[1].usage() == 100 and p[1].isUsable()
+            p[1] for p in sortedPools if p[1].usage()[0] == 100 and p[1].isUsable()
         ]
 
         logger.debug('Pools: %s/%s', pools, poolsFull)
