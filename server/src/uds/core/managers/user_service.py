@@ -611,8 +611,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def checkUuid(self, userService: UserService) -> bool:
         return comms.checkUuid(userService)
 
-    def requestScreenshot(self, userService: UserService) -> bytes:
-        return comms.requestScreenshot(userService)
+    def requestScreenshot(self, userService: UserService) -> None:
+        # Screenshot will request an screenshot to the actor
+        # And the actor will return back, via REST actor API, the screenshot
+        comms.requestScreenshot(userService)
 
     def sendScript(self, userService: UserService, script: str, forUser: bool = False) -> None:
         comms.sendScript(userService, script, forUser)
@@ -919,7 +921,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if meta.policy == types.pools.LoadBalancingPolicy.PRIORITY:
             sortPools = [(p.priority, p.pool) for p in poolMembers]
         elif meta.policy == types.pools.LoadBalancingPolicy.GREATER_PERCENT_FREE:
-            sortPools = [(p.pool.usage()[0], p.pool) for p in poolMembers]
+            sortPools = [(p.pool.usage().percent, p.pool) for p in poolMembers]
         else:
             sortPools = [
                 (
@@ -940,7 +942,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         for p in sortedPools:
             if not p[1].isUsable():
                 continue
-            if p[1].usage() == 100:
+            if p[1].usage().percent == 100:
                 poolsFull.append(p[1])
             else:
                 pools.append(p[1])

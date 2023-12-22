@@ -163,31 +163,37 @@ def checkUuid(userService: 'UserService') -> bool:
     return True  # Actor does not supports checking
 
 
-def requestScreenshot(userService: 'UserService') -> bytes:
+def requestScreenshot(userService: 'UserService') -> None:
     """
-    Returns an screenshot in PNG format (bytes) or empty png if not supported
+    Requests an screenshot to an actor on an user service
+    
+    This method is used to request an screenshot to an actor on an user service.
+    
+    Args:
+        userService: User service to request screenshot from
+
+    Notes:
+        The screenshot is not returned directly, but will be returned on a actor REST API call to "screenshot" method.
     """
-    emptyPng = (
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-    )
     try:
-        png = _requestActor(
-            userService, 'screenshot', minVersion='3.0.0'
+        # Data = {} forces an empty POST
+        _requestActor(
+            userService, 'screenshot', data={}, minVersion='4.0.0'
         )  # First valid version with screenshot is 3.0
     except exceptions.actor.NoActorComms:
-        png = None
-
-    return base64.b64decode(png or emptyPng)
+        pass # No actor comms, nothing to do
 
 
 def sendScript(userService: 'UserService', script: str, forUser: bool = False) -> None:
     """
-    If allowed, send script to user service
+    If allowed, sends script to user service
+    Note tha the script is a python script, so it can be executed directly by the actor
     """
     try:
         data: collections.abc.MutableMapping[str, typing.Any] = {'script': script}
         if forUser:
             data['user'] = forUser
+        # Data = {} forces an empty POST
         _requestActor(userService, 'script', data=data)
     except exceptions.actor.NoActorComms:
         pass
