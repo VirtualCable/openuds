@@ -41,7 +41,7 @@ class DetectedOsInfo(typing.NamedTuple):
 
 
 class KnownOS(enum.Enum):
-    LINUX = ('Linux', 'armv7l')
+    LINUX = ('Linux',)  # previusly got 'armv7l'
     CHROME_OS = ('CrOS',)
     WINDOWS_PHONE = ('Windows Phone',)
     WINDOWS = ('Windows',)
@@ -58,15 +58,16 @@ class KnownOS(enum.Enum):
     def __str__(self):
         return self.os_name()
 
+# Order is important here, as we will use the first match
 class KnownBrowser(enum.StrEnum):
     # Known browsers
     FIREFOX = 'Firefox'
     SEAMONKEY = 'Seamonkey'
-    CHROME = 'Chrome'
-    CHROMIUM = 'Chromium'
+    EDGE = 'Microsoft Edge'
     SAFARI = 'Safari'
     OPERA = 'Opera'
+    CHROME = 'Chrome'
+    CHROMIUM = 'Chromium'
     IEXPLORER = 'Explorer'
-    EDGE = 'Edge'
     OTHER = 'Other'
 

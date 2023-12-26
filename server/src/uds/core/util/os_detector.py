@@ -41,50 +41,76 @@ from uds.core import types, consts
 logger = logging.getLogger(__name__)
 
 
-
-def getOsFromUA(
-    ua: typing.Optional[str],
+def detect_os(
+    headers: collections.abc.Mapping[str, typing.Any],
 ) -> types.os.DetectedOsInfo:
     """
     Basic OS Client detector (very basic indeed :-))
     """
-    ua = ua or types.os.KnownOS.UNKNOWN.value[0]
+    ua = (headers.get('User-Agent') or types.os.KnownOS.UNKNOWN.value[0])
 
-    res = types.os.DetectedOsInfo(os=types.os.KnownOS.UNKNOWN, browser=types.os.KnownBrowser.OTHER, version='0.0')
-    found: bool = False
-    for os in consts.os.KNOWN_OS_LIST:
-        if found:
-            break
-        for osName in os.value:
-            if osName in ua:
-                res = res._replace(os=os)
-                found = True
+    res = types.os.DetectedOsInfo(
+        os=types.os.KnownOS.UNKNOWN, browser=types.os.KnownBrowser.OTHER, version='0.0'
+    )
+
+    # First, try to detect from Sec-Ch-Ua-Platform
+    # Remember all Sec... headers are only available on secure connections
+    secChUaPlatform = headers.get('Sec-Ch-Ua-Platform')
+    found = types.os.KnownOS.UNKNOWN
+
+    if secChUaPlatform is not None:
+        # Strip initial and final " chars if present
+        secChUaPlatform = secChUaPlatform.strip('"')
+        for os in consts.os.KNOWN_OS_LIST:
+            if secChUaPlatform in os.value:
+                found = os
+                break
+    else:  # Try to detect from User-Agent
+        ual = ua.lower()
+        for os in consts.os.KNOWN_OS_LIST:
+            if os.os_name().lower() in ual:
+                found = os
                 break
 
-    match = None
+    # If we found a known OS, store it
+    if found != types.os.KnownOS.UNKNOWN:
+        res = res._replace(os=found)
 
-    ruleKey, ruleValue = None, None
-    for ruleKey, ruleValue in consts.os.browserRules.items():
-        must, mustNot = ruleValue
+    # Try to detect browser from Sec-Ch-Ua first
+    secChUa = headers.get('Sec-Ch-Ua')
+    if secChUa is not None:
+        for browser in consts.os.knownBrowsers:
+            if browser in secChUa:
+                res = res._replace(browser=browser)
+                break
+    else:
+        # Try to detect browser from User-Agent
+        match = None
 
-        for mustRe in consts.os.browsersREs[must]:
-            match = mustRe.search(ua)
-            if match is None:
-                continue
-            # Check against no maching rules
-            for mustNotREs in mustNot:
-                for cre in consts.os.browsersREs[mustNotREs]:
-                    if cre.search(ua) is not None:
-                        match = None
-                        break
+        ruleKey, ruleValue = None, None
+        for ruleKey, ruleValue in consts.os.browserRules.items():
+            must, mustNot = ruleValue
+
+            for mustRe in consts.os.browsersREs[must]:
+                match = mustRe.search(ua)
                 if match is None:
+                    continue
+                # Check against no maching rules
+                for mustNotREs in mustNot:
+                    for cre in consts.os.browsersREs[mustNotREs]:
+                        if cre.search(ua) is not None:
+                            match = None
+                            break
+                    if match is None:
+                        break
+                if match is not None:
                     break
             if match is not None:
                 break
-        if match is not None:
-            break
 
-    if match is not None:
-        res = res._replace(browser=ruleKey, version=match.groups(1)[0])
+        if match is not None:
+            res = res._replace(browser=ruleKey, version=match.groups(1)[0])
+
+    logger.debug('Detected: %s %s', res.os, res.browser)
 
     return res

@@ -136,7 +136,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
     request.authorized = request.session.get(AUTHORIZED_KEY, False)
 
     # Ensures request contains os
-    request.os = OsDetector.getOsFromUA(request.META.get('HTTP_USER_AGENT', 'Unknown'))
+    request.os = OsDetector.detect_os(request.headers)
 
     # Ensures that requests contains the valid user
     _get_user(request)

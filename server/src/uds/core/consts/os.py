@@ -53,7 +53,7 @@ MOBILE_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(set(ALL_OS_LI
 DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
 
 
-knownBrowsers = tuple(types.os.KnownBrowser)
+knownBrowsers: typing.Final[tuple[types.os.KnownBrowser, ...]] = tuple(types.os.KnownBrowser)
 
 browsersREs: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),

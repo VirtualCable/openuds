@@ -40,7 +40,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds.web.util import errors
-from uds.core import auths, types
+from uds.core import auths, types, exceptions
 from uds.core.auths.auth import (
     webLogin,
     webLogout,
@@ -107,14 +107,12 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
 
         result = authenticateViaCallback(authenticator, params, request)
 
-        # os = OsDetector.getOsFromUA(request.META['HTTP_USER_AGENT'])
-
         if result.url:
-            raise auths.exceptions.Redirect(result.url)
+            raise exceptions.auth.Redirect(result.url)
 
         if result.user is None:
             authLogLogin(request, authenticator, f'{params}', 'Invalid at auth callback')
-            raise auths.exceptions.InvalidUserException()
+            raise exceptions.auth.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
 
@@ -131,9 +129,9 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
         return response
-    except auths.exceptions.Redirect as e:
+    except exceptions.auth.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/')
-    except auths.exceptions.Logout as e:
+    except exceptions.auth.Logout as e:
         return webLogout(
             request,
             request.build_absolute_uri(str(e)) if e.args and e.args[0] else None,
@@ -214,7 +212,7 @@ def ticketAuth(
             password = CryptoManager().decrypt(data['password'])
         except Exception:
             logger.error('Ticket stored is not valid')
-            raise auths.exceptions.InvalidUserException() from None
+            raise exceptions.auth.InvalidUserException() from None
 
         auth = Authenticator.objects.get(uuid=auth)
         # If user does not exists in DB, create it right now
@@ -232,7 +230,7 @@ def ticketAuth(
 
         usr = auth.getOrCreateUser(username, realname)
         if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
-            raise auths.exceptions.InvalidUserException()
+            raise exceptions.auth.InvalidUserException()
 
         # Add groups to user (replace existing groups)
         usr.groups.set(grps)  # type: ignore
