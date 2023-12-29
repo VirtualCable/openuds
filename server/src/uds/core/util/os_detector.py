@@ -40,7 +40,7 @@ from .tools import DictAsObj
 logger = logging.getLogger(__name__)
 
 class KnownOS(enum.Enum):
-    Linux = ('Linux', 'armv7l')
+    Linux = ('Linux', 'armv7l', 'aarch64')
     ChromeOS = ('CrOS',)
     WindowsPhone = ('Windows Phone',)
     Windows = ('Windows',)

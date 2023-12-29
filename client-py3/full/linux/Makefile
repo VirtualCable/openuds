@@ -90,6 +90,7 @@ build-igel:
 	cat igel/UDSClient-Profile-template.xml | sed -e s/"_SIZE_"/"$(APPIMAGE_SIZE)M"/g > $(DESTDIR)/UDSClient-Profile.xml
 	cat igel/UDSClient-template.inf | sed -e s/"_SIZE_"/"$(APPIMAGE_SIZE)M"/g > $(DESTDIR)/UDSClient.inf
 	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)/UDSClient
+	chmod 755 $(DESTDIR)/UDSClient
 	cp igel/UDSClient.desktop $(DESTDIR)/UDSClient.desktop
 	cp igel/init.sh $(DESTDIR)/init.sh
 	tar cjvf $(DESTDIR)/UDSClient.tar.bz2 -C $(DESTDIR) UDSClient UDSClient.desktop init.sh
@@ -102,6 +103,7 @@ build-thinpro:
 	mkdir -p $(DESTDIR)
 	cp -r thinpro/* $(DESTDIR)
 	cp UDSClient-$(VERSION)-x86_64.AppImage $(DESTDIR)/UDSClient
+	chmod 755 $(DESTDIR)/UDSClient
 	tar czvf ../udsclient3-$(VERSION)-thinpro.tar.gz -C $(DESTDIR) .
 	rm -rf $(DESTDIR)
 
