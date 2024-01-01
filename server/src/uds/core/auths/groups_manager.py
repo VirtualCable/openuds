@@ -30,12 +30,14 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
-import logging
-import typing
 import collections.abc
+import dataclasses
+import logging
+import re
+import typing
 
 from uds.core.util.state import State
+
 from .group import Group
 
 if typing.TYPE_CHECKING:
@@ -43,8 +45,8 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-
-class _LocalGrp(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class _LocalGrp:
     name: str
     group: 'Group'
     is_valid: bool = False
@@ -55,6 +57,9 @@ class _LocalGrp(typing.NamedTuple):
         Checks if this group name is equal to the provided name (case)
         """
         return name.casefold() == self.name.casefold()
+    
+    def replace(self, **kwargs) -> '_LocalGrp':
+        return dataclasses.replace(self, **kwargs)
 
 
 class GroupsManager:
@@ -102,7 +107,7 @@ class GroupsManager:
                     )
                 )
 
-    def _checkAllGroups(self, groupName: str) -> typing.Generator[int, None, None]:
+    def _indexes_for_mached_groups(self, groupName: str) -> typing.Generator[int, None, None]:
         """
         Returns true if this groups manager contains the specified group name (string)
         """
@@ -132,9 +137,8 @@ class GroupsManager:
         """
         returns the list of valid groups (:py:class:uds.core.auths.group.Group)
         """
-        from uds.models import (  # pylint: disable=import-outside-toplevel
-            Group as DBGroup,
-        )
+        from uds.models import \
+            Group as DBGroup  # pylint: disable=import-outside-toplevel
 
         valid_id_list: list[int] = []
         for group in self._groups:
@@ -190,15 +194,15 @@ class GroupsManager:
             for n in groupName:
                 self.validate(n)
         else:
-            for n in self._checkAllGroups(groupName):
-                self._groups[n] = self._groups[n]._replace(is_valid=True)
+            for n in self._indexes_for_mached_groups(groupName):
+                self._groups[n] = self._groups[n].replace(is_valid=True)
 
     def isValid(self, groupName: str) -> bool:
         """
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         """
-        for n in self._checkAllGroups(groupName):
+        for n in self._indexes_for_mached_groups(groupName):
             if self._groups[n].is_valid:
                 return True
         return False

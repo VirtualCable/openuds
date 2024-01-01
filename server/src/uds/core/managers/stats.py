@@ -30,6 +30,7 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import datetime
+import dataclasses
 import time
 import logging
 import typing
@@ -54,8 +55,8 @@ FLDS_EQUIV: collections.abc.Mapping[str, collections.abc.Iterable[str]] = {
 
 REVERSE_FLDS_EQUIV: collections.abc.Mapping[str, str] = {i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases}
 
-
-class AccumStat(typing.NamedTuple):
+@dataclasses.dataclass
+class AccumStat:
     stamp: int
     n: int  # Number of elements in this interval
     sum: int  # Sum of elements in this interval
@@ -203,19 +204,19 @@ class StatsManager(metaclass=singleton.Singleton):
         if owner_id is not None:
             query = query.filter(owner_id=owner_id)
 
-        # Create a numpy array with all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
+        # Yields all data, stamp, n, sum, max, min (stamp, v_count,v_sum,v_max,v_min)
         # Now, get exactly the points we need
         stamp = since
         last = AccumStat(stamp, 0, 0, 0, 0)
         for rec in query:
             # While query stamp is greater than stamp, repeat last AccumStat
             while rec.stamp > stamp:
-                # Append to numpy array
+                # Yield last value until we reach the record
                 yield last
                 stamp += intervalType.seconds()
-                last = last._replace(stamp=stamp)  # adjust stamp
-            # Now, we have a record that is greater or equal to stamp, so we can use it
-            # but replace record stamp with stamp
+                last.stamp = stamp
+            # The record to be emmitted is the current one, but replace record stamp with current stamp
+            # The recor is for sure the first one previous to stamp (we have emmited last record until we reach this one)
             last = AccumStat(
                 stamp,
                 rec.v_count,

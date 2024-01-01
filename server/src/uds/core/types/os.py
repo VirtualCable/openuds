@@ -30,14 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import enum
 import typing
 import collections.abc
 
-class DetectedOsInfo(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class DetectedOsInfo:
     os: 'KnownOS'
     browser: 'KnownBrowser'
     version: str
+    
+    def replace(self, **kwargs):
+        return dataclasses.replace(self, **kwargs)
 
 
 class KnownOS(enum.Enum):

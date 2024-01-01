@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import enum
 import typing
 import collections.abc
@@ -113,12 +114,15 @@ ServerSubtype.manager().register(
 )
 
 
-class ServerStats(typing.NamedTuple):
+@dataclasses.dataclass
+class ServerStats:
     memused: int = 0  # In bytes
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    disks: list[tuple[str, int, int]] = []  # List of tuples (mountpoint, used, total)
+    disks: list[tuple[str, int, int]] = dataclasses.field(
+        default_factory=list
+    )  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
     current_users: int = 0  # Number of current users
     stamp: float = 0  # Timestamp of this stats
@@ -137,7 +141,7 @@ class ServerStats(typing.NamedTuple):
 
         Returns:
             bool: True if valid, False otherwise
-            
+
         Note:
             In normal situations, the stats of a server will be uptated ever minute or so, so this will be valid
             most time. If the server is down, it will be valid for 3 minutes, so it will be used as a "last known" stats
@@ -171,16 +175,17 @@ class ServerStats(typing.NamedTuple):
 
         current_users = max(1, self.current_users)
         new_users = max(1, current_users + users_increment)
-        
+
         new_memused = self.memused * new_users / current_users
         # Ensure memused is in range 0-memtotal
         new_memused = min(max(0, new_memused), self.memtotal - 1)
 
         new_cpuused = self.cpuused * new_users / current_users
         # Ensure cpuused is in range 0-1
-        new_cpuused = min(max(0, new_cpuused), 1) 
+        new_cpuused = min(max(0, new_cpuused), 1)
 
-        return self._replace(
+        return dataclasses.replace(
+            self,
             current_users=new_users,
             memused=new_memused,
             cpuused=new_cpuused,

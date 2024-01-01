@@ -29,6 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import logging
 import sys
 import typing
@@ -65,8 +66,8 @@ __all__ = ['Handler', 'Dispatcher']
 
 AUTH_TOKEN_HEADER = 'X-Auth-Token'  # nosec: this is not a password, but a header name
 
-
-class HandlerNode(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class HandlerNode:
     """
     Represents a node on the handler tree
     """
@@ -258,7 +259,9 @@ class Dispatcher(View):
         if name not in service_node.children:
             service_node.children[name] = HandlerNode(name, None, {})
 
-        service_node.children[name] = service_node.children[name]._replace(handler=type_)
+        service_node.children[name] = dataclasses.replace(
+            service_node.children[name], handler=type_
+        )
 
     # Initializes the dispatchers
     @staticmethod

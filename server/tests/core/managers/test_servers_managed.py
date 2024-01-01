@@ -31,6 +31,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 from contextlib import contextmanager
+import dataclasses
 import typing
 import collections.abc
 import datetime
@@ -131,9 +132,9 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     return  # For mypy
                 uuid, counter = assignation
                 # Update only users, as the connection does not consume memory nor cpu
-                self.server_stats[uuid] = self.server_stats[uuid]._replace(
-                    current_users=self.server_stats[uuid].current_users + 1
-                )
+                self.server_stats[uuid] = dataclasses.replace(
+                    self.server_stats[uuid], current_users=self.server_stats[uuid].current_users + 1
+                )               
 
                 prop_name = self.manager.propertyName(userService.user)
                 # uuid shuld be one on registered servers
