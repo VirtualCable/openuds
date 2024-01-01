@@ -52,7 +52,10 @@ class UDSHttpResponse(HttpResponse):
 
     def __init__(self, content, *args, **kwargs):
         super().__init__(content, *args, **kwargs)
-        self.content = content
+        self.content = content  # type: ignore  # mypy does not know about this setter
+        
+    def json(self) -> typing.Any:
+        return super().json()   # type: ignore  # mypy does not know about this method
 
 
 class UDSClientMixin:

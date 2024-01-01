@@ -110,10 +110,8 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         result = success(unique_id)
 
         # Ensure own token is assigned
-        self.assertEqual(result['own_token'], user_service.uuid)
-
-        # Ensure no alias token is provided
-        self.assertIsNone(result['alias_token'])
+        self.assertEqual(result['token'], user_service.uuid)
+        self.assertEqual(result['own_token'], result['token'])  # Compat value with 3.x actors
 
         # Ensure unique_id detected is ours
         self.assertEqual(result['unique_id'], unique_id)
@@ -133,8 +131,8 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         # Now invoke failure with valid token but invalid mac
         result = failure(actor_token, 'invalid mac', False)
 
-        self.assertIsNone(result['own_token'], None)
-        self.assertIsNone(result['alias_token'])
+        self.assertIsNone(result['own_token'])
+        self.assertIsNone(result['token'])
         self.assertIsNone(result['os'])
         self.assertIsNone(result['unique_id'])
 
@@ -157,10 +155,13 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         )
 
         # Unmanaged host is the response for initialization of unmanaged actor ALWAYS
-        self.assertIsNone(result['alias_token'])
-        self.assertIsNone(result['own_token'])
+        self.assertIsInstance(result['token'], str)
+        self.assertEqual(result['token'], result['own_token'])
         self.assertIsNone(result['unique_id'])
         self.assertIsNone(result['os'])
+        
+        # Store alias token for later tests
+        alias_token = result['token']
 
         # Now, invoke a "nice" initialize
         result = success(
@@ -168,23 +169,23 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
             mac=unique_id,
         )
 
-        alias_token = result['alias_token']
+        token = result['token']
 
-        self.assertIsInstance(alias_token, str)
-        self.assertEqual(result['own_token'], user_service.uuid)
-        self.assertEqual(result['alias_token'], alias_token)
+        self.assertIsInstance(token, str)
+        self.assertEqual(token, user_service.uuid)
+        self.assertEqual(token, result['own_token'])
         self.assertEqual(result['unique_id'], unique_id)
 
         # Ensure that the alias returned is on alias db, and it points to the same service as the one we belong to
-        alias = models.ServiceTokenAlias.objects.get(alias=result['alias_token'])
+        alias = models.ServiceTokenAlias.objects.get(alias=alias_token)
         self.assertEqual(alias.service, user_service.deployed_service.service)
 
         # Now, we should be able to "initialize" with valid mac and with original and alias tokens
         # If we call initialize and we get "own-token" means that we have already logged in with this data
         result = success(alias_token, mac=unique_id)
 
-        self.assertEqual(result['own_token'], user_service.uuid)
-        self.assertEqual(result['alias_token'], alias_token)
+        self.assertEqual(result['token'], user_service.uuid)
+        self.assertEqual(result['token'], result['own_token'])
         self.assertEqual(result['unique_id'], unique_id)
 
         #

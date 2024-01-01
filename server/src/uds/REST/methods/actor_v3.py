@@ -389,8 +389,8 @@ class Initialize(ActorV3Action):
         ) -> dict[str, typing.Any]:
             return ActorV3Action.actorResult(
                 {
-                    'own_token': alias_token or own_token,  # Compat with old actor versions, TBR on 5.0
-                    'token': alias_token or own_token,  # New token, will be used from now onwards
+                    'own_token': own_token or alias_token,  # Compat with old actor versions, TBR on 5.0
+                    'token': own_token or alias_token,  # New token, will be used from now onwards
                     'unique_id': unique_id,
                     'os': os,
                 }
@@ -410,6 +410,9 @@ class Initialize(ActorV3Action):
                 # Not on alias token, try to locate on Service table
                 if not service:
                     service = typing.cast('Service', Service.objects.get(token=token))
+                    # If exists, create and alias for it
+                    alias_token = CryptoManager().randomString(40)  # fix alias with new token
+                    service.aliases.create(alias=alias_token)
 
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service
