@@ -341,4 +341,9 @@ class Migration(migrations.Migration):
                 max_length=32,
             ),
         ),
+        migrations.AddField(
+            model_name="servicetokenalias",
+            name="unique_id",
+            field=models.CharField(db_index=True, default="", max_length=128),
+        ),
     ]

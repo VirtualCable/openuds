@@ -138,6 +138,6 @@ class FieldInfo:
     fills: typing.Optional[Filler] = None
     rows: typing.Optional[int] = None
 
-    def asDict(self) -> dict[str, typing.Any]:
+    def as_dict(self) -> dict[str, typing.Any]:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}

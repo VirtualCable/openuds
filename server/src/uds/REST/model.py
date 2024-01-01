@@ -287,7 +287,7 @@ class BaseModelHandler(Handler):
             type=type_.getType(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
-        ).asDict(**self.typeInfo(type_))
+        ).as_dict(**self.typeInfo(type_))
         if hasattr(type_, 'group'):
             res['group'] = _(type_.group)  # Add group info is it is contained
         return res

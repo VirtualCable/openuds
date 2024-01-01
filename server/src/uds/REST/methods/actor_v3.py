@@ -411,8 +411,17 @@ class Initialize(ActorV3Action):
                 if not service:
                     service = typing.cast('Service', Service.objects.get(token=token))
                     # If exists, create and alias for it
-                    alias_token = CryptoManager().randomString(40)  # fix alias with new token
-                    service.aliases.create(alias=alias_token)
+                    # Get first mac and, if not exists, get first ip
+                    unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', ''))
+                    if unique_id is None:
+                        raise BlockAccess()
+                    # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
+                    if not ServiceTokenAlias.objects.filter(service=service, unique_id=unique_id).exists():
+                        alias_token = CryptoManager().randomString(40)  # fix alias with new token
+                        service.aliases.create(alias=alias_token, unique_id=unique_id)
+                    else:
+                        # If exists, get existing one
+                        alias_token = ServiceTokenAlias.objects.get(service=service, unique_id=unique_id).alias
 
                 # Locate an userService that belongs to this service and which
                 # Build the possible ids and make initial filter to match service

@@ -30,13 +30,15 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import dataclasses
 import collections.abc
 
 from .services import ServiceType
 
 
 # For requests to actors/servers
-class PreconnectRequest(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class PreconnectRequest:
     """Information sent on a preconnect request"""
 
     udsuser: str  # UDS user name
@@ -49,12 +51,13 @@ class PreconnectRequest(typing.NamedTuple):
     ip: str  # IP of the client
     hostname: str  # Hostname of the client
 
-    def asDict(self) -> dict[str, str]:
-        return self._asdict()
+    def as_dict(self) -> dict[str, str]:
+        return dataclasses.asdict(self)
 
 
 # For requests to actors/servers
-class AssignRequest(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class AssignRequest:
     """Information sent on a assign request"""
 
     udsuser: str
@@ -64,17 +67,22 @@ class AssignRequest(typing.NamedTuple):
 
     assignations: int  # Number of times this service has been assigned
 
-    def asDict(self) -> dict[str, 'str|int']:
-        return self._asdict()
+    def as_dict(self) -> dict[str, 'str|int']:
+        return dataclasses.asdict(self)
 
-class ReleaseRequest(typing.NamedTuple):
+
+@dataclasses.dataclass(frozen=True)
+class ReleaseRequest:
     """Information sent on a release request"""
+
     userservice_uuid: str  # UUID of userservice
 
-    def asDict(self) -> dict[str, str]:
-        return self._asdict()
+    def as_dict(self) -> dict[str, str]:
+        return dataclasses.asdict(self)
 
-class ConnectionData(typing.NamedTuple):
+
+@dataclasses.dataclass(frozen=True)
+class ConnectionData:
     """
     Connection data provided by transports, and contains all the "transformable" information needed to connect to a service
     (such as username, password, domain, etc..)
@@ -91,11 +99,11 @@ class ConnectionData(typing.NamedTuple):
 
     # sso: bool = False  # For future sso implementation
 
-    def asDict(self) -> dict[str, str]:
-        return self._asdict()
+    def as_dict(self) -> dict[str, str]:
+        return dataclasses.asdict(self)
 
-
-class ConnectionSource(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class ConnectionSource:
     """
     Connection source from where the connection is being done
     """
@@ -103,5 +111,5 @@ class ConnectionSource(typing.NamedTuple):
     ip: str  # IP of the client
     hostname: str  # Hostname of the client
 
-    def asDict(self) -> dict[str, str]:
-        return self._asdict()
+    def as_dict(self) -> dict[str, str]:
+        return dataclasses.asdict(self)

@@ -139,7 +139,7 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
             udsuser_uuid=userService.user.uuid if userService.user else '',
             userservice_uuid=userService.uuid,
             service_type=info.service_type,
-        ).asDict(),
+        ).as_dict(),
     )
 
 

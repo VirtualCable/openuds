@@ -31,6 +31,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import enum
 import typing
+import dataclasses
 import collections.abc
 
 from django.utils.translation import gettext as _
@@ -84,8 +85,8 @@ class HighAvailabilityPolicy(enum.IntEnum):
             (HighAvailabilityPolicy.ENABLED, _('Enabled')),
         ]
 
-
-class UsageInfo(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class UsageInfo:
     used: int
     total: int
 

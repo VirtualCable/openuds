@@ -148,7 +148,7 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
 
 def process_ping(server: 'models.Server', data: dict[str, typing.Any]) -> typing.Any:
     if 'stats' in data:
-        server.stats = types.servers.ServerStats.fromDict(data['stats'])
+        server.stats = types.servers.ServerStats.from_dict(data['stats'])
         # Set stats on server
     server.last_ping = getSqlDatetime()
 

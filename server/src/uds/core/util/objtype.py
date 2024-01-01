@@ -32,6 +32,7 @@
 """
 import logging
 import typing
+import dataclasses
 import collections.abc
 import enum
 
@@ -43,9 +44,10 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-class ObjTypeInfo(typing.NamedTuple):
-    type: int
-    model: type['Model']
+@dataclasses.dataclass(frozen=True)
+class ObjTypeInfo:
+    obj_type: int
+    model: 'type[Model]'
     
 @enum.unique
 class ObjectType(enum.Enum):
@@ -82,7 +84,7 @@ class ObjectType(enum.Enum):
     @property
     def type(self) -> int:
         """Returns the integer value of this object type. (The "type" id)"""
-        return self.value.type
+        return self.value.obj_type
 
     @staticmethod
     def from_model(model: 'Model') -> 'ObjectType':
@@ -110,4 +112,4 @@ class ObjectType(enum.Enum):
             >>> ObjectType.PROVIDER == 2
             False
         """
-        return super().__eq__(__o) or self.value.type == __o
+        return super().__eq__(__o) or self.value.obj_type == __o

@@ -189,7 +189,7 @@ class ServerApiRequester:
                 userservice_uuid=userService.uuid,
                 service_type=service_type,
                 assignations=count,
-            ).asDict(),
+            ).as_dict(),
         )
         return True
 
@@ -223,7 +223,7 @@ class ServerApiRequester:
                 udsuser_uuid=userService.user.uuid if userService.user else '',
                 userservice_uuid=userService.uuid,
                 service_type=info.service_type,
-            ).asDict(),
+            ).as_dict(),
         )
         return True
 
@@ -233,7 +233,7 @@ class ServerApiRequester:
         Notifies removal of user service to server
         """
         logger.debug('Notifying release of service %s to server %s', userService.uuid, self.server.host)
-        self.post('release', types.connections.ReleaseRequest(userservice_uuid=userService.uuid).asDict())
+        self.post('release', types.connections.ReleaseRequest(userservice_uuid=userService.uuid).as_dict())
 
         return True
 
@@ -258,5 +258,5 @@ class ServerApiRequester:
             return None
 
         # Will store stats on property, so no save is needed
-        self.server.stats = types.servers.ServerStats.fromDict(data)
+        self.server.stats = types.servers.ServerStats.from_dict(data)
         return self.server.stats

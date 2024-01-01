@@ -113,6 +113,23 @@ ServerSubtype.manager().register(
     ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
 )
 
+@dataclasses.dataclass(frozen=True)
+class ServerDiskInfo:
+    mountpoint: str
+    used: int
+    total: int
+
+    @staticmethod
+    def from_dict(data: dict[str, typing.Any]) -> 'ServerDiskInfo':
+        return ServerDiskInfo(data['mountpoint'], data['used'], data['total'])
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {
+            'mountpoint': self.mountpoint,
+            'used': self.used,
+            'total': self.total,
+        }
+
 
 @dataclasses.dataclass
 class ServerStats:
@@ -120,7 +137,7 @@ class ServerStats:
     memtotal: int = 0  # In bytes
     cpuused: float = 0  # 0-1 (cpu usage)
     uptime: int = 0  # In seconds
-    disks: list[tuple[str, int, int]] = dataclasses.field(
+    disks: list[ServerDiskInfo] = dataclasses.field(
         default_factory=list
     )  # List of tuples (mountpoint, used, total)
     connections: int = 0  # Number of connections
@@ -192,14 +209,14 @@ class ServerStats:
         )
 
     @staticmethod
-    def fromDict(data: collections.abc.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
+    def from_dict(data: collections.abc.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
         from uds.core.util.model import getSqlStamp  # Avoid circular import
 
         dct = {k: v for k, v in data.items()}  # Make a copy
         dct.update(kwargs)  # and update with kwargs
-        disks: list[tuple[str, int, int]] = []
+        disks: list[ServerDiskInfo] = []
         for disk in dct.get('disks', []):
-            disks.append((disk['mountpoint'], disk['used'], disk['total']))
+            disks.append(ServerDiskInfo.from_dict(disk))
         return ServerStats(
             memused=dct.get('memused', 1),
             memtotal=dct.get('memtotal') or 1,  # Avoid division by zero
@@ -211,11 +228,17 @@ class ServerStats:
             stamp=dct.get('stamp', getSqlStamp()),
         )
 
-    def asDict(self) -> dict[str, typing.Any]:
-        data = self._asdict()
-        # Replace disk as dicts
-        data['disks'] = [{'mountpoint': d[0], 'used': d[1], 'total': d[2]} for d in self.disks]
-        return data
+    def as_dict(self) -> dict[str, typing.Any]:
+        return {
+            'memused': self.memused,
+            'memtotal': self.memtotal,
+            'cpuused': self.cpuused,
+            'uptime': self.uptime,
+            'disks': [d.as_dict() for d in self.disks],
+            'connections': self.connections,
+            'current_users': self.current_users,
+            'stamp': self.stamp,
+        }
 
     @staticmethod
     def empty() -> 'ServerStats':
@@ -231,11 +254,11 @@ class ServerCounter(typing.NamedTuple):
     counter: int
 
     @staticmethod
-    def fromIterable(data: typing.Optional[collections.abc.Iterable]) -> typing.Optional['ServerCounter']:
+    def from_iterable(data: typing.Optional[collections.abc.Iterable]) -> typing.Optional['ServerCounter']:
         if data is None:
             return None
         return ServerCounter(*data)
 
     @staticmethod
-    def empty() -> 'ServerCounter':
+    def null() -> 'ServerCounter':
         return ServerCounter('', 0)

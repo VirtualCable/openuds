@@ -224,7 +224,7 @@ class ServerManager(metaclass=singleton.Singleton):
         excludeServersUUids = excludeServersUUids or set()
 
         with serverGroup.properties as props:
-            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.fromIterable(
+            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
                 props.get(prop_name)
             )
             # If server is forced, and server is part of the group, use it
@@ -315,7 +315,7 @@ class ServerManager(metaclass=singleton.Singleton):
         userUuid = userUuid if userUuid else userService.user.uuid if userService.user else None
 
         if userUuid is None:
-            return types.servers.ServerCounter.empty()  # No user is assigned to this service, nothing to do
+            return types.servers.ServerCounter.null()  # No user is assigned to this service, nothing to do
 
         prop_name = self.propertyName(userService.user)
         with serverGroup.properties as props:
@@ -325,10 +325,10 @@ class ServerManager(metaclass=singleton.Singleton):
 
                 serverCounter: typing.Optional[
                     types.servers.ServerCounter
-                ] = types.servers.ServerCounter.fromIterable(props.get(prop_name))
+                ] = types.servers.ServerCounter.from_iterable(props.get(prop_name))
                 # If no cached value, get server assignation
                 if serverCounter is None:
-                    return types.servers.ServerCounter.empty()
+                    return types.servers.ServerCounter.null()
                 # Ensure counter is at least 1
                 serverCounter = types.servers.ServerCounter(
                     serverCounter.server_uuid, max(1, serverCounter.counter)
@@ -439,7 +439,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         prop_name = self.propertyName(userService.user)
         with serverGroup.properties as props:
-            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.fromIterable(
+            info: typing.Optional[types.servers.ServerCounter] = types.servers.ServerCounter.from_iterable(
                 props.get(prop_name)
             )
             if info is None:

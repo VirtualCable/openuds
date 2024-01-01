@@ -147,11 +147,13 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
 
         success = functools.partial(self.invoke_success, 'unmanaged')
         failure = functools.partial(self.invoke_failure, 'unmanaged')
+        
+        TEST_MAC: typing.Final[str] = '00:00:00:00:00:00'
 
         # This will succeed, but only alias token is returned because MAC is not registered by UDS
         result = success(
             actor_token,
-            mac='00:00:00:00:00:00',
+            mac=TEST_MAC,
         )
 
         # Unmanaged host is the response for initialization of unmanaged actor ALWAYS
@@ -159,9 +161,17 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         self.assertEqual(result['token'], result['own_token'])
         self.assertIsNone(result['unique_id'])
         self.assertIsNone(result['os'])
+    
         
         # Store alias token for later tests
         alias_token = result['token']
+        
+        # If repeated, same token is returned
+        result = success(
+            actor_token,
+            mac=TEST_MAC,
+        )
+        self.assertEqual(result['token'], alias_token)
 
         # Now, invoke a "nice" initialize
         result = success(

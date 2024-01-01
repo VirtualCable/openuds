@@ -30,15 +30,17 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import dataclasses
 import collections.abc
 
-class TypeInfo(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class TypeInfo:
     name: str
     type: str
     description: str
     icon: str
 
-    def asDict(self, **extra) -> dict[str, typing.Any]:
+    def as_dict(self, **extra) -> dict[str, typing.Any]:
         return {
             'name': self.name,
             'type': self.type,
@@ -46,7 +48,9 @@ class TypeInfo(typing.NamedTuple):
             'icon': self.icon,
             **extra
         }
-    
+
+# This is a named tuple for convenience, and must be
+# compatible with tuple[str, bool] (name, needs_parent)
 class ModelCustomMethod(typing.NamedTuple):
     name: str
     needs_parent: bool = True

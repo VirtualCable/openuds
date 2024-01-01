@@ -331,7 +331,7 @@ class ServersGroups(ModelHandler):
         for i in types.servers.ServerSubtype.manager().enum():
             v = types.rest.TypeInfo(
                 name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon
-            ).asDict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
+            ).as_dict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
             yield v
 
     def getGui(self, type_: str) -> list[typing.Any]:

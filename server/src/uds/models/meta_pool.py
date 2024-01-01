@@ -161,6 +161,8 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         Returns the % used services, then count and the max related to "maximum" user services
         If no "maximum" number of services, will return 0% ofc
         cachedValue is used to optimize (if known the number of assigned services, we can avoid to query the db)
+        Note:
+            No metapoools, cachedValue is ignored, but keep for consistency with servicePool
         """
         # If no pools, return 0%
         if self.members.count() == 0:

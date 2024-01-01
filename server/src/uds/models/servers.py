@@ -244,7 +244,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         """Returns the current stats of this server, or None if not available"""
         statsDct = self.properties.get('stats', None)
         if statsDct:
-            return types.servers.ServerStats.fromDict(statsDct)
+            return types.servers.ServerStats.from_dict(statsDct)
         return None
 
     @stats.setter
@@ -254,7 +254,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             del self.properties['stats']
         else:
             # Set stamp to current time and save it, overwriting existing stamp if any
-            statsDict = value.asDict()
+            statsDict = value.as_dict()
             statsDict['stamp'] = getSqlStamp()
             self.properties['stats'] = statsDict
 
@@ -263,14 +263,14 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         stats = self.stats
         if stats and stats.is_valid:  # If rae invalid, do not waste time recalculating
             # Avoid replacing current "stamp" value, this is just a "simulation"
-            self.properties['stats'] = stats.adjust(users_increment=1).asDict()
+            self.properties['stats'] = stats.adjust(users_increment=1).as_dict()
             
     def newRelease(self) -> None:
         """Simulates, with current stats, the release of a user"""
         stats = self.stats
         if stats and stats.is_valid:
             # Avoid replacing current "stamp" value, this is just a "simulation"
-            self.properties['stats'] = stats.adjust(users_increment=-1).asDict()
+            self.properties['stats'] = stats.adjust(users_increment=-1).as_dict()
 
     def isRestrained(self) -> bool:
         """Returns if this server is restrained or not

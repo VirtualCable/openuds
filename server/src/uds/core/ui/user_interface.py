@@ -375,7 +375,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = typing.cast(dict, self._fieldsInfo.asDict())
+            data = typing.cast(dict, self._fieldsInfo.as_dict())
             if 'value' in data:
                 del data['value']  # We don't want to send value on guiDescription
             data['label'] = _(data['label']) if data['label'] else ''

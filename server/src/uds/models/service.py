@@ -63,6 +63,7 @@ class ServiceTokenAlias(models.Model):
 
     service = models.ForeignKey('Service', on_delete=models.CASCADE, related_name='aliases')
     alias = models.CharField(max_length=64, unique=True)
+    unique_id = models.CharField(max_length=128, default='', db_index=True)  # Used to locate an already created alias for a userService and service
 
     def __str__(self) -> str:
         return str(self.alias)  # pylint complains about CharField
