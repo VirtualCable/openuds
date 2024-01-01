@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 import typing
+import dataclasses
 import collections.abc
 import enum
 
@@ -64,8 +65,8 @@ class AuthenticationInternalUrl(enum.Enum):
         """
         return reverse(self.value)
 
-
-class AuthenticationResult(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class AuthenticationResult:
     success: AuthenticationState
     url: typing.Optional[str] = None
     username: typing.Optional[str] = None
@@ -74,8 +75,8 @@ class AuthenticationResult(typing.NamedTuple):
 FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
 SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
 
-
-class AuthCallbackParams(typing.NamedTuple):
+@dataclasses.dataclass(frozen=True)
+class AuthCallbackParams:
     '''Parameters passed to auth callback stage2
 
     This are the parameters that will be passes to the authenticator callback
