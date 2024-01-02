@@ -74,14 +74,14 @@ def detect_os(
 
     # If we found a known OS, store it
     if found != types.os.KnownOS.UNKNOWN:
-        res = res.replace(os=found)
+        res.os = found
 
     # Try to detect browser from Sec-Ch-Ua first
     secChUa = headers.get('Sec-Ch-Ua')
     if secChUa is not None:
         for browser in consts.os.knownBrowsers:
             if browser in secChUa:
-                res = res.replace(browser=browser)
+                res.browser = browser
                 break
     else:
         # Try to detect browser from User-Agent
@@ -109,7 +109,8 @@ def detect_os(
                 break
 
         if match is not None:
-            res = res.replace(browser=ruleKey, version=match.groups(1)[0])
+            res.browser = ruleKey or types.os.KnownBrowser.OTHER
+            res.version = match.groups(1)[0]
 
     logger.debug('Detected: %s %s', res.os, res.browser)
 

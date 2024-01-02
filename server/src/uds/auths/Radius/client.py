@@ -1,3 +1,4 @@
+import dataclasses
 import io
 import logging
 import enum
@@ -69,8 +70,8 @@ class RadiusStates(enum.IntEnum):
     NOT_NEEDED = INCORRECT
     NEEDED = CORRECT
 
-
-class RadiusResult(typing.NamedTuple):
+@dataclasses.dataclass
+class RadiusResult:
     """
     Result of an AccessChallenge request.
     """

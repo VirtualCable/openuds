@@ -278,7 +278,7 @@ class ServerManager(metaclass=singleton.Singleton):
                     except exceptions.UDSException:  # No more servers
                         return None
                 elif lockTime:  # If lockTime is set, update it
-                    models.Server.objects.filter(uuid=info[0]).update(locked_until=now + lockTime)
+                    models.Server.objects.filter(uuid=info.server_uuid).update(locked_until=now + lockTime)
 
             # Notify to server
             # Update counter
@@ -339,7 +339,7 @@ class ServerManager(metaclass=singleton.Singleton):
                 else:  # Not last one, just decrement counter
                     props[prop_name] = (serverCounter.server_uuid, serverCounter.counter - 1)
 
-            server = models.Server.objects.get(uuid=serverCounter[0])
+            server = models.Server.objects.get(uuid=serverCounter.server_uuid)
 
             if unlock or serverCounter.counter == 1:
                 server.locked_until = None  # Ensure server is unlocked if no more users are assigned to it

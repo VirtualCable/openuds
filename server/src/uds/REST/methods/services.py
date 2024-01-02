@@ -159,7 +159,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         )
         # Fix max_services_count_type to ServicesCountingType enum or ServicesCountingType.STANDARD if not found
         try:
-            fields['max_services_count_type'] = types.services.ServicesCountingType.fromInt(int(fields['max_services_count_type']))
+            fields['max_services_count_type'] = types.services.ServicesCountingType.from_int(int(fields['max_services_count_type']))
         except Exception:
             fields['max_services_count_type'] = types.services.ServicesCountingType.STANDARD
         tags = fields['tags']

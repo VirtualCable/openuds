@@ -113,6 +113,7 @@ ServerSubtype.manager().register(
     ServerType.UNMANAGED, 'ip', 'Unmanaged IP Server', consts.images.DEFAULT_IMAGE_BASE64, False
 )
 
+
 @dataclasses.dataclass(frozen=True)
 class ServerDiskInfo:
     mountpoint: str
@@ -248,7 +249,8 @@ class ServerStats:
         # Human readable
         return f'memory: {self.memused//(1024*1024)}/{self.memtotal//(1024*1024)} cpu: {self.cpuused*100} users: {self.current_users}, weight: {self.weight()}, valid: {self.is_valid}'
 
-
+# ServerCounter must be serializable by json, so
+# we keep it as a NamedTuple instead of a dataclass
 class ServerCounter(typing.NamedTuple):
     server_uuid: str
     counter: int

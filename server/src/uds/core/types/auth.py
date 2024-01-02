@@ -75,7 +75,7 @@ class AuthenticationResult:
 FAILED_AUTH = AuthenticationResult(success=AuthenticationState.FAIL)
 SUCCESS_AUTH = AuthenticationResult(success=AuthenticationState.SUCCESS)
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class AuthCallbackParams:
     '''Parameters passed to auth callback stage2
 
@@ -91,7 +91,7 @@ class AuthCallbackParams:
     query_string: str
 
     @staticmethod
-    def fromRequest(request: 'HttpRequest') -> 'AuthCallbackParams':
+    def from_request(request: 'HttpRequest') -> 'AuthCallbackParams':
         return AuthCallbackParams(
             https=request.is_secure(),
             host=request.META['HTTP_HOST'],

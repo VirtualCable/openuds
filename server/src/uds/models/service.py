@@ -163,7 +163,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     @property
     def maxServicesCountType(self) -> ServicesCountingType:
-        return ServicesCountingType.fromInt(self.max_services_count_type)
+        return ServicesCountingType.from_int(self.max_services_count_type)
 
     def isInMaintenance(self) -> bool:
         # orphaned services?

@@ -87,7 +87,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         if not authenticator:
             raise Exception('Authenticator not found')
 
-        params = types.auth.AuthCallbackParams.fromRequest(request)
+        params = types.auth.AuthCallbackParams.from_request(request)
 
         logger.debug('Auth callback for %s with params %s', authenticator, params)
 

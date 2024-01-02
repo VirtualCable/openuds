@@ -37,7 +37,7 @@ from .services import ServiceType
 
 
 # For requests to actors/servers
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class PreconnectRequest:
     """Information sent on a preconnect request"""
 
@@ -56,7 +56,7 @@ class PreconnectRequest:
 
 
 # For requests to actors/servers
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class AssignRequest:
     """Information sent on a assign request"""
 
@@ -71,7 +71,7 @@ class AssignRequest:
         return dataclasses.asdict(self)
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class ReleaseRequest:
     """Information sent on a release request"""
 
@@ -81,7 +81,7 @@ class ReleaseRequest:
         return dataclasses.asdict(self)
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class ConnectionData:
     """
     Connection data provided by transports, and contains all the "transformable" information needed to connect to a service
@@ -102,7 +102,7 @@ class ConnectionData:
     def as_dict(self) -> dict[str, str]:
         return dataclasses.asdict(self)
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class ConnectionSource:
     """
     Connection source from where the connection is being done

@@ -35,14 +35,11 @@ import enum
 import typing
 import collections.abc
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class DetectedOsInfo:
     os: 'KnownOS'
     browser: 'KnownBrowser'
-    version: str
-    
-    def replace(self, **kwargs):
-        return dataclasses.replace(self, **kwargs)
+    version: str   
 
 
 class KnownOS(enum.Enum):

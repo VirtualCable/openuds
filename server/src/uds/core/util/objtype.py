@@ -42,40 +42,41 @@ from uds import models
 if typing.TYPE_CHECKING:
     from django.db.models import Model
 
+
 logger = logging.getLogger(__name__)
 
-@dataclasses.dataclass(frozen=True)
-class ObjTypeInfo:
+@dataclasses.dataclass
+class _ObjTypeInfo:
     obj_type: int
     model: 'type[Model]'
     
 @enum.unique
 class ObjectType(enum.Enum):
-    PROVIDER = ObjTypeInfo(1, models.Provider)
-    SERVICE = ObjTypeInfo(2, models.Service)
-    OSMANAGER = ObjTypeInfo(3, models.OSManager)
-    TRANSPORT = ObjTypeInfo(4, models.Transport)
-    NETWORK = ObjTypeInfo(5, models.Network)
-    POOL = ObjTypeInfo(6, models.ServicePool)
-    USER_SERVICE = ObjTypeInfo(7, models.UserService)
-    AUTHENTICATOR = ObjTypeInfo(8, models.Authenticator)
-    USER = ObjTypeInfo(9, models.User)
-    GROUP = ObjTypeInfo(10, models.Group)
-    STATS_COUNTER = ObjTypeInfo(11, models.StatsCounters)
-    STATS_EVENTS = ObjTypeInfo(12, models.StatsEvents)
-    CALENDAR = ObjTypeInfo(13, models.Calendar)
-    CALENDAR_RULE = ObjTypeInfo(14, models.CalendarRule)
-    METAPOOL = ObjTypeInfo(15, models.MetaPool)
-    ACCOUNT = ObjTypeInfo(16, models.Account)
+    PROVIDER = _ObjTypeInfo(1, models.Provider)
+    SERVICE = _ObjTypeInfo(2, models.Service)
+    OSMANAGER = _ObjTypeInfo(3, models.OSManager)
+    TRANSPORT = _ObjTypeInfo(4, models.Transport)
+    NETWORK = _ObjTypeInfo(5, models.Network)
+    POOL = _ObjTypeInfo(6, models.ServicePool)
+    USER_SERVICE = _ObjTypeInfo(7, models.UserService)
+    AUTHENTICATOR = _ObjTypeInfo(8, models.Authenticator)
+    USER = _ObjTypeInfo(9, models.User)
+    GROUP = _ObjTypeInfo(10, models.Group)
+    STATS_COUNTER = _ObjTypeInfo(11, models.StatsCounters)
+    STATS_EVENTS = _ObjTypeInfo(12, models.StatsEvents)
+    CALENDAR = _ObjTypeInfo(13, models.Calendar)
+    CALENDAR_RULE = _ObjTypeInfo(14, models.CalendarRule)
+    METAPOOL = _ObjTypeInfo(15, models.MetaPool)
+    ACCOUNT = _ObjTypeInfo(16, models.Account)
     # Actor and Tunnel tokens are now on REGISTERED_SERVER, so removed
-    MFA = ObjTypeInfo(19, models.MFA)
-    REGISTERED_SERVER = ObjTypeInfo(20, models.Server)
-    REGISTERED_SERVER_GROUP = ObjTypeInfo(21, models.ServerGroup)
-    ACCOUNT_USAGE = ObjTypeInfo(22, models.AccountUsage)
-    IMAGE = ObjTypeInfo(23, models.Image)
-    LOG = ObjTypeInfo(24, models.Log)
-    NOTIFICATION = ObjTypeInfo(25, models.Notification)
-    TICKET_STORE = ObjTypeInfo(26, models.TicketStore)
+    MFA = _ObjTypeInfo(19, models.MFA)
+    REGISTERED_SERVER = _ObjTypeInfo(20, models.Server)
+    REGISTERED_SERVER_GROUP = _ObjTypeInfo(21, models.ServerGroup)
+    ACCOUNT_USAGE = _ObjTypeInfo(22, models.AccountUsage)
+    IMAGE = _ObjTypeInfo(23, models.Image)
+    LOG = _ObjTypeInfo(24, models.Log)
+    NOTIFICATION = _ObjTypeInfo(25, models.Notification)
+    TICKET_STORE = _ObjTypeInfo(26, models.TicketStore)
 
     @property
     def model(self) -> type['Model']:

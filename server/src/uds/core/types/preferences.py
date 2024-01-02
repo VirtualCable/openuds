@@ -53,7 +53,7 @@ class CommonPrefs:
     BYPASS_PREF = 'bypassPluginDetection'
 
     @staticmethod
-    def getWidthHeight(size: str) -> tuple[int, int]:
+    def get_wh(size: str) -> tuple[int, int]:
         """
         Get width based on screenSizePref value
         """
@@ -67,7 +67,7 @@ class CommonPrefs:
         }.get(size, (1024, 768))
 
     @staticmethod
-    def getDepth(depth: str) -> int:
+    def get_depth(depth: str) -> int:
         """
         Get depth based on depthPref value
         """

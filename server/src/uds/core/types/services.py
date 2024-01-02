@@ -36,7 +36,7 @@ class ServiceType(enum.StrEnum):
     VDI = 'VDI'
     VAPP = 'VAPP'
 
-    def fromStr(self, value: str) -> 'ServiceType':
+    def from_str(self, value: str) -> 'ServiceType':
         """Returns the service type from a string"""
         return ServiceType(value.upper())
 
@@ -48,7 +48,7 @@ class ServicesCountingType(enum.IntEnum):
     CONSERVATIVE = 1
 
     @staticmethod
-    def fromInt(value: int) -> 'ServicesCountingType':
+    def from_int(value: int) -> 'ServicesCountingType':
         """Returns the MaxServiceCountingMethodType from an int
         If the int is not a valid value, returns STANDARD
         """
@@ -58,7 +58,7 @@ class ServicesCountingType(enum.IntEnum):
             return ServicesCountingType.STANDARD
 
     @staticmethod
-    def fromStr(value: str) -> 'ServicesCountingType':
+    def from_str(value: str) -> 'ServicesCountingType':
         """Returns the MaxServiceCountingMethodType from an str
         If the str is not a valid value, returns STANDARD
         """

@@ -33,7 +33,7 @@ import typing
 import dataclasses
 import collections.abc
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class TypeInfo:
     name: str
     type: str

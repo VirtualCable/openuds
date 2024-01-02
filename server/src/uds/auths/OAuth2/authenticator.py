@@ -35,6 +35,7 @@ import hashlib
 import secrets
 import string
 import typing
+import dataclasses
 import collections.abc
 import datetime
 import urllib.parse
@@ -43,7 +44,6 @@ from base64 import b64decode
 import defusedxml.ElementTree as etree
 import jwt
 import requests
-from cryptography.x509 import load_pem_x509_certificate
 from django.utils.translation import gettext
 from django.utils.translation import gettext_noop as _
 
@@ -64,8 +64,8 @@ PKCE_ALPHABET: typing.Final[str] = string.ascii_letters + string.digits + '-._~'
 # Length of the State parameter
 STATE_LENGTH: typing.Final[int] = 16
 
-
-class TokenInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class TokenInfo:
     access_token: str
     token_type: str
     expires: datetime.datetime
@@ -75,16 +75,16 @@ class TokenInfo(typing.NamedTuple):
     id_token: typing.Optional[str]
 
     @staticmethod
-    def fromJson(json: dict[str, typing.Any]) -> 'TokenInfo':
+    def from_dict(dct: dict[str, typing.Any]) -> 'TokenInfo':
         # expires is -10 to avoid problems with clock sync
         return TokenInfo(
-            access_token=json['access_token'],
-            token_type=json['token_type'],
-            expires=model.getSqlDatetime() + datetime.timedelta(seconds=json['expires_in'] - 10),
-            refresh_token=json['refresh_token'],
-            scope=json['scope'],
-            info=json.get('info', {}),
-            id_token=json.get('id_token', None),
+            access_token=dct['access_token'],
+            token_type=dct['token_type'],
+            expires=model.getSqlDatetime() + datetime.timedelta(seconds=dct['expires_in'] - 10),
+            refresh_token=dct['refresh_token'],
+            scope=dct['scope'],
+            info=dct.get('info', {}),
+            id_token=dct.get('id_token', None),
         )
 
 
@@ -340,7 +340,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if not req.ok:
             raise Exception('Error requesting token: {}'.format(req.text))
 
-        return TokenInfo.fromJson(req.json())
+        return TokenInfo.from_dict(req.json())
 
     def _requestInfo(self, token: 'TokenInfo') -> dict[str, typing.Any]:
         """Request user info from the info endpoint using the token received from the token endpoint

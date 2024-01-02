@@ -59,7 +59,7 @@ class TransportSelectionPolicy(enum.IntEnum):
     COMMON = 1
     LABEL = 2
 
-    def asStr(self) -> str:
+    def as_str(self) -> str:
         return self.name.lower()
 
     @staticmethod
@@ -75,7 +75,7 @@ class HighAvailabilityPolicy(enum.IntEnum):
     DISABLED = 0
     ENABLED = 1
 
-    def asStr(self) -> str:
+    def as_str(self) -> str:
         return str(self)
 
     @staticmethod
