@@ -144,7 +144,7 @@ class TelegramNotifier(messaging.Notifier):
         t = telegram.Telegram(self.accessToken.value, self.botname.value)
         for chatId in chatIds:
             with ignoreExceptions():
-                t.sendMessage(chatId, telegramMsg)
+                t.send_message(chatId, telegramMsg)
                 # Wait a bit, so we don't send more than 10 messages per second
                 time.sleep(0.1)
 
@@ -188,7 +188,7 @@ class TelegramNotifier(messaging.Notifier):
         lastOffset = self.storage.getPickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
         with ignoreExceptions():  # In case getUpdates fails, ignore it
-            for update in t.getUpdates():
+            for update in t.get_updates():
                 # Process update
                 with ignoreExceptions():  # Any failure will be ignored and next update will be processed
                     message = update.text.strip()
@@ -203,8 +203,8 @@ class TelegramNotifier(messaging.Notifier):
                                 message,
                             )
                         self.subscribeUser(update.chat.id)
-                        t.sendMessage(update.chat.id, _('You have been subscribed to notifications'))
+                        t.send_message(update.chat.id, _('You have been subscribed to notifications'))
                     elif message in ('/leave', '/unsubscribe'):
                         self.unsubscriteUser(update.chat.id)
-                        t.sendMessage(update.chat.id, _('You have been unsubscribed from notifications'))
+                        t.send_message(update.chat.id, _('You have been unsubscribed from notifications'))
             self.storage.putPickle('lastOffset', t.lastOffset)

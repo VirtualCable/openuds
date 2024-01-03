@@ -83,6 +83,7 @@ class Config:
         CUSTOM = 'Custom'
         ADMIN = 'Admin'
         WYSE = 'WYSE'  # Legacy
+        SAML = 'SAML'  # Legacy
         OTHER = 'Other'
 
         @staticmethod

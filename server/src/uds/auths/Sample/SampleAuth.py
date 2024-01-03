@@ -272,9 +272,9 @@ class SampleAuth(auths.Authenticator):
 
     def authCallback(
         self,
-        parameters: dict[str, typing.Any],
-        gm: 'auths.GroupsManager',  # pylint: disable=unused-argument
-        request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
+        parameters: 'types.auth.AuthCallbackParams',
+        gm: 'GroupsManager',
+        request: 'types.request.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
         We provide this as a sample of callback for an user.
@@ -289,7 +289,7 @@ class SampleAuth(auths.Authenticator):
 
         Here, we will receive the parameters for this
         """
-        user = parameters.get('user', None)
+        user = request.user.name if request.user else None
 
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=user)
 

@@ -419,7 +419,7 @@ class ProxmoxClient:
         return types.VmCreationResult(
             node=toNode,
             vmid=newVmId,
-            upid=types.UPID.fromDict(self._post('nodes/{}/qemu/{}/clone'.format(fromNode, vmId), data=params)),
+            upid=types.UPID.from_dict(self._post('nodes/{}/qemu/{}/clone'.format(fromNode, vmId), data=params)),
         )
 
     @ensureConnected
@@ -459,7 +459,7 @@ class ProxmoxClient:
     @ensureConnected
     def deleteVm(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
+        return types.UPID.from_dict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
 
     @ensureConnected
     def getTask(self, node: str, upid: str) -> types.TaskStatus:
@@ -488,7 +488,7 @@ class ProxmoxClient:
         for nodeName in nodeList:
             for vm in self._get('nodes/{}/qemu'.format(nodeName))['data']:
                 vm['node'] = nodeName
-                result.append(types.VMInfo.fromDict(vm))
+                result.append(types.VMInfo.from_dict(vm))
 
         return sorted(result, key=lambda x: '{}{}'.format(x.node, x.name))
 
@@ -532,7 +532,7 @@ class ProxmoxClient:
             try:
                 vm = self._get('nodes/{}/qemu/{}/status/current'.format(n.name, vmId))['data']
                 vm['node'] = n.name
-                return types.VMInfo.fromDict(vm)
+                return types.VMInfo.from_dict(vm)
             except ProxmoxConnectionError:
                 anyNodeIsDown = True  # There is at least one node down when we are trying to get info
             except ProxmoxAuthError:
@@ -549,7 +549,7 @@ class ProxmoxClient:
     # @allowCache('vmc', CACHE_DURATION, cachingArgs=[1, 2], cachingKWArgs=['vmId', 'node'], cachingKeyFnc=cachingKeyHelper)
     def getVmConfiguration(self, vmId: int, node: typing.Optional[str] = None):
         node = node or self.getVmInfo(vmId).node
-        return types.VMConfiguration.fromDict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
+        return types.VMConfiguration.from_dict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
 
     @ensureConnected
     def setVmMac(
@@ -584,29 +584,29 @@ class ProxmoxClient:
     def startVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmId)))
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmId)))
 
     @ensureConnected
     def stopVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
 
     @ensureConnected
     def resetVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
 
     @ensureConnected
     def suspendVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
 
     @ensureConnected
     def shutdownVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
-        return types.UPID.fromDict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
+        return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
 
     @ensureConnected
     def convertToTemplate(self, vmId: int, node: typing.Optional[str] = None) -> None:
@@ -627,7 +627,7 @@ class ProxmoxClient:
         cachingKeyFnc=cachingKeyHelper,
     )
     def getStorage(self, storage: str, node: str, **kwargs) -> types.StorageInfo:
-        return types.StorageInfo.fromDict(
+        return types.StorageInfo.from_dict(
             self._get('nodes/{}/storage/{}/status'.format(node, urllib.parse.quote(storage)))['data']
         )
 
@@ -660,7 +660,7 @@ class ProxmoxClient:
             for storage in self._get('nodes/{}/storage{}'.format(nodeName, params))['data']:
                 storage['node'] = nodeName
                 storage['content'] = storage['content'].split(',')
-                result.append(types.StorageInfo.fromDict(storage))
+                result.append(types.StorageInfo.from_dict(storage))
 
         return result
 
@@ -668,13 +668,13 @@ class ProxmoxClient:
     @cached('nodeStats', CACHE_INFO_DURATION, cachingKeyFnc=cachingKeyHelper)
     def getNodesStats(self, **kwargs) -> list[types.NodeStats]:
         return [
-            types.NodeStats.fromDict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
+            types.NodeStats.from_dict(nodeStat) for nodeStat in self._get('cluster/resources?type=node')['data']
         ]
 
     @ensureConnected
     @cached('pools', CACHE_DURATION // 6, cachingKeyFnc=cachingKeyHelper)
     def listPools(self) -> list[types.PoolInfo]:
-        return [types.PoolInfo.fromDict(nodeStat) for nodeStat in self._get('pools')['data']]
+        return [types.PoolInfo.from_dict(nodeStat) for nodeStat in self._get('pools')['data']]
 
     @ensureConnected
     def getConsoleConnection(

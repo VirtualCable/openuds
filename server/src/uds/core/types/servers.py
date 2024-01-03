@@ -194,7 +194,7 @@ class ServerStats:
         current_users = max(1, self.current_users)
         new_users = max(1, current_users + users_increment)
 
-        new_memused = self.memused * new_users / current_users
+        new_memused = self.memused * new_users // current_users
         # Ensure memused is in range 0-memtotal
         new_memused = min(max(0, new_memused), self.memtotal - 1)
 

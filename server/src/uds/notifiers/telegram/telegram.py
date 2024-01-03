@@ -1,3 +1,4 @@
+import dataclasses
 import typing
 import collections.abc
 import logging
@@ -6,30 +7,29 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-
-class Chat(typing.NamedTuple):
+@dataclasses.dataclass
+class Chat:
     id: int
     type: str
     first_name: str
 
-
-class From(typing.NamedTuple):
+@dataclasses.dataclass
+class From:
     id: int
     is_bot: bool
     first_name: str
     last_name: typing.Optional[str]
     username: str
 
-
-class Message(typing.NamedTuple):
+@dataclasses.dataclass
+class Message:
     chat: Chat
     from_: From
     date: int
     text: str
 
     @staticmethod
-    def fromDict(data: collections.abc.Mapping[str, typing.Any]) -> 'Message':
-        print(data)
+    def from_dict(data: collections.abc.Mapping[str, typing.Any]) -> 'Message':
         return Message(
             Chat(
                 id=data['chat']['id'],
@@ -79,14 +79,14 @@ class Telegram:
         )
         return response.json()
 
-    def sendMessage(self, chat_id: int, text: str) -> dict[str, typing.Any]:
-        return self.request('sendMessage', {'chat_id': chat_id, 'text': text})
+    def send_message(self, chat_id: int, text: str) -> dict[str, typing.Any]:
+        return self.request('send_message', {'chat_id': chat_id, 'text': text})
 
-    def getUpdates(self, offset: int = 0, timeout: int = 0) -> collections.abc.Iterable[Message]:
+    def get_updates(self, offset: int = 0, timeout: int = 0) -> collections.abc.Iterable[Message]:
         self.lastOffset = offset or self.lastOffset
-        res = self.request('getUpdates', {'offset': self.lastOffset, 'timeout': timeout}, stream=True)
+        res = self.request('get_updates', {'offset': self.lastOffset, 'timeout': timeout}, stream=True)
         if res['ok'] and res['result']:  # if ok and there are results
             # Update the offset
             self.lastOffset = res['result'][-1]['update_id'] + 1
             for update in res['result']:
-                yield Message.fromDict(update['message'])
+                yield Message.from_dict(update['message'])

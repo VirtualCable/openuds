@@ -222,7 +222,7 @@ def surfaceChart(
             z,
             rstride=1,
             cstride=1,
-            cmap=cm.coolwarm,  # pylint: disable=no-member  # type: ignore
+            cmap=cm.coolwarm,  # type: ignore  # it's there, but maybe it's created dynamically
         )
     else:
         axis.plot_surface(

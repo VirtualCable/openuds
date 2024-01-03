@@ -817,7 +817,7 @@ class FUSE:
                 continue
 
             if hasattr(prototype, 'argtypes'):
-                val = prototype(partial(FUSE._wrapper, getattr(self, name)))
+                val = prototype(partial(FUSE._wrapper, getattr(self, name)))  # type: ignore
 
             setattr(fuse_ops, name, val)
 

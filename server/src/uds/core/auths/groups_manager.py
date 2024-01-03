@@ -191,11 +191,11 @@ class GroupsManager:
         so they reflect the known groups that are considered valid.
         """
         if not isinstance(groupName, str):
-            for n in groupName:
-                self.validate(n)
+            for name in groupName:
+                self.validate(name)
         else:
-            for n in self._indexes_for_mached_groups(groupName):
-                self._groups[n] = self._groups[n].replace(is_valid=True)
+            for index in self._indexes_for_mached_groups(groupName):
+                self._groups[index] = self._groups[index].replace(is_valid=True)
 
     def isValid(self, groupName: str) -> bool:
         """

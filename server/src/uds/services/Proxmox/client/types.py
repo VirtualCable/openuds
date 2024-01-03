@@ -39,7 +39,7 @@ class Cluster(typing.NamedTuple):
     quorate: int
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Cluster':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Cluster':
         return convertFromDict(Cluster, dictionary)
 
 
@@ -53,7 +53,7 @@ class Node(typing.NamedTuple):
     id: str
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
         return convertFromDict(Node, dictionary)
 
 
@@ -71,7 +71,7 @@ class NodeStats(typing.NamedTuple):
     maxcpu: int
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'NodeStats':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'NodeStats':
         dictionary['name'] = dictionary['node']
         return convertFromDict(NodeStats, dictionary)
 
@@ -103,9 +103,9 @@ class ClusterStatus(typing.NamedTuple):
 
         for i in dictionary['data']:
             if i['type'] == 'cluster':
-                cluster = Cluster.fromDict(i)
+                cluster = Cluster.from_dict(i)
             else:
-                nodes.append(Node.fromDict(i))
+                nodes.append(Node.from_dict(i))
 
         return ClusterStatus(cluster=cluster, nodes=nodes)
 
@@ -121,7 +121,7 @@ class UPID(typing.NamedTuple):
     upid: str
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'UPID':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'UPID':
         upid = dictionary['data']
         d = upid.split(':')
         return UPID(
@@ -204,7 +204,7 @@ class VMInfo(typing.NamedTuple):
     vgpu_type: typing.Optional[str]
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'VMInfo':
         vgpu_type = None
         # Look for vgpu type if present
         for k, v in dictionary.items():
@@ -234,7 +234,7 @@ class VMConfiguration(typing.NamedTuple):
     template: bool
 
     @staticmethod
-    def fromDict(src: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
+    def from_dict(src: collections.abc.MutableMapping[str, typing.Any]) -> 'VMConfiguration':
         nets: list[NetworkConfiguration] = []
         for k in src.keys():
             if k[:3] == 'net':
@@ -264,7 +264,7 @@ class StorageInfo(typing.NamedTuple):
     used_fraction: float
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
         return convertFromDict(StorageInfo, dictionary)
 
 
@@ -273,5 +273,5 @@ class PoolInfo(typing.NamedTuple):
     comments: str
 
     @staticmethod
-    def fromDict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
         return convertFromDict(PoolInfo, dictionary)

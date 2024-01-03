@@ -261,7 +261,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return meta
 
     @staticmethod
-    def pre_delete(sender, **kwargs):  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 

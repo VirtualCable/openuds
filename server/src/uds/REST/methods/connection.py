@@ -125,7 +125,7 @@ class Connection(Handler):
             }
             if itrans:  # only will be available id doNotCheck is False
                 connectionInfoDict.update(
-                    itrans.getConnectionInfo(userService, self._user, 'UNKNOWN')._asdict()
+                    itrans.getConnectionInfo(userService, self._user, 'UNKNOWN').as_dict()
                 )
             return Connection.result(result=connectionInfoDict)
         except ServiceNotReadyError as e:

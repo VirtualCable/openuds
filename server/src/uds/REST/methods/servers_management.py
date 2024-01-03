@@ -261,7 +261,7 @@ class ServersServers(DetailHandler):
                 try:
                     server = models.Server.objects.get(uuid=processUuid(self._params['server']))
                     # Check server type is also SERVER
-                    if server.type != types.servers.ServerType.SERVER:
+                    if server and server.type != types.servers.ServerType.SERVER:
                         logger.error('Server type for %s is not SERVER', server.host)
                         raise self.invalidRequestException() from None
                     parent.servers.add(server)

@@ -104,16 +104,16 @@ def fernet_key(crypt_key: bytes) -> str:
 # pylint: disable=unnecessary-dunder-call
 class _SerializableField(typing.Generic[T]):
     name: str
-    type: type[T]
+    obj_type: 'type[T]'
     default: DefaultValueType
 
-    def __init__(self, type: type[T], default: DefaultValueType = UNASSIGNED):
-        self.type = type
+    def __init__(self, obj_type: 'type[T]', default: DefaultValueType = UNASSIGNED):
+        self.obj_type = obj_type
         self.default = default
 
     def _default(self) -> T:
         if isinstance(self.default, _Unassigned):
-            return self.type()
+            return self.obj_type()
         if callable(self.default):
             return self.default()
         return self.default
@@ -121,7 +121,7 @@ class _SerializableField(typing.Generic[T]):
     def __get__(
         self,
         instance: 'AutoSerializable',
-        objtype: typing.Optional[type['AutoSerializable']] = None,
+        objtype: typing.Optional['type[AutoSerializable]'] = None,
     ) -> T:
         """Get field value
 
@@ -140,11 +140,11 @@ class _SerializableField(typing.Generic[T]):
     def __set__(self, instance: 'AutoSerializable', value: T) -> None:
         # If type is float and value is int, convert it
         # Or if type is int and value is float, convert it
-        if self.type in (float, int) and isinstance(value, (float, int)):
-            value = self.type(value)
-        if not isinstance(value, self.type):
+        if self.obj_type in (float, int) and isinstance(value, (float, int)):
+            value = self.obj_type(value)  # type: ignore
+        if not isinstance(value, self.obj_type):
             # Allow int to float conversion and viceversa
-            raise TypeError(f"Field {self.name} cannot be set to {value} (type {self.type.__name__})")
+            raise TypeError(f"Field {self.name} cannot be set to {value} (type {self.obj_type.__name__})")
         if not hasattr(instance, '_fields'):
             setattr(instance, '_fields', {})
         getattr(instance, '_fields')[self.name] = value
@@ -161,9 +161,9 @@ class _SerializableField(typing.Generic[T]):
         Note:
             Only str, int, and float are supported in this base class.
         """
-        if self.type in (str, int, float):
+        if self.obj_type in (str, int, float):
             return str(self.__get__(instance)).encode()
-        raise TypeError(f"Field {self.name} cannot be marshalled (type {self.type})")
+        raise TypeError(f"Field {self.name} cannot be marshalled (type {self.obj_type})")
 
     def unmarshal(self, instance: 'AutoSerializable', data: bytes) -> None:
         """Basic unmarshalling of field
@@ -178,11 +178,11 @@ class _SerializableField(typing.Generic[T]):
         Note:
             Only str, int, and float are supported in this base class.
         """
-        if self.type in (str, int, float):
-            tp: typing.Type = self.type
+        if self.obj_type in (str, int, float):
+            tp: typing.Type = self.obj_type
             self.__set__(instance, tp(data.decode()))
             return
-        raise TypeError(f"Field {self.name} cannot be unmarshalled (type {self.type})")
+        raise TypeError(f"Field {self.name} cannot be unmarshalled (type {self.obj_type})")
 
 
 # Integer field
@@ -461,7 +461,7 @@ class AutoSerializable(metaclass=_FieldNameSetter):
     def __str__(self) -> str:
         return ', '.join(
             [
-                f"{k}={v.type.__name__}({v.__get__(self)})"
+                f"{k}={v.obj_type.__name__}({v.__get__(self)})"
                 for k, v in self.__class__.__dict__.items()
                 if isinstance(v, _SerializableField)
             ]
