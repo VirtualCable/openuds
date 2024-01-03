@@ -121,10 +121,12 @@ class Scheduler:
 
     # to keep singleton Scheduler
     _scheduler: typing.Optional['Scheduler'] = None
+    _hostname: str
+    _keep_running: bool
 
     def __init__(self) -> None:
         self._hostname = platform.node()
-        self._keepRunning = True
+        self._keep_running = True
         logger.info('Initialized scheduler for host "%s"', self._hostname)
 
     @staticmethod
@@ -136,13 +138,13 @@ class Scheduler:
             Scheduler._scheduler = Scheduler()
         return Scheduler._scheduler
 
-    def notifyTermination(self) -> None:
+    def notify_termination(self) -> None:
         """
         Invoked to signal that termination of scheduler task(s) is requested
         """
-        self._keepRunning = False
+        self._keep_running = False
 
-    def executeOneJob(self) -> None:
+    def execute_job(self) -> None:
         """
         Looks for the best waiting job and executes it
         """
@@ -192,7 +194,7 @@ class Scheduler:
             ) from e
 
     @staticmethod
-    def releaseOwnShedules() -> None:
+    def release_own_shedules() -> None:
         """
         Releases all scheduleds being executed by this server
         """
@@ -222,10 +224,10 @@ class Scheduler:
         logger.debug('Run Scheduler thread')
         JobsFactory().ensureJobsInDatabase()
         logger.debug("At loop")
-        while self._keepRunning:
+        while self._keep_running:
             try:
                 time.sleep(self.granularity)
-                self.executeOneJob()
+                self.execute_job()
             except Exception as e:
                 # This can happen often on sqlite, and this is not problem at all as we recover it.
                 # The log is removed so we do not get increased workers.log file size with no information at all
@@ -238,4 +240,4 @@ class Scheduler:
                 except Exception:
                     logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting Scheduler because stop has been requested')
-        self.releaseOwnShedules()
+        self.release_own_shedules()

@@ -131,7 +131,7 @@ class GroupsManager:
         as where inserted inside Database (most probably using administration interface)
         """
         for g in self._groups:
-            yield g.group.dbGroup().name
+            yield g.group.db_group().name
 
     def getValidGroups(self) -> typing.Generator['Group', None, None]:
         """
@@ -143,7 +143,7 @@ class GroupsManager:
         valid_id_list: list[int] = []
         for group in self._groups:
             if group.is_valid:
-                valid_id_list.append(group.group.dbGroup().id)
+                valid_id_list.append(group.group.db_group().id)
                 yield group.group
 
         # Now, get metagroups and also return them

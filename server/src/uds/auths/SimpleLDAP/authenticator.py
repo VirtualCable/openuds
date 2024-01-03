@@ -492,7 +492,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return username
         return self.__getUserRealName(res)
 
-    def modift_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, usrData: dict[str, str]) -> None:
         '''
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)

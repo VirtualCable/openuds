@@ -79,7 +79,7 @@ def detect_os(
     # Try to detect browser from Sec-Ch-Ua first
     secChUa = headers.get('Sec-Ch-Ua')
     if secChUa is not None:
-        for browser in consts.os.knownBrowsers:
+        for browser in consts.os.known_browsers:
             if browser in secChUa:
                 res.browser = browser
                 break
@@ -88,16 +88,16 @@ def detect_os(
         match = None
 
         ruleKey, ruleValue = None, None
-        for ruleKey, ruleValue in consts.os.browserRules.items():
+        for ruleKey, ruleValue in consts.os.browser_rules.items():
             must, mustNot = ruleValue
 
-            for mustRe in consts.os.browsersREs[must]:
+            for mustRe in consts.os.browsers_re[must]:
                 match = mustRe.search(ua)
                 if match is None:
                     continue
                 # Check against no maching rules
                 for mustNotREs in mustNot:
-                    for cre in consts.os.browsersREs[mustNotREs]:
+                    for cre in consts.os.browsers_re[mustNotREs]:
                         if cre.search(ua) is not None:
                             match = None
                             break

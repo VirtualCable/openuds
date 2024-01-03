@@ -314,7 +314,7 @@ class SampleAuth(auths.Authenticator):
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 
-    def modift_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, usrData: dict[str, str]) -> None:
         """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.

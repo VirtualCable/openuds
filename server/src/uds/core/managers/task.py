@@ -55,7 +55,7 @@ class SchedulerThread(BaseThread):
         Scheduler.scheduler().run()
 
     def notifyTermination(self):
-        Scheduler.scheduler().notifyTermination()
+        Scheduler.scheduler().notify_termination()
 
 
 class DelayedTaskThread(BaseThread):
@@ -120,7 +120,7 @@ class TaskManager(metaclass=singleton.Singleton):
         connection.close()
 
         # Releases owned schedules so anyone can access them...
-        Scheduler.releaseOwnShedules()
+        Scheduler.release_own_shedules()
 
         self.registerScheduledTasks()
 

@@ -50,13 +50,14 @@ class Group:
 
     It's only constructor expect a database group as parameter.
     """
+    _db_group: 'DBGroup'
 
-    def __init__(self, dbGroup: 'DBGroup'):
+    def __init__(self, db_group: 'DBGroup'):
         """
         Initializes internal data
         """
-        self._manager = dbGroup.getManager()
-        self._dbGroup = dbGroup
+        self._manager = db_group.getManager()
+        self._db_group = db_group
 
     def manager(self) -> 'AuthenticatorInstance':
         """
@@ -64,8 +65,8 @@ class Group:
         """
         return self._manager
 
-    def dbGroup(self) -> 'DBGroup':
+    def db_group(self) -> 'DBGroup':
         """
         Returns the database group associated with this
         """
-        return self._dbGroup
+        return self._db_group

@@ -54,25 +54,25 @@ class User:
     """
 
     _manager: 'AuthenticatorInstance'
-    _grpsManager: typing.Optional['GroupsManager']
-    _dbUser: 'DBUser'
+    grps_manager: typing.Optional['GroupsManager']
+    _db_user: 'DBUser'
     _groups: typing.Optional[list[Group]]
 
-    def __init__(self, dbUser):
-        self._manager = dbUser.getManager()
-        self._grpsManager = None
-        self._dbUser = dbUser
+    def __init__(self, db_user: 'DBUser') -> None:
+        self._manager = db_user.getManager()
+        self.grps_manager = None
+        self._db_user = db_user
         self._groups = None
 
-    def _groupsManager(self) -> 'GroupsManager':
+    def _groups_manager(self) -> 'GroupsManager':
         """
         If the groups manager for this user already exists, it returns this.
         If it does not exists, it creates one default from authenticator and
         returns it.
         """
-        if self._grpsManager is None:
-            self._grpsManager = GroupsManager(self._manager.db_obj())
-        return self._grpsManager
+        if self.grps_manager is None:
+            self.grps_manager = GroupsManager(self._manager.db_obj())
+        return self.grps_manager
 
     def groups(self) -> list[Group]:
         """
@@ -88,15 +88,15 @@ class User:
 
         if self._groups is None:
             if self._manager.isExternalSource:
-                self._manager.get_groups(self._dbUser.name, self._groupsManager())
-                self._groups = list(self._groupsManager().getValidGroups())
+                self._manager.get_groups(self._db_user.name, self._groups_manager())
+                self._groups = list(self._groups_manager().getValidGroups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
-                usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
-                usr.groups.set((g.dbGroup().id for g in self._groups if g.dbGroup().is_meta is False))  # type: ignore
+                usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
+                usr.groups.set((g.db_group().id for g in self._groups if g.db_group().is_meta is False))  # type: ignore
             else:
                 # From db
-                usr = DBUser.objects.get(pk=self._dbUser.id)  # @UndefinedVariable
+                usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
                 self._groups = [Group(g) for g in usr.getGroups()]
         return self._groups
 
@@ -106,8 +106,8 @@ class User:
         """
         return self._manager
 
-    def dbUser(self) -> 'DBUser':
+    def db_user(self) -> 'DBUser':
         """
         Returns the database user
         """
-        return self._dbUser
+        return self._db_user

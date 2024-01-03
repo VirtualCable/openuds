@@ -57,17 +57,17 @@ class DelayedTaskThread(threading.Thread):
     Class responsible of executing a delayed task in its own thread
     """
 
-    __slots__ = ('_taskInstance',)
+    __slots__ = ('_task_instance',)
 
-    _taskInstance: DelayedTask
+    _task_instance: DelayedTask
 
-    def __init__(self, taskInstance: DelayedTask) -> None:
+    def __init__(self, task_instance: DelayedTask) -> None:
         super().__init__()
-        self._taskInstance = taskInstance
+        self._task_instance = task_instance
 
     def run(self) -> None:
         try:
-            self._taskInstance.execute()
+            self._task_instance.execute()
         except Exception as e:
             logger.exception("Exception in thread %s: %s", e.__class__, e)
         finally:
@@ -83,11 +83,11 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
 
     granularity: typing.ClassVar[int] = 2  # we check for delayed tasks every "granularity" seconds
     _hostname: typing.ClassVar[str]  # "Our" hostname
-    _keepRunning: typing.ClassVar[bool]  # If we should keep it running
+    _keep_running: typing.ClassVar[bool]  # If we should keep it running
 
     def __init__(self):
         DelayedTaskRunner._hostname = gethostname()
-        DelayedTaskRunner._keepRunning = True
+        DelayedTaskRunner._keep_running = True
         logger.debug("Initialized delayed task runner for host %s", DelayedTaskRunner._hostname)
 
     def notifyTermination(self) -> None:
@@ -95,7 +95,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         Invoke this whenever you want to terminate the delayed task runner thread
         It will mark the thread to "stop" ASAP
         """
-        DelayedTaskRunner._keepRunning = False
+        DelayedTaskRunner._keep_running = False
 
     @staticmethod
     def runner() -> 'DelayedTaskRunner':
@@ -106,7 +106,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         """
         return DelayedTaskRunner()
 
-    def executeOneDelayedTask(self) -> None:
+    def execute_delayed_task(self) -> None:
         now = getSqlDatetime()
         filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
@@ -196,7 +196,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         except Exception as e:
             logger.exception('Exception removing a delayed task %s: %s', e.__class__, e)
 
-    def checkExists(self, tag: str) -> bool:
+    def tag_exists(self, tag: str) -> bool:
         if not tag:
             return False
 
@@ -210,10 +210,10 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
 
     def run(self) -> None:
         logger.debug("At loop")
-        while DelayedTaskRunner._keepRunning:
+        while DelayedTaskRunner._keep_running:
             try:
                 time.sleep(self.granularity)
-                self.executeOneDelayedTask()
+                self.execute_delayed_task()
             except Exception as e:
                 logger.error('Unexpected exception at run loop %s: %s', e.__class__, e)
                 try:

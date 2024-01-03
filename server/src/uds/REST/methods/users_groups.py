@@ -142,7 +142,7 @@ class Users(DetailHandler):
                 res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
             )
             usr = aUser(u)
-            res['groups'] = [g.dbGroup().uuid for g in usr.groups()]
+            res['groups'] = [g.db_group().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res
         except Exception as e:
@@ -230,7 +230,7 @@ class Users(DetailHandler):
                     )  # this throws an exception if there is an error (for example, this auth can't create users)
                     user = parent.users.create(**fields)
                 else:
-                    auth.modift_user(fields)  # Notifies authenticator
+                    auth.modify_user(fields)  # Notifies authenticator
                     user = parent.users.get(uuid=processUuid(item))
                     user.__dict__.update(fields)
                     user.save()

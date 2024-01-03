@@ -261,7 +261,7 @@ class UserServiceOpChecker(DelayedTask):
         @param pi: Instance of Publication manager for the object
         """
         # Do not add task if already exists one that updates this service
-        if DelayedTaskRunner.runner().checkExists(USERSERVICE_TAG + userService.uuid):
+        if DelayedTaskRunner.runner().tag_exists(USERSERVICE_TAG + userService.uuid):
             return
         DelayedTaskRunner.runner().insert(
             UserServiceOpChecker(userService),

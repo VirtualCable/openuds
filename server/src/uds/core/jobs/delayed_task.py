@@ -74,7 +74,7 @@ class DelayedTask(Environmentable):
         """
         from .delayed_task_runner import DelayedTaskRunner  # pylint: disable=import-outside-toplevel
 
-        if check and DelayedTaskRunner.runner().checkExists(tag):
+        if check and DelayedTaskRunner.runner().tag_exists(tag):
             return
 
         DelayedTaskRunner.runner().insert(self, suggestedTime, tag)

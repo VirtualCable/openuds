@@ -228,7 +228,7 @@ class Authenticator(Module):
             groupsManager = GroupsManager(self.db_obj())
             self.get_groups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
-            typing.cast(typing.Any, user.groups).set([g.dbGroup() for g in groupsManager.getValidGroups()])
+            typing.cast(typing.Any, user.groups).set([g.db_group() for g in groupsManager.getValidGroups()])
 
     def callback_url(self) -> str:
         """
@@ -622,7 +622,7 @@ class Authenticator(Module):
 
         """
 
-    def modift_user(self, usrData: dict[str, str]) -> None:
+    def modify_user(self, usrData: dict[str, str]) -> None:
         """
         This method is used when modifying an user to allow the authenticator:
 
