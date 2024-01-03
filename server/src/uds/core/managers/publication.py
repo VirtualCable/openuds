@@ -46,7 +46,7 @@ from uds.core.util.state import State
 from uds.core.util import log
 
 from uds.models import ServicePoolPublication, ServicePool
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 from uds.core.util import singleton
 
@@ -75,7 +75,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             if servicePoolPub.state != State.REMOVABLE:
                 logger.info('Already removed')
 
-            now = getSqlDatetime()
+            now = sql_datetime()
             activePub: typing.Optional[
                 ServicePoolPublication
             ] = servicePoolPub.deployed_service.activePublication()
@@ -102,7 +102,7 @@ class PublicationLauncher(DelayedTask):
         logger.debug('Publishing')
         servicePoolPub: typing.Optional[ServicePoolPublication] = None
         try:
-            now = getSqlDatetime()
+            now = sql_datetime()
             with transaction.atomic():
                 servicePoolPub = ServicePoolPublication.objects.select_for_update().get(
                     pk=self._publicationId
@@ -304,7 +304,7 @@ class PublicationManager(metaclass=singleton.Singleton):
 
         publication: typing.Optional[ServicePoolPublication] = None
         try:
-            now = getSqlDatetime()
+            now = sql_datetime()
             publication = servicePool.publications.create(
                 state=State.LAUNCHING,
                 state_date=now,

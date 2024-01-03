@@ -43,7 +43,7 @@ from django.db import transaction, OperationalError
 from django.db.models import Q
 
 from uds.models import DelayedTask as DBDelayedTask
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.environment import Environment
 from uds.core.util import singleton
 
@@ -107,7 +107,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         return DelayedTaskRunner()
 
     def execute_delayed_task(self) -> None:
-        now = getSqlDatetime()
+        now = sql_datetime()
         filt = Q(execution_time__lt=now) | Q(insert_date__gt=now + timedelta(seconds=30))
         # If next execution is before now or last execution is in the future (clock changed on this server, we take that task as executable)
         try:
@@ -141,7 +141,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
             DelayedTaskThread(taskInstance).start()
 
     def _insert(self, instance: DelayedTask, delay: int, tag: str) -> None:
-        now = getSqlDatetime()
+        now = sql_datetime()
         exec_time = now + timedelta(seconds=delay)
         cls = instance.__class__
 

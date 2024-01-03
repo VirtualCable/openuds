@@ -38,7 +38,7 @@ from django.conf import settings
 from uds import models
 from uds.core import consts, osmanagers, types
 from uds.core.util import log
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
@@ -150,7 +150,7 @@ def process_ping(server: 'models.Server', data: dict[str, typing.Any]) -> typing
     if 'stats' in data:
         server.stats = types.servers.ServerStats.from_dict(data['stats'])
         # Set stats on server
-    server.last_ping = getSqlDatetime()
+    server.last_ping = sql_datetime()
 
     return rest_result(consts.OK)
 

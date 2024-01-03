@@ -39,7 +39,7 @@ from django.db import models
 from uds.core.managers.crypto import CryptoManager
 
 from .uuid_model import UUIDModel
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 
 from .user import User
 from .user_service import UserService
@@ -81,7 +81,7 @@ class TicketStore(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def generateUuid() -> str:
+    def generate_uuid() -> str:
         return CryptoManager().randomString(TICKET_LENGTH).lower()  # Temporary fix lower() for compat with 3.0
 
     @staticmethod
@@ -111,8 +111,8 @@ class TicketStore(UUIDModel):
             owner = SECURED  # So data is REALLY encrypted, because key used to encrypt is sustituted by SECURED on DB
 
         return TicketStore.objects.create(
-            uuid=TicketStore.generateUuid(),
-            stamp=getSqlDatetime(),
+            uuid=TicketStore.generate_uuid(),
+            stamp=sql_datetime(),
             data=data,
             validity=validity,
             owner=owner,
@@ -138,7 +138,7 @@ class TicketStore(UUIDModel):
 
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
             validity = datetime.timedelta(seconds=t.validity)
-            now = getSqlDatetime()
+            now = sql_datetime()
 
             logger.debug('Ticket validity: %s %s', t.stamp + validity, now)
             if t.stamp + validity < now:
@@ -210,7 +210,7 @@ class TicketStore(UUIDModel):
     ):
         try:
             t = TicketStore.objects.get(uuid=uuid, owner=owner)
-            t.stamp = getSqlDatetime()
+            t.stamp = sql_datetime()
             if validity:
                 t.validity = validity
             t.save(update_fields=['validity', 'stamp'])
@@ -284,7 +284,7 @@ class TicketStore(UUIDModel):
 
     @staticmethod
     def cleanup() -> None:
-        now = getSqlDatetime()
+        now = sql_datetime()
         for v in TicketStore.objects.all():
             if now > v.stamp + datetime.timedelta(
                 seconds=v.validity + 600

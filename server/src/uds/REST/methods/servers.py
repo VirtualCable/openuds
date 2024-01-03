@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 class ServerRegisterBase(Handler):
     def post(self) -> collections.abc.MutableMapping[str, typing.Any]:
         serverToken: models.Server
-        now = model.getSqlDatetime()
+        now = model.sql_datetime()
         ip = self._params.get('ip', self.request.ip)
         if ':' in ip:
             # If zone is present, remove it

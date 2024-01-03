@@ -50,7 +50,7 @@ from uds.core.services.exceptions import (
     ServiceNotReadyError,
 )
 from uds.core.util import log, singleton
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.core.util.stats import events
 from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
@@ -124,7 +124,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         # Checks if maxUserServices has been reached and if so, raises an exception
         self._checkMaxUserServicesReached(publication.deployed_service)
-        now = getSqlDatetime()
+        now = sql_datetime()
         return publication.userServices.create(
             cache_level=cacheLevel,
             state=State.PREPARING,
@@ -142,7 +142,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Private method to instatiate an assigned element at database with default state
         """
         self._checkMaxUserServicesReached(publication.deployed_service)
-        now = getSqlDatetime()
+        now = sql_datetime()
         return publication.userServices.create(
             cache_level=0,
             state=State.PREPARING,
@@ -162,7 +162,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         an UserService with no publications, and create them from an ServicePool
         """
         self._checkMaxUserServicesReached(servicePool)
-        now = getSqlDatetime()
+        now = sql_datetime()
         return servicePool.userServices.create(
             cache_level=0,
             state=State.PREPARING,

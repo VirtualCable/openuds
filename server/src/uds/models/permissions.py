@@ -43,7 +43,7 @@ from uds.core.types.permissions import PermissionType
 from .uuid_model import UUIDModel
 from .user import User
 from .group import Group
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +128,7 @@ class Permissions(UUIDModel):
             return existing
         except Exception:  # Does not exists
             return Permissions.objects.create(
-                created=getSqlDatetime(),
+                created=sql_datetime(),
                 ends=None,
                 user=user,
                 group=group,

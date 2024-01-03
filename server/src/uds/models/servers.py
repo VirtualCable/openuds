@@ -39,7 +39,7 @@ from uds.core import consts, types
 from uds.core.consts import MAC_UNKNOWN
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.util import log, net, properties, resolver
-from uds.core.util.model import getSqlStamp, getSqlDatetime
+from uds.core.util.model import sql_stamp, sql_datetime
 
 from .tag import TaggingMixin
 from .uuid_model import UUIDModel
@@ -255,7 +255,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         else:
             # Set stamp to current time and save it, overwriting existing stamp if any
             statsDict = value.as_dict()
-            statsDict['stamp'] = getSqlStamp()
+            statsDict['stamp'] = sql_stamp()
             self.properties['stats'] = statsDict
 
     def newAssignation(self) -> None:
@@ -279,7 +279,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         If it is not available, we return False, otherwise True
         """
         restrainedUntil = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
-        return restrainedUntil > getSqlDatetime()
+        return restrainedUntil > sql_datetime()
 
     def setRestrainedUntil(self, value: typing.Optional[datetime.datetime] = None) -> None:
         """Sets the availability of this server

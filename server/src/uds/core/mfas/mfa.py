@@ -40,7 +40,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _, gettext
 from uds.core.module import Module
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.models.network import Network
 from uds.core import exceptions
 
@@ -229,7 +229,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (getSqlDatetime(), code))
+        self.storage.putPickle(storageKey, (sql_datetime(), code))
 
     def process(
         self,
@@ -266,7 +266,7 @@ class MFA(Module):
         try:
             if data and validity:
                 # if we have a stored code, check if it's still valid
-                if data[0] + datetime.timedelta(seconds=validity) > getSqlDatetime():
+                if data[0] + datetime.timedelta(seconds=validity) > sql_datetime():
                     # if it's still valid, just return without sending a new one
                     return MFA.RESULT.OK
         except Exception:
@@ -322,7 +322,7 @@ class MFA(Module):
                 if (
                     validity > 0
                     and data[0] + datetime.timedelta(seconds=validity)
-                    < getSqlDatetime()
+                    < sql_datetime()
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error

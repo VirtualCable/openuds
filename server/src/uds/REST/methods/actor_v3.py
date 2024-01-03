@@ -44,7 +44,7 @@ from uds.core.managers.user_service import UserServiceManager
 from uds.core.util import log, security
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
@@ -300,7 +300,7 @@ class Register(ActorV3Action):
                 'run_once_command': self._params['run_once_command'],
                 'custom': self._params.get('custom', ''),
             }
-            actorToken.stamp = getSqlDatetime()
+            actorToken.stamp = sql_datetime()
             actorToken.save()
             logger.info('Registered actor %s', self._params)
             found = True
@@ -324,7 +324,7 @@ class Register(ActorV3Action):
                 'version': '',
                 'os_type': self._params.get('os', types.os.KnownOS.UNKNOWN.os_name()),
                 'mac': self._params['mac'],
-                'stamp': getSqlDatetime(),
+                'stamp': sql_datetime(),
             }
 
             actorToken = Server.objects.create(**kwargs)

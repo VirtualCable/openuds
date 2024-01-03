@@ -38,7 +38,7 @@ from uds.core.jobs import Job
 from uds.core.util.config import GlobalConfig
 from uds.core.util.state import State
 from uds.models import ServicePool
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class AssignedAndUnused(Job):
     friendly_name = 'Unused services checker'
 
     def run(self) -> None:
-        since_state = getSqlDatetime() - timedelta(
+        since_state = sql_datetime() - timedelta(
             seconds=GlobalConfig.CHECK_UNUSED_TIME.getInt()
         )
         # Locate service pools with pending assigned service in use

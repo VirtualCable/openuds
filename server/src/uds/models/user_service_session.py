@@ -36,7 +36,7 @@ from django.db import models
 
 from uds.core.managers.crypto import CryptoManager
 from .user_service import UserService
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ class UserServiceSession(models.Model):  # pylint: disable=too-many-public-metho
     session_id = models.CharField(
         max_length=128, db_index=True, default=_session_id_generator, blank=True
     )
-    start = models.DateTimeField(default=getSqlDatetime)
+    start = models.DateTimeField(default=sql_datetime)
     end = models.DateTimeField(null=True, blank=True)
 
     user_service = models.ForeignKey(
@@ -88,5 +88,5 @@ class UserServiceSession(models.Model):  # pylint: disable=too-many-public-metho
         """
         Ends the session
         """
-        self.end = getSqlDatetime()
+        self.end = sql_datetime()
         self.save(update_fields=['end'])

@@ -164,9 +164,9 @@ class ServerStats:
             In normal situations, the stats of a server will be uptated ever minute or so, so this will be valid
             most time. If the server is down, it will be valid for 3 minutes, so it will be used as a "last known" stats
         """
-        from uds.core.util.model import getSqlStamp  # To avoid circular import
+        from uds.core.util.model import sql_stamp  # To avoid circular import
 
-        return self.stamp > getSqlStamp() - consts.system.DEFAULT_CACHE_TIMEOUT
+        return self.stamp > sql_stamp() - consts.system.DEFAULT_CACHE_TIMEOUT
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:
@@ -211,7 +211,7 @@ class ServerStats:
 
     @staticmethod
     def from_dict(data: collections.abc.Mapping[str, typing.Any], **kwargs: typing.Any) -> 'ServerStats':
-        from uds.core.util.model import getSqlStamp  # Avoid circular import
+        from uds.core.util.model import sql_stamp  # Avoid circular import
 
         dct = {k: v for k, v in data.items()}  # Make a copy
         dct.update(kwargs)  # and update with kwargs
@@ -226,7 +226,7 @@ class ServerStats:
             disks=disks,
             connections=dct.get('connections', 0),
             current_users=dct.get('current_users', 0),
-            stamp=dct.get('stamp', getSqlStamp()),
+            stamp=dct.get('stamp', sql_stamp()),
         )
 
     def as_dict(self) -> dict[str, typing.Any]:

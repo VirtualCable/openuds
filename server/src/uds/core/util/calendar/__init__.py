@@ -41,7 +41,7 @@ import bitarray
 
 from django.core.cache import caches
 
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 from uds.models.calendar import Calendar
 
@@ -140,7 +140,7 @@ class CalendarChecker:
         @param dtime: Datetime object to check
         """
         if dtime is None:
-            dtime = getSqlDatetime()
+            dtime = sql_datetime()
 
         # memcached access
         memCache = caches['memory']
@@ -181,7 +181,7 @@ class CalendarChecker:
         """
         logger.debug('Obtaining nextEvent')
         if not checkFrom:
-            checkFrom = getSqlDatetime()
+            checkFrom = sql_datetime()
 
         if not offset:
             offset = datetime.timedelta(minutes=0)

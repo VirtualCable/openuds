@@ -55,7 +55,7 @@ from .service_pool_group import ServicePoolGroup
 from .account import Account
 
 from ..core.consts import NEVER
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 from uds.core import consts
 
 
@@ -211,7 +211,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 ServicePool.objects.none()
             )  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = getSqlDatetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
 
         res = []
@@ -261,7 +261,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = typing.cast(datetime, getSqlDatetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        date = typing.cast(datetime, sql_datetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
         if (
             self.userServices.filter(state=states.userService.ERROR, state_date__gt=date).count()
             >= GlobalConfig.RESTRAINT_COUNT.getInt()
@@ -315,7 +315,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
         if chkDateTime is None:
-            chkDateTime = getSqlDatetime()
+            chkDateTime = sql_datetime()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime
@@ -336,7 +336,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             typing.Optional[int] -- [Returns deadline in secods. If no deadline (forever), will return None]
         """
         if chkDateTime is None:
-            chkDateTime = typing.cast(datetime, getSqlDatetime())
+            chkDateTime = typing.cast(datetime, sql_datetime())
 
         if self.isAccessAllowed(chkDateTime) is False:
             return -1
@@ -393,7 +393,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         """
         self.state = state
-        self.state_date = getSqlDatetime()
+        self.state_date = sql_datetime()
         if save:
             self.save()
 
@@ -435,7 +435,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Args:
             activePub: Active publication used as "current" publication to make checks
         """
-        now = getSqlDatetime()
+        now = sql_datetime()
         nonActivePub: 'ServicePoolPublication'
         userService: 'UserService'
 

@@ -43,7 +43,7 @@ from uds.core.environment import Environment
 from uds.core.util import log
 
 from .service_pool import ServicePool
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 from .uuid_model import UUIDModel
 
 
@@ -179,7 +179,7 @@ class ServicePoolPublication(UUIDModel):
             save: Defaults to true. If false, record will not be saved to db, just modified
 
         """
-        self.state_date = getSqlDatetime()
+        self.state_date = sql_datetime()
         self.state = state
         self.save(update_fields=['state_date', 'state'])
 

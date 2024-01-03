@@ -35,7 +35,7 @@ import collections.abc
 
 from uds.core.services import Publication
 from uds.core.util.state import State
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -76,7 +76,7 @@ class OGPublication(Publication):
         """
         Realizes the publication of the service
         """
-        self._name = 'Publication {}'.format(getSqlDatetime())
+        self._name = 'Publication {}'.format(sql_datetime())
         return State.FINISHED
 
     def checkState(self) -> str:

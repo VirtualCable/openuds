@@ -43,7 +43,7 @@ from uds.core import consts, types
 from uds.core.util import log, states
 from uds.core.util.calendar import CalendarChecker
 
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 from .group import Group
 from .image import Image
 from .service_pool import ServicePool
@@ -145,7 +145,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
         if chkDateTime is None:
-            chkDateTime = getSqlDatetime()
+            chkDateTime = sql_datetime()
 
         access = self.fallbackAccess
         # Let's see if we can access by current datetime

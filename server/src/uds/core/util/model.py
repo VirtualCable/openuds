@@ -88,7 +88,7 @@ class TimeTrack:
         return date
 
     @staticmethod
-    def getSqlDatetime() -> datetime.datetime:
+    def sql_datetime() -> datetime.datetime:
         now = datetime.datetime.now()
         with TimeTrack.lock:
             diff = now - TimeTrack.last_check
@@ -103,32 +103,32 @@ class TimeTrack:
         return TimeTrack.cached_time + (now - TimeTrack.last_check)
 
 
-def getSqlDatetime() -> datetime.datetime:
+def sql_datetime() -> datetime.datetime:
     """Returns the current date/time of the database server.
     Has been updated to use TimeTrack, which reduces the queries to database to get the current time
     """
-    return TimeTrack.getSqlDatetime()
+    return TimeTrack.sql_datetime()
 
 
-def getSqlStampInSeconds() -> int:
+def sql_stamp_seconds() -> int:
     """Returns the current date/time of the database server as unix timestamp
 
     Returns:
         int: Unix timestamp
     """
-    return int(mktime(getSqlDatetime().timetuple()))
+    return int(mktime(sql_datetime().timetuple()))
 
 
-def getSqlStamp() -> float:
+def sql_stamp() -> float:
     """Returns the current date/time of the database server as unix timestamp
 
     Returns:
         float: Unix timestamp
     """
-    return float(mktime(getSqlDatetime().timetuple())) + getSqlDatetime().microsecond / 1000000.0
+    return float(mktime(sql_datetime().timetuple())) + sql_datetime().microsecond / 1000000.0
 
 
-def generateUuid(obj: typing.Any = None) -> str:
+def generate_uuid(obj: typing.Any = None) -> str:
     """
     Generates a ramdom uuid for models default
     """

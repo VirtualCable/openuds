@@ -36,7 +36,7 @@ import logging
 from django.db import transaction
 
 from uds.models import Scheduler
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 
@@ -57,7 +57,7 @@ class SchedulerHousekeeping(Job):
         """
         Look for "hanged" scheduler tasks and reschedule them
         """
-        since = getSqlDatetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
+        since = sql_datetime() - timedelta(minutes=MAX_EXECUTION_MINUTES)
         for _ in range(3):  # Retry three times in case of lockout error
             try:
                 with transaction.atomic():

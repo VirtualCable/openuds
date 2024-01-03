@@ -42,7 +42,7 @@ from uds.core.util import log
 from .uuid_model import UUIDModel
 from .authenticator import Authenticator
 from .user import User
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -68,7 +68,7 @@ class Group(UUIDModel):
     is_meta = models.BooleanField(default=False, db_index=True)
     meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
-    created = models.DateTimeField(default=getSqlDatetime, blank=True)
+    created = models.DateTimeField(default=sql_datetime, blank=True)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["Group"]'

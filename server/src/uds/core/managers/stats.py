@@ -39,7 +39,7 @@ import collections.abc
 from uds.core.util.config import GlobalConfig
 from uds.core.util import singleton
 from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
-from uds.core.util.model import getSqlDatetime, getSqlStampInSeconds
+from uds.core.util.model import sql_datetime, sql_stamp_seconds
 
 if typing.TYPE_CHECKING:
     from django.db import models
@@ -85,7 +85,7 @@ class StatsManager(metaclass=singleton.Singleton):
         model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
         minTime = time.mktime(
-            (getSqlDatetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple()
+            (sql_datetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple()
         )
         model.objects.filter(stamp__lt=minTime).delete()
 
@@ -115,7 +115,7 @@ class StatsManager(metaclass=singleton.Singleton):
             Nothing
         """
         if stamp is None:
-            stamp = typing.cast(datetime.datetime, getSqlDatetime())
+            stamp = typing.cast(datetime.datetime, sql_datetime())
 
         # To Unix epoch
         stampInt = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member
@@ -188,7 +188,7 @@ class StatsManager(metaclass=singleton.Singleton):
         if since is None:
             if points is None:
                 points = 100  # If since is not specified, we need at least points, get a default
-            since = getSqlDatetime() - datetime.timedelta(seconds=intervalType.seconds() * points)
+            since = sql_datetime() - datetime.timedelta(seconds=intervalType.seconds() * points)
 
         if isinstance(since, datetime.datetime):
             since = int(since.timestamp())
@@ -260,7 +260,7 @@ class StatsManager(metaclass=singleton.Singleton):
         logger.debug('Adding event stat')
         stamp = kwargs.get('stamp')
         if stamp is None:
-            stamp = getSqlStampInSeconds()
+            stamp = sql_stamp_seconds()
         else:
             # To Unix epoch
             stamp = int(time.mktime(stamp.timetuple()))  # pylint: disable=maybe-no-member

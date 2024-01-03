@@ -34,7 +34,7 @@ import logging
 from django.db import transaction
 
 from uds.models import AccountUsage
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ class UsageAccounting(Job):
         with transaction.atomic():
             AccountUsage.objects.select_for_update().filter(
                 user_service__in_use=True
-            ).update(end=getSqlDatetime())
+            ).update(end=sql_datetime())
             AccountUsage.objects.select_for_update().filter(
                 user_service__in_use=False
             ).update(

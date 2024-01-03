@@ -32,7 +32,7 @@ import typing
 import collections.abc
 
 from uds.core.consts.system import VERSION
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 
 
 def rest_result(result: typing.Any, **kwargs) -> dict[str, typing.Any]:
@@ -40,4 +40,4 @@ def rest_result(result: typing.Any, **kwargs) -> dict[str, typing.Any]:
     Returns a REST result
     '''
     # A common possible value in kwargs is "error"
-    return {'result': result, 'stamp': getSqlStampInSeconds(), 'version': VERSION, **kwargs}
+    return {'result': result, 'stamp': sql_stamp_seconds(), 'version': VERSION, **kwargs}

@@ -49,7 +49,7 @@ from uds.core import services
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 from .service_pool import ServicePool
 from .transport import Transport
 from .authenticator import Authenticator
@@ -302,7 +302,7 @@ class CalendarAction(UUIDModel):
             )
             return
 
-        self.last_execution = getSqlDatetime()
+        self.last_execution = sql_datetime()
         params = json.loads(self.params)
 
         saveServicePool = save
@@ -339,7 +339,7 @@ class CalendarAction(UUIDModel):
 
         def remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
-            since = getSqlDatetime() - datetime.timedelta(hours=numVal('hours'))
+            since = sql_datetime() - datetime.timedelta(hours=numVal('hours'))
             for userService in self.service_pool.assignedUserServices().filter(
                 state_date__lt=since, state=state.State.USABLE
             ):
@@ -443,7 +443,7 @@ class CalendarAction(UUIDModel):
             self.save()
 
     def save(self, *args, **kwargs):
-        lastExecution = self.last_execution or getSqlDatetime()
+        lastExecution = self.last_execution or sql_datetime()
         possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(
             checkFrom=lastExecution - self.offset, startEvent=self.at_start
         )

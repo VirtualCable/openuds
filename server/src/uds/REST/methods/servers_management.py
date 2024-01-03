@@ -39,7 +39,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import consts, types, ui
 from uds.core.util import permissions, ensure
-from uds.core.util.model import getSqlDatetime, processUuid
+from uds.core.util.model import sql_datetime, processUuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
@@ -251,7 +251,7 @@ class ServersServers(DetailHandler):
                     listen_port=self._params['listen_port'] or 0,
                     type=parent.type,
                     subtype=parent.subtype,
-                    stamp=getSqlDatetime(),
+                    stamp=sql_datetime(),
                 )
                 # Add to group
                 parent.servers.add(server)

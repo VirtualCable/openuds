@@ -59,13 +59,13 @@ class AssignedAndUnusedTest(UDSTestCase):
         # Set now, should not be removed
         count = models.UserService.objects.filter(state=State.REMOVABLE).count()
         cleaner = AssignedAndUnused(Environment.getTempEnv())
-        # since_state = util.getSqlDatetime() - datetime.timedelta(seconds=cleaner.frecuency)
+        # since_state = util.sql_datetime() - datetime.timedelta(seconds=cleaner.frecuency)
         cleaner.run()
         self.assertEqual(models.UserService.objects.filter(state=State.REMOVABLE).count(), count)
         # Set half the userServices to a long-ago state, should be removed
         for i, us in enumerate(self.userServices):
             if i%2 == 0:
-                us.state_date = model.getSqlDatetime() - datetime.timedelta(seconds=602)
+                us.state_date = model.sql_datetime() - datetime.timedelta(seconds=602)
                 us.save(update_fields=['state_date'])
         cleaner.run()
         self.assertEqual(models.UserService.objects.filter(state=State.REMOVABLE).count(), count + len(self.userServices)//2)

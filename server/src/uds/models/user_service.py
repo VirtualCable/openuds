@@ -40,7 +40,7 @@ from django.db.models import signals
 from uds.core import types, consts
 from uds.core.environment import Environment
 from uds.core.util import log, unique, properties
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
@@ -397,7 +397,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         """
         if state != self.state:
-            self.state_date = getSqlDatetime()
+            self.state_date = sql_datetime()
             self.state = state
             self.save(update_fields=['state', 'state_date'])
 
@@ -412,7 +412,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         """
         if state != self.os_state:
-            self.state_date = getSqlDatetime()
+            self.state_date = sql_datetime()
             self.os_state = state
             self.save(update_fields=['os_state', 'state_date'])
 
@@ -424,7 +424,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             user: User to assing to (db record)
         """
         self.cache_level = 0
-        self.state_date = getSqlDatetime()
+        self.state_date = sql_datetime()
         self.user = user
         self.save(update_fields=['cache_level', 'state_date', 'user'])
 
@@ -441,7 +441,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         from uds.core.managers.user_service import UserServiceManager
 
         self.in_use = inUse
-        self.in_use_date = getSqlDatetime()
+        self.in_use_date = sql_datetime()
         self.save(update_fields=['in_use', 'in_use_date'])
 
         # Start/stop accounting

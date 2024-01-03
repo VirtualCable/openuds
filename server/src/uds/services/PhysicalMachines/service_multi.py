@@ -42,7 +42,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from uds.core import exceptions, services, types
 from uds.core.ui import gui
 from uds.core.util import ensure, log, net
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 
 from .deployment import IPMachineDeployed
 from .service_base import IPServiceBase
@@ -262,7 +262,7 @@ class IPMachinesService(IPServiceBase):
     def getUnassignedMachine(self) -> typing.Optional[str]:
         # Search first unassigned machine
         try:
-            now = getSqlStampInSeconds()
+            now = sql_stamp_seconds()
 
             # Reorder ips, so we do not always get the same one if requested
             allIps = self._ips[:]
@@ -332,7 +332,7 @@ class IPMachinesService(IPServiceBase):
         theIP = IPServiceBase.getIp(assignableId)
         theMAC = IPServiceBase.getMac(assignableId)
 
-        now = getSqlStampInSeconds()
+        now = sql_stamp_seconds()
         locked = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
             self.storage.putPickle(theIP, now)
@@ -350,7 +350,7 @@ class IPMachinesService(IPServiceBase):
 
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
-        now = getSqlStampInSeconds()
+        now = sql_stamp_seconds()
         locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
             self.storage.putPickle(theIP, str(now))  # Lock it

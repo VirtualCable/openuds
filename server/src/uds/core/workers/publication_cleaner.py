@@ -37,7 +37,7 @@ import collections.abc
 from uds.core.managers import publicationManager
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePoolPublication
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.services.exceptions import PublishException
 from uds.core.util.state import State
 from uds.core.jobs import Job
@@ -53,7 +53,7 @@ class PublicationInfoItemsCleaner(Job):
     friendly_name = 'Publications Info Cleaner'
 
     def run(self) -> None:
-        removeFrom = getSqlDatetime() - timedelta(
+        removeFrom = sql_datetime() - timedelta(
             seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
         )
         ServicePoolPublication.objects.filter(

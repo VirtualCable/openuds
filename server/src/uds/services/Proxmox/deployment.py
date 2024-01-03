@@ -39,7 +39,7 @@ from uds.core import services
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.util.state import State
 from uds.core.util import log
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 
 from .jobs import ProxmoxDeferredRemoval
 from . import client
@@ -447,7 +447,7 @@ if sys.platform == 'win32':
         vmInfo = self.service().getMachineInfo(int(self._vmid))
         if vmInfo.status != 'stopped':
             self.__setTask(self.service().shutdownMachine(int(self._vmid)))
-            shutdown = getSqlStampInSeconds()
+            shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
         self.storage.putPickle('shutdown', shutdown)
         return State.RUNNING
@@ -530,7 +530,7 @@ if sys.platform == 'win32':
             return State.FINISHED  # It's stopped
 
         logger.debug('State is running')
-        if getSqlStampInSeconds() - shutdown_start > GUEST_SHUTDOWN_WAIT:
+        if sql_stamp_seconds() - shutdown_start > GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop')
             self.doLog(
                 log.LogLevel.ERROR,

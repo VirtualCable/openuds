@@ -35,7 +35,7 @@ import logging
 from django.db.models import Q, Count
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePool, UserService
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
@@ -49,7 +49,7 @@ class HangedCleaner(Job):
     friendly_name = 'Hanged services checker'
 
     def run(self) -> None:
-        now = getSqlDatetime()
+        now = sql_datetime()
         since_state = now - timedelta(
             seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
         )

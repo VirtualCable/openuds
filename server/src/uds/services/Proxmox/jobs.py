@@ -35,7 +35,7 @@ import collections.abc
 from uds.core import jobs
 
 from uds.models import Provider
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 from uds.core.util.unique_id_generator import UniqueIDGenerator
 
 from . import provider
@@ -147,4 +147,4 @@ class ProxmoxVmidReleaser(jobs.Job):
     def run(self) -> None:
         logger.debug('Proxmox Vmid releader running')
         gen = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
-        gen.releaseOlderThan(getSqlStampInSeconds() - MAX_VMID_LIFE_SECS)
+        gen.releaseOlderThan(sql_stamp_seconds() - MAX_VMID_LIFE_SECS)

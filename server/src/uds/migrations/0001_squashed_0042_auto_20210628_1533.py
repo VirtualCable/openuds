@@ -576,12 +576,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='group',
             name='created',
-            field=models.DateTimeField(blank=True, default=uds.core.util.model.getSqlDatetime),
+            field=models.DateTimeField(blank=True, default=uds.core.util.model.sql_datetime),
         ),
         migrations.AddField(
             model_name='user',
             name='created',
-            field=models.DateTimeField(blank=True, default=uds.core.util.model.getSqlDatetime),
+            field=models.DateTimeField(blank=True, default=uds.core.util.model.sql_datetime),
         ),
         migrations.AlterField(
             model_name='deployedservice',

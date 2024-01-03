@@ -35,7 +35,7 @@ import collections.abc
 import logging
 
 from uds.core.util import singleton
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.models.log import Log
 # from uds.core.workers.log
 
@@ -82,7 +82,7 @@ class LogManager(metaclass=singleton.Singleton):
             Log.objects.create(
                 owner_type=owner_type.value,
                 owner_id=owner_id,
-                created=getSqlDatetime(),
+                created=sql_datetime(),
                 source=source,
                 level=level,
                 data=message,
@@ -104,13 +104,13 @@ class LogManager(metaclass=singleton.Singleton):
             for x in reversed(qs.order_by('-created', '-id')[:limit])  # type: ignore  # Slicing is not supported by pylance right now
         ]
 
-    def _clearLogs(self, owner_type: LogObjectType, owner_id: int):
+    def _clear_logs(self, owner_type: LogObjectType, owner_id: int):
         """
         Clears ALL logs related to user service
         """
         Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()
 
-    def doLog(
+    def log(
         self,
         whichObject: typing.Optional['Model'],
         level: int,
@@ -139,7 +139,7 @@ class LogManager(metaclass=singleton.Singleton):
             except Exception as e:
                 logger.error('Error logging %s.%s-%s %s: %s (%s)', whichObject.__class__, objectId, source, level, message, e)
 
-    def getLogs(
+    def get_logs(
         self, wichObject: typing.Optional['Model'], limit: int = -1
     ) -> list[dict]:
         """
@@ -161,7 +161,7 @@ class LogManager(metaclass=singleton.Singleton):
 
         return []
 
-    def clearLogs(self, wichObject: typing.Optional['Model']):
+    def clear_logs(self, wichObject: typing.Optional['Model']):
         """
         Clears all logs related to wichObject
 
@@ -174,7 +174,7 @@ class LogManager(metaclass=singleton.Singleton):
             else LogObjectType.SYSLOG
         )
         if owner_type:
-            self._clearLogs(owner_type, getattr(wichObject, 'id', -1))
+            self._clear_logs(owner_type, getattr(wichObject, 'id', -1))
         #else:
             # logger.debug(
             #    'Requested clearLogs for a type of object not covered: %s: %s',

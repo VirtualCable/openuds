@@ -50,7 +50,7 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core.util import security, decorators, ensure, auth as auth_utils
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 from . import config
 
@@ -499,10 +499,10 @@ class SAMLAuthenticator(auths.Authenticator):
                 'metadataCacheDuration': self.metadataCacheDuration.int_value
                 if self.metadataCacheDuration.int_value > 0
                 else 86400 * 365 * 10,
-                'metadataValidUntil': getSqlDatetime()
+                'metadataValidUntil': sql_datetime()
                 + datetime.timedelta(seconds=self.metadataValidityDuration.int_value)
                 if self.metadataCacheDuration.int_value > 0
-                else getSqlDatetime() + datetime.timedelta(days=365 * 10),
+                else sql_datetime() + datetime.timedelta(days=365 * 10),
                 'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
                 'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
                 'logoutRequestSigned': self.logoutRequestSigned.isTrue(),

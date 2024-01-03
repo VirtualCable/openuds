@@ -34,7 +34,7 @@ import logging
 
 from django.db import models
 
-from uds.core.util.model import generateUuid
+from uds.core.util.model import generate_uuid
 
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class UUIDModel(models.Model):
     Base abstract model for models that require an uuid
     """
 
-    uuid = models.CharField(max_length=50, unique=True, default=generateUuid)
+    uuid = models.CharField(max_length=50, unique=True, default=generate_uuid)
 
     # Automatic field from Model without a defined specific primary_key
     # Just a fake declaration to allow type checking
@@ -57,7 +57,7 @@ class UUIDModel(models.Model):
     # Override default save to add uuid
     def save(self, *args, **kwargs):
         if not self.uuid:
-            self.uuid = generateUuid()
+            self.uuid = generate_uuid()
         elif self.uuid != self.uuid.lower():
             self.uuid = (
                 self.uuid.lower()

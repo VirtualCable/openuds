@@ -24,7 +24,7 @@ def migrate_old_data(apps, schema_editor) -> None:
 
         # First, add uuid to existing registered servers
         for server in Server.objects.all():
-            server.uuid = uds.core.util.model.generateUuid()
+            server.uuid = uds.core.util.model.generate_uuid()
             server.save(update_fields=['uuid'])
 
         # Current Registered servers are tunnel servers, and all tunnel servers are linux os, so update ip
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                 (
                     "uuid",
                     models.CharField(
-                        default=uds.core.util.model.generateUuid,
+                        default=uds.core.util.model.generate_uuid,
                         max_length=50,
                         unique=True,
                     ),
@@ -180,7 +180,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="server",
             name="uuid",
-            field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=False),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=False),
         ),
         migrations.RemoveConstraint(
             model_name="server",
@@ -264,7 +264,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="server",
             name="uuid",
-            field=models.CharField(default=uds.core.util.model.generateUuid, max_length=50, unique=True),
+            field=models.CharField(default=uds.core.util.model.generate_uuid, max_length=50, unique=True),
         ),
         # Add server group to transports
         migrations.AddField(

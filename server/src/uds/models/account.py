@@ -36,7 +36,7 @@ from django.db import models
 
 from .uuid_model import UUIDModel
 from .tag import TaggingMixin
-from ..core.util.model import getSqlDatetime
+from ..core.util.model import sql_datetime
 from ..core.consts import NEVER
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class Account(UUIDModel, TaggingMixin):
         if hasattr(userService, 'accounting'):  # Already has an account
             return None
 
-        start = getSqlDatetime()
+        start = sql_datetime()
 
         if userService.user:
             userName = userService.user.pretty_name
@@ -89,7 +89,7 @@ class Account(UUIDModel, TaggingMixin):
 
         tmp = userService.accounting
         tmp.user_service = None  # type: ignore
-        tmp.end = getSqlDatetime()
+        tmp.end = sql_datetime()
         tmp.save()
         return tmp
 

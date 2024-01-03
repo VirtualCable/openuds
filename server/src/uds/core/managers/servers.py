@@ -219,7 +219,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         # Look for existing user asignation through properties
         prop_name = self.propertyName(userService.user)
-        now = model_utils.getSqlDatetime()
+        now = model_utils.sql_datetime()
 
         excludeServersUUids = excludeServersUUids or set()
 
@@ -461,7 +461,7 @@ class ServerManager(metaclass=singleton.Singleton):
             List of servers sorted by usage
         """
         with transaction.atomic():
-            now = model_utils.getSqlDatetime()
+            now = model_utils.sql_datetime()
             fltrs = serverGroup.servers.filter(maintenance_mode=False)
             fltrs = fltrs.filter(Q(locked_until=None) | Q(locked_until__lte=now))  # Only unlocked servers
             if excludeServersUUids:

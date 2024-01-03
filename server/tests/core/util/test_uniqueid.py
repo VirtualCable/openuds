@@ -37,7 +37,7 @@ from uds.core.util.unique_gid_generator import UniqueGIDGenerator
 from uds.core.util.unique_mac_generator import UniqueMacGenerator
 from uds.core.util.unique_name_generator import UniqueNameGenerator
 
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 
 from ...utils.test import UDSTestCase
 
@@ -88,7 +88,7 @@ class UniqueIdTest(UDSTestCase):
         for i in range(NUM):
             self.assertEqual(self.uidGen.get(), i)
 
-        stamp = getSqlStampInSeconds() + 1
+        stamp = sql_stamp_seconds() + 1
         time.sleep(2)
 
         for i in range(NUM):

@@ -44,7 +44,7 @@ from django.http import HttpResponse
 
 
 from .uuid_model import UUIDModel
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core import consts
 
 logger = logging.getLogger(__name__)
@@ -198,7 +198,7 @@ class Image(UUIDModel):
         return HttpResponse(self.thumb, content_type='image/png')
 
     def save(self, *args, **kwargs):
-        self.stamp = getSqlDatetime()
+        self.stamp = sql_datetime()
         return super().save(*args, **kwargs)
 
     def __str__(self):

@@ -49,7 +49,7 @@ class JobsFactory(factory.Factory['Job']):
         Ensures that uds core workers are correctly registered in database and in factory
         """
         from uds.models import Scheduler                  # pylint: disable=import-outside-toplevel
-        from uds.core.util.model import getSqlDatetime        # pylint: disable=import-outside-toplevel
+        from uds.core.util.model import sql_datetime        # pylint: disable=import-outside-toplevel
         from uds.core.util.state import State             # pylint: disable=import-outside-toplevel
         from uds.core import workers                      # pylint: disable=import-outside-toplevel
 
@@ -60,7 +60,7 @@ class JobsFactory(factory.Factory['Job']):
                 try:
                     type_.setup()
                     # We use database server datetime
-                    now = getSqlDatetime()
+                    now = sql_datetime()
                     next_ = now
                     job = Scheduler.objects.create(
                         name=name,

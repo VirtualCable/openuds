@@ -37,7 +37,7 @@ import collections.abc
 from django.db.models import Q, Count
 
 from uds.models import ServicePool, UserService
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
 from uds.core.jobs import Job
 from uds.core.util import log
@@ -59,7 +59,7 @@ class StuckCleaner(Job):
     friendly_name = 'Stuck States cleaner'
 
     def run(self) -> None:
-        since_state: datetime = getSqlDatetime() - timedelta(seconds=MAX_STUCK_TIME)
+        since_state: datetime = sql_datetime() - timedelta(seconds=MAX_STUCK_TIME)
         # Filter for locating machine stuck on removing, cancelling, etc..
         # Locate service pools with pending assigned service in use
         servicePoolswithStucks = (

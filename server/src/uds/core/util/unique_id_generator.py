@@ -39,7 +39,7 @@ from django.db import transaction, OperationalError, connection
 from django.db.utils import IntegrityError
 
 from uds.models.unique_id import UniqueId
-from uds.core.util.model import getSqlStampInSeconds
+from uds.core.util.model import sql_stamp_seconds
 
 if typing.TYPE_CHECKING:
     from django.db import models
@@ -86,7 +86,7 @@ class UniqueIDGenerator:
         is global to "unique ids' database
         """
         # First look for a name in the range defined
-        stamp = getSqlStampInSeconds()
+        stamp = sql_stamp_seconds()
         seq = rangeStart
         # logger.debug(UniqueId)
         counter = 0
@@ -151,7 +151,7 @@ class UniqueIDGenerator:
         self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(
             owner=toUidGen._owner,  # pylint: disable=protected-access
             basename=toUidGen._baseName,  # pylint: disable=protected-access
-            stamp=getSqlStampInSeconds(),
+            stamp=sql_stamp_seconds(),
         )
         return True
 
@@ -161,7 +161,7 @@ class UniqueIDGenerator:
             flt = (
                 self.__filter(0, forUpdate=True)
                 .filter(owner=self._owner, seq=seq)
-                .update(owner='', assigned=False, stamp=getSqlStampInSeconds())
+                .update(owner='', assigned=False, stamp=sql_stamp_seconds())
             )
         if flt > 0:
             self.__purge()
@@ -182,12 +182,12 @@ class UniqueIDGenerator:
 
     def release(self) -> None:
         UniqueId.objects.select_for_update().filter(owner=self._owner).update(
-            assigned=False, owner='', stamp=getSqlStampInSeconds()
+            assigned=False, owner='', stamp=sql_stamp_seconds()
         )  # @UndefinedVariable
         self.__purge()
 
     def releaseOlderThan(self, stamp=None) -> None:
-        stamp = getSqlStampInSeconds() if stamp is None else stamp
+        stamp = sql_stamp_seconds() if stamp is None else stamp
         UniqueId.objects.select_for_update().filter(
             owner=self._owner, stamp__lt=stamp
         ).update(

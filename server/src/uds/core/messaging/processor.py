@@ -37,7 +37,7 @@ import collections.abc
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 from .provider import Notifier as NotificationProviderModule, LogLevel
 from .config import DO_NOT_REPEAT
 
@@ -79,7 +79,7 @@ class MessageProcessorThread(BaseThread):
         while self.keepRunning:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
-            sinceSkip = getSqlDatetime() - datetime.timedelta(
+            sinceSkip = sql_datetime() - datetime.timedelta(
                 seconds=DO_NOT_REPEAT.getInt()
             )
             for n in Notification.getPersistentQuerySet().all():

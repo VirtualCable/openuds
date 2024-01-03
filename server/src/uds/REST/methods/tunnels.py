@@ -35,7 +35,7 @@ import collections.abc
 
 from uds import models
 from uds.core import consts, types
-from uds.core.util.model import getSqlStampInSeconds, getSqlDatetime
+from uds.core.util.model import sql_stamp_seconds, sql_datetime
 from uds.REST import Handler
 from uds.REST import AccessDenied
 from uds.core.auths.auth import isTrustedSource
@@ -102,7 +102,7 @@ class TunnelTicket(Handler):
                 sent, recv = self._params['sent'], self._params['recv']
                 # Ensures extra exists...
                 extra = extra or {}
-                now = getSqlStampInSeconds()
+                now = sql_stamp_seconds()
                 totalTime = now - extra.get('b', now - 1)
                 msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
                 log.doLog(user.manager, log.LogLevel.INFO, msg)
@@ -143,7 +143,7 @@ class TunnelTicket(Handler):
                     host=host,
                     extra={
                         't': self._args[0],  # ticket
-                        'b': getSqlStampInSeconds(),  # Begin time stamp
+                        'b': sql_stamp_seconds(),  # Begin time stamp
                     },
                     validity=MAX_SESSION_LENGTH,
                 )

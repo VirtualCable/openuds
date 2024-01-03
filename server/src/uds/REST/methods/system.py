@@ -39,7 +39,7 @@ import collections.abc
 
 from uds import models
 import uds.core.types.permissions
-from uds.core.util.model import getSqlDatetime
+from uds.core.util.model import sql_datetime
 
 from uds.core.util.model import processUuid
 from uds.core.util.stats import counters
@@ -74,7 +74,7 @@ def getServicesPoolsCounters(
             + str(POINTS)
             + str(since_days)
         )
-        to = getSqlDatetime()
+        to = sql_datetime()
         since: datetime.datetime = to - datetime.timedelta(days=since_days)
 
         cachedValue: typing.Optional[bytes] = cache.get(cacheKey)
