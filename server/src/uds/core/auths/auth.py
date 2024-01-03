@@ -538,7 +538,7 @@ def authenticate_log_login(
         )
     )
     level = log.LogLevel.INFO if logStr == 'Logged in' else log.LogLevel.ERROR
-    log.doLog(
+    log.log(
         authenticator,
         level,
         f'user {userName} has {logStr} from {request.ip} where os is {request.os.os.name}',
@@ -548,7 +548,7 @@ def authenticate_log_login(
     try:
         # Root user is not on any authenticator, so we cannot attach log to an db user
         user = authenticator.users.get(name=userName)
-        log.doLog(
+        log.log(
             user,
             level,
             f'{logStr} from {request.ip} where OS is {request.os.os.name}',
@@ -561,12 +561,12 @@ def authenticate_log_login(
 def auth_log_logout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
         if request.user.manager.id is not None:
-            log.doLog(
+            log.log(
                 request.user.manager,
                 log.LogLevel.INFO,
                 f'user {request.user.name} has logged out from {request.ip}',
                 log.LogSource.WEB,
             )
-            log.doLog(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)
+            log.log(request.user, log.LogLevel.INFO, f'has logged out from {request.ip}', log.LogSource.WEB)
         else:
             logger.info('Root has logged out from %s', request.ip)

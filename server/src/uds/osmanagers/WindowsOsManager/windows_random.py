@@ -116,7 +116,7 @@ class WinRandomPassManager(WindowsOsManager):
             pos = rnd.randrange(0, len(randomPass))
             randomPass = randomPass[:pos] + base + randomPass[pos:]
             userService.storeValue('winOsRandomPass', randomPass)
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.INFO,
                 f'Password set to "{randomPass}"',

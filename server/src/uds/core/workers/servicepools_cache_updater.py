@@ -63,7 +63,7 @@ class ServiceCacheUpdater(Job):
 
     @staticmethod
     def __notifyRestrain(servicePool) -> None:
-        log.doLog(
+        log.log(
             servicePool,
             log.LogLevel.WARNING,
             'Service Pool is restrained due to excesive errors',
@@ -241,7 +241,7 @@ class ServiceCacheUpdater(Job):
                 services.UserService.L1_CACHE,
             )
         except MaxServicesReachedError:
-            log.doLog(
+            log.log(
                 servicePool,
                 log.LogLevel.ERROR,
                 'Max number of services reached for this service',

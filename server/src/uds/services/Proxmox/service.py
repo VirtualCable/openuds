@@ -296,7 +296,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             self.disableHA(vmId)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmId, e)
-            self.doLog(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
+            self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
             
         # And remove it
         return self.parent().removeMachine(vmId)

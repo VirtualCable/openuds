@@ -90,8 +90,8 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
                 protocol = 'RDS' if 'remote-app' in val else val['protocol'].upper()
                 host = val.get('hostname', '0.0.0.0')  # nosec: Not a bind, just a placeholder for "no host"
                 msg = f'User {user.name} started HTML5 {protocol} tunnel to {host}.'
-                log.doLog(user.manager, log.LogLevel.INFO, msg)
-                log.doLog(userService, log.LogLevel.INFO, msg)
+                log.log(user.manager, log.LogLevel.INFO, msg)
+                log.log(userService, log.LogLevel.INFO, msg)
 
                 events.addEvent(
                     userService.deployed_service,

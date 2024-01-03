@@ -134,7 +134,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 except client.ProxmoxNotFound:
                     storage.remove('tr' + str(vmId))  # VM does not exists anymore
                 except Exception as e:  # Any other exception wil be threated again
-                    # instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
+                    # instance.log('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal for proxmox finished')

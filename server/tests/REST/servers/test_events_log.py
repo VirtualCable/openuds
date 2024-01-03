@@ -63,8 +63,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
         server = servers_fixtures.createServer()
         userService = self.user_service_managed
 
-        # Mock the "log.doLog" method (uds.core.util.log.doLog)
-        with mock.patch('uds.core.managers.log.manager.LogManager.doLog') as doLog:
+        with mock.patch('uds.core.managers.log.manager.LogManager.log') as the_log:
             # Now notify to server
             response = self.client.rest_post(
                 '/servers/event',
@@ -77,7 +76,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
             )
             self.assertEqual(response.status_code, 200)
             # First call shout have
-            doLog.assert_any_call(server, log.LogLevel.INFO, 'test message', log.LogSource.SERVER, None)
+            the_log.assert_any_call(server, log.LogLevel.INFO, 'test message', log.LogSource.SERVER, None)
 
             # Now notify to an userService
             response = self.client.rest_post(
@@ -92,7 +91,7 @@ class ServerEventsLogTest(rest.test.RESTTestCase):
             )
 
             self.assertEqual(response.status_code, 200)
-            doLog.assert_any_call(
+            the_log.assert_any_call(
                 userService, log.LogLevel.INFO, 'test message userservice', log.LogSource.SERVER, None
             )
 

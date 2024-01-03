@@ -123,7 +123,7 @@ class Group(UUIDModel):
         to_delete.getManager().remove_group(to_delete.name)
 
         # Clears related logs
-        log.clearLogs(to_delete)
+        log.clear_logs(to_delete)
 
         logger.debug('Deleted group %s', to_delete)
 

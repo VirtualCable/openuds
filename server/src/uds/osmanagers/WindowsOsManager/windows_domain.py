@@ -296,7 +296,7 @@ class WinDomainOsManager(WindowsOsManager):
                 break
             except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
                 logger.warning('Could not find _ldap._tcp.%s', self._domain)
-                log.doLog(
+                log.log(
                     userService,
                     log.LogLevel.WARNING,
                     f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
@@ -314,7 +314,7 @@ class WinDomainOsManager(WindowsOsManager):
                 # logger.exception('Ldap Exception caught')
 
         if error:
-            log.doLog(userService, log.LogLevel.WARNING, error, log.LogSource.OSMANAGER)
+            log.log(userService, log.LogLevel.WARNING, error, log.LogSource.OSMANAGER)
             logger.error(error)
 
     def release(self, userService: 'UserService') -> None:
@@ -326,7 +326,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         if '.' not in self._domain:
             # logger.info('Releasing from a not FQDN domain is not supported')
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.INFO,
                 "Removing a domain machine form a non FQDN domain is not supported.",
@@ -338,7 +338,7 @@ class WinDomainOsManager(WindowsOsManager):
             ldapConnection = self.__connectLdap()
         except dns.resolver.NXDOMAIN:  # No domain found, log it and pass
             logger.warning('Could not find _ldap._tcp.%s', self._domain)
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.WARNING,
                 f'Could not remove machine from domain (_ldap._tcp.{self._domain} not found)',
@@ -347,7 +347,7 @@ class WinDomainOsManager(WindowsOsManager):
             return
         except ldaputil.LDAPError as e:
             # logger.exception('Ldap Exception caught')
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.WARNING,
                 f'Could not remove machine from domain ({e})',
@@ -356,7 +356,7 @@ class WinDomainOsManager(WindowsOsManager):
             return
         except Exception as e:
             # logger.exception('Exception caught')
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.WARNING,
                 f'Could not remove machine from domain ({e})',

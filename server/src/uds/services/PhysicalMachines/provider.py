@@ -145,7 +145,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                     res = dns.resolver.resolve(ip, 'AAAA')
                     ip = res[0].address
                 except Exception as e:
-                    self.doLog(log.LogLevel.WARNING, f'Name {ip} could not be resolved')
+                    self.do_log(log.LogLevel.WARNING, f'Name {ip} could not be resolved')
                     logger.warning('Name %s could not be resolved (%s)', ip, e)
                     return ''
 

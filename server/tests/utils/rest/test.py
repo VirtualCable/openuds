@@ -90,10 +90,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         )
 
         for user in self.users:
-            log.doLog(user, log.LogLevel.DEBUG, f'Debug Log for {user.name}')
-            log.doLog(user, log.LogLevel.INFO, f'Info Log for {user.name}')
-            log.doLog(user, log.LogLevel.WARNING, f'Warning Log for {user.name}')
-            log.doLog(user, log.LogLevel.ERROR, f'Error Log for {user.name}')
+            log.log(user, log.LogLevel.DEBUG, f'Debug Log for {user.name}')
+            log.log(user, log.LogLevel.INFO, f'Info Log for {user.name}')
+            log.log(user, log.LogLevel.WARNING, f'Warning Log for {user.name}')
+            log.log(user, log.LogLevel.ERROR, f'Error Log for {user.name}')
 
         self.provider = services_fixtures.createProvider()
 

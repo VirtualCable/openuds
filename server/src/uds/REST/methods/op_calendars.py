@@ -117,7 +117,7 @@ class AccessCalendars(DetailHandler):
                 calendar=calendar, access=access, priority=priority
             )
 
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'{"Added" if uuid is None else "Updated"} access calendar {calendar.name}/{access} by {self._user.pretty_name}',
@@ -130,7 +130,7 @@ class AccessCalendars(DetailHandler):
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
 
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
 
 class ActionsCalendars(DetailHandler):
@@ -225,7 +225,7 @@ class ActionsCalendars(DetailHandler):
                 params=params,
             )
 
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, ServicePool)
@@ -239,7 +239,7 @@ class ActionsCalendars(DetailHandler):
 
         calendarAction.delete()
 
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def execute(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, ServicePool)
@@ -255,7 +255,7 @@ class ActionsCalendars(DetailHandler):
             f'{calendarAction.params}" by {self._user.pretty_name}'
         )
 
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
         calendarAction.execute()
 
         return self.success()

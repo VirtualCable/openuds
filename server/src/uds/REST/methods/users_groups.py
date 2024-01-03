@@ -191,7 +191,7 @@ class Users(DetailHandler):
         except Exception:
             raise self.invalidItemException() from None
 
-        return log.getLogs(user)
+        return log.get_logs(user)
 
     def saveItem(self, parent: 'Model', item):
         parent = ensure.is_instance(parent, Authenticator)

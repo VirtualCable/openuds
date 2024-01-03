@@ -116,7 +116,7 @@ class OVirtDeferredRemoval(jobs.Job):
                     # It this is reached, remove check
                     storage.remove('tr' + vmId)
                 except Exception as e:  # Any other exception wil be threated again
-                    # instance.doLog('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
+                    # instance.log('Delayed removal of %s has failed: %s. Will retry later', vmId, e)
                     logger.error('Delayed removal of %s failed: %s', i, e)
 
         logger.debug('Deferred removal finished')

@@ -97,26 +97,26 @@ class HangedCleaner(Job):
                 if (
                     us.state in [State.REMOVING, State.CANCELING]
                 ):  # Removing too long, remark it as removable
-                    log.doLog(
+                    log.log(
                         us,
                         log.LogLevel.ERROR,
                         'User Service hanged on removal process. Restarting removal.',
                         log.LogSource.INTERNAL,
                     )
-                    log.doLog(
+                    log.log(
                         servicePool,
                         log.LogLevel.ERROR,
                         f'User service {us.friendly_name} hanged on removal. Restarting removal.',
                     )
                     us.release()  # Mark it again as removable, and let's see
                 else:
-                    log.doLog(
+                    log.log(
                         us,
                         log.LogLevel.ERROR,
                         'User Service seems to be hanged. Removing it.',
                         log.LogSource.INTERNAL,
                     )
-                    log.doLog(
+                    log.log(
                         servicePool,
                         log.LogLevel.ERROR,
                         f'Removing user service {us.friendly_name} because it seems to be hanged'

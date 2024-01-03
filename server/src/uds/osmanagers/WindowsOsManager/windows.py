@@ -143,7 +143,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def getName(self, userService: 'UserService') -> str:
         return userService.getName()
 
-    def doLog(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
+    def do_log(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
         try:
             msg, levelStr = data.split('\t')
@@ -153,10 +153,10 @@ class WindowsOsManager(osmanagers.OSManager):
                 logger.debug('Do not understand level %s', levelStr)
                 level = log.LogLevel.INFO
 
-            log.doLog(userService, level, msg, origin)
+            log.log(userService, level, msg, origin)
         except Exception:
             logger.exception('WindowsOs Manager message log: ')
-            log.doLog(
+            log.log(
                 userService, log.LogLevel.ERROR, f'do not understand {data}', origin
             )
 
@@ -192,7 +192,7 @@ class WindowsOsManager(osmanagers.OSManager):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
         if self.isRemovableOnLogout(userService):
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',

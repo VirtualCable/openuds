@@ -298,7 +298,7 @@ if sys.platform == 'win32':
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.LogLevel.ERROR, reason)
+        self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
             ProxmoxDeferredRemoval.remove(self.service().parent(), int(self._vmid))
@@ -532,7 +532,7 @@ if sys.platform == 'win32':
         logger.debug('State is running')
         if sql_stamp_seconds() - shutdown_start > GUEST_SHUTDOWN_WAIT:
             logger.debug('Time is consumed, falling back to stop')
-            self.doLog(
+            self.do_log(
                 log.LogLevel.ERROR,
                 f'Could not shutdown machine using soft power off in time ({GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )

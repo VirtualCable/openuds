@@ -259,14 +259,14 @@ class OSManager(Module):
             fld4=fullUserName,
         )
 
-        log.doLog(
+        log.log(
             userService,
             log.LogLevel.INFO,
             f'User {userName} has logged in',
             log.LogSource.OSMANAGER,
         )
 
-        log.useLog(
+        log.log_use(
             'login',
             uniqueId,
             serviceIp,
@@ -323,14 +323,14 @@ class OSManager(Module):
             fld4=fullUserName,
         )
 
-        log.doLog(
+        log.log(
             userService,
             log.LogLevel.INFO,
             f'User {userName} has logged out',
             log.LogSource.OSMANAGER,
         )
 
-        log.useLog(
+        log.log_use(
             'logout',
             uniqueId,
             serviceIp,

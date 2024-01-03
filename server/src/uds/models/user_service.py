@@ -604,7 +604,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
     # Utility for logging
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
-        log.doLog(self, level, message, log.LogSource.INTERNAL)
+        log.log(self, level, message, log.LogSource.INTERNAL)
 
     def testServer(self, host, port, timeout=4) -> bool:
         return self.deployed_service.testServer(host, port, timeout)
@@ -635,7 +635,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         to_delete.closeSession('')
 
         # Clear related logs to this user service
-        log.clearLogs(to_delete)
+        log.clear_logs(to_delete)
 
         logger.debug('Deleted user service %s', to_delete)
 

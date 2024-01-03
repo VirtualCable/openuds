@@ -36,7 +36,7 @@ from uds import models
 
 # Import for REST using this module can access constants easily
 # pylint: disable=unused-import
-from uds.core.util.log import LogLevel, LogSource, doLog
+from uds.core.util.log import LogLevel, LogSource, log
 
 if typing.TYPE_CHECKING:
     from .handlers import Handler
@@ -91,7 +91,7 @@ def logOperation(
     path = replacePath(path)
 
     username = handler.request.user.pretty_name if handler.request.user else 'Unknown'
-    doLog(
+    log(
         None,  # > None Objects goes to SYSLOG (global log)
         level=level,
         message=f'{handler.request.ip} [{username}]: [{handler.request.method}/{response_code}] {path}'[

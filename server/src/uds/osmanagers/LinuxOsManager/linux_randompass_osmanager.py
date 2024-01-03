@@ -100,7 +100,7 @@ class LinuxRandomPassManager(LinuxOsManager):
                 for _ in range(16)
             )
             service.storeValue('linOsRandomPass', randomPass)
-            log.doLog(
+            log.log(
                 service,
                 log.LogLevel.INFO,
                 f'Password set to "{randomPass}"',

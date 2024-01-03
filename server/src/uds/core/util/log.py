@@ -132,7 +132,7 @@ class LogSource(enum.StrEnum):
     LOGS = 'logs'
 
 
-def useLog(
+def log_use(
     type_: str,
     serviceUniqueId: str,
     serviceIp: str,
@@ -174,7 +174,7 @@ def useLog(
     # Will be stored on database by UDSLogHandler
 
 
-def doLog(
+def log(
     wichObject: typing.Optional['Model'],
     level: LogLevel,
     message: str,
@@ -187,7 +187,7 @@ def doLog(
     LogManager.manager().log(wichObject, level, message, source, logName)
 
 
-def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict]:
+def get_logs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict]:
     """
     Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
     """
@@ -197,7 +197,7 @@ def getLogs(wichObject: typing.Optional['Model'], limit: int = -1) -> list[dict]
     return LogManager().get_logs(wichObject, limit)
 
 
-def clearLogs(wichObject: typing.Optional['Model']) -> None:
+def clear_logs(wichObject: typing.Optional['Model']) -> None:
     """
     Clears the logs associated with the object using the logManager
     """
@@ -220,7 +220,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.notifications import NotificationsManager
 
-        def formatMessage(*, clearLevel: bool) -> str:
+        def _format_msg(*, clearLevel: bool) -> str:
             msg = self.format(record)
             # Remove date and time from message, as it will be stored on database
             msg = DATETIME_PATTERN.sub('', msg)
@@ -238,11 +238,11 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
                 logLevel = LogLevel.fromLoggingLevel(record.levelno)
                 UDSLogHandler.emiting = True
                 identificator = os.path.basename(self.baseFilename)
-                msg = formatMessage(clearLevel=True)
+                msg = _format_msg(clearLevel=True)
                 if record.levelno >= logging.WARNING:
                     # Remove traceback from message, as it will be stored on database
                     notify(msg.splitlines()[0], identificator, logLevel)
-                doLog(None, logLevel, msg, LogSource.LOGS, identificator)
+                log(None, logLevel, msg, LogSource.LOGS, identificator)
             except Exception:  # nosec: If cannot log, just ignore it
                 pass
             finally:
@@ -250,7 +250,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
 
         # Send warning and error messages to systemd journal
         if record.levelno >= logging.WARNING:
-            msg = formatMessage(clearLevel=False)
+            msg = _format_msg(clearLevel=False)
             # Send to systemd journaling, transforming identificator and priority
             identificator = 'UDS-' + os.path.basename(self.baseFilename).split('.')[0]
             # convert syslog level to systemd priority

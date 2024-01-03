@@ -287,7 +287,7 @@ class IPMachinesService(IPServiceBase):
                     if self._port > 0 and not wolENABLED:  # If configured WOL, check is a nonsense
                         if net.testConnection(theIP, self._port, timeOut=0.5) is False:
                             # Log into logs of provider, so it can be "shown" on services logs
-                            self.parent().doLog(
+                            self.parent().do_log(
                                 log.LogLevel.WARNING,
                                 f'Host {theIP} not accesible on port {self._port}',
                             )

@@ -158,7 +158,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.doLog(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
+            self.do_log(log.LogLevel.ERROR, 'Error on setReady: {}'.format(e))
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return State.FINISHED
@@ -248,7 +248,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         self._queue = [opError]
         self._reason = str(reason)
 
-        self.doLog(log.LogLevel.ERROR, self._reason)
+        self.do_log(log.LogLevel.ERROR, self._reason)
 
         if self._vmid:  # Powers off & delete it
             try:

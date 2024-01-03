@@ -511,7 +511,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if (
                 inAssigned >= servicePool.max_srvs
             ):  # cacheUpdater will drop unnecesary L1 machines, so it's not neccesary to check against inCacheL1
-                log.doLog(
+                log.log(
                     servicePool,
                     log.LogLevel.WARNING,
                     f'Max number of services reached: {servicePool.max_srvs}',
@@ -786,7 +786,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Test if the service is ready
         if userService.isReady():
             serviceNotReadyCode = 0x0002
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.INFO,
                 f"User {user.pretty_name} from {srcIp} has initiated access",
@@ -800,7 +800,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
             if self.checkUuid(userService) is False:  # The service is not the expected one
                 serviceNotReadyCode = 0x0004
-                log.doLog(
+                log.log(
                     userService,
                     log.LogLevel.WARNING,
                     f'User service is not accessible due to invalid UUID (user: {user.pretty_name}, ip: {ip})',
@@ -820,7 +820,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     serviceNotReadyCode = 0x0003
                     transportInstance = transport.get_instance()
                     if transportInstance.isAvailableFor(userService, ip):
-                        log.doLog(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
+                        log.log(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
                         self.notifyPreconnect(
                             userService,
                             transportInstance.getConnectionInfo(userService, user, ''),
@@ -841,7 +841,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         )
 
                     message = transportInstance.getCustomAvailableErrorMsg(userService, ip)
-                    log.doLog(userService, log.LogLevel.WARNING, message, log.LogSource.TRANSPORT)
+                    log.log(userService, log.LogLevel.WARNING, message, log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
                         userService,
@@ -850,7 +850,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 else:
                     logger.debug('Ip not available from user service %s', userService)
         else:
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.WARNING,
                 f'User {user.pretty_name} from {srcIp} tried to access, but service was not ready',
@@ -1042,7 +1042,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                         )
                         usable = None
 
-        log.doLog(
+        log.log(
             meta,
             log.LogLevel.WARNING,
             f'No user service accessible from device (ip {srcIp}, os: {os.os.name})',

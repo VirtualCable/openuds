@@ -49,14 +49,14 @@ def process_log(server: 'models.Server', data: dict[str, typing.Any]) -> typing.
     if data.get('userservice_uuid', None):  # Log for an user service
         try:
             userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
-            log.doLog(
+            log.log(
                 userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
             )
             return rest_result(consts.OK)
         except models.UserService.DoesNotExist:
             pass  # If not found, log on server
 
-    log.doLog(server, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER)
+    log.log(server, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER)
 
     return rest_result(consts.OK)
 

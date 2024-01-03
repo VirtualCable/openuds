@@ -155,7 +155,7 @@ class XenLinkedDeployment(services.UserService):
             self.cache.put('ready', '1', 30)                
         except Exception as e:
             # On case of exception, log an an error and return as if the operation was executed
-            self.doLog(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
+            self.do_log(log.LogLevel.ERROR, 'Error setting machine state: {}'.format(e))
             # return self.__error('Machine is not available anymore')
 
         return State.FINISHED
@@ -225,7 +225,7 @@ class XenLinkedDeployment(services.UserService):
 
     def __error(self, reason: typing.Any) -> str:
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.LogLevel.ERROR, reason)
+        self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off and delete VM
             try:

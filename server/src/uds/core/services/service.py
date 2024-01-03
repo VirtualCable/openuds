@@ -466,14 +466,14 @@ class Service(Module):
         """
         return False
 
-    def doLog(self, level: log.LogLevel, message: str) -> None:
+    def do_log(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
         from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
-            log.doLog(DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
+            log.log(DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
 
     @classmethod
     def canAssign(cls) -> bool:

@@ -13,6 +13,7 @@
 *.debhelper*
 *-stamp
 *.substvars
+.coverage*
 
 # /client/administration/
 /client/administration/*.suo

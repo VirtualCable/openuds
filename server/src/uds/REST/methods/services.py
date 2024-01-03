@@ -332,7 +332,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             service = parent.services.get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
-            return log.getLogs(service)
+            return log.get_logs(service)
         except Exception:
             raise self.invalidItemException() from None
 

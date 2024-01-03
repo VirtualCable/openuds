@@ -252,7 +252,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         User.objects.filter(parent=to_delete.id).delete()
 
         # Remove related logs
-        log.clearLogs(to_delete)
+        log.clear_logs(to_delete)
 
         # Removes all user services assigned to this user (unassign it and mark for removal)
         for us in to_delete.userServices.all():

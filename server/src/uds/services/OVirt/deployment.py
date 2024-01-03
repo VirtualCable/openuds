@@ -219,7 +219,7 @@ class OVirtLinkedDeployment(services.UserService):
 
             self.cache.put('ready', '1')
         except Exception as e:
-            self.doLog(log.LogLevel.ERROR, f'Error on setReady: {e}')
+            self.do_log(log.LogLevel.ERROR, f'Error on setReady: {e}')
             # Treat as operation done, maybe the machine is ready and we can continue
 
         return State.FINISHED
@@ -336,7 +336,7 @@ if sys.platform == 'win32':
         """
         reason = str(reason)
         logger.debug('Setting error state, reason: %s', reason)
-        self.doLog(log.LogLevel.ERROR, reason)
+        self.do_log(log.LogLevel.ERROR, reason)
 
         if self._vmid != '':  # Powers off
             OVirtDeferredRemoval.remove(self.service().parent(), self._vmid)

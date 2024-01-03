@@ -295,7 +295,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             s.env.clearRelatedData()
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clear_logs(toDelete)
 
         # Clears related permissions
         clean(toDelete)

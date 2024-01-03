@@ -712,7 +712,7 @@ class Log(ActorV3Action):
             level = log.LogLevel.fromInt(int(self._params['level']) + 10000)
         else:
             level = log.LogLevel.fromInt(int(self._params['level']))
-        log.doLog(
+        log.log(
             userService,
             level,
             self._params['message'],

@@ -602,7 +602,7 @@ class ServicesPools(ModelHandler):
     def getLogs(self, item: 'Model') -> list[dict]:
         item = ensure.is_instance(item, ServicePool)
         try:
-            return log.getLogs(item)
+            return log.get_logs(item)
         except Exception:
             return []
 

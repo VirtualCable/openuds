@@ -217,7 +217,7 @@ class ServicePoolPublication(UUIDModel):
         # It's handled as "publish", and as so, it can be a multi-step process
 
         # Clears related logs
-        log.clearLogs(to_delete)
+        log.clear_logs(to_delete)
 
         logger.debug('Deleted publication %s', to_delete)
 

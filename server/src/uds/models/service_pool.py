@@ -655,7 +655,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     # Utility for logging
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
-        log.doLog(self, level, message, log.LogSource.INTERNAL)
+        log.log(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod
     def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
@@ -677,7 +677,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         toDelete.get_environment().clearRelatedData()
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clear_logs(toDelete)
 
         # Clears related permissions
         clean(toDelete)

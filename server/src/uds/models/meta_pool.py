@@ -275,7 +275,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         toDelete: 'MetaPool' = kwargs['instance']
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clear_logs(toDelete)
 
         # Clears related permissions
         clean(toDelete)

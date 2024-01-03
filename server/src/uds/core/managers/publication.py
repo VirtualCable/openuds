@@ -342,7 +342,7 @@ class PublicationManager(metaclass=singleton.Singleton):
         if publication.state not in State.PUBLISH_STATES:
             if publication.state == State.CANCELING:  # Double cancel
                 logger.info('Double cancel invoked for a publication')
-                log.doLog(
+                log.log(
                     publication.deployed_service,
                     log.LogLevel.WARNING,
                     'Forced cancel on publication, you must check uncleaned resources manually',

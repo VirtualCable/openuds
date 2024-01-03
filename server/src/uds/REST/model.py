@@ -787,7 +787,7 @@ class ModelHandler(BaseModelHandler):
     def getLogs(self, item: models.Model) -> list[dict]:
         self.ensureAccess(item, types.permissions.PermissionType.READ)
         try:
-            return log.getLogs(item)
+            return log.get_logs(item)
         except Exception as e:
             logger.warning('Exception getting logs for %s: %s', item, e)
             return []

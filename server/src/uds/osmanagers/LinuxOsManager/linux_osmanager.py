@@ -137,7 +137,7 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         return service.getName()
 
-    def doLog(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
+    def do_log(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
         # Stores a log associated with this service
         try:
             msg, slevel = data.split('\t')
@@ -146,9 +146,9 @@ class LinuxOsManager(osmanagers.OSManager):
             except Exception:
                 logger.debug('Do not understand level %s', slevel)
                 level = log.LogLevel.INFO
-            log.doLog(service, level, msg, origin)
+            log.log(service, level, msg, origin)
         except Exception:
-            log.doLog(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
+            log.log(service, log.LogLevel.ERROR, f'do not understand {data}', origin)
 
     def actorData(
         self, userService: 'UserService'
@@ -161,7 +161,7 @@ class LinuxOsManager(osmanagers.OSManager):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
         if self.isRemovableOnLogout(userService):
-            log.doLog(
+            log.log(
                 userService,
                 log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',

@@ -193,7 +193,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
     if userService:
         if actionString == 'release' and userService.deployed_service.allow_users_remove:
             rebuild = True
-            log.doLog(
+            log.log(
                 userService.deployed_service,
                 log.LogLevel.INFO,
                 "Removing User Service {} as requested by {} from {}".format(
@@ -209,7 +209,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
             and userService.deployed_service.service.get_type().canReset  # type: ignore
         ):
             rebuild = True
-            log.doLog(
+            log.log(
                 userService.deployed_service,
                 log.LogLevel.INFO,
                 "Reseting User Service {} as requested by {} from {}".format(

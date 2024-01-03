@@ -183,7 +183,7 @@ class AssignedService(DetailHandler):
         try:
             userService: models.UserService = parent.assignedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', userService)
-            return log.getLogs(userService)
+            return log.get_logs(userService)
         except Exception as e:
             raise self.invalidItemException() from e
 
@@ -210,7 +210,7 @@ class AssignedService(DetailHandler):
         else:
             raise self.invalidItemException(_('Item is not removable'))
 
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -239,7 +239,7 @@ class AssignedService(DetailHandler):
         userService.save()
 
         # Log change
-        log.doLog(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
+        log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
         userService = parent.userServices.get(uuid=processUuid(item))
@@ -296,7 +296,7 @@ class CachedService(AssignedService):
         try:
             userService = parent.cachedUserServices().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
-            return log.getLogs(userService)
+            return log.get_logs(userService)
         except Exception:
             raise self.invalidItemException() from None
 
@@ -359,7 +359,7 @@ class Groups(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         group: models.Group = models.Group.objects.get(uuid=processUuid(self._params['id']))
         parent.assignedGroups.add(group)
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Added group {group.pretty_name} by {self._user.pretty_name}',
@@ -370,7 +370,7 @@ class Groups(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         group: models.Group = models.Group.objects.get(uuid=processUuid(self._args[0]))
         parent.assignedGroups.remove(group)
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Removed group {group.pretty_name} by {self._user.pretty_name}',
@@ -420,7 +420,7 @@ class Transports(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['id']))
         parent.transports.add(transport)
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Added transport {transport.name} by {self._user.pretty_name}',
@@ -431,7 +431,7 @@ class Transports(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._args[0]))
         parent.transports.remove(transport)
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Removed transport {transport.name} by {self._user.pretty_name}',
@@ -464,7 +464,7 @@ class Publications(DetailHandler):
         logger.debug('Custom "publish" invoked for %s', parent)
         parent.publish(changeLog)  # Can raise exceptions that will be processed on response
 
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Initiated publication v{parent.current_pub_revision} by {self._user.pretty_name}',
@@ -494,7 +494,7 @@ class Publications(DetailHandler):
         except Exception as e:
             raise ResponseError(str(e)) from e
 
-        log.doLog(
+        log.log(
             parent,
             log.LogLevel.INFO,
             f'Canceled publication v{parent.current_pub_revision} by {self._user.pretty_name}',

@@ -220,14 +220,14 @@ class ServiceProvider(module.Module):
         val = getattr(val, 'value', val)
         return val is True or val == consts.TRUE_STR
 
-    def doLog(self, level: log.LogLevel, message: str) -> None:
+    def do_log(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this service
         """
         from uds.models import Provider as DBProvider  # pylint: disable=import-outside-toplevel
 
         if self.getUuid():
-            log.doLog(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
+            log.log(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
 
     def __str__(self):
         """

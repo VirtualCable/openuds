@@ -124,7 +124,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
             s.env.clearRelatedData()
 
         # Clears related logs
-        log.clearLogs(to_delete)
+        log.clear_logs(to_delete)
 
         # Clears related permissions
         clean(to_delete)
