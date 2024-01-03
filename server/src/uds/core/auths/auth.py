@@ -247,7 +247,7 @@ def registerUser(
     username = authInstance.transformUsername(username, request)
     logger.debug('Transformed username: %s', username)
 
-    usr = authenticator.getOrCreateUser(username, username)
+    usr = authenticator.get_or_create_user(username, username)
     usr.real_name = authInstance.getRealName(username)
     usr.save()
     if usr is not None and State.isActive(usr.state):

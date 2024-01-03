@@ -208,7 +208,7 @@ class Authenticator(Module):
 
         if self._dbObj is None:
             if not self._uuid:
-                return Authenticator.nullAuthenticator()
+                return Authenticator.null()
             self._dbObj = Authenticator.objects.get(uuid=self._uuid)
         return self._dbObj
 
@@ -370,7 +370,7 @@ class Authenticator(Module):
         # Maybe "internal for root", if this is the case, it is valid for all ips
         if not self.dbObj().id:
             return True
-        return self.dbObj().state != consts.auth.DISABLED and self.dbObj().isValidForIp(
+        return self.dbObj().state != consts.auth.DISABLED and self.dbObj().is_ip_allowed(
             typing.cast('types.request.ExtendedHttpRequest', request).ip
         )
 

@@ -45,7 +45,8 @@ from .tag import TaggingMixin
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.models import Group, Network, User
+    from uds.models import Group, Network, User, MFA
+    from django.db.models.manager import RelatedManager # type: ignore  # MyPy complains because of django-stubs
 
 
 logger = logging.getLogger(__name__)
@@ -65,12 +66,12 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     # "fake" relations declarations for type checking
     # objects: 'models.manager.Manager["Authenticator"]'
-    users: 'models.manager.RelatedManager[User]'
-    groups: 'models.manager.RelatedManager[Group]'
+    users: 'RelatedManager[User]'
+    groups: 'RelatedManager[Group]'
 
-    networks: 'models.manager.RelatedManager[Network]'
+    networks: 'RelatedManager[Network]'
     # MFA associated to this authenticator. Can be null
-    mfa = models.ForeignKey(
+    mfa: models.ForeignKey['MFA|None'] = models.ForeignKey(
         'MFA',
         on_delete=models.SET_NULL,
         null=True,
@@ -124,7 +125,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # If type is not registered (should be, but maybe a database inconsistence), consider this a "base empty auth"
         return auths.factory().lookup(self.data_type) or auths.Authenticator
 
-    def getOrCreateUser(self, username: str, realName: typing.Optional[str] = None) -> 'User':
+    def get_or_create_user(self, username: str, realName: typing.Optional[str] = None) -> 'User':
         """
         Used to get or create a new user at database associated with this authenticator.
 
@@ -170,7 +171,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
         return user
 
-    def isValidUser(self, username: str, returnValueIfNot: bool = True) -> bool:
+    def is_user_allowed(self, username: str, returnValueIfNot: bool = True) -> bool:
         """
         Checks the validity of an user
 
@@ -200,7 +201,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         except Exception:
             return returnValueIfNot
 
-    def isValidForIp(self, ipStr: str) -> bool:
+    def is_ip_allowed(self, ipStr: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -233,7 +234,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return not exists
     
     @staticmethod
-    def nullAuthenticator() -> 'Authenticator':
+    def null() -> 'Authenticator':
         """
         Returns a null authenticator, that is, an authenticator that does nothing
         """
@@ -247,7 +248,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         return Authenticator.objects.all().order_by('priority')
 
     @staticmethod
-    def getByTag(tag=None) -> collections.abc.Iterable['Authenticator']:
+    def get_by_tag(tag=None) -> collections.abc.Iterable['Authenticator']:
         """
         Gets authenticator by tag name.
         Special tag name "disabled" is used to exclude customAuth
@@ -271,7 +272,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
                 yield auth
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -301,7 +302,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
     # returns CSV header
     @staticmethod
-    def getCSVHeader(sep: str = ',') -> str:
+    def get_cvs_header(sep: str = ',') -> str:
         return sep.join(
             [
                 'name',
@@ -312,7 +313,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         )
 
     # Return record as csv line using separator (default: ',')
-    def toCsv(self, sep: str = ',') -> str:
+    def to_csv(self, sep: str = ',') -> str:
         return sep.join(
             [
                 self.name,
@@ -327,4 +328,4 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
 
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(Authenticator.beforeDelete, sender=Authenticator)
+models.signals.pre_delete.connect(Authenticator.pre_delete, sender=Authenticator)

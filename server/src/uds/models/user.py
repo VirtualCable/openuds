@@ -48,6 +48,7 @@ from .uuid_model import UUIDModel
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
     from uds.core.types.request import ExtendedHttpRequest
+    from django.db.models.manager import RelatedManager # type: ignore  # MyPy complains because of django-stubs
 
 
 logger = logging.getLogger(__name__)
@@ -82,9 +83,9 @@ class User(UUIDModel, properties.PropertiesMixin):
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["User"]'
-    groups: 'models.manager.RelatedManager[Group]'
-    userServices: 'models.manager.RelatedManager[UserService]'
-    permissions: 'models.manager.RelatedManager[Permissions]'
+    groups: 'RelatedManager[Group]'
+    userServices: 'RelatedManager[UserService]'
+    permissions: 'RelatedManager[Permissions]'
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """

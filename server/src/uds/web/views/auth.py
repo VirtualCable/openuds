@@ -228,7 +228,7 @@ def ticketAuth(
             logger.error('Ticket has no valid groups')
             raise Exception('Invalid ticket authentication')
 
-        usr = auth.getOrCreateUser(username, realname)
+        usr = auth.get_or_create_user(username, realname)
         if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
             raise exceptions.auth.InvalidUserException()
 

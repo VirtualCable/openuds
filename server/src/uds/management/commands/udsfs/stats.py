@@ -285,8 +285,8 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Compose the csv file from what we now of service pools
-        virtualFile = models.Authenticator.getCSVHeader().encode() + b'\n'
+        virtualFile = models.Authenticator.get_cvs_header().encode() + b'\n'
         # First, get the list of service pools
         for auth in models.Authenticator.objects.all().order_by('name'):
-            virtualFile += auth.toCsv().encode() + b'\n'
+            virtualFile += auth.to_csv().encode() + b'\n'
         return virtualFile
