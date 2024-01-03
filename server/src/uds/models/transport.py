@@ -91,10 +91,10 @@ class Transport(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values: typing.Optional[dict[str, str]] = None) -> 'transports.Transport':
-        return typing.cast('transports.Transport', super().getInstance(values=values))
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'transports.Transport':
+        return typing.cast('transports.Transport', super().get_instance(values=values))
 
-    def getType(self) -> type['transports.Transport']:
+    def get_type(self) -> type['transports.Transport']:
         """
         Get the type of the object this record represents.
 
@@ -107,7 +107,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         return transports.factory().lookup(self.data_type) or transports.Transport
 
-    def isValidForIp(self, ipStr: str) -> bool:
+    def is_ip_allowed(self, ipStr: str) -> bool:
         """
         Checks if this transport is valid for the specified IP.
 
@@ -142,7 +142,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         # Deny, must not be in any network
         return not exists
 
-    def isValidForOs(self, os: 'types.os.KnownOS') -> bool:
+    def is_os_allowed(self, os: 'types.os.KnownOS') -> bool:
         """If this transport is configured to be valid for the specified OS.
 
         Args:
@@ -157,7 +157,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -168,12 +168,12 @@ class Transport(ManagedObjectModel, TaggingMixin):
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete = kwargs['instance']
+        toDelete: 'Transport' = kwargs['instance']
 
         logger.debug('Before delete transport %s', toDelete)
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
-            s = toDelete.getInstance()
+            s = toDelete.get_instance()
             s.destroy()
             s.env.clearRelatedData()
 
@@ -182,4 +182,4 @@ class Transport(ManagedObjectModel, TaggingMixin):
 
 
 # : Connects a pre deletion signal to OS Manager
-models.signals.pre_delete.connect(Transport.beforeDelete, sender=Transport)
+models.signals.pre_delete.connect(Transport.pre_delete, sender=Transport)

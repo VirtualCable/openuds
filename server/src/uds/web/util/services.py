@@ -141,7 +141,7 @@ def getServicesData(
         tt = []
         t: Transport
         for t in Transport.objects.all().prefetch_related('networks'):
-            if t.isValidForIp(request.ip):
+            if t.is_ip_allowed(request.ip):
                 tt.append(t.name)
         validTrans = ','.join(tt)
 
@@ -150,14 +150,15 @@ def getServicesData(
 
     # Metapool helpers
     def transportIterator(member) -> collections.abc.Iterable[Transport]:
+        t: Transport
         for t in member.pool.transports.all().order_by('priority'):
             try:
-                typeTrans = t.getType()
+                typeTrans = t.get_type()
                 if (
                     typeTrans
-                    and t.validForIp(request.ip)
+                    and t.is_ip_allowed(request.ip)
                     and typeTrans.supportsOs(osType)
-                    and t.validForOs(osType)
+                    and t.is_os_allowed(osType)
                 ):
                     yield t
             except Exception as e:
@@ -252,12 +253,12 @@ def getServicesData(
                 # if pool.isInMaintenance():
                 #    continue
                 for t in member.pool.transports.all():
-                    typeTrans = t.getType()
+                    typeTrans = t.get_type()
                     if (
                         typeTrans
-                        and t.isValidForIp(request.ip)
+                        and t.is_ip_allowed(request.ip)
                         and typeTrans.supportsOs(osType)
-                        and t.isValidForOs(osType)
+                        and t.is_os_allowed(osType)
                     ):
                         metaTransports = [
                             {
@@ -340,12 +341,12 @@ def getServicesData(
         for t in sorted(
             sPool.transports.all(), key=lambda x: x.priority
         ):  # In memory sort, allows reuse prefetched and not too big array
-            typeTrans = t.getType()
+            typeTrans = t.get_type()
             if (
                 typeTrans
-                and t.isValidForIp(request.ip)
+                and t.is_ip_allowed(request.ip)
                 and typeTrans.supportsOs(osType)
-                and t.isValidForOs(osType)
+                and t.is_os_allowed(osType)
             ):
                 if typeTrans.ownLink:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
@@ -453,7 +454,7 @@ def enableService(
 
         userService.properties['accessed_by_client'] = False  # Reset accesed property to
 
-        typeTrans = trans.getType()
+        typeTrans = trans.get_type()
 
         error = ''  # No error
 

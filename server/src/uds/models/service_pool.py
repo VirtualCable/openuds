@@ -160,7 +160,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         db_table = 'uds__deployed_service'
         app_label = 'uds'
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
@@ -182,7 +182,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def transformsUserOrPasswordForService(self) -> bool:
         if self.osmanager:
-            return self.osmanager.getType().transformsUserOrPasswordForService()
+            return self.osmanager.get_type().transformsUserOrPasswordForService()
         return False
 
     def processUserPassword(self, username: str, password: str) -> tuple[str, str]:
@@ -288,7 +288,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return None
 
         # If has os manager, check if it is persistent
-        if self.osmanager and self.osmanager.getInstance().isPersistent():
+        if self.osmanager and self.osmanager.get_instance().isPersistent():
             return None
 
         # Return the date
@@ -368,7 +368,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             name: Name of the value to store
             value: Value of the value to store
         """
-        self.getEnvironment().storage.put(name, value)
+        self.get_environment().storage.put(name, value)
 
     def recoverValue(self, name: str) -> typing.Any:
         """
@@ -380,7 +380,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         Returns:
             Stored value, None if no value was stored
         """
-        return typing.cast(str, self.getEnvironment().storage.get(name))
+        return typing.cast(str, self.get_environment().storage.get(name))
 
     def setState(self, state: str, save: bool = True) -> None:
         """
@@ -474,7 +474,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if (
             self.activePublication() is None
             and self.service
-            and self.service.getType().publicationType is not None
+            and self.service.get_type().publicationType is not None
         ):
             raise InvalidServiceException()
 
@@ -520,7 +520,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        servicesNotNeedingPub = [t.getType() for t in services.factory().servicesThatDoNotNeedPublication()]
+        servicesNotNeedingPub = [t.get_type() for t in services.factory().servicesThatDoNotNeedPublication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
@@ -640,7 +640,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0 and self.service:
-            maxs = self.service.getInstance().maxUserServices
+            maxs = self.service.get_instance().maxUserServices
 
         if cachedValue == -1:
             cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
@@ -658,7 +658,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         log.doLog(self, level, message, log.LogSource.INTERNAL)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -674,7 +674,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         toDelete: 'ServicePool' = kwargs['instance']
 
         logger.debug('Deleting Service Pool %s', toDelete)
-        toDelete.getEnvironment().clearRelatedData()
+        toDelete.get_environment().clearRelatedData()
 
         # Clears related logs
         log.clearLogs(toDelete)
@@ -720,4 +720,4 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(ServicePool.beforeDelete, sender=ServicePool)
+models.signals.pre_delete.connect(ServicePool.pre_delete, sender=ServicePool)

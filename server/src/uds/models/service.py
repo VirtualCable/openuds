@@ -99,7 +99,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         app_label = 'uds'
         constraints = [models.UniqueConstraint(fields=['provider', 'name'], name='u_srv_provider_name')]
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
@@ -113,7 +113,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             },
         )
 
-    def getInstance(self, values: typing.Optional[dict[str, str]] = None) -> 'services.Service':
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'services.Service':
         """
         Instantiates the object this record contains.
 
@@ -132,11 +132,11 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
             return self._cachedInstance
 
-        prov: 'services.ServiceProvider' = self.provider.getInstance()
+        prov: 'services.ServiceProvider' = self.provider.get_instance()
         sType = prov.getServiceByType(self.data_type)
 
         if sType:
-            obj = sType(self.getEnvironment(), prov, values, uuid=self.uuid)
+            obj = sType(self.get_environment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
             raise Exception(f'Service type of {self.data_type} is not recogniced by provider {prov.name}')
@@ -145,7 +145,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         return obj
 
-    def getType(self) -> type['services.Service']:
+    def get_type(self) -> type['services.Service']:
         """
         Get the type of the object this record represents.
 
@@ -158,7 +158,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel,redefined-outer-name
 
-        prov: type['services.ServiceProvider'] = self.provider.getType()
+        prov: type['services.ServiceProvider'] = self.provider.get_type()
         return prov.getServiceByType(self.data_type) or services.Service
 
     @property
@@ -202,7 +202,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -213,21 +213,21 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete = kwargs['instance']
+        to_delete: 'Service' = kwargs['instance']
 
-        logger.debug('Before delete service %s', toDelete)
+        logger.debug('Before delete service %s', to_delete)
         # Only tries to get instance if data is not empty
-        if toDelete.data != '':
-            s = toDelete.getInstance()
+        if to_delete.data != '':
+            s = to_delete.get_instance()
             s.destroy()
             s.env.clearRelatedData()
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
 
 # : Connects a pre deletion signal to Service
-models.signals.pre_delete.connect(Service.beforeDelete, sender=Service)
+models.signals.pre_delete.connect(Service.pre_delete, sender=Service)

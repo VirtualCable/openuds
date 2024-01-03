@@ -83,13 +83,13 @@ class Providers(ModelHandler):
     table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     def item_as_dict(self, item: 'Provider') -> dict[str, typing.Any]:
-        type_ = item.getType()
+        type_ = item.get_type()
 
         # Icon can have a lot of data (1-2 Kbytes), but it's not expected to have a lot of services providers, and even so, this will work fine
         offers = [
             {
                 'name': gettext(t.name()),
-                'type': t.getType(),
+                'type': t.get_type(),
                 'description': gettext(t.description()),
                 'icon': t.icon64().replace('\n', ''),
             }
@@ -106,7 +106,7 @@ class Providers(ModelHandler):
             .count(),
             'maintenance_mode': item.maintenance_mode,
             'offers': offers,
-            'type': type_.getType(),
+            'type': type_.get_type(),
             'type_name': type_.name(),
             'comments': item.comments,
             'permission': permissions.getEffectivePermission(self._user, item),

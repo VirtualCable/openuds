@@ -237,7 +237,7 @@ class BaseX2GOTransport(transports.Transport):
         else:
             service = userService.service
 
-        servicesTypeProvided = service.getType().servicesTypeProvided
+        servicesTypeProvided = service.get_type().servicesTypeProvided
 
         if self.fixedName.value != '':
             username = self.fixedName.value

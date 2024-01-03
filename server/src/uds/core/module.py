@@ -144,7 +144,7 @@ class Module(UserInterface, Environmentable, Serializable):
         return _(cls.typeName)
 
     @classmethod
-    def getType(cls: type['Module']) -> str:
+    def get_type(cls: type['Module']) -> str:
         """
         Returns typeType
 

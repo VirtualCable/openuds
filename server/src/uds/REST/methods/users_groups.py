@@ -223,7 +223,7 @@ class Users(DetailHandler):
         user = None
         try:
             with transaction.atomic():
-                auth = parent.getInstance()
+                auth = parent.get_instance()
                 if item is None:  # Create new
                     auth.createUser(
                         fields
@@ -394,7 +394,7 @@ class Groups(DetailHandler):
             },
         ]
 
-    def getTypes(self, parent: 'Model', forType: typing.Optional[str]):
+    def get_types(self, parent: 'Model', forType: typing.Optional[str]):
         parent = ensure.is_instance(parent, Authenticator)
         tDct = {
             'group': {'name': _('Group'), 'description': _('UDS Group')},
@@ -433,7 +433,7 @@ class Groups(DetailHandler):
                 raise RequestError(_('Group name is required'))
             fields = self.readFieldsFromParams(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
-            auth = parent.getInstance()
+            auth = parent.get_instance()
             if not item:  # Create new
                 if not is_meta and not is_pattern:
                     auth.createGroup(

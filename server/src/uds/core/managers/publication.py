@@ -115,7 +115,7 @@ class PublicationLauncher(DelayedTask):
                     return
                 servicePoolPub.state = State.PREPARING
                 servicePoolPub.save()
-            pi = servicePoolPub.getInstance()
+            pi = servicePoolPub.get_intance()
             state = pi.publish()
             servicePool: ServicePool = servicePoolPub.deployed_service
             servicePool.current_pub_revision += 1
@@ -182,7 +182,7 @@ class PublicationFinishChecker(DelayedTask):
                         doPublicationCleanup = (
                             True
                             if osm is None
-                            else not osm.getInstance().isPersistent()
+                            else not osm.get_instance().isPersistent()
                         )
 
                         if doPublicationCleanup:
@@ -246,7 +246,7 @@ class PublicationFinishChecker(DelayedTask):
             if publication.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
             else:
-                publicationInstance = publication.getInstance()
+                publicationInstance = publication.get_intance()
                 logger.debug(
                     "publication instance class: %s", publicationInstance.__class__
                 )
@@ -360,7 +360,7 @@ class PublicationManager(metaclass=singleton.Singleton):
             return publication
 
         try:
-            pubInstance = publication.getInstance()
+            pubInstance = publication.get_intance()
             state = pubInstance.cancel()
             publication.setState(State.CANCELING)
             PublicationFinishChecker.checkAndUpdateState(
@@ -387,7 +387,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                 _('Can\'t unpublish publications with services in process')
             )
         try:
-            pubInstance = servicePoolPub.getInstance()
+            pubInstance = servicePoolPub.get_intance()
             state = pubInstance.destroy()
             servicePoolPub.setState(State.REMOVING)
             PublicationFinishChecker.checkAndUpdateState(

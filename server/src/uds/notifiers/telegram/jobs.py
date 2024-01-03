@@ -30,7 +30,7 @@ class TelegramReceiver(jobs.Job):
 
         # Get all Notifiers that are telegram notifiers
         for telegramDbNotifier in Notifier.objects.filter(data_Type=notifier.TELEGRAM_TYPE):
-            n = typing.cast(notifier.TelegramNotifier, telegramDbNotifier.getInstance())
+            n = typing.cast(notifier.TelegramNotifier, telegramDbNotifier.get_instance())
 
             if n is None:
                 logger.error('Notifier %s is not a Telegram notifier', telegramDbNotifier.name)

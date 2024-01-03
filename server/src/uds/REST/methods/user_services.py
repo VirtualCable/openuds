@@ -385,9 +385,9 @@ class Transports(DetailHandler):
 
     def getItems(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.ServicePool)
-        def getType(trans):
+        def get_type(trans: 'models.Transport'):
             try:
-                return self.typeAsDict(trans.getType())
+                return self.typeAsDict(trans.get_type())
             except Exception:  # No type found
                 return None
 
@@ -395,13 +395,13 @@ class Transports(DetailHandler):
             {
                 'id': i.uuid,
                 'name': i.name,
-                'type': getType(i),
+                'type': get_type(i),
                 'comments': i.comments,
                 'priority': i.priority,
-                'trans_type': _(i.getType().name()),
+                'trans_type': _(i.get_type().name()),
             }
             for i in parent.transports.all()
-            if getType(i)
+            if get_type(i)
         ]
 
     def getTitle(self, parent: 'Model') -> str:
@@ -511,7 +511,7 @@ class Publications(DetailHandler):
                 'revision': i.revision,
                 'publish_date': i.publish_date,
                 'state': i.state,
-                'reason': State.isErrored(i.state) and i.getInstance().reasonOfError() or '',
+                'reason': State.isErrored(i.state) and i.get_intance().reasonOfError() or '',
                 'state_date': i.state_date,
             }
             for i in parent.publications.all()

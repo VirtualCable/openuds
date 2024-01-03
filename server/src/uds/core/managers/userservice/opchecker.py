@@ -59,7 +59,7 @@ class StateUpdater:
     ):
         self.userService = userService
         self.userServiceInstance = (
-            userServiceInstance if userServiceInstance is not None else userService.getInstance()
+            userServiceInstance if userServiceInstance is not None else userService.get_instance()
         )
 
     def setError(self, msg: typing.Optional[str] = None):
@@ -278,7 +278,7 @@ class UserServiceOpChecker(DelayedTask):
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
                 return
-            ci = uService.getInstance()
+            ci = uService.get_instance()
             logger.debug("uService instance class: %s", ci.__class__)
             state = ci.checkState()
             UserServiceOpChecker.checkAndUpdateState(uService, ci, state)

@@ -491,7 +491,7 @@ class ServicesPools(ModelHandler):
                 raise RequestError(gettext('Base service does not exist anymore')) from None
 
             try:
-                serviceType = service.getType()
+                serviceType = service.get_type()
 
                 if serviceType.publicationType is None:
                     self._params['publish_on_save'] = False
@@ -626,7 +626,7 @@ class ServicesPools(ModelHandler):
     def actionsList(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         validActions: tuple[dict, ...] = ()
-        itemInfo = item.service.getType()  # type: ignore
+        itemInfo = item.service.get_type()  # type: ignore
         if itemInfo.usesCache is True:
             validActions += (
                 CALENDAR_ACTION_INITIAL,
@@ -659,7 +659,7 @@ class ServicesPools(ModelHandler):
 
     def listAssignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        service = item.service.getInstance()  # type: ignore
+        service = item.service.get_instance()  # type: ignore
         return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
 
     def createFromAssignable(self, item: 'Model') -> typing.Any:

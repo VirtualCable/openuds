@@ -109,13 +109,13 @@ class ServicePoolPublication(UUIDModel):
         ordering = ('publish_date',)
         app_label = 'uds'
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
 
-    def getInstance(self) -> 'services.Publication':
+    def get_intance(self) -> 'services.Publication':
         """
         Instantiates the object this record contains.
 
@@ -132,9 +132,9 @@ class ServicePoolPublication(UUIDModel):
         """
         if not self.deployed_service.service:
             raise Exception('No service assigned to publication')
-        serviceInstance = self.deployed_service.service.getInstance()
+        serviceInstance = self.deployed_service.service.get_instance()
         osManager = self.deployed_service.osmanager
-        osManagerInstance = osManager.getInstance() if osManager else None
+        osManagerInstance = osManager.get_instance() if osManager else None
 
         # Sanity check, so it's easier to find when we have created
         # a service that needs publication but do not have
@@ -145,7 +145,7 @@ class ServicePoolPublication(UUIDModel):
             )
 
         publication = serviceInstance.publicationType(
-            self.getEnvironment(),
+            self.get_environment(),
             service=serviceInstance,
             osManager=osManagerInstance,
             revision=self.revision,
@@ -200,7 +200,7 @@ class ServicePoolPublication(UUIDModel):
         publicationManager().cancel(self)
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -209,17 +209,17 @@ class ServicePoolPublication(UUIDModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete: ServicePoolPublication = kwargs['instance']
-        toDelete.getEnvironment().clearRelatedData()
+        to_delete: ServicePoolPublication = kwargs['instance']
+        to_delete.get_environment().clearRelatedData()
 
         # Delete method is invoked directly by PublicationManager,
         # Destroying a publication is not obligatory an 1 step action.
         # It's handled as "publish", and as so, it can be a multi-step process
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
-        logger.debug('Deleted publication %s', toDelete)
+        logger.debug('Deleted publication %s', to_delete)
 
     def __str__(self) -> str:
         return (
@@ -228,4 +228,4 @@ class ServicePoolPublication(UUIDModel):
 
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(ServicePoolPublication.beforeDelete, sender=ServicePoolPublication)
+models.signals.pre_delete.connect(ServicePoolPublication.pre_delete, sender=ServicePoolPublication)

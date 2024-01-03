@@ -156,7 +156,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         del self.properties['destroy_after']
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents.
 
@@ -178,7 +178,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             },
         )
 
-    def getInstance(self) -> 'services.UserService':
+    def get_instance(self) -> 'services.UserService':
         """
         Instantiates the object this record contains. In this case, the instantiated object needs also
         the os manager and the publication, so we also instantiate those here.
@@ -198,21 +198,21 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         servicePool = self.deployed_service
         if not servicePool.service:
             raise Exception('Service not found')
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.get_instance()
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             osmanagerInstance = None
         else:
-            osmanagerInstance = servicePool.osmanager.getInstance()
+            osmanagerInstance = servicePool.osmanager.get_instance()
         # We get active publication
         publicationInstance = None
         try:  # We may have deleted publication...
             if self.publication is not None:
-                publicationInstance = self.publication.getInstance()
+                publicationInstance = self.publication.get_intance()
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None  # type: ignore
             logger.exception(
-                'Got exception at getInstance of an userService %s (seems that publication does not exists!)',
+                'Got exception at get_instance of an userService %s (seems that publication does not exists!)',
                 self,
             )
         if serviceInstance.userServiceType is None:
@@ -220,7 +220,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 f'Class {serviceInstance.__class__.__name__} needs userServiceType but it is not defined!!!'
             )
         us = serviceInstance.userServiceType(
-            self.getEnvironment(),
+            self.get_environment(),
             service=serviceInstance,
             publication=publicationInstance,
             osmanager=osmanagerInstance,
@@ -255,7 +255,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns the name of the user deployed service
         """
         if self.friendly_name == '':
-            si = self.getInstance()
+            si = self.get_instance()
             self.friendly_name = si.getName()
             self.updateData(si)
 
@@ -266,7 +266,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns the unique id of the user deployed service
         """
         if self.unique_id == '':
-            si = self.getInstance()
+            si = self.get_instance()
             self.unique_id = si.getUniqueId()
             self.updateData(si)
         return self.unique_id
@@ -297,7 +297,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # To transition between old stor at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
-            val = typing.cast(str, self.getEnvironment().storage.get(name))
+            val = typing.cast(str, self.get_environment().storage.get(name))
         return val
 
     def setConnectionSource(self, src: types.connections.ConnectionSource) -> None:
@@ -343,7 +343,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def getOsManagerInstance(self) -> typing.Optional['osmanagers.OSManager']:
         osManager = self.getOsManager()
         if osManager:
-            return osManager.getInstance()
+            return osManager.get_instance()
         return None
 
     def needsOsManager(self) -> bool:
@@ -380,11 +380,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         servicePool = self.deployed_service
         if not servicePool.service:
             raise Exception('Service not found')
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.get_instance()
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.getInstance().processUserPassword(self, username, password)
+        return servicePool.osmanager.get_instance().processUserPassword(self, username, password)
 
     def setState(self, state: str) -> None:
         """
@@ -599,7 +599,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service and self.deployed_service.service.getType().publicationType is None
+            self.deployed_service.service and self.deployed_service.service.get_type().publicationType is None
         ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging
@@ -617,7 +617,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -626,21 +626,21 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete: 'UserService' = kwargs['instance']
+        to_delete: 'UserService' = kwargs['instance']
         # Clear environment
-        toDelete.getEnvironment().clearRelatedData()
+        to_delete.get_environment().clearRelatedData()
         # Ensure all sessions are closed (invoke with '' to close all sessions)
         # In fact, sessions are going to be deleted also, but we give then
         # the oportunity to execute some code before deleting them
-        toDelete.closeSession('')
+        to_delete.closeSession('')
 
         # Clear related logs to this user service
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
-        logger.debug('Deleted user service %s', toDelete)
+        logger.debug('Deleted user service %s', to_delete)
 
 
 # Connects a pre deletion signal to Authenticator
-signals.pre_delete.connect(UserService.beforeDelete, sender=UserService)
+signals.pre_delete.connect(UserService.pre_delete, sender=UserService)
 # Connects the properties signals
-properties.PropertiesMixin.setupSignals(UserService)
+properties.PropertiesMixin.setup_signals(UserService)

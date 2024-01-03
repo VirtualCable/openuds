@@ -123,7 +123,7 @@ class Transports(ModelHandler):
                     for x in ServicePool.objects.filter(service__isnull=False)
                     .order_by('name')
                     .prefetch_related('service')
-                    if transportType.protocol in x.service.getType().allowedProtocols
+                    if transportType.protocol in x.service.get_type().allowedProtocols
                 ],
                 'label': gettext('Service Pools'),
                 'tooltip': gettext('Currently assigned services pools'),
@@ -149,7 +149,7 @@ class Transports(ModelHandler):
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Transport)
-        type_ = item.getType()
+        type_ = item.get_type()
         pools = list(item.deployedServices.all().values_list('uuid', flat=True))
         return {
             'id': item.uuid,
@@ -164,7 +164,7 @@ class Transports(ModelHandler):
             'pools': pools,
             'pools_count': len(pools),
             'deployed_count': item.deployedServices.count(),
-            'type': type_.getType(),
+            'type': type_.get_type(),
             'type_name': type_.name(),
             'protocol': type_.protocol,
             'permission': permissions.getEffectivePermission(self._user, item),

@@ -64,12 +64,12 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(
+    def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
     ) -> 'osmanagers.OSManager':
-        return typing.cast('osmanagers.OSManager', super().getInstance(values=values))
+        return typing.cast('osmanagers.OSManager', super().get_instance(values=values))
 
-    def getType(self) -> type['osmanagers.OSManager']:
+    def get_type(self) -> type['osmanagers.OSManager']:
         """
         Get the type of the object this record represents.
 
@@ -105,7 +105,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         return f'{self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -114,19 +114,19 @@ class OSManager(ManagedObjectModel, TaggingMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete = kwargs['instance']
-        if toDelete.deployedServices.count() > 0:
+        to_delete: 'OSManager' = kwargs['instance']
+        if to_delete.deployedServices.count() > 0:
             raise IntegrityError(
                 'Can\'t remove os managers with assigned deployed services'
             )
         # Only tries to get instance if data is not empty
-        if toDelete.data != '':
-            s = toDelete.getInstance()
+        if to_delete.data != '':
+            s = to_delete.get_instance()
             s.destroy()
             s.env.clearRelatedData()
 
-        logger.debug('Before delete os manager %s', toDelete)
+        logger.debug('Before delete os manager %s', to_delete)
 
 
 # : Connects a pre deletion signal to OS Manager
-models.signals.pre_delete.connect(OSManager.beforeDelete, sender=OSManager)
+models.signals.pre_delete.connect(OSManager.pre_delete, sender=OSManager)

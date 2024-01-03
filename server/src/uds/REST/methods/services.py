@@ -68,7 +68,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     def serviceInfo(item: models.Service) -> dict[str, typing.Any]:
-        info = item.getType()
+        info = item.get_type()
 
         return {
             'icon': info.icon64().replace('\n', ''),
@@ -95,7 +95,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         :param item: Service item (db)
         :param full: If full is requested, add "extra" fields to complete information
         """
-        itemType = item.getType()
+        itemType = item.get_type()
         retVal = {
             'id': item.uuid,
             'name': item.name,
@@ -180,14 +180,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 [models.Tag.objects.get_or_create(tag=val)[0] for val in tags]
             )
 
-            serviceInstance = service.getInstance(self._params)
+            serviceInstance = service.get_instance(self._params)
 
             # Store token if this service provides one
             service.token = serviceInstance.getToken() or None  # If '', use "None" to
 
             service.data = (
                 serviceInstance.serialize()
-            )  # This may launch an validation exception (the getInstance(...) part)
+            )  # This may launch an validation exception (the get_instance(...) part)
 
             service.save()
         except models.Service.DoesNotExist:
@@ -255,29 +255,29 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             {'tags': {'title': _('tags'), 'visible': False}},
         ]
 
-    def getTypes(
+    def get_types(
         self, parent: 'Model', forType: typing.Optional[str]
     ) -> collections.abc.Iterable[dict[str, typing.Any]]:
         parent = ensure.is_instance(parent, models.Provider)
-        logger.debug('getTypes parameters: %s, %s', parent, forType)
+        logger.debug('get_types parameters: %s, %s', parent, forType)
         offers: list[dict[str, typing.Any]] = []
         if forType is None:
             offers = [
                 {
                     'name': _(t.name()),
-                    'type': t.getType(),
+                    'type': t.get_type(),
                     'description': _(t.description()),
                     'icon': t.icon64().replace('\n', ''),
                 }
-                for t in parent.getType().getProvidedServices()
+                for t in parent.get_type().getProvidedServices()
             ]
         else:
-            for t in parent.getType().getProvidedServices():
-                if forType == t.getType():
+            for t in parent.get_type().getProvidedServices():
+                if forType == t.get_type():
                     offers = [
                         {
                             'name': _(t.name()),
-                            'type': t.getType(),
+                            'type': t.get_type(),
                             'description': _(t.description()),
                             'icon': t.icon64().replace('\n', ''),
                         }
@@ -292,7 +292,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
-            parentInstance = parent.getInstance()
+            parentInstance = parent.get_instance()
             serviceType = parentInstance.getServiceByType(forType)
             if not serviceType:
                 raise self.invalidItemException(f'Gui for {forType} not found')

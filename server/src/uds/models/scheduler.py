@@ -83,13 +83,13 @@ class Scheduler(models.Model):
 
         app_label = 'uds'
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
 
-    def getInstance(self) -> typing.Optional[jobs.Job]:
+    def get_intance(self) -> typing.Optional[jobs.Job]:
         """
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job
@@ -97,22 +97,22 @@ class Scheduler(models.Model):
         jobInstance = jobs.factory().lookup(self.name)
 
         if jobInstance:
-            return jobInstance(self.getEnvironment())
+            return jobInstance(self.get_environment())
 
         return None
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to remove environment for sheduled task
         """
-        toDelete = kwargs['instance']
+        toDelete: 'Scheduler' = kwargs['instance']
         logger.debug('Deleting sheduled task %s', toDelete)
-        toDelete.getEnvironment().clearRelatedData()
+        toDelete.get_environment().clearRelatedData()
 
     def __str__(self) -> str:
         return f'Scheduled task {self.name}, every {self.frecuency}, last execution at {self.last_execution}, state = {self.state}'
 
 
 # Connects a pre deletion signal to Scheduler
-models.signals.pre_delete.connect(Scheduler.beforeDelete, sender=Scheduler)
+models.signals.pre_delete.connect(Scheduler.pre_delete, sender=Scheduler)

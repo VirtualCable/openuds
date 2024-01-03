@@ -211,10 +211,10 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return f'Network {self.name} ({self.net_string}) from {self.str_net_start} to {self.str_net_end} ({self.version})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete = kwargs['instance']
+        toDelete: 'Network' = kwargs['instance']
 
         logger.debug('Before delete auth %s', toDelete)
 
@@ -223,4 +223,4 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
 
 
 # Connects a pre deletion signal to Authenticator
-models.signals.pre_delete.connect(Network.beforeDelete, sender=Network)
+models.signals.pre_delete.connect(Network.pre_delete, sender=Network)

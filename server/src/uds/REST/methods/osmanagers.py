@@ -65,13 +65,13 @@ class OsManagers(ModelHandler):
     ]
 
     def osmToDict(self, osm: OSManager) -> dict[str, typing.Any]:
-        type_ = osm.getType()
+        type_ = osm.get_type()
         return {
             'id': osm.uuid,
             'name': osm.name,
             'tags': [tag.tag for tag in osm.tags.all()],
             'deployed_count': osm.deployedServices.count(),
-            'type': type_.getType(),
+            'type': type_.get_type(),
             'type_name': type_.name(),
             'servicesTypes': [type_.servicesType],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,

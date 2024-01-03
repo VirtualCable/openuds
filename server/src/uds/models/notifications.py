@@ -101,7 +101,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
         db_table = 'uds_notify_prov'
         app_label = 'uds'
 
-    def getType(self) -> type['NotificationProviderModule']:
+    def get_type(self) -> type['NotificationProviderModule']:
         """
         Get the type of the object this record represents.
 
@@ -117,15 +117,15 @@ class Notifier(ManagedObjectModel, TaggingMixin):
             raise Exception(f'Notifier type not found: {self.data_type}')
         return kind
 
-    def getInstance(
+    def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
     ) -> 'NotificationProviderModule':
         return typing.cast(
-            'NotificationProviderModule', super().getInstance(values=values)
+            'NotificationProviderModule', super().get_instance(values=values)
         )
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -134,22 +134,22 @@ class Notifier(ManagedObjectModel, TaggingMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete: 'Notifier' = kwargs['instance']
+        to_delete: 'Notifier' = kwargs['instance']
         # Only tries to get instance if data is not empty
-        if toDelete.data:
+        if to_delete.data:
             try:
-                s = toDelete.getInstance()
+                s = to_delete.get_instance()
                 s.destroy()  # Invokes the destruction of "related own data"
                 s.env.clearRelatedData()  # Clears related data, such as storage, cache, etc...
             except Exception as e:
                 logger.error(
                     'Error processing deletion of notifier %s: %s (forced deletion)',
-                    toDelete.name,
+                    to_delete.name,
                     e,
                 )
 
-        logger.debug('Before delete notification provider %s', toDelete)
+        logger.debug('Before delete notification provider %s', to_delete)
 
 
 # : Connects a pre deletion signal to OS Manager
-models.signals.pre_delete.connect(Notifier.beforeDelete, sender=Notifier)
+models.signals.pre_delete.connect(Notifier.pre_delete, sender=Notifier)

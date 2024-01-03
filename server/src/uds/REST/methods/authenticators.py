@@ -154,7 +154,7 @@ class Authenticators(ModelHandler):
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Authenticator)
-        type_ = item.getType()
+        type_ = item.get_type()
         return {
             'numeric_id': item.id,
             'id': item.uuid,
@@ -168,7 +168,7 @@ class Authenticators(ModelHandler):
             'mfa_id': item.mfa.uuid if item.mfa else '',
             'small_name': item.small_name,
             'users_count': item.users.count(),
-            'type': type_.getType(),
+            'type': type_.get_type(),
             'type_name': type_.name(),
             'type_info': self.typeInfo(type_),
             'permission': permissions.getEffectivePermission(self._user, item),
@@ -199,7 +199,7 @@ class Authenticators(ModelHandler):
 
             limit = int(self._params.get('limit', '50'))
 
-            auth = item.getInstance()
+            auth = item.get_instance()
 
             canDoSearch = (
                 type_ == 'user'

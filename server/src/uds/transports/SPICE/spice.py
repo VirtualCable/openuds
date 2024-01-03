@@ -83,7 +83,7 @@ class SPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'transports.TransportScript':
         try:
-            userServiceInstance = userService.getInstance()
+            userServiceInstance = userService.get_instance()
             con: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')

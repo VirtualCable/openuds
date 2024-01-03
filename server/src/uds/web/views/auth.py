@@ -122,8 +122,8 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
-        if authenticator.getType().providesMfa() and authenticator.mfa:
-            authInstance = authenticator.getInstance()
+        if authenticator.get_type().providesMfa() and authenticator.mfa:
+            authInstance = authenticator.get_instance()
             if authInstance.mfaIdentifier(result.user.name):
                 request.authorized = False  # We can ask for MFA so first disauthorize user
                 response = HttpResponseRedirect(reverse('page.mfa'))
@@ -156,7 +156,7 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
         )
         if not authenticator:
             raise Exception('Authenticator not found')
-        authInstance = authenticator.getInstance()
+        authInstance = authenticator.get_instance()
         if typing.cast(typing.Any, authInstance.getInfo) == auths.Authenticator.getInfo:
             raise Exception()  # This authenticator do not provides info
 
@@ -183,7 +183,7 @@ def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
             auth = Authenticator.objects.get(uuid=processUuid(idAuth))
         except Authenticator.DoesNotExist:
             auth = Authenticator.objects.get(pk=idAuth)
-        res = auth.getInstance().getJavascript(request)
+        res = auth.get_instance().getJavascript(request)
         if not res:
             res = ''
     except Exception:
@@ -259,7 +259,7 @@ def ticketAuth(
             res = UserServiceManager().getService(request.user, request.os, request.ip, poolUuid, None, False)
             _, userService, _, transport, _ = res
 
-            transportInstance = transport.getInstance()
+            transportInstance = transport.get_instance()
             if transportInstance.ownLink is True:
                 link = reverse(
                     'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore

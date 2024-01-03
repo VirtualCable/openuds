@@ -53,7 +53,7 @@ def createEmailNotifier(
     notifier.name = 'Testing email notifier'
     notifier.comments = 'Testing email notifier'
     notifier.data_type = EmailNotifier.typeType
-    instance: EmailNotifier = typing.cast(EmailNotifier, notifier.getInstance())
+    instance: EmailNotifier = typing.cast(EmailNotifier, notifier.get_instance())
     # Fill up fields
     instance.hostname.value = (host or 'localhost') + (
         '' if port == 0 else ':' + str(port)

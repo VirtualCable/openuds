@@ -77,7 +77,7 @@ class EmailNotifierTest(UDSTestCase):
             enableHtml=False
         )
 
-        notifier.getInstance().notify(
+        notifier.get_instance().notify(
             'Group',
             'Identificator',
             messaging.LogLevel.CRITICAL,

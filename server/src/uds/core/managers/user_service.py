@@ -108,7 +108,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Checks if the maximum number of user services for this service has been reached
         """
-        serviceInstance = service.getInstance()
+        serviceInstance = service.get_instance()
         # Early return, so no database count is needed
         if serviceInstance.maxUserServices == consts.UNLIMITED:
             return False
@@ -185,7 +185,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             publication,
         )
         cache = self._createCacheAtDb(publication, cacheLevel)
-        ci = cache.getInstance()
+        ci = cache.get_instance()
         state = ci.deployForCache(cacheLevel)
 
         UserServiceOpChecker.checkAndUpdateState(cache, ci, state)
@@ -203,7 +203,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             raise ServiceNotReadyError()
 
-        if servicePool.service.getType().publicationType is not None:
+        if servicePool.service.get_type().publicationType is not None:
             publication = servicePool.activePublication()
             if publication:
                 assigned = self._createAssignedAtDb(publication, user)
@@ -225,7 +225,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
-        assignedInstance = assigned.getInstance()
+        assignedInstance = assigned.get_instance()
         state = assignedInstance.deployForUser(user)
 
         UserServiceOpChecker.makeUnique(assigned, assignedInstance, state)
@@ -236,11 +236,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Creates an assigned service from an "assignable" id
         """
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.get_instance()
         if not serviceInstance.canAssign():
             raise Exception('This service type cannot assign asignables')
 
-        if servicePool.service.getType().publicationType is not None:
+        if servicePool.service.get_type().publicationType is not None:
             publication = servicePool.activePublication()
             if publication:
                 assigned = self._createAssignedAtDb(publication, user)
@@ -265,7 +265,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             assigned = self._createAssignedAtDbForNoPublication(servicePool, user)
 
         # Now, get from serviceInstance the data
-        assignedInstance = assigned.getInstance()
+        assignedInstance = assigned.get_instance()
         state = serviceInstance.assignFromAssignables(assignableId, user, assignedInstance)
         # assigned.updateData(assignedInstance)
 
@@ -280,7 +280,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         cache.refresh_from_db()
         logger.debug('Moving cache %s to level %s', cache, cacheLevel)
-        cacheInstance = cache.getInstance()
+        cacheInstance = cache.get_instance()
         state = cacheInstance.moveToCache(cacheLevel)
         cache.cache_level = cacheLevel
         cache.save(update_fields=['cache_level'])
@@ -308,7 +308,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return self.remove(userService)
 
         operationsLogger.info('Canceling userService %s', userService.name)
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
 
         if (
             not userServiceInstance.supportsCancel()
@@ -341,7 +341,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userService.setInUse(False)  # For accounting, ensure that it is not in use right now
             userService.save()
 
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         state = userServiceInstance.destroy()
 
         # Data will be serialized on makeUnique process
@@ -374,7 +374,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def getAssignationForUser(
         self, servicePool: ServicePool, user: User
     ) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
-        if servicePool.service.getInstance().spawnsNew is False:
+        if servicePool.service.get_instance().spawnsNew is False:
             assignedUserService = self.getExistingAssignationForUser(servicePool, user)
         else:
             assignedUserService = None
@@ -503,7 +503,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return cache
 
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
-        serviceType = servicePool.service.getType()
+        serviceType = servicePool.service.get_type()
         if serviceType.usesCache:
             inAssigned = (
                 servicePool.assignedUserServices().filter(self.getStateFilter(servicePool.service)).count()
@@ -537,7 +537,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         serviceIsntance is just a helper, so if we already have deserialized deployedService
         """
         removing = self.getUserServicesInStatesForProvider(servicePool.service.provider, [State.REMOVING])
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.get_instance()
         if (
             serviceInstance.isAvailable()
             and removing >= serviceInstance.parent().getMaxRemovingServices()
@@ -553,7 +553,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         preparingForProvider = self.getUserServicesInStatesForProvider(
             servicePool.service.provider, [State.PREPARING]
         )
-        serviceInstance = servicePool.service.getInstance()
+        serviceInstance = servicePool.service.get_instance()
         if self.maximumUserServicesDeployed(servicePool.service) or (
             preparingForProvider >= serviceInstance.parent().getMaxPreparingServices()
             and serviceInstance.parent().getIgnoreLimits() is False
@@ -570,7 +570,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             return False
 
         logger.debug('Service %s is usable, checking it via setReady', userService)
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         try:
             state = userServiceInstance.setReady()
         except Exception as e:
@@ -591,12 +591,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def reset(self, userService: UserService) -> None:
         userService.refresh_from_db()
 
-        if not userService.deployed_service.service.getType().canReset:
+        if not userService.deployed_service.service.get_type().canReset:
             return
 
         operationsLogger.info('Reseting %s', userService)
 
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         try:
             userServiceInstance.reset()
         except Exception:
@@ -632,7 +632,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         osManager = userService.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if not osManager else not osManager.getInstance().isPersistent()
+        doPublicationCleanup = True if not osManager else not osManager.get_instance().isPersistent()
 
         if doPublicationCleanup:
             remove = False
@@ -655,7 +655,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     def notifyReadyFromOsManager(self, userService: UserService, data: typing.Any) -> None:
         try:
-            userServiceInstance = userService.getInstance()
+            userServiceInstance = userService.get_instance()
             logger.debug('Notifying user service ready state')
             state = userServiceInstance.notifyReadyFromOsManager(data)
             logger.debug('State: %s', state)
@@ -750,12 +750,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if not idTransport:  # Find a suitable transport
             t: Transport
             for t in userService.deployed_service.transports.order_by('priority'):
-                typeTrans = t.getType()
+                typeTrans = t.get_type()
                 if (
                     typeTrans
-                    and t.isValidForIp(srcIp)
+                    and t.is_ip_allowed(srcIp)
                     and typeTrans.supportsOs(os.os)
-                    and t.isValidForOs(os.os)
+                    and t.is_os_allowed(os.os)
                 ):
                     idTransport = t.uuid
                     break
@@ -770,7 +770,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise InvalidServiceException()
 
         # If transport is not available for the request IP...
-        if not transport.isValidForIp(srcIp):
+        if not transport.is_ip_allowed(srcIp):
             msg = _('The requested transport {} is not valid for {}').format(transport.name, srcIp)
             logger.error(msg)
             raise InvalidServiceException(msg)
@@ -793,7 +793,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 log.LogSource.WEB,
             )
             # If ready, show transport for this service, if also ready ofc
-            userServiceInstance = userService.getInstance()
+            userServiceInstance = userService.get_instance()
             ip = userServiceInstance.getIp()
             userService.logIP(ip)  # Update known ip
             logger.debug('IP: %s', ip)
@@ -818,7 +818,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 )
                 if ip:
                     serviceNotReadyCode = 0x0003
-                    transportInstance = transport.getInstance()
+                    transportInstance = transport.get_instance()
                     if transportInstance.isAvailableFor(userService, ip):
                         log.doLog(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
                         self.notifyPreconnect(
@@ -964,13 +964,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
             else:
                 q = pool.transports.filter(uuid=idTransport)
             for t in q.order_by('priority'):
-                typeTrans = t.getType()
+                typeTrans = t.get_type()
                 if (
                     typeTrans
-                    and t.getType()
-                    and t.isValidForIp(srcIp)
+                    and t.get_type()
+                    and t.is_ip_allowed(srcIp)
                     and typeTrans.supportsOs(os.os)
-                    and t.isValidForOs(os.os)
+                    and t.is_os_allowed(os.os)
                 ):
                     found = (pool, t)
                     break
@@ -991,7 +991,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                 # Check that servide is accessible
                 if (
-                    not alreadyAssigned.deployed_service.service.getInstance().isAvailable()
+                    not alreadyAssigned.deployed_service.service.get_instance().isAvailable()
                 ):  # Not available, mark for removal
                     alreadyAssigned.release()
                 raise Exception()  # And process a new access
@@ -1015,7 +1015,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
                 if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                     # If not available, skip it
-                    if pool.service.getInstance().isAvailable() is False:
+                    if pool.service.get_instance().isAvailable() is False:
                         continue
 
                 # Ensure transport is available for the OS

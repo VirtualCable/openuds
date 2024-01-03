@@ -66,7 +66,7 @@ class OpenGnsysMaintainer(jobs.Job):
             # Locate all services inside the provider
             service: models.Service
             for service in provider.services.all():
-                instance: OGService = typing.cast(OGService, service.getInstance())
+                instance: OGService = typing.cast(OGService, service.get_instance())
                 since = getSqlDatetime() - datetime.timedelta(
                     hours=instance.maxReservationTime.num() - 8
                 )  # If less than 8 hours of reservation...

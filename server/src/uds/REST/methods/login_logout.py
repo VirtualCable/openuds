@@ -231,7 +231,7 @@ class Auths(Handler):
         paramAll: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():
-            theType = auth.getType()
+            theType = auth.get_type()
             if paramAll or (theType.isCustom() is False and theType.typeType not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'

@@ -422,7 +422,7 @@ class BaseRDPTransport(transports.Transport):
     ) -> types.connections.ConnectionData:
         username = None
         if isinstance(userService, UserService):
-            cdata = userService.getInstance().getConnectionData()
+            cdata = userService.get_instance().getConnectionData()
             if cdata:
                 username = cdata[1] or username
                 password = cdata[2] or password

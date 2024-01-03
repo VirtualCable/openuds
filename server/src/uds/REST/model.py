@@ -284,7 +284,7 @@ class BaseModelHandler(Handler):
         """
         res = types.rest.TypeInfo(
             name=_(type_.name()),
-            type=type_.getType(),
+            type=type_.get_type(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
         ).as_dict(**self.typeInfo(type_))
@@ -345,7 +345,7 @@ class BaseModelHandler(Handler):
         :param res: Dictionary to "extend" with instance key-values pairs
         """
         if isinstance(item, ManagedObjectModel):
-            i = item.getInstance()
+            i = item.get_instance()
             i.initGui()  # Defaults & stuff
             res.update(i.valuesDict())
         return res
@@ -495,7 +495,7 @@ class DetailHandler(BaseModelHandler):
             #     gui = self.getGui(parent, None)
             #     return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
-                types_ = self.getTypes(parent, None)
+                types_ = self.get_types(parent, None)
                 logger.debug('Types: %s', types_)
                 return types_
             if self._args[0] == GUI:
@@ -517,7 +517,7 @@ class DetailHandler(BaseModelHandler):
                 gui = self.getGui(parent, self._args[1])
                 return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
-                types_ = self.getTypes(parent, self._args[1])
+                types_ = self.get_types(parent, self._args[1])
                 logger.debug('Types: %s', types_)
                 return types_
             if self._args[1] == LOG:
@@ -665,7 +665,7 @@ class DetailHandler(BaseModelHandler):
         # raise RequestError('Gui not provided for this type of object')
         return []
 
-    def getTypes(
+    def get_types(
         self, parent: models.Model, forType: typing.Optional[str]
     ) -> collections.abc.Iterable[dict[str, typing.Any]]:
         """
@@ -766,13 +766,13 @@ class ModelHandler(BaseModelHandler):
         """
         return []
 
-    def getTypes(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
+    def get_types(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
         for type_ in self.enum_types():
             yield self.typeAsDict(type_)
 
-    def getType(self, type_: str) -> dict[str, typing.Any]:
+    def get_type(self, type_: str) -> dict[str, typing.Any]:
         found = None
-        for v in self.getTypes():
+        for v in self.get_types():
             if v['type'] == type_:
                 found = v
                 break
@@ -1005,7 +1005,7 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == OVERVIEW:
                 return list(self.getItems())
             if self._args[0] == TYPES:
-                return list(self.getTypes())
+                return list(self.get_types())
             if self._args[0] == TABLEINFO:
                 return self.processTableFields(
                     self.table_title,
@@ -1037,7 +1037,7 @@ class ModelHandler(BaseModelHandler):
         elif self._args[0] == TYPES:
             if nArgs != 2:
                 raise self.invalidRequestException()
-            return self.getType(self._args[1])
+            return self.get_type(self._args[1])
         elif self._args[0] == GUI:
             if nArgs != 2:
                 raise self.invalidRequestException()
@@ -1139,7 +1139,7 @@ class ModelHandler(BaseModelHandler):
                     data_type: typing.Optional[str] = self._params.get('data_type', self._params.get('type'))
                     if data_type:
                         item.data_type = data_type
-                        item.data = item.getInstance(self._params).serialize()
+                        item.data = item.get_instance(self._params).serialize()
 
                 item.save()
 

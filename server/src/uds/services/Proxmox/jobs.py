@@ -103,9 +103,9 @@ class ProxmoxDeferredRemoval(jobs.Job):
         ):
             logger.debug('Provider %s if os type proxmox', dbProvider)
 
-            storage = dbProvider.getEnvironment().storage
+            storage = dbProvider.get_environment().storage
             instance: provider.ProxmoxProvider = typing.cast(
-                provider.ProxmoxProvider, dbProvider.getInstance()
+                provider.ProxmoxProvider, dbProvider.get_instance()
             )
 
             for i in storage.filter('tRm'):

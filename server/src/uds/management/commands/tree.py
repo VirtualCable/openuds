@@ -55,7 +55,7 @@ def getSerializedFromManagedObject(
     removableFields: typing.Optional[list[str]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
     try:
-        obj = mod.getInstance()
+        obj = mod.get_instance()
         gui = {i['name']: i['gui']['type'] for i in obj.guiDescription()}
         values = obj.valuesDict()
         # Remove password fields

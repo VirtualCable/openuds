@@ -114,7 +114,7 @@ class Notifiers(ModelHandler):
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Notifier)
-        type_ = item.getType()
+        type_ = item.get_type()
         return {
             'id': item.uuid,
             'name': item.name,
@@ -122,7 +122,7 @@ class Notifiers(ModelHandler):
             'enabled': item.enabled,
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
-            'type': type_.getType(),
+            'type': type_.get_type(),
             'type_name': type_.name(),
             'permission': permissions.getEffectivePermission(self._user, item),
         }

@@ -261,7 +261,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return meta
 
     @staticmethod
-    def beforeDelete(sender, **kwargs):  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs):  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -272,7 +272,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete = kwargs['instance']
+        toDelete: 'MetaPool' = kwargs['instance']
 
         # Clears related logs
         log.clearLogs(toDelete)
@@ -285,7 +285,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
 
 
 # Connects a pre deletion signal
-signals.pre_delete.connect(MetaPool.beforeDelete, sender=MetaPool)
+signals.pre_delete.connect(MetaPool.pre_delete, sender=MetaPool)
 
 
 class MetaPoolMember(UUIDModel):

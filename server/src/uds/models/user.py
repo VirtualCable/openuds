@@ -127,7 +127,7 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         :note: The returned value is an instance of the authenticator class used to manage this user, not a db record.
         """
-        return self.manager.getInstance()
+        return self.manager.get_instance()
 
     def isStaff(self) -> bool:
         """
@@ -222,10 +222,10 @@ class User(UUIDModel, properties.PropertiesMixin):
         # If has mfa, remove related data
         # If has mfa, remove related data
         if self.manager.mfa:
-            self.manager.mfa.getInstance().resetData(mfas.MFA.getUserId(self))
+            self.manager.mfa.get_instance().resetData(mfas.MFA.getUserId(self))
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -234,35 +234,35 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete: User = kwargs['instance']
+        to_delete: User = kwargs['instance']
 
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
-        toDelete.getManager().removeUser(toDelete.name)
+        to_delete.getManager().removeUser(to_delete.name)
 
         # If has mfa, remove related data
-        toDelete.cleanRelated()
+        to_delete.cleanRelated()
 
         # Remove related stored values
-        with storage.StorageAccess('manager' + str(toDelete.manager.uuid)) as store:
+        with storage.StorageAccess('manager' + str(to_delete.manager.uuid)) as store:
             for key in store.keys():
                 store.delete(key)
 
         # now removes all "child" of this user, if it has children
-        User.objects.filter(parent=toDelete.id).delete()
+        User.objects.filter(parent=to_delete.id).delete()
 
         # Remove related logs
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
         # Removes all user services assigned to this user (unassign it and mark for removal)
-        for us in toDelete.userServices.all():
+        for us in to_delete.userServices.all():
             us.assignToUser(None)
             us.remove()
 
-        logger.debug('Deleted user %s', toDelete)
+        logger.debug('Deleted user %s', to_delete)
 
 # Connect to pre delete signal
-signals.pre_delete.connect(User.beforeDelete, sender=User)
+signals.pre_delete.connect(User.pre_delete, sender=User)
 
 # Connects the properties signals
-properties.PropertiesMixin.setupSignals(User)
+properties.PropertiesMixin.setup_signals(User)

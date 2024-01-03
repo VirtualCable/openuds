@@ -105,7 +105,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     # Filter out non accesible authenticators (using origin)
     authenticators = [
-        a for a in authenticators if a.getInstance().isAccesibleFrom(request)
+        a for a in authenticators if a.get_instance().isAccesibleFrom(request)
     ]
 
     # logger.debug('Authenticators PRE: %s', authenticators)
@@ -117,7 +117,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             x
             for x in authenticators
             if x.small_name == tag
-            or (tag == 'disabled' and x.getType().isCustom() is False)
+            or (tag == 'disabled' and x.get_type().isCustom() is False)
         ]
 
     # No autenticator can reach the criteria, let's do a final try
@@ -126,7 +126,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         try:
             authenticators = []
             for a in Authenticator.objects.exclude(state=consts.auth.DISABLED).order_by('priority'):
-                if a.getInstance().isAccesibleFrom(request):
+                if a.get_instance().isAccesibleFrom(request):
                     authenticators.append(a)
                     break
         except Exception:
@@ -140,7 +140,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     # the auths for client
     def getAuthInfo(auth: Authenticator):
-        theType = auth.getType()
+        theType = auth.get_type()
         return {
             'id': auth.uuid,
             'name': auth.name,
@@ -157,7 +157,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             {'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES
         ],
         'authenticators': [
-            getAuthInfo(auth) for auth in authenticators if auth.getType()
+            getAuthInfo(auth) for auth in authenticators if auth.get_type()
         ],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
@@ -218,7 +218,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         info = {
             'networks': [n.name for n in Network.networksFor(request.ip)],
             'transports': [
-                t.name for t in Transport.objects.all() if t.isValidForIp(request.ip)
+                t.name for t in Transport.objects.all() if t.is_ip_allowed(request.ip)
             ],
             'ip': request.ip,
             'ip_proxy': request.ip_proxy,

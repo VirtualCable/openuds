@@ -77,7 +77,7 @@ class AssignedAndUnused(Job):
             )
             # If do not needs os manager, this is
             if ds.osmanager:
-                osm = ds.osmanager.getInstance()
+                osm = ds.osmanager.get_instance()
                 if osm.processUnusedMachines:
                     logger.debug(
                         'Processing unused services for %s, %s', ds, ds.osmanager

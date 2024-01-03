@@ -49,7 +49,7 @@ class Attribute:
         self._type = theType
         self.setValue(value)
 
-    def getType(self) -> typing.Type:
+    def get_type(self) -> typing.Type:
         return self._type
 
     def getValue(self) -> typing.Any:
@@ -131,7 +131,7 @@ class AutoAttributes(Serializable):
     def __repr__(self) -> str:
         return (
             'AutoAttributes('
-            + ', '.join(f'{k}={v.getType().__name__}' for k, v in self.attrs.items())
+            + ', '.join(f'{k}={v.get_type().__name__}' for k, v in self.attrs.items())
             + ')'
         )
 
@@ -139,7 +139,7 @@ class AutoAttributes(Serializable):
         return (
             '<AutoAttribute '
             + ','.join(
-                f'{k} ({v.getType()}) = {v.getStrValue()}'
+                f'{k} ({v.get_type()}) = {v.getStrValue()}'
                 for k, v in self.attrs.items()
             )
             + '>'

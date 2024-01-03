@@ -100,7 +100,7 @@ class TSPICETransport(BaseSpiceTransport):
         request: 'ExtendedHttpRequestWithUser',
     ) -> transports.TransportScript:
         try:
-            userServiceInstance = userService.getInstance()
+            userServiceInstance = userService.get_instance()
             con = userServiceInstance.getConsoleConnection()
         except Exception:
             logger.exception('Error getting console connection data')

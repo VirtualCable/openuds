@@ -119,8 +119,7 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
-            if loginResult.user.manager.getType().providesMfa() and loginResult.user.manager.mfa:
-                # authInstance = loginResult.user.manager.getInstance()
+            if loginResult.user.manager.get_type().providesMfa() and loginResult.user.manager.mfa:
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -190,8 +189,8 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
         return HttpResponseRedirect(reverse('page.index'))
 
     # Obtain MFA data
-    authInstance = request.user.manager.getInstance()
-    mfaInstance = typing.cast('mfas.MFA', mfaProvider.getInstance())
+    authInstance = request.user.manager.get_instance()
+    mfaInstance = typing.cast('mfas.MFA', mfaProvider.get_instance())
 
     # Get validity duration
     validity = mfaProvider.validity * 60

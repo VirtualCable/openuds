@@ -58,7 +58,7 @@ def createProvider() -> models.Provider:
     provider.name = 'Testing provider {}'.format(glob['provider_id'])
     provider.comments = 'Tesging provider comment {}'.format(glob['provider_id'])
     provider.data_type = TestProvider.typeType
-    provider.data = provider.getInstance().serialize()
+    provider.data = provider.get_instance().serialize()
     provider.save()
     glob['provider_id'] += 1
 
@@ -74,11 +74,11 @@ def createService(
         name='Service {}'.format(glob['service_id']),
         data_type=TestServiceCache.typeType,
         data=TestServiceCache(
-            environment.Environment(str(glob['service_id'])), provider.getInstance()
+            environment.Environment(str(glob['service_id'])), provider.get_instance()
         ).serialize()
         if useCachingVersion
         else TestServiceNoCache(
-            environment.Environment(str(glob['service_id'])), provider.getInstance()
+            environment.Environment(str(glob['service_id'])), provider.get_instance()
         ).serialize(),
         token=generators.random_string(16) + str(glob['service_id']),
     )

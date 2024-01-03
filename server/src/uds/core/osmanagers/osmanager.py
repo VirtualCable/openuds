@@ -237,7 +237,7 @@ class OSManager(Module):
         uniqueId = userService.unique_id
         userService.setInUse(True)
         userService.properties['last_username'] = userName or 'unknown'  # Store it for convenience
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         userServiceInstance.userLoggedIn(userName or 'unknown')
         userService.updateData(userServiceInstance)
 
@@ -301,7 +301,7 @@ class OSManager(Module):
 
         uniqueId = userService.unique_id
         userService.setInUse(False)
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         userServiceInstance.userLoggedOut(userName or 'unknown')
         userService.updateData(userServiceInstance)
 

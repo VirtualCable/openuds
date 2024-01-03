@@ -124,7 +124,7 @@ def notifyPreconnect(userService: 'UserService', info: types.connections.Connect
     Notifies a preconnect to an user service
     """
     src = userService.getConnectionSource()
-    if userService.deployed_service.service.getInstance().notifyPreconnect(userService, info) is True:
+    if userService.deployed_service.service.get_instance().notifyPreconnect(userService, info) is True:
         return  # Ok, service handled it
 
     _requestActor(

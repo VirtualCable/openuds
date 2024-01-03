@@ -65,7 +65,7 @@ class ManagedObjectModel(UUIDModel):
 
         abstract = True
 
-    def getEnvironment(self) -> Environment:
+    def get_environment(self) -> Environment:
         """
         Returns an environment valid for the record this object represents
         """
@@ -82,9 +82,9 @@ class ManagedObjectModel(UUIDModel):
         if not values and self.data:
             obj.deserialize(self.data)
 
-        self._cachedInstance = None  # Ensures returns correct value on getInstance
+        self._cachedInstance = None  # Ensures returns correct value on get_instance
 
-    def getInstance(
+    def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
     ) -> Module:
         """
@@ -104,9 +104,9 @@ class ManagedObjectModel(UUIDModel):
         if self._cachedInstance and values is None:
             return self._cachedInstance
 
-        klass = self.getType()
+        klass = self.get_type()
 
-        env = self.getEnvironment()
+        env = self.get_environment()
         obj = klass(env, values)
         self.deserialize(obj, values)
 
@@ -114,16 +114,16 @@ class ManagedObjectModel(UUIDModel):
 
         return obj
 
-    def getType(self) -> type[Module]:
+    def get_type(self) -> type[Module]:
         """
         Returns the type of self (as python type)
         Must be overriden!!!
         """
         raise NotImplementedError(
-            f'getType has not been implemented for {self.__class__.__name__}'
+            f'get_type has not been implemented for {self.__class__.__name__}'
         )
 
-    def isOfType(self, type_: str) -> bool:
+    def is_type(self, type_: str) -> bool:
         """
         return True if self if of the requested type, else returns False
         """

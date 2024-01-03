@@ -98,7 +98,7 @@ class Group(UUIDModel):
 
         :note: The returned value is an instance of the authenticator class used to manage this user, not a db record.
         """
-        return self.manager.getInstance()
+        return self.manager.get_instance()
 
     def __str__(self) -> str:
         if self.is_meta:
@@ -107,7 +107,7 @@ class Group(UUIDModel):
         return f'Group {self.name}(id:{self.id}) from auth {self.manager.name}'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -115,17 +115,17 @@ class Group(UUIDModel):
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete = kwargs['instance']
+        to_delete: 'Group' = kwargs['instance']
         # Todelete is a group
 
         # We invoke removeGroup. If this raises an exception, group will not
         # be removed
-        toDelete.getManager().removeGroup(toDelete.name)
+        to_delete.getManager().removeGroup(to_delete.name)
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
-        logger.debug('Deleted group %s', toDelete)
+        logger.debug('Deleted group %s', to_delete)
 
 
-models.signals.pre_delete.connect(Group.beforeDelete, sender=Group)
+models.signals.pre_delete.connect(Group.pre_delete, sender=Group)

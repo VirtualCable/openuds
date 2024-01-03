@@ -107,7 +107,7 @@ def checkLogin(  # pylint: disable=too-many-branches, too-many-statements
         )
         maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
         # Get instance..
-        authInstance = authenticator.getInstance()
+        authInstance = authenticator.get_instance()
         # Check if user is locked
         if (
             authInstance.blockUserOnLoginFailures is True

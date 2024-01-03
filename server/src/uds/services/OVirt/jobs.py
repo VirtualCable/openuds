@@ -96,8 +96,8 @@ class OVirtDeferredRemoval(jobs.Job):
         ):
             logger.debug('Provider %s if os type ovirt', provider)
 
-            storage = provider.getEnvironment().storage
-            instance: OVirtProvider = typing.cast(OVirtProvider, provider.getInstance())
+            storage = provider.get_environment().storage
+            instance: OVirtProvider = typing.cast(OVirtProvider, provider.get_instance())
 
             for i in storage.filter('tRm'):
                 vmId = i[1].decode()

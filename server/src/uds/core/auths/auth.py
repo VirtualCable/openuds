@@ -305,7 +305,7 @@ def authenticate(
         return AuthResult(user=getRootUser())
 
     gm = auths.GroupsManager(authenticator)
-    authInstance = authenticator.getInstance()
+    authInstance = authenticator.get_instance()
     if useInternalAuthenticate is False:
         res = authInstance.authenticate(username, password, gm, request)
     else:
@@ -356,7 +356,7 @@ def authenticateViaCallback(
          the groups of this user so your getGroups will work correctly.
     """
     gm = auths.GroupsManager(authenticator)
-    authInstance = authenticator.getInstance()
+    authInstance = authenticator.get_instance()
 
     # If there is no callback for this authenticator...
     if authInstance.authCallback is auths.Authenticator.authCallback:
@@ -487,7 +487,7 @@ def webLogout(
     exit_url = exit_url or exit_page
     try:
         if request.user:
-            authenticator = request.user.manager.getInstance()
+            authenticator = request.user.manager.get_instance()
             username = request.user.name
             logout = authenticator.logout(request, username)
             if logout and logout.success == types.auth.AuthenticationState.REDIRECT:

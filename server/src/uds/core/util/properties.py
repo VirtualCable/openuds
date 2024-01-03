@@ -153,14 +153,14 @@ class PropertiesMixin:
         return PropertyAccessor(owner_id=owner_id, owner_type=owner_type)
 
     @staticmethod
-    def _deleteSignal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
-        toDelete: 'PropertiesMixin' = kwargs['instance']
+    def _pre_delete_signal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+        to_delete: 'PropertiesMixin' = kwargs['instance']
         # We are deleting the object, so we delete the properties too
         # Remember that properties is a generic table, does not have any cascade delete
-        toDelete.properties.clear()
+        to_delete.properties.clear()
 
     @staticmethod
-    def setupSignals(model: 'type[models.Model]') -> None:
+    def setup_signals(model: 'type[models.Model]') -> None:
         """Connects a pre deletion signal to delete properties
         Note that this method must be added to every class creation that inherits from PropertiesMixin
         Or the properties will not be deleted on deletion of the object
@@ -168,4 +168,4 @@ class PropertiesMixin:
         Args:
             model (type[models.Model]): Model to connect the signal to
         """
-        signals.pre_delete.connect(PropertiesMixin._deleteSignal, sender=model)
+        signals.pre_delete.connect(PropertiesMixin._pre_delete_signal, sender=model)

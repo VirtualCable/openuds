@@ -87,7 +87,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def getInstance(self, values=None) -> auths.Authenticator:
+    def get_instance(self, values=None) -> auths.Authenticator:
         """
         Instantiates the object this record contains.
 
@@ -105,13 +105,13 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         if self.id is None:
             return auths.Authenticator(environment.Environment.getTempEnv(), values, uuid=self.uuid)
 
-        auType = self.getType()
-        env = self.getEnvironment()
+        auType = self.get_type()
+        env = self.get_environment()
         auth = auType(env, values, uuid=self.uuid)
         self.deserialize(auth, values)
         return auth
 
-    def getType(self) -> type[auths.Authenticator]:
+    def get_type(self) -> type[auths.Authenticator]:
         """
         Get the type of the object this record represents.
 
@@ -268,7 +268,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             authsList = Authenticator.objects.all().order_by('priority', 'name')
 
         for auth in authsList:
-            if auth.getType() and (not auth.getType().isCustom() or tag != 'disabled'):
+            if auth.get_type() and (not auth.get_type().isCustom() or tag != 'disabled'):
                 yield auth
 
     @staticmethod
@@ -284,13 +284,13 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.util.permissions import clean
 
-        toDelete = kwargs['instance']
+        toDelete: 'Authenticator' = kwargs['instance']
 
         logger.debug('Before delete auth %s', toDelete)
 
         # Only tries to get instance if data is not empty
         if toDelete.data != '':
-            s = toDelete.getInstance()
+            s = toDelete.get_instance()
             s.destroy()
             s.env.clearRelatedData()
 

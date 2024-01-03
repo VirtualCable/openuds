@@ -397,5 +397,5 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return f'<RegisterdServer {self.token} of type {self.server_type.name} created on {self.stamp} by {self.username} from {self.ip}/{self.hostname}>'
 
 
-properties.PropertiesMixin.setupSignals(Server)
-properties.PropertiesMixin.setupSignals(ServerGroup)
+properties.PropertiesMixin.setup_signals(Server)
+properties.PropertiesMixin.setup_signals(ServerGroup)

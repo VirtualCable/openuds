@@ -190,7 +190,7 @@ class ActorV3Action(Handler):
     def notifyService(self, action: NotifyActionType) -> None:
         try:
             # If unmanaged, use Service locator
-            service: 'services.Service' = Service.objects.get(token=self._params['token']).getInstance()
+            service: 'services.Service' = Service.objects.get(token=self._params['token']).get_instance()
 
             # We have a valid service, now we can make notifications
 
@@ -495,7 +495,7 @@ class BaseReadyChange(ActorV3Action):
         userService = self.getUserService()
         # Stores known IP and notifies it to deployment
         userService.logIP(self._params['ip'])
-        userServiceInstance = userService.getInstance()
+        userServiceInstance = userService.get_instance()
         userServiceInstance.setIp(self._params['ip'])
         userService.updateData(userServiceInstance)
 
@@ -768,7 +768,7 @@ class Unmanaged(ActorV3Action):
 
         try:
             dbService: Service = Service.objects.get(token=self._params['token'])
-            service: 'services.Service' = dbService.getInstance()
+            service: 'services.Service' = dbService.get_instance()
         except Exception:
             return ActorV3Action.actorResult(error='Invalid token')
 

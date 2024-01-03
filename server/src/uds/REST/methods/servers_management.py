@@ -327,7 +327,7 @@ class ServersGroups(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getTypes(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
+    def get_types(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
         for i in types.servers.ServerSubtype.manager().enum():
             v = types.rest.TypeInfo(
                 name=i.description, type=f'{i.type.name}@{i.subtype}', description='', icon=i.icon

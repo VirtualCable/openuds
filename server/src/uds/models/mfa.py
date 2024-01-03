@@ -61,12 +61,12 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
     # objects: 'models.BaseManager[MFA]'
     authenticators: 'models.manager.RelatedManager[Authenticator]'
 
-    def getInstance(
+    def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
     ) -> 'mfas.MFA':
-        return typing.cast('mfas.MFA', super().getInstance(values=values))
+        return typing.cast('mfas.MFA', super().get_instance(values=values))
 
-    def getType(self) -> type['mfas.MFA']:
+    def get_type(self) -> type['mfas.MFA']:
         """Get the type of the object this record represents.
 
         The type is a Python type, it obtains this MFA and associated record field.
@@ -86,7 +86,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'MFA {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Service class "Destroy" before deleting it from database.
 
@@ -95,22 +95,22 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         :note: If destroy raises an exception, the deletion is not taken.
         """
-        toDelete: 'MFA' = kwargs['instance']
+        to_delete: 'MFA' = kwargs['instance']
         # Only tries to get instance if data is not empty
-        if toDelete.data:
+        if to_delete.data:
             try:
-                s = toDelete.getInstance()
+                s = to_delete.get_instance()
                 s.destroy()
                 s.env.clearRelatedData()
             except Exception as e:
                 logger.error(
                     'Error processing deletion of notifier %s: %s (forced deletion)',
-                    toDelete.name,
+                    to_delete.name,
                     e,
                 )
 
-        logger.debug('Before delete mfa provider %s', toDelete)
+        logger.debug('Before delete mfa provider %s', to_delete)
 
 
 # : Connects a pre deletion signal to OS Manager
-models.signals.pre_delete.connect(MFA.beforeDelete, sender=MFA)
+models.signals.pre_delete.connect(MFA.pre_delete, sender=MFA)

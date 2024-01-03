@@ -232,7 +232,7 @@ class Config:
         def isLongText(self) -> bool:
             return self._longText
 
-        def getType(self) -> int:
+        def get_type(self) -> int:
             return self._type
 
         def getParams(self) -> typing.Any:
@@ -356,7 +356,7 @@ class Config:
             if cfg.isCrypted() is True and addCrypt is False:
                 continue
 
-            if cfg.getType() == Config.FieldType.PASSWORD and addCrypt is False:
+            if cfg.get_type() == Config.FieldType.PASSWORD and addCrypt is False:
                 continue
 
             # add section if it do not exists
@@ -366,7 +366,7 @@ class Config:
                 'value': cfg.get(),
                 'crypt': cfg.isCrypted(),
                 'longText': cfg.isLongText(),
-                'type': cfg.getType(),
+                'type': cfg.get_type(),
                 'params': cfg.getParams(),
                 'help': cfg.getHelp(),
             }

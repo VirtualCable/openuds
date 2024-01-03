@@ -68,7 +68,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         ordering = ('name',)
         app_label = 'uds'
 
-    def getType(self) -> type['ServiceProvider']:
+    def get_type(self) -> type['ServiceProvider']:
         """
         Get the type of the object this record represents.
 
@@ -81,11 +81,11 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         return services.factory().lookup(self.data_type) or services.ServiceProvider
 
-    def getInstance(
+    def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
     ) -> 'ServiceProvider':
         prov: 'ServiceProvider' = typing.cast(
-            'ServiceProvider', super().getInstance(values=values)
+            'ServiceProvider', super().get_instance(values=values)
         )
         # Set uuid
         prov.setUuid(self.uuid)
@@ -103,7 +103,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         return f'Provider {self.name} of type {self.data_type} (id:{self.id})'
 
     @staticmethod
-    def beforeDelete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
         Used to invoke the Provider class "Destroy" before deleting it from database.
 
@@ -114,21 +114,21 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         from uds.core.util.permissions import clean  # pylint: disable=import-outside-toplevel
 
-        toDelete = kwargs['instance']
-        logger.debug('Before delete service provider %s', toDelete)
+        to_delete: 'Provider' = kwargs['instance']
+        logger.debug('Before delete service provider %s', to_delete)
 
         # Only tries to get instance if data is not empty
-        if toDelete.data != '':
-            s = toDelete.getInstance()
+        if to_delete.data != '':
+            s = to_delete.get_instance()
             s.destroy()
             s.env.clearRelatedData()
 
         # Clears related logs
-        log.clearLogs(toDelete)
+        log.clearLogs(to_delete)
 
         # Clears related permissions
-        clean(toDelete)
+        clean(to_delete)
 
 
 # : Connects a pre deletion signal to Provider
-signals.pre_delete.connect(Provider.beforeDelete, sender=Provider)
+signals.pre_delete.connect(Provider.pre_delete, sender=Provider)

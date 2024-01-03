@@ -99,7 +99,7 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
             ]
         else:
             transport = Transport.objects.get(uuid=processUuid(idTrans))
-        return HttpResponse(transport.getInstance().icon(), content_type='image/png')
+        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
@@ -114,7 +114,7 @@ def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
 
     try:
         transport: Transport = Transport.objects.get(uuid=processUuid(idImage))
-        return HttpResponse(transport.getInstance().icon(), content_type='image/png')
+        return HttpResponse(transport.get_instance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
@@ -163,7 +163,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
     if userService:
         # Service exists...
         try:
-            userServiceInstance = userService.getInstance()
+            userServiceInstance = userService.get_instance()
             ip = userServiceInstance.getIp()
             userService.logIP(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
@@ -206,7 +206,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
         elif (
             actionString == 'reset'
             and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.getType().canReset  # type: ignore
+            and userService.deployed_service.service.get_type().canReset  # type: ignore
         ):
             rebuild = True
             log.doLog(
