@@ -134,7 +134,7 @@ class SampleAuth(auths.Authenticator):
         if values and len(self.groups.value) < 2:
             raise exceptions.validation.ValidationError(_('We need more than two groups!'))
 
-    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Here we will receive a pattern for searching users.
 
@@ -152,7 +152,7 @@ class SampleAuth(auths.Authenticator):
             for a in range(1, 10)
         ]
 
-    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Here we we will receive a patter for searching groups.
 
@@ -228,7 +228,7 @@ class SampleAuth(auths.Authenticator):
 
         return types.auth.SUCCESS_AUTH
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         """
         As with authenticator part related to groupsManager, this
         method will fill the groups to which the specified username belongs to.
@@ -243,7 +243,7 @@ class SampleAuth(auths.Authenticator):
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:  # pylint: disable=unused-argument
+    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:  # pylint: disable=unused-argument
         """
         If we override this method from the base one, we are telling UDS
         that we want to draw our own authenticator.
@@ -266,11 +266,11 @@ class SampleAuth(auths.Authenticator):
         # I know, this is a bit ugly, but this is just a sample :-)
 
         res = '<p>Login name: <input id="logname" type="text"/></p>'
-        res += '<p><a href="" onclick="window.location.replace(\'' + self.callbackUrl() + '?user='
+        res += '<p><a href="" onclick="window.location.replace(\'' + self.callback_url() + '?user='
         res += '\' + $(\'#logname\').val()); return false;">Login</a></p>'
         return res
 
-    def authCallback(
+    def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
@@ -293,7 +293,7 @@ class SampleAuth(auths.Authenticator):
 
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=user)
 
-    def createUser(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, str]) -> None:
         """
         This method provides a "check oportunity" to authenticators for users created
         manually at administration interface.
@@ -314,7 +314,7 @@ class SampleAuth(auths.Authenticator):
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE
 
-    def modifyUser(self, usrData: dict[str, str]) -> None:
+    def modift_user(self, usrData: dict[str, str]) -> None:
         """
         This method provides a "check opportunity" to authenticator for users modified
         at administration interface.

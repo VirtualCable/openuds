@@ -268,7 +268,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             authsList = Authenticator.objects.all().order_by('priority', 'name')
 
         for auth in authsList:
-            if auth.get_type() and (not auth.get_type().isCustom() or tag != 'disabled'):
+            if auth.get_type() and (not auth.get_type().is_custom() or tag != 'disabled'):
                 yield auth
 
     @staticmethod

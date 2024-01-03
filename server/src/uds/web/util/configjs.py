@@ -59,7 +59,7 @@ register = template.Library()
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
-def udsJs(request: 'ExtendedHttpRequest') -> str:
+def uds_js(request: 'ExtendedHttpRequest') -> str:
     auth_host = (
         request.META.get('HTTP_HOST') or request.META.get('SERVER_NAME') or 'auth_host'
     )  # Last one is a placeholder in case we can't locate host name
@@ -105,7 +105,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
 
     # Filter out non accesible authenticators (using origin)
     authenticators = [
-        a for a in authenticators if a.get_instance().isAccesibleFrom(request)
+        a for a in authenticators if a.get_instance().is_ip_allowed(request)
     ]
 
     # logger.debug('Authenticators PRE: %s', authenticators)
@@ -117,7 +117,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             x
             for x in authenticators
             if x.small_name == tag
-            or (tag == 'disabled' and x.get_type().isCustom() is False)
+            or (tag == 'disabled' and x.get_type().is_custom() is False)
         ]
 
     # No autenticator can reach the criteria, let's do a final try
@@ -126,7 +126,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
         try:
             authenticators = []
             for a in Authenticator.objects.exclude(state=consts.auth.DISABLED).order_by('priority'):
-                if a.get_instance().isAccesibleFrom(request):
+                if a.get_instance().is_ip_allowed(request):
                     authenticators.append(a)
                     break
         except Exception:
@@ -146,7 +146,7 @@ def udsJs(request: 'ExtendedHttpRequest') -> str:
             'name': auth.name,
             'label': auth.small_name,
             'priority': auth.priority,
-            'is_custom': theType.isCustom(),
+            'is_custom': theType.is_custom(),
         }
 
     config = {

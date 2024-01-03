@@ -87,15 +87,15 @@ class Authenticators(ModelHandler):
     def typeInfo(self, type_: type['Module']) -> dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
-                'canSearchUsers': type_.searchUsers != auths.Authenticator.searchUsers,  # type: ignore
-                'canSearchGroups': type_.searchGroups != auths.Authenticator.searchGroups,  # type: ignore
+                'canSearchUsers': type_.search_users != auths.Authenticator.search_users,  # type: ignore
+                'canSearchGroups': type_.search_groups != auths.Authenticator.search_groups,  # type: ignore
                 'needsPassword': type_.needsPassword,
                 'userNameLabel': _(type_.userNameLabel),
                 'groupNameLabel': _(type_.groupNameLabel),
                 'passwordLabel': _(type_.passwordLabel),
-                'canCreateUsers': type_.createUser != auths.Authenticator.createUser,  # type: ignore
+                'canCreateUsers': type_.create_user != auths.Authenticator.create_user,  # type: ignore
                 'isExternal': type_.isExternalSource,
-                'supportsMFA': type_.providesMfa(),
+                'supportsMFA': type_.provides_mfa(),
             }
         # Not of my type
         return {}
@@ -130,7 +130,7 @@ class Authenticators(ModelHandler):
                     },
                 )
                 # If supports mfa, add MFA provider selector field
-                if authType.providesMfa():
+                if authType.provides_mfa():
                     self.addField(
                         field,
                         {
@@ -203,15 +203,15 @@ class Authenticators(ModelHandler):
 
             canDoSearch = (
                 type_ == 'user'
-                and (auth.searchUsers != auths.Authenticator.searchUsers)  # type: ignore
-                or (auth.searchGroups != auths.Authenticator.searchGroups)  # type: ignore
+                and (auth.search_users != auths.Authenticator.search_users)  # type: ignore
+                or (auth.search_groups != auths.Authenticator.search_groups)  # type: ignore
             )
             if canDoSearch is False:
                 raise self.notSupported()
 
             if type_ == 'user':
-                return list(auth.searchUsers(term))[:limit]
-            return list(auth.searchGroups(term))[:limit]
+                return list(auth.search_users(term))[:limit]
+            return list(auth.search_groups(term))[:limit]
         except Exception as e:
             logger.exception('Too many results: %s', e)
             return [{'id': _('Too many results...'), 'name': _('Refine your query')}]

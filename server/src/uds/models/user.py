@@ -113,7 +113,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         The manager (an instance of uds.core.auths.Authenticator), can transform the database stored username
         so we can, for example, add @domain in some cases.
         """
-        return self.getManager().getForAuth(self.name)
+        return self.getManager().get_for_auth(self.name)
 
     @property
     def pretty_name(self) -> str:
@@ -238,7 +238,7 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
-        to_delete.getManager().removeUser(to_delete.name)
+        to_delete.getManager().remove_user(to_delete.name)
 
         # If has mfa, remove related data
         to_delete.cleanRelated()

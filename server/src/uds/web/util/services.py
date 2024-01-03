@@ -37,7 +37,7 @@ from django.utils import formats
 from django.utils.translation import gettext
 
 from uds.core import types
-from uds.core.auths.auth import webPassword
+from uds.core.auths.auth import web_password
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import (
@@ -448,7 +448,7 @@ def enableService(
             request.user, request.os, request.ip, idService, idTransport, doTest=False
         )
         scrambler = CryptoManager().randomString(32)
-        password = CryptoManager().symCrypt(webPassword(request), scrambler)
+        password = CryptoManager().symCrypt(web_password(request), scrambler)
 
         userService, trans = res[1], res[3]
 

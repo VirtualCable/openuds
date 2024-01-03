@@ -41,7 +41,7 @@ from .service import (
     serviceImage,
     action,
 )
-from .auth import authCallback, authCallback_stage2, authInfo, ticketAuth, customAuth
+from .auth import auth_callback, auth_callback_stage2, auth_info, ticket_auth, custom_auth
 from .download import download
 from .images import image
 from . import main

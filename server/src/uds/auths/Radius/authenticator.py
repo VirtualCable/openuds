@@ -37,7 +37,7 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types, consts
-from uds.core.auths.auth import authLogLogin
+from uds.core.auths.auth import authenticate_log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 
@@ -136,9 +136,9 @@ class RadiusAuth(auths.Authenticator):
         )
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + str(self.dbObj().uuid) + username
+        return 'mfa_' + str(self.db_obj().uuid) + username
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def authenticate(
@@ -162,9 +162,9 @@ class RadiusAuth(auths.Authenticator):
                 )
 
         except Exception:
-            authLogLogin(
+            authenticate_log_login(
                 request,
-                self.dbObj(),
+                self.db_obj(),
                 username,
                 'Access denied by Raiuds',
             )
@@ -182,18 +182,18 @@ class RadiusAuth(auths.Authenticator):
 
         return types.auth.SUCCESS_AUTH
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
         with self.storage.map() as storage:
             groupsManager.validate(storage.get(username, []))
 
-    def createUser(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, str]) -> None:
         pass
 
-    def removeUser(self, username: str) -> None:
+    def remove_user(self, username: str) -> None:
         with self.storage.map() as storage:
             if username in storage:
                 del storage[username]
-        return super().removeUser(username)
+        return super().remove_user(username)
 
     @staticmethod
     def test(env, data):

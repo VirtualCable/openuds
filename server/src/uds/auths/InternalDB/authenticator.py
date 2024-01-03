@@ -41,7 +41,7 @@ import dns.reversename
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types, exceptions, consts
-from uds.core.auths.auth import authLogLogin
+from uds.core.auths.auth import authenticate_log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util.state import State
@@ -107,14 +107,14 @@ class InternalDBAuth(auths.Authenticator):
                 pass
         return ip
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         try:
-            self.dbObj().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
+            self.db_obj().users.get(name=username.lower(), state=State.ACTIVE).mfa_data
         except Exception:  # nosec: This is e controled pickle loading
             pass
         return ''
 
-    def transformUsername(self, username: str, request: 'ExtendedHttpRequest') -> str:
+    def transformed_username(self, username: str, request: 'ExtendedHttpRequest') -> str:
         username = username.lower()
         if self.differentForEachHost.isTrue():
             newUsername = (
@@ -123,7 +123,7 @@ class InternalDBAuth(auths.Authenticator):
                 + username
             )
             # Duplicate basic user into username.
-            auth = self.dbObj()
+            auth = self.db_obj()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
             # This way also, we protect from using forged "ip" + "username", because those will belong in fact to no group
             # and access will be denied
@@ -150,11 +150,11 @@ class InternalDBAuth(auths.Authenticator):
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         username = username.lower()
-        dbAuth = self.dbObj()
+        dbAuth = self.db_obj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
-            authLogLogin(request, self.dbObj(), username, 'Invalid user')
+            authenticate_log_login(request, self.db_obj(), username, 'Invalid user')
             return types.auth.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -165,11 +165,11 @@ class InternalDBAuth(auths.Authenticator):
             groupsManager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 
-        authLogLogin(request, self.dbObj(), username, 'Invalid password')
+        authenticate_log_login(request, self.db_obj(), username, 'Invalid password')
         return types.auth.FAILED_AUTH
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
-        dbAuth = self.dbObj()
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
+        dbAuth = self.db_obj()
         try:
             user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
@@ -177,15 +177,15 @@ class InternalDBAuth(auths.Authenticator):
 
         groupsManager.validate([g.name for g in user.groups.all()])
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         # Return the real name of the user, if it is set
         try:
-            user = self.dbObj().users.get(name=username.lower(), state=State.ACTIVE)
+            user = self.db_obj().users.get(name=username.lower(), state=State.ACTIVE)
             return user.real_name or username
         except Exception:
-            return super().getRealName(username)
+            return super().get_real_name(username)
 
-    def createUser(self, usrData):
+    def create_user(self, usrData):
         pass
 
     @staticmethod

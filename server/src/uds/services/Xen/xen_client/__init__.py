@@ -142,13 +142,13 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def toMb(number: typing.Union[str, int]) -> int:
         return int(number) // (1024 * 1024)
 
-    def checkLogin(self) -> bool:
+    def check_login(self) -> bool:
         if not self._loggedIn:
             self.login(switchToMaster=True)
         return self._loggedIn
 
     def getXenapiProperty(self, prop: str) -> typing.Any:
-        if not self.checkLogin():
+        if not self.check_login():
             raise Exception("Can't log in")
         return getattr(self._session.xenapi, prop)
 
@@ -165,8 +165,8 @@ class XenServer:  # pylint: disable=too-many-public-methods
     VBD = property(lambda self: self.getXenapiProperty('VBD'))  # Virtual Block Device
 
     # Properties to access private vars
-    poolName = property(lambda self: self.checkLogin() and self._poolName)
-    hasPool = property(lambda self: self.checkLogin() and self._poolName != '')
+    poolName = property(lambda self: self.check_login() and self._poolName)
+    hasPool = property(lambda self: self.check_login() and self._poolName)
 
     def getPoolName(self) -> str:
         pool = self.pool.get_all()[0]

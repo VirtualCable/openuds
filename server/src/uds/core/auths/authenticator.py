@@ -167,7 +167,7 @@ class Authenticator(Module):
     # : group class
     groupType: typing.ClassVar[type[Group]] = Group
 
-    _dbObj: typing.Optional['models.Authenticator'] = None  # Cached dbAuth object
+    _db_obj: typing.Optional['models.Authenticator'] = None  # Cached dbAuth object
 
     def __init__(
         self,
@@ -200,19 +200,19 @@ class Authenticator(Module):
         Default implementation does nothing
         """
 
-    def dbObj(self) -> 'models.Authenticator':
+    def db_obj(self) -> 'models.Authenticator':
         """
         Helper method to access the Authenticator database object
         """
         from uds.models import Authenticator  # pylint: disable=import-outside-toplevel
 
-        if self._dbObj is None:
+        if self._db_obj is None:
             if not self._uuid:
                 return Authenticator.null()
-            self._dbObj = Authenticator.objects.get(uuid=self._uuid)
-        return self._dbObj
+            self._db_obj = Authenticator.objects.get(uuid=self._uuid)
+        return self._db_obj
 
-    def recreateGroups(self, user: 'models.User') -> None:
+    def recreate_groups(self, user: 'models.User') -> None:
         """
         Helper method, not needed to be overriden.
         It simply checks if the source is external and if so, recreates
@@ -225,45 +225,45 @@ class Authenticator(Module):
         )
 
         if self.isExternalSource:
-            groupsManager = GroupsManager(self.dbObj())
-            self.getGroups(user.name, groupsManager)
+            groupsManager = GroupsManager(self.db_obj())
+            self.get_groups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there
             typing.cast(typing.Any, user.groups).set([g.dbGroup() for g in groupsManager.getValidGroups()])
 
-    def callbackUrl(self) -> str:
+    def callback_url(self) -> str:
         """
         Helper method to return callback url for self (authenticator).
 
         This method will allow us to know where to do redirection in case
         we need to use callback for authentication
         """
-        from .auth import authCallbackUrl  # pylint: disable=import-outside-toplevel
+        from .auth import authenticate_callback_url  # pylint: disable=import-outside-toplevel
 
-        return authCallbackUrl(self.dbObj())
+        return authenticate_callback_url(self.db_obj())
 
-    def infoUrl(self) -> str:
+    def info_url(self) -> str:
         """
         Helper method to return info url for this authenticator
         """
-        from .auth import authInfoUrl  # pylint: disable=import-outside-toplevel
+        from .auth import authenticate_info_url  # pylint: disable=import-outside-toplevel
 
-        return authInfoUrl(self.dbObj())
+        return authenticate_info_url(self.db_obj())
 
     @classmethod
-    def isCustom(cls) -> bool:
+    def is_custom(cls) -> bool:
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
-        return cls.getJavascript is not Authenticator.getJavascript
+        return cls.get_javascript is not Authenticator.get_javascript
 
     @classmethod
-    def canCheckUserPassword(cls) -> bool:
+    def can_check_user_password(cls) -> bool:
         """
         Helper method to query if a class can do a login using credentials
         """
         return cls.authenticate is not Authenticator.authenticate
 
-    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         If you provide this method, the user will be allowed to search users,
         that is, the search button at administration interface, at user form,
@@ -283,7 +283,7 @@ class Authenticator(Module):
         """
         return []
 
-    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """
         Returns an array of groups that match the supplied pattern
         If none found, returns empty array. Items returned are BaseGroups (or derived)
@@ -298,7 +298,7 @@ class Authenticator(Module):
         """
         return []
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         """
         If this method is provided by an authenticator, the user will be allowed to enter a MFA code
         You must return the value used by a MFA provider to identify the user (i.e. email, phone number, etc)
@@ -311,11 +311,11 @@ class Authenticator(Module):
         return ''
 
     @classmethod
-    def providesMfa(cls) -> bool:
+    def provides_mfa(cls: typing.Type['Authenticator']) -> bool:
         """
         Returns if this authenticator provides a MFA identifier
         """
-        return cls.mfaIdentifier is not Authenticator.mfaIdentifier
+        return cls.mfa_identifier is not Authenticator.mfa_identifier
 
     def authenticate(
         self,
@@ -363,18 +363,18 @@ class Authenticator(Module):
         """
         return types.auth.FAILED_AUTH
 
-    def isAccesibleFrom(self, request: 'HttpRequest') -> bool:
+    def is_ip_allowed(self, request: 'HttpRequest') -> bool:
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
         # Maybe "internal for root", if this is the case, it is valid for all ips
-        if not self.dbObj().id:
+        if not self.db_obj().id:
             return True
-        return self.dbObj().state != consts.auth.DISABLED and self.dbObj().is_ip_allowed(
+        return self.db_obj().state != consts.auth.DISABLED and self.db_obj().is_ip_allowed(
             typing.cast('types.request.ExtendedHttpRequest', request).ip
         )
 
-    def transformUsername(
+    def transformed_username(
         self,
         username: str,
         request: 'types.request.ExtendedHttpRequest',
@@ -393,7 +393,7 @@ class Authenticator(Module):
         """
         return username
 
-    def internalAuthenticate(
+    def internal_authenticate(
         self,
         username: str,
         credentials: str,
@@ -418,7 +418,7 @@ class Authenticator(Module):
 
         Returns:
             True if authentication success, False if don't.
-            By default, internalAuthenticate simply invokes authenticate, but this method
+            By default, internal_authenticate simply invokes authenticate, but this method
             is here so you can provide your own method if needed
 
         See uds.core.auths.groups_manager
@@ -467,7 +467,7 @@ class Authenticator(Module):
         """
         return types.auth.SUCCESS_AUTH
 
-    def webLogoutHook(
+    def hook_web_logout(
         self,
         username: str,
         request: 'HttpRequest',
@@ -490,7 +490,7 @@ class Authenticator(Module):
         '''
         return
 
-    def getForAuth(self, username: str) -> str:
+    def get_for_auth(self, username: str) -> str:
         """
         Process the username for this authenticator and returns it.
         This transformation is used for transports only, not for transforming
@@ -504,7 +504,7 @@ class Authenticator(Module):
         """
         return username
 
-    def getGroups(self, username: str, groupsManager: 'GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'GroupsManager'):
         """
         Looks for the real groups to which the specified user belongs.
 
@@ -516,7 +516,7 @@ class Authenticator(Module):
         """
         raise NotImplementedError
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:
         """
         If you override this method, and returns something different of None,
         UDS will consider your authenticator as "Owner draw", that is, that it
@@ -531,7 +531,7 @@ class Authenticator(Module):
         """
         return None
 
-    def authCallback(
+    def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
@@ -564,18 +564,13 @@ class Authenticator(Module):
                 * username: Username of the user, if success is True
                 * url: Url to redirect to,
 
-        You can also return an exception here and, if you don't wont to check the user login,
-        you can raise :py:class:uds.core.auths.exceptions.Redirect to redirect user to somewhere.
-        In this case, no user checking will be done. This is usefull to use this url to provide
-        other functionality appart of login, (such as logout)
-
         :note: Keeping user information about group membership inside storage is highly recommended.
                There will be calls to getGroups one an again, and also to getRealName, not just
                at login, but at future (from admin interface, at user editing for example)
         """
         return types.auth.FAILED_AUTH
 
-    def getInfo(
+    def get_info(
         self, parameters: collections.abc.Mapping[str, str]
     ) -> typing.Optional[tuple[str, typing.Optional[str]]]:
         """
@@ -587,7 +582,7 @@ class Authenticator(Module):
         """
         return None
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         """
         Tries to get the real name of an user
 
@@ -595,7 +590,7 @@ class Authenticator(Module):
         """
         return username
 
-    def createUser(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, str]) -> None:
         """
         This method is used when creating an user to allow the authenticator:
 
@@ -627,7 +622,7 @@ class Authenticator(Module):
 
         """
 
-    def modifyUser(self, usrData: dict[str, str]) -> None:
+    def modift_user(self, usrData: dict[str, str]) -> None:
         """
         This method is used when modifying an user to allow the authenticator:
 
@@ -653,7 +648,7 @@ class Authenticator(Module):
                data of users.
         """
 
-    def createGroup(self, groupData: dict[str, str]) -> None:
+    def create_group(self, groupData: dict[str, str]) -> None:
         """
         This method is used when creating a new group to allow the authenticator:
 
@@ -679,7 +674,7 @@ class Authenticator(Module):
             name (group name) to a new one!
         """
 
-    def modifyGroup(self, groupData: dict[str, str]) -> None:
+    def modify_group(self, groupData: dict[str, str]) -> None:
         """
         This method is used when modifying group to allow the authenticator:
 
@@ -704,7 +699,7 @@ class Authenticator(Module):
         Note: 'name' output parameter will be ignored
         """
 
-    def removeUser(self, username: str) -> None:
+    def remove_user(self, username: str) -> None:
         """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an user needs to be removed.
@@ -720,7 +715,7 @@ class Authenticator(Module):
 
     # We don't have a "modify" group option. Once u have created it, the only way of changing it if removing it an recreating it with another name
 
-    def removeGroup(self, groupname: str) -> None:
+    def remove_group(self, groupname: str) -> None:
         """
         Remove user is used whenever from the administration interface, or from other
         internal workers, an group needs to be removed.

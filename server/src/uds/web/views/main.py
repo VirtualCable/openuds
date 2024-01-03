@@ -53,7 +53,7 @@ from uds.core.managers.user_service import UserServiceManager
 from uds.web.util import errors
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
-from uds.web.util.authentication import checkLogin
+from uds.web.util.authentication import check_login
 from uds.web.util.services import getServicesData
 from uds.web.util import configjs
 from uds.core import mfas, types, exceptions
@@ -108,18 +108,18 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
         request.authorized = False  # Ensure that on login page, user is unauthorized first
         
         form = LoginForm(request.POST, tag=tag)
-        loginResult = checkLogin(request, form, tag)
+        loginResult = check_login(request, form, tag)
         if loginResult.user:
             response = HttpResponseRedirect(reverse('page.index'))
             # save tag, weblogin will clear session
             tag = request.session.get('tag')
-            auth.webLogin(
+            auth.web_login(
                 request, response, loginResult.user, loginResult.password
             )  # data is user password here
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
-            if loginResult.user.manager.get_type().providesMfa() and loginResult.user.manager.mfa:
+            if loginResult.user.manager.get_type().provides_mfa() and loginResult.user.manager.mfa:
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -145,24 +145,24 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
 
 
 @never_cache
-@auth.webLoginRequired(admin=False)
+@auth.web_login_required(admin=False)
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
-    auth.authLogLogout(request)
+    auth.auth_log_logout(request)
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
     url = logoutResponse.url if logoutResponse.success == types.auth.AuthenticationState.REDIRECT else None
         
-    return auth.webLogout(request, url or request.session.get('logouturl', None))
+    return auth.web_logout(request, url or request.session.get('logouturl', None))
 
 
 @never_cache
 def js(request: ExtendedHttpRequest) -> HttpResponse:
-    return HttpResponse(content=configjs.udsJs(request), content_type='application/javascript')
+    return HttpResponse(content=configjs.uds_js(request), content_type='application/javascript')
 
 
 @never_cache
-@auth.denyNonAuthenticated  # webLoginRequired not used here because this is not a web page, but js
+@auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
 def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
 
@@ -203,7 +203,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
 
-    mfaIdentifier = authInstance.mfaIdentifier(request.user.name)
+    mfaIdentifier = authInstance.mfa_identifier(request.user.name)
     label = mfaInstance.label()
 
     if not mfaIdentifier:
@@ -315,7 +315,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
 
 
 @csrf_exempt
-@auth.denyNonAuthenticated
+@auth.deny_non_authenticated
 def update_transport_ticket(
     request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str
 ) -> HttpResponse:

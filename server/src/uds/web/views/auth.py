@@ -42,10 +42,10 @@ from django.views.decorators.csrf import csrf_exempt
 from uds.web.util import errors
 from uds.core import auths, types, exceptions
 from uds.core.auths.auth import (
-    webLogin,
-    webLogout,
-    authenticateViaCallback,
-    authLogLogin,
+    web_login,
+    web_logout,
+    authenticate_via_callback,
+    authenticate_log_login,
     getUDSCookie,
 )
 from uds.core.managers.user_service import UserServiceManager
@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
-def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
+def auth_callback(request: HttpRequest, authName: str) -> HttpResponse:
     """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -98,33 +98,33 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exceptionView(request, e)
 
 
-def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
+def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
     try:
         ticket = TicketStore.get(ticketId, invalidate=True)
         params: types.auth.AuthCallbackParams = ticket['params']
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
 
-        result = authenticateViaCallback(authenticator, params, request)
+        result = authenticate_via_callback(authenticator, params, request)
 
         if result.url:
             raise exceptions.auth.Redirect(result.url)
 
         if result.user is None:
-            authLogLogin(request, authenticator, f'{params}', 'Invalid at auth callback')
+            authenticate_log_login(request, authenticator, f'{params}', 'Invalid at auth callback')
             raise exceptions.auth.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
 
-        webLogin(request, response, result.user, '')  # Password is unavailable in this case
+        web_login(request, response, result.user, '')  # Password is unavailable in this case
 
-        authLogLogin(request, authenticator, result.user.name, 'Federated login')
+        authenticate_log_login(request, authenticator, result.user.name, 'Federated login')
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
-        if authenticator.get_type().providesMfa() and authenticator.mfa:
+        if authenticator.get_type().provides_mfa() and authenticator.mfa:
             authInstance = authenticator.get_instance()
-            if authInstance.mfaIdentifier(result.user.name):
+            if authInstance.mfa_identifier(result.user.name):
                 request.authorized = False  # We can ask for MFA so first disauthorize user
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -132,7 +132,7 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
     except exceptions.auth.Redirect as e:
         return HttpResponseRedirect(request.build_absolute_uri(str(e)) if e.args and e.args[0] else '/')
     except exceptions.auth.Logout as e:
-        return webLogout(
+        return web_logout(
             request,
             request.build_absolute_uri(str(e)) if e.args and e.args[0] else None,
         )
@@ -142,7 +142,7 @@ def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -
 
 
 @csrf_exempt
-def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
+def auth_info(request: 'HttpRequest', authName: str) -> HttpResponse:
     """
     This url is provided so authenticators can provide info (such as SAML metadata)
 
@@ -157,10 +157,10 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
         if not authenticator:
             raise Exception('Authenticator not found')
         authInstance = authenticator.get_instance()
-        if typing.cast(typing.Any, authInstance.getInfo) == auths.Authenticator.getInfo:
+        if typing.cast(typing.Any, authInstance.get_info) == auths.Authenticator.get_info:
             raise Exception()  # This authenticator do not provides info
 
-        info = authInstance.getInfo(request.GET)
+        info = authInstance.get_info(request.GET)
 
         if info is None:
             raise Exception()  # This auth do not provides info
@@ -176,14 +176,14 @@ def authInfo(request: 'HttpRequest', authName: str) -> HttpResponse:
 
 # Gets the javascript from the custom authtenticator
 @never_cache
-def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
+def custom_auth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
     res: typing.Optional[str] = ''
     try:
         try:
             auth = Authenticator.objects.get(uuid=processUuid(idAuth))
         except Authenticator.DoesNotExist:
             auth = Authenticator.objects.get(pk=idAuth)
-        res = auth.get_instance().getJavascript(request)
+        res = auth.get_instance().get_javascript(request)
         if not res:
             res = ''
     except Exception:
@@ -193,7 +193,7 @@ def customAuth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
 
 
 @never_cache
-def ticketAuth(
+def ticket_auth(
     request: 'ExtendedHttpRequestWithUser', ticketId: str
 ) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """
@@ -236,10 +236,10 @@ def ticketAuth(
         usr.groups.set(grps)  # type: ignore
 
         # Force cookie generation
-        webLogin(request, None, usr, password)
+        web_login(request, None, usr, password)
 
         # Log the login
-        authLogLogin(request, auth, username, 'Ticket authentication')
+        authenticate_log_login(request, auth, username, 'Ticket authentication')
 
         request.user = (
             usr  # Temporarily store this user as "authenticated" user, next requests will be done using session

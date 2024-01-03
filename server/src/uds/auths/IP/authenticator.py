@@ -89,7 +89,7 @@ class IPAuth(auths.Authenticator):
             ip = ip.split(':')[-1]
         return ip
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
         for g in groupsManager.getGroupsNames():
@@ -108,11 +108,11 @@ class IPAuth(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         # If credentials is a dict, that can't be sent directly from web interface, we allow entering
         if username == self.getIp(request):
-            self.getGroups(username, groupsManager)
+            self.get_groups(username, groupsManager)
             return types.auth.SUCCESS_AUTH
         return types.auth.FAILED_AUTH
 
-    def isAccesibleFrom(self, request: 'ExtendedHttpRequest'):
+    def is_ip_allowed(self, request: 'ExtendedHttpRequest'):
         """
         Used by the login interface to determine if the authenticator is visible on the login page.
         """
@@ -120,9 +120,9 @@ class IPAuth(auths.Authenticator):
         # If has networks and not in any of them, not visible
         if validNets and not net.contains(validNets, request.ip):
             return False
-        return super().isAccesibleFrom(request)
+        return super().is_ip_allowed(request)
 
-    def internalAuthenticate(
+    def internal_authenticate(
         self,
         username: str,
         credentials: str,  # pylint: disable=unused-argument
@@ -131,8 +131,8 @@ class IPAuth(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
-        self.getGroups(username, groupsManager)
-        if groupsManager.hasValidGroups() and self.dbObj().is_user_allowed(
+        self.get_groups(username, groupsManager)
+        if groupsManager.hasValidGroups() and self.db_obj().is_user_allowed(
             username, True
         ):
             return types.auth.SUCCESS_AUTH
@@ -145,14 +145,14 @@ class IPAuth(auths.Authenticator):
     def check(self):
         return _("All seems to be fine.")
 
-    def getJavascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         # We will authenticate ip here, from request.ip
         # If valid, it will simply submit form with ip submited and a cached generated random password
         ip = self.getIp(request)
-        gm = auths.GroupsManager(self.dbObj())
-        self.getGroups(ip, gm)
+        gm = auths.GroupsManager(self.db_obj())
+        self.get_groups(ip, gm)
 
-        if gm.hasValidGroups() and self.dbObj().is_user_allowed(ip, True):
+        if gm.hasValidGroups() and self.db_obj().is_user_allowed(ip, True):
             return ('function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
                     '    document.getElementById(element).value = value;\n'
                     '}}\n'

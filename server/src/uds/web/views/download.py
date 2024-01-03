@@ -32,7 +32,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core.auths.auth import webLoginRequired
+from uds.core.auths.auth import web_login_required
 from uds.core.managers import downloadsManager
 from .main import index
 
@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@webLoginRequired(admin=True)
+@web_login_required(admin=True)
 def download(request: 'HttpRequest', idDownload: str) -> 'HttpResponse':
     """
     Downloadables management

@@ -120,7 +120,7 @@ class Group(UUIDModel):
 
         # We invoke removeGroup. If this raises an exception, group will not
         # be removed
-        to_delete.getManager().removeGroup(to_delete.name)
+        to_delete.getManager().remove_group(to_delete.name)
 
         # Clears related logs
         log.clearLogs(to_delete)

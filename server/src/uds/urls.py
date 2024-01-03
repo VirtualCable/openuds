@@ -67,18 +67,18 @@ urlpatterns = [
     # Old urls for federated authentications
     re_path(
         r'^auth/(?P<authName>.+)',
-        uds.web.views.authCallback,
+        uds.web.views.auth_callback,
         name='page.auth.callback.compat',
     ),
     re_path(
         r'^authinfo/(?P<authName>.+)',
-        uds.web.views.authInfo,
+        uds.web.views.auth_info,
         name='page.auth.info.compat',
     ),
     # Ticket authentication
     re_path(
         r'^tkauth/(?P<ticketId>[a-zA-Z0-9-]+)$',
-        uds.web.views.ticketAuth,
+        uds.web.views.ticket_auth,
         name='page.auth.ticket.compat',
     ),
     # END COMPAT
@@ -109,23 +109,23 @@ urlpatterns = [
     # Federated authentication
     re_path(
         r'^uds/page/auth/(?P<authName>[^/]+)$',
-        uds.web.views.authCallback,
+        uds.web.views.auth_callback,
         name='page.auth.callback',
     ),
     re_path(
         r'^uds/page/auth/stage2/(?P<ticketId>[^/]+)$',
-        uds.web.views.authCallback_stage2,
+        uds.web.views.auth_callback_stage2,
         name='page.auth.callback_stage2',
     ),
     re_path(
         r'^uds/page/auth/info/(?P<authName>[a-zA-Z0-9.-]+)$',
-        uds.web.views.authInfo,
+        uds.web.views.auth_info,
         name='page.auth.info',
     ),
     # Ticket authentication related
     re_path(
         r'^uds/page/ticket/auth/(?P<ticketId>[a-zA-Z0-9.-]+)$',
-        uds.web.views.ticketAuth,
+        uds.web.views.ticket_auth,
         name='page.ticket.auth',
     ),
     path(
@@ -201,7 +201,7 @@ urlpatterns = [
     # Authenticators custom js
     re_path(
         r'^uds/webapi/customAuth/(?P<idAuth>[a-zA-Z0-9:-]*)$',
-        uds.web.views.customAuth,
+        uds.web.views.custom_auth,
         name='uds.web.views.customAuth',
     ),
     # Error message

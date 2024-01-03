@@ -38,7 +38,7 @@ import ldap.filter
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types, consts, exceptions
-from uds.core.auths.auth import authLogLogin
+from uds.core.auths.auth import authenticate_log_login
 from uds.core.ui import gui
 from uds.core.util import ldaputil
 
@@ -313,9 +313,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._verifySsl = gui.toBool(verifySsl)
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + str(self.dbObj().uuid) + username
+        return 'mfa_' + str(self.db_obj().uuid) + username
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def __connection(self):
@@ -447,14 +447,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             user = self.__getUser(username)
 
             if user is None:
-                authLogLogin(request, self.dbObj(), username, 'Invalid user')
+                authenticate_log_login(request, self.db_obj(), username, 'Invalid user')
                 return types.auth.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
                 self.__connectAs(user['dn'], credentials)  # Will raise an exception if it can't connect
             except Exception:
-                authLogLogin(request, self.dbObj(), username, 'Invalid password')
+                authenticate_log_login(request, self.db_obj(), username, 'Invalid password')
                 return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set
@@ -471,7 +471,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         except Exception:
             return types.auth.FAILED_AUTH
 
-    def createUser(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, str]) -> None:
         '''
         Groups are only used in case of internal users (non external sources) that must know to witch groups this user belongs to
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
@@ -483,7 +483,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         # Fills back realName field
         usrData['real_name'] = self.__getUserRealName(res)
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         '''
         Tries to get the real name of an user
         '''
@@ -492,7 +492,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             return username
         return self.__getUserRealName(res)
 
-    def modifyUser(self, usrData: dict[str, str]) -> None:
+    def modift_user(self, usrData: dict[str, str]) -> None:
         '''
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
@@ -500,9 +500,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
         @return:  Raises an exception it things don't goes fine
         '''
-        return self.createUser(usrData)
+        return self.create_user(usrData)
 
-    def createGroup(self, groupData: dict[str, str]) -> None:
+    def create_group(self, groupData: dict[str, str]) -> None:
         '''
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has its own groups and, at most, it can check if it exists on external source before accepting it
@@ -514,7 +514,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         if res is None:
             raise exceptions.auth.AuthenticatorException(_('Group not found'))
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         '''
         Looks for the real groups to which the specified user belongs
         Updates groups manager with valid groups
@@ -525,7 +525,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             raise exceptions.auth.AuthenticatorException(_('Username not found'))
         groupsManager.validate(self.__getGroups(user))
 
-    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(
@@ -547,7 +547,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             logger.exception("Exception: ")
             raise exceptions.auth.AuthenticatorException(_('Too many results, be more specific')) from e
 
-    def searchGroups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(

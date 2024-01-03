@@ -40,7 +40,7 @@ import ldap
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, exceptions, types, consts
-from uds.core.auths.auth import authLogLogin
+from uds.core.auths.auth import authenticate_log_login
 from uds.core.ui import gui
 from uds.core.util import ldaputil, auth as auth_utils
 
@@ -272,9 +272,9 @@ class RegexLdap(auths.Authenticator):
         return res
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbObj().uuid + username
+        return 'mfa_' + self.db_obj().uuid + username
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def valuesDict(self) -> gui.ValuesDictType:
@@ -494,14 +494,14 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
-                authLogLogin(request, self.dbObj(), username, 'Invalid user')
+                authenticate_log_login(request, self.db_obj(), username, 'Invalid user')
                 return types.auth.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
                 self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
             except Exception:
-                authLogLogin(request, self.dbObj(), username, 'Invalid password')
+                authenticate_log_login(request, self.db_obj(), username, 'Invalid password')
                 return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set
@@ -518,7 +518,7 @@ class RegexLdap(auths.Authenticator):
         except Exception:
             return types.auth.FAILED_AUTH
 
-    def createUser(self, usrData: dict[str, str]) -> None:
+    def create_user(self, usrData: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         External sources already has the user  cause they are managed externally, so, it can at most test if the users exists on external source
@@ -533,7 +533,7 @@ class RegexLdap(auths.Authenticator):
         # Fills back realName field
         usrData['real_name'] = self.__getUserRealName(res)
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         """
         Tries to get the real name of an user
         """
@@ -542,7 +542,7 @@ class RegexLdap(auths.Authenticator):
             return username
         return self.__getUserRealName(res)
 
-    def modifyUser(self, usrData: dict[str, str]) -> None:
+    def modift_user(self, usrData: dict[str, str]) -> None:
         """
         We must override this method in authenticators not based on external sources (i.e. database users, text file users, etc..)
         Modify user has no reason on external sources, so it will never be used (probably)
@@ -550,9 +550,9 @@ class RegexLdap(auths.Authenticator):
         @param usrData: Contains data received from user directly, that is, a dictionary with at least: name, realName, comments, state & password
         @return:  Raises an exception it things doesn't go fine
         """
-        return self.createUser(usrData)
+        return self.create_user(usrData)
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         """
         Looks for the real groups to which the specified user belongs
         Updates groups manager with valid groups
@@ -564,7 +564,7 @@ class RegexLdap(auths.Authenticator):
         groups = self.__getGroups(user)
         groupsManager.validate(groups)
 
-    def searchUsers(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
+    def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
             for r in ldaputil.getAsDict(

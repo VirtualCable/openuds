@@ -225,12 +225,12 @@ class Users(DetailHandler):
             with transaction.atomic():
                 auth = parent.get_instance()
                 if item is None:  # Create new
-                    auth.createUser(
+                    auth.create_user(
                         fields
                     )  # this throws an exception if there is an error (for example, this auth can't create users)
                     user = parent.users.create(**fields)
                 else:
-                    auth.modifyUser(fields)  # Notifies authenticator
+                    auth.modift_user(fields)  # Notifies authenticator
                     user = parent.users.get(uuid=processUuid(item))
                     user.__dict__.update(fields)
                     user.save()
@@ -436,7 +436,7 @@ class Groups(DetailHandler):
             auth = parent.get_instance()
             if not item:  # Create new
                 if not is_meta and not is_pattern:
-                    auth.createGroup(
+                    auth.create_group(
                         fields
                     )  # this throws an exception if there is an error (for example, this auth can't create groups)
                 toSave = {}
@@ -448,7 +448,7 @@ class Groups(DetailHandler):
                 group = parent.groups.create(**toSave)
             else:
                 if not is_meta and not is_pattern:
-                    auth.modifyGroup(fields)
+                    auth.modify_group(fields)
                 toSave = {}
                 for k in valid_fields:
                     toSave[k] = fields[k]

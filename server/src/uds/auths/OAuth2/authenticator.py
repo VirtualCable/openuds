@@ -466,10 +466,10 @@ class OAuth2Authenticator(auths.Authenticator):
 
         request: 'HttpRequest' = values['_request']
 
-        if self.redirectionEndpoint.value.strip() == '' and self.dbObj():
-            self.redirectionEndpoint.value = request.build_absolute_uri(self.callbackUrl())
+        if self.redirectionEndpoint.value.strip() == '' and self.db_obj():
+            self.redirectionEndpoint.value = request.build_absolute_uri(self.callback_url())
 
-    def authCallback(
+    def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -495,19 +495,19 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         return types.auth.SUCCESS_AUTH
 
-    def getJavascript(self, request: 'HttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'HttpRequest') -> typing.Optional[str]:
         """
         We will here compose the azure request and send it via http-redirect
         """
         return f'window.location="{self._getLoginURL(request)}";'
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         data = self.storage.getPickle(username)
         if not data:
             return
         groupsManager.validate(data[1])
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         data = self.storage.getPickle(username)
         if not data:
             return username

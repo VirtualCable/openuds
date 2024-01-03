@@ -71,7 +71,7 @@ class User:
         returns it.
         """
         if self._grpsManager is None:
-            self._grpsManager = GroupsManager(self._manager.dbObj())
+            self._grpsManager = GroupsManager(self._manager.db_obj())
         return self._grpsManager
 
     def groups(self) -> list[Group]:
@@ -88,7 +88,7 @@ class User:
 
         if self._groups is None:
             if self._manager.isExternalSource:
-                self._manager.getGroups(self._dbUser.name, self._groupsManager())
+                self._manager.get_groups(self._dbUser.name, self._groupsManager())
                 self._groups = list(self._groupsManager().getValidGroups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation

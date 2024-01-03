@@ -116,7 +116,7 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
     """
     Tries to render an error page with error information
     """
-    from uds.core.auths.exceptions import (
+    from uds.core.exceptions.auth import (
         InvalidUserException,
         InvalidAuthenticatorException,
     )

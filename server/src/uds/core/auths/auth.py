@@ -139,7 +139,7 @@ def getRootUser() -> models.User:
 
 
 # Decorator to make easier protect pages that needs to be logged in
-def webLoginRequired(
+def web_login_required(
     admin: typing.Union[bool, typing.Literal['admin']] = False
 ) -> collections.abc.Callable[
     [collections.abc.Callable[..., HttpResponse]], collections.abc.Callable[..., HttpResponse]
@@ -219,9 +219,9 @@ def trustedSourceRequired(
 
 
 # decorator to deny non authenticated requests
-# The difference with webLoginRequired is that this one does not redirect to login page
+# The difference with web_login_required is that this one does not redirect to login page
 # it's designed to be used in ajax calls mainly
-def denyNonAuthenticated(
+def deny_non_authenticated(
     view_func: collections.abc.Callable[..., RT]
 ) -> collections.abc.Callable[..., RT]:
     @wraps(view_func)
@@ -233,7 +233,7 @@ def denyNonAuthenticated(
     return _wrapped_view
 
 
-def registerUser(
+def register_user(
     authenticator: models.Authenticator,
     authInstance: AuthenticatorInstance,
     username: str,
@@ -244,15 +244,15 @@ def registerUser(
     This will work correctly with both internal or externals cause we first authenticate the user, if internal and user do not exists in database
     authenticate will return false, if external and return true, will create a reference in database
     """
-    username = authInstance.transformUsername(username, request)
+    username = authInstance.transformed_username(username, request)
     logger.debug('Transformed username: %s', username)
 
     usr = authenticator.get_or_create_user(username, username)
-    usr.real_name = authInstance.getRealName(username)
+    usr.real_name = authInstance.get_real_name(username)
     usr.save()
     if usr is not None and State.isActive(usr.state):
         # Now we update database groups for this user
-        usr.getManager().recreateGroups(usr)
+        usr.getManager().recreate_groups(usr)
         # And add an login event
         events.addEvent(
             authenticator, events.ET_LOGIN, username=username, srcip=request.ip
@@ -309,7 +309,7 @@ def authenticate(
     if useInternalAuthenticate is False:
         res = authInstance.authenticate(username, password, gm, request)
     else:
-        res = authInstance.internalAuthenticate(username, password, gm, request)
+        res = authInstance.internal_authenticate(username, password, gm, request)
 
     if res.success == types.auth.AuthenticationState.FAIL:
         logger.debug('Authentication failed')
@@ -329,10 +329,10 @@ def authenticate(
         )
         return AuthResult()
 
-    return registerUser(authenticator, authInstance, username, request)
+    return register_user(authenticator, authInstance, username, request)
 
 
-def authenticateViaCallback(
+def authenticate_via_callback(
     authenticator: models.Authenticator,
     params: 'types.auth.AuthCallbackParams',
     request: 'ExtendedHttpRequestWithUser',
@@ -359,10 +359,10 @@ def authenticateViaCallback(
     authInstance = authenticator.get_instance()
 
     # If there is no callback for this authenticator...
-    if authInstance.authCallback is auths.Authenticator.authCallback:
+    if authInstance.auth_callback is auths.Authenticator.auth_callback:
         raise exceptions.auth.InvalidAuthenticatorException()
 
-    result = authInstance.authCallback(params, gm, request)
+    result = authInstance.auth_callback(params, gm, request)
     if result.success == types.auth.AuthenticationState.FAIL or (
         result.success == types.auth.AuthenticationState.SUCCESS and not gm.hasValidGroups()
     ):
@@ -372,21 +372,21 @@ def authenticateViaCallback(
         return AuthResult(url=result.url)
 
     if result.username:
-        return registerUser(authenticator, authInstance, result.username or '', request)
+        return register_user(authenticator, authInstance, result.username or '', request)
     else:
         logger.warning('Authenticator %s returned empty username', authenticator.name)
 
     raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
 
 
-def authCallbackUrl(authenticator: models.Authenticator) -> str:
+def authenticate_callback_url(authenticator: models.Authenticator) -> str:
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
     return reverse('page.auth.callback', kwargs={'authName': authenticator.small_name})
 
 
-def authInfoUrl(authenticator: typing.Union[str, bytes, models.Authenticator]) -> str:
+def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authenticator]) -> str:
     """
     Helper method, so we can get the info url for an authenticator
     """
@@ -400,7 +400,7 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, models.Authenticator]) -
     return reverse('page.auth.info', kwargs={'authName': name})
 
 
-def webLogin(
+def web_login(
     request: 'ExtendedHttpRequest',
     response: typing.Optional[HttpResponse],
     user: models.User,
@@ -455,7 +455,7 @@ def webLogin(
     return True
 
 
-def webPassword(request: HttpRequest) -> str:
+def web_password(request: HttpRequest) -> str:
     """
     The password is stored at session using a simple scramble algorithm that keeps the password splited at
     session (db) and client browser cookies. This method uses this two values to recompose the user password
@@ -472,7 +472,7 @@ def webPassword(request: HttpRequest) -> str:
     )  # recover as original unicode string
 
 
-def webLogout(
+def web_logout(
     request: 'ExtendedHttpRequest', exit_url: typing.Optional[str] = None
 ) -> HttpResponse:
     """
@@ -509,11 +509,11 @@ def webLogout(
 
     response = HttpResponseRedirect(exit_url)
     if authenticator:
-        authenticator.webLogoutHook(username, request, response)
+        authenticator.hook_web_logout(username, request, response)
     return response
 
 
-def authLogLogin(
+def authenticate_log_login(
     request: 'ExtendedHttpRequest',
     authenticator: models.Authenticator,
     userName: str,
@@ -558,7 +558,7 @@ def authLogLogin(
         logger.info('Root {logStr} from %s where OS is %s', request.ip, request.os.os.name)
 
 
-def authLogLogout(request: 'ExtendedHttpRequest') -> None:
+def auth_log_logout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
         if request.user.manager.id is not None:
             log.doLog(

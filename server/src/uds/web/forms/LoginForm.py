@@ -67,7 +67,7 @@ class LoginForm(forms.Form):
         for a in Authenticator.get_by_tag(tag):
             if not a.get_type():  # Not existing manager for the auth?
                 continue
-            if a.get_type().isCustom() and tag == 'disabled':
+            if a.get_type().is_custom() and tag == 'disabled':
                 continue
             choices.append((a.uuid, a.name))
 

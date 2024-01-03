@@ -36,7 +36,7 @@ from django.shortcuts import render
 from django.template import RequestContext, loader
 from django.utils.translation import gettext as _
 
-from uds.core.auths.auth import webLoginRequired
+from uds.core.auths.auth import web_login_required
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ CSRF_FIELD = 'csrfmiddlewaretoken'
 CSRF_FIELD = 'csrfmiddlewaretoken'
 
 
-@webLoginRequired(admin=True)
+@web_login_required(admin=True)
 def index(request):
     # Gets csrf token
     csrf_token = csrf.get_token(request)
@@ -60,7 +60,7 @@ def index(request):
     )
 
 
-@webLoginRequired(admin=True)
+@web_login_required(admin=True)
 def tmpl(request, template):
     try:
         t = loader.get_template('uds/admin/tmpl/' + template + ".html")
@@ -72,6 +72,6 @@ def tmpl(request, template):
     return HttpResponse(resp, content_type="text/plain")
 
 
-@webLoginRequired(admin=True)
+@web_login_required(admin=True)
 def sample(request):
     return render(request, 'uds/admin/sample.html')

@@ -36,7 +36,7 @@ import collections.abc
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page, never_cache
 
-from uds.core.auths.auth import webLoginRequired, webPassword
+from uds.core.auths.auth import web_login_required, web_password
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.consts.images import DEFAULT_IMAGE
@@ -55,7 +55,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@webLoginRequired(admin=False)
+@web_login_required(admin=False)
 def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
@@ -74,7 +74,7 @@ def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idT
                     ip,
                     request.os,
                     request.user,
-                    webPassword(request),
+                    web_password(request),
                     request,
                 )
             }
@@ -119,7 +119,7 @@ def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
 
 
-@webLoginRequired(admin=False)
+@web_login_required(admin=False)
 @never_cache
 def userServiceEnabler(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
@@ -139,7 +139,7 @@ def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
     # return HttpResponse('<html><body onload="window.close()"></body></html>')
 
 
-@webLoginRequired(admin=False)
+@web_login_required(admin=False)
 @never_cache
 def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
     '''
@@ -181,7 +181,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
     return HttpResponse(json.dumps({'status': status}), content_type='application/json')
 
 
-@webLoginRequired(admin=False)
+@web_login_required(admin=False)
 @never_cache
 def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
     userService = UserServiceManager().locateMetaService(request.user, idService)

@@ -44,7 +44,7 @@ from uds.core.auths.auth import (
     ROOT_ID,
     USER_KEY,
     getRootUser,
-    webLogout,
+    web_logout,
 )
 from uds.models import User
 
@@ -151,7 +151,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
             expiry = now
         if expiry < now:
             try:
-                return webLogout(request=request)
+                return web_logout(request=request)
             except Exception:  # nosec: intentionaly catching all exceptions and ignoring them
                 pass  # If fails, we don't care, we just want to logout
             return HttpResponseForbidden(content='Session Expired', content_type='text/plain')

@@ -379,9 +379,9 @@ class SAMLAuthenticator(auths.Authenticator):
         request: 'ExtendedHttpRequest' = values['_request']
 
         if self.entityID.value == '':
-            self.entityID.value = request.build_absolute_uri(self.infoUrl())
+            self.entityID.value = request.build_absolute_uri(self.info_url())
 
-        self.manageUrl.value = request.build_absolute_uri(self.callbackUrl())
+        self.manageUrl.value = request.build_absolute_uri(self.callback_url())
 
         idpMetadata: str = self.idpMetadata.value
         fromUrl: bool = False
@@ -544,7 +544,7 @@ class SAMLAuthenticator(auths.Authenticator):
         return typing.cast(bytes, metadata).decode()
 
 
-    def getInfo(
+    def get_info(
         self, parameters: collections.abc.Mapping[str, str]
     ) -> typing.Optional[tuple[str, typing.Optional[str]]]:
         """
@@ -561,12 +561,12 @@ class SAMLAuthenticator(auths.Authenticator):
         return info, content_type  # 'application/samlmetadata+xml')
 
     def mfaStorageKey(self, username: str) -> str:
-        return 'mfa_' + self.dbObj().uuid + username  # type: ignore
+        return 'mfa_' + self.db_obj().uuid + username  # type: ignore
 
     def mfaClean(self, username: str):
         self.storage.remove(self.mfaStorageKey(username))
 
-    def mfaIdentifier(self, username: str) -> str:
+    def mfa_identifier(self, username: str) -> str:
         return self.storage.getPickle(self.mfaStorageKey(username)) or ''
 
     def logoutFromCallback(
@@ -609,7 +609,7 @@ class SAMLAuthenticator(auths.Authenticator):
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements
-    def authCallback(
+    def auth_callback(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -724,19 +724,19 @@ class SAMLAuthenticator(auths.Authenticator):
             ),
         )
 
-    def getGroups(self, username: str, groupsManager: 'auths.GroupsManager'):
+    def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         data = self.storage.getPickle(username)
         if not data:
             return
         groupsManager.validate(data[1])
 
-    def getRealName(self, username: str) -> str:
+    def get_real_name(self, username: str) -> str:
         data = self.storage.getPickle(username)
         if not data:
             return username
         return data[0]
 
-    def getJavascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
+    def get_javascript(self, request: 'ExtendedHttpRequest') -> typing.Optional[str]:
         """
         We will here compose the saml request and send it via http-redirect
         """
@@ -745,7 +745,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return f'window.location="{auth.login()}";'
 
-    def removeUser(self, username):
+    def remove_user(self, username):
         """
         Clean ups storage data
         """
