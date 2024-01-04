@@ -83,7 +83,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         return CryptoManager()  # Singleton pattern will return always the same instance
 
     @staticmethod
-    def AESKey(key: typing.Union[str, bytes], length: int) -> bytes:
+    def aes_key(key: typing.Union[str, bytes], length: int) -> bytes:
         if isinstance(key, str):
             bkey = key.encode('utf8')
         else:
@@ -133,10 +133,10 @@ class CryptoManager(metaclass=singleton.Singleton):
         # logger.debug('Decripted: %s %s', data, decrypted)
         return decrypted.decode()
 
-    def AESCrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
+    def aes_crypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         # First, match key to 16 bytes. If key is over 16, create a new one based on key of 16 bytes length
         cipher = Cipher(
-            algorithms.AES(CryptoManager.AESKey(key, 16)),
+            algorithms.AES(CryptoManager.aes_key(key, 16)),
             modes.CBC(b'udsinitvectoruds'),
             backend=default_backend(),
         )
@@ -151,12 +151,12 @@ class CryptoManager(metaclass=singleton.Singleton):
 
         return encoded
 
-    def AESDecrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
+    def aes_decrypt(self, text: bytes, key: bytes, base64: bool = False) -> bytes:
         if base64:
             text = codecs.decode(text, 'base64')
 
         cipher = Cipher(
-            algorithms.AES(CryptoManager.AESKey(key, 16)),
+            algorithms.AES(CryptoManager.aes_key(key, 16)),
             modes.CBC(b'udsinitvectoruds'),
             backend=default_backend(),
         )
@@ -166,12 +166,12 @@ class CryptoManager(metaclass=singleton.Singleton):
         return toDecode[4 : 4 + struct.unpack('>i', toDecode[:4])[0]]
 
     # Fast encription using django SECRET_KEY as key
-    def fastCrypt(self, data: bytes) -> bytes:
-        return self.AESCrypt(data, UDSK)
+    def fast_crypt(self, data: bytes) -> bytes:
+        return self.aes_crypt(data, UDSK)
 
     # Fast decryption using django SECRET_KEY as key
-    def fastDecrypt(self, data: bytes) -> bytes:
-        return self.AESDecrypt(data, UDSK)
+    def fast_decrypt(self, data: bytes) -> bytes:
+        return self.aes_decrypt(data, UDSK)
 
     def xor(self, value: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
         if not key:
@@ -188,15 +188,15 @@ class CryptoManager(metaclass=singleton.Singleton):
         # We must return binary in xor, because result is in fact binary
         return array.array('B', (value_array[i] ^ key_array[i] for i in range(len(value_array)))).tobytes()
 
-    def symCrypt(self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
+    def symmetric_encrypt(self, text: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> bytes:
         if isinstance(text, str):
             text = text.encode()
         if isinstance(key, str):
             key = key.encode()
 
-        return self.AESCrypt(text, key)
+        return self.aes_crypt(text, key)
 
-    def symDecrpyt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
+    def symmetric_decrypt(self, cryptText: typing.Union[str, bytes], key: typing.Union[str, bytes]) -> str:
         if isinstance(cryptText, str):
             cryptText = cryptText.encode()
 
@@ -207,11 +207,11 @@ class CryptoManager(metaclass=singleton.Singleton):
             return ''
 
         try:
-            return self.AESDecrypt(cryptText, key).decode('utf-8')
+            return self.aes_decrypt(cryptText, key).decode('utf-8')
         except Exception:  # Error decoding crypted element, return empty one
             return ''
 
-    def loadPrivateKey(
+    def load_private_key(
         self, rsaKey: str
     ) -> typing.Union['RSAPrivateKey', 'DSAPrivateKey', 'DHPrivateKey', 'EllipticCurvePrivateKey']:
         try:
@@ -219,7 +219,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         except Exception as e:
             raise e
 
-    def loadCertificate(self, certificate: typing.Union[str, bytes]) -> x509.Certificate:
+    def load_certificate(self, certificate: typing.Union[str, bytes]) -> x509.Certificate:
         if isinstance(certificate, str):
             certificate = certificate.encode()
 
@@ -229,7 +229,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         except Exception as e:
             raise Exception('Invalid certificate') from e
 
-    def certificateString(self, certificate: str) -> str:
+    def certificate_string(self, certificate: str) -> str:
         # Remove -----.*-----\n strings using regex
         return re.sub(r'(-----.*-----\n)', '', certificate)
 
@@ -252,7 +252,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         # Argon2
         return '{ARGON2}' + PasswordHasher(type=ArgonType.ID).hash(value)
 
-    def checkHash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
+    def check_hash(self, value: typing.Union[str, bytes], hashValue: str) -> bool:
         if isinstance(value, str):
             value = value.encode()
 
@@ -290,7 +290,7 @@ class CryptoManager(metaclass=singleton.Singleton):
         If obj is None, returns an uuid based on a random string
         """
         if obj is None:
-            obj = self.randomString()
+            obj = self.random_string()
         elif isinstance(obj, bytes):
             obj = obj.decode('utf8')  # To string
         else:
@@ -303,7 +303,7 @@ class CryptoManager(metaclass=singleton.Singleton):
             uuid.uuid5(self._namespace, obj)
         ).lower()  # I believe uuid returns a lowercase uuid always, but in case... :)
 
-    def randomString(self, length: int = 40, digits: bool = True, punctuation: bool = False) -> str:
+    def random_string(self, length: int = 40, digits: bool = True, punctuation: bool = False) -> str:
         base = (
             string.ascii_letters
             + (string.digits if digits else '')
@@ -313,5 +313,5 @@ class CryptoManager(metaclass=singleton.Singleton):
 
     def unique(self) -> str:
         return hashlib.sha3_256(
-            (self.randomString(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
+            (self.random_string(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
         ).hexdigest()

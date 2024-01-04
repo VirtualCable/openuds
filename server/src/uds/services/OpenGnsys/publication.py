@@ -79,13 +79,13 @@ class OGPublication(Publication):
         self._name = 'Publication {}'.format(sql_datetime())
         return State.FINISHED
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Checks state of publication creation
         """
         return State.FINISHED
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         return 'No error possible :)'
 
     def destroy(self) -> str:

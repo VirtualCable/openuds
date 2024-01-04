@@ -144,7 +144,7 @@ class TestOSManager(osmanagers.OSManager):
     def isPersistent(self):
         return self.onLogout.value == 'keep-always'
 
-    def checkState(self, userService: 'UserService') -> str:
+    def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 

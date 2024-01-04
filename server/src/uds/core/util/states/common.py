@@ -142,7 +142,7 @@ def isForExecute(state):
     return state == FOR_EXECUTE
 
 
-def toString(state):
+def as_str(state):
     return string.get(state, '')
 
 

@@ -1415,7 +1415,7 @@ class UserInterface(metaclass=UserInterfaceType):
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
             types.ui.FieldType.NUMERIC: lambda x: str(int(x.num())),
             types.ui.FieldType.PASSWORD: lambda x: (
-                CryptoManager().AESCrypt(x.value.encode('utf8'), UDSK, True).decode()
+                CryptoManager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
             types.ui.FieldType.HIDDEN: (lambda x: None if not x.isSerializable() else x.value),
             types.ui.FieldType.CHOICE: lambda x: x.value,
@@ -1486,7 +1486,7 @@ class UserInterface(metaclass=UserInterfaceType):
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
             types.ui.FieldType.NUMERIC: int,
             types.ui.FieldType.PASSWORD: lambda x: (
-                CryptoManager().AESDecrypt(x.encode(), UDSK, True).decode()
+                CryptoManager().aes_decrypt(x.encode(), UDSK, True).decode()
             ),
             types.ui.FieldType.HIDDEN: lambda x: None,
             types.ui.FieldType.CHOICE: lambda x: x,
@@ -1550,9 +1550,9 @@ class UserInterface(metaclass=UserInterfaceType):
                                 v[1:]
                             )  # nosec: secure pickled by us for sure
                         elif v.startswith(OLD_PASSWORD_FIELD):
-                            val = CryptoManager().AESDecrypt(v[1:], UDSB, True).decode()
+                            val = CryptoManager().aes_decrypt(v[1:], UDSB, True).decode()
                         elif v.startswith(PASSWORD_FIELD):
-                            val = CryptoManager().AESDecrypt(v[1:], UDSK, True).decode()
+                            val = CryptoManager().aes_decrypt(v[1:], UDSK, True).decode()
                         else:
                             val = v
                             # Ensure "legacy bytes" values are loaded correctly as unicode

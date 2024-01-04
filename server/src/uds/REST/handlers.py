@@ -238,7 +238,7 @@ class Handler:
 
         # crypt password and convert to base64
         passwd = codecs.encode(
-            CryptoManager().symCrypt(password, scrambler), 'base64'
+            CryptoManager().symmetric_encrypt(password, scrambler), 'base64'
         ).decode()
 
         session['REST'] = {

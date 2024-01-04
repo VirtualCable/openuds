@@ -93,7 +93,7 @@ class UserService(Environmentable, Serializable):
         deployForCache, deployForUser and moveToCache it these methods returns
         RUNNING
       * Checks (if a deployment has finished, or the cache movement is finished)
-        are always done using checkState(). It is secuential, i mean, will only
+        are always done using check_state(). It is secuential, i mean, will only
         be called when a deployment,a cache movement or a cancel operation is
         running
       * If the service that supports this deployeds do not use L2 cache, the
@@ -108,7 +108,7 @@ class UserService(Environmentable, Serializable):
         Ofc, if a service has an "Instant" creation, it don't needs cache...
       * We do not expect any exception from these methods, but if there is an
         error, the method can return "ERROR". To show the reason of error, the
-        method reasonOfError can be called multiple times, including
+        method error_reason can be called multiple times, including
         serializations in middle, so remember to include reason of error in serializations
     """
 
@@ -167,7 +167,7 @@ class UserService(Environmentable, Serializable):
         you can here access publication, service, osManager, ...
         """
 
-    def dbObj(self) -> 'models.UserService':
+    def db_obj(self) -> 'models.UserService':
         """
         Returns the database object for this object
         """
@@ -285,7 +285,7 @@ class UserService(Environmentable, Serializable):
         just return State.RUNNING. If not, return State.FINISHED. In case of
         error, return State.ERROR and be ready to provide error message when
 
-        if State.RUNNING is returned, the :py:meth:.checkState method will be
+        if State.RUNNING is returned, the :py:meth:.check_state method will be
         used to check when this process has finished.
 
         :note: All task methods, like this one, are expected to handle
@@ -336,7 +336,7 @@ class UserService(Environmentable, Serializable):
 
         If the machine powered off, or suspended, or any other state that is not
         directly usable but can be put in an usable state, it will return
-        "State.RUNNING", and core will use checkState to see when the operation
+        "State.RUNNING", and core will use check_state to see when the operation
         has finished.
 
         :note: All task methods, like this one, are expected to handle
@@ -420,7 +420,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError(f'Base deploy for user invoked! for class {self.__class__.__name__}')
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -434,7 +434,7 @@ class UserService(Environmentable, Serializable):
         failed. If the operation continues, but haven't finished yet, it must
         return State.RUNNING. If has finished must return State.FINISH and if it
         has some kind of error, State.ERROR and also store somewhere the info
-        that will be requested using :py:meth:.reasonOfError
+        that will be requested using :py:meth:.error_reason
 
         :note: override ALWAYS this method, or an exception will be raised
 
@@ -454,7 +454,7 @@ class UserService(Environmentable, Serializable):
 
         Default implementation does nothing at all.
 
-        :note: You can also make these operations at checkState, this is really
+        :note: You can also make these operations at check_state, this is really
                not needed, but can be provided (default implementation of base class does
                nothing)
         """
@@ -518,7 +518,7 @@ class UserService(Environmentable, Serializable):
         The user provided is just an string, that is provided by actor.
         """
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         Returns the reason of the error.
 
@@ -541,7 +541,7 @@ class UserService(Environmentable, Serializable):
         This method gives the oportunity to remove associated data (virtual machine,
         ...) for the user consumable this instance represents.
 
-        If return value is State.RUNNING, :py:meth:.checkState will be used to
+        If return value is State.RUNNING, :py:meth:.check_state will be used to
         check if the destroy operation has finished.
 
         :note: All task methods, like this one, are expected to handle

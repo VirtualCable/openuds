@@ -117,7 +117,7 @@ class UDSClient(UDSClientMixin, Client):
         super().__init__(enforce_csrf_checks, raise_request_exception)  # type: ignore  # Pyright Complains, but this is ok
 
         # and required UDS cookie
-        self.cookies['uds'] = CryptoManager().randomString(48)
+        self.cookies['uds'] = CryptoManager().random_string(48)
 
     def request(self, **request: typing.Any):
         # Copy request dict
@@ -173,7 +173,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
         super().__init__(enforce_csrf_checks, raise_request_exception)  # type: ignore  # Coplains, but this is ok
 
         # and required UDS cookie
-        self.cookies['uds'] = CryptoManager().randomString(48)
+        self.cookies['uds'] = CryptoManager().random_string(48)
 
     async def request(self, **request: typing.Any):
         # Copy request dict

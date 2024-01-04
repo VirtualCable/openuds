@@ -249,7 +249,7 @@ if sys.platform == 'win32':
 '''
         # Post script to service
         #         operations.writeToPipe("\\\\.\\pipe\\VDSMDPipe", packet, True)
-        dbUserService = self.dbObj()
+        dbUserService = self.db_obj()
         if dbUserService:
             UserServiceManager().sendScript(dbUserService, script)
 
@@ -385,9 +385,9 @@ if sys.platform == 'win32':
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        checkState method will "pop" first item when a check operation returns State.FINISHED
+        check_state method will "pop" first item when a check operation returns State.FINISHED
 
-        At executeQueue this return value will be ignored, and it will only be used at checkState
+        At executeQueue this return value will be ignored, and it will only be used at check_state
         """
         return State.FINISHED
 
@@ -547,11 +547,11 @@ if sys.platform == 'win32':
         """
         return State.FINISHED
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('checkState')
+        self.__debug('check_state')
         op = self.__getCurrentOp()
 
         if op == opError:
@@ -604,7 +604,7 @@ if sys.platform == 'win32':
 
         return self.__executeQueue()
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         Returns the reason of the error.
 

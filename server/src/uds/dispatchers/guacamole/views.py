@@ -107,7 +107,7 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
                 raise  # Let it be handled by the upper layers
 
         if 'password' in val:
-            val['password'] = CryptoManager().symDecrpyt(val['password'], scrambler)
+            val['password'] = CryptoManager().symmetric_decrypt(val['password'], scrambler)
 
         response = dict2resp(val)
     except Exception:

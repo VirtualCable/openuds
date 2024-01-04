@@ -39,7 +39,7 @@ from uds.core.managers.crypto import CryptoManager
 
 CURRENT_SERIALIZER_VERSION = b'v1'
 DESERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[bytes], bytes]]] = {
-    b'v1': CryptoManager().fastDecrypt,
+    b'v1': CryptoManager().fast_decrypt,
 }
 
 
@@ -50,7 +50,7 @@ def serialize(obj: typing.Any) -> bytes:
     # generate pickle dump and encrypt it to keep it safe
     # Compress data using lzma first
 
-    data = CryptoManager().fastCrypt(
+    data = CryptoManager().fast_crypt(
         lzma.compress(pickle.dumps(obj))
     )  # With latest available protocol
     return CURRENT_SERIALIZER_VERSION + data

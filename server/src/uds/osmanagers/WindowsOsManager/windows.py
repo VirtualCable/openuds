@@ -203,7 +203,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def isPersistent(self):
         return self._onLogout == 'keep-always'
 
-    def checkState(self, userService: 'UserService') -> str:
+    def check_state(self, userService: 'UserService') -> str:
         # will alway return true, because the check is done by an actor callback
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING

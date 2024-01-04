@@ -204,7 +204,7 @@ class SampleUserServiceOne(services.UserService):
 
         If the machine powered off, or suspended, or any other state that is not
         directly usable but can be put in an usable state, it will return
-        "State.RUNNING", and core will use checkState to see when the operation
+        "State.RUNNING", and core will use check_state to see when the operation
         has finished.
 
         I hope this sample is enough to explain the use of this method..
@@ -250,7 +250,7 @@ class SampleUserServiceOne(services.UserService):
 
         return State.RUNNING
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Our deployForUser method will initiate the consumable service deployment,
         but will not finish it.
@@ -260,7 +260,7 @@ class SampleUserServiceOne(services.UserService):
         on it.
 
         One deployForUser returns State.RUNNING, this task will get called until
-        checkState returns State.FINISHED.
+        check_state returns State.FINISHED.
 
         Also, we will make the publication fail one of every 10 calls to this
         method.
@@ -281,14 +281,14 @@ class SampleUserServiceOne(services.UserService):
             count = int(countStr) + 1
         # Count is always a valid value, because this method will never get
         # called before deployForUser, deployForCache, destroy or cancel.
-        # In our sample, we only use checkState in case of deployForUser,
+        # In our sample, we only use check_state in case of deployForUser,
         # so at first call count will be 0.
         if count >= 5:
             return State.FINISHED
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
-            self.storage.saveData('error', 'Random error at checkState :-)')
+            self.storage.saveData('error', 'Random error at check_state :-)')
             return State.ERROR
 
         self.storage.saveData('count', str(count))
@@ -300,7 +300,7 @@ class SampleUserServiceOne(services.UserService):
         (No matter wether it is for cache or for an user)
 
         This gives the oportunity to make something at that moment.
-        :note: You can also make these operations at checkState, this is really
+        :note: You can also make these operations at check_state, this is really
         not needed, but can be provided (default implementation of base class does
         nothing)
         """
@@ -341,7 +341,7 @@ class SampleUserServiceOne(services.UserService):
         # We do nothing more that remove the user
         self.storage.remove('user')
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         Returns the reason of the error.
 
@@ -358,7 +358,7 @@ class SampleUserServiceOne(services.UserService):
 
         Invoked for destroying a deployed service
         Do whatever needed here, as deleting associated data if needed (i.e. a copy of the machine, snapshots, etc...)
-        @return: State.FINISHED if no more checks/steps for deployment are needed, State.RUNNING if more steps are needed (steps checked using checkState)
+        @return: State.FINISHED if no more checks/steps for deployment are needed, State.RUNNING if more steps are needed (steps checked using check_state)
         """
         return State.FINISHED
 

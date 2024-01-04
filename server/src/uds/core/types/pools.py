@@ -42,7 +42,7 @@ class LoadBalancingPolicy(enum.IntEnum):
     PRIORITY = 1
     GREATER_PERCENT_FREE = 2
 
-    def asStr(self) -> str:
+    def as_str(self) -> str:
         return self.name.lower()
 
     @staticmethod

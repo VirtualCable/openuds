@@ -151,7 +151,7 @@ class Connection(Handler):
                 transport,
                 transportInstance,
             ) = res  # pylint: disable=unused-variable
-            password = CryptoManager().symDecrpyt(self.getValue('password'), scrambler)
+            password = CryptoManager().symmetric_decrypt(self.getValue('password'), scrambler)
 
             userService.setConnectionSource(
                 types.connections.ConnectionSource(self._request.ip, hostname)

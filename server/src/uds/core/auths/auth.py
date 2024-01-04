@@ -96,7 +96,7 @@ def getUDSCookie(
     Generates a random cookie for uds, used, for example, to encript things
     """
     if 'uds' not in request.COOKIES:
-        cookie = CryptoManager().randomString(UDS_COOKIE_LENGTH)
+        cookie = CryptoManager().random_string(UDS_COOKIE_LENGTH)
         if response is not None:
             response.set_cookie(
                 'uds',
@@ -300,7 +300,7 @@ def authenticate(
         not useInternalAuthenticate
         and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
-        and CryptoManager().checkHash(password, GlobalConfig.SUPER_USER_PASS.get(True))
+        and CryptoManager().check_hash(password, GlobalConfig.SUPER_USER_PASS.get(True))
     ):
         return AuthResult(user=getRootUser())
 
@@ -436,7 +436,7 @@ def web_login(
 
     request.session[USER_KEY] = user.id
     request.session[PASS_KEY] = codecs.encode(
-        CryptoManager().symCrypt(password, cookie), "base64"
+        CryptoManager().symmetric_encrypt(password, cookie), "base64"
     ).decode()  # as str
 
     # Ensures that this user will have access through REST api if logged in through web interface
@@ -462,12 +462,12 @@ def web_password(request: HttpRequest) -> str:
     so we can provide it to remote sessions.
     """
     if hasattr(request, '_cryptedpass') and hasattr(request, '_scrambler'):
-        return CryptoManager.manager().symDecrpyt(
+        return CryptoManager.manager().symmetric_decrypt(
             getattr(request, '_cryptedpass'),
             getattr(request, '_scrambler'),
         )
     passkey = base64.b64decode(request.session.get(PASS_KEY, ''))
-    return CryptoManager().symDecrpyt(
+    return CryptoManager().symmetric_decrypt(
         passkey, getUDSCookie(request)
     )  # recover as original unicode string
 

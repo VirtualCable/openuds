@@ -117,7 +117,7 @@ class Publication(Environmentable, Serializable):
         you can here access service, osManager, ...
         """
 
-    def dbObj(self) -> 'models.ServicePoolPublication':
+    def db_obj(self) -> 'models.ServicePoolPublication':
         """
         Returns the database object associated with this publication
         """
@@ -205,7 +205,7 @@ class Publication(Environmentable, Serializable):
         raise NotImplementedError(f'publish method for class {self.__class__.__name__} not provided! ')
 
     @abc.abstractmethod
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -217,7 +217,7 @@ class Publication(Environmentable, Serializable):
         that will be done at :py:meth:.publish method.
 
         If this method returns that the operation has been initiated, but not finished
-        (State.RUNNING), the core will keep calling this method until checkState
+        (State.RUNNING), the core will keep calling this method until check_state
         returns State.FINISHED (or State.error).
 
         You MUST always provide this method if you expect the publication no to be
@@ -229,7 +229,7 @@ class Publication(Environmentable, Serializable):
                to the core. Take that into account and handle exceptions inside
                this method.
         """
-        raise NotImplementedError(f'checkState method for class {self.__class__.__name__} not provided!!!')
+        raise NotImplementedError(f'check_state method for class {self.__class__.__name__} not provided!!!')
 
     def finish(self) -> None:
         """
@@ -242,7 +242,7 @@ class Publication(Environmentable, Serializable):
         """
         return
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         If a publication produces an error, here we must return the reason why
         it happened. This will be called just after publish or checkPublishingState

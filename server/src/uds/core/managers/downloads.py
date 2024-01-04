@@ -67,7 +67,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
         # Singleton pattern will return always the same instance
         return DownloadsManager()
 
-    def registerDownloadable(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
+    def register(self, name: str, comment: str, path: str, mime: str = 'application/octet-stream'):
         """
         Registers a downloadable file.
         @param name: name shown
@@ -82,7 +82,7 @@ class DownloadsManager(metaclass=singleton.Singleton):
             'mime': mime,
         }
 
-    def getDownloadables(self) -> dict[str, dict[str, str]]:
+    def downloadables(self) -> dict[str, dict[str, str]]:
         return self._downloadables
 
     def send(self, request, _id) -> HttpResponse:

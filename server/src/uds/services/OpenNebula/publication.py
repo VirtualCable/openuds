@@ -97,7 +97,7 @@ class LivePublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Checks state of publication creation
         """
@@ -119,13 +119,13 @@ class LivePublication(Publication):
         self._state = 'ok'
         return State.FINISHED
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
+        it happened. This will be called just after publish or check_state
         if they return State.ERROR
 
-        Returns an string, in our case, set at checkState
+        Returns an string, in our case, set at check_state
         """
         return self._reason
 

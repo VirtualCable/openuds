@@ -98,7 +98,7 @@ class TestPublication(services.Publication):
         self.data.number = 0
         self.data.state = State.FINISHED
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         return self.data.reason
 
     def destroy(self) -> str:

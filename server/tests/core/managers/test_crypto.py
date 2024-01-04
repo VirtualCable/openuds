@@ -98,17 +98,17 @@ class CryptoManagerTest(UDSTestCase):
 
         for s1 in (testStr1a, testStr1b):
             for s2 in (testStr2a, testStr2b):
-                sym = self.manager.symCrypt(s1, s2)
+                sym = self.manager.symmetric_encrypt(s1, s2)
                 self.assertIsInstance(sym, bytes, 'Returned xor string is not bytes')
-                symd = self.manager.symDecrpyt(sym, s2)
+                symd = self.manager.symmetric_decrypt(sym, s2)
                 self.assertEqual(symd, s1)
 
     def test_Certs(self) -> None:
         # Right now, only tests that these methods do not fails
-        self.manager.loadPrivateKey(settings.RSA_KEY)
+        self.manager.load_private_key(settings.RSA_KEY)
 
-        self.manager.loadCertificate(settings.CERTIFICATE)
-        self.manager.loadCertificate(settings.CERTIFICATE.encode('utf8'))
+        self.manager.load_certificate(settings.CERTIFICATE)
+        self.manager.load_certificate(settings.CERTIFICATE.encode('utf8'))
 
     def test_Hash(self) -> None:
         testStr = 'Test String for hash'
@@ -147,8 +147,8 @@ class CryptoManagerTest(UDSTestCase):
     def testFastCrypt(self) -> None:
         # Fast crypt uses random padding text, so the last block can be different
         self.assertEqual(
-            self.manager.fastCrypt(TEST_STRING.encode())[:-16], CRYPTED_STRING[:-16]
+            self.manager.fast_crypt(TEST_STRING.encode())[:-16], CRYPTED_STRING[:-16]
         )
 
     def testFastDecrypt(self) -> None:
-        self.assertEqual(self.manager.fastDecrypt(CRYPTED_STRING).decode(), TEST_STRING)
+        self.assertEqual(self.manager.fast_decrypt(CRYPTED_STRING).decode(), TEST_STRING)

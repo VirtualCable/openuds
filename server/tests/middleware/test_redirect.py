@@ -57,7 +57,7 @@ class RedirectMiddlewareTest(test.UDSTransactionTestCase):
 
         # Try several urls, random. Unsecure will redirect, secure will not
         for _ in range(32):
-            url = f'/{CryptoManager().randomString(32)}'
+            url = f'/{CryptoManager().random_string(32)}'
             response = self.client.get(url, secure=False)
             self.assertEqual(response.status_code, 301)
             self.assertEqual(response.url, page)

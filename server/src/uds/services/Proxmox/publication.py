@@ -134,7 +134,7 @@ class ProxmoxPublication(services.Publication):
             self._reason = str(e)
             return State.ERROR
 
-    def checkState(
+    def check_state(
         self,
     ) -> str:  # pylint: disable = too-many-branches,too-many-return-statements
         if self._state != State.RUNNING:
@@ -201,7 +201,7 @@ class ProxmoxPublication(services.Publication):
     def cancel(self) -> str:
         return self.destroy()
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         return self._reason
 
     def machine(self) -> int:

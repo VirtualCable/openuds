@@ -447,8 +447,8 @@ def enableService(
         res = UserServiceManager().getService(
             request.user, request.os, request.ip, idService, idTransport, doTest=False
         )
-        scrambler = CryptoManager().randomString(32)
-        password = CryptoManager().symCrypt(web_password(request), scrambler)
+        scrambler = CryptoManager().random_string(32)
+        password = CryptoManager().symmetric_encrypt(web_password(request), scrambler)
 
         userService, trans = res[1], res[3]
 

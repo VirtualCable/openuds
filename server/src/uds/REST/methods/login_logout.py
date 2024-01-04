@@ -150,14 +150,14 @@ class Login(Handler):
             locale: str = self._params.get('locale', 'en')
 
             # Generate a random scrambler
-            scrambler: str = CryptoManager.manager().randomString(32)
+            scrambler: str = CryptoManager.manager().random_string(32)
             if (
                 authName == 'admin'
                 or authLabel == 'admin'
                 or authId == '00000000-0000-0000-0000-000000000000'
                 or (not authId and not authName and not authLabel)
             ):
-                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().checkHash(
+                if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().check_hash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
                     self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
@@ -173,7 +173,7 @@ class Login(Handler):
                 auth = Authenticator.objects.get(small_name=authLabel)
 
             # No matter in fact the password, just not empty (so it can be encrypted, but will be invalid anyway)
-            password = password or CryptoManager().randomString(32)
+            password = password or CryptoManager().random_string(32)
 
             logger.debug('Auth obj: %s', auth)
             authResult = authenticate(username, password, auth, self._request, True)

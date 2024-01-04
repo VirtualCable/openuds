@@ -114,7 +114,7 @@ class TestUserService(services.UserService):
         self.data.count = 3
         return State.RUNNING
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         logger.info('Checking state of deployment %s', self.data)
         if self.data.count <= 0:
             return State.FINISHED
@@ -132,7 +132,7 @@ class TestUserService(services.UserService):
     def userLoggedOut(self, username) -> None:
         logger.info('User %s has logged out', username)
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         return 'No error'
 
     def destroy(self) -> str:

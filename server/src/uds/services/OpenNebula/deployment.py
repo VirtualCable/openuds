@@ -294,9 +294,9 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        checkState method will "pop" first item when a check operation returns State.FINISHED
+        check_state method will "pop" first item when a check operation returns State.FINISHED
 
-        At executeQueue this return value will be ignored, and it will only be used at checkState
+        At executeQueue this return value will be ignored, and it will only be used at check_state
         """
         return State.FINISHED
 
@@ -393,11 +393,11 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         """
         return State.FINISHED  # No check at all, always true
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Check what operation is going on, and acts based on it
         """
-        self.__debug('checkState')
+        self.__debug('check_state')
         op = self.__getCurrentOp()
 
         if op == opError:
@@ -446,7 +446,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
 
         return self.__executeQueue()
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         Returns the reason of the error.
 

@@ -245,7 +245,7 @@ class Service(Module):
         Default implementation does nothing
         """
 
-    def dbObj(self) -> 'models.Service':
+    def db_obj(self) -> 'models.Service':
         """
         Returns the database object associated with this service
         """

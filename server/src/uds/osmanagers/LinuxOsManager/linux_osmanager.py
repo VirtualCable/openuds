@@ -172,7 +172,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def isPersistent(self) -> bool:
         return self._onLogout == 'keep-always'
 
-    def checkState(self, userService: 'UserService') -> str:
+    def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 

@@ -122,7 +122,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
 
         # If not to be managed by a token, autologin user
         if not self.service().getToken():
-            userService = self.dbObj()
+            userService = self.db_obj()
             if userService:
                 userService.setInUse(True)
 
@@ -137,7 +137,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         self._ip = ip
         self._state = State.FINISHED
         if not self.service().getToken():
-            dbService = self.dbObj()
+            dbService = self.db_obj()
             if dbService:
                 dbService.setInUse(True)
                 dbService.save()
@@ -149,10 +149,10 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         self._reason = reason
         return self._state
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         return self._state
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why it happened. This will be called just after
         publish or checkPublishingState if they return State.ERROR

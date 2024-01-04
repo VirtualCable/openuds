@@ -59,7 +59,7 @@ class ServerRegisterTest(rest.test.RESTTestCase):
             'ip': '',  # To be set on tests
             'port': consts.system.SERVER_DEFAULT_LISTEN_PORT,
             'type': '',  # To be set on tests
-            'subtype': crypto.CryptoManager.manager().randomString(10),
+            'subtype': crypto.CryptoManager.manager().random_string(10),
             'os': '',  # To be set on tests
             'hostname': 'test',
             'log_level': log.LogLevel.INFO.value,

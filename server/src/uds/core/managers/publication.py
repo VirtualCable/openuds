@@ -129,7 +129,7 @@ class PublicationLauncher(DelayedTask):
                 ),
             )
             servicePool.save()
-            PublicationFinishChecker.checkAndUpdateState(servicePoolPub, pi, state)
+            PublicationFinishChecker.state_updater(servicePoolPub, pi, state)
         except (
             ServicePoolPublication.DoesNotExist
         ):  # Deployed service publication has been removed from database, this is ok, just ignore it
@@ -156,7 +156,7 @@ class PublicationFinishChecker(DelayedTask):
         self._state = publication.state
 
     @staticmethod
-    def checkAndUpdateState(
+    def state_updater(
         publication: ServicePoolPublication,
         publicationInstance: 'services.Publication',
         state: str,
@@ -217,13 +217,13 @@ class PublicationFinishChecker(DelayedTask):
                 publication.updateData(publicationInstance)
 
             if checkLater:
-                PublicationFinishChecker.checkLater(publication, publicationInstance)
+                PublicationFinishChecker.check_later(publication, publicationInstance)
         except Exception:
             logger.exception('At checkAndUpdate for publication')
-            PublicationFinishChecker.checkLater(publication, publicationInstance)
+            PublicationFinishChecker.check_later(publication, publicationInstance)
 
     @staticmethod
-    def checkLater(
+    def check_later(
         publication: ServicePoolPublication, publicationInstance: 'services.Publication'
     ) -> None:
         """
@@ -251,10 +251,10 @@ class PublicationFinishChecker(DelayedTask):
                     "publication instance class: %s", publicationInstance.__class__
                 )
                 try:
-                    state = publicationInstance.checkState()
+                    state = publicationInstance.check_state()
                 except Exception:
                     state = State.ERROR
-                PublicationFinishChecker.checkAndUpdateState(
+                PublicationFinishChecker.state_updater(
                     publication, publicationInstance, state
                 )
         except Exception as e:
@@ -363,7 +363,7 @@ class PublicationManager(metaclass=singleton.Singleton):
             pubInstance = publication.get_intance()
             state = pubInstance.cancel()
             publication.setState(State.CANCELING)
-            PublicationFinishChecker.checkAndUpdateState(
+            PublicationFinishChecker.state_updater(
                 publication, pubInstance, state
             )
             return publication
@@ -390,7 +390,7 @@ class PublicationManager(metaclass=singleton.Singleton):
             pubInstance = servicePoolPub.get_intance()
             state = pubInstance.destroy()
             servicePoolPub.setState(State.REMOVING)
-            PublicationFinishChecker.checkAndUpdateState(
+            PublicationFinishChecker.state_updater(
                 servicePoolPub, pubInstance, state
             )
         except Exception as e:

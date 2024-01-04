@@ -302,7 +302,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
                 'name': val['name'],
                 'description': gettext(val['comment']),
             }
-            for key, val in downloadsManager().getDownloadables().items()
+            for key, val in downloadsManager().downloadables().items()
         ]
         # URLS
         config['urls']['admin'] = reverse('uds.admin.views.index')

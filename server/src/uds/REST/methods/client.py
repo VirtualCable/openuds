@@ -161,7 +161,7 @@ class Client(Handler):
                 transport,
                 transportInstance,
             )
-            password = CryptoManager().symDecrpyt(data['password'], scrambler)
+            password = CryptoManager().symmetric_decrypt(data['password'], scrambler)
 
             # userService.setConnectionSource(srcIp, hostname)  # Store where we are accessing from so we can notify Service
             if not ip:

@@ -193,7 +193,7 @@ class HTML5VNCTransport(transports.Transport):
 
         logger.debug('VNC Params: %s', params)
 
-        scrambler = CryptoManager().randomString(32)
+        scrambler = CryptoManager().random_string(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''

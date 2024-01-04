@@ -103,7 +103,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
         }
 
     @contextmanager
-    def createMockApiRequester(
+    def create_mock_api_requester(
         self,
         getStats: typing.Optional[
             collections.abc.Callable[['models.Server'], typing.Optional['types.servers.ServerStats']]
@@ -121,8 +121,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
             mockServerApiRequester.return_value.getStats.side_effect = _getStats
             yield mockServerApiRequester
 
-    def testAssignAuto(self) -> None:
-        with self.createMockApiRequester() as mockServerApiRequester:
+    def test_auto_assign(self) -> None:
+        with self.create_mock_api_requester() as mockServerApiRequester:
             for elementNumber, userService in enumerate(self.user_services):
                 expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
                 expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
@@ -213,8 +213,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 
-    def testAssignAutoLockLimit(self) -> None:
-        with self.createMockApiRequester() as mockServerApiRequester:
+    def test_assign_auto_lock_limit(self) -> None:
+        with self.create_mock_api_requester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
                 assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1))
@@ -241,8 +241,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
             # notifyRelease should has been called once
             self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)
 
-    def testAssignReleaseMax(self) -> None:
-        with self.createMockApiRequester() as mockServerApiRequester:
+    def test_assign_release_max(self) -> None:
+        with self.create_mock_api_requester() as mockServerApiRequester:
             serverApiRequester = mockServerApiRequester.return_value
             for assignations in range(2):  # Second pass will get current assignation, not new ones
                 for elementNumber, userService in enumerate(self.user_services[:NUM_REGISTEREDSERVERS]):

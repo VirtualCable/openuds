@@ -155,7 +155,7 @@ class State:
         return state == State.FOR_EXECUTE
 
     @staticmethod
-    def toString(state: str) -> str:
+    def as_str(state: str) -> str:
         return State.string.get(state, '')
 
     @staticmethod

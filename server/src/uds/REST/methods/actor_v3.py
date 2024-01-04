@@ -417,7 +417,7 @@ class Initialize(ActorV3Action):
                         raise BlockAccess()
                     # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
                     if not ServiceTokenAlias.objects.filter(service=service, unique_id=unique_id).exists():
-                        alias_token = CryptoManager().randomString(40)  # fix alias with new token
+                        alias_token = CryptoManager().random_string(40)  # fix alias with new token
                         service.aliases.create(alias=alias_token, unique_id=unique_id)
                     else:
                         # If exists, get existing one
@@ -460,7 +460,7 @@ class Initialize(ActorV3Action):
 
             if service and not alias_token:  # Is a service managed by UDS
                 # Create a new alias for it, and save
-                alias_token = CryptoManager().randomString(40)  # fix alias with new token
+                alias_token = CryptoManager().random_string(40)  # fix alias with new token
                 service.aliases.create(alias=alias_token)
 
             return initialization_result(userService.uuid, userService.unique_id, osData, alias_token)

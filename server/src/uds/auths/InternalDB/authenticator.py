@@ -161,7 +161,7 @@ class InternalDBAuth(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
-        if CryptoManager().checkHash(credentials, user.password):
+        if CryptoManager().check_hash(credentials, user.password):
             groupsManager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 

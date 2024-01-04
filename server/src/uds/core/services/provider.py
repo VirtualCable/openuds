@@ -180,7 +180,7 @@ class ServiceProvider(module.Module):
         Default implementation does nothing
         """
 
-    def dbObj(self) -> 'models.Provider':
+    def db_obj(self) -> 'models.Provider':
         """
         Returns the database object for this provider
         """

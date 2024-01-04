@@ -55,7 +55,7 @@ class SamplePublication(services.Publication):
     following methods:
         * Of course, the __init__
         * :py:meth:`.publish`
-        * :py:meth:`.checkState`
+        * :py:meth:`.check_state`
         * :py:meth:`.finish`
 
     Also, of course, methods from :py:class:`uds.core.serializable.Serializable`
@@ -151,10 +151,10 @@ class SamplePublication(services.Publication):
 
         In our example wi will simple assign a name, and set number to 5. We
         will use this number later, to make a "delay" at check if the publication
-        has finished. (see method checkState)
+        has finished. (see method check_state)
 
         We also will make this publication an "stepped one", that is, it will not
-        finish at publish call but a later checkState call
+        finish at publish call but a later check_state call
 
         Take care with instantiating threads from here. Whenever a publish returns
         "State.RUNNING", the core will recheck it later, but not using this instance
@@ -174,13 +174,13 @@ class SamplePublication(services.Publication):
         store it at delayed task queue.
 
         Also note that, in that case, this class can also acomplish that by simply
-        using the suggestedTime attribute and the checkState method in most cases.
+        using the suggestedTime attribute and the check_state method in most cases.
         """
         self._number = 5
         self._reason = ''
         return State.RUNNING
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Our publish method will initiate publication, but will not finish it.
         So in our sample, wi will only check if _number reaches 0, and if so
@@ -188,7 +188,7 @@ class SamplePublication(services.Publication):
         on it.
 
         One publish returns State.RUNNING, this task will get called untill
-        checkState returns State.FINISHED.
+        check_state returns State.FINISHED.
 
         Also, wi will make the publication fail one of every 10 calls to this
         method.
@@ -224,13 +224,13 @@ class SamplePublication(services.Publication):
             random.SystemRandom().choices(string.ascii_uppercase + string.digits, k=10)
         )
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         If a publication produces an error, here we must notify the reason why
-        it happened. This will be called just after publish or checkState
+        it happened. This will be called just after publish or check_state
         if they return State.ERROR
 
-        Returns an string, in our case, set at checkState
+        Returns an string, in our case, set at check_state
         """
         return self._reason
 

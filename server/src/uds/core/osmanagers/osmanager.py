@@ -144,7 +144,7 @@ class OSManager(Module):
         """
         return {}
 
-    def checkState(self, userService: 'UserService') -> str:  # pylint: disable=unused-argument
+    def check_state(self, userService: 'UserService') -> str:  # pylint: disable=unused-argument
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:

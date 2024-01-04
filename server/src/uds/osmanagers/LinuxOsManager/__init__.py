@@ -46,14 +46,14 @@ from .linux_randompass_osmanager import LinuxRandomPassManager
 from .linux_ad_osmanager import LinuxOsADManager
 from .linux_freeipa_osmanager import LinuxOsFreeIPAManager
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     f'udsactor_{VERSION}_all.deb',
     _('UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python >= 3.6)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__)) + f'/files/udsactor_{VERSION}_all.deb',
     'application/x-debian-package',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     f'udsactor-{VERSION}-1.noarch.rpm',
     _('UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines <b>(Requires python >= 3.6)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
@@ -61,7 +61,7 @@ downloadsManager().registerDownloadable(
     'application/x-redhat-package-manager',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     f'udsactor-unmanaged_{VERSION}_all.deb',
     _(
         'UDS Actor for Debian based Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
@@ -71,7 +71,7 @@ downloadsManager().registerDownloadable(
     'application/x-debian-package',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     f'udsactor-unmanaged-{VERSION}-1.noarch.rpm',
     _(
         'UDS Actor for Centos, Fedora, RH, Suse, ... Linux machines. Used ONLY for static machines. <b>(Requires python >= 3.6)</b>'
@@ -81,14 +81,14 @@ downloadsManager().registerDownloadable(
     'application/x-redhat-package-manager',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     'udsactor_2.2.0_legacy.deb',
     _('<b>Legacy</b> UDS Actor for Debian, Ubuntu, ... Linux machines <b>(Requires python 2.7)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__)) + '/files/udsactor_2.2.0_legacy.deb',
     'application/x-debian-package',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     'udsactor-legacy-2.2.1-1.noarch.rpm',
     _('<b>Legacy</b> UDS Actor for Centos, Fedora, RH, ... Linux machines <b>(Requires python 2.7)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
@@ -96,7 +96,7 @@ downloadsManager().registerDownloadable(
     'application/x-redhat-package-manager',
 )
 
-downloadsManager().registerDownloadable(
+downloadsManager().register(
     'udsactor-opensuse-legacy-2.2.1-1.noarch.rpm',
     _('<b>Legacy</b> UDS Actor for OpenSUSE, ... Linux machines <b>(Requires python 2.7)</b>'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))

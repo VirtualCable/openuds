@@ -330,7 +330,7 @@ def update_transport_ticket(
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
-                password = CryptoManager().symCrypt(password, scrambler)
+                password = CryptoManager().symmetric_encrypt(password, scrambler)
 
             def checkValidTicket(data: collections.abc.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' in data:

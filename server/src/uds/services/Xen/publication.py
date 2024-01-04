@@ -115,7 +115,7 @@ class XenPublication(Publication):
 
         return State.RUNNING
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Checks state of publication creation
         """
@@ -142,7 +142,7 @@ class XenPublication(Publication):
 
         return State.RUNNING
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         return self._reason
 
     def destroy(self) -> str:

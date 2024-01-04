@@ -220,7 +220,7 @@ class HTML5SSHTransport(transports.Transport):
 
         logger.debug('SSH Params: %s', params)
 
-        scrambler = CryptoManager().randomString(32)
+        scrambler = CryptoManager().random_string(32)
         ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
 
         onw = ''

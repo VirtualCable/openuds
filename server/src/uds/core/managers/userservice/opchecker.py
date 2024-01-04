@@ -49,39 +49,39 @@ USERSERVICE_TAG = 'cm-'
 # State updaters
 # This will be executed on current service state for checking transitions to new state, task states, etc..
 class StateUpdater:
-    userService: UserService
-    userServiceInstance: services.UserService
+    user_service: UserService
+    user_service_instance: services.UserService
 
     def __init__(
         self,
         userService: UserService,
         userServiceInstance: typing.Optional[services.UserService] = None,
     ):
-        self.userService = userService
-        self.userServiceInstance = (
+        self.user_service = userService
+        self.user_service_instance = (
             userServiceInstance if userServiceInstance is not None else userService.get_instance()
         )
 
-    def setError(self, msg: typing.Optional[str] = None):
+    def set_error(self, msg: typing.Optional[str] = None):
         logger.error('Got error on processor: %s', msg)
         self.save(State.ERROR)
         if msg is not None:
-            log.log(self.userService, log.LogLevel.ERROR, msg, log.LogSource.INTERNAL)
+            log.log(self.user_service, log.LogLevel.ERROR, msg, log.LogSource.INTERNAL)
 
     def save(self, newState: typing.Optional[str] = None):
         if newState:
-            self.userService.setState(newState)
+            self.user_service.setState(newState)
 
-        self.userService.updateData(self.userServiceInstance)
+        self.user_service.updateData(self.user_service_instance)
 
-    def logIp(self):
-        ip = self.userServiceInstance.getIp()
+    def log_ip(self):
+        ip = self.user_service_instance.getIp()
 
         if ip is not None and ip != '':
-            self.userService.log_ip(ip)
+            self.user_service.log_ip(ip)
 
-    def checkLater(self):
-        UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
+    def check_later(self):
+        UserServiceOpChecker.check_later(self.user_service, self.user_service_instance)
 
     def run(self, state):
         executor = {
@@ -92,111 +92,111 @@ class StateUpdater:
 
         logger.debug(
             'Running Executor for %s with state %s and executor %s',
-            self.userService.friendly_name,
-            State.toString(state),
+            self.user_service.friendly_name,
+            State.as_str(state),
             executor,
         )
 
         try:
             executor()
         except Exception as e:
-            self.setError(f'Exception: {e}')
+            self.set_error(f'Exception: {e}')
 
-        logger.debug('Executor for %s done', self.userService.friendly_name)
+        logger.debug('Executor for %s done', self.user_service.friendly_name)
 
     def finish(self):
-        raise NotImplementedError('finish method must be overriden')
+        raise NotImplementedError()
 
     def running(self):
         self.save()
-        self.checkLater()
+        self.check_later()
 
     def error(self):
-        self.setError(self.userServiceInstance.reasonOfError())
+        self.set_error(self.user_service_instance.error_reason())
 
 
 class UpdateFromPreparing(StateUpdater):
     def checkOsManagerRelated(self) -> str:
-        osManager = self.userServiceInstance.osmanager()
+        osManager = self.user_service_instance.osmanager()
 
         state = State.USABLE
 
         # and make this usable if os manager says that it is usable, else it pass to configuring state
         # This is an "early check" for os manager, so if we do not have os manager, or os manager
         # already notifies "ready" for this, we
-        if osManager is not None and State.isPreparing(self.userService.os_state):
-            logger.debug('Has valid osmanager for %s', self.userService.friendly_name)
+        if osManager is not None and State.isPreparing(self.user_service.os_state):
+            logger.debug('Has valid osmanager for %s', self.user_service.friendly_name)
 
-            stateOs = osManager.checkState(self.userService)
+            stateOs = osManager.check_state(self.user_service)
         else:
             stateOs = State.FINISHED
 
         logger.debug(
             'State %s, StateOS %s for %s',
-            State.toString(state),
-            State.toString(stateOs),
-            self.userService.friendly_name,
+            State.as_str(state),
+            State.as_str(stateOs),
+            self.user_service.friendly_name,
         )
         if stateOs == State.RUNNING:
-            self.userService.setOsState(State.PREPARING)
+            self.user_service.setOsState(State.PREPARING)
         else:
             # If state is finish, we need to notify the userService again that os has finished
             # This will return a new task state, and that one will be the one taken into account
-            self.userService.setOsState(State.USABLE)
-            rs = self.userServiceInstance.notifyReadyFromOsManager('')
+            self.user_service.setOsState(State.USABLE)
+            rs = self.user_service_instance.notifyReadyFromOsManager('')
             if rs != State.FINISHED:
-                self.checkLater()
+                self.check_later()
                 state = (
-                    self.userService.state
+                    self.user_service.state
                 )  # No not alter current state if after notifying os manager the user service keeps working
             else:
-                self.logIp()
+                self.log_ip()
 
         return state
 
     def finish(self):
-        if self.userService.destroy_after:  # Marked for destroyal
-            del self.userService.destroy_after  # Cleanup..
+        if self.user_service.destroy_after:  # Marked for destroyal
+            del self.user_service.destroy_after  # Cleanup..
             self.save(State.REMOVABLE)  # And start removing it
             return
 
         # By default, if not valid publication, service will be marked for removal on preparation finished
         state = State.REMOVABLE
-        if self.userService.check_publication_validity():
-            logger.debug('Publication is valid for %s', self.userService.friendly_name)
+        if self.user_service.check_publication_validity():
+            logger.debug('Publication is valid for %s', self.user_service.friendly_name)
             state = self.checkOsManagerRelated()
 
         # Now notifies the service instance that we have finished processing
-        if state != self.userService.state:
-            self.userServiceInstance.finish()
+        if state != self.user_service.state:
+            self.user_service_instance.finish()
 
         self.save(state)
 
 
 class UpdateFromRemoving(StateUpdater):
     def finish(self):
-        osManager = self.userServiceInstance.osmanager()
+        osManager = self.user_service_instance.osmanager()
         if osManager is not None:
-            osManager.release(self.userService)
+            osManager.release(self.user_service)
 
         self.save(State.REMOVED)
 
 
 class UpdateFromCanceling(StateUpdater):
     def finish(self):
-        osManager = self.userServiceInstance.osmanager()
+        osManager = self.user_service_instance.osmanager()
         if osManager is not None:
-            osManager.release(self.userService)
+            osManager.release(self.user_service)
 
         self.save(State.CANCELED)
 
 
 class UpdateFromOther(StateUpdater):
     def finish(self):
-        self.setError(f'Unknown running transition from {State.toString(self.userService.state)}')
+        self.set_error(f'Unknown running transition from {State.as_str(self.user_service.state)}')
 
     def running(self):
-        self.setError(f'Unknown running transition from {State.toString(self.userService.state)}')
+        self.set_error(f'Unknown running transition from {State.as_str(self.user_service.state)}')
 
 
 class UserServiceOpChecker(DelayedTask):
@@ -210,15 +210,15 @@ class UserServiceOpChecker(DelayedTask):
         self._state = service.state
 
     @staticmethod
-    def makeUnique(userService: UserService, userServiceInstance: services.UserService, state: str):
+    def make_unique(userService: UserService, userServiceInstance: services.UserService, state: str):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
         DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userService.uuid)
-        UserServiceOpChecker.checkAndUpdateState(userService, userServiceInstance, state)
+        UserServiceOpChecker.state_updater(userService, userServiceInstance, state)
 
     @staticmethod
-    def checkAndUpdateState(userService: UserService, userServiceInstance: services.UserService, state: str):
+    def state_updater(userService: UserService, userServiceInstance: services.UserService, state: str):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
@@ -231,16 +231,19 @@ class UserServiceOpChecker(DelayedTask):
             )  # And name, both methods can modify serviceInstance, so we save it later
             userService.save(update_fields=['unique_id', 'friendly_name'])
 
-            updater = {
-                State.PREPARING: UpdateFromPreparing,
-                State.REMOVING: UpdateFromRemoving,
-                State.CANCELING: UpdateFromCanceling,
-            }.get(userService.state, UpdateFromOther)
+            updater = typing.cast(
+                type[StateUpdater],
+                {
+                    State.PREPARING: UpdateFromPreparing,
+                    State.REMOVING: UpdateFromRemoving,
+                    State.CANCELING: UpdateFromCanceling,
+                }.get(userService.state, UpdateFromOther),
+            )
 
             logger.debug(
                 'Updating %s from %s with updater %s and state %s',
                 userService.friendly_name,
-                State.toString(userService.state),
+                State.as_str(userService.state),
                 updater,
                 state,
             )
@@ -254,7 +257,7 @@ class UserServiceOpChecker(DelayedTask):
             userService.save(update_fields=['data'])
 
     @staticmethod
-    def checkLater(userService, ci):
+    def check_later(userService, ci):
         """
         Inserts a task in the delayedTaskRunner so we can check the state of this publication
         @param dps: Database object for ServicePoolPublication
@@ -269,28 +272,28 @@ class UserServiceOpChecker(DelayedTask):
             USERSERVICE_TAG + userService.uuid,
         )
 
-    def run(self):
+    def run(self) -> None:
         logger.debug('Checking user service finished %s', self._svrId)
-        uService = None
+        user_service: 'UserService|None' = None
         try:
-            uService = UserService.objects.get(pk=self._svrId)
-            if uService.state != self._state:
+            user_service = typing.cast(UserService, UserService.objects.get(pk=self._svrId))
+            if user_service.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
                 # This item is no longer valid, returning will not check it again (no checkLater called)
                 return
-            ci = uService.get_instance()
+            ci = user_service.get_instance()
             logger.debug("uService instance class: %s", ci.__class__)
-            state = ci.checkState()
-            UserServiceOpChecker.checkAndUpdateState(uService, ci, state)
+            state = ci.check_state()
+            UserServiceOpChecker.state_updater(user_service, ci, state)
         except UserService.DoesNotExist as e:  # pylint: disable=no-member
             logger.error('User service not found (erased from database?) %s : %s', e.__class__, e)
         except Exception as e:
             # Exception caught, mark service as errored
             logger.exception("Error %s, %s :", e.__class__, e)
-            if uService:
-                log.log(uService, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
+            if user_service:
+                log.log(user_service, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
                 try:
-                    uService.setState(State.ERROR)
-                    uService.save(update_fields=['data'])
+                    user_service.setState(State.ERROR)
+                    user_service.save(update_fields=['data'])
                 except Exception:
                     logger.error('Can\'t update state of uService object')

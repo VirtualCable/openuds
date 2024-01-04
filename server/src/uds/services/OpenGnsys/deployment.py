@@ -140,7 +140,7 @@ class OGDeployment(services.UserService):
         The problem is that currently there is no way that a machine is in FACT started.
         OpenGnsys will try it best by sending an WOL
         """
-        dbs = self.dbObj()
+        dbs = self.db_obj()
         if not dbs:
             return State.FINISHED
 
@@ -276,9 +276,9 @@ class OGDeployment(services.UserService):
         """
         Used to retry an operation
         In fact, this will not be never invoked, unless we push it twice, because
-        checkState method will "pop" first item when a check operation returns State.FINISHED
+        check_state method will "pop" first item when a check operation returns State.FINISHED
 
-        At executeQueue this return value will be ignored, and it will only be used at checkState
+        At executeQueue this return value will be ignored, and it will only be used at check_state
         """
         return State.FINISHED
 
@@ -287,7 +287,7 @@ class OGDeployment(services.UserService):
         Deploys a machine from template for user/cache
         """
         r: typing.Any = None
-        token = CryptoManager().randomString(32)
+        token = CryptoManager().random_string(32)
         try:
             r = self.service().reserve()
             self.service().notifyEvents(r['id'], token, self._uuid)
@@ -315,7 +315,7 @@ class OGDeployment(services.UserService):
         )
 
         # Store actor version & Known ip
-        dbs = self.dbObj()
+        dbs = self.db_obj()
         if dbs:
             dbs.properties['actor_version'] = '1.1-OpenGnsys'
             dbs.properties['token'] = token
@@ -333,7 +333,7 @@ class OGDeployment(services.UserService):
         Removes a machine from system
         Avoids "double unreserve" in case the reservation was made from release
         """
-        dbs = self.dbObj()
+        dbs = self.db_obj()
         if dbs:
             # On release callback, we will set a property on DB called "from_release"
             # so we can avoid double unreserve
@@ -357,11 +357,11 @@ class OGDeployment(services.UserService):
         """
         return State.FINISHED  # No check at all, always true
 
-    def checkState(self) -> str:
+    def check_state(self) -> str:
         """
         Check what operation is going on, and acts acordly to it
         """
-        self.__debug('checkState')
+        self.__debug('check_state')
         op = self.__getCurrentOp()
 
         if op == opError:
@@ -396,7 +396,7 @@ class OGDeployment(services.UserService):
         except Exception as e:
             return self.__error(e)
 
-    def reasonOfError(self) -> str:
+    def error_reason(self) -> str:
         """
         Returns the reason of the error.
 

@@ -352,7 +352,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         try:
-            CryptoManager().loadCertificate(self.serverCertificate.value)
+            CryptoManager().load_certificate(self.serverCertificate.value)
         except Exception as e:
             raise exceptions.validation.ValidationError(gettext('Invalid server certificate. ') + str(e))
 
@@ -367,7 +367,7 @@ class SAMLAuthenticator(auths.Authenticator):
             )
 
         try:
-            CryptoManager().loadPrivateKey(self.privateKey.value)
+            CryptoManager().load_private_key(self.privateKey.value)
         except Exception as e:
             raise exceptions.validation.ValidationError(gettext('Invalid private key. ') + str(e))
 

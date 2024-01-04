@@ -70,14 +70,14 @@ class DownloadsManagerTest(WEBTestCase):
             ),
         ):
             fileName, mimeType, knownUuid = v
-            self.manager.registerDownloadable(
+            self.manager.register(
                 fileName,
                 'This is the test file {}'.format(fileName),
                 self.filePath,
                 mimeType,
             )
 
-            downloadables = self.manager.getDownloadables()
+            downloadables = self.manager.downloadables()
 
             self.assertIn(
                 knownUuid,

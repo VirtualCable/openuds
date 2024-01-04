@@ -86,7 +86,7 @@ def assertUserIs(
 
         # Compare password
         if compare_password:
-            if not CryptoManager().checkHash(compare_to['password'], user.password):
+            if not CryptoManager().check_hash(compare_to['password'], user.password):
                 logger.info(
                     'User password do not match: %s != %s',
                     user.password,

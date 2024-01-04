@@ -223,7 +223,7 @@ class ServicePoolPublication(UUIDModel):
 
     def __str__(self) -> str:
         return (
-            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.toString(self.state)}'
+            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.as_str(self.state)}'
         )
 
 
