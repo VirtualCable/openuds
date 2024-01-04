@@ -86,5 +86,5 @@ class IPServiceBase(services.Service):
 
     # Phisical machines does not have "real" providers, so
     # always is available
-    def isAvailable(self) -> bool:
+    def is_avaliable(self) -> bool:
         return True

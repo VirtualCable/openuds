@@ -343,5 +343,5 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return self.parent().getConsoleConnection(machineId)
 
     @cached('reachable', Cache.SHORT_VALIDITY)
-    def isAvailable(self) -> bool:
+    def is_avaliable(self) -> bool:
         return self.parent().isAvailable()

@@ -442,5 +442,5 @@ class LiveService(services.Service):
         """
         return int(self.lenName.value)
 
-    def isAvailable(self) -> bool:
+    def is_avaliable(self) -> bool:
         return self.parent().isAvailable()

@@ -139,7 +139,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             obj = sType(self.get_environment(), prov, values, uuid=self.uuid)
             self.deserialize(obj, values)
         else:
-            raise Exception(f'Service type of {self.data_type} is not recogniced by provider {prov.name}')
+            raise Exception(f'Service type of {self.data_type} is not recognized by provider {prov.name}')
 
         self._cachedInstance = obj
 

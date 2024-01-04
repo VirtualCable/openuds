@@ -265,7 +265,7 @@ class Service(Module):
         """
         return self._provider
 
-    def isAvailable(self) -> bool:
+    def is_avaliable(self) -> bool:
         """
         Returns if this service is reachable (that is, we can operate with it). This is used, for example, to check
         if a service is "operable" before removing an user service (pass from "waiting for removal" to "removing")
@@ -371,7 +371,7 @@ class Service(Module):
         """
         return None
 
-    def getVappLauncher(self, userService: 'models.UserService') -> typing.Optional[tuple[str, str]]:
+    def get_vapp_launcher(self, userService: 'models.UserService') -> typing.Optional[tuple[str, str]]:
         """Returns the vapp launcher for this service, if any
 
         Args:

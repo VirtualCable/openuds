@@ -539,7 +539,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         removing = self.getUserServicesInStatesForProvider(servicePool.service.provider, [State.REMOVING])
         serviceInstance = servicePool.service.get_instance()
         if (
-            serviceInstance.isAvailable()
+            serviceInstance.is_avaliable()
             and removing >= serviceInstance.parent().getMaxRemovingServices()
             and serviceInstance.parent().getIgnoreLimits() is False
         ):
@@ -991,7 +991,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                 # Check that servide is accessible
                 if (
-                    not alreadyAssigned.deployed_service.service.get_instance().isAvailable()
+                    not alreadyAssigned.deployed_service.service.get_instance().is_avaliable()
                 ):  # Not available, mark for removal
                     alreadyAssigned.release()
                 raise Exception()  # And process a new access
@@ -1015,7 +1015,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             for pool in pools:  # Pools are already sorted, and "full" pools are filtered out
                 if meta.ha_policy == types.pools.HighAvailabilityPolicy.ENABLED:
                     # If not available, skip it
-                    if pool.service.get_instance().isAvailable() is False:
+                    if pool.service.get_instance().is_avaliable() is False:
                         continue
 
                 # Ensure transport is available for the OS
