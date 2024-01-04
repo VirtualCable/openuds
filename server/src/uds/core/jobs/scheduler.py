@@ -61,21 +61,21 @@ class JobThread(threading.Thread):
       Ensures that the scheduler db entry is released after run
     """
 
-    _jobInstance: 'Job'
-    _dbJobId: int
+    _job_instance: 'Job'
+    _db_job_id: int
     _freq: int
 
     def __init__(self, jobInstance: 'Job', dbJob: DBScheduler) -> None:
         super().__init__()
-        self._jobInstance = jobInstance
-        self._dbJobId = dbJob.id
+        self._job_instance = jobInstance
+        self._db_job_id = dbJob.id
         self._freq = dbJob.frecuency
 
     def run(self) -> None:
         try:
-            self._jobInstance.execute()
+            self._job_instance.execute()
         except Exception:
-            logger.warning("Exception executing job %s", self._dbJobId)
+            logger.warning("Exception executing job %s", self._db_job_id)
         finally:
             self.jobDone()
 
@@ -86,7 +86,7 @@ class JobThread(threading.Thread):
         done = False
         while done is False:
             try:
-                self.__updateDb()
+                self._update_db_record()
                 done = True
             except Exception:
                 # Databases locked, maybe because we are on a multitask environment, let's try again in a while
@@ -100,12 +100,12 @@ class JobThread(threading.Thread):
         # Ensures DB connection is released after job is done
         connections['default'].close()
 
-    def __updateDb(self) -> None:
+    def _update_db_record(self) -> None:
         """
         Atomically updates the scheduler db to "release" this job
         """
         with transaction.atomic():
-            DBScheduler.objects.select_for_update().filter(id=self._dbJobId).update(
+            DBScheduler.objects.select_for_update().filter(id=self._db_job_id).update(
                 state=State.FOR_EXECUTE,
                 owner_server='',
                 next_execution=sql_datetime() + timedelta(seconds=self._freq),
@@ -116,8 +116,9 @@ class Scheduler:
     """
     Class responsible of maintain/execute scheduled jobs
     """
-
-    granularity = 2  # We check for cron jobs every THIS seconds
+    
+    # We check for scheduled operations every THIS seconds
+    granularity: typing.Final[int] = 2
 
     # to keep singleton Scheduler
     _scheduler: typing.Optional['Scheduler'] = None
@@ -194,7 +195,7 @@ class Scheduler:
             ) from e
 
     @staticmethod
-    def release_own_shedules() -> None:
+    def release_own_schedules() -> None:
         """
         Releases all scheduleds being executed by this server
         """
@@ -222,7 +223,7 @@ class Scheduler:
         """
         # We ensure that the jobs are also in database so we can
         logger.debug('Run Scheduler thread')
-        JobsFactory().ensureJobsInDatabase()
+        JobsFactory().ensure_jobs_registered()
         logger.debug("At loop")
         while self._keep_running:
             try:
@@ -240,4 +241,4 @@ class Scheduler:
                 except Exception:
                     logger.exception('Exception clossing connection at delayed task')
         logger.info('Exiting Scheduler because stop has been requested')
-        self.release_own_shedules()
+        self.release_own_schedules()

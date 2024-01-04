@@ -650,8 +650,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return types.pools.UsageInfo(cachedValue, maxs)
 
-    def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
-        return bool(self.service) and self.service.testServer(host, port, timeout)
+    def test_connectivity(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
+        return bool(self.service) and self.service.test_connectivity(host, port, timeout)
 
     # Utility for logging
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:

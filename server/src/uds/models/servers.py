@@ -363,9 +363,9 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
     def setActorVersion(self, userService: 'UserService') -> None:
         """Sets the actor version of this server to the userService"""
-        userService.setActorVersion(f'Server {self.version or "unknown"}')
+        userService.actor_version = f'Server {self.version or "unknown"}'
 
-    def getCommsUrl(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
+    def get_comms_endpoint(self, *, path: typing.Optional[str] = None) -> typing.Optional[str]:
         """
         Returns the url for a path to this server
 

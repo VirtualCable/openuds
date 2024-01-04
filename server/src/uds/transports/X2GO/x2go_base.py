@@ -210,7 +210,7 @@ class BaseX2GOTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if connection.testServer(ip, 22):
+            if connection.test_connectivity(ip, 22):
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)

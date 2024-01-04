@@ -97,7 +97,7 @@ class TestOSManager(osmanagers.OSManager):
         '''
         if not userService.in_use:
             if (self.onLogout.value == 'remove') or (
-                not userService.isValidPublication() and self.onLogout.value == 'keep'
+                not userService.check_publication_validity() and self.onLogout.value == 'keep'
             ):
                 return True
 

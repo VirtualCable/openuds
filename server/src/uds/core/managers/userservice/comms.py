@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 TIMEOUT = 2
 
 
-def _requestActor(
+def _execute_actor_request(
     userService: 'UserService',
     method: str,
     data: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None,
@@ -59,7 +59,7 @@ def _requestActor(
     if no communications url is provided or no min version, raises a "NoActorComms" exception (or OldActorVersion, derived from NoActorComms)
     Returns request response value interpreted as json
     """
-    url = userService.getCommsUrl()
+    url = userService.get_comms_endpoint()
     if not url:
         raise exceptions.actor.NoActorComms(f'No notification urls for {userService.friendly_name}')
 
@@ -119,15 +119,15 @@ def _requestActor(
     return js
 
 
-def notifyPreconnect(userService: 'UserService', info: types.connections.ConnectionData) -> None:
+def notify_preconnect(userService: 'UserService', info: types.connections.ConnectionData) -> None:
     """
     Notifies a preconnect to an user service
     """
     src = userService.getConnectionSource()
-    if userService.deployed_service.service.get_instance().notifyPreconnect(userService, info) is True:
+    if userService.deployed_service.service.get_instance().notify_preconnect(userService, info) is True:
         return  # Ok, service handled it
 
-    _requestActor(
+    _execute_actor_request(
         userService,
         'preConnect',
         types.connections.PreconnectRequest(
@@ -148,7 +148,7 @@ def checkUuid(userService: 'UserService') -> bool:
     Checks if the uuid of the service is the same of our known uuid on DB
     """
     try:
-        uuid = _requestActor(userService, 'uuid')
+        uuid = _execute_actor_request(userService, 'uuid')
         if uuid and uuid != userService.uuid:  # Empty UUID means "no check this, fixed pool machine"
             logger.info(
                 'Machine %s do not have expected uuid %s, instead has %s',
@@ -177,7 +177,7 @@ def requestScreenshot(userService: 'UserService') -> None:
     """
     try:
         # Data = {} forces an empty POST
-        _requestActor(
+        _execute_actor_request(
             userService, 'screenshot', data={}, minVersion='4.0.0'
         )  # First valid version with screenshot is 3.0
     except exceptions.actor.NoActorComms:
@@ -194,7 +194,7 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
         if forUser:
             data['user'] = forUser
         # Data = {} forces an empty POST
-        _requestActor(userService, 'script', data=data)
+        _execute_actor_request(userService, 'script', data=data)
     except exceptions.actor.NoActorComms:
         pass
 
@@ -204,7 +204,7 @@ def requestLogoff(userService: 'UserService') -> None:
     Ask client to logoff user
     """
     try:
-        _requestActor(userService, 'logout', data={})
+        _execute_actor_request(userService, 'logout', data={})
     except exceptions.actor.NoActorComms:
         pass
 
@@ -214,6 +214,6 @@ def sendMessage(userService: 'UserService', message: str) -> None:
     Sends an screen message to client
     """
     try:
-        _requestActor(userService, 'message', data={'message': message})
+        _execute_actor_request(userService, 'message', data={'message': message})
     except exceptions.actor.NoActorComms:
         pass

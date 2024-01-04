@@ -216,7 +216,7 @@ class OSManager(Module):
         """
 
     def logKnownIp(self, userService: 'UserService', ip: str) -> None:
-        userService.logIP(ip)
+        userService.log_ip(ip)
 
     def toReady(self, userService: 'UserService') -> None:
         '''

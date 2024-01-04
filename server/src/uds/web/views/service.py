@@ -165,7 +165,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
         try:
             userServiceInstance = userService.get_instance()
             ip = userServiceInstance.getIp()
-            userService.logIP(ip)
+            userService.log_ip(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
             ip = None

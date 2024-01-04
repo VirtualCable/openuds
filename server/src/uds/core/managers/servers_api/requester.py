@@ -55,7 +55,7 @@ AUTH_TOKEN = 'X-TOKEN-AUTH'
 # If server is restrained, it will return False
 # If server is not restrained, it will execute the function and return it's result
 # If exception is raised, it will restrain the server and return False
-def restrainServer(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
+def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
     def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
         if self.server.isRestrained():
             return False
@@ -83,7 +83,7 @@ class ServerApiRequester:
         self.cache = cache.Cache('serverapi:' + server.uuid)
 
     @contextlib.contextmanager
-    def setupSession(
+    def setup_session(
         self, *, minVersion: typing.Optional[str] = None
     ) -> typing.Generator['requests.Session', None, None]:
         """
@@ -124,7 +124,7 @@ class ServerApiRequester:
                 except Exception:
                     logger.error('Error removing temp file %s', verify)
 
-    def getCommsUrl(self, method: str, minVersion: typing.Optional[str]) -> typing.Optional[str]:
+    def get_comms_endpoint(self, method: str, minVersion: typing.Optional[str]) -> typing.Optional[str]:
         """
         Returns the url for a method on the server
         """
@@ -133,14 +133,14 @@ class ServerApiRequester:
         ):
             return None
 
-        return self.server.getCommsUrl(path=method)
+        return self.server.get_comms_endpoint(path=method)
 
     def get(self, method: str, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.getCommsUrl(method, minVersion)
+        url = self.get_comms_endpoint(method, minVersion)
         if not url:
             return None
 
-        with self.setupSession(minVersion=minVersion) as session:
+        with self.setup_session(minVersion=minVersion) as session:
             response = session.get(url, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
@@ -151,11 +151,11 @@ class ServerApiRequester:
             return response.json()
 
     def post(self, method: str, data: typing.Any, *, minVersion: typing.Optional[str] = None) -> typing.Any:
-        url = self.getCommsUrl(method, minVersion)
+        url = self.get_comms_endpoint(method, minVersion)
         if not url:
             return None
 
-        with self.setupSession(minVersion=minVersion) as session:
+        with self.setup_session(minVersion=minVersion) as session:
             response = session.post(url, json=data, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
@@ -165,7 +165,7 @@ class ServerApiRequester:
 
             return response.json()
 
-    @restrainServer
+    @restrain_server
     def notifyAssign(
         self, userService: 'models.UserService', service_type: 'types.services.ServiceType', count: int
     ) -> bool:
@@ -193,8 +193,8 @@ class ServerApiRequester:
         )
         return True
 
-    @restrainServer
-    def notifyPreconnect(
+    @restrain_server
+    def notify_preconnect(
         self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
     ) -> bool:
         """
@@ -227,7 +227,7 @@ class ServerApiRequester:
         )
         return True
 
-    @restrainServer
+    @restrain_server
     def notifyRelease(self, userService: 'models.UserService') -> bool:
         """
         Notifies removal of user service to server

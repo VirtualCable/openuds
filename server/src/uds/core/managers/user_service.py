@@ -602,11 +602,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         except Exception:
             logger.exception('Reseting service')
 
-    def notifyPreconnect(self, userService: UserService, info: types.connections.ConnectionData) -> None:
+    def notify_preconnect(self, userService: UserService, info: types.connections.ConnectionData) -> None:
         try:
-            comms.notifyPreconnect(userService, info)
+            comms.notify_preconnect(userService, info)
         except exceptions.actor.NoActorComms:  # If no comms url for userService, try with service
-            userService.deployed_service.service.notifyPreconnect(userService, info)
+            userService.deployed_service.service.notify_preconnect(userService, info)
 
     def checkUuid(self, userService: UserService) -> bool:
         return comms.checkUuid(userService)
@@ -795,7 +795,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             # If ready, show transport for this service, if also ready ofc
             userServiceInstance = userService.get_instance()
             ip = userServiceInstance.getIp()
-            userService.logIP(ip)  # Update known ip
+            userService.log_ip(ip)  # Update known ip
             logger.debug('IP: %s', ip)
 
             if self.checkUuid(userService) is False:  # The service is not the expected one
@@ -821,7 +821,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     transportInstance = transport.get_instance()
                     if transportInstance.isAvailableFor(userService, ip):
                         log.log(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
-                        self.notifyPreconnect(
+                        self.notify_preconnect(
                             userService,
                             transportInstance.getConnectionInfo(userService, user, ''),
                         )

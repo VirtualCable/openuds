@@ -44,7 +44,7 @@ if typing.TYPE_CHECKING:
 
 
 class JobsFactory(factory.Factory['Job']):
-    def ensureJobsInDatabase(self) -> None:
+    def ensure_jobs_registered(self) -> None:
         """
         Ensures that uds core workers are correctly registered in database and in factory
         """
@@ -55,6 +55,8 @@ class JobsFactory(factory.Factory['Job']):
 
         try:
             logger.debug('Ensuring that jobs are registered inside database')
+            # Ensure workers are initialized
+            # That is, dynamic load of packages and registration of jobs on manager
             workers.initialize()
             for name, type_ in self.objects().items():
                 try:

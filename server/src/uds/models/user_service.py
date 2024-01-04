@@ -311,8 +311,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns:
             Nothing
         """
-        self.src_ip = src.ip[:consts.system.MAX_IPV6_LENGTH]
-        self.src_hostname = src.hostname[:consts.system.MAX_DNS_NAME_LENGTH]
+        self.src_ip = src.ip[: consts.system.MAX_IPV6_LENGTH]
+        self.src_hostname = src.hostname[: consts.system.MAX_DNS_NAME_LENGTH]
 
         if len(src.ip) > consts.system.MAX_IPV6_LENGTH or len(src.hostname) > consts.system.MAX_DNS_NAME_LENGTH:
             logger.info(
@@ -570,31 +570,33 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.properties['comms_url'] = commsUrl
 
-    def getCommsUrl(
+    def get_comms_endpoint(
         self, path: typing.Optional[str] = None
     ) -> typing.Optional[str]:  # pylint: disable=unused-argument
         # path is not used, but to keep compat with Server "getCommUrl" method
         return self.properties.get('comms_url', None)
-    
-    def notifyPreconnect(self) -> None:
+
+    def notify_preconnect(self) -> None:
         """
         Notifies preconnect to userService
         """
-        
+        pass
 
-    def logIP(self, ip: typing.Optional[str] = None) -> None:
+    def log_ip(self, ip: typing.Optional[str] = None) -> None:
         self.properties['ip'] = ip
 
-    def getLoggedIP(self) -> str:
+    def get_log_ip(self) -> str:
         return self.properties.get('ip') or '0.0.0.0'  # nosec: no binding address
 
-    def setActorVersion(self, version: typing.Optional[str] = None) -> None:
+    @property
+    def actor_version(self) -> str:
+        return self.properties.get('actor_version') or '0.0.0'
+    
+    @actor_version.setter
+    def actor_version(self, version: str) -> None:
         self.properties['actor_version'] = version
 
-    def getActorVersion(self) -> str:
-        return self.properties.get('actor_version') or '0.0.0'
-
-    def isValidPublication(self) -> bool:
+    def check_publication_validity(self) -> bool:
         """
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
@@ -606,8 +608,8 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
         log.log(self, level, message, log.LogSource.INTERNAL)
 
-    def testServer(self, host, port, timeout=4) -> bool:
-        return self.deployed_service.testServer(host, port, timeout)
+    def test_connectivity(self, host, port, timeout=4) -> bool:
+        return self.deployed_service.test_connectivity(host, port, timeout)
 
     def __str__(self):
         return (

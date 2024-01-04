@@ -319,7 +319,7 @@ class OGDeployment(services.UserService):
         if dbs:
             dbs.properties['actor_version'] = '1.1-OpenGnsys'
             dbs.properties['token'] = token
-            dbs.logIP(self._ip)
+            dbs.log_ip(self._ip)
 
         return State.RUNNING
 

@@ -78,7 +78,7 @@ class StateUpdater:
         ip = self.userServiceInstance.getIp()
 
         if ip is not None and ip != '':
-            self.userService.logIP(ip)
+            self.userService.log_ip(ip)
 
     def checkLater(self):
         UserServiceOpChecker.checkLater(self.userService, self.userServiceInstance)
@@ -162,7 +162,7 @@ class UpdateFromPreparing(StateUpdater):
 
         # By default, if not valid publication, service will be marked for removal on preparation finished
         state = State.REMOVABLE
-        if self.userService.isValidPublication():
+        if self.userService.check_publication_validity():
             logger.debug('Publication is valid for %s', self.userService.friendly_name)
             state = self.checkOsManagerRelated()
 

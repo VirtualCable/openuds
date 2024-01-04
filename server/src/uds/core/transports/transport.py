@@ -130,14 +130,14 @@ class Transport(Module):
         Invoked when Transport is deleted
         """
 
-    def testServer(
+    def test_connectivity(
         self,
         userService: 'models.UserService',
         ip: str,
         port: typing.Union[str, int],
         timeout: float = 4,
     ) -> bool:
-        return net.testConnection(ip, str(port), timeout)
+        return net.test_connectivity(ip, int(port), timeout)
 
     def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
         """

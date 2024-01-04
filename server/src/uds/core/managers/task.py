@@ -120,7 +120,7 @@ class TaskManager(metaclass=singleton.Singleton):
         connection.close()
 
         # Releases owned schedules so anyone can access them...
-        Scheduler.release_own_shedules()
+        Scheduler.release_own_schedules()
 
         self.registerScheduledTasks()
 

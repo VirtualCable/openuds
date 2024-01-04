@@ -451,7 +451,7 @@ class Service(Module):
             self.storage.delete('__nfo_' + id)
         return value
 
-    def notifyPreconnect(
+    def notify_preconnect(
         self, userService: 'models.UserService', info: 'types.connections.ConnectionData'
     ) -> bool:
         """

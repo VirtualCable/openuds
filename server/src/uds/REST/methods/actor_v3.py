@@ -452,7 +452,7 @@ class Initialize(ActorV3Action):
 
             # Managed by UDS, get initialization data from osmanager and return it
             # Set last seen actor version
-            userService.setActorVersion(self._params['version'])
+            userService.actor_version = self._params['version']
             osData: collections.abc.MutableMapping[str, typing.Any] = {}
             osManager = userService.getOsManagerInstance()
             if osManager:
@@ -494,7 +494,7 @@ class BaseReadyChange(ActorV3Action):
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
         # Stores known IP and notifies it to deployment
-        userService.logIP(self._params['ip'])
+        userService.log_ip(self._params['ip'])
         userServiceInstance = userService.get_instance()
         userServiceInstance.setIp(self._params['ip'])
         userService.updateData(userServiceInstance)
@@ -575,8 +575,8 @@ class Version(ActorV3Action):
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        userService.setActorVersion(self._params['version'])
-        userService.logIP(self._params['ip'])
+        userService.actor_version = self._params['version']
+        userService.log_ip(self._params['ip'])
 
         return ActorV3Action.actorResult()
 
@@ -707,7 +707,7 @@ class Log(ActorV3Action):
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         userService = self.getUserService()
-        if userService.getActorVersion() < '4.0.0':
+        if userService.actor_version < '4.0.0':
             # Adjust loglevel to own, we start on 10000 for OTHER, and received is 0 for OTHER
             level = log.LogLevel.fromInt(int(self._params['level']) + 10000)
         else:

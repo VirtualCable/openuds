@@ -125,7 +125,7 @@ class LinuxOsManager(osmanagers.OSManager):
         '''
         if not userService.in_use:
             if (self._onLogout == 'remove') or (
-                not userService.isValidPublication() and self._onLogout == 'keep'
+                not userService.check_publication_validity() and self._onLogout == 'keep'
             ):
                 return True
 

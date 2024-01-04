@@ -169,10 +169,10 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         # orphaned services?
         return self.provider.isInMaintenance() if self.provider else True
 
-    def testServer(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
-        return net.testConnection(host, port, timeout)
+    def test_connectivity(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
+        return net.test_connectivity(host, int(port), timeout)
 
-    def notifyPreconnect(self, userService: 'UserService', info: 'types.connections.ConnectionData') -> None:
+    def notify_preconnect(self, userService: 'UserService', info: 'types.connections.ConnectionData') -> None:
         """
         Notify preconnect event to service, so it can do whatever it needs to do before connecting
 
@@ -182,7 +182,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         Note:
             Override this method if you need to do something before connecting to a service
-            (i.e. invoke notifyPreconnect using a Server, or whatever you need to do)
+            (i.e. invoke notify_preconnect using a Server, or whatever you need to do)
         """
         logger.warning('No actor notification available for user service %s', userService.friendly_name)
 

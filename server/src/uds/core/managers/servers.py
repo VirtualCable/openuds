@@ -361,7 +361,7 @@ class ServerManager(metaclass=singleton.Singleton):
 
         return types.servers.ServerCounter(serverCounter.server_uuid, serverCounter.counter - 1)
 
-    def notifyPreconnect(
+    def notify_preconnect(
         self,
         serverGroup: 'models.ServerGroup',
         userService: 'models.UserService',
@@ -377,7 +377,7 @@ class ServerManager(metaclass=singleton.Singleton):
             server = self.getServerAssignation(userService, serverGroup)
 
         if server:
-            requester.ServerApiRequester(server).notifyPreconnect(userService, info)
+            requester.ServerApiRequester(server).notify_preconnect(userService, info)
 
     def notifyAssign(
         self,

@@ -179,7 +179,7 @@ class BaseSpiceTransport(transports.Transport):
                 120,
             )
 
-            if self.testServer(userService, con['address'], port_to_test) is True:
+            if self.test_connectivity(userService, con['address'], port_to_test) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 ready = 'Y'
 
