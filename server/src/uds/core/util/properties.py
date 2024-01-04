@@ -153,7 +153,7 @@ class PropertiesMixin:
         return PropertyAccessor(owner_id=owner_id, owner_type=owner_type)
 
     @staticmethod
-    def _pre_delete_signal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
+    def _pre_delete_properties_signal(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         to_delete: 'PropertiesMixin' = kwargs['instance']
         # We are deleting the object, so we delete the properties too
         # Remember that properties is a generic table, does not have any cascade delete
@@ -168,4 +168,4 @@ class PropertiesMixin:
         Args:
             model (type[models.Model]): Model to connect the signal to
         """
-        signals.pre_delete.connect(PropertiesMixin._pre_delete_signal, sender=model)
+        signals.pre_delete.connect(PropertiesMixin._pre_delete_properties_signal, sender=model)

@@ -242,9 +242,11 @@ class Command(BaseCommand):
                 grps: dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
                     grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                num_users: int = authenticator.users.count()
                 authenticators[authenticator.name] = {
                     '_': getSerializedFromManagedObject(authenticator),
                     'groups': grps,
+                    'users': num_users,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators

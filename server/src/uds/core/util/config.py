@@ -84,6 +84,7 @@ class Config:
         ADMIN = 'Admin'
         WYSE = 'WYSE'  # Legacy
         SAML = 'SAML'  # Legacy
+        ENTERPRISE = 'Enterprise'  # For enterprise pourposes
         OTHER = 'Other'
 
         @staticmethod
