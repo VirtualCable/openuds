@@ -136,7 +136,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         p: 'MetaPoolMember'
         for p in self.members.all():
             total += 1
-            if p.pool.isInMaintenance():
+            if p.pool.is_in_maintenance():
                 maintenance += 1
         return total == maintenance
 

@@ -101,7 +101,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         ]
 
     # For properties
-    def ownerIdAndType(self) -> tuple[str, str]:
+    def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'user'
 
     def getUsernameForAuth(self) -> str:

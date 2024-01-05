@@ -204,9 +204,9 @@ class Transport(Module):
                is done, because there is no relation at that level between user and service.
         """
         if isinstance(userService, models.ServicePool):
-            username, password = userService.processUserPassword(user.name, password)
+            username, password = userService.process_user_password(user.name, password)
         else:
-            username = self.processedUser(userService, user)
+            username = self.processed_username(userService, user)
         return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
@@ -215,7 +215,7 @@ class Transport(Module):
             domain='',
         )
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
         """
         Used to "transform" username that will be sent to service
         This is used to make the "user" that will receive the service match with that sent in notification

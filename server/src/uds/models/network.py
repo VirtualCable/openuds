@@ -103,7 +103,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
-        ipInt, version = net.ipToLong(ip)
+        ipInt, version = net.ip_to_long(ip)
         hex_value = Network.hexlify(ipInt)
         # hexlify is used to convert to hex, and then decode to convert to string
         return Network.objects.filter(
@@ -128,7 +128,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
             netRange: Network range in any supported format
 
         """
-        nr = net.networkFromString(netRange)
+        nr = net.network_from_str(netRange)
         return Network.objects.create(
             name=name,
             start=Network.hexlify(nr.start),
@@ -173,7 +173,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         Returns:
             string representing the dotted quad of this network start
         """
-        return net.longToIp(self.net_start)
+        return net.long_to_ip(self.net_start)
 
     @property
     def str_net_end(self) -> str:
@@ -183,7 +183,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         Returns:
             string representing the dotted quad of this network end
         """
-        return net.longToIp(self.net_end)
+        return net.long_to_ip(self.net_end)
 
     def contains(self, ip: str) -> bool:
         """
@@ -192,7 +192,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         # if net_string is '*', then we are in all networks, return true
         if self.net_string == '*':
             return True
-        ipInt, version = net.ipToLong(ip)
+        ipInt, version = net.ip_to_long(ip)
         return self.net_start <= ipInt <= self.net_end and self.version == version
 
     __contains__ = contains
@@ -201,7 +201,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         """
         Overrides save to update the start, end and version fields
         """
-        rng = net.networkFromString(self.net_string)
+        rng = net.network_from_str(self.net_string)
         self.start = Network.hexlify(rng.start)
         self.end = Network.hexlify(rng.end)
         self.version = rng.version

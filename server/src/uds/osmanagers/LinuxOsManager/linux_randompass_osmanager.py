@@ -85,7 +85,7 @@ class LinuxRandomPassManager(LinuxOsManager):
         else:
             self._userAccount = ''
 
-    def processUserPassword(
+    def process_user_password(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if username == self._userAccount:

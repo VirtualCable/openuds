@@ -74,7 +74,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         # If multiple and has a ';' on IP, the values is IP;MAC
         ip = self._ip.split('~')[0].split(';')[0]
         # If ip is in fact a hostname...
-        if not net.ipToLong(ip).version:
+        if not net.ip_to_long(ip).version:
             # Try to resolve name...
             try:
                 # Prefer ipv4 first

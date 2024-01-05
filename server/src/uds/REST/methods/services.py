@@ -356,7 +356,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         'user_services_count': i.userServices.exclude(
                             state__in=(State.REMOVED, State.ERROR)
                         ).count(),
-                        'state': _('With errors') if i.isRestrained() else _('Ok'),
+                        'state': _('With errors') if i.is_restrained() else _('Ok'),
                     }
                 )
             except AccessDenied:

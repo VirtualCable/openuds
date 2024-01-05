@@ -64,14 +64,14 @@ class DeployedServiceStatsCollector(Job):
         totalAssigned, totalInUse, totalCached = 0, 0, 0
         for servicePool in servicePoolsToCheck:
             try:
-                fltr = servicePool.assignedUserServices().exclude(
+                fltr = servicePool.assigned_user_services().exclude(
                     state__in=State.INFO_STATES
                 )
                 assigned = fltr.count()
                 inUse = fltr.filter(in_use=True).count()
                 # Cached user services
                 cached = (
-                    servicePool.cachedUserServices()
+                    servicePool.cached_users_services()
                     .exclude(state__in=State.INFO_STATES)
                     .count()
                 )

@@ -290,8 +290,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             State.as_str(cache.state),
             State.as_str(cache.os_state),
         )
-        if State.isRuning(state) and cache.isUsable():
-            cache.setState(State.PREPARING)
+        if State.is_runing(state) and cache.isUsable():
+            cache.set_state(State.PREPARING)
 
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(cache, cacheInstance, state)
@@ -316,7 +316,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             # State is kept, just mark it for destroy after finished preparing
             userService.destroy_after = True
         else:
-            userService.setState(State.CANCELING)
+            userService.set_state(State.CANCELING)
             # We simply notify service that it should cancel operation
             state = userServiceInstance.cancel()
 
@@ -334,9 +334,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             userService = UserService.objects.select_for_update().get(id=userService.id)
             operationsLogger.info('Removing userService %a', userService.name)
-            if userService.isUsable() is False and State.isRemovable(userService.state) is False:
+            if userService.isUsable() is False and State.is_removable(userService.state) is False:
                 raise OperationException(_('Can\'t remove a non active element'))
-            userService.setState(State.REMOVING)
+            userService.set_state(State.REMOVING)
             logger.debug("***** The state now is %s *****", State.as_str(userService.state))
             userService.setInUse(False)  # For accounting, ensure that it is not in use right now
             userService.save()
@@ -350,7 +350,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return userService
 
     def removeOrCancel(self, userService: UserService):
-        if userService.isUsable() or State.isRemovable(userService.state):
+        if userService.isUsable() or State.is_removable(userService.state):
             return self.remove(userService)
 
         if userService.isPreparing():
@@ -363,7 +363,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def getExistingAssignationForUser(
         self, servicePool: ServicePool, user: User
     ) -> typing.Optional[UserService]:
-        existing = servicePool.assignedUserServices().filter(
+        existing = servicePool.assigned_user_services().filter(
             user=user, state__in=State.VALID_STATES
         )  # , deployed_service__visible=True
         if existing.exists():
@@ -383,7 +383,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if assignedUserService:
             return assignedUserService
 
-        if servicePool.isRestrained():
+        if servicePool.is_restrained():
             raise InvalidServiceException(_('The requested service is restrained'))
 
         cache: typing.Optional[UserService] = None
@@ -391,7 +391,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             caches = typing.cast(
                 list[UserService],
-                servicePool.cachedUserServices()
+                servicePool.cached_users_services()
                 .select_for_update()
                 .filter(
                     cache_level=services.UserService.L1_CACHE,
@@ -405,7 +405,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 cache = caches[0]
                 # Ensure element is reserved correctly on DB
                 if (
-                    servicePool.cachedUserServices()
+                    servicePool.cached_users_services()
                     .select_for_update()
                     .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
                     .update(user=user, cache_level=0)
@@ -420,7 +420,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             with transaction.atomic():
                 caches = typing.cast(
                     list[UserService],
-                    servicePool.cachedUserServices()
+                    servicePool.cached_users_services()
                     .select_for_update()
                     .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)[
                         :1  # type: ignore  # Slicing is not supported by pylance right now
@@ -429,7 +429,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if cache:
                     cache = caches[0]
                     if (
-                        servicePool.cachedUserServices()
+                        servicePool.cached_users_services()
                         .select_for_update()
                         .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
                         .update(user=user, cache_level=0)
@@ -453,7 +453,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             events.addEvent(
                 servicePool,
                 events.ET_CACHE_HIT,
-                fld1=servicePool.cachedUserServices()
+                fld1=servicePool.cached_users_services()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)
                 .count(),
             )
@@ -464,7 +464,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Now find if there is a preparing one
         with transaction.atomic():
             caches = (
-                servicePool.cachedUserServices()
+                servicePool.cached_users_services()
                 .select_for_update()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)[
                     :1  # type: ignore  # Slicing is not supported by pylance right now
@@ -473,7 +473,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             if caches:
                 cache = caches[0]  # type: ignore  # Slicing is not supported by pylance right now
                 if (
-                    servicePool.cachedUserServices()
+                    servicePool.cached_users_services()
                     .select_for_update()
                     .filter(user=None, uuid=typing.cast(UserService, cache).uuid)
                     .update(user=user, cache_level=0)
@@ -496,7 +496,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             events.addEvent(
                 servicePool,
                 events.ET_CACHE_MISS,
-                fld1=servicePool.cachedUserServices()
+                fld1=servicePool.cached_users_services()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)
                 .count(),
             )
@@ -506,7 +506,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         serviceType = servicePool.service.get_type()
         if serviceType.usesCache:
             inAssigned = (
-                servicePool.assignedUserServices().filter(self.getStateFilter(servicePool.service)).count()
+                servicePool.assigned_user_services().filter(self.getStateFilter(servicePool.service)).count()
             )
             if (
                 inAssigned >= servicePool.max_srvs
@@ -583,7 +583,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             userService.updateData(userServiceInstance)
             return True
 
-        userService.setState(State.PREPARING)
+        userService.set_state(State.PREPARING)
         UserServiceOpChecker.make_unique(userService, userServiceInstance, state)
 
         return False
@@ -666,12 +666,12 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 State.USABLE,
                 State.PREPARING,
             ):  # We don't want to get active deleting or deleted machines...
-                userService.setState(State.PREPARING)
+                userService.set_state(State.PREPARING)
                 UserServiceOpChecker.make_unique(userService, userServiceInstance, state)
             userService.save(update_fields=['os_state'])
         except Exception as e:
             logger.exception('Unhandled exception on notyfyReady: %s', e)
-            userService.setState(State.ERROR)
+            userService.set_state(State.ERROR)
             return
 
     def locateUserService(
@@ -685,13 +685,13 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if kind in 'A':  # This is an assigned service
             logger.debug('Getting A service %s', uuidService)
             userService = UserService.objects.get(uuid=uuidService, user=user)
-            typing.cast(UserService, userService).deployed_service.validateUser(user)
+            typing.cast(UserService, userService).deployed_service.validate_user(user)
         else:
             try:
                 servicePool: ServicePool = ServicePool.objects.get(uuid=uuidService)
                 # We first do a sanity check for this, if the user has access to this service
                 # If it fails, will raise an exception
-                servicePool.validateUser(user)
+                servicePool.validate_user(user)
 
                 # Now we have to locate an instance of the service, so we can assign it to user.
                 if create:  # getAssignation, if no assignation is found, tries to create one
@@ -744,7 +744,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         if userService.isInMaintenance():
             raise ServiceInMaintenanceMode()
 
-        if not userService.deployed_service.isAccessAllowed():
+        if not userService.deployed_service.is_access_allowed():
             raise ServiceAccessDeniedByCalendar()
 
         if not idTransport:  # Find a suitable transport
@@ -877,7 +877,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         meta: MetaPool = MetaPool.objects.get(uuid=uuidMetapool)
         # Get pool members. Just pools "visible" and "usable"
-        pools = [p.pool for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()]
+        pools = [p.pool for p in meta.members.all() if p.pool.is_visible() and p.pool.is_usable()]
         # look for an existing user service in the pool
         try:
             return UserService.objects.filter(
@@ -914,7 +914,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise ServiceAccessDeniedByCalendar()
 
         # Get pool members. Just pools "visible" and "usable"
-        poolMembers = [p for p in meta.members.all() if p.pool.isVisible() and p.pool.isUsable()]
+        poolMembers = [p for p in meta.members.all() if p.pool.is_visible() and p.pool.is_usable()]
         # Sort pools array. List of tuples with (priority, pool)
         sortPools: list[tuple[int, ServicePool]]
         # Sort pools based on meta selection
@@ -940,7 +940,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         pools: list[ServicePool] = []
         poolsFull: list[ServicePool] = []
         for p in sortedPools:
-            if not p[1].isUsable():
+            if not p[1].is_usable():
                 continue
             if p[1].usage().percent == 100:
                 poolsFull.append(p[1])
@@ -1024,7 +1024,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 # Stop if a pool-transport is found and can be assigned to user
                 if usable:
                     try:
-                        usable[0].validateUser(user)
+                        usable[0].validate_user(user)
                         return self.getService(
                             user,
                             os,

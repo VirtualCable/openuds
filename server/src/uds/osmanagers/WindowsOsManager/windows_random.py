@@ -96,13 +96,13 @@ class WinRandomPassManager(WindowsOsManager):
             self._userAccount = ''
             self._password = ''  # nosec: not a password (empty)
 
-    def processUserPassword(
+    def process_user_password(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if username == self._userAccount:
             password = userService.recoverValue('winOsRandomPass')
 
-        return WindowsOsManager.processUserPassword(self, userService, username, password)
+        return WindowsOsManager.process_user_password(self, userService, username, password)
 
     def genPassword(self, userService: 'UserService'):
         randomPass = userService.recoverValue('winOsRandomPass')

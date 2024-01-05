@@ -58,7 +58,7 @@ class NetTest(UDSTestCase):
             ('192.168.0.1-192.168.0.87', 3232235521, 3232235607),
             ('192.168.0.1 netmask 255.255.255.0', 3232235520, 3232235775),
         ):
-            multiple_net: list[net.NetworkType] = net.networksFromString(n[0])
+            multiple_net: list[net.NetworkType] = net.networks_from_str(n[0])
             self.assertEqual(
                 len(multiple_net),
                 1,
@@ -75,7 +75,7 @@ class NetTest(UDSTestCase):
                 'Incorrect network end value for {0}'.format(n[0]),
             )
 
-            single_net: net.NetworkType = net.networkFromString(n[0])
+            single_net: net.NetworkType = net.network_from_str(n[0])
             self.assertEqual(
                 len(single_net),
                 3,
@@ -94,10 +94,10 @@ class NetTest(UDSTestCase):
 
         for n1 in ('192.168.0', '192.168.0.5-192.168.0.3', 'no net'):
             with self.assertRaises(ValueError):
-                net.networksFromString(n1)
+                net.networks_from_str(n1)
 
-        self.assertEqual(net.ipToLong('192.168.0.5').ip, 3232235525)
-        self.assertEqual(net.longToIp(3232235525, 4), '192.168.0.5')
+        self.assertEqual(net.ip_to_long('192.168.0.5').ip, 3232235525)
+        self.assertEqual(net.long_to_ip(3232235525, 4), '192.168.0.5')
         for n2 in range(0, 255):
             self.assertTrue(net.contains('192.168.0.0/24', '192.168.0.{}'.format(n2)))
 
@@ -115,7 +115,7 @@ class NetTest(UDSTestCase):
                 for n6 in range(0, 256, 13):
                     for n7 in range(0, 256, 11):
                         ip = '{0}.{1}.{2}.{3}'.format(n4, n5, n6, n7)
-                        self.assertEqual(net.longToIp(net.ipToLong(ip).ip, 4), ip)
+                        self.assertEqual(net.long_to_ip(net.ip_to_long(ip).ip, 4), ip)
 
     def testNetworkFromStringIPv6(self) -> None:
         # IPv6 only support standard notation, and '*', but not "netmask" or "range"
@@ -151,7 +151,7 @@ class NetTest(UDSTestCase):
                 338620831926207318622244848606417780735,
             ),
         ):
-            multiple_net: list[net.NetworkType] = net.networksFromString(
+            multiple_net: list[net.NetworkType] = net.networks_from_str(
                 n[0], version=(6 if n[0] == '*' else 0)
             )
             self.assertEqual(
@@ -170,7 +170,7 @@ class NetTest(UDSTestCase):
                 'Incorrect network end value for {0}'.format(n[0]),
             )
 
-            single_net: net.NetworkType = net.networkFromString(
+            single_net: net.NetworkType = net.network_from_str(
                 n[0], version=(6 if n[0] == '*' else 0)
             )
             self.assertEqual(
@@ -199,4 +199,4 @@ class NetTest(UDSTestCase):
             '2001:2:3:4:5:6:0:1',
         ):
             # Ensure converting back to string ips works
-            self.assertEqual(net.longToIp(net.ipToLong(n6).ip, 6), n6)
+            self.assertEqual(net.long_to_ip(net.ip_to_long(n6).ip, 6), n6)

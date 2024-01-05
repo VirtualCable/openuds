@@ -174,11 +174,11 @@ class MetaAssignedService(DetailHandler):
                     k: v
                     for k, v in models.Properties.objects.filter(
                         owner_type='userservice',
-                        owner_id__in=m.pool.assignedUserServices().values_list('uuid', flat=True),
+                        owner_id__in=m.pool.assigned_user_services().values_list('uuid', flat=True),
                     ).values_list('key', 'value')
                 }
                 for u in (
-                    m.pool.assignedUserServices()
+                    m.pool.assigned_user_services()
                     .filter(state__in=State.VALID_STATES)
                     .prefetch_related('deployed_service', 'publication')
                 ):

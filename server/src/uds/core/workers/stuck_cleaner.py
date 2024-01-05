@@ -99,5 +99,5 @@ class StuckCleaner(Job):
                     log.LogLevel.ERROR,
                     f'User service {stuck.name} has been hard removed because it\'s stuck',
                 )
-                # stuck.setState(State.ERROR)
+                # stuck.set_state(State.ERROR)
                 stuck.delete()

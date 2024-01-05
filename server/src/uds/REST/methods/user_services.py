@@ -128,17 +128,17 @@ class AssignedService(DetailHandler):
                     k: v
                     for k, v in models.Properties.objects.filter(
                         owner_type='userservice',
-                        owner_id__in=parent.assignedUserServices().values_list('uuid', flat=True),
+                        owner_id__in=parent.assigned_user_services().values_list('uuid', flat=True),
                     ).values_list('key', 'value')
                 }
                 return [
                     AssignedService.itemToDict(k, properties.get(k.uuid, {}))
-                    for k in parent.assignedUserServices()
+                    for k in parent.assigned_user_services()
                     .all()
                     .prefetch_related('deployed_service', 'publication', 'user')
                 ]
             return AssignedService.itemToDict(
-                parent.assignedUserServices().get(processUuid(uuid=processUuid(item))),
+                parent.assigned_user_services().get(processUuid(uuid=processUuid(item))),
                 props={
                     k: v
                     for k, v in models.Properties.objects.filter(
@@ -181,7 +181,7 @@ class AssignedService(DetailHandler):
     def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService: models.UserService = parent.assignedUserServices().get(uuid=processUuid(item))
+            userService: models.UserService = parent.assigned_user_services().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', userService)
             return log.get_logs(userService)
         except Exception as e:
@@ -260,11 +260,11 @@ class CachedService(AssignedService):
             if not item:
                 return [
                     AssignedService.itemToDict(k, is_cache=True)
-                    for k in parent.cachedUserServices()
+                    for k in parent.cached_users_services()
                     .all()
                     .prefetch_related('deployed_service', 'publication')
                 ]
-            cachedService: models.UserService = parent.cachedUserServices().get(uuid=processUuid(item))
+            cachedService: models.UserService = parent.cached_users_services().get(uuid=processUuid(item))
             return AssignedService.itemToDict(cachedService, is_cache=True)
         except Exception as e:
             logger.exception('getItems')
@@ -294,7 +294,7 @@ class CachedService(AssignedService):
     def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService = parent.cachedUserServices().get(uuid=processUuid(item))
+            userService = parent.cached_users_services().get(uuid=processUuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(userService)
         except Exception:
@@ -511,7 +511,7 @@ class Publications(DetailHandler):
                 'revision': i.revision,
                 'publish_date': i.publish_date,
                 'state': i.state,
-                'reason': State.isErrored(i.state) and i.get_intance().error_reason() or '',
+                'reason': State.is_errored(i.state) and i.get_intance().error_reason() or '',
                 'state_date': i.state_date,
             }
             for i in parent.publications.all()

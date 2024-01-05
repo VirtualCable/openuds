@@ -149,7 +149,7 @@ class OGDeployment(services.UserService):
             status = self.__checkMachineReady()
             if status == State.FINISHED:
                 self.service().notifyDeadline(
-                    self._machineId, dbs.deployed_service.getDeadline()
+                    self._machineId, dbs.deployed_service.get_deadline()
                 )
                 return State.FINISHED
 

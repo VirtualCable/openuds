@@ -250,7 +250,7 @@ def register_user(
     usr = authenticator.get_or_create_user(username, username)
     usr.real_name = authInstance.get_real_name(username)
     usr.save()
-    if usr is not None and State.isActive(usr.state):
+    if usr is not None and State.is_active(usr.state):
         # Now we update database groups for this user
         usr.getManager().recreate_groups(usr)
         # And add an login event

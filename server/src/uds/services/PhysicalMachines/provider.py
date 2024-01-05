@@ -102,7 +102,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             # wol section
             for key in config['wol']:
                 try:
-                    net.networksFromString(key)  # Raises exception if net is invalid
+                    net.networks_from_str(key)  # Raises exception if net is invalid
                 except Exception:
                     raise exceptions.validation.ValidationError(
                         _('Invalid network in advanced configuration: ') + key
@@ -133,7 +133,7 @@ class PhysicalMachinesProvider(services.ServiceProvider):
             return ''
 
         # If ip is in fact a hostname...
-        if not net.ipToLong(ip).version:
+        if not net.ip_to_long(ip).version:
             # Try to resolve name...
             try:
                 # Prefer ipv4

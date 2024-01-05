@@ -112,7 +112,7 @@ class TestTransport(transports.Transport):
 
         # Fix username/password acording to os manager
         username: str = user.getUsernameForAuth()
-        username, password = userService.processUserPassword(username, password)
+        username, password = userService.process_user_password(username, password)
 
         url = self.testURL.value.replace('_IP_', ip).replace('_USER_', username)
 

@@ -309,7 +309,7 @@ class HTML5RDPTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
+    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.getConnectionInfo(userService, user, '')
         return v.username
 
@@ -363,7 +363,7 @@ class HTML5RDPTransport(transports.Transport):
             username = 'AzureAD\\' + username
 
         # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
+        username, password = userService.process_user_password(username, password)
 
         return types.connections.ConnectionData(
             protocol=self.protocol,

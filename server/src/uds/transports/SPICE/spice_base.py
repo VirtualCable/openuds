@@ -191,11 +191,11 @@ class BaseSpiceTransport(transports.Transport):
             return transports.Transport.getCustomAvailableErrorMsg(self, userService, ip)
         return msg
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.processUserPassword(userService, user, '')
+    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
+        v = self.process_user_password(userService, user, '')
         return v.username
 
-    def processUserPassword(
+    def process_user_password(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
@@ -213,7 +213,7 @@ class BaseSpiceTransport(transports.Transport):
             username, password = '', ''
 
         # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
+        username, password = userService.process_user_password(username, password)
 
         return types.connections.ConnectionData(
             protocol=self.protocol,
@@ -228,4 +228,4 @@ class BaseSpiceTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        return self.processUserPassword(userService, user, password)
+        return self.process_user_password(userService, user, password)

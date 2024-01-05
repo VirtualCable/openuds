@@ -137,7 +137,7 @@ class PropertyAccessor:
 class PropertiesMixin:
     """Mixin to add properties to a model"""
 
-    def ownerIdAndType(self) -> tuple[str, str]:
+    def get_owner_id_and_type(self) -> tuple[str, str]:
         """Returns the owner id and type of this object
         The owner id and type is used to identify the owner in the properties table
 
@@ -149,7 +149,7 @@ class PropertiesMixin:
 
     @property
     def properties(self) -> PropertyAccessor:
-        owner_id, owner_type = self.ownerIdAndType()
+        owner_id, owner_type = self.get_owner_id_and_type()
         return PropertyAccessor(owner_id=owner_id, owner_type=owner_type)
 
     @staticmethod

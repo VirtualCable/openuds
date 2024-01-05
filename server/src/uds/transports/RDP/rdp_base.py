@@ -346,11 +346,11 @@ class BaseRDPTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def processedUser(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.processUserPassword(userService, user, '', altUsername=None)
+    def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
+        v = self.process_user_password(userService, user, '', altUsername=None)
         return v.username
 
-    def processUserPassword(
+    def process_user_password(
         self,
         userService: 'models.UserService',
         user: 'models.User',
@@ -388,12 +388,12 @@ class BaseRDPTransport(transports.Transport):
             if '.' in domain:  # Dotter domain form
                 username = username + '@' + domain
                 domain = ''
-            else:  # In case of a NETBIOS domain (not recomended), join it so processUserPassword can deal with it
+            else:  # In case of a NETBIOS domain (not recomended), join it so process_user_password can deal with it
                 username = domain + '\\' + username
                 domain = ''
 
         # Fix username/password acording to os manager
-        username, password = userService.processUserPassword(username, password)
+        username, password = userService.process_user_password(username, password)
 
         # Recover domain name if needed
         if '\\' in username:
@@ -427,7 +427,7 @@ class BaseRDPTransport(transports.Transport):
                 username = cdata[1] or username
                 password = cdata[2] or password
 
-        return self.processUserPassword(
+        return self.process_user_password(
             typing.cast('models.UserService', userService),
             user,
             password,

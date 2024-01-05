@@ -99,59 +99,59 @@ class State:
     PUBLISH_STATES = [LAUNCHING, PREPARING]
 
     @staticmethod
-    def isActive(state: str) -> bool:
+    def is_active(state: str) -> bool:
         return state == State.ACTIVE
 
     @staticmethod
-    def isInactive(state: str) -> bool:
+    def is_inactive(state: str) -> bool:
         return state == State.INACTIVE
 
     @staticmethod
-    def isBlocked(state: str) -> bool:
+    def is_blocked(state: str) -> bool:
         return state == State.BLOCKED
 
     @staticmethod
-    def isPreparing(state: str) -> bool:
+    def is_preparing(state: str) -> bool:
         return state == State.PREPARING
 
     @staticmethod
-    def isUsable(state : str) -> bool:
+    def is_usable(state : str) -> bool:
         return state == State.USABLE
 
     @staticmethod
-    def isRemovable(state: str) -> bool:
+    def is_removable(state: str) -> bool:
         return state == State.REMOVABLE
 
     @staticmethod
-    def isRemoving(state: str) -> bool:
+    def is_removing(state: str) -> bool:
         return state == State.REMOVING
 
     @staticmethod
-    def isRemoved(state: str) -> bool:
+    def is_removed(state: str) -> bool:
         return state == State.REMOVED
 
     @staticmethod
-    def isCanceling(state: str) -> bool:
+    def is_canceling(state: str) -> bool:
         return state == State.CANCELING
 
     @staticmethod
-    def isCanceled(state: str) -> bool:
+    def is_canceled(state: str) -> bool:
         return state == State.CANCELED
 
     @staticmethod
-    def isErrored(state: str) -> bool:
+    def is_errored(state: str) -> bool:
         return state == State.ERROR
 
     @staticmethod
-    def isFinished(state: str) -> bool:
+    def is_finished(state: str) -> bool:
         return state == State.FINISHED
 
     @staticmethod
-    def isRuning(state: str) -> bool:
+    def is_runing(state: str) -> bool:
         return state == State.RUNNING
 
     @staticmethod
-    def isForExecute(state: str) -> bool:
+    def is_for_execute(state: str) -> bool:
         return state == State.FOR_EXECUTE
 
     @staticmethod

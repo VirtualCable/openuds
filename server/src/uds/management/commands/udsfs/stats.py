@@ -270,10 +270,10 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Compose the csv file from what we now of service pools
-        virtualFile = models.ServicePool.getCSVHeader().encode() + b'\n'
+        virtualFile = models.ServicePool.get_cvs_header().encode() + b'\n'
         # First, get the list of service pools
         for pool in models.ServicePool.objects.all().order_by('name'):
-            virtualFile += pool.toCsv().encode() + b'\n'
+            virtualFile += pool.as_cvs().encode() + b'\n'
         return virtualFile
 
     def _read_auths(self, interval: StatInterval, extension: str, size: int, offset: int) -> bytes:

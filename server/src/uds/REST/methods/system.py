@@ -164,7 +164,7 @@ class System(Handler):
                     state__in=(State.REMOVED, State.ERROR)
                 ).count()
                 restrained_services_pools: int = (
-                    models.ServicePool.getRestrainedsQuerySet().count()
+                    models.ServicePool.restraineds_queryset().count()
                 )
                 return {
                     'users': users,

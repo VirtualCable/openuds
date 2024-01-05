@@ -105,27 +105,27 @@ class ServerManagerManagedServersTest(UDSTestCase):
     @contextmanager
     def create_mock_api_requester(
         self,
-        getStats: typing.Optional[
+        get_stats: typing.Optional[
             collections.abc.Callable[['models.Server'], typing.Optional['types.servers.ServerStats']]
         ] = None,
     ) -> typing.Iterator[mock.Mock]:
         with mock.patch('uds.core.managers.servers_api.requester.ServerApiRequester') as mockServerApiRequester:
 
-            def _getStats() -> typing.Optional[types.servers.ServerStats]:
+            def _get_stats() -> typing.Optional[types.servers.ServerStats]:
                 # Get first argument from call to init on serverApiRequester
                 server = mockServerApiRequester.call_args[0][0]
                 logger.debug('Getting stats for %s', server.host)
-                return (getStats or (lambda x: self.server_stats.get(x.uuid)))(server)
+                return (get_stats or (lambda x: self.server_stats.get(x.uuid)))(server)
 
             # return_value returns the instance of the mock
-            mockServerApiRequester.return_value.getStats.side_effect = _getStats
+            mockServerApiRequester.return_value.get_stats.side_effect = _get_stats
             yield mockServerApiRequester
 
     def test_auto_assign(self) -> None:
         with self.create_mock_api_requester() as mockServerApiRequester:
             for elementNumber, userService in enumerate(self.user_services):
-                expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
-                expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
+                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
+                expected_notify_assign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
                 assignation = self.assign(userService)
                 if assignation is None:
                     self.fail('Assignation returned None')
@@ -136,33 +136,33 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     self.server_stats[uuid], current_users=self.server_stats[uuid].current_users + 1
                 )               
 
-                prop_name = self.manager.propertyName(userService.user)
+                prop_name = self.manager.property_name(userService.user)
                 # uuid shuld be one on registered servers
                 self.assertTrue(uuid in self.all_uuids)
                 # Server locked should be None
                 self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)
 
-                # mockServer.getStats has been called NUM_REGISTEREDSERVERS times
+                # mockServer.get_stats has been called NUM_REGISTEREDSERVERS times
                 self.assertEqual(
-                    mockServerApiRequester.return_value.getStats.call_count,
-                    expected_getStats_calls,
+                    mockServerApiRequester.return_value.get_stats.call_count,
+                    expected_get_stats_calls,
                     f'Error on loop {elementNumber}',
                 )
-                # notifyAssign should has been called once for each user service
+                # notify_assign should has been called once for each user service
                 self.assertEqual(
-                    mockServerApiRequester.return_value.notifyAssign.call_count, expected_notifyAssign_calls + 1
+                    mockServerApiRequester.return_value.notify_assign.call_count, expected_notify_assign_calls + 1
                 )
-                # notifyAssign paramsh should have been
-                # request.ServerApiRequester(bestServer).notifyAssign(userService, serviceType, uuid_counter[1])
+                # notify_assign paramsh should have been
+                # request.ServerApiRequester(bestServer).notify_assign(userService, serviceType, uuid_counter[1])
                 self.assertEqual(
-                    mockServerApiRequester.return_value.notifyAssign.call_args[0][0], userService
+                    mockServerApiRequester.return_value.notify_assign.call_args[0][0], userService
                 )  # userService
                 self.assertEqual(
-                    mockServerApiRequester.return_value.notifyAssign.call_args[0][1],
+                    mockServerApiRequester.return_value.notify_assign.call_args[0][1],
                     types.services.ServiceType.VDI,
                 )
                 self.assertEqual(
-                    mockServerApiRequester.return_value.notifyAssign.call_args[0][2], counter
+                    mockServerApiRequester.return_value.notify_assign.call_args[0][2], counter
                 )  # counter
 
                 # Server storage should contain the assignation
@@ -185,14 +185,14 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     self.assertTrue(uuid2 in self.all_uuids)
                     self.assertIsNone(models.Server.objects.get(uuid=uuid).locked_until)  # uuid is uuid2
 
-                    # mockServer.getStats has been called NUM_REGISTEREDSERVERS times, because no new requests has been done
+                    # mockServer.get_stats has been called NUM_REGISTEREDSERVERS times, because no new requests has been done
                     self.assertEqual(
-                        mockServerApiRequester.return_value.getStats.call_count, expected_getStats_calls
+                        mockServerApiRequester.return_value.get_stats.call_count, expected_get_stats_calls
                     )
-                    # notifyAssign should has been called twice
+                    # notify_assign should has been called twice
                     self.assertEqual(
-                        mockServerApiRequester.return_value.notifyAssign.call_count,
-                        expected_notifyAssign_calls + i + 2,
+                        mockServerApiRequester.return_value.notify_assign.call_count,
+                        expected_notify_assign_calls + i + 2,
                     )
 
                     # Server storage should have elementNumber + 1 elements
@@ -204,8 +204,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             # Now, remove all asignations..
             for elementNumber, userService in enumerate(self.user_services):
-                expected_getStats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
-                expected_notifyAssign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
+                expected_get_stats_calls = NUM_REGISTEREDSERVERS * (elementNumber + 1)
+                expected_notify_assign_calls = elementNumber * 33  # 32 in loop + 1 in first assign
 
                 # # Remove it, should decrement counter
                 for i in range(32, -1, -1):  # Deletes 33 times
@@ -238,8 +238,8 @@ class ServerManagerManagedServersTest(UDSTestCase):
             time.sleep(1)
             self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
 
-            # notifyRelease should has been called once
-            self.assertEqual(mockServerApiRequester.return_value.notifyRelease.call_count, 1)
+            # notify_release should has been called once
+            self.assertEqual(mockServerApiRequester.return_value.notify_release.call_count, 1)
 
     def test_assign_release_max(self) -> None:
         with self.create_mock_api_requester() as mockServerApiRequester:
@@ -249,7 +249,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # Ensure locking server, so we have to use every server only once
                     assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=32))
                     self.assertEqual(
-                        serverApiRequester.notifyAssign.call_count,
+                        serverApiRequester.notify_assign.call_count,
                         assignations * NUM_REGISTEREDSERVERS + elementNumber + 1,
                     )
                     if assignation is None:
@@ -275,7 +275,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
             # Storage should have NUM_REGISTEREDSERVERS elements
             self.assertEqual(len(self.registered_servers_group.properties), NUM_REGISTEREDSERVERS)
 
-            with self.manager.cntStorage() as stor:
+            with self.manager.counter_storage() as stor:
                 self.assertEqual(len(stor), 0)  # No counter storage for managed servers
 
             # Now release all, twice
@@ -291,7 +291,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     else:
                         self.fail('Release returned None')
                     self.assertEqual(
-                        serverApiRequester.notifyRelease.call_count,
+                        serverApiRequester.notify_release.call_count,
                         release * NUM_REGISTEREDSERVERS + elementNumber + 1,
                         f'Error on loop {release} - {elementNumber}',
                     )
@@ -302,7 +302,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 
-            with self.manager.cntStorage() as stor:
+            with self.manager.counter_storage() as stor:
                 self.assertEqual(len(stor), 0)
 
             # Trying to release again should return '', 0
@@ -314,6 +314,6 @@ class ServerManagerManagedServersTest(UDSTestCase):
                     # Number of lasting assignations should be one less than before
                     self.assertEqual(counter, 0)
                     self.assertEqual(
-                        serverApiRequester.notifyRelease.call_count,
-                        2 * NUM_REGISTEREDSERVERS,  # No release if all are released already, so no notifyRelease
+                        serverApiRequester.notify_release.call_count,
+                        2 * NUM_REGISTEREDSERVERS,  # No release if all are released already, so no notify_release
                     )

@@ -197,6 +197,6 @@ class UsersTest(rest.test.RESTActorTestCase):
         response = self.client.rest_get(url)
         self.assertEqual(response.status_code, 200)
         groups = self.plain_users[0].groups.all()
-        count = len(list(models.ServicePool.getDeployedServicesForGroups(groups)))
+        count = len(list(models.ServicePool.get_pools_for_groups(groups)))
 
         self.assertEqual(len(response.json()), count)

@@ -200,7 +200,7 @@ class ServicesPools(ModelHandler):
                 poolGroupThumb = item.servicesPoolGroup.image.thumb64
 
         state = item.state
-        if item.isInMaintenance():
+        if item.is_in_maintenance():
             state = State.MAINTENANCE
         # This needs a lot of queries, and really does not apport anything important to the report
         # elif UserServiceManager().canInitiateServiceFromDeployedService(item) is False:
@@ -246,7 +246,7 @@ class ServicesPools(ModelHandler):
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()
                 preparing_count = item.userServices.filter(state=State.PREPARING).count()
-                restrained = item.isRestrained()
+                restrained = item.is_restrained()
                 usage_count = -1
 
             poolGroupId = None

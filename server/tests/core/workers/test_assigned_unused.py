@@ -55,7 +55,7 @@ class AssignedAndUnusedTest(UDSTestCase):
 
     def test_assigned_unused(self):
         for us in self.userServices:  # Update state date to now
-            us.setState(State.USABLE)
+            us.set_state(State.USABLE)
         # Set now, should not be removed
         count = models.UserService.objects.filter(state=State.REMOVABLE).count()
         cleaner = AssignedAndUnused(Environment.getTempEnv())

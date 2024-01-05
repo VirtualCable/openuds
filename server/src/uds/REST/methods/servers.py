@@ -205,7 +205,7 @@ class ServerEvent(Handler):
         #    * Logout: { 'username': 'username'}
         #    * Log: { 'level': 'level', 'message': 'message'}
         try:
-            return ServerManager.manager().processEvent(server, self._params)
+            return ServerManager.manager().process_event(server, self._params)
         except Exception as e:
             logger.error('Error processing event %s: %s', self._params, e)
             return rest_result('error', error='Error processing event')

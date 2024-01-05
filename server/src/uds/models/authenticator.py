@@ -197,7 +197,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         try:
             usr: 'User' = self.users.get(name=username)
-            return State.isActive(usr.state)
+            return State.is_active(usr.state)
         except Exception:
             return returnValueIfNot
 
@@ -223,7 +223,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         if self.net_filtering == consts.auth.NO_FILTERING:
             return True
-        ip, version = net.ipToLong(ipStr)
+        ip, version = net.ip_to_long(ipStr)
         # Allow
         exists = self.networks.filter(
             start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version

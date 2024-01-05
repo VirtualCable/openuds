@@ -125,7 +125,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         ]
 
     # For properties
-    def ownerIdAndType(self) -> tuple[str, str]:
+    def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'userservice'
 
     @property
@@ -358,7 +358,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         return self.deployed_service.transformsUserOrPasswordForService()
 
-    def processUserPassword(self, username: str, password: str) -> tuple[str, str]:
+    def process_user_password(self, username: str, password: str) -> tuple[str, str]:
         """
         Before accessing a service by a transport, we can request
         the service to "transform" the username & password that the transport
@@ -384,9 +384,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if serviceInstance.needsManager is False or not servicePool.osmanager:
             return (username, password)
 
-        return servicePool.osmanager.get_instance().processUserPassword(self, username, password)
+        return servicePool.osmanager.get_instance().process_user_password(self, username, password)
 
-    def setState(self, state: str) -> None:
+    def set_state(self, state: str) -> None:
         """
         Updates the state of this object and, optionally, saves it
 
@@ -498,13 +498,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Returns if this service is usable
         """
-        return State.isUsable(self.state)
+        return State.is_usable(self.state)
 
     def isPreparing(self) -> bool:
         """
         Returns if this service is in preparation (not ready to use, but in its way to be so...)
         """
-        return State.isPreparing(self.state)
+        return State.is_preparing(self.state)
 
     def isReady(self) -> bool:
         """
@@ -517,13 +517,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return UserServiceManager().isReady(self)
 
     def isInMaintenance(self) -> bool:
-        return self.deployed_service.isInMaintenance()
+        return self.deployed_service.is_in_maintenance()
 
     def remove(self) -> None:
         """
         Mark this user deployed service for removal
         """
-        self.setState(State.REMOVABLE)
+        self.set_state(State.REMOVABLE)
 
     def release(self) -> None:
         """

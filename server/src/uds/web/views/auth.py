@@ -229,7 +229,7 @@ def ticket_auth(
             raise Exception('Invalid ticket authentication')
 
         usr = auth.get_or_create_user(username, realname)
-        if usr is None or State.isActive(usr.state) is False:  # If user is inactive, raise an exception
+        if usr is None or State.is_active(usr.state) is False:  # If user is inactive, raise an exception
             raise exceptions.auth.InvalidUserException()
 
         # Add groups to user (replace existing groups)

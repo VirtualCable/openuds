@@ -83,7 +83,7 @@ class ServerGroup(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     servers: 'models.manager.RelatedManager[Server]'
 
     # For properties
-    def ownerIdAndType(self) -> tuple[str, str]:
+    def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'servergroup'
 
     class Meta:
@@ -203,7 +203,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         app_label = 'uds'
 
     # For properties
-    def ownerIdAndType(self) -> tuple[str, str]:
+    def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'server'
 
     @property
@@ -225,7 +225,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
 
         Host returns first the IP if it exists, and if not, the hostname (resolved)
         """
-        if net.isValidIp(self.ip):
+        if net.is_valid_ip(self.ip):
             return self.ip
         # If hostname exists, try to resolve it
         if self.hostname:
@@ -258,21 +258,21 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             statsDict['stamp'] = sql_stamp()
             self.properties['stats'] = statsDict
 
-    def newAssignation(self) -> None:
-        """Simulates, with current stats, the addition of a new user"""
+    def interpolate_new_assignation(self) -> None:
+        """Interpolates, with current stats, the addition of a new user"""
         stats = self.stats
         if stats and stats.is_valid:  # If rae invalid, do not waste time recalculating
             # Avoid replacing current "stamp" value, this is just a "simulation"
             self.properties['stats'] = stats.adjust(users_increment=1).as_dict()
             
-    def newRelease(self) -> None:
-        """Simulates, with current stats, the release of a user"""
+    def interpolate_new_release(self) -> None:
+        """Interpolates, with current stats, the release of a user"""
         stats = self.stats
         if stats and stats.is_valid:
             # Avoid replacing current "stamp" value, this is just a "simulation"
             self.properties['stats'] = stats.adjust(users_increment=-1).as_dict()
 
-    def isRestrained(self) -> bool:
+    def is_restrained(self) -> bool:
         """Returns if this server is restrained or not
 
         For this, we get the property (if available) "available" (datetime) and compare it with current time
@@ -281,7 +281,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         restrainedUntil = datetime.datetime.fromtimestamp(self.properties.get('available', consts.NEVER_UNIX))
         return restrainedUntil > sql_datetime()
 
-    def setRestrainedUntil(self, value: typing.Optional[datetime.datetime] = None) -> None:
+    def set_restrained_until(self, value: typing.Optional[datetime.datetime] = None) -> None:
         """Sets the availability of this server
         If value is None, it will be available right now
         """
@@ -306,7 +306,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         return create_token()  # Return global function
 
     @staticmethod
-    def validateToken(
+    def validate_token(
         token: str,
         serverType: typing.Union[collections.abc.Iterable[types.servers.ServerType], types.servers.ServerType],
         request: typing.Optional[ExtendedHttpRequest] = None,
@@ -353,7 +353,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         Returns:
             The server found, or None if not found
         """
-        if net.isValidIp(ip_or_host):
+        if net.is_valid_ip(ip_or_host):
             found = Server.objects.filter(ip=ip_or_host).first()
             if not found:  # Try reverse dns lookup
                 found = Server.objects.filter(hostname__in=resolver.reverse(ip_or_host)).first()
@@ -361,7 +361,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
             found = Server.objects.filter(hostname=ip_or_host).first()
         return found
 
-    def setActorVersion(self, userService: 'UserService') -> None:
+    def set_actor_version(self, userService: 'UserService') -> None:
         """Sets the actor version of this server to the userService"""
         userService.actor_version = f'Server {self.version or "unknown"}'
 

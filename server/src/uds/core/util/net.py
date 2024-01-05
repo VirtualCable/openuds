@@ -52,22 +52,22 @@ class NetworkType(typing.NamedTuple):
 logger = logging.getLogger(__name__)
 
 # Test patters for networks IPv4
-reCIDRIPv4 = re.compile(
+RECIDRIPV4: typing.Final[re.Pattern] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})/([0-9]{1,2})$'
 )
-reMaskIPv4 = re.compile(
+REMASKIPV4: typing.Final[re.Pattern] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})netmask([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-re1AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
-re2AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
-re3AsteriskIPv4 = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
-reRangeIPv4 = re.compile(
+RE1ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.\*$')
+RE2ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.\*\.?\*?$')
+RE3ASTERISKIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.\*\.?\*?\.?\*?$')
+RERANGEIPV4: typing.Final[re.Pattern] = re.compile(
     r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})-([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$'
 )
-reSingleIPv4 = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
+RESINGLEIPV4: typing.Final[re.Pattern] = re.compile(r'^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$')
 
 
-def ipToLong(ip: str) -> IpType:
+def ip_to_long(ip: str) -> IpType:
     """
     Convert an ipv4 or ipv6 address to its long representation
     """
@@ -85,7 +85,7 @@ def ipToLong(ip: str) -> IpType:
         return IpType(0, 0)  # Invalid values will map to "0.0.0.0" --> 0
 
 
-def longToIp(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
+def long_to_ip(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
     """
     convert long int to ipv4 or ipv6 address, depending on size
     """
@@ -94,7 +94,7 @@ def longToIp(n: int, version: typing.Literal[0, 4, 6] = 0) -> str:
     return str(ipaddress.IPv4Address(n))
 
 
-def networkFromStringIPv4(strNets: str) -> NetworkType:
+def network_from_str_ipv4(nets_string: str) -> NetworkType:
     '''
     Parses the network from strings in this forms:
       - A.* (or A.*.* or A.*.*.*)
@@ -107,15 +107,15 @@ def networkFromStringIPv4(strNets: str) -> NetworkType:
     returns a named tuple with networks start and network end
     '''
 
-    inputString = strNets
-    logger.debug('Getting network from %s', strNets)
+    input_string = nets_string
+    logger.debug('Getting network from %s', nets_string)
 
     def check(*args) -> None:
         for n in args:
             if int(n) < 0 or int(n) > 255:
                 raise Exception()
 
-    def toNum(*args) -> int:
+    def to_num(*args) -> int:
         start = 256 * 256 * 256
         val = 0
         for n in args:
@@ -123,74 +123,74 @@ def networkFromStringIPv4(strNets: str) -> NetworkType:
             start >>= 8
         return val
 
-    def maskFromBits(nBits: int) -> int:
+    def mask_from_bits(nBits: int) -> int:
         v = 0
         for n in range(nBits):
             v |= 1 << (31 - n)
         return v
 
-    strNets = strNets.replace(' ', '')
+    nets_string = nets_string.replace(' ', '')
 
-    if strNets == '*':
+    if nets_string == '*':
         return NetworkType(0, 2**32 - 1, 4)
 
     try:
         # Test patterns
-        m = reCIDRIPv4.match(strNets)
+        m = RECIDRIPV4.match(nets_string)
         if m is not None:
             logger.debug('Format is CIDR')
             check(*m.groups())
             bits = int(m.group(5))
             if bits < 0 | bits > 32:
                 raise Exception()
-            val = toNum(*m.groups())
-            bits = maskFromBits(bits)
+            val = to_num(*m.groups())
+            bits = mask_from_bits(bits)
             noBits = ~bits & 0xFFFFFFFF
             return NetworkType(val & bits, val | noBits, 4)
 
-        m = reMaskIPv4.match(strNets)
+        m = REMASKIPV4.match(nets_string)
         if m is not None:
             logger.debug('Format is network mask')
             check(*m.groups())
-            val = toNum(*(m.groups()[0:4]))
-            bits = toNum(*(m.groups()[4:8]))
+            val = to_num(*(m.groups()[0:4]))
+            bits = to_num(*(m.groups()[4:8]))
             noBits = ~bits & 0xFFFFFFFF
             return NetworkType(val & bits, val | noBits, 4)
 
-        m = reRangeIPv4.match(strNets)
+        m = RERANGEIPV4.match(nets_string)
         if m is not None:
             logger.debug('Format is network range')
             check(*m.groups())
-            val = toNum(*(m.groups()[0:4]))
-            val2 = toNum(*(m.groups()[4:8]))
+            val = to_num(*(m.groups()[0:4]))
+            val2 = to_num(*(m.groups()[4:8]))
             if val2 < val:
                 raise Exception()
             return NetworkType(val, val2, 4)
 
-        m = reSingleIPv4.match(strNets)
+        m = RESINGLEIPV4.match(nets_string)
         if m is not None:
             logger.debug('Format is a single host')
             check(*m.groups())
-            val = toNum(*m.groups())
+            val = to_num(*m.groups())
             return NetworkType(val, val, 4)
 
-        for v in ((re1AsteriskIPv4, 3), (re2AsteriskIPv4, 2), (re3AsteriskIPv4, 1)):
-            m = v[0].match(strNets)
+        for v in ((RE1ASTERISKIPV4, 3), (RE2ASTERISKIPV4, 2), (RE3ASTERISKIPV4, 1)):
+            m = v[0].match(nets_string)
             if m is not None:
                 check(*m.groups())
-                val = toNum(*(m.groups()[0 : v[1] + 1]))
-                bits = maskFromBits(v[1] * 8)
+                val = to_num(*(m.groups()[0 : v[1] + 1]))
+                bits = mask_from_bits(v[1] * 8)
                 noBits = ~bits & 0xFFFFFFFF
                 return NetworkType(val & bits, val | noBits, 4)
 
         # No pattern recognized, invalid network
         raise Exception()
     except Exception as e:
-        logger.error('Invalid network found: %s %s', strNets, e)
-        raise ValueError(inputString) from e
+        logger.error('Invalid network found: %s %s', nets_string, e)
+        raise ValueError(input_string) from e
 
 
-def networkFromStringIPv6(strNets: str) -> NetworkType:
+def network_from_str_ipv6(strNets: str) -> NetworkType:
     '''
     returns a named tuple with networks start and network end
     '''
@@ -209,20 +209,20 @@ def networkFromStringIPv6(strNets: str) -> NetworkType:
         raise ValueError(strNets) from e
 
 
-def networkFromString(
+def network_from_str(
     strNets: str,
     version: typing.Literal[0, 4, 6] = 0,
 ) -> NetworkType:
     if not ':' in strNets and version != 6:
-        return networkFromStringIPv4(strNets)
+        return network_from_str_ipv4(strNets)
     # ':' in strNets or version == 6:
     # If is in fact an IPv4 address, return None network, this will not be used
     if '.' in strNets:
         return NetworkType(0, 0, 0)
-    return networkFromStringIPv6(strNets)
+    return network_from_str_ipv6(strNets)
 
 
-def networksFromString(
+def networks_from_str(
     nets: str,
     version: typing.Literal[0, 4, 6] = 0,
 ) -> list[NetworkType]:
@@ -233,7 +233,7 @@ def networksFromString(
     res = []
     for strNet in re.split('[;,]', nets):
         if strNet:
-            res.append(networkFromString(strNet, version))
+            res.append(network_from_str(strNet, version))
     return res
 
 
@@ -243,11 +243,11 @@ def contains(
     version: typing.Literal[0, 4, 6] = 0,
 ) -> bool:
     if isinstance(ip, str):
-        ip, version = ipToLong(ip)  # Ip overrides protocol version
+        ip, version = ip_to_long(ip)  # Ip overrides protocol version
     if isinstance(networks, str):
         if networks == '*':
             return True  # All IPs are in the * network
-        networks = networksFromString(networks, version)
+        networks = networks_from_str(networks, version)
     elif isinstance(networks, NetworkType):
         networks = [networks]
 
@@ -258,7 +258,7 @@ def contains(
     return False
 
 
-def isValidIp(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
+def is_valid_ip(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
     # Using ipaddress module
     try:
         addr = ipaddress.ip_address(value)
@@ -267,7 +267,7 @@ def isValidIp(value: str, version: typing.Literal[0, 4, 6] = 0) -> bool:
         return False
 
 
-def isValidFQDN(value: str) -> bool:
+def is_valid_fqdn(value: str) -> bool:
     return (
         re.match(
             r'^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$',
@@ -277,8 +277,8 @@ def isValidFQDN(value: str) -> bool:
     )
 
 
-def isValidHost(value: str):
-    return isValidIp(value) or isValidFQDN(value)
+def is_valid_host(value: str):
+    return is_valid_ip(value) or is_valid_fqdn(value)
 
 
 def test_connectivity(host: str, port: int, timeOut: float = 4) -> bool:

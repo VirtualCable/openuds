@@ -82,7 +82,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             servicePoolPub.deployed_service.userServices.filter(in_use=True).update(
                 in_use=False, state_date=now
             )
-            servicePoolPub.deployed_service.markOldUserServicesAsRemovables(activePub)
+            servicePoolPub.deployed_service.mark_old_userservices_as_removable(activePub)
         except (
             Exception
         ):  #  nosec: Removed publication, no problem at all, just continue
@@ -119,7 +119,7 @@ class PublicationLauncher(DelayedTask):
             state = pi.publish()
             servicePool: ServicePool = servicePoolPub.deployed_service
             servicePool.current_pub_revision += 1
-            servicePool.storeValue(
+            servicePool.set_value(
                 'toBeReplacedIn',
                 serialize(
                     now
@@ -168,14 +168,14 @@ class PublicationFinishChecker(DelayedTask):
         try:
             prevState: str = publication.state
             checkLater: bool = False
-            if State.isFinished(state):
+            if State.is_finished(state):
                 # Now we mark, if it exists, the previous usable publication as "Removable"
-                if State.isPreparing(prevState):
+                if State.is_preparing(prevState):
                     old: ServicePoolPublication
                     for old in publication.deployed_service.publications.filter(
                         state=State.USABLE
                     ):
-                        old.setState(State.REMOVABLE)
+                        old.set_state(State.REMOVABLE)
 
                         osm = publication.deployed_service.osmanager
                         # If os manager says "machine is persistent", do not tray to delete "previous version" assigned machines
@@ -192,26 +192,26 @@ class PublicationFinishChecker(DelayedTask):
                                 'pclean-' + str(old.id),
                                 True,
                             )
-                            publication.deployed_service.markOldUserServicesAsRemovables(
+                            publication.deployed_service.mark_old_userservices_as_removable(
                                 publication
                             )
                         else:  # Remove only cache services, not assigned
-                            publication.deployed_service.markOldUserServicesAsRemovables(
+                            publication.deployed_service.mark_old_userservices_as_removable(
                                 publication, True
                             )
 
-                    publication.setState(State.USABLE)
-                elif State.isRemoving(prevState):
-                    publication.setState(State.REMOVED)
+                    publication.set_state(State.USABLE)
+                elif State.is_removing(prevState):
+                    publication.set_state(State.REMOVED)
                 else:  # State is canceling
-                    publication.setState(State.CANCELED)
+                    publication.set_state(State.CANCELED)
                 # Mark all previous publications deployed services as removables
                 # and make this usable
                 publicationInstance.finish()
                 publication.updateData(publicationInstance)
-            elif State.isErrored(state):
+            elif State.is_errored(state):
                 publication.updateData(publicationInstance)
-                publication.setState(State.ERROR)
+                publication.set_state(State.ERROR)
             else:
                 checkLater = True  # The task is running
                 publication.updateData(publicationInstance)
@@ -297,7 +297,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                 )
             )
 
-        if servicePool.isInMaintenance():
+        if servicePool.is_in_maintenance():
             raise PublishException(
                 _('Service is in maintenance mode and new publications are not allowed')
             )
@@ -348,21 +348,21 @@ class PublicationManager(metaclass=singleton.Singleton):
                     'Forced cancel on publication, you must check uncleaned resources manually',
                     log.LogSource.ADMIN,
                 )
-                publication.setState(State.CANCELED)
+                publication.set_state(State.CANCELED)
                 publication.save()
                 return publication
             raise PublishException(_('Can\'t cancel non running publication'))
 
         if publication.state == State.LAUNCHING:
             publication.state = State.CANCELED
-            publication.deployed_service.storeValue('toBeReplacedIn', None)
+            publication.deployed_service.set_value('toBeReplacedIn', None)
             publication.save()
             return publication
 
         try:
             pubInstance = publication.get_intance()
             state = pubInstance.cancel()
-            publication.setState(State.CANCELING)
+            publication.set_state(State.CANCELING)
             PublicationFinishChecker.state_updater(
                 publication, pubInstance, state
             )
@@ -378,8 +378,8 @@ class PublicationManager(metaclass=singleton.Singleton):
         :param servicePoolPub: Publication to unpublish
         """
         if (
-            State.isUsable(servicePoolPub.state) is False
-            and State.isRemovable(servicePoolPub.state) is False
+            State.is_usable(servicePoolPub.state) is False
+            and State.is_removable(servicePoolPub.state) is False
         ):
             raise PublishException(_('Can\'t unpublish non usable publication'))
         if servicePoolPub.userServices.exclude(state__in=State.INFO_STATES).count() > 0:
@@ -389,7 +389,7 @@ class PublicationManager(metaclass=singleton.Singleton):
         try:
             pubInstance = servicePoolPub.get_intance()
             state = pubInstance.destroy()
-            servicePoolPub.setState(State.REMOVING)
+            servicePoolPub.set_state(State.REMOVING)
             PublicationFinishChecker.state_updater(
                 servicePoolPub, pubInstance, state
             )

@@ -57,14 +57,14 @@ AUTH_TOKEN = 'X-TOKEN-AUTH'
 # If exception is raised, it will restrain the server and return False
 def restrain_server(func: collections.abc.Callable[..., typing.Any]) -> collections.abc.Callable[..., typing.Any]:
     def inner(self: 'ServerApiRequester', *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-        if self.server.isRestrained():
+        if self.server.is_restrained():
             return False
 
         try:
             return func(self, *args, **kwargs)
         except Exception as e:
             logger.error('Error executing %s: %s', func.__name__, e)
-            self.server.setRestrainedUntil(
+            self.server.set_restrained_until(
                 sql_datetime() + datetime.timedelta(seconds=consts.system.FAILURE_TIMEOUT)
             )  # Block server for a while
             return False
@@ -166,7 +166,7 @@ class ServerApiRequester:
             return response.json()
 
     @restrain_server
-    def notifyAssign(
+    def notify_assign(
         self, userService: 'models.UserService', service_type: 'types.services.ServiceType', count: int
     ) -> bool:
         """
@@ -228,7 +228,7 @@ class ServerApiRequester:
         return True
 
     @restrain_server
-    def notifyRelease(self, userService: 'models.UserService') -> bool:
+    def notify_release(self, userService: 'models.UserService') -> bool:
         """
         Notifies removal of user service to server
         """
@@ -237,7 +237,7 @@ class ServerApiRequester:
 
         return True
 
-    def getStats(self) -> typing.Optional['types.servers.ServerStats']:
+    def get_stats(self) -> typing.Optional['types.servers.ServerStats']:
         """
         Returns the stats of a server
         """

@@ -295,7 +295,7 @@ class CalendarAction(UUIDModel):
         """
         logger.debug('Executing action')
         # If restrained pool, skip this execution (will rery later, not updated)
-        if not self.service_pool.isUsable():
+        if not self.service_pool.is_usable():
             logger.info(
                 'Execution of task for %s due to contained state (restrained, in maintenance or removing)',
                 self.service_pool.name,
@@ -334,13 +334,13 @@ class CalendarAction(UUIDModel):
 
         def remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assignedUserServices().filter(state=state.State.USABLE):
+            for userService in self.service_pool.assigned_user_services().filter(state=state.State.USABLE):
                 userService.remove()
 
         def remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
             since = sql_datetime() - datetime.timedelta(hours=numVal('hours'))
-            for userService in self.service_pool.assignedUserServices().filter(
+            for userService in self.service_pool.assigned_user_services().filter(
                 state_date__lt=since, state=state.State.USABLE
             ):
                 userService.remove()
@@ -355,7 +355,7 @@ class CalendarAction(UUIDModel):
 
         def clear_cache() -> None:
             # 4.- Remove all cache_l1_srvs
-            for i in self.service_pool.cachedUserServices().filter(
+            for i in self.service_pool.cached_users_services().filter(
                 UserServiceManager().getCacheStateFilter(
                     self.service_pool,
                     services.UserService.L1_CACHE

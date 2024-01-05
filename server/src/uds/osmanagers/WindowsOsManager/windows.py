@@ -165,7 +165,7 @@ class WindowsOsManager(osmanagers.OSManager):
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.getName()}  # No custom data
 
-    def processUserPassword(
+    def process_user_password(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if userService.properties.get('sso_available') == '1':
@@ -182,7 +182,7 @@ class WindowsOsManager(osmanagers.OSManager):
             )  # , owner=SECURE_OWNER, secure=True)
             return ticket, ''
 
-        return osmanagers.OSManager.processUserPassword(
+        return osmanagers.OSManager.process_user_password(
             self, userService, username, password
         )
 

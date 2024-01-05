@@ -75,7 +75,7 @@ def getGroupsFromMeta(groups) -> collections.abc.Iterable[Group]:
 
 
 def getPoolsForGroups(groups):
-    for servicePool in ServicePool.getDeployedServicesForGroups(groups):
+    for servicePool in ServicePool.get_pools_for_groups(groups):
         yield servicePool
 
 
@@ -305,7 +305,7 @@ class Users(DetailHandler):
                     'user_services_count': i.userServices.exclude(
                         state__in=(State.REMOVED, State.ERROR)
                     ).count(),
-                    'state': _('With errors') if i.isRestrained() else _('Ok'),
+                    'state': _('With errors') if i.is_restrained() else _('Ok'),
                 }
             )
 
@@ -505,7 +505,7 @@ class Groups(DetailHandler):
                     'user_services_count': i.userServices.exclude(
                         state__in=(State.REMOVED, State.ERROR)
                     ).count(),
-                    'state': _('With errors') if i.isRestrained() else _('Ok'),
+                    'state': _('With errors') if i.is_restrained() else _('Ok'),
                 }
             )
 

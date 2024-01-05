@@ -122,7 +122,7 @@ def getServicesData(
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
     groups = list(request.user.getGroups())
     availServicePools = list(
-        ServicePool.getDeployedServicesForGroups(groups, request.user)
+        ServicePool.get_pools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
     availMetaPools = list(
         MetaPool.getForGroups(groups, request.user)
@@ -371,7 +371,7 @@ def getServicesData(
 
         # Only add toBeReplaced info in case we allow it. This will generate some "overload" on the services
         toBeReplacedDate = (
-            sPool.toBeReplaced(request.user)
+            sPool.when_will_be_replaced(request.user)
             if typing.cast(typing.Any, sPool).pubs_active > 0
             and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False)
             else None
@@ -399,8 +399,8 @@ def getServicesData(
                 show_transports=sPool.show_transports,
                 allow_users_remove=sPool.allow_users_remove,
                 allow_users_reset=sPool.allow_users_reset,
-                maintenance=sPool.isInMaintenance(),
-                not_accesible=not sPool.isAccessAllowed(now),
+                maintenance=sPool.is_in_maintenance(),
+                not_accesible=not sPool.is_access_allowed(now),
                 in_use=in_use,
                 to_be_replaced=toBeReplaced,
                 to_be_replaced_text=toBeReplacedTxt,

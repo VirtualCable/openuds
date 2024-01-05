@@ -70,7 +70,7 @@ class StateUpdater:
 
     def save(self, newState: typing.Optional[str] = None):
         if newState:
-            self.user_service.setState(newState)
+            self.user_service.set_state(newState)
 
         self.user_service.updateData(self.user_service_instance)
 
@@ -124,7 +124,7 @@ class UpdateFromPreparing(StateUpdater):
         # and make this usable if os manager says that it is usable, else it pass to configuring state
         # This is an "early check" for os manager, so if we do not have os manager, or os manager
         # already notifies "ready" for this, we
-        if osManager is not None and State.isPreparing(self.user_service.os_state):
+        if osManager is not None and State.is_preparing(self.user_service.os_state):
             logger.debug('Has valid osmanager for %s', self.user_service.friendly_name)
 
             stateOs = osManager.check_state(self.user_service)
@@ -253,7 +253,7 @@ class UserServiceOpChecker(DelayedTask):
         except Exception as e:
             logger.exception('Checking service state')
             log.log(userService, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
-            userService.setState(State.ERROR)
+            userService.set_state(State.ERROR)
             userService.save(update_fields=['data'])
 
     @staticmethod
@@ -293,7 +293,7 @@ class UserServiceOpChecker(DelayedTask):
             if user_service:
                 log.log(user_service, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
                 try:
-                    user_service.setState(State.ERROR)
+                    user_service.set_state(State.ERROR)
                     user_service.save(update_fields=['data'])
                 except Exception:
                     logger.error('Can\'t update state of uService object')

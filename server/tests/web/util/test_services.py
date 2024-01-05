@@ -155,7 +155,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 user_service['maintenance'], found.service.provider.maintenance_mode
             )
             self.assertEqual(
-                user_service['not_accesible'], not found.isAccessAllowed(now)
+                user_service['not_accesible'], not found.is_access_allowed(now)
             )
             self.assertEqual(
                 user_service['in_use'], found.userServices.filter(in_use=True).count()

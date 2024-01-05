@@ -186,9 +186,9 @@ class OSManager(Module):
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool
         """
-        return cls.processUserPassword != OSManager.processUserPassword
+        return cls.process_user_password != OSManager.process_user_password
 
-    def processUserPassword(
+    def process_user_password(
         self,
         userService: 'UserService',  # pylint: disable=unused-argument
         username: str,

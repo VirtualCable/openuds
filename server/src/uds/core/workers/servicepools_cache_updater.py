@@ -115,7 +115,7 @@ class ServiceCacheUpdater(Job):
                 )
                 continue
 
-            if servicePool.isRestrained():
+            if servicePool.is_restrained():
                 logger.debug(
                     'StopSkippingped cache generation for restrained service pool: %s',
                     servicePool.name,
@@ -127,17 +127,17 @@ class ServiceCacheUpdater(Job):
             # Before we were removing the elements marked to be destroyed after creation, but this makes us
             # to create new items over the limit stablisshed, so we will not remove them anymore
             inCacheL1: int = (
-                servicePool.cachedUserServices()
+                servicePool.cached_users_services()
                 .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
                 .count()
             )
             inCacheL2: int = (
-                servicePool.cachedUserServices()
+                servicePool.cached_users_services()
                 .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
                 .count()
             ) if spServiceInstance.usesCache_L2 else 0
             inAssigned: int = (
-                servicePool.assignedUserServices()
+                servicePool.assigned_user_services()
                 .filter(UserServiceManager().getStateFilter(servicePool.service))  # type: ignore
                 .count()
             )
@@ -216,7 +216,7 @@ class ServiceCacheUpdater(Job):
             valid = None
             with transaction.atomic():
                 for n in (
-                    servicePool.cachedUserServices()
+                    servicePool.cached_users_services()
                     .select_for_update()
                     .filter(
                         UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE)
@@ -224,7 +224,7 @@ class ServiceCacheUpdater(Job):
                     .order_by('creation_date')
                 ):
                     if n.needsOsManager():
-                        if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+                        if State.is_usable(n.state) is False or State.is_usable(n.os_state):
                             valid = n
                             break
                     else:
@@ -296,7 +296,7 @@ class ServiceCacheUpdater(Job):
         # Here, we will take into account the "remove_after" marked user services, so we don't try to remove them
         cacheItems: list[UserService] = [
             i
-            for i in servicePool.cachedUserServices()
+            for i in servicePool.cached_users_services()
             .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
             .order_by('-creation_date')
             .iterator()
@@ -313,7 +313,7 @@ class ServiceCacheUpdater(Job):
             valid = None
             for n in cacheItems:
                 if n.needsOsManager():
-                    if State.isUsable(n.state) is False or State.isUsable(n.os_state):
+                    if State.is_usable(n.state) is False or State.is_usable(n.os_state):
                         valid = n
                         break
                 else:
@@ -337,7 +337,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Reducing L2 cache erasing a service in cache for %s", servicePool.name)
         if cacheL2 > 0:
             cacheItems = (
-                servicePool.cachedUserServices()
+                servicePool.cached_users_services()
                 .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
                 .order_by('creation_date')
             )

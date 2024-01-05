@@ -177,7 +177,7 @@ class DeployedServiceRemover(Job):
         for servicePool in removableServicePools:
             try:
                 # Skips checking deployed services in maintenance mode
-                if servicePool.isInMaintenance() is False:
+                if servicePool.is_in_maintenance() is False:
                     self.startRemovalOf(servicePool)
             except Exception as e1:
                 logger.error('Error removing service pool %s: %s', servicePool.name, e1)
@@ -203,7 +203,7 @@ class DeployedServiceRemover(Job):
                     self.forceRemovalOf(servicePool)  # Force removal
 
                 # Skips checking deployed services in maintenance mode
-                if servicePool.isInMaintenance() is False:
+                if servicePool.is_in_maintenance() is False:
                     self.continueRemovalOf(servicePool)
             except Exception:
                 logger.exception('Removing deployed service')

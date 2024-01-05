@@ -81,7 +81,7 @@ class TunnelTicket(Handler):
 
         # Take token from url
         token = self._args[2][:48]
-        if not models.Server.validateToken(token, serverType=types.servers.ServerType.TUNNEL):
+        if not models.Server.validate_token(token, serverType=types.servers.ServerType.TUNNEL):
             if self._args[1][:4] == 'stop':
                 # "Discard" invalid stop requests, because Applications does not like them.
                 # RDS connections keep alive for a while after the application is finished,
@@ -123,7 +123,7 @@ class TunnelTicket(Handler):
                     logger.warning('Error logging tunnel close event: %s', e)
 
             else:
-                if net.ipToLong(self._args[1][:32]).version == 0:
+                if net.ip_to_long(self._args[1][:32]).version == 0:
                     raise Exception('Invalid from IP')
                 events.addEvent(
                     userService.deployed_service,

@@ -429,7 +429,7 @@ class Initialize(ActorV3Action):
                 dbFilter = UserService.objects.filter(deployed_service__service=service)
             else:
                 # If not service provided token, use actor tokens
-                if not Server.validateToken(token, types.servers.ServerType.ACTOR):
+                if not Server.validate_token(token, types.servers.ServerType.ACTOR):
                     raise BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
@@ -624,11 +624,11 @@ class Login(ActorV3Action):
 
             if osManager:  # For os managed services, let's check if we honor deadline
                 if osManager.ignoreDeadLine():
-                    deadLine = userService.deployed_service.getDeadline()
+                    deadLine = userService.deployed_service.get_deadline()
                 else:
                     deadLine = None
             else:  # For non os manager machines, process deadline as always
-                deadLine = userService.deployed_service.getDeadline()
+                deadLine = userService.deployed_service.get_deadline()
 
         except (
             Exception

@@ -90,7 +90,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
         data['userservice_uuid'] = data.get('userservice_uuid', ticket['userservice_uuid'])
 
     userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
-    server.setActorVersion(userService)
+    server.set_actor_version(userService)
 
     if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
         osmanagers.OSManager.loggedIn(userService, data['username'])
@@ -105,7 +105,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
     logger.debug('Max idle: %s', maxIdle)
 
     deadLine = (
-        userService.deployed_service.getDeadline() if not osManager or osManager.ignoreDeadLine() else None
+        userService.deployed_service.get_deadline() if not osManager or osManager.ignoreDeadLine() else None
     )
     result = {
         'ip': src.ip,

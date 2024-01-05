@@ -185,7 +185,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return self.osmanager.get_type().transformsUserOrPasswordForService()
         return False
 
-    def processUserPassword(self, username: str, password: str) -> tuple[str, str]:
+    def process_user_password(self, username: str, password: str) -> tuple[str, str]:
         """
         This method is provided for consistency between UserService and ServicePool
         There is no posibility to check the username and password that a user will use to
@@ -197,7 +197,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return username, password
 
     @staticmethod
-    def getRestrainedsQuerySet() -> 'models.QuerySet[ServicePool]':
+    def restraineds_queryset() -> 'models.QuerySet[ServicePool]':
         from uds.models.user_service import (  # pylint: disable=import-outside-toplevel
             UserService,
         )
@@ -226,8 +226,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return ServicePool.objects.filter(pk__in=res)
 
     @staticmethod
-    def getRestraineds() -> typing.Iterator['ServicePool']:
-        return ServicePool.getRestrainedsQuerySet().iterator()
+    def restrained_pools() -> typing.Iterator['ServicePool']:
+        return ServicePool.restraineds_queryset().iterator()
 
     @property
     def owned_by_meta(self) -> bool:
@@ -240,7 +240,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return str(self.short_name.strip())
         return str(self.name)
 
-    def isRestrained(self) -> bool:
+    def is_restrained(self) -> bool:
         """
         Maybe this deployed service is having problems, and that may block some task in some
         situations.
@@ -270,18 +270,18 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return False
 
-    def isInMaintenance(self) -> bool:
+    def is_in_maintenance(self) -> bool:
         return self.service.isInMaintenance() if self.service else True
 
-    def isVisible(self) -> bool:
+    def is_visible(self) -> bool:
         return self.visible  # type: ignore
 
-    def isUsable(self) -> bool:
+    def is_usable(self) -> bool:
         return (
-            self.state == states.servicePool.ACTIVE and not self.isInMaintenance() and not self.isRestrained()
+            self.state == states.servicePool.ACTIVE and not self.is_in_maintenance() and not self.is_restrained()
         )
 
-    def toBeReplaced(self, forUser: 'User') -> typing.Optional[datetime]:
+    def when_will_be_replaced(self, forUser: 'User') -> typing.Optional[datetime]:
         activePub: typing.Optional['ServicePoolPublication'] = self.activePublication()
         # If no publication or current revision, it's not going to be replaced
         if activePub is None:
@@ -295,12 +295,12 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         try:
             found = typing.cast(
                 'UserService',
-                self.assignedUserServices().filter(user=forUser, state__in=states.userService.VALID_STATES)[
+                self.assigned_user_services().filter(user=forUser, state__in=states.userService.VALID_STATES)[
                     0
                 ],  # type: ignore  # Slicing is not supported by pylance right now
             )
             if activePub and found.publication and activePub.id != found.publication.id:
-                ret = self.recoverValue('toBeReplacedIn')
+                ret = self.get_value('toBeReplacedIn')
                 if ret:
                     return serializer.deserialize(ret)
 
@@ -310,7 +310,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return None
 
-    def isAccessAllowed(self, chkDateTime=None) -> bool:
+    def is_access_allowed(self, chkDateTime=None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -326,7 +326,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return access == states.action.ALLOW
 
-    def getDeadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
+    def get_deadline(self, chkDateTime: typing.Optional[datetime] = None) -> typing.Optional[int]:
         """Gets the deadline for an access on chkDateTime in seconds
 
         Keyword Arguments:
@@ -338,7 +338,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if chkDateTime is None:
             chkDateTime = typing.cast(datetime, sql_datetime())
 
-        if self.isAccessAllowed(chkDateTime) is False:
+        if self.is_access_allowed(chkDateTime) is False:
             return -1
 
         deadLine = None
@@ -360,7 +360,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         return int((deadLine - chkDateTime).total_seconds())
 
-    def storeValue(self, name: str, value: typing.Any):
+    def set_value(self, name: str, value: typing.Any):
         """
         Stores a value inside custom storage
 
@@ -370,7 +370,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         self.get_environment().storage.put(name, value)
 
-    def recoverValue(self, name: str) -> typing.Any:
+    def get_value(self, name: str) -> typing.Any:
         """
         Recovers a value from custom storage
 
@@ -382,7 +382,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return typing.cast(str, self.get_environment().storage.get(name))
 
-    def setState(self, state: str, save: bool = True) -> None:
+    def set_state(self, state: str, save: bool = True) -> None:
         """
         Updates the state of this object and, optionally, saves it
 
@@ -403,7 +403,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         The background worker will be the responsible for removing the deployed service
         """
-        self.setState(states.servicePool.REMOVABLE)
+        self.set_state(states.servicePool.REMOVABLE)
 
     def removed(self) -> None:
         """
@@ -414,10 +414,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         # self.assignedGroups.clear()
         # self.osmanager = None
         # self.service = None
-        # self.setState(State.REMOVED)
+        # self.set_state(State.REMOVED)
         self.delete()
 
-    def markOldUserServicesAsRemovables(
+    def mark_old_userservices_as_removable(
         self,
         activePub: typing.Optional['ServicePoolPublication'],
         skipAssigned: bool = False,
@@ -454,7 +454,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                         cache_level=0, state=states.userService.USABLE, in_use=False
                     ).update(state=states.userService.REMOVABLE, state_date=now)
 
-    def validateGroups(self, groups: collections.abc.Iterable['Group']) -> None:
+    def validate_groups(self, groups: collections.abc.Iterable['Group']) -> None:
         """
         Ensures that at least a group of groups (database groups) has access to this Service Pool
         raise an InvalidUserException if fails check
@@ -466,7 +466,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         ):  # pylint: disable=no-member
             raise exceptions.auth.InvalidUserException()
 
-    def validatePublication(self) -> None:
+    def validate_publication(self) -> None:
         """
         Ensures that, if this service has publications, that a publication is active
         raises an IvalidServiceException if check fails
@@ -478,14 +478,14 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         ):
             raise InvalidServiceException()
 
-    def validateTransport(self, transport) -> None:
+    def validate_transport(self, transport) -> None:
         if (
             self.transports.filter(id=transport.id).count()  # pylint: disable=no-member
             == 0  # pylint: disable=no-member
         ):  # pylint: disable=no-member
             raise InvalidServiceException()
 
-    def validateUser(self, user: 'User') -> None:
+    def validate_user(self, user: 'User') -> None:
         """
         Validates that the user has access to this deployed service
 
@@ -502,11 +502,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         logger.debug('User: %s', user.id)
         logger.debug('ServicePool: %s', self.id)
-        self.validateGroups(user.getGroups())
-        self.validatePublication()
+        self.validate_groups(user.getGroups())
+        self.validate_publication()
 
     @staticmethod
-    def getDeployedServicesForGroups(
+    def get_pools_for_groups(
         groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None
     ) -> collections.abc.Iterable['ServicePool']:
         """
@@ -603,7 +603,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if pub:
             pub.unpublish()
 
-    def cachedUserServices(self) -> 'models.QuerySet[UserService]':
+    def cached_users_services(self) -> 'models.QuerySet[UserService]':
         """
         ':rtype uds.models.user_service.UserService'
         Utility method to access the cached user services (level 1 and 2)
@@ -613,7 +613,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.exclude(cache_level=0)
 
-    def assignedUserServices(self) -> 'models.QuerySet[UserService]':
+    def assigned_user_services(self) -> 'models.QuerySet[UserService]':
         """
         Utility method to access the assigned user services
 
@@ -622,7 +622,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return self.userServices.filter(cache_level=0)
 
-    def erroneousUserServices(self) -> 'models.QuerySet[UserService]':
+    def erroneous_user_services(self) -> 'models.QuerySet[UserService]':
         """
         Utility method to locate invalid assigned user services.
 
@@ -643,7 +643,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             maxs = self.service.get_instance().maxUserServices
 
         if cachedValue == -1:
-            cachedValue = self.assignedUserServices().filter(state__in=states.userService.VALID_STATES).count()
+            cachedValue = self.assigned_user_services().filter(state__in=states.userService.VALID_STATES).count()
 
         if maxs == 0 or max == consts.UNLIMITED:
             return types.pools.UsageInfo(cachedValue, consts.UNLIMITED)
@@ -684,7 +684,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     # returns CSV header
     @staticmethod
-    def getCSVHeader(sep: str = ',') -> str:
+    def get_cvs_header(sep: str = ',') -> str:
         return sep.join(
             [
                 'name',
@@ -698,7 +698,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         )
 
     # Return record as csv line using separator (default: ',')
-    def toCsv(self, sep: str = ',') -> str:
+    def as_cvs(self, sep: str = ',') -> str:
         return sep.join(
             [
                 self.name,
@@ -706,8 +706,8 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
                 str(self.cache_l1_srvs),
                 str(self.cache_l2_srvs),
                 str(self.max_srvs),
-                str(self.assignedUserServices().count()),
-                str(self.cachedUserServices().count()),
+                str(self.assigned_user_services().count()),
+                str(self.cached_users_services().count()),
             ]
         )
 
