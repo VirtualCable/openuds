@@ -76,12 +76,12 @@ class SystemTest(rest.test.RESTTestCase):
         for pool in [self.user_service_managed, self.user_service_unmanaged]:
             stats_counters.create_stats_interval_total(
                 id=pool.deployed_service.id,
-                counter_type=[counters.CT_ASSIGNED, counters.CT_INUSE, counters.CT_CACHED],
+                counter_type=[counters.types.stats.CounterType.ASSIGNED, counters.types.stats.CounterType.INUSE, counters.types.stats.CounterType.CACHED],
                 since=datetime.datetime.now() - datetime.timedelta(days=DAYS),
                 days=DAYS,
                 number_per_hour=6,
                 value=lambda x, y: (x % y) * 10,
-                owner_type=counters.OT_SERVICEPOOL
+                owner_type=counters.types.stats.CounterOwnerType.SERVICEPOOL
             )
         # Now, test (will fail if not logged in)
         response = self.client.get('/uds/rest/system/stats/assigned')

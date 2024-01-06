@@ -51,7 +51,7 @@ START_DATE = datetime.datetime(2009, 12, 4, 0, 0, 0)
 DAYS = 4
 NUMBER_PER_HOUR = 6  # Can be any value divisor of 3600
 NUMBER_OF_POOLS = 11
-COUNTERS_TYPES = [counters.CT_ASSIGNED, counters.CT_INUSE]
+COUNTERS_TYPES = [counters.types.stats.CounterType.ASSIGNED, counters.types.stats.CounterType.INUSE]
 
 
 class StatsFunction:
@@ -80,7 +80,7 @@ class StatsAcummulatorTest(UDSTestCase):
                 days=DAYS,
                 number_per_hour=NUMBER_PER_HOUR,
                 value=StatsFunction((pool_id + 1)),
-                owner_type=counters.OT_SERVICEPOOL,
+                owner_type=counters.types.stats.CounterOwnerType.SERVICEPOOL,
             )
 
         # Setup worker

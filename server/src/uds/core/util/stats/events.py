@@ -38,7 +38,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core.managers.stats import StatsManager, REVERSE_FLDS_EQUIV
+from uds.core.managers.stats import StatsManager, _REVERSE_FLDS_EQUIV
 from uds.core import types
 from uds.models import Provider, Service, ServicePool, Authenticator, OSManager
 
@@ -48,29 +48,14 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from django.db import models
-    
-# Events names
-EVENT_NAMES: typing.Final[collections.abc.Mapping[types.stats.EventType, str]] = {
-    types.stats.EventType.LOGIN: 'Login',
-    types.stats.EventType.LOGOUT: 'Logout',
-    types.stats.EventType.ACCESS: 'Access',
-    types.stats.EventType.CACHE_HIT: 'Cache hit',
-    types.stats.EventType.CACHE_MISS: 'Cache miss',
-    types.stats.EventType.PLATFORM: 'Platform',
-    types.stats.EventType.TUNNEL_OPEN: 'Tunnel open',
-    types.stats.EventType.TUNNEL_CLOSE: 'Tunnel close',
-    types.stats.EventType.OSMANAGER_INIT: 'OS Manager init',
-    types.stats.EventType.OSMANAGER_READY: 'OS Manager ready',
-    types.stats.EventType.OSMANAGER_RELEASE: 'OS Manager release',
-}
 
 
-MODEL_TO_OWNER: typing.Final[collections.abc.Mapping[type['models.Model'], types.stats.EventOwner]] = {
-    ServicePool: types.stats.EventOwner.SERVICEPOOL,
-    Service: types.stats.EventOwner.SERVICE,
-    Provider: types.stats.EventOwner.PROVIDER,
-    Authenticator: types.stats.EventOwner.AUTHENTICATOR,
-    OSManager: types.stats.EventOwner.OSMANAGER,
+_OWNER_FROM_MODEL: typing.Final[collections.abc.Mapping[type['models.Model'], types.stats.EventOwnerType]] = {
+    ServicePool: types.stats.EventOwnerType.SERVICEPOOL,
+    Service: types.stats.EventOwnerType.SERVICE,
+    Provider: types.stats.EventOwnerType.PROVIDER,
+    Authenticator: types.stats.EventOwnerType.AUTHENTICATOR,
+    OSManager: types.stats.EventOwnerType.OSMANAGER,
 }
 
 # Events data (fld1, fld2, fld3, fld4):
@@ -125,16 +110,18 @@ MODEL_TO_OWNER: typing.Final[collections.abc.Mapping[type['models.Model'], types
 
 # Helpers
 # get owner by type and id
-def get_owner(ownerType: types.stats.EventOwner, ownerId: int) -> 'Provider|Service|ServicePool|Authenticator|OSManager|None':
-    if ownerType == types.stats.EventOwner.PROVIDER:
+def get_owner(
+    ownerType: types.stats.EventOwnerType, ownerId: int
+) -> 'Provider|Service|ServicePool|Authenticator|OSManager|None':
+    if ownerType == types.stats.EventOwnerType.PROVIDER:
         return Provider.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwner.SERVICE:
+    if ownerType == types.stats.EventOwnerType.SERVICE:
         return Service.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwner.SERVICEPOOL:
+    if ownerType == types.stats.EventOwnerType.SERVICEPOOL:
         return ServicePool.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwner.AUTHENTICATOR:
+    if ownerType == types.stats.EventOwnerType.AUTHENTICATOR:
         return Authenticator.objects.get(pk=ownerId)
-    if ownerType == types.stats.EventOwner.OSMANAGER:
+    if ownerType == types.stats.EventOwnerType.OSMANAGER:
         return OSManager.objects.get(pk=ownerId)
     return None
 
@@ -149,22 +136,20 @@ class EventTupleType(typing.NamedTuple):
 
     # aliases for fields
     def __getitem__(self, item) -> typing.Any:
-        if item in REVERSE_FLDS_EQUIV:
-            item = REVERSE_FLDS_EQUIV[item]
+        if item in _REVERSE_FLDS_EQUIV:
+            item = _REVERSE_FLDS_EQUIV[item]
         return self.__getattribute__(item)
 
     # Obtains the Event as a string
     def __str__(self) -> str:
         # Convert Event type to string first
-        return (
-            f'{self.stamp} {self.event_type.event_name} {self.fld1} {self.fld2} {self.fld3} {self.fld4}'
-        )
+        return f'{self.stamp} {self.event_type.event_name} {self.fld1} {self.fld2} {self.fld3} {self.fld4}'
 
 
 EventClass = typing.Union[Provider, Service, ServicePool, Authenticator]
 
 
-def add_event(obj: EventClass, eventType: int, **kwargs) -> bool:
+def add_event(obj: EventClass, eventType: types.stats.EventType, **kwargs) -> bool:
     """
     Adds a event stat to specified object
 
@@ -175,14 +160,10 @@ def add_event(obj: EventClass, eventType: int, **kwargs) -> bool:
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
 
-    return StatsManager.manager().addEvent(
-        MODEL_TO_OWNER[type(obj)], obj.id, eventType, **kwargs
-    )
+    return StatsManager.manager().add_event(_OWNER_FROM_MODEL[type(obj)], obj.id, eventType, **kwargs)
 
 
-def get_events(
-    obj: EventClass, eventType: int, **kwargs
-) -> typing.Generator[EventTupleType, None, None]:
+def get_events(obj: EventClass, eventType: types.stats.EventType, **kwargs) -> typing.Generator[EventTupleType, None, None]:
     """
     Get events
 
@@ -205,8 +186,8 @@ def get_events(
     else:
         owner_id = obj.pk
 
-    for i in StatsManager.manager().getEvents(
-        MODEL_TO_OWNER[objType],
+    for i in StatsManager.manager().enumerate_events(
+        _OWNER_FROM_MODEL[objType],
         eventType,
         owner_id=owner_id,
         since=kwargs.get('since'),
@@ -224,9 +205,9 @@ def get_events(
 
 # tail the events table
 def tail_events(wait_time: int = 2) -> typing.Generator[EventTupleType, None, None]:
-    from_id = None
+    starting_id = None
     while True:
-        for i in StatsManager.manager().tailEvents(fromId=from_id):
+        for i in StatsManager.manager().tail_events(starting_id=starting_id):
             yield EventTupleType(
                 datetime.datetime.fromtimestamp(i.stamp),
                 i.fld1,
@@ -235,5 +216,5 @@ def tail_events(wait_time: int = 2) -> typing.Generator[EventTupleType, None, No
                 i.fld4,
                 types.stats.EventType.from_int(i.event_type),
             )
-            from_id = i.pk if i.pk > (from_id or 0) else from_id
+            starting_id = i.pk if i.pk > (starting_id or 0) else starting_id
         time.sleep(wait_time)

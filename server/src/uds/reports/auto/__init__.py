@@ -119,7 +119,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
         fields.source_field_data(self.getModel(), self.source)
         logger.debug('Source field data: %s', self.source)
 
-    def getModelItems(self) -> collections.abc.Iterable[ReportAutoModel]:
+    def get_model_records(self) -> collections.abc.Iterable[ReportAutoModel]:
         model = self.getModel()
 
         filters = [self.source.value] if isinstance(self.source, gui.ChoiceField) else self.source.value

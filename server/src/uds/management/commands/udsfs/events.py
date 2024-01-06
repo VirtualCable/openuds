@@ -54,7 +54,7 @@ def pretty_print(event: StatsEvents) -> str:
     # convert unix timestamp to human readable
     dt = datetime.datetime.fromtimestamp(event.stamp)
     # Get owner, if it already exists
-    owner = get_owner(events_types.EventOwner.from_int(event.owner_type), event.owner_id)
+    owner = get_owner(events_types.EventOwnerType.from_int(event.owner_type), event.owner_id)
     name = getattr(owner, 'name', '') if hasattr(owner, 'name') else '[*Deleted*]'
     # Get event name
     event_name = events_types.EventType.from_int(event.event_type).event_name

@@ -78,12 +78,12 @@ class DeployedServiceStatsCollector(Job):
                 totalAssigned += assigned
                 totalInUse += inUse
                 totalCached += cached
-                counters.addCounter(
-                    servicePool, counters.CT_ASSIGNED, assigned, stamp=stamp
+                counters.add_counter(
+                    servicePool, counters.types.stats.CounterType.ASSIGNED, assigned, stamp=stamp
                 )
-                counters.addCounter(servicePool, counters.CT_INUSE, inUse, stamp=stamp)
-                counters.addCounter(
-                    servicePool, counters.CT_CACHED, cached, stamp=stamp
+                counters.add_counter(servicePool, counters.types.stats.CounterType.INUSE, inUse, stamp=stamp)
+                counters.add_counter(
+                    servicePool, counters.types.stats.CounterType.CACHED, cached, stamp=stamp
                 )
             except Exception:
                 logger.exception(
@@ -92,9 +92,9 @@ class DeployedServiceStatsCollector(Job):
         # Store a global "fake pool" with all stats
         sp = models.ServicePool()
         sp.id = -1
-        counters.addCounter(sp, counters.CT_ASSIGNED, totalAssigned, stamp=stamp)
-        counters.addCounter(sp, counters.CT_INUSE, totalInUse, stamp=stamp)
-        counters.addCounter(sp, counters.CT_CACHED, totalCached, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.ASSIGNED, totalAssigned, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.INUSE, totalInUse, stamp=stamp)
+        counters.add_counter(sp, counters.types.stats.CounterType.CACHED, totalCached, stamp=stamp)
 
         totalUsers, totalAssigned, totalWithService = 0, 0, 0
         for auth in models.Authenticator.objects.all():
@@ -109,23 +109,23 @@ class DeployedServiceStatsCollector(Job):
             totalAssigned += number_assigned_services
             totalWithService += users_with_service
 
-            counters.addCounter(auth, counters.CT_AUTH_USERS, users, stamp=stamp)
-            counters.addCounter(
-                auth, counters.CT_AUTH_SERVICES, number_assigned_services, stamp=stamp
+            counters.add_counter(auth, counters.types.stats.CounterType.AUTH_USERS, users, stamp=stamp)
+            counters.add_counter(
+                auth, counters.types.stats.CounterType.AUTH_SERVICES, number_assigned_services, stamp=stamp
             )
-            counters.addCounter(
+            counters.add_counter(
                 auth,
-                counters.CT_AUTH_USERS_WITH_SERVICES,
+                counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES,
                 users_with_service,
                 stamp=stamp,
             )
 
         au = models.Authenticator()
         au.id = -1
-        counters.addCounter(au, counters.CT_AUTH_USERS, totalUsers, stamp=stamp)
-        counters.addCounter(au, counters.CT_AUTH_SERVICES, totalAssigned, stamp=stamp)
-        counters.addCounter(
-            au, counters.CT_AUTH_USERS_WITH_SERVICES, totalWithService, stamp=stamp
+        counters.add_counter(au, counters.types.stats.CounterType.AUTH_USERS, totalUsers, stamp=stamp)
+        counters.add_counter(au, counters.types.stats.CounterType.AUTH_SERVICES, totalAssigned, stamp=stamp)
+        counters.add_counter(
+            au, counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES, totalWithService, stamp=stamp
         )
 
         logger.debug('Done Deployed service stats collector')
@@ -145,12 +145,12 @@ class StatsCleaner(Job):
     def run(self):
         logger.debug('Starting statistics cleanup')
         try:
-            StatsManager.manager().cleanupCounters()
+            StatsManager.manager().perform_counters_maintenance()
         except Exception:
             logger.exception('Cleaning up counters')
 
         try:
-            StatsManager.manager().cleanupEvents()
+            StatsManager.manager().perform_events_maintenancecleanupEvents()
         except Exception:
             logger.exception('Cleaning up events')
 

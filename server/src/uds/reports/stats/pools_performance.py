@@ -133,7 +133,7 @@ class PoolPerformanceReport(StatsReport):
         # Store dataUsers for all pools
         poolsData = []
 
-        fld = StatsManager.manager().getEventFldFor('username')
+        fld = StatsManager.manager().get_event_field_for('username')
 
         reportData = []
         for p in self.getPools():
@@ -143,8 +143,8 @@ class PoolPerformanceReport(StatsReport):
                 key = (interval[0] + interval[1]) // 2
                 q = (
                     StatsManager.manager()
-                    .getEvents(
-                        events.types.stats.EventOwner.SERVICEPOOL,
+                    .enumerate_events(
+                        events.types.stats.EventOwnerType.SERVICEPOOL,
                         events.types.stats.EventType.ACCESS,
                         since=interval[0],
                         to=interval[1],

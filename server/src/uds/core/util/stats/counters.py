@@ -45,28 +45,12 @@ from uds.models import (
     Authenticator,
     StatsCountersAccum,
 )
-from uds.core.consts import NEVER
+from uds.core import consts, types
 
 
 logger = logging.getLogger(__name__)
 
 CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Authenticator)
-
-
-# Posible counters, note that not all are used by every posible type
-# FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
-(
-    CT_LOAD,
-    CT_STORAGE,
-    CT_ASSIGNED,
-    CT_INUSE,
-    CT_AUTH_USERS,
-    CT_AUTH_USERS_WITH_SERVICES,
-    CT_AUTH_SERVICES,
-    CT_CACHED,
-) = range(8)
-
-OT_PROVIDER, OT_SERVICE, OT_SERVICEPOOL, OT_AUTHENTICATOR = range(4)
 
 
 # Helpers
@@ -89,60 +73,54 @@ def _get_P_S_DS_Ids(provider) -> tuple:
     return res
 
 
-idRetriever: collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable]] = {
+_id_retriever: typing.Final[
+    collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable]]
+] = {
     Provider: {
-        CT_LOAD: _get_Id,
-        CT_STORAGE: _get_P_S_Ids,
-        CT_ASSIGNED: _get_P_S_DS_Ids,
-        CT_INUSE: _get_P_S_DS_Ids,
+        types.stats.CounterType.LOAD: _get_Id,
+        types.stats.CounterType.STORAGE: _get_P_S_Ids,
+        types.stats.CounterType.ASSIGNED: _get_P_S_DS_Ids,
+        types.stats.CounterType.INUSE: _get_P_S_DS_Ids,
     },
     Service: {
-        CT_STORAGE: _get_Id,
-        CT_ASSIGNED: _get_S_DS_Ids,
-        CT_INUSE: _get_S_DS_Ids,
+        types.stats.CounterType.STORAGE: _get_Id,
+        types.stats.CounterType.ASSIGNED: _get_S_DS_Ids,
+        types.stats.CounterType.INUSE: _get_S_DS_Ids,
     },
-    ServicePool: {CT_ASSIGNED: _get_Id, CT_INUSE: _get_Id, CT_CACHED: _get_Id},
+    ServicePool: {
+        types.stats.CounterType.ASSIGNED: _get_Id,
+        types.stats.CounterType.INUSE: _get_Id,
+        types.stats.CounterType.CACHED: _get_Id,
+    },
     Authenticator: {
-        CT_AUTH_USERS: _get_Id,
-        CT_AUTH_SERVICES: _get_Id,
-        CT_AUTH_USERS_WITH_SERVICES: _get_Id,
+        types.stats.CounterType.AUTH_USERS: _get_Id,
+        types.stats.CounterType.AUTH_SERVICES: _get_Id,
+        types.stats.CounterType.AUTH_USERS_WITH_SERVICES: _get_Id,
     },
 }
 
-counterTypes: collections.abc.Mapping[int, tuple[type[Model], ...]] = {
-    CT_LOAD: (Provider,),
-    CT_STORAGE: (Service,),
-    CT_ASSIGNED: (ServicePool,),
-    CT_INUSE: (ServicePool,),
-    CT_AUTH_USERS: (Authenticator,),
-    CT_AUTH_SERVICES: (Authenticator,),
-    CT_AUTH_USERS_WITH_SERVICES: (Authenticator,),
-    CT_CACHED: (ServicePool,),
+_valid_model_for_counterype: typing.Final[collections.abc.Mapping[int, tuple[type[Model], ...]]] = {
+    types.stats.CounterType.LOAD: (Provider,),
+    types.stats.CounterType.STORAGE: (Service,),
+    types.stats.CounterType.ASSIGNED: (ServicePool,),
+    types.stats.CounterType.INUSE: (ServicePool,),
+    types.stats.CounterType.AUTH_USERS: (Authenticator,),
+    types.stats.CounterType.AUTH_SERVICES: (Authenticator,),
+    types.stats.CounterType.AUTH_USERS_WITH_SERVICES: (Authenticator,),
+    types.stats.CounterType.CACHED: (ServicePool,),
 }
 
-objectTypes: collections.abc.Mapping[type[Model], int] = {
-    ServicePool: OT_SERVICEPOOL,
-    Service: OT_SERVICE,
-    Provider: OT_PROVIDER,
-    Authenticator: OT_AUTHENTICATOR,
-}
-
-# Titles of types
-titles: collections.abc.Mapping[int, typing.Any] = {
-    CT_ASSIGNED: _('Assigned'),
-    CT_INUSE: _('In use'),
-    CT_LOAD: _('Load'),
-    CT_STORAGE: _('Storage'),
-    CT_AUTH_USERS: _('Users'),
-    CT_AUTH_USERS_WITH_SERVICES: _('Users with services'),
-    CT_AUTH_SERVICES: _('User Services'),
-    CT_CACHED: _('Cached'),
+_obj_type_from_model: typing.Final[collections.abc.Mapping[type[Model], types.stats.CounterOwnerType]] = {
+    ServicePool: types.stats.CounterOwnerType.SERVICEPOOL,
+    Service: types.stats.CounterOwnerType.SERVICE,
+    Provider: types.stats.CounterOwnerType.PROVIDER,
+    Authenticator: types.stats.CounterOwnerType.AUTHENTICATOR,
 }
 
 
-def addCounter(
+def add_counter(
     obj: CounterClass,
-    counterType: int,
+    counterType: types.stats.CounterType,
     counterValue: int,
     stamp: typing.Optional[datetime.datetime] = None,
 ) -> bool:
@@ -156,7 +134,7 @@ def addCounter(
     note: Runtime checks are done so if we try to insert an unssuported stat, this won't be inserted and it will be logged
     """
     type_ = type(obj)
-    if type_ not in counterTypes.get(counterType, ()):  # pylint: disable
+    if type_ not in _valid_model_for_counterype.get(counterType, ()):  # pylint: disable
         logger.error(
             'Type %s does not accepts counter of type %s',
             type_,
@@ -165,11 +143,13 @@ def addCounter(
         )
         return False
 
-    return StatsManager.manager().addCounter(objectTypes[type(obj)], obj.id, counterType, counterValue, stamp)
+    return StatsManager.manager().add_counter(
+        _obj_type_from_model[type(obj)], obj.id, counterType, counterValue, stamp
+    )
 
 
-def getCounters(
-    obj: CounterClass, counterType: int, **kwargs
+def enumerate_counters(
+    obj: CounterClass, counterType: types.stats.CounterType, **kwargs
 ) -> typing.Generator[tuple[datetime.datetime, int], None, None]:
     """
     Get counters
@@ -185,13 +165,13 @@ def getCounters(
     Returns:
         A generator, that contains pairs of (stamp, value) tuples
     """
-    since = kwargs.get('since') or NEVER
+    since = kwargs.get('since') or consts.NEVER
     to = kwargs.get('to') or datetime.datetime.now()
     limit = kwargs.get('limit')
     use_max = kwargs.get('use_max', False)
     type_ = type(obj)
 
-    readFncTbl = idRetriever.get(type_)
+    readFncTbl = _id_retriever.get(type_)
 
     if not readFncTbl:
         logger.error('Type %s has no registered stats', type_)
@@ -208,8 +188,8 @@ def getCounters(
     else:
         owner_ids = None
 
-    for i in StatsManager.manager().getCounters(
-        objectTypes[type(obj)],
+    for i in StatsManager.manager().enumerate_counters(
+        _obj_type_from_model[type(obj)],
         counterType,
         owner_ids,
         since,
@@ -222,19 +202,15 @@ def getCounters(
         yield (datetime.datetime.fromtimestamp(i[0]), i[1])
 
 
-def getCounterTitle(counterType: int) -> str:
-    return titles.get(counterType, '').title()
-
-
-def getAcumCounters(
+def get_accumulated_counters(
     intervalType: StatsCountersAccum.IntervalType,
-    counterType: int,
-    onwer_type: typing.Optional[int] = None,
+    counterType: types.stats.CounterType,
+    onwer_type: typing.Optional[types.stats.CounterOwnerType] = None,
     owner_id: typing.Optional[int] = None,
     since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
     points: typing.Optional[int] = None,
 ) -> typing.Generator[AccumStat, None, None]:
-    yield from StatsManager.manager().getAcumCounters(
+    yield from StatsManager.manager().get_accumulated_counters(
         intervalType=intervalType,
         counterType=counterType,
         owner_type=onwer_type,
@@ -242,15 +218,3 @@ def getAcumCounters(
         since=since,
         points=points,
     )
-
-
-# Data initialization
-def _initializeData() -> None:
-    """
-    Initializes dictionaries.
-
-    Hides data from global var space
-    """
-
-
-_initializeData()

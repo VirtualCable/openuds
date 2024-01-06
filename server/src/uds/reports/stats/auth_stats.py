@@ -64,7 +64,7 @@ class AuthenticatorsStats(StatsReportAuto):
     def generate(self) -> typing.Any:
 
         stats = []
-        for a in self.getModelItems():
+        for a in self.get_model_records():
             # Will show a.name on every change...
             stats.append({'date': a.name, 'users': None})
 
@@ -73,9 +73,9 @@ class AuthenticatorsStats(StatsReportAuto):
                 end = i[1]
                 data = [0, 0, 0]
                 # Get stats for interval
-                for counter in counters.getCounters(
+                for counter in counters.enumerate_counters(
                         typing.cast('models.Authenticator', a),
-                        counters.CT_AUTH_SERVICES,
+                        counters.types.stats.CounterType.AUTH_SERVICES,
                         since=start,
                         to=end,
                         interval=BIG_INTERVAL,
@@ -84,9 +84,9 @@ class AuthenticatorsStats(StatsReportAuto):
                     ):
                     data[0] += counter[1]
 
-                for counter in counters.getCounters(
+                for counter in counters.enumerate_counters(
                     typing.cast('models.Authenticator', a),
-                    counters.CT_AUTH_USERS_WITH_SERVICES,
+                    counters.types.stats.CounterType.AUTH_USERS_WITH_SERVICES,
                     since=start,
                     to=end,
                     interval=BIG_INTERVAL,
@@ -94,9 +94,9 @@ class AuthenticatorsStats(StatsReportAuto):
                     use_max=True,
                 ):
                     data[1] += counter[1]
-                for counter in counters.getCounters(
+                for counter in counters.enumerate_counters(
                     typing.cast('models.Authenticator', a),
-                    counters.CT_AUTH_USERS,
+                    counters.types.stats.CounterType.AUTH_USERS,
                     since=start,
                     to=end,
                     interval=BIG_INTERVAL,

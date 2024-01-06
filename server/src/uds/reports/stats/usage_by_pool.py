@@ -101,8 +101,8 @@ class UsageByPool(StatsReport):
         for pool in pools:
             items = (
                 StatsManager.manager()
-                .getEvents(
-                    stats.events.types.stats.EventOwner.SERVICEPOOL,
+                .enumerate_events(
+                    stats.events.types.stats.EventOwnerType.SERVICEPOOL,
                     (stats.events.types.stats.EventType.LOGIN, stats.events.types.stats.EventType.LOGOUT),
                     owner_id=pool.id,
                     since=start,

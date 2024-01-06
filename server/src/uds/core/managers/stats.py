@@ -29,31 +29,35 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import datetime
-import dataclasses
-import time
-import logging
-import typing
 import collections.abc
+import dataclasses
+import datetime
+import logging
+import time
+import typing
 
-from uds.core.util.config import GlobalConfig
+from uds.core import types
 from uds.core.util import singleton
-from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
+from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime, sql_stamp_seconds
+from uds.models import StatsCounters, StatsCountersAccum, StatsEvents
 
 if typing.TYPE_CHECKING:
     from django.db import models
 
 logger = logging.getLogger(__name__)
 
-FLDS_EQUIV: collections.abc.Mapping[str, collections.abc.Iterable[str]] = {
+_FLDS_EQUIV: typing.Final[collections.abc.Mapping[str, collections.abc.Iterable[str]]] = {
     'fld1': ('username', 'platform', 'duration'),
     'fld2': ('source', 'srcip', 'browser', 'sent'),
     'fld3': ('destination', 'dstip', 'received'),
     'fld4': ('uniqueid', 'tunnel'),
 }
 
-REVERSE_FLDS_EQUIV: collections.abc.Mapping[str, str] = {i: fld for fld, aliases in FLDS_EQUIV.items() for i in aliases}
+_REVERSE_FLDS_EQUIV: typing.Final[collections.abc.Mapping[str, str]] = {
+    i: fld for fld, aliases in _FLDS_EQUIV.items() for i in aliases
+}
+
 
 @dataclasses.dataclass
 class AccumStat:
@@ -80,7 +84,7 @@ class StatsManager(metaclass=singleton.Singleton):
     def manager() -> 'StatsManager':
         return StatsManager()  # Singleton pattern will return always the same instance
 
-    def __doCleanup(
+    def _do_maintanance(
         self,
         model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
@@ -90,11 +94,11 @@ class StatsManager(metaclass=singleton.Singleton):
         model.objects.filter(stamp__lt=minTime).delete()
 
     # Counter stats
-    def addCounter(
+    def add_counter(
         self,
-        owner_type: int,
+        owner_type: types.stats.CounterOwnerType,
         owner_id: int,
-        counterType: int,
+        counterType: types.stats.CounterType,
         counterValue: int,
         stamp: typing.Optional[datetime.datetime] = None,
     ) -> bool:
@@ -133,7 +137,7 @@ class StatsManager(metaclass=singleton.Singleton):
             logger.error('Exception handling counter stats saving (maybe database is full?)')
         return False
 
-    def getCounters(
+    def enumerate_counters(
         self,
         ownerType: int,
         counterType: int,
@@ -176,11 +180,11 @@ class StatsManager(metaclass=singleton.Singleton):
             use_max=use_max,
         )
 
-    def getAcumCounters(
+    def get_accumulated_counters(
         self,
         intervalType: StatsCountersAccum.IntervalType,
-        counterType: int,
-        owner_type: typing.Optional[int] = None,
+        counterType: types.stats.CounterType,
+        owner_type: typing.Optional[types.stats.CounterOwnerType] = None,
         owner_id: typing.Optional[int] = None,
         since: typing.Optional[typing.Union[datetime.datetime, int]] = None,
         points: typing.Optional[int] = None,
@@ -228,21 +232,21 @@ class StatsManager(metaclass=singleton.Singleton):
             yield last
             stamp += intervalType.seconds()
 
-    def cleanupCounters(self):
+    def perform_counters_maintenance(self):
         """
         Removes all counters previous to configured max keep time for stat information from database.
         """
-        self.__doCleanup(StatsCounters)
-        self.__doCleanup(StatsCountersAccum)
+        self._do_maintanance(StatsCounters)
+        self._do_maintanance(StatsCountersAccum)
 
-    def getEventFldFor(self, fld: str) -> str:
+    def get_event_field_for(self, fld: str) -> str:
         '''
         Get equivalency between "cool names" and field. Will raise "KeyError" if no equivalency
         '''
-        return REVERSE_FLDS_EQUIV[fld]
+        return _REVERSE_FLDS_EQUIV[fld]
 
     # Event stats
-    def addEvent(self, owner_type: int, owner_id: int, eventType: int, **kwargs):
+    def add_event(self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs):
         """
         Adds a new event stat to database.
 
@@ -270,7 +274,7 @@ class StatsManager(metaclass=singleton.Singleton):
             def getKwarg(fld: str) -> str:
                 val = kwargs.get(fld)
                 if val is None:
-                    for i in FLDS_EQUIV[fld]:
+                    for i in _FLDS_EQUIV[fld]:
                         val = kwargs.get(i)
                         if val is not None:
                             break
@@ -284,7 +288,7 @@ class StatsManager(metaclass=singleton.Singleton):
             StatsEvents.objects.create(
                 owner_type=owner_type,
                 owner_id=owner_id,
-                event_type=eventType,
+                event_type=event_type,
                 stamp=stamp,
                 fld1=fld1,
                 fld2=fld2,
@@ -296,10 +300,10 @@ class StatsManager(metaclass=singleton.Singleton):
             logger.exception('Exception handling event stats saving (maybe database is full?)')
         return False
 
-    def getEvents(
+    def enumerate_events(
         self,
-        ownerType: typing.Union[int, collections.abc.Iterable[int]],
-        eventType: typing.Union[int, collections.abc.Iterable[int]],
+        owner_type: typing.Union[types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]],
+        event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
         **kwargs
     ) -> 'models.QuerySet[StatsEvents]':
         """
@@ -316,23 +320,23 @@ class StatsManager(metaclass=singleton.Singleton):
 
             Iterator, containing (date, counter) each element
         """
-        return StatsEvents.get_stats(ownerType, eventType, **kwargs)
+        return StatsEvents.enumerate_stats(owner_type, event_type, **kwargs)
 
-    def tailEvents(
-        self, *, fromId: typing.Optional[str] = None, number: typing.Optional[int] = None
+    def tail_events(
+        self, *, starting_id: typing.Optional[str] = None, number: typing.Optional[int] = None
     ) -> 'models.QuerySet[StatsEvents]':
         # If number is not specified, we return five last events
         number = number or 5
-        if fromId:
-            return StatsEvents.objects.filter(id__gt=fromId).order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
+        if starting_id:
+            return StatsEvents.objects.filter(id__gt=starting_id).order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
         return StatsEvents.objects.order_by('-id')[:number]  # type: ignore  # Slicing is not supported by pylance right now
 
-    def cleanupEvents(self):
+    def perform_events_maintenancecleanupEvents(self):
         """
         Removes all events previous to configured max keep time for stat information from database.
         """
 
-        self.__doCleanup(StatsEvents)
+        self._do_maintanance(StatsEvents)
 
     def acummulate(self, max_days: int = 7):
         for interval in StatsCountersAccum.IntervalType:

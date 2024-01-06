@@ -94,9 +94,9 @@ class CountersPoolAssigned(StatsReport):
 
             hours = [0] * 24
 
-            for x in counters.getCounters(
+            for x in counters.enumerate_counters(
                 pool,
-                counters.CT_ASSIGNED,
+                counters.types.stats.CounterType.ASSIGNED,
                 since=start,
                 to=start + datetime.timedelta(days=1),
                 intervals=3600,

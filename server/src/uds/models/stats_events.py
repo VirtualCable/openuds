@@ -70,15 +70,13 @@ class StatsEvents(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def get_stats(
-        owner_type: typing.Union[int, collections.abc.Iterable[int]],
-        event_type: typing.Union[int, collections.abc.Iterable[int]],
+    def enumerate_stats(
+        owner_type: typing.Union[types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]],
+        event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
         **kwargs,
     ) -> 'models.QuerySet[StatsEvents]':
         """
         Returns a queryset with the average stats grouped by interval for owner_type and owner_id (optional)
-
-        Note: if someone cant get this more optimized, please, contribute it!
         """
         if isinstance(owner_type, int):
             owner_type = [owner_type]
@@ -120,15 +118,15 @@ class StatsEvents(models.Model):
         return self.fld1
 
     @property
-    def srcIp(self) -> str:
+    def src_ip(self) -> str:
         return self.fld2
 
     @property
-    def dstIp(self) -> str:
+    def dst_ip(self) -> str:
         return self.fld3
 
     @property
-    def uniqueId(self) -> str:
+    def unique_id(self) -> str:
         return self.fld4
 
     @property
@@ -162,7 +160,7 @@ class StatsEvents(models.Model):
 
         return sep.join(
             [
-                types.stats.EventOwner.from_int(self.owner_type).owner_name,
+                types.stats.EventOwnerType.from_int(self.owner_type).owner_name,
                 str(self.owner_id),
                 types.stats.EventType.from_int(self.event_type).event_name,
                 str(self.isostamp),

@@ -66,7 +66,7 @@ class EventType(enum.IntEnum):
         return self.name.capitalize().replace('_', ' ')
 
 
-class EventOwner(enum.IntEnum):
+class EventOwnerType(enum.IntEnum):
     PROVIDER = 0
     SERVICE = 1
     SERVICEPOOL = 2
@@ -74,11 +74,11 @@ class EventOwner(enum.IntEnum):
     OSMANAGER = 4
 
     @staticmethod
-    def from_int(value: int) -> 'EventOwner':
+    def from_int(value: int) -> 'EventOwnerType':
         try:
-            return EventOwner(value)
+            return EventOwnerType(value)
         except ValueError:
-            return EventOwner.PROVIDER
+            return EventOwnerType.PROVIDER
 
     @property
     def owner_name(self) -> str:
@@ -115,7 +115,7 @@ class CounterType(enum.IntEnum):
         return self.name.capitalize().replace('_', ' ')
 
 
-class CounterOwner(enum.IntEnum):
+class CounterOwnerType(enum.IntEnum):
     """
     Counter owner types
     """
@@ -126,11 +126,11 @@ class CounterOwner(enum.IntEnum):
     AUTHENTICATOR = 3
 
     @staticmethod
-    def from_int(value: int) -> 'CounterOwner':
+    def from_int(value: int) -> 'CounterOwnerType':
         try:
-            return CounterOwner(value)
+            return CounterOwnerType(value)
         except ValueError:
-            return CounterOwner.PROVIDER
+            return CounterOwnerType.PROVIDER
 
     @property
     def owner_name(self) -> str:

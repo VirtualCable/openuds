@@ -28,18 +28,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import collections.abc
 import datetime
+import typing
 
-from uds.core.util.stats import counters
 from uds import models
+from uds.core import types
+from uds.core.util.stats import counters
 
 
 def create_stats_counters(
-    owner_type: int,
+    owner_type: types.stats.CounterOwnerType,
     owner_id: int,
-    counter_type: int,
+    counter_type: types.stats.CounterType,
     since: datetime.datetime,
     to: datetime.datetime,
     number: typing.Optional[int] = None,
@@ -77,12 +78,12 @@ def create_stats_counters(
 
 def create_stats_interval_total(
     id: int,
-    counter_type: list[int],
+    counter_type: list[types.stats.CounterType],
     since: datetime.datetime,
     days: int,
     number_per_hour: int,
     value: typing.Union[int, collections.abc.Callable[[int, int], int]],
-    owner_type: int = counters.OT_SERVICEPOOL,
+    owner_type: int = counters.types.stats.CounterOwnerType.SERVICEPOOL,
 ) -> list[models.StatsCounters]:
     '''
     Creates a list of counters with the given type, counter_type, since and to, save it in the database

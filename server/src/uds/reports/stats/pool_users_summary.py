@@ -93,8 +93,8 @@ class UsageSummaryByUsersPool(StatsReport):
 
         items = (
             StatsManager.manager()
-            .getEvents(
-                events.types.stats.EventOwner.SERVICEPOOL,
+            .enumerate_events(
+                events.types.stats.EventOwnerType.SERVICEPOOL,
                 (events.types.stats.EventType.LOGIN, events.types.stats.EventType.LOGOUT),
                 owner_id=pool.id,
                 since=start,

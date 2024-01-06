@@ -55,9 +55,9 @@ class StatsCountersTest(UDSTestCase):
 
     def xtest_create_stats_counters_single(self) -> None:
         l = create_stats_counters(
-            counters.OT_AUTHENTICATOR,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
             0,
-            counters.CT_INUSE,
+            counters.types.stats.CounterType.INUSE,
             START_DATE,
             END_DATE_DAY,
             1
@@ -66,21 +66,21 @@ class StatsCountersTest(UDSTestCase):
         self.assertEqual(len(l), 1)
         # Now, test it is on DB. If not found, it will raise exception
         models.StatsCounters.objects.get(
-            owner_type=counters.OT_AUTHENTICATOR,
+            owner_type=counters.types.stats.CounterOwnerType.AUTHENTICATOR,
             owner_id=0,
-            counter_type=counters.CT_INUSE,
+            counter_type=counters.types.stats.CounterType.INUSE,
             stamp=int(START_DATE.timestamp()),
         )
 
         # Now test get_grouped
         res = list(models.StatsCounters.get_grouped(
-            counters.OT_AUTHENTICATOR,
-            counters.CT_INUSE,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
+            counters.types.stats.CounterType.INUSE,
         ))
         self.assertEqual(len(res), 1)
         res = list(models.StatsCounters.get_grouped(
-            counters.OT_AUTHENTICATOR,
-            counters.CT_INUSE,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
+            counters.types.stats.CounterType.INUSE,
             owner_id=0,
             since=START_DATE,
             to=END_DATE_DAY,
@@ -90,9 +90,9 @@ class StatsCountersTest(UDSTestCase):
     def test_create_stats_counters_multi(self) -> None:
         NUMBER = 100
         l = create_stats_counters(
-            counters.OT_AUTHENTICATOR,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
             0,
-            counters.CT_INUSE,
+            counters.types.stats.CounterType.INUSE,
             START_DATE,
             END_DATE_DAY,
             NUMBER
@@ -101,16 +101,16 @@ class StatsCountersTest(UDSTestCase):
         self.assertEqual(len(l), NUMBER)
         # Now, test it is on DB. If not found, it will raise exception
         models.StatsCounters.objects.get(
-            owner_type=counters.OT_AUTHENTICATOR,
+            owner_type=counters.types.stats.CounterOwnerType.AUTHENTICATOR,
             owner_id=0,
-            counter_type=counters.CT_INUSE,
+            counter_type=counters.types.stats.CounterType.INUSE,
             stamp=int(START_DATE.timestamp()),
         )
 
 
         res = list(models.StatsCounters.get_grouped(
-            counters.OT_AUTHENTICATOR,
-            counters.CT_INUSE,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
+            counters.types.stats.CounterType.INUSE,
             owner_id=0,
             since=START_DATE,
             to=END_DATE_DAY,
@@ -120,13 +120,13 @@ class StatsCountersTest(UDSTestCase):
 
         # Now test get_grouped
         res = list(models.StatsCounters.get_grouped(
-            counters.OT_AUTHENTICATOR,
-            counters.CT_INUSE,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
+            counters.types.stats.CounterType.INUSE,
         ))
         self.assertEqual(len(res), NUMBER)
         res = list(models.StatsCounters.get_grouped(
-            counters.OT_AUTHENTICATOR,
-            counters.CT_INUSE,
+            counters.types.stats.CounterOwnerType.AUTHENTICATOR,
+            counters.types.stats.CounterType.INUSE,
             owner_id=0,
             since=START_DATE,
             to=END_DATE_DAY,

@@ -38,7 +38,7 @@ import typing
 import collections.abc
 
 from uds import models
-import uds.core.types.permissions
+from uds.core import types
 from uds.core.util.model import sql_datetime
 
 from uds.core.util.model import processUuid
@@ -62,9 +62,9 @@ USE_MAX = True
 CACHE_TIME = SINCE * 24 * 3600 // POINTS
 
 
-def getServicesPoolsCounters(
+def get_servicepools_counters(
     servicePool: typing.Optional[models.ServicePool],
-    counter_type: int,
+    counter_type: types.stats.CounterType,
     since_days: int = SINCE,
 ) -> list[collections.abc.Mapping[str, typing.Any]]:
     try:
@@ -85,7 +85,7 @@ def getServicesPoolsCounters(
             else:
                 us = servicePool
             val: list[collections.abc.Mapping[str, typing.Any]] = []
-            for x in counters.getCounters(
+            for x in counters.enumerate_counters(
                 us,
                 counter_type,
                 since=since,
@@ -191,26 +191,26 @@ class System(Handler):
                 raise AccessDenied()
             # Check permission for pool..
             if not permissions.hasAccess(
-                self._user, typing.cast('Model', pool), uds.core.types.permissions.PermissionType.READ
+                self._user, typing.cast('Model', pool), types.permissions.PermissionType.READ
             ):
                 raise AccessDenied()
             if self._args[0] == 'stats':
                 if self._args[1] == 'assigned':
-                    return getServicesPoolsCounters(pool, counters.CT_ASSIGNED)
+                    return get_servicepools_counters(pool, counters.types.stats.CounterType.ASSIGNED)
                 elif self._args[1] == 'inuse':
-                    return getServicesPoolsCounters(pool, counters.CT_INUSE)
+                    return get_servicepools_counters(pool, counters.types.stats.CounterType.INUSE)
                 elif self._args[1] == 'cached':
-                    return getServicesPoolsCounters(pool, counters.CT_CACHED)
+                    return get_servicepools_counters(pool, counters.types.stats.CounterType.CACHED)
                 elif self._args[1] == 'complete':
                     return {
-                        'assigned': getServicesPoolsCounters(
-                            pool, counters.CT_ASSIGNED, since_days=7
+                        'assigned': get_servicepools_counters(
+                            pool, counters.types.stats.CounterType.ASSIGNED, since_days=7
                         ),
-                        'inuse': getServicesPoolsCounters(
-                            pool, counters.CT_INUSE, since_days=7
+                        'inuse': get_servicepools_counters(
+                            pool, counters.types.stats.CounterType.INUSE, since_days=7
                         ),
-                        'cached': getServicesPoolsCounters(
-                            pool, counters.CT_CACHED, since_days=7
+                        'cached': get_servicepools_counters(
+                            pool, counters.types.stats.CounterType.CACHED, since_days=7
                         ),
                     }
 
