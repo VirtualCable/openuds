@@ -452,7 +452,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
-            UserServiceManager().checkForRemoval(self)
+            UserServiceManager().check_for_removal(self)
 
     def startUsageAccounting(self) -> None:
         # 1.- If do not have any account associated, do nothing
@@ -514,7 +514,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         from uds.core.managers.user_service import UserServiceManager
 
         # Call to isReady of the instance
-        return UserServiceManager().isReady(self)
+        return UserServiceManager().is_ready(self)
 
     def isInMaintenance(self) -> bool:
         return self.deployed_service.is_in_maintenance()
@@ -565,7 +565,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.user_service import UserServiceManager
 
-        UserServiceManager().moveToLevel(self, cacheLevel)
+        UserServiceManager().move_to_level(self, cacheLevel)
 
     def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
         self.properties['comms_url'] = commsUrl

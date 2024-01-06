@@ -142,7 +142,7 @@ class Users(DetailHandler):
                 res['staff_member'] and (res['is_admin'] and _('Admin') or _('Staff member')) or _('User')
             )
             usr = aUser(u)
-            res['groups'] = [g.db_group().uuid for g in usr.groups()]
+            res['groups'] = [g.db_obj().uuid for g in usr.groups()]
             logger.debug('Item: %s', res)
             return res
         except Exception as e:

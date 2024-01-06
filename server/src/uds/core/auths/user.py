@@ -89,11 +89,11 @@ class User:
         if self._groups is None:
             if self._manager.isExternalSource:
                 self._manager.get_groups(self._db_user.name, self._groups_manager())
-                self._groups = list(self._groups_manager().getValidGroups())
+                self._groups = list(self._groups_manager().enumerate_valid_groups())
                 logger.debug(self._groups)
                 # This is just for updating "cached" data of this user, we only get real groups at login and at modify user operation
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
-                usr.groups.set((g.db_group().id for g in self._groups if g.db_group().is_meta is False))  # type: ignore
+                usr.groups.set((g.db_obj().id for g in self._groups if g.db_obj().is_meta is False))  # type: ignore
             else:
                 # From db
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
@@ -106,7 +106,7 @@ class User:
         """
         return self._manager
 
-    def db_user(self) -> 'DBUser':
+    def db_obj(self) -> 'DBUser':
         """
         Returns the database user
         """

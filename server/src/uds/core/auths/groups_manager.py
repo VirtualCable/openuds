@@ -107,11 +107,11 @@ class GroupsManager:
                     )
                 )
 
-    def _indexes_for_mached_groups(self, groupName: str) -> typing.Generator[int, None, None]:
+    def _indexes_for_mached_groups(self, group_name: str) -> typing.Generator[int, None, None]:
         """
         Returns true if this groups manager contains the specified group name (string)
         """
-        name = groupName.lower()
+        name = group_name.lower()
         for n, grp in enumerate(self._groups):
             if grp.is_pattern:
                 logger.debug('Group is a pattern: %s', grp)
@@ -125,17 +125,16 @@ class GroupsManager:
                 if grp.matches(name):  # If group name matches
                     yield n
 
-    def getGroupsNames(self) -> typing.Generator[str, None, None]:
+    def enumerate_groups_name(self) -> typing.Generator[str, None, None]:
         """
         Return all groups names managed by this groups manager. The names are returned
         as where inserted inside Database (most probably using administration interface)
         """
         for g in self._groups:
-            yield g.group.db_group().name
+            yield g.group.db_obj().name
 
-    def getValidGroups(self) -> typing.Generator['Group', None, None]:
-        """
-        returns the list of valid groups (:py:class:uds.core.auths.group.Group)
+    def enumerate_valid_groups(self) -> typing.Generator['Group', None, None]:
+        """Returns the list of valid groups for this groups manager.
         """
         from uds.models import \
             Group as DBGroup  # pylint: disable=import-outside-toplevel
@@ -143,7 +142,7 @@ class GroupsManager:
         valid_id_list: list[int] = []
         for group in self._groups:
             if group.is_valid:
-                valid_id_list.append(group.group.db_group().id)
+                valid_id_list.append(group.group.db_obj().id)
                 yield group.group
 
         # Now, get metagroups and also return them
@@ -161,48 +160,48 @@ class GroupsManager:
                 # This group matches
                 yield Group(db_group)
 
-    def hasValidGroups(self) -> bool:
+    def has_valid_groups(self) -> bool:
         """
         Checks if this groups manager has at least one group that has been
         validated (using :py:meth:.validate)
         """
         return any(g.is_valid for g in self._groups)
 
-    def getGroup(self, groupName: str) -> typing.Optional[Group]:
+    def get_group(self, group_name: str) -> typing.Optional[Group]:
         """
         If this groups manager contains that group manager, it returns the
         :py:class:uds.core.auths.group.Group  representing that group name.
         """
         for group in self._groups:
-            if group.matches(groupName):
+            if group.matches(group_name):
                 return group.group
 
         return None
 
-    def validate(self, groupName: typing.Union[str, collections.abc.Iterable[str]]) -> None:
-        """Validates that the group (or groups) groupName passed in is valid for this group manager.
+    def validate(self, group_name: typing.Union[str, collections.abc.Iterable[str]]) -> None:
+        """Validates that the group (or groups) group_name passed in is valid for this group manager.
 
         It check that the group specified is known by this group manager.
 
         Args:
-           groupName: string, list or tuple of values (strings) to check
+           group_name: string, list or tuple of values (strings) to check
 
         Returns nothing, it changes the groups this groups contains attributes,
         so they reflect the known groups that are considered valid.
         """
-        if not isinstance(groupName, str):
-            for name in groupName:
+        if not isinstance(group_name, str):
+            for name in group_name:
                 self.validate(name)
         else:
-            for index in self._indexes_for_mached_groups(groupName):
+            for index in self._indexes_for_mached_groups(group_name):
                 self._groups[index] = self._groups[index].replace(is_valid=True)
 
-    def isValid(self, groupName: str) -> bool:
+    def is_valid(self, group_name: str) -> bool:
         """
         Checks if this group name is marked as valid inside this groups manager.
         Returns True if group name is marked as valid, False if it isn't.
         """
-        for n in self._indexes_for_mached_groups(groupName):
+        for n in self._indexes_for_mached_groups(group_name):
             if self._groups[n].is_valid:
                 return True
         return False

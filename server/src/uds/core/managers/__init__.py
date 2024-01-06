@@ -45,29 +45,29 @@ if typing.TYPE_CHECKING:
     from .notifications import NotificationsManager
 
 
-def taskManager() -> 'TaskManager':
+def task_manager() -> 'TaskManager':
     from .task import TaskManager  # pylint: disable=import-outside-toplevel
 
     return TaskManager()
 
 
-def downloadsManager() -> 'DownloadsManager':
+def downloads_manager() -> 'DownloadsManager':
     from .downloads import DownloadsManager  # pylint: disable=import-outside-toplevel
 
     return DownloadsManager()
 
 
-def logManager() -> 'LogManager':
+def log_manager() -> 'LogManager':
     from .log import LogManager  # pylint: disable=import-outside-toplevel
 
     return LogManager()
 
-def publicationManager() -> 'PublicationManager':
+def publication_manager() -> 'PublicationManager':
     from .publication import PublicationManager  # pylint: disable=import-outside-toplevel
 
     return PublicationManager()
 
-def notificationsManager() -> 'NotificationsManager':
+def notifications_manager() -> 'NotificationsManager':
     from .notifications import NotificationsManager  # pylint: disable=import-outside-toplevel
 
     return NotificationsManager()

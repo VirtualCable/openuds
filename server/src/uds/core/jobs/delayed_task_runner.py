@@ -90,7 +90,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         DelayedTaskRunner._keep_running = True
         logger.debug("Initialized delayed task runner for host %s", DelayedTaskRunner._hostname)
 
-    def notifyTermination(self) -> None:
+    def request_stop(self) -> None:
         """
         Invoke this whenever you want to terminate the delayed task runner thread
         It will mark the thread to "stop" ASAP
@@ -148,7 +148,7 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         # Save "env" from delayed task, set it to None and restore it after save
         env = instance.env
         instance.env = None  # type: ignore   # clean env before saving pickle, save space (the env will be created again when executing)
-        instanceDump = codecs.encode(pickle.dumps(instance), 'base64').decode()
+        instance_dump = codecs.encode(pickle.dumps(instance), 'base64').decode()
         instance.env = env
 
         typeName = str(cls.__module__ + '.' + cls.__name__)
@@ -156,13 +156,13 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         logger.debug(
             'Inserting delayed task %s with %s bytes (%s)',
             typeName,
-            len(instanceDump),
+            len(instance_dump),
             exec_time,
         )
 
         DBDelayedTask.objects.create(
             type=typeName,
-            instance=instanceDump,  # @UndefinedVariable
+            instance=instance_dump,  # @UndefinedVariable
             insert_date=now,
             execution_delay=delay,
             execution_time=exec_time,

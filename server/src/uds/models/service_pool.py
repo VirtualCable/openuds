@@ -588,10 +588,10 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
         from uds.core.managers import (  # pylint: disable=import-outside-toplevel
-            publicationManager,
+            publication_manager,
         )
 
-        publicationManager().publish(self, changeLog)
+        publication_manager().publish(self, changeLog)
 
     def unpublish(self) -> None:
         """

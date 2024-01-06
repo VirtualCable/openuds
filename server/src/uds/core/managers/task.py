@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseThread(threading.Thread):
-    def notifyTermination(self):
+    def request_stop(self):
         raise NotImplementedError
 
 
@@ -54,7 +54,7 @@ class SchedulerThread(BaseThread):
     def run(self):
         Scheduler.scheduler().run()
 
-    def notifyTermination(self):
+    def request_stop(self):
         Scheduler.scheduler().notify_termination()
 
 
@@ -62,8 +62,8 @@ class DelayedTaskThread(BaseThread):
     def run(self):
         DelayedTaskRunner.runner().run()
 
-    def notifyTermination(self):
-        DelayedTaskRunner.runner().notifyTermination()
+    def request_stop(self):
+        DelayedTaskRunner.runner().request_stop()
 
 
 class TaskManager(metaclass=singleton.Singleton):
@@ -82,7 +82,7 @@ class TaskManager(metaclass=singleton.Singleton):
         return TaskManager()
 
     @staticmethod
-    def sigTerm(sigNum, frame):  # pylint: disable=unused-argument
+    def sig_term(sigNum, frame):  # pylint: disable=unused-argument
         """
         This method will ensure that we finish correctly current running task before exiting.
         If we need to stop cause something went wrong (that should not happen), we must send sigterm, wait a while (10-20 secs) and after that send sigkill
@@ -94,17 +94,17 @@ class TaskManager(metaclass=singleton.Singleton):
         logger.info("Caught term signal, finishing task manager")
         TaskManager.manager().keepRunning = False
 
-    def registerJob(self, jobType: type[jobs.Job]) -> None:
+    def register_job(self, jobType: type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
         jobs.factory().put(jobName, jobType)
 
-    def registerScheduledTasks(self) -> None:
+    def register_scheduled_tasks(self) -> None:
         logger.info("Registering sheduled tasks")
 
         # Simply import this to make workers "auto import themself"
         from uds.core import workers  # pylint: disable=unused-import, import-outside-toplevel
 
-    def addOtherTasks(self) -> None:
+    def add_other_tasks(self) -> None:
         logger.info("Registering other tasks")
 
         from uds.core.messaging.processor import MessageProcessorThread  # pylint: disable=import-outside-toplevel
@@ -122,7 +122,7 @@ class TaskManager(metaclass=singleton.Singleton):
         # Releases owned schedules so anyone can access them...
         Scheduler.release_own_schedules()
 
-        self.registerScheduledTasks()
+        self.register_scheduled_tasks()
 
         noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.getInt()
         noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
@@ -131,8 +131,8 @@ class TaskManager(metaclass=singleton.Singleton):
             'Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks
         )
 
-        signal.signal(signal.SIGTERM, TaskManager.sigTerm)
-        signal.signal(signal.SIGINT, TaskManager.sigTerm)
+        signal.signal(signal.SIGTERM, TaskManager.sig_term)
+        signal.signal(signal.SIGINT, TaskManager.sig_term)
 
         thread: BaseThread
         for _ in range(noSchedulers):
@@ -148,7 +148,7 @@ class TaskManager(metaclass=singleton.Singleton):
             time.sleep(0.5)  # Wait a bit before next delayed task runner is started
 
         # Add any other tasks (Such as message processor)
-        self.addOtherTasks()
+        self.add_other_tasks()
 
         # Debugging stuff
         # import guppy
@@ -160,6 +160,6 @@ class TaskManager(metaclass=singleton.Singleton):
             time.sleep(1)
 
         for thread in self.threads:
-            thread.notifyTermination()
+            thread.request_stop()
 
         # The join of threads will happen before termination, so its fine to just return here

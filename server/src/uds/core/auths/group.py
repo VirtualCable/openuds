@@ -65,7 +65,7 @@ class Group:
         """
         return self._manager
 
-    def db_group(self) -> 'DBGroup':
+    def db_obj(self) -> 'DBGroup':
         """
         Returns the database group associated with this
         """

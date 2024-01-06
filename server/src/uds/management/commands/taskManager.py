@@ -39,7 +39,7 @@ import logging
 from django.core.management.base import BaseCommand  # , CommandError
 from django.conf import settings
 
-from uds.core.managers import taskManager
+from uds.core.managers import task_manager
 from uds.core.util.config import GlobalConfig
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,7 @@ class Command(BaseCommand):
                 with open(getPidFile(), 'w+', encoding='utf8') as f:
                     f.write(f'{pid}\n')
 
-            manager = taskManager()
+            manager = task_manager()
             manager.run()
 
         if not start and not stop:

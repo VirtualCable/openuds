@@ -51,14 +51,14 @@ class DownloadsManagerTest(WEBTestCase):
 
     @classmethod
     def setUpClass(cls):
-        from uds.core.managers import downloadsManager
+        from uds.core.managers import downloads_manager
 
         super().setUpClass()
 
         cls.filePath = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'downloadable.txt'
         )
-        cls.manager = downloadsManager()
+        cls.manager = downloads_manager()
 
     def test_downloads(self):
         for v in (

@@ -41,7 +41,7 @@ import collections.abc
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core.managers.log.objects import LogObjectType
+from uds.core.types.log import LogObjectType
 from uds.core.ui import gui
 from uds.core.util import dateutils, log
 from uds.models import Log

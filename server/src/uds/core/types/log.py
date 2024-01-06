@@ -1,3 +1,4 @@
+import stat
 import typing
 import collections.abc
 import functools
@@ -33,9 +34,16 @@ class LogObjectType(enum.IntEnum):
         if self == LogObjectType.SYSLOG:
             return GlobalConfig.GENERAL_LOG_MAX_ELEMENTS.getInt()
         return GlobalConfig.INDIVIDIAL_LOG_MAX_ELEMENTS.getInt()
+    
+    @staticmethod
+    def get_type_from_model(model: 'Model') -> 'LogObjectType|None':
+        """
+        Returns the type of log object from the model
+        """
+        return _MODEL_TO_TYPE.get(type(model), None)
 
 # Dict for translations
-MODEL_TO_TYPE: collections.abc.Mapping[type['Model'], LogObjectType] = {
+_MODEL_TO_TYPE: typing.Final[collections.abc.Mapping[type['Model'], LogObjectType]] = {
     models.UserService: LogObjectType.USERSERVICE,
     models.ServicePoolPublication: LogObjectType.PUBLICATION,
     models.ServicePool: LogObjectType.SERVICEPOOL,

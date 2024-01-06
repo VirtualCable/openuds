@@ -145,13 +145,13 @@ class Client(Handler):
                 userServiceInstance,
                 transport,
                 transportInstance,
-            ) = UserServiceManager().getService(
+            ) = UserServiceManager().get_user_service_info(
                 self._request.user,
                 self._request.os,
                 self._request.ip,
                 data['service'],
                 data['transport'],
-                clientHostname=hostname,
+                client_hostname=hostname,
             )
             logger.debug(
                 'Res: %s %s %s %s %s',

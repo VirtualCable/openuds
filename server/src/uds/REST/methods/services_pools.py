@@ -668,7 +668,7 @@ class ServicesPools(ModelHandler):
             return self.invalidRequestException('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
-        UserServiceManager().createFromAssignable(
+        UserServiceManager().create_from_assignable(
             item,
             User.objects.get(uuid=processUuid(self._params['user_id'])),
             self._params['assignable_id'],

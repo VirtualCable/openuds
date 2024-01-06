@@ -222,7 +222,7 @@ class SampleAuth(auths.Authenticator):
         # two letters equals to the groups names known by UDS
         # For this, we will ask the groups manager for the groups names, and will check that and,
         # if the user match this criteria, will mark that group as valid
-        for g in groupsManager.getGroupsNames():
+        for g in groupsManager.enumerate_groups_name():
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 
@@ -239,7 +239,7 @@ class SampleAuth(auths.Authenticator):
 
         In our case, we simply repeat the process that we also do at authenticate
         """
-        for g in groupsManager.getGroupsNames():
+        for g in groupsManager.enumerate_groups_name():
             if len(set(g.lower()).intersection(username.lower())) >= 2:
                 groupsManager.validate(g)
 

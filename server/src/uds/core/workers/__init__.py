@@ -45,12 +45,12 @@ def initialize() -> None:
     it register all subclases of service provider as
     """
     from uds.core import jobs  # pylint: disable=import-outside-toplevel
-    from uds.core.managers import taskManager  # pylint: disable=import-outside-toplevel
+    from uds.core.managers import task_manager  # pylint: disable=import-outside-toplevel
 
     def registerer(cls: type[jobs.Job]) -> None:
         if cls.__module__.startswith('uds.core.workers'):
             logger.debug('Registering job: %s', cls.__module__)
-            taskManager().registerJob(cls)
+            task_manager().register_job(cls)
 
     modfinder.dynamicLoadAndRegisterPackages(
         registerer,

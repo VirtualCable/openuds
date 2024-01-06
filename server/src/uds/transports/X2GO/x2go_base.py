@@ -291,5 +291,5 @@ class BaseX2GOTransport(transports.Transport):
     def getAndPushKey(self, userName: str, userService: 'models.UserService') -> tuple[str, str]:
         priv, pub = self.genKeyPairForSsh()
         authScript = self.getAuthorizeScript(userName, pub)
-        UserServiceManager().sendScript(userService, authScript)
+        UserServiceManager().send_script(userService, authScript)
         return priv, pub

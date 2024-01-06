@@ -128,17 +128,17 @@ class ServiceCacheUpdater(Job):
             # to create new items over the limit stablisshed, so we will not remove them anymore
             inCacheL1: int = (
                 servicePool.cached_users_services()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
+                .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L1_CACHE))
                 .count()
             )
             inCacheL2: int = (
                 servicePool.cached_users_services()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
+                .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE))
                 .count()
             ) if spServiceInstance.usesCache_L2 else 0
             inAssigned: int = (
                 servicePool.assigned_user_services()
-                .filter(UserServiceManager().getStateFilter(servicePool.service))  # type: ignore
+                .filter(UserServiceManager().get_state_filter(servicePool.service))  # type: ignore
                 .count()
             )
             # if we bypasses max cache, we will reduce it in first place. This is so because this will free resources on service provider
@@ -170,7 +170,7 @@ class ServiceCacheUpdater(Job):
                 continue
 
             # If this service don't allows more starting user services, continue
-            if not UserServiceManager().canGrowServicePool(servicePool):
+            if not UserServiceManager().can_grow_service_pool(servicePool):
                 logger.debug(
                     'This pool cannot grow rithg now: %s',
                     servicePool,
@@ -219,7 +219,7 @@ class ServiceCacheUpdater(Job):
                     servicePool.cached_users_services()
                     .select_for_update()
                     .filter(
-                        UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE)
+                        UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE)
                     )
                     .order_by('creation_date')
                 ):
@@ -236,7 +236,7 @@ class ServiceCacheUpdater(Job):
                 return
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager().createCacheFor(
+            UserServiceManager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
                 services.UserService.L1_CACHE,
             )
@@ -272,7 +272,7 @@ class ServiceCacheUpdater(Job):
         logger.debug("Growing L2 cache creating a new service for %s", servicePool.name)
         try:
             # This has a velid publication, or it will not be here
-            UserServiceManager().createCacheFor(
+            UserServiceManager().create_cache_for(
                 typing.cast(ServicePoolPublication, servicePool.activePublication()),
                 services.UserService.L2_CACHE,
             )
@@ -297,7 +297,7 @@ class ServiceCacheUpdater(Job):
         cacheItems: list[UserService] = [
             i
             for i in servicePool.cached_users_services()
-            .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L1_CACHE))
+            .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L1_CACHE))
             .order_by('-creation_date')
             .iterator()
             if not i.destroy_after
@@ -338,7 +338,7 @@ class ServiceCacheUpdater(Job):
         if cacheL2 > 0:
             cacheItems = (
                 servicePool.cached_users_services()
-                .filter(UserServiceManager().getCacheStateFilter(servicePool, services.UserService.L2_CACHE))
+                .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE))
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?

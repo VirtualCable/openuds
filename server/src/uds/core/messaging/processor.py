@@ -37,18 +37,15 @@ import collections.abc
 from uds.core.managers.task import BaseThread
 
 from uds.models import Notifier, Notification
+from uds.core import consts
 from uds.core.util.model import sql_datetime
 from .provider import Notifier as NotificationProviderModule, LogLevel
 from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
 
-WAIT_TIME = 8  # seconds
-CACHE_TIMEOUT = 64  # seconds
-
-
 class MessageProcessorThread(BaseThread):
-    keepRunning: bool = True
+    _keep_running: bool = True
 
     _cached_providers: typing.Optional[
         list[tuple[int, NotificationProviderModule]]
@@ -67,7 +64,7 @@ class MessageProcessorThread(BaseThread):
         # we need to refresh it
         if (
             self._cached_providers is None
-            or time.time() - self._cached_stamp > CACHE_TIMEOUT
+            or time.time() - self._cached_stamp > consts.system.SHORT_CACHE_TIMEOUT
         ):
             self._cached_providers = [
                 (p.level, p.get_instance()) for p in Notifier.objects.filter(enabled=True)
@@ -76,10 +73,10 @@ class MessageProcessorThread(BaseThread):
         return self._cached_providers
 
     def run(self):
-        while self.keepRunning:
+        while self._keep_running:
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
-            sinceSkip = sql_datetime() - datetime.timedelta(
+            not_before = sql_datetime() - datetime.timedelta(
                 seconds=DO_NOT_REPEAT.getInt()
             )
             for n in Notification.getPersistentQuerySet().all():
@@ -90,7 +87,7 @@ class MessageProcessorThread(BaseThread):
                     group=n.group,
                     identificator=n.identificator,
                     message=n.message,
-                    stamp__gt=sinceSkip,
+                    stamp__gt=not_before,
                 ).exists():
                     # Remove it from the persistent db
                     n.deletePersistent()
@@ -127,7 +124,7 @@ class MessageProcessorThread(BaseThread):
                 if notify:
                     for p in (i[1] for i in self.providers if i[0] >= n.level):
                         # if we are asked to stop, we don't try to send anymore
-                        if not self.keepRunning:
+                        if not self._keep_running:
                             break
                         try:
                             p.notify(
@@ -145,10 +142,11 @@ class MessageProcessorThread(BaseThread):
                             )
                             continue
 
-            for _ in range(WAIT_TIME):
-                if not self.keepRunning:
+            # Wait a bit before next check
+            for _ in range(consts.system.DEFAULT_WAIT_TIME):
+                if not self._keep_running:
                     break
                 time.sleep(1)
 
-    def notifyTermination(self):
-        self.keepRunning = False
+    def request_stop(self):
+        self._keep_running = False

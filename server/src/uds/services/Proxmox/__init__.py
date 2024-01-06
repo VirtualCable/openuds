@@ -32,4 +32,4 @@ from .jobs import ProxmoxDeferredRemoval, ProxmoxVmidReleaser
 
 # Scheduled task to do clean processes
 for cls in (ProxmoxDeferredRemoval, ProxmoxVmidReleaser):
-    managers.taskManager().registerJob(cls)
+    managers.task_manager().register_job(cls)

@@ -35,7 +35,7 @@ from django.db.models import Count
 
 from uds.core.jobs import Job
 from uds import models
-from uds.core.managers.log import objects
+from uds.core.types import log
 
 # from uds.core.util.config import GlobalConfig
 
@@ -58,7 +58,7 @@ class LogMaintenance(Job):
         ):
             # First, ensure we do not have more than requested logs, and we can put one more log item
             try:
-                ownerType = objects.LogObjectType(owner_type)
+                ownerType = log.LogObjectType(owner_type)
             except ValueError:
                 # If we do not know the owner type, we will delete all logs for this owner
                 models.Log.objects.filter(owner_id=owner_id, owner_type=owner_type).delete()

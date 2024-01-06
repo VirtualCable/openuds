@@ -63,7 +63,7 @@ def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idT
 
     # For type checkers to "be happy"
     try:
-        res = UserServiceManager().getService(request.user, request.os, request.ip, idService, idTransport)
+        res = UserServiceManager().get_user_service_info(request.user, request.os, request.ip, idService, idTransport)
         ip, userService, iads, trans, itrans = res
         # This returns a response object in fact
         if itrans and ip:
@@ -154,10 +154,10 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
     userService: typing.Optional['UserService'] = None
     status = 'running'
     # If service exists (meta or not)
-    if UserServiceManager().isMetaService(idService):
+    if UserServiceManager().is_meta_service(idService):
         userService = UserServiceManager().locateMetaService(user=request.user, idService=idService)
     else:
-        userService = UserServiceManager().locateUserService(
+        userService = UserServiceManager().locate_user_service(
             user=request.user, idService=idService, create=False
         )
     if userService:
@@ -186,7 +186,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
 def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
     userService = UserServiceManager().locateMetaService(request.user, idService)
     if not userService:
-        userService = UserServiceManager().locateUserService(request.user, idService, create=False)
+        userService = UserServiceManager().locate_user_service(request.user, idService, create=False)
 
     response: typing.Any = None
     rebuild: bool = False
@@ -201,7 +201,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
                 ),
                 log.LogSource.WEB,
             )
-            UserServiceManager().requestLogoff(userService)
+            UserServiceManager().request_logoff(userService)
             userService.release()
         elif (
             actionString == 'reset'

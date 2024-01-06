@@ -143,17 +143,17 @@ def notify_preconnect(userService: 'UserService', info: types.connections.Connec
     )
 
 
-def checkUuid(userService: 'UserService') -> bool:
+def check_user_service_uuid(user_service: 'UserService') -> bool:
     """
     Checks if the uuid of the service is the same of our known uuid on DB
     """
     try:
-        uuid = _execute_actor_request(userService, 'uuid')
-        if uuid and uuid != userService.uuid:  # Empty UUID means "no check this, fixed pool machine"
+        uuid = _execute_actor_request(user_service, 'uuid')
+        if uuid and uuid != user_service.uuid:  # Empty UUID means "no check this, fixed pool machine"
             logger.info(
                 'Machine %s do not have expected uuid %s, instead has %s',
-                userService.friendly_name,
-                userService.uuid,
+                user_service.friendly_name,
+                user_service.uuid,
                 uuid,
             )
             return False
@@ -163,7 +163,7 @@ def checkUuid(userService: 'UserService') -> bool:
     return True  # Actor does not supports checking
 
 
-def requestScreenshot(userService: 'UserService') -> None:
+def request_screenshot(userService: 'UserService') -> None:
     """
     Requests an screenshot to an actor on an user service
     
@@ -184,7 +184,7 @@ def requestScreenshot(userService: 'UserService') -> None:
         pass # No actor comms, nothing to do
 
 
-def sendScript(userService: 'UserService', script: str, forUser: bool = False) -> None:
+def send_script(userService: 'UserService', script: str, forUser: bool = False) -> None:
     """
     If allowed, sends script to user service
     Note tha the script is a python script, so it can be executed directly by the actor
@@ -199,17 +199,17 @@ def sendScript(userService: 'UserService', script: str, forUser: bool = False) -
         pass
 
 
-def requestLogoff(userService: 'UserService') -> None:
+def request_logoff(user_service: 'UserService') -> None:
     """
     Ask client to logoff user
     """
     try:
-        _execute_actor_request(userService, 'logout', data={})
+        _execute_actor_request(user_service, 'logout', data={})
     except exceptions.actor.NoActorComms:
         pass
 
 
-def sendMessage(userService: 'UserService', message: str) -> None:
+def send_message(userService: 'UserService', message: str) -> None:
     """
     Sends an screen message to client
     """

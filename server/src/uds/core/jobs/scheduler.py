@@ -77,9 +77,9 @@ class JobThread(threading.Thread):
         except Exception:
             logger.warning("Exception executing job %s", self._db_job_id)
         finally:
-            self.jobDone()
+            self._job_finished()
 
-    def jobDone(self) -> None:
+    def _job_finished(self) -> None:
         """
         Invoked whenever a job is is finished (with or without exception)
         """

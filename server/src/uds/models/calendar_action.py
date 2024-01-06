@@ -356,7 +356,7 @@ class CalendarAction(UUIDModel):
         def clear_cache() -> None:
             # 4.- Remove all cache_l1_srvs
             for i in self.service_pool.cached_users_services().filter(
-                UserServiceManager().getCacheStateFilter(
+                UserServiceManager().get_cache_state_filter(
                     self.service_pool,
                     services.UserService.L1_CACHE
                     if self.action == CALENDAR_ACTION_CLEAN_CACHE_L1['id']

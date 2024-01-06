@@ -256,7 +256,7 @@ def ticket_auth(
         # Check if servicePool is part of the ticket
         if poolUuid:
             # Request service, with transport = None so it is automatic
-            res = UserServiceManager().getService(request.user, request.os, request.ip, poolUuid, None, False)
+            res = UserServiceManager().get_user_service_info(request.user, request.os, request.ip, poolUuid, None, False)
             _, userService, _, transport, _ = res
 
             transportInstance = transport.get_instance()

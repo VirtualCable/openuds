@@ -33,7 +33,7 @@ import typing
 import collections.abc
 
 from uds.core.auths.auth import web_login_required
-from uds.core.managers import downloadsManager
+from uds.core.managers import downloads_manager
 from .main import index
 
 # Not imported at runtime, just for type checking
@@ -54,4 +54,4 @@ def download(request: 'HttpRequest', idDownload: str) -> 'HttpResponse':
     if idDownload.strip() == '':
         return index(request)
 
-    return downloadsManager().send(request, idDownload)
+    return downloads_manager().send(request, idDownload)

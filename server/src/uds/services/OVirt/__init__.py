@@ -34,4 +34,4 @@ from .jobs import OVirtHouseKeeping, OVirtDeferredRemoval
 
 # Scheduled task to do clean processes
 for cls in (OVirtDeferredRemoval, OVirtHouseKeeping):
-    managers.taskManager().registerJob(cls)
+    managers.task_manager().register_job(cls)

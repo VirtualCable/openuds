@@ -116,7 +116,7 @@ class StateUpdater:
 
 
 class UpdateFromPreparing(StateUpdater):
-    def checkOsManagerRelated(self) -> str:
+    def check_os_manager_related(self) -> str:
         osManager = self.user_service_instance.osmanager()
 
         state = State.USABLE
@@ -164,7 +164,7 @@ class UpdateFromPreparing(StateUpdater):
         state = State.REMOVABLE
         if self.user_service.check_publication_validity():
             logger.debug('Publication is valid for %s', self.user_service.friendly_name)
-            state = self.checkOsManagerRelated()
+            state = self.check_os_manager_related()
 
         # Now notifies the service instance that we have finished processing
         if state != self.user_service.state:

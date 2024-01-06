@@ -103,7 +103,7 @@ class UserServiceRemover(Job):
                 break
             logger.debug('Checking removal of %s', removableUserService.name)
             try:
-                if manager.canRemoveServiceFromDeployedService(
+                if manager.can_remove_service_from_service_pool(
                     removableUserService.deployed_service
                 ):
                     manager.remove(removableUserService)

@@ -227,7 +227,7 @@ if sys.platform == 'win32':
         dbService = self.db_obj()
         if dbService:
             try:
-                UserServiceManager().sendScript(dbService, script)
+                UserServiceManager().send_script(dbService, script)
             except Exception as e:
                 logger.info('Exception sending loggin to %s: %s', dbService, e)
 

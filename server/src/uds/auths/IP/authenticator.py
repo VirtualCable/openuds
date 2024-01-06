@@ -92,7 +92,7 @@ class IPAuth(auths.Authenticator):
     def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
         # these groups are a bit special. They are in fact ip-ranges, and we must check that the ip is in betwen
         # The ranges are stored in group names
-        for g in groupsManager.getGroupsNames():
+        for g in groupsManager.enumerate_groups_name():
             try:
                 if net.contains(g, username):
                     groupsManager.validate(g)
@@ -132,7 +132,7 @@ class IPAuth(auths.Authenticator):
         # In fact, username does not matter, will get IP from request
         username = self.getIp(request)  # Override provided username and use source IP
         self.get_groups(username, groupsManager)
-        if groupsManager.hasValidGroups() and self.db_obj().is_user_allowed(
+        if groupsManager.has_valid_groups() and self.db_obj().is_user_allowed(
             username, True
         ):
             return types.auth.SUCCESS_AUTH
@@ -152,7 +152,7 @@ class IPAuth(auths.Authenticator):
         gm = auths.GroupsManager(self.db_obj())
         self.get_groups(ip, gm)
 
-        if gm.hasValidGroups() and self.db_obj().is_user_allowed(ip, True):
+        if gm.has_valid_groups() and self.db_obj().is_user_allowed(ip, True):
             return ('function setVal(element, value) {{\n'  # nosec: no user input, password is always EMPTY
                     '    document.getElementById(element).value = value;\n'
                     '}}\n'

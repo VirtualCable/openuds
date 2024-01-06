@@ -37,7 +37,7 @@ import collections.abc
 
 from django.db import models
 
-from uds.core.managers import publicationManager
+from uds.core.managers import publication_manager
 from uds.core.util.state import State
 from uds.core.environment import Environment
 from uds.core.util import log
@@ -190,14 +190,14 @@ class ServicePoolPublication(UUIDModel):
         No check is done, it simply redirects the request to PublicationManager, where checks are done.
         """
 
-        publicationManager().unpublish(self)
+        publication_manager().unpublish(self)
 
     def cancel(self):
         """
         Invoques the cancelation of this publication
         """
 
-        publicationManager().cancel(self)
+        publication_manager().cancel(self)
 
     @staticmethod
     def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument

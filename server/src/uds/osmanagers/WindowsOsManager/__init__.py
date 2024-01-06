@@ -45,7 +45,7 @@ from .windows import WindowsOsManager
 from .windows_domain import WinDomainOsManager
 from .windows_random import WinRandomPassManager
 
-managers.downloadsManager().register(
+managers.downloads_manager().register(
     f'UDSActorSetup-{VERSION}.exe',
     _('UDS Actor for windows machines'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))
@@ -53,7 +53,7 @@ managers.downloadsManager().register(
     'application/vnd.microsoft.portable-executable',
 )
 
-managers.downloadsManager().register(
+managers.downloads_manager().register(
     f'UDSActorUnmanagedSetup-{VERSION}.exe',
     _('UDS Actor for Unmanaged windows machines. Used ONLY for static machines.'),
     os.path.dirname(typing.cast(str, sys.modules[__package__].__file__))

@@ -444,8 +444,8 @@ def enableService(
     # If meta service, process and rebuild idService & idTransport
 
     try:
-        res = UserServiceManager().getService(
-            request.user, request.os, request.ip, idService, idTransport, doTest=False
+        res = UserServiceManager().get_user_service_info(
+            request.user, request.os, request.ip, idService, idTransport, validate_with_test=False
         )
         scrambler = CryptoManager().random_string(32)
         password = CryptoManager().symmetric_encrypt(web_password(request), scrambler)

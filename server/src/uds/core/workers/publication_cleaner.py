@@ -34,7 +34,7 @@ import logging
 import typing
 import collections.abc
 
-from uds.core.managers import publicationManager
+from uds.core.managers import publication_manager
 from uds.core.util.config import GlobalConfig
 from uds.models import ServicePoolPublication
 from uds.core.util.model import sql_datetime
@@ -77,6 +77,6 @@ class PublicationCleaner(Job):
         )
         for removable in removables:
             try:
-                publicationManager().unpublish(removable)
+                publication_manager().unpublish(removable)
             except PublishException:  # Can say that it cant be removed right now
                 logger.debug('Delaying removal')

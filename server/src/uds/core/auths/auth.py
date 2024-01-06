@@ -322,7 +322,7 @@ def authenticate(
     logger.debug('Groups manager: %s', gm)
 
     # If do not have any valid group
-    if gm.hasValidGroups() is False:
+    if gm.has_valid_groups() is False:
         logger.info(
             'User %s has been authenticated, but he does not belongs to any UDS known group',
             username,
@@ -364,7 +364,7 @@ def authenticate_via_callback(
 
     result = authInstance.auth_callback(params, gm, request)
     if result.success == types.auth.AuthenticationState.FAIL or (
-        result.success == types.auth.AuthenticationState.SUCCESS and not gm.hasValidGroups()
+        result.success == types.auth.AuthenticationState.SUCCESS and not gm.has_valid_groups()
     ):
         raise exceptions.auth.InvalidUserException('User doesn\'t has access to UDS')
 

@@ -39,7 +39,7 @@ from uds.core.util.model import sql_datetime
 from uds.models.log import Log
 # from uds.core.workers.log
 
-from .objects import MODEL_TO_TYPE, LogObjectType
+from uds.core.types.log import LogObjectType
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -92,7 +92,7 @@ class LogManager(metaclass=singleton.Singleton):
             # Some objects will not get logged, such as System administrator objects, but this is fine
             pass
 
-    def _getLogs(
+    def _get_logs(
         self, owner_type: LogObjectType, owner_id: int, limit: int
     ) -> list[dict]:
         """
@@ -112,7 +112,7 @@ class LogManager(metaclass=singleton.Singleton):
 
     def log(
         self,
-        whichObject: typing.Optional['Model'],
+        db_object: typing.Optional['Model'],
         level: int,
         message: str,
         source: str,
@@ -124,11 +124,11 @@ class LogManager(metaclass=singleton.Singleton):
         If the object provided do not accepts associated loggin, it simply ignores the request
         """
         owner_type = (
-            MODEL_TO_TYPE.get(type(whichObject), None)
-            if whichObject
+            LogObjectType.get_type_from_model(db_object)
+            if db_object
             else LogObjectType.SYSLOG
         )
-        objectId = getattr(whichObject, 'id', -1)
+        objectId = getattr(db_object, 'id', -1)
         logName = logName or ''
 
         if owner_type is not None:
@@ -137,31 +137,31 @@ class LogManager(metaclass=singleton.Singleton):
                     owner_type, objectId, level, message, source, logName
                 )
             except Exception as e:
-                logger.error('Error logging %s.%s-%s %s: %s (%s)', whichObject.__class__, objectId, source, level, message, e)
+                logger.error('Error logging %s.%s-%s %s: %s (%s)', db_object.__class__, objectId, source, level, message, e)
 
     def get_logs(
-        self, wichObject: typing.Optional['Model'], limit: int = -1
+        self, db_object: typing.Optional['Model'], limit: int = -1
     ) -> list[dict]:
         """
         Get the logs associated with "wichObject", limiting to "limit" (default is GlobalConfig.MAX_LOGS_PER_ELEMENT)
         """
 
         owner_type = (
-            MODEL_TO_TYPE.get(type(wichObject), None)
-            if wichObject
+            LogObjectType.get_type_from_model(db_object)
+            if db_object
             else LogObjectType.SYSLOG
         )
 
         if owner_type is not None:  # 0 is valid owner type, so we must check for None
-            return self._getLogs(
+            return self._get_logs(
                 owner_type,
-                getattr(wichObject, 'id', -1),
+                getattr(db_object, 'id', -1),
                 limit if limit != -1 else owner_type.get_max_elements(),
             )
 
         return []
 
-    def clear_logs(self, wichObject: typing.Optional['Model']):
+    def clear_logs(self, db_object: typing.Optional['Model']):
         """
         Clears all logs related to wichObject
 
@@ -169,12 +169,12 @@ class LogManager(metaclass=singleton.Singleton):
         """
 
         owner_type = (
-            MODEL_TO_TYPE.get(type(wichObject), None)
-            if wichObject
+            LogObjectType.get_type_from_model(db_object)
+            if db_object
             else LogObjectType.SYSLOG
         )
         if owner_type:
-            self._clear_logs(owner_type, getattr(wichObject, 'id', -1))
+            self._clear_logs(owner_type, getattr(db_object, 'id', -1))
         #else:
             # logger.debug(
             #    'Requested clearLogs for a type of object not covered: %s: %s',
