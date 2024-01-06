@@ -102,8 +102,8 @@ class UsageByPool(StatsReport):
             items = (
                 StatsManager.manager()
                 .getEvents(
-                    stats.events.OT_SERVICEPOOL,
-                    (stats.events.ET_LOGIN, stats.events.ET_LOGOUT),
+                    stats.events.types.stats.EventOwner.SERVICEPOOL,
+                    (stats.events.types.stats.EventType.LOGIN, stats.events.types.stats.EventType.LOGOUT),
                     owner_id=pool.id,
                     since=start,
                     to=end,
@@ -116,7 +116,7 @@ class UsageByPool(StatsReport):
                 # if '\\' in i.fld1:
                 #    continue
 
-                if i.event_type == stats.events.ET_LOGIN:
+                if i.event_type == stats.events.types.stats.EventType.LOGIN:
                     logins[i.fld4] = i.stamp
                 else:
                     if i.fld4 in logins:

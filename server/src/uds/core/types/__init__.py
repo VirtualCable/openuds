@@ -33,7 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 # pylint: disable=unused-import
 from . import auth
 from . import connections
-from . import events
+from . import stats
 from . import os
 from . import permissions
 from . import pools

@@ -252,12 +252,12 @@ class StatsFS(types.UDSFSInterface):
             size,
         )
         # Get stats events from last 24 hours (in UTC) stamp is unix timestamp
-        virtualFile = models.StatsEvents.getCSVHeader().encode() + b'\n'
+        virtualFile = models.StatsEvents.get_csv_header().encode() + b'\n'
         # stamp is unix timestamp
         for record in models.StatsEvents.objects.filter(
             stamp__gte=interval.start_timestamp, stamp__lte=interval.end_timestamp
         ):
-            virtualFile += record.toCsv().encode() + b'\n'
+            virtualFile += record.as_csv().encode() + b'\n'
 
         return virtualFile
 

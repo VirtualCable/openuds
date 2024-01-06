@@ -37,6 +37,8 @@ import collections.abc
 
 from django.db import models
 
+from uds.core import types
+
 logger = logging.getLogger(__name__)
 
 
@@ -139,7 +141,7 @@ class StatsEvents(models.Model):
 
     # returns CSV header
     @staticmethod
-    def getCSVHeader(
+    def get_csv_header(
         sep: str = '',
     ) -> str:
         return sep.join(
@@ -156,14 +158,13 @@ class StatsEvents(models.Model):
         )
 
     # Return record as csv line using separator (default: ',')
-    def toCsv(self, sep: str = ',') -> str:
-        from uds.core.util.stats.events import EVENT_NAMES, TYPES_NAMES  # pylint: disable=import-outside-toplevel
+    def as_csv(self, sep: str = ',') -> str:
 
         return sep.join(
             [
-                TYPES_NAMES.get(self.owner_type, '?'),
+                types.stats.EventOwner.from_int(self.owner_type).owner_name,
                 str(self.owner_id),
-                EVENT_NAMES.get(self.event_type, '?'),
+                types.stats.EventType.from_int(self.event_type).event_name,
                 str(self.isostamp),
                 self.fld1,
                 self.fld2,

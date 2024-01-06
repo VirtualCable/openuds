@@ -450,9 +450,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 user,
                 cache,
             )
-            events.addEvent(
+            events.add_event(
                 servicePool,
-                events.ET_CACHE_HIT,
+                types.stats.EventType.CACHE_HIT,
                 fld1=servicePool.cached_users_services()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.USABLE)
                 .count(),
@@ -493,9 +493,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 user,
                 cache,
             )
-            events.addEvent(
+            events.add_event(
                 servicePool,
-                events.ET_CACHE_MISS,
+                events.types.stats.EventType.CACHE_MISS,
                 fld1=servicePool.cached_users_services()
                 .filter(cache_level=services.UserService.L1_CACHE, state=State.PREPARING)
                 .count(),
@@ -520,7 +520,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 raise MaxServicesReachedError()
 
         # Can create new service, create it
-        events.addEvent(servicePool, events.ET_CACHE_MISS, fld1=0)
+        events.add_event(servicePool, events.types.stats.EventType.CACHE_MISS, fld1=0)
         return self.createAssignedFor(servicePool, user)
 
     def getUserServicesInStatesForProvider(self, provider: 'models.Provider', states: list[str]) -> int:
@@ -808,9 +808,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 )
                 logger.debug('UUID check failed for user service %s', userService)
             else:
-                events.addEvent(
+                events.add_event(
                     userService.deployed_service,
-                    events.ET_ACCESS,
+                    events.types.stats.EventType.ACCESS,
                     username=userName,
                     srcip=srcIp,
                     dstip=ip,

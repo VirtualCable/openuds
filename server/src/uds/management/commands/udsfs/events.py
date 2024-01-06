@@ -39,7 +39,8 @@ import logging
 from django.db.models import QuerySet
 
 from uds.models import StatsEvents
-from uds.core.util.stats.events import EVENT_NAMES, getOwner
+from uds.core.util.stats.events import get_owner
+from uds.core.types import stats as events_types
 
 from . import types
 
@@ -53,10 +54,10 @@ def pretty_print(event: StatsEvents) -> str:
     # convert unix timestamp to human readable
     dt = datetime.datetime.fromtimestamp(event.stamp)
     # Get owner, if it already exists
-    owner = getOwner(event.owner_type, event.owner_id)
+    owner = get_owner(events_types.EventOwner.from_int(event.owner_type), event.owner_id)
     name = getattr(owner, 'name', '') if hasattr(owner, 'name') else '[*Deleted*]'
     # Get event name
-    event_name = EVENT_NAMES[event.event_type]
+    event_name = events_types.EventType.from_int(event.event_type).event_name
     # Get event description
     return f'{dt} - {event_name} {name} - {event.fld1}|{event.fld2}|{event.fld3}|{event.fld3}'
 

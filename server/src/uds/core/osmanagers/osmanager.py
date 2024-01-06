@@ -38,7 +38,7 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import types
 from uds.core.util.state import State
-from uds.core.util.stats.events import addEvent, ET_LOGIN, ET_LOGOUT
+from uds.core.util.stats.events import add_event
 from uds.core.util import log
 from uds.core.util.config import GlobalConfig
 from uds.core.module import Module
@@ -250,9 +250,9 @@ class OSManager(Module):
 
         userName = userName or 'unknown'
 
-        addEvent(
+        add_event(
             userService.deployed_service,
-            ET_LOGIN,
+            types.stats.EventType.LOGIN,
             fld1=userName,
             fld2=knownUserIP,
             fld3=serviceIp,
@@ -314,9 +314,9 @@ class OSManager(Module):
 
         userName = userName or 'unknown'
 
-        addEvent(
+        add_event(
             userService.deployed_service,
-            ET_LOGOUT,
+            types.stats.EventType.LOGOUT,
             fld1=userName,
             fld2=knownUserIP,
             fld3=serviceIp,

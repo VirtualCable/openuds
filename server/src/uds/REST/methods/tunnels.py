@@ -93,7 +93,7 @@ class TunnelTicket(Handler):
 
         # Try to get ticket from DB
         try:
-            user, userService, host, port, extra = models.TicketStore.get_for_tunnel(
+            user, user_service, host, port, extra = models.TicketStore.get_for_tunnel(
                 self._args[0]
             )
             host = host or ''
@@ -106,14 +106,14 @@ class TunnelTicket(Handler):
                 totalTime = now - extra.get('b', now - 1)
                 msg = f'User {user.name} stopped tunnel {extra.get("t", "")[:8]}... to {host}:{port}: u:{sent}/d:{recv}/t:{totalTime}.'
                 log.log(user.manager, log.LogLevel.INFO, msg)
-                log.log(userService, log.LogLevel.INFO, msg)
+                log.log(user_service, log.LogLevel.INFO, msg)
 
                 # Try to log Close event
                 try:
                     # If pool does not exists, do not log anything
-                    events.addEvent(
-                        userService.deployed_service,
-                        events.ET_TUNNEL_CLOSE,
+                    events.add_event(
+                        user_service.deployed_service,
+                        events.types.stats.EventType.TUNNEL_CLOSE,
                         duration=totalTime,
                         sent=sent,
                         received=recv,
@@ -125,9 +125,9 @@ class TunnelTicket(Handler):
             else:
                 if net.ip_to_long(self._args[1][:32]).version == 0:
                     raise Exception('Invalid from IP')
-                events.addEvent(
-                    userService.deployed_service,
-                    events.ET_TUNNEL_OPEN,
+                events.add_event(
+                    user_service.deployed_service,
+                    events.types.stats.EventType.TUNNEL_OPEN,
                     username=user.pretty_name,
                     srcip=self._args[1],
                     dstip=host,
@@ -135,10 +135,10 @@ class TunnelTicket(Handler):
                 )
                 msg = f'User {user.name} started tunnel {self._args[0][:8]}... to {host}:{port} from {self._args[1]}.'
                 log.log(user.manager, log.LogLevel.INFO, msg)
-                log.log(userService, log.LogLevel.INFO, msg)
+                log.log(user_service, log.LogLevel.INFO, msg)
                 # Generate new, notify only, ticket
                 notifyTicket = models.TicketStore.create_for_tunnel(
-                    userService=userService,
+                    userService=user_service,
                     port=port,
                     host=host,
                     extra={

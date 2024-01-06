@@ -93,9 +93,9 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
                 log.log(user.manager, log.LogLevel.INFO, msg)
                 log.log(userService, log.LogLevel.INFO, msg)
 
-                events.addEvent(
+                events.add_event(
                     userService.deployed_service,
-                    events.ET_TUNNEL_OPEN,
+                    events.types.stats.EventType.TUNNEL_OPEN,
                     username=user.pretty_name,
                     source='HTML5-' + protocol,  # On HTML5, currently src is not provided by Guacamole
                     dstip=host,

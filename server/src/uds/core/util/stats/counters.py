@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import enum
 import datetime
 import logging
 import typing
@@ -49,9 +50,8 @@ from uds.core.consts import NEVER
 
 logger = logging.getLogger(__name__)
 
-CounterClass = typing.TypeVar(
-    'CounterClass', Provider, Service, ServicePool, Authenticator
-)
+CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Authenticator)
+
 
 # Posible counters, note that not all are used by every posible type
 # FIRST_COUNTER_TYPE, LAST_COUNTER_TYPE are just a placeholder for sanity checks
@@ -89,9 +89,7 @@ def _get_P_S_DS_Ids(provider) -> tuple:
     return res
 
 
-idRetriever: collections.abc.Mapping[
-    type[Model], collections.abc.Mapping[int, collections.abc.Callable]
-] = {
+idRetriever: collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable]] = {
     Provider: {
         CT_LOAD: _get_Id,
         CT_STORAGE: _get_P_S_Ids,
@@ -167,9 +165,7 @@ def addCounter(
         )
         return False
 
-    return StatsManager.manager().addCounter(
-        objectTypes[type(obj)], obj.id, counterType, counterValue, stamp
-    )
+    return StatsManager.manager().addCounter(objectTypes[type(obj)], obj.id, counterType, counterValue, stamp)
 
 
 def getCounters(

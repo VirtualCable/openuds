@@ -94,8 +94,8 @@ class UsageSummaryByUsersPool(StatsReport):
         items = (
             StatsManager.manager()
             .getEvents(
-                events.OT_SERVICEPOOL,
-                (events.ET_LOGIN, events.ET_LOGOUT),
+                events.types.stats.EventOwner.SERVICEPOOL,
+                (events.types.stats.EventType.LOGIN, events.types.stats.EventType.LOGOUT),
                 owner_id=pool.id,
                 since=start,
                 to=end,
@@ -109,7 +109,7 @@ class UsageSummaryByUsersPool(StatsReport):
             # if '\\' in i.fld1:
             #    continue
             username = i.fld4
-            if i.event_type == events.ET_LOGIN:
+            if i.event_type == events.types.stats.EventType.LOGIN:
                 logins[username] = i.stamp
             else:
                 if username in logins:

@@ -254,12 +254,12 @@ def register_user(
         # Now we update database groups for this user
         usr.getManager().recreate_groups(usr)
         # And add an login event
-        events.addEvent(
-            authenticator, events.ET_LOGIN, username=username, srcip=request.ip
+        events.add_event(
+            authenticator, events.types.stats.EventType.LOGIN, username=username, srcip=request.ip
         )
-        events.addEvent(
+        events.add_event(
             authenticator,
-            events.ET_PLATFORM,
+            events.types.stats.EventType.PLATFORM,
             platform=request.os.os.name,
             browser=request.os.browser,
             version=request.os.version,
@@ -494,9 +494,9 @@ def web_logout(
                 exit_url = logout.url or exit_url
             if request.user.id != ROOT_ID:
                 # Log the event if not root user
-                events.addEvent(
+                events.add_event(
                     request.user.manager,
-                    events.ET_LOGOUT,
+                    events.types.stats.EventType.LOGOUT,
                     username=request.user.name,
                     srcip=request.ip,
                 )

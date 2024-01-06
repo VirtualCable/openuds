@@ -123,8 +123,8 @@ class StatsReportLogin(StatsReport):
             val = (
                 StatsManager.manager()
                 .getEvents(
-                    stats.events.OT_AUTHENTICATOR,
-                    stats.events.ET_LOGIN,
+                    stats.events.types.stats.EventOwner.AUTHENTICATOR,
+                    stats.events.types.stats.EventType.LOGIN,
                     since=interval[0],
                     to=interval[1],
                 )
@@ -150,7 +150,7 @@ class StatsReportLogin(StatsReport):
         dataHour = [0] * 24
         dataWeekHour = [[0] * 24 for _ in range(7)]
         for val in StatsManager.manager().getEvents(
-            stats.events.OT_AUTHENTICATOR, stats.events.ET_LOGIN, since=start, to=end
+            stats.events.types.stats.EventOwner.AUTHENTICATOR, stats.events.types.stats.EventType.LOGIN, since=start, to=end
         ):
             s = datetime.datetime.fromtimestamp(val.stamp)
             dataWeek[s.weekday()] += 1
