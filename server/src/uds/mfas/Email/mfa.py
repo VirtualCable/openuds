@@ -52,10 +52,10 @@ logger = logging.getLogger(__name__)
 
 
 class EmailMFA(mfas.MFA):
-    typeName = _('Email Multi Factor')
-    typeType = 'emailMFA'
-    typeDescription = _('Email Multi Factor Authenticator')
-    iconFile = 'mail.png'
+    type_name = _('Email Multi Factor')
+    type_type = 'emailMFA'
+    type_description = _('Email Multi Factor Authenticator')
+    icon_file = 'mail.png'
 
     hostname = gui.TextField(
         length=128,

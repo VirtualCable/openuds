@@ -82,10 +82,10 @@ class Transport(Module):
     """
 
     # Transport informational related data, inherited from BaseModule
-    typeName = 'Base Transport Manager'
-    typeType = 'Base Transport'
-    typeDescription = 'Base Transport'
-    iconFile = 'transport.png'
+    type_name = 'Base Transport Manager'
+    type_type = 'Base Transport'
+    type_description = 'Base Transport'
+    icon_file = 'transport.png'
     # Supported names for OS (used right now, but lots of more names for sure)
     # Windows
     # Macintosh
@@ -335,4 +335,4 @@ class Transport(Module):
         return 'https://www.udsenterprise.com'
 
     def __str__(self):
-        return f'Transport {self.typeName} ({self.typeDescription})'
+        return f'Transport {self.type_name} ({self.type_description})'

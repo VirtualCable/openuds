@@ -58,11 +58,11 @@ class RDPTransport(BaseRDPTransport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
 
-    isBase = False
+    is_base = False
 
-    typeName = _('RDP')
-    typeType = 'RDPTransport'
-    typeDescription = _('RDP Protocol. Direct connection.')
+    type_name = _('RDP')
+    type_type = 'RDPTransport'
+    type_description = _('RDP Protocol. Direct connection.')
 
     useEmptyCreds = BaseRDPTransport.useEmptyCreds
     fixedName = BaseRDPTransport.fixedName

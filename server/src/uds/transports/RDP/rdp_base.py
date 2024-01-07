@@ -54,9 +54,9 @@ class BaseRDPTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = True
+    is_base = True
 
-    iconFile = 'rdp.png'
+    icon_file = 'rdp.png'
     protocol = transports.protocols.RDP
 
     useEmptyCreds = gui.CheckBoxField(

@@ -53,10 +53,10 @@ class TestServiceNoCache(services.Service):
     """
     Basic testing service without cache and no publication OFC
     """
-    typeName = _('Testing Service no cache')
-    typeType = 'TestService1'
-    typeDescription = _('Testing (and dummy) service with no cache')
-    iconFile = 'service.png'
+    type_name = _('Testing Service no cache')
+    type_type = 'TestService1'
+    type_description = _('Testing (and dummy) service with no cache')
+    icon_file = 'service.png'
 
     # Functional related data
 
@@ -76,7 +76,7 @@ class TestServiceNoCache(services.Service):
         return typing.cast('TestProvider', super().parent())
 
     def getName(self) -> str:
-        return self.parent().getName() + '{' + self.typeName + '}'
+        return self.parent().getName() + '{' + self.type_name + '}'
 
     def getBaseName(self) -> str:
         return self.parent().getName()
@@ -86,10 +86,10 @@ class TestServiceCache(services.Service):
     A simple testging service WITH cache and publication OFC
     """
 
-    typeName = _('Testing Service WITH cache')
-    typeType = 'TestService2'
-    typeDescription = _('Testing (and dummy) service with CACHE and PUBLICATION')
-    iconFile = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
+    type_name = _('Testing Service WITH cache')
+    type_type = 'TestService2'
+    type_description = _('Testing (and dummy) service with CACHE and PUBLICATION')
+    icon_file = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
     # Functional related data
     maxUserServices = 1000  # A big number for testing
@@ -112,7 +112,7 @@ class TestServiceCache(services.Service):
         return typing.cast('TestProvider', super().parent())
 
     def getName(self) -> str:
-        return self.parent().getName() + '{' + self.typeName + '}'
+        return self.parent().getName() + '{' + self.type_name + '}'
 
     def getBaseName(self) -> str:
         return self.parent().getName()

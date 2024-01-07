@@ -62,15 +62,15 @@ class TestProvider(services.ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('Testing Provider')
+    type_name = _('Testing Provider')
     # : Type used internally to identify this provider
-    typeType = 'TestProvider'
+    type_type = 'TestProvider'
     # : Description shown at administration interface for this provider
-    typeDescription = _('Test (and dummy) service provider')
+    type_description = _('Test (and dummy) service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # Max preparing concurrent services
     maxPreparingServices = 1000 # a lot, this in fact will not make anything

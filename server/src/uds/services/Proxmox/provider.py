@@ -59,10 +59,10 @@ class ProxmoxProvider(
     services.ServiceProvider
 ):  # pylint: disable=too-many-public-methods
     offers = [ProxmoxLinkedService]
-    typeName = _('Proxmox Platform Provider')
-    typeType = 'ProxmoxPlatform'
-    typeDescription = _('Proxmox platform service provider')
-    iconFile = 'provider.png'
+    type_name = _('Proxmox Platform Provider')
+    type_type = 'ProxmoxPlatform'
+    type_description = _('Proxmox platform service provider')
+    icon_file = 'provider.png'
 
     host = gui.TextField(
         length=64,

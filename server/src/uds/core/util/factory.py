@@ -28,21 +28,21 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
         '''
         return self._objects
 
-    def put(self, typeName: str, type_: type[V]) -> None:
+    def put(self, type_name: str, type_: type[V]) -> None:
         '''
         Inserts an object into the factory.
         '''
-        if typeName in self._objects:
-            logger.debug('%s already registered as %s', type_, self._objects[typeName])
+        if type_name in self._objects:
+            logger.debug('%s already registered as %s', type_, self._objects[type_name])
             return
 
-        self._objects[typeName.lower()] = type_
+        self._objects[type_name.lower()] = type_
 
-    def get(self, typeName: str) -> typing.Optional[type[V]]:
+    def get(self, type_name: str) -> typing.Optional[type[V]]:
         '''
         Returns an object from the factory.
         '''
-        return self._objects.get(typeName.lower())
+        return self._objects.get(type_name.lower())
 
     # aliases for get
     lookup = get

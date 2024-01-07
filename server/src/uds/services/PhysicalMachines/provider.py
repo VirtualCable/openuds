@@ -52,10 +52,10 @@ VALID_CONFIG_SECTIONS = set(('wol',))
 
 class PhysicalMachinesProvider(services.ServiceProvider):
     # What services do we offer?
-    typeName = _('Static IP Machines Provider')
-    typeType = 'PhysicalMachinesServiceProvider'
-    typeDescription = _('Provides connection to machines by IP')
-    iconFile = 'provider.png'
+    type_name = _('Static IP Machines Provider')
+    type_type = 'PhysicalMachinesServiceProvider'
+    type_description = _('Provides connection to machines by IP')
+    icon_file = 'provider.png'
 
     # No extra data needed
     config = gui.TextField(

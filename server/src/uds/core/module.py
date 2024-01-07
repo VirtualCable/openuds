@@ -55,16 +55,16 @@ class Module(UserInterface, Environmentable, Serializable):
     All modules must, at least, implement the following:
 
     * Attributes:
-       * :py:attr:`.typeName`:
+       * :py:attr:`.type_name`:
          Name for this type of module (human readable) to assign to the module (string)
          This name will be used to let the administrator identify this module.
-       * :py:attr:`.typeType`:
+       * :py:attr:`.type_type`:
          Name for this type of module (machine only) to assing to the module (string)
          This name will be used internally to identify when a serialized module corresponds with this class.
-       * :py:attr:`.typeDescription`:
+       * :py:attr:`.type_description`:
          Description for this type of module.
          This descriptio will be used to let the administrator identify what this module provides
-       * :py:attr:`.iconFile`: This is an icon file, in png format, used at administration client to identify this module.
+       * :py:attr:`.icon_file`: This is an icon file, in png format, used at administration client to identify this module.
          This parameter may be optionall if you override the "icon" method.
     * Own Methods:
        * :py:meth:`.__init__`
@@ -100,8 +100,8 @@ class Module(UserInterface, Environmentable, Serializable):
 
     __slots__ = ['_uuid']
     # Import variable indicating this module is a base class not a real module
-    # Note that Module is not a real module, but a base class for all modules so isBase is not used on this class
-    isBase: typing.ClassVar[bool] = False
+    # Note that Module is not a real module, but a base class for all modules so is_base is not used on this class
+    is_base: typing.ClassVar[bool] = False
 
     # Types
     ValuesType = typing.Optional[
@@ -110,14 +110,14 @@ class Module(UserInterface, Environmentable, Serializable):
 
     # : Which coded to use to encode module by default.
     # : Basic name used to provide the administrator an "huma readable" form for the module
-    typeName: typing.ClassVar[str] = 'Base Module'
+    type_name: typing.ClassVar[str] = 'Base Module'
     # : Internal type name, used by system to locate this module
-    typeType: typing.ClassVar[str] = 'BaseModule'
+    type_type: typing.ClassVar[str] = 'BaseModule'
     # : Description of this module, used at admin level
-    typeDescription: typing.ClassVar[str] = 'Base Module'
+    type_description: typing.ClassVar[str] = 'Base Module'
     # : Icon file, relative to module folders
     # This is expected to be png, use this format always
-    iconFile: typing.ClassVar[str] = 'base.png'
+    icon_file: typing.ClassVar[str] = 'base.png'
 
     # Not defined, but declared. If module is groupable, this value will contain to which group belongs
     group: typing.ClassVar[str]
@@ -132,8 +132,8 @@ class Module(UserInterface, Environmentable, Serializable):
     @classmethod
     def name(cls: type['Module']) -> str:
         """
-        Returns "translated" typeName, using gettext for transforming
-        cls.typeName
+        Returns "translated" type_name, using gettext for transforming
+        cls.type_name
 
         Args:
             cls: This is a class method, so cls is the class
@@ -141,26 +141,26 @@ class Module(UserInterface, Environmentable, Serializable):
         Returns:
             Translated type name (using gettext)
         """
-        return _(cls.typeName)
+        return _(cls.type_name)
 
     @classmethod
     def get_type(cls: type['Module']) -> str:
         """
-        Returns typeType
+        Returns type_type
 
         Args:
             cls: This is a class method, so cls is the class
 
         Returns:
-            the typeType of this class (or derived class)
+            the type_type of this class (or derived class)
         """
-        return cls.typeType
+        return cls.type_type
 
     @classmethod
     def description(cls: type['Module']) -> str:
         """
         This method returns the "translated" description, that is, using
-        gettext for transforming cls.typeDescription.
+        gettext for transforming cls.type_description.
 
         Args:
             cls: This is a class method, so cls is the class
@@ -169,12 +169,12 @@ class Module(UserInterface, Environmentable, Serializable):
             Translated description (using gettext)
 
         """
-        return _(cls.typeDescription)
+        return _(cls.type_description)
 
     @classmethod
     def icon(cls: type['Module']) -> bytes:
         """
-        Reads the file specified by iconFile at module folder, and returns it content.
+        Reads the file specified by icon_file at module folder, and returns it content.
         This is used to obtain an icon so administration can represent it.
 
         Args:
@@ -184,13 +184,13 @@ class Module(UserInterface, Environmentable, Serializable):
 
         Returns:
             Base 64 encoded or raw image, obtained from the specified file at
-            'iconFile' class attribute
+            'icon_file' class attribute
         """
-        return utils.loadIcon(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
+        return utils.loadIcon(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file)
 
     @classmethod
     def icon64(cls: type['Module']) -> str:
-        return utils.loadIconBase64(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.iconFile)
+        return utils.loadIconBase64(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file)
 
     @staticmethod
     def test(
@@ -251,7 +251,7 @@ class Module(UserInterface, Environmentable, Serializable):
     def __str__(self):
         return "Base Module"
 
-    def isDirty(self) -> bool:
+    def is_dirty(self) -> bool:
         """
         This method informs the core if the module has changed serializable data,
         and that must be re-serialized
@@ -289,10 +289,10 @@ class Module(UserInterface, Environmentable, Serializable):
         """
         return _("No check method provided.")
 
-    def getUuid(self) -> str:
+    def get_uuid(self) -> str:
         return self._uuid
 
-    def setUuid(self, uuid: typing.Optional[str]) -> None:
+    def set_uuid(self, uuid: typing.Optional[str]) -> None:
         self._uuid = uuid or ''
 
     def destroy(self) -> None:

@@ -52,7 +52,7 @@ def createEmailNotifier(
     notifier = models.Notifier()
     notifier.name = 'Testing email notifier'
     notifier.comments = 'Testing email notifier'
-    notifier.data_type = EmailNotifier.typeType
+    notifier.data_type = EmailNotifier.type_type
     instance: EmailNotifier = typing.cast(EmailNotifier, notifier.get_instance())
     # Fill up fields
     instance.hostname.value = (host or 'localhost') + (

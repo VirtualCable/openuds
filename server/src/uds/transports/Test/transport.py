@@ -53,10 +53,10 @@ class TestTransport(transports.Transport):
     Simpe testing transport. Currently a copy of URLCustomTransport
     """
 
-    typeName = _('Test Transport')
-    typeType = 'TestTransport'
-    typeDescription = _('Test Transport')
-    iconFile = 'transport.png'
+    type_name = _('Test Transport')
+    type_type = 'TestTransport'
+    type_description = _('Test Transport')
+    icon_file = 'transport.png'
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST

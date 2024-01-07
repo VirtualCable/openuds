@@ -96,10 +96,10 @@ class SMSMFA(mfas.MFA):
 
     """
 
-    typeName = _('SMS via HTTP')
-    typeType = 'smsHttpMFA'
-    typeDescription = _('Simple SMS sending MFA using HTTP/HTTPS')
-    iconFile = 'sms.png'
+    type_name = _('SMS via HTTP')
+    type_type = 'smsHttpMFA'
+    type_description = _('Simple SMS sending MFA using HTTP/HTTPS')
+    icon_file = 'sms.png'
 
     sendingUrl = gui.TextField(
         length=128,

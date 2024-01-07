@@ -60,15 +60,15 @@ class LiveService(services.Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenNebula Live Images')
+    type_name = _('OpenNebula Live Images')
     # : Type used internally to identify this provider
-    typeType = 'openNebulaLiveService'
+    type_type = 'openNebulaLiveService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenNebula live images based service')
+    type_description = _('OpenNebula live images based service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # Functional related data
 

@@ -46,10 +46,10 @@ logger = logging.getLogger(__name__)
 
 
 class SampleMFA(mfas.MFA):
-    typeName = _('Sample Multi Factor')
-    typeType = 'sampleMFA'
-    typeDescription = _('Sample Multi Factor Authenticator')
-    iconFile = 'sample.png'
+    type_name = _('Sample Multi Factor')
+    type_type = 'sampleMFA'
+    type_description = _('Sample Multi Factor Authenticator')
+    icon_file = 'sample.png'
 
     useless = gui.CheckBoxField(
         label=_('Sample useless field'),

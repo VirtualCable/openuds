@@ -45,8 +45,8 @@ class HTML5RDSTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = 'RDS'
-    typeType = 'HTML5RDSTransport'
+    type_name = 'RDS'
+    type_type = 'HTML5RDSTransport'
 
     guacamoleServer = gui.TextField(label='',default='https://')
     useGlyptodonTunnel = gui.CheckBoxField(label='')

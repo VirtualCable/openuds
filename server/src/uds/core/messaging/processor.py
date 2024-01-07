@@ -137,7 +137,7 @@ class MessageProcessorThread(BaseThread):
                             logger.error(
                                 'Error sending notification %s to %s',
                                 n,
-                                p.typeName,
+                                p.type_name,
                                 exc_info=True,
                             )
                             continue

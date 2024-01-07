@@ -99,7 +99,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
         dbProvider: Provider
         # Look for Providers of type proxmox
         for dbProvider in Provider.objects.filter(
-            maintenance_mode=False, data_type=provider.ProxmoxProvider.typeType
+            maintenance_mode=False, data_type=provider.ProxmoxProvider.type_type
         ):
             logger.debug('Provider %s if os type proxmox', dbProvider)
 

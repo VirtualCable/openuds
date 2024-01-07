@@ -69,10 +69,10 @@ class IPAuth(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    typeName = _('IP Authenticator')
-    typeType = 'IPAuth'
-    typeDescription = _('IP Authenticator')
-    iconFile = 'auth.png'
+    type_name = _('IP Authenticator')
+    type_type = 'IPAuth'
+    type_description = _('IP Authenticator')
+    icon_file = 'auth.png'
 
     needsPassword = False
     userNameLabel = _('IP')

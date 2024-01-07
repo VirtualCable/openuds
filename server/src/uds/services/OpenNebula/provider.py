@@ -60,15 +60,15 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenNebula Platform Provider')
+    type_name = _('OpenNebula Platform Provider')
     # : Type used internally to identify this provider
-    typeType = 'openNebulaPlatform'
+    type_type = 'openNebulaPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenNebula platform service provider')
+    type_description = _('OpenNebula platform service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:

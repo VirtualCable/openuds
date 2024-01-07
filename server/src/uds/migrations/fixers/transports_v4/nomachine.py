@@ -45,7 +45,7 @@ class TSNoMachineTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeType = 'TSNoMachineTransport'
+    type_type = 'TSNoMachineTransport'
 
     tunnelServer = gui.TextField(label='')
     tunnelWait = gui.NumericField(label='', default=30)

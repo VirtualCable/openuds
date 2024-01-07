@@ -60,15 +60,15 @@ class TelegramNotifier(messaging.Notifier):
     Email notifier
     """
 
-    typeName = _('Telegram notifications')
+    type_name = _('Telegram notifications')
     # : Type used internally to identify this provider
-    typeType = TELEGRAM_TYPE
+    type_type = TELEGRAM_TYPE
     # : Description shown at administration interface for this provider
-    typeDescription = _('Telegram notifications')
+    type_description = _('Telegram notifications')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'telegram.png'
+    icon_file = 'telegram.png'
 
     botname = gui.TextField(
         length=64,

@@ -57,7 +57,7 @@ def createProvider() -> models.Provider:
     provider = models.Provider()
     provider.name = 'Testing provider {}'.format(glob['provider_id'])
     provider.comments = 'Tesging provider comment {}'.format(glob['provider_id'])
-    provider.data_type = TestProvider.typeType
+    provider.data_type = TestProvider.type_type
     provider.data = provider.get_instance().serialize()
     provider.save()
     glob['provider_id'] += 1
@@ -72,7 +72,7 @@ def createService(
 
     service = provider.services.create(
         name='Service {}'.format(glob['service_id']),
-        data_type=TestServiceCache.typeType,
+        data_type=TestServiceCache.type_type,
         data=TestServiceCache(
             environment.Environment(str(glob['service_id'])), provider.get_instance()
         ).serialize()
@@ -97,7 +97,7 @@ def createOsManager() -> models.OSManager:
     osmanager = models.OSManager.objects.create(
         name='OS Manager %d' % (glob['osmanager_id']),
         comments='Comment for OS Manager %d' % (glob['osmanager_id']),
-        data_type=TestOSManager.typeType,
+        data_type=TestOSManager.type_type,
         data=TestOSManager(
             environment.Environment(str(glob['osmanager_id'])), values
         ).serialize(),
@@ -176,7 +176,7 @@ def createTransport() -> models.Transport:
     transport: 'models.Transport' = models.Transport.objects.create(
         name='Transport %d' % (glob['transport_id']),
         comments='Comment for Trnasport %d' % (glob['transport_id']),
-        data_type=TestTransport.typeType,
+        data_type=TestTransport.type_type,
         data=TestTransport(
             environment.Environment(str(glob['transport_id'])), values
         ).serialize(),

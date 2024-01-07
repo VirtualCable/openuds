@@ -59,15 +59,15 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('Xen Linked Clone')
+    type_name = _('Xen Linked Clone')
     # : Type used internally to identify this provider
-    typeType = 'XenLinkedService'
+    type_type = 'XenLinkedService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('Xen Services based on templates')
+    type_description = _('Xen Services based on templates')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'service.png'
+    icon_file = 'service.png'
 
     # Functional related data
 

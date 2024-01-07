@@ -63,15 +63,15 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('Proxmox Linked Clone')
+    type_name = _('Proxmox Linked Clone')
     # : Type used internally to identify this provider
-    typeType = 'ProxmoxLinkedService'
+    type_type = 'ProxmoxLinkedService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('Proxmox Services based on templates and COW (experimental)')
+    type_description = _('Proxmox Services based on templates and COW (experimental)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'service.png'
+    icon_file = 'service.png'
 
     # Functional related data
 

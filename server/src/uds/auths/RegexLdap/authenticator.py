@@ -195,10 +195,10 @@ class RegexLdap(auths.Authenticator):
         tab=types.ui.Tab.MFA,
     )
 
-    typeName = _('Regex LDAP Authenticator')
-    typeType = 'RegexLdapAuthenticator'
-    typeDescription = _('Regular Expressions LDAP authenticator')
-    iconFile = 'auth.png'
+    type_name = _('Regex LDAP Authenticator')
+    type_type = 'RegexLdapAuthenticator'
+    type_description = _('Regular Expressions LDAP authenticator')
+    icon_file = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
     isExternalSource = True

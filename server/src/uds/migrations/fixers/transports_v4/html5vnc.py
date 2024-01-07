@@ -45,8 +45,8 @@ class HTML5VNCTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = 'HTML5 VNC Experimental'
-    typeType = 'HTML5VNCTransport'
+    type_name = 'HTML5 VNC Experimental'
+    type_type = 'HTML5VNCTransport'
     guacamoleServer = gui.TextField(label='',default='https://')
 
     username = gui.TextField(label='')

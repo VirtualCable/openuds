@@ -54,9 +54,9 @@ class BaseSpiceTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = True
+    is_base = True
 
-    iconFile = 'spice.png'
+    icon_file = 'spice.png'
     protocol = protocols.SPICE
 
     useEmptyCreds = gui.CheckBoxField(

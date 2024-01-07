@@ -61,10 +61,10 @@ class IPSingleMachineService(IPServiceBase):
     )
 
     # Description of service
-    typeName = _('Static Single IP')
-    typeType = 'IPSingleMachineService'
-    typeDescription = _('This service provides access to POWERED-ON Machine by IP')
-    iconFile = 'machine.png'
+    type_name = _('Static Single IP')
+    type_type = 'IPSingleMachineService'
+    type_description = _('This service provides access to POWERED-ON Machine by IP')
+    icon_file = 'machine.png'
 
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state

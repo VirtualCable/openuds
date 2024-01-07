@@ -91,7 +91,7 @@ RDS_SUBTYPE: typing.Final[str] = 'rds'
 
 # Copy for migration
 class RDSProvider(services.ServiceProvider):
-    typeType = 'RDSProvider'
+    type_type = 'RDSProvider'
 
     # Gui
     ipList = gui.EditableListField(label='')

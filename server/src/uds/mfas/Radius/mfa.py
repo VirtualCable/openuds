@@ -63,10 +63,10 @@ class RadiusOTP(mfas.MFA):
     using 'Access-Challenge' response from Radius Server [RFC2865, RFC5080]
     '''
 
-    typeName = _('Radius OTP Challenge')
-    typeType = 'RadiusOTP'
-    typeDescription = _('Radius OTP Challenge')
-    iconFile = 'radius.png'
+    type_name = _('Radius OTP Challenge')
+    type_type = 'RadiusOTP'
+    type_description = _('Radius OTP Challenge')
+    icon_file = 'radius.png'
 
     server = gui.TextField(
         length=64,

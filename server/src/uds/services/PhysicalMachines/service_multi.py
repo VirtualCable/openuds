@@ -130,10 +130,10 @@ class IPMachinesService(IPServiceBase):
     )
 
     # Description of service
-    typeName = typing.cast(str, _('Static Multiple IP'))
-    typeType = 'IPMachinesService'
-    typeDescription = typing.cast(str, _('This service provides access to POWERED-ON Machines by IP'))
-    iconFile = 'machines.png'
+    type_name = typing.cast(str, _('Static Multiple IP'))
+    type_type = 'IPMachinesService'
+    type_description = typing.cast(str, _('This service provides access to POWERED-ON Machines by IP'))
+    icon_file = 'machines.png'
 
     usesCache = False  # Cache are running machine awaiting to be assigned
     usesCache_L2 = False  # L2 Cache are running machines in suspended state

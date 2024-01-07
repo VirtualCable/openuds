@@ -53,24 +53,24 @@ class Notifier(Module):
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeName: typing.ClassVar[str] = _('Base Notifier')
+    type_name: typing.ClassVar[str] = _('Base Notifier')
 
     # : Name of type used by Managers to identify this type of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType: typing.ClassVar[str] = 'baseNotifier'
+    type_type: typing.ClassVar[str] = 'baseNotifier'
 
     # : Description shown at administration level for this authenticator.
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeDescription: typing.ClassVar[str] = _('Base Notifier')
+    type_description: typing.ClassVar[str] = _('Base Notifier')
 
     # : Icon file, used to represent this authenticator at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
-    iconFile: typing.ClassVar[str] = 'notifier.png'
+    icon_file: typing.ClassVar[str] = 'notifier.png'
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)

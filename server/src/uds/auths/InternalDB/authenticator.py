@@ -55,12 +55,12 @@ logger = logging.getLogger(__name__)
 
 
 class InternalDBAuth(auths.Authenticator):
-    typeName = _('Internal Database')
-    typeType = 'InternalDBAuth'
-    typeDescription = _(
+    type_name = _('Internal Database')
+    type_type = 'InternalDBAuth'
+    type_description = _(
         'Internal dabasase authenticator. Doesn\'t use external sources'
     )
-    iconFile = 'auth.png'
+    icon_file = 'auth.png'
 
     # If we need to enter the password for this user
     needsPassword = True

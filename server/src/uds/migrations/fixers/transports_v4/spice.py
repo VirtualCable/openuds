@@ -44,7 +44,7 @@ class TSPICETransport(transports.Transport):
     Provides access via SPICE to service.
     """
 
-    typeType = 'TSSPICETransport'
+    type_type = 'TSSPICETransport'
 
     tunnelServer = gui.TextField(label='')
     tunnelWait = gui.NumericField(label='', default=30)

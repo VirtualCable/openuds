@@ -59,7 +59,7 @@ class OpenGnsysMaintainer(jobs.Job):
         # Look for Providers of type VMWareVCServiceProvider
         provider: models.Provider
         for provider in models.Provider.objects.filter(
-            maintenance_mode=False, data_type=OGProvider.typeType
+            maintenance_mode=False, data_type=OGProvider.type_type
         ):
             logger.debug('Provider %s is type openGnsys', provider)
 

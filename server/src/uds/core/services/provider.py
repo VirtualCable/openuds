@@ -90,24 +90,24 @@ class ServiceProvider(module.Module):
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "translatable" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeName = 'Base Provider'
+    type_name = 'Base Provider'
 
     # : Name of type used by Managers to identify this tipe of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType = 'BaseServiceProvider'
+    type_type = 'BaseServiceProvider'
 
     # : Description shown at administration level for this provider.
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "translatable" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeDescription = 'Base Service Provider'
+    type_description = 'Base Service Provider'
 
     # : Icon file, used to represent this provider at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own py:meth:`uds.core.module.BaseModule.icon` method.
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
@@ -134,17 +134,17 @@ class ServiceProvider(module.Module):
         return cls.offers
 
     @classmethod
-    def getServiceByType(cls, typeName: str) -> typing.Optional[type['Service']]:
+    def getServiceByType(cls, type_name: str) -> typing.Optional[type['Service']]:
         """
         Tries to locate a child service which type corresponds with the
         one provided.
         Returns None if can't find one.
 
         :note: The type that this method looks for is not the class, but
-               the typeType that Service has.
+               the type_type that Service has.
         """
         for _type in cls.offers:
-            if _type.get_type() == typeName:
+            if _type.get_type() == type_name:
                 return _type
         return None
 
@@ -226,8 +226,8 @@ class ServiceProvider(module.Module):
         """
         from uds.models import Provider as DBProvider  # pylint: disable=import-outside-toplevel
 
-        if self.getUuid():
-            log.log(DBProvider.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
+        if self.get_uuid():
+            log.log(DBProvider.objects.get(uuid=self.get_uuid()), level, message, log.LogSource.SERVICE)
 
     def __str__(self):
         """

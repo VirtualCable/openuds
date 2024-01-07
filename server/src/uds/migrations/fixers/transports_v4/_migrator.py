@@ -21,7 +21,7 @@ def tunnel_transport(apps, TransportType: typing.Type, serverAttr: str, is_html_
         # For testing
         # from uds.models import Transport, ServerGroup, Server
 
-        for t in Transport.objects.filter(data_type=TransportType.typeType):
+        for t in Transport.objects.filter(data_type=TransportType.type_type):
             # Extract data
             obj = TransportType(Environment(t.uuid), None)
             obj.deserialize(t.data)
@@ -79,7 +79,7 @@ def tunnel_transport_back(apps, TransportType: typing.Type, serverAttr: str, is_
         # For testing
         # from uds.models import Transport, ServerGroup
 
-        for t in Transport.objects.filter(data_type=TransportType.typeType):
+        for t in Transport.objects.filter(data_type=TransportType.type_type):
             # Extranct data
             obj = TransportType(Environment(t.uuid), None)
             obj.deserialize(t.data)

@@ -92,7 +92,7 @@ class OVirtDeferredRemoval(jobs.Job):
         provider: Provider
         # Look for Providers of type Ovirt
         for provider in Provider.objects.filter(
-            maintenance_mode=False, data_type=OVirtProvider.typeType
+            maintenance_mode=False, data_type=OVirtProvider.type_type
         ):
             logger.debug('Provider %s if os type ovirt', provider)
 

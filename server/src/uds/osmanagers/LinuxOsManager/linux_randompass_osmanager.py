@@ -51,12 +51,12 @@ if typing.TYPE_CHECKING:
 
 
 class LinuxRandomPassManager(LinuxOsManager):
-    typeName = _('Linux Random Password OS Manager')
-    typeType = 'LinRandomPasswordManager'
-    typeDescription = _(
+    type_name = _('Linux Random Password OS Manager')
+    type_type = 'LinRandomPasswordManager'
+    type_description = _(
         'Os Manager to control linux machines, with user password set randomly.'
     )
-    iconFile = 'losmanager.png'
+    icon_file = 'losmanager.png'
 
     # Apart form data from linux os manager, we need also domain and credentials
     userAccount = gui.TextField(

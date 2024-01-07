@@ -45,8 +45,8 @@ class HTML5RDPTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = 'HTML5 RDP'  # Not important here, just for migrations
-    typeType = 'HTML5RDPTransport'
+    type_name = 'HTML5 RDP'  # Not important here, just for migrations
+    type_type = 'HTML5RDPTransport'
 
     guacamoleServer = gui.TextField(label='')
 

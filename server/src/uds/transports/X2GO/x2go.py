@@ -53,11 +53,11 @@ class X2GOTransport(BaseX2GOTransport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = False
+    is_base = False
 
-    typeName = _('X2Go')
-    typeType = 'X2GOTransport'
-    typeDescription = _('X2Go access (Experimental). Direct connection.')
+    type_name = _('X2Go')
+    type_type = 'X2GOTransport'
+    type_description = _('X2Go access (Experimental). Direct connection.')
 
     fixedName = BaseX2GOTransport.fixedName
     screenSize = BaseX2GOTransport.screenSize

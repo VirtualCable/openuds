@@ -59,15 +59,15 @@ class OGService(services.Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenGnsys Machines Service')
+    type_name = _('OpenGnsys Machines Service')
     # : Type used internally to identify this provider
-    typeType = 'openGnsysMachine'
+    type_type = 'openGnsysMachine'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenGnsys physical machines')
+    type_description = _('OpenGnsys physical machines')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # Functional related data
 

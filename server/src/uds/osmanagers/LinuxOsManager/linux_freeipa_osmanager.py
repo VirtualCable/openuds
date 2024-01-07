@@ -54,10 +54,10 @@ logger = logging.getLogger(__name__)
 
 
 class LinuxOsFreeIPAManager(LinuxOsManager):
-    typeName = _('Linux OS FreeIPA Manager')
-    typeType = 'LinuxFreeIPAManager'
-    typeDescription = _('Os Manager to control Linux virtual machines with FreeIPA')
-    iconFile = 'losmanager.png'
+    type_name = _('Linux OS FreeIPA Manager')
+    type_type = 'LinuxFreeIPAManager'
+    type_description = _('Os Manager to control Linux virtual machines with FreeIPA')
+    icon_file = 'losmanager.png'
 
     domain = gui.TextField(
         length=64,

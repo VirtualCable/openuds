@@ -85,17 +85,17 @@ class ProviderLegacy(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenStack LEGACY Platform Provider')
+    type_name = _('OpenStack LEGACY Platform Provider')
     # : Type used internally to identify this provider
-    typeType = 'openStackPlatform'
+    type_type = 'openStackPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _(
+    type_description = _(
         'OpenStack LEGACY platform service provider (for older Openstack Releases, previous to OCATA)'
     )
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:

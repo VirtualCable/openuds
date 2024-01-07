@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 # Copy for migration
 class TRDSTransport(transports.Transport):
-    typeType = 'TRDSTransport'
+    type_type = 'TRDSTransport'
 
     tunnelServer = gui.TextField(label='')
     tunnelWait = gui.NumericField(label='', default=30)

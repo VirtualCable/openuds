@@ -232,7 +232,7 @@ class Auths(Handler):
         auth: Authenticator
         for auth in Authenticator.objects.all():
             theType = auth.get_type()
-            if paramAll or (theType.is_custom() is False and theType.typeType not in ('IP',)):
+            if paramAll or (theType.is_custom() is False and theType.type_type not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
                     'auth_id': auth.uuid,
@@ -240,7 +240,7 @@ class Auths(Handler):
                     'authLabel': str(auth.small_name),  # Deprecated, use 'auth_label'
                     'auth_label': str(auth.small_name),
                     'auth': auth.name,
-                    'type': theType.typeType,
+                    'type': theType.type_type,
                     'priority': auth.priority,
                     'isCustom': theType.is_custom(), # Deprecated, use 'custom'
                     'custom': theType.is_custom(),

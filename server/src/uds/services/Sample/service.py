@@ -56,10 +56,10 @@ class ServiceOne(services.Service):
     Basic service, the first part (variables) include the description of the service.
 
     Remember to fill all variables needed, but at least you must define:
-        * typeName
-        * typeType
-        * typeDescription
-        * iconFile (defaults to service.png)
+        * type_name
+        * type_type
+        * type_description
+        * icon_file (defaults to service.png)
         * publicationType, type of publication in case it needs publication.
           If this is not provided, core will assume that the service do not
           needs publishing.
@@ -77,15 +77,15 @@ class ServiceOne(services.Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('Sample Service One')
+    type_name = _('Sample Service One')
     # : Type used internally to identify this provider
-    typeType = 'SampleService1'
+    type_type = 'SampleService1'
     # : Description shown at administration interface for this provider
-    typeDescription = _('Sample (and dummy) service ONE')
+    type_description = _('Sample (and dummy) service ONE')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'service.png'
+    icon_file = 'service.png'
 
     # Functional related data
 
@@ -201,10 +201,10 @@ class ServiceTwo(services.Service):
     Just a second service, no comments here (almost same that ServiceOne
     """
 
-    typeName = _('Sample Service Two')
-    typeType = 'SampleService2'
-    typeDescription = _('Sample (and dummy) service ONE+ONE')
-    iconFile = 'provider.png'  # : We reuse provider icon here :-)
+    type_name = _('Sample Service Two')
+    type_type = 'SampleService2'
+    type_description = _('Sample (and dummy) service ONE+ONE')
+    icon_file = 'provider.png'  # : We reuse provider icon here :-)
 
     # Functional related data
     maxUserServices = 5  # : Max number of deployed services for user in this service

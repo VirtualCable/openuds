@@ -65,15 +65,15 @@ class LiveService(services.Service):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenStack Live Volume')
+    type_name = _('OpenStack Live Volume')
     # : Type used internally to identify this provider
-    typeType = 'openStackLiveService'
+    type_type = 'openStackLiveService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack live images based service')
+    type_description = _('OpenStack live images based service')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'openstack.png'
+    icon_file = 'openstack.png'
 
     # Functional related data
 

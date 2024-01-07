@@ -53,7 +53,7 @@ def createAuthenticator(
         authenticator = models.Authenticator()
         authenticator.name = 'Testing authenticator'
         authenticator.comments = 'Tesging authenticator'
-        authenticator.data_type = InternalDBAuth.typeType
+        authenticator.data_type = InternalDBAuth.type_type
         authenticator.data = authenticator.get_instance().serialize()
         authenticator.save()
 

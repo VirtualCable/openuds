@@ -56,12 +56,12 @@ class TSPICETransport(BaseSpiceTransport):
     """
     Provides access via SPICE to service.
     """
-    isBase = False
+    is_base = False
 
-    iconFile = 'spice-tunnel.png'
-    typeName = _('SPICE')
-    typeType = 'TSSPICETransport'
-    typeDescription = _('SPICE Protocol. Tunneled connection.')
+    icon_file = 'spice-tunnel.png'
+    type_name = _('SPICE')
+    type_type = 'TSSPICETransport'
+    type_description = _('SPICE Protocol. Tunneled connection.')
     protocol = transports.protocols.SPICE
     group: typing.ClassVar[str] = transports.TUNNELED_GROUP
 

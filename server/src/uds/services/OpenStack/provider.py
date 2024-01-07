@@ -82,15 +82,15 @@ class OpenStackProvider(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenStack Platform Provider')
+    type_name = _('OpenStack Platform Provider')
     # : Type used internally to identify this provider
-    typeType = 'openStackPlatformNew'
+    type_type = 'openStackPlatformNew'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenStack platform service provider')
+    type_description = _('OpenStack platform service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'openstack.png'
+    icon_file = 'openstack.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:

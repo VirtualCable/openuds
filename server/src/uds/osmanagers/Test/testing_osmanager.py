@@ -50,10 +50,10 @@ logger = logging.getLogger(__name__)
 
 
 class TestOSManager(osmanagers.OSManager):
-    typeName = _('Test OS Manager')
-    typeType = 'TestOsManager'
-    typeDescription = _('Os Manager for testing pourposes')
-    iconFile = 'osmanager.png'
+    type_name = _('Test OS Manager')
+    type_type = 'TestOsManager'
+    type_description = _('Os Manager for testing pourposes')
+    icon_file = 'osmanager.png'
 
     servicesType = types.services.ServiceType.VDI
 

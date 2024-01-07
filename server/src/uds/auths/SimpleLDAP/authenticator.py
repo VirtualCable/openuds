@@ -188,10 +188,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tab=types.ui.Tab.MFA,
     )
 
-    typeName = _('SimpleLDAP')
-    typeType = 'SimpleLdapAuthenticator'
-    typeDescription = _('Simple LDAP authenticator')
-    iconFile = 'auth.png'
+    type_name = _('SimpleLDAP')
+    type_type = 'SimpleLdapAuthenticator'
+    type_description = _('Simple LDAP authenticator')
+    icon_file = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
     isExternalSource = True

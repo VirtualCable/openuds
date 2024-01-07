@@ -101,24 +101,24 @@ class Service(Module):
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeName = _('Base Service')
+    type_name = _('Base Service')
 
     # : Name of type used by Managers to identify this type of service
     # : We could have used here the Class name, but we decided that the
     # : module implementator will be the one that will provide a name that
     # : will relation the class (type) and that name.
-    typeType = 'BaseService'
+    type_type = 'BaseService'
 
     # : Description shown at administration level for this service.
     # : This string will be translated when provided to admin interface
     # : using gettext, so you can mark it as "_" at derived classes (using gettext_noop)
     # : if you want so it can be translated.
-    typeDescription = _('Base Service')
+    type_description = _('Base Service')
 
     # : Icon file, used to represent this service at administration interface
     # : This file should be at same folder as this class is, except if you provide
     # : your own :py:meth:uds.core.module.BaseModule.icon method.
-    iconFile = 'service.png'
+    icon_file = 'service.png'
 
     # Functional related data
 
@@ -252,7 +252,7 @@ class Service(Module):
         from uds.models import Service
 
         if self._dbObj is None:
-            self._dbObj = Service.objects.get(uuid=self.getUuid())
+            self._dbObj = Service.objects.get(uuid=self.get_uuid())
         return self._dbObj
 
     def parent(self) -> 'services.ServiceProvider':
@@ -472,8 +472,8 @@ class Service(Module):
         """
         from uds.models import Service as DBService  # pylint: disable=import-outside-toplevel
 
-        if self.getUuid():
-            log.log(DBService.objects.get(uuid=self.getUuid()), level, message, log.LogSource.SERVICE)
+        if self.get_uuid():
+            log.log(DBService.objects.get(uuid=self.get_uuid()), level, message, log.LogSource.SERVICE)
 
     @classmethod
     def canAssign(cls) -> bool:

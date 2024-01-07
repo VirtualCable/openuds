@@ -58,10 +58,10 @@ class HTML5RDPTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = _('HTML5 RDP')
-    typeType = 'HTML5RDPTransport'
-    typeDescription = _('RDP protocol using HTML5 client')
-    iconFile = 'html5.png'
+    type_name = _('HTML5 RDP')
+    type_type = 'HTML5RDPTransport'
+    type_description = _('RDP protocol using HTML5 client')
+    icon_file = 'html5.png'
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST

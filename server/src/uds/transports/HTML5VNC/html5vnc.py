@@ -60,10 +60,10 @@ class HTML5VNCTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = _('HTML5 VNC')
-    typeType = 'HTML5VNCTransport'
-    typeDescription = _('VNC protocol using HTML5 client')
-    iconFile = 'html5vnc.png'
+    type_name = _('HTML5 VNC')
+    type_type = 'HTML5VNCTransport'
+    type_description = _('VNC protocol using HTML5 client')
+    icon_file = 'html5vnc.png'
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST

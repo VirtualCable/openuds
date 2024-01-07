@@ -60,10 +60,10 @@ class OSManager(Module):
     """
 
     # Service informational related data
-    typeName = _('Base OS Manager')
-    typeType = 'osmanager'
-    typeDescription = _('Base Manager')
-    iconFile = 'osmanager.png'
+    type_name = _('Base OS Manager')
+    type_type = 'osmanager'
+    type_description = _('Base Manager')
+    icon_file = 'osmanager.png'
 
     # If true, this os manager  will be invoked with every user service assigned, but not used
     # The interval is defined as a global config

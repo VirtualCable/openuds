@@ -60,12 +60,12 @@ class TRDPTransport(BaseRDPTransport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = False
+    is_base = False
 
-    iconFile = 'rdp-tunnel.png'
-    typeName = _('RDP')
-    typeType = 'TSRDPTransport'
-    typeDescription = _('RDP Protocol. Tunneled connection.')
+    icon_file = 'rdp-tunnel.png'
+    type_name = _('RDP')
+    type_type = 'TSRDPTransport'
+    type_description = _('RDP Protocol. Tunneled connection.')
     group = transports.TUNNELED_GROUP
 
     tunnel = fields.tunnelField()

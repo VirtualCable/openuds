@@ -44,10 +44,10 @@ def scrambleMsg(msg: str) -> str:
 
 
 class WindowsOsManager(osmanagers.OSManager):
-    typeName = _('Windows Basic OS Manager')
-    typeType = 'WindowsManager'
-    typeDescription = _('Os Manager to control windows machines without domain.')
-    iconFile = 'wosmanager.png'
+    type_name = _('Windows Basic OS Manager')
+    type_type = 'WindowsManager'
+    type_description = _('Os Manager to control windows machines without domain.')
+    icon_file = 'wosmanager.png'
     servicesType = serviceTypes.VDI
 
     onLogout = gui.ChoiceField(

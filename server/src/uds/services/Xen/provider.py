@@ -82,15 +82,15 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('Xenserver/XCP-NG Platforms Provider')
+    type_name = _('Xenserver/XCP-NG Platforms Provider')
     # : Type used internally to identify this provider
-    typeType = 'XenPlatform'
+    type_type = 'XenPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('XenServer and XCP-NG platforms service provider')
+    type_description = _('XenServer and XCP-NG platforms service provider')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:

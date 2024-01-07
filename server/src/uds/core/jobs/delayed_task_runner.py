@@ -151,17 +151,17 @@ class DelayedTaskRunner(metaclass=singleton.Singleton):
         instance_dump = codecs.encode(pickle.dumps(instance), 'base64').decode()
         instance.env = env
 
-        typeName = str(cls.__module__ + '.' + cls.__name__)
+        type_name = str(cls.__module__ + '.' + cls.__name__)
 
         logger.debug(
             'Inserting delayed task %s with %s bytes (%s)',
-            typeName,
+            type_name,
             len(instance_dump),
             exec_time,
         )
 
         DBDelayedTask.objects.create(
-            type=typeName,
+            type=type_name,
             instance=instance_dump,  # @UndefinedVariable
             insert_date=now,
             execution_delay=delay,

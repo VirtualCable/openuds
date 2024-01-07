@@ -187,5 +187,5 @@ def dynamicLoadAndRegisterModules(
         modName (str): Name of the package to load
     '''
     dynamicLoadAndRegisterPackages(
-        factory.insert, type_, modName, checker=lambda x: not x.isBase
+        factory.insert, type_, modName, checker=lambda x: not x.is_base
     )

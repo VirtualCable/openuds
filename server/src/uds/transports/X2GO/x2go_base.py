@@ -62,9 +62,9 @@ class BaseX2GOTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = True
+    is_base = True
 
-    iconFile = 'x2go.png'
+    icon_file = 'x2go.png'
     protocol = transports.protocols.X2GO
     supportedOss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
 

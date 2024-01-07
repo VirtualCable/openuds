@@ -43,7 +43,7 @@ class HTML5SSHTransport(transports.Transport):
     Provides access via SSH to service.
     """
 
-    typeType = 'HTML5SSHTransport'
+    type_type = 'HTML5SSHTransport'
 
     guacamoleServer = gui.TextField(label='',default='https://')
     username = gui.TextField(label='')

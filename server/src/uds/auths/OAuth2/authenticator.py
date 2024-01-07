@@ -93,10 +93,10 @@ class OAuth2Authenticator(auths.Authenticator):
     This class represents an OAuth2 Authenticator.
     """
 
-    typeName = _('OAuth2 Authenticator')
-    typeType = 'OAuth2Authenticator'
-    typeDescription = _('OAuth2 Authenticator')
-    iconFile = 'oauth2.png'
+    type_name = _('OAuth2 Authenticator')
+    type_type = 'OAuth2Authenticator'
+    type_description = _('OAuth2 Authenticator')
+    icon_file = 'oauth2.png'
 
     authorizationEndpoint = gui.TextField(
         length=64,

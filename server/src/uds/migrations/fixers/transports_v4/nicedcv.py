@@ -45,7 +45,7 @@ class NICEDCVTunnelTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     '''
 
-    typeType = 'NICEDCVTunnelTransport'
+    type_type = 'NICEDCVTunnelTransport'
 
     tunnelServer = gui.TextField(label='')
 

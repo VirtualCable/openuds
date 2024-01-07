@@ -79,15 +79,15 @@ class OGProvider(ServiceProvider):
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('OpenGnsys Platform Provider')
+    type_name = _('OpenGnsys Platform Provider')
     # : Type used internally to identify this provider
-    typeType = 'openGnsysPlatform'
+    type_type = 'openGnsysPlatform'
     # : Description shown at administration interface for this provider
-    typeDescription = _('OpenGnsys platform service provider (experimental)')
+    type_description = _('OpenGnsys platform service provider (experimental)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'provider.png'
+    icon_file = 'provider.png'
 
     # now comes the form fields
     # There is always two fields that are requested to the admin, that are:

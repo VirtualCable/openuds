@@ -59,10 +59,10 @@ class TOTP_MFA(mfas.MFA):
     using 'Access-Challenge' response from Radius Server [RFC2865, RFC5080]
     '''
 
-    typeName = _('TOTP Based MFA')
-    typeType = 'TOTP_MFA'
-    typeDescription = _('TOTP Based MFA (Google Authenticator, etc)')
-    iconFile = 'totp.png'
+    type_name = _('TOTP Based MFA')
+    type_type = 'TOTP_MFA'
+    type_description = _('TOTP Based MFA (Google Authenticator, etc)')
+    icon_file = 'totp.png'
 
     issuer = gui.TextField(
         length=64,

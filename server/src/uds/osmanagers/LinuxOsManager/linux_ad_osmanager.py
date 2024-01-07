@@ -54,10 +54,10 @@ logger = logging.getLogger(__name__)
 
 
 class LinuxOsADManager(LinuxOsManager):
-    typeName = _('Linux OS Active Directory Manager')
-    typeType = 'LinuxADManager'
-    typeDescription = _('Os Manager to control Linux virtual machines with active directory')
-    iconFile = 'losmanager.png'
+    type_name = _('Linux OS Active Directory Manager')
+    type_type = 'LinuxADManager'
+    type_description = _('Os Manager to control Linux virtual machines with active directory')
+    icon_file = 'losmanager.png'
 
     domain = gui.TextField(
         length=64,

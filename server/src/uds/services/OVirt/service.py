@@ -62,15 +62,15 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     # : Name to show the administrator. This string will be translated BEFORE
     # : sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    typeName = _('oVirt/RHEV Linked Clone')
+    type_name = _('oVirt/RHEV Linked Clone')
     # : Type used internally to identify this provider
-    typeType = 'oVirtLinkedService'
+    type_type = 'oVirtLinkedService'
     # : Description shown at administration interface for this provider
-    typeDescription = _('oVirt Services based on templates and COW (experimental)')
+    type_description = _('oVirt Services based on templates and COW (experimental)')
     # : Icon file used as icon for this provider. This string will be translated
     # : BEFORE sending it to administration interface, so don't forget to
     # : mark it as _ (using gettext_noop)
-    iconFile = 'service.png'
+    icon_file = 'service.png'
 
     # Functional related data
 

@@ -59,12 +59,12 @@ class TX2GOTransport(BaseX2GOTransport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    isBase = False
+    is_base = False
 
-    iconFile = 'x2go-tunnel.png'
-    typeName = _('X2Go')
-    typeType = 'TX2GOTransport'
-    typeDescription = _('X2Go access (Experimental). Tunneled connection.')
+    icon_file = 'x2go-tunnel.png'
+    type_name = _('X2Go')
+    type_type = 'TX2GOTransport'
+    type_description = _('X2Go access (Experimental). Tunneled connection.')
     group = transports.TUNNELED_GROUP
 
     tunnel = fields.tunnelField()

@@ -55,11 +55,11 @@ class SPICETransport(BaseSpiceTransport):
     Provides access via SPICE to service.
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
-    isBase = False
+    is_base = False
 
-    typeName = _('SPICE')
-    typeType = 'SPICETransport'
-    typeDescription = _('SPICE Protocol. Direct connection.')
+    type_name = _('SPICE')
+    type_type = 'SPICETransport'
+    type_description = _('SPICE Protocol. Direct connection.')
 
     # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
     # fixedName = BaseSpiceTransport.fixedName

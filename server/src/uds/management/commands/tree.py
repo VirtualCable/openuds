@@ -70,8 +70,8 @@ def getSerializedFromManagedObject(
         for i in removableFields or []:
             if i in values:
                 del values[i]
-        # Append typeName to list
-        values['typeName'] = str(obj.typeName)
+        # Append type_name to list
+        values['type_name'] = str(obj.type_name)
         values['comments'] = mod.comments
 
         return values

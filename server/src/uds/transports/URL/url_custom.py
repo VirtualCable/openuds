@@ -54,10 +54,10 @@ class URLCustomTransport(transports.Transport):
     This transport can use an domain. If username processed by authenticator contains '@', it will split it and left-@-part will be username, and right password
     """
 
-    typeName = _('URL Launcher')
-    typeType = 'URLTransport'
-    typeDescription = _('Launchs an external UDS customized URL')
-    iconFile = 'url.png'
+    type_name = _('URL Launcher')
+    type_type = 'URLTransport'
+    type_description = _('Launchs an external UDS customized URL')
+    icon_file = 'url.png'
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST

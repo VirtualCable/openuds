@@ -57,10 +57,10 @@ logger = logging.getLogger(__name__)
 
 
 class WinRandomPassManager(WindowsOsManager):
-    typeName = _('Windows Random Password OS Manager')
-    typeType = 'WinRandomPasswordManager'
-    typeDescription = _('Os Manager to control windows machines, with user password set randomly.')
-    iconFile = 'wosmanager.png'
+    type_name = _('Windows Random Password OS Manager')
+    type_type = 'WinRandomPasswordManager'
+    type_description = _('Os Manager to control windows machines, with user password set randomly.')
+    icon_file = 'wosmanager.png'
 
     # Apart form data from windows os manager, we need also domain and credentials
     userAccount = gui.TextField(

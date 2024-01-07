@@ -88,7 +88,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
             'ServiceProvider', super().get_instance(values=values)
         )
         # Set uuid
-        prov.setUuid(self.uuid)
+        prov.set_uuid(self.uuid)
         return prov
 
     def isInMaintenance(self) -> bool:

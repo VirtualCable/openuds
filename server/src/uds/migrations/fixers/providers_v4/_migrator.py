@@ -60,7 +60,7 @@ def migrate(
         # For testing
         # from uds.models import Provider, Server, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.typeType):  # type: ignore
+        for record in Table.objects.filter(data_type=DataType.type_type):  # type: ignore
             # Extract data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)
@@ -137,7 +137,7 @@ def rollback(apps, model: typing.Literal['Provider', 'Service'], DataType: typin
         # For testing
         # from uds.models import Transport, ServerGroup
 
-        for record in Table.objects.filter(data_type=DataType.typeType):  # type: ignore
+        for record in Table.objects.filter(data_type=DataType.type_type):  # type: ignore
             # Extranct data
             obj = DataType(Environment(record.uuid), None)
             obj.deserialize(record.data)

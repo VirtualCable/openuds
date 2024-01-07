@@ -59,10 +59,10 @@ class HTML5SSHTransport(transports.Transport):
     Provides access via SSH to service.
     """
 
-    typeName = _('HTML5 SSH')
-    typeType = 'HTML5SSHTransport'
-    typeDescription = _('SSH protocol using HTML5 client')
-    iconFile = 'html5ssh.png'
+    type_name = _('HTML5 SSH')
+    type_type = 'HTML5SSHTransport'
+    type_description = _('SSH protocol using HTML5 client')
+    icon_file = 'html5ssh.png'
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST
