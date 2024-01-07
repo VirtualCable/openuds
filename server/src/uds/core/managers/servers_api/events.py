@@ -93,19 +93,19 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
     server.set_actor_version(userService)
 
     if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-        osmanagers.OSManager.loggedIn(userService, data['username'])
+        osmanagers.OSManager.logged_in(userService, data['username'])
 
     # Get the source of the connection and a new session id
     src = userService.getConnectionSource()
     session_id = userService.initSession()  # creates a session for every login requested
 
     osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-    maxIdle = osManager.maxIdle() if osManager else None
+    maxIdle = osManager.max_idle() if osManager else None
 
     logger.debug('Max idle: %s', maxIdle)
 
     deadLine = (
-        userService.deployed_service.get_deadline() if not osManager or osManager.ignoreDeadLine() else None
+        userService.deployed_service.get_deadline() if not osManager or osManager.ignore_deadline() else None
     )
     result = {
         'ip': src.ip,
@@ -137,7 +137,7 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
     userService.closeSession(session_id)
 
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-        osmanagers.OSManager.loggedOut(userService, data['username'])
+        osmanagers.OSManager.logged_out(userService, data['username'])
         osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
         if not osManager or osManager.isRemovableOnLogout(userService):
             logger.debug('Removable on logout: %s', osManager)

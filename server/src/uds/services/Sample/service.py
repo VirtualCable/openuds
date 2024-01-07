@@ -60,10 +60,10 @@ class ServiceOne(services.Service):
         * type_type
         * type_description
         * icon_file (defaults to service.png)
-        * publicationType, type of publication in case it needs publication.
+        * publication_type, type of publication in case it needs publication.
           If this is not provided, core will assume that the service do not
           needs publishing.
-        * userServiceType, type of deployed user service. Do not forget this!!!
+        * user_service_type, type of deployed user service. Do not forget this!!!
 
     The rest of them can be ommited, but its recommended that you fill all
     declarations shown in this sample (that in fact, are all)
@@ -90,31 +90,31 @@ class ServiceOne(services.Service):
     # Functional related data
 
     # : If we need to generate "cache" for this service, so users can access the
-    # : provided services faster. Is usesCache is True, you will need also
-    # : set publicationType, do take care about that!
-    usesCache = False
+    # : provided services faster. Is uses_cache is True, you will need also
+    # : set publication_type, do take care about that!
+    uses_cache = False
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
-    cacheTooltip = _('None')
+    cache_tooltip = _('None')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
-    usesCache_L2 = False
+    uses_cache_l2 = False
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
-    cacheTooltip_L2 = _('None')
+    cache_tooltip_l2 = _('None')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
-    needsManager = False
+    needs_manager = False
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
-    mustAssignManually = False
+    must_assign_manually = False
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = None
+    publication_type = None
     # : Types of deploys (services in cache and/or assigned to users)
-    userServiceType = SampleUserServiceOne
+    user_service_type = SampleUserServiceOne
 
     # Now the form part, this service will have only two "dummy" fields
     # If we don't indicate an order, the output order of fields will be
@@ -207,21 +207,21 @@ class ServiceTwo(services.Service):
     icon_file = 'provider.png'  # : We reuse provider icon here :-)
 
     # Functional related data
-    maxUserServices = 5  # : Max number of deployed services for user in this service
-    usesCache = True
-    cacheTooltip = _('L1 cache for dummy elements')
-    usesCache_L2 = True
-    cacheTooltip_L2 = _('L2 cache for dummy elements')
+    max_user_services = 5  # : Max number of deployed services for user in this service
+    uses_cache = True
+    cache_tooltip = _('L1 cache for dummy elements')
+    uses_cache_l2 = True
+    cache_tooltip_l2 = _('L2 cache for dummy elements')
 
-    needsManager = False
-    mustAssignManually = False
+    needs_manager = False
+    must_assign_manually = False
 
     # : Types of publications. In this case, we will include a publication
     # : type for this one
     # : Note that this is a MUST if you indicate that needPublication
-    publicationType = SamplePublication
+    publication_type = SamplePublication
     # : Types of deploys (services in cache and/or assigned to users)
-    userServiceType = SampleUserServiceTwo
+    user_service_type = SampleUserServiceTwo
 
     # Gui, we will use here the EditableList field
     names = gui.EditableListField(label=_('List of names'))

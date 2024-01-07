@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 
 class IPMachineDeployed(services.UserService, AutoAttributes):
-    suggestedTime = 10
+    suggested_delay = 10
 
     _ip: str
     _reason: str
@@ -66,10 +66,10 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
     def service(self) -> 'IPServiceBase':
         return typing.cast('IPServiceBase', super().service())
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s (ignored)', ip)
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         ip = self._ip.split('~')[0].split(';')[0]
@@ -92,17 +92,17 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
 
         return ip
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         return self._ip.replace('~', ':')
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         return self._ip.replace('~', ':').split(';')[0]
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         # If single machine, ip is IP~counter,
         # If multiple and has a ';' on IP, the values is IP;MAC
         if ';' in self._ip:  # Only try wakeup if mac is present
@@ -121,14 +121,14 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
             self._state = State.FINISHED
 
         # If not to be managed by a token, autologin user
-        if not self.service().getToken():
+        if not self.service().get_token():
             userService = self.db_obj()
             if userService:
                 userService.setInUse(True)
 
         return self._state
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         logger.debug("Starting deploy of %s for user %s", self._ip, user)
         return self.__deploy()
 
@@ -136,7 +136,7 @@ class IPMachineDeployed(services.UserService, AutoAttributes):
         logger.debug('Assigning from assignable with ip %s', ip)
         self._ip = ip
         self._state = State.FINISHED
-        if not self.service().getToken():
+        if not self.service().get_token():
             dbService = self.db_obj()
             if dbService:
                 dbService.setInUse(True)

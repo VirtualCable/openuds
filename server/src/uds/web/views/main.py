@@ -179,7 +179,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
 
-    mfaUserId = mfas.MFA.getUserId(request.user)
+    mfaUserId = mfas.MFA.get_user_id(request.user)
 
     # Try to get cookie anc check it
     mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
@@ -207,7 +207,7 @@ def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-ma
     label = mfaInstance.label()
 
     if not mfaIdentifier:
-        emtpyIdentifiedAllowed = mfaInstance.emptyIndentifierAllowedToLogin(request)
+        emtpyIdentifiedAllowed = mfaInstance.allow_login_without_identifier(request)
         # can be True, False or None
         if emtpyIdentifiedAllowed is True:
             # Allow login

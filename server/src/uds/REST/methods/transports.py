@@ -123,7 +123,7 @@ class Transports(ModelHandler):
                     for x in ServicePool.objects.filter(service__isnull=False)
                     .order_by('name')
                     .prefetch_related('service')
-                    if transportType.protocol in x.service.get_type().allowedProtocols
+                    if transportType.protocol in x.service.get_type().allowed_protocols
                 ],
                 'label': gettext('Service Pools'),
                 'tooltip': gettext('Currently assigned services pools'),

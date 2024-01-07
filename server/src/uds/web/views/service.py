@@ -164,7 +164,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
         # Service exists...
         try:
             userServiceInstance = userService.get_instance()
-            ip = userServiceInstance.getIp()
+            ip = userServiceInstance.get_ip()
             userService.log_ip(ip)
             # logger.debug('Res: %s %s %s %s %s', ip, userService, userServiceInstance, transport, transportInstance)
         except ServiceNotReadyError:
@@ -206,7 +206,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
         elif (
             actionString == 'reset'
             and userService.deployed_service.allow_users_reset
-            and userService.deployed_service.service.get_type().canReset  # type: ignore
+            and userService.deployed_service.service.get_type().can_reset  # type: ignore
         ):
             rebuild = True
             log.log(

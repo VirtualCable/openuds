@@ -109,7 +109,7 @@ class LinuxRandomPassManager(LinuxOsManager):
 
         return randomPass
 
-    def actorData(
+    def actor_data(
         self, userService: 'UserService'
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {

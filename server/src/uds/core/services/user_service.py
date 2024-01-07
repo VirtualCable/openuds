@@ -89,7 +89,7 @@ class UserService(Environmentable, Serializable):
         Uniques ids can be repeated at database level, to let it come at a later
         deployment stage, but if two services has same uniqueid at a time,
         os manager will simply not work.
-      * suggestedTime is always accessed through instance objects, and used after
+      * suggested_delay is always accessed through instance objects, and used after
         deployForCache, deployForUser and moveToCache it these methods returns
         RUNNING
       * Checks (if a deployment has finished, or the cache movement is finished)
@@ -122,14 +122,14 @@ class UserService(Environmentable, Serializable):
     # : a bit more so we can use longer interval checks
     # : This attribute is accessed always through an instance object,
     # : so u can modify it at your own implementation.
-    suggestedTime = 10
+    suggested_delay = 10
 
     _service: 'services.Service'
     _publication: typing.Optional['services.Publication']
     _osmanager: typing.Optional['osmanagers.OSManager']
     _uuid: str
 
-    _dbObj: typing.Optional['models.UserService'] = None
+    _db_obj: typing.Optional['models.UserService'] = None
 
     def __init__(self, environment: 'Environment', **kwargs):
         """
@@ -173,11 +173,11 @@ class UserService(Environmentable, Serializable):
         """
         from uds.models import UserService
 
-        if self._dbObj is None:
-            self._dbObj = UserService.objects.get(uuid=self._uuid)
-        return self._dbObj
+        if self._db_obj is None:
+            self._db_obj = UserService.objects.get(uuid=self._uuid)
+        return self._db_obj
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """
         Override this to return a name to display under some circustances
 
@@ -185,7 +185,7 @@ class UserService(Environmentable, Serializable):
 
             name, default implementation returns unique id
         """
-        return self.getUniqueId()
+        return self.get_unique_id()
 
     def service(self) -> 'services.Service':
         """
@@ -222,41 +222,41 @@ class UserService(Environmentable, Serializable):
         """
         return self._osmanager
 
-    def getUuid(self) -> str:
+    def get_uuid(self) -> str:
         return self._uuid
 
     def do_log(self, level: log.LogLevel, message: str) -> None:
         """
         Logs a message with requested level associated with this user deployment
         """
-        if self._dbObj:
-            log.log(self._dbObj, level, message, log.LogSource.SERVICE)
+        if self._db_obj:
+            log.log(self._db_obj, level, message, log.LogSource.SERVICE)
 
-    def macGenerator(self) -> 'UniqueMacGenerator':
+    def mac_generator(self) -> 'UniqueMacGenerator':
         """
         Utility method to access provided macs generator (inside environment)
 
         Returns the environment unique mac addresses generator
         """
-        return typing.cast('UniqueMacGenerator', self.idGenerators('mac'))
+        return typing.cast('UniqueMacGenerator', self.id_generators('mac'))
 
-    def nameGenerator(self) -> 'UniqueNameGenerator':
+    def name_generator(self) -> 'UniqueNameGenerator':
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique name generator
         """
-        return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
+        return typing.cast('UniqueNameGenerator', self.id_generators('name'))
 
-    def gidGenerator(self) -> 'UniqueGIDGenerator':
+    def gid_generator(self) -> 'UniqueGIDGenerator':
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique global id generator
         """
-        return typing.cast('UniqueGIDGenerator', self.idGenerators('id'))
+        return typing.cast('UniqueGIDGenerator', self.id_generators('id'))
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         """
         Obtains an unique id for this deployed service, you MUST override this
 
@@ -267,7 +267,7 @@ class UserService(Environmentable, Serializable):
         """
         raise NotImplementedError('Base getUniqueId for User Deployment called!!!')
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:  # pylint: disable=unused-argument
+    def process_ready_from_os_manager(self, data: typing.Any) -> str:  # pylint: disable=unused-argument
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -295,7 +295,7 @@ class UserService(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         """
         All services are "IP" services, so this method is a MUST
 
@@ -306,13 +306,13 @@ class UserService(Environmentable, Serializable):
         """
         raise Exception('Base getIp for User Deployment got called!!!')
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         """
         This is an utility method, invoked by some os manager to notify what they thinks is the ip for this service.
         If you assign the service IP by your own methods, do not override this
         """
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -346,7 +346,7 @@ class UserService(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys a user deployment as cache.
 
@@ -385,7 +385,7 @@ class UserService(Environmentable, Serializable):
         """
         raise Exception(f'Base deploy for cache invoked! for class {self.__class__.__name__}')
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 
@@ -459,7 +459,7 @@ class UserService(Environmentable, Serializable):
                nothing)
         """
 
-    def moveToCache(self, newLevel: int) -> str:  # pylint: disable=unused-argument
+    def move_to_cache(self, newLevel: int) -> str:  # pylint: disable=unused-argument
         """
         This method is invoked whenever the core needs to move from the current
         cache level to a new cache level an user deployment.
@@ -488,7 +488,7 @@ class UserService(Environmentable, Serializable):
         """
         return State.FINISHED
 
-    def userLoggedIn(self, username: str) -> None:
+    def user_logged_in(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -503,7 +503,7 @@ class UserService(Environmentable, Serializable):
         The user provided is just an string, that is provided by actors.
         """
 
-    def userLoggedOut(self, username: str) -> None:
+    def user_logged_out(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.
@@ -571,7 +571,7 @@ class UserService(Environmentable, Serializable):
         return State.RUNNING
 
     @classmethod
-    def supportsCancel(cls) -> bool:
+    def supports_cancel(cls) -> bool:
         """
         Helper to query if a class is custom (implements getJavascript method)
         """
@@ -584,7 +584,7 @@ class UserService(Environmentable, Serializable):
         base method does nothing
         """
 
-    def getConnectionData(self) -> typing.Optional[tuple[str, str, str]]:
+    def get_connection_data(self) -> typing.Optional[tuple[str, str, str]]:
         """
         This method is only invoked on some user deployments that needs to provide
         Credentials based on deployment itself
@@ -592,7 +592,7 @@ class UserService(Environmentable, Serializable):
         """
         return None
 
-    def getConsoleConnection(
+    def get_console_connection(
         self,
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """

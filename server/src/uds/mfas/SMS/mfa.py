@@ -243,7 +243,7 @@ class SMSMFA(mfas.MFA):
         default='0',
         tooltip=_('Action for SMS response error'),
         required=True,
-        choices=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
     )
 
@@ -304,8 +304,8 @@ class SMSMFA(mfas.MFA):
                     session.headers[headerName.strip()] = headerValue.strip()
         return session
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.checkAction(self.allowLoginWithoutMFA.value, request, self.networks.value)
+    def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+        return mfas.LoginAllowed.check_action(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
     def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
@@ -315,7 +315,7 @@ class SMSMFA(mfas.MFA):
                 response.status_code,
                 response.text,
             )
-            if not mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
+            if not mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
                 raise Exception(_('SMS sending failed'))
             return mfas.MFA.RESULT.ALLOWED  # Allow login, NO MFA code was sent
         if self.responseOkRegex.value.strip():
@@ -329,7 +329,7 @@ class SMSMFA(mfas.MFA):
                     'SMS response error: %s',
                     response.text,
                 )
-                if not mfas.LoginAllowed.checkAction(
+                if not mfas.LoginAllowed.check_action(
                     self.responseErrorAction.value, request, self.networks.value
                 ):
                     raise Exception(_('SMS response error'))
@@ -418,7 +418,7 @@ class SMSMFA(mfas.MFA):
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext('Check your phone. You will receive an SMS with the verification code')
 
-    def sendCode(
+    def send_code(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,

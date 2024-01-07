@@ -94,14 +94,14 @@ class ServiceCacheUpdater(Job):
             # If this deployedService don't have a publication active and needs it, ignore it
             spServiceInstance = servicePool.service.get_instance()  # type: ignore
             
-            if spServiceInstance.usesCache is False:
+            if spServiceInstance.uses_cache is False:
                 logger.debug(
                     'Skipping cache generation for service pool that does not uses cache: %s',
                     servicePool.name,
                 )
                 continue
 
-            if servicePool.activePublication() is None and spServiceInstance.publicationType is not None:
+            if servicePool.activePublication() is None and spServiceInstance.publication_type is not None:
                 logger.debug(
                     'Skipping. %s Needs publication but do not have one',
                     servicePool.name,
@@ -135,7 +135,7 @@ class ServiceCacheUpdater(Job):
                 servicePool.cached_users_services()
                 .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE))
                 .count()
-            ) if spServiceInstance.usesCache_L2 else 0
+            ) if spServiceInstance.uses_cache_l2 else 0
             inAssigned: int = (
                 servicePool.assigned_user_services()
                 .filter(UserServiceManager().get_state_filter(servicePool.service))  # type: ignore
@@ -164,7 +164,7 @@ class ServiceCacheUpdater(Job):
 
             # If we have more in L2 cache than needed, decrease L2 cache, but int this case, we continue checking cause L2 cache removal
             # has less priority than l1 creations or removals, but higher. In this case, we will simply take last l2 oversized found and reduce it
-            if spServiceInstance.usesCache_L2 and inCacheL2 > servicePool.cache_l2_srvs:
+            if spServiceInstance.uses_cache_l2 and inCacheL2 > servicePool.cache_l2_srvs:
                 logger.debug('We have more services in L2 cache than configured, appending')
                 servicesPools.append((servicePool, inCacheL1, inCacheL2, inAssigned))
                 continue

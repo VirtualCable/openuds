@@ -111,7 +111,7 @@ class GraphsTest(UDSTestCase):
 
     def test_bar_chart(self):
         output = io.BytesIO()
-        graphs.barChart((10, 8, 96), data=self.data1, output=output)
+        graphs.bar_chart((10, 8, 96), data=self.data1, output=output)
         value = output.getvalue()
         self.assertGreater(len(value), 0)
         self.assertEqual(self.data1['xtickFnc'].call_count, 3)
@@ -122,7 +122,7 @@ class GraphsTest(UDSTestCase):
 
     def test_line_chart(self):
         output = io.BytesIO()
-        graphs.lineChart((10, 8, 96), data=self.data1, output=output)
+        graphs.line_chart((10, 8, 96), data=self.data1, output=output)
         value = output.getvalue()
         self.assertGreater(len(value), 0)
         self.assertEqual(self.data1['xtickFnc'].call_count, 3)
@@ -133,7 +133,7 @@ class GraphsTest(UDSTestCase):
 
     def test_surface_chart(self):
         output = io.BytesIO()
-        graphs.surfaceChart((10, 8, 96), data=self.data2, output=output)
+        graphs.surface_chart((10, 8, 96), data=self.data2, output=output)
         value = output.getvalue()
         self.assertGreater(len(value), 0)
         self.assertEqual(self.data2['xtickFnc'].call_count, 3)
@@ -146,7 +146,7 @@ class GraphsTest(UDSTestCase):
     def test_surface_chart_wireframe(self):
         self.data2['wireframe'] = True
         output = io.BytesIO()
-        graphs.surfaceChart((10, 8, 96), data=self.data2, output=output)
+        graphs.surface_chart((10, 8, 96), data=self.data2, output=output)
         value = output.getvalue()
         self.assertGreater(len(value), 0)
         self.assertEqual(self.data2['xtickFnc'].call_count, 3)

@@ -114,7 +114,7 @@ class AuthenticatorsStats(StatsReportAuto):
                     }
                 )
         logger.debug('Report Data Done')
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/authenticator_stats.html',
             dct={'data': stats},
             header=gettext('Users usage list'),

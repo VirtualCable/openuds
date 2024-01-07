@@ -86,13 +86,13 @@ class Report(UserInterface):
         return gettext(cls.group)
 
     @classmethod
-    def getUuid(cls):
+    def get_uuid(cls):
         if cls.uuid is None:
             raise Exception(f'Class does not includes an uuid!!!: {cls}')
         return cls.uuid
 
     @staticmethod
-    def asPDF(
+    def as_pdf(
         html: str,
         header: typing.Optional[str] = None,
         water: typing.Optional[str] = None,
@@ -109,7 +109,7 @@ class Report(UserInterface):
         ) -> dict:
             logger.debug('Getting url for weasyprint %s', url)
             if url.startswith('stock://'):
-                imagePath = stock.getStockImagePath(url[8:])
+                imagePath = stock.get_stock_image_path(url[8:])
                 with open(imagePath, 'rb') as f:
                     image = f.read()
                 return {'string': image, 'mime_type': 'image/png'}
@@ -123,7 +123,7 @@ class Report(UserInterface):
 
             return default_url_fetcher(url)
 
-        with open(stock.getStockCssPath('report.css'), 'r', encoding='utf-8') as f:
+        with open(stock.get_stock_css_path('report.css'), 'r', encoding='utf-8') as f:
             css = f.read()
 
         css = (
@@ -147,13 +147,13 @@ class Report(UserInterface):
         )  # Return a new bytes object
 
     @staticmethod
-    def templateAsPDF(templateName, dct, header=None, water=None, images=None) -> bytes:
+    def template_as_pdf(templateName, dct, header=None, water=None, images=None) -> bytes:
         """
         Renders a template as PDF
         """
         t = loader.get_template(templateName)
 
-        return Report.asPDF(t.render(dct), header=header, water=water, images=images)
+        return Report.as_pdf(t.render(dct), header=header, water=water, images=images)
 
     def __init__(self, values: gui.ValuesType = None):
         """
@@ -193,7 +193,7 @@ class Report(UserInterface):
         """
         raise NotImplementedError()
 
-    def generateEncoded(self) -> str:
+    def generate_encoded(self) -> str:
         """
         Generated base 64 encoded report.
         Basically calls generate and encodes resuslt as base64

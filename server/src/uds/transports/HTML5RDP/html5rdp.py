@@ -323,7 +323,7 @@ class HTML5RDPTransport(transports.Transport):
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
         if isinstance(userService, models.UserService):
-            cdata = userService.get_instance().getConnectionData()
+            cdata = userService.get_instance().get_connection_data()
             if cdata:
                 username = cdata[1] or username
                 password = cdata[2] or password

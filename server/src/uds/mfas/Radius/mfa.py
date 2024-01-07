@@ -114,7 +114,7 @@ class RadiusOTP(mfas.MFA):
         default='0',
         tooltip=_('Action for OTP server communication error'),
         required=True,
-        choices=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
     )
 
@@ -138,7 +138,7 @@ class RadiusOTP(mfas.MFA):
         default='0',
         tooltip=_('Action for user without defined Radius Challenge'),
         required=True,
-        choices=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
     )
 
@@ -155,11 +155,11 @@ class RadiusOTP(mfas.MFA):
         )
 
     def checkResult(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
-        if mfas.LoginAllowed.checkAction(action, request, self.networks.value):
+        if mfas.LoginAllowed.check_action(action, request, self.networks.value):
             return mfas.MFA.RESULT.OK
         raise Exception('User not allowed to login')
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return None
 
     def label(self) -> str:
@@ -196,7 +196,7 @@ class RadiusOTP(mfas.MFA):
             auth_reply = connection.authenticate_challenge(username, password=web_pwd)
         except Exception as e:
             logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-            if not mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
+            if not mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
                 raise Exception(_('Radius OTP connection error')) from e
             logger.warning(
                 "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",
@@ -264,7 +264,7 @@ class RadiusOTP(mfas.MFA):
                     auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
             except Exception as e:
                 logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-                if mfas.LoginAllowed.checkAction(self.responseErrorAction.value, request, self.networks.value):
+                if mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
                     raise Exception(_('Radius OTP connection error')) from e
                 logger.warning(
                     "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",

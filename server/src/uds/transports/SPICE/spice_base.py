@@ -150,7 +150,7 @@ class BaseSpiceTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             userServiceInstance = userService.get_instance()
-            con = userServiceInstance.getConsoleConnection()
+            con = userServiceInstance.get_console_connection()
 
             logger.debug('Connection data: %s', con)
 

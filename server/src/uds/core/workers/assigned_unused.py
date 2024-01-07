@@ -84,7 +84,7 @@ class AssignedAndUnused(Job):
                     )
                     for us in unusedMachines:
                         logger.debug('Found unused assigned service %s', us)
-                        osm.processUnused(us)
+                        osm.process_unused(us)
             else:  # No os manager, simply remove unused services in specified time
                 for us in unusedMachines:
                     logger.debug(

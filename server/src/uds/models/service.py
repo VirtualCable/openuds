@@ -133,7 +133,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
             return self._cachedInstance
 
         prov: 'services.ServiceProvider' = self.provider.get_instance()
-        sType = prov.getServiceByType(self.data_type)
+        sType = prov.get_service_by_type(self.data_type)
 
         if sType:
             obj = sType(self.get_environment(), prov, values, uuid=self.uuid)
@@ -159,7 +159,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         from uds.core import services  # pylint: disable=import-outside-toplevel,redefined-outer-name
 
         prov: type['services.ServiceProvider'] = self.provider.get_type()
-        return prov.getServiceByType(self.data_type) or services.Service
+        return prov.get_service_by_type(self.data_type) or services.Service
 
     @property
     def maxServicesCountType(self) -> ServicesCountingType:

@@ -59,7 +59,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         # We could also check if it provides at least a service, but
         # for debugging purposes, it's better to not check that
         # We will check that if service provided by "provider" needs
-        # cache, but service do not provides publicationType,
+        # cache, but service do not provides publication_type,
         # that service will not be registered and it will be informed
         type_name = type_.get_type().lower()
 
@@ -70,11 +70,11 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         # Fix offers by checking if they are valid
         offers = []
         for s in type_.offers:
-            if s.usesCache_L2:
-                s.usesCache = True
-                if s.publicationType is None:
+            if s.uses_cache_l2:
+                s.uses_cache = True
+                if s.publication_type is None:
                     logger.error(
-                        'Provider %s offers %s, but %s needs cache and do not have publicationType defined',
+                        'Provider %s offers %s, but %s needs cache and do not have publication_type defined',
                         type_,
                         s,
                         s,
@@ -88,7 +88,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         super().insert(type_)
 
 
-    def servicesThatDoNotNeedPublication(self) -> collections.abc.Iterable[type[Service]]:
+    def services_not_needing_publication(self) -> collections.abc.Iterable[type[Service]]:
         """
         Returns a list of all service providers registered that do not need
         to be published
@@ -96,6 +96,6 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         res = []
         for p in self.providers().values():
             for s in p.offers:
-                if s.publicationType is None and s.mustAssignManually is False:
+                if s.publication_type is None and s.must_assign_manually is False:
                     res.append(s)
         return res

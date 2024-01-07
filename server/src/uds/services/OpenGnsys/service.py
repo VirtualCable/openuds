@@ -72,28 +72,28 @@ class OGService(services.Service):
     # Functional related data
 
     # : If we need to generate "cache" for this service, so users can access the
-    # : provided services faster. Is usesCache is True, you will need also
-    # : set publicationType, do take care about that!
-    usesCache = True
+    # : provided services faster. Is uses_cache is True, you will need also
+    # : set publication_type, do take care about that!
+    uses_cache = True
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
-    cacheTooltip = _('Number of desired machines to keep running waiting for an user')
+    cache_tooltip = _('Number of desired machines to keep running waiting for an user')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
-    needsManager = False
+    needs_manager = False
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
-    mustAssignManually = False
+    must_assign_manually = False
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = OGPublication
+    publication_type = OGPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    userServiceType = OGDeployment
+    user_service_type = OGDeployment
 
-    allowedProtocols = protocols.GENERIC_VDI
-    servicesTypeProvided = types.services.ServiceType.VDI
+    allowed_protocols = protocols.GENERIC_VDI
+    services_type_provided = types.services.ServiceType.VDI
 
 
 

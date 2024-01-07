@@ -102,7 +102,7 @@ class PoolsUsageSummary(UsageByPool):
 
         logger.debug('Pools: %s --- %s  --- %s', pools, totalTime, totalCount)
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/pools-usage-summary.html',
             dct={
                 'data': (

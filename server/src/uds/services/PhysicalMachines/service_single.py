@@ -66,14 +66,14 @@ class IPSingleMachineService(IPServiceBase):
     type_description = _('This service provides access to POWERED-ON Machine by IP')
     icon_file = 'machine.png'
 
-    usesCache = False  # Cache are running machine awaiting to be assigned
-    usesCache_L2 = False  # L2 Cache are running machines in suspended state
-    needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
-    mustAssignManually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
+    uses_cache = False  # Cache are running machine awaiting to be assigned
+    uses_cache_l2 = False  # L2 Cache are running machines in suspended state
+    needs_manager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
+    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
-    userServiceType = IPMachineDeployed
+    user_service_type = IPMachineDeployed
 
-    servicesTypeProvided = types.services.ServiceType.VDI
+    services_type_provided = types.services.ServiceType.VDI
 
 
     def initialize(self, values: 'Module.ValuesType') -> None:

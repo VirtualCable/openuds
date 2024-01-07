@@ -75,7 +75,7 @@ class StateUpdater:
         self.user_service.updateData(self.user_service_instance)
 
     def log_ip(self):
-        ip = self.user_service_instance.getIp()
+        ip = self.user_service_instance.get_ip()
 
         if ip is not None and ip != '':
             self.user_service.log_ip(ip)
@@ -143,7 +143,7 @@ class UpdateFromPreparing(StateUpdater):
             # If state is finish, we need to notify the userService again that os has finished
             # This will return a new task state, and that one will be the one taken into account
             self.user_service.setOsState(State.USABLE)
-            rs = self.user_service_instance.notifyReadyFromOsManager('')
+            rs = self.user_service_instance.process_ready_from_os_manager('')
             if rs != State.FINISHED:
                 self.check_later()
                 state = (
@@ -225,9 +225,9 @@ class UserServiceOpChecker(DelayedTask):
         """
         try:
             # Fills up basic data
-            userService.unique_id = userServiceInstance.getUniqueId()  # Updates uniqueId
+            userService.unique_id = userServiceInstance.get_unique_id()  # Updates uniqueId
             userService.friendly_name = (
-                userServiceInstance.getName()
+                userServiceInstance.get_name()
             )  # And name, both methods can modify serviceInstance, so we save it later
             userService.save(update_fields=['unique_id', 'friendly_name'])
 
@@ -268,7 +268,7 @@ class UserServiceOpChecker(DelayedTask):
             return
         DelayedTaskRunner.runner().insert(
             UserServiceOpChecker(userService),
-            ci.suggestedTime,
+            ci.suggested_delay,
             USERSERVICE_TAG + userService.uuid,
         )
 

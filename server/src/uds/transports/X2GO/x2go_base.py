@@ -237,7 +237,7 @@ class BaseX2GOTransport(transports.Transport):
         else:
             service = userService.service
 
-        servicesTypeProvided = service.get_type().servicesTypeProvided
+        services_type_provided = service.get_type().services_type_provided
 
         if self.fixedName.value != '':
             username = self.fixedName.value
@@ -248,7 +248,7 @@ class BaseX2GOTransport(transports.Transport):
         return types.connections.ConnectionData(
             protocol=self.protocol,
             username=username,
-            service_type=servicesTypeProvided,
+            service_type=services_type_provided,
             password=password,
         )
 

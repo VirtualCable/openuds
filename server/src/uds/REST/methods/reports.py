@@ -80,7 +80,7 @@ class Reports(model.BaseModelHandler):
         found = None
         logger.debug('Looking for report %s', uuid)
         for i in reports.availableReports:
-            if i.getUuid() == uuid:
+            if i.get_uuid() == uuid:
                 found = i(values)
                 break
 
@@ -127,7 +127,7 @@ class Reports(model.BaseModelHandler):
 
         try:
             logger.debug('Report: %s', report)
-            result = report.generateEncoded()
+            result = report.generate_encoded()
 
             data = {
                 'mime_type': report.mime_type,
@@ -152,7 +152,7 @@ class Reports(model.BaseModelHandler):
     ) -> typing.Generator[dict[str, typing.Any], None, None]:
         for i in reports.availableReports:
             yield {
-                'id': i.getUuid(),
+                'id': i.get_uuid(),
                 'mime_type': i.mime_type,
                 'encoded': i.encoded,
                 'group': i.translated_group(),

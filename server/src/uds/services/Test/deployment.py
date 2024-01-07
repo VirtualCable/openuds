@@ -72,44 +72,44 @@ class TestUserService(services.UserService):
         self.data = TestUserService.Data()
 
     # : Recheck every five seconds by default (for task methods)
-    suggestedTime = 5
+    suggested_delay = 5
 
     def service(self) -> typing.Union['TestServiceNoCache', 'TestServiceCache']:
         return typing.cast('TestServiceNoCache', super().service())
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         if not self.data.name:
-            self.data.name = self.nameGenerator().get(self.service().getBaseName(), 3)
+            self.data.name = self.name_generator().get(self.service().getBaseName(), 3)
 
         logger.info('Getting name of deployment %s', self.data)
 
         return self.data.name
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         logger.info('Setting ip of deployment %s to %s', self.data, ip)
         self.data.ip = ip
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         logger.info('Getting unique id of deployment %s', self.data)
         if not self.data.mac:
-            self.data.mac = self.macGenerator().get(
+            self.data.mac = self.mac_generator().get(
                 '00:00:00:00:00:00-00:FF:FF:FF:FF:FF'
             )
         return self.data.mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         logger.info('Getting ip of deployment %s', self.data)
         ip = typing.cast(str, self.storage.readData('ip'))
         if ip is None:
             ip = '8.6.4.2'  # Sample IP for testing purposses only
         return ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         logger.info('Setting ready %s', self.data)
         self.data.ready = True
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         logger.info('Deploying for user %s %s', user, self.data)
         self.data.count = 3
         return State.RUNNING
@@ -126,10 +126,10 @@ class TestUserService(services.UserService):
         logger.info('Finishing deployment %s', self.data)
         self.data.count = -1
 
-    def userLoggedIn(self, username: str) -> None:
+    def user_logged_in(self, username: str) -> None:
         logger.info('User %s has logged in', username)
 
-    def userLoggedOut(self, username) -> None:
+    def user_logged_out(self, username) -> None:
         logger.info('User %s has logged out', username)
 
     def error_reason(self) -> str:

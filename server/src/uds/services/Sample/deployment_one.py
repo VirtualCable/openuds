@@ -73,13 +73,13 @@ class SampleUserServiceOne(services.UserService):
     by Serializble classes, like this) empty (that is, returns '' first and does
     nothing the second one)
 
-    Also Remember, if you don't include this class as the userServiceType of the
+    Also Remember, if you don't include this class as the user_service_type of the
     SampleServiceOne, or whenever you trie to access a service of SampleServiceOne,
-    you will get an excetion that says that you havent included the userServiceType.
+    you will get an excetion that says that you havent included the user_service_type.
     """
 
     # : Recheck every five seconds by default (for task methods)
-    suggestedTime = 5
+    suggested_delay = 5
 
     def service(self) -> 'sample_service.ServiceOne':
         return typing.cast('sample_service.ServiceOne', super().service())
@@ -96,7 +96,7 @@ class SampleUserServiceOne(services.UserService):
         Does nothing here also, all data are kept at environment storage
         """
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """
         We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
@@ -119,7 +119,7 @@ class SampleUserServiceOne(services.UserService):
         """
         name: str = typing.cast(str, self.storage.readData('name'))
         if name is None:
-            name = self.nameGenerator().get(
+            name = self.name_generator().get(
                 self.service().getBaseName() + '-' + self.service().getColour(), 3
             )
             # Store value for persistence
@@ -127,7 +127,7 @@ class SampleUserServiceOne(services.UserService):
 
         return name
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -141,7 +141,7 @@ class SampleUserServiceOne(services.UserService):
         """
         self.storage.saveData('ip', ip)
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -153,11 +153,11 @@ class SampleUserServiceOne(services.UserService):
         """
         mac = typing.cast(str, self.storage.readData('mac'))
         if mac is None:
-            mac = self.macGenerator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
+            mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
             self.storage.saveData('mac', mac)
         return mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -180,7 +180,7 @@ class SampleUserServiceOne(services.UserService):
             ip = '192.168.0.34'  # Sample IP for testing purposses only
         return ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         """
         This is a task method. As that, the expected return values are
         State values RUNNING, FINISHED or ERROR.
@@ -213,7 +213,7 @@ class SampleUserServiceOne(services.UserService):
         # In our case, the service is always ready
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 
@@ -307,7 +307,7 @@ class SampleUserServiceOne(services.UserService):
         # Note that this is not really needed, is just a sample of storage use
         self.storage.remove('count')
 
-    def userLoggedIn(self, username: str) -> None:
+    def user_logged_in(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -324,7 +324,7 @@ class SampleUserServiceOne(services.UserService):
         # We store the value at storage, but never get used, just an example
         self.storage.saveData('user', username)
 
-    def userLoggedOut(self, username) -> None:
+    def user_logged_out(self, username) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.

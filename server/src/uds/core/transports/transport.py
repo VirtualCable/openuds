@@ -92,10 +92,6 @@ class Transport(Module):
     # Linux
     supportedOss: tuple = consts.os.desktopOss  # Supported operating systems
 
-    # If this transport is visible via Web, via Thin Client or both
-    webTransport: bool = False
-    tcTransport: bool = False
-
     # If the link to use transport is provided by transport itself
     ownLink: bool = False
 

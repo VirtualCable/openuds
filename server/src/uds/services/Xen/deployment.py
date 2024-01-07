@@ -69,7 +69,7 @@ NO_MORE_NAMES = 'NO-NAME-ERROR'
 
 class XenLinkedDeployment(services.UserService):
     # : Recheck every six seconds by default (for task methods)
-    suggestedTime = 7
+    suggested_delay = 7
 
     _name: str = ''
     _ip: str = ''
@@ -119,29 +119,29 @@ class XenLinkedDeployment(services.UserService):
             self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
             self._task = vals[7].decode('utf8')
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         if not self._name:
             try:
-                self._name = self.nameGenerator().get(
+                self._name = self.name_generator().get(
                     self.service().getBaseName(), self.service().getLenName()
                 )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         if not self._mac:
-            self._mac = self.macGenerator().get(self.service().getMacRange())
+            self._mac = self.mac_generator().get(self.service().getMacRange())
         return self._mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         return self._ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
@@ -164,7 +164,7 @@ class XenLinkedDeployment(services.UserService):
         if self._vmid:
             self.service().resetVM(self._vmid)  # Reset in sync
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
+    def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -174,7 +174,7 @@ class XenLinkedDeployment(services.UserService):
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -182,7 +182,7 @@ class XenLinkedDeployment(services.UserService):
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
@@ -303,7 +303,7 @@ class XenLinkedDeployment(services.UserService):
         Deploys a machine from template for user/cache
         """
         templateId = self.publication().getTemplateId()
-        name = self.getName()
+        name = self.get_name()
         if name == NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
@@ -384,7 +384,7 @@ class XenLinkedDeployment(services.UserService):
         """
         Provisions machine & changes the mac of the indicated nic
         """
-        self.service().configureVM(self._vmid, self.getUniqueId())
+        self.service().configureVM(self._vmid, self.get_unique_id())
 
         return State.RUNNING
 
@@ -500,7 +500,7 @@ class XenLinkedDeployment(services.UserService):
         except Exception as e:
             return self.__error(e)
 
-    def moveToCache(self, newLevel: int) -> str:
+    def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """

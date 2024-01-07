@@ -63,7 +63,7 @@ class LoginAllowed(enum.StrEnum):
     DENIED_IF_IN_NETWORKS = '3'
 
     @staticmethod
-    def checkAction(
+    def check_action(
         action: 'LoginAllowed|str',
         request: 'ExtendedHttpRequest',
         networks: typing.Optional[collections.abc.Iterable[str]] = None,
@@ -87,7 +87,7 @@ class LoginAllowed(enum.StrEnum):
         }.get(action, False)
 
     @staticmethod
-    def valuesForSelect() -> collections.abc.Mapping[str, str]:
+    def choices() -> collections.abc.Mapping[str, str]:
         return {
             LoginAllowed.ALLOWED.value: gettext('Allow user login'),
             LoginAllowed.DENIED.value: gettext('Deny user login'),
@@ -179,7 +179,7 @@ class MFA(Module):
         """
         return ''
 
-    def emptyIndentifierAllowedToLogin(
+    def allow_login_without_identifier(
         self, request: 'ExtendedHttpRequest'
     ) -> typing.Optional[bool]:
         """
@@ -191,7 +191,7 @@ class MFA(Module):
         """
         return True
 
-    def sendCode(
+    def send_code(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,
@@ -208,7 +208,7 @@ class MFA(Module):
         logger.error('MFA.sendCode not implemented')
         raise exceptions.auth.MFAError('MFA.sendCode not implemented')
 
-    def _getData(
+    def _get_data(
         self, request: 'ExtendedHttpRequest', userId: str
     ) -> typing.Optional[tuple[datetime.datetime, str]]:
         """
@@ -217,14 +217,14 @@ class MFA(Module):
         storageKey = request.ip + userId
         return self.storage.getPickle(storageKey)
 
-    def _removeData(self, request: 'ExtendedHttpRequest', userId: str) -> None:
+    def _remove_data(self, request: 'ExtendedHttpRequest', userId: str) -> None:
         """
         Internal method to remove the data from storage
         """
         storageKey = request.ip + userId
         self.storage.remove(storageKey)
 
-    def _putData(self, request: 'ExtendedHttpRequest', userId: str, code: str) -> None:
+    def _put_data(self, request: 'ExtendedHttpRequest', userId: str, code: str) -> None:
         """
         Internal method to put the data into storage
         """
@@ -261,7 +261,7 @@ class MFA(Module):
             Raises an error if the code was not sent and was required to be sent
         """
         # try to get the stored code
-        data = self._getData(request, userId)
+        data = self._get_data(request, userId)
         validity = validity if validity is not None else 0
         try:
             if data and validity:
@@ -271,7 +271,7 @@ class MFA(Module):
                     return MFA.RESULT.OK
         except Exception:
             # if we have a problem, just remove the stored code
-            self._removeData(request, userId)
+            self._remove_data(request, userId)
 
         # Generate a 6 digit code (0-9)
         code = ''.join(random.SystemRandom().choices('0123456789', k=6))
@@ -280,10 +280,10 @@ class MFA(Module):
         # Send the code to the user
         # May raise an exception if the code was not sent and is required to be sent
         # pylint: disable=assignment-from-no-return
-        result = self.sendCode(request, userId, username, identifier, code)
+        result = self.send_code(request, userId, username, identifier, code)
 
         # Store the code in the database, own storage space, if no exception was raised
-        self._putData(request, userId, code)
+        self._put_data(request, userId, code)
 
         return result
 
@@ -316,7 +316,7 @@ class MFA(Module):
         try:
             err = _('Invalid MFA code')
 
-            data = self._getData(request, userId)
+            data = self._get_data(request, userId)
             if data and len(data) == 2:
                 validity = validity if validity is not None else 0
                 if (
@@ -326,13 +326,13 @@ class MFA(Module):
                 ):
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
-                    self._removeData(request, userId)
+                    self._remove_data(request, userId)
                     raise exceptions.auth.MFAError('MFA Code expired')
 
                 # Check if the code is valid
                 if data[1] == code:
                     # Code is valid, remove it from storage
-                    self._removeData(request, userId)
+                    self._remove_data(request, userId)
                     return
         except Exception as e:
             # Any error means invalid code
@@ -340,7 +340,7 @@ class MFA(Module):
 
         raise exceptions.auth.MFAError(err)
 
-    def resetData(
+    def reset_data(
         self,
         userId: str,
     ) -> None:
@@ -350,7 +350,7 @@ class MFA(Module):
         """
 
     @staticmethod
-    def getUserId(user: 'User') -> str:
+    def get_user_id(user: 'User') -> str:
         """
         Composes an unique, mfa dependant, id for the user (at this time, it's sha3_256 of user + mfa)
         """

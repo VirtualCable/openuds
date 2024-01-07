@@ -44,11 +44,11 @@ LOGO = 'logo-512.png'
 CSS = 'report.css'
 
 
-def getStockImagePath(stockImg: typing.Optional[str] = None) -> str:
+def get_stock_image_path(stockImg: typing.Optional[str] = None) -> str:
     stockImg = stockImg or LOGO
     return utils.package_relative_file(__name__, 'stock_images/' + stockImg)
 
 
-def getStockCssPath(css: typing.Optional[str] = None) -> str:
+def get_stock_css_path(css: typing.Optional[str] = None) -> str:
     css = css or CSS
     return utils.package_relative_file(__name__, 'css/' + css)

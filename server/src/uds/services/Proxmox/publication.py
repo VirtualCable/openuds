@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProxmoxPublication(services.Publication):
-    suggestedTime = 20
+    suggested_delay = 20
 
     _name: str
     _vm: str
@@ -115,12 +115,12 @@ class ProxmoxPublication(services.Publication):
                 'UDS '
                 + _('Publication')
                 + ' '
-                + self.dsName()
+                + self.servicepool_name()
                 + "-"
                 + str(self.revision())
             )
             comments = _('UDS Publication for {0} created at {1}').format(
-                self.dsName(), str(datetime.now()).split('.')[0]
+                self.servicepool_name(), str(datetime.now()).split('.')[0]
             )
             task = self.service().cloneMachine(self._name, comments)
             self._vm = str(task.vmid)

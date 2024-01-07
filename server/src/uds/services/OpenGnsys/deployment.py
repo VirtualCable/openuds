@@ -64,7 +64,7 @@ class OGDeployment(services.UserService):
     """
 
     # : Recheck every N seconds by default (for task methods)
-    suggestedTime = 20
+    suggested_delay = 20
 
     _name: str = 'unknown'
     _ip: str = ''
@@ -124,16 +124,16 @@ class OGDeployment(services.UserService):
                 vals[7]
             )  # nosec: not insecure, we are loading our own data
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         return self._name
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         return self._mac.upper()
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         return self._ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         """
         Notifies the current "deadline" to the user, before accessing by UDS
         The machine has been already been started.
@@ -169,7 +169,7 @@ class OGDeployment(services.UserService):
         except Exception as e:
             return self.__error(f'Error setting ready state: {e}')
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -177,7 +177,7 @@ class OGDeployment(services.UserService):
         self.__initQueueForDeploy()
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """

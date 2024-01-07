@@ -208,7 +208,7 @@ class PoolPerformanceReport(StatsReport):
             'ylabel': _('Users'),
         }
 
-        graphs.barChart(SIZE, data, graph1)
+        graphs.bar_chart(SIZE, data, graph1)
 
         X = [v[0] for v in poolsData[0]['dataAccesses']]
         data = {
@@ -227,11 +227,11 @@ class PoolPerformanceReport(StatsReport):
             'ylabel': _('Accesses'),
         }
 
-        graphs.barChart(SIZE, data, graph2)
+        graphs.bar_chart(SIZE, data, graph2)
 
         # Generate Data for pools, basically joining all pool data
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/pools-performance.html',
             dct={
                 'data': reportData,

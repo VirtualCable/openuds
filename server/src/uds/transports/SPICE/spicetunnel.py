@@ -101,7 +101,7 @@ class TSPICETransport(BaseSpiceTransport):
     ) -> transports.TransportScript:
         try:
             userServiceInstance = userService.get_instance()
-            con = userServiceInstance.getConsoleConnection()
+            con = userServiceInstance.get_console_connection()
         except Exception:
             logger.exception('Error getting console connection data')
             raise

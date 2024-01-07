@@ -77,7 +77,7 @@ class ListReportUsers(ListReport):
         auth = Authenticator.objects.get(uuid=self.authenticator.value)
         users = auth.users.order_by('name')
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/lists/users.html',
             dct={
                 'users': users,

@@ -68,7 +68,7 @@ class DelayedTask(Environmentable):
         logging.error("Base run of job called for class")
         raise NotImplementedError
 
-    def register(self, suggestedTime: int, tag: str = '', check: bool = True) -> None:
+    def register(self, suggested_delay: int, tag: str = '', check: bool = True) -> None:
         """
         Utility method that allows to register a Delayedtask
         """
@@ -77,4 +77,4 @@ class DelayedTask(Environmentable):
         if check and DelayedTaskRunner.runner().tag_exists(tag):
             return
 
-        DelayedTaskRunner.runner().insert(self, suggestedTime, tag)
+        DelayedTaskRunner.runner().insert(self, suggested_delay, tag)

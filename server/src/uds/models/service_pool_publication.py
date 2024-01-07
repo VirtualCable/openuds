@@ -139,12 +139,12 @@ class ServicePoolPublication(UUIDModel):
         # Sanity check, so it's easier to find when we have created
         # a service that needs publication but do not have
 
-        if serviceInstance.publicationType is None:
+        if serviceInstance.publication_type is None:
             raise Exception(
-                f'Class {serviceInstance.__class__.__name__} do not have defined publicationType but needs to be published!!!'
+                f'Class {serviceInstance.__class__.__name__} do not have defined publication_type but needs to be published!!!'
             )
 
-        publication = serviceInstance.publicationType(
+        publication = serviceInstance.publication_type(
             self.get_environment(),
             service=serviceInstance,
             osManager=osManagerInstance,

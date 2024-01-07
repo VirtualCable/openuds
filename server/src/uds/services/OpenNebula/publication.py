@@ -49,7 +49,7 @@ class LivePublication(Publication):
     This class provides the publication of a oVirtLinkedService
     """
 
-    suggestedTime = (
+    suggested_delay = (
         2  # : Suggested recheck time if publication is unfinished in seconds
     )
 
@@ -83,7 +83,7 @@ class LivePublication(Publication):
         Realizes the publication of the service
         """
         self._name = self.service().sanitizeVmName(
-            'UDSP ' + self.dsName() + "-" + str(self.revision())
+            'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
         self._state = 'running'

@@ -108,7 +108,7 @@ class TOTP_MFA(mfas.MFA):
             ]
         )
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+    def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return None
 
     def askForOTP(self, request: 'ExtendedHttpRequest') -> bool:
@@ -216,5 +216,5 @@ class TOTP_MFA(mfas.MFA):
         if qrShown is False:
             self._saveUserData(userId, (secret, True))  # Update user data to show QR code only once
 
-    def resetData(self, userId: str) -> None:
+    def reset_data(self, userId: str) -> None:
         self._removeUserData(userId)

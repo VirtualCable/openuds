@@ -56,8 +56,8 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         # Default values for max
         TestProvider.maxPreparingServices = 1000
         TestProvider.maxRemovingServices = 1000
-        TestServiceCache.maxUserServices = 1000
-        TestServiceNoCache.maxUserServices = 1000
+        TestServiceCache.max_user_services = 1000
+        TestServiceNoCache.max_user_services = 1000
 
         ServiceCacheUpdater.setup()
         userService = services_fixtures.createCacheTestingUserServices()[0]
@@ -168,17 +168,17 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         self.assertEqual(self.runCacheUpdater(10), 40)
 
     def test_service_max_deployed(self) -> None:
-        TestServiceCache.maxUserServices = 22
+        TestServiceCache.max_user_services = 22
 
         self.setCache(initial=100, cache=100, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.maxUserServices)
+        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.max_user_services)
 
         # Delete all userServices
         self.servicePool.userServices.all().delete()
 
         # We again allow masUserServices to be zero (meaning that no service will be created)
         # This allows us to "honor" some external providers that, in some cases, will not have services available...
-        TestServiceCache.maxUserServices = 0
+        TestServiceCache.max_user_services = 0
         self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 0)

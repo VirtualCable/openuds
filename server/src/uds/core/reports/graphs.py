@@ -48,7 +48,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def barChart(
+def bar_chart(
     size: tuple[float, float, int],
     data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,
@@ -107,7 +107,7 @@ def barChart(
     fig.savefig(output, format='png', transparent=True)
 
 
-def lineChart(
+def line_chart(
     size: tuple[float, float, int],
     data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,
@@ -164,7 +164,7 @@ def lineChart(
     fig.savefig(output, format='png', transparent=True)
 
 
-def surfaceChart(
+def surface_chart(
     size: tuple[float, float, int],
     data: collections.abc.Mapping[str, typing.Any],
     output: io.BytesIO,

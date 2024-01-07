@@ -145,7 +145,7 @@ class UsageSummaryByUsersPool(StatsReport):
     def generate(self) -> bytes:
         items, poolName = self.getData()
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/pool-users-summary.html',
             dct={
                 'data': items,

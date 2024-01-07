@@ -80,13 +80,13 @@ class Publication(Environmentable, Serializable):
     # : takes low time, so we suggest to check at short intervals,
     # : but full clone takes a lot, so we suggest that checks are done more steady.
     # : This attribute is always accessed using an instance object, so you can
-    # : change suggestedTime in your implementation.
-    suggestedTime: int = 10
+    # : change suggested_delay in your implementation.
+    suggested_delay: int = 10
 
     _osmanager: typing.Optional['osmanagers.OSManager']
     _service: 'services.Service'
     _revision: int
-    _dsName: str
+    _servicepool_name: str
     _uuid: str
 
     _dbObj: typing.Optional['models.ServicePoolPublication']
@@ -103,7 +103,7 @@ class Publication(Environmentable, Serializable):
         self._osManager = kwargs.get('osManager', None)
         self._service = kwargs['service']  # Raises an exception if service is not included
         self._revision = kwargs.get('revision', -1)
-        self._dsName = kwargs.get('dsName', 'Unknown')
+        self._servicepool_name = kwargs.get('dsName', 'Unknown')
         self._uuid = kwargs.get('uuid', '')
 
         self.initialize()
@@ -137,7 +137,7 @@ class Publication(Environmentable, Serializable):
         """
         return self._service
 
-    def osManager(self) -> typing.Optional['osmanagers.OSManager']:
+    def os_manager(self) -> typing.Optional['osmanagers.OSManager']:
         """
         Utility method to access os manager for this publication.
 
@@ -156,16 +156,16 @@ class Publication(Environmentable, Serializable):
         """
         return self._revision
 
-    def dsName(self) -> str:
+    def servicepool_name(self) -> str:
         """
         Utility method to access the declared deployed service name.
 
         This name is set by core, using the administrator provided data
         at administration interface.
         """
-        return self._dsName
+        return self._servicepool_name
 
-    def getUuid(self) -> str:
+    def get_uuid(self) -> str:
         return self._uuid
 
     @abc.abstractmethod

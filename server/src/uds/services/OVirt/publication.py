@@ -51,7 +51,7 @@ class OVirtPublication(Publication):
     This class provides the publication of a oVirtLinkedService
     """
 
-    suggestedTime = (
+    suggested_delay = (
         20  # : Suggested recheck time if publication is unfinished in seconds
     )
     _name: str
@@ -114,10 +114,10 @@ class OVirtPublication(Publication):
         Realizes the publication of the service
         """
         self._name = self.service().sanitizeVmName(
-            'UDSP ' + self.dsName() + "-" + str(self.revision())
+            'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         comments = _('UDS pub for {0} at {1}').format(
-            self.dsName(), str(datetime.now()).split('.')[0]
+            self.servicepool_name(), str(datetime.now()).split('.')[0]
         )
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'f'

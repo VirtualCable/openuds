@@ -61,16 +61,16 @@ class TestServiceNoCache(services.Service):
     # Functional related data
 
     maxUserservices = 1000  # A big number for testing purposes
-    usesCache = False
-    cacheTooltip = _('None')
-    usesCache_L2 = False
-    cacheTooltip_L2 = _('None')
+    uses_cache = False
+    cache_tooltip = _('None')
+    uses_cache_l2 = False
+    cache_tooltip_l2 = _('None')
 
-    needsManager = False
-    mustAssignManually = False
+    needs_manager = False
+    must_assign_manually = False
 
-    publicationType = None
-    userServiceType = TestUserService
+    publication_type = None
+    user_service_type = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())
@@ -92,21 +92,21 @@ class TestServiceCache(services.Service):
     icon_file = 'provider.png'  # : We reuse provider icon here :-), it's just for testing purpuoses
 
     # Functional related data
-    maxUserServices = 1000  # A big number for testing
-    usesCache = True
-    cacheTooltip = _('L1 cache for dummy elements')
-    usesCache_L2 = True
-    cacheTooltip_L2 = _('L2 cache for dummy elements')
+    max_user_services = 1000  # A big number for testing
+    uses_cache = True
+    cache_tooltip = _('L1 cache for dummy elements')
+    uses_cache_l2 = True
+    cache_tooltip_l2 = _('L2 cache for dummy elements')
 
-    needsManager = False
-    mustAssignManually = False
+    needs_manager = False
+    must_assign_manually = False
 
     # : Types of publications. In this case, we will include a publication
     # : type for this one
     # : Note that this is a MUST if you indicate that needPublication
-    publicationType = TestPublication
+    publication_type = TestPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    userServiceType = TestUserService
+    user_service_type = TestUserService
 
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())

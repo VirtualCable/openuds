@@ -81,11 +81,11 @@ class SamplePublication(services.Publication):
     This value is instance based, so if we override it in our class, the suggested
     time could change.
 
-    The class attribute that indicates this suggested time is "suggestedTime", and
-    it's expressed in seconds, (i.e. "suggestedTime = 10")
+    The class attribute that indicates this suggested time is "suggested_delay", and
+    it's expressed in seconds, (i.e. "suggested_delay = 10")
     """
 
-    suggestedTime = (
+    suggested_delay = (
         5  # : Suggested recheck time if publication is unfinished in seconds
     )
     _name: str = ''
@@ -174,7 +174,7 @@ class SamplePublication(services.Publication):
         store it at delayed task queue.
 
         Also note that, in that case, this class can also acomplish that by simply
-        using the suggestedTime attribute and the check_state method in most cases.
+        using the suggested_delay attribute and the check_state method in most cases.
         """
         self._number = 5
         self._reason = ''

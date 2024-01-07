@@ -236,7 +236,7 @@ class Environmentable:
         """
         return self._env.storage
 
-    def idGenerators(self, generatorId: str) -> 'UniqueIDGenerator':
+    def id_generators(self, generatorId: str) -> 'UniqueIDGenerator':
         """
         Utility method to access the id generator of the environment containe by this object
 

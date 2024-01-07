@@ -85,7 +85,7 @@ class ProxmoxDeployment(services.UserService):
     """
 
     # : Recheck every this seconds by default (for task methods)
-    suggestedTime = 12
+    suggested_delay = 12
 
     # own vars
     _name: str
@@ -147,21 +147,21 @@ class ProxmoxDeployment(services.UserService):
             self._reason = vals[6].decode('utf8')
             self._queue = pickle.loads(vals[7])  # nosec: controled data
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(
+                self._name = self.name_generator().get(
                     self.service().getBaseName(), self.service().getLenName()
                 )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         logger.debug('Setting IP to %s', ip)
         self._ip = ip
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -172,13 +172,13 @@ class ProxmoxDeployment(services.UserService):
         to use to get an unused mac.
         """
         if self._mac == '':
-            self._mac = self.macGenerator().get(self.service().getMacRange())
+            self._mac = self.mac_generator().get(self.service().getMacRange())
         return self._mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         return self._ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         if self.cache.get('ready') == '1':
             return State.FINISHED
 
@@ -206,7 +206,7 @@ class ProxmoxDeployment(services.UserService):
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
-    def getConsoleConnection(
+    def get_console_connection(
         self,
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.service().getConsoleConnection(self._vmid)
@@ -231,7 +231,7 @@ if sys.platform == 'win32':
             except Exception as e:
                 logger.info('Exception sending loggin to %s: %s', dbService, e)
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
+    def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -241,7 +241,7 @@ if sys.platform == 'win32':
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -249,7 +249,7 @@ if sys.platform == 'win32':
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
@@ -365,7 +365,7 @@ if sys.platform == 'win32':
         Deploys a machine from template for user/cache
         """
         templateId = self.publication().machine()
-        name = self.getName()
+        name = self.get_name()
         if name == NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
@@ -459,7 +459,7 @@ if sys.platform == 'win32':
             )  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
-            self.service().setVmMac(int(self._vmid), self.getUniqueId())
+            self.service().setVmMac(int(self._vmid), self.get_unique_id())
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e
@@ -600,7 +600,7 @@ if sys.platform == 'win32':
         except Exception as e:
             return self.__error(e)
 
-    def moveToCache(self, newLevel: int) -> str:
+    def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """

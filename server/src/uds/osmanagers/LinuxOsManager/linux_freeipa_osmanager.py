@@ -172,7 +172,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             self._ssl = 'n'
             self._automaticIdMapping = 'n'
 
-    def actorData(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userService.getName(),
@@ -180,7 +180,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
                 'domain': self._domain,
                 'username': self._account,
                 'password': self._password,
-                'isPersistent': self.isPersistent(),
+                'isPersistent': self.is_persistent(),
                 'clientSoftware': self._clientSoftware,
                 'serverSoftware': self._serverSoftware,
                 'membershipSoftware': self._membershipSoftware,

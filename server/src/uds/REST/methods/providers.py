@@ -93,7 +93,7 @@ class Providers(ModelHandler):
                 'description': gettext(t.description()),
                 'icon': t.icon64().replace('\n', ''),
             }
-            for t in type_.getProvidedServices()
+            for t in type_.get_provided_services()
         ]
 
         return {

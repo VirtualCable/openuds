@@ -199,7 +199,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if not servicePool.service:
             raise Exception('Service not found')
         serviceInstance = servicePool.service.get_instance()
-        if serviceInstance.needsManager is False or not servicePool.osmanager:
+        if serviceInstance.needs_manager is False or not servicePool.osmanager:
             osmanagerInstance = None
         else:
             osmanagerInstance = servicePool.osmanager.get_instance()
@@ -215,11 +215,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 'Got exception at get_instance of an userService %s (seems that publication does not exists!)',
                 self,
             )
-        if serviceInstance.userServiceType is None:
+        if serviceInstance.user_service_type is None:
             raise Exception(
-                f'Class {serviceInstance.__class__.__name__} needs userServiceType but it is not defined!!!'
+                f'Class {serviceInstance.__class__.__name__} needs user_service_type but it is not defined!!!'
             )
-        us = serviceInstance.userServiceType(
+        us = serviceInstance.user_service_type(
             self.get_environment(),
             service=serviceInstance,
             publication=publicationInstance,
@@ -256,7 +256,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         if self.friendly_name == '':
             si = self.get_instance()
-            self.friendly_name = si.getName()
+            self.friendly_name = si.get_name()
             self.updateData(si)
 
         return self.friendly_name
@@ -267,7 +267,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         if self.unique_id == '':
             si = self.get_instance()
-            self.unique_id = si.getUniqueId()
+            self.unique_id = si.get_unique_id()
             self.updateData(si)
         return self.unique_id
 
@@ -381,7 +381,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if not servicePool.service:
             raise Exception('Service not found')
         serviceInstance = servicePool.service.get_instance()
-        if serviceInstance.needsManager is False or not servicePool.osmanager:
+        if serviceInstance.needs_manager is False or not servicePool.osmanager:
             return (username, password)
 
         return servicePool.osmanager.get_instance().process_user_password(self, username, password)
@@ -601,7 +601,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Returns True if this user service does not needs an publication, or if this deployed service publication is the current one
         """
         return (
-            self.deployed_service.service and self.deployed_service.service.get_type().publicationType is None
+            self.deployed_service.service and self.deployed_service.service.get_type().publication_type is None
         ) or self.publication == self.deployed_service.activePublication()
 
     # Utility for logging

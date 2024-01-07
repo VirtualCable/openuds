@@ -55,7 +55,7 @@ class LivePublication(Publication):
     _state: str = 'r'
     _destroyAfter: str = 'n'
 
-    suggestedTime = (
+    suggested_delay = (
         20  # : Suggested recheck time if publication is unfinished in seconds
     )
 
@@ -112,7 +112,7 @@ class LivePublication(Publication):
         Realizes the publication of the service
         """
         self._name = self.service().sanitizeVmName(
-            'UDSP ' + self.dsName() + "-" + str(self.revision())
+            'UDSP ' + self.servicepool_name() + "-" + str(self.revision())
         )
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'n'

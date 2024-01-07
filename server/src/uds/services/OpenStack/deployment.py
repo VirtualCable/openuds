@@ -74,7 +74,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
     _queue: list[int] = []
 
     # : Recheck every this seconds by default (for task methods)
-    suggestedTime = 5
+    suggested_delay = 5
 
     def initialize(self) -> None:
         self._name = ''
@@ -116,26 +116,26 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
             self._reason = vals[5].decode('utf8')
             self._queue = pickle.loads(vals[6])  # nosec: not insecure, we are loading our own data
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         if self._name == '':
             try:
-                self._name = self.nameGenerator().get(
+                self._name = self.name_generator().get(
                     self.service().getBaseName(), self.service().getLenName()
                 )
             except KeyError:
                 return NO_MORE_NAMES
         return self._name
 
-    def setIp(self, ip) -> None:
+    def set_ip(self, ip) -> None:
         self._ip = ip
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         return self._mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         return self._ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         """
         The method is invoked whenever a machine is provided to an user, right
         before presenting it (via transport rendering) to the user.
@@ -167,7 +167,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         if self._vmid != '':
             self.service().resetMachine(self._vmid)
 
-    def notifyReadyFromOsManager(self, data: typing.Any) -> str:
+    def process_ready_from_os_manager(self, data: typing.Any) -> str:
         # Here we will check for suspending the VM (when full ready)
         logger.debug('Checking if cache 2 for %s', self._name)
         if self.__getCurrentOp() == opWait:
@@ -177,7 +177,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         # Do not need to go to level 2 (opWait is in fact "waiting for moving machine to cache level 2)
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
         """
@@ -185,7 +185,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         self.__initQueueForDeploy(False)
         return self.__executeQueue()
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys an service instance for cache
         """
@@ -311,7 +311,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         Deploys a machine from template for user/cache
         """
         templateId = self.publication().getTemplateId()
-        name = self.getName()
+        name = self.get_name()
         if name == NO_MORE_NAMES:
             raise Exception(
                 'No more names available for this service. (Increase digits for this service to fix)'
@@ -423,7 +423,7 @@ class LiveDeployment(services.UserService):  # pylint: disable=too-many-public-m
         except Exception as e:
             return self.__error(e)
 
-    def moveToCache(self, newLevel: int) -> str:
+    def move_to_cache(self, newLevel: int) -> str:
         """
         Moves machines between cache levels
         """

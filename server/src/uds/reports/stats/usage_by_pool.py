@@ -139,7 +139,7 @@ class UsageByPool(StatsReport):
     def generate(self):
         items, poolName = self.getData()
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/usage-by-pool.html',
             dct={
                 'data': items,

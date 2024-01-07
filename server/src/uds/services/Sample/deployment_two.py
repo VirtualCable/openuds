@@ -70,13 +70,13 @@ class SampleUserServiceTwo(services.UserService):
     by Serializable classes, like this) empty (that is, returns '' first and does
     nothing the second one)
 
-    Also Remember, if you don't include this class as the userServiceType of the
+    Also Remember, if you don't include this class as the user_service_type of the
     SampleServiceTwo, or whenever you try to access a service of SampleServiceTwo,
-    you will get an exception that says that you haven't included the userServiceType.
+    you will get an exception that says that you haven't included the user_service_type.
     """
 
     # : Recheck every five seconds by default (for task methods)
-    suggestedTime = 2
+    suggested_delay = 2
 
     _name: str
     _ip: str
@@ -137,7 +137,7 @@ class SampleUserServiceTwo(services.UserService):
             self._name, self._ip, self._mac, self._error, count = values[1:]
             self._count = int(count)
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """
         We override this to return a name to display. Default implementation
         (in base class), returns getUniqueIde() value
@@ -159,11 +159,11 @@ class SampleUserServiceTwo(services.UserService):
         generate more names. (Generator are simple utility classes)
         """
         if self._name == '':
-            self._name = self.nameGenerator().get(self.publication().getBaseName(), 3)
+            self._name = self.name_generator().get(self.publication().getBaseName(), 3)
         # self._name will be stored when object is marshaled
         return self._name
 
-    def setIp(self, ip: str) -> None:
+    def set_ip(self, ip: str) -> None:
         """
         In our case, there is no OS manager associated with this, so this method
         will never get called, but we put here as sample.
@@ -177,7 +177,7 @@ class SampleUserServiceTwo(services.UserService):
         """
         self._ip = ip
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         """
         Return and unique identifier for this service.
         In our case, we will generate a mac name, that can be also as sample
@@ -202,10 +202,10 @@ class SampleUserServiceTwo(services.UserService):
         :note: Normally, getting out of macs in the mac pool is a bad thing... :-)
         """
         if self._mac == '':
-            self._mac = self.macGenerator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
+            self._mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
         return self._mac
 
-    def getIp(self) -> str:
+    def get_ip(self) -> str:
         """
         We need to implement this method, so we can return the IP for transports
         use. If no IP is known for this service, this must return None
@@ -227,7 +227,7 @@ class SampleUserServiceTwo(services.UserService):
             return '192.168.0.34'  # Sample IP for testing purposes only
         return self._ip
 
-    def setReady(self) -> str:
+    def set_ready(self) -> str:
         """
         This is a task method. As that, the excepted return values are
         State values RUNNING, FINISHED or ERROR.
@@ -260,7 +260,7 @@ class SampleUserServiceTwo(services.UserService):
         # In our case, the service is always ready
         return State.FINISHED
 
-    def deployForUser(self, user: 'models.User') -> str:
+    def deploy_for_user(self, user: 'models.User') -> str:
         """
         Deploys an service instance for an user.
 
@@ -299,7 +299,7 @@ class SampleUserServiceTwo(services.UserService):
 
         return State.RUNNING
 
-    def deployForCache(self, cacheLevel: int) -> str:
+    def deploy_for_cache(self, cacheLevel: int) -> str:
         """
         Deploys a user deployment as cache.
 
@@ -373,7 +373,7 @@ class SampleUserServiceTwo(services.UserService):
         # We set count to 0, not needed but for sample purposes
         self._count = 0
 
-    def userLoggedIn(self, username: str) -> None:
+    def user_logged_in(self, username: str) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged into a service.
@@ -390,7 +390,7 @@ class SampleUserServiceTwo(services.UserService):
         # We store the value at storage, but never get used, just an example
         self.storage.saveData('user', username)
 
-    def userLoggedOut(self, username) -> None:
+    def user_logged_out(self, username) -> None:
         """
         This method must be available so os managers can invoke it whenever
         an user get logged out if a service.

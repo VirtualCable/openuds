@@ -72,34 +72,34 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     # Functional related data
 
     # : If we need to generate "cache" for this service, so users can access the
-    # : provided services faster. Is usesCache is True, you will need also
-    # : set publicationType, do take care about that!
-    usesCache = True
+    # : provided services faster. Is uses_cache is True, you will need also
+    # : set publication_type, do take care about that!
+    uses_cache = True
     # : Tooltip shown to user when this item is pointed at admin interface, none
     # : because we don't use it
-    cacheTooltip = _('Number of desired machines to keep running waiting for a user')
+    cache_tooltip = _('Number of desired machines to keep running waiting for a user')
     # : If we need to generate a "Level 2" cache for this service (i.e., L1
     # : could be running machines and L2 suspended machines)
-    usesCache_L2 = True
+    uses_cache_l2 = True
     # : Tooltip shown to user when this item is pointed at admin interface, None
     # : also because we don't use it
-    cacheTooltip_L2 = _('Number of desired machines to keep suspended waiting for use')
+    cache_tooltip_l2 = _('Number of desired machines to keep suspended waiting for use')
 
     # : If the service needs a s.o. manager (managers are related to agents
     # : provided by services itselfs, i.e. virtual machines with actors)
-    needsManager = True
+    needs_manager = True
     # : If true, the system can't do an automatic assignation of a deployed user
     # : service from this service
-    mustAssignManually = False
-    canReset = True
+    must_assign_manually = False
+    can_reset = True
 
     # : Types of publications (preparated data for deploys)
     # : In our case, we do no need a publication, so this is None
-    publicationType = XenPublication
+    publication_type = XenPublication
     # : Types of deploys (services in cache and/or assigned to users)
-    userServiceType = XenLinkedDeployment
+    user_service_type = XenLinkedDeployment
 
-    servicesTypeProvided = types.services.ServiceType.VDI
+    services_type_provided = types.services.ServiceType.VDI
 
 
     # Now the form part

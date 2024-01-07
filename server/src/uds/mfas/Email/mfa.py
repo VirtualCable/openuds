@@ -134,7 +134,7 @@ class EmailMFA(mfas.MFA):
         default='0',
         tooltip=_('Action for MFA response error'),
         required=True,
-        choices=mfas.LoginAllowed.valuesForSelect(),
+        choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
     )
 
@@ -211,8 +211,8 @@ class EmailMFA(mfas.MFA):
             [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
-    def emptyIndentifierAllowedToLogin(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.checkAction(self.allowLoginWithoutMFA.value, request, self.networks.value)
+    def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
+        return mfas.LoginAllowed.check_action(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
     def label(self) -> str:
         return 'OTP received via email'
@@ -248,7 +248,7 @@ class EmailMFA(mfas.MFA):
                 logger.error('Error sending email: %s', e)
                 raise
 
-    def sendCode(
+    def send_code(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,

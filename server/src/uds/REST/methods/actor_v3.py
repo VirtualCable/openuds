@@ -200,7 +200,7 @@ class ActorV3Action(Handler):
             # ensure idsLists has upper and lower versions for case sensitive databases
             idsList = fixIdsList(idsList)
 
-            validId: typing.Optional[str] = service.getValidId(idsList)
+            validId: typing.Optional[str] = service.get_valid_id(idsList)
 
             is_remote = self._params.get('session_type', '')[:4] in ('xrdp', 'RDP-')
 
@@ -212,11 +212,11 @@ class ActorV3Action(Handler):
 
                 if action == NotifyActionType.LOGIN:
                     # Try to guess if this is a remote session
-                    service.processLogin(validId, remote_login=is_remote)
+                    service.process_login(validId, remote_login=is_remote)
                 elif action == NotifyActionType.LOGOUT:
-                    service.processLogout(validId, remote_login=is_remote)
+                    service.process_logout(validId, remote_login=is_remote)
             elif action == NotifyActionType.DATA:
-                service.notifyData(validId, self._params['data'])
+                service.notify_data(validId, self._params['data'])
             else:
                 raise Exception('Invalid action')
 
@@ -456,7 +456,7 @@ class Initialize(ActorV3Action):
             osData: collections.abc.MutableMapping[str, typing.Any] = {}
             osManager = userService.getOsManagerInstance()
             if osManager:
-                osData = osManager.actorData(userService)
+                osData = osManager.actor_data(userService)
 
             if service and not alias_token:  # Is a service managed by UDS
                 # Create a new alias for it, and save
@@ -496,7 +496,7 @@ class BaseReadyChange(ActorV3Action):
         # Stores known IP and notifies it to deployment
         userService.log_ip(self._params['ip'])
         userServiceInstance = userService.get_instance()
-        userServiceInstance.setIp(self._params['ip'])
+        userServiceInstance.set_ip(self._params['ip'])
         userService.updateData(userServiceInstance)
 
         # Store communications url also
@@ -513,7 +513,7 @@ class BaseReadyChange(ActorV3Action):
             osManager = userService.getOsManagerInstance()
 
             if osManager:
-                osManager.toReady(userService)
+                osManager.to_ready(userService)
                 UserServiceManager().notify_ready_from_os_manager(userService, '')
 
         # Generates a certificate and send it to client.
@@ -600,7 +600,7 @@ class Login(ActorV3Action):
     def process_login(userService: UserService, username: str) -> typing.Optional[osmanagers.OSManager]:
         osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
         if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-            osmanagers.OSManager.loggedIn(userService, username)
+            osmanagers.OSManager.logged_in(userService, username)
         return osManager
 
     def action(self) -> dict[str, typing.Any]:
@@ -615,7 +615,7 @@ class Login(ActorV3Action):
             userService: UserService = self.getUserService()
             osManager = Login.process_login(userService, self._params.get('username') or '')
 
-            maxIdle = osManager.maxIdle() if osManager else None
+            maxIdle = osManager.max_idle() if osManager else None
 
             logger.debug('Max idle: %s', maxIdle)
 
@@ -623,7 +623,7 @@ class Login(ActorV3Action):
             session_id = userService.initSession()  # creates a session for every login requested
 
             if osManager:  # For os managed services, let's check if we honor deadline
-                if osManager.ignoreDeadLine():
+                if osManager.ignore_deadline():
                     deadLine = userService.deployed_service.get_deadline()
                 else:
                     deadLine = None
@@ -667,7 +667,7 @@ class Logout(ActorV3Action):
         userService.closeSession(session_id)
 
         if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-            osmanagers.OSManager.loggedOut(userService, username)
+            osmanagers.OSManager.logged_out(userService, username)
             if osManager:
                 if osManager.isRemovableOnLogout(userService):
                     logger.debug('Removable on logout: %s', osManager)
@@ -775,7 +775,7 @@ class Unmanaged(ActorV3Action):
         # Build the possible ids and ask service if it recognizes any of it
         # If not recognized, will generate anyway the certificate, but will not be saved
         idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
-        validId: typing.Optional[str] = service.getValidId(idsList)
+        validId: typing.Optional[str] = service.get_valid_id(idsList)
 
         # ensure idsLists has upper and lower versions for case sensitive databases
         idsList = fixIdsList(idsList)
@@ -816,10 +816,10 @@ class Unmanaged(ActorV3Action):
                 Logout.process_logout(userService, 'init', '')
             else:
                 # If it is not assgined to an user service, notify service
-                service.notifyInitialization(validId)
+                service.notify_initialization(validId)
 
             # Store certificate, secret & port with service if validId
-            service.storeIdInfo(
+            service.store_id_info(
                 validId,
                 {
                     'cert': certificate,

@@ -128,9 +128,9 @@ class CountersPoolAssigned(StatsReport):
             'ylabel': 'Services',
         }
 
-        graphs.barChart(SIZE, d, graph1)
+        graphs.bar_chart(SIZE, d, graph1)
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/pools-usage-day.html',
             dct={
                 'data': items,

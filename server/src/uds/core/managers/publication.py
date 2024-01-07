@@ -182,7 +182,7 @@ class PublicationFinishChecker(DelayedTask):
                         doPublicationCleanup = (
                             True
                             if osm is None
-                            else not osm.get_instance().isPersistent()
+                            else not osm.get_instance().is_persistent()
                         )
 
                         if doPublicationCleanup:
@@ -233,7 +233,7 @@ class PublicationFinishChecker(DelayedTask):
         """
         DelayedTaskRunner.runner().insert(
             PublicationFinishChecker(publication),
-            publicationInstance.suggestedTime,
+            publicationInstance.suggested_delay,
             PUBTAG + str(publication.id),
         )
 

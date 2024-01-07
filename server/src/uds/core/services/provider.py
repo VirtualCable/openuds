@@ -127,14 +127,14 @@ class ServiceProvider(module.Module):
     _dbObj: typing.Optional['models.Provider'] = None
 
     @classmethod
-    def getProvidedServices(cls) -> list[type['Service']]:
+    def get_provided_services(cls) -> list[type['Service']]:
         """
         Returns what type of services this provider offers
         """
         return cls.offers
 
     @classmethod
-    def getServiceByType(cls, type_name: str) -> typing.Optional[type['Service']]:
+    def get_service_by_type(cls, type_name: str) -> typing.Optional[type['Service']]:
         """
         Tries to locate a child service which type corresponds with the
         one provided.
@@ -190,7 +190,7 @@ class ServiceProvider(module.Module):
             self._dbObj = Provider.objects.get(uuid=self._uuid)
         return self._dbObj
 
-    def getMaxPreparingServices(self) -> int:
+    def get_max_preparing_services(self) -> int:
         val = self.maxPreparingServices
         if val is None:
             val = self.maxPreparingServices = 15
@@ -201,7 +201,7 @@ class ServiceProvider(module.Module):
             retVal = val
         return retVal if retVal > 0 else 1
 
-    def getMaxRemovingServices(self) -> int:
+    def get_max_removing_services(self) -> int:
         val = self.maxRemovingServices
         if val is None:
             val = self.maxRemovingServices = 15
@@ -212,7 +212,7 @@ class ServiceProvider(module.Module):
             retVal = val
         return retVal if retVal > 0 else 1
 
-    def getIgnoreLimits(self) -> bool:
+    def get_ignore_limits(self) -> bool:
         val = self.ignoreLimits
         if val is None:
             val = self.ignoreLimits = False

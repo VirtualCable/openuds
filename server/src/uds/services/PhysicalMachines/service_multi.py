@@ -135,14 +135,14 @@ class IPMachinesService(IPServiceBase):
     type_description = typing.cast(str, _('This service provides access to POWERED-ON Machines by IP'))
     icon_file = 'machines.png'
 
-    usesCache = False  # Cache are running machine awaiting to be assigned
-    usesCache_L2 = False  # L2 Cache are running machines in suspended state
-    needsManager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
-    mustAssignManually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
+    uses_cache = False  # Cache are running machine awaiting to be assigned
+    uses_cache_l2 = False  # L2 Cache are running machines in suspended state
+    needs_manager = False  # If the service needs a s.o. manager (managers are related to agents provided by services itselfs, i.e. virtual machines with agent)
+    must_assign_manually = False  # If true, the system can't do an automatic assignation of a deployed user service from this service
 
-    userServiceType = IPMachineDeployed
+    user_service_type = IPMachineDeployed
 
-    servicesTypeProvided = types.services.ServiceType.VDI
+    services_type_provided = types.services.ServiceType.VDI
 
     _ips: list[str] = []
     _token: str = ''
@@ -186,7 +186,7 @@ class IPMachinesService(IPServiceBase):
         self._lockByExternalAccess = self.lockByExternalAccess.isTrue()
         self._useRandomIp = self.useRandomIp.isTrue()
 
-    def getToken(self):
+    def get_token(self):
         return self._token or None
 
     def valuesDict(self) -> gui.ValuesDictType:
@@ -239,7 +239,7 @@ class IPMachinesService(IPServiceBase):
                 self._useRandomIp = gui.toBool(values[6].decode())
 
         # Sets maximum services for this
-        self.maxUserServices = len(self._ips)
+        self.max_user_services = len(self._ips)
 
     def canBeUsed(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked
@@ -319,10 +319,10 @@ class IPMachinesService(IPServiceBase):
         except Exception:
             logger.exception("Exception at getUnassignedMachine")
 
-    def listAssignables(self):
+    def enumerate_assignables(self):
         return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.readData(ip) is None]
 
-    def assignFromAssignables(
+    def assign_from_assignables(
         self,
         assignableId: str,
         user: 'models.User',
@@ -342,7 +342,7 @@ class IPMachinesService(IPServiceBase):
 
         return userServiceInstance.error('IP already assigned')
 
-    def processLogin(self, id: str, remote_login: bool) -> None:
+    def process_login(self, id: str, remote_login: bool) -> None:
         '''
         Process login for a machine not assigned to any user.
         '''
@@ -355,7 +355,7 @@ class IPMachinesService(IPServiceBase):
         if self.canBeUsed(locked, now):
             self.storage.putPickle(theIP, str(now))  # Lock it
 
-    def processLogout(self, id: str, remote_login: bool) -> None:
+    def process_logout(self, id: str, remote_login: bool) -> None:
         '''
         Process logout for a machine not assigned to any user.
         '''
@@ -368,7 +368,7 @@ class IPMachinesService(IPServiceBase):
             self.unassignMachine(id)
         # If not proccesed by login, we cannot release it
 
-    def notifyInitialization(self, id: str) -> None:
+    def notify_initialization(self, id: str) -> None:
         '''
         Notify that a machine has been initialized.
         Normally, this means that
@@ -376,7 +376,7 @@ class IPMachinesService(IPServiceBase):
         logger.debug('Notify initialization for %s: %s', self, id)
         self.unassignMachine(id)
 
-    def getValidId(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
+    def get_valid_id(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
         # If locking not allowed, return None
         if self._lockByExternalAccess is False:
             return None

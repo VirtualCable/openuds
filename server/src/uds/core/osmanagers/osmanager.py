@@ -101,7 +101,7 @@ class OSManager(Module):
         """
 
     # These methods must be overriden
-    def actorData(
+    def actor_data(
         self, userService: 'UserService'  # pylint: disable=unused-argument
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
@@ -157,7 +157,7 @@ class OSManager(Module):
         """
         return State.FINISHED
 
-    def processUnused(self, userService: 'UserService') -> None:
+    def process_unused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
@@ -170,18 +170,18 @@ class OSManager(Module):
         """
         return True
 
-    def maxIdle(self) -> typing.Optional[int]:
+    def max_idle(self) -> typing.Optional[int]:
         """
         If os manager request "max idle", this method will return a value different to None so actors will get informed on Connection
         @return Must return None (default if not override), or a "max idle" in seconds
         """
         return None
 
-    def ignoreDeadLine(self) -> bool:
+    def ignore_deadline(self) -> bool:
         return False
 
     @classmethod
-    def transformsUserOrPasswordForService(cls: type['OSManager']) -> bool:
+    def transforms_user_or_password_for_service(cls: type['OSManager']) -> bool:
         """
         Helper method that informs if the os manager transforms the username and/or the password.
         This is used from ServicePool
@@ -215,19 +215,19 @@ class OSManager(Module):
         Invoked when OS Manager is deleted
         """
 
-    def logKnownIp(self, userService: 'UserService', ip: str) -> None:
+    def log_known_ip(self, userService: 'UserService', ip: str) -> None:
         userService.log_ip(ip)
 
-    def toReady(self, userService: 'UserService') -> None:
+    def to_ready(self, userService: 'UserService') -> None:
         '''
         Resets login counter to 0
         '''
         userService.properties['logins_counter'] = 0
         # And execute ready notification method
-        self.readyNotified(userService)
+        self.ready_notified(userService)
 
     @staticmethod
-    def loggedIn(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def logged_in(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -238,10 +238,10 @@ class OSManager(Module):
         userService.setInUse(True)
         userService.properties['last_username'] = userName or 'unknown'  # Store it for convenience
         userServiceInstance = userService.get_instance()
-        userServiceInstance.userLoggedIn(userName or 'unknown')
+        userServiceInstance.user_logged_in(userName or 'unknown')
         userService.updateData(userServiceInstance)
 
-        serviceIp = userServiceInstance.getIp()
+        serviceIp = userServiceInstance.get_ip()
 
         fullUserName = userService.user.pretty_name if userService.user else 'unknown'
 
@@ -283,7 +283,7 @@ class OSManager(Module):
             p['logins_counter'] = counter
 
     @staticmethod
-    def loggedOut(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def logged_out(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
@@ -302,10 +302,10 @@ class OSManager(Module):
         uniqueId = userService.unique_id
         userService.setInUse(False)
         userServiceInstance = userService.get_instance()
-        userServiceInstance.userLoggedOut(userName or 'unknown')
+        userServiceInstance.user_logged_out(userName or 'unknown')
         userService.updateData(userServiceInstance)
 
-        serviceIp = userServiceInstance.getIp()
+        serviceIp = userServiceInstance.get_ip()
 
         fullUserName = userService.user.pretty_name if userService.user else 'unknown'
 
@@ -341,12 +341,12 @@ class OSManager(Module):
             userService.deployed_service.name,
         )
 
-    def readyNotified(self, userService: 'UserService') -> None:
+    def ready_notified(self, userService: 'UserService') -> None:
         """
         Invoked by actor when userService is ready
         """
 
-    def isPersistent(self) -> bool:
+    def is_persistent(self) -> bool:
         """
         When a publication if finished, old assigned machines will be removed if this value is True.
         Defaults to False

@@ -71,7 +71,7 @@ class Service(Module):
     values, this can change in a future and declaring all needed is a good way
     to avoid future problems. Of course, if you declare that do no do something
     (i.e. do not uses cache), you will not have to declare related attributes
-    (i.e. cacheTooltip, usesCache_L2 and cacheTooltip_L2)
+    (i.e. cache_tooltip, uses_cache_l2 and cache_tooltip_l2)
 
     As you derive from this class, if you provide __init__ in your own class,
     remember to call ALWAYS at base class __init__  as this:
@@ -126,45 +126,45 @@ class Service(Module):
     # : for providing user services. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
     # : Note: you can override this value on service instantiation by providing a "maxService":
-    # :      - If maxServices is an integer, it will be used as maxUserServices
-    # :      - If maxServices is a gui.NumericField, it will be used as maxUserServices (.num() will be called)
-    # :      - If maxServices is a callable, it will be called and the result will be used as maxUserServices
-    # :      - If maxServices is None, maxUserServices will be set to consts.UNLIMITED (as default)
-    maxUserServices: int = (
+    # :      - If maxServices is an integer, it will be used as max_user_services
+    # :      - If maxServices is a gui.NumericField, it will be used as max_user_services (.num() will be called)
+    # :      - If maxServices is a callable, it will be called and the result will be used as max_user_services
+    # :      - If maxServices is None, max_user_services will be set to consts.UNLIMITED (as default)
+    max_user_services: int = (
         consts.UNLIMITED
     )  
 
     # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
     # : Example:
-    # :    cacheConstrains = {
+    # :    cache_constrains = {
     # :        'cache_l2_srvs': 10,
     # :        'cache_l1_srvs': 20,
     # :    }
     # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
     # : on a save invocation to REST api for ServicePool
-    cacheConstrains: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
+    cache_constrains: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access
     # : to services if he already do not have one.
     # : If you set this to True, please, provide a _ :py:attr:.cacheToolTip
-    usesCache = False
+    uses_cache = False
 
-    # : Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.usesCache
-    cacheTooltip = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
+    # : Tooltip to be used if services uses cache at administration interface, indicated by :py:attr:.uses_cache
+    cache_tooltip = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
-    # : If user deployments can be cached (see :py:attr:.usesCache), may he also can provide a secondary cache,
+    # : If user deployments can be cached (see :py:attr:.uses_cache), may he also can provide a secondary cache,
     # : that is no more that user deployments that are "almost ready" to be used, but preperably consumes less
     # : resources than L1 cache. This can give a boost to cache L1 recovering in case of peaks
-    # : in demand. If you set this to True, please, provide also  a _ :py:attr:.cacheTooltip_L2
-    usesCache_L2 = False  # : If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
+    # : in demand. If you set this to True, please, provide also  a _ :py:attr:.cache_tooltip_l2
+    uses_cache_l2 = False  # : If we need to generate a "Level 2" cache for this service (i.e., L1 could be running machines and L2 suspended machines)
 
-    # : Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.usesCache_L2
-    cacheTooltip_L2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
+    # : Tooltip to be used if services uses L2 cache at administration interface, indicated by :py:attr:.uses_cache_l2
+    cache_tooltip_l2 = _('None')  # : Tooltip shown to user when this item is pointed at admin interface
 
     # : If the service needs a o.s. manager (see os managers section)
-    needsManager: bool = False
+    needs_manager: bool = False
 
     # : If the service can be autoassigned or needs to be assigned by administrator
     # : Not all services are for assigning it. Thing, i.e., a Service that manages
@@ -173,7 +173,7 @@ class Service(Module):
     # : to assign the service automatically. If this is true, the core will not
     # : assign the service automatically, so if the user do not have a consumable
     # : assigned, the user will never get one (of this kind, of course)
-    mustAssignManually: typing.ClassVar[bool] = False
+    must_assign_manually: typing.ClassVar[bool] = False
 
     # : Types of publications (preparated data for deploys)
     # : If you provide this, UDS will assume that the service needs a preparation.
@@ -182,32 +182,32 @@ class Service(Module):
     # : provide a publication type
     # : This refers to class that provides the logic for publication, you can see
     # : :py:class:uds.core.services.Publication
-    publicationType: typing.ClassVar[typing.Optional[type['Publication']]] = None
+    publication_type: typing.ClassVar[typing.Optional[type['Publication']]] = None
 
     # : Types of deploys (services in cache and/or assigned to users)
     # : This is ALWAYS a MUST. You mast indicate the class responsible
     # : for managing the user deployments (user consumable services generated
     # : from this one). If this attribute is not set, the service will never work
     # : (core will not know how to handle the user deployments)
-    userServiceType: typing.ClassVar[typing.Optional[type['UserService']]] = None
+    user_service_type: typing.ClassVar[typing.Optional[type['UserService']]] = None
 
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowedProtocols: collections.abc.Iterable = protocols.GENERIC_VDI
+    allowed_protocols: collections.abc.Iterable = protocols.GENERIC_VDI
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
     # This is a class attribute, so it can be overriden at instance level
-    spawnsNew: bool = False
+    spawns_new: bool = False
 
     # : If the service allows "reset", here we will announce it
     # : Defaults to False
-    canReset = False
+    can_reset = False
 
     # : 'kind' of services that this service provides:
     # : For example, VDI, VAPP, ...
-    servicesTypeProvided: types.services.ServiceType = types.services.ServiceType.VDI
+    services_type_provided: types.services.ServiceType = types.services.ServiceType.VDI
 
     _provider: 'services.ServiceProvider'  # Parent instance (not database object)
 
@@ -281,30 +281,30 @@ class Service(Module):
         super().unmarshal(data)
 
         if hasattr(self, 'maxServices'):
-            # Fix self "maxUserServices" value after loading fields
+            # Fix self "max_user_services" value after loading fields
             try:
                 maxServices = getattr(self, 'maxServices', None)
                 if isinstance(maxServices, int):
-                    self.maxUserServices = maxServices
+                    self.max_user_services = maxServices
                 elif isinstance(maxServices, gui.NumericField):
-                    self.maxUserServices = maxServices.num()
-                    # For 0 values on maxUserServices field, we will set it to UNLIMITED
-                    if self.maxUserServices == 0:
-                        self.maxUserServices = consts.UNLIMITED
+                    self.max_user_services = maxServices.num()
+                    # For 0 values on max_user_services field, we will set it to UNLIMITED
+                    if self.max_user_services == 0:
+                        self.max_user_services = consts.UNLIMITED
                 elif callable(maxServices):
-                    self.maxUserServices = maxServices()
+                    self.max_user_services = maxServices()
                 else:
-                    self.maxUserServices = consts.UNLIMITED
+                    self.max_user_services = consts.UNLIMITED
             except Exception:
-                self.maxUserServices = consts.UNLIMITED
+                self.max_user_services = consts.UNLIMITED
 
-            # Ensure that maxUserServices is not negative
-            if self.maxUserServices < 0:
-                self.maxUserServices = consts.UNLIMITED
+            # Ensure that max_user_services is not negative
+            if self.max_user_services < 0:
+                self.max_user_services = consts.UNLIMITED
 
         # Keep untouched if maxServices is not present
 
-    def requestServicesForAssignation(self, **kwargs) -> collections.abc.Iterable['UserService']:
+    def user_services_for_assignation(self, **kwargs) -> collections.abc.Iterable['UserService']:
         """
         override this if mustAssignManualy is True
         @params kwargs: Named arguments
@@ -316,23 +316,23 @@ class Service(Module):
             f'The class {self.__class__.__name__} has been marked as manually asignable but no requestServicesForAssignetion provided!!!'
         )
 
-    def macGenerator(self) -> typing.Optional['UniqueMacGenerator']:
+    def mac_generator(self) -> typing.Optional['UniqueMacGenerator']:
         """
         Utility method to access provided macs generator (inside environment)
 
         Returns the environment unique mac addresses generator
         """
-        return typing.cast('UniqueMacGenerator', self.idGenerators('mac'))
+        return typing.cast('UniqueMacGenerator', self.id_generators('mac'))
 
-    def nameGenerator(self) -> typing.Optional['UniqueNameGenerator']:
+    def name_generator(self) -> typing.Optional['UniqueNameGenerator']:
         """
         Utility method to access provided names generator (inside environment)
 
         Returns the environment unique name generator
         """
-        return typing.cast('UniqueNameGenerator', self.idGenerators('name'))
+        return typing.cast('UniqueNameGenerator', self.id_generators('name'))
 
-    def listAssignables(self) -> collections.abc.Iterable[tuple[str, str]]:
+    def enumerate_assignables(self) -> collections.abc.Iterable[tuple[str, str]]:
         """
         If overrided, will provide list of assignables elements, so we can "add" an element manually to the list of assigned user services
         If not overriden, means that it cannot assign manually
@@ -342,7 +342,7 @@ class Service(Module):
         """
         return []
 
-    def assignFromAssignables(
+    def assign_from_assignables(
         self, assignableId: str, user: 'models.User', userDeployment: 'UserService'
     ) -> str:
         """
@@ -362,7 +362,7 @@ class Service(Module):
         """
         return State.FINISHED
 
-    def getToken(self) -> typing.Optional[str]:
+    def get_token(self) -> typing.Optional[str]:
         """
         This method is to allow some kind of services to register a "token", so special actors
         (for example, those for static pool of machines) can communicate with UDS services for
@@ -382,7 +382,7 @@ class Service(Module):
         """
         return None
 
-    def getValidId(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
+    def get_valid_id(self, idsList: collections.abc.Iterable[str]) -> typing.Optional[str]:
         """
         Looks for an "owned" id in the provided list. If found, returns it, else return None
 
@@ -394,7 +394,7 @@ class Service(Module):
         """
         return None
 
-    def processLogin(self, id: str, remote_login: bool) -> None:
+    def process_login(self, id: str, remote_login: bool) -> None:
         """
         In the case that a login is invoked directly on an actor controlled machine with
         an service token, this method will be called with provided info by uds actor (parameters)
@@ -407,7 +407,7 @@ class Service(Module):
         """
         return
 
-    def processLogout(self, id: str, remote_login: bool) -> None:
+    def process_logout(self, id: str, remote_login: bool) -> None:
         """
         In the case that a logout is invoked directly on an actor controlled machine with
         an service token, this method will be called with provided info by uds actor (parameters)
@@ -419,7 +419,7 @@ class Service(Module):
         """
         return
 
-    def notifyInitialization(self, id: str) -> None:
+    def notify_initialization(self, id: str) -> None:
         """
         In the case that the startup of a "tokenized" method is invoked (unmanaged method of actor_v3 rest api),
         this method is forwarded, so the tokenized method could take proper actions on a "known-to-be-free service"
@@ -429,7 +429,7 @@ class Service(Module):
         """
         return
 
-    def notifyData(self, id: typing.Optional[str], data: str) -> None:
+    def notify_data(self, id: typing.Optional[str], data: str) -> None:
         """
         Processes a custom data notification, that must be interpreted by the service itself.
         This allows "token actors" to communicate with service directly, what is needed for
@@ -441,10 +441,10 @@ class Service(Module):
         """
         return
 
-    def storeIdInfo(self, id: str, data: typing.Any) -> None:
+    def store_id_info(self, id: str, data: typing.Any) -> None:
         self.storage.putPickle('__nfo_' + id, data)
 
-    def recoverIdInfo(self, id: str, delete: bool = False) -> typing.Any:
+    def recover_id_info(self, id: str, delete: bool = False) -> typing.Any:
         # recovers the information
         value = self.storage.getPickle('__nfo_' + id)
         if value and delete:
@@ -476,13 +476,13 @@ class Service(Module):
             log.log(DBService.objects.get(uuid=self.get_uuid()), level, message, log.LogSource.SERVICE)
 
     @classmethod
-    def canAssign(cls) -> bool:
+    def can_assign(cls) -> bool:
         """
         Helper to query if a class is assignable (can be assigned to an user manually)
         """
         return (
-            cls.listAssignables is not Service.listAssignables
-            and cls.assignFromAssignables is not Service.assignFromAssignables
+            cls.enumerate_assignables is not Service.enumerate_assignables
+            and cls.assign_from_assignables is not Service.assign_from_assignables
         )
 
     def __str__(self):

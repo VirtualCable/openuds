@@ -269,7 +269,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return obj['dn']  # Returns the DN
 
-    def readyNotified(self, userService: 'UserService') -> None:
+    def ready_notified(self, userService: 'UserService') -> None:
         # No group to add
         if self._group == '':
             return
@@ -437,7 +437,7 @@ class WinDomainOsManager(WindowsOsManager):
 
         return [True, _("All parameters seem to work fine.")]
 
-    def actorData(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
             'name': userService.getName(),

@@ -179,7 +179,7 @@ class StatsReportLogin(StatsReport):
             'allTicks': False,
         }
 
-        graphs.lineChart(SIZE, d, graph1)
+        graphs.line_chart(SIZE, d, graph1)
 
         graph2 = io.BytesIO()
         graph3 = io.BytesIO()
@@ -204,7 +204,7 @@ class StatsReportLogin(StatsReport):
             'ylabel': 'Users',
         }
 
-        graphs.barChart(SIZE, d, graph2)
+        graphs.bar_chart(SIZE, d, graph2)
 
         X = list(range(24))
         d = {
@@ -215,7 +215,7 @@ class StatsReportLogin(StatsReport):
             'ylabel': 'Users',
         }
 
-        graphs.barChart(SIZE, d, graph3)
+        graphs.bar_chart(SIZE, d, graph3)
 
         X = list(range(24))
         Y = list(range(7))
@@ -239,9 +239,9 @@ class StatsReportLogin(StatsReport):
             'zlabel': _('Users'),
         }
 
-        graphs.surfaceChart(SIZE, d, graph4)
+        graphs.surface_chart(SIZE, d, graph4)
 
-        return self.templateAsPDF(
+        return self.template_as_pdf(
             'uds/reports/stats/user-access.html',
             dct={
                 'data': reportData,

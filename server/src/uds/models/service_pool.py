@@ -182,7 +182,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def transformsUserOrPasswordForService(self) -> bool:
         if self.osmanager:
-            return self.osmanager.get_type().transformsUserOrPasswordForService()
+            return self.osmanager.get_type().transforms_user_or_password_for_service()
         return False
 
     def process_user_password(self, username: str, password: str) -> tuple[str, str]:
@@ -288,7 +288,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             return None
 
         # If has os manager, check if it is persistent
-        if self.osmanager and self.osmanager.get_instance().isPersistent():
+        if self.osmanager and self.osmanager.get_instance().is_persistent():
             return None
 
         # Return the date
@@ -474,7 +474,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         if (
             self.activePublication() is None
             and self.service
-            and self.service.get_type().publicationType is not None
+            and self.service.get_type().publication_type is not None
         ):
             raise InvalidServiceException()
 
@@ -520,7 +520,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         from uds.core import services  # pylint: disable=import-outside-toplevel
 
-        servicesNotNeedingPub = [t.get_type() for t in services.factory().servicesThatDoNotNeedPublication()]
+        servicesNotNeedingPub = [t.get_type() for t in services.factory().services_not_needing_publication()]
         # Get services that HAS publications
         query = (
             ServicePool.objects.filter(
@@ -640,7 +640,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0 and self.service:
-            maxs = self.service.get_instance().maxUserServices
+            maxs = self.service.get_instance().max_user_services
 
         if cachedValue == -1:
             cachedValue = self.assigned_user_services().filter(state__in=states.userService.VALID_STATES).count()

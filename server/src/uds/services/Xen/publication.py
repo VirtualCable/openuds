@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 
 class XenPublication(Publication):
-    suggestedTime = (
+    suggested_delay = (
         20  # : Suggested recheck time if publication is unfinished in seconds
     )
 
@@ -97,10 +97,10 @@ class XenPublication(Publication):
         Realizes the publication of the service
         """
         self._name = self.service().sanitizeVmName(
-            'UDS Pub ' + self.dsName() + "-" + str(self.revision())
+            'UDS Pub ' + self.servicepool_name() + "-" + str(self.revision())
         )
         comments = _('UDS pub for {0} at {1}').format(
-            self.dsName(), str(datetime.now()).split('.')[0]
+            self.servicepool_name(), str(datetime.now()).split('.')[0]
         )
         self._reason = ''  # No error, no reason for it
         self._destroyAfter = 'f'

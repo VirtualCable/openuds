@@ -137,7 +137,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def release(self, userService: 'UserService') -> None:
         pass
 
-    def ignoreDeadLine(self) -> bool:
+    def ignore_deadline(self) -> bool:
         return not self._deadLine
 
     def getName(self, userService: 'UserService') -> str:
@@ -160,7 +160,7 @@ class WindowsOsManager(osmanagers.OSManager):
                 userService, log.LogLevel.ERROR, f'do not understand {data}', origin
             )
 
-    def actorData(
+    def actor_data(
         self, userService: 'UserService'
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.getName()}  # No custom data
@@ -186,7 +186,7 @@ class WindowsOsManager(osmanagers.OSManager):
             self, userService, username, password
         )
 
-    def processUnused(self, userService: 'UserService') -> None:
+    def process_unused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
@@ -200,7 +200,7 @@ class WindowsOsManager(osmanagers.OSManager):
             )
             userService.remove()
 
-    def isPersistent(self):
+    def is_persistent(self):
         return self._onLogout == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
@@ -208,7 +208,7 @@ class WindowsOsManager(osmanagers.OSManager):
         logger.debug('Checking state for service %s', userService)
         return State.RUNNING
 
-    def maxIdle(self):
+    def max_idle(self):
         """
         On production environments, will return no idle for non removable machines
         """

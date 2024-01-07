@@ -88,7 +88,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     def _check_if_max_user_services_reached(self, servicePool: ServicePool) -> None:
         """
-        Checks if maxUserServices for the service has been reached, and, if so,
+        Checks if max_user_services for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
         """
         if self.maximum_user_services_reached(servicePool.service):
@@ -110,10 +110,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         serviceInstance = service.get_instance()
         # Early return, so no database count is needed
-        if serviceInstance.maxUserServices == consts.UNLIMITED:
+        if serviceInstance.max_user_services == consts.UNLIMITED:
             return False
 
-        if self.get_existing_user_services(service) >= serviceInstance.maxUserServices:
+        if self.get_existing_user_services(service) >= serviceInstance.max_user_services:
             return True
 
         return False
@@ -122,7 +122,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Private method to instatiate a cache element at database with default states
         """
-        # Checks if maxUserServices has been reached and if so, raises an exception
+        # Checks if max_user_services has been reached and if so, raises an exception
         self._check_if_max_user_services_reached(publication.deployed_service)
         now = sql_datetime()
         return publication.userServices.create(
@@ -186,7 +186,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         cache = self._create_cache_user_service_at_db(publication, cacheLevel)
         ci = cache.get_instance()
-        state = ci.deployForCache(cacheLevel)
+        state = ci.deploy_for_cache(cacheLevel)
 
         UserServiceOpChecker.state_updater(cache, ci, state)
         return cache
@@ -203,7 +203,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             raise ServiceNotReadyError()
 
-        if servicePool.service.get_type().publicationType is not None:
+        if servicePool.service.get_type().publication_type is not None:
             publication = servicePool.activePublication()
             if publication:
                 assigned = self._create_assigned_user_service_at_db(publication, user)
@@ -226,7 +226,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             assigned = self._create_assigned_at_db_for_no_publication(servicePool, user)
 
         assignedInstance = assigned.get_instance()
-        state = assignedInstance.deployForUser(user)
+        state = assignedInstance.deploy_for_user(user)
 
         UserServiceOpChecker.make_unique(assigned, assignedInstance, state)
 
@@ -237,10 +237,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Creates an assigned service from an "assignable" id
         """
         serviceInstance = servicePool.service.get_instance()
-        if not serviceInstance.canAssign():
+        if not serviceInstance.can_assign():
             raise Exception('This service type cannot assign asignables')
 
-        if servicePool.service.get_type().publicationType is not None:
+        if servicePool.service.get_type().publication_type is not None:
             publication = servicePool.activePublication()
             if publication:
                 assigned = self._create_assigned_user_service_at_db(publication, user)
@@ -266,7 +266,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Now, get from serviceInstance the data
         assignedInstance = assigned.get_instance()
-        state = serviceInstance.assignFromAssignables(assignableId, user, assignedInstance)
+        state = serviceInstance.assign_from_assignables(assignableId, user, assignedInstance)
         # assigned.updateData(assignedInstance)
 
         UserServiceOpChecker.make_unique(assigned, assignedInstance, state)
@@ -281,7 +281,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         cache.refresh_from_db()
         logger.debug('Moving cache %s to level %s', cache, cacheLevel)
         cacheInstance = cache.get_instance()
-        state = cacheInstance.moveToCache(cacheLevel)
+        state = cacheInstance.move_to_cache(cacheLevel)
         cache.cache_level = cacheLevel
         cache.save(update_fields=['cache_level'])
         logger.debug(
@@ -311,7 +311,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         userServiceInstance = userService.get_instance()
 
         if (
-            not userServiceInstance.supportsCancel()
+            not userServiceInstance.supports_cancel()
         ):  # Does not supports cancel, but destroy, so mark it for "later" destroy
             # State is kept, just mark it for destroy after finished preparing
             userService.destroy_after = True
@@ -374,7 +374,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def get_assignation_for_user(
         self, servicePool: ServicePool, user: User
     ) -> typing.Optional[UserService]:  # pylint: disable=too-many-branches
-        if servicePool.service.get_instance().spawnsNew is False:
+        if servicePool.service.get_instance().spawns_new is False:
             assignedUserService = self.get_existing_assignation_for_user(servicePool, user)
         else:
             assignedUserService = None
@@ -504,7 +504,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Can't assign directly from L2 cache... so we check if we can create e new service in the limits requested
         serviceType = servicePool.service.get_type()
-        if serviceType.usesCache:
+        if serviceType.uses_cache:
             inAssigned = (
                 servicePool.assigned_user_services().filter(self.get_state_filter(servicePool.service)).count()
             )
@@ -539,8 +539,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         service_instance = service_pool.service.get_instance()
         if (
             service_instance.is_avaliable()
-            and removing >= service_instance.parent().getMaxRemovingServices()
-            and service_instance.parent().getIgnoreLimits() is False
+            and removing >= service_instance.parent().get_max_removing_services()
+            and service_instance.parent().get_ignore_limits() is False
         ):
             return False
         return True
@@ -554,8 +554,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = servicePool.service.get_instance()
         if self.maximum_user_services_reached(servicePool.service) or (
-            preparingForProvider >= serviceInstance.parent().getMaxPreparingServices()
-            and serviceInstance.parent().getIgnoreLimits() is False
+            preparingForProvider >= serviceInstance.parent().get_max_preparing_services()
+            and serviceInstance.parent().get_ignore_limits() is False
         ):
             return False
         return True
@@ -571,7 +571,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         logger.debug('Service %s is usable, checking it via setReady', userService)
         userServiceInstance = userService.get_instance()
         try:
-            state = userServiceInstance.setReady()
+            state = userServiceInstance.set_ready()
         except Exception as e:
             logger.warning('Could not check readyness of %s: %s', userService, e)
             return False
@@ -590,7 +590,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
     def reset(self, userService: UserService) -> None:
         userService.refresh_from_db()
 
-        if not userService.deployed_service.service.get_type().canReset:
+        if not userService.deployed_service.service.get_type().can_reset:
             return
 
         operationsLogger.info('Reseting %s', userService)
@@ -631,7 +631,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         osManager = userService.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if not osManager else not osManager.get_instance().isPersistent()
+        doPublicationCleanup = True if not osManager else not osManager.get_instance().is_persistent()
 
         if doPublicationCleanup:
             remove = False
@@ -656,7 +656,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         try:
             userServiceInstance = userService.get_instance()
             logger.debug('Notifying user service ready state')
-            state = userServiceInstance.notifyReadyFromOsManager(data)
+            state = userServiceInstance.process_ready_from_os_manager(data)
             logger.debug('State: %s', state)
             if state == State.FINISHED:
                 userService.updateData(userServiceInstance)
@@ -793,7 +793,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             )
             # If ready, show transport for this service, if also ready ofc
             userServiceInstance = userService.get_instance()
-            ip = userServiceInstance.getIp()
+            ip = userServiceInstance.get_ip()
             userService.log_ip(ip)  # Update known ip
             logger.debug('IP: %s', ip)
 

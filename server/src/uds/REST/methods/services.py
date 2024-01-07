@@ -72,18 +72,18 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return {
             'icon': info.icon64().replace('\n', ''),
-            'needs_publication': info.publicationType is not None,
-            'max_deployed': info.maxUserServices,
-            'uses_cache': info.usesCache and info.cacheConstrains is None,
-            'uses_cache_l2': info.usesCache_L2,
-            'cache_tooltip': _(info.cacheTooltip),
-            'cache_tooltip_l2': _(info.cacheTooltip_L2),
-            'needs_manager': info.needsManager,
-            'allowedProtocols': info.allowedProtocols,
-            'servicesTypeProvided': [info.servicesTypeProvided],  # As a list for compatibility, to be removed TODO: Remove
-            'must_assign_manually': info.mustAssignManually,
-            'can_reset': info.canReset,
-            'can_list_assignables': info.canAssign(),
+            'needs_publication': info.publication_type is not None,
+            'max_deployed': info.max_user_services,
+            'uses_cache': info.uses_cache and info.cache_constrains is None,
+            'uses_cache_l2': info.uses_cache_l2,
+            'cache_tooltip': _(info.cache_tooltip),
+            'cache_tooltip_l2': _(info.cache_tooltip_l2),
+            'needs_manager': info.needs_manager,
+            'allowed_protocols': info.allowed_protocols,
+            'services_type_provided': [info.services_type_provided],  # As a list for compatibility, to be removed TODO: Remove
+            'must_assign_manually': info.must_assign_manually,
+            'can_reset': info.can_reset,
+            'can_list_assignables': info.can_assign(),
         }
 
     @staticmethod
@@ -183,7 +183,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             serviceInstance = service.get_instance(self._params)
 
             # Store token if this service provides one
-            service.token = serviceInstance.getToken() or None  # If '', use "None" to
+            service.token = serviceInstance.get_token() or None  # If '', use "None" to
 
             service.data = (
                 serviceInstance.serialize()
@@ -269,10 +269,10 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     'description': _(t.description()),
                     'icon': t.icon64().replace('\n', ''),
                 }
-                for t in parent.get_type().getProvidedServices()
+                for t in parent.get_type().get_provided_services()
             ]
         else:
-            for t in parent.get_type().getProvidedServices():
+            for t in parent.get_type().get_provided_services():
                 if forType == t.get_type():
                     offers = [
                         {
@@ -293,7 +293,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
             parentInstance = parent.get_instance()
-            serviceType = parentInstance.getServiceByType(forType)
+            serviceType = parentInstance.get_service_by_type(forType)
             if not serviceType:
                 raise self.invalidItemException(f'Gui for {forType} not found')
 

@@ -276,7 +276,7 @@ class TicketStore(UUIDModel):
             host = data['h']
 
             if not host:
-                host = userService.get_instance().getIp()
+                host = userService.get_instance().get_ip()
 
             return (user, userService, host, data['p'], data['e'])
         except Exception as e:

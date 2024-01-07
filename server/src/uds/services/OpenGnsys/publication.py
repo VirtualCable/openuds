@@ -51,7 +51,7 @@ class OGPublication(Publication):
 
     _name: str = ''
 
-    suggestedTime = (
+    suggested_delay = (
         5  # : Suggested recheck time if publication is unfinished in seconds
     )
 

@@ -52,7 +52,7 @@ class TestPublication(services.Publication):
     """
     Simple test publication 
     """
-    suggestedTime = (
+    suggested_delay = (
         5  # : Suggested recheck time if publication is unfinished in seconds
     )
     

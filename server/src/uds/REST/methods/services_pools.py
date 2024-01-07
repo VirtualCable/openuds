@@ -493,27 +493,27 @@ class ServicesPools(ModelHandler):
             try:
                 serviceType = service.get_type()
 
-                if serviceType.publicationType is None:
+                if serviceType.publication_type is None:
                     self._params['publish_on_save'] = False
 
-                if serviceType.canReset is False:
+                if serviceType.can_reset is False:
                     self._params['allow_users_reset'] = False
 
-                if serviceType.needsManager is True:
+                if serviceType.needs_manager is True:
                     osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
 
                 # If service has "overrided fields", overwrite received ones now
-                if serviceType.cacheConstrains:
-                    for k, v in serviceType.cacheConstrains.items():
+                if serviceType.cache_constrains:
+                    for k, v in serviceType.cache_constrains.items():
                         fields[k] = v
 
-                if serviceType.usesCache_L2 is False:
+                if serviceType.uses_cache_l2 is False:
                     fields['cache_l2_srvs'] = 0
 
-                if serviceType.usesCache is False:
+                if serviceType.uses_cache is False:
                     for k in (
                         'initial_srvs',
                         'cache_l1_srvs',
@@ -526,10 +526,10 @@ class ServicesPools(ModelHandler):
                     fields['initial_srvs'] = int(fields['initial_srvs'])
                     fields['cache_l1_srvs'] = int(fields['cache_l1_srvs'])
 
-                    # if serviceType.maxUserServices != consts.UNLIMITED:
-                    #    fields['max_srvs'] = min((fields['max_srvs'], serviceType.maxUserServices))
-                    #    fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.maxUserServices)
-                    #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.maxUserServices)
+                    # if serviceType.max_user_services != consts.UNLIMITED:
+                    #    fields['max_srvs'] = min((fields['max_srvs'], serviceType.max_user_services))
+                    #    fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.max_user_services)
+                    #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.max_user_services)
             except Exception as e:
                 raise RequestError(gettext('This service requires an OS Manager')) from e
 
@@ -627,16 +627,16 @@ class ServicesPools(ModelHandler):
         item = ensure.is_instance(item, ServicePool)
         validActions: tuple[dict, ...] = ()
         itemInfo = item.service.get_type()  # type: ignore
-        if itemInfo.usesCache is True:
+        if itemInfo.uses_cache is True:
             validActions += (
                 CALENDAR_ACTION_INITIAL,
                 CALENDAR_ACTION_CACHE_L1,
                 CALENDAR_ACTION_MAX,
             )
-            if itemInfo.usesCache_L2 is True:
+            if itemInfo.uses_cache_l2 is True:
                 validActions += (CALENDAR_ACTION_CACHE_L2,)
 
-        if itemInfo.publicationType is not None:
+        if itemInfo.publication_type is not None:
             validActions += (CALENDAR_ACTION_PUBLISH,)
 
         # Transport & groups actions
@@ -660,7 +660,7 @@ class ServicesPools(ModelHandler):
     def listAssignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         service = item.service.get_instance()  # type: ignore
-        return [gui.choiceItem(i[0], i[1]) for i in service.listAssignables()]
+        return [gui.choiceItem(i[0], i[1]) for i in service.enumerate_assignables()]
 
     def createFromAssignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
