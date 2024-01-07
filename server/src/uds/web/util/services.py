@@ -157,7 +157,7 @@ def getServicesData(
                 if (
                     typeTrans
                     and t.is_ip_allowed(request.ip)
-                    and typeTrans.supportsOs(osType)
+                    and typeTrans.supports_os(osType)
                     and t.is_os_allowed(osType)
                 ):
                     yield t
@@ -174,7 +174,7 @@ def getServicesData(
             {
                 'id': idd(i),
                 'name': i.name,
-                'link': html.udsAccessLink(request, 'M' + meta.uuid, idd(i)),  # type: ignore
+                'link': html.uds_access_link(request, 'M' + meta.uuid, idd(i)),  # type: ignore
                 'priority': i.priority,
             }
             for i in transports
@@ -257,14 +257,14 @@ def getServicesData(
                     if (
                         typeTrans
                         and t.is_ip_allowed(request.ip)
-                        and typeTrans.supportsOs(osType)
+                        and typeTrans.supports_os(osType)
                         and t.is_os_allowed(osType)
                     ):
                         metaTransports = [
                             {
                                 'id': 'meta',
                                 'name': 'meta',
-                                'link': html.udsAccessLink(request, 'M' + meta.uuid, None),  # type: ignore
+                                'link': html.uds_access_link(request, 'M' + meta.uuid, None),  # type: ignore
                                 'priority': 0,
                             }
                         ]
@@ -345,13 +345,13 @@ def getServicesData(
             if (
                 typeTrans
                 and t.is_ip_allowed(request.ip)
-                and typeTrans.supportsOs(osType)
+                and typeTrans.supports_os(osType)
                 and t.is_os_allowed(osType)
             ):
-                if typeTrans.ownLink:
+                if typeTrans.own_link:
                     link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
-                    link = html.udsAccessLink(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
+                    link = html.uds_access_link(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
                 trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
 
         # If empty transports, do not include it on list
@@ -458,7 +458,7 @@ def enableService(
 
         error = ''  # No error
 
-        if typeTrans.ownLink:
+        if typeTrans.own_link:
             url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))  # type: ignore
         else:
             data = {
@@ -469,7 +469,7 @@ def enableService(
             }
 
             ticket = TicketStore.create(data)
-            url = html.udsLink(request, ticket, scrambler)
+            url = html.uds_link(request, ticket, scrambler)
     except ServiceNotReadyError as e:
         logger.debug('Service not ready')
         # Not ready, show message and return to this page in a while

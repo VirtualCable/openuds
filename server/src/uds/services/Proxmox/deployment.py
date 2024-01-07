@@ -477,7 +477,7 @@ if sys.platform == 'win32':
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
 
-        if task.isErrored():
+        if task.is_errored():
             return self.__error(task.exitstatus)
 
         if task.isCompleted():

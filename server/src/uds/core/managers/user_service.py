@@ -79,7 +79,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
     @staticmethod
     def get_state_filter(service: 'models.Service') -> Q:
-        if service.oldMaxAccountingMethod:  # If no limits and accounting method is not old one
+        if service.old_max_accounting_method:  # If no limits and accounting method is not old one
             # Valid states are: PREPARING, USABLE
             states = [State.PREPARING, State.USABLE]
         else:  # New accounting method selected
@@ -290,7 +290,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             State.as_str(cache.state),
             State.as_str(cache.os_state),
         )
-        if State.is_runing(state) and cache.isUsable():
+        if State.is_runing(state) and cache.is_usable():
             cache.set_state(State.PREPARING)
 
         # Data will be serialized on makeUnique process
@@ -303,7 +303,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         userService.refresh_from_db()
 
-        if userService.isPreparing() is False:
+        if userService.is_preparing() is False:
             logger.debug('Cancel requested for a non running operation, performing removal instead')
             return self.remove(userService)
 
@@ -334,7 +334,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             userService = UserService.objects.select_for_update().get(id=userService.id)
             operationsLogger.info('Removing userService %a', userService.name)
-            if userService.isUsable() is False and State.is_removable(userService.state) is False:
+            if userService.is_usable() is False and State.is_removable(userService.state) is False:
                 raise OperationException(_('Can\'t remove a non active element'))
             userService.set_state(State.REMOVING)
             logger.debug("***** The state now is %s *****", State.as_str(userService.state))
@@ -350,10 +350,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return userService
 
     def remove_or_cancel(self, userService: UserService):
-        if userService.isUsable() or State.is_removable(userService.state):
+        if userService.is_usable() or State.is_removable(userService.state):
             return self.remove(userService)
 
-        if userService.isPreparing():
+        if userService.is_preparing():
             return self.cancel(userService)
 
         raise OperationException(
@@ -442,7 +442,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Out of atomic transaction
         if cache:
             # Early assign
-            cache.assignToUser(user)
+            cache.assign_to(user)
 
             logger.debug(
                 'Found a cached-ready service from %s for user %s, item %s',
@@ -485,7 +485,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         # Out of atomic transaction
         if cache:
-            cache.assignToUser(user)
+            cache.assign_to(user)
 
             logger.debug(
                 'Found a cached-preparing service from %s for user %s, item %s',
@@ -753,7 +753,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if (
                     typeTrans
                     and t.is_ip_allowed(src_ip)
-                    and typeTrans.supportsOs(os.os)
+                    and typeTrans.supports_os(os.os)
                     and t.is_os_allowed(os.os)
                 ):
                     transport_id = t.uuid
@@ -818,11 +818,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
                 if ip:
                     serviceNotReadyCode = 0x0003
                     transportInstance = transport.get_instance()
-                    if transportInstance.isAvailableFor(userService, ip):
+                    if transportInstance.is_ip_allowed(userService, ip):
                         log.log(userService, log.LogLevel.INFO, "User service ready", log.LogSource.WEB)
                         self.notify_preconnect(
                             userService,
-                            transportInstance.getConnectionInfo(userService, user, ''),
+                            transportInstance.get_connection_info(userService, user, ''),
                         )
                         traceLogger.info(
                             'READY on service "%s" for user "%s" with transport "%s" (ip:%s)',
@@ -839,7 +839,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                             transportInstance,
                         )
 
-                    message = transportInstance.getCustomAvailableErrorMsg(userService, ip)
+                    message = transportInstance.get_available_error_msg(userService, ip)
                     log.log(userService, log.LogLevel.WARNING, message, log.LogSource.TRANSPORT)
                     logger.debug(
                         'Transport is not ready for user service %s: %s',
@@ -864,7 +864,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             transport.name,
             ip,
         )
-        raise ServiceNotReadyError(code=serviceNotReadyCode, userService=userService, transport=transport)
+        raise ServiceNotReadyError(code=serviceNotReadyCode, user_service=userService, transport=transport)
 
     def is_meta_service(self, metaId: str) -> bool:
         return metaId[0] == 'M'
@@ -968,7 +968,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
                     typeTrans
                     and t.get_type()
                     and t.is_ip_allowed(srcIp)
-                    and typeTrans.supportsOs(os.os)
+                    and typeTrans.supports_os(os.os)
                     and t.is_os_allowed(os.os)
                 ):
                     found = (pool, t)

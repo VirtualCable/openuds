@@ -44,6 +44,7 @@ from .config import DO_NOT_REPEAT
 
 logger = logging.getLogger(__name__)
 
+# Note that this thread will be running on the scheduler process
 class MessageProcessorThread(BaseThread):
     _keep_running: bool = True
 

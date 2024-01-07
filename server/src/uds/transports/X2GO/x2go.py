@@ -82,7 +82,7 @@ class X2GOTransport(BaseX2GOTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
-        ci = self.getConnectionInfo(userService, user, password)
+        ci = self.get_connection_info(userService, user, password)
 
         priv, pub = self.getAndPushKey(ci.username, userService)
 
@@ -110,7 +110,7 @@ class X2GOTransport(BaseX2GOTransport):
         sp = {'ip': ip, 'port': '22', 'key': priv, 'xf': xf}
 
         try:
-            return self.getScript(os.os.os_name(), 'direct', sp)
+            return self.get_script(os.os.os_name(), 'direct', sp)
         except Exception:
             return super().get_transport_script(
                 userService, transport, ip, os, user, password, request

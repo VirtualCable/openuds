@@ -42,7 +42,7 @@ from uds import models
 from uds.core import exceptions, types
 import uds.core.types.permissions
 from uds.core.util import log, permissions, ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
@@ -125,7 +125,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             if item is None:
                 return [Services.serviceToDict(k, perm) for k in parent.services.all()]
-            k = parent.services.get(uuid=processUuid(item))
+            k = parent.services.get(uuid=process_uuid(item))
             val = Services.serviceToDict(k, perm, full=True)
             return self.fillIntanceFields(k, val)
         except Exception as e:
@@ -170,7 +170,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             if not item:  # Create new
                 service = parent.services.create(**fields)
             else:
-                service = parent.services.get(uuid=processUuid(item))
+                service = parent.services.get(uuid=process_uuid(item))
                 service.__dict__.update(fields)
 
             if service is None:
@@ -216,7 +216,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.Provider)
         try:
-            service = parent.services.get(uuid=processUuid(item))
+            service = parent.services.get(uuid=process_uuid(item))
             if service.deployedServices.count() == 0:
                 service.delete()
                 return
@@ -330,7 +330,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
     def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
-            service = parent.services.get(uuid=processUuid(item))
+            service = parent.services.get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(service)
         except Exception:
@@ -338,7 +338,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
     def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.Provider)
-        service = parent.services.get(uuid=processUuid(item))
+        service = parent.services.get(uuid=process_uuid(item))
         logger.debug('Got parameters for servicepools: %s, %s', parent, item)
         res = []
         for i in service.deployedServices.all():

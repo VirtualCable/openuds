@@ -444,8 +444,8 @@ class CalendarAction(UUIDModel):
 
     def save(self, *args, **kwargs):
         lastExecution = self.last_execution or sql_datetime()
-        possibleNext = calendar.CalendarChecker(self.calendar).nextEvent(
-            checkFrom=lastExecution - self.offset, startEvent=self.at_start
+        possibleNext = calendar.CalendarChecker(self.calendar).next_event(
+            check_from=lastExecution - self.offset, start_event=self.at_start
         )
         if possibleNext:
             self.next_execution = possibleNext + self.offset

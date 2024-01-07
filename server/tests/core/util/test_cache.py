@@ -99,7 +99,7 @@ class CacheTest(UDSTransactionTestCase):
         # Checks cache cleanup (remove expired keys)
         cache.put('key', 'test', 0)
         time.sleep(0.1)
-        Cache.cleanUp()
+        Cache.purge_outdated()
         cache.refresh('key')
         self.assertEqual(
             cache.get('key'),

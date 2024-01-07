@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 from uds import models
 import uds.core.types.permissions
 from uds.core.util.state import State
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util import log, permissions, ensure
 from uds.core.managers.user_service import UserServiceManager
 from uds.REST.model import DetailHandler
@@ -138,11 +138,11 @@ class AssignedService(DetailHandler):
                     .prefetch_related('deployed_service', 'publication', 'user')
                 ]
             return AssignedService.itemToDict(
-                parent.assigned_user_services().get(processUuid(uuid=processUuid(item))),
+                parent.assigned_user_services().get(process_uuid(uuid=process_uuid(item))),
                 props={
                     k: v
                     for k, v in models.Properties.objects.filter(
-                        owner_type='userservice', owner_id=processUuid(item)
+                        owner_type='userservice', owner_id=process_uuid(item)
                     ).values_list('key', 'value')
                 },
             )
@@ -181,7 +181,7 @@ class AssignedService(DetailHandler):
     def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService: models.UserService = parent.assigned_user_services().get(uuid=processUuid(item))
+            userService: models.UserService = parent.assigned_user_services().get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', userService)
             return log.get_logs(userService)
         except Exception as e:
@@ -191,7 +191,7 @@ class AssignedService(DetailHandler):
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService: models.UserService = parent.userServices.get(uuid=processUuid(item))
+            userService: models.UserService = parent.userServices.get(uuid=process_uuid(item))
         except Exception as e:
             logger.exception('deleteItem')
             raise self.invalidItemException() from e
@@ -218,8 +218,8 @@ class AssignedService(DetailHandler):
         if not item:
             raise self.invalidItemException('Only modify is allowed')
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
-        userService = parent.userServices.get(uuid=processUuid(item))
-        user = models.User.objects.get(uuid=processUuid(fields['user_id']))
+        userService = parent.userServices.get(uuid=process_uuid(item))
+        user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
         logStr = f'Changed ownership of service {userService.friendly_name} from {userService.user} to {user.pretty_name} by {self._user.pretty_name}'
 
@@ -242,7 +242,7 @@ class AssignedService(DetailHandler):
         log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     def reset(self, parent: 'models.ServicePool', item: str) -> typing.Any:
-        userService = parent.userServices.get(uuid=processUuid(item))
+        userService = parent.userServices.get(uuid=process_uuid(item))
         UserServiceManager().reset(userService)
 
 
@@ -264,7 +264,7 @@ class CachedService(AssignedService):
                     .all()
                     .prefetch_related('deployed_service', 'publication')
                 ]
-            cachedService: models.UserService = parent.cached_users_services().get(uuid=processUuid(item))
+            cachedService: models.UserService = parent.cached_users_services().get(uuid=process_uuid(item))
             return AssignedService.itemToDict(cachedService, is_cache=True)
         except Exception as e:
             logger.exception('getItems')
@@ -294,7 +294,7 @@ class CachedService(AssignedService):
     def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
         try:
-            userService = parent.cached_users_services().get(uuid=processUuid(item))
+            userService = parent.cached_users_services().get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(userService)
         except Exception:
@@ -357,7 +357,7 @@ class Groups(DetailHandler):
 
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
-        group: models.Group = models.Group.objects.get(uuid=processUuid(self._params['id']))
+        group: models.Group = models.Group.objects.get(uuid=process_uuid(self._params['id']))
         parent.assignedGroups.add(group)
         log.log(
             parent,
@@ -368,7 +368,7 @@ class Groups(DetailHandler):
 
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
-        group: models.Group = models.Group.objects.get(uuid=processUuid(self._args[0]))
+        group: models.Group = models.Group.objects.get(uuid=process_uuid(self._args[0]))
         parent.assignedGroups.remove(group)
         log.log(
             parent,
@@ -418,7 +418,7 @@ class Transports(DetailHandler):
 
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
-        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._params['id']))
+        transport: models.Transport = models.Transport.objects.get(uuid=process_uuid(self._params['id']))
         parent.transports.add(transport)
         log.log(
             parent,
@@ -429,7 +429,7 @@ class Transports(DetailHandler):
 
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
-        transport: models.Transport = models.Transport.objects.get(uuid=processUuid(self._args[0]))
+        transport: models.Transport = models.Transport.objects.get(uuid=process_uuid(self._args[0]))
         parent.transports.remove(transport)
         log.log(
             parent,
@@ -455,7 +455,7 @@ class Publications(DetailHandler):
         changeLog = self._params['changelog'] if 'changelog' in self._params else None
 
         if (
-            permissions.hasAccess(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+            permissions.has_access(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
@@ -482,14 +482,14 @@ class Publications(DetailHandler):
         """
         parent = ensure.is_instance(parent, models.ServicePool)
         if (
-            permissions.hasAccess(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+            permissions.has_access(self._user, parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
             is False
         ):
             logger.debug('Management Permission failed for user %s', self._user)
             raise self.accessDenied()
 
         try:
-            ds = models.ServicePoolPublication.objects.get(uuid=processUuid(uuid))
+            ds = models.ServicePoolPublication.objects.get(uuid=process_uuid(uuid))
             ds.cancel()
         except Exception as e:
             raise ResponseError(str(e)) from e

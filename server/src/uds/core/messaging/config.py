@@ -30,13 +30,14 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
 
 from django.utils.translation import gettext_lazy as _
 
 from uds.core.util import config as cfg
 
 # Globals for messagging
-DO_NOT_REPEAT = cfg.Config.section(cfg.Config.SectionType.GLOBAL).value(
+DO_NOT_REPEAT: typing.Final[cfg.Config.Value] = cfg.Config.section(cfg.Config.SectionType.GLOBAL).value(
     'Uniqueness',
     '10',
     help=_('Number of seconds to ignore repeated messages'),

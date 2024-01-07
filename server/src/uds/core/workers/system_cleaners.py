@@ -49,7 +49,7 @@ class CacheCleaner(Job):
 
     def run(self) -> None:
         logger.debug('Starting cache cleanup')
-        Cache.cleanUp()
+        Cache.purge_outdated()
         logger.debug('Done cache cleanup')
 
 

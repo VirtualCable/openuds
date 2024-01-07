@@ -59,8 +59,8 @@ class URLCustomTransport(transports.Transport):
     type_description = _('Launchs an external UDS customized URL')
     icon_file = 'url.png'
 
-    ownLink = True
-    supportedOss = consts.os.ALL_OS_LIST
+    own_link = True
+    supported_oss = consts.os.ALL_OS_LIST
     protocol = types.transports.Protocol.OTHER
     group = types.transports.Grouping.DIRECT
 
@@ -96,7 +96,7 @@ class URLCustomTransport(transports.Transport):
             )
 
     # Same check as normal RDP transport
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         # No check is done for URL transport
         return True
 

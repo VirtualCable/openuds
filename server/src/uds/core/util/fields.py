@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # ******************************************************
 
 
-def _serverGroupValues(
+def _server_group_values(
     types_: collections.abc.Iterable[types.servers.ServerType], subtype: typing.Optional[str] = None
 ) -> list[types.ui.ChoiceItem]:
     fltr = models.ServerGroup.objects.filter(
@@ -66,7 +66,7 @@ def _serverGroupValues(
     ]
 
 
-def _serverGrpFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
+def _server_group_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     try:
         return models.ServerGroup.objects.get(uuid=fld.value)
     except Exception:
@@ -74,25 +74,25 @@ def _serverGrpFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 
 # Tunnel server field
-def tunnelField() -> ui.gui.ChoiceField:
+def tunnel_field() -> ui.gui.ChoiceField:
     """Returns a field to select a tunnel server"""
     return ui.gui.ChoiceField(
         label=_('Tunnel server'),
         order=1,
         tooltip=_('Tunnel server to use'),
         required=True,
-        choices=functools.partial(_serverGroupValues, [types.servers.ServerType.TUNNEL]),
+        choices=functools.partial(_server_group_values, [types.servers.ServerType.TUNNEL]),
         tab=types.ui.Tab.TUNNEL,
     )
 
 
-def getTunnelFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
+def get_tunnel_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     """Returns a tunnel server from a field"""
-    return _serverGrpFromField(fld)
+    return _server_group_from_field(fld)
 
 
 # Server group field
-def serverGroupField(
+def server_group_field(
     type: typing.Optional[list[types.servers.ServerType]] = None,
     subtype: typing.Optional[str] = None,
     tab: typing.Optional[types.ui.Tab] = None,
@@ -112,22 +112,22 @@ def serverGroupField(
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        choices=functools.partial(_serverGroupValues, type, subtype),  # So it gets evaluated at runtime
+        choices=functools.partial(_server_group_values, type, subtype),  # So it gets evaluated at runtime
         tab=tab,
     )
 
 
-def getServerGroupFromField(fld: ui.gui.ChoiceField) -> models.ServerGroup:
+def get_server_group_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
     """Returns a server group from a field
 
     Args:
         fld: Field to get server group from
     """
-    return _serverGrpFromField(fld)
+    return _server_group_from_field(fld)
 
 
 # Ticket validity time field (for http related tunnels)
-def tunnelTicketValidityField() -> ui.gui.NumericField:
+def tunnel_ricket_validity_field() -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Ticket Validity'),
@@ -143,7 +143,7 @@ def tunnelTicketValidityField() -> ui.gui.NumericField:
 
 
 # Tunnel wait time (for uds client related tunnels)
-def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
+def tunnel_runnel_wait(order: int = 2) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
@@ -158,12 +158,12 @@ def tunnelTunnelWait(order: int = 2) -> ui.gui.NumericField:
 
 
 # Get certificates from field
-def getCertificatesFromField(
-    field: ui.gui.TextField, fieldValue: typing.Optional[str] = None
+def get_vertificates_from_field(
+    field: ui.gui.TextField, field_value: typing.Optional[str] = None
 ) -> list['Certificate']:
     # Get certificates in self.publicKey.value, encoded as PEM
     # Return a list of certificates in DER format
-    value = (fieldValue or field.value).strip()
+    value = (field_value or field.value).strip()
     if value == '':
         return []
 

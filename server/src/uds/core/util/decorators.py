@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import functools
 import hashlib
 import inspect
@@ -51,8 +52,9 @@ RT = typing.TypeVar('RT')
 
 blockCache = Cache('uds:blocker')  # One year
 
+
 # Caching statistics
-class StatsType:
+class CacheStats:
     __slots__ = ('hits', 'misses', 'total', 'start_time', 'saving_time')
 
     hits: int
@@ -97,10 +99,11 @@ class StatsType:
         )
 
 
-stats = StatsType()
+stats = CacheStats()
 
 
-class CacheInfo(typing.NamedTuple):
+@dataclasses.dataclass
+class CacheInfo:
     """
     Cache info
     """
@@ -134,7 +137,7 @@ def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Calla
     return new_func
 
 
-def deprecatedClassValue(newVarName: str) -> collections.abc.Callable:
+def deprecated_class_value(newVarName: str) -> collections.abc.Callable:
     """
     Decorator to make a class value deprecated and warn about it
 
@@ -170,7 +173,7 @@ def deprecatedClassValue(newVarName: str) -> collections.abc.Callable:
     return functools.partial(innerDeprecated, newVarName=newVarName)
 
 
-def ensureConnected(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+def ensure_connected(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     """This decorator calls "connect" method of the class of the wrapped object"""
 
     @functools.wraps(func)
@@ -184,43 +187,39 @@ def ensureConnected(func: collections.abc.Callable[..., RT]) -> collections.abc.
 # Decorator for caching
 # This decorator will cache the result of the function for a given time, and given parameters
 def cached(
-    cachePrefix: str,
-    cacheTimeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
-    cachingArgs: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
-    cachingKWArgs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
-    cachingKeyFnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
+    prefix: str,
+    timeout: typing.Union[collections.abc.Callable[[], int], int] = -1,
+    args: typing.Optional[typing.Union[collections.abc.Iterable[int], int]] = None,
+    kwargs: typing.Optional[typing.Union[collections.abc.Iterable[str], str]] = None,
+    key_fnc: typing.Optional[collections.abc.Callable[[typing.Any], str]] = None,
 ) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """Decorator that give us a "quick& clean" caching feature on db.
     The "cached" element must provide a "cache" variable, which is a cache object
 
     Parameters:
-        cachePrefix: Prefix to use for cache key
-        cacheTimeout: Timeout for cache
-        cachingArgs: List of arguments to use for cache key (i.e. [0, 1] will use first and second argument for cache key, 0 will use "self" if a method, and 1 will use first argument)
-        cachingKWArgs: List of keyword arguments to use for cache key (i.e. ['a', 'b'] will use "a" and "b" keyword arguments for cache key)
-        cachingKeyFnc: Function to use for cache key. If provided, this function will be called with the same arguments as the wrapped function, and must return a string to use as cache key
+        prefix: Prefix to use for cache key
+        timeout: Timeout for cache
+        args: List of arguments to use for cache key (i.e. [0, 1] will use first and second argument for cache key, 0 will use "self" if a method, and 1 will use first argument)
+        kwargs: List of keyword arguments to use for cache key (i.e. ['a', 'b'] will use "a" and "b" keyword arguments for cache key)
+        key_fnc: Function to use for cache key. If provided, this function will be called with the same arguments as the wrapped function, and must return a string to use as cache key
 
     Note:
-        If cachingArgs and cachingKWArgs are not provided, the whole arguments will be used for cache key
+        If args and cachingKWArgs are not provided, the whole arguments will be used for cache key
 
     """
-    cacheTimeout = Cache.DEFAULT_VALIDITY if cacheTimeout == -1 else cacheTimeout
-    cachingArgList: list[int] = (
-        [cachingArgs] if isinstance(cachingArgs, int) else list(cachingArgs or [])
-    )
-    cachingKwargList: list[str] = (
-        isinstance(cachingKWArgs, str) and [cachingKWArgs] or list(cachingKWArgs or [])
-    )
+    timeout = consts.system.DEFAULT_CACHE_TIMEOUT if timeout == -1 else timeout
+    args_list: list[int] = [args] if isinstance(args, int) else list(args or [])
+    kwargs_list: list[str] = isinstance(kwargs, str) and [kwargs] or list(kwargs or [])
 
     lock = threading.Lock()
 
     hits = misses = exec_time = 0
 
-    def allowCacheDecorator(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
+    def allow_cache_decorator(fnc: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
         try:
-            if cachingArgList is None and cachingKwargList is None:
+            if args_list is None and kwargs_list is None:
                 for pos, (paramName, param) in enumerate(inspect.signature(fnc).parameters.items()):
                     if paramName == 'self':
                         continue
@@ -229,42 +228,43 @@ def cached(
                         inspect.Parameter.POSITIONAL_OR_KEYWORD,
                         inspect.Parameter.POSITIONAL_ONLY,
                     ):
-                        cachingArgList.append(pos)
+                        args_list.append(pos)
                     elif param.kind in (
                         inspect.Parameter.KEYWORD_ONLY,
                         inspect.Parameter.POSITIONAL_OR_KEYWORD,
                     ):
-                        cachingKwargList.append(paramName)
+                        kwargs_list.append(paramName)
                     # *args and **kwargs are not supported
         except Exception:  # nosec
             pass  # Not inspectable, no caching
 
-        keyFnc = cachingKeyFnc or (lambda x: fnc.__name__)
+        lkey_fnc = key_fnc or (lambda x: fnc.__name__)
 
         @functools.wraps(fnc)
         def wrapper(*args, **kwargs) -> RT:
-            with transaction.atomic(): # On its own transaction (for cache operations, that are on DB)
-                nonlocal hits, misses, exec_time
-                keyHash = hashlib.sha256(usedforsecurity=False)
-                for i in cachingArgList:
+            nonlocal hits, misses, exec_time
+            with transaction.atomic():  # On its own transaction (for cache operations, that are on DB)
+                key_hash = hashlib.sha256(usedforsecurity=False)
+                for i in args_list:
                     if i < len(args):
-                        keyHash.update(str(args[i]).encode('utf-8'))
-                for s in cachingKwargList:
-                    keyHash.update(str(kwargs.get(s, '')).encode('utf-8'))
+                        key_hash.update(str(args[i]).encode('utf-8'))
+                for s in kwargs_list:
+                    key_hash.update(str(kwargs.get(s, '')).encode('utf-8'))
                 # Append key data
-                keyHash.update(keyFnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8'))
+                key_hash.update(lkey_fnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8'))
                 # compute cache key
-                cacheKey = f'{cachePrefix}-{keyHash.hexdigest()}'
+                cache_key = f'{prefix}-{key_hash.hexdigest()}'
 
                 # Get cache from object, or create a new one (generic, common to all objects)
-                cache = getattr(args[0], 'cache', None) or Cache('functionCache')
+                cache: 'Cache' = getattr(args[0], 'cache', None) or Cache('functionCache')
 
-                # if cacheTimeout is a function, call it
-                timeout = cacheTimeout() if callable(cacheTimeout) else cacheTimeout
+                # if timeout is a function, call it
+                ltimeout = timeout() if callable(timeout) else timeout
 
                 data: typing.Any = None
-                if not kwargs.get('force', False) and timeout > 0:
-                    data = cache.get(cacheKey)
+                # If misses is 0, we are starting, so we will not try to get from cache
+                if not kwargs.get('force', False) and ltimeout > 0 and misses > 0:
+                    data = cache.get(cache_key)
                     if data:
                         with lock:
                             hits += 1
@@ -287,11 +287,11 @@ def cached(
 
                 try:
                     # Maybe returned data is not serializable. In that case, cache will fail but no harm is done with this
-                    cache.put(cacheKey, data, timeout)
+                    cache.put(cache_key, data, ltimeout)
                 except Exception as e:
                     logger.debug(
                         'Data for %s is not serializable on call to %s, not cached. %s (%s)',
-                        cacheKey,
+                        cache_key,
                         fnc.__name__,
                         data,
                         e,
@@ -315,7 +315,7 @@ def cached(
 
         return wrapper
 
-    return allowCacheDecorator
+    return allow_cache_decorator
 
 
 # Decorator to execute method in a thread
@@ -351,6 +351,7 @@ def blocker(
 
     """
     from uds.REST.exceptions import AccessDenied  # To avoid circular references
+
     max_failures = max_failures or consts.system.ALLOWED_FAILS
 
     def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
@@ -392,7 +393,9 @@ def blocker(
     return decorator
 
 
-def profile(log_file: typing.Optional[str] = None) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
+def profile(
+    log_file: typing.Optional[str] = None,
+) -> collections.abc.Callable[[collections.abc.Callable[..., RT]], collections.abc.Callable[..., RT]]:
     """
     Decorator that will profile the wrapped function and log the results to the provided file
 
@@ -402,6 +405,7 @@ def profile(log_file: typing.Optional[str] = None) -> collections.abc.Callable[[
     Returns:
         Decorator
     """
+
     def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:

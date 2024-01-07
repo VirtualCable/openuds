@@ -363,7 +363,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         if self._mfaAttr:
             attributes = attributes + [self._mfaAttr]
 
-        return ldaputil.getFirst(
+        return ldaputil.first(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
@@ -379,7 +379,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         @param groupName: group name to search, using user provided parameters at configuration to map search entries.
         @return: None if group name is not found, an dictionary of LDAP entry attributes if found.
         """
-        return ldaputil.getFirst(
+        return ldaputil.first(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._groupClass,
@@ -394,7 +394,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             groups: list[str] = []
 
             filter_ = f'(&(objectClass={self._groupClass})(|({self._memberAttr}={user["_id"]})({self._memberAttr}={user["dn"]})))'
-            for d in ldaputil.getAsDict(
+            for d in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
                 ldapFilter=filter_,
@@ -528,7 +528,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
-            for r in ldaputil.getAsDict(
+            for r in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
                 ldapFilter=f'(&(objectClass={self._userClass})({self._userIdAttr}={pattern}*))',
@@ -550,7 +550,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     def search_groups(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
-            for r in ldaputil.getAsDict(
+            for r in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
                 ldapFilter=f'(&(objectClass={self._groupClass})({self._groupIdAttr}={pattern}*))',

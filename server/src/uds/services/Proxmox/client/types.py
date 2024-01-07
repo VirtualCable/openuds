@@ -155,14 +155,14 @@ class TaskStatus(typing.NamedTuple):
     def isRunning(self) -> bool:
         return self.status == 'running'
 
-    def isFinished(self) -> bool:
+    def is_finished(self) -> bool:
         return self.status == 'stopped'
 
     def isCompleted(self) -> bool:
-        return self.isFinished() and self.exitstatus == 'OK'
+        return self.is_finished() and self.exitstatus == 'OK'
 
-    def isErrored(self) -> bool:
-        return self.isFinished() and not self.isCompleted()
+    def is_errored(self) -> bool:
+        return self.is_finished() and not self.isCompleted()
 
 
 class NetworkConfiguration(typing.NamedTuple):

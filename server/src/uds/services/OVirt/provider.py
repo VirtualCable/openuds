@@ -35,7 +35,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import services, types
+from uds.core import services, types, consts
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
@@ -510,7 +510,7 @@ class OVirtProvider(
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
 
-    @cached('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

@@ -64,13 +64,13 @@ class HTML5SSHTransport(transports.Transport):
     type_description = _('SSH protocol using HTML5 client')
     icon_file = 'html5ssh.png'
 
-    ownLink = True
-    supportedOss = consts.os.ALL_OS_LIST
+    own_link = True
+    supported_oss = consts.os.ALL_OS_LIST
     # pylint: disable=no-member  # ??? SSH is there, but pylint does not see it ???
     protocol = types.transports.Protocol.SSH
     group = types.transports.Grouping.TUNNELED
 
-    tunnel = fields.tunnelField()
+    tunnel = fields.tunnel_field()
 
     useGlyptodonTunnel = HTML5RDPTransport.useGlyptodonTunnel
 
@@ -148,7 +148,7 @@ class HTML5SSHTransport(transports.Transport):
         tab=types.ui.Tab.PARAMETERS,
     )
 
-    ticketValidity = fields.tunnelTicketValidityField()
+    ticketValidity = fields.tunnel_ricket_validity_field()
 
     forceNewWindow = HTML5RDPTransport.forceNewWindow
     customGEPath = HTML5RDPTransport.customGEPath
@@ -157,7 +157,7 @@ class HTML5SSHTransport(transports.Transport):
         if not values:
             return
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -234,5 +234,5 @@ class HTML5SSHTransport(transports.Transport):
         # Remove trailing /
         path = path.rstrip('/')
 
-        tunnelServer = fields.getTunnelFromField(self.tunnel)
+        tunnelServer = fields.get_tunnel_from_field(self.tunnel)
         return str(f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}')

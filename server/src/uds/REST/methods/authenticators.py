@@ -43,7 +43,7 @@ from uds.core.environment import Environment
 from uds.REST import NotFound
 from uds.REST.model import ModelHandler
 from uds.core.util import permissions, ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.ui import gui
 
 from .users_groups import Users, Groups
@@ -235,7 +235,7 @@ class Authenticators(ModelHandler):
         logger.debug(self._params)
         if fields.get('mfa_id'):
             try:
-                mfa = MFA.objects.get(uuid=processUuid(fields['mfa_id']))
+                mfa = MFA.objects.get(uuid=process_uuid(fields['mfa_id']))
                 fields['mfa_id'] = mfa.id
             except MFA.DoesNotExist:
                 pass  # will set field to null

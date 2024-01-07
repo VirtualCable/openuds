@@ -55,7 +55,7 @@ def __loadModules():
     """
     from uds.core import services  # pylint: disable=import-outside-toplevel
 
-    modfinder.dynamicLoadAndRegisterModules(
+    modfinder.dynamically_load_and_register_modules(
         services.factory(), services.ServiceProvider, __name__
     )
 

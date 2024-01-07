@@ -142,7 +142,7 @@ class BaseSpiceTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         """
@@ -184,10 +184,10 @@ class BaseSpiceTransport(transports.Transport):
 
         return ready == 'Y'
 
-    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
+    def get_available_error_msg(self, userService: 'models.UserService', ip: str) -> str:
         msg = self.cache.get('cachedMsg')
         if msg is None:
-            return transports.Transport.getCustomAvailableErrorMsg(self, userService, ip)
+            return transports.Transport.get_available_error_msg(self, userService, ip)
         return msg
 
     def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
@@ -221,7 +221,7 @@ class BaseSpiceTransport(transports.Transport):
             password=password,
         )
 
-    def getConnectionInfo(
+    def get_connection_info(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',

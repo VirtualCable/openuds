@@ -33,6 +33,9 @@ import logging
 import typing
 import collections.abc
 
+from django.apps import apps
+from django.db import connections
+
 from uds.core.util import singleton
 from uds.core.util.log import LogLevel
 
@@ -47,8 +50,28 @@ class NotificationsManager(metaclass=singleton.Singleton):
     This class manages alerts and notifications
     """
 
+    _initialized: bool = False
+
     def __init__(self):
         pass
+
+    def _ensure_local_db_exists(self) -> bool:
+        if not apps.ready:
+            return False
+        if self._initialized:
+            return True
+        # Ensure notifications table exists on local sqlite db (called "persistent" on settings.py)
+        # Note: On Notification model change, we must ensure that the table is removed on the migration itself
+        from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
+
+        try:
+            with connections['persistent'].schema_editor() as schema_editor:
+                schema_editor.create_model(Notification)
+        except Exception:  # nosec: intentionally catching all exceptions
+            # If it fails, it's ok, it just means that it already exists
+            pass
+        self._initialized = True
+        return True
 
     @staticmethod
     def manager() -> 'NotificationsManager':
@@ -56,6 +79,10 @@ class NotificationsManager(metaclass=singleton.Singleton):
 
     def notify(self, group: str, identificator: str, level: LogLevel, message: str, *args) -> None:
         from uds.models.notifications import Notification  # pylint: disable=import-outside-toplevel
+
+        # Due to use of local db, we must ensure that it exists (and cannot do it on ready)
+        if self._ensure_local_db_exists() is False:
+            return  # Not initialized apps yet, so we cannot do anything
 
         # logger.debug(
         #    'Notify: %s, %s, %s, %s, [%s]', group, identificator, level, message, args

@@ -419,7 +419,7 @@ class RegexLdap(auths.Authenticator):
         if self._mfaAttr:
             attributes = attributes + self.__getAttrsFromField(self._mfaAttr)
 
-        user = ldaputil.getFirst(
+        user = ldaputil.first(
             con=self.__connection(),
             base=self._ldapBase,
             objectClass=self._userClass,
@@ -434,7 +434,7 @@ class RegexLdap(auths.Authenticator):
         # For example, you can have authentication in an "user" object class and attributes in an "user_attributes" object class.
         # Note: This is very rare situation, but it ocurrs :)
         if user and self._altClass:
-            for usr in ldaputil.getAsDict(
+            for usr in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
                 ldapFilter=f'(&(objectClass={self._altClass})({self._userIdAttr}={ldaputil.escape(username)}))',
@@ -567,7 +567,7 @@ class RegexLdap(auths.Authenticator):
     def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         try:
             res = []
-            for r in ldaputil.getAsDict(
+            for r in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
                 ldapFilter=f'(&(&(objectClass={self._userClass})({self._userIdAttr}={ldaputil.escape(pattern)}*)))',

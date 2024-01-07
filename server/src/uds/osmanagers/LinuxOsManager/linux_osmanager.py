@@ -119,7 +119,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def ignore_deadline(self) -> bool:
         return not self._deadLine
 
-    def isRemovableOnLogout(self, userService: 'UserService') -> bool:
+    def is_removableOnLogout(self, userService: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''
@@ -142,7 +142,7 @@ class LinuxOsManager(osmanagers.OSManager):
         try:
             msg, slevel = data.split('\t')
             try:
-                level = log.LogLevel.fromStr(slevel)
+                level = log.LogLevel.from_str(slevel)
             except Exception:
                 logger.debug('Do not understand level %s', slevel)
                 level = log.LogLevel.INFO
@@ -160,7 +160,7 @@ class LinuxOsManager(osmanagers.OSManager):
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.isRemovableOnLogout(userService):
+        if self.is_removableOnLogout(userService):
             log.log(
                 userService,
                 log.LogLevel.INFO,

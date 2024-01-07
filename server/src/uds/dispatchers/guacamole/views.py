@@ -79,7 +79,7 @@ def guacamole(request: ExtendedHttpRequestWithUser, token: str, tunnelId: str) -
 
             try:
                 userService = UserService.objects.get(uuid=ti['userService'])
-                if not userService.isUsable():
+                if not userService.is_usable():
                     raise Exception()  # Not usable, so we will not use it :)
                 user = userService.user
                 # check service owner is the same as the one that requested the ticket

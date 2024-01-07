@@ -153,7 +153,7 @@ class Command(BaseCommand):
                             fltr = fltr.filter(state=State.ERROR)
                         for item in fltr[:max_items]:  # at most max_items items
                             logs = [
-                                f'{l["date"]}: {log.LogLevel.fromStr(l["level"])} [{l["source"]}] - {l["message"]}'
+                                f'{l["date"]}: {log.LogLevel.from_str(l["level"])} [{l["source"]}] - {l["message"]}'
                                 for l in log.get_logs(item)
                             ]
                             userServices[item.friendly_name] = {

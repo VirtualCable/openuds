@@ -51,7 +51,7 @@ def __loadModules():
     from uds.core import osmanagers
 
     # OSManagers registers everything
-    modfinder.dynamicLoadAndRegisterModules(
+    modfinder.dynamically_load_and_register_modules(
         osmanagers.factory(), osmanagers.OSManager, __name__
     )
 

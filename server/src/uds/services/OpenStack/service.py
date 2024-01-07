@@ -117,7 +117,7 @@ class LiveService(services.Service):
         label=_('Project'),
         order=2,
         fills={
-            'callbackName': 'osFillResources',
+            'callback_name': 'osFillResources',
             'function': helpers.getResources,
             'parameters': ['ov', 'ev', 'project', 'region', 'legacy'],
         },
@@ -129,7 +129,7 @@ class LiveService(services.Service):
         label=_('Availability Zones'),
         order=3,
         fills={
-            'callbackName': 'osFillVolumees',
+            'callback_name': 'osFillVolumees',
             'function': helpers.getVolumes,
             'parameters': [
                 'ov',

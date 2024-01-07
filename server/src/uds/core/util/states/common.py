@@ -86,59 +86,59 @@ VALID_STATES = [USABLE, PREPARING]
 PUBLISH_STATES = [LAUNCHING, PREPARING]
 
 
-def isActive(state):
+def is_active(state):
     return state == ACTIVE
 
 
-def isInactive(state):
+def is_inactive(state):
     return state == INACTIVE
 
 
-def isBlocked(state):
+def is_blocked(state):
     return state == BLOCKED
 
 
-def isPreparing(state):
+def is_preparing(state):
     return state == PREPARING
 
 
-def isUsable(state):
+def is_usable(state):
     return state == USABLE
 
 
-def isRemovable(state):
+def is_removable(state):
     return state == REMOVABLE
 
 
-def isRemoving(state):
+def is_removing(state):
     return state == REMOVING
 
 
-def isRemoved(state):
+def is_removed(state):
     return state == REMOVED
 
 
-def isCanceling(state):
+def is_canceling(state):
     return state == CANCELING
 
 
-def isCanceled(state):
+def is_canceled(state):
     return state == CANCELED
 
 
-def isErrored(state):
+def is_errored(state):
     return state == ERROR
 
 
-def isFinished(state):
+def is_finished(state):
     return state == FINISHED
 
 
-def isRuning(state):
+def is_runing(state):
     return state == RUNNING
 
 
-def isForExecute(state):
+def is_for_execute(state):
     return state == FOR_EXECUTE
 
 

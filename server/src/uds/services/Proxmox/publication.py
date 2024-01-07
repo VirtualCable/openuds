@@ -150,7 +150,7 @@ class ProxmoxPublication(services.Publication):
             self._reason = str(e)
             return self._state
 
-        if task.isErrored():
+        if task.is_errored():
             self._reason = task.exitstatus
             self._state = State.ERROR
         else:  # Finished

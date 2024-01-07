@@ -58,8 +58,8 @@ class TestTransport(transports.Transport):
     type_description = _('Test Transport')
     icon_file = 'transport.png'
 
-    ownLink = True
-    supportedOss = consts.os.ALL_OS_LIST
+    own_link = True
+    supported_oss = consts.os.ALL_OS_LIST
     protocol = types.transports.Protocol.OTHER
     group = types.transports.Grouping.DIRECT
 
@@ -95,7 +95,7 @@ class TestTransport(transports.Transport):
             )
 
     # Same check as normal RDP transport
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         # No check is done for URL transport
         return True
 

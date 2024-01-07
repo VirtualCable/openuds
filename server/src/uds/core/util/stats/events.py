@@ -30,6 +30,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import dataclasses
 import datetime
 import stat
 import time
@@ -125,8 +126,8 @@ def get_owner(
         return OSManager.objects.get(pk=ownerId)
     return None
 
-
-class EventTupleType(typing.NamedTuple):
+@dataclasses.dataclass
+class EventTupleType:
     stamp: datetime.datetime
     fld1: str
     fld2: str

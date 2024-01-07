@@ -68,27 +68,27 @@ def match(
     And the literals will be ignored
     """
     arg_list = list(arg_list)  # ensure it is a list
-    for matcher in args:
-        if len(arg_list) != len(matcher[0]):
+    for pattern, function in args:
+        if len(arg_list) != len(pattern):
             continue
 
         # Check if all the arguments match
-        doMatch = True
+        matched = True
         for i, arg in enumerate(arg_list):
-            if matcher[0][i].startswith('<') and matcher[0][i].endswith('>'):
+            if pattern[i].startswith('<') and pattern[i].endswith('>'):
                 continue
 
-            if arg != matcher[0][i]:
-                doMatch = False
+            if arg != pattern[i]:
+                matched = False
                 break
 
-        if doMatch:
+        if matched:
             # All the arguments match, call the callback
-            return matcher[1](
+            return function(
                 *[
                     arg
                     for i, arg in enumerate(arg_list)
-                    if matcher[0][i].startswith('<') and matcher[0][i].endswith('>')
+                    if pattern[i].startswith('<') and pattern[i].endswith('>')
                 ]
             )
 

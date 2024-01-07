@@ -136,7 +136,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         label=_("Base Machine"),
         order=110,
         fills={
-            'callbackName': 'pmFillResourcesFromMachine',
+            'callback_name': 'pmFillResourcesFromMachine',
             'function': helpers.getStorage,
             'parameters': ['machine', 'ov', 'ev'],
         },
@@ -341,6 +341,6 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
 
-    @cached('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
         return self.parent().isAvailable()

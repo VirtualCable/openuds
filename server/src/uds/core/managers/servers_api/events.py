@@ -50,13 +50,13 @@ def process_log(server: 'models.Server', data: dict[str, typing.Any]) -> typing.
         try:
             userService = models.UserService.objects.get(uuid=data['userservice_uuid'])
             log.log(
-                userService, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER
+                userService, log.LogLevel.from_str(data['level']), data['message'], source=log.LogSource.SERVER
             )
             return rest_result(consts.OK)
         except models.UserService.DoesNotExist:
             pass  # If not found, log on server
 
-    log.log(server, log.LogLevel.fromStr(data['level']), data['message'], source=log.LogSource.SERVER)
+    log.log(server, log.LogLevel.from_str(data['level']), data['message'], source=log.LogSource.SERVER)
 
     return rest_result(consts.OK)
 
@@ -139,7 +139,7 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
         osmanagers.OSManager.logged_out(userService, data['username'])
         osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-        if not osManager or osManager.isRemovableOnLogout(userService):
+        if not osManager or osManager.is_removableOnLogout(userService):
             logger.debug('Removable on logout: %s', osManager)
             userService.remove()
 

@@ -40,7 +40,7 @@ from uds.core import types
 import uds.web.views
 import uds.admin.views
 
-from uds.core.util.modfinder import loadModulesUrls
+from uds.core.util.modfinder import get_urlpatterns_from_modules
 
 
 urlpatterns = [
@@ -224,4 +224,4 @@ urlpatterns = [
 ]
 
 # Append urls from special dispatchers
-urlpatterns += loadModulesUrls()
+urlpatterns += get_urlpatterns_from_modules()

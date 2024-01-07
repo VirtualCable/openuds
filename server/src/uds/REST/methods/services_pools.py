@@ -45,7 +45,7 @@ from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.util import log, permissions, ensure
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_datetime, processUuid
+from uds.core.util.model import sql_datetime, process_uuid
 from uds.core.util.state import State
 from uds.models import (Account, Image, OSManager, Service, ServicePool,
                         ServicePoolGroup, User)
@@ -485,7 +485,7 @@ class ServicesPools(ModelHandler):
 
         try:
             try:
-                service = Service.objects.get(uuid=processUuid(fields['service_id']))
+                service = Service.objects.get(uuid=process_uuid(fields['service_id']))
                 fields['service_id'] = service.id
             except Exception:
                 raise RequestError(gettext('Base service does not exist anymore')) from None
@@ -500,7 +500,7 @@ class ServicesPools(ModelHandler):
                     self._params['allow_users_reset'] = False
 
                 if serviceType.needs_manager is True:
-                    osmanager = OSManager.objects.get(uuid=processUuid(fields['osmanager_id']))
+                    osmanager = OSManager.objects.get(uuid=process_uuid(fields['osmanager_id']))
                     fields['osmanager_id'] = osmanager.id
                 else:
                     del fields['osmanager_id']
@@ -549,7 +549,7 @@ class ServicesPools(ModelHandler):
 
             if accountId != '-1':
                 try:
-                    fields['account_id'] = Account.objects.get(uuid=processUuid(accountId)).id
+                    fields['account_id'] = Account.objects.get(uuid=process_uuid(accountId)).id
                 except Exception:
                     logger.exception('Getting account ID')
 
@@ -559,7 +559,7 @@ class ServicesPools(ModelHandler):
             logger.debug('Image id: %s', imgId)
             try:
                 if imgId != '-1':
-                    image = Image.objects.get(uuid=processUuid(imgId))
+                    image = Image.objects.get(uuid=process_uuid(imgId))
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')
@@ -571,7 +571,7 @@ class ServicesPools(ModelHandler):
             logger.debug('pool_group_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
-                    spgrp = ServicePoolGroup.objects.get(uuid=processUuid(spgrpId))
+                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(spgrpId))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:
                 logger.exception('At service pool group recovering')
@@ -670,7 +670,7 @@ class ServicesPools(ModelHandler):
         logger.debug('Creating from assignable: %s', self._params)
         UserServiceManager().create_from_assignable(
             item,
-            User.objects.get(uuid=processUuid(self._params['user_id'])),
+            User.objects.get(uuid=process_uuid(self._params['user_id'])),
             self._params['assignable_id'],
         )
 

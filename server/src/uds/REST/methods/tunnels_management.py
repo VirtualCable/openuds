@@ -39,7 +39,7 @@ from django.utils.translation import gettext_lazy as _
 import uds.core.types.permissions
 from uds.core import types, consts, ui
 from uds.core.util import permissions, validators, ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds import models
 from uds.REST.model import DetailHandler, ModelHandler
 
@@ -63,7 +63,7 @@ class TunnelServers(DetailHandler):
                 multi = True
                 q = parent.servers.all().order_by('hostname')
             else:
-                q = parent.servers.filter(uuid=processUuid(item))
+                q = parent.servers.filter(uuid=process_uuid(item))
             res = []
             i = None
             for i in q:
@@ -119,7 +119,7 @@ class TunnelServers(DetailHandler):
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
-            parent.servers.remove(models.Server.objects.get(uuid=processUuid(item)))
+            parent.servers.remove(models.Server.objects.get(uuid=process_uuid(item)))
         except Exception:
             raise self.invalidItemException() from None
 
@@ -130,7 +130,7 @@ class TunnelServers(DetailHandler):
         Custom method that swaps maintenance mode state for a tunnel server
         :param item:
         """
-        item = models.Server.objects.get(uuid=processUuid(id))
+        item = models.Server.objects.get(uuid=process_uuid(id))
         self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
@@ -221,7 +221,7 @@ class Tunnels(ModelHandler):
             raise self.invalidItemException('No server specified')
 
         try:
-            server = models.Server.objects.get(uuid=processUuid(item))
+            server = models.Server.objects.get(uuid=process_uuid(item))
             self.ensureAccess(server, uds.core.types.permissions.PermissionType.READ)
             parent.servers.add(server)
         except Exception:

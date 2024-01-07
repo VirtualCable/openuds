@@ -42,6 +42,6 @@ def __loadPlugins():
     logger.debug('Initializing plugins...')
 
     # Load all modules
-    modfinder.importModules(__name__)
+    modfinder.import_modules(__name__)
 
 __loadPlugins()

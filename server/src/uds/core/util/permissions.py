@@ -87,7 +87,7 @@ def effective_permissions(
         return PermissionType.NONE
 
 
-def addUserPermission(
+def add_user_permission(
     user: 'models.User',
     obj: 'Model',
     permission: PermissionType = PermissionType.READ,
@@ -101,7 +101,7 @@ def addUserPermission(
     )
 
 
-def addGroupPermission(
+def add_group_permission(
     group: 'models.Group',
     obj: 'Model',
     permission: PermissionType = PermissionType.READ,
@@ -114,7 +114,7 @@ def addGroupPermission(
     )
 
 
-def hasAccess(
+def has_access(
     user: 'models.User',
     obj: 'Model',
     permission: PermissionType = PermissionType.ALL,
@@ -123,7 +123,7 @@ def hasAccess(
     return effective_permissions(user, obj, for_type).includes(permission)
 
 
-def revokePermissionById(permUUID: str) -> None:
+def revoke_permission_by_id(permUUID: str) -> None:
     """Revokes a permision by its uuid
 
     Arguments:

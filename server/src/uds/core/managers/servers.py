@@ -72,7 +72,7 @@ class ServerManager(metaclass=singleton.Singleton):
     def counter_storage(self) -> 'StorageAccess':
         # If counters are too old, restart them
         if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
-            self.clearUnmanagedUsage()
+            self.clear_unmanaged_usage()
         return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
 
     def property_name(self, user: typing.Optional[typing.Union[str, 'models.User']]) -> str:
@@ -81,7 +81,7 @@ class ServerManager(metaclass=singleton.Singleton):
             return ServerManager.BASE_PROPERTY_NAME + user
         return ServerManager.BASE_PROPERTY_NAME + (str(user.uuid) if user else '_')
 
-    def clearUnmanagedUsage(self) -> None:
+    def clear_unmanaged_usage(self) -> None:
         with self.counter_storage() as counters:
             counters.clear()
         self.last_counters_clean = datetime.datetime.now()

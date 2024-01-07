@@ -60,7 +60,7 @@ def __loadModules() -> None:
         alreadyAdded.add(cls.uuid)
         availableReports.append(cls)
 
-    modfinder.dynamicLoadAndRegisterPackages(
+    modfinder.dynamically_load_and_register_packages(
         addReportCls,
         reports.Report,
         __name__,

@@ -235,7 +235,7 @@ class WinDomainOsManager(WindowsOsManager):
         obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
             obj = next(
-                ldaputil.getAsDict(
+                ldaputil.as_dict(
                     ldapConnection,
                     base,
                     f'(&(objectClass=group)(|(cn={group})(sAMAccountName={group})))',
@@ -260,7 +260,7 @@ class WinDomainOsManager(WindowsOsManager):
         fltr = f'(&(objectClass=computer)(sAMAccountName={ldaputil.escape(machineName)}$))'
         obj: typing.Optional[collections.abc.MutableMapping[str, typing.Any]]
         try:
-            obj = next(ldaputil.getAsDict(ldapConnection, base, fltr, ['dn'], sizeLimit=50))
+            obj = next(ldaputil.as_dict(ldapConnection, base, fltr, ['dn'], sizeLimit=50))
         except StopIteration:
             obj = None
 

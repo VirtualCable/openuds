@@ -66,7 +66,7 @@ class BaseX2GOTransport(transports.Transport):
 
     icon_file = 'x2go.png'
     protocol = types.transports.Protocol.X2GO
-    supportedOss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
+    supported_oss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
 
     fixedName = gui.TextField(
         order=2,
@@ -201,7 +201,7 @@ class BaseX2GOTransport(transports.Transport):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -252,7 +252,7 @@ class BaseX2GOTransport(transports.Transport):
             password=password,
         )
 
-    def getConnectionInfo(
+    def get_connection_info(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',

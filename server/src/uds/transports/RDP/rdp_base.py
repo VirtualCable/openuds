@@ -331,7 +331,7 @@ class BaseRDPTransport(transports.Transport):
         tab='Windows Client',
     )
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -414,7 +414,7 @@ class BaseRDPTransport(transports.Transport):
             domain=domain,
         )
 
-    def getConnectionInfo(
+    def get_connection_info(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',

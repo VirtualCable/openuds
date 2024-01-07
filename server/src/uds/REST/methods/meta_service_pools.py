@@ -43,7 +43,7 @@ from uds import models
 # from uds.models.user import User
 
 from uds.core.util.state import State
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util import log, ensure
 from uds.REST.model import DetailHandler
 from .user_services import AssignedService
@@ -77,7 +77,7 @@ class MetaServicesPool(DetailHandler):
         try:
             if not item:
                 return [MetaServicesPool.as_dict(i) for i in parent.members.all()]
-            i = parent.members.get(uuid=processUuid(item))
+            i = parent.members.get(uuid=process_uuid(item))
             return MetaServicesPool.as_dict(i)
         except Exception:
             logger.exception('err: %s', item)
@@ -96,9 +96,9 @@ class MetaServicesPool(DetailHandler):
     def saveItem(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.MetaPool)
         # If already exists
-        uuid = processUuid(item) if item else None
+        uuid = process_uuid(item) if item else None
 
-        pool = models.ServicePool.objects.get(uuid=processUuid(self._params['pool_id']))
+        pool = models.ServicePool.objects.get(uuid=process_uuid(self._params['pool_id']))
         enabled = self._params['enabled'] not in ('false', False, '0', 0)
         priority = int(self._params['priority'])
         priority = priority if priority >= 0 else 0
@@ -124,7 +124,7 @@ class MetaServicesPool(DetailHandler):
 
     def deleteItem(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, models.MetaPool)
-        member = parent.members.get(uuid=processUuid(self._args[0]))
+        member = parent.members.get(uuid=process_uuid(self._args[0]))
         logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
 
         member.delete()
@@ -155,7 +155,7 @@ class MetaAssignedService(DetailHandler):
         """
         try:
             return models.UserService.objects.filter(
-                uuid=processUuid(userServiceId),
+                uuid=process_uuid(userServiceId),
                 cache_level=0,
                 deployed_service__in=[i.pool for i in metaPool.members.all()],
             )[0]
@@ -198,7 +198,7 @@ class MetaAssignedService(DetailHandler):
                 props={
                     k: v
                     for k, v in models.Properties.objects.filter(
-                        owner_type='userservice', owner_id=processUuid(item)
+                        owner_type='userservice', owner_id=process_uuid(item)
                     ).values_list('key', 'value')
                 },
             )
@@ -277,7 +277,7 @@ class MetaAssignedService(DetailHandler):
 
         fields = self.readFieldsFromParams(['auth_id', 'user_id'])
         service = self._getAssignedService(parent, item)
-        user = models.User.objects.get(uuid=processUuid(fields['user_id']))
+        user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 
         logStr = 'Changing ownership of service from {} to {} by {}'.format(
             service.user.pretty_name if service.user else 'unknown', user.pretty_name, self._user.pretty_name

@@ -33,7 +33,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import services, types
+from uds.core import services, types, consts
 from uds.core.ui import gui
 from uds.core.util import validators
 from uds.core.util.cache import Cache
@@ -310,7 +310,7 @@ class ProxmoxProvider(
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)
 
-    @cached('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         return self._getApi().test()
 

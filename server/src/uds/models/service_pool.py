@@ -271,7 +271,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         return False
 
     def is_in_maintenance(self) -> bool:
-        return self.service.isInMaintenance() if self.service else True
+        return self.service.is_in_maintenance() if self.service else True
 
     def is_visible(self) -> bool:
         return self.visible  # type: ignore
@@ -345,11 +345,11 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         for ac in self.calendarAccess.all():
             if ac.access == states.action.ALLOW and self.fallbackAccess == states.action.DENY:
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, False)
+                nextE = calendar.CalendarChecker(ac.calendar).next_event(chkDateTime, False)
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
             elif ac.access == states.action.DENY:  # DENY
-                nextE = calendar.CalendarChecker(ac.calendar).nextEvent(chkDateTime, True)
+                nextE = calendar.CalendarChecker(ac.calendar).next_event(chkDateTime, True)
                 if not deadLine or (nextE and deadLine > nextE):
                     deadLine = nextE
 

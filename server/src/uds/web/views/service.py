@@ -40,7 +40,7 @@ from uds.core.auths.auth import web_login_required, web_password
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.types.request import ExtendedHttpRequest
 from uds.core.consts.images import DEFAULT_IMAGE
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Transport, Image
 from uds.core.util import log
 from uds.core.services.exceptions import ServiceNotReadyError
@@ -98,7 +98,7 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
         else:
-            transport = Transport.objects.get(uuid=processUuid(idTrans))
+            transport = Transport.objects.get(uuid=process_uuid(idTrans))
         return HttpResponse(transport.get_instance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')
@@ -107,13 +107,13 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
 @cache_page(3600, key_prefix='img', cache='memory')
 def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
     try:
-        icon = Image.objects.get(uuid=processUuid(idImage))
+        icon = Image.objects.get(uuid=process_uuid(idImage))
         return icon.imageResponse()
     except Image.DoesNotExist:
         pass  # Tries to get image from transport
 
     try:
-        transport: Transport = Transport.objects.get(uuid=processUuid(idImage))
+        transport: Transport = Transport.objects.get(uuid=process_uuid(idImage))
         return HttpResponse(transport.get_instance().icon(), content_type='image/png')
     except Exception:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
+def uds_link(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
     # Removed http support, so only udss:// links are generated
 
     # If we have a scheme, remove it
@@ -54,7 +54,7 @@ def udsLink(request: 'HttpRequest', ticket: str, scrambler: str) -> str:
     return f'udss://{rel}{ticket}/{scrambler}'
 
 
-def udsAccessLink(
+def uds_access_link(
     request: 'HttpRequest',  # pylint: disable=unused-argument
     serviceId: str,
     transportId: typing.Optional[str],
@@ -65,7 +65,7 @@ def udsAccessLink(
     return f'udsa://{serviceId}/{transportId or "meta"}'
 
 
-def parseDate(dateToParse) -> datetime.date:
+def parse_date(dateToParse) -> datetime.date:
     if get_language() == 'fr':
         date_format = '%d/%m/%Y'
     else:
@@ -76,7 +76,7 @@ def parseDate(dateToParse) -> datetime.date:
     return datetime.datetime.strptime(dateToParse, date_format).date()
 
 
-def dateToLiteral(date) -> str:
+def date_to_literal(date) -> str:
     # Fix for FR lang for datepicker
     if get_language() == 'fr':
         date = date.strftime('%d/%m/%Y')
@@ -86,12 +86,14 @@ def dateToLiteral(date) -> str:
     return date
 
 
-def extractKey(dictionary: dict, key: typing.Any, **kwargs) -> str:
-    format_ = kwargs.get('format', '{0}')
-    default = kwargs.get('default', '')
+def extract_key(
+    dictionary: dict, key: typing.Any, fmt: typing.Optional[str] = None, default: typing.Any = None
+):
+    fmt = fmt or '{0}'
+    default = default or ''
 
     if key in dictionary:
-        value = format_.format(dictionary[key])
+        value = fmt.format(dictionary[key])
         del dictionary[key]
     else:
         value = default

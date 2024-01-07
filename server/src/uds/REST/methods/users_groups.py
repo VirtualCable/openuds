@@ -42,7 +42,7 @@ from uds.core.util.state import State
 
 from uds.core.auths.user import User as aUser
 from uds.core.util import log, ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
 from uds.REST import RequestError
@@ -122,7 +122,7 @@ class Users(DetailHandler):
                         or _('User')
                     )
                 return values
-            u = parent.users.get(uuid=processUuid(item))
+            u = parent.users.get(uuid=process_uuid(item))
             res = model_to_dict(
                 u,
                 fields=(
@@ -152,7 +152,7 @@ class Users(DetailHandler):
     def getTitle(self, parent: 'Model') -> str:
         try:
             return _('Users of {0}').format(
-                Authenticator.objects.get(uuid=processUuid(self._kwargs['parent_id'])).name
+                Authenticator.objects.get(uuid=process_uuid(self._kwargs['parent_id'])).name
             )
         except Exception:
             return _('Current users')
@@ -187,7 +187,7 @@ class Users(DetailHandler):
         parent = ensure.is_instance(parent, Authenticator)
         user = None
         try:
-            user = parent.users.get(uuid=processUuid(item))
+            user = parent.users.get(uuid=process_uuid(item))
         except Exception:
             raise self.invalidItemException() from None
 
@@ -231,7 +231,7 @@ class Users(DetailHandler):
                     user = parent.users.create(**fields)
                 else:
                     auth.modify_user(fields)  # Notifies authenticator
-                    user = parent.users.get(uuid=processUuid(item))
+                    user = parent.users.get(uuid=process_uuid(item))
                     user.__dict__.update(fields)
                     user.save()
 
@@ -260,7 +260,7 @@ class Users(DetailHandler):
     def deleteItem(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, Authenticator)
         try:
-            user = parent.users.get(uuid=processUuid(item))
+            user = parent.users.get(uuid=process_uuid(item))
             if not self._user.is_admin and (user.is_admin or user.staff_member):
                 logger.warning(
                     'Removal of user %s denied due to insufficients rights',
@@ -292,8 +292,8 @@ class Users(DetailHandler):
 
     def servicesPools(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, Authenticator)
-        uuid = processUuid(item)
-        user = parent.users.get(uuid=processUuid(uuid))
+        uuid = process_uuid(item)
+        user = parent.users.get(uuid=process_uuid(uuid))
         res = []
         groups = list(user.getGroups())
         for i in getPoolsForGroups(groups):
@@ -313,8 +313,8 @@ class Users(DetailHandler):
 
     def userServices(self, parent: 'Authenticator', item: str) -> list[dict]:
         parent = ensure.is_instance(parent, Authenticator)
-        uuid = processUuid(item)
-        user = parent.users.get(uuid=processUuid(uuid))
+        uuid = process_uuid(item)
+        user = parent.users.get(uuid=process_uuid(uuid))
         res = []
         for i in user.userServices.all():
             if i.state == State.USABLE:
@@ -326,8 +326,8 @@ class Users(DetailHandler):
         return res
 
     def cleanRelated(self, parent: 'Authenticator', item: str) -> dict[str, str]:
-        uuid = processUuid(item)
-        user = parent.users.get(uuid=processUuid(uuid))
+        uuid = process_uuid(item)
+        user = parent.users.get(uuid=process_uuid(uuid))
         user.cleanRelated()
         return {'status': 'ok'}
 
@@ -343,7 +343,7 @@ class Groups(DetailHandler):
                 multi = True
                 q = parent.groups.all().order_by('name')
             else:
-                q = parent.groups.filter(uuid=processUuid(item))
+                q = parent.groups.filter(uuid=process_uuid(item))
             res = []
             i = None
             for i in q:
@@ -456,7 +456,7 @@ class Groups(DetailHandler):
                 toSave['comments'] = fields['comments'][:255]
                 toSave['meta_if_any'] = meta_if_any
 
-                group = parent.groups.get(uuid=processUuid(item))
+                group = parent.groups.get(uuid=process_uuid(item))
                 group.__dict__.update(toSave)
 
             if is_meta:
@@ -493,8 +493,8 @@ class Groups(DetailHandler):
 
     def servicesPools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)
-        uuid = processUuid(item)
-        group = parent.groups.get(uuid=processUuid(uuid))
+        uuid = process_uuid(item)
+        group = parent.groups.get(uuid=process_uuid(uuid))
         res: list[collections.abc.Mapping[str, typing.Any]] = []
         for i in getPoolsForGroups((group,)):
             res.append(
@@ -512,9 +512,9 @@ class Groups(DetailHandler):
         return res
 
     def users(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
-        uuid = processUuid(item)
+        uuid = process_uuid(item)
         parent = ensure.is_instance(parent, Authenticator)
-        group = parent.groups.get(uuid=processUuid(uuid))
+        group = parent.groups.get(uuid=process_uuid(uuid))
 
         def info(user):
             return {

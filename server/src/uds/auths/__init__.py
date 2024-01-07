@@ -50,7 +50,7 @@ def __loadModules__():
     """
     from uds.core import auths
 
-    modfinder.dynamicLoadAndRegisterModules(auths.factory(), auths.Authenticator, __name__)
+    modfinder.dynamically_load_and_register_modules(auths.factory(), auths.Authenticator, __name__)
 
 
 __loadModules__()

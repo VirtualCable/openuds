@@ -52,7 +52,7 @@ def initialize() -> None:
             logger.debug('Registering job: %s', cls.__module__)
             task_manager().register_job(cls)
 
-    modfinder.dynamicLoadAndRegisterPackages(
+    modfinder.dynamically_load_and_register_packages(
         registerer,
         jobs.Job,
         __name__

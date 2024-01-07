@@ -88,7 +88,7 @@ class Config:
         OTHER = 'Other'
 
         @staticmethod
-        def fromStr(value: str) -> 'Config.SectionType':
+        def from_str(value: str) -> 'Config.SectionType':
             if value in list(Config.SectionType.values()):
                 return Config.SectionType(value)
             return Config.SectionType(Config.SectionType.OTHER)
@@ -309,9 +309,9 @@ class Config:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             if cfg.crypt:
-                val = Config.section(Config.SectionType.fromStr(cfg.section)).valueCrypt(cfg.key)
+                val = Config.section(Config.SectionType.from_str(cfg.section)).valueCrypt(cfg.key)
             else:
-                val = Config.section(Config.SectionType.fromStr(cfg.section)).value(cfg.key)
+                val = Config.section(Config.SectionType.from_str(cfg.section)).value(cfg.key)
             yield val
 
     @staticmethod

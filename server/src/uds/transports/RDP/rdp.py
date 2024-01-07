@@ -112,7 +112,7 @@ class RDPTransport(BaseRDPTransport):
     ) -> 'types.transports.TransportScript':
         # We use helper to keep this clean
 
-        ci = self.getConnectionInfo(userService, user, password)
+        ci = self.get_connection_info(userService, user, password)
 
         # escape conflicting chars : Note, on 3.0 this should not be neccesary. Kept until more tests
         # password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
@@ -193,4 +193,4 @@ class RDPTransport(BaseRDPTransport):
             )
             return super().get_transport_script(userService, transport, ip, os, user, password, request)
 
-        return self.getScript(os.os.os_name(), 'direct', sp)
+        return self.get_script(os.os.os_name(), 'direct', sp)

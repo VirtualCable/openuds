@@ -68,7 +68,7 @@ class CalendarChecker:
     def __init__(self, calendar: Calendar) -> None:
         self.calendar = calendar
 
-    def _updateData(self, dtime: datetime.datetime) -> bitarray.bitarray:
+    def _gen_state_on_minute(self, dtime: datetime.datetime) -> bitarray.bitarray:
         logger.debug('Updating %s', dtime)
         CalendarChecker.updates += 1
 
@@ -115,19 +115,19 @@ class CalendarChecker:
 
         return data
 
-    def _updateEvents(
-        self, checkFrom: datetime.datetime, startEvent: bool = True
+    def _update_events(
+        self, check_from: datetime.datetime, startEvent: bool = True
     ) -> typing.Optional[datetime.datetime]:
         next_event = None
         for rule in self.calendar.rules.all():
             # logger.debug('RULE: start = {}, checkFrom = {}, end'.format(rule.start.date(), checkFrom.date()))
-            if rule.end is not None and rule.end < checkFrom.date():
+            if rule.end is not None and rule.end < check_from.date():
                 continue
             # logger.debug('Rule in check interval...')
             if startEvent:
-                event = rule.as_rrule().after(checkFrom)  # At start
+                event = rule.as_rrule().after(check_from)  # At start
             else:
-                event = rule.as_rrule_end().after(checkFrom)  # At end
+                event = rule.as_rrule_end().after(check_from)  # At end
 
             if event and (next_event is None or next_event > event):
                 next_event = event
@@ -143,66 +143,67 @@ class CalendarChecker:
             dtime = sql_datetime()
 
         # memcached access
-        memCache = caches['memory']
+        memcache_storage = caches['memory']
 
         # First, try to get data from cache if it is valid
-        cacheKey = CalendarChecker._cacheKey(
+        cache_key = CalendarChecker._gen_cache_key(
             str(self.calendar.modified) + str(dtime.date()) + (self.calendar.uuid or '') + 'checker'
         )
         # First, check "local memory cache", and if not found, from DB cache
-        cached = memCache.get(cacheKey)
+        cached = memcache_storage.get(cache_key)
         if not cached:
-            cached = CalendarChecker.cache.get(cacheKey, None)
+            cached = CalendarChecker.cache.get(cache_key, None)
             if cached:
-                memCache.set(cacheKey, cached, ONE_DAY)
+                memcache_storage.set(cache_key, cached, ONE_DAY)
 
+        # state_per_minute is a bitarray with 24*60 bits, one for each minute of the day
         if cached:
-            data = bitarray.bitarray()  # Empty bitarray
-            data.frombytes(cached)
+            state_on_minute = bitarray.bitarray()  # Empty bitarray
+            state_on_minute.frombytes(cached)
             CalendarChecker.cache_hit += 1
         else:
-            data = self._updateData(dtime)
+            state_on_minute = self._gen_state_on_minute(dtime)
 
             # Now data can be accessed as an array of booleans.
             # Store data on persistent cache
-            CalendarChecker.cache.put(cacheKey, data.tobytes(), ONE_DAY)
-            memCache.set(cacheKey, data.tobytes(), ONE_DAY)
+            CalendarChecker.cache.put(cache_key, state_on_minute.tobytes(), ONE_DAY)
+            memcache_storage.set(cache_key, state_on_minute.tobytes(), ONE_DAY)
 
-        return bool(data[dtime.hour * 60 + dtime.minute])
+        return bool(state_on_minute[dtime.hour * 60 + dtime.minute])
 
-    def nextEvent(
+    def next_event(
         self,
-        checkFrom: typing.Optional[datetime.datetime] = None,
-        startEvent: bool = True,
+        check_from: typing.Optional[datetime.datetime] = None,
+        start_event: bool = True,
         offset: typing.Optional[datetime.timedelta] = None,
     ) -> typing.Optional[datetime.datetime]:
         """
         Returns next event for this interval
         """
         logger.debug('Obtaining nextEvent')
-        if not checkFrom:
-            checkFrom = sql_datetime()
+        if not check_from:
+            check_from = sql_datetime()
 
         if not offset:
             offset = datetime.timedelta(minutes=0)
 
-        cacheKey = CalendarChecker._cacheKey(
+        cache_key = CalendarChecker._gen_cache_key(
             str(self.calendar.modified)
             + (self.calendar.uuid or '')
             + str(offset.seconds)
-            + str(checkFrom)
+            + str(check_from)
             + 'event'
-            + ('x' if startEvent else '_')
+            + ('x' if start_event else '_')
         )
-        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(cacheKey, None)
+        next_event: typing.Optional[datetime.datetime] = CalendarChecker.cache.get(cache_key, None)
         if not next_event:
             logger.debug('Regenerating cached nextEvent')
-            next_event = self._updateEvents(
-                checkFrom + offset, startEvent
+            next_event = self._update_events(
+                check_from + offset, start_event
             )  # We substract on checkin, so we can take into account for next execution the "offset" on start & end (just the inverse of current, so we substract it)
             if next_event:
                 next_event += offset
-            CalendarChecker.cache.put(cacheKey, next_event, 3600)
+            CalendarChecker.cache.put(cache_key, next_event, 3600)
         else:
             logger.debug('nextEvent cache hit')
             CalendarChecker.hits += 1
@@ -213,7 +214,7 @@ class CalendarChecker:
         return f'Calendar checker for {self.calendar}'
 
     @staticmethod
-    def _cacheKey(key: str) -> str:
+    def _gen_cache_key(key: str) -> str:
         # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
         # Simple, fastest algorihm is to use md5
         return hashlib.md5(key.encode('utf-8')).hexdigest()  # nosec  simple fast algorithm for cache keys

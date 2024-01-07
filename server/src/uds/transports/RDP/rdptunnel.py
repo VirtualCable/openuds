@@ -68,9 +68,9 @@ class TRDPTransport(BaseRDPTransport):
     type_description = _('RDP Protocol. Tunneled connection.')
     group = types.transports.Grouping.TUNNELED
 
-    tunnel = fields.tunnelField()
+    tunnel = fields.tunnel_field()
 
-    tunnelWait = fields.tunnelTunnelWait()
+    tunnelWait = fields.tunnel_runnel_wait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -132,7 +132,7 @@ class TRDPTransport(BaseRDPTransport):
     ) -> 'types.transports.TransportScript':
         # We use helper to keep this clean
 
-        ci = self.getConnectionInfo(userService, user, password)
+        ci = self.get_connection_info(userService, user, password)
 
         # escape conflicting chars : Note, on 3.0 this should not be neccesary. Kept until more tests
         # password = password.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
@@ -148,7 +148,7 @@ class TRDPTransport(BaseRDPTransport):
             validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 
-        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
         tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
@@ -223,4 +223,4 @@ class TRDPTransport(BaseRDPTransport):
             )
             return super().get_transport_script(userService, transport, ip, os, user, password, request)
 
-        return self.getScript(os.os.os_name(), 'tunnel', sp)
+        return self.get_script(os.os.os_name(), 'tunnel', sp)

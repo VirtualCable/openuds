@@ -61,7 +61,7 @@ def __loadModules():
     """
     from uds.core import mfas  # pylint: disable=import-outside-toplevel
 
-    modfinder.dynamicLoadAndRegisterModules(mfas.factory(), mfas.MFA, __name__)
+    modfinder.dynamically_load_and_register_modules(mfas.factory(), mfas.MFA, __name__)
 
 
 __loadModules()

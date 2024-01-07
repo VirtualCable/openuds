@@ -67,8 +67,8 @@ class TX2GOTransport(BaseX2GOTransport):
     type_description = _('X2Go access (Experimental). Tunneled connection.')
     group = types.transports.Grouping.TUNNELED
 
-    tunnel = fields.tunnelField()
-    tunnelWait = fields.tunnelTunnelWait()
+    tunnel = fields.tunnel_field()
+    tunnelWait = fields.tunnel_runnel_wait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -105,7 +105,7 @@ class TX2GOTransport(BaseX2GOTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
-        ci = self.getConnectionInfo(userService, user, password)
+        ci = self.get_connection_info(userService, user, password)
 
         priv, pub = self.getAndPushKey(ci.username, userService)
 
@@ -137,7 +137,7 @@ class TX2GOTransport(BaseX2GOTransport):
             validity=self.tunnelWait.num() + 60,  # Ticket overtime
         )
 
-        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
         tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         sp = {
@@ -151,6 +151,6 @@ class TX2GOTransport(BaseX2GOTransport):
         }
 
         try:
-            return self.getScript(os.os.os_name(), 'tunnel', sp)
+            return self.get_script(os.os.os_name(), 'tunnel', sp)
         except Exception:
             return super().get_transport_script(userService, transport, ip, os, user, password, request)

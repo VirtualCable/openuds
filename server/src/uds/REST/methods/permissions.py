@@ -137,19 +137,19 @@ class Permissions(Handler):
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             user = models.User.objects.get(uuid=user_param)
-            permissions.addUserPermission(user, obj, perm)
+            permissions.add_user_permission(user, obj, perm)
             return Permissions.permsToDict(permissions.getPermissions(obj))
 
         def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> list[dict]:
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             group = models.Group.objects.get(uuid=group_param)
-            permissions.addGroupPermission(group, obj, perm)
+            permissions.add_group_permission(group, obj, perm)
             return Permissions.permsToDict(permissions.getPermissions(obj))
 
         def revoke() -> list[dict]:
             for permId in self._params.get('items', []):
-                permissions.revokePermissionById(permId)
+                permissions.revoke_permission_by_id(permId)
             return []
 
         def no_match() -> None:
@@ -171,17 +171,17 @@ class Permissions(Handler):
 
             if self._args[2] == 'users':
                 user = models.User.objects.get(uuid=self._args[4])
-                permissions.addUserPermission(user, obj, perm)
+                permissions.add_user_permission(user, obj, perm)
             elif self._args[2] == 'groups':
                 group = models.Group.objects.get(uuid=self._args[4])
-                permissions.addGroupPermission(group, obj, perm)
+                permissions.add_group_permission(group, obj, perm)
             else:
                 raise RequestError('Ivalid request')
             return Permissions.permsToDict(permissions.getPermissions(obj))
 
         if la == 1 and self._args[0] == 'revoke':
             for permId in self._params.get('items', []):
-                permissions.revokePermissionById(permId)
+                permissions.revoke_permission_by_id(permId)
             return []
 
         raise RequestError('Invalid request')

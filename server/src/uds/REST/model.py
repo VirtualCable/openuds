@@ -47,7 +47,7 @@ from uds.core import exceptions as udsExceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import log, permissions
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
 from uds.REST.utils import rest_result
 
@@ -263,7 +263,7 @@ class BaseModelHandler(Handler):
         permission: 'types.permissions.PermissionType',
         root: bool = False,
     ) -> None:
-        if not permissions.hasAccess(self._user, obj, permission, root):
+        if not permissions.has_access(self._user, obj, permission, root):
             raise self.accessDenied()
 
     def getPermissions(self, obj: models.Model, root: bool = False) -> int:
@@ -510,7 +510,7 @@ class DetailHandler(BaseModelHandler):
                 )
 
             # try to get id
-            return self.getItems(parent, processUuid(self._args[0]))
+            return self.getItems(parent, process_uuid(self._args[0]))
 
         if nArgs == 2:
             if self._args[0] == GUI:
@@ -878,7 +878,7 @@ class ModelHandler(BaseModelHandler):
             else:
                 requiredPermission = types.permissions.PermissionType.READ
 
-            if permissions.hasAccess(self._user, item, requiredPermission) is False:
+            if permissions.has_access(self._user, item, requiredPermission) is False:
                 logger.debug(
                     'Permission for user %s does not comply with %s',
                     self._user,
@@ -938,7 +938,7 @@ class ModelHandler(BaseModelHandler):
         for item in query:
             try:
                 if (
-                    permissions.hasAccess(
+                    permissions.has_access(
                         typing.cast('User', self._user),
                         item,
                         types.permissions.PermissionType.READ,

@@ -39,7 +39,7 @@ from django.db import IntegrityError
 from django.utils.translation import gettext as _
 
 from uds.core.util import ensure, permissions
-from uds.core.util.model import sql_datetime, processUuid
+from uds.core.util.model import sql_datetime, process_uuid
 from uds.models.calendar_rule import CalendarRule, freqs
 from uds.models.calendar import Calendar
 from uds.REST import RequestError
@@ -86,7 +86,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             if item is None:
                 return [CalendarRules.ruleToDict(k, perm) for k in parent.rules.all()]
-            k = parent.rules.get(uuid=processUuid(item))
+            k = parent.rules.get(uuid=process_uuid(item))
             return CalendarRules.ruleToDict(k, perm)
         except Exception as e:
             logger.exception('itemId %s', item)
@@ -143,7 +143,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             if item is None:  # Create new
                 calRule = parent.rules.create(**fields)
             else:
-                calRule = parent.rules.get(uuid=processUuid(item))
+                calRule = parent.rules.get(uuid=process_uuid(item))
                 calRule.__dict__.update(fields)
                 calRule.save()
         except CalendarRule.DoesNotExist:
@@ -158,7 +158,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
-            calRule = parent.rules.get(uuid=processUuid(item))
+            calRule = parent.rules.get(uuid=process_uuid(item))
             calRule.calendar.modified = sql_datetime()
             calRule.calendar.save()
             calRule.delete()

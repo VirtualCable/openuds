@@ -40,11 +40,11 @@ from uds.core.util import ensure
 logger = logging.getLogger(__name__)
 
 
-def validateRegexField(field: ui.gui.TextField, fieldValue: typing.Optional[str] = None):
+def validateRegexField(field: ui.gui.TextField, field_value: typing.Optional[str] = None):
     """
     Validates the multi line fields refering to attributes
     """
-    value: str = fieldValue or field.value
+    value: str = field_value or field.value
     if value.strip() == '':
         return  # Ok, empty
 

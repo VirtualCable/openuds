@@ -41,7 +41,7 @@ from uds import models
 from uds.core import types
 from uds.core.util.model import sql_datetime
 
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util.stats import counters
 from uds.core.util.cache import Cache
 from uds.core.util.state import State
@@ -182,7 +182,7 @@ class System(Handler):
             if len(self._args) == 3:
                 try:
                     pool = models.ServicePool.objects.get(
-                        uuid=processUuid(self._args[2])
+                        uuid=process_uuid(self._args[2])
                     )
                 except Exception:
                     pool = None
@@ -190,7 +190,7 @@ class System(Handler):
             if not pool and not self._user.is_admin:
                 raise AccessDenied()
             # Check permission for pool..
-            if not permissions.hasAccess(
+            if not permissions.has_access(
                 self._user, typing.cast('Model', pool), types.permissions.PermissionType.READ
             ):
                 raise AccessDenied()

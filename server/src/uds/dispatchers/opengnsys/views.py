@@ -38,7 +38,7 @@ from django.http import HttpResponse, HttpRequest
 from uds.REST.methods import actor_v3
 from uds.core.auths import auth
 from uds.models import UserService
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util import states
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ def opengnsys(
 
     def getUserService() -> typing.Optional[UserService]:
         try:
-            userService = UserService.objects.get(uuid=processUuid(uuid), state=states.userService.USABLE)
+            userService = UserService.objects.get(uuid=process_uuid(uuid), state=states.userService.USABLE)
             if userService.properties.get('token') == token:
                 return userService
             logger.warning(

@@ -39,7 +39,7 @@ from django.utils.translation import gettext_lazy as _
 from uds import models
 from uds.core import consts, types, ui
 from uds.core.util import permissions, ensure
-from uds.core.util.model import sql_datetime, processUuid
+from uds.core.util.model import sql_datetime, process_uuid
 from uds.REST.exceptions import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
@@ -100,7 +100,7 @@ class ServersTokens(ModelHandler):
         )  # Must have write permissions to delete
 
         try:
-            self.model.objects.get(uuid=processUuid(self._args[0])).delete()
+            self.model.objects.get(uuid=process_uuid(self._args[0])).delete()
         except self.model.DoesNotExist:
             raise NotFound('Element do not exists') from None
 
@@ -119,7 +119,7 @@ class ServersServers(DetailHandler):
                 multi = True
                 q = parent.servers.all()
             else:
-                q = parent.servers.filter(uuid=processUuid(item))
+                q = parent.servers.filter(uuid=process_uuid(item))
             res = []
             i = None
             for i in q:
@@ -259,7 +259,7 @@ class ServersServers(DetailHandler):
             elif parent.type == types.servers.ServerType.SERVER:
                 # Get server
                 try:
-                    server = models.Server.objects.get(uuid=processUuid(self._params['server']))
+                    server = models.Server.objects.get(uuid=process_uuid(self._params['server']))
                     # Check server type is also SERVER
                     if server and server.type != types.servers.ServerType.SERVER:
                         logger.error('Server type for %s is not SERVER', server.host)
@@ -270,7 +270,7 @@ class ServersServers(DetailHandler):
                 pass
         else:
             try:
-                server = models.Server.objects.get(uuid=processUuid(item))
+                server = models.Server.objects.get(uuid=process_uuid(item))
                 parent.servers.add(server)
             except Exception:
                 raise self.invalidItemException() from None
@@ -280,7 +280,7 @@ class ServersServers(DetailHandler):
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
-            server = models.Server.objects.get(uuid=processUuid(item))
+            server = models.Server.objects.get(uuid=process_uuid(item))
             if parent.server_type == types.servers.ServerType.UNMANAGED:
                 parent.servers.remove(server)  # Remove reference
                 server.delete()  # and delete server
@@ -296,7 +296,7 @@ class ServersServers(DetailHandler):
         Custom method that swaps maintenance mode state for a tunnel server
         :param item:
         """
-        item = models.Server.objects.get(uuid=processUuid(id))
+        item = models.Server.objects.get(uuid=process_uuid(id))
         self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()

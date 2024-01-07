@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 first, value = config.split('=', 1)  # Only first = is separator :)
                 first = first.split('.')
                 if len(first) == 2:
-                    mod, name = Config.SectionType.fromStr(first[0]), first[1]
+                    mod, name = Config.SectionType.from_str(first[0]), first[1]
                 else:
                     mod, name = Config.SectionType.GLOBAL, first[0]
                 if (

@@ -91,7 +91,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         prov.set_uuid(self.uuid)
         return prov
 
-    def isInMaintenance(self) -> bool:
+    def is_in_maintenance(self) -> bool:
         return self.maintenance_mode
 
     @staticmethod

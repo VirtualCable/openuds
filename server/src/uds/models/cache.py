@@ -65,7 +65,7 @@ class Cache(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def cleanUp() -> None:
+    def purge_outdated() -> None:
         """
         Purges the cache items that are no longer vaild.
         """

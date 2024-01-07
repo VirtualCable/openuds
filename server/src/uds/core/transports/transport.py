@@ -70,10 +70,10 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supportedOss: tuple = consts.os.desktopOss  # Supported operating systems
+    supported_oss: tuple = consts.os.desktopOss  # Supported operating systems
 
     # If the link to use transport is provided by transport itself
-    ownLink: bool = False
+    own_link: bool = False
 
     # Protocol "type". This is not mandatory, but will help
     protocol: types.transports.Protocol = types.transports.Protocol.NONE
@@ -115,14 +115,14 @@ class Transport(Module):
     ) -> bool:
         return net.test_connectivity(ip, int(port), timeout)
 
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
         """
         return False
 
-    def getCustomAvailableErrorMsg(self, userService: 'models.UserService', ip: str) -> str:
+    def get_available_error_msg(self, userService: 'models.UserService', ip: str) -> str:
         """
         Returns a customized error message, that will be used when a service fails to check "isAvailableFor"
         Override this in yours transports if needed
@@ -130,31 +130,31 @@ class Transport(Module):
         return f'Not accessible (using service ip {ip})'
 
     @classmethod
-    def supportsProtocol(cls, protocol: typing.Union[collections.abc.Iterable, str]):
+    def supports_protocol(cls, protocol: typing.Union[collections.abc.Iterable, str]):
         if isinstance(protocol, str):
             return protocol.lower() == cls.protocol.lower()
         # Not string group of strings
         for v in protocol:
-            if cls.supportsProtocol(v):
+            if cls.supports_protocol(v):
                 return True
         return False
 
     @classmethod
-    def supportsOs(cls, osType: types.os.KnownOS) -> bool:
+    def supports_os(cls, osType: types.os.KnownOS) -> bool:
         """
         Helper method to check if transport supports requested operating system.
         Class method
         """
-        return osType in cls.supportedOss
+        return osType in cls.supported_oss
 
     @classmethod
-    def providesConnetionInfo(cls) -> bool:
+    def provides_connetion_info(cls) -> bool:
         """
         Helper method to check if transport provides information about connection
         """
-        return cls.getConnectionInfo is not Transport.getConnectionInfo
+        return cls.get_connection_info is not Transport.get_connection_info
 
-    def getConnectionInfo(
+    def get_connection_info(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
@@ -257,7 +257,7 @@ class Transport(Module):
             parameters=transport_script.parameters,
         )
 
-    def getRelativeScript(
+    def get_relative_script(
         self, scriptName: str, params: collections.abc.Mapping[str, typing.Any]
     ) -> types.transports.TransportScript:
         """Returns a script that will be executed on client, but will be downloaded from server
@@ -285,7 +285,7 @@ class Transport(Module):
             parameters=params,
         )
 
-    def getScript(
+    def get_script(
         self,
         osName: str,
         type: typing.Literal['tunnel', 'direct'],
@@ -294,7 +294,7 @@ class Transport(Module):
         """
         Returns a script for the given os and type
         """
-        return self.getRelativeScript(f'scripts/{osName.lower()}/{type}.py', params)
+        return self.get_relative_script(f'scripts/{osName.lower()}/{type}.py', params)
 
     def getLink(
         self,

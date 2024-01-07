@@ -41,7 +41,7 @@ from uds.core import types
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util import ensure, permissions
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util.state import State
 from uds.models import Image, MetaPool, ServicePoolGroup
 from uds.REST import RequestError, ResponseError
@@ -263,7 +263,7 @@ class MetaPools(ModelHandler):
             logger.debug('Image id: %s', imgId)
             try:
                 if imgId != '-1':
-                    image = Image.objects.get(uuid=processUuid(imgId))
+                    image = Image.objects.get(uuid=process_uuid(imgId))
                     fields['image_id'] = image.id
             except Exception:
                 logger.exception('At image recovering')
@@ -274,7 +274,7 @@ class MetaPools(ModelHandler):
             logger.debug('servicesPoolGroup_id: %s', spgrpId)
             try:
                 if spgrpId != '-1':
-                    spgrp = ServicePoolGroup.objects.get(uuid=processUuid(spgrpId))
+                    spgrp = ServicePoolGroup.objects.get(uuid=process_uuid(spgrpId))
                     fields['servicesPoolGroup_id'] = spgrp.id
             except Exception:
                 logger.exception('At service pool group recovering')

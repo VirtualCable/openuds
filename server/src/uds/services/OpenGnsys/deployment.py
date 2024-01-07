@@ -157,7 +157,7 @@ class OGDeployment(services.UserService):
                 return State.ERROR
 
             # Machine powered off, check what to do...
-            if self.service().isRemovableIfUnavailable():
+            if self.service().is_removableIfUnavailable():
                 return self.__error(
                     'Machine is unavailable and service has "Remove if unavailable" flag active.'
                 )

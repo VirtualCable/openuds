@@ -296,7 +296,7 @@ class OpenStackProvider(ServiceProvider):
         """
         return OpenStackProvider(env, data).testConnection()
 
-    @cached('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

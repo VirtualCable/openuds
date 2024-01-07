@@ -103,15 +103,6 @@ class UDSAppConfig(AppConfig):
         # pylint: disable=unused-import,import-outside-toplevel
         from . import REST
 
-        # Ensure notifications table exists on local sqlite db (called "persistent" on settings.py)
-        # Note: On Notification model change, we must ensure that the table is removed on the migration itself
-        try:
-            with connections['persistent'].schema_editor() as schema_editor:
-                schema_editor.create_model(self.get_model('Notification'))
-        except Exception:  # nosec: intentionally catching all exceptions
-            # If it fails, it's ok, it just means that it already exists
-            pass
-
 
 default_app_config = 'uds.UDSAppConfig'
 

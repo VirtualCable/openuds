@@ -47,7 +47,7 @@ class Tab(enum.StrEnum):
     MFA = gettext_noop('MFA')
 
     @staticmethod
-    def fromStr(value: typing.Optional[str]) -> typing.Union['Tab', str, None]:
+    def from_str(value: typing.Optional[str]) -> typing.Union['Tab', str, None]:
         """Returns a Tab from a string
         If value is not a valid Tab, returns Tab.PARAMETERS
 
@@ -77,7 +77,7 @@ class FieldType(enum.StrEnum):
     INFO = 'internal-info'
 
     @staticmethod
-    def fromStr(value: str) -> 'FieldType':
+    def from_str(value: str) -> 'FieldType':
         """Returns a FieldType from a string
         If value is not a valid FieldType, returns FieldType.TEXT
 
@@ -105,7 +105,7 @@ class FieldPatternType(enum.StrEnum):
 
 
 class Filler(typing.TypedDict):
-    callbackName: str
+    callback_name: str
     parameters: list[str]
     function: typing.NotRequired[collections.abc.Callable[..., typing.Any]]
 

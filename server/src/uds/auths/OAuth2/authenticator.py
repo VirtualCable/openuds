@@ -232,7 +232,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if self.publicKey.value.strip() == '':
             return []
 
-        return [cert.public_key() for cert in fields.getCertificatesFromField(self.publicKey)]
+        return [cert.public_key() for cert in fields.get_vertificates_from_field(self.publicKey)]
 
     def _codeVerifierAndChallenge(self) -> tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE

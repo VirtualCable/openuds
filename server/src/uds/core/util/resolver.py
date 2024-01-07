@@ -28,6 +28,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import time
 import typing
 import collections.abc
 import functools
@@ -35,8 +36,9 @@ import functools
 import dns.resolver
 import dns.reversename
 
+from uds.core.util.decorators import cached
 
-@functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
+@cached(prefix='resolver.resolve', timeout=60)  # Cache for 1 hour
 def resolve(hostname: str) -> list[str]:
     """
     Resolves a hostname to a list of ips
@@ -50,7 +52,7 @@ def resolve(hostname: str) -> list[str]:
             pass
     return ips
 
-@functools.lru_cache(maxsize=512)  # Limit the memory used by this cache (512 items)
+@cached(prefix='resolver.reverse', timeout=60)  # Cache for 1 hour
 def reverse(ip: str) -> list[str]:
     """
     Resolves an ip to a list of hostnames

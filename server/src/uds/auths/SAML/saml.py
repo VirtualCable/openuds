@@ -455,9 +455,9 @@ class SAMLAuthenticator(auths.Authenticator):
         }
 
     @decorators.cached(
-        cachePrefix='idpm',
-        cachingKeyFnc=CACHING_KEY_FNC,
-        cacheTimeout=3600 * 24 * 365,  # 1 year
+        prefix='idpm',
+        key_fnc=CACHING_KEY_FNC,
+        timeout=3600 * 24 * 365,  # 1 year
     )
     def getIdpMetadataDict(self) -> dict[str, typing.Any]:
         if self.idpMetadata.value.startswith('http'):
@@ -527,9 +527,9 @@ class SAMLAuthenticator(auths.Authenticator):
         }
 
     @decorators.cached(
-        cachePrefix='spm',
-        cachingKeyFnc=CACHING_KEY_FNC,
-        cacheTimeout=3600,  # 1 hour
+        prefix='spm',
+        key_fnc=CACHING_KEY_FNC,
+        timeout=3600,  # 1 hour
     )
     def getSpMetadata(self) -> str:
         saml_settings = OneLogin_Saml2_Settings(settings=self.oneLoginSettings())

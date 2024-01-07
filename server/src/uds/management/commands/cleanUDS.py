@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         sys.stdout.write("Cache...\n")
         # UDSs cache
-        Cache.cleanUp()
+        Cache.purge_outdated()
         # Django caches
         cache.clear()
 

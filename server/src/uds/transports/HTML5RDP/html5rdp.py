@@ -63,12 +63,12 @@ class HTML5RDPTransport(transports.Transport):
     type_description = _('RDP protocol using HTML5 client')
     icon_file = 'html5.png'
 
-    ownLink = True
-    supportedOss = consts.os.ALL_OS_LIST
+    own_link = True
+    supported_oss = consts.os.ALL_OS_LIST
     protocol = types.transports.Protocol.RDP
     group = types.transports.Grouping.TUNNELED
 
-    tunnel = fields.tunnelField()
+    tunnel = fields.tunnel_field()
 
     useGlyptodonTunnel = ui.gui.CheckBoxField(
         label=_('Use Glyptodon Enterprise tunnel'),
@@ -211,7 +211,7 @@ class HTML5RDPTransport(transports.Transport):
         tab=types.ui.Tab.PARAMETERS,
     )
 
-    ticketValidity = fields.tunnelTicketValidityField()
+    ticketValidity = fields.tunnel_ricket_validity_field()
 
     forceNewWindow = ui.gui.ChoiceField(
         order=91,
@@ -294,7 +294,7 @@ class HTML5RDPTransport(transports.Transport):
         #    )
 
     # Same check as normal RDP transport
-    def isAvailableFor(self, userService: 'models.UserService', ip: str) -> bool:
+    def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
         """
         Checks if the transport is available for the requested destination ip
         Override this in yours transports
@@ -310,10 +310,10 @@ class HTML5RDPTransport(transports.Transport):
         return ready == 'Y'
 
     def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
-        v = self.getConnectionInfo(userService, user, '')
+        v = self.get_connection_info(userService, user, '')
         return v.username
 
-    def getConnectionInfo(
+    def get_connection_info(
         self,
         userService: typing.Union['models.UserService', 'models.ServicePool'],
         user: 'models.User',
@@ -383,7 +383,7 @@ class HTML5RDPTransport(transports.Transport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',  # pylint: disable=unused-argument
     ) -> str:
-        credsInfo = self.getConnectionInfo(userService, user, password)
+        credsInfo = self.get_connection_info(userService, user, password)
         username, password, domain = (
             credsInfo.username,
             credsInfo.password,
@@ -480,7 +480,7 @@ class HTML5RDPTransport(transports.Transport):
         # Remove trailing /
         path = path.rstrip('/')
 
-        tunnelServer = fields.getTunnelFromField(self.tunnel)
+        tunnelServer = fields.get_tunnel_from_field(self.tunnel)
         return str(
             f'https://{tunnelServer.host}:{tunnelServer.port}{path}/#/?data={ticket}.{scrambler}{onw}{extra_params}'
         )

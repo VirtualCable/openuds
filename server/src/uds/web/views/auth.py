@@ -53,7 +53,7 @@ from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util import html
 from uds.core.util.state import State
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore
 
@@ -180,7 +180,7 @@ def custom_auth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
     res: typing.Optional[str] = ''
     try:
         try:
-            auth = Authenticator.objects.get(uuid=processUuid(idAuth))
+            auth = Authenticator.objects.get(uuid=process_uuid(idAuth))
         except Authenticator.DoesNotExist:
             auth = Authenticator.objects.get(pk=idAuth)
         res = auth.get_instance().get_javascript(request)
@@ -260,12 +260,12 @@ def ticket_auth(
             _, userService, _, transport, _ = res
 
             transportInstance = transport.get_instance()
-            if transportInstance.ownLink is True:
+            if transportInstance.own_link is True:
                 link = reverse(
                     'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore
                 )
             else:
-                link = html.udsAccessLink(request, 'A' + userService.uuid, transport.uuid)  # type: ignore
+                link = html.uds_access_link(request, 'A' + userService.uuid, transport.uuid)  # type: ignore
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))

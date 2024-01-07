@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 
 from uds.models import UserService, Provider
 from uds.core.util.state import State
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
 from uds.core.util import ensure
 
@@ -99,7 +99,7 @@ class ServicesUsage(DetailHandler):
                 )
             else:
                 userServicesQuery = UserService.objects.filter(
-                    deployed_service__service_uuid=processUuid(item)
+                    deployed_service__service_uuid=process_uuid(item)
                 )
 
             return [
@@ -138,7 +138,7 @@ class ServicesUsage(DetailHandler):
         userService: UserService
         try:
             userService = UserService.objects.get(
-                uuid=processUuid(item), deployed_service__service__provider=parent
+                uuid=process_uuid(item), deployed_service__service__provider=parent
             )
         except Exception:
             raise self.invalidItemException()

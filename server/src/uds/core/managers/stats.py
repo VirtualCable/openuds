@@ -246,7 +246,9 @@ class StatsManager(metaclass=singleton.Singleton):
         return _REVERSE_FLDS_EQUIV[fld]
 
     # Event stats
-    def add_event(self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs):
+    def add_event(
+        self, owner_type: types.stats.EventOwnerType, owner_id: int, event_type: types.stats.EventType, **kwargs
+    ):
         """
         Adds a new event stat to database.
 
@@ -271,7 +273,7 @@ class StatsManager(metaclass=singleton.Singleton):
 
         try:
 
-            def getKwarg(fld: str) -> str:
+            def get_kwarg(fld: str) -> str:
                 val = kwargs.get(fld)
                 if val is None:
                     for i in _FLDS_EQUIV[fld]:
@@ -280,10 +282,10 @@ class StatsManager(metaclass=singleton.Singleton):
                             break
                 return val or ''
 
-            fld1 = getKwarg('fld1')
-            fld2 = getKwarg('fld2')
-            fld3 = getKwarg('fld3')
-            fld4 = getKwarg('fld4')
+            fld1 = get_kwarg('fld1')
+            fld2 = get_kwarg('fld2')
+            fld3 = get_kwarg('fld3')
+            fld4 = get_kwarg('fld4')
 
             StatsEvents.objects.create(
                 owner_type=owner_type,
@@ -302,7 +304,9 @@ class StatsManager(metaclass=singleton.Singleton):
 
     def enumerate_events(
         self,
-        owner_type: typing.Union[types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]],
+        owner_type: typing.Union[
+            types.stats.EventOwnerType, collections.abc.Iterable[types.stats.EventOwnerType]
+        ],
         event_type: typing.Union[types.stats.EventType, collections.abc.Iterable[types.stats.EventType]],
         **kwargs
     ) -> 'models.QuerySet[StatsEvents]':

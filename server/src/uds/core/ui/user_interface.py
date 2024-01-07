@@ -49,7 +49,6 @@ from django.utils.translation import gettext as _
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
 from uds.core.util import serializer, validators, ensure
-from uds.core.util.decorators import deprecatedClassValue
 
 logger = logging.getLogger(__name__)
 
@@ -305,7 +304,7 @@ class gui:
                 default=default if not callable(default) else default,
                 readonly=kwargs.get('readonly'),
                 value=kwargs.get('value') if kwargs.get('value') is not None else default,
-                tab=types.ui.Tab.fromStr(kwargs.get('tab')),
+                tab=types.ui.Tab.from_str(kwargs.get('tab')),
             )
 
         @property
@@ -951,7 +950,7 @@ class gui:
         There is an extra option available for this kind of field:
 
            fills: This options is a dictionary that contains this fields:
-              * 'callbackName' : Callback name for invocation via the specific
+              * 'callback_name' : Callback name for invocation via the specific
                  method xml-rpc. This name is a name we assign to this callback,
                  and is used to locate the method when callback is invoked from
                  admin interface.
@@ -1003,7 +1002,7 @@ class gui:
                   resourcePool = gui.ChoiceField(
                       label=_("Resource Pool"), readonly = False, order = 5,
                       fills = {
-                          'callbackName' : 'vcFillMachinesFromResource',
+                          'callback_name' : 'vcFillMachinesFromResource',
                           'function' : VCHelpers.getMachines,
                           'parameters' : ['vc', 'ev', 'resourcePool']
                       },
@@ -1052,14 +1051,14 @@ class gui:
             self._fieldsInfo.choices = gui.convertToChoices(choices or [])
             # if has fillers, set them
             if fills:
-                if 'function' not in fills or 'callbackName' not in fills:
+                if 'function' not in fills or 'callback_name' not in fills:
                     raise ValueError('Invalid fills parameters')
                 fnc = fills['function']
                 fills.pop('function')
                 self._fieldsInfo.fills = fills
                 # Store it only if not already present
-                if fills['callbackName'] not in gui.callbacks:
-                    gui.callbacks[fills['callbackName']] = fnc
+                if fills['callback_name'] not in gui.callbacks:
+                    gui.callbacks[fills['callback_name']] = fnc
 
         def setChoices(self, values: collections.abc.Iterable[typing.Union[str, types.ui.ChoiceItem]]):
             """

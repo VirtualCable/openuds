@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 
 from uds.core import types
 from uds.core.util import log, ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Calendar, CalendarAction, CalendarAccess, ServicePool
 from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.REST.model import DetailHandler
@@ -71,7 +71,7 @@ class AccessCalendars(DetailHandler):
             if not item:
                 return [AccessCalendars.as_dict(i) for i in parent.calendarAccess.all()]
             return AccessCalendars.as_dict(
-                parent.calendarAccess.get(uuid=processUuid(item))
+                parent.calendarAccess.get(uuid=process_uuid(item))
             )
         except Exception as e:
             logger.exception('err: %s', item)
@@ -90,11 +90,11 @@ class AccessCalendars(DetailHandler):
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, ServicePool)
         # If already exists
-        uuid = processUuid(item) if item is not None else None
+        uuid = process_uuid(item) if item is not None else None
 
         try:
             calendar: Calendar = Calendar.objects.get(
-                uuid=processUuid(self._params['calendarId'])
+                uuid=process_uuid(self._params['calendarId'])
             )
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
@@ -126,7 +126,7 @@ class AccessCalendars(DetailHandler):
 
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, ServicePool)
-        calendarAccess = parent.calendarAccess.get(uuid=processUuid(self._args[0]))
+        calendarAccess = parent.calendarAccess.get(uuid=process_uuid(self._args[0]))
         logStr = f'Removed access calendar {calendarAccess.calendar.name} by {self._user.pretty_name}'
         calendarAccess.delete()
 
@@ -167,7 +167,7 @@ class ActionsCalendars(DetailHandler):
                 return [
                     ActionsCalendars.as_dict(i) for i in parent.calendaraction_set.all()
                 ]
-            i = parent.calendaraction_set.get(uuid=processUuid(item))
+            i = parent.calendaraction_set.get(uuid=process_uuid(item))
             return ActionsCalendars.as_dict(i)
         except Exception as e:
             raise self.invalidItemException() from e
@@ -189,9 +189,9 @@ class ActionsCalendars(DetailHandler):
     def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, ServicePool)
         # If already exists
-        uuid = processUuid(item) if item is not None else None
+        uuid = process_uuid(item) if item is not None else None
 
-        calendar = Calendar.objects.get(uuid=processUuid(self._params['calendarId']))
+        calendar = Calendar.objects.get(uuid=process_uuid(self._params['calendarId']))
         action = self._params['action'].upper()
         if action not in CALENDAR_ACTION_DICT:
             raise self.invalidRequestException()
@@ -229,7 +229,7 @@ class ActionsCalendars(DetailHandler):
 
     def deleteItem(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, ServicePool)
-        calendarAction = CalendarAction.objects.get(uuid=processUuid(self._args[0]))
+        calendarAction = CalendarAction.objects.get(uuid=process_uuid(self._args[0]))
         logStr = (
             f'Removed scheduled action "{calendarAction.calendar.name},'
             f'{calendarAction.action},{calendarAction.events_offset},'
@@ -244,7 +244,7 @@ class ActionsCalendars(DetailHandler):
     def execute(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, ServicePool)
         logger.debug('Launching action')
-        uuid = processUuid(item)
+        uuid = process_uuid(item)
         calendarAction: CalendarAction = CalendarAction.objects.get(uuid=uuid)
         self.ensureAccess(calendarAction, types.permissions.PermissionType.MANAGEMENT)
 

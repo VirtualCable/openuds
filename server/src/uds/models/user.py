@@ -256,7 +256,7 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         # Removes all user services assigned to this user (unassign it and mark for removal)
         for us in to_delete.userServices.all():
-            us.assignToUser(None)
+            us.assign_to(None)
             us.remove()
 
         logger.debug('Deleted user %s', to_delete)

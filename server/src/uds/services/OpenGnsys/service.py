@@ -101,7 +101,7 @@ class OGService(services.Service):
         label=_("OU"),
         order=100,
         fills={
-            'callbackName': 'osFillData',
+            'callback_name': 'osFillData',
             'function': helpers.getResources,
             'parameters': ['ov', 'ev', 'ou'],
         },
@@ -222,7 +222,7 @@ class OGService(services.Service):
     def getReleaseURL(self, uuid: str, token: str) -> str:
         return self._notifyURL(uuid, token, 'release')
 
-    def isRemovableIfUnavailable(self):
+    def is_removableIfUnavailable(self):
         return self.startIfUnavailable.isTrue()
 
     def is_avaliable(self) -> bool:

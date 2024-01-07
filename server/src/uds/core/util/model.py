@@ -61,7 +61,7 @@ class TimeTrack:
     misses: typing.ClassVar[int] = 0
 
     @staticmethod
-    def _fetchSqlDatetime() -> datetime.datetime:
+    def _fetch_sql_datetime() -> datetime.datetime:
         """Returns the current date/time of the database server.
 
         We use this time as method to keep all operations betwen different servers in sync.
@@ -97,7 +97,7 @@ class TimeTrack:
             if diff > datetime.timedelta(seconds=CACHE_TIME_TIMEOUT) or diff < datetime.timedelta(seconds=0):
                 TimeTrack.last_check = now
                 TimeTrack.misses += 1
-                TimeTrack.cached_time = TimeTrack._fetchSqlDatetime()
+                TimeTrack.cached_time = TimeTrack._fetch_sql_datetime()
             else:
                 TimeTrack.hits += 1
         return TimeTrack.cached_time + (now - TimeTrack.last_check)
@@ -135,7 +135,7 @@ def generate_uuid(obj: typing.Any = None) -> str:
     return CryptoManager().uuid(obj=obj).lower()
 
 
-def processUuid(uuid: str) -> str:
+def process_uuid(uuid: str) -> str:
     if isinstance(uuid, bytes):
         uuid = uuid.decode('utf8')  # type: ignore
     return uuid.lower()

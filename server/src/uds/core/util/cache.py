@@ -41,6 +41,7 @@ from django.db.utils import OperationalError
 from uds.models.cache import Cache as DBCache
 from uds.core.util.model import sql_datetime
 from uds.core.util import serializer
+from uds.core import consts
 
 from .hash import hash_key
 
@@ -51,11 +52,6 @@ class Cache:
     # Simple hits vs missses counters
     hits = 0
     misses = 0
-
-    # Some aliases
-    DEFAULT_VALIDITY = 60
-    SHORT_VALIDITY = 5
-    LONG_VALIDITY = 3600
 
     _owner: str
     _bowner: bytes
@@ -155,7 +151,8 @@ class Cache:
         self.remove(key)
 
     def clear(self) -> None:
-        Cache.delete(self._owner)
+        with transaction.atomic():
+            Cache.delete(self._owner)
 
     def put(
         self,
@@ -165,30 +162,26 @@ class Cache:
     ) -> None:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         if validity is None:
-            validity = Cache.DEFAULT_VALIDITY
+            validity = consts.system.DEFAULT_CACHE_TIMEOUT
         key = self.__getKey(skey)
         strValue = Cache._serializer(value)
         now = sql_datetime()
-        try:
-            DBCache.objects.create(
-                owner=self._owner,
-                key=key,
-                value=strValue,
-                created=now,
-                validity=validity,
-            )  # @UndefinedVariable
-        except Exception:
+        # Remove existing if any and create a new one
+        with transaction.atomic():
             try:
-                # Already exists, modify it
-                c: DBCache = DBCache.objects.get(pk=key)  # @UndefinedVariable
-                c.owner = self._owner
-                c.key = key
-                c.value = strValue
-                c.created = now
-                c.validity = validity
-                c.save()
-            except transaction.TransactionManagementError:
-                logger.debug('Transaction in course, cannot store value')
+                # Remove if existing
+                DBCache.objects.filter(pk=key).delete()
+                # And create a new one
+                DBCache.objects.create(
+                    owner=self._owner,
+                    key=key,
+                    value=strValue,
+                    created=now,
+                    validity=validity,
+                )  # @UndefinedVariable
+                return  # And return
+            except Exception as e:
+                logger.debug('Transaction in course, cannot store value: %s', e)
 
     def __setitem__(self, key: typing.Union[str, bytes], value: typing.Any) -> None:
         """
@@ -200,26 +193,29 @@ class Cache:
         # logger.debug('Refreshing key "%s" for cache "%s"' % (skey, self._owner,))
         try:
             key = self.__getKey(skey)
-            c = DBCache.objects.get(pk=key)  # @UndefinedVariable
+            c = DBCache.objects.get(pk=key)
             c.created = sql_datetime()
             c.save()
-        except DBCache.DoesNotExist:  # @UndefinedVariable
+        except DBCache.DoesNotExist:
             logger.debug('Can\'t refresh cache key %s because it doesn\'t exists', skey)
             return
 
     @staticmethod
     def purge() -> None:
-        DBCache.objects.all().delete()  # @UndefinedVariable
+        with transaction.atomic():
+            DBCache.objects.all().delete()
 
     @staticmethod
-    def cleanUp() -> None:
-        DBCache.cleanUp()  # @UndefinedVariable
+    def purge_outdated() -> None:
+        # purge_outdated has a transaction.atomic() inside
+        DBCache.purge_outdated()
 
     @staticmethod
     def delete(owner: typing.Optional[str] = None) -> None:
-        # logger.info("Deleting cache items")
-        if owner is None:
-            objects = DBCache.objects.all()  # @UndefinedVariable
-        else:
-            objects = DBCache.objects.filter(owner=owner)  # @UndefinedVariable
-        objects.delete()
+        with transaction.atomic():
+            # logger.info("Deleting cache items")
+            if owner is None:
+                objects = DBCache.objects.all()
+            else:
+                objects = DBCache.objects.filter(owner=owner)
+            objects.delete()

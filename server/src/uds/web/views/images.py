@@ -36,7 +36,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
 
 from uds.core.consts.images import DEFAULT_IMAGE
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Image
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ if typing.TYPE_CHECKING:
 @cache_page(3600, key_prefix='img', cache='memory')
 def image(request: 'HttpRequest', idImage: str) -> 'HttpResponse':
     try:
-        icon = Image.objects.get(uuid=processUuid(idImage))
+        icon = Image.objects.get(uuid=process_uuid(idImage))
         return icon.imageResponse()
     except Image.DoesNotExist:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

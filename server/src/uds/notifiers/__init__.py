@@ -55,7 +55,7 @@ def __loadModules():
     from uds.core import messaging
 
     # We need to import all modules that are descendant of this package
-    modfinder.dynamicLoadAndRegisterModules(messaging.factory(), messaging.Notifier, __name__)
+    modfinder.dynamically_load_and_register_modules(messaging.factory(), messaging.Notifier, __name__)
 
 
 __loadModules()

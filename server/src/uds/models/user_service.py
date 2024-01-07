@@ -416,7 +416,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             self.os_state = state
             self.save(update_fields=['os_state', 'state_date'])
 
-    def assignToUser(self, user: typing.Optional[User]) -> None:
+    def assign_to(self, user: typing.Optional[User]) -> None:
         """
         Assigns this user deployed service to an user.
 
@@ -494,13 +494,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             except Exception:  # Does not exists, log it and ignore it
                 logger.warning('Session %s does not exists for user deployed service', self.id)
 
-    def isUsable(self) -> bool:
+    def is_usable(self) -> bool:
         """
         Returns if this service is usable
         """
         return State.is_usable(self.state)
 
-    def isPreparing(self) -> bool:
+    def is_preparing(self) -> bool:
         """
         Returns if this service is in preparation (not ready to use, but in its way to be so...)
         """
@@ -544,7 +544,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Marks for removal or cancels it, depending on state
         """
-        if self.isUsable():
+        if self.is_usable():
             self.remove()
         else:
             self.cancel()

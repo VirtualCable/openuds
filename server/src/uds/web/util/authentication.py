@@ -39,7 +39,7 @@ from uds.core.auths.auth import authenticate, authenticate_log_login
 from uds.models import Authenticator, User
 from uds.core.util.config import GlobalConfig
 from uds.core.util.cache import Cache
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 import uds.web.util.errors as errors
 
 # Not imported at runtime, just for type checking
@@ -91,7 +91,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         os = request.os
         try:
             authenticator = Authenticator.objects.get(
-                uuid=processUuid(form.cleaned_data['authenticator'])
+                uuid=process_uuid(form.cleaned_data['authenticator'])
             )
         except Exception:
             authenticator = Authenticator.null()

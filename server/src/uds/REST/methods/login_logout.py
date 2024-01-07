@@ -44,7 +44,7 @@ from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_stamp_seconds, processUuid
+from uds.core.util.model import sql_stamp_seconds, process_uuid
 from uds.models import Authenticator
 from uds.REST import AccessDenied, Handler, RequestError
 from uds.REST.utils import rest_result
@@ -166,7 +166,7 @@ class Login(Handler):
 
             # Will raise an exception if no auth found
             if authId:
-                auth = Authenticator.objects.get(uuid=processUuid(authId))
+                auth = Authenticator.objects.get(uuid=process_uuid(authId))
             elif authName:
                 auth = Authenticator.objects.get(name=authName)
             else:

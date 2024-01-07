@@ -37,7 +37,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 
 from uds.core.util import ensure, permissions
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
 from uds.REST import RequestError
 from uds.REST.model import DetailHandler
@@ -84,7 +84,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         try:
             if not item:
                 return [AccountsUsage.usageToDict(k, perm) for k in parent.usages.all()]
-            k = parent.usages.get(uuid=processUuid(item))
+            k = parent.usages.get(uuid=process_uuid(item))
             return AccountsUsage.usageToDict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
@@ -111,7 +111,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         parent = ensure.is_instance(parent, Account)
         logger.debug('Deleting account usage %s from %s', item, parent)
         try:
-            usage = parent.usages.get(uuid=processUuid(item))
+            usage = parent.usages.get(uuid=process_uuid(item))
             usage.delete()
         except Exception:
             logger.exception('Exception')

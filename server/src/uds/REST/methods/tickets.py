@@ -40,7 +40,7 @@ from uds.REST import Handler
 from uds.REST import RequestError
 from uds import models
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.core.util import ensure
 
 logger = logging.getLogger(__name__)
@@ -167,7 +167,7 @@ class Tickets(Handler):
             # Will raise an exception if no auth found
             if authId:
                 auth = models.Authenticator.objects.get(
-                    uuid=processUuid(authId.lower())
+                    uuid=process_uuid(authId.lower())
                 )
             elif authName:
                 auth = models.Authenticator.objects.get(name=authName)
@@ -213,7 +213,7 @@ class Tickets(Handler):
             poolUuid = self.getParam('servicePool')
             if poolUuid:
                 # Check if is pool or metapool
-                poolUuid = processUuid(poolUuid)
+                poolUuid = process_uuid(poolUuid)
                 pool: typing.Union[models.ServicePool, models.MetaPool]
 
                 try:

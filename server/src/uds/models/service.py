@@ -83,7 +83,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
     max_services_count_type = models.PositiveIntegerField(default=ServicesCountingType.STANDARD)
 
-    _cachedInstance: typing.Optional['services.Service'] = None
+    _cached_instance: typing.Optional['services.Service'] = None
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["Service"]'
@@ -128,9 +128,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
 
         Raises:
         """
-        if self._cachedInstance and values is None:
+        if self._cached_instance and values is None:
             # logger.debug('Got cached instance instead of deserializing a new one for {}'.format(self.name))
-            return self._cachedInstance
+            return self._cached_instance
 
         prov: 'services.ServiceProvider' = self.provider.get_instance()
         sType = prov.get_service_by_type(self.data_type)
@@ -141,7 +141,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         else:
             raise Exception(f'Service type of {self.data_type} is not recognized by provider {prov.name}')
 
-        self._cachedInstance = obj
+        self._cached_instance = obj
 
         return obj
 
@@ -165,9 +165,9 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     def maxServicesCountType(self) -> ServicesCountingType:
         return ServicesCountingType.from_int(self.max_services_count_type)
 
-    def isInMaintenance(self) -> bool:
+    def is_in_maintenance(self) -> bool:
         # orphaned services?
-        return self.provider.isInMaintenance() if self.provider else True
+        return self.provider.is_in_maintenance() if self.provider else True
 
     def test_connectivity(self, host: str, port: typing.Union[str, int], timeout: float = 4) -> bool:
         return net.test_connectivity(host, int(port), timeout)
@@ -187,13 +187,13 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         logger.warning('No actor notification available for user service %s', userService.friendly_name)
 
     @property
-    def oldMaxAccountingMethod(self) -> bool:
+    def old_max_accounting_method(self) -> bool:
         # Compatibility with old accounting method
         # Counts only "creating and running" instances for max limit checking
         return self.maxServicesCountType == ServicesCountingType.STANDARD
 
     @property
-    def newMaxAccountingMethod(self) -> bool:
+    def new_max_accounting_method(self) -> bool:
         # Compatibility with new accounting method,
         # Counts EVERYTHING for max limit checking
         return self.maxServicesCountType == ServicesCountingType.CONSERVATIVE

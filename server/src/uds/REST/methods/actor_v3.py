@@ -669,7 +669,7 @@ class Logout(ActorV3Action):
         if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
             osmanagers.OSManager.logged_out(userService, username)
             if osManager:
-                if osManager.isRemovableOnLogout(userService):
+                if osManager.is_removableOnLogout(userService):
                     logger.debug('Removable on logout: %s', osManager)
                     userService.remove()
             else:

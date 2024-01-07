@@ -55,7 +55,7 @@ if typing.TYPE_CHECKING:
     from uds.core.util.factory import ModuleFactory
 
 
-def loadModulesUrls() -> list[typing.Any]:
+def get_urlpatterns_from_modules() -> list[typing.Any]:
     """Loads dipatcher modules urls to add to django urlpatterns
 
     Returns:
@@ -86,7 +86,7 @@ def loadModulesUrls() -> list[typing.Any]:
     return patterns
 
 
-def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> None:
+def import_modules(modName: str, *, packageName: typing.Optional[str] = None) -> None:
     """Dinamycally import children of package
 
     Args:
@@ -117,7 +117,7 @@ def importModules(modName: str, *, packageName: typing.Optional[str] = None) -> 
     importlib.invalidate_caches()
 
 
-def dynamicLoadAndRegisterPackages(
+def dynamically_load_and_register_packages(
     adder: collections.abc.Callable[[type[V]], None],
     type_: type[V],
     modName: str,
@@ -143,7 +143,7 @@ def dynamicLoadAndRegisterPackages(
                 return cls.__name__.startswith('MyClass')
     '''
     # Ensures all modules under modName (and optionally packageName) are imported
-    importModules(modName, packageName=packageName)
+    import_modules(modName, packageName=packageName)
 
     checkFnc = checker or (lambda x: True)
 
@@ -172,8 +172,8 @@ def dynamicLoadAndRegisterPackages(
     logger.info('* Done Registering %s', modName)
 
 
-def dynamicLoadAndRegisterModules(
-    factory: 'ModuleFactory',
+def dynamically_load_and_register_modules(
+    factory: 'ModuleFactory[T]',
     type_: type[T],
     modName: str,
 ) -> None:
@@ -186,6 +186,6 @@ def dynamicLoadAndRegisterModules(
         type_ (type[T]): Type of the objects to load
         modName (str): Name of the package to load
     '''
-    dynamicLoadAndRegisterPackages(
+    dynamically_load_and_register_packages(
         factory.insert, type_, modName, checker=lambda x: not x.is_base
     )

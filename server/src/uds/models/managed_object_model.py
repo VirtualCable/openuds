@@ -56,7 +56,7 @@ class ManagedObjectModel(UUIDModel):
     data = models.TextField(default='')
     comments = models.CharField(max_length=256)
 
-    _cachedInstance: typing.Optional[Module] = None
+    _cached_instance: typing.Optional[Module] = None
 
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
@@ -82,7 +82,7 @@ class ManagedObjectModel(UUIDModel):
         if not values and self.data:
             obj.deserialize(self.data)
 
-        self._cachedInstance = None  # Ensures returns correct value on get_instance
+        self._cached_instance = None  # Ensures returns correct value on get_instance
 
     def get_instance(
         self, values: typing.Optional[dict[str, str]] = None
@@ -101,8 +101,8 @@ class ManagedObjectModel(UUIDModel):
         Notes:
             Can be overriden
         """
-        if self._cachedInstance and values is None:
-            return self._cachedInstance
+        if self._cached_instance and values is None:
+            return self._cached_instance
 
         klass = self.get_type()
 
@@ -110,7 +110,7 @@ class ManagedObjectModel(UUIDModel):
         obj = klass(env, values)
         self.deserialize(obj, values)
 
-        self._cachedInstance = obj
+        self._cached_instance = obj
 
         return obj
 

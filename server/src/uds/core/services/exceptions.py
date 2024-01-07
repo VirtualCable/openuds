@@ -43,6 +43,7 @@ class ServiceException(UDSException):
     """
     Base class for all service exceptions
     """
+
     def __init__(self, *args, **kwargs):
         # Eats "kwargs" to avoid "unexpected keyword argument" error
         super().__init__(*args)
@@ -110,11 +111,17 @@ class ServiceNotReadyError(ServiceException):
     """
 
     code: int
-    userService: typing.Optional['UserService']
+    user_service: typing.Optional['UserService']
     transport: typing.Optional['Transport']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.code = kwargs.get('code', 0x0000)
-        self.userService = kwargs.get('userService', None)
-        self.transport = kwargs.get('transport', None)
+    def __init__(
+        self,
+        *,
+        code: int = 0x0000,
+        user_service: typing.Optional['UserService'] = None,
+        transport: typing.Optional['Transport'] = None
+    ):
+        super().__init__()
+        self.code = code
+        self.user_service = user_service
+        self.transport = transport

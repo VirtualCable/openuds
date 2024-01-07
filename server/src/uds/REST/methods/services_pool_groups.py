@@ -41,7 +41,7 @@ from uds.core import types
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util import ensure
-from uds.core.util.model import processUuid
+from uds.core.util.model import process_uuid
 from uds.models import Image, ServicePoolGroup
 from uds.REST.model import ModelHandler
 
@@ -85,7 +85,7 @@ class ServicesPoolGroups(ModelHandler):
         logger.debug('Image id: %s', imgId)
         try:
             if imgId != '-1':
-                image = Image.objects.get(uuid=processUuid(imgId))
+                image = Image.objects.get(uuid=process_uuid(imgId))
                 fields['image_id'] = image.id
         except Exception:
             logger.exception('At image recovering')

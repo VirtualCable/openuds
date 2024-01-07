@@ -36,7 +36,7 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.services import ServiceProvider
 from uds.core.ui import gui
 from uds.core.util import validators
@@ -340,7 +340,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         return OpenNebulaProvider(env, data).testConnection()
 
-    @cached('reachable', Cache.SHORT_VALIDITY)
+    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

@@ -193,7 +193,7 @@ def connection(
     raise LDAPError(_('Unknown error'))
 
 
-def getAsDict(
+def as_dict(
     con: 'LDAPObject',
     base: str,
     ldapFilter: str,
@@ -249,7 +249,7 @@ def getAsDict(
             yield dct
 
 
-def getFirst(
+def first(
     con: 'LDAPObject',
     base: str,
     objectClass: str,
@@ -271,7 +271,7 @@ def getFirst(
     ldapFilter = f'(&(objectClass={objectClass})({field}={value}))'
 
     try:
-        obj = next(getAsDict(con, base, ldapFilter, attrList, sizeLimit))
+        obj = next(as_dict(con, base, ldapFilter, attrList, sizeLimit))
     except StopIteration:
         return None  # None found
 
@@ -292,14 +292,14 @@ def recursive_delete(con: 'LDAPObject', base_dn: str) -> None:
     con.delete_s(base_dn)
 
 
-def getRootDSE(con: 'LDAPObject') -> typing.Optional[LDAPResultType]:
+def get_root_dse(con: 'LDAPObject') -> typing.Optional[LDAPResultType]:
     """
     Gets the root DSE of the LDAP server
     @param cont: Connection to LDAP server
     @return: None if root DSE is not found, an dictionary of LDAP entry attributes if found (all in unicode on py2, str on py3).
     """
     return next(
-        getAsDict(
+        as_dict(
             con=con,
             base='',
             ldapFilter='(objectClass=*)',

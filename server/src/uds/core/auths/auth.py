@@ -517,13 +517,13 @@ def authenticate_log_login(
     request: 'ExtendedHttpRequest',
     authenticator: models.Authenticator,
     userName: str,
-    logStr: str = '',
+    log_string: str = '',
 ) -> None:
     """
     Logs authentication
     """
-    if logStr == '':
-        logStr = 'Logged in'
+    if log_string == '':
+        log_string = 'Logged in'
 
     authLogger.info(
         '|'.join(
@@ -532,16 +532,16 @@ def authenticate_log_login(
                 userName,
                 request.ip,
                 request.os.os.name,
-                logStr,
+                log_string,
                 request.META.get('HTTP_USER_AGENT', 'Undefined'),
             ]
         )
     )
-    level = log.LogLevel.INFO if logStr == 'Logged in' else log.LogLevel.ERROR
+    level = log.LogLevel.INFO if log_string == 'Logged in' else log.LogLevel.ERROR
     log.log(
         authenticator,
         level,
-        f'user {userName} has {logStr} from {request.ip} where os is {request.os.os.name}',
+        f'user {userName} has {log_string} from {request.ip} where os is {request.os.os.name}',
         log.LogSource.WEB,
     )
 
@@ -551,11 +551,11 @@ def authenticate_log_login(
         log.log(
             user,
             level,
-            f'{logStr} from {request.ip} where OS is {request.os.os.name}',
+            f'{log_string} from {request.ip} where OS is {request.os.os.name}',
             log.LogSource.WEB,
         )
     except Exception:  # nosec: root user is not on any authenticator, will fail with an exception we can ingore
-        logger.info('Root {logStr} from %s where OS is %s', request.ip, request.os.os.name)
+        logger.info('Root %s from %s where OS is %s', log_string, request.ip, request.os.os.name)
 
 
 def auth_log_logout(request: 'ExtendedHttpRequest') -> None:

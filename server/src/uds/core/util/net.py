@@ -30,12 +30,12 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
-import socket
-import logging
-import typing
 import collections.abc
 import ipaddress
+import logging
+import re
+import socket
+import typing
 
 
 class IpType(typing.NamedTuple):

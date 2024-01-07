@@ -65,8 +65,8 @@ class TSPICETransport(BaseSpiceTransport):
     protocol = types.transports.Protocol.SPICE
     group = types.transports.Grouping.TUNNELED
 
-    tunnel = fields.tunnelField()
-    tunnelWait = fields.tunnelTunnelWait()
+    tunnel = fields.tunnel_field()
+    tunnelWait = fields.tunnel_runnel_wait()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -111,7 +111,7 @@ class TSPICETransport(BaseSpiceTransport):
                 _('No console connection data received'),
             )
 
-        tunnelFields = fields.getTunnelFromField(self.tunnel)
+        tunnelFields = fields.get_tunnel_from_field(self.tunnel)
         tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         # We MAY need two tickets, one for 'insecure' port an one for secure
@@ -169,7 +169,7 @@ class TSPICETransport(BaseSpiceTransport):
         }
 
         try:
-            return self.getScript(os.os.os_name(), 'tunnel', sp)
+            return self.get_script(os.os.os_name(), 'tunnel', sp)
         except Exception:
             return super().get_transport_script(
                 userService, transport, ip, os, user, password, request

@@ -282,7 +282,7 @@ class Dispatcher(View):
             return not issubclass(x, DetailHandler) and not x.__subclasses__()
 
         # Register all subclasses of Handler
-        modfinder.dynamicLoadAndRegisterPackages(
+        modfinder.dynamically_load_and_register_packages(
             Dispatcher.registerClass,
             Handler,
             modName=modName,

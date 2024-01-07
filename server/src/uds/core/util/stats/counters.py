@@ -54,22 +54,22 @@ CounterClass = typing.TypeVar('CounterClass', Provider, Service, ServicePool, Au
 
 
 # Helpers
-def _get_Id(obj):
+def _get_id(obj):
     return obj.id if obj.id != -1 else None
 
 
-def _get_P_S_Ids(provider) -> tuple:
+def _get_prov_serv_ids(provider) -> tuple:
     return tuple(i.id for i in provider.services.all())
 
 
-def _get_S_DS_Ids(service) -> tuple:
+def _get_serv_pool_ids(service) -> tuple:
     return tuple(i.id for i in service.deployedServices.all())
 
 
-def _get_P_S_DS_Ids(provider) -> tuple:
+def _get_prov_serv_pool_ids(provider) -> tuple:
     res: tuple = ()
     for i in provider.services.all():
-        res += _get_S_DS_Ids(i)
+        res += _get_serv_pool_ids(i)
     return res
 
 
@@ -77,25 +77,25 @@ _id_retriever: typing.Final[
     collections.abc.Mapping[type[Model], collections.abc.Mapping[int, collections.abc.Callable]]
 ] = {
     Provider: {
-        types.stats.CounterType.LOAD: _get_Id,
-        types.stats.CounterType.STORAGE: _get_P_S_Ids,
-        types.stats.CounterType.ASSIGNED: _get_P_S_DS_Ids,
-        types.stats.CounterType.INUSE: _get_P_S_DS_Ids,
+        types.stats.CounterType.LOAD: _get_id,
+        types.stats.CounterType.STORAGE: _get_prov_serv_ids,
+        types.stats.CounterType.ASSIGNED: _get_prov_serv_pool_ids,
+        types.stats.CounterType.INUSE: _get_prov_serv_pool_ids,
     },
     Service: {
-        types.stats.CounterType.STORAGE: _get_Id,
-        types.stats.CounterType.ASSIGNED: _get_S_DS_Ids,
-        types.stats.CounterType.INUSE: _get_S_DS_Ids,
+        types.stats.CounterType.STORAGE: _get_id,
+        types.stats.CounterType.ASSIGNED: _get_serv_pool_ids,
+        types.stats.CounterType.INUSE: _get_serv_pool_ids,
     },
     ServicePool: {
-        types.stats.CounterType.ASSIGNED: _get_Id,
-        types.stats.CounterType.INUSE: _get_Id,
-        types.stats.CounterType.CACHED: _get_Id,
+        types.stats.CounterType.ASSIGNED: _get_id,
+        types.stats.CounterType.INUSE: _get_id,
+        types.stats.CounterType.CACHED: _get_id,
     },
     Authenticator: {
-        types.stats.CounterType.AUTH_USERS: _get_Id,
-        types.stats.CounterType.AUTH_SERVICES: _get_Id,
-        types.stats.CounterType.AUTH_USERS_WITH_SERVICES: _get_Id,
+        types.stats.CounterType.AUTH_USERS: _get_id,
+        types.stats.CounterType.AUTH_SERVICES: _get_id,
+        types.stats.CounterType.AUTH_USERS_WITH_SERVICES: _get_id,
     },
 }
 

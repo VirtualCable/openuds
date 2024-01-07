@@ -110,7 +110,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         label=_("Cluster"),
         order=100,
         fills={
-            'callbackName': 'ovFillResourcesFromCluster',
+            'callback_name': 'ovFillResourcesFromCluster',
             'function': helpers.getResources,
             'parameters': ['cluster', 'ov', 'ev'],
         },

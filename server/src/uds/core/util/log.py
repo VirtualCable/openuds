@@ -73,7 +73,7 @@ class LogLevel(enum.IntEnum):
         return self.name
 
     @staticmethod
-    def fromStr(level: str) -> 'LogLevel':
+    def from_str(level: str) -> 'LogLevel':
         try:
             return LogLevel[level.upper()]
         except KeyError:

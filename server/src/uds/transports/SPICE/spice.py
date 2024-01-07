@@ -120,7 +120,7 @@ class SPICETransport(BaseSpiceTransport):
         }
 
         try:
-            return self.getScript(os.os.os_name(), 'direct', sp)
+            return self.get_script(os.os.os_name(), 'direct', sp)
         except Exception:
             return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
