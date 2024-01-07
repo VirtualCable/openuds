@@ -57,7 +57,7 @@ class BaseRDPTransport(transports.Transport):
     is_base = True
 
     icon_file = 'rdp.png'
-    protocol = transports.protocols.RDP
+    protocol = types.transports.Protocol.RDP
 
     useEmptyCreds = gui.CheckBoxField(
         label=_('Empty creds'),

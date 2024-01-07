@@ -72,7 +72,7 @@ class SPICETransport(BaseSpiceTransport):
     sslConnection = BaseSpiceTransport.SSLConnection
     overridedProxy = BaseSpiceTransport.overridedProxy
 
-    def getUDSTransportScript(
+    def get_transport_script(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -81,7 +81,7 @@ class SPICETransport(BaseSpiceTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> 'transports.TransportScript':
+    ) -> 'types.transports.TransportScript':
         try:
             userServiceInstance = userService.get_instance()
             con: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = userServiceInstance.get_console_connection()
@@ -122,7 +122,7 @@ class SPICETransport(BaseSpiceTransport):
         try:
             return self.getScript(os.os.os_name(), 'direct', sp)
         except Exception:
-            return super().getUDSTransportScript(
+            return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
             )
 

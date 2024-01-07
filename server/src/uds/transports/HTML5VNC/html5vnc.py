@@ -67,8 +67,8 @@ class HTML5VNCTransport(transports.Transport):
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST
-    protocol = transports.protocols.VNC
-    group = transports.TUNNELED_GROUP
+    protocol = types.transports.Protocol.VNC
+    group = types.transports.Grouping.TUNNELED
     experimental = True
 
     tunnel = fields.tunnelField()

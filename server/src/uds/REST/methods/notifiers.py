@@ -124,5 +124,5 @@ class Notifiers(ModelHandler):
             'comments': item.comments,
             'type': type_.get_type(),
             'type_name': type_.name(),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }

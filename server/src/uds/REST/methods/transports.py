@@ -167,7 +167,7 @@ class Transports(ModelHandler):
             'type': type_.get_type(),
             'type_name': type_.name(),
             'protocol': type_.protocol,
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def beforeSave(self, fields: dict[str, typing.Any]) -> None:

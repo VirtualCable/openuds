@@ -35,7 +35,6 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types, consts
-from uds.core.transports import protocols
 from uds.core.ui import gui
 from uds.core.util import validators, log
 from uds.core.util.cache import Cache
@@ -103,7 +102,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     # : Types of deploys (services in cache and/or assigned to users)
     user_service_type = ProxmoxDeployment
 
-    allowed_protocols = types.transports.Protocol.generic_vdi() + (protocols.SPICE,)
+    allowed_protocols = types.transports.Protocol.generic_vdi(types.transports.Protocol.SPICE)
     services_type_provided = types.services.ServiceType.VDI
 
 

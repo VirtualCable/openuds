@@ -267,7 +267,7 @@ class BaseModelHandler(Handler):
             raise self.accessDenied()
 
     def getPermissions(self, obj: models.Model, root: bool = False) -> int:
-        return permissions.getEffectivePermission(self._user, obj, root)
+        return permissions.effective_permissions(self._user, obj, root)
 
     def typeInfo(
         self, type_: type['Module']  # pylint: disable=unused-argument

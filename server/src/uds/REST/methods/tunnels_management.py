@@ -200,7 +200,7 @@ class Tunnels(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'transports_count': item.transports.count(),
             'servers_count': item.servers.count(),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def beforeSave(self, fields: dict[str, typing.Any]) -> None:
@@ -243,7 +243,7 @@ class Tunnels(ModelHandler):
                 'name': i.hostname,
             }
             for i in models.Server.objects.filter(type=types.servers.ServerType.TUNNEL)
-            if permissions.getEffectivePermission(self._user, i)
+            if permissions.effective_permissions(self._user, i)
             >= uds.core.types.permissions.PermissionType.READ
             and i not in allServers
         ]

@@ -149,7 +149,7 @@ class MetaPools(ModelHandler):
             'visible': item.visible,
             'policy': item.policy,
             'fallbackAccess': item.fallbackAccess,
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
             'calendar_message': item.calendar_message,
             'transport_grouping': item.transport_grouping,
             'ha_policy': item.ha_policy,

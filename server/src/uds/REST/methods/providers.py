@@ -109,7 +109,7 @@ class Providers(ModelHandler):
             'type': type_.get_type(),
             'type_name': type_.name(),
             'comments': item.comments,
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def checkDelete(self, item: 'Model') -> None:
@@ -135,7 +135,7 @@ class Providers(ModelHandler):
         """
         for s in Service.objects.all():
             try:
-                perm = permissions.getEffectivePermission(self._user, s)
+                perm = permissions.effective_permissions(self._user, s)
                 if perm >= uds.core.types.permissions.PermissionType.READ:
                     yield DetailServices.serviceToDict(s, perm, True)
             except Exception:

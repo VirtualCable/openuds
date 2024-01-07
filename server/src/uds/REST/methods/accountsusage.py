@@ -80,7 +80,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
     def getItems(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
-        perm = permissions.getEffectivePermission(self._user, parent)
+        perm = permissions.effective_permissions(self._user, parent)
         try:
             if not item:
                 return [AccountsUsage.usageToDict(k, perm) for k in parent.usages.all()]

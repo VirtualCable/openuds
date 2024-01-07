@@ -62,8 +62,8 @@ class TSPICETransport(BaseSpiceTransport):
     type_name = _('SPICE')
     type_type = 'TSSPICETransport'
     type_description = _('SPICE Protocol. Tunneled connection.')
-    protocol = transports.protocols.SPICE
-    group: typing.ClassVar[str] = transports.TUNNELED_GROUP
+    protocol = types.transports.Protocol.SPICE
+    group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnelField()
     tunnelWait = fields.tunnelTunnelWait()
@@ -89,7 +89,7 @@ class TSPICETransport(BaseSpiceTransport):
         if values:
             validators.validateHostPortPair(values.get('tunnelServer', ''))
 
-    def getUDSTransportScript(  # pylint: disable=too-many-locals
+    def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -98,7 +98,7 @@ class TSPICETransport(BaseSpiceTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> transports.TransportScript:
+    ) -> types.transports.TransportScript:
         try:
             userServiceInstance = userService.get_instance()
             con = userServiceInstance.get_console_connection()
@@ -120,7 +120,7 @@ class TSPICETransport(BaseSpiceTransport):
 
         if 'proxy' in con:
             logger.exception('Proxied SPICE tunnels are not suppoorted')
-            return super().getUDSTransportScript(
+            return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
             )
 
@@ -171,6 +171,6 @@ class TSPICETransport(BaseSpiceTransport):
         try:
             return self.getScript(os.os.os_name(), 'tunnel', sp)
         except Exception:
-            return super().getUDSTransportScript(
+            return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
             )

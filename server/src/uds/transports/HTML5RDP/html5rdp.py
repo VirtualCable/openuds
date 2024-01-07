@@ -65,8 +65,8 @@ class HTML5RDPTransport(transports.Transport):
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST
-    protocol = transports.protocols.RDP
-    group = transports.TUNNELED_GROUP
+    protocol = types.transports.Protocol.RDP
+    group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnelField()
 

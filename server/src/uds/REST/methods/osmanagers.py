@@ -75,7 +75,7 @@ class OsManagers(ModelHandler):
             'type_name': type_.name(),
             'servicesTypes': [type_.servicesType],  # A list for backward compatibility. TODO: To be removed when admin interface is changed
             'comments': osm.comments,
-            'permission': permissions.getEffectivePermission(self._user, osm),
+            'permission': permissions.effective_permissions(self._user, osm),
         }
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:

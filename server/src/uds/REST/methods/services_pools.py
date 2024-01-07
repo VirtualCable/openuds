@@ -264,7 +264,7 @@ class ServicesPools(ModelHandler):
             val['user_services_in_preparation'] = preparing_count
             val['tags'] = [tag.tag for tag in item.tags.all()]
             val['restrained'] = restrained
-            val['permission'] = permissions.getEffectivePermission(self._user, item)
+            val['permission'] = permissions.effective_permissions(self._user, item)
             val['info'] = Services.serviceInfo(item.service)  # type: ignore
             val['pool_group_id'] = poolGroupId
             val['pool_group_name'] = poolGroupName

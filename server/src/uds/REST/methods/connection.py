@@ -160,7 +160,7 @@ class Connection(Handler):
             if not ip or not transportInstance:
                 raise ServiceNotReadyError()
 
-            transportScript = transportInstance.getEncodedTransportScript(
+            transportScript = transportInstance.encoded_transport_script(
                 userService,
                 transport,
                 ip,

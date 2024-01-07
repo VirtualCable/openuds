@@ -37,6 +37,8 @@ import enum
 import json
 import typing
 
+from django.utils.translation import gettext_noop as _, gettext
+
 
 class Protocol(enum.StrEnum):
     NONE = ''
@@ -68,6 +70,14 @@ class Protocol(enum.StrEnum):
             Protocol.SSH,
             Protocol.OTHER,
         ) + extra
+
+
+class Grouping(enum.StrEnum):
+    DIRECT = _('Direct')
+    TUNNELED = _('Tunneled')
+
+    def localized(self) -> str:
+        return gettext(self.value)
 
 
 @dataclasses.dataclass

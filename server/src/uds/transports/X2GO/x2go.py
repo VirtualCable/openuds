@@ -72,7 +72,7 @@ class X2GOTransport(BaseX2GOTransport):
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
-    def getUDSTransportScript(  # pylint: disable=too-many-locals
+    def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -81,7 +81,7 @@ class X2GOTransport(BaseX2GOTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> 'transports.TransportScript':
+    ) -> 'types.transports.TransportScript':
         ci = self.getConnectionInfo(userService, user, password)
 
         priv, pub = self.getAndPushKey(ci.username, userService)
@@ -112,6 +112,6 @@ class X2GOTransport(BaseX2GOTransport):
         try:
             return self.getScript(os.os.os_name(), 'direct', sp)
         except Exception:
-            return super().getUDSTransportScript(
+            return super().get_transport_script(
                 userService, transport, ip, os, user, password, request
             )

@@ -100,7 +100,7 @@ class RDPTransport(BaseRDPTransport):
     customParametersWindows = BaseRDPTransport.customParametersWindows
     optimizeTeams = BaseRDPTransport.optimizeTeams
 
-    def getUDSTransportScript(  # pylint: disable=too-many-locals
+    def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -109,7 +109,7 @@ class RDPTransport(BaseRDPTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> 'transports.TransportScript':
+    ) -> 'types.transports.TransportScript':
         # We use helper to keep this clean
 
         ci = self.getConnectionInfo(userService, user, password)
@@ -191,6 +191,6 @@ class RDPTransport(BaseRDPTransport):
                 'Os not valid for RDP Transport: %s',
                 request.META.get('HTTP_USER_AGENT', 'Unknown'),
             )
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userService, transport, ip, os, user, password, request)
 
         return self.getScript(os.os.os_name(), 'direct', sp)

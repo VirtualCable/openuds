@@ -61,8 +61,8 @@ class URLCustomTransport(transports.Transport):
 
     ownLink = True
     supportedOss = consts.os.ALL_OS_LIST
-    protocol = transports.protocols.OTHER
-    group = transports.DIRECT_GROUP
+    protocol = types.transports.Protocol.OTHER
+    group = types.transports.Grouping.DIRECT
 
     urlPattern = gui.TextField(
         label=_('URL Pattern'),

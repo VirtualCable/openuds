@@ -89,7 +89,7 @@ class Calendars(ModelHandler):
             'number_rules': item.rules.count(),
             'number_access': item.calendaraccess_set.all().values('service_pool').distinct().count(),
             'number_actions': item.calendaraction_set.all().values('service_pool').distinct().count(),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def getGui(self, type_: str) -> list[typing.Any]:

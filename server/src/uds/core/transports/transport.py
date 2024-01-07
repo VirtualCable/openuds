@@ -51,9 +51,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-DIRECT_GROUP = _('Direct')
-TUNNELED_GROUP = _('Tunneled')
-
 
 class Transport(Module):
     """
@@ -82,7 +79,7 @@ class Transport(Module):
     protocol: types.transports.Protocol = types.transports.Protocol.NONE
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
-    group: typing.ClassVar[str] = DIRECT_GROUP
+    group: typing.ClassVar[types.transports.Grouping] = types.transports.Grouping.DIRECT
 
     def __init__(self, environment: 'Environment', values: Module.ValuesType):
         super().__init__(environment, values)
@@ -202,7 +199,7 @@ class Transport(Module):
         """
         return user.name
 
-    def getUDSTransportScript(
+    def get_transport_script(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -236,7 +233,7 @@ class Transport(Module):
             parameters={'transport': transport.name},
         )
 
-    def getEncodedTransportScript(
+    def encoded_transport_script(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -249,7 +246,7 @@ class Transport(Module):
         """
         Encodes the script so the client can understand it
         """
-        transport_script = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
+        transport_script = self.get_transport_script(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', transport_script)
 
         return types.transports.TransportScript(

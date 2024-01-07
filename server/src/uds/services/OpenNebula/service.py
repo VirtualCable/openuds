@@ -36,7 +36,6 @@ import collections.abc
 
 from django.utils.translation import gettext_noop as _
 from uds.core import services, types
-from uds.core.transports import protocols
 from uds.core.util import validators
 from uds.core.ui import gui
 

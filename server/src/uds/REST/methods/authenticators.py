@@ -171,7 +171,7 @@ class Authenticators(ModelHandler):
             'type': type_.get_type(),
             'type_name': type_.name(),
             'type_info': self.typeInfo(type_),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def afterSave(self, item: 'Model') -> None:

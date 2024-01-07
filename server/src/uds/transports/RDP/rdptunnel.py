@@ -66,7 +66,7 @@ class TRDPTransport(BaseRDPTransport):
     type_name = _('RDP')
     type_type = 'TSRDPTransport'
     type_description = _('RDP Protocol. Tunneled connection.')
-    group = transports.TUNNELED_GROUP
+    group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnelField()
 
@@ -120,7 +120,7 @@ class TRDPTransport(BaseRDPTransport):
         if values:
             validators.validateHostPortPair(values.get('tunnelServer', ''))
 
-    def getUDSTransportScript(  # pylint: disable=too-many-locals
+    def get_transport_script(  # pylint: disable=too-many-locals
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -129,7 +129,7 @@ class TRDPTransport(BaseRDPTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> 'transports.TransportScript':
+    ) -> 'types.transports.TransportScript':
         # We use helper to keep this clean
 
         ci = self.getConnectionInfo(userService, user, password)
@@ -221,6 +221,6 @@ class TRDPTransport(BaseRDPTransport):
                 'Os not valid for RDP Transport: %s',
                 request.META.get('HTTP_USER_AGENT', 'Unknown'),
             )
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userService, transport, ip, os, user, password, request)
 
         return self.getScript(os.os.os_name(), 'tunnel', sp)

@@ -380,7 +380,7 @@ class ServersGroups(ModelHandler):
             'type_name': types.servers.ServerType(item.type).name.capitalize(),
             'tags': [tag.tag for tag in item.tags.all()],
             'servers_count': item.servers.count(),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def deleteItem(self, item: 'Model') -> None:

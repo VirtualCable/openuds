@@ -79,7 +79,7 @@ class Accounts(ModelHandler):
             'tags': [tag.tag for tag in item.tags.all()],
             'comments': item.comments,
             'time_mark': item.time_mark,
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
 
     def getGui(self, type_: str) -> list[typing.Any]:

@@ -65,7 +65,7 @@ class TX2GOTransport(BaseX2GOTransport):
     type_name = _('X2Go')
     type_type = 'TX2GOTransport'
     type_description = _('X2Go access (Experimental). Tunneled connection.')
-    group = transports.TUNNELED_GROUP
+    group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnelField()
     tunnelWait = fields.tunnelTunnelWait()
@@ -95,7 +95,7 @@ class TX2GOTransport(BaseX2GOTransport):
         if values:
             validators.validateHostPortPair(values.get('tunnelServer', ''))
 
-    def getUDSTransportScript(
+    def get_transport_script(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -104,7 +104,7 @@ class TX2GOTransport(BaseX2GOTransport):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> 'transports.TransportScript':
+    ) -> 'types.transports.TransportScript':
         ci = self.getConnectionInfo(userService, user, password)
 
         priv, pub = self.getAndPushKey(ci.username, userService)
@@ -153,4 +153,4 @@ class TX2GOTransport(BaseX2GOTransport):
         try:
             return self.getScript(os.os.os_name(), 'tunnel', sp)
         except Exception:
-            return super().getUDSTransportScript(userService, transport, ip, os, user, password, request)
+            return super().get_transport_script(userService, transport, ip, os, user, password, request)

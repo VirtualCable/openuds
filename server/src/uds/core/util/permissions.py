@@ -61,7 +61,7 @@ def getPermissions(obj: 'Model') -> list[models.Permissions]:
     )
 
 
-def getEffectivePermission(
+def effective_permissions(
     user: 'models.User', obj: 'Model', for_type: bool = False
 ) -> PermissionType:
     try:
@@ -120,7 +120,7 @@ def hasAccess(
     permission: PermissionType = PermissionType.ALL,
     for_type: bool = False,
 ):
-    return getEffectivePermission(user, obj, for_type).includes(permission)
+    return effective_permissions(user, obj, for_type).includes(permission)
 
 
 def revokePermissionById(permUUID: str) -> None:

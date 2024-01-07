@@ -171,7 +171,7 @@ class Client(Handler):
             if not transportInstance:
                 raise Exception('No transport instance!!!')
 
-            transport_script = transportInstance.getEncodedTransportScript(
+            transport_script = transportInstance.encoded_transport_script(
                 userService,
                 transport,
                 ip,

@@ -37,7 +37,6 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 from uds.core.ui import gui
 from uds.core import transports, types, consts
-from uds.core.transports import protocols
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,7 +56,7 @@ class BaseSpiceTransport(transports.Transport):
     is_base = True
 
     icon_file = 'spice.png'
-    protocol = protocols.SPICE
+    protocol = types.transports.Protocol.SPICE
 
     useEmptyCreds = gui.CheckBoxField(
         order=1,

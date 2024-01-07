@@ -88,7 +88,7 @@ class ConnectionData:
     (such as username, password, domain, etc..)
     """
 
-    protocol: str  # protocol to use, (there are a few standard defined in 'protocols.py', if yours does not fit those, use your own name
+    protocol: str  # protocol to use, (there are a few standard defined in 'uds.core.types.transports.py', if yours does not fit those, use your own name
     username: str  # username (transformed if needed to) used to login to service
     service_type: ServiceType  # If VDI or APP, Defaults to VDI
     password: str = ''  # password (transformed if needed to) used to login to service

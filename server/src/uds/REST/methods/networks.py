@@ -111,5 +111,5 @@ class Networks(ModelHandler):
             'net_string': item.net_string,
             'transports_count': item.transports.count(),
             'authenticators_count': item.authenticators.count(),
-            'permission': permissions.getEffectivePermission(self._user, item),
+            'permission': permissions.effective_permissions(self._user, item),
         }
