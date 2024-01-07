@@ -102,7 +102,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
     # : Types of deploys (services in cache and/or assigned to users)
     user_service_type = OVirtLinkedDeployment
 
-    allowed_protocols = protocols.GENERIC_VDI + (protocols.SPICE,)
+    allowed_protocols = types.transports.Protocol.generic_vdi() + (protocols.SPICE,)
     services_type_provided = types.services.ServiceType.VDI
 
 

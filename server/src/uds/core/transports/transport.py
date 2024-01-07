@@ -41,7 +41,6 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import types, consts
 from uds.core.module import Module
-from uds.core.transports import protocols
 from uds.core.util import net
 
 # Not imported at runtime, just for type checking
@@ -54,22 +53,6 @@ logger = logging.getLogger(__name__)
 
 DIRECT_GROUP = _('Direct')
 TUNNELED_GROUP = _('Tunneled')
-
-
-class TransportScript(typing.NamedTuple):
-    script: str = ''
-    script_type: typing.Union[
-        typing.Literal['python'], typing.Literal['lua']
-    ] = 'python'  # currently only python is supported
-    signature_b64: str = ''  # Signature of the script in base64
-    parameters: collections.abc.Mapping[str, typing.Any] = {}
-
-    @property
-    def encoded_parameters(self) -> str:
-        """
-        Returns encoded parameters for transport script
-        """
-        return codecs.encode(codecs.encode(json.dumps(self.parameters).encode(), 'bz2'), 'base64').decode()
 
 
 class Transport(Module):
@@ -96,7 +79,7 @@ class Transport(Module):
     ownLink: bool = False
 
     # Protocol "type". This is not mandatory, but will help
-    protocol: str = protocols.NONE
+    protocol: types.transports.Protocol = types.transports.Protocol.NONE
 
     # For allowing grouping transport on dashboard "new" menu, and maybe other places
     group: typing.ClassVar[str] = DIRECT_GROUP
@@ -228,12 +211,12 @@ class Transport(Module):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> TransportScript:
+    ) -> types.transports.TransportScript:
         """
         If this is an uds transport, this will return the tranport script needed for executing
         this on client
         """
-        return TransportScript(
+        return types.transports.TransportScript(
             script="raise Exception('The transport {transport} is not supported on your platform.'.format(transport=params['transport']))",
             signature_b64='EH/91J7u9+/sHtB5+EUVRDW1+jqF0LuZzfRi8qxyIuSdJuWt'
             '8V8Yngu24p0NNr13TaxPQ1rpGN8x0NsU/Ma8k4GGohc+zxdf'
@@ -262,14 +245,14 @@ class Transport(Module):
         user: 'models.User',
         password: str,
         request: 'ExtendedHttpRequestWithUser',
-    ) -> TransportScript:
+    ) -> types.transports.TransportScript:
         """
         Encodes the script so the client can understand it
         """
         transport_script = self.getUDSTransportScript(userService, transport, ip, os, user, password, request)
         logger.debug('Transport script: %s', transport_script)
 
-        return TransportScript(
+        return types.transports.TransportScript(
             script=codecs.encode(codecs.encode(transport_script.script.encode(), 'bz2'), 'base64')
             .decode()
             .replace('\n', ''),
@@ -277,7 +260,9 @@ class Transport(Module):
             parameters=transport_script.parameters,
         )
 
-    def getRelativeScript(self, scriptName: str, params: collections.abc.Mapping[str, typing.Any]) -> 'TransportScript':
+    def getRelativeScript(
+        self, scriptName: str, params: collections.abc.Mapping[str, typing.Any]
+    ) -> types.transports.TransportScript:
         """Returns a script that will be executed on client, but will be downloaded from server
 
         Args:
@@ -296,7 +281,7 @@ class Transport(Module):
         with open(os.path.join(basePath, scriptName + '.signature'), 'r', encoding='utf8') as signatureFile:
             signature = signatureFile.read()
 
-        return TransportScript(
+        return types.transports.TransportScript(
             script=script,
             script_type='python',
             signature_b64=signature,
@@ -308,7 +293,7 @@ class Transport(Module):
         osName: str,
         type: typing.Literal['tunnel', 'direct'],
         params: collections.abc.Mapping[str, typing.Any],
-    ) -> 'TransportScript':
+    ) -> types.transports.TransportScript:
         """
         Returns a script for the given os and type
         """

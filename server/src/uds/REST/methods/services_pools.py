@@ -506,8 +506,8 @@ class ServicesPools(ModelHandler):
                     del fields['osmanager_id']
 
                 # If service has "overrided fields", overwrite received ones now
-                if serviceType.cache_constrains:
-                    for k, v in serviceType.cache_constrains.items():
+                if serviceType.overrided_fields:
+                    for k, v in serviceType.overrided_fields.items():
                         fields[k] = v
 
                 if serviceType.uses_cache_l2 is False:

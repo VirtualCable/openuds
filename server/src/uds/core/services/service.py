@@ -38,7 +38,6 @@ import logging
 
 from django.utils.translation import gettext_noop as _
 from uds.core.module import Module
-from uds.core.transports import protocols
 from uds.core.ui.user_interface import gui
 from uds.core.util.state import State
 from uds.core.util import log
@@ -130,20 +129,18 @@ class Service(Module):
     # :      - If maxServices is a gui.NumericField, it will be used as max_user_services (.num() will be called)
     # :      - If maxServices is a callable, it will be called and the result will be used as max_user_services
     # :      - If maxServices is None, max_user_services will be set to consts.UNLIMITED (as default)
-    max_user_services: int = (
-        consts.UNLIMITED
-    )  
+    max_user_services: int = consts.UNLIMITED
 
-    # : If this item "has constains", on deployed service edition, defined keys will overwrite defined ones
+    # : If this item "has overrided fields", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
     # : Example:
-    # :    cache_constrains = {
+    # :    overrided_fields = {
     # :        'cache_l2_srvs': 10,
     # :        'cache_l1_srvs': 20,
     # :    }
     # : This means that service pool will have cache_l2_srvs = 10 and cache_l1_srvs = 20, no matter what the user has provided
     # : on a save invocation to REST api for ServicePool
-    cache_constrains: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
+    overrided_fields: typing.Optional[collections.abc.MutableMapping[str, typing.Any]] = None
 
     # : If this class uses cache or not. If uses cache is true, means that the
     # : service can "prepare" some user deployments to allow quicker user access
@@ -194,7 +191,7 @@ class Service(Module):
     # : Restricted transports
     # : If this list contains anything else but emtpy, the only allowed protocol for transports
     # : will be the ones listed here (on implementation, ofc)
-    allowed_protocols: collections.abc.Iterable = protocols.GENERIC_VDI
+    allowed_protocols: collections.abc.Iterable[types.transports.Protocol] = types.transports.Protocol.generic_vdi()
 
     # : If this services "spawns" a new copy on every execution (that is, does not "reuse" the previous opened session)
     # : Default behavior is False (and most common), but some services may need to respawn a new "copy" on every launch
@@ -211,7 +208,7 @@ class Service(Module):
 
     _provider: 'services.ServiceProvider'  # Parent instance (not database object)
 
-    _dbObj: typing.Optional['models.Service'] = None  # Database object cache
+    _db_obj: typing.Optional['models.Service'] = None  # Database object cache
 
     def __init__(
         self,
@@ -251,9 +248,9 @@ class Service(Module):
         """
         from uds.models import Service
 
-        if self._dbObj is None:
-            self._dbObj = Service.objects.get(uuid=self.get_uuid())
-        return self._dbObj
+        if self._db_obj is None:
+            self._db_obj = Service.objects.get(uuid=self.get_uuid())
+        return self._db_obj
 
     def parent(self) -> 'services.ServiceProvider':
         """

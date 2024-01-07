@@ -31,15 +31,20 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
 # pylint: disable=unused-import
-from . import auth
-from . import connections
-from . import stats
-from . import os
-from . import permissions
-from . import pools
-from . import request
-from . import rest
-from . import services
-from . import servers
-from . import ui
+from . import (
+    auth,
+    connections,
+    os,
+    permissions,
+    pools,
+    request,
+    rest,
+    servers,
+    services,
+    stats,
+    transports,
+    ui,
+)
+
+# Log is not imported here, as it is a special case with lots of dependencies
 # Preferences must be include explicitly, as it is not a "normal use" type

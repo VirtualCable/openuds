@@ -32,7 +32,7 @@ UDS Service modules interfaces and classes.
 
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from .transport import Transport, TransportScript, DIRECT_GROUP, TUNNELED_GROUP
+from .transport import Transport, DIRECT_GROUP, TUNNELED_GROUP
 from .transport_factory import TransportsFactory
 from . import protocols
 
