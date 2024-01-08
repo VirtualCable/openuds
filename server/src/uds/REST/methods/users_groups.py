@@ -65,7 +65,7 @@ if typing.TYPE_CHECKING:
     from uds.models import UserService
 
 
-def getGroupsFromMeta(groups) -> collections.abc.Iterable[Group]:
+def get_groups_from_metagroup(groups) -> collections.abc.Iterable[Group]:
     for g in groups:
         if g.is_meta:
             for x in g.groups.all():
@@ -74,7 +74,7 @@ def getGroupsFromMeta(groups) -> collections.abc.Iterable[Group]:
             yield g
 
 
-def getPoolsForGroups(groups):
+def get_service_pools_for_groups(groups):
     for servicePool in ServicePool.get_pools_for_groups(groups):
         yield servicePool
 
@@ -174,7 +174,7 @@ class Users(DetailHandler):
                 'state': {
                     'title': _('state'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
                 }
             },
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
@@ -215,7 +215,7 @@ class Users(DetailHandler):
             valid_fields.append('mfa_data')
             self._params['mfa_data'] = self._params['mfa_data'].strip()
 
-        fields = self.readFieldsFromParams(valid_fields)
+        fields = self.fields_from_params(valid_fields)
         if not self._user.is_admin:
             del fields['staff_member']
             del fields['is_admin']
@@ -238,7 +238,7 @@ class Users(DetailHandler):
                 logger.debug('User parent: %s', user.parent)
                 # If internal auth, and not a child user, save groups
                 if not auth.isExternalSource and not user.parent:
-                    groups = self.readFieldsFromParams(['groups'])['groups']
+                    groups = self.fields_from_params(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
         except User.DoesNotExist:
@@ -296,7 +296,7 @@ class Users(DetailHandler):
         user = parent.users.get(uuid=process_uuid(uuid))
         res = []
         groups = list(user.getGroups())
-        for i in getPoolsForGroups(groups):
+        for i in get_service_pools_for_groups(groups):
             res.append(
                 {
                     'id': i.uuid,
@@ -354,6 +354,7 @@ class Groups(DetailHandler):
                     'state': i.state,
                     'type': i.is_meta and 'meta' or 'group',
                     'meta_if_any': i.meta_if_any,
+                    'skip_mfa': i.skip_mfa,
                 }
                 if i.is_meta:
                     val['groups'] = list(x.uuid for x in i.groups.all().order_by('name'))
@@ -364,7 +365,7 @@ class Groups(DetailHandler):
                 raise Exception('Item not found')
             # Add pools field if 1 item only
             result = res[0]
-            result['pools'] = [v.uuid for v in getPoolsForGroups([i])]
+            result['pools'] = [v.uuid for v in get_service_pools_for_groups([i])]
             return result
         except Exception as e:
             logger.exception('REST groups')
@@ -389,9 +390,16 @@ class Groups(DetailHandler):
                 'state': {
                     'title': _('state'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
                 }
             },
+            {
+                'skip_mfa': {
+                    'title': _('Skip MFA'),
+                    'type': 'dict',
+                    'dict': {State.ACTIVE: _('Enabled'), State.INACTIVE: _('Disabled')},
+                }
+            }
         ]
 
     def get_types(self, parent: 'Model', forType: typing.Optional[str]):
@@ -428,10 +436,10 @@ class Groups(DetailHandler):
             logger.debug('Saving group %s / %s', parent, item)
             logger.debug('Meta any %s', meta_if_any)
             logger.debug('Pools: %s', pools)
-            valid_fields = ['name', 'comments', 'state']
+            valid_fields = ['name', 'comments', 'state', 'skip_mfa']
             if self._params.get('name', '') == '':
                 raise RequestError(_('Group name is required'))
-            fields = self.readFieldsFromParams(valid_fields)
+            fields = self.fields_from_params(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.get_instance()
             if not item:  # Create new
@@ -455,6 +463,7 @@ class Groups(DetailHandler):
                 del toSave['name']  # Name can't be changed
                 toSave['comments'] = fields['comments'][:255]
                 toSave['meta_if_any'] = meta_if_any
+                toSave['skip_mfa'] = fields['skip_mfa']
 
                 group = parent.groups.get(uuid=process_uuid(item))
                 group.__dict__.update(toSave)
@@ -496,7 +505,7 @@ class Groups(DetailHandler):
         uuid = process_uuid(item)
         group = parent.groups.get(uuid=process_uuid(uuid))
         res: list[collections.abc.Mapping[str, typing.Any]] = []
-        for i in getPoolsForGroups((group,)):
+        for i in get_service_pools_for_groups((group,)):
             res.append(
                 {
                     'id': i.uuid,
@@ -527,7 +536,7 @@ class Groups(DetailHandler):
 
         if group.is_meta:
             # Get all users for everygroup and
-            groups = getGroupsFromMeta((group,))
+            groups = get_groups_from_metagroup((group,))
             tmpSet: typing.Optional[typing.Set] = None
             for g in groups:
                 gSet = set((i for i in g.users.all()))

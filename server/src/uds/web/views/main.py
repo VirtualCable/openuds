@@ -43,10 +43,12 @@ from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRed
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from py import log
 from uds.core.types.request import ExtendedHttpRequest
 
 from uds.core.types.request import ExtendedHttpRequestWithUser
 from uds.core.auths import auth
+from uds.core.util import state
 from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
@@ -100,13 +102,13 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     tag = tag or request.session.get('tag', None)
-    
+
     logger.debug('Tag: %s', tag)
     response: typing.Optional[HttpResponse] = None
     if request.method == 'POST':
         request.session['restricted'] = False  # Access is from login
         request.authorized = False  # Ensure that on login page, user is unauthorized first
-        
+
         form = LoginForm(request.POST, tag=tag)
         loginResult = check_login(request, form, tag)
         if loginResult.user:
@@ -119,7 +121,11 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
 
             # If MFA is provided, we need to redirect to MFA page
             request.authorized = True
-            if loginResult.user.manager.get_type().provides_mfa() and loginResult.user.manager.mfa:
+            if (
+                loginResult.user.manager.get_type().provides_mfa()
+                and loginResult.user.manager.mfa
+                and loginResult.user.groups.filter(skip_mfa=state.State.ACTIVE).count() == 0
+            ):
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
 
@@ -152,7 +158,7 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     request.authorized = False
     logoutResponse = request.user.logout(request)
     url = logoutResponse.url if logoutResponse.success == types.auth.AuthenticationState.REDIRECT else None
-        
+
     return auth.web_logout(request, url or request.session.get('logouturl', None))
 
 
@@ -169,7 +175,9 @@ def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 
 # The MFA page does not needs CRF token, so we disable it
 @csrf_exempt
-def mfa(request: ExtendedHttpRequest) -> HttpResponse:  # pylint: disable=too-many-return-statements,too-many-statements
+def mfa(
+    request: ExtendedHttpRequest,
+) -> HttpResponse:  # pylint: disable=too-many-return-statements,too-many-statements
     if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
         logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
@@ -347,11 +355,12 @@ def update_transport_ticket(
                                 uuid=data['ticket-info'].get('userService', None)
                             )
                             UserServiceManager().notify_preconnect(
-                                userService, types.connections.ConnectionData(
+                                userService,
+                                types.connections.ConnectionData(
                                     username=username,
                                     protocol=data.get('protocol', ''),
                                     service_type=data['ticket-info'].get('service_type', ''),
-                                )
+                                ),
                             )
                         except models.UserService.DoesNotExist:
                             pass

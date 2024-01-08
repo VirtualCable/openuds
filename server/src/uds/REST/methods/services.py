@@ -154,7 +154,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving service for %s / %s', parent, item)
-        fields = self.readFieldsFromParams(
+        fields = self.fields_from_params(
             ['name', 'comments', 'data_type', 'tags', 'max_services_count_type']
         )
         # Fix max_services_count_type to ServicesCountingType enum or ServicesCountingType.STANDARD if not found

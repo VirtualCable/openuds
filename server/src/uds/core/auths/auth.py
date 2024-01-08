@@ -252,7 +252,7 @@ def register_user(
     usr.save()
     if usr is not None and State.is_active(usr.state):
         # Now we update database groups for this user
-        usr.getManager().recreate_groups(usr)
+        usr.get_manager().recreate_groups(usr)
         # And add an login event
         events.add_event(
             authenticator, events.types.stats.EventType.LOGIN, username=username, srcip=request.ip

@@ -275,7 +275,7 @@ class MetaAssignedService(DetailHandler):
         if item is None:
             raise self.invalidItemException()
 
-        fields = self.readFieldsFromParams(['auth_id', 'user_id'])
+        fields = self.fields_from_params(['auth_id', 'user_id'])
         service = self._getAssignedService(parent, item)
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 

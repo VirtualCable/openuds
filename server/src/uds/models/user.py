@@ -113,7 +113,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         The manager (an instance of uds.core.auths.Authenticator), can transform the database stored username
         so we can, for example, add @domain in some cases.
         """
-        return self.getManager().get_for_auth(self.name)
+        return self.get_manager().get_for_auth(self.name)
 
     @property
     def pretty_name(self) -> str:
@@ -121,7 +121,7 @@ class User(UUIDModel, properties.PropertiesMixin):
             return self.name + '@' + self.manager.name
         return self.name
 
-    def getManager(self) -> 'auths.Authenticator':
+    def get_manager(self) -> 'auths.Authenticator':
         """
         Returns the authenticator object that owns this user.
 
@@ -147,7 +147,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         Invoked to log out this user
         Returns the url where to redirect user, or None if default url will be used
         """
-        return self.getManager().logout(request, self.name)
+        return self.get_manager().logout(request, self.name)
 
     def getGroups(self) -> typing.Generator['Group', None, None]:
         """
@@ -238,7 +238,7 @@ class User(UUIDModel, properties.PropertiesMixin):
 
         # first, we invoke removeUser. If this raises an exception, user will not
         # be removed
-        to_delete.getManager().remove_user(to_delete.name)
+        to_delete.get_manager().remove_user(to_delete.name)
 
         # If has mfa, remove related data
         to_delete.cleanRelated()

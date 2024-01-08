@@ -310,7 +310,7 @@ class Migration(migrations.Migration):
             model_name="servicepool",
             name="short_name",
             field=models.CharField(default="", max_length=96),
-        ),        
+        ),
         migrations.AlterField(
             model_name="metapool",
             name="name",
@@ -320,7 +320,7 @@ class Migration(migrations.Migration):
             model_name="metapool",
             name="short_name",
             field=models.CharField(default="", max_length=96),
-        ),        
+        ),
         migrations.AlterField(
             model_name="authenticator",
             name="small_name",
@@ -345,5 +345,10 @@ class Migration(migrations.Migration):
             model_name="servicetokenalias",
             name="unique_id",
             field=models.CharField(db_index=True, default="", max_length=128),
+        ),
+        migrations.AddField(
+            model_name="group",
+            name="skip_mfa",
+            field=models.CharField(db_index=True, default="I", max_length=1),
         ),
     ]

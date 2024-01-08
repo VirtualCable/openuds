@@ -117,7 +117,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         # Extract item db fields
         # We need this fields for all
         logger.debug('Saving rule %s / %s', parent, item)
-        fields = self.readFieldsFromParams(
+        fields = self.fields_from_params(
             [
                 'name',
                 'comments',

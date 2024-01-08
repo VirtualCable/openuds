@@ -56,7 +56,7 @@ class Group:
         """
         Initializes internal data
         """
-        self._manager = db_group.getManager()
+        self._manager = db_group.get_manager()
         self._db_group = db_group
 
     def manager(self) -> 'AuthenticatorInstance':

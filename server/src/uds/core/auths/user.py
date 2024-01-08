@@ -59,7 +59,7 @@ class User:
     _groups: typing.Optional[list[Group]]
 
     def __init__(self, db_user: 'DBUser') -> None:
-        self._manager = db_user.getManager()
+        self._manager = db_user.get_manager()
         self.grps_manager = None
         self._db_user = db_user
         self._groups = None

@@ -217,7 +217,7 @@ class AssignedService(DetailHandler):
         parent = ensure.is_instance(parent, models.ServicePool)
         if not item:
             raise self.invalidItemException('Only modify is allowed')
-        fields = self.readFieldsFromParams(['auth_id', 'user_id'])
+        fields = self.fields_from_params(['auth_id', 'user_id'])
         userService = parent.userServices.get(uuid=process_uuid(item))
         user = models.User.objects.get(uuid=process_uuid(fields['user_id']))
 

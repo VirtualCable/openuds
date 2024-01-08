@@ -309,7 +309,7 @@ class BaseModelHandler(Handler):
             'subtitle': subtitle or '',
         }
 
-    def readFieldsFromParams(self, fldList: list[str]) -> dict[str, typing.Any]:
+    def fields_from_params(self, fldList: list[str]) -> dict[str, typing.Any]:
         """
         Reads the indicated fields from the parameters received, and if
         :param fldList: List of required fields
@@ -1095,7 +1095,7 @@ class ModelHandler(BaseModelHandler):
 
         try:
             # Extract fields
-            args = self.readFieldsFromParams(self.save_fields)
+            args = self.fields_from_params(self.save_fields)
             logger.debug('Args: %s', args)
             self.beforeSave(args)
             # If tags is in save fields, treat it "specially"

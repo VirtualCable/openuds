@@ -69,11 +69,19 @@ class Group(UUIDModel):
     meta_if_any = models.BooleanField(default=False)
     groups = models.ManyToManyField('self', symmetrical=False)
     created = models.DateTimeField(default=sql_datetime, blank=True)
+    skip_mfa = models.CharField(max_length=1, default=State.INACTIVE, db_index=True)
 
     # "fake" declarations for type checking
     # objects: 'models.manager.Manager["Group"]'
-    deployedServices: 'models.manager.RelatedManager[ServicePool]'
+    deployedServices: 'models.manager.RelatedManager[ServicePool]'  # Legacy name, will keep this forever :)
     permissions: 'models.manager.RelatedManager[Permissions]'
+    
+    @property
+    def service_pools(self) -> 'models.manager.RelatedManager[ServicePool]':
+        """
+        Returns the service pools that this group has access to
+        """
+        return self.deployedServices
 
     class Meta:  # pylint: disable=too-few-public-methods
         """
@@ -92,7 +100,7 @@ class Group(UUIDModel):
     def pretty_name(self) -> str:
         return self.name + '@' + self.manager.name
 
-    def getManager(self) -> 'auths.Authenticator':
+    def get_manager(self) -> 'auths.Authenticator':
         """
         Returns the authenticator object that owns this user.
 
@@ -120,7 +128,7 @@ class Group(UUIDModel):
 
         # We invoke removeGroup. If this raises an exception, group will not
         # be removed
-        to_delete.getManager().remove_group(to_delete.name)
+        to_delete.get_manager().remove_group(to_delete.name)
 
         # Clears related logs
         log.clear_logs(to_delete)
