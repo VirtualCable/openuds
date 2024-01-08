@@ -90,7 +90,7 @@ class IPSingleMachineService(IPServiceBase):
         try:
             counter = self.storage.getPickle('counter')
             counter = counter + 1 if counter is not None else 1
-            self.storage.putPickle('counter', counter)
+            self.storage.put_pickle('counter', counter)
             ip = '{}~{}'.format(self.ip.value, counter)
         except Exception:
             ip = None

@@ -256,7 +256,7 @@ class Storage:
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
         return self.saveData(skey, data)
 
-    def putPickle(
+    def put_pickle(
         self,
         skey: typing.Union[str, bytes],
         data: typing.Any,

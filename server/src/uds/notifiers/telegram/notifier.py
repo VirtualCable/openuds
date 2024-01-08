@@ -154,7 +154,7 @@ class TelegramNotifier(messaging.Notifier):
         chatIds = self.storage.getPickle('chatIds') or []
         if chatId not in chatIds:
             chatIds.append(chatId)
-            self.storage.putPickle('chatIds', chatIds)
+            self.storage.put_pickle('chatIds', chatIds)
             logger.info('User %s subscribed to notifications', chatId)
 
     def unsubscriteUser(self, chatId: int) -> None:
@@ -163,7 +163,7 @@ class TelegramNotifier(messaging.Notifier):
         chatIds = self.storage.getPickle('chatIds') or []
         if chatId in chatIds:
             chatIds.remove(chatId)
-            self.storage.putPickle('chatIds', chatIds)
+            self.storage.put_pickle('chatIds', chatIds)
             logger.info('User %s unsubscribed from notifications', chatId)
 
     def retrieveMessages(self) -> None:
@@ -176,14 +176,14 @@ class TelegramNotifier(messaging.Notifier):
         # If last check is not set, we will set it to now
         if lastCheck is None:
             lastCheck = now - datetime.timedelta(seconds=self.checkDelay.num() + 1)
-            self.storage.putPickle('lastCheck', lastCheck)
+            self.storage.put_pickle('lastCheck', lastCheck)
 
         # If not enough time has passed, we will not check
         if lastCheck + datetime.timedelta(seconds=self.checkDelay.num()) > now:
             return
 
         # Update last check
-        self.storage.putPickle('lastCheck', now)
+        self.storage.put_pickle('lastCheck', now)
 
         lastOffset = self.storage.getPickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
@@ -207,4 +207,4 @@ class TelegramNotifier(messaging.Notifier):
                     elif message in ('/leave', '/unsubscribe'):
                         self.unsubscriteUser(update.chat.id)
                         t.send_message(update.chat.id, _('You have been unsubscribed from notifications'))
-            self.storage.putPickle('lastOffset', t.lastOffset)
+            self.storage.put_pickle('lastOffset', t.lastOffset)

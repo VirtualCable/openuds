@@ -50,7 +50,7 @@ class StorageTest(UDSTestCase):
         storage.put(b'key', UNICODE_CHARS)
         storage.put(UNICODE_CHARS_2, UNICODE_CHARS)
 
-        storage.putPickle('pickle', VALUE_1)
+        storage.put_pickle('pickle', VALUE_1)
 
         self.assertEqual(storage.get(UNICODE_CHARS), u'chars')  # Always returns unicod
         self.assertEqual(storage.readData('saveData'), UNICODE_CHARS)

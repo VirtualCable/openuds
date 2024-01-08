@@ -392,7 +392,7 @@ class OAuth2Authenticator(auths.Authenticator):
         groups.extend(self.commonGroups.value.split(','))
 
         # store groups for this username at storage, so we can check it at a later stage
-        self.storage.putPickle(username, [realName, groups])
+        self.storage.put_pickle(username, [realName, groups])
 
         # Validate common groups
         gm.validate(groups)

@@ -280,7 +280,7 @@ class IPMachinesService(IPServiceBase):
                         and self.cache.get('port{}'.format(theIP))
                     ):
                         continue  # The check failed not so long ago, skip it...
-                    self.storage.putPickle(theIP, now)
+                    self.storage.put_pickle(theIP, now)
                     # Is WOL enabled?
                     wolENABLED = bool(self.parent().wolURL(theIP, theMAC))
                     # Now, check if it is available on port, if required...
@@ -335,7 +335,7 @@ class IPMachinesService(IPServiceBase):
         now = sql_stamp_seconds()
         locked = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
-            self.storage.putPickle(theIP, now)
+            self.storage.put_pickle(theIP, now)
             if theMAC:
                 theIP += ';' + theMAC
             return userServiceInstance.assign(theIP)
@@ -353,7 +353,7 @@ class IPMachinesService(IPServiceBase):
         now = sql_stamp_seconds()
         locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
         if self.canBeUsed(locked, now):
-            self.storage.putPickle(theIP, str(now))  # Lock it
+            self.storage.put_pickle(theIP, str(now))  # Lock it
 
     def process_logout(self, id: str, remote_login: bool) -> None:
         '''

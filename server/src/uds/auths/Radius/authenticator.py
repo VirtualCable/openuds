@@ -156,7 +156,7 @@ class RadiusAuth(auths.Authenticator):
                 request.session[client.STATE_VAR_NAME] = state.decode()
             # store the user mfa attribute if it is set
             if mfaCode:
-                self.storage.putPickle(
+                self.storage.put_pickle(
                     self.mfaStorageKey(username),
                     mfaCode,
                 )

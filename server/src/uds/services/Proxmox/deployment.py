@@ -449,7 +449,7 @@ if sys.platform == 'win32':
             self.__setTask(self.service().shutdownMachine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
-        self.storage.putPickle('shutdown', shutdown)
+        self.storage.put_pickle('shutdown', shutdown)
         return State.RUNNING
 
     def __updateVmMacAndHA(self) -> str:
@@ -537,7 +537,7 @@ if sys.platform == 'win32':
                 f'Could not shutdown machine using soft power off in time ({GUEST_SHUTDOWN_WAIT} seconds). Powering off.',
             )
             # Not stopped by guest in time, but must be stopped normally
-            self.storage.putPickle('shutdown', 0)
+            self.storage.put_pickle('shutdown', 0)
             return self.__stopMachine()  # Launch "hard" stop
 
         return State.RUNNING

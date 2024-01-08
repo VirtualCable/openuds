@@ -135,7 +135,7 @@ class TOTP_MFA(mfas.MFA):
         return data
 
     def _saveUserData(self, userId: str, data: tuple[str, bool]) -> None:
-        self.storage.putPickle(userId, data)
+        self.storage.put_pickle(userId, data)
 
     def _removeUserData(self, userId: str) -> None:
         self.storage.remove(userId)

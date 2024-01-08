@@ -459,7 +459,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
 
             # store the user mfa attribute if it is set
             if self._mfaAttr:
-                self.storage.putPickle(
+                self.storage.put_pickle(
                     self.mfaStorageKey(username),
                     user[self._mfaAttr][0],
                 )

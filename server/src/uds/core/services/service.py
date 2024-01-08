@@ -439,7 +439,7 @@ class Service(Module):
         return
 
     def store_id_info(self, id: str, data: typing.Any) -> None:
-        self.storage.putPickle('__nfo_' + id, data)
+        self.storage.put_pickle('__nfo_' + id, data)
 
     def recover_id_info(self, id: str, delete: bool = False) -> typing.Any:
         # recovers the information

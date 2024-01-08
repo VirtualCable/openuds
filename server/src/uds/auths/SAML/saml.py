@@ -675,11 +675,11 @@ class SAMLAuthenticator(auths.Authenticator):
         logger.debug('Real name: %s', realName)
 
         # store groups for this username at storage, so we can check it at a later stage
-        self.storage.putPickle(username, [realName, groups])
+        self.storage.put_pickle(username, [realName, groups])
 
         # store also the mfa identifier field value, in case we have provided it
         if self.mfaAttr.value.strip():
-            self.storage.putPickle(
+            self.storage.put_pickle(
                 self.mfaStorageKey(username),
                 ''.join(auth_utils.processRegexField(self.mfaAttr.value, attributes)),
             )  # in case multipel values is returned, join them

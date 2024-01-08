@@ -229,7 +229,7 @@ class MFA(Module):
         Internal method to put the data into storage
         """
         storageKey = request.ip + userId
-        self.storage.putPickle(storageKey, (sql_datetime(), code))
+        self.storage.put_pickle(storageKey, (sql_datetime(), code))
 
     def process(
         self,
