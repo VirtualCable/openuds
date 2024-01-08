@@ -692,22 +692,19 @@ msgstr "Delete MFA"
 
 #: static/admin/translations-fakejs.js:158
 #: static/admin/translations-fakejs.js:169
-#, fuzzy
 #| msgid "New service"
 msgid "New server"
-msgstr "New service"
+msgstr "New server"
 
 #: static/admin/translations-fakejs.js:159
-#, fuzzy
 #| msgid "Edit service"
 msgid "Edit server"
-msgstr "Edit service"
+msgstr "Edit server"
 
 #: static/admin/translations-fakejs.js:160
-#, fuzzy
 #| msgid "Delete service"
 msgid "Delete server"
-msgstr "Delete service"
+msgstr "Delete server"
 
 #: static/admin/translations-fakejs.js:163
 #: static/admin/translations-fakejs.js:180
@@ -747,7 +744,7 @@ msgstr "Maintenance mode for"
 
 #: static/admin/translations-fakejs.js:170
 msgid "Remove server from server group"
-msgstr ""
+msgstr "Remove server from server group"
 
 #: static/admin/translations-fakejs.js:172
 msgid "New service"
@@ -790,38 +787,33 @@ msgid "Delete Network"
 msgstr "Delete Network"
 
 #: static/admin/translations-fakejs.js:194
-#, fuzzy
 #| msgid "New rule"
 msgid "New tunnel"
-msgstr "New rule"
+msgstr "New tunnel"
 
 #: static/admin/translations-fakejs.js:195
-#, fuzzy
 #| msgid "Edit rule"
 msgid "Edit tunnel"
-msgstr "Edit rule"
+msgstr "Edit tunnel"
 
 #: static/admin/translations-fakejs.js:196
-#, fuzzy
 #| msgid "Delete user"
 msgid "Delete tunnel"
-msgstr "Delete user"
+msgstr "Delete tunnel"
 
 #: static/admin/translations-fakejs.js:200
-#, fuzzy
 #| msgid "Please, select a valid user"
 msgid "Please, select a valid server"
-msgstr "Please, select a valid user"
+msgstr "Please, select a valid server"
 
 #: static/admin/translations-fakejs.js:208
 msgid "This tunnel already has all the tunnel servers available"
-msgstr ""
+msgstr "This tunnel already has all the tunnel servers available"
 
 #: static/admin/translations-fakejs.js:209
-#, fuzzy
 #| msgid "Remove member pool"
 msgid "Remove member from tunnel"
-msgstr "Remove member pool"
+msgstr "Remove member from tunnel"
 
 #: static/admin/translations-fakejs.js:210
 msgid "New Transport"
@@ -836,10 +828,9 @@ msgid "Delete Transport"
 msgstr "Delete Transport"
 
 #: static/admin/translations-fakejs.js:213
-#, fuzzy
 #| msgid "Delete actor token - USE WITH EXTREME CAUTION!!!"
 msgid "Delete servers token - USE WITH EXTREME CAUTION!!!"
-msgstr "Delete actor token - USE WITH EXTREME CAUTION!!!"
+msgstr "Delete servers token - USE WITH EXTREME CAUTION!!!"
 
 #: static/admin/translations-fakejs.js:214
 msgid "Delete image"
@@ -876,16 +867,14 @@ msgid "Report finished"
 msgstr "Report finished"
 
 #: static/admin/translations-fakejs.js:228
-#, fuzzy
 #| msgid "New provider"
 msgid "New Notifier"
-msgstr "New provider"
+msgstr "New Notifier"
 
 #: static/admin/translations-fakejs.js:229
-#, fuzzy
 #| msgid "Edit provider"
 msgid "Edit Notifier"
-msgstr "Edit provider"
+msgstr "Edit Notifier"
 
 #: static/admin/translations-fakejs.js:230
 #: static/admin/translations-fakejs.js:233
@@ -997,10 +986,9 @@ msgstr "Confirm revokation of permission"
 
 #: static/admin/translations-fakejs.js:257
 #: static/admin/translations-fakejs.js:262
-#, fuzzy
 #| msgid "March"
 msgid "Search"
-msgstr "March"
+msgstr "Search"
 
 #: static/admin/translations-fakejs.js:258
 #: static/admin/translations-fakejs.js:263
@@ -1009,10 +997,9 @@ msgid "No entries found"
 msgstr "No entries found"
 
 #: static/admin/translations-fakejs.js:259
-#, fuzzy
 #| msgid "Selected items"
 msgid "Select"
-msgstr "Selected items"
+msgstr "Select"
 
 #: static/admin/translations-fakejs.js:264
 msgid ", (%i more items)"
@@ -1464,26 +1451,23 @@ msgid "Meta group name"
 msgstr "Meta group name"
 
 #: static/admin/translations-fakejs.js:459
-#, fuzzy
 #| msgid "Edit MFA"
 msgid "Skip MFA"
-msgstr "Edit MFA"
+msgstr "Skip MFA"
 
 #: static/admin/translations-fakejs.js:462
 msgid "Service Pools"
 msgstr "Service Pools"
 
 #: static/admin/translations-fakejs.js:464
-#, fuzzy
 #| msgid "group"
 msgid "Any group"
-msgstr "group"
+msgstr "Any group"
 
 #: static/admin/translations-fakejs.js:465
-#, fuzzy
 #| msgid "pool group"
 msgid "All groups"
-msgstr "pool group"
+msgstr "All groups"
 
 #: static/admin/translations-fakejs.js:466
 msgid "Selected Groups"
@@ -1504,20 +1488,18 @@ msgid "Services pools"
 msgstr "Services pools"
 
 #: static/admin/translations-fakejs.js:479
-#, fuzzy
 #| msgid "Assign service to user manually"
 msgid "Assign new server to tunnel group"
-msgstr "Assign service to user manually"
+msgstr "Assign new server to tunnel group"
 
 #: static/admin/translations-fakejs.js:480
 msgid "Tunnel"
 msgstr "Tunnel"
 
 #: static/admin/translations-fakejs.js:484
-#, fuzzy
 #| msgid "Tunnel"
 msgid "Tunnel servers"
-msgstr "Tunnel"
+msgstr "Tunnel servers"
 
 #: static/admin/translations-fakejs.js:485
 msgid "New image for"
@@ -1536,10 +1518,9 @@ msgid "Image (click to change)"
 msgstr "Image (click to change)"
 
 #: static/admin/translations-fakejs.js:489
-#, fuzzy
 #| msgid "For optimal results, use "
 msgid "For optimal results, use \"squared\" images."
-msgstr "For optimal results, use "
+msgstr "For optimal results, use \"squared\" images."
 
 #: static/admin/translations-fakejs.js:490
 msgid "The image will be resized on upload to"
@@ -1617,17 +1598,15 @@ msgid "Remove all"
 msgstr "Remove all"
 
 #: static/admin/translations-fakejs.js:528
-#, fuzzy
 #| msgid "provider"
 msgid "Providers"
-msgstr "provider"
+msgstr "Providers"
 
 #: static/admin/translations-fakejs.js:529
 #: static/admin/translations-fakejs.js:550
-#, fuzzy
 #| msgid "Services"
 msgid "Servers"
-msgstr "Services"
+msgstr "Servers"
 
 #: static/admin/translations-fakejs.js:530
 msgid "Authentication"
@@ -1655,10 +1634,9 @@ msgid "Networks"
 msgstr "Networks"
 
 #: static/admin/translations-fakejs.js:537
-#, fuzzy
 #| msgid "Tunnel"
 msgid "Tunnels"
-msgstr "Tunnel"
+msgstr "Tunnels"
 
 #: static/admin/translations-fakejs.js:538
 msgid "Pools"
@@ -1673,10 +1651,9 @@ msgid "Calendars"
 msgstr "Calendars"
 
 #: static/admin/translations-fakejs.js:543
-#, fuzzy
 #| msgid "Accounts"
 msgid "Accounting"
-msgstr "Accounts"
+msgstr "Accounting"
 
 #: static/admin/translations-fakejs.js:544
 msgid "Tools"
@@ -1692,7 +1669,7 @@ msgstr "Reports"
 
 #: static/admin/translations-fakejs.js:547
 msgid "Notifiers"
-msgstr ""
+msgstr "Notifiers"
 
 #: static/admin/translations-fakejs.js:548
 msgid "Tokens"
@@ -1730,7 +1707,7 @@ msgstr "Launching service"
 
 #: static/modern/main.js:1 static/modern/translations-fakejs.js:18
 msgid "Invalid UDS URL"
-msgstr ""
+msgstr "Invalid UDS URL"
 
 #: static/modern/main.js:1 static/modern/translations-fakejs.js:19
 #: static/modern/translations-fakejs.js:24
@@ -1987,10 +1964,9 @@ msgid "Login Verification"
 msgstr "Login Verification"
 
 #: static/modern/translations-fakejs.js:81
-#, fuzzy
 #| msgid "Remember me for"
 msgid "Remember Me"
-msgstr "Remember me for"
+msgstr "Remember Me"
 
 #: static/modern/translations-fakejs.js:82
 msgid "Submit"

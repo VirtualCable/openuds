@@ -215,10 +215,9 @@ msgid "Visible"
 msgstr "Visible"
 
 #: REST/methods/authenticators.py:120
-#, fuzzy
 #| msgid "Forbidden"
 msgid "Hidden"
-msgstr "Forbidden"
+msgstr "Hidden"
 
 #: REST/methods/authenticators.py:121 REST/methods/users_groups.py:177
 #: REST/methods/users_groups.py:393 REST/methods/users_groups.py:400
@@ -236,6 +235,8 @@ msgid ""
 "Access type for this transport. Disabled means not only hidden, but also not "
 "usable as login method."
 msgstr ""
+"Access type for this transport. Disabled means not only hidden, but also not "
+"usable as login method."
 
 #: REST/methods/authenticators.py:129 REST/methods/services_pools.py:363
 #: REST/methods/services_pools.py:375 REST/methods/services_pools.py:390
@@ -357,10 +358,9 @@ msgid "Policy"
 msgstr "Policy"
 
 #: REST/methods/meta_pools.py:100 REST/methods/meta_pools.py:187
-#, fuzzy
 #| msgid "Policy"
 msgid "HA Policy"
-msgstr "Policy"
+msgstr "HA Policy"
 
 #: REST/methods/meta_pools.py:105 REST/methods/services.py:247
 #: REST/methods/services_pools.py:120
@@ -390,22 +390,22 @@ msgid "Short name for user service visualization"
 msgstr "Short name for user service visualization"
 
 #: REST/methods/meta_pools.py:177
-#, fuzzy
 #| msgid "Load Balancing Info"
 msgid "Load balancing policy"
-msgstr "Load Balancing Info"
+msgstr "Load balancing policy"
 
 #: REST/methods/meta_pools.py:178
-#, fuzzy
 #| msgid "Service pool policy"
 msgid "Service pool load balancing policy"
-msgstr "Service pool policy"
+msgstr "Service pool load balancing policy"
 
 #: REST/methods/meta_pools.py:189
 msgid ""
 "Service pool High Availability policy. If enabled and a pool fails, it will "
 "be restarted in another pool. Enable with care!."
 msgstr ""
+"Service pool High Availability policy. If enabled and a pool fails, it will "
+"be restarted in another pool. Enable with care!."
 
 #: REST/methods/meta_pools.py:200 REST/methods/services_pool_groups.py:107
 #: REST/methods/services_pools.py:371
@@ -580,10 +580,9 @@ msgstr ""
 "host, etc..."
 
 #: REST/methods/notifiers.py:68
-#, fuzzy
 #| msgid "NAS Identifier"
 msgid "Notifiers"
-msgstr "NAS Identifier"
+msgstr "Notifiers"
 
 #: REST/methods/notifiers.py:72 REST/methods/notifiers.py:97
 #: templates/uds/reports/lists/audit.html:15
@@ -592,13 +591,12 @@ msgstr "Level"
 
 #: REST/methods/notifiers.py:98
 msgid "Level of notifications"
-msgstr ""
+msgstr "Level of notifications"
 
 #: REST/methods/notifiers.py:105
-#, fuzzy
 #| msgid "If checked, the host will be reversed dns"
 msgid "If checked, this notifier will be used"
-msgstr "If checked, the host will be reversed dns"
+msgstr "If checked, this notifier will be used"
 
 #: REST/methods/op_calendars.py:81
 msgid "Access restrictions by calendar"
@@ -699,60 +697,56 @@ msgstr "Generates"
 
 #: REST/methods/servers.py:73
 msgid "Invalid type. Type must be an integer."
-msgstr ""
+msgstr "Invalid type. Type must be an integer."
 
 #: REST/methods/servers.py:75
 msgid "Invalid subtype. Max length is 16."
-msgstr ""
+msgstr "Invalid subtype. Max length is 16."
 
 #: REST/methods/servers.py:77
 msgid "Invalid os. Max length is 16."
-msgstr ""
+msgstr "Invalid os. Max length is 16."
 
 #: REST/methods/servers.py:79
 msgid "Invalid data. Max length is 2048."
-msgstr ""
+msgstr "Invalid data. Max length is 2048."
 
 #: REST/methods/servers.py:81
-#, fuzzy
 #| msgid "Length must be betwen 1 and 6"
 msgid "Invalid port. Must be between 1 and 65535"
-msgstr "Length must be betwen 1 and 6"
+msgstr "Invalid port. Must be between 1 and 65535"
 
 #: REST/methods/servers_management.py:65
-#, fuzzy
 #| msgid "User Services"
 msgid "Registered Servers"
-msgstr "User Services"
+msgstr "Registered Servers"
 
 #: REST/methods/servers_management.py:70
 msgid "OS"
-msgstr ""
+msgstr "OS"
 
 #: REST/methods/servers_management.py:147 REST/methods/tunnels_management.py:90
-#, fuzzy, python-brace-format
+#, python-brace-format
 #| msgid "Services of {}"
 msgid "Servers of {0}"
-msgstr "Services of {}"
+msgstr "Servers of {0}"
 
 #: REST/methods/servers_management.py:149 REST/methods/tunnels_management.py:92
 #: REST/methods/tunnels_management.py:160
-#, fuzzy
 #| msgid "Server"
 msgid "Servers"
-msgstr "Server"
+msgstr "Servers"
 
 #: REST/methods/servers_management.py:159
 #: REST/methods/tunnels_management.py:102
 msgid "Ip"
-msgstr ""
+msgstr "Ip"
 
 #: REST/methods/servers_management.py:160
 #: REST/methods/tunnels_management.py:103
-#, fuzzy
 #| msgid "Machine"
 msgid "Mac"
-msgstr "Machine"
+msgstr "Mac"
 
 #: REST/methods/servers_management.py:163
 #: REST/methods/tunnels_management.py:106 REST/methods/user_services.py:285
@@ -762,10 +756,9 @@ msgstr "State"
 
 #: REST/methods/servers_management.py:165
 #: REST/methods/tunnels_management.py:108
-#, fuzzy
 #| msgid "In maintenance"
 msgid "Maintenance"
-msgstr "In maintenance"
+msgstr "Maintenance"
 
 #: REST/methods/servers_management.py:165
 #: REST/methods/tunnels_management.py:108
@@ -776,15 +769,15 @@ msgstr "Normal"
 #: REST/methods/servers_management.py:177
 #: REST/methods/servers_management.py:345
 msgid "of type"
-msgstr ""
+msgstr "of type"
 
 #: REST/methods/servers_management.py:186
 msgid "Hostname of the server. It must be resolvable by UDS"
-msgstr ""
+msgstr "Hostname of the server. It must be resolvable by UDS"
 
 #: REST/methods/servers_management.py:194
 msgid "IP of the server. Used if hostname is not resolvable by UDS"
-msgstr ""
+msgstr "IP of the server. Used if hostname is not resolvable by UDS"
 
 #: REST/methods/servers_management.py:201
 #: REST/methods/tunnels_management.py:159
@@ -806,7 +799,7 @@ msgstr "Port"
 
 #: REST/methods/servers_management.py:202
 msgid "Port of server. 0 means \"service default\""
-msgstr ""
+msgstr "Port of server. 0 means \"service default\""
 
 #: REST/methods/servers_management.py:220 auths/OAuth2/authenticator.py:107
 #: auths/OAuth2/authenticator.py:115 auths/OAuth2/authenticator.py:123
@@ -816,40 +809,35 @@ msgid "Server"
 msgstr "Server"
 
 #: REST/methods/servers_management.py:221
-#, fuzzy
 #| msgid "Services Pool Groups"
 msgid "Server to include on group"
-msgstr "Services Pool Groups"
+msgstr "Server to include on group"
 
 #: REST/methods/servers_management.py:320
-#, fuzzy
 #| msgid "Services Pool Groups"
 msgid "Servers Groups"
-msgstr "Services Pool Groups"
+msgstr "Servers Groups"
 
 #: REST/methods/servers_management.py:326
 msgid "Subtype"
-msgstr ""
+msgstr "Subtype"
 
 #: REST/methods/servers_management.py:334
-#, fuzzy
 #| msgid "Manage"
 msgid "Managed"
-msgstr "Manage"
+msgstr "Managed"
 
 #: REST/methods/servers_management.py:334
 #: REST/methods/servers_management.py:344 core/types/servers.py:67
-#, fuzzy
 #| msgid "Unmanaged host"
 msgid "Unmanaged"
-msgstr "Unmanaged host"
+msgstr "Unmanaged"
 
 #: REST/methods/servers_management.py:342 REST/methods/services.py:252
 #: REST/methods/services.py:311
-#, fuzzy
 #| msgid "Calendar"
 msgid "Standard"
-msgstr "Calendar"
+msgstr "Standard"
 
 #: REST/methods/services.py:200
 msgid ""
@@ -879,26 +867,23 @@ msgid "Services Pools"
 msgstr "Services Pools"
 
 #: REST/methods/services.py:250
-#, fuzzy
 #| msgid "Max. reservation time"
 msgid "Max services count type"
-msgstr "Max. reservation time"
+msgstr "Max services count type"
 
 #: REST/methods/services.py:252 REST/methods/services.py:312
-#, fuzzy
 #| msgid "Inactive"
 msgid "Conservative"
-msgstr "Inactive"
+msgstr "Conservative"
 
 #: REST/methods/services.py:314
-#, fuzzy
 #| msgid "Service not found"
 msgid "Service counting method"
-msgstr "Service not found"
+msgstr "Service counting method"
 
 #: REST/methods/services.py:316
 msgid "Kind of service counting for calculating if MAX is reached"
-msgstr ""
+msgstr "Kind of service counting for calculating if MAX is reached"
 
 #: REST/methods/services.py:359 REST/methods/users_groups.py:308
 #: REST/methods/users_groups.py:517
@@ -1059,13 +1044,12 @@ msgstr "Account associated to this service pool"
 
 #: REST/methods/services_pools.py:481
 msgid "Name too long"
-msgstr ""
+msgstr "Name too long"
 
 #: REST/methods/services_pools.py:484
-#, fuzzy
 #| msgid "Short name"
 msgid "Short name too long"
-msgstr "Short name"
+msgstr "Short name too long"
 
 #: REST/methods/services_pools.py:491
 msgid "Base service does not exist anymore"
@@ -1117,10 +1101,9 @@ msgid "Label must contain only letters, numbers, \":\" and \"-\""
 msgstr "Label must contain only letters, numbers, \":\" and \"-\""
 
 #: REST/methods/tunnels_management.py:154
-#, fuzzy
 #| msgid "Tunnel"
 msgid "Tunnels"
-msgstr "Tunnel"
+msgstr "Tunnels"
 
 #: REST/methods/tunnels_management.py:158
 #: auths/ActiveDirectory_enterprise/authenticator.py:52
@@ -1138,19 +1121,17 @@ msgid "Host"
 msgstr "Host"
 
 #: REST/methods/tunnels_management.py:176
-#, fuzzy
 #| msgid ""
 #| "Hostname or IP address of the gateway server. if ommited, no gateway will "
 #| "be used"
 msgid ""
 "Hostname or IP address of the server where the tunnel is visible by the users"
 msgstr ""
-"Hostname or IP address of the gateway server. if ommited, no gateway will be "
-"used"
+"Hostname or IP address of the server where the tunnel is visible by the users"
 
 #: REST/methods/tunnels_management.py:185
 msgid "Port where the tunnel is visible by the users"
-msgstr ""
+msgstr "Port where the tunnel is visible by the users"
 
 #: REST/methods/user_services.py:159 REST/methods/user_services.py:279
 #: REST/methods/user_services.py:526 REST/methods/user_services.py:564
@@ -1284,7 +1265,7 @@ msgstr "Current groups"
 
 #: REST/methods/users_groups.py:398
 msgid "Skip MFA"
-msgstr ""
+msgstr "Skip MFA"
 
 #: REST/methods/users_groups.py:408
 msgid "UDS Group"
@@ -1330,25 +1311,22 @@ msgstr "Label for this element"
 
 #: REST/model.py:228
 msgid "No filtering"
-msgstr ""
+msgstr "No filtering"
 
 #: REST/model.py:229
-#, fuzzy
 #| msgid "Accelerated network"
 msgid "Allow selected networks"
-msgstr "Accelerated network"
+msgstr "Allow selected networks"
 
 #: REST/model.py:230
-#, fuzzy
 #| msgid "Accelerated network"
 msgid "Deny selected networks"
-msgstr "Accelerated network"
+msgstr "Deny selected networks"
 
 #: REST/model.py:232
-#, fuzzy
 #| msgid "Network range"
 msgid "Network Filtering"
-msgstr "Network range"
+msgstr "Network Filtering"
 
 #: REST/model.py:234
 msgid ""
@@ -1356,16 +1334,16 @@ msgid ""
 "\"Allow\" to only enable for selected networks or \"Deny\" to deny from "
 "selected networks"
 msgstr ""
+"Type of network filtering. Use \"Disabled\" to disable origin check, \"Allow"
+"\" to only enable for selected networks or \"Deny\" to deny from selected "
+"networks"
 
 #: REST/model.py:251
-#, fuzzy
 #| msgid ""
 #| "Networks associated with this transport. If No network selected, will "
 #| "mean \"all networks\""
 msgid "Networks associated. If No network selected, will mean \"all networks\""
-msgstr ""
-"Networks associated with this transport. If No network selected, will mean "
-"\"all networks\""
+msgstr "Networks associated. If No network selected, will mean \"all networks\""
 
 #: REST/model.py:359
 msgid "Invalid Request"
@@ -1907,114 +1885,109 @@ msgid "All seems fine in the authenticator."
 msgstr "All seems fine in the authenticator."
 
 #: auths/OAuth2/authenticator.py:96 auths/OAuth2/authenticator.py:98
-#, fuzzy
 #| msgid "SAML Authenticator"
 msgid "OAuth2 Authenticator"
-msgstr "SAML Authenticator"
+msgstr "OAuth2 Authenticator"
 
 #: auths/OAuth2/authenticator.py:103
-#, fuzzy
 #| msgid "Authentication error"
 msgid "Authorization endpoint"
-msgstr "Authentication error"
+msgstr "Authorization endpoint"
 
 #: auths/OAuth2/authenticator.py:105
 msgid "Authorization endpoint for OAuth2."
-msgstr ""
+msgstr "Authorization endpoint for OAuth2."
 
 #: auths/OAuth2/authenticator.py:127
 msgid "Scope"
-msgstr ""
+msgstr "Scope"
 
 #: auths/OAuth2/authenticator.py:129
 msgid "Scope for OAuth2."
-msgstr ""
+msgstr "Scope for OAuth2."
 
 #: auths/OAuth2/authenticator.py:135
-#, fuzzy
 #| msgid "Pool Group"
 msgid "Common Groups"
-msgstr "Pool Group"
+msgstr "Common Groups"
 
 #: auths/OAuth2/authenticator.py:137
 msgid ""
 "User will be assigned to this groups once authenticated. Comma separated "
 "list of groups"
 msgstr ""
+"User will be assigned to this groups once authenticated. Comma separated "
+"list of groups"
 
 #: auths/OAuth2/authenticator.py:145
-#, fuzzy
 #| msgid "Identity endpoint"
 msgid "Redirection endpoint"
-msgstr "Identity endpoint"
+msgstr "Redirection endpoint"
 
 #: auths/OAuth2/authenticator.py:147
 msgid "Redirection endpoint for OAuth2.  (Filled by UDS)"
-msgstr ""
+msgstr "Redirection endpoint for OAuth2.  (Filled by UDS)"
 
 #: auths/OAuth2/authenticator.py:152
-#, fuzzy
 #| msgid "Response code"
 msgid "Response type"
-msgstr "Response code"
+msgstr "Response type"
 
 #: auths/OAuth2/authenticator.py:154
 msgid "Response type for OAuth2."
-msgstr ""
+msgstr "Response type for OAuth2."
 
 #: auths/OAuth2/authenticator.py:158
 msgid "Code (authorization code flow)"
-msgstr ""
+msgstr "Code (authorization code flow)"
 
 #: auths/OAuth2/authenticator.py:159
 msgid "PKCE (authorization code flow with PKCE)"
-msgstr ""
+msgstr "PKCE (authorization code flow with PKCE)"
 
 #: auths/OAuth2/authenticator.py:160
 msgid "Token (implicit flow)"
-msgstr ""
+msgstr "Token (implicit flow)"
 
 #: auths/OAuth2/authenticator.py:163
 msgid "OpenID Connect Token (implicit flow with OpenID Connect)"
-msgstr ""
+msgstr "OpenID Connect Token (implicit flow with OpenID Connect)"
 
 #: auths/OAuth2/authenticator.py:167
 msgid "OpenID Connect Code (authorization code flow with OpenID Connect)"
-msgstr ""
+msgstr "OpenID Connect Code (authorization code flow with OpenID Connect)"
 
 #: auths/OAuth2/authenticator.py:175
-#, fuzzy
 #| msgid "Identity endpoint"
 msgid "Token endpoint"
-msgstr "Identity endpoint"
+msgstr "Token endpoint"
 
 #: auths/OAuth2/authenticator.py:177
 msgid "Token endpoint for OAuth2. Only required for \"code\" response type."
-msgstr ""
+msgstr "Token endpoint for OAuth2. Only required for \"code\" response type."
 
 #: auths/OAuth2/authenticator.py:183
-#, fuzzy
 #| msgid "Identity endpoint"
 msgid "User information endpoint"
-msgstr "Identity endpoint"
+msgstr "User information endpoint"
 
 #: auths/OAuth2/authenticator.py:185
 msgid ""
 "User information endpoint for OAuth2. Only required for \"code\" response "
 "type."
 msgstr ""
+"User information endpoint for OAuth2. Only required for \"code\" response "
+"type."
 
 #: auths/OAuth2/authenticator.py:192
-#, fuzzy
 #| msgid "Publish date"
 msgid "Public Key"
-msgstr "Publish date"
+msgstr "Public Key"
 
 #: auths/OAuth2/authenticator.py:194
-#, fuzzy
 #| msgid "Service provider"
 msgid "Provided by Oauth2 provider"
-msgstr "Service provider"
+msgstr "Provided by Oauth2 provider"
 
 #: auths/OAuth2/authenticator.py:202 auths/SAML/saml.py:160
 msgid "User name attrs"
@@ -2048,15 +2021,15 @@ msgstr "Fields from where to extract the real name"
 
 #: auths/OAuth2/authenticator.py:453
 msgid "Common groups is required for \"code\" response types"
-msgstr ""
+msgstr "Common groups is required for \"code\" response types"
 
 #: auths/OAuth2/authenticator.py:456
 msgid "Token endpoint is required for \"code\" response types"
-msgstr ""
+msgstr "Token endpoint is required for \"code\" response types"
 
 #: auths/OAuth2/authenticator.py:464
 msgid "Public key is required for \"openid+token_id\" response type"
-msgstr ""
+msgstr "Public key is required for \"openid+token_id\" response type"
 
 #: auths/Radius/authenticator.py:57 auths/Radius/authenticator.py:59
 msgid "Radius Authenticator"
@@ -2290,14 +2263,13 @@ msgid "If set, enable lowercase url encoding so ADFS can work correctly"
 msgstr "If set, enable lowercase url encoding so ADFS can work correctly"
 
 #: auths/SAML/saml.py:213
-#, fuzzy
 #| msgid "Check certificate"
 msgid "Check SSL certificate"
-msgstr "Check certificate"
+msgstr "Check SSL certificate"
 
 #: auths/SAML/saml.py:216
 msgid "If set, check SSL certificate on requests for IDP Metadata"
-msgstr ""
+msgstr "If set, check SSL certificate on requests for IDP Metadata"
 
 #: auths/SAML/saml.py:217 auths/SAML/saml.py:225 auths/SAML/saml.py:233
 #: auths/SAML/saml.py:241 auths/SAML/saml.py:249 auths/SAML/saml.py:257
@@ -2393,12 +2365,13 @@ msgid "Allow deprecated signature algorithms"
 msgstr "Allow deprecated signature algorithms"
 
 #: auths/SAML/saml.py:304
-#, fuzzy
 #| msgid "If set, deprecated signature algorithms will be allowed"
 msgid ""
 "If set, deprecated signature algorithms will be allowed (as SHA1, MD5, "
 "etc...)"
-msgstr "If set, deprecated signature algorithms will be allowed"
+msgstr ""
+"If set, deprecated signature algorithms will be allowed (as SHA1, MD5, "
+"etc...)"
 
 #: auths/SAML/saml.py:309
 msgid "Metadata cache duration"
@@ -2613,32 +2586,28 @@ msgid "Can't unpublish publications with services in process"
 msgstr "Can't unpublish publications with services in process"
 
 #: core/managers/servers.py:169
-#, fuzzy
 #| msgid "List of servers available for this service"
 msgid "No server available for user"
-msgstr "List of servers available for this service"
+msgstr "No server available for user"
 
 #: core/managers/servers.py:218 core/managers/servers.py:438
-#, fuzzy
 #| msgid "Assigned services"
 msgid "No user assigned to service"
-msgstr "Assigned services"
+msgstr "No user assigned to service"
 
 #: core/managers/servers.py:236
 msgid "Server is not part of the group"
-msgstr ""
+msgstr "Server is not part of the group"
 
 #: core/managers/servers.py:238
-#, fuzzy
 #| msgid "The requested service is in maintenance mode"
 msgid "Server is in maintenance mode"
-msgstr "The requested service is in maintenance mode"
+msgstr "Server is in maintenance mode"
 
 #: core/managers/servers.py:240
-#, fuzzy
 #| msgid "The requested service is restrained"
 msgid "Server is restrained"
-msgstr "The requested service is restrained"
+msgstr "Server is restrained"
 
 #: core/managers/user_service.py:96
 msgid "Maximum number of user services reached for this {}"
@@ -2674,11 +2643,11 @@ msgstr "The service is not accessible from this device"
 
 #: core/messaging/config.py:43
 msgid "Number of seconds to ignore repeated messages"
-msgstr ""
+msgstr "Number of seconds to ignore repeated messages"
 
 #: core/messaging/provider.py:56 core/messaging/provider.py:68
 msgid "Base Notifier"
-msgstr ""
+msgstr "Base Notifier"
 
 #: core/mfas/mfa.py:92 mfas/SMS/mfa.py:232
 msgid "Allow user login"
@@ -2786,7 +2755,7 @@ msgstr "Tunnel"
 
 #: core/types/servers.py:65
 msgid "Actor"
-msgstr ""
+msgstr "Actor"
 
 #: core/types/transports.py:76
 msgid "Direct"
@@ -2802,13 +2771,15 @@ msgstr "Credentials"
 
 #: core/util/config.py:388
 msgid "Session expire time in hours after publishing"
-msgstr ""
+msgstr "Session expire time in hours after publishing"
 
 #: core/util/config.py:396
 msgid ""
 "Delay between cache checks. Reducing this number will increase cache "
 "generation speed but also will load service providers"
 msgstr ""
+"Delay between cache checks. Reducing this number will increase cache "
+"generation speed but also will load service providers"
 
 #: core/util/config.py:405
 msgid ""
@@ -2816,6 +2787,9 @@ msgid ""
 "deployed task will complete sooner, but it will give more load to overall "
 "system"
 msgstr ""
+"Delayed task number of threads PER SERVER, with higher number of threads, "
+"deployed task will complete sooner, but it will give more load to overall "
+"system"
 
 #: core/util/config.py:414
 msgid ""
@@ -2823,108 +2797,119 @@ msgid ""
 "threads, deployed task will complete sooner, but it will give more load to "
 "overall system"
 msgstr ""
+"Number of scheduler threads running PER SERVER, with higher number of "
+"threads, deployed task will complete sooner, but it will give more load to "
+"overall system"
 
 #: core/util/config.py:423
 msgid ""
 "Waiting time before removing \"errored\" and \"removed\" publications, "
 "cache, and user assigned machines. Time is in seconds"
 msgstr ""
+"Waiting time before removing \"errored\" and \"removed\" publications, "
+"cache, and user assigned machines. Time is in seconds"
 
 #: core/util/config.py:431
 msgid "Time to maintaing \"info state\" items before removing it, in seconds"
-msgstr ""
+msgstr "Time to maintaing \"info state\" items before removing it, in seconds"
 
 #: core/util/config.py:438
 msgid "Number of services to initiate removal per run of CacheCleaner"
-msgstr ""
+msgstr "Number of services to initiate removal per run of CacheCleaner"
 
 #: core/util/config.py:445
 msgid "Removal Check time for cache, publications and deployed services"
-msgstr ""
+msgstr "Removal Check time for cache, publications and deployed services"
 
 #: core/util/config.py:448
-#, fuzzy
 #| msgid "Service name"
 msgid "Superuser username"
-msgstr "Service name"
+msgstr "Superuser username"
 
 #: core/util/config.py:452
-#, fuzzy
 #| msgid "User's password"
 msgid "Superuser password"
-msgstr "User's password"
+msgstr "Superuser password"
 
 #: core/util/config.py:458
 msgid "Allow root user to access using web interface"
-msgstr ""
+msgstr "Allow root user to access using web interface"
 
 #: core/util/config.py:465
 msgid "Enable enhanced security modules"
-msgstr ""
+msgstr "Enable enhanced security modules"
 
 #: core/util/config.py:480 core/util/config.py:486
 msgid "Time betwen checks of unused user services by os managers"
-msgstr ""
+msgstr "Time betwen checks of unused user services by os managers"
 
 #: core/util/config.py:495
 msgid "Max logins before blocking an account for a while"
-msgstr ""
+msgstr "Max logins before blocking an account for a while"
 
 #: core/util/config.py:502
 msgid "Block time in second for an user that has too many login failures"
-msgstr ""
+msgstr "Block time in second for an user that has too many login failures"
 
 #: core/util/config.py:508
 msgid "Block ip on login failure"
-msgstr ""
+msgstr "Block ip on login failure"
 
 #: core/util/config.py:517
 msgid "Do autorun of service if just one service"
-msgstr ""
+msgstr "Do autorun of service if just one service"
 
 #: core/util/config.py:524
 msgid "Redirect HTTP to HTTPS on connection to UDS"
-msgstr ""
+msgstr "Redirect HTTP to HTTPS on connection to UDS"
 
 #: core/util/config.py:530
 msgid "Redirects login page to the tag used when logged in if active."
-msgstr ""
+msgstr "Redirects login page to the tag used when logged in if active."
 
 #: core/util/config.py:540
 msgid ""
 "Max time needed to get a service \"fully functional\" before it's considered "
 "\"failed\" and removed"
 msgstr ""
+"Max time needed to get a service \"fully functional\" before it's considered "
+"\"failed\" and removed"
 
 #: core/util/config.py:547
 msgid ""
 "Max time needed to get a service \"fully removed\" before it's considered "
 "\"failed\" and purged"
 msgstr ""
+"Max time needed to get a service \"fully removed\" before it's considered "
+"\"failed\" and purged"
 
 #: core/util/config.py:554
 msgid "Maximum logs per every log-capable administration element"
-msgstr ""
+msgstr "Maximum logs per every log-capable administration element"
 
 #: core/util/config.py:561
 msgid ""
 "Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 msgstr ""
+"Maximum logs entries for general UDS logs (0 = unlimited, use with care)"
 
 #: core/util/config.py:569
 msgid ""
 "Time to restrain a user service in case it gives some errors at some point"
 msgstr ""
+"Time to restrain a user service in case it gives some errors at some point"
 
 #: core/util/config.py:576
 msgid ""
 "Number of errors that must occurr in \"restrainTime\" to restrain an user "
 "service"
 msgstr ""
+"Number of errors that must occurr in \"restrainTime\" to restrain an user "
+"service"
 
 #: core/util/config.py:584
 msgid "Statistics duration, in days"
-msgstr ""
+msgstr "Statistics duration, in days"
 
 #: core/util/config.py:591
 msgid ""
@@ -2938,151 +2923,148 @@ msgstr "Maximum number of time to accumulate on one run. Default is 7 (1 week)"
 
 #: core/util/config.py:606
 msgid "If disallow login showing authenticatiors"
-msgstr ""
+msgstr "If disallow login showing authenticatiors"
 
 #: core/util/config.py:614
 msgid ""
 "Notify user of existence of a new version of a service on new publication"
 msgstr ""
+"Notify user of existence of a new version of a service on new publication"
 
 #: core/util/config.py:621
 msgid "Networks considered \"trusted\" for tunnel requests"
-msgstr ""
+msgstr "Networks considered \"trusted\" for tunnel requests"
 
 #: core/util/config.py:629
 msgid ""
 "Allow clients to notify their own ip (if set), or use always the request "
 "extracted IP"
 msgstr ""
+"Allow clients to notify their own ip (if set), or use always the request "
+"extracted IP"
 
 #: core/util/config.py:637
 msgid "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
-msgstr ""
+msgstr "If there is a proxy in front of us (i.e. HAProxy, or any NLB)"
 
 #: core/util/config.py:646
 msgid ""
 "If we use new logout mechanics for osmanagers, where only when the logged in "
 "users reaches 0, it is considered \"logged out\""
 msgstr ""
+"If we use new logout mechanics for osmanagers, where only when the logged in "
+"users reaches 0, it is considered \"logged out\""
 
 #: core/util/config.py:655
 msgid "Enable/Disable Actor attack detection ip blocking"
-msgstr ""
+msgstr "Enable/Disable Actor attack detection ip blocking"
 
 #: core/util/config.py:663
-#, fuzzy
 #| msgid "Max session per machine"
 msgid "Max session length for Admin"
-msgstr "Max session per machine"
+msgstr "Max session length for Admin"
 
 #: core/util/config.py:669
-#, fuzzy
 #| msgid "Max session per machine"
 msgid "Max session length for User"
-msgstr "Max session per machine"
+msgstr "Max session length for User"
 
 #: core/util/config.py:676
 msgid "Page reload Time (legacy)"
-msgstr ""
+msgstr "Page reload Time (legacy)"
 
 #: core/util/config.py:684
-#, fuzzy
 #| msgid ""
 #| "Custom message to be shown to users if access is limited by calendar "
 #| "rules."
 msgid "Custom message for error when limiting by calendar"
-msgstr ""
-"Custom message to be shown to users if access is limited by calendar rules."
+msgstr "Custom message for error when limiting by calendar"
 
 #: core/util/config.py:692
 msgid "If convert username to lowercase on logins"
-msgstr ""
+msgstr "If convert username to lowercase on logins"
 
 #: core/util/config.py:700
 msgid "Global UDS ID (common for all servers on the same cluster)"
-msgstr ""
+msgstr "Global UDS ID (common for all servers on the same cluster)"
 
 #: core/util/config.py:708
-#, fuzzy
 #| msgid "Friendly name"
 msgid "Site display name"
-msgstr "Friendly name"
+msgstr "Site display name"
 
 #: core/util/config.py:714
 msgid "Site copyright info"
-msgstr ""
+msgstr "Site copyright info"
 
 #: core/util/config.py:720
 msgid "Site copyright link"
-msgstr ""
+msgstr "Site copyright link"
 
 #: core/util/config.py:723
 msgid "Top navbar logo name"
-msgstr ""
+msgstr "Top navbar logo name"
 
 #: core/util/config.py:729
 msgid "Custom CSS styles applied to the user accesible site"
-msgstr ""
+msgstr "Custom CSS styles applied to the user accesible site"
 
 #: core/util/config.py:735
-#, fuzzy
 #| msgid "Services assignation"
 msgid "Site information"
-msgstr "Services assignation"
+msgstr "Site information"
 
 #: core/util/config.py:741
 msgid "Show Filter box for user services on Top or bottom of the page"
-msgstr ""
+msgstr "Show Filter box for user services on Top or bottom of the page"
 
 #: core/util/config.py:747
 msgid "Minimal User Services needed to show filter"
-msgstr ""
+msgstr "Minimal User Services needed to show filter"
 
 #: core/util/config.py:753
 msgid ""
 "Redirect URL after logout. If empty, the user will be redirected to the "
 "login page."
 msgstr ""
+"Redirect URL after logout. If empty, the user will be redirected to the "
+"login page."
 
 #: core/util/config.py:760
 msgid "Enable experimental features. USE WITH CAUTION!!"
-msgstr ""
+msgstr "Enable experimental features. USE WITH CAUTION!!"
 
 #: core/util/config.py:768
 msgid "Number of items per page in admin tables"
-msgstr ""
+msgstr "Number of items per page in admin tables"
 
 #: core/util/config.py:774
 msgid "List of trusted hosts/networks allowed to access the admin interface"
-msgstr ""
+msgstr "List of trusted hosts/networks allowed to access the admin interface"
 
 #: core/util/config.py:780
-#, fuzzy
 #| msgid "Base name for this user services"
 msgid "Enable VNC menu for user services"
-msgstr "Base name for this user services"
+msgstr "Enable VNC menu for user services"
 
 #: core/util/fields.py:80
 msgid "Tunnel server"
 msgstr "Tunnel server"
 
 #: core/util/fields.py:82
-#, fuzzy
 #| msgid "Tunnel server"
 msgid "Tunnel server to use"
-msgstr "Tunnel server"
+msgstr "Tunnel server to use"
 
 #: core/util/fields.py:111
-#, fuzzy
 #| msgid "Remove a group"
 msgid "Server group"
-msgstr "Remove a group"
+msgstr "Server group"
 
 #: core/util/fields.py:113
-#, fuzzy
 #| msgid "Service security groups"
 msgid "Server group to use"
-msgstr "Service security groups"
+msgstr "Server group to use"
 
 #: core/util/fields.py:133
 msgid "Ticket Validity"
@@ -3101,12 +3083,13 @@ msgid "Tunnel wait time"
 msgstr "Tunnel wait time"
 
 #: core/util/fields.py:154
-#, fuzzy
 #| msgid "Maximum time to wait before closing the tunnel listener"
 msgid ""
 "Maximum time, in seconds, to wait before disable new connections on client "
 "tunnel listener"
-msgstr "Maximum time to wait before closing the tunnel listener"
+msgstr ""
+"Maximum time, in seconds, to wait before disable new connections on client "
+"tunnel listener"
 
 #: core/util/ldaputil.py:186
 msgid "Can't contact LDAP server"
@@ -3220,86 +3203,73 @@ msgid "{0} contains invalid characters"
 msgstr "{0} contains invalid characters"
 
 #: core/util/validators.py:93
-#, fuzzy
 #| msgid "{} exceeds maximum host name length."
 msgid "{} is not a valid hostname: maximum host name length exceeded."
-msgstr "{} exceeds maximum host name length."
+msgstr "{} is not a valid hostname: maximum host name length exceeded."
 
 #: core/util/validators.py:99
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid hostname: (domains not allowed)"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid hostname: (domains not allowed)"
 
 #: core/util/validators.py:105
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid hostname: (invalid characters)"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid hostname: (invalid characters)"
 
 #: core/util/validators.py:116
-#, fuzzy
 #| msgid "{} exceeds maximum host name length."
 msgid "{} is not a valid URL: exceeds maximum length."
-msgstr "{} exceeds maximum host name length."
+msgstr "{} is not a valid URL: exceeds maximum length."
 
 #: core/util/validators.py:136
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid IPv4 address"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid IPv4 address"
 
 #: core/util/validators.py:150
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid IPv6 address"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid IPv6 address"
 
 #: core/util/validators.py:165
-#, fuzzy
 #| msgid "{} is not a valid host:port pair"
 msgid "{} is not a valid IPv4 or IPv6 address"
-msgstr "{} is not a valid host:port pair"
+msgstr "{} is not a valid IPv4 or IPv6 address"
 
 #: core/util/validators.py:192
-#, fuzzy
 #| msgid "{} exceeds maximum host name length."
 msgid "{} exceeds maximum path length."
-msgstr "{} exceeds maximum host name length."
+msgstr "{} exceeds maximum path length."
 
 #: core/util/validators.py:199
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid windows path"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid windows path"
 
 #: core/util/validators.py:202
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid unix path"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid unix path"
 
 #: core/util/validators.py:205
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid path"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid path"
 
 #: core/util/validators.py:259
 msgid "{} is not a valid host:port pair"
 msgstr "{} is not a valid host:port pair"
 
 #: core/util/validators.py:286
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid MAC address"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid MAC address"
 
 #: core/util/validators.py:302
-#, fuzzy
 #| msgid "{} is not a valid hostname"
 msgid "{} is not a valid MAC range"
-msgstr "{} is not a valid hostname"
+msgstr "{} is not a valid MAC range"
 
 #: core/util/validators.py:314
 msgid "Email address is too long"
@@ -3326,34 +3296,31 @@ msgid "The machine name can't be only numbers"
 msgstr "The machine name can't be only numbers"
 
 #: core/util/validators.py:369
-#, fuzzy
 #| msgid "Invalid data"
 msgid "Invalid JSON data"
-msgstr "Invalid data"
+msgstr "Invalid JSON data"
 
 #: core/util/validators.py:390 core/util/validators.py:411
-#, fuzzy
 #| msgid "Invalid server certificate. "
 msgid "Invalid certificate"
-msgstr "Invalid server certificate. "
+msgstr "Invalid certificate"
 
 #: dispatchers/wyse_enterprise/config.py:20
 msgid "Privileges"
-msgstr ""
+msgstr "Privileges"
 
 #: dispatchers/wyse_enterprise/config.py:24
 msgid "Default user to use when no user is specified"
-msgstr ""
+msgstr "Default user to use when no user is specified"
 
 #: dispatchers/wyse_enterprise/config.py:29
 msgid "Default language to use when no language is specified"
-msgstr ""
+msgstr "Default language to use when no language is specified"
 
 #: dispatchers/wyse_enterprise/config.py:33
-#, fuzzy
 #| msgid "Color depth for this connection"
 msgid "How many colors use for connection"
-msgstr "Color depth for this connection"
+msgstr "How many colors use for connection"
 
 #: dispatchers/wyse_enterprise/views.py:120
 msgid "There are no authenticators available for login"
@@ -3943,13 +3910,12 @@ msgstr "Time in hours before considering the user service is OLD."
 
 #: models/calendar_action.py:194
 msgid "Clean L1 cache"
-msgstr ""
+msgstr "Clean L1 cache"
 
 #: models/calendar_action.py:200
-#, fuzzy
 #| msgid "Set L2 cache size"
 msgid "Clean L2 cache"
-msgstr "Set L2 cache size"
+msgstr "Clean L2 cache"
 
 #: models/calendar_rule.py:55
 msgid "Yearly"
@@ -3973,7 +3939,7 @@ msgstr "Weekdays"
 
 #: models/calendar_rule.py:60
 msgid "Never"
-msgstr ""
+msgstr "Never"
 
 #: models/calendar_rule.py:80
 msgid "Minutes"
@@ -3998,76 +3964,71 @@ msgstr "General"
 
 #: notifiers/email/notifier.py:60 notifiers/email/notifier.py:64
 msgid "Email notifications"
-msgstr ""
+msgstr "Email notifications"
 
 #: notifiers/email/notifier.py:125
-#, fuzzy
 #| msgid "From Email"
 msgid "To Email"
-msgstr "From Email"
+msgstr "To Email"
 
 #: notifiers/email/notifier.py:127
-#, fuzzy
 #| msgid "Email address that will be used as sender"
 msgid "Email address that will be used as recipient"
-msgstr "Email address that will be used as sender"
+msgstr "Email address that will be used as recipient"
 
 #: notifiers/telegram/notifier.py:63 notifiers/telegram/notifier.py:67
 msgid "Telegram notifications"
-msgstr ""
+msgstr "Telegram notifications"
 
 #: notifiers/telegram/notifier.py:75
-#, fuzzy
 #| msgid "Name"
 msgid "Bot Name"
-msgstr "Name"
+msgstr "Bot Name"
 
 #: notifiers/telegram/notifier.py:77
-#, fuzzy
 #| msgid "Short name"
 msgid "Bot name"
-msgstr "Short name"
+msgstr "Bot name"
 
 #: notifiers/telegram/notifier.py:80 notifiers/telegram/notifier.py:90
 #: notifiers/telegram/notifier.py:101 notifiers/telegram/notifier.py:116
 msgid "Telegram"
-msgstr ""
+msgstr "Telegram"
 
 #: notifiers/telegram/notifier.py:85 notifiers/telegram/notifier.py:87
-#, fuzzy
 #| msgid "Access denied"
 msgid "Access Token"
-msgstr "Access denied"
+msgstr "Access Token"
 
 #: notifiers/telegram/notifier.py:98
 msgid ""
 "Secret key used to validate subscribtion requests (using /join or /subscribe "
 "commands)"
 msgstr ""
+"Secret key used to validate subscribtion requests (using /join or /subscribe "
+"commands)"
 
 #: notifiers/telegram/notifier.py:109
-#, fuzzy
 #| msgid "Check Cert."
 msgid "Check delay"
-msgstr "Check Cert."
+msgstr "Check delay"
 
 #: notifiers/telegram/notifier.py:111
 msgid "Delay in seconds between checks for commands"
-msgstr ""
+msgstr "Delay in seconds between checks for commands"
 
 #: notifiers/telegram/notifier.py:132
-#, fuzzy
 #| msgid "Invalid network: {}"
 msgid "Invalid value for {}"
-msgstr "Invalid network: {}"
+msgstr "Invalid value for {}"
 
 #: notifiers/telegram/notifier.py:206
 msgid "You have been subscribed to notifications"
-msgstr ""
+msgstr "You have been subscribed to notifications"
 
 #: notifiers/telegram/notifier.py:209
 msgid "You have been unsubscribed from notifications"
-msgstr ""
+msgstr "You have been unsubscribed from notifications"
 
 #: osmanagers/LinuxOsManager/__init__.py:51
 msgid ""
@@ -4126,16 +4087,14 @@ msgstr ""
 "2.7)</b>"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:57
-#, fuzzy
 #| msgid "Linux OS Manager"
 msgid "Linux OS Active Directory Manager"
-msgstr "Linux OS Manager"
+msgstr "Linux OS Active Directory Manager"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:59
-#, fuzzy
 #| msgid "Os Manager to control Linux virtual machines"
 msgid "Os Manager to control Linux virtual machines with active directory"
-msgstr "Os Manager to control Linux virtual machines"
+msgstr "Os Manager to control Linux virtual machines with active directory"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:64
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:64
@@ -4193,56 +4152,53 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:92
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:84
-#, fuzzy
 #| msgid "Client Secret"
 msgid "Client software"
-msgstr "Client Secret"
+msgstr "Client software"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:94
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:86
 msgid "Use specific client software"
-msgstr ""
+msgstr "Use specific client software"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:96
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:108
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:88
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:100
-#, fuzzy
 #| msgid "Automatic selection"
 msgid "Automatically"
-msgstr "Automatic selection"
+msgstr "Automatically"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:97
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:89
 msgid "SSSD"
-msgstr ""
+msgstr "SSSD"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:98
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:90
 msgid "Winbind"
-msgstr ""
+msgstr "Winbind"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:104
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:96
-#, fuzzy
 #| msgid "Group membership attr"
 msgid "Membership software"
-msgstr "Group membership attr"
+msgstr "Membership software"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:106
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:98
 msgid "Use specific membership software"
-msgstr ""
+msgstr "Use specific membership software"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:109
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:101
 msgid "Samba"
-msgstr ""
+msgstr "Samba"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:110
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:102
 msgid "adcli"
-msgstr ""
+msgstr "adcli"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:116
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:108
@@ -4262,22 +4218,20 @@ msgstr ""
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:127
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:119
-#, fuzzy
 #| msgid "If checked,  a ssl connection to Active Directory will be used"
 msgid "If checked, a ssl connection to Active Directory will be used"
-msgstr "If checked,  a ssl connection to Active Directory will be used"
+msgstr "If checked, a ssl connection to Active Directory will be used"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:132
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:124
-#, fuzzy
 #| msgid "Automatic selection"
 msgid "Automatic ID mapping"
-msgstr "Automatic selection"
+msgstr "Automatic ID mapping"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:134
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:126
 msgid "If checked, automatic ID mapping"
-msgstr ""
+msgstr "If checked, automatic ID mapping"
 
 #: osmanagers/LinuxOsManager/linux_ad_osmanager.py:159
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:150
@@ -4298,16 +4252,14 @@ msgid "Must provide a password for the account!"
 msgstr "Must provide a password for the account!"
 
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:57
-#, fuzzy
 #| msgid "Linux OS Manager"
 msgid "Linux OS FreeIPA Manager"
-msgstr "Linux OS Manager"
+msgstr "Linux OS FreeIPA Manager"
 
 #: osmanagers/LinuxOsManager/linux_freeipa_osmanager.py:59
-#, fuzzy
 #| msgid "Os Manager to control Linux virtual machines"
 msgid "Os Manager to control Linux virtual machines with FreeIPA"
-msgstr "Os Manager to control Linux virtual machines"
+msgstr "Os Manager to control Linux virtual machines with FreeIPA"
 
 #: osmanagers/LinuxOsManager/linux_osmanager.py:55
 msgid "Linux OS Manager"
@@ -4394,14 +4346,13 @@ msgid "Must provide an user account!!!"
 msgstr "Must provide an user account!!!"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:48
-#, fuzzy
 #| msgid "RDS UDS Actor (for remote apps on Windows Server)"
 msgid "UDS RDS Server (for remote apps on Windows Server)"
-msgstr "RDS UDS Actor (for remote apps on Windows Server)"
+msgstr "UDS RDS Server (for remote apps on Windows Server)"
 
 #: osmanagers/RDSOsManager_enterprise/__init__.py:56
 msgid "RDS UDS Actor (legacy, use UDS RDS Server instead)"
-msgstr ""
+msgstr "RDS UDS Actor (legacy, use UDS RDS Server instead)"
 
 #: osmanagers/RDSOsManager_enterprise/rds_osmanager.py:33
 msgid "RDS OS Manager"
@@ -4424,16 +4375,14 @@ msgstr ""
 "period, session will be released."
 
 #: osmanagers/Test/testing_osmanager.py:53
-#, fuzzy
 #| msgid "Base OS Manager"
 msgid "Test OS Manager"
-msgstr "Base OS Manager"
+msgstr "Test OS Manager"
 
 #: osmanagers/Test/testing_osmanager.py:55
-#, fuzzy
 #| msgid "Password for testing purposes"
 msgid "Os Manager for testing pourposes"
-msgstr "Password for testing purposes"
+msgstr "Os Manager for testing pourposes"
 
 #: osmanagers/Test/testing_osmanager.py:83
 #: osmanagers/WindowsOsManager/windows.py:76
@@ -5022,7 +4971,6 @@ msgstr "Timeout in seconds of connection to vCloud"
 
 #: services/AWS_enterprise/provider.py:92
 #: services/Azure_enterprise/provider.py:115 services/OpenStack/provider.py:217
-#, fuzzy
 #| msgid ""
 #| "Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
 #| "host:port, i.e. http://10.10.0.1:8080)"
@@ -5030,8 +4978,8 @@ msgid ""
 "Proxy used on server connections for HTTPS connections (use PROTOCOL://host:"
 "port, i.e. http://10.10.0.1:8080)"
 msgstr ""
-"Proxy used for connection to azure for HTTPS connections (use PROTOCOL://"
-"host:port, i.e. http://10.10.0.1:8080)"
+"Proxy used on server connections for HTTPS connections (use PROTOCOL://host:"
+"port, i.e. http://10.10.0.1:8080)"
 
 #: services/AWS_enterprise/provider.py:100
 msgid "Default region"
@@ -6383,7 +6331,6 @@ msgid "Only if NOT available"
 msgstr "Only if NOT available"
 
 #: services/RDS_enterprise/config.py:10
-#, fuzzy
 #| msgid ""
 #| "Maximum duration in hours for a session (0 means no limit). After this "
 #| "period, session will be released."
@@ -6391,8 +6338,8 @@ msgid ""
 "Maximum time in seconds a session can be active without being used. After "
 "this time, the session will be considered terminated."
 msgstr ""
-"Maximum duration in hours for a session (0 means no limit). After this "
-"period, session will be released."
+"Maximum time in seconds a session can be active without being used. After "
+"this time, the session will be considered terminated."
 
 #: services/RDS_enterprise/provider.py:73
 msgid "RDS Platform Provider"
@@ -6443,16 +6390,14 @@ msgstr ""
 "disabled)"
 
 #: services/RDS_enterprise/provider.py:119
-#, fuzzy
 #| msgid "Services assignation"
 msgid "Session duration"
-msgstr "Services assignation"
+msgstr "Session duration"
 
 #: services/RDS_enterprise/provider.py:123
-#, fuzzy
 #| msgid "User list for mapping. (Not used if User mapping is disabled)"
 msgid "Max. session duration in hours. (Not used if User mapping is disabled)"
-msgstr "User list for mapping. (Not used if User mapping is disabled)"
+msgstr "Max. session duration in hours. (Not used if User mapping is disabled)"
 
 #: services/RDS_enterprise/provider.py:131
 msgid "User auto creation on AD"
@@ -6543,7 +6488,7 @@ msgstr "If not empty, UDS will try to add managed users to this group"
 
 #: services/RDS_enterprise/provider.py:213
 msgid "AD Certificate (PEM format). Leave empty to use standard CA"
-msgstr ""
+msgstr "AD Certificate (PEM format). Leave empty to use standard CA"
 
 #: services/RDS_enterprise/provider.py:223
 msgid "Select only one of \"User mapping\" or \"User creation\" methods."
@@ -6575,7 +6520,7 @@ msgstr "AD User Management: you must provide the user creation domain FQDN."
 
 #: services/RDS_enterprise/provider.py:269
 msgid "User mapping is not supported anymore on UDS."
-msgstr ""
+msgstr "User mapping is not supported anymore on UDS."
 
 #: services/RDS_enterprise/provider.py:305
 msgid "Connection to {}, port {} failed."
@@ -6590,20 +6535,18 @@ msgid "User creation test failed. Please, check parameters."
 msgstr "User creation test failed. Please, check parameters."
 
 #: services/RDS_enterprise/provider.py:350
-#, fuzzy
 #| msgid "Server {} is not accesible and Server checking is enabled"
 msgid "Connection to {} failed and server checking is enabled."
-msgstr "Server {} is not accesible and Server checking is enabled"
+msgstr "Connection to {} failed and server checking is enabled."
 
 #: services/RDS_enterprise/provider.py:355
 msgid "Connectivity test passed"
 msgstr "Connectivity test passed"
 
 #: services/RDS_enterprise/provider.py:640
-#, fuzzy
 #| msgid "No services available"
 msgid "No more servers available"
-msgstr "No services available"
+msgstr "No more servers available"
 
 #: services/RDS_enterprise/service.py:34
 msgid "RDS Platform RemoteAPP"
@@ -6678,10 +6621,9 @@ msgid "This fields contains a remote host"
 msgstr "This fields contains a remote host"
 
 #: services/Sample/provider.py:111
-#, fuzzy
 #| msgid "This is a text area"
 msgid "This is a password field"
-msgstr "This is a text area"
+msgstr "This is a password field"
 
 #: services/Sample/provider.py:119
 msgid "Your pet's name"
@@ -6708,28 +6650,24 @@ msgid "If you fail, this will not get saved :-)"
 msgstr "If you fail, this will not get saved :-)"
 
 #: services/Sample/provider.py:147
-#, fuzzy
 #| msgid "Is Methuselah still alive?"
 msgid "Is Methuselah still alive BBBB?"
-msgstr "Is Methuselah still alive?"
+msgstr "Is Methuselah still alive BBBB?"
 
 #: services/Sample/provider.py:148
-#, fuzzy
 #| msgid "If you fail, this will not get saved :-)"
 msgid "If you fail, this will not get saved BBBB"
-msgstr "If you fail, this will not get saved :-)"
+msgstr "If you fail, this will not get saved BBBB"
 
 #: services/Sample/provider.py:155
-#, fuzzy
 #| msgid "Is Methuselah still alive?"
 msgid "Is Methuselah still alive CCCC?"
-msgstr "Is Methuselah still alive?"
+msgstr "Is Methuselah still alive CCCC?"
 
 #: services/Sample/provider.py:156
-#, fuzzy
 #| msgid "If you fail, this will not get saved :-)"
 msgid "If you fail, this will not get saved CCCC"
-msgstr "If you fail, this will not get saved :-)"
+msgstr "If you fail, this will not get saved CCCC"
 
 #: services/Sample/provider.py:164
 msgid "Text area"
@@ -6800,36 +6738,32 @@ msgid "List of names"
 msgstr "List of names"
 
 #: services/Test/provider.py:65
-#, fuzzy
 #| msgid "Sample Provider"
 msgid "Testing Provider"
-msgstr "Sample Provider"
+msgstr "Testing Provider"
 
 #: services/Test/provider.py:69
-#, fuzzy
 #| msgid "Sample (and dummy) service provider"
 msgid "Test (and dummy) service provider"
-msgstr "Sample (and dummy) service provider"
+msgstr "Test (and dummy) service provider"
 
 #: services/Test/service.py:56
-#, fuzzy
 #| msgid "Services to keep in cache"
 msgid "Testing Service no cache"
-msgstr "Services to keep in cache"
+msgstr "Testing Service no cache"
 
 #: services/Test/service.py:58
-#, fuzzy
 #| msgid "Sample (and dummy) service provider"
 msgid "Testing (and dummy) service with no cache"
-msgstr "Sample (and dummy) service provider"
+msgstr "Testing (and dummy) service with no cache"
 
 #: services/Test/service.py:89
 msgid "Testing Service WITH cache"
-msgstr ""
+msgstr "Testing Service WITH cache"
 
 #: services/Test/service.py:91
 msgid "Testing (and dummy) service with CACHE and PUBLICATION"
-msgstr ""
+msgstr "Testing (and dummy) service with CACHE and PUBLICATION"
 
 #: services/VCloud_enterprise/provider.py:41
 msgid "vCloud Server IP or Hostname"
@@ -7551,10 +7485,9 @@ msgid "Layout"
 msgstr "Layout"
 
 #: transports/HTML5RDP/html5rdp.py:187
-#, fuzzy
 #| msgid "Keyboards Layout of server"
 msgid "Keyboard Layout of server"
-msgstr "Keyboards Layout of server"
+msgstr "Keyboard Layout of server"
 
 #: transports/HTML5RDP/html5rdp.py:191
 msgid "English (US) keyboard"
@@ -7854,16 +7787,14 @@ msgstr ""
 "no keep alive messages are sent."
 
 #: transports/HTML5VNC/html5vnc.py:63
-#, fuzzy
 #| msgid "HTML5 RDP"
 msgid "HTML5 VNC"
-msgstr "HTML5 RDP"
+msgstr "HTML5 VNC"
 
 #: transports/HTML5VNC/html5vnc.py:65
-#, fuzzy
 #| msgid "RDP protocol using HTML5 client"
 msgid "VNC protocol using HTML5 client"
-msgstr "RDP protocol using HTML5 client"
+msgstr "VNC protocol using HTML5 client"
 
 #: transports/HTML5VNC/html5vnc.py:81
 msgid "Username for VNC connection authentication."
@@ -7978,10 +7909,9 @@ msgstr "Window size on connection"
 
 #: transports/NoMachine_enterprise/nomachine_transport.py:63
 #: transports/NoMachine_enterprise/nomachine_tunneltransport.py:65
-#, fuzzy
 #| msgid "Machine"
 msgid "NoMachine"
-msgstr "Machine"
+msgstr "NoMachine"
 
 #: transports/NoMachine_enterprise/nomachine_transport.py:65
 msgid "NoMachine Protocol Direct connection."
@@ -8342,13 +8272,12 @@ msgstr "SPICE Protocol. Tunneled connection."
 
 #: transports/SPICE/spicetunnel.py:111
 msgid "No console connection data received"
-msgstr ""
+msgstr "No console connection data received"
 
 #: transports/Test/transport.py:56 transports/Test/transport.py:58
-#, fuzzy
 #| msgid "Transport"
 msgid "Test Transport"
-msgstr "Transport"
+msgstr "Test Transport"
 
 #: transports/Test/transport.py:67 transports/URL/url_custom.py:68
 msgid "URL Pattern"
