@@ -30,17 +30,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
-from django.utils.translation import gettext, gettext_lazy as _
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
 
-from uds.core import osmanagers
+from uds.core import exceptions, osmanagers
 from uds.core.environment import Environment
-from uds.core.util import permissions, ensure
+from uds.core.util import ensure, permissions
 from uds.models import OSManager
-from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
 if typing.TYPE_CHECKING:
@@ -86,7 +86,7 @@ class OsManagers(ModelHandler):
         item = ensure.is_instance(item, OSManager)
         # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
-            raise RequestError(
+            raise exceptions.rest.RequestError(
                 gettext('Can\'t delete an OS Manager with services pools associated')
             )
 
@@ -100,7 +100,7 @@ class OsManagers(ModelHandler):
             osmanagerType = osmanagers.factory().lookup(type_)
 
             if not osmanagerType:
-                raise NotFound('OS Manager type not found')
+                raise exceptions.rest.NotFound('OS Manager type not found')
 
             osmanager = osmanagerType(Environment.getTempEnv(), None)
 
@@ -109,4 +109,4 @@ class OsManagers(ModelHandler):
                 ['name', 'comments', 'tags'],
             )
         except:
-            raise NotFound('type not found')
+            raise exceptions.rest.NotFound('type not found')

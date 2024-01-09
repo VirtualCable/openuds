@@ -350,7 +350,7 @@ def blocker(
         Decorator
 
     """
-    from uds.REST.exceptions import AccessDenied  # To avoid circular references
+    from uds.core.exceptions.rest import AccessDenied  # To avoid circular references
 
     max_failures = max_failures or consts.system.ALLOWED_FAILS
 

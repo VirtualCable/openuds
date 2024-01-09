@@ -36,10 +36,10 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 
+from uds.core import exceptions
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
-from uds.REST import RequestError
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
@@ -105,7 +105,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
         return {'field': 'running', 'prefix': 'row-running-'}
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
-        raise RequestError('Accounts usage cannot be edited')
+        raise exceptions.rest.RequestError('Accounts usage cannot be edited')
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Account)

@@ -30,20 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
-from uds.core import services
+from uds.core import exceptions, services
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
 from uds.core.util.state import State
 from uds.models import Provider, Service, UserService
-from uds.REST import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
 from .services import Services as DetailServices
@@ -115,7 +114,7 @@ class Providers(ModelHandler):
     def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Provider)
         if item.services.count() > 0:
-            raise RequestError(gettext('Can\'t delete providers with services'))
+            raise exceptions.rest.RequestError(gettext('Can\'t delete providers with services'))
 
     # Types related
     def enum_types(self) -> collections.abc.Iterable[type[services.ServiceProvider]]:
@@ -127,7 +126,7 @@ class Providers(ModelHandler):
         if providerType:
             provider = providerType(Environment.getTempEnv(), None)
             return self.add_default_fields(provider.guiDescription(), ['name', 'comments', 'tags'])
-        raise NotFound('Type not found!')
+        raise exceptions.rest.NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[dict, None, None]:
         """
@@ -172,7 +171,7 @@ class Providers(ModelHandler):
         spType = services.factory().lookup(type_)
 
         if not spType:
-            raise NotFound('Type not found!')
+            raise exceptions.rest.NotFound('Type not found!')
 
         tmpEnvironment = Environment.getTempEnv()
         logger.debug('spType: %s', spType)

@@ -30,13 +30,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
+from uds.core import exceptions
 from uds.core.ui import gui
-from uds.REST import Handler, RequestError, NotFound
-
+from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +50,9 @@ class Callback(Handler):
 
     def get(self) -> list[dict[str, typing.Any]]:
         if len(self._args) != 1:
-            raise RequestError('Invalid Request')
+            raise exceptions.rest.RequestError('Invalid Request')
 
         if self._args[0] in gui.callbacks:
             return gui.callbacks[self._args[0]](self._params)
 
-        raise NotFound('callback {0} not found'.format(self._args[0]))
+        raise exceptions.rest.NotFound('callback {0} not found'.format(self._args[0]))

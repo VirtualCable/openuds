@@ -34,6 +34,7 @@ from . import actor
 from . import auth
 from . import service
 from . import validation
+from . import rest
 
 # Common exceptions inserted here
 from .common import UDSException, BlockAccess

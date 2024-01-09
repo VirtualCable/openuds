@@ -44,7 +44,7 @@ from django.db import IntegrityError, models
 from django.utils.translation import gettext as _
 
 from uds.core import consts
-from uds.core import exceptions as udsExceptions
+from uds.core import exceptions
 from uds.core import types
 from uds.core.module import Module
 from uds.core.util import log, permissions
@@ -52,7 +52,6 @@ from uds.core.util.model import process_uuid
 from uds.models import ManagedObjectModel, Network, Tag, TaggingMixin
 from uds.REST.utils import rest_result
 
-from . import exceptions
 from .handlers import Handler
 
 # Not imported at runtime, just for type checking
@@ -115,7 +114,7 @@ class BaseModelHandler(Handler):
                         caller.filename,
                         caller.lineno,
                     )
-                    raise exceptions.RequestError(f'Field {fld} is mandatory on {field.get("name", "")} field.')
+                    raise exceptions.rest.RequestError(f'Field {fld} is mandatory on {field.get("name", "")} field.')
 
             if choices:
                 guiDesc['choices'] = choices
@@ -332,7 +331,7 @@ class BaseModelHandler(Handler):
                     args[key] = self._params[key]
                 # del self._params[key]
         except KeyError as e:
-            raise exceptions.RequestError(f'needed parameter not found in data {e}')
+            raise exceptions.rest.RequestError(f'needed parameter not found in data {e}')
 
         return args
 
@@ -352,37 +351,37 @@ class BaseModelHandler(Handler):
         return res
 
     # Exceptions
-    def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
         """
         message = message or _('Invalid Request')
-        return exceptions.RequestError(f'{message} {self.__class__}: {self._args}')
+        return exceptions.rest.RequestError(f'{message} {self.__class__}: {self._args}')
 
-    def invalid_response_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_response_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
         message = 'Invalid response' if message is None else message
-        return exceptions.ResponseError(message)
+        return exceptions.rest.ResponseError(message)
 
-    def invalid_method_response(self) -> exceptions.HandlerError:
+    def invalid_method_response(self) -> exceptions.rest.HandlerError:
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
-        return exceptions.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
+        return exceptions.rest.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    def invalid_item_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_item_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
         """
         Raises a NotFound exception, with location info
         """
         message = message or _('Item not found')
-        return exceptions.NotFound(message)
+        return exceptions.rest.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def access_denied_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
-        return exceptions.AccessDenied(message or _('Access denied'))
+    def access_denied_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+        return exceptions.rest.AccessDenied(message or _('Access denied'))
 
-    def not_supported_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
-        return exceptions.NotSupportedError(message or _('Operation not supported'))
+    def not_supported_response(self, message: typing.Optional[str] = None) -> exceptions.rest.HandlerError:
+        return exceptions.rest.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
     def success(self) -> str:
@@ -435,7 +434,7 @@ class DetailHandler(BaseModelHandler):
 
     def __init__(
         self,
-        parentHandler: 'ModelHandler',
+        parent_handler: 'ModelHandler',
         path: str,
         params: typing.Any,
         *args: str,
@@ -446,7 +445,7 @@ class DetailHandler(BaseModelHandler):
         parent modelhandler has already done it (so we must access through parent handler)
         """
         # Parent init not invoked because their methos are not used on detail handlers (only on parent handlers..)
-        self._parent = parentHandler
+        self._parent = parent_handler
         self._path = path
         self._params = params
         self._args = args
@@ -779,7 +778,7 @@ class ModelHandler(BaseModelHandler):
                 break
 
         if found is None:
-            raise exceptions.NotFound('type not found')
+            raise exceptions.rest.NotFound('type not found')
 
         logger.debug('Found type %s', found)
         return found
@@ -864,7 +863,7 @@ class ModelHandler(BaseModelHandler):
         except Exception as e:
             logger.exception('Exception:')
             logger.info('Filtering expression %s is invalid!', self.fltr)
-            raise exceptions.RequestError(f'Filtering expression {self.fltr} is invalid') from e
+            raise exceptions.rest.RequestError(f'Filtering expression {self.fltr} is invalid') from e
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
@@ -902,7 +901,7 @@ class ModelHandler(BaseModelHandler):
             raise self.invalid_item_response() from e
         except (KeyError, AttributeError) as e:
             raise self.invalid_method_response() from e
-        except exceptions.HandlerError:
+        except exceptions.rest.HandlerError:
             raise
         except Exception as e:
             logger.error('Exception processing detail: %s', e)
@@ -1157,16 +1156,16 @@ class ModelHandler(BaseModelHandler):
             return res
 
         except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
-            raise exceptions.NotFound('Item not found') from None
+            raise exceptions.rest.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
-            raise exceptions.RequestError('Element already exists (duplicate key error)') from None
-        except (exceptions.SaveException, udsExceptions.validation.ValidationError) as e:
-            raise exceptions.RequestError(str(e)) from e
-        except (exceptions.RequestError, exceptions.ResponseError):
+            raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from None
+        except (exceptions.rest.SaveException, exceptions.validation.ValidationError) as e:
+            raise exceptions.rest.RequestError(str(e)) from e
+        except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise
         except Exception as e:
             logger.exception('Exception on put')
-            raise exceptions.RequestError('incorrect invocation to PUT') from e
+            raise exceptions.rest.RequestError('incorrect invocation to PUT') from e
 
     def delete(self) -> typing.Any:
         """
@@ -1177,7 +1176,7 @@ class ModelHandler(BaseModelHandler):
             return self.process_detail()
 
         if len(self._args) != 1:
-            raise exceptions.RequestError('Delete need one and only one argument')
+            raise exceptions.rest.RequestError('Delete need one and only one argument')
 
         self.ensure_has_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
@@ -1188,7 +1187,7 @@ class ModelHandler(BaseModelHandler):
             self.validate_delete(item)
             self.delete_item(item)
         except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
-            raise exceptions.NotFound('Element do not exists') from None
+            raise exceptions.rest.NotFound('Element do not exists') from None
 
         return consts.OK
 

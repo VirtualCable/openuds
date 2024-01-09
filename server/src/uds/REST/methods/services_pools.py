@@ -39,7 +39,7 @@ from django.db.models import Count, Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import consts, types
+from uds.core import types, exceptions
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
@@ -58,7 +58,6 @@ from uds.models.calendar_action import (
     CALENDAR_ACTION_MAX, CALENDAR_ACTION_PUBLISH,
     CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
     CALENDAR_ACTION_REMOVE_USERSERVICES)
-from uds.REST import RequestError, ResponseError
 from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
@@ -279,9 +278,9 @@ class ServicesPools(ModelHandler):
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
-        #    raise ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
+        #    raise exceptions.rest.ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
-            raise ResponseError(gettext('Create at least a service before creating a new service pool'))
+            raise exceptions.rest.ResponseError(gettext('Create at least a service before creating a new service pool'))
 
         g = self.add_default_fields([], ['name', 'comments', 'tags'])
 
@@ -478,17 +477,17 @@ class ServicesPools(ModelHandler):
             return len(w)
                 
         if macro_fld_len(fields['name']) > 128:
-            raise RequestError(gettext('Name too long'))
+            raise exceptions.rest.RequestError(gettext('Name too long'))
         
         if macro_fld_len(fields['short_name']) > 32:
-            raise RequestError(gettext('Short name too long'))
+            raise exceptions.rest.RequestError(gettext('Short name too long'))
 
         try:
             try:
                 service = Service.objects.get(uuid=process_uuid(fields['service_id']))
                 fields['service_id'] = service.id
             except Exception:
-                raise RequestError(gettext('Base service does not exist anymore')) from None
+                raise exceptions.rest.RequestError(gettext('Base service does not exist anymore')) from None
 
             try:
                 serviceType = service.get_type()
@@ -531,7 +530,7 @@ class ServicesPools(ModelHandler):
                     #    fields['initial_srvs'] = min(fields['initial_srvs'], serviceType.max_user_services)
                     #    fields['cache_l1_srvs'] = min(fields['cache_l1_srvs'], serviceType.max_user_services)
             except Exception as e:
-                raise RequestError(gettext('This service requires an OS Manager')) from e
+                raise exceptions.rest.RequestError(gettext('This service requires an OS Manager')) from e
 
             # If max < initial or cache_1 or cache_l2
             fields['max_srvs'] = max(
@@ -576,10 +575,10 @@ class ServicesPools(ModelHandler):
             except Exception:
                 logger.exception('At service pool group recovering')
 
-        except (RequestError, ResponseError):
+        except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise
         except Exception as e:
-            raise RequestError(str(e)) from e
+            raise exceptions.rest.RequestError(str(e)) from e
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, ServicePool)

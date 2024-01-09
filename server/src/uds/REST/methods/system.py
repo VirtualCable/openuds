@@ -30,23 +30,21 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import pickle  # nosec: pickle is used to cache data, not to load it
-import datetime
 import codecs
-import logging
-import typing
 import collections.abc
+import datetime
+import logging
+import pickle  # nosec: pickle is used to cache data, not to load it
+import typing
 
 from uds import models
-from uds.core import types
-from uds.core.util.model import sql_datetime
-
-from uds.core.util.model import process_uuid
-from uds.core.util.stats import counters
-from uds.core.util.cache import Cache
-from uds.core.util.state import State
+from uds.core import exceptions, types
 from uds.core.util import permissions
-from uds.REST import Handler, RequestError, ResponseError, AccessDenied
+from uds.core.util.cache import Cache
+from uds.core.util.model import process_uuid, sql_datetime
+from uds.core.util.state import State
+from uds.core.util.stats import counters
+from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +106,7 @@ def get_servicepools_counters(
         return val
     except Exception as e:
         logger.exception('getServicesPoolsCounters')
-        raise ResponseError('can\'t create stats for objects!!!') from e
+        raise exceptions.rest.ResponseError('can\'t create stats for objects!!!') from e
 
 
 class System(Handler):
@@ -154,7 +152,7 @@ class System(Handler):
         if len(self._args) == 1:
             if self._args[0] == 'overview':  # System overview
                 if not self._user.is_admin:
-                    raise AccessDenied()
+                    raise exceptions.rest.AccessDenied()
                 users: int = models.User.objects.count()
                 groups: int = models.Group.objects.count()
                 services: int = models.Service.objects.count()
@@ -188,12 +186,12 @@ class System(Handler):
                     pool = None
             # If pool is None, needs admin also
             if not pool and not self._user.is_admin:
-                raise AccessDenied()
+                raise exceptions.rest.AccessDenied()
             # Check permission for pool..
             if not permissions.has_access(
                 self._user, typing.cast('Model', pool), types.permissions.PermissionType.READ
             ):
-                raise AccessDenied()
+                raise exceptions.rest.AccessDenied()
             if self._args[0] == 'stats':
                 if self._args[1] == 'assigned':
                     return get_servicepools_counters(pool, counters.types.stats.CounterType.ASSIGNED)
@@ -214,7 +212,7 @@ class System(Handler):
                         ),
                     }
 
-        raise RequestError('invalid request')
+        raise exceptions.rest.RequestError('invalid request')
 
     def put(self):
-        raise RequestError()
+        raise exceptions.rest.RequestError()

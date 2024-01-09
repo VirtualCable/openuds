@@ -37,14 +37,13 @@ import collections.abc
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types
+from uds.core import types, exceptions
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid
 from uds.core.util.state import State
 from uds.models import Image, MetaPool, ServicePoolGroup
-from uds.REST import RequestError, ResponseError
 from uds.REST.methods.op_calendars import AccessCalendars
 from uds.REST.model import ModelHandler
 
@@ -279,10 +278,10 @@ class MetaPools(ModelHandler):
             except Exception:
                 logger.exception('At service pool group recovering')
 
-        except (RequestError, ResponseError):
+        except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise
         except Exception as e:
-            raise RequestError(str(e))
+            raise exceptions.rest.RequestError(str(e))
 
         logger.debug('Fields: %s', fields)
 

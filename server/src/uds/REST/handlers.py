@@ -43,7 +43,7 @@ from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
 
-from .exceptions import AccessDenied
+from ..core.exceptions.rest import AccessDenied
 
 
 # Not imported at runtime, just for type checking

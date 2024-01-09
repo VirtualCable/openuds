@@ -29,18 +29,17 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from uds import models
-from uds.core import consts, types
-from uds.core.util.model import sql_stamp_seconds, sql_datetime
-from uds.REST import Handler
-from uds.REST import AccessDenied
+from uds.core import exceptions, types
 from uds.core.auths.auth import isTrustedSource
 from uds.core.util import log, net
+from uds.core.util.model import sql_datetime, sql_stamp_seconds
 from uds.core.util.stats import events
+from uds.REST import Handler
 
 from .servers import ServerRegisterBase
 
@@ -77,7 +76,7 @@ class TunnelTicket(Handler):
             or len(self._args[0]) != 48
         ):
             # Invalid requests
-            raise AccessDenied()
+            raise exceptions.rest.AccessDenied()
 
         # Take token from url
         token = self._args[2][:48]
@@ -89,7 +88,7 @@ class TunnelTicket(Handler):
                 # discard invalid stop requests. (because the data provided is also for "several" applications)")
                 return {}
             logger.error('Invalid token %s from %s', token, self._request.ip)
-            raise AccessDenied()
+            raise exceptions.rest.AccessDenied()
 
         # Try to get ticket from DB
         try:
@@ -152,7 +151,7 @@ class TunnelTicket(Handler):
             return data
         except Exception as e:
             logger.info('Ticket ignored: %s', e)
-            raise AccessDenied() from e
+            raise exceptions.rest.AccessDenied() from e
 
 
 class TunnelRegister(ServerRegisterBase):

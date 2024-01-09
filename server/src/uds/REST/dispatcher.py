@@ -41,18 +41,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 
-from uds.core import consts
+from uds.core import consts, exceptions
 from uds.core.util import modfinder
 
 from . import processors, log
-from .exceptions import (
-    AccessDenied,
-    HandlerError,
-    NotFound,
-    NotSupportedError,
-    RequestError,
-    ResponseError,
-)
 from .handlers import Handler
 from .model import DetailHandler
 
@@ -180,7 +172,7 @@ class Dispatcher(View):
                     allowedMethods.append(n)
             log.log_operation(handler, 405, log.LogLevel.ERROR)
             return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
-        except AccessDenied:
+        except exceptions.rest.AccessDenied:
             log.log_operation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
@@ -204,22 +196,22 @@ class Dispatcher(View):
             # Exceptiol will also be logged, but with ERROR level
             log.log_operation(handler, response.status_code, log.LogLevel.INFO)
             return response
-        except RequestError as e:
+        except exceptions.rest.RequestError as e:
             log.log_operation(handler, 400, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
-        except ResponseError as e:
+        except exceptions.rest.ResponseError as e:
             log.log_operation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseServerError(str(e), content_type="text/plain")
-        except NotSupportedError as e:
+        except exceptions.rest.NotSupportedError as e:
             log.log_operation(handler, 501, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
-        except AccessDenied as e:
+        except exceptions.rest.AccessDenied as e:
             log.log_operation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden(str(e), content_type="text/plain")
-        except NotFound as e:
+        except exceptions.rest.NotFound as e:
             log.log_operation(handler, 404, log.LogLevel.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
-        except HandlerError as e:
+        except exceptions.rest.HandlerError as e:
             log.log_operation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:

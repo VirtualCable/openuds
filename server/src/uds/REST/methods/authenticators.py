@@ -30,27 +30,28 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import re
-import logging
-import typing
 import collections.abc
+import logging
+import re
+import typing
 
-from django.utils.translation import gettext, gettext_lazy as _
-from uds.models import Authenticator, Network, MFA
-from uds.core import auths, consts, types
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+
+from uds.core import auths, consts, exceptions, types
 from uds.core.environment import Environment
-
-from uds.REST import NotFound
-from uds.REST.model import ModelHandler
-from uds.core.util import permissions, ensure
-from uds.core.util.model import process_uuid
 from uds.core.ui import gui
+from uds.core.util import ensure, permissions
+from uds.core.util.model import process_uuid
+from uds.models import MFA, Authenticator, Network
+from uds.REST.model import ModelHandler
 
-from .users_groups import Users, Groups
+from .users_groups import Groups, Users
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.db.models import Model
+
     from uds.core.module import Module
 
 logger = logging.getLogger(__name__)
@@ -150,7 +151,7 @@ class Authenticators(ModelHandler):
             raise Exception()  # Not found
         except Exception as e:
             logger.info('Type not found: %s', e)
-            raise NotFound('type not found') from e
+            raise exceptions.rest.NotFound('type not found') from e
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, Authenticator)

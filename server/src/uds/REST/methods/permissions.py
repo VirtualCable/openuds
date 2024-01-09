@@ -30,15 +30,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 import uds.core.types.permissions
 from uds import models
+from uds.core import exceptions
 from uds.core.util import permissions
 from uds.core.util.rest.tools import match
-from uds.REST import Handler, RequestError
+from uds.REST import Handler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -72,12 +73,12 @@ class Permissions(Handler):
         }.get(arg, None)
 
         if cls is None:
-            raise RequestError('Invalid request')
+            raise exceptions.rest.RequestError('Invalid request')
 
         return cls
 
     @staticmethod
-    def permsToDict(
+    def as_dict(
         perms: collections.abc.Iterable[models.Permissions],
     ) -> list[dict[str, str]]:
         res = []
@@ -116,12 +117,12 @@ class Permissions(Handler):
         logger.debug('Permissions args for GET: %s', self._args)
 
         if len(self._args) != 2:
-            raise RequestError('Invalid request')
+            raise exceptions.rest.RequestError('Invalid request')
 
         itemClass = Permissions.getClass(self._args[0])
         obj: 'Model' = itemClass.objects.get(uuid=self._args[1])
 
-        return Permissions.permsToDict(permissions.getPermissions(obj))
+        return Permissions.as_dict(permissions.getPermissions(obj))
 
     def put(self) -> list[dict]:
         """
@@ -138,14 +139,14 @@ class Permissions(Handler):
             obj = cls.objects.get(uuid=obj_param)
             user = models.User.objects.get(uuid=user_param)
             permissions.add_user_permission(user, obj, perm)
-            return Permissions.permsToDict(permissions.getPermissions(obj))
+            return Permissions.as_dict(permissions.getPermissions(obj))
 
         def add_group_permission(cls_param: str, obj_param: str, group_param: str) -> list[dict]:
             cls = Permissions.getClass(cls_param)
             obj = cls.objects.get(uuid=obj_param)
             group = models.Group.objects.get(uuid=group_param)
             permissions.add_group_permission(group, obj, perm)
-            return Permissions.permsToDict(permissions.getPermissions(obj))
+            return Permissions.as_dict(permissions.getPermissions(obj))
 
         def revoke() -> list[dict]:
             for permId in self._params.get('items', []):
@@ -153,35 +154,36 @@ class Permissions(Handler):
             return []
 
         def no_match() -> None:
-            raise RequestError('Invalid request')
+            raise exceptions.rest.RequestError('Invalid request')
 
         # match is a helper function that will match the args with the given patterns
         return match(self._args,
             no_match,
-            (('<cls>', '<obl>', 'users', 'add', '<user>'), add_user_permission),
-            (('<cls>', '<obl>', 'groups', 'add', '<group>'), add_group_permission),
+            (('<cls>', '<obj>', 'users', 'add', '<user>'), add_user_permission),
+            (('<cls>', '<obj>', 'groups', 'add', '<group>'), add_group_permission),
             (('revoke', ), revoke)
         )
 
-        if la == 5 and self._args[3] == 'add':
-
-            cls = Permissions.getClass(self._args[0])
-
-            obj = cls.objects.get(uuid=self._args[1])
-
-            if self._args[2] == 'users':
-                user = models.User.objects.get(uuid=self._args[4])
-                permissions.add_user_permission(user, obj, perm)
-            elif self._args[2] == 'groups':
-                group = models.Group.objects.get(uuid=self._args[4])
-                permissions.add_group_permission(group, obj, perm)
-            else:
-                raise RequestError('Ivalid request')
-            return Permissions.permsToDict(permissions.getPermissions(obj))
-
-        if la == 1 and self._args[0] == 'revoke':
-            for permId in self._params.get('items', []):
-                permissions.revoke_permission_by_id(permId)
-            return []
-
-        raise RequestError('Invalid request')
+        # Old code: (Replaced by code above :) )
+        # if la == 5 and self._args[3] == 'add':
+        #
+        #     cls = Permissions.getClass(self._args[0])
+        #
+        #     obj = cls.objects.get(uuid=self._args[1])
+        #
+        #     if self._args[2] == 'users':
+        #         user = models.User.objects.get(uuid=self._args[4])
+        #         permissions.add_user_permission(user, obj, perm)
+        #     elif self._args[2] == 'groups':
+        #         group = models.Group.objects.get(uuid=self._args[4])
+        #         permissions.add_group_permission(group, obj, perm)
+        #     else:
+        #         raise exceptions.rest.RequestError('Ivalid request')
+        #     return Permissions.permsToDict(permissions.getPermissions(obj))
+        #
+        # if la == 1 and self._args[0] == 'revoke':
+        #     for permId in self._params.get('items', []):
+        #         permissions.revoke_permission_by_id(permId)
+        #     return []
+        #
+        # raise exceptions.rest.RequestError('Invalid request')

@@ -28,24 +28,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
-
-from django.utils.translation import gettext as _
 
 from django.urls import reverse
-from uds.REST import Handler
-from uds.REST import RequestError
-from uds.core import consts
-from uds.models import TicketStore
-from uds.models import User
-from uds.web.util import errors
-from uds.core.managers.user_service import UserServiceManager
+from django.utils.translation import gettext as _
+
+from uds.core import consts, exceptions
 from uds.core.managers.crypto import CryptoManager
-from uds.core.util.config import GlobalConfig
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.util.config import GlobalConfig
 from uds.core.util.rest.tools import match
+from uds.models import TicketStore, User
+from uds.REST import Handler
+from uds.web.util import errors
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -212,7 +210,7 @@ class Client(Handler):
         logger.debug('Client args for GET: %s', self._args)
 
         def error() -> None:
-            raise RequestError('Invalid request')
+            raise exceptions.rest.RequestError('Invalid request')
 
         def noargs() -> dict[str, typing.Any]:
             return Client.result(

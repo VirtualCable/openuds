@@ -30,23 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import functools
+import collections.abc
 import logging
-import random
-import string
 import time
 import typing
-import collections.abc
 
-from uds.core.consts.system import VERSION as UDS_VERSION
-from uds.core import consts
+from uds.core import consts, exceptions
 from uds.core.auths.auth import authenticate
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
-from uds.core.util.model import sql_stamp_seconds, process_uuid
+from uds.core.util.model import process_uuid
 from uds.models import Authenticator
-from uds.REST import AccessDenied, Handler, RequestError
+from uds.REST import Handler
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
@@ -110,7 +106,7 @@ class Login(Handler):
                 self._request.ip,
                 GlobalConfig.LOGIN_BLOCK.getInt(),
             )
-            raise AccessDenied('Too many fails')
+            raise exceptions.rest.AccessDenied('Too many fails')
 
         try:
             # if (
@@ -129,7 +125,7 @@ class Login(Handler):
                 i in self._params
                 for i in ('auth_id', 'authId', 'authSmallName', 'authLabel', 'auth_label', 'auth')
             ):
-                raise RequestError('Invalid parameters (no auth)')
+                raise exceptions.rest.RequestError('Invalid parameters (no auth)')
 
             authId: typing.Optional[str] = self._params.get(
                 'auth_id',
@@ -228,11 +224,11 @@ class Auths(Handler):
     authenticated = False  # By default, all handlers needs authentication
 
     def auths(self) -> collections.abc.Iterable[dict[str, typing.Any]]:
-        paramAll: bool = self._params.get('all', 'false').lower() == 'true'
+        all_param: bool = self._params.get('all', 'false').lower() == 'true'
         auth: Authenticator
         for auth in Authenticator.objects.all():
             theType = auth.get_type()
-            if paramAll or (theType.is_custom() is False and theType.type_type not in ('IP',)):
+            if all_param or (theType.is_custom() is False and theType.type_type not in ('IP',)):
                 yield {
                     'authId': auth.uuid,  # Deprecated, use 'auth_id'
                     'auth_id': auth.uuid,

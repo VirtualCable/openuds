@@ -29,7 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from uds.core.exceptions import UDSException
+from uds.core.exceptions.common import UDSException
 
 class HandlerError(UDSException):
     """

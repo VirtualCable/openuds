@@ -33,9 +33,10 @@
 import logging
 
 from django.core.cache import caches
-from uds.core.util.cache import Cache as uCache
-from uds.REST import Handler, RequestError
 
+from uds.core import exceptions
+from uds.core.util.cache import Cache as uCache
+from uds.REST import Handler
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ class Cache(Handler):
             return {}
 
         if len(self._args) != 1:
-            raise RequestError('Invalid Request')
+            raise exceptions.rest.RequestError('Invalid Request')
 
         uCache.purge()
         for i in ('default', 'memory'):

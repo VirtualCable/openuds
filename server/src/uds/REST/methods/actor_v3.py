@@ -50,7 +50,7 @@ from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
 from uds.REST.utils import rest_result
 
-from ..exceptions import AccessDenied, RequestError
+from ...core.exceptions.rest import AccessDenied, RequestError
 from ..handlers import Handler
 
 # Not imported at runtime, just for type checking

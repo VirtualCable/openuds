@@ -36,14 +36,6 @@ import collections.abc
 logger = logging.getLogger(__name__)
 
 # Convenience imports, must be present before initializing handlers
-from .exceptions import (
-    AccessDenied,
-    HandlerError,
-    NotFound,
-    NotSupportedError,
-    RequestError,
-    ResponseError,
-)
 from .handlers import Handler
 
 from .dispatcher import Dispatcher, AUTH_TOKEN_HEADER

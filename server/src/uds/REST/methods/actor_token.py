@@ -40,7 +40,7 @@ from uds.core import types, consts
 from uds.core.types import permissions
 from uds.core.util.log import LogLevel
 from uds.models import Server
-from uds.REST.exceptions import NotFound, RequestError
+from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import ModelHandler
 
 if typing.TYPE_CHECKING:

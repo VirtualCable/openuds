@@ -50,7 +50,6 @@ from uds.core.util.state import State
 
 
 from uds.REST.model import DetailHandler
-from uds.REST import NotFound, ResponseError, RequestError, AccessDenied
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -195,23 +194,23 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         except IntegrityError as e:  # Duplicate key probably
             if service and service.token and not item:
                 service.delete()
-                raise RequestError(
+                raise exceptions.rest.RequestError(
                     _(
                         'Service token seems to be in use by other service. Please, select a new one.'
                     )
                 ) from e
-            raise RequestError(_('Element already exists (duplicate key error)')) from e
+            raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
         except exceptions.validation.ValidationError as e:
             if (
                 not item and service
             ):  # Only remove partially saved element if creating new (if editing, ignore this)
                 self._deleteIncompleteService(service)
-            raise RequestError(_('Input error: {0}'.format(e))) from e
+            raise exceptions.rest.RequestError(_('Input error: {0}'.format(e))) from e
         except Exception as e:
             if not item and service:
                 self._deleteIncompleteService(service)
             logger.exception('Saving Service')
-            raise RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
+            raise exceptions.rest.RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.Provider)
@@ -224,7 +223,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Deleting service')
             raise self.invalid_item_response() from None
 
-        raise RequestError('Item has associated deployed services')
+        raise exceptions.rest.RequestError('Item has associated deployed services')
 
     def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.Provider)
@@ -284,7 +283,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                     ]
                     break
             if offers:
-                raise NotFound('type not found')
+                raise exceptions.rest.NotFound('type not found')
 
         return offers  # Default is that details do not have types
 
@@ -325,7 +324,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         except Exception as e:
             logger.exception('getGui')
-            raise ResponseError(str(e)) from e
+            raise exceptions.rest.ResponseError(str(e)) from e
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
@@ -359,7 +358,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                         'state': _('With errors') if i.is_restrained() else _('Ok'),
                     }
                 )
-            except AccessDenied:
+            except exceptions.rest.AccessDenied:
                 pass
 
         return res

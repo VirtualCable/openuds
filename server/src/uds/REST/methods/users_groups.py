@@ -45,7 +45,6 @@ from uds.core.util import log, ensure
 from uds.core.util.model import process_uuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
-from uds.REST import RequestError
 from uds.core import consts, exceptions
 
 from uds.REST.model import DetailHandler
@@ -205,7 +204,7 @@ class Users(DetailHandler):
             'is_admin',
         ]
         if self._params.get('name', '').strip() == '':
-            raise RequestError(_('Username cannot be empty'))
+            raise exceptions.rest.RequestError(_('Username cannot be empty'))
 
         if 'password' in self._params:
             valid_fields.append('password')
@@ -244,12 +243,12 @@ class Users(DetailHandler):
         except User.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('User already exists (duplicate key error)')) from None
+            raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
-            raise RequestError(str(e)) from e
+            raise exceptions.rest.RequestError(str(e)) from e
         except ValidationError as e:
-            raise RequestError(str(e.message)) from e
-        except RequestError:  # pylint: disable=try-except-raise
+            raise exceptions.rest.RequestError(str(e.message)) from e
+        except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
         except Exception as e:
             logger.exception('Saving user')
@@ -438,7 +437,7 @@ class Groups(DetailHandler):
             logger.debug('Pools: %s', pools)
             valid_fields = ['name', 'comments', 'state', 'skip_mfa']
             if self._params.get('name', '') == '':
-                raise RequestError(_('Group name is required'))
+                raise exceptions.rest.RequestError(_('Group name is required'))
             fields = self.fields_from_params(valid_fields)
             is_pattern = fields.get('name', '').find('pat:') == 0
             auth = parent.get_instance()
@@ -482,10 +481,10 @@ class Groups(DetailHandler):
         except Group.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
-            raise RequestError(_('User already exists (duplicate key error)')) from None
+            raise exceptions.rest.RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
-            raise RequestError(str(e)) from e
-        except RequestError:  # pylint: disable=try-except-raise
+            raise exceptions.rest.RequestError(str(e)) from e
+        except exceptions.rest.RequestError:  # pylint: disable=try-except-raise
             raise  # Re-raise
         except Exception as e:
             logger.exception('Saving group')

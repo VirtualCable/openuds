@@ -30,19 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import datetime
 import logging
 import typing
-import collections.abc
 
 from django.db import IntegrityError
 from django.utils.translation import gettext as _
 
+from uds.core import exceptions
 from uds.core.util import ensure, permissions
-from uds.core.util.model import sql_datetime, process_uuid
-from uds.models.calendar_rule import CalendarRule, freqs
+from uds.core.util.model import process_uuid, sql_datetime
 from uds.models.calendar import Calendar
-from uds.REST import RequestError
+from uds.models.calendar_rule import CalendarRule, freqs
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
@@ -149,10 +149,10 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         except CalendarRule.DoesNotExist:
             raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
-            raise RequestError(_('Element already exists (duplicate key error)')) from e
+            raise exceptions.rest.RequestError(_('Element already exists (duplicate key error)')) from e
         except Exception as e:
             logger.exception('Saving calendar')
-            raise RequestError(f'incorrect invocation to PUT: {e}') from e
+            raise self.invalid_request_response(f'incorrect invocation to PUT: {e}') from e
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Calendar)

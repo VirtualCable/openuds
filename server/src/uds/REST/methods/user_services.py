@@ -37,13 +37,13 @@ import collections.abc
 from django.utils.translation import gettext as _
 
 from uds import models
+from uds.core import exceptions
 import uds.core.types.permissions
 from uds.core.util.state import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, permissions, ensure
 from uds.core.managers.user_service import UserServiceManager
 from uds.REST.model import DetailHandler
-from uds.REST import ResponseError
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -492,7 +492,7 @@ class Publications(DetailHandler):
             ds = models.ServicePoolPublication.objects.get(uuid=process_uuid(uuid))
             ds.cancel()
         except Exception as e:
-            raise ResponseError(str(e)) from e
+            raise exceptions.rest.ResponseError(str(e)) from e
 
         log.log(
             parent,

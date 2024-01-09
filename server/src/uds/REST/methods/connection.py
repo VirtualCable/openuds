@@ -30,21 +30,18 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import datetime
 import logging
 import typing
-import collections.abc
 
-
-from uds.core.types.request import ExtendedHttpRequestWithUser
-
-from uds.core import types
-from uds.REST import Handler
-from uds.REST import RequestError
-from uds.core.managers.user_service import UserServiceManager
+from uds.core import exceptions, types
 from uds.core.managers.crypto import CryptoManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
+from uds.core.types.request import ExtendedHttpRequestWithUser
 from uds.core.util.rest.tools import match
+from uds.REST import Handler
 from uds.web.util import errors, services
 
 logger = logging.getLogger(__name__)
@@ -200,7 +197,7 @@ class Connection(Handler):
         logger.debug('Connection args for GET: %s', self._args)
 
         def error() -> dict[str, typing.Any]:
-            raise RequestError('Invalid Request')
+            raise exceptions.rest.RequestError('Invalid Request')
 
         return match(
             self._args,

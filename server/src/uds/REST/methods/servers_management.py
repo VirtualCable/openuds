@@ -40,7 +40,7 @@ from uds import models
 from uds.core import consts, types, ui
 from uds.core.util import permissions, ensure
 from uds.core.util.model import sql_datetime, process_uuid
-from uds.REST.exceptions import NotFound, RequestError
+from uds.core.exceptions.rest import NotFound, RequestError
 from uds.REST.model import DetailHandler, ModelHandler
 
 if typing.TYPE_CHECKING:

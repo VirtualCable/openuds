@@ -37,11 +37,11 @@ import collections.abc
 
 
 from uds.REST import Handler
-from uds.REST import RequestError
 from uds import models
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util.model import process_uuid
 from uds.core.util import ensure
+from uds.core import exceptions
 
 logger = logging.getLogger(__name__)
 
@@ -110,17 +110,17 @@ class Tickets(Handler):
         """
         logger.debug('Ticket args for GET: %s', self._args)
 
-        raise RequestError('Invalid request')
+        raise exceptions.rest.RequestError('Invalid request')
 
     def _checkInput(self) -> None:
         # Parameters can only be theese
         for p in self._params:
             if p not in VALID_PARAMS:
                 logger.debug('Parameter %s not in valid ticket parameters list', p)
-                raise RequestError('Invalid parameters')
+                raise exceptions.rest.RequestError('Invalid parameters')
 
         if len(self._args) != 1 or self._args[0] not in ('create',):
-            raise RequestError('Invalid method')
+            raise exceptions.rest.RequestError('Invalid method')
 
         try:
             for i in (
@@ -138,7 +138,7 @@ class Tickets(Handler):
             if 'username' in self._params and 'groups' in self._params:
                 raise StopIteration()
 
-            raise RequestError('Invalid parameters (no auth or username/groups)')
+            raise exceptions.rest.RequestError('Invalid parameters (no auth or username/groups)')
         except StopIteration:
             pass  # All ok
 
@@ -199,7 +199,7 @@ class Tickets(Handler):
                         )
 
             if not groupIds:  # No valid group in groups names
-                raise RequestError(
+                raise exceptions.rest.RequestError(
                     'Authenticator does not contain ANY of the requested groups and force is not used'
                 )
 

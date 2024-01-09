@@ -37,8 +37,9 @@ from django.utils.translation import gettext_lazy as _
 
 from uds import models
 from uds.core import consts, exceptions, types
+from uds.core.exceptions import rest as rest_exceptions
 from uds.core.util import decorators, validators, log, model
-from uds.REST import Handler, exceptions as rest_exceptions
+from uds.REST import Handler
 from uds.REST.utils import rest_result
 
 logger = logging.getLogger(__name__)
