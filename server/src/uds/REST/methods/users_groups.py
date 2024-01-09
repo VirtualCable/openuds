@@ -82,7 +82,7 @@ def get_service_pools_for_groups(groups):
 class Users(DetailHandler):
     custom_methods = ['servicesPools', 'userServices', 'cleanRelated']
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Authenticator)
 
         # processes item to change uuid key for id
@@ -147,9 +147,9 @@ class Users(DetailHandler):
             return res
         except Exception as e:
             # User not found
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         try:
             return _('Users of {0}').format(
                 Authenticator.objects.get(uuid=process_uuid(self._kwargs['parent_id'])).name
@@ -157,7 +157,7 @@ class Users(DetailHandler):
         except Exception:
             return _('Current users')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {
                 'name': {
@@ -180,20 +180,20 @@ class Users(DetailHandler):
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
+    def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, Authenticator)
         user = None
         try:
             user = parent.users.get(uuid=process_uuid(item))
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
         return log.get_logs(user)
 
-    def saveItem(self, parent: 'Model', item):
+    def save_item(self, parent: 'Model', item):
         parent = ensure.is_instance(parent, Authenticator)
         logger.debug('Saving user %s / %s', parent, item)
         valid_fields = [
@@ -242,7 +242,7 @@ class Users(DetailHandler):
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)
         except User.DoesNotExist:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
@@ -253,11 +253,11 @@ class Users(DetailHandler):
             raise  # Re-raise
         except Exception as e:
             logger.exception('Saving user')
-            raise self.invalidRequestException() from e
+            raise self.invalid_request_response() from e
 
-        return self.getItems(parent, user.uuid)
+        return self.get_items(parent, user.uuid)
 
-    def deleteItem(self, parent: 'Model', item: str):
+    def delete_item(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, Authenticator)
         try:
             user = parent.users.get(uuid=process_uuid(item))
@@ -266,7 +266,7 @@ class Users(DetailHandler):
                     'Removal of user %s denied due to insufficients rights',
                     user.pretty_name,
                 )
-                raise self.invalidItemException(
+                raise self.invalid_item_response(
                     f'Removal of user {user.pretty_name} denied due to insufficients rights'
                 )
 
@@ -286,7 +286,7 @@ class Users(DetailHandler):
             user.delete()
         except Exception as e:
             logger.exception('Removing user')
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
         return 'deleted'
 
@@ -318,7 +318,7 @@ class Users(DetailHandler):
         res = []
         for i in user.userServices.all():
             if i.state == State.USABLE:
-                v = AssignedService.itemToDict(i)
+                v = AssignedService.item_as_dict(i)
                 v['pool'] = i.deployed_service.name
                 v['pool_id'] = i.deployed_service.uuid
                 res.append(v)
@@ -335,7 +335,7 @@ class Users(DetailHandler):
 class Groups(DetailHandler):
     custom_methods = ['servicesPools', 'users']
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, Authenticator)
         try:
             multi = False
@@ -369,16 +369,16 @@ class Groups(DetailHandler):
             return result
         except Exception as e:
             logger.exception('REST groups')
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             return _('Groups of {0}').format(parent.name)
         except Exception:
             return _('Current groups')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {
                 'name': {
@@ -424,9 +424,9 @@ class Groups(DetailHandler):
         try:
             return next(filter(lambda x: x['type'] == forType, types))
         except Exception:
-            raise self.invalidRequestException() from None
+            raise self.invalid_request_response() from None
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, Authenticator)
         group = None  # Avoid warning on reference before assignment
         try:
@@ -480,7 +480,7 @@ class Groups(DetailHandler):
 
             group.save()
         except Group.DoesNotExist:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
         except IntegrityError:  # Duplicate key probably
             raise RequestError(_('User already exists (duplicate key error)')) from None
         except exceptions.auth.AuthenticatorException as e:
@@ -489,16 +489,16 @@ class Groups(DetailHandler):
             raise  # Re-raise
         except Exception as e:
             logger.exception('Saving group')
-            raise self.invalidRequestException() from e
+            raise self.invalid_request_response() from e
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Authenticator)
         try:
             group = parent.groups.get(uuid=item)
 
             group.delete()
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
     def servicesPools(self, parent: 'Model', item: str) -> list[collections.abc.Mapping[str, typing.Any]]:
         parent = ensure.is_instance(parent, Authenticator)

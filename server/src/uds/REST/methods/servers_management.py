@@ -95,7 +95,7 @@ class ServersTokens(ModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(
+        self.ensure_has_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
@@ -111,7 +111,7 @@ class ServersTokens(ModelHandler):
 class ServersServers(DetailHandler):
     custom_methods = ['maintenance']
 
-    def getItems(self, parent_: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent_: 'Model', item: typing.Optional[str]):
         parent = typing.cast('models.ServerGroup', parent_)  # We will receive for sure
         try:
             multi = False
@@ -139,16 +139,16 @@ class ServersServers(DetailHandler):
             return res[0]
         except Exception as e:
             logger.exception('REST servers')
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
             return str(_('Servers'))
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return [
             {
@@ -167,16 +167,16 @@ class ServersServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
-    def getGui(self, parent: 'Model', forType: str = '') -> list[typing.Any]:
+    def get_gui(self, parent: 'Model', forType: str = '') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         kind, subkind = parent.server_type, parent.subtype
         title = _('of type') + f' {subkind.upper()} {kind.name.capitalize()}'
         if kind == types.servers.ServerType.UNMANAGED:
-            return self.addField(
+            return self.add_field(
                 [],
                 [
                     {
@@ -211,7 +211,7 @@ class ServersServers(DetailHandler):
                 ],
             )
         else:
-            return self.addField(
+            return self.add_field(
                 [],
                 [
                     {
@@ -235,7 +235,7 @@ class ServersServers(DetailHandler):
                 ],
             )
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         # Item is the uuid of the server to add
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
@@ -263,21 +263,21 @@ class ServersServers(DetailHandler):
                     # Check server type is also SERVER
                     if server and server.type != types.servers.ServerType.SERVER:
                         logger.error('Server type for %s is not SERVER', server.host)
-                        raise self.invalidRequestException() from None
+                        raise self.invalid_request_response() from None
                     parent.servers.add(server)
                 except Exception:
-                    raise self.invalidItemException() from None
+                    raise self.invalid_item_response() from None
                 pass
         else:
             try:
                 server = models.Server.objects.get(uuid=process_uuid(item))
                 parent.servers.add(server)
             except Exception:
-                raise self.invalidItemException() from None
+                raise self.invalid_item_response() from None
 
-            raise self.invalidRequestException() from None
+            raise self.invalid_request_response() from None
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             server = models.Server.objects.get(uuid=process_uuid(item))
@@ -287,7 +287,7 @@ class ServersServers(DetailHandler):
             else:
                 parent.servers.remove(server)  # Just remove reference
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
@@ -297,7 +297,7 @@ class ServersServers(DetailHandler):
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
@@ -316,7 +316,7 @@ class ServersGroups(ModelHandler):
     path = 'servers'
     name = 'groups'
 
-    save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on beforeSave
+    save_fields = ['name', 'comments', 'type', 'tags']  # Subtype is appended on pre_save
     table_title = typing.cast(str, _('Servers Groups'))
     table_fields = [
         {'name': {'title': _('Name')}},
@@ -334,7 +334,7 @@ class ServersGroups(ModelHandler):
             ).as_dict(group=gettext('Managed') if i.managed else gettext('Unmanaged'))
             yield v
 
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         if '@' not in type_:  # If no subtype, use default
             type_ += '@default'
         kind, subkind = type_.split('@')[:2]
@@ -343,8 +343,8 @@ class ServersGroups(ModelHandler):
         elif kind == types.servers.ServerType.UNMANAGED.name:
             kind = typing.cast(str, _('Unmanaged'))
         title = _('of type') + f' {subkind.upper()} {kind}'
-        return self.addField(
-            self.addDefaultFields(
+        return self.add_field(
+            self.add_default_fields(
                 [],
                 ['name', 'comments', 'tags'],
             ),
@@ -362,12 +362,12 @@ class ServersGroups(ModelHandler):
             ],
         )
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # Update type and subtype to correct values
         type, subtype = fields['type'].split('@')
         fields['type'] = types.servers.ServerType[type.upper()].value
         fields['subtype'] = subtype
-        return super().beforeSave(fields)
+        return super().pre_save(fields)
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, models.ServerGroup)
@@ -383,12 +383,12 @@ class ServersGroups(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def deleteItem(self, item: 'Model') -> None:
+    def delete_item(self, item: 'Model') -> None:
         item = ensure.is_instance(item, models.ServerGroup)
         """
         Processes a DELETE request
         """
-        self.ensureAccess(
+        self.ensure_has_access(
             self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 

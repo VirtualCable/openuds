@@ -158,8 +158,8 @@ class MetaPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
-        localGUI = self.addDefaultFields([], ['name', 'comments', 'tags'])
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        localGUI = self.add_default_fields([], ['name', 'comments', 'tags'])
 
         for field in [
             {
@@ -250,11 +250,11 @@ class MetaPools(ModelHandler):
                 'tab': types.ui.Tab.DISPLAY,
             },
         ]:
-            self.addField(localGUI, field)
+            self.add_field(localGUI, field)
 
         return localGUI
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         try:
             # **** IMAGE ***
@@ -286,13 +286,13 @@ class MetaPools(ModelHandler):
 
         logger.debug('Fields: %s', fields)
 
-    def deleteItem(self, item: 'Model') -> None:
+    def delete_item(self, item: 'Model') -> None:
         item = ensure.is_instance(item, MetaPool)
         item.delete()
 
     # Set fallback status
     def setFallbackAccess(self, item: MetaPool):
-        self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess', 'ALLOW')
         logger.debug('Setting fallback of %s to %s', item.name, fallback)

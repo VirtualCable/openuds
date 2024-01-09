@@ -55,7 +55,7 @@ UUID_REPLACER = (
 )
 
 
-def replacePath(path: str) -> str:
+def replace_path(path: str) -> str:
     """Replaces uuids in path with names
     All paths are in the form .../type/uuid/...
     """
@@ -71,7 +71,7 @@ def replacePath(path: str) -> str:
     return path
 
 
-def logOperation(
+def log_operation(
     handler: typing.Optional['Handler'], response_code: int, level: LogLevel = LogLevel.INFO
 ):
     """
@@ -88,7 +88,7 @@ def logOperation(
     ):
         return
 
-    path = replacePath(path)
+    path = replace_path(path)
 
     username = handler.request.user.pretty_name if handler.request.user else 'Unknown'
     log(

@@ -74,9 +74,9 @@ class IPAuth(auths.Authenticator):
     type_description = _('IP Authenticator')
     icon_file = 'auth.png'
 
-    needsPassword = False
-    userNameLabel = _('IP')
-    groupNameLabel = _('IP Range')
+    needs_password = False
+    label_username = _('IP')
+    label_groupname = _('IP Range')
     isExternalSource = True
 
     blockUserOnLoginFailures = False

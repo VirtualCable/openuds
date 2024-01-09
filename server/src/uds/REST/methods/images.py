@@ -73,21 +73,21 @@ class Images(ModelHandler):
         {'size': {'title': _('Size')}},
     ]
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['image'] = fields['data']
         del fields['data']
         #fields['data'] = Image.prepareForDb(Image.decode64(fields['data']))[2]
 
-    def afterSave(self, item: 'Model') -> None:
+    def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Image)
         # Updates the thumbnail and re-saves it
         logger.debug('After save: item = %s', item)
         #item.updateThumbnail()
         #item.save()
 
-    def getGui(self, type_: str) -> list[typing.Any]:
-        return self.addField(
-            self.addDefaultFields([], ['name']),
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        return self.add_field(
+            self.add_default_fields([], ['name']),
             {
                 'name': 'data',
                 'value': '',

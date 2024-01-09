@@ -78,15 +78,15 @@ class Notifiers(ModelHandler):
     def enum_types(self) -> collections.abc.Iterable[type[messaging.Notifier]]:
         return messaging.factory().providers().values()
 
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         notifierType = messaging.factory().lookup(type_)
 
         if not notifierType:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
         notifier = notifierType(Environment.getTempEnv(), None)
 
-        localGui = self.addDefaultFields(
+        localGui = self.add_default_fields(
             notifier.guiDescription(), ['name', 'comments', 'tags']
         )
 
@@ -108,7 +108,7 @@ class Notifiers(ModelHandler):
                 'default': True,
             }
         ]:
-            self.addField(localGui, field)
+            self.add_field(localGui, field)
 
         return localGui
 

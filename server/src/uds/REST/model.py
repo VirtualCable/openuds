@@ -31,6 +31,7 @@
 """
 # pylint: disable=too-many-public-methods
 
+import abc
 import fnmatch
 import inspect
 import logging
@@ -76,7 +77,7 @@ class BaseModelHandler(Handler):
     Base Handler for Master & Detail Handlers
     """
 
-    def addField(
+    def add_field(
         self, gui: list[typing.Any], field: typing.Union[FieldType, list[FieldType]]
     ) -> list[typing.Any]:
         """
@@ -88,7 +89,7 @@ class BaseModelHandler(Handler):
         """
         if isinstance(field, list):
             for i in field:
-                gui = self.addField(gui, i)
+                gui = self.add_field(gui, i)
         else:
             if 'values' in field:
                 caller = inspect.stack()[1]
@@ -147,7 +148,7 @@ class BaseModelHandler(Handler):
             gui.append(v)
         return gui
 
-    def addDefaultFields(self, gui: list[typing.Any], flds: list[str]) -> list[typing.Any]:
+    def add_default_fields(self, gui: list[typing.Any], flds: list[str]) -> list[typing.Any]:
         """
         Adds default fields (based in a list) to a "gui" description
         :param gui: Gui list where the "default" fielsds will be added
@@ -155,7 +156,7 @@ class BaseModelHandler(Handler):
                     'priority' and 'small_name', 'short_name', 'tags'
         """
         if 'tags' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'tags',
@@ -166,7 +167,7 @@ class BaseModelHandler(Handler):
                 },
             )
         if 'name' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'name',
@@ -179,7 +180,7 @@ class BaseModelHandler(Handler):
                 },
             )
         if 'comments' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'comments',
@@ -192,7 +193,7 @@ class BaseModelHandler(Handler):
                 },
             )
         if 'priority' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'priority',
@@ -206,7 +207,7 @@ class BaseModelHandler(Handler):
                 },
             )
         if 'small_name' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'small_name',
@@ -219,7 +220,7 @@ class BaseModelHandler(Handler):
                 },
             )
         if 'networks' in flds:
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'net_filtering',
@@ -238,7 +239,7 @@ class BaseModelHandler(Handler):
                     'tab': types.ui.Tab.ADVANCED,
                 },
             )
-            self.addField(
+            self.add_field(
                 gui,
                 {
                     'name': 'networks',
@@ -257,19 +258,19 @@ class BaseModelHandler(Handler):
 
         return gui
 
-    def ensureAccess(
+    def ensure_has_access(
         self,
         obj: models.Model,
         permission: 'types.permissions.PermissionType',
         root: bool = False,
     ) -> None:
         if not permissions.has_access(self._user, obj, permission, root):
-            raise self.accessDenied()
+            raise self.access_denied_response()
 
-    def getPermissions(self, obj: models.Model, root: bool = False) -> int:
+    def get_permissions(self, obj: models.Model, root: bool = False) -> int:
         return permissions.effective_permissions(self._user, obj, root)
 
-    def typeInfo(
+    def type_info(
         self, type_: type['Module']  # pylint: disable=unused-argument
     ) -> dict[str, typing.Any]:
         """
@@ -278,7 +279,7 @@ class BaseModelHandler(Handler):
         """
         return {}
 
-    def typeAsDict(self, type_: type['Module']) -> dict[str, typing.Any]:
+    def type_as_dict(self, type_: type['Module']) -> dict[str, typing.Any]:
         """
         Returns a dictionary describing the type (the name, the icon, description, etc...)
         """
@@ -287,12 +288,12 @@ class BaseModelHandler(Handler):
             type=type_.get_type(),
             description=_(type_.description()),
             icon=type_.icon64().replace('\n', ''),
-        ).as_dict(**self.typeInfo(type_))
+        ).as_dict(**self.type_info(type_))
         if hasattr(type_, 'group'):
             res['group'] = _(type_.group)  # Add group info is it is contained
         return res
 
-    def processTableFields(
+    def process_table_fields(
         self,
         title: str,
         fields: list[typing.Any],
@@ -335,7 +336,7 @@ class BaseModelHandler(Handler):
 
         return args
 
-    def fillIntanceFields(
+    def fill_instance_fields(
         self, item: 'models.Model', res: dict[str, typing.Any]
     ) -> dict[str, typing.Any]:
         """
@@ -351,7 +352,7 @@ class BaseModelHandler(Handler):
         return res
 
     # Exceptions
-    def invalidRequestException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_request_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         """
         Raises an invalid request error with a default translated string
         :param message: Custom message to add to exception. If it is None, "Invalid Request" is used
@@ -359,17 +360,17 @@ class BaseModelHandler(Handler):
         message = message or _('Invalid Request')
         return exceptions.RequestError(f'{message} {self.__class__}: {self._args}')
 
-    def invalidResponseException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_response_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         message = 'Invalid response' if message is None else message
         return exceptions.ResponseError(message)
 
-    def invalidMethodException(self) -> exceptions.HandlerError:
+    def invalid_method_response(self) -> exceptions.HandlerError:
         """
         Raises a NotFound exception with translated "Method not found" string to current locale
         """
         return exceptions.RequestError(_('Method not found in {}: {}').format(self.__class__, self._args))
 
-    def invalidItemException(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def invalid_item_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         """
         Raises a NotFound exception, with location info
         """
@@ -377,10 +378,10 @@ class BaseModelHandler(Handler):
         return exceptions.NotFound(message)
         # raise NotFound('{} {}: {}'.format(message, self.__class__, self._args))
 
-    def accessDenied(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def access_denied_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         return exceptions.AccessDenied(message or _('Access denied'))
 
-    def notSupported(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
+    def not_supported_response(self, message: typing.Optional[str] = None) -> exceptions.HandlerError:
         return exceptions.NotSupportedError(message or _('Operation not supported'))
 
     # Success methods
@@ -396,7 +397,7 @@ class BaseModelHandler(Handler):
         Invokes a test for an item
         """
         logger.debug('Called base test for %s --> %s', self.__class__.__name__, self._params)
-        raise self.invalidMethodException()
+        raise self.invalid_method_response()
 
 
 # Details do not have types at all
@@ -406,7 +407,7 @@ class DetailHandler(BaseModelHandler):
     """
     Detail handler (for relations such as provider-->services, authenticators-->users,groups, deployed services-->cache,assigned, groups, transports
     Urls recognized for GET are:
-    [path] --> get Items (all items, this call is delegated to getItems)
+    [path] --> get Items (all items, this call is delegated to get_items)
     [path]/overview
     [path]/ID
     [path]/gui
@@ -452,7 +453,7 @@ class DetailHandler(BaseModelHandler):
         self._kwargs = kwargs
         self._user = kwargs.get('user', None)
 
-    def __checkCustom(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
+    def _check_is_custom_method(self, check: str, parent: models.Model, arg: typing.Any = None) -> typing.Any:
         """
         checks curron methods
         :param check: Method to check
@@ -481,18 +482,18 @@ class DetailHandler(BaseModelHandler):
         parent: models.Model = self._kwargs['parent']
 
         if nArgs == 0:
-            return self.getItems(parent, None)
+            return self.get_items(parent, None)
 
         # if has custom methods, look for if this request matches any of them
-        r = self.__checkCustom(self._args[0], parent)
+        r = self._check_is_custom_method(self._args[0], parent)
         if r is not None:
             return r
 
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
-                return self.getItems(parent, None)
+                return self.get_items(parent, None)
             # if self._args[0] == GUI:
-            #     gui = self.getGui(parent, None)
+            #     gui = self.get_gui(parent, None)
             #     return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
                 types_ = self.get_types(parent, None)
@@ -500,40 +501,40 @@ class DetailHandler(BaseModelHandler):
                 return types_
             if self._args[0] == GUI:
                 # Gui without type, valid
-                gui = self.getGui(parent, '')  # No type
+                gui = self.get_gui(parent, '')  # No type
                 return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TABLEINFO:
-                return self.processTableFields(
-                    self.getTitle(parent),
-                    self.getFields(parent),
-                    self.getRowStyle(parent),
+                return self.process_table_fields(
+                    self.get_title(parent),
+                    self.get_fields(parent),
+                    self.get_row_style(parent),
                 )
 
             # try to get id
-            return self.getItems(parent, process_uuid(self._args[0]))
+            return self.get_items(parent, process_uuid(self._args[0]))
 
         if nArgs == 2:
             if self._args[0] == GUI:
-                gui = self.getGui(parent, self._args[1])
+                gui = self.get_gui(parent, self._args[1])
                 return sorted(gui, key=lambda f: f['gui']['order'])
             if self._args[0] == TYPES:
                 types_ = self.get_types(parent, self._args[1])
                 logger.debug('Types: %s', types_)
                 return types_
             if self._args[1] == LOG:
-                return self.getLogs(parent, self._args[0])
+                return self.get_logs(parent, self._args[0])
 
-            r = self.__checkCustom(self._args[1], parent, self._args[0])
+            r = self._check_is_custom_method(self._args[1], parent, self._args[0])
             if r is not None:
                 return r
 
-        return self.fallbackGet()
+        return self.fallback_get()
 
     def put(self) -> typing.Any:
         """
         Process the "PUT" operation, making the correspondent checks.
         Evaluates if it is a new element or a "modify" operation (based on if it has parameter),
-        and invokes "saveItem" with parent & item (that can be None for a new Item)
+        and invokes "save_item" with parent & item (that can be None for a new Item)
         """
         logger.debug('Detail args for PUT: %s, %s', self._args, self._params)
 
@@ -544,10 +545,10 @@ class DetailHandler(BaseModelHandler):
         if len(self._args) == 1:
             item = self._args[0]
         elif len(self._args) > 1:  # PUT expects 0 or 1 parameters. 0 == NEW, 1 = EDIT
-            raise self.invalidRequestException()
+            raise self.invalid_request_response()
 
         logger.debug('Invoking proper saving detail item %s', item)
-        self.saveItem(parent, item)
+        self.save_item(parent, item)
         # Empty response
         return rest_result(consts.OK)
 
@@ -557,34 +558,34 @@ class DetailHandler(BaseModelHandler):
         Post can be used for, for example, testing.
         Right now is an invalid method for Detail elements
         """
-        raise self.invalidRequestException('This method does not accepts POST')
+        raise self.invalid_request_response('This method does not accepts POST')
 
     def delete(self) -> typing.Any:
         """
         Process the "DELETE" operation, making the correspondent checks.
-        Extracts the item id and invokes deleteItem with parent item and item id (uuid)
+        Extracts the item id and invokes delete_item with parent item and item id (uuid)
         """
         logger.debug('Detail args for DELETE: %s', self._args)
 
         parent = self._kwargs['parent']
 
         if len(self._args) != 1:
-            raise self.invalidRequestException()
+            raise self.invalid_request_response()
 
-        self.deleteItem(parent, self._args[0])
+        self.delete_item(parent, self._args[0])
 
         return consts.OK
 
-    def fallbackGet(self) -> typing.Any:
+    def fallback_get(self) -> typing.Any:
         """
         Invoked if default get can't process request.
         Here derived classes can process "non default" (and so, not understood) GET constructions
         """
-        raise self.invalidRequestException('Fallback invoked')
+        raise self.invalid_request_response('Fallback invoked')
 
     # Override this to provide functionality
-    # Default (as sample) getItems
-    def getItems(
+    # Default (as sample) get_items
+    def get_items(
         self, parent: models.Model, item: typing.Optional[str]
     ) -> typing.Union[list[dict], dict]:
         """
@@ -596,10 +597,10 @@ class DetailHandler(BaseModelHandler):
         # if item is None:  # Returns ALL detail items
         #     return []
         # return {}  # Returns one item
-        raise NotImplementedError(f'Must provide an getItems method for {self.__class__} class')
+        raise NotImplementedError(f'Must provide an get_items method for {self.__class__} class')
 
     # Default save
-    def saveItem(self, parent: models.Model, item: typing.Optional[str]) -> None:
+    def save_item(self, parent: models.Model, item: typing.Optional[str]) -> None:
         """
         Invoked for a valid "put" operation
         If this method is not overridden, the detail class will not have "Save/modify" operations.
@@ -608,11 +609,11 @@ class DetailHandler(BaseModelHandler):
         :param item: Item id (uuid)
         :return: Normally "success" is expected, but can throw any "exception"
         """
-        logger.debug('Default saveItem handler caller for %s', self._path)
-        raise self.invalidRequestException()
+        logger.debug('Default save_item handler caller for %s', self._path)
+        raise self.invalid_request_response()
 
     # Default delete
-    def deleteItem(self, parent: models.Model, item: str) -> None:
+    def delete_item(self, parent: models.Model, item: str) -> None:
         """
         Invoked for a valid "delete" operation.
         If this method is not overriden, the detail class will not have "delete" operation.
@@ -620,10 +621,10 @@ class DetailHandler(BaseModelHandler):
         :param item: Item id (uuid)
         :return: Normally "success" is expected, but can throw any "exception"
         """
-        raise self.invalidRequestException()
+        raise self.invalid_request_response()
 
     # A detail handler must also return title & fields for tables
-    def getTitle(self, parent: models.Model) -> str:  # pylint: disable=no-self-use
+    def get_title(self, parent: models.Model) -> str:  # pylint: disable=no-self-use
         """
         A "generic" title for a view based on this detail.
         If not overridden, defaults to ''
@@ -632,7 +633,7 @@ class DetailHandler(BaseModelHandler):
         """
         return ''
 
-    def getFields(self, parent: models.Model) -> list[typing.Any]:
+    def get_fields(self, parent: models.Model) -> list[typing.Any]:
         """
         A "generic" list of fields for a view based on this detail.
         If not overridden, defaults to emty list
@@ -641,7 +642,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []
 
-    def getRowStyle(self, parent: models.Model) -> dict[str, typing.Any]:
+    def get_row_style(self, parent: models.Model) -> dict[str, typing.Any]:
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
@@ -654,7 +655,7 @@ class DetailHandler(BaseModelHandler):
         """
         return {}
 
-    def getGui(self, parent: models.Model, forType: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: models.Model, forType: str) -> collections.abc.Iterable[typing.Any]:
         """
         Gets the gui that is needed in order to "edit/add" new items on this detail
         If not overriden, means that the detail has no edit/new Gui
@@ -677,14 +678,14 @@ class DetailHandler(BaseModelHandler):
         """
         return []  # Default is that details do not have types
 
-    def getLogs(self, parent: models.Model, item: str) -> list[typing.Any]:
+    def get_logs(self, parent: models.Model, item: str) -> list[typing.Any]:
         """
         If the detail has any log associated with it items, provide it overriding this method
         :param parent:
         :param item:
-        :return: a list of log elements (normally got using "uds.core.util.log.getLogs" method)
+        :return: a list of log elements (normally got using "uds.core.util.log.get_logs" method)
         """
-        raise self.invalidMethodException()
+        raise self.invalid_method_response()
 
 
 class ModelHandler(BaseModelHandler):
@@ -731,7 +732,7 @@ class ModelHandler(BaseModelHandler):
     # * If a field is in the form "field:default" and field is not present in the request, default will be used
     # * If the "default" is the string "None", then the default will be None
     # * If the "default" is _ (underscore), then the field will be ignored (not saved) if not present in the request
-    # Note that these fields has to be present in the model, and they can be "edited" in the beforeSave method
+    # Note that these fields has to be present in the model, and they can be "edited" in the pre_save method
     save_fields: typing.ClassVar[list[str]] = []
     # Put removable fields before updating
     remove_fields: typing.ClassVar[list[str]] = []
@@ -768,7 +769,7 @@ class ModelHandler(BaseModelHandler):
 
     def get_types(self, *args, **kwargs) -> typing.Generator[dict[str, typing.Any], None, None]:
         for type_ in self.enum_types():
-            yield self.typeAsDict(type_)
+            yield self.type_as_dict(type_)
 
     def get_type(self, type_: str) -> dict[str, typing.Any]:
         found = None
@@ -784,8 +785,8 @@ class ModelHandler(BaseModelHandler):
         return found
 
     # log related
-    def getLogs(self, item: models.Model) -> list[dict]:
-        self.ensureAccess(item, types.permissions.PermissionType.READ)
+    def get_logs(self, item: models.Model) -> list[dict]:
+        self.ensure_has_access(item, types.permissions.PermissionType.READ)
         try:
             return log.get_logs(item)
         except Exception as e:
@@ -793,31 +794,31 @@ class ModelHandler(BaseModelHandler):
             return []
 
     # gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         return []
         # raise self.invalidRequestException()
 
     # Delete related, checks if the item can be deleted
     # If it can't be so, raises an exception
-    def checkDelete(self, item: models.Model) -> None:
+    def validate_delete(self, item: models.Model) -> None:
         pass
 
     # Save related, checks if the item can be saved
     # If it can't be saved, raises an exception
-    def checkSave(self, item: models.Model) -> None:
+    def validate_save(self, item: models.Model) -> None:
         pass
 
     # Invoked to possibily fix fields (or add new one, or check
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         pass
 
     # Invoked right after saved an item (no matter if new or edition)
-    def afterSave(self, item: models.Model) -> None:
+    def post_save(self, item: models.Model) -> None:
         pass
 
     # End overridable
 
-    def extractFilter(self) -> None:
+    def extract_filter(self) -> None:
         # Extract filter from params if present
         self.fltr = None
         if 'filter' in self._params:
@@ -825,7 +826,7 @@ class ModelHandler(BaseModelHandler):
             del self._params['filter']  # Remove parameter
             logger.debug('Found a filter expression (%s)', self.fltr)
 
-    def doFilter(self, data: typing.Any) -> typing.Any:
+    def filter(self, data: typing.Any) -> typing.Any:
         # Right now, filtering only supports a single filter, in a future
         # we may improve it
         if self.fltr is None:
@@ -867,7 +868,7 @@ class ModelHandler(BaseModelHandler):
 
     # Helper to process detail
     # Details can be managed (writen) by any user that has MANAGEMENT permission over parent
-    def processDetail(self) -> typing.Any:
+    def process_detail(self) -> typing.Any:
         logger.debug('Processing detail %s for with params %s', self._path, self._params)
         try:
             item: models.Model = self.model.objects.filter(uuid=self._args[0])[0]  # type: ignore  # Slicing is not supported by pylance right now
@@ -884,10 +885,10 @@ class ModelHandler(BaseModelHandler):
                     self._user,
                     requiredPermission,
                 )
-                raise self.accessDenied()
+                raise self.access_denied_response()
 
             if not self.detail:
-                raise self.invalidRequestException()
+                raise self.invalid_request_response()
 
             # pylint: disable=unsubscriptable-object
             detailCls = self.detail[self._args[1]]
@@ -898,16 +899,16 @@ class ModelHandler(BaseModelHandler):
 
             return method()
         except IndexError as e:
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
         except (KeyError, AttributeError) as e:
-            raise self.invalidMethodException() from e
+            raise self.invalid_method_response() from e
         except exceptions.HandlerError:
             raise
         except Exception as e:
             logger.error('Exception processing detail: %s', e)
-            raise self.invalidRequestException() from e
+            raise self.invalid_request_response() from e
 
-    def getItems(self, *args, **kwargs) -> typing.Generator[collections.abc.MutableMapping[str, typing.Any], None, None]:
+    def get_items(self, *args, **kwargs) -> typing.Generator[collections.abc.MutableMapping[str, typing.Any], None, None]:
         if 'overview' in kwargs:
             overview = kwargs['overview']
             del kwargs['overview']
@@ -950,7 +951,7 @@ class ModelHandler(BaseModelHandler):
                     yield self.item_as_dict_overview(item)
                 else:
                     res = self.item_as_dict(item)
-                    self.fillIntanceFields(item, res)
+                    self.fill_instance_fields(item, res)
                     yield res
             except Exception as e:  # maybe an exception is thrown to skip an item
                 logger.debug('Got exception processing item from model: %s', e)
@@ -961,16 +962,16 @@ class ModelHandler(BaseModelHandler):
         Wraps real get method so we can process filters if they exists
         """
         # Extract filter from params if present
-        self.extractFilter()
-        return self.doFilter(self.doGet())
+        self.extract_filter()
+        return self.filter(self.process_get())
 
     #  pylint: disable=too-many-return-statements
-    def doGet(self) -> typing.Any:
+    def process_get(self) -> typing.Any:
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
         nArgs = len(self._args)
 
         if nArgs == 0:
-            return list(self.getItems(overview=False))
+            return list(self.get_items(overview=False))
 
         # if has custom methods, look for if this request matches any of them
         for cm in self.custom_methods:
@@ -988,7 +989,7 @@ class ModelHandler(BaseModelHandler):
                             self._params,
                             e,
                         )
-                        raise self.invalidMethodException()
+                        raise self.invalid_method_response()
 
                     return operation(item)
 
@@ -997,69 +998,69 @@ class ModelHandler(BaseModelHandler):
                 try:
                     operation = getattr(self, self._args[0])
                 except Exception as e:
-                    raise self.invalidMethodException() from e
+                    raise self.invalid_method_response() from e
 
                 return operation()
 
         if nArgs == 1:
             if self._args[0] == OVERVIEW:
-                return list(self.getItems())
+                return list(self.get_items())
             if self._args[0] == TYPES:
                 return list(self.get_types())
             if self._args[0] == TABLEINFO:
-                return self.processTableFields(
+                return self.process_table_fields(
                     self.table_title,
                     self.table_fields,
                     self.table_row_style,
                     self.table_subtitle,
                 )
             if self._args[0] == GUI:
-                return self.getGui('')
+                return self.get_gui('')
 
             # get item ID
             try:
                 item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
 
-                self.ensureAccess(item, types.permissions.PermissionType.READ)
+                self.ensure_has_access(item, types.permissions.PermissionType.READ)
 
                 res = self.item_as_dict(item)
-                self.fillIntanceFields(item, res)
+                self.fill_instance_fields(item, res)
                 return res
             except Exception as e:
                 logger.exception('Got Exception looking for item')
-                raise self.invalidItemException() from e
+                raise self.invalid_item_response() from e
 
         # nArgs > 1
         # Request type info or gui, or detail
         if self._args[0] == OVERVIEW:
             if nArgs != 2:
-                raise self.invalidRequestException()
+                raise self.invalid_request_response()
         elif self._args[0] == TYPES:
             if nArgs != 2:
-                raise self.invalidRequestException()
+                raise self.invalid_request_response()
             return self.get_type(self._args[1])
         elif self._args[0] == GUI:
             if nArgs != 2:
-                raise self.invalidRequestException()
-            gui = self.getGui(self._args[1])
+                raise self.invalid_request_response()
+            gui = self.get_gui(self._args[1])
             return sorted(gui, key=lambda f: f['gui']['order'])
         elif self._args[1] == LOG:
             if nArgs != 2:
-                raise self.invalidRequestException()
+                raise self.invalid_request_response()
             try:
                 # DB maybe case sensitive??, anyway, uuids are stored in lowercase
                 item = self.model.objects.get(  # type: ignore  # mypy complains about type of model
                     uuid=self._args[0].lower()
                 )
-                return self.getLogs(item)
+                return self.get_logs(item)
             except Exception as e:
-                raise self.invalidItemException() from e
+                raise self.invalid_item_response() from e
 
         # If has detail and is requesting detail
         if self.detail is not None:
-            return self.processDetail()
+            return self.process_detail()
 
-        raise self.invalidRequestException()  # Will not return
+        raise self.invalid_request_response()  # Will not return
 
     def post(self) -> typing.Any:
         """
@@ -1071,7 +1072,7 @@ class ModelHandler(BaseModelHandler):
             if self._args[0] == 'test':
                 return self.test(self._args[1])
 
-        raise self.invalidMethodException()  # Will not return
+        raise self.invalid_method_response()  # Will not return
 
     def put(self) -> typing.Any:
         """
@@ -1086,10 +1087,10 @@ class ModelHandler(BaseModelHandler):
         deleteOnError = False
 
         if len(self._args) > 1:  # Detail?
-            return self.processDetail()
+            return self.process_detail()
 
         # Here, self.model() indicates an "django model object with default params"
-        self.ensureAccess(
+        self.ensure_has_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to create, modify, etc..
 
@@ -1097,7 +1098,7 @@ class ModelHandler(BaseModelHandler):
             # Extract fields
             args = self.fields_from_params(self.save_fields)
             logger.debug('Args: %s', args)
-            self.beforeSave(args)
+            self.pre_save(args)
             # If tags is in save fields, treat it "specially"
             if 'tags' in self.save_fields:
                 tags = args['tags']
@@ -1129,7 +1130,7 @@ class ModelHandler(BaseModelHandler):
                     item.tags.clear()
 
             if not deleteOnError:
-                self.checkSave(
+                self.validate_save(
                     item
                 )  # Will raise an exception if item can't be saved (only for modify operations..)
 
@@ -1144,14 +1145,14 @@ class ModelHandler(BaseModelHandler):
                 item.save()
 
                 res = self.item_as_dict(item)
-                self.fillIntanceFields(item, res)
+                self.fill_instance_fields(item, res)
             except Exception:
                 logger.exception('Exception on put')
                 if deleteOnError:
                     item.delete()
                 raise
 
-            self.afterSave(item)
+            self.post_save(item)
 
             return res
 
@@ -1173,25 +1174,25 @@ class ModelHandler(BaseModelHandler):
         """
         logger.debug('method DELETE for %s, %s', self.__class__.__name__, self._args)
         if len(self._args) > 1:
-            return self.processDetail()
+            return self.process_detail()
 
         if len(self._args) != 1:
             raise exceptions.RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(
+        self.ensure_has_access(
             self.model(), types.permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 
         try:
             item = self.model.objects.get(uuid=self._args[0].lower())  # type: ignore  # mypy complains about type of model
-            self.checkDelete(item)
-            self.deleteItem(item)
+            self.validate_delete(item)
+            self.delete_item(item)
         except self.model.DoesNotExist:  # type: ignore  # mypy complains about type of model
             raise exceptions.NotFound('Element do not exists') from None
 
         return consts.OK
 
-    def deleteItem(self, item: models.Model) -> None:
+    def delete_item(self, item: models.Model) -> None:
         """
         Basic, overridable method for deleting an item
         """

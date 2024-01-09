@@ -66,17 +66,17 @@ class MFA(ModelHandler):
     def enum_types(self) -> collections.abc.Iterable[type[mfas.MFA]]:
         return mfas.factory().providers().values()
 
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         mfaType = mfas.factory().lookup(type_)
 
         if not mfaType:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
         # Create a temporal instance to get the gui
         mfa = mfaType(Environment.getTempEnv(), None)
 
-        localGui = self.addDefaultFields(mfa.guiDescription(), ['name', 'comments', 'tags'])
-        self.addField(
+        localGui = self.add_default_fields(mfa.guiDescription(), ['name', 'comments', 'tags'])
+        self.add_field(
             localGui,
             {
                 'name': 'remember_device',
@@ -88,7 +88,7 @@ class MFA(ModelHandler):
                 'order': 111,
             },
         )
-        self.addField(
+        self.add_field(
             localGui,
             {
                 'name': 'validity',

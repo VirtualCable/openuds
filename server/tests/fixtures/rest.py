@@ -57,6 +57,7 @@ class GroupRestStruct(rest.RestStruct):
     type: str
     is_meta: bool
     meta_if_any: bool
+    skip_mfa: str  # 'A' or 'I' (State.ACTIVE or State.INACTIVE)
 
 
 # ServicePool REST structure
@@ -96,9 +97,10 @@ def createUser(**kwargs) -> dict[str, typing.Any]:
     return data
 
 
-def createGroup(**kwargs) -> dict[str, typing.Any]:
+def create_group(**kwargs) -> dict[str, typing.Any]:
     data = GroupRestStruct.random_create(**kwargs).as_dict()
     data['state'] = 'A'  # Fix state to 1 char
+    data['skip_mfa'] = 'A'  # Fix state to 1 char
     return data
 
 

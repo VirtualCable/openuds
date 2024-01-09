@@ -137,10 +137,10 @@ class ServicesPools(ModelHandler):
         ('createFromAssignable', True),
     ]
 
-    def getItems(self, *args, **kwargs) -> typing.Generator[typing.Any, None, None]:
+    def get_items(self, *args, **kwargs) -> typing.Generator[typing.Any, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
         d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-        return super().getItems(
+        return super().get_items(
             overview=kwargs.get('overview', True),
             query=(
                 ServicePool.objects.prefetch_related(
@@ -181,8 +181,8 @@ class ServicesPools(ModelHandler):
                 )
             ),
         )
-        # return super().getItems(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
-        # return super(ServicesPools, self).getItems(*args, **kwargs)
+        # return super().get_items(overview=kwargs.get('overview', True), prefetch=['service', 'service__provider', 'servicesPoolGroup', 'image', 'tags'])
+        # return super(ServicesPools, self).get_items(*args, **kwargs)
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
         item = ensure.is_instance(item, ServicePool)
@@ -277,13 +277,13 @@ class ServicesPools(ModelHandler):
         return val
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
             raise ResponseError(gettext('Create at least a service before creating a new service pool'))
 
-        g = self.addDefaultFields([], ['name', 'comments', 'tags'])
+        g = self.add_default_fields([], ['name', 'comments', 'tags'])
 
         for f in [
             {
@@ -464,12 +464,12 @@ class ServicesPools(ModelHandler):
                 'order': 131,
             },
         ]:
-            self.addField(g, f)
+            self.add_field(g, f)
 
         return g
 
     # pylint: disable=too-many-statements
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         # logger.debug(self._params)
         def macro_fld_len(x) -> int:
             w = x
@@ -581,7 +581,7 @@ class ServicesPools(ModelHandler):
         except Exception as e:
             raise RequestError(str(e)) from e
 
-    def afterSave(self, item: 'Model') -> None:
+    def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, ServicePool)
         if self._params.get('publish_on_save', False) is True:
             try:
@@ -589,7 +589,7 @@ class ServicesPools(ModelHandler):
             except Exception as e:
                 logger.error('Could not publish service pool %s: %s', item.name, e)
 
-    def deleteItem(self, item: 'Model') -> None:
+    def delete_item(self, item: 'Model') -> None:
         item = ensure.is_instance(item, ServicePool)
         try:
             logger.debug('Deleting %s', item)
@@ -599,7 +599,7 @@ class ServicesPools(ModelHandler):
             logger.exception('deleting service pool')
 
     # Logs
-    def getLogs(self, item: 'Model') -> list[dict]:
+    def get_logs(self, item: 'Model') -> list[dict]:
         item = ensure.is_instance(item, ServicePool)
         try:
             return log.get_logs(item)
@@ -609,7 +609,7 @@ class ServicesPools(ModelHandler):
     # Set fallback status
     def setFallbackAccess(self, item: 'Model'):
         item = ensure.is_instance(item, ServicePool)
-        self.ensureAccess(item, types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, types.permissions.PermissionType.MANAGEMENT)
 
         fallback = self._params.get('fallbackAccess')
         if fallback:
@@ -665,7 +665,7 @@ class ServicesPools(ModelHandler):
     def createFromAssignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         if 'user_id' not in self._params or 'assignable_id' not in self._params:
-            return self.invalidRequestException('Invalid parameters')
+            return self.invalid_request_response('Invalid parameters')
 
         logger.debug('Creating from assignable: %s', self._params)
         UserServiceManager().create_from_assignable(

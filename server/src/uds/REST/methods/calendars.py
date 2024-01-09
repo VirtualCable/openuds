@@ -92,5 +92,5 @@ class Calendars(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def getGui(self, type_: str) -> list[typing.Any]:
-        return self.addDefaultFields([], ['name', 'comments', 'tags'])
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        return self.add_default_fields([], ['name', 'comments', 'tags'])

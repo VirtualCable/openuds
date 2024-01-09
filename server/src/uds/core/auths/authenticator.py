@@ -138,18 +138,18 @@ class Authenticator(Module):
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
-    needsPassword: typing.ClassVar[bool] = False
+    needs_password: typing.ClassVar[bool] = False
 
     # : Label for username field, shown at administration interface user form.
-    userNameLabel: typing.ClassVar[str] = _('User name')
+    label_username: typing.ClassVar[str] = _('User name')
 
     # : Label for group field, shown at administration interface user form.
-    groupNameLabel: typing.ClassVar[str] = _('Group name')
+    label_groupname: typing.ClassVar[str] = _('Group name')
 
     # : Label for password field, , shown at administration interface user form.
     # : Not needed for external authenticators (where credentials are stored with
     # : an already existing user.
-    passwordLabel: typing.ClassVar[str] = _('Password')
+    label_password: typing.ClassVar[str] = _('Password')
 
     # : If this authenticators casues a temporal block of an user on repeated login failures
     blockUserOnLoginFailures: typing.ClassVar[bool] = True

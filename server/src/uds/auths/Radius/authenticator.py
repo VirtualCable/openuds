@@ -59,8 +59,8 @@ class RadiusAuth(auths.Authenticator):
     type_description = _('Radius Authenticator')
     icon_file = 'radius.png'
 
-    userNameLabel = _('User')
-    groupNameLabel = _('Group')
+    label_username = _('User')
+    label_groupname = _('Group')
 
     server = gui.TextField(
         length=64,

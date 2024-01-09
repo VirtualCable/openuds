@@ -56,7 +56,7 @@ class ServicesUsage(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(item: UserService) -> dict[str, typing.Any]:
+    def item_as_dict(item: UserService) -> dict[str, typing.Any]:
         """
         Converts an assigned/cached service db item to a dictionary for REST response
         :param item: item to convert
@@ -90,7 +90,7 @@ class ServicesUsage(DetailHandler):
             'in_use': item.in_use,
         }
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, Provider)
         try:
             if item is None:
@@ -103,20 +103,20 @@ class ServicesUsage(DetailHandler):
                 )
 
             return [
-                ServicesUsage.itemToDict(k)
+                ServicesUsage.item_as_dict(k)
                 for k in userServicesQuery.filter(state=State.USABLE)
                 .order_by('creation_date')
                 .prefetch_related('deployed_service', 'deployed_service__service', 'user', 'user__manager')
             ]
 
         except Exception:
-            logger.exception('getItems')
-            raise self.invalidItemException()
+            logger.exception('get_items')
+            raise self.invalid_item_response()
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         return _('Services Usage')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             # {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
             {'state_date': {'title': _('Access'), 'type': 'datetime'}},
@@ -130,10 +130,10 @@ class ServicesUsage(DetailHandler):
             {'source_host': {'title': _('Src Host')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Provider)
         userService: UserService
         try:
@@ -141,7 +141,7 @@ class ServicesUsage(DetailHandler):
                 uuid=process_uuid(item), deployed_service__service__provider=parent
             )
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
         logger.debug('Deleting user service')
         if userService.state in (State.USABLE, State.REMOVING):
@@ -149,6 +149,6 @@ class ServicesUsage(DetailHandler):
         elif userService.state == State.PREPARING:
             userService.cancel()
         elif userService.state == State.REMOVABLE:
-            raise self.invalidItemException(_('Item already being removed'))
+            raise self.invalid_item_response(_('Item already being removed'))
         else:
-            raise self.invalidItemException(_('Item is not removable'))
+            raise self.invalid_item_response(_('Item is not removable'))

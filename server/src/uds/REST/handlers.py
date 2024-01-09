@@ -146,7 +146,7 @@ class Handler:
             if self.needs_staff and not self.is_staff_member():
                 raise AccessDenied()
             try:
-                self._user = self.getUser()
+                self._user = self.get_user()
             except Exception as e:
                 # Maybe the user was deleted, so access is denied
                 raise AccessDenied() from e
@@ -166,7 +166,7 @@ class Handler:
         """
         return self._headers.get(headerName)
 
-    def addHeader(self, header: str, value: str) -> None:
+    def add_header(self, header: str, value: str) -> None:
         """
         Inserts a new header inside the headers list
         :param header: name of header to insert
@@ -174,7 +174,7 @@ class Handler:
         """
         self._headers[header] = value
 
-    def removeHeader(self, header: str) -> None:
+    def delete_header(self, header: str) -> None:
         """
         Removes an specific header from the headers list
         :param header: Name of header to remove
@@ -206,14 +206,14 @@ class Handler:
         return self._args
 
     # Auth related
-    def getAuthToken(self) -> typing.Optional[str]:
+    def get_auth_token(self) -> typing.Optional[str]:
         """
         Returns the authentication token for this REST request
         """
         return self._authToken
 
     @staticmethod
-    def storeSessionAuthdata(
+    def set_rest_auth(
         session: SessionBase,
         id_auth: int,
         username: str,
@@ -251,7 +251,7 @@ class Handler:
             'staff_member': staff_member,
         }
 
-    def genAuthToken(
+    def gen_auth_token(
         self,
         id_auth: int,
         username: str,
@@ -272,7 +272,7 @@ class Handler:
         :param staf_member: If user is considered staff member or not
         """
         session = SessionStore()
-        Handler.storeSessionAuthdata(
+        Handler.set_rest_auth(
             session,
             id_auth,
             username,
@@ -289,7 +289,7 @@ class Handler:
 
         return self._authToken
 
-    def cleanAuthToken(self) -> None:
+    def clear_auth_token(self) -> None:
         """
         Cleans up the authentication token
         """
@@ -299,7 +299,7 @@ class Handler:
         self._session = None
 
     # Session related (from auth token)
-    def getValue(self, key: str) -> typing.Any:
+    def recover_value(self, key: str) -> typing.Any:
         """
         Get REST session related value for a key
         """
@@ -313,7 +313,7 @@ class Handler:
         except Exception:
             return None
 
-    def setValue(self, key: str, value: typing.Any) -> None:
+    def store_value(self, key: str, value: typing.Any) -> None:
         """
         Set a session key value
         """
@@ -331,7 +331,7 @@ class Handler:
                 'Got an exception setting session value %s to %s', key, value
             )
 
-    def validSource(self) -> bool:
+    def valid_source(self) -> bool:
         try:
             return net.contains(
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
@@ -348,21 +348,21 @@ class Handler:
         """
         True if user of this REST request is administrator and SOURCE is valid admint trusted sources
         """
-        return bool(self.getValue('is_admin')) and self.validSource()
+        return bool(self.recover_value('is_admin')) and self.valid_source()
 
     def is_staff_member(self) -> bool:
         """
         True if user of this REST request is member of staff
         """
-        return bool(self.getValue('staff_member')) and self.validSource()
+        return bool(self.recover_value('staff_member')) and self.valid_source()
 
-    def getUser(self) -> 'User':
+    def get_user(self) -> 'User':
         """
         If user is staff member, returns his Associated user on auth
         """
         logger.debug('REST : %s', self._session)
-        authId = self.getValue('auth')
-        username = self.getValue('username')
+        authId = self.recover_value('auth')
+        username = self.recover_value('username')
         # Maybe it's root user??
         if (
             GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
@@ -373,7 +373,7 @@ class Handler:
 
         return Authenticator.objects.get(pk=authId).users.get(name=username)
 
-    def getParam(self, *names: str) -> str:
+    def get_param(self, *names: str) -> str:
         """
         Returns the first parameter found in the parameters (_params) list
 

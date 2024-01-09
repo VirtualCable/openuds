@@ -82,8 +82,8 @@ class Accounts(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def getGui(self, type_: str) -> list[typing.Any]:
-        return self.addDefaultFields([], ['name', 'comments', 'tags'])
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        return self.add_default_fields([], ['name', 'comments', 'tags'])
 
     def timemark(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, Account)
@@ -93,5 +93,5 @@ class Accounts(ModelHandler):
 
     def clear(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, Account)
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         return item.usages.filter(user_service=None).delete()

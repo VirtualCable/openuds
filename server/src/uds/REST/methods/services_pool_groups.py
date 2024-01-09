@@ -79,7 +79,7 @@ class ServicesPoolGroups(ModelHandler):
         {'comments': {'title': _('Comments')}},
     ]
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         imgId = fields['image_id']
         fields['image_id'] = None
         logger.debug('Image id: %s', imgId)
@@ -91,8 +91,8 @@ class ServicesPoolGroups(ModelHandler):
             logger.exception('At image recovering')
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
-        localGui = self.addDefaultFields([], ['name', 'comments', 'priority'])
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        localGui = self.add_default_fields([], ['name', 'comments', 'priority'])
 
         for field in [
             {
@@ -110,7 +110,7 @@ class ServicesPoolGroups(ModelHandler):
                 'order': 102,
             }
         ]:
-            self.addField(localGui, field)
+            self.add_field(localGui, field)
 
         return localGui
 

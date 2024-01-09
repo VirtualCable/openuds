@@ -63,7 +63,7 @@ class InternalDBAuth(auths.Authenticator):
     icon_file = 'auth.png'
 
     # If we need to enter the password for this user
-    needsPassword = True
+    needs_password = True
 
     # This is the only internal source
     isExternalSource = False

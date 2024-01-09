@@ -97,7 +97,7 @@ class ActorTokens(ModelHandler):
         if len(self._args) != 1:
             raise RequestError('Delete need one and only one argument')
 
-        self.ensureAccess(
+        self.ensure_has_access(
             self.model(), permissions.PermissionType.ALL, root=True
         )  # Must have write permissions to delete
 

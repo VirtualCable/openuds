@@ -82,7 +82,7 @@ class OsManagers(ModelHandler):
         item = ensure.is_instance(item, OSManager)
         return self.osmToDict(item)
 
-    def checkDelete(self, item: 'Model') -> None:
+    def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, OSManager)
         # Only can delete if no ServicePools attached
         if item.deployedServices.count() > 0:
@@ -95,7 +95,7 @@ class OsManagers(ModelHandler):
         return osmanagers.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         try:
             osmanagerType = osmanagers.factory().lookup(type_)
 
@@ -104,7 +104,7 @@ class OsManagers(ModelHandler):
 
             osmanager = osmanagerType(Environment.getTempEnv(), None)
 
-            return self.addDefaultFields(
+            return self.add_default_fields(
                 osmanager.guiDescription(),  # type: ignore  # may raise an exception if lookup fails
                 ['name', 'comments', 'tags'],
             )

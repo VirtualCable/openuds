@@ -118,7 +118,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.Provider)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -127,12 +127,12 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 return [Services.serviceToDict(k, perm) for k in parent.services.all()]
             k = parent.services.get(uuid=process_uuid(item))
             val = Services.serviceToDict(k, perm, full=True)
-            return self.fillIntanceFields(k, val)
+            return self.fill_instance_fields(k, val)
         except Exception as e:
             logger.error('Error getting services for %s: %s', parent, e)
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
@@ -149,7 +149,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             except Exception:  # nosec: This is a delete, we don't care about exceptions
                 pass
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.Provider)
         # Extract item db fields
         # We need this fields for all
@@ -191,7 +191,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
             service.save()
         except models.Service.DoesNotExist:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
             if service and service.token and not item:
                 service.delete()
@@ -213,7 +213,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('Saving Service')
             raise RequestError('incorrect invocation to PUT: {0}'.format(e)) from e
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             service = parent.services.get(uuid=process_uuid(item))
@@ -222,18 +222,18 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 return
         except Exception:
             logger.exception('Deleting service')
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
         raise RequestError('Item has associated deployed services')
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             return _('Services of {}').format(parent.name)
         except Exception:
             return _('Current services')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'name': {'title': _('Service name'), 'visible': True, 'type': 'iconType'}},
             {'comments': {'title': _('Comments')}},
@@ -288,22 +288,22 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return offers  # Default is that details do not have types
 
-    def getGui(self, parent: 'Model', forType: str) -> collections.abc.Iterable[typing.Any]:
+    def get_gui(self, parent: 'Model', forType: str) -> collections.abc.Iterable[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             logger.debug('getGui parameters: %s, %s', parent, forType)
             parentInstance = parent.get_instance()
             serviceType = parentInstance.get_service_by_type(forType)
             if not serviceType:
-                raise self.invalidItemException(f'Gui for {forType} not found')
+                raise self.invalid_item_response(f'Gui for {forType} not found')
 
             service = serviceType(
                 Environment.getTempEnv(), parentInstance
             )  # Instantiate it so it has the opportunity to alter gui description based on parent
-            localGui = self.addDefaultFields(
+            localGui = self.add_default_fields(
                 service.guiDescription(), ['name', 'comments', 'tags']
             )
-            self.addField(
+            self.add_field(
                 localGui,
                 {
                     'name': 'max_services_count_type',
@@ -327,14 +327,14 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.exception('getGui')
             raise ResponseError(str(e)) from e
 
-    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
+    def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.Provider)
         try:
             service = parent.services.get(uuid=process_uuid(item))
             logger.debug('Getting logs for %s', item)
             return log.get_logs(service)
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
     def servicesPools(self, parent: 'Model', item: str) -> typing.Any:
         parent = ensure.is_instance(parent, models.Provider)
@@ -343,7 +343,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         res = []
         for i in service.deployedServices.all():
             try:
-                self.ensureAccess(
+                self.ensure_has_access(
                     i, uds.core.types.permissions.PermissionType.READ
                 )  # Ensures access before listing...
                 res.append(

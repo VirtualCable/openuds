@@ -72,7 +72,7 @@ class MetaServicesPool(DetailHandler):
             'user_services_in_preparation': item.pool.userServices.filter(state=State.PREPARING).count(),
         }
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             if not item:
@@ -81,19 +81,19 @@ class MetaServicesPool(DetailHandler):
             return MetaServicesPool.as_dict(i)
         except Exception:
             logger.exception('err: %s', item)
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         return _('Service pools')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'priority': {'title': _('Priority'), 'type': 'numeric', 'width': '6em'}},
             {'name': {'title': _('Service Pool name')}},
             {'enabled': {'title': _('Enabled')}},
         ]
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]):
+    def save_item(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.MetaPool)
         # If already exists
         uuid = process_uuid(item) if item else None
@@ -122,7 +122,7 @@ class MetaServicesPool(DetailHandler):
 
         return self.success()
 
-    def deleteItem(self, parent: 'Model', item: str):
+    def delete_item(self, parent: 'Model', item: str):
         parent = ensure.is_instance(parent, models.MetaPool)
         member = parent.members.get(uuid=process_uuid(self._args[0]))
         logStr = "Removed meta pool member {} by {}".format(member.pool.name, self._user.pretty_name)
@@ -138,12 +138,12 @@ class MetaAssignedService(DetailHandler):
     """
 
     @staticmethod
-    def itemToDict(
+    def item_as_dict(
         metaPool: 'models.MetaPool',
         item: 'models.UserService',
         props: typing.Optional[dict[str, typing.Any]],
     ) -> dict[str, typing.Any]:
-        element = AssignedService.itemToDict(item, props, False)
+        element = AssignedService.item_as_dict(item, props, False)
         element['pool_id'] = item.deployed_service.uuid
         element['pool_name'] = item.deployed_service.name
         return element
@@ -160,9 +160,9 @@ class MetaAssignedService(DetailHandler):
                 deployed_service__in=[i.pool for i in metaPool.members.all()],
             )[0]
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.MetaPool)
         def assignedUserServicesForPools() -> (
             typing.Generator[
@@ -189,10 +189,10 @@ class MetaAssignedService(DetailHandler):
                 result = {}
 
                 for k, props in assignedUserServicesForPools():
-                    result[k.uuid] = MetaAssignedService.itemToDict(parent, k, props)
+                    result[k.uuid] = MetaAssignedService.item_as_dict(parent, k, props)
                 return list(result.values())
 
-            return MetaAssignedService.itemToDict(
+            return MetaAssignedService.item_as_dict(
                 parent,
                 self._getAssignedService(parent, item),
                 props={
@@ -203,14 +203,14 @@ class MetaAssignedService(DetailHandler):
                 },
             )
         except Exception:
-            logger.exception('getItems')
-            raise self.invalidItemException()
+            logger.exception('get_items')
+            raise self.invalid_item_response()
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.MetaPool)
         return _('Assigned services')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         return [
             {'creation_date': {'title': _('Creation date'), 'type': 'datetime'}},
@@ -232,20 +232,20 @@ class MetaAssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         return {'field': 'state', 'prefix': 'row-state-'}
 
-    def getLogs(self, parent: 'Model', item: str) -> list[typing.Any]:
+    def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:
             asignedService = self._getAssignedService(parent, item)
             logger.debug('Getting logs for %s', asignedService)
             return log.get_logs(asignedService)
         except Exception:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.MetaPool)
         userService = self._getAssignedService(parent, item)
 
@@ -263,17 +263,17 @@ class MetaAssignedService(DetailHandler):
         elif userService.state == State.PREPARING:
             userService.cancel()
         elif userService.state == State.REMOVABLE:
-            raise self.invalidItemException(_('Item already being removed'))
+            raise self.invalid_item_response(_('Item already being removed'))
         else:
-            raise self.invalidItemException(_('Item is not removable'))
+            raise self.invalid_item_response(_('Item is not removable'))
 
         log.log(parent, log.LogLevel.INFO, logStr, log.LogSource.ADMIN)
 
     # Only owner is allowed to change right now
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]):
+    def save_item(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.MetaPool)
         if item is None:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
         fields = self.fields_from_params(['auth_id', 'user_id'])
         service = self._getAssignedService(parent, item)
@@ -291,7 +291,7 @@ class MetaAssignedService(DetailHandler):
             .count()
             > 0
         ):
-            raise self.invalidResponseException(
+            raise self.invalid_response_response(
                 'There is already another user service assigned to {}'.format(user.pretty_name)
             )
 

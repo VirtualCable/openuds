@@ -84,33 +84,33 @@ class Authenticators(ModelHandler):
     def enum_types(self) -> collections.abc.Iterable[type[auths.Authenticator]]:
         return auths.factory().providers().values()
 
-    def typeInfo(self, type_: type['Module']) -> dict[str, typing.Any]:
+    def type_info(self, type_: type['Module']) -> dict[str, typing.Any]:
         if issubclass(type_, auths.Authenticator):
             return {
-                'canSearchUsers': type_.search_users != auths.Authenticator.search_users,  # type: ignore
-                'canSearchGroups': type_.search_groups != auths.Authenticator.search_groups,  # type: ignore
-                'needsPassword': type_.needsPassword,
-                'userNameLabel': _(type_.userNameLabel),
-                'groupNameLabel': _(type_.groupNameLabel),
-                'passwordLabel': _(type_.passwordLabel),
-                'canCreateUsers': type_.create_user != auths.Authenticator.create_user,  # type: ignore
-                'isExternal': type_.isExternalSource,
-                'supportsMFA': type_.provides_mfa(),
+                'search_users_supported': type_.search_users != auths.Authenticator.search_users,  # type: ignore
+                'search_groups_supported': type_.search_groups != auths.Authenticator.search_groups,  # type: ignore
+                'needs_password': type_.needs_password,
+                'label_username': _(type_.label_username),
+                'label_groupname': _(type_.label_groupname),
+                'label_password': _(type_.label_password),
+                'create_users_supported': type_.create_user != auths.Authenticator.create_user,  # type: ignore
+                'is_external': type_.isExternalSource,
+                'mfa_supported': type_.provides_mfa(),
             }
         # Not of my type
         return {}
 
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         try:
             authType = auths.factory().lookup(type_)
             if authType:
                 # Create a new instance of the authenticator to access to its GUI
                 authInstance = authType(Environment.getTempEnv(), None)
-                field = self.addDefaultFields(
+                field = self.add_default_fields(
                     authInstance.guiDescription(),
                     ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                 )
-                self.addField(
+                self.add_field(
                     field,
                     {
                         'name': 'state',
@@ -131,7 +131,7 @@ class Authenticators(ModelHandler):
                 )
                 # If supports mfa, add MFA provider selector field
                 if authType.provides_mfa():
-                    self.addField(
+                    self.add_field(
                         field,
                         {
                             'name': 'mfa_id',
@@ -170,11 +170,11 @@ class Authenticators(ModelHandler):
             'users_count': item.users.count(),
             'type': type_.get_type(),
             'type_name': type_.name(),
-            'type_info': self.typeInfo(type_),
+            'type_info': self.type_info(type_),
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def afterSave(self, item: 'Model') -> None:
+    def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Authenticator)
         try:
             networks = self._params['networks']
@@ -189,11 +189,11 @@ class Authenticators(ModelHandler):
     # Custom "search" method
     def search(self, item: 'Model') -> list[dict]:
         item = ensure.is_instance(item, Authenticator)
-        self.ensureAccess(item, types.permissions.PermissionType.READ)
+        self.ensure_has_access(item, types.permissions.PermissionType.READ)
         try:
             type_ = self._params['type']
             if type_ not in ('user', 'group'):
-                raise self.invalidRequestException()
+                raise self.invalid_request_response()
 
             term = self._params['term']
 
@@ -207,7 +207,7 @@ class Authenticators(ModelHandler):
                 or (auth.search_groups != auths.Authenticator.search_groups)  # type: ignore
             )
             if canDoSearch is False:
-                raise self.notSupported()
+                raise self.not_supported_response()
 
             if type_ == 'user':
                 return list(auth.search_users(term))[:limit]
@@ -220,7 +220,7 @@ class Authenticators(ModelHandler):
     def test(self, type_: str):
         authType = auths.factory().lookup(type_)
         if not authType:
-            raise self.invalidRequestException(f'Invalid type: {type_}')
+            raise self.invalid_request_response(f'Invalid type: {type_}')
 
         dct = self._params.copy()
         dct['_request'] = self._request
@@ -229,7 +229,7 @@ class Authenticators(ModelHandler):
             return self.success()
         return res[1]
 
-    def beforeSave(
+    def pre_save(
         self, fields: dict[str, typing.Any]
     ) -> None:  # pylint: disable=too-many-branches,too-many-statements
         logger.debug(self._params)
@@ -246,11 +246,11 @@ class Authenticators(ModelHandler):
         fields['small_name'] = fields['small_name'].strip().replace(' ', '_')
         # And ensure small_name chars are valid [a-zA-Z0-9:-]+
         if fields['small_name'] and not re.match(r'^[a-zA-Z0-9:.-]+$', fields['small_name']):
-            raise self.invalidRequestException(
+            raise self.invalid_request_response(
                 typing.cast(str, _('Label must contain only letters, numbers, or symbols: - : .'))
             )
 
-    def deleteItem(self, item: 'Model'):
+    def delete_item(self, item: 'Model'):
         # For every user, remove assigned services (mark them for removal)
         item = ensure.is_instance(item, Authenticator)
 

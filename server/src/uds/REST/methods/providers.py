@@ -112,7 +112,7 @@ class Providers(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def checkDelete(self, item: 'Model') -> None:
+    def validate_delete(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Provider)
         if item.services.count() > 0:
             raise RequestError(gettext('Can\'t delete providers with services'))
@@ -122,11 +122,11 @@ class Providers(ModelHandler):
         return services.factory().providers().values()
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         providerType = services.factory().lookup(type_)
         if providerType:
             provider = providerType(Environment.getTempEnv(), None)
-            return self.addDefaultFields(provider.guiDescription(), ['name', 'comments', 'tags'])
+            return self.add_default_fields(provider.guiDescription(), ['name', 'comments', 'tags'])
         raise NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[dict, None, None]:
@@ -147,8 +147,8 @@ class Providers(ModelHandler):
         """
         try:
             service = Service.objects.get(uuid=self._args[1])
-            self.ensureAccess(service.provider, uds.core.types.permissions.PermissionType.READ)
-            perm = self.getPermissions(service.provider)
+            self.ensure_has_access(service.provider, uds.core.types.permissions.PermissionType.READ)
+            perm = self.get_permissions(service.provider)
             return DetailServices.serviceToDict(service, perm, True)
         except Exception:
             # logger.exception('Exception')
@@ -160,7 +160,7 @@ class Providers(ModelHandler):
         :param item:
         """
         item = ensure.is_instance(item, Provider)
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return self.item_as_dict(item)

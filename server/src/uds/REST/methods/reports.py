@@ -85,7 +85,7 @@ class Reports(model.BaseModelHandler):
                 break
 
         if not found:
-            raise self.invalidRequestException('Invalid report uuid!')
+            raise self.invalid_request_response('Invalid report uuid!')
 
         return found
 
@@ -93,20 +93,20 @@ class Reports(model.BaseModelHandler):
         logger.debug('method GET for %s, %s', self.__class__.__name__, self._args)
 
         def error() -> typing.NoReturn:
-            raise self.invalidRequestException()
+            raise self.invalid_request_response()
 
         return match(
             self._args,
             error,
-            ((), lambda: list(self.getItems())),
-            ((model.OVERVIEW,), lambda: list(self.getItems())),
+            ((), lambda: list(self.get_items())),
+            ((model.OVERVIEW,), lambda: list(self.get_items())),
             (
                 (model.TABLEINFO,),
-                lambda: self.processTableFields(
+                lambda: self.process_table_fields(
                     str(self.table_title), self.table_fields, self.table_row_style
                 ),
             ),
-            ((model.GUI, '<report>'), lambda report: self.getGui(report)),
+            ((model.GUI, '<report>'), lambda report: self.get_gui(report)),
         )
 
     def put(self):
@@ -121,7 +121,7 @@ class Reports(model.BaseModelHandler):
         )
 
         if len(self._args) != 1:
-            raise self.invalidRequestException()
+            raise self.invalid_request_response()
 
         report = self._findReport(self._args[0], self._params)
 
@@ -139,15 +139,15 @@ class Reports(model.BaseModelHandler):
             return data
         except Exception as e:
             logger.exception('Generating report')
-            raise self.invalidRequestException(str(e))
+            raise self.invalid_request_response(str(e))
 
     # Gui related
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         report = self._findReport(type_)
         return sorted(report.guiDescription(), key=lambda f: f['gui']['order'])
 
     # Returns the list of
-    def getItems(
+    def get_items(
         self, *args, **kwargs
     ) -> typing.Generator[dict[str, typing.Any], None, None]:
         for i in reports.availableReports:

@@ -55,7 +55,7 @@ class TunnelServers(DetailHandler):
     # tunnels/[id]/servers
     custom_methods = ['maintenance']
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             multi = False
@@ -82,16 +82,16 @@ class TunnelServers(DetailHandler):
             return res[0]
         except Exception as e:
             logger.exception('REST groups')
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             return _('Servers of {0}').format(parent.name)
         except Exception:
             return gettext('Servers')
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return [
             {
@@ -110,18 +110,18 @@ class TunnelServers(DetailHandler):
             },
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         parent = ensure.is_instance(parent, models.ServerGroup)
         return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
 
     # Cannot save a tunnel server, it's not editable...
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, models.ServerGroup)
         try:
             parent.servers.remove(models.Server.objects.get(uuid=process_uuid(item)))
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
     # Custom methods
     def maintenance(self, parent: 'Model', id: str) -> typing.Any:
@@ -131,7 +131,7 @@ class TunnelServers(DetailHandler):
         :param item:
         """
         item = models.Server.objects.get(uuid=process_uuid(id))
-        self.ensureAccess(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(item, uds.core.types.permissions.PermissionType.MANAGEMENT)
         item.maintenance_mode = not item.maintenance_mode
         item.save()
         return 'ok'
@@ -161,9 +161,9 @@ class Tunnels(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getGui(self, type_: str) -> list[typing.Any]:
-        return self.addField(
-            self.addDefaultFields(
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        return self.add_field(
+            self.add_default_fields(
                 [],
                 ['name', 'comments', 'tags'],
             ),
@@ -203,7 +203,7 @@ class Tunnels(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['type'] = types.servers.ServerType.TUNNEL.value
         fields['port'] = int(fields['port'])
         # Ensure host is a valid IP(4 or 6) or hostname
@@ -211,21 +211,21 @@ class Tunnels(ModelHandler):
 
     def assign(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)
-        self.ensureAccess(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
+        self.ensure_has_access(parent, uds.core.types.permissions.PermissionType.MANAGEMENT)
 
         server: typing.Optional['models.Server'] = None  # Avoid warning on reference before assignment
 
         item = self._args[-1]
 
         if item is None:
-            raise self.invalidItemException('No server specified')
+            raise self.invalid_item_response('No server specified')
 
         try:
             server = models.Server.objects.get(uuid=process_uuid(item))
-            self.ensureAccess(server, uds.core.types.permissions.PermissionType.READ)
+            self.ensure_has_access(server, uds.core.types.permissions.PermissionType.READ)
             parent.servers.add(server)
         except Exception:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
 
         # TODO: implement this
         return 'ok'

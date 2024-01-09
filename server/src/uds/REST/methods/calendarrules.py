@@ -79,7 +79,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
+    def get_items(self, parent: 'Model', item: typing.Optional[str]) -> typing.Any:
         parent = ensure.is_instance(parent, Calendar)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -90,9 +90,9 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             return CalendarRules.ruleToDict(k, perm)
         except Exception as e:
             logger.exception('itemId %s', item)
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         parent = ensure.is_instance(parent, Calendar)
 
         return [
@@ -111,7 +111,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             {'comments': {'title': _('Comments')}},
         ]
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, Calendar)
 
         # Extract item db fields
@@ -131,7 +131,7 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
         )
 
         if int(fields['interval']) < 1:
-            raise self.invalidItemException('Repeat must be greater than zero')
+            raise self.invalid_item_response('Repeat must be greater than zero')
 
         # Convert timestamps to datetimes
         fields['start'] = datetime.datetime.fromtimestamp(fields['start'])
@@ -147,14 +147,14 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
                 calRule.__dict__.update(fields)
                 calRule.save()
         except CalendarRule.DoesNotExist:
-            raise self.invalidItemException() from None
+            raise self.invalid_item_response() from None
         except IntegrityError as e:  # Duplicate key probably
             raise RequestError(_('Element already exists (duplicate key error)')) from e
         except Exception as e:
             logger.exception('Saving calendar')
             raise RequestError(f'incorrect invocation to PUT: {e}') from e
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Calendar)
         logger.debug('Deleting rule %s from %s', item, parent)
         try:
@@ -164,9 +164,9 @@ class CalendarRules(DetailHandler):  # pylint: disable=too-many-public-methods
             calRule.delete()
         except Exception as e:
             logger.exception('Exception')
-            raise self.invalidItemException() from e
+            raise self.invalid_item_response() from e
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, Calendar)
         try:
             return _('Rules of {0}').format(parent.name)

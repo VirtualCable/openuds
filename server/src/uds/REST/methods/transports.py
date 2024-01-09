@@ -84,18 +84,18 @@ class Transports(ModelHandler):
     def enum_types(self) -> collections.abc.Iterable[type[transports.Transport]]:
         return transports.factory().providers().values()
 
-    def getGui(self, type_: str) -> list[typing.Any]:
+    def get_gui(self, type_: str) -> list[typing.Any]:
         transportType = transports.factory().lookup(type_)
 
         if not transportType:
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
         transport = transportType(Environment.getTempEnv(), None)
 
-        field = self.addDefaultFields(
+        field = self.add_default_fields(
             transport.guiDescription(), ['name', 'comments', 'tags', 'priority', 'networks']
         )
-        field = self.addField(
+        field = self.add_field(
             field,
             {
                 'name': 'allowed_oss',
@@ -113,7 +113,7 @@ class Transports(ModelHandler):
                 'order': 102,
             },
         )
-        field = self.addField(
+        field = self.add_field(
             field,
             {
                 'name': 'pools',
@@ -131,7 +131,7 @@ class Transports(ModelHandler):
                 'order': 103,
             },
         )
-        field = self.addField(
+        field = self.add_field(
             field,
             {
                 'name': 'label',
@@ -170,15 +170,15 @@ class Transports(ModelHandler):
             'permission': permissions.effective_permissions(self._user, item),
         }
 
-    def beforeSave(self, fields: dict[str, typing.Any]) -> None:
+    def pre_save(self, fields: dict[str, typing.Any]) -> None:
         fields['allowed_oss'] = ','.join(fields['allowed_oss'])
         # If label has spaces, replace them with underscores
         fields['label'] = fields['label'].strip().replace(' ', '-')
         # And ensure small_name chars are valid [ a-zA-Z0-9:-]+
         if fields['label'] and not re.match(r'^[a-zA-Z0-9:-]+$', fields['label']):
-            raise self.invalidRequestException(gettext('Label must contain only letters, numbers, ":" and "-"'))
+            raise self.invalid_request_response(gettext('Label must contain only letters, numbers, ":" and "-"'))
 
-    def afterSave(self, item: 'Model') -> None:
+    def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Transport)
         try:
             networks = self._params['networks']

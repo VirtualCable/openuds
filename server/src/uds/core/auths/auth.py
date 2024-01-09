@@ -441,7 +441,7 @@ def web_login(
 
     # Ensures that this user will have access through REST api if logged in through web interface
     # Note that REST api will set the session expiry to selected value if user is an administrator
-    REST.Handler.storeSessionAuthdata(
+    REST.Handler.set_rest_auth(
         request.session,
         manager_id,
         user.name,

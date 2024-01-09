@@ -203,13 +203,13 @@ class RegexLdap(auths.Authenticator):
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
     isExternalSource = True
     # If we need to enter the password for this user
-    needsPassword = False
+    needs_password = False
     # Label for username field
-    userNameLabel = _('Username')
+    label_username = _('Username')
     # Label for group field
-    groupNameLabel = _("Group")
+    label_groupname = _("Group")
     # Label for password field
-    passwordLabel = _("Password")
+    label_password = _("Password")
 
     _connection: typing.Any = None
     _host: str = ''

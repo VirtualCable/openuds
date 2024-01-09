@@ -87,9 +87,9 @@ class Networks(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
 
-    def getGui(self, type_: str) -> list[typing.Any]:
-        return self.addField(
-            self.addDefaultFields([], ['name', 'tags']),
+    def get_gui(self, type_: str) -> list[typing.Any]:
+        return self.add_field(
+            self.add_default_fields([], ['name', 'tags']),
             {
                 'name': 'net_string',
                 'value': '',

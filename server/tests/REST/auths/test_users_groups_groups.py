@@ -83,22 +83,11 @@ class GroupsTest(rest.test.RESTActorTestCase):
         self.assertIn('fields', tableinfo)
         self.assertIn('row-style', tableinfo)
 
-        # Ensure at least name, comments ans state are present on tableinfo['fields']
-        fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
-        self.assertTrue(
-            functools.reduce(
-                lambda x, y: x and y,
-                map(
-                    lambda f: next(iter(f.keys()))
-                    in (
-                        'name',
-                        'comments',
-                        'state',
-                    ),
-                    fields,
-                ),
-            )
-        )
+        # Ensure at least name, comments, state and skip_mfa are present on tableinfo['fields']
+        # fields: list[collections.abc.Mapping[str, typing.Any]] = tableinfo['fields']
+        fields: list[str] = [list(k.keys())[0] for k in tableinfo['fields']]
+        for i in ('name', 'comments', 'state', 'skip_mfa'):
+            self.assertIn(i, fields)
 
     def test_group(self) -> None:
         url = f'authenticators/{self.auth.uuid}/groups'
@@ -116,7 +105,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
     def test_group_create_edit(self) -> None:
         url = f'authenticators/{self.auth.uuid}/groups'
         # Normal group
-        group_dct = rest_fixtures.createGroup()
+        group_dct = rest_fixtures.create_group()
         response = self.client.rest_put(
             url,
             group_dct,
@@ -136,7 +125,7 @@ class GroupsTest(rest.test.RESTActorTestCase):
 
         # Now a meta group, with some groups inside
         # groups = [self.simple_groups[0].uuid]
-        group_dct = rest_fixtures.createGroup(
+        group_dct = rest_fixtures.create_group(
             meta=True, groups=[self.simple_groups[0].uuid, self.simple_groups[1].uuid]
         )
 

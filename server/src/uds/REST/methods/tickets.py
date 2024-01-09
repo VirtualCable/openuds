@@ -154,15 +154,15 @@ class Tickets(Handler):
         # Check that call is correct (pamateters, args, ...)
         self._checkInput()
 
-        force: bool = self.getParam('force') in ('1', 'true', 'True', True)
+        force: bool = self.get_param('force') in ('1', 'true', 'True', True)
 
         try:
             servicePoolId: typing.Optional[str] = None
 
             # First param is recommended, last ones are compatible with old versions
-            authId = self.getParam('auth_id', 'authId')
-            authName = self.getParam('auth_name', 'auth')
-            authTag = self.getParam('auth_tag', 'authTag', 'authSmallName')
+            authId = self.get_param('auth_id', 'authId')
+            authName = self.get_param('auth_name', 'auth')
+            authTag = self.get_param('auth_tag', 'authTag', 'authSmallName')
 
             # Will raise an exception if no auth found
             if authId:
@@ -174,12 +174,12 @@ class Tickets(Handler):
             else:
                 auth = models.Authenticator.objects.get(small_name=authTag)
 
-            username: str = self.getParam('username')
-            password: str = self.getParam('password')
+            username: str = self.get_param('username')
+            password: str = self.get_param('password')
             # Some machines needs password, depending on configuration
 
             groupIds: list[str] = []
-            for groupName in ensure.is_list(self.getParam('groups')):
+            for groupName in ensure.is_list(self.get_param('groups')):
                 try:
                     groupIds.append(auth.groups.get(name=groupName).uuid or '')
                 except Exception:
@@ -204,13 +204,13 @@ class Tickets(Handler):
                 )
 
             try:
-                time = int(self.getParam('time') or 60)
+                time = int(self.get_param('time') or 60)
                 time = 60 if time < 1 else time
             except Exception:
                 time = 60
-            realname: str = self.getParam('realname', 'username') or ''
+            realname: str = self.get_param('realname', 'username') or ''
 
-            poolUuid = self.getParam('servicePool')
+            poolUuid = self.get_param('servicePool')
             if poolUuid:
                 # Check if is pool or metapool
                 poolUuid = process_uuid(poolUuid)

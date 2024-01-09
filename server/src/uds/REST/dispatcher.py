@@ -168,7 +168,7 @@ class Dispatcher(View):
             logger.debug('Path: %s', full_path)
             logger.debug('Error: %s', e)
 
-            log.logOperation(handler, 400, log.LogLevel.ERROR)
+            log.log_operation(handler, 400, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(
                 f'Invalid parameters invoking {full_path}: {e}',
                 content_type="text/plain",
@@ -178,13 +178,13 @@ class Dispatcher(View):
             for n in ['get', 'post', 'put', 'delete']:
                 if hasattr(handler, n):
                     allowedMethods.append(n)
-            log.logOperation(handler, 405, log.LogLevel.ERROR)
+            log.log_operation(handler, 405, log.LogLevel.ERROR)
             return http.HttpResponseNotAllowed(allowedMethods, content_type="text/plain")
         except AccessDenied:
-            log.logOperation(handler, 403, log.LogLevel.ERROR)
+            log.log_operation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden('access denied', content_type="text/plain")
         except Exception:
-            log.logOperation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, log.LogLevel.ERROR)
             logger.exception('error accessing attribute')
             logger.debug('Getting attribute %s for %s', http_method, full_path)
             return http.HttpResponseServerError('Unexcepected error', content_type="text/plain")
@@ -202,28 +202,28 @@ class Dispatcher(View):
 
             # Log de operation on the audit log for admin
             # Exceptiol will also be logged, but with ERROR level
-            log.logOperation(handler, response.status_code, log.LogLevel.INFO)
+            log.log_operation(handler, response.status_code, log.LogLevel.INFO)
             return response
         except RequestError as e:
-            log.logOperation(handler, 400, log.LogLevel.ERROR)
+            log.log_operation(handler, 400, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except ResponseError as e:
-            log.logOperation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseServerError(str(e), content_type="text/plain")
         except NotSupportedError as e:
-            log.logOperation(handler, 501, log.LogLevel.ERROR)
+            log.log_operation(handler, 501, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except AccessDenied as e:
-            log.logOperation(handler, 403, log.LogLevel.ERROR)
+            log.log_operation(handler, 403, log.LogLevel.ERROR)
             return http.HttpResponseForbidden(str(e), content_type="text/plain")
         except NotFound as e:
-            log.logOperation(handler, 404, log.LogLevel.ERROR)
+            log.log_operation(handler, 404, log.LogLevel.ERROR)
             return http.HttpResponseNotFound(str(e), content_type="text/plain")
         except HandlerError as e:
-            log.logOperation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, log.LogLevel.ERROR)
             return http.HttpResponseBadRequest(str(e), content_type="text/plain")
         except Exception as e:
-            log.logOperation(handler, 500, log.LogLevel.ERROR)
+            log.log_operation(handler, 500, log.LogLevel.ERROR)
             # Get ecxeption backtrace
             trace_back = traceback.format_exc()
             logger.error('Exception processing request: %s', full_path)

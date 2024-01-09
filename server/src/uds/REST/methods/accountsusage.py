@@ -77,7 +77,7 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
 
         return retVal
 
-    def getItems(self, parent: 'Model', item: typing.Optional[str]):
+    def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, Account)
         # Check what kind of access do we have to parent provider
         perm = permissions.effective_permissions(self._user, parent)
@@ -88,9 +88,9 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             return AccountsUsage.usageToDict(k, perm)
         except Exception:
             logger.exception('itemId %s', item)
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
-    def getFields(self, parent: 'Model') -> list[typing.Any]:
+    def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'pool_name': {'title': _('Pool name')}},
             {'user_name': {'title': _('User name')}},
@@ -101,13 +101,13 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def getRowStyle(self, parent: 'Model') -> dict[str, typing.Any]:
+    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
         return {'field': 'running', 'prefix': 'row-running-'}
 
-    def saveItem(self, parent: 'Model', item: typing.Optional[str]) -> None:
+    def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         raise RequestError('Accounts usage cannot be edited')
 
-    def deleteItem(self, parent: 'Model', item: str) -> None:
+    def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Account)
         logger.debug('Deleting account usage %s from %s', item, parent)
         try:
@@ -115,9 +115,9 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             usage.delete()
         except Exception:
             logger.exception('Exception')
-            raise self.invalidItemException()
+            raise self.invalid_item_response()
 
-    def getTitle(self, parent: 'Model') -> str:
+    def get_title(self, parent: 'Model') -> str:
         parent = ensure.is_instance(parent, Account)
         try:
             return _('Usages of {0}').format(parent.name)

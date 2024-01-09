@@ -107,13 +107,13 @@ class SampleAuth(auths.Authenticator):
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
     # : False is the default value, so this is not needed in fact
-    # : needsPassword = False
+    # : needs_password = False
 
     # : Label for username field, shown at administration interface user form.
-    userNameLabel = _('Fake User')
+    label_username = _('Fake User')
 
     # Label for group field, shown at administration interface user form.
-    groupNameLabel = _('Fake Group')
+    label_groupname = _('Fake Group')
 
     # : Definition of this type of authenticator form
     # : We will define a simple form where we will use a simple

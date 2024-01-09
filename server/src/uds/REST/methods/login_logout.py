@@ -160,8 +160,8 @@ class Login(Handler):
                 if GlobalConfig.SUPER_USER_LOGIN.get(True) == username and CryptoManager().check_hash(
                     password, GlobalConfig.SUPER_USER_PASS.get(True)
                 ):
-                    self.genAuthToken(-1, username, password, locale, platform, True, True, scrambler)
-                    return Login.result(result='ok', token=self.getAuthToken())
+                    self.gen_auth_token(-1, username, password, locale, platform, True, True, scrambler)
+                    return Login.result(result='ok', token=self.get_auth_token())
                 return Login.result(error='Invalid credentials')
 
             # Will raise an exception if no auth found
@@ -186,7 +186,7 @@ class Login(Handler):
                 return Login.result(error='Invalid credentials')
             return Login.result(
                 result='ok',
-                token=self.genAuthToken(
+                token=self.gen_auth_token(
                     auth.id,
                     authResult.user.name,
                     password,
@@ -216,7 +216,7 @@ class Logout(Handler):
 
     def get(self):
         # Remove auth token
-        self.cleanAuthToken()
+        self.clear_auth_token()
         return {'result': 'ok'}
 
     def post(self):
