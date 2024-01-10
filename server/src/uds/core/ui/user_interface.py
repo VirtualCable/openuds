@@ -611,7 +611,7 @@ class gui:
               # with tooltip "Port (usually 443)" and order 1
               num = gui.NumericField(length=5, label = _('Port'),
                   default = '443', order = 1, tooltip = _('Port (usually 443)'),
-                  minVAlue = 1024, maxValue = 65535,
+                  minVAlue = 1024, max_value = 65535,
                   required = True)
         """
 
@@ -626,8 +626,8 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], int], int] = 0,
             value: typing.Optional[int] = None,
-            minValue: typing.Optional[int] = None,
-            maxValue: typing.Optional[int] = None,
+            min_value: typing.Optional[int] = None,
+            max_value: typing.Optional[int] = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -641,8 +641,8 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.NUMERIC,
             )
-            self._fields_info.minValue = minValue
-            self._fields_info.maxValue = maxValue
+            self._fields_info.min_value = min_value
+            self._fields_info.max_value = max_value
 
         def _set_value(self, value: typing.Any):
             # Internally stores an string

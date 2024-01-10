@@ -52,5 +52,5 @@ def _process_response(
 
 # Add a X-UA-Compatible header to the response
 # This header tells to Internet Explorer to render page with latest
-# possible version or to use chrome frame if it is installed. TO BE REMOVED SOON (edge does not need it)
+# possible version or to use chrome frame if it is installed. TO BE REMOVED SOON (last version with this will be 4.0.0) (edge does not need it)
 XUACompatibleMiddleware = builder.build_middleware(lambda x: None, _process_response)

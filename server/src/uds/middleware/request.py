@@ -67,7 +67,7 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
 
     Returns the obtained IP, that always will be a valid ip address.
     """
-    behind_proxy = GlobalConfig.BEHIND_PROXY.getBool(False)
+    behind_proxy = GlobalConfig.BEHIND_PROXY.as_bool(False)
 
     request.ip = request.META.get('REMOTE_ADDR', '')
 

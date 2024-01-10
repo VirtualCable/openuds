@@ -34,6 +34,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 from . import (
     auth,
     connections,
+    errors,
     os,
     permissions,
     pools,

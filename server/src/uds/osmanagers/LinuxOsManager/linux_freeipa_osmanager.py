@@ -128,7 +128,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         default=True,
     )
 
-    # Inherits base "onLogout"
+    # Inherits base "fields"
     onLogout = LinuxOsManager.onLogout
     idle = LinuxOsManager.idle
     deadLine = LinuxOsManager.deadLine
@@ -136,12 +136,12 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
     _domain: str
     _account: str
     _password: str
-    _removeOnExit: str
+    _remove_on_exit: str
     _ssl: str
-    _automaticIdMapping: str
-    _clientSoftware: str
-    _serverSoftware: str
-    _membershipSoftware: str
+    _automatic_id_mapping: str
+    _client_software: str
+    _server_software: str
+    _membership_software: str
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
@@ -155,22 +155,22 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             self._domain = values['domain']
             self._account = values['account']
             self._password = values['password']
-            self._clientSoftware = values['clientSoftware']
-            self._serverSoftware = 'ipa'
-            self._membershipSoftware = values['membershipSoftware']
-            self._removeOnExit = 'y' if values['removeOnExit'] else 'n'
+            self._client_software = values['clientSoftware']
+            self._server_software = 'ipa'
+            self._membership_software = values['membershipSoftware']
+            self._remove_on_exit = 'y' if values['removeOnExit'] else 'n'
             self._ssl = 'y' if values['ssl'] else 'n'
-            self._automaticIdMapping = 'y' if values['automaticIdMapping'] else 'n'
+            self._automatic_id_mapping = 'y' if values['automaticIdMapping'] else 'n'
         else:
             self._domain = ''
             self._account = ''
             self._password = ''  # nosec: no encoded password
-            self._clientSoftware = ''
-            self._serverSoftware = 'ipa'
-            self._membershipSoftware = ''
-            self._removeOnExit = 'n'
+            self._client_software = ''
+            self._server_software = 'ipa'
+            self._membership_software = ''
+            self._remove_on_exit = 'n'
             self._ssl = 'n'
-            self._automaticIdMapping = 'n'
+            self._automatic_id_mapping = 'n'
 
     def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
@@ -181,11 +181,11 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
                 'username': self._account,
                 'password': self._password,
                 'isPersistent': self.is_persistent(),
-                'clientSoftware': self._clientSoftware,
-                'serverSoftware': self._serverSoftware,
-                'membershipSoftware': self._membershipSoftware,
+                'clientSoftware': self._client_software,
+                'serverSoftware': self._server_software,
+                'membershipSoftware': self._membership_software,
                 'ssl': self._ssl == 'y',
-                'automaticIdMapping': self._automaticIdMapping == 'y',
+                'automaticIdMapping': self._automatic_id_mapping == 'y',
             }
         }
 
@@ -200,12 +200,12 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
                 self._domain,
                 self._account,
                 CryptoManager().encrypt(self._password),
-                self._clientSoftware,
-                self._serverSoftware,
-                self._membershipSoftware,
-                self._removeOnExit,
+                self._client_software,
+                self._server_software,
+                self._membership_software,
+                self._remove_on_exit,
                 self._ssl,
-                self._automaticIdMapping,
+                self._automatic_id_mapping,
                 codecs.encode(base, 'hex').decode(),
             ]
         ).encode('utf8')
@@ -216,12 +216,12 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             self._domain = values[1]
             self._account = values[2]
             self._password = CryptoManager().decrypt(values[3])
-            self._clientSoftware = values[4]
-            self._serverSoftware = values[5]
-            self._membershipSoftware = values[6]
-            self._removeOnExit = values[7]
+            self._client_software = values[4]
+            self._server_software = values[5]
+            self._membership_software = values[6]
+            self._remove_on_exit = values[7]
             self._ssl = values[8]
-            self._automaticIdMapping = values[9]
+            self._automatic_id_mapping = values[9]
         super().unmarshal(codecs.decode(values[10].encode(), 'hex'))
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
@@ -229,10 +229,10 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password
-        dct['clientSoftware'] = self._clientSoftware
-        dct['serverSoftware'] = self._serverSoftware
-        dct['membershipSoftware'] = self._membershipSoftware
-        dct['removeOnExit'] = self._removeOnExit == 'y'
+        dct['clientSoftware'] = self._client_software
+        dct['serverSoftware'] = self._server_software
+        dct['membershipSoftware'] = self._membership_software
+        dct['removeOnExit'] = self._remove_on_exit == 'y'
         dct['ssl'] = self._ssl == 'y'
-        dct['automaticIdMapping'] = self._automaticIdMapping == 'y'
+        dct['automaticIdMapping'] = self._automatic_id_mapping == 'y'
         return dct

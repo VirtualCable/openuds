@@ -59,7 +59,7 @@ class HangedCleaner(Job):
             state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING
         ) | Q(state_date__lt=since_removing, state__in=[State.REMOVING, State.CANCELING])
 
-        withHangedServices = (
+        servicepools_with_hanged = (
             ServicePool.objects.annotate(
                 hanged=Count(
                     'userServices',
@@ -87,7 +87,7 @@ class HangedCleaner(Job):
         # Type
         servicePool: ServicePool
 
-        for servicePool in withHangedServices:
+        for servicePool in servicepools_with_hanged:
             logger.debug('Searching for hanged services for %s', servicePool)
             us: UserService
             for us in servicePool.userServices.filter(flt):

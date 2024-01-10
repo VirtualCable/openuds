@@ -94,7 +94,7 @@ class IPMachinesService(IPServiceBase):
         default=0,
         order=2,
         tooltip=typing.cast(str, _('If a host fails to check, skip it for this time (in minutes).')),
-        minValue=0,
+        min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )
@@ -110,7 +110,7 @@ class IPMachinesService(IPServiceBase):
                 'Maximum session duration before UDS thinks this machine got locked and releases it (hours). 0 means "never".'
             ),
         ),
-        minValue=0,
+        min_value=0,
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )

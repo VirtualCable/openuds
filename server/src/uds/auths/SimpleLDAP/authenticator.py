@@ -96,7 +96,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         order=10,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
-        minValue=1,
+        min_value=1,
         tab=types.ui.Tab.ADVANCED,
     )
     verifySsl = gui.CheckBoxField(

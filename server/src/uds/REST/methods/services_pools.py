@@ -402,7 +402,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'initial_srvs',
                 'value': '0',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('Initial available services'),
                 'tooltip': gettext('Services created initially for this service pool'),
                 'type': types.ui.FieldType.NUMERIC,
@@ -412,7 +412,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'cache_l1_srvs',
                 'value': '0',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('Services to keep in cache'),
                 'tooltip': gettext('Services kept in cache for improved user service assignation'),
                 'type': types.ui.FieldType.NUMERIC,
@@ -422,7 +422,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'cache_l2_srvs',
                 'value': '0',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('Services to keep in L2 cache'),
                 'tooltip': gettext('Services kept in cache of level2 for improved service generation'),
                 'type': types.ui.FieldType.NUMERIC,
@@ -432,7 +432,7 @@ class ServicesPools(ModelHandler):
             {
                 'name': 'max_srvs',
                 'value': '0',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('Maximum number of services to provide'),
                 'tooltip': gettext(
                     'Maximum number of service (assigned and L1 cache) that can be created for this service'

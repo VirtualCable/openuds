@@ -96,18 +96,22 @@ class LinuxOsManager(osmanagers.OSManager):
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
+    
+    _on_logout: str
+    _idle: int
+    _deadLine: bool
 
     def _set_process_unused_machines(self) -> None:
-        self.processUnusedMachines = self._onLogout == 'remove'
+        self.processUnusedMachines = self._on_logout == 'remove'
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
         if values is not None:
-            self._onLogout = values['onLogout']
+            self._on_logout = values['onLogout']
             self._idle = int(values['idle'])
             self._deadLine = gui.as_bool(values['deadLine'])
         else:
-            self._onLogout = ''
+            self._on_logout = ''
             self._idle = -1
             self._deadLine = True
 
@@ -124,8 +128,8 @@ class LinuxOsManager(osmanagers.OSManager):
         Says if a machine is removable on logout
         '''
         if not userService.in_use:
-            if (self._onLogout == 'remove') or (
-                not userService.check_publication_validity() and self._onLogout == 'keep'
+            if (self._on_logout == 'remove') or (
+                not userService.check_publication_validity() and self._on_logout == 'keep'
             ):
                 return True
 
@@ -170,7 +174,7 @@ class LinuxOsManager(osmanagers.OSManager):
             userService.remove()
 
     def is_persistent(self) -> bool:
-        return self._onLogout == 'keep-always'
+        return self._on_logout == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
@@ -192,7 +196,7 @@ class LinuxOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._onLogout, str(self._idle), gui.from_bool(self._deadLine)]
+            ['v3', self._on_logout, str(self._idle), gui.from_bool(self._deadLine)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
@@ -200,11 +204,11 @@ class LinuxOsManager(osmanagers.OSManager):
         self._idle = -1
         self._deadLine = True
         if values[0] == 'v1':
-            self._onLogout = values[1]
+            self._on_logout = values[1]
         elif values[0] == 'v2':
-            self._onLogout, self._idle = values[1], int(values[2])
+            self._on_logout, self._idle = values[1], int(values[2])
         elif values[0] == 'v3':
-            self._onLogout, self._idle, self._deadLine = (
+            self._on_logout, self._idle, self._deadLine = (
                 values[1],
                 int(values[2]),
                 gui.as_bool(values[3]),
@@ -214,7 +218,7 @@ class LinuxOsManager(osmanagers.OSManager):
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
         return {
-            'onLogout': self._onLogout,
+            'onLogout': self._on_logout,
             'idle': str(self._idle),
             'deadLine': gui.from_bool(self._deadLine),
         }

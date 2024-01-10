@@ -34,6 +34,8 @@ class PermissionType(enum.IntEnum):
         # Unknown value, return NONE
         return PermissionType.NONE
 
-    def includes(self, permission: 'PermissionType') -> bool:
+    def contains(self, permission: 'PermissionType') -> bool:
         """Returns if the permission includes the given permission"""
         return self.value >= permission.value
+    
+    __contains__ = contains

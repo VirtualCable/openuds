@@ -296,7 +296,7 @@ class OSManager(Module):
                 counter -= 1
             p['logins_counter'] = counter
 
-        if GlobalConfig.EXCLUSIVE_LOGOUT.getBool(True) and counter > 0:
+        if GlobalConfig.EXCLUSIVE_LOGOUT.as_bool(True) and counter > 0:
             return
 
         uniqueId = userService.unique_id

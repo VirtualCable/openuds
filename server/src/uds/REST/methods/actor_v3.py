@@ -97,7 +97,7 @@ def fixIdsList(idsList: list[str]) -> list[str]:
 
 
 def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
-    if GlobalConfig.BLOCK_ACTOR_FAILURES.getBool() is False:
+    if GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool() is False:
         return
     fails = cache.get(request.ip) or 0
     if fails >= consts.system.ALLOWED_FAILS:
@@ -709,9 +709,9 @@ class Log(ActorV3Action):
         userService = self.getUserService()
         if userService.actor_version < '4.0.0':
             # Adjust loglevel to own, we start on 10000 for OTHER, and received is 0 for OTHER
-            level = log.LogLevel.fromInt(int(self._params['level']) + 10000)
+            level = log.LogLevel.from_int(int(self._params['level']) + 10000)
         else:
-            level = log.LogLevel.fromInt(int(self._params['level']))
+            level = log.LogLevel.from_int(int(self._params['level']))
         log.log(
             userService,
             level,

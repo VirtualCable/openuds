@@ -63,7 +63,8 @@ class Error(enum.IntEnum):
     RELOAD_NOT_SUPPORTED = 18
     INVALID_MFA_CODE = 19
 
-    def as_str(self) -> str:
+    @property
+    def message(self) -> str:
         try:
             return ERROR_STRINGS[self.value]
         except IndexError:

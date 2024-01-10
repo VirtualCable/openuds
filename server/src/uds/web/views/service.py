@@ -155,10 +155,10 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
     status = 'running'
     # If service exists (meta or not)
     if UserServiceManager().is_meta_service(idService):
-        userService = UserServiceManager().locateMetaService(user=request.user, idService=idService)
+        userService = UserServiceManager().locate_meta_service(user=request.user, id_metapool=idService)
     else:
         userService = UserServiceManager().locate_user_service(
-            user=request.user, idService=idService, create=False
+            user=request.user, id_service=idService, create=False
         )
     if userService:
         # Service exists...
@@ -184,7 +184,7 @@ def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, id
 @web_login_required(admin=False)
 @never_cache
 def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString: str) -> HttpResponse:
-    userService = UserServiceManager().locateMetaService(request.user, idService)
+    userService = UserServiceManager().locate_meta_service(request.user, idService)
     if not userService:
         userService = UserServiceManager().locate_user_service(request.user, idService, create=False)
 

@@ -62,7 +62,7 @@ class ServiceCacheUpdater(Job):
     friendly_name = 'Service Cache Updater'
 
     @staticmethod
-    def __notifyRestrain(servicePool) -> None:
+    def _notify_restrain(servicePool) -> None:
         log.log(
             servicePool,
             log.LogLevel.WARNING,
@@ -71,7 +71,7 @@ class ServiceCacheUpdater(Job):
         )
         logger.info('%s is restrained, will check this later', servicePool.name)
 
-    def servicesPoolsNeedingCacheUpdate(
+    def service_pools_needing_cache_update(
         self,
     ) -> list[tuple[ServicePool, int, int, int]]:
         # State filter for cached and inAssigned objects
@@ -120,7 +120,7 @@ class ServiceCacheUpdater(Job):
                     'StopSkippingped cache generation for restrained service pool: %s',
                     servicePool.name,
                 )
-                ServiceCacheUpdater.__notifyRestrain(servicePool)
+                ServiceCacheUpdater._notify_restrain(servicePool)
                 continue
 
             # Get data related to actual state of cache
@@ -196,7 +196,7 @@ class ServiceCacheUpdater(Job):
         # We also return calculated values so we can reuse then
         return servicesPools
 
-    def growL1Cache(
+    def grow_l1_cache(
         self,
         servicePool: ServicePool,
         cacheL1: int,  # pylint: disable=unused-argument
@@ -255,7 +255,7 @@ class ServiceCacheUpdater(Job):
         except Exception:
             logger.exception('Exception')
 
-    def growL2Cache(
+    def grow_l2_cache(
         self,
         servicePool: ServicePool,
         cacheL1: int,  # pylint: disable=unused-argument
@@ -284,7 +284,7 @@ class ServiceCacheUpdater(Job):
             )
             # TODO: When alerts are ready, notify this
 
-    def reduceL1Cache(
+    def reduce_l1_cache(
         self,
         servicePool: ServicePool,
         cacheL1: int,  # pylint: disable=unused-argument
@@ -327,18 +327,18 @@ class ServiceCacheUpdater(Job):
         cache = cacheItems[0]
         cache.remove_or_cancel()
 
-    def reduceL2Cache(
+    def reduce_l2_cache(
         self,
-        servicePool: ServicePool,
+        service_pool: ServicePool,
         cacheL1: int,  # pylint: disable=unused-argument
         cacheL2: int,
         assigned: int,  # pylint: disable=unused-argument
     ):
-        logger.debug("Reducing L2 cache erasing a service in cache for %s", servicePool.name)
+        logger.debug("Reducing L2 cache erasing a service in cache for %s", service_pool.name)
         if cacheL2 > 0:
             cacheItems = (
-                servicePool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE))
+                service_pool.cached_users_services()
+                .filter(UserServiceManager().get_cache_state_filter(service_pool, services.UserService.L2_CACHE))
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?
@@ -348,7 +348,7 @@ class ServiceCacheUpdater(Job):
     def run(self) -> None:
         logger.debug('Starting cache checking')
         # We need to get
-        servicesThatNeedsUpdate = self.servicesPoolsNeedingCacheUpdate()
+        servicesThatNeedsUpdate = self.service_pools_needing_cache_update()
         for servicePool, cacheL1, cacheL2, assigned in servicesThatNeedsUpdate:
             # We have cache to update??
             logger.debug("Updating cache for %s", servicePool)
@@ -361,16 +361,16 @@ class ServiceCacheUpdater(Job):
             # if we try to increase cache before having reduced whatever needed
             # first, the service will get lock until someone removes something.
             if totalL1Assigned > servicePool.max_srvs:
-                self.reduceL1Cache(servicePool, cacheL1, cacheL2, assigned)
+                self.reduce_l1_cache(servicePool, cacheL1, cacheL2, assigned)
             elif totalL1Assigned > servicePool.initial_srvs and cacheL1 > servicePool.cache_l1_srvs:
-                self.reduceL1Cache(servicePool, cacheL1, cacheL2, assigned)
+                self.reduce_l1_cache(servicePool, cacheL1, cacheL2, assigned)
             elif cacheL2 > servicePool.cache_l2_srvs:  # We have excesives L2 items
-                self.reduceL2Cache(servicePool, cacheL1, cacheL2, assigned)
+                self.reduce_l2_cache(servicePool, cacheL1, cacheL2, assigned)
             elif totalL1Assigned < servicePool.max_srvs and (
                 totalL1Assigned < servicePool.initial_srvs or cacheL1 < servicePool.cache_l1_srvs
             ):  # We need more services
-                self.growL1Cache(servicePool, cacheL1, cacheL2, assigned)
+                self.grow_l1_cache(servicePool, cacheL1, cacheL2, assigned)
             elif cacheL2 < servicePool.cache_l2_srvs:  # We need more L2 items
-                self.growL2Cache(servicePool, cacheL1, cacheL2, assigned)
+                self.grow_l2_cache(servicePool, cacheL1, cacheL2, assigned)
             else:
                 logger.warning("We have more services than max requested for %s", servicePool.name)

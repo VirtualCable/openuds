@@ -111,8 +111,8 @@ class TelegramNotifier(messaging.Notifier):
         tooltip=_('Delay in seconds between checks for commands'),
         required=True,
         default=3600,
-        minValue=60,
-        maxValue=86400,
+        min_value=60,
+        max_value=86400,
         tab=_('Telegram'),
     )
 

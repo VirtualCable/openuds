@@ -81,7 +81,7 @@ class MFA(ModelHandler):
             {
                 'name': 'remember_device',
                 'value': '0',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('Device Caching'),
                 'tooltip': gettext('Time in hours to cache device so MFA is not required again. User based.'),
                 'type': types.ui.FieldType.NUMERIC,
@@ -93,7 +93,7 @@ class MFA(ModelHandler):
             {
                 'name': 'validity',
                 'value': '5',
-                'minValue': '0',
+                'min_value': '0',
                 'label': gettext('MFA code validity'),
                 'tooltip': gettext('Time in minutes to allow MFA code to be used.'),
                 'type': types.ui.FieldType.NUMERIC,

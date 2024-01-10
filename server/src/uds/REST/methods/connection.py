@@ -42,7 +42,7 @@ from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.types.request import ExtendedHttpRequestWithUser
 from uds.core.util.rest.tools import match
 from uds.REST import Handler
-from uds.web.util import errors, services
+from uds.web.util import services
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class Connection(Handler):
         res = {'result': result, 'date': datetime.datetime.now()}
         if error:
             if isinstance(error, int):
-                error = errors.errorString(error)
+                error = types.errors.Error.from_int(error).message
             error = str(error)  # Ensure error is an string
             if errorCode != 0:
                 error += f' (code {errorCode:04X})'
@@ -127,14 +127,14 @@ class Connection(Handler):
             return Connection.result(result=connectionInfoDict)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+            return Connection.result(
+                error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
+            )
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def script(
-        self, idService: str, idTransport: str, scrambler: str, hostname: str
-    ) -> dict[str, typing.Any]:
+    def script(self, idService: str, idTransport: str, scrambler: str, hostname: str) -> dict[str, typing.Any]:
         try:
             res = UserServiceManager().get_user_service_info(
                 self._user, self._request.os, self._request.ip, idService, idTransport
@@ -170,14 +170,12 @@ class Connection(Handler):
             return Connection.result(result=transportScript)
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
-            return Connection.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+            return Connection.result(error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
         except Exception as e:
             logger.exception("Exception")
             return Connection.result(error=str(e))
 
-    def getTicketContent(
-        self, ticketId: str
-    ) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
+    def getTicketContent(self, ticketId: str) -> dict[str, typing.Any]:  # pylint: disable=unused-argument
         return {}
 
     def getUdsLink(self, idService: str, idTransport: str) -> dict[str, typing.Any]:

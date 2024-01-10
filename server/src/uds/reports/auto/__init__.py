@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import datetime
 import logging
 import typing
@@ -37,7 +38,7 @@ import collections.abc
 
 from django.utils.translation import gettext, gettext_noop as _
 
-from uds.core.ui import UserInterface, UserInterfaceType, gui
+from uds.core.ui import UserInterface, UserInterfaceAbstract, gui
 from uds.core.reports import Report
 from uds import models
 
@@ -60,7 +61,7 @@ reportAutoModelDct: collections.abc.Mapping[str, type[ReportAutoModel]] = {  # t
 }
 
 
-class ReportAutoType(UserInterfaceType):
+class ReportAutoType(UserInterfaceAbstract):
     def __new__(mcs, name, bases, attrs) -> 'ReportAutoType':
         # Add gui for elements...
         order = 1
@@ -85,8 +86,8 @@ class ReportAutoType(UserInterfaceType):
                 attrs['interval'] = fields.intervals_field(order)
                 order += 1
 
-        return typing.cast('ReportAutoType', UserInterfaceType.__new__(mcs, name, bases, attrs))
-
+        return typing.cast('ReportAutoType', UserInterfaceAbstract.__new__(mcs, name, bases, attrs))
+    
 # pylint: disable=abstract-method
 class ReportAuto(Report, metaclass=ReportAutoType):
     # Variables that will be overwriten on new class creation

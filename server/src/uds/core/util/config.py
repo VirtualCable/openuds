@@ -217,7 +217,7 @@ class Config:
                     )
                     return -1
 
-        def getBool(self, force: bool = False) -> bool:
+        def as_bool(self, force: bool = False) -> bool:
             if self.get(force) == '0':
                 return False
             return True

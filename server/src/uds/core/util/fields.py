@@ -137,7 +137,7 @@ def tunnel_ricket_validity_field() -> ui.gui.NumericField:
             'Allowed time, in seconds, for HTML5 client to reload data from UDS Broker. The default value of 60 is recommended.'
         ),
         required=True,
-        minValue=60,
+        min_value=60,
         tab=types.ui.Tab.ADVANCED,
     )
 
@@ -148,8 +148,8 @@ def tunnel_runnel_wait(order: int = 2) -> ui.gui.NumericField:
         length=3,
         label=_('Tunnel wait time'),
         default=30,
-        minValue=5,
-        maxValue=3600 * 24,
+        min_value=5,
+        max_value=3600 * 24,
         order=order,
         tooltip=_('Maximum time, in seconds, to wait before disable new connections on client tunnel listener'),
         required=True,

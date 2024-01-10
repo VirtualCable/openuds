@@ -130,7 +130,7 @@ class OGService(services.Service):
             'Security parameter for OpenGnsys to keep reservations at most this hours. Handle with care!'
         ),
         default=2400,  # 1 hundred days
-        minValue=24,
+        min_value=24,
         tab=_('Advanced'),
         required=False,
     )
@@ -147,8 +147,8 @@ class OGService(services.Service):
     maxServices = gui.NumericField(
         order=4,
         label=_("Max. Allowed services"),
-        minValue=0,
-        maxValue=99999,
+        min_value=0,
+        max_value=99999,
         default=0,
         readonly=False,
         tooltip=_('Maximum number of allowed services (0 or less means no limit)'),

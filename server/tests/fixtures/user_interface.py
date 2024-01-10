@@ -72,8 +72,8 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a numeric field',
         required=True,
         default=typing.cast(int, DEFAULTS['num_field']),
-        minValue=0,
-        maxValue=100,
+        min_value=0,
+        max_value=100,
     )
     password_field = gui.PasswordField(
         label='Password Field',

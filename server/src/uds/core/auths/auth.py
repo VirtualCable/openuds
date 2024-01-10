@@ -102,7 +102,7 @@ def uds_cookie(
                 'uds',
                 cookie,
                 samesite='Lax',
-                httponly=GlobalConfig.ENHANCED_SECURITY.getBool(),
+                httponly=GlobalConfig.ENHANCED_SECURITY.as_bool(),
             )
         request.COOKIES['uds'] = cookie
     else:
@@ -298,7 +298,7 @@ def authenticate(
     # If global root auth is enabled && user/password is correct,
     if (
         not useInternalAuthenticate
-        and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
+        and GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
         and CryptoManager().check_hash(password, GlobalConfig.SUPER_USER_PASS.get(True))
     ):
@@ -431,7 +431,7 @@ def web_login(
     # Store request ip in session
     request.session[IP_KEY] = request.ip
     # If Enabled zero trust, do not cache credentials
-    if GlobalConfig.ENFORCE_ZERO_TRUST.getBool(False):
+    if GlobalConfig.ENFORCE_ZERO_TRUST.as_bool(False):
         password = ''  # nosec: clear password if zero trust is enabled
 
     request.session[USER_KEY] = user.id
@@ -480,7 +480,7 @@ def web_logout(
     by django in regular basis.
     """
     tag = request.session.get('tag', None)
-    if tag and config.GlobalConfig.REDIRECT_TO_TAG_ON_LOGOUT.getBool(False):
+    if tag and config.GlobalConfig.REDIRECT_TO_TAG_ON_LOGOUT.as_bool(False):
         exit_page = reverse('page.login.tag', kwargs={'tag': tag})
     else:
         exit_page = reverse('page.login')

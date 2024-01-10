@@ -36,9 +36,11 @@ import enum
 
 from django.urls import reverse
 
+
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
     from django.http.request import QueryDict
+    from uds.models import User
 
 
 class AuthenticationState(enum.IntEnum):
@@ -101,4 +103,12 @@ class AuthCallbackParams:
             post_params=request.POST.copy(),
             query_string=request.META['QUERY_STRING'],
         )
+
+@dataclasses.dataclass
+class LoginResult:
+    user: typing.Optional['User'] = None
+    password: str = ''
+    errstr: typing.Optional[str] = None
+    errid: int = 0
+    url: typing.Optional[str] = None
 

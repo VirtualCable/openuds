@@ -35,7 +35,7 @@ import collections.abc
 from datetime import datetime
 import time
 
-from . import auth, images, os, system, errors
+from . import auth, images, os, system
 
 # Date related constants
 NEVER: typing.Final[datetime] = datetime(1972, 7, 1)

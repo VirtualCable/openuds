@@ -144,7 +144,7 @@ class HTML5SSHTransport(transports.Transport):
             'Time in seconds between keep alive messages sent to server. If not provided, no keep alive messages are sent.'
         ),
         required=True,
-        minValue=0,
+        min_value=0,
         tab=types.ui.Tab.PARAMETERS,
     )
 

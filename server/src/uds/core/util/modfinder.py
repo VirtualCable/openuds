@@ -86,32 +86,32 @@ def get_urlpatterns_from_modules() -> list[typing.Any]:
     return patterns
 
 
-def import_modules(modName: str, *, packageName: typing.Optional[str] = None) -> None:
+def import_modules(mod_name: str, *, package_name: typing.Optional[str] = None) -> None:
     """Dinamycally import children of package
 
     Args:
-        modName (str): Name of the module to import
-        packageName (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
+        mod_name (str): Name of the module to import
+        package_name (str, optional): Name of the package inside the module to import. Defaults to None. If None, the module itself is imported
 
     Notes:
         This function is used to dinamycally import all submodules inside a submodule (with optional package name).
         
     """
     # Dinamycally import children of this package.
-    pkgpath = os.path.dirname(typing.cast(str, sys.modules[modName].__file__))
-    if packageName:  # Append package name to path and module name
-        pkgpath = os.path.join(pkgpath, packageName)
-        modName = f'{modName}.{packageName}'
+    pkgpath = os.path.dirname(typing.cast(str, sys.modules[mod_name].__file__))
+    if package_name:  # Append package name to path and module name
+        pkgpath = os.path.join(pkgpath, package_name)
+        mod_name = f'{mod_name}.{package_name}'
 
     logger.info('* Importing modules from %s', pkgpath)
     for _, name, _ in pkgutil.iter_modules([pkgpath]):
         try:
-            logger.info('   - Importing module %s.%s ', modName, name)
-            importlib.import_module('.' + name, modName)  # import module
+            logger.info('   - Importing module %s.%s ', mod_name, name)
+            importlib.import_module('.' + name, mod_name)  # import module
         except Exception as e:
             if settings.DEBUG:
-                logger.exception('***** Error importing module %s.%s: %s *****', modName, name, e)
-            logger.error('   - Error importing module %s.%s: %s', modName, name, e)
+                logger.exception('***** Error importing module %s.%s: %s *****', mod_name, name, e)
+            logger.error('   - Error importing module %s.%s: %s', mod_name, name, e)
     logger.info('* Done importing modules from %s', pkgpath)
 
     importlib.invalidate_caches()
@@ -143,7 +143,7 @@ def dynamically_load_and_register_packages(
                 return cls.__name__.startswith('MyClass')
     '''
     # Ensures all modules under modName (and optionally packageName) are imported
-    import_modules(modName, packageName=packageName)
+    import_modules(modName, package_name=packageName)
 
     checkFnc = checker or (lambda x: True)
 

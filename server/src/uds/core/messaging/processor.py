@@ -131,7 +131,7 @@ class MessageProcessorThread(BaseThread):
                             p.notify(
                                 n.group,
                                 n.identificator,
-                                LogLevel.fromInt(n.level),
+                                LogLevel.from_int(n.level),
                                 n.message,
                             )
                         except Exception:

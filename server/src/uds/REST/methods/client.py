@@ -35,7 +35,7 @@ import typing
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from uds.core import consts, exceptions
+from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
@@ -43,7 +43,6 @@ from uds.core.util.config import GlobalConfig
 from uds.core.util.rest.tools import match
 from uds.models import TicketStore, User
 from uds.REST import Handler
-from uds.web.util import errors
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -84,8 +83,8 @@ class Client(Handler):
         res = {'result': result}
         if error:
             if isinstance(error, int):
-                error = errors.errorString(error)
-            error = str(error)  # Ensures error is an string
+                error = types.errors.Error.from_int(error).message
+            # error = str(error)  # Ensures error is an string
             if errorCode != 0:
                 # Reformat error so it is better understood by users
                 # error += ' (code {0:04X})'.format(errorCode)
@@ -117,7 +116,7 @@ class Client(Handler):
             return Client.result(error='Client version not supported.\n Please, upgrade it.')
 
         # Ip is optional,
-        if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.getBool() is True:
+        if GlobalConfig.HONOR_CLIENT_IP_NOTIFY.as_bool() is True:
             srcIp = self._params.get('ip', srcIp)
 
         logger.debug(
@@ -131,7 +130,7 @@ class Client(Handler):
         try:
             data = TicketStore.get(ticket)
         except TicketStore.InvalidTicket:
-            return Client.result(error=errors.ACCESS_DENIED)
+            return Client.result(error=types.errors.Error.ACCESS_DENIED)
 
         self._request.user = User.objects.get(uuid=data['user'])
 
@@ -192,7 +191,9 @@ class Client(Handler):
         except ServiceNotReadyError as e:
             # Refresh ticket and make this retrayable
             TicketStore.revalidate(ticket, 20)  # Retry will be in at most 5 seconds, so 20 is fine :)
-            return Client.result(error=errors.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True)
+            return Client.result(
+                error=types.errors.Error.SERVICE_IN_PREPARATION, errorCode=e.code, retryable=True
+            )
         except Exception as e:
             logger.exception("Exception")
             return Client.result(error=str(e))

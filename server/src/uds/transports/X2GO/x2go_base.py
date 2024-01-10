@@ -195,8 +195,8 @@ class BaseX2GOTransport(transports.Transport):
         tooltip=_('Quality value used on some pack formats.'),
         length=1,
         default=6,
-        minValue=1,
-        maxValue=9,
+        min_value=1,
+        max_value=9,
         required=True,
         tab=types.ui.Tab.ADVANCED,
     )

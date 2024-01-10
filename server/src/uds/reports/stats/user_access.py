@@ -81,8 +81,8 @@ class StatsReportLogin(StatsReport):
         order=3,
         label=_('Number of intervals'),
         length=3,
-        minValue=0,
-        maxValue=128,
+        min_value=0,
+        max_value=128,
         tooltip=_('Number of sampling points used in charts'),
         default=64,
     )

@@ -80,21 +80,21 @@ class LogLevel(enum.IntEnum):
             return LogLevel.OTHER
 
     @staticmethod
-    def fromInt(level: int) -> 'LogLevel':
+    def from_int(level: int) -> 'LogLevel':
         try:
             return LogLevel(level)
         except ValueError:
             return LogLevel.OTHER
 
     @staticmethod
-    def fromActorLevel(level: int) -> 'LogLevel':
+    def from_actor_level(level: int) -> 'LogLevel':
         """
         Returns the log level for actor log level
         """
         return [LogLevel.DEBUG, LogLevel.INFO, LogLevel.ERROR, LogLevel.CRITICAL][level % 4]
 
     @staticmethod
-    def fromLoggingLevel(level: int) -> 'LogLevel':
+    def from_logging_level(level: int) -> 'LogLevel':
         """
         Returns the log level for logging log level
         """
@@ -115,6 +115,10 @@ class LogLevel(enum.IntEnum):
     # Rteturns "interesting" log levels
     @staticmethod
     def interesting() -> list[tuple[int, str]]:
+        """Returns "interesting" log levels
+        
+        Interesting log levels are those that are ABOBE INFO level (that is, errors, etc..)
+        """
         return [(level.value, level.name) for level in LogLevel if level.value > LogLevel.INFO.value]
 
 
@@ -235,7 +239,7 @@ class UDSLogHandler(logging.handlers.RotatingFileHandler):
         if apps.ready and record.levelno >= logging.INFO and not UDSLogHandler.emiting:
             try:
                 # Convert to own loglevel, basically multiplying by 1000
-                logLevel = LogLevel.fromLoggingLevel(record.levelno)
+                logLevel = LogLevel.from_logging_level(record.levelno)
                 UDSLogHandler.emiting = True
                 identificator = os.path.basename(self.baseFilename)
                 msg = _format_msg(clearLevel=True)

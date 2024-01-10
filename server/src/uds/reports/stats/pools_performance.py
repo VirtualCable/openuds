@@ -89,8 +89,8 @@ class PoolPerformanceReport(StatsReport):
         order=4,
         label=_('Number of intervals'),
         length=3,
-        minValue=0,
-        maxValue=32,
+        min_value=0,
+        max_value=32,
         tooltip=_('Number of sampling points used in charts'),
         default=8,
     )

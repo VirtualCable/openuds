@@ -105,7 +105,7 @@ class RegexLdap(auths.Authenticator):
         order=6,
         tooltip=_('Timeout in seconds of connection to LDAP'),
         required=True,
-        minValue=1,
+        min_value=1,
     )
     verifySsl = gui.CheckBoxField(
         label=_('Verify SSL'),

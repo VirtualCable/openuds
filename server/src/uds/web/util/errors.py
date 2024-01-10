@@ -79,6 +79,6 @@ def errorMessage(request: 'HttpRequest', err: int) -> 'HttpResponse':
     Error view, responsible of error display
     """
     return HttpResponse(
-        json.dumps({'error': consts.errors.Error.from_int(err).as_str(), 'code': str(err)}),
+        json.dumps({'error': consts.errors.Error.from_int(err).message, 'code': str(err)}),
         content_type='application/json',
     )

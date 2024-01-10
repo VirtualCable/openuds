@@ -28,9 +28,9 @@
 '''
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from django.urls import reverse
 from django.utils import formats
@@ -49,7 +49,6 @@ from uds.core.util import html
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime
 from uds.models import MetaPool, Network, ServicePool, ServicePoolGroup, TicketStore, Transport
-from uds.web.util import errors
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -373,7 +372,7 @@ def getServicesData(
         toBeReplacedDate = (
             sPool.when_will_be_replaced(request.user)
             if typing.cast(typing.Any, sPool).pubs_active > 0
-            and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.getBool(False)
+            and GlobalConfig.NOTIFY_REMOVAL_BY_PUB.as_bool(False)
             else None
         )
         # tbr = False
@@ -417,7 +416,7 @@ def getServicesData(
     if (
         hasattr(request, 'session')
         and len(services) == 1
-        and GlobalConfig.AUTORUN_SERVICE.getBool(False)
+        and GlobalConfig.AUTORUN_SERVICE.as_bool(False)
         and services[0]['transports']
     ):
         if request.session.get('autorunDone', '0') == '0':
@@ -480,10 +479,10 @@ def enableService(
         )
     except MaxServicesReachedError:
         logger.info('Number of service reached MAX for service pool "%s"', idService)
-        error = errors.errorString(errors.MAX_SERVICES_REACHED)
+        error = types.errors.Error.MAX_SERVICES_REACHED.message
     except ServiceAccessDeniedByCalendar:
         logger.info('Access tried to a calendar limited access pool "%s"', idService)
-        error = errors.errorString(errors.SERVICE_CALENDAR_DENIED)
+        error = types.errors.Error.SERVICE_CALENDAR_DENIED.message
     except Exception as e:
         logger.exception('Error')
         error = str(e)

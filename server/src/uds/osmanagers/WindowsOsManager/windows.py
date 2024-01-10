@@ -88,9 +88,9 @@ class WindowsOsManager(osmanagers.OSManager):
         default=True,
     )
 
-    _onLogout: str
+    _on_logout: str
     _idle: int
-    _deadLine: bool
+    _deadline: bool
 
     @staticmethod
     def validateLen(length):
@@ -107,18 +107,18 @@ class WindowsOsManager(osmanagers.OSManager):
         return length
 
     def __setProcessUnusedMachines(self):
-        self.processUnusedMachines = self._onLogout == 'remove'
+        self.processUnusedMachines = self._on_logout == 'remove'
 
     def __init__(self, environment, values):
         super().__init__(environment, values)
         if values is not None:
-            self._onLogout = values['onLogout']
+            self._on_logout = values['onLogout']
             self._idle = int(values['idle'])
-            self._deadLine = gui.as_bool(values['deadLine'])
+            self._deadline = gui.as_bool(values['deadLine'])
         else:
-            self._onLogout = ''
+            self._on_logout = ''
             self._idle = -1
-            self._deadLine = True
+            self._deadline = True
 
         self.__setProcessUnusedMachines()
 
@@ -127,8 +127,8 @@ class WindowsOsManager(osmanagers.OSManager):
         Says if a machine is removable on logout
         """
         if not userService.in_use:
-            if (self._onLogout == 'remove') or (
-                not userService.check_publication_validity() and self._onLogout == 'keep'
+            if (self._on_logout == 'remove') or (
+                not userService.check_publication_validity() and self._on_logout == 'keep'
             ):
                 return True
 
@@ -138,7 +138,7 @@ class WindowsOsManager(osmanagers.OSManager):
         pass
 
     def ignore_deadline(self) -> bool:
-        return not self._deadLine
+        return not self._deadline
 
     def get_name(self, userService: 'UserService') -> str:
         return userService.get_name()
@@ -201,7 +201,7 @@ class WindowsOsManager(osmanagers.OSManager):
             userService.remove()
 
     def is_persistent(self):
-        return self._onLogout == 'keep-always'
+        return self._on_logout == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
         # will alway return true, because the check is done by an actor callback
@@ -224,20 +224,20 @@ class WindowsOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._onLogout, str(self._idle), gui.from_bool(self._deadLine)]
+            ['v3', self._on_logout, str(self._idle), gui.from_bool(self._deadline)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         vals = data.decode('utf8').split('\t')
         self._idle = -1
-        self._deadLine = True
+        self._deadline = True
         try:
             if vals[0] == 'v1':
-                self._onLogout = vals[1]
+                self._on_logout = vals[1]
             elif vals[0] == 'v2':
-                self._onLogout, self._idle = vals[1], int(vals[2])
+                self._on_logout, self._idle = vals[1], int(vals[2])
             elif vals[0] == 'v3':
-                self._onLogout, self._idle, self._deadLine = (
+                self._on_logout, self._idle, self._deadline = (
                     vals[1],
                     int(vals[2]),
                     gui.as_bool(vals[3]),
@@ -251,7 +251,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
         return {
-            'onLogout': self._onLogout,
+            'onLogout': self._on_logout,
             'idle': str(self._idle),
-            'deadLine': gui.from_bool(self._deadLine),
+            'deadLine': gui.from_bool(self._deadline),
         }

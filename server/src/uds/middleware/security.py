@@ -68,7 +68,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
         )
         return HttpResponseForbidden(content='Forbbiden', content_type='text/plain')
 
-    if GlobalConfig.ENHANCED_SECURITY.getBool():
+    if GlobalConfig.ENHANCED_SECURITY.as_bool():
         # Check that ip stored in session is the same as the one that is requesting if user is logged in
         session_ip = request.session.get(IP_KEY, None)
         if request.user and session_ip and session_ip != request.ip:
@@ -88,7 +88,7 @@ def _process_response(
     request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
     response: 'HttpResponse',
 ) -> 'HttpResponse':
-    if GlobalConfig.ENHANCED_SECURITY.getBool():
+    if GlobalConfig.ENHANCED_SECURITY.as_bool():
         # Legacy browser support for X-XSS-Protection
         response.headers.setdefault('X-XSS-Protection', '1; mode=block')  # type: ignore
         # Add Content-Security-Policy, see https://www.owasp.org/index.php/Content_Security_Policy

@@ -300,7 +300,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         val = self.properties.get(name)
 
-        # To transition between old stor at storage table and new properties table
+        # To transition between old store at storage table and new properties table
         # If value is found on property, use it, else, try to recover it from storage
         if val is None:
             val = typing.cast(str, self.get_environment().storage.get(name))

@@ -120,7 +120,7 @@ def has_access(
     permission: PermissionType = PermissionType.ALL,
     for_type: bool = False,
 ):
-    return effective_permissions(user, obj, for_type).includes(permission)
+    return effective_permissions(user, obj, for_type).contains(permission)
 
 
 def revoke_permission_by_id(permUUID: str) -> None:

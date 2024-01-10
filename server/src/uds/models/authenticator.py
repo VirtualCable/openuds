@@ -261,7 +261,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
             if not authsList.exists():
                 authsList = Authenticator.objects.all().order_by('priority', 'name')
                 # If disallow global login (use all auths), get just the first by priority/name
-                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool(False) is True:
+                if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool(False) is True:
                     authsList = authsList[:1]  # type: ignore  # Slicing is not supported by pylance right now
             logger.debug(authsList)
         else:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2012-2023 Virtual Cable S.L.U.
+# Copyright (c) 2012-2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -69,34 +69,34 @@ class DeployedServiceRemover(Job):
     )  # Request run publication "removal" every configued seconds. If config value is changed, it will be used at next reload
     friendly_name = 'Deployed Service Cleaner'
 
-    def startRemovalOf(self, servicePool: ServicePool) -> None:
+    def start_removal_of(self, service_pool: ServicePool) -> None:
         if (
-            servicePool.service is None
+            service_pool.service is None
         ):  # Maybe an inconsistent value? (must not, but if no ref integrity in db, maybe someone hand-changed something.. ;)")
-            logger.error('Found service pool %s without service', servicePool.name)
-            servicePool.delete()  # Just remove it "a las bravas", the best we can do
+            logger.error('Found service pool %s without service', service_pool.name)
+            service_pool.delete()  # Just remove it "a las bravas", the best we can do
             return
 
         # Get publications in course...., that only can be one :)
-        logger.debug('Removal process of %s', servicePool)
+        logger.debug('Removal process of %s', service_pool)
 
-        publishing = servicePool.publications.filter(state=State.PREPARING)
+        publishing = service_pool.publications.filter(state=State.PREPARING)
         for pub in publishing:
             pub.cancel()
         # Now all publishments are canceling, let's try to cancel cache and assigned
-        uServices: collections.abc.Iterable[UserService] = servicePool.userServices.filter(
+        uServices: collections.abc.Iterable[UserService] = service_pool.userServices.filter(
             state=State.PREPARING
         )
         for userService in uServices:
             logger.debug('Canceling %s', userService)
             userService.cancel()
         # Nice start of removal, maybe we need to do some limitation later, but there should not be too much services nor publications cancelable at once
-        servicePool.state = State.REMOVING
-        servicePool.state_date = sql_datetime()  # Now
-        servicePool.name += ' (removed)'
-        servicePool.save(update_fields=['state', 'state_date', 'name'])
+        service_pool.state = State.REMOVING
+        service_pool.state_date = sql_datetime()  # Now
+        service_pool.name += ' (removed)'
+        service_pool.save(update_fields=['state', 'state_date', 'name'])
 
-    def continueRemovalOf(self, servicePool: ServicePool) -> None:
+    def continue_removal_of(self, servicePool: ServicePool) -> None:
         # get current time
         now = sql_datetime()
 
@@ -149,7 +149,7 @@ class DeployedServiceRemover(Job):
             except Exception:
                 logger.exception('Cought unexpected exception at continueRemovalOf: ')
 
-    def forceRemovalOf(self, servicePool: ServicePool) -> None:
+    def force_removal_of(self, servicePool: ServicePool) -> None:
         # Simple remove all publications and user services, without checking anything
         # Log userServices forcet to remove
         logger.warning(
@@ -178,7 +178,7 @@ class DeployedServiceRemover(Job):
             try:
                 # Skips checking deployed services in maintenance mode
                 if servicePool.is_in_maintenance() is False:
-                    self.startRemovalOf(servicePool)
+                    self.start_removal_of(servicePool)
             except Exception as e1:
                 logger.error('Error removing service pool %s: %s', servicePool.name, e1)
                 try:
@@ -200,10 +200,10 @@ class DeployedServiceRemover(Job):
                 if servicePool.state_date < sql_datetime() - timedelta(
                     seconds=MAX_REMOVING_TIME
                 ):
-                    self.forceRemovalOf(servicePool)  # Force removal
+                    self.force_removal_of(servicePool)  # Force removal
 
                 # Skips checking deployed services in maintenance mode
                 if servicePool.is_in_maintenance() is False:
-                    self.continueRemovalOf(servicePool)
+                    self.continue_removal_of(servicePool)
             except Exception:
                 logger.exception('Removing deployed service')

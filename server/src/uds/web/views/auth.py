@@ -40,7 +40,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds.web.util import errors
-from uds.core import auths, types, exceptions
+from uds.core import auths, types, exceptions, consts
 from uds.core.auths.auth import (
     web_login,
     web_logout,
@@ -278,15 +278,15 @@ def ticket_auth(
         uds_cookie(request, response, True)
         return response
     except ServiceNotReadyError:
-        return errors.errorView(request, errors.SERVICE_NOT_READY)
+        return errors.errorView(request, types.errors.Error.SERVICE_NOT_READY)
     except TicketStore.InvalidTicket:
-        return errors.errorView(request, errors.RELOAD_NOT_SUPPORTED)
+        return errors.errorView(request, types.errors.Error.RELOAD_NOT_SUPPORTED)
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
-        return errors.errorView(request, errors.ACCESS_DENIED)
+        return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
     except ServicePool.DoesNotExist:  # type: ignore  # DoesNotExist is different for each model
         logger.error('Ticket has an invalid Service Pool')
-        return errors.errorView(request, errors.SERVICE_NOT_FOUND)
+        return errors.errorView(request, types.errors.Error.SERVICE_NOT_FOUND)
     except Exception as e:
         logger.exception('Exception')
         return errors.exceptionView(request, e)

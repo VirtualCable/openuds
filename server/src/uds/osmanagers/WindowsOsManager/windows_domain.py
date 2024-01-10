@@ -135,8 +135,8 @@ class WinDomainOsManager(WindowsOsManager):
     _account: str
     _pasword: str
     _group: str
-    _serverHint: str
-    _removeOnExit: str
+    _server_hint: str
+    _remove_on_exit: str
     _ssl: str
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType'):
@@ -157,17 +157,17 @@ class WinDomainOsManager(WindowsOsManager):
             self._account = values['account']
             self._password = values['password']
             self._group = values['grp'].strip()
-            self._serverHint = values['serverHint'].strip()
+            self._server_hint = values['serverHint'].strip()
             self._ssl = 'y' if values['ssl'] else 'n'
-            self._removeOnExit = 'y' if values['removeOnExit'] else 'n'
+            self._remove_on_exit = 'y' if values['removeOnExit'] else 'n'
         else:
             self._domain = ''
             self._ou = ''
             self._account = ''
             self._password = ''  # nosec: no encoded password
             self._group = ''
-            self._serverHint = ''
-            self._removeOnExit = 'n'
+            self._server_hint = ''
+            self._remove_on_exit = 'n'
             self._ssl = 'n'
 
         # self._ou = self._ou.replace(' ', ''), do not remove spaces
@@ -177,8 +177,8 @@ class WinDomainOsManager(WindowsOsManager):
                 self._ou += ',' + lpath
 
     def __getServerList(self) -> collections.abc.Iterable[tuple[str, int]]:
-        if self._serverHint != '':
-            yield (self._serverHint, 389)
+        if self._server_hint != '':
+            yield (self._server_hint, 389)
 
         server: typing.Any
 
@@ -321,7 +321,7 @@ class WinDomainOsManager(WindowsOsManager):
         super().release(userService)
 
         # If no removal requested, just return
-        if self._removeOnExit != 'y':
+        if self._remove_on_exit != 'y':
             return
 
         if '.' not in self._domain:
@@ -471,9 +471,9 @@ class WinDomainOsManager(WindowsOsManager):
                 CryptoManager().encrypt(self._password),
                 base,
                 self._group,
-                self._serverHint,
+                self._server_hint,
                 self._ssl,
-                self._removeOnExit,
+                self._remove_on_exit,
             ]
         ).encode('utf8')
 
@@ -491,16 +491,16 @@ class WinDomainOsManager(WindowsOsManager):
             self._group = ''
 
         if values[0] in ('v3', 'v4'):
-            self._serverHint = values[7]
+            self._server_hint = values[7]
         else:
-            self._serverHint = ''
+            self._server_hint = ''
 
         if values[0] == 'v4':
             self._ssl = values[8]
-            self._removeOnExit = values[9]
+            self._remove_on_exit = values[9]
         else:
             self._ssl = 'n'
-            self._removeOnExit = 'y'
+            self._remove_on_exit = 'y'
         super().unmarshal(codecs.decode(values[5].encode(), 'hex'))
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
@@ -510,7 +510,7 @@ class WinDomainOsManager(WindowsOsManager):
         dct['account'] = self._account
         dct['password'] = self._password
         dct['grp'] = self._group
-        dct['serverHint'] = self._serverHint
+        dct['serverHint'] = self._server_hint
         dct['ssl'] = self._ssl == 'y'
-        dct['removeOnExit'] = self._removeOnExit == 'y'
+        dct['removeOnExit'] = self._remove_on_exit == 'y'
         return dct

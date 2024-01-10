@@ -357,7 +357,7 @@ def blocker(
     def decorator(f: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
         @functools.wraps(f)
         def wrapper(*args: typing.Any, **kwargs: typing.Any) -> RT:
-            if not GlobalConfig.BLOCK_ACTOR_FAILURES.getBool(True) and not ignore_block_config:
+            if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
             request: typing.Optional['ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)

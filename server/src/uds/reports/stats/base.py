@@ -42,5 +42,5 @@ class StatsReport(reports.Report):
         raise NotImplementedError('StatsReport generate invoked and not implemented')
 
 # pylint: disable=abstract-method
-class StatsReportAuto(ReportAuto, StatsReport):
+class StatsReportAuto(ReportAuto, StatsReport):  # type: ignore
     pass

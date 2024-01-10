@@ -365,7 +365,7 @@ class Handler:
         username = self.recover_value('username')
         # Maybe it's root user??
         if (
-            GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.getBool(True)
+            GlobalConfig.SUPER_USER_ALLOW_WEBACCESS.as_bool(True)
             and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
             and authId == -1
         ):

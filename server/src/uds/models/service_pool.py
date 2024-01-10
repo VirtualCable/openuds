@@ -152,6 +152,19 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
     calendaraction_set: 'models.manager.RelatedManager[CalendarAction]'
     changelog: 'models.manager.RelatedManager[ServicePoolPublicationChangelog]'
 
+    # New nomenclature, but keeping old ones for compatibility
+    @property
+    def user_services(self) -> 'models.manager.RelatedManager[UserService]':
+        return self.userServices
+
+    @property
+    def member_of_meta(self) -> 'models.manager.RelatedManager[MetaPoolMember]':
+        return self.memberOfMeta
+
+    @property
+    def calendar_access(self) -> 'models.manager.RelatedManager[CalendarAccess]':
+        return self.calendarAccess
+
     class Meta(UUIDModel.Meta):  # pylint: disable=too-few-public-methods
         """
         Meta class to declare the name of the table at database
@@ -278,7 +291,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
     def is_usable(self) -> bool:
         return (
-            self.state == states.servicePool.ACTIVE and not self.is_in_maintenance() and not self.is_restrained()
+            self.state == states.servicePool.ACTIVE
+            and not self.is_in_maintenance()
+            and not self.is_restrained()
         )
 
     def when_will_be_replaced(self, forUser: 'User') -> typing.Optional[datetime]:
@@ -643,7 +658,9 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
             maxs = self.service.get_instance().max_user_services
 
         if cachedValue == -1:
-            cachedValue = self.assigned_user_services().filter(state__in=states.userService.VALID_STATES).count()
+            cachedValue = (
+                self.assigned_user_services().filter(state__in=states.userService.VALID_STATES).count()
+            )
 
         if maxs == 0 or max == consts.UNLIMITED:
             return types.pools.UsageInfo(cachedValue, consts.UNLIMITED)

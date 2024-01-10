@@ -72,7 +72,7 @@ class LinuxRandomPassManager(LinuxOsManager):
     idle = LinuxOsManager.idle
     deadLine = LinuxOsManager.deadLine
 
-    _userAccount: str
+    _user_account: str
 
     def __init__(self, environment, values):
         super().__init__(environment, values)
@@ -81,18 +81,18 @@ class LinuxRandomPassManager(LinuxOsManager):
                 raise exceptions.validation.ValidationError(
                     _('Must provide an user account!!!')
                 )
-            self._userAccount = values['userAccount']
+            self._user_account = values['userAccount']
         else:
-            self._userAccount = ''
+            self._user_account = ''
 
     def process_user_password(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
-        if username == self._userAccount:
+        if username == self._user_account:
             return (username, userService.recoverValue('linOsRandomPass'))
         return username, password
 
-    def genPassword(self, service: 'UserService') -> str:
+    def gen_random_password(self, service: 'UserService') -> str:
         randomPass = service.recoverValue('linOsRandomPass')
         if randomPass is None:
             randomPass = ''.join(
@@ -118,14 +118,14 @@ class LinuxRandomPassManager(LinuxOsManager):
 
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
-            'username': self._userAccount,
+            'username': self._user_account,
             'password': '',  # On linux, user password is not needed so we provide an empty one
-            'new_password': self.genPassword(userService),
+            'new_password': self.gen_random_password(userService),
 
             'custom': {
-                'username': self._userAccount,
+                'username': self._user_account,
                 'password': '',  # On linux, user password is not needed so we provide an empty one
-                'new_password': self.genPassword(userService),
+                'new_password': self.gen_random_password(userService),
             },
         }
 
@@ -135,16 +135,16 @@ class LinuxRandomPassManager(LinuxOsManager):
         """
         base = LinuxOsManager.marshal(self)
         return '\t'.join(
-            ['v1', self._userAccount, codecs.encode(base, 'hex').decode()]
+            ['v1', self._user_account, codecs.encode(base, 'hex').decode()]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         values = data.split(b'\t')
         if values[0] == b'v1':
-            self._userAccount = values[1].decode()
+            self._user_account = values[1].decode()
             LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
         dic = LinuxOsManager.get_dict_of_values(self)
-        dic['userAccount'] = self._userAccount
+        dic['userAccount'] = self._user_account
         return dic

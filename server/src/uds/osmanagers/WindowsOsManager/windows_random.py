@@ -83,6 +83,9 @@ class WinRandomPassManager(WindowsOsManager):
     idle = WindowsOsManager.idle
     deadLine = WindowsOsManager.deadLine
 
+    _user_account: str
+    _password: str
+
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType'):
         super().__init__(environment, values)
         if values:
@@ -90,21 +93,21 @@ class WinRandomPassManager(WindowsOsManager):
                 raise exceptions.validation.ValidationError(_('Must provide an user account!!!'))
             if values['password'] == '':
                 raise exceptions.validation.ValidationError(_('Must provide a password for the account!!!'))
-            self._userAccount = values['userAccount']
+            self._user_account = values['userAccount']
             self._password = values['password']
         else:
-            self._userAccount = ''
+            self._user_account = ''
             self._password = ''  # nosec: not a password (empty)
 
     def process_user_password(
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
-        if username == self._userAccount:
+        if username == self._user_account:
             password = userService.recoverValue('winOsRandomPass')
 
         return WindowsOsManager.process_user_password(self, userService, username, password)
 
-    def genPassword(self, userService: 'UserService'):
+    def gen_random_password(self, userService: 'UserService'):
         randomPass = userService.recoverValue('winOsRandomPass')
         if not randomPass:
             # Generates a password that conforms to complexity
@@ -128,17 +131,15 @@ class WinRandomPassManager(WindowsOsManager):
         return {
             'action': 'rename',
             'name': userService.get_name(),
-
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
-            'username': self._userAccount,
+            'username': self._user_account,
             'password': self._password,
-            'new_password': self.genPassword(userService),
-
+            'new_password': self.gen_random_password(userService),
             'custom': {
-                'username': self._userAccount,
+                'username': self._user_account,
                 'password': self._password,
-                'new_password': self.genPassword(userService),
+                'new_password': self.gen_random_password(userService),
             },
         }
 
@@ -147,19 +148,19 @@ class WinRandomPassManager(WindowsOsManager):
         Serializes the os manager data so we can store it in database
         '''
         base = codecs.encode(super().marshal(), 'hex').decode()
-        return '\t'.join(['v1', self._userAccount, CryptoManager().encrypt(self._password), base]).encode(
+        return '\t'.join(['v1', self._user_account, CryptoManager().encrypt(self._password), base]).encode(
             'utf8'
         )
 
     def unmarshal(self, data: bytes) -> None:
         values = data.decode('utf8').split('\t')
         if values[0] == 'v1':
-            self._userAccount = values[1]
+            self._user_account = values[1]
             self._password = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
     def get_dict_of_values(self) -> gui.ValuesDictType:
         dic = super().get_dict_of_values()
-        dic['userAccount'] = self._userAccount
+        dic['userAccount'] = self._user_account
         dic['password'] = self._password
         return dic

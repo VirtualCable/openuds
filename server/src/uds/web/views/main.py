@@ -233,7 +233,7 @@ def mfa(
                 request.user.manager.name,
                 mfa_provider.name,
             )
-            return errors.errorView(request, errors.ACCESS_DENIED)
+            return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
         # None, the authenticator will decide what to do if mfa_identifier is empty
 
     tries = request.session.get('mfa_tries', 0)
@@ -282,8 +282,8 @@ def mfa(
                     # Clean session
                     request.session.flush()
                     # Too many tries, redirect to login error page
-                    return errors.errorView(request, errors.ACCESS_DENIED)
-                return errors.errorView(request, errors.INVALID_MFA_CODE)
+                    return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
+                return errors.errorView(request, types.errors.Error.INVALID_MFA_CODE)
         else:
             pass  # Will render again the page
     else:
@@ -307,7 +307,7 @@ def mfa(
                 request.session['mfa_start_time'] = now
         except Exception as e:
             logger.error('Error processing MFA: %s', e)
-            return errors.errorView(request, errors.UNKNOWN_ERROR)
+            return errors.errorView(request, types.errors.Error.UNKNOWN_ERROR)
 
     # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device
     remember_device = ''

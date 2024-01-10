@@ -51,15 +51,15 @@ url_validator = dj_validators.URLValidator(['http', 'https'])
 
 def validateNumeric(
     value: typing.Union[str, int],
-    minValue: typing.Optional[int] = None,
-    maxValue: typing.Optional[int] = None,
+    min_value: typing.Optional[int] = None,
+    max_value: typing.Optional[int] = None,
     fieldName: typing.Optional[str] = None,
 ) -> int:
     """
     Validates that a numeric value is valid
     :param numericStr: Numeric value to check (as string)
-    :param minValue: If not None, min value that must be the numeric or exception is thrown
-    :param maxValue: If not None, max value that must be the numeric or exception is thrown
+    :param min_value: If not None, min value that must be the numeric or exception is thrown
+    :param max_value: If not None, max value that must be the numeric or exception is thrown
     :param returnAsInteger: if True, returs value as integer (default), else returns as string
     :param fieldName: If present, the name of the field for "Raising" exceptions, defaults to "Numeric value"
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
@@ -69,14 +69,14 @@ def validateNumeric(
 
     try:
         numeric = int(value)
-        if minValue is not None and numeric < minValue:
+        if min_value is not None and numeric < min_value:
             raise exceptions.validation.ValidationError(
-                _('{0} must be greater than or equal to {1}').format(fieldName, minValue)
+                _('{0} must be greater than or equal to {1}').format(fieldName, min_value)
             )
 
-        if maxValue is not None and numeric > maxValue:
+        if max_value is not None and numeric > max_value:
             raise exceptions.validation.ValidationError(
-                _('{0} must be lower than or equal to {1}').format(fieldName, maxValue)
+                _('{0} must be lower than or equal to {1}').format(fieldName, max_value)
             )
 
         value = str(numeric)
@@ -220,7 +220,7 @@ def validatePort(port: typing.Union[str, int]) -> int:
     Raises:
         exceptions.ValidationException: if port is not valid
     """
-    return validateNumeric(port, minValue=1, maxValue=65535, fieldName='Port')
+    return validateNumeric(port, min_value=1, max_value=65535, fieldName='Port')
 
 
 def validateHost(host: str) -> str:
@@ -266,7 +266,7 @@ def validateTimeout(timeOutStr: str) -> int:
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
-    return validateNumeric(timeOutStr, minValue=0, fieldName='Timeout')
+    return validateNumeric(timeOutStr, min_value=0, fieldName='Timeout')
 
 
 def validateMac(mac: str) -> str:

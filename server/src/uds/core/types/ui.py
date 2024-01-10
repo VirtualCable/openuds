@@ -134,8 +134,8 @@ class FieldInfo:
     pattern: typing.Union[FieldPatternType, 're.Pattern'] = FieldPatternType.NONE
     tab: typing.Union[Tab, str, None] = None
     choices: typing.Optional[ChoicesType] = None
-    minValue: typing.Optional[int] = None
-    maxValue: typing.Optional[int] = None
+    min_value: typing.Optional[int] = None
+    max_value: typing.Optional[int] = None
     fills: typing.Optional[Filler] = None
     rows: typing.Optional[int] = None
 

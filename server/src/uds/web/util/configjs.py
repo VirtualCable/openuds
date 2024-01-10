@@ -88,7 +88,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # Initial list of authenticators (all except disabled ones)
     auths = Authenticator.objects.exclude(state=consts.auth.DISABLED)
     authenticators: list[Authenticator] = []
-    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.getBool():
+    if GlobalConfig.DISALLOW_GLOBAL_LOGIN.as_bool():
         try:
             # Get authenticators with auth_host or tag. If tag is None, auth_host, if exists
             # Tag will also include non visible authenticators
@@ -163,14 +163,14 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'tag': tag,
         'os': request.os.os.name,
         'image_size': Image.MAX_IMAGE_SIZE,
-        'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.getBool(),
+        'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.as_bool(),
         'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),
         'site_name': GlobalConfig.SITE_NAME.get(),
         'site_copyright_info': GlobalConfig.SITE_COPYRIGHT.get(),
         'site_copyright_link': GlobalConfig.SITE_COPYRIGHT_LINK.get(),
         'site_logo_name': GlobalConfig.SITE_LOGO_NAME.get(),
         'site_information': GlobalConfig.SITE_INFO.get(),
-        'site_filter_on_top': GlobalConfig.SITE_FILTER_ONTOP.getBool(True),
+        'site_filter_on_top': GlobalConfig.SITE_FILTER_ONTOP.as_bool(True),
         'launcher_wait_time': 5000,
         'messages': {
             # Calendar denied message
@@ -309,7 +309,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
         # Admin config
         page_size = GlobalConfig.ADMIN_PAGESIZE.getInt(True)
-        vnc_userservices = GlobalConfig.ADMIN_ENABLE_USERSERVICES_VNC.getBool(True)
+        vnc_userservices = GlobalConfig.ADMIN_ENABLE_USERSERVICES_VNC.as_bool(True)
         # Fix page size to razonable usable values
         page_size = 10 if page_size < 10 else 100 if page_size > 100 else page_size
         config['admin'] = {
