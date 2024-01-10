@@ -154,26 +154,34 @@ class Authenticators(ModelHandler):
             raise exceptions.rest.NotFound('type not found') from e
 
     def item_as_dict(self, item: 'Model') -> dict[str, typing.Any]:
+        summary = 'summarize' in self._params
+
         item = ensure.is_instance(item, Authenticator)
-        type_ = item.get_type()
-        return {
+        v = {
             'numeric_id': item.id,
             'id': item.uuid,
             'name': item.name,
-            'tags': [tag.tag for tag in item.tags.all()],
-            'comments': item.comments,
             'priority': item.priority,
-            'net_filtering': item.net_filtering,
-            'networks': [{'id': n.uuid} for n in item.networks.all()],
-            'state': item.state,
-            'mfa_id': item.mfa.uuid if item.mfa else '',
-            'small_name': item.small_name,
-            'users_count': item.users.count(),
-            'type': type_.get_type(),
-            'type_name': type_.name(),
-            'type_info': self.type_info(type_),
-            'permission': permissions.effective_permissions(self._user, item),
         }
+        if not summary:
+            type_ = item.get_type()
+            v.update(
+                {
+                    'tags': [tag.tag for tag in item.tags.all()],
+                    'comments': item.comments,
+                    'net_filtering': item.net_filtering,
+                    'networks': [{'id': n.uuid} for n in item.networks.all()],
+                    'state': item.state,
+                    'mfa_id': item.mfa.uuid if item.mfa else '',
+                    'small_name': item.small_name,
+                    'users_count': item.users.count(),
+                    'type': type_.get_type(),
+                    'type_name': type_.name(),
+                    'type_info': self.type_info(type_),
+                    'permission': permissions.effective_permissions(self._user, item),
+                }
+            )
+        return v
 
     def post_save(self, item: 'Model') -> None:
         item = ensure.is_instance(item, Authenticator)
