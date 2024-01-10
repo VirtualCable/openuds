@@ -315,3 +315,9 @@ class CryptoManager(metaclass=singleton.Singleton):
         return hashlib.sha3_256(
             (self.random_string(24, True) + datetime.datetime.now().strftime('%H%M%S%f')).encode()
         ).hexdigest()
+
+    def sha(self, value: typing.Union[str, bytes]) -> str:
+        if isinstance(value, str):
+            value = value.encode()
+
+        return hashlib.sha3_256(value).hexdigest()

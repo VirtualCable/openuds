@@ -140,7 +140,7 @@ class TelegramNotifier(messaging.Notifier):
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
         logger.debug('Sending telegram message: %s', telegramMsg)
         # load chatIds
-        chatIds = self.storage.getPickle('chatIds') or []
+        chatIds = self.storage.get_unpickle('chatIds') or []
         t = telegram.Telegram(self.accessToken.value, self.botname.value)
         for chatId in chatIds:
             with ignoreExceptions():
@@ -151,7 +151,7 @@ class TelegramNotifier(messaging.Notifier):
     def subscribeUser(self, chatId: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chatIds
-        chatIds = self.storage.getPickle('chatIds') or []
+        chatIds = self.storage.get_unpickle('chatIds') or []
         if chatId not in chatIds:
             chatIds.append(chatId)
             self.storage.put_pickle('chatIds', chatIds)
@@ -160,7 +160,7 @@ class TelegramNotifier(messaging.Notifier):
     def unsubscriteUser(self, chatId: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
         # that holds a list of chatIds
-        chatIds = self.storage.getPickle('chatIds') or []
+        chatIds = self.storage.get_unpickle('chatIds') or []
         if chatId in chatIds:
             chatIds.remove(chatId)
             self.storage.put_pickle('chatIds', chatIds)
@@ -170,7 +170,7 @@ class TelegramNotifier(messaging.Notifier):
         if not self.accessToken.value.strip():
             return  # no access token, no messages
         # Time of last retrieve
-        lastCheck: typing.Optional[datetime.datetime] = self.storage.getPickle('lastCheck')
+        lastCheck: typing.Optional[datetime.datetime] = self.storage.get_unpickle('lastCheck')
         now = sql_datetime()
 
         # If last check is not set, we will set it to now
@@ -185,7 +185,7 @@ class TelegramNotifier(messaging.Notifier):
         # Update last check
         self.storage.put_pickle('lastCheck', now)
 
-        lastOffset = self.storage.getPickle('lastOffset') or 0
+        lastOffset = self.storage.get_unpickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
         with ignoreExceptions():  # In case getUpdates fails, ignore it
             for update in t.get_updates():

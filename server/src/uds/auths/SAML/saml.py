@@ -567,7 +567,7 @@ class SAMLAuthenticator(auths.Authenticator):
         self.storage.remove(self.mfaStorageKey(username))
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+        return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
 
     def logoutFromCallback(
         self,
@@ -725,13 +725,13 @@ class SAMLAuthenticator(auths.Authenticator):
         )
 
     def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
-        data = self.storage.getPickle(username)
+        data = self.storage.get_unpickle(username)
         if not data:
             return
         groupsManager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
-        data = self.storage.getPickle(username)
+        data = self.storage.get_unpickle(username)
         if not data:
             return username
         return data[0]

@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 MARK = '_mgb_'
 
 
-def _calcKey(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
+def _calculate_key(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
     h = hashlib.md5(usedforsecurity=False)
     h.update(owner)
     h.update(key)
@@ -55,14 +55,14 @@ def _calcKey(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> 
     return h.hexdigest()
 
 
-def _encodeValue(key: str, value: typing.Any, compat: bool = False) -> str:
+def _encode_value(key: str, value: typing.Any, compat: bool = False) -> str:
     if not compat:
         return base64.b64encode(pickle.dumps((MARK, key, value))).decode()
     # Compatibility save
     return base64.b64encode(pickle.dumps(value)).decode()
 
 
-def _decodeValue(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.Any]:
+def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.Any]:
     if value:
         try:
             v = pickle.loads(base64.b64decode(value.encode()))  # nosec: This is e controled pickle loading
@@ -121,7 +121,7 @@ class StorageAsDict(MutableMapping):
         if key[0] == '#':
             # Compat with old db key
             return key[1:]
-        return _calcKey(self._owner.encode(), key.encode())
+        return _calculate_key(self._owner.encode(), key.encode())
 
     def __getitem__(self, key: str) -> typing.Any:
         if not isinstance(key, str):
@@ -130,7 +130,11 @@ class StorageAsDict(MutableMapping):
         dbk = self._key(key)
         try:
             c: DBStorage = typing.cast(DBStorage, self._db.get(pk=dbk))
-            return _decodeValue(dbk, c.data)[1]  # Ignores original key
+            if c.owner != self._owner:  # Maybe a key collision,
+                logger.error('Key collision detected for key %s', key)
+                return None
+            okey, value = _decode_value(dbk, c.data)
+            return _decode_value(dbk, c.data)[1]  # Ignores original key
         except DBStorage.DoesNotExist:
             return None
 
@@ -139,7 +143,7 @@ class StorageAsDict(MutableMapping):
             raise TypeError(f'Key must be str type, {type(key)} found')
 
         dbk = self._key(key)
-        data = _encodeValue(key, value, self._compat)
+        data = _encode_value(key, value, self._compat)
         # ignores return value, we don't care if it was created or updated
         DBStorage.objects.update_or_create(
             key=dbk, defaults={'data': data, 'attr1': self._group, 'owner': self._owner}
@@ -153,7 +157,7 @@ class StorageAsDict(MutableMapping):
         """
         Iterates through keys
         """
-        return iter(_decodeValue(i.key, i.data)[0] for i in self._filtered)
+        return iter(_decode_value(i.key, i.data)[0] for i in self._filtered)
 
     def __contains__(self, key: object) -> bool:
         if isinstance(key, str):
@@ -165,10 +169,10 @@ class StorageAsDict(MutableMapping):
 
     # Optimized methods, avoid re-reading from DB
     def items(self):
-        return iter(_decodeValue(i.key, i.data) for i in self._filtered)
+        return iter(_decode_value(i.key, i.data) for i in self._filtered)
 
     def values(self):
-        return iter(_decodeValue(i.key, i.data)[1] for i in self._filtered)
+        return iter(_decode_value(i.key, i.data)[1] for i in self._filtered)
 
     def get(self, key: str, default: typing.Any = None) -> typing.Any:
         return self[key] or default
@@ -190,6 +194,11 @@ class StorageAccess:
     """
     Allows the access to the storage as a dict, with atomic transaction if requested
     """
+
+    owner: str
+    group: typing.Optional[str]
+    atomic: bool
+    compat: bool
 
     def __init__(
         self,
@@ -223,13 +232,13 @@ class Storage:
     _bownwer: bytes
 
     def __init__(self, owner: typing.Union[str, bytes]):
-        self._owner = owner.decode('utf-8') if isinstance(owner, bytes) else owner
+        self._owner = typing.cast(str, owner.decode('utf-8') if isinstance(owner, bytes) else owner)
         self._bowner = self._owner.encode('utf8')
 
-    def getKey(self, key: typing.Union[str, bytes]) -> str:
-        return _calcKey(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
+    def get_key(self, key: typing.Union[str, bytes]) -> str:
+        return _calculate_key(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
 
-    def saveData(
+    def save_to_db(
         self,
         skey: typing.Union[str, bytes],
         data: typing.Any,
@@ -240,21 +249,21 @@ class Storage:
             self.remove(skey)
             return
 
-        key = self.getKey(skey)
+        key = self.get_key(skey)
         if isinstance(data, str):
             data = data.encode('utf-8')
-        dataStr = codecs.encode(data, 'base64').decode()
+        data_string = codecs.encode(data, 'base64').decode()
         attr1 = attr1 or ''
         try:
-            DBStorage.objects.create(owner=self._owner, key=key, data=dataStr, attr1=attr1)
+            DBStorage.objects.create(owner=self._owner, key=key, data=data_string, attr1=attr1)
         except Exception:
             with transaction.atomic():
                 DBStorage.objects.filter(key=key).select_for_update().update(
-                    owner=self._owner, data=dataStr, attr1=attr1
+                    owner=self._owner, data=data_string, attr1=attr1
                 )  # @UndefinedVariable
 
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
-        return self.saveData(skey, data)
+        return self.save_to_db(skey, data)
 
     def put_pickle(
         self,
@@ -262,23 +271,23 @@ class Storage:
         data: typing.Any,
         attr1: typing.Optional[str] = None,
     ) -> None:
-        return self.saveData(
+        return self.save_to_db(
             skey, pickle.dumps(data), attr1
         )  # Protocol 2 is compatible with python 2.7. This will be unnecesary when fully migrated
 
-    def updateData(
+    def update_to_db(
         self,
         skey: typing.Union[str, bytes],
         data: typing.Any,
         attr1: typing.Optional[str] = None,
     ) -> None:
-        self.saveData(skey, data, attr1)
+        self.save_to_db(skey, data, attr1)
 
-    def readData(
+    def read_from_db(
         self, skey: typing.Union[str, bytes], fromPickle: bool = False
     ) -> typing.Optional[typing.Union[str, bytes]]:
         try:
-            key = self.getKey(skey)
+            key = self.get_key(skey)
             c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
             val = codecs.decode(c.data.encode(), 'base64')
 
@@ -293,15 +302,15 @@ class Storage:
             return None
 
     def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
-        return self.readData(skey)
+        return self.read_from_db(skey)
 
-    def getPickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
-        v = self.readData(skey, True)
+    def get_unpickle(self, skey: typing.Union[str, bytes]) -> typing.Any:
+        v = self.read_from_db(skey, True)
         if v:
             return pickle.loads(typing.cast(bytes, v))  # nosec: This is e controled pickle loading
         return None
 
-    def getPickleByAttr1(self, attr1: str, forUpdate: bool = False):
+    def get_unpickle_by_attr1(self, attr1: str, forUpdate: bool = False):
         try:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)
             if forUpdate:
@@ -312,11 +321,16 @@ class Storage:
         except Exception:
             return None
 
-    def remove(self, skey: typing.Union[collections.abc.Iterable[typing.Union[str, bytes]], str, bytes]) -> None:
-        keys: collections.abc.Iterable[typing.Union[str, bytes]] = [skey] if isinstance(skey, (str, bytes)) else skey
+    def remove(
+        self, skey: typing.Union[collections.abc.Iterable[typing.Union[str, bytes]], str, bytes]
+    ) -> None:
+        keys: collections.abc.Iterable[typing.Union[str, bytes]] = typing.cast(
+            collections.abc.Iterable[typing.Union[str, bytes]],
+            [skey] if isinstance(skey, (str, bytes)) else skey,
+        )
         try:
             # Process several keys at once
-            DBStorage.objects.filter(key__in=[self.getKey(k) for k in keys]).delete()
+            DBStorage.objects.filter(key__in=[self.get_key(k) for k in keys]).delete()
         except Exception:  # nosec: Not interested in processing exceptions, just ignores it
             pass
 
@@ -342,7 +356,9 @@ class Storage:
     ) -> StorageAccess:
         return StorageAccess(self._owner, group=group, atomic=atomic, compat=compat)
 
-    def locateByAttr1(self, attr1: typing.Union[collections.abc.Iterable[str], str]) -> collections.abc.Iterable[bytes]:
+    def search_by_attr1(
+        self, attr1: typing.Union[collections.abc.Iterable[str], str]
+    ) -> collections.abc.Iterable[bytes]:
         if isinstance(attr1, str):
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
         else:
@@ -365,7 +381,7 @@ class Storage:
         for v in query:  # @UndefinedVariable
             yield (v.key, codecs.decode(v.data.encode(), 'base64'), v.attr1)
 
-    def filterPickle(
+    def filter_unpickle(
         self, attr1: typing.Optional[str] = None, forUpdate: bool = False
     ) -> collections.abc.Iterable[tuple[str, typing.Any, 'str|None']]:
         for v in self.filter(attr1, forUpdate):

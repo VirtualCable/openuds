@@ -215,7 +215,7 @@ class MFA(Module):
         Internal method to get the data from storage
         """
         storageKey = request.ip + userId
-        return self.storage.getPickle(storageKey)
+        return self.storage.get_unpickle(storageKey)
 
     def _remove_data(self, request: 'ExtendedHttpRequest', userId: str) -> None:
         """

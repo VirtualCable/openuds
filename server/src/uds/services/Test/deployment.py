@@ -99,7 +99,7 @@ class TestUserService(services.UserService):
 
     def get_ip(self) -> str:
         logger.info('Getting ip of deployment %s', self.data)
-        ip = typing.cast(str, self.storage.readData('ip'))
+        ip = typing.cast(str, self.storage.read_from_db('ip'))
         if ip is None:
             ip = '8.6.4.2'  # Sample IP for testing purposses only
         return ip

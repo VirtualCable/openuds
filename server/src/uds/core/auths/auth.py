@@ -513,7 +513,7 @@ def web_logout(
     return response
 
 
-def authenticate_log_login(
+def log_login(
     request: 'ExtendedHttpRequest',
     authenticator: models.Authenticator,
     userName: str,
@@ -558,7 +558,7 @@ def authenticate_log_login(
         logger.info('Root %s from %s where OS is %s', log_string, request.ip, request.os.os.name)
 
 
-def auth_log_logout(request: 'ExtendedHttpRequest') -> None:
+def log_logout(request: 'ExtendedHttpRequest') -> None:
     if request.user:
         if request.user.manager.id is not None:
             log.log(

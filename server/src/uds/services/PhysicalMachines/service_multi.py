@@ -169,7 +169,7 @@ class IPMachinesService(IPServiceBase):
                 '{}~{}'.format(str(ip).strip(), i) for i, ip in enumerate(values['ipList']) if str(ip).strip()
             ]  # Allow duplicates right now
             # Current stored data, if it exists
-            d = self.storage.readData('ips')
+            d = self.storage.read_from_db('ips')
             old_ips = pickle.loads(d) if d and isinstance(d, bytes) else []  # nosec: pickle is safe here
             # dissapeared ones
             dissapeared = set(IPServiceBase.getIp(i.split('~')[0]) for i in old_ips) - set(
@@ -202,7 +202,7 @@ class IPMachinesService(IPServiceBase):
         }
 
     def marshal(self) -> bytes:
-        self.storage.saveData('ips', pickle.dumps(self._ips))
+        self.storage.save_to_db('ips', pickle.dumps(self._ips))
         return b'\0'.join(
             [
                 b'v7',
@@ -217,7 +217,7 @@ class IPMachinesService(IPServiceBase):
 
     def unmarshal(self, data: bytes) -> None:
         values: list[bytes] = data.split(b'\0')
-        d = self.storage.readData('ips')
+        d = self.storage.read_from_db('ips')
         if isinstance(d, bytes):
             self._ips = pickle.loads(d)  # nosec: pickle is safe here
         elif isinstance(d, str):  # "legacy" saved elements
@@ -272,7 +272,7 @@ class IPMachinesService(IPServiceBase):
             for ip in allIps:
                 theIP = IPServiceBase.getIp(ip)
                 theMAC = IPServiceBase.getMac(ip)
-                locked = self.storage.getPickle(theIP)
+                locked = self.storage.get_unpickle(theIP)
                 if self.canBeUsed(locked, now):
                     if (
                         self._port > 0
@@ -320,7 +320,7 @@ class IPMachinesService(IPServiceBase):
             logger.exception("Exception at getUnassignedMachine")
 
     def enumerate_assignables(self):
-        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.readData(ip) is None]
+        return [(ip, ip.split('~')[0]) for ip in self._ips if self.storage.read_from_db(ip) is None]
 
     def assign_from_assignables(
         self,
@@ -333,7 +333,7 @@ class IPMachinesService(IPServiceBase):
         theMAC = IPServiceBase.getMac(assignableId)
 
         now = sql_stamp_seconds()
-        locked = self.storage.getPickle(theIP)
+        locked = self.storage.get_unpickle(theIP)
         if self.canBeUsed(locked, now):
             self.storage.put_pickle(theIP, now)
             if theMAC:
@@ -351,7 +351,7 @@ class IPMachinesService(IPServiceBase):
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
         now = sql_stamp_seconds()
-        locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
+        locked: typing.Union[None, str, int] = self.storage.get_unpickle(theIP)
         if self.canBeUsed(locked, now):
             self.storage.put_pickle(theIP, str(now))  # Lock it
 
@@ -362,7 +362,7 @@ class IPMachinesService(IPServiceBase):
         logger.debug('Processing logout for %s: %s', self, id)
         # Locate the IP on the storage
         theIP = IPServiceBase.getIp(id)
-        locked: typing.Union[None, str, int] = self.storage.getPickle(theIP)
+        locked: typing.Union[None, str, int] = self.storage.get_unpickle(theIP)
         # If locked is str, has been locked by processLogin so we can unlock it
         if isinstance(locked, str):
             self.unassignMachine(id)

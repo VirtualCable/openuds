@@ -88,7 +88,7 @@ class IPSingleMachineService(IPServiceBase):
     def getUnassignedMachine(self) -> typing.Optional[str]:
         ip: typing.Optional[str] = None
         try:
-            counter = self.storage.getPickle('counter')
+            counter = self.storage.get_unpickle('counter')
             counter = counter + 1 if counter is not None else 1
             self.storage.put_pickle('counter', counter)
             ip = '{}~{}'.format(self.ip.value, counter)

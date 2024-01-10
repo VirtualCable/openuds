@@ -41,7 +41,7 @@ import dns.reversename
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types, exceptions, consts
-from uds.core.auths.auth import authenticate_log_login
+from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 from uds.core.util.state import State
@@ -154,7 +154,7 @@ class InternalDBAuth(auths.Authenticator):
         try:
             user: 'models.User' = dbAuth.users.get(name=username, state=State.ACTIVE)
         except Exception:
-            authenticate_log_login(request, self.db_obj(), username, 'Invalid user')
+            log_login(request, self.db_obj(), username, 'Invalid user')
             return types.auth.FAILED_AUTH
 
         if user.parent:  # Direct auth not allowed for "derived" users
@@ -165,7 +165,7 @@ class InternalDBAuth(auths.Authenticator):
             groupsManager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 
-        authenticate_log_login(request, self.db_obj(), username, 'Invalid password')
+        log_login(request, self.db_obj(), username, 'Invalid password')
         return types.auth.FAILED_AUTH
 
     def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):

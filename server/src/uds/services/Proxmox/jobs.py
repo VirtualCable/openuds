@@ -72,7 +72,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
         except client.ProxmoxNotFound:
             return  # Machine does not exists
         except Exception as e:
-            providerInstance.storage.saveData('tr' + str(vmId), str(vmId), attr1='tRm')
+            providerInstance.storage.save_to_db('tr' + str(vmId), str(vmId), attr1='tRm')
             logger.info(
                 'Machine %s could not be removed right now, queued for later: %s',
                 vmId,

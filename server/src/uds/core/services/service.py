@@ -443,7 +443,7 @@ class Service(Module):
 
     def recover_id_info(self, id: str, delete: bool = False) -> typing.Any:
         # recovers the information
-        value = self.storage.getPickle('__nfo_' + id)
+        value = self.storage.get_unpickle('__nfo_' + id)
         if value and delete:
             self.storage.delete('__nfo_' + id)
         return value

@@ -71,10 +71,10 @@ class OVirtDeferredRemoval(jobs.Job):
                 if state in ('up', 'powering_up', 'suspended'):
                     providerInstance.stopMachine(vmId)
                 elif state != 'unknown':  # Machine exists, remove it later
-                    providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
+                    providerInstance.storage.save_to_db('tr' + vmId, vmId, attr1='tRm')
 
             except Exception as e:
-                providerInstance.storage.saveData('tr' + vmId, vmId, attr1='tRm')
+                providerInstance.storage.save_to_db('tr' + vmId, vmId, attr1='tRm')
                 logger.info(
                     'Machine %s could not be removed right now, queued for later: %s',
                     vmId,

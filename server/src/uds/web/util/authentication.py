@@ -35,7 +35,7 @@ from django.http import HttpResponseRedirect
 
 from django.utils.translation import gettext as _
 
-from uds.core.auths.auth import authenticate, authenticate_log_login
+from uds.core.auths.auth import authenticate, log_login
 from uds.models import Authenticator, User
 from uds.core.util.config import GlobalConfig
 from uds.core.util.cache import Cache
@@ -114,13 +114,13 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
             and (tries >= maxTries)
             or triesByIp >= maxTries
         ):
-            authenticate_log_login(request, authenticator, userName, 'Temporarily blocked')
+            log_login(request, authenticator, userName, 'Temporarily blocked')
             return LoginResult(
                 errstr=_('Too many authentication errrors. User temporarily blocked')
             )
         # check if authenticator is visible for this requests
         if authInstance.is_ip_allowed(request=request) is False:
-            authenticate_log_login(
+            log_login(
                 request,
                 authenticator,
                 userName,
@@ -136,7 +136,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
             logger.debug("Invalid user %s (access denied)", userName)
             cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.getInt())
             cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.getInt())
-            authenticate_log_login(
+            log_login(
                 request,
                 authenticator,
                 userName,
@@ -154,7 +154,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         if form.cleaned_data['logouturl'] != '':
             logger.debug('The logoout url will be %s', form.cleaned_data['logouturl'])
             request.session['logouturl'] = form.cleaned_data['logouturl']
-        authenticate_log_login(request, authenticator, authResult.user.name)
+        log_login(request, authenticator, authResult.user.name)
         return LoginResult(user=authResult.user, password=form.cleaned_data['password'])
 
     logger.info('Invalid form received')

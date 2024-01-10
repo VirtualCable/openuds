@@ -513,7 +513,7 @@ if sys.platform == 'win32':
         """
         Check if the machine has gracely stopped (timed shutdown)
         """
-        shutdown_start = self.storage.getPickle('shutdown')
+        shutdown_start = self.storage.get_unpickle('shutdown')
         logger.debug('Shutdown start: %s', shutdown_start)
         if shutdown_start < 0:  # Was already stopped
             # Machine is already stop

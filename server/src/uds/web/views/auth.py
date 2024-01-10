@@ -45,7 +45,7 @@ from uds.core.auths.auth import (
     web_login,
     web_logout,
     authenticate_via_callback,
-    authenticate_log_login,
+    log_login,
     getUDSCookie,
 )
 from uds.core.managers.user_service import UserServiceManager
@@ -111,14 +111,14 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) 
             raise exceptions.auth.Redirect(result.url)
 
         if result.user is None:
-            authenticate_log_login(request, authenticator, f'{params}', 'Invalid at auth callback')
+            log_login(request, authenticator, f'{params}', 'Invalid at auth callback')
             raise exceptions.auth.InvalidUserException()
 
         response = HttpResponseRedirect(reverse('page.index'))
 
         web_login(request, response, result.user, '')  # Password is unavailable in this case
 
-        authenticate_log_login(request, authenticator, result.user.name, 'Federated login')
+        log_login(request, authenticator, result.user.name, 'Federated login')
 
         # If MFA is provided, we need to redirect to MFA page
         request.authorized = True
@@ -239,7 +239,7 @@ def ticket_auth(
         web_login(request, None, usr, password)
 
         # Log the login
-        authenticate_log_login(request, auth, username, 'Ticket authentication')
+        log_login(request, auth, username, 'Ticket authentication')
 
         request.user = (
             usr  # Temporarily store this user as "authenticated" user, next requests will be done using session
@@ -256,7 +256,9 @@ def ticket_auth(
         # Check if servicePool is part of the ticket
         if poolUuid:
             # Request service, with transport = None so it is automatic
-            res = UserServiceManager().get_user_service_info(request.user, request.os, request.ip, poolUuid, None, False)
+            res = UserServiceManager().get_user_service_info(
+                request.user, request.os, request.ip, poolUuid, None, False
+            )
             _, userService, _, transport, _ = res
 
             transportInstance = transport.get_instance()

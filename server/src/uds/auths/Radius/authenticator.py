@@ -37,7 +37,7 @@ import collections.abc
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, types, consts
-from uds.core.auths.auth import authenticate_log_login
+from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
 
@@ -125,7 +125,7 @@ class RadiusAuth(auths.Authenticator):
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         pass
 
-    def radiusClient(self) -> client.RadiusClient:
+    def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
         return client.RadiusClient(
             self.server.value,
@@ -135,11 +135,11 @@ class RadiusAuth(auths.Authenticator):
             appClassPrefix=self.appClassPrefix.value,
         )
 
-    def mfaStorageKey(self, username: str) -> str:
+    def mfa_storage_key(self, username: str) -> str:
         return 'mfa_' + str(self.db_obj().uuid) + username
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+        return self.storage.get_unpickle(self.mfa_storage_key(username)) or ''
 
     def authenticate(
         self,
@@ -149,7 +149,7 @@ class RadiusAuth(auths.Authenticator):
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         try:
-            connection = self.radiusClient()
+            connection = self.radius_client()
             groups, mfaCode, state = connection.authenticate(username=username, password=credentials, mfaField=self.mfaAttr.value.strip())
             # If state, store in session
             if state:
@@ -157,12 +157,12 @@ class RadiusAuth(auths.Authenticator):
             # store the user mfa attribute if it is set
             if mfaCode:
                 self.storage.put_pickle(
-                    self.mfaStorageKey(username),
+                    self.mfa_storage_key(username),
                     mfaCode,
                 )
 
         except Exception:
-            authenticate_log_login(
+            log_login(
                 request,
                 self.db_obj(),
                 username,
@@ -200,15 +200,15 @@ class RadiusAuth(auths.Authenticator):
         """Test the connection to the server ."""
         try:
             auth = RadiusAuth(None, env, data)  # type: ignore
-            return auth.testConnection()
+            return auth.test_connection()
         except Exception as e:
             logger.error("Exception found testing Radius auth %s: %s", e.__class__, e)
             return [False, _('Error testing connection')]
 
-    def testConnection(self):
+    def test_connection(self):
         """Test connection to Radius Server"""
         try:
-            connection = self.radiusClient()
+            connection = self.radius_client()
             # Reply is not important...
             connection.authenticate(
                 CryptoManager().random_string(10), CryptoManager().random_string(10)

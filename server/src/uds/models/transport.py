@@ -36,7 +36,7 @@ import collections.abc
 
 from django.db import models
 
-from uds.core import transports, types
+from uds.core import transports, types, consts
 
 from uds.core.util import net
 
@@ -58,13 +58,8 @@ class Transport(ManagedObjectModel, TaggingMixin):
     Sample of transports are RDP, Spice, Web file uploader, etc...
     """
 
-    # Constants for net_filter
-    NO_FILTERING = 'n'
-    ALLOW = 'a'
-    DENY = 'd'
-
     priority = models.IntegerField(default=0, db_index=True)
-    net_filtering = models.CharField(max_length=1, default=NO_FILTERING, db_index=True)
+    net_filtering = models.CharField(max_length=1, default=consts.auth.NO_FILTERING, db_index=True)
     # We store allowed oss as a comma-separated list
     allowed_oss = models.CharField(max_length=255, default='')
     # Label, to group transports on meta pools
@@ -130,14 +125,14 @@ class Transport(ManagedObjectModel, TaggingMixin):
         # Avoid circular import
         from uds.models import Network  # pylint: disable=import-outside-toplevel
 
-        if self.net_filtering == Transport.NO_FILTERING:
+        if self.net_filtering == consts.auth.NO_FILTERING:
             return True
         ip, version = net.ip_to_long(ipStr)
         # Allow
         exists = self.networks.filter(
             start__lte=Network.hexlify(ip), end__gte=Network.hexlify(ip), version=version
         ).exists()
-        if self.net_filtering == Transport.ALLOW:
+        if self.net_filtering == consts.auth.ALLOW:
             return exists
         # Deny, must not be in any network
         return not exists

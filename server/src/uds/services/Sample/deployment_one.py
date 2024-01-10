@@ -117,13 +117,13 @@ class SampleUserServiceOne(services.UserService):
         a new unique name, so we keep the first generated name cached and don't
         generate more names. (Generator are simple utility classes)
         """
-        name: str = typing.cast(str, self.storage.readData('name'))
+        name: str = typing.cast(str, self.storage.read_from_db('name'))
         if name is None:
             name = self.name_generator().get(
                 self.service().get_base_name() + '-' + self.service().getColour(), 3
             )
             # Store value for persistence
-            self.storage.saveData('name', name)
+            self.storage.save_to_db('name', name)
 
         return name
 
@@ -139,7 +139,7 @@ class SampleUserServiceOne(services.UserService):
         :note: This IP is the IP of the "consumed service", so the transport can
                access it.
         """
-        self.storage.saveData('ip', ip)
+        self.storage.save_to_db('ip', ip)
 
     def get_unique_id(self) -> str:
         """
@@ -151,10 +151,10 @@ class SampleUserServiceOne(services.UserService):
         The get method of a mac generator takes one param, that is the mac range
         to use to get an unused mac.
         """
-        mac = typing.cast(str, self.storage.readData('mac'))
+        mac = typing.cast(str, self.storage.read_from_db('mac'))
         if mac is None:
             mac = self.mac_generator().get('00:00:00:00:00:00-00:FF:FF:FF:FF:FF')
-            self.storage.saveData('mac', mac)
+            self.storage.save_to_db('mac', mac)
         return mac
 
     def get_ip(self) -> str:
@@ -175,7 +175,7 @@ class SampleUserServiceOne(services.UserService):
                show the IP to the administrator, this method will get called
 
         """
-        ip = typing.cast(str, self.storage.readData('ip'))
+        ip = typing.cast(str, self.storage.read_from_db('ip'))
         if ip is None:
             ip = '192.168.0.34'  # Sample IP for testing purposses only
         return ip
@@ -241,11 +241,11 @@ class SampleUserServiceOne(services.UserService):
         """
         import random
 
-        self.storage.saveData('count', '0')
+        self.storage.save_to_db('count', '0')
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
-            self.storage.saveData('error', 'Random error at deployForUser :-)')
+            self.storage.save_to_db('error', 'Random error at deployForUser :-)')
             return State.ERROR
 
         return State.RUNNING
@@ -274,7 +274,7 @@ class SampleUserServiceOne(services.UserService):
         import random
 
         countStr: typing.Optional[str] = typing.cast(
-            str, self.storage.readData('count')
+            str, self.storage.read_from_db('count')
         )
         count: int = 0
         if countStr:
@@ -288,10 +288,10 @@ class SampleUserServiceOne(services.UserService):
 
         # random fail
         if random.randint(0, 9) == 9:  # nosec: just testing values
-            self.storage.saveData('error', 'Random error at check_state :-)')
+            self.storage.save_to_db('error', 'Random error at check_state :-)')
             return State.ERROR
 
-        self.storage.saveData('count', str(count))
+        self.storage.save_to_db('count', str(count))
         return State.RUNNING
 
     def finish(self) -> None:
@@ -322,7 +322,7 @@ class SampleUserServiceOne(services.UserService):
         The user provided is just an string, that is provided by actor.
         """
         # We store the value at storage, but never get used, just an example
-        self.storage.saveData('user', username)
+        self.storage.save_to_db('user', username)
 
     def user_logged_out(self, username) -> None:
         """
@@ -349,7 +349,7 @@ class SampleUserServiceOne(services.UserService):
         for it, and it will be asked everytime it's needed to be shown to the
         user (when the administation asks for it).
         """
-        return typing.cast(str, self.storage.readData('error')) or 'No error'
+        return typing.cast(str, self.storage.read_from_db('error')) or 'No error'
 
     def destroy(self) -> str:
         """

@@ -43,24 +43,24 @@ class StorageTest(UDSTestCase):
         storage = Storage(UNICODE_CHARS)
 
         storage.put(UNICODE_CHARS, b'chars')
-        storage.saveData('saveData', UNICODE_CHARS, UNICODE_CHARS)
-        storage.saveData('saveData2', UNICODE_CHARS_2, UNICODE_CHARS)
-        storage.saveData('saveData3', UNICODE_CHARS, 'attribute')
-        storage.saveData('saveData4', UNICODE_CHARS_2, 'attribute')
+        storage.save_to_db('saveData', UNICODE_CHARS, UNICODE_CHARS)
+        storage.save_to_db('saveData2', UNICODE_CHARS_2, UNICODE_CHARS)
+        storage.save_to_db('saveData3', UNICODE_CHARS, 'attribute')
+        storage.save_to_db('saveData4', UNICODE_CHARS_2, 'attribute')
         storage.put(b'key', UNICODE_CHARS)
         storage.put(UNICODE_CHARS_2, UNICODE_CHARS)
 
         storage.put_pickle('pickle', VALUE_1)
 
         self.assertEqual(storage.get(UNICODE_CHARS), u'chars')  # Always returns unicod
-        self.assertEqual(storage.readData('saveData'), UNICODE_CHARS)
-        self.assertEqual(storage.readData('saveData2'), UNICODE_CHARS_2)
+        self.assertEqual(storage.read_from_db('saveData'), UNICODE_CHARS)
+        self.assertEqual(storage.read_from_db('saveData2'), UNICODE_CHARS_2)
         self.assertEqual(storage.get(b'key'), UNICODE_CHARS)
         self.assertEqual(storage.get(UNICODE_CHARS_2), UNICODE_CHARS)
-        self.assertEqual(storage.getPickle('pickle'), VALUE_1)
+        self.assertEqual(storage.get_unpickle('pickle'), VALUE_1)
 
-        self.assertEqual(len(list(storage.locateByAttr1(UNICODE_CHARS))), 2)
-        self.assertEqual(len(list(storage.locateByAttr1('attribute'))), 2)
+        self.assertEqual(len(list(storage.search_by_attr1(UNICODE_CHARS))), 2)
+        self.assertEqual(len(list(storage.search_by_attr1('attribute'))), 2)
 
         storage.remove(UNICODE_CHARS)
         storage.remove(b'key')
@@ -68,4 +68,4 @@ class StorageTest(UDSTestCase):
 
         self.assertIsNone(storage.get(UNICODE_CHARS))
         self.assertIsNone(storage.get(b'key'))
-        self.assertIsNone(storage.getPickle('pickle'))
+        self.assertIsNone(storage.get_unpickle('pickle'))

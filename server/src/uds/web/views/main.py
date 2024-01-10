@@ -28,45 +28,38 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
+import datetime
+import json
+import logging
+import random
 import re
 import time
-import logging
 import typing
-import collections.abc
-import random
-import json
 
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.middleware import csrf
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseRedirect
-from django.views.decorators.cache import never_cache
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from py import log
-from uds.core.types.request import ExtendedHttpRequest
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
-from uds.core.types.request import ExtendedHttpRequestWithUser
+from uds import auths, models
+from uds.core import exceptions, mfas, types, consts
 from uds.core.auths import auth
-from uds.core.util import state
-from uds.core.util.config import GlobalConfig
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
-from uds.web.util import errors
+from uds.core.types.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
+from uds.core.util import config, state, storage
+from uds.core.util.model import sql_stamp_seconds
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
+from uds.web.util import configjs, errors
 from uds.web.util.authentication import check_login
 from uds.web.util.services import getServicesData
-from uds.web.util import configjs
-from uds.core import mfas, types, exceptions
-from uds import auths, models
-from uds.core.util.model import sql_stamp_seconds
-
 
 logger = logging.getLogger(__name__)
-
-CSRF_FIELD = 'csrfmiddlewaretoken'
-MFA_COOKIE_NAME = 'mfa_status'
 
 if typing.TYPE_CHECKING:
     pass
@@ -82,7 +75,7 @@ def index(request: HttpRequest) -> HttpResponse:
     response = render(
         request=request,
         template_name='uds/modern/index.html',
-        context={'csrf_field': CSRF_FIELD, 'csrf_token': csrf_token},
+        context={'csrf_field': consts.auth.CSRF_FIELD, 'csrf_token': csrf_token},
     )
 
     # Ensure UDS cookie is present
@@ -153,7 +146,7 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
 @never_cache
 @auth.web_login_required(admin=False)
 def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
-    auth.auth_log_logout(request)
+    auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
     logoutResponse = request.user.logout(request)
@@ -169,11 +162,11 @@ def js(request: ExtendedHttpRequest) -> HttpResponse:
 
 @never_cache
 @auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
-def servicesData(request: ExtendedHttpRequestWithUser) -> HttpResponse:
+def services_data_json(request: ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
 
 
-# The MFA page does not needs CRF token, so we disable it
+# The MFA page does not needs CSRF token, so we disable it
 @csrf_exempt
 def mfa(
     request: ExtendedHttpRequest,
@@ -182,26 +175,37 @@ def mfa(
         logger.warning('MFA: No user or user is already authorized')
         return HttpResponseRedirect(reverse('page.index'))  # No user, no MFA
 
-    mfaProvider = typing.cast('None|models.MFA', request.user.manager.mfa)
-    if not mfaProvider:
+    store: 'storage.Storage' = storage.Storage('mfs')
+
+    mfa_provider = typing.cast('None|models.MFA', request.user.manager.mfa)
+    if not mfa_provider:
         logger.warning('MFA: No MFA provider for user')
         return HttpResponseRedirect(reverse('page.index'))
 
-    mfaUserId = mfas.MFA.get_user_id(request.user)
+    mfa_user_id = mfas.MFA.get_user_id(request.user)
 
     # Try to get cookie anc check it
-    mfaCookie = request.COOKIES.get(MFA_COOKIE_NAME, None)
-    if mfaCookie == mfaUserId:  # Cookie is valid, skip MFA setting authorization
-        logger.debug('MFA: Cookie is valid, skipping MFA')
-        request.authorized = True
-        return HttpResponseRedirect(reverse('page.index'))
+    mfa_cookie = request.COOKIES.get(consts.auth.MFA_COOKIE_NAME, None)
+    if mfa_cookie and mfa_provider.remember_device > 0:
+        stored_user_id: typing.Optional[str]
+        created: typing.Optional[datetime.datetime]
+        stored_user_id, created = store.get_unpickle(mfa_cookie) or (None, None)
+        if (
+            stored_user_id
+            and created
+            and created + datetime.timedelta(hours=mfa_provider.remember_device) > datetime.datetime.now()
+        ):
+            # Cookie is valid, skip MFA setting authorization
+            logger.debug('MFA: Cookie is valid, skipping MFA')
+            request.authorized = True
+            return HttpResponseRedirect(reverse('page.index'))
 
     # Obtain MFA data
-    authInstance = request.user.manager.get_instance()
-    mfaInstance = typing.cast('mfas.MFA', mfaProvider.get_instance())
+    auth_instance = request.user.manager.get_instance()
+    mfa_instance = typing.cast('mfas.MFA', mfa_provider.get_instance())
 
     # Get validity duration
-    validity = mfaProvider.validity * 60
+    validity = mfa_provider.validity * 60
     now = sql_stamp_seconds()
     start_time = request.session.get('mfa_start_time', now)
 
@@ -211,26 +215,26 @@ def mfa(
         request.session.flush()  # Clear session, and redirect to login
         return HttpResponseRedirect(reverse('page.login'))
 
-    mfaIdentifier = authInstance.mfa_identifier(request.user.name)
-    label = mfaInstance.label()
+    mfa_identifier = auth_instance.mfa_identifier(request.user.name)
+    label = mfa_instance.label()
 
-    if not mfaIdentifier:
-        emtpyIdentifiedAllowed = mfaInstance.allow_login_without_identifier(request)
+    if not mfa_identifier:
+        allow_login_without_identifier = mfa_instance.allow_login_without_identifier(request)
         # can be True, False or None
-        if emtpyIdentifiedAllowed is True:
+        if allow_login_without_identifier is True:
             # Allow login
             request.authorized = True
             return HttpResponseRedirect(reverse('page.index'))
-        if emtpyIdentifiedAllowed is False:
+        if allow_login_without_identifier is False:
             # Not allowed to login, redirect to login error page
             logger.warning(
                 'MFA identifier not found for user %s on authenticator %s. It is required by MFA %s',
                 request.user.name,
                 request.user.manager.name,
-                mfaProvider.name,
+                mfa_provider.name,
             )
             return errors.errorView(request, errors.ACCESS_DENIED)
-        # None, the authenticator will decide what to do if mfaIdentifier is empty
+        # None, the authenticator will decide what to do if mfa_identifier is empty
 
     tries = request.session.get('mfa_tries', 0)
     if request.method == 'POST':  # User has provided MFA code
@@ -238,11 +242,11 @@ def mfa(
         if form.is_valid():
             code = form.cleaned_data['code']
             try:
-                mfaInstance.validate(
+                mfa_instance.validate(
                     request,
-                    mfaUserId,
+                    mfa_user_id,
                     request.user.name,
-                    mfaIdentifier,
+                    mfa_identifier,
                     code,
                     validity=validity,
                 )  # Will raise MFAError if code is not valid
@@ -256,11 +260,17 @@ def mfa(
                 response = HttpResponseRedirect(reverse('page.index'))
 
                 # If mfaProvider requests to keep MFA code on client, create a mfacookie for this user
-                if mfaProvider.remember_device > 0 and form.cleaned_data['remember'] is True:
+                if mfa_provider.remember_device > 0 and form.cleaned_data['remember'] is True:
+                    # Store also cookie locally, to check if remember_device is changed
+                    mfa_cookie = CryptoManager().random_string(96)
+                    store.put_pickle(
+                        mfa_cookie,
+                        (mfa_user_id, now),
+                    )
                     response.set_cookie(
-                        MFA_COOKIE_NAME,
-                        mfaUserId,
-                        max_age=mfaProvider.remember_device * 60 * 60,
+                        consts.auth.MFA_COOKIE_NAME,
+                        mfa_cookie,
+                        max_age=mfa_provider.remember_device * 60 * 60,
                     )
 
                 return response
@@ -268,7 +278,7 @@ def mfa(
                 logger.error('MFA error: %s', e)
                 tries += 1
                 request.session['mfa_tries'] = tries
-                if tries >= GlobalConfig.MAX_LOGIN_TRIES.getInt():
+                if tries >= config.GlobalConfig.MAX_LOGIN_TRIES.getInt():
                     # Clean session
                     request.session.flush()
                     # Too many tries, redirect to login error page
@@ -280,11 +290,11 @@ def mfa(
         # Make MFA send a code
         request.session['mfa_tries'] = 0  # Reset tries
         try:
-            result = mfaInstance.process(
+            result = mfa_instance.process(
                 request,
-                mfaUserId,
+                mfa_user_id,
                 request.user.name,
-                mfaIdentifier,
+                mfa_identifier,
                 validity=validity,
             )
             if result == mfas.MFA.RESULT.ALLOWED:
@@ -302,15 +312,15 @@ def mfa(
     # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device
     remember_device = ''
     # Remember_device is in hours
-    if mfaProvider.remember_device > 0:
+    if mfa_provider.remember_device > 0:
         # if more than a day, we show days only
-        if mfaProvider.remember_device >= 24:
-            remember_device = _('{} days').format(mfaProvider.remember_device // 24)
+        if mfa_provider.remember_device >= 24:
+            remember_device = _('{} days').format(mfa_provider.remember_device // 24)
         else:
-            remember_device = _('{} hours').format(mfaProvider.remember_device)
+            remember_device = _('{} hours').format(mfa_provider.remember_device)
 
     # Html from MFA provider
-    mfaHtml = mfaInstance.html(request, mfaUserId, request.user.name)
+    mfaHtml = mfa_instance.html(request, mfa_user_id, request.user.name)
 
     # Redirect to index, but with MFA data
     request.session['mfa'] = {

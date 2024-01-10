@@ -39,8 +39,12 @@ HIDDEN: typing.Final[str] = 'h'
 DISABLED: typing.Final[str] = 'd'
 
 # net_filter
-# Note: this are STANDARD values used on "default field" networks on RESP API
-# Named them for better reading, but cannot be changed, since they are used on RESP API
+# Note: this are STANDARD values used on "default field" networks on REST API
+# Named them for better reading, but cannot be changed, since they are used on REST API
 NO_FILTERING: typing.Final[str] = 'n'
 ALLOW: typing.Final[str] = 'a'
 DENY: typing.Final[str] = 'd'
+
+# Cookie for mfa and csrf field
+MFA_COOKIE_NAME: typing.Final[str] = 'mfa_status'
+CSRF_FIELD: typing.Final[str] = 'csrfmiddlewaretoken'

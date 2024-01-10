@@ -388,7 +388,7 @@ class SampleUserServiceTwo(services.UserService):
         The user provided is just an string, that is provided by actors.
         """
         # We store the value at storage, but never get used, just an example
-        self.storage.saveData('user', username)
+        self.storage.save_to_db('user', username)
 
     def user_logged_out(self, username) -> None:
         """

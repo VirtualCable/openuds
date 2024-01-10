@@ -40,7 +40,7 @@ import ldap
 from django.utils.translation import gettext_noop as _
 
 from uds.core import auths, exceptions, types, consts
-from uds.core.auths.auth import authenticate_log_login
+from uds.core.auths.auth import log_login
 from uds.core.ui import gui
 from uds.core.util import ldaputil, auth as auth_utils
 
@@ -275,7 +275,7 @@ class RegexLdap(auths.Authenticator):
         return 'mfa_' + self.db_obj().uuid + username
 
     def mfa_identifier(self, username: str) -> str:
-        return self.storage.getPickle(self.mfaStorageKey(username)) or ''
+        return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
 
     def dict_of_values(self) -> gui.ValuesDictType:
         return {
@@ -494,14 +494,14 @@ class RegexLdap(auths.Authenticator):
             usr = self.__getUser(username)
 
             if usr is None:
-                authenticate_log_login(request, self.db_obj(), username, 'Invalid user')
+                log_login(request, self.db_obj(), username, 'Invalid user')
                 return types.auth.FAILED_AUTH
 
             try:
                 # Let's see first if it credentials are fine
                 self.__connectAs(usr['dn'], credentials)  # Will raise an exception if it can't connect
             except Exception:
-                authenticate_log_login(request, self.db_obj(), username, 'Invalid password')
+                log_login(request, self.db_obj(), username, 'Invalid password')
                 return types.auth.FAILED_AUTH
 
             # store the user mfa attribute if it is set

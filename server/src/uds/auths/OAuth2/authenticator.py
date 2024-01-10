@@ -226,7 +226,7 @@ class OAuth2Authenticator(auths.Authenticator):
         tab=_('Attributes'),
     )
 
-    def _getPublicKeys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
+    def _get_public_keys(self) -> list[typing.Any]:  # In fact, any of the PublicKey types
         # Get certificates in self.publicKey.value, encoded as PEM
         # Return a list of certificates in DER format
         if self.publicKey.value.strip() == '':
@@ -234,7 +234,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return [cert.public_key() for cert in fields.get_vertificates_from_field(self.publicKey)]
 
-    def _codeVerifierAndChallenge(self) -> tuple[str, str]:
+    def _code_verifier_and_challenge(self) -> tuple[str, str]:
         """Generate a code verifier and a code challenge for PKCE
 
         Returns:
@@ -249,7 +249,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return codeVerifier, codeChallenge
 
-    def _getResponseTypeString(self) -> str:
+    def _get_response_type_string(self) -> str:
         match self.responseType.value:
             case 'code':
                 return 'code'
@@ -264,14 +264,14 @@ class OAuth2Authenticator(auths.Authenticator):
             case _:
                 raise Exception('Invalid response type')
 
-    def _getLoginURL(self, request: 'HttpRequest') -> str:
+    def _get_login_url(self, request: 'HttpRequest') -> str:
         """
         :type request: django.http.request.HttpRequest
         """
         state: str = secrets.token_urlsafe(STATE_LENGTH)
 
         param_dict = {
-            'response_type': self._getResponseTypeString(),
+            'response_type': self._get_response_type_string(),
             'client_id': self.clientId.value,
             'redirect_uri': self.redirectionEndpoint.value,
             'scope': self.scope.value.replace(',', ' '),
@@ -296,7 +296,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
             case 'pkce':
                 # PKCE flow
-                codeVerifier, codeChallenge = self._codeVerifierAndChallenge()
+                codeVerifier, codeChallenge = self._code_verifier_and_challenge()
                 param_dict['code_challenge'] = codeChallenge
                 param_dict['code_challenge_method'] = 'S256'
                 self.cache.put(state, codeVerifier, 3600)
@@ -315,7 +315,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return self.authorizationEndpoint.value + '?' + params
 
-    def _requestToken(self, code: str, code_verifier: typing.Optional[str] = None) -> TokenInfo:
+    def _request_token(self, code: str, code_verifier: typing.Optional[str] = None) -> TokenInfo:
         """Request a token from the token endpoint using the code received from the authorization endpoint
 
         Args:
@@ -342,7 +342,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         return TokenInfo.from_dict(req.json())
 
-    def _requestInfo(self, token: 'TokenInfo') -> dict[str, typing.Any]:
+    def _request_info(self, token: 'TokenInfo') -> dict[str, typing.Any]:
         """Request user info from the info endpoint using the token received from the token endpoint
 
         If the token endpoint returns the user info, this method will not be used
@@ -374,7 +374,7 @@ class OAuth2Authenticator(auths.Authenticator):
             userInfo = req.json()
         return userInfo
 
-    def _processToken(
+    def _process_token(
         self, userInfo: collections.abc.Mapping[str, typing.Any], gm: 'auths.GroupsManager'
     ) -> types.auth.AuthenticationResult:
         # After this point, we don't mind about the token, we only need to authenticate user
@@ -401,7 +401,7 @@ class OAuth2Authenticator(auths.Authenticator):
         # and if we are here, the user is authenticated, so we can return SUCCESS_AUTH
         return types.auth.AuthenticationResult(types.auth.AuthenticationState.SUCCESS, username=username)
 
-    def _processTokenOpenId(
+    def _process_token_open_id(
         self, token_id: str, nonce: str, gm: 'auths.GroupsManager'
     ) -> types.auth.AuthenticationResult:
         # Get token headers, to extract algorithm
@@ -410,7 +410,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
         # We may have multiple public keys, try them all
         # (We should only have one, but just in case)
-        for key in self._getPublicKeys():
+        for key in self._get_public_keys():
             logger.debug('Key = %s', key)
             try:
                 payload = jwt.decode(token, key=key, audience=self.clientId.value, algorithms=[info.get('alg', 'RSA256')])  # type: ignore
@@ -423,7 +423,7 @@ class OAuth2Authenticator(auths.Authenticator):
                     # All is fine, get user & look for groups
 
                 # Process attributes from payload
-                return self._processToken(payload, gm)
+                return self._process_token(payload, gm)
             except (jwt.InvalidTokenError, IndexError):
                 # logger.debug('Data was invalid: %s', e)
                 pass
@@ -477,13 +477,13 @@ class OAuth2Authenticator(auths.Authenticator):
     ) -> types.auth.AuthenticationResult:
         match self.responseType.value:
             case 'code' | 'pkce':
-                return self.authCallbackCode(parameters, gm, request)
+                return self.auth_callback_code(parameters, gm, request)
             case 'token':
-                return self.authCallbackToken(parameters, gm, request)
+                return self.auth_callback_token(parameters, gm, request)
             case 'openid+code':
-                return self.authCallbackOpenIdCode(parameters, gm, request)
+                return self.auth_callback_openid_code(parameters, gm, request)
             case 'openid+token_id':
-                return self.authCallbackOpenIdIdToken(parameters, gm, request)
+                return self.authcallback_openid_id_token(parameters, gm, request)
             case _:
                 raise Exception('Invalid response type')
         return auths.SUCCESS_AUTH
@@ -499,21 +499,21 @@ class OAuth2Authenticator(auths.Authenticator):
         """
         We will here compose the azure request and send it via http-redirect
         """
-        return f'window.location="{self._getLoginURL(request)}";'
+        return f'window.location="{self._get_login_url(request)}";'
 
     def get_groups(self, username: str, groupsManager: 'auths.GroupsManager'):
-        data = self.storage.getPickle(username)
+        data = self.storage.get_unpickle(username)
         if not data:
             return
         groupsManager.validate(data[1])
 
     def get_real_name(self, username: str) -> str:
-        data = self.storage.getPickle(username)
+        data = self.storage.get_unpickle(username)
         if not data:
             return username
         return data[0]
 
-    def authCallbackCode(
+    def auth_callback_code(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -539,10 +539,10 @@ class OAuth2Authenticator(auths.Authenticator):
         if code_verifier == 'none':
             code_verifier = None
 
-        token = self._requestToken(code, code_verifier)
-        return self._processToken(self._requestInfo(token), gm)
+        token = self._request_token(code, code_verifier)
+        return self._process_token(self._request_info(token), gm)
 
-    def authCallbackToken(
+    def auth_callback_token(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -568,9 +568,9 @@ class OAuth2Authenticator(auths.Authenticator):
             info={},
             id_token=None,
         )
-        return self._processToken(self._requestInfo(token), gm)
+        return self._process_token(self._request_info(token), gm)
 
-    def authCallbackOpenIdCode(
+    def auth_callback_openid_code(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -592,15 +592,15 @@ class OAuth2Authenticator(auths.Authenticator):
             return types.auth.FAILED_AUTH
 
         # Get the token, token_type, expires
-        token = self._requestToken(code)
+        token = self._request_token(code)
 
         if not token.id_token:
             logger.error('No id_token received on OAuth2 callback')
             return types.auth.FAILED_AUTH
 
-        return self._processTokenOpenId(token.id_token, nonce, gm)
+        return self._process_token_open_id(token.id_token, nonce, gm)
 
-    def authCallbackOpenIdIdToken(
+    def authcallback_openid_id_token(
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
@@ -621,4 +621,4 @@ class OAuth2Authenticator(auths.Authenticator):
             logger.error('Invalid id_token received on OAuth2 callback')
             return types.auth.FAILED_AUTH
 
-        return self._processTokenOpenId(id_token, nonce, gm)
+        return self._process_token_open_id(id_token, nonce, gm)

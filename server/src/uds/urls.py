@@ -183,7 +183,7 @@ urlpatterns = [
     # Services list, ...
     path(
         r'uds/webapi/services',
-        uds.web.views.main.servicesData,
+        uds.web.views.main.services_data_json,
         name='webapi.services',
     ),
     # Transport own link processor
