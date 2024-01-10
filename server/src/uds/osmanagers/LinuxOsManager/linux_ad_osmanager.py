@@ -238,8 +238,8 @@ class LinuxOsADManager(LinuxOsManager):
             self._automaticIdMapping = values[10]
         super().unmarshal(codecs.decode(values[11].encode(), 'hex'))
 
-    def dict_of_values(self) -> gui.ValuesDictType:
-        dct = super().dict_of_values()
+    def get_dict_of_values(self) -> gui.ValuesDictType:
+        dct = super().get_dict_of_values()
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password

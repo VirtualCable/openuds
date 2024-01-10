@@ -112,17 +112,19 @@ class ServiceProvider(module.Module):
     # : This defines the maximum number of concurrent services that should be in state "in preparation" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
+    # : Note: This cannot be renamed with out a "migration", because it's used at database
     maxPreparingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
+    # : Note: This cannot be renamed with out a "migration", because it's used at database
     maxRemovingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value)
-    ignoreLimits: typing.Any = None
+    ignore_limits: typing.Any = None
 
     _dbObj: typing.Optional['models.Provider'] = None
 
@@ -213,9 +215,9 @@ class ServiceProvider(module.Module):
         return retVal if retVal > 0 else 1
 
     def get_ignore_limits(self) -> bool:
-        val = self.ignoreLimits
+        val = self.ignore_limits
         if val is None:
-            val = self.ignoreLimits = False
+            val = self.ignore_limits = False
 
         val = getattr(val, 'value', val)
         return val is True or val == consts.TRUE_STR

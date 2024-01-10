@@ -198,13 +198,13 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
     def parent(self) -> 'XenProvider':
         return typing.cast('XenProvider', super().parent())
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
 
         machines_list = [
-            gui.choiceItem(m['id'], m['name']) for m in self.parent().getMachines()
+            gui.choice_item(m['id'], m['name']) for m in self.parent().getMachines()
         ]
 
         storages_list = []
@@ -214,20 +214,20 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
                 (storage['size'] - storage['used']) / 1024,
             )
             storages_list.append(
-                gui.choiceItem(
+                gui.choice_item(
                     storage['id'],
                     "%s (%4.2f Gb/%4.2f Gb)" % (storage['name'], space, free),
                 )
             )
 
         network_list = [
-            gui.choiceItem(net['id'], net['name'])
+            gui.choice_item(net['id'], net['name'])
             for net in self.parent().getNetworks()
         ]
 
-        self.machine.setChoices(machines_list)
-        self.datastore.setChoices(storages_list)
-        self.network.setChoices(network_list)
+        self.machine.set_choices(machines_list)
+        self.datastore.set_choices(storages_list)
+        self.network.set_choices(network_list)
 
     def checkTaskFinished(self, task: str) -> tuple[bool, str]:
         return self.parent().checkTaskFinished(task)

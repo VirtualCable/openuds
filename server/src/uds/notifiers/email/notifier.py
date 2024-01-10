@@ -84,9 +84,9 @@ class EmailNotifier(messaging.Notifier):
         label=_('Security'),
         tooltip=_('Security protocol to use'),
         choices=[
-            gui.choiceItem('tls', _('TLS')),
-            gui.choiceItem('ssl', _('SSL')),
-            gui.choiceItem('none', _('None')),
+            gui.choice_item('tls', _('TLS')),
+            gui.choice_item('ssl', _('SSL')),
+            gui.choice_item('none', _('None')),
         ],
         order=2,
         required=True,
@@ -147,7 +147,7 @@ class EmailNotifier(messaging.Notifier):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        hostname = self.hostname.cleanStr()
+        hostname = self.hostname.as_clean_str()
         if not hostname:
             raise exceptions.validation.ValidationError(_('Invalid SMTP hostname'))
 
@@ -156,7 +156,7 @@ class EmailNotifier(messaging.Notifier):
             host, port = validators.validateHostPortPair(hostname)
             self.hostname.value = f'{host}:{port}'
         else:
-            host = self.hostname.cleanStr()
+            host = self.hostname.as_clean_str()
             self.hostname.value = validators.validateFqdn(host)
 
         # now check from email and to email
@@ -191,7 +191,7 @@ class EmailNotifier(messaging.Notifier):
         """
         Login to SMTP server
         """
-        host = self.hostname.cleanStr()
+        host = self.hostname.as_clean_str()
         if ':' in host:
             host, ports = host.split(':')
             port = int(ports)

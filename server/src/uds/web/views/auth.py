@@ -46,7 +46,7 @@ from uds.core.auths.auth import (
     web_logout,
     authenticate_via_callback,
     log_login,
-    getUDSCookie,
+    uds_cookie,
 )
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.crypto import CryptoManager
@@ -275,7 +275,7 @@ def ticket_auth(
             response = HttpResponseRedirect(reverse('page.index'))
 
         # Now ensure uds cookie is at response
-        getUDSCookie(request, response, True)
+        uds_cookie(request, response, True)
         return response
     except ServiceNotReadyError:
         return errors.errorView(request, errors.SERVICE_NOT_READY)

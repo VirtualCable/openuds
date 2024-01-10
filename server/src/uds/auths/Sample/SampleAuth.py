@@ -102,7 +102,7 @@ class SampleAuth(auths.Authenticator):
     # : Mark this authenticator as that the users comes from outside the UDS
     # : database, that are most authenticator (except Internal DB)
     # : True is the default value, so we do not need it in fact
-    # isExternalSource = True
+    # external_source = True
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.

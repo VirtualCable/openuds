@@ -106,7 +106,7 @@ class OVirtProvider(
         required=True,
         readonly=False,
         choices=[
-            gui.choiceItem('4', '4.x'),
+            gui.choice_item('4', '4.x'),
         ],
         default='4',  # Default value is the ID of the choicefield
     )

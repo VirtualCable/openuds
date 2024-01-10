@@ -158,8 +158,8 @@ class WinRandomPassManager(WindowsOsManager):
             self._password = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
-    def dict_of_values(self) -> gui.ValuesDictType:
-        dic = super().dict_of_values()
+    def get_dict_of_values(self) -> gui.ValuesDictType:
+        dic = super().get_dict_of_values()
         dic['userAccount'] = self._userAccount
         dic['password'] = self._password
         return dic

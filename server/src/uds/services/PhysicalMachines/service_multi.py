@@ -183,13 +183,13 @@ class IPMachinesService(IPServiceBase):
         self._port = self.port.value
         self._skipTimeOnFailure = self.skipTimeOnFailure.num()
         self._maxSessionForMachine = self.maxSessionForMachine.num()
-        self._lockByExternalAccess = self.lockByExternalAccess.isTrue()
-        self._useRandomIp = self.useRandomIp.isTrue()
+        self._lockByExternalAccess = self.lockByExternalAccess.as_bool()
+        self._useRandomIp = self.useRandomIp.as_bool()
 
     def get_token(self):
         return self._token or None
 
-    def dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_values(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
         return {
             'ipList': ensure.is_list(ips),
@@ -197,8 +197,8 @@ class IPMachinesService(IPServiceBase):
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
-            'lockByExternalAccess': gui.fromBool(self._lockByExternalAccess),
-            'useRandomIp': gui.fromBool(self._useRandomIp),
+            'lockByExternalAccess': gui.from_bool(self._lockByExternalAccess),
+            'useRandomIp': gui.from_bool(self._useRandomIp),
         }
 
     def marshal(self) -> bytes:
@@ -210,8 +210,8 @@ class IPMachinesService(IPServiceBase):
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
-                gui.fromBool(self._lockByExternalAccess).encode(),
-                gui.fromBool(self._useRandomIp).encode(),
+                gui.from_bool(self._lockByExternalAccess).encode(),
+                gui.from_bool(self._useRandomIp).encode(),
             ]
         )
 
@@ -234,9 +234,9 @@ class IPMachinesService(IPServiceBase):
             if values[0] in (b'v5', b'v6', b'v7'):
                 self._maxSessionForMachine = int(values[4].decode())
             if values[0] in (b'v6', b'v7'):
-                self._lockByExternalAccess = gui.toBool(values[5].decode())
+                self._lockByExternalAccess = gui.as_bool(values[5].decode())
             if values[0] in (b'v7',):
-                self._useRandomIp = gui.toBool(values[6].decode())
+                self._useRandomIp = gui.as_bool(values[6].decode())
 
         # Sets maximum services for this
         self.max_user_services = len(self._ips)

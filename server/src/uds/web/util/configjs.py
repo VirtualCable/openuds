@@ -139,7 +139,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # logger.debug('Authenticators: %s', authenticators)
 
     # the auths for client
-    def getAuthInfo(auth: Authenticator):
+    def _get_auth_info(auth: Authenticator):
         theType = auth.get_type()
         return {
             'id': auth.uuid,
@@ -157,7 +157,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             {'id': k, 'name': gettext(v)} for k, v in settings.LANGUAGES
         ],
         'authenticators': [
-            getAuthInfo(auth) for auth in authenticators if auth.get_type()
+            _get_auth_info(auth) for auth in authenticators if auth.get_type()
         ],
         'mfa': request.session.get('mfa', None),
         'tag': tag,
@@ -336,4 +336,5 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     # Reset some 1 time values...
     request.session['launch'] = ''
 
+    # Return as javascript executable code
     return 'var udsData = ' + json.dumps(uds) + ';\n'

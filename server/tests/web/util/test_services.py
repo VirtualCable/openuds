@@ -213,7 +213,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 user_service['group'], models.ServicePoolGroup.default().as_dict
             )
             self.assertEqual(
-                user_service['not_accesible'], not found.isAccessAllowed(now)
+                user_service['not_accesible'], not found.is_access_allowed(now)
             )
             self.assertEqual(user_service['to_be_replaced'], None)
             self.assertEqual(user_service['to_be_replaced_text'], '')

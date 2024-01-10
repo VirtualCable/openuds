@@ -113,6 +113,7 @@ class Filler(typing.TypedDict):
 class ChoiceItem(typing.TypedDict):
     id: str
     text: str
+    img: typing.NotRequired[str]  # Only for IMAGECHOICE
 
 
 ChoicesType = typing.Union[collections.abc.Callable[[], collections.abc.Iterable[ChoiceItem]], collections.abc.Iterable[ChoiceItem]]

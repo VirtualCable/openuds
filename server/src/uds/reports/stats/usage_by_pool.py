@@ -79,14 +79,14 @@ class UsageByPool(StatsReport):
     def initialize(self, values):
         pass
 
-    def initGui(self):
+    def init_gui(self):
         logger.debug('Initializing gui')
-        vals = [gui.choiceItem('0-0-0-0', gettext('ALL POOLS'))] + [
-            gui.choiceItem(v.uuid, v.name)
+        vals = [gui.choice_item('0-0-0-0', gettext('ALL POOLS'))] + [
+            gui.choice_item(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
             if v.uuid
         ]
-        self.pool.setChoices(vals)
+        self.pool.set_choices(vals)
 
     def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db

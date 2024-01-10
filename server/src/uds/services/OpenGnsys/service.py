@@ -161,12 +161,12 @@ class OGService(services.Service):
         value=None
     )  # We need to keep the env so we can instantiate the Provider
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         """
         Loads required values inside
         """
-        ous = [gui.choiceItem(r['id'], r['name']) for r in self.parent().api.getOus()]
-        self.ou.setChoices(ous)
+        ous = [gui.choice_item(r['id'], r['name']) for r in self.parent().api.getOus()]
+        self.ou.set_choices(ous)
 
         self.ov.value = self.parent().serialize()
         self.ev.value = self.parent().env.key
@@ -223,7 +223,7 @@ class OGService(services.Service):
         return self._notifyURL(uuid, token, 'release')
 
     def is_removableIfUnavailable(self):
-        return self.startIfUnavailable.isTrue()
+        return self.startIfUnavailable.as_bool()
 
     def is_avaliable(self) -> bool:
         return self.parent().isAvailable()

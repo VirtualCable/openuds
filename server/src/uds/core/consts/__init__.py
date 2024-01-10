@@ -35,7 +35,7 @@ import collections.abc
 from datetime import datetime
 import time
 
-from . import auth, images, os, system
+from . import auth, images, os, system, errors
 
 # Date related constants
 NEVER: typing.Final[datetime] = datetime(1972, 7, 1)
@@ -71,4 +71,3 @@ FALSE_STR: typing.Final[str] = 'false'
 
 # Constant to mark an "UNLIMITED" value
 UNLIMITED: typing.Final[int] = -1
-

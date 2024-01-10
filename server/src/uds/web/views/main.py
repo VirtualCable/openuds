@@ -79,7 +79,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
     # Ensure UDS cookie is present
-    auth.getUDSCookie(request, response)
+    auth.uds_cookie(request, response)
 
     return response
 
@@ -350,7 +350,7 @@ def update_transport_ticket(
             if password:
                 password = CryptoManager().symmetric_encrypt(password, scrambler)
 
-            def checkValidTicket(data: collections.abc.Mapping[str, typing.Any]) -> bool:
+            def _is_ticket_valid(data: collections.abc.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' in data:
                     try:
                         user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
@@ -379,7 +379,7 @@ def update_transport_ticket(
 
             models.TicketStore.update(
                 uuid=idTicket,
-                checkFnc=checkValidTicket,
+                checkFnc=_is_ticket_valid,
                 username=username,
                 password=password,
                 domain=domain,

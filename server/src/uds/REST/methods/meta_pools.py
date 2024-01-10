@@ -172,7 +172,7 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'policy',
-                'choices': [gui.choiceItem(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
+                'choices': [gui.choice_item(k, str(v)) for k, v in types.pools.LoadBalancingPolicy.enumerate()],
                 'label': gettext('Load balancing policy'),
                 'tooltip': gettext('Service pool load balancing policy'),
                 'type': types.ui.FieldType.CHOICE,
@@ -181,7 +181,7 @@ class MetaPools(ModelHandler):
             {
                 'name': 'ha_policy',
                 'choices': [
-                    gui.choiceItem(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
+                    gui.choice_item(k, str(v)) for k, v in types.pools.HighAvailabilityPolicy.enumerate()
                 ],
                 'label': gettext('HA Policy'),
                 'tooltip': gettext(
@@ -192,9 +192,9 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'image_id',
-                'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sortedChoices(
-                    [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
+                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sorted_choices(
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -204,10 +204,10 @@ class MetaPools(ModelHandler):
             },
             {
                 'name': 'servicesPoolGroup_id',
-                'choices': [gui.choiceImage(-1, typing.cast(str, _('Default')), DEFAULT_THUMB_BASE64)]
-                + gui.sortedChoices(
+                'choices': [gui.choice_image(-1, typing.cast(str, _('Default')), DEFAULT_THUMB_BASE64)]
+                + gui.sorted_choices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
+                        gui.choice_image(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
@@ -240,7 +240,7 @@ class MetaPools(ModelHandler):
             {
                 'name': 'transport_grouping',
                 'choices': [
-                    gui.choiceItem(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
+                    gui.choice_item(k, str(v)) for k, v in types.pools.TransportSelectionPolicy.enumerate()
                 ],
                 'label': gettext('Transport Selection'),
                 'tooltip': gettext('Transport selection policy'),

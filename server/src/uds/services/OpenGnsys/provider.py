@@ -213,7 +213,7 @@ class OGProvider(ServiceProvider):
                 self.password.value,
                 self.endpoint,
                 self.cache,
-                self.checkCert.isTrue(),
+                self.checkCert.as_bool(),
             )
 
         logger.debug('Api: %s', self._api)

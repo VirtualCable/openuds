@@ -70,7 +70,7 @@ class Transport(Module):
     # Windows
     # Macintosh
     # Linux
-    supported_oss: tuple = consts.os.desktopOss  # Supported operating systems
+    supported_oss: tuple = consts.os.DESKTOP_OSS  # Supported operating systems
 
     # If the link to use transport is provided by transport itself
     own_link: bool = False
@@ -296,7 +296,7 @@ class Transport(Module):
         """
         return self.get_relative_script(f'scripts/{osName.lower()}/{type}.py', params)
 
-    def getLink(
+    def get_link(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',

@@ -157,7 +157,7 @@ class ServicePoolPublication(UUIDModel):
             publication.deserialize(self.data)
         return publication
 
-    def updateData(self, publication):
+    def update_data(self, publication):
         """
         Updates the data field with the serialized uds.core.services.Publication
 

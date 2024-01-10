@@ -68,7 +68,7 @@ def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idT
         # This returns a response object in fact
         if itrans and ip:
             response = {
-                'url': itrans.getLink(
+                'url': itrans.get_link(
                     userService,
                     trans,
                     ip,

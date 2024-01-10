@@ -296,10 +296,10 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'service_id',
-                'choices': [gui.choiceItem('', '')]
-                + gui.sortedChoices(
+                'choices': [gui.choice_item('', '')]
+                + gui.sorted_choices(
                     [
-                        gui.choiceItem(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
+                        gui.choice_item(v.uuid, v.provider.name + '\\' + v.name)  # type: ignore
                         for v in Service.objects.all()
                     ]
                 ),
@@ -311,9 +311,9 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'osmanager_id',
-                'choices': [gui.choiceItem(-1, '')]
-                + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
+                'choices': [gui.choice_item(-1, '')]
+                + gui.sorted_choices(
+                    [gui.choice_item(v.uuid, v.name) for v in OSManager.objects.all()]  # type: ignore
                 ),
                 'label': gettext('OS Manager'),
                 'tooltip': gettext('OS Manager used as base of this service pool'),
@@ -363,9 +363,9 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'image_id',
-                'choices': [gui.choiceImage(-1, '--------', DEFAULT_THUMB_BASE64)]
-                + gui.sortedChoices(
-                    [gui.choiceImage(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
+                'choices': [gui.choice_image(-1, '--------', DEFAULT_THUMB_BASE64)]
+                + gui.sorted_choices(
+                    [gui.choice_image(v.uuid, v.name, v.thumb64) for v in Image.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Associated Image'),
                 'tooltip': gettext('Image assocciated with this service'),
@@ -375,10 +375,10 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'pool_group_id',
-                'choices': [gui.choiceImage(-1, _('Default'), DEFAULT_THUMB_BASE64)]
-                + gui.sortedChoices(
+                'choices': [gui.choice_image(-1, _('Default'), DEFAULT_THUMB_BASE64)]
+                + gui.sorted_choices(
                     [
-                        gui.choiceImage(v.uuid, v.name, v.thumb64)  # type: ignore
+                        gui.choice_image(v.uuid, v.name, v.thumb64)  # type: ignore
                         for v in ServicePoolGroup.objects.all()
                     ]
                 ),
@@ -452,9 +452,9 @@ class ServicesPools(ModelHandler):
             },
             {
                 'name': 'account_id',
-                'choices': [gui.choiceItem(-1, '')]
-                + gui.sortedChoices(
-                    [gui.choiceItem(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
+                'choices': [gui.choice_item(-1, '')]
+                + gui.sorted_choices(
+                    [gui.choice_item(v.uuid, v.name) for v in Account.objects.all()]  # type: ignore
                 ),
                 'label': gettext('Accounting'),
                 'tooltip': gettext('Account associated to this service pool'),
@@ -659,7 +659,7 @@ class ServicesPools(ModelHandler):
     def listAssignables(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
         service = item.service.get_instance()  # type: ignore
-        return [gui.choiceItem(i[0], i[1]) for i in service.enumerate_assignables()]
+        return [gui.choice_item(i[0], i[1]) for i in service.enumerate_assignables()]
 
     def createFromAssignable(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)

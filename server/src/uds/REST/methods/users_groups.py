@@ -236,7 +236,7 @@ class Users(DetailHandler):
 
                 logger.debug('User parent: %s', user.parent)
                 # If internal auth, and not a child user, save groups
-                if not auth.isExternalSource and not user.parent:
+                if not auth.external_source and not user.parent:
                     groups = self.fields_from_params(['groups'])['groups']
                     # Save but skip meta groups, they are not real groups, but just a way to group users based on rules
                     user.groups.set(g for g in parent.groups.filter(uuid__in=groups) if g.is_meta is False)

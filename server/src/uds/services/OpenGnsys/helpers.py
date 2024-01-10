@@ -54,11 +54,11 @@ def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
 
     api = provider.api
 
-    labs = [gui.choiceItem('0', _('All Labs'))] + [
-        gui.choiceItem(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])
+    labs = [gui.choice_item('0', _('All Labs'))] + [
+        gui.choice_item(l['id'], l['name']) for l in api.getLabs(ou=parameters['ou'])
     ]
     images = [
-        gui.choiceItem(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
+        gui.choice_item(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
     ]
 
     data = [

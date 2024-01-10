@@ -87,7 +87,7 @@ class User:
         )
 
         if self._groups is None:
-            if self._manager.isExternalSource:
+            if self._manager.external_source:
                 self._manager.get_groups(self._db_user.name, self._groups_manager())
                 self._groups = list(self._groups_manager().enumerate_valid_groups())
                 logger.debug(self._groups)

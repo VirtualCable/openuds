@@ -89,7 +89,7 @@ class Publication(Environmentable, Serializable):
     _servicepool_name: str
     _uuid: str
 
-    _dbObj: typing.Optional['models.ServicePoolPublication']
+    _db_obj: typing.Optional['models.ServicePoolPublication']
 
     def __init__(self, environment: 'Environment', **kwargs):
         """
@@ -123,9 +123,9 @@ class Publication(Environmentable, Serializable):
         """
         from uds.models import ServicePoolPublication
 
-        if self._dbObj is None:
-            self._dbObj = ServicePoolPublication.objects.get(uuid=self._uuid)
-        return self._dbObj
+        if self._db_obj is None:
+            self._db_obj = ServicePoolPublication.objects.get(uuid=self._uuid)
+        return self._db_obj
 
     def service(self) -> 'services.Service':
         """

@@ -164,7 +164,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     @property
     def endpoint(self) -> str:
         return 'http{}://{}:{}/RPC2'.format(
-            's' if self.ssl.isTrue() else '', self.host.value, self.port.value
+            's' if self.ssl.as_bool() else '', self.host.value, self.port.value
         )
 
     @property

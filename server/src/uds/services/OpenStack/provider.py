@@ -53,9 +53,9 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 INTERFACE_VALUES: list[types.ui.ChoiceItem] = [
-    gui.choiceItem('public', 'public'),
-    gui.choiceItem('private', 'private'),
-    gui.choiceItem('admin', 'admin'),
+    gui.choice_item('public', 'public'),
+    gui.choice_item('private', 'private'),
+    gui.choice_item('admin', 'admin'),
 ]
 
 

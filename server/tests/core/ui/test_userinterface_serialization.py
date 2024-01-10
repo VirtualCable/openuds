@@ -83,22 +83,22 @@ def oldSerializeForm(ui) -> bytes:
     val: typing.Any
     for k, v in ui._gui.items():
         logger.debug('serializing Key: %s/%s', k, v.value)
-        if v.isType(types.ui.FieldType.HIDDEN) and v.isSerializable() is False:
+        if v.is_type(types.ui.FieldType.HIDDEN) and v.is_serializable() is False:
             # logger.debug('Field {0} is not serializable'.format(k))
             continue
-        if v.isType(types.ui.FieldType.INFO):
+        if v.is_type(types.ui.FieldType.INFO):
             # logger.debug('Field {} is a dummy field and will not be serialized')
             continue
-        if v.isType(types.ui.FieldType.EDITABLELIST) or v.isType(types.ui.FieldType.MULTICHOICE):
+        if v.is_type(types.ui.FieldType.EDITABLELIST) or v.is_type(types.ui.FieldType.MULTICHOICE):
             # logger.debug('Serializing value {0}'.format(v.value))
             val = MULTIVALUE_FIELD + pickle.dumps(v.value, protocol=0)
-        elif v.isType(types.ui.FieldType.PASSWORD):
+        elif v.is_type(types.ui.FieldType.PASSWORD):
             val = PASSWORD_FIELD + CryptoManager().aes_crypt(v.value.encode('utf8'), UDSK, True)
-        elif v.isType(types.ui.FieldType.NUMERIC):
+        elif v.is_type(types.ui.FieldType.NUMERIC):
             val = str(int(v.num())).encode('utf8')
-        elif v.isType(types.ui.FieldType.CHECKBOX):
-            val = v.isTrue()
-        elif v.isType(types.ui.FieldType.DATE):
+        elif v.is_type(types.ui.FieldType.CHECKBOX):
+            val = v.as_bool()
+        elif v.is_type(types.ui.FieldType.DATE):
             val = typing.cast(datetime.date, v.value).isoformat().encode('utf8')
         else:
             val = v.value.encode('utf8')
@@ -147,14 +147,14 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterface()
         data = oldSerializeForm(ui)
         ui2 = TestingUserInterface()
-        ui2.oldDeserializeForm(data)
+        ui2.deserialize_old_fields(data)
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
 
         # Now deserialize old data with new method, (will internally call oldUnserializeForm)
         ui3 = TestingUserInterface()
-        ui3.deserializeForm(data)
+        ui3.unserialize_fields(data)
 
         self.assertEqual(ui, ui3)
         self.ensure_values_fine(ui3)
@@ -162,9 +162,9 @@ class UserinterfaceTest(UDSTestCase):
     def test_new_serialization(self):
         # This test is to ensure that new serialized data can be loaded
         ui = TestingUserInterface()
-        data = ui.serializeForm()
+        data = ui.serialize_fields()
         ui2 = TestingUserInterface()
-        ui2.deserializeForm(data)
+        ui2.unserialize_fields(data)
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)

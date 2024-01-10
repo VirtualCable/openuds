@@ -56,9 +56,9 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 INTERFACE_VALUES = [
-    gui.choiceItem('public', 'public'),
-    gui.choiceItem('private', 'private'),
-    gui.choiceItem('admin', 'admin'),
+    gui.choice_item('public', 'public'),
+    gui.choice_item('private', 'private'),
+    gui.choice_item('admin', 'admin'),
 ]
 
 
@@ -233,7 +233,7 @@ class ProviderLegacy(ServiceProvider):
             self.username.value,
             self.password.value,
             legacyVersion=True,
-            useSSL=self.ssl.isTrue(),
+            useSSL=self.ssl.as_bool(),
             projectId=projectId,
             region=region,
             access=self.access.value,

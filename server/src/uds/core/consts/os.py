@@ -42,20 +42,20 @@ KNOWN_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(
 )
 
 ALL_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = KNOWN_OS_LIST + (types.os.KnownOS.UNKNOWN,)
-desktopOss: typing.Final[tuple[types.os.KnownOS, ...]] = (
+DESKTOP_OSS: typing.Final[tuple[types.os.KnownOS, ...]] = (
     types.os.KnownOS.LINUX,
     types.os.KnownOS.WINDOWS,
     types.os.KnownOS.MAC_OS,
 )
-MOBILE_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(set(ALL_OS_LIST) - set(desktopOss))
+MOBILE_OS_LIST: typing.Final[tuple[types.os.KnownOS, ...]] = tuple(set(ALL_OS_LIST) - set(DESKTOP_OSS))
 
 
 DEFAULT_OS: typing.Final[types.os.KnownOS] = types.os.KnownOS.WINDOWS
 
 
-known_browsers: typing.Final[tuple[types.os.KnownBrowser, ...]] = tuple(types.os.KnownBrowser)
+KNOW_BROWSERS: typing.Final[tuple[types.os.KnownBrowser, ...]] = tuple(types.os.KnownBrowser)
 
-browsers_re: dict[types.os.KnownBrowser, tuple] = {
+BROWSERS_RE: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.FIREFOX: (re.compile(r'Firefox/([0-9.]+)'),),
     types.os.KnownBrowser.SEAMONKEY: (re.compile(r'Seamonkey/([0-9.]+)'),),
     types.os.KnownBrowser.CHROME: (re.compile(r'Chrome/([0-9.]+)'),),
@@ -72,7 +72,7 @@ browsers_re: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.EDGE: (re.compile(r'Edg/([0-9.]+)'),),
 }
 
-browser_rules: dict[types.os.KnownBrowser, tuple] = {
+BROWSER_RULES: dict[types.os.KnownBrowser, tuple] = {
     types.os.KnownBrowser.EDGE: (types.os.KnownBrowser.EDGE, ()),
     types.os.KnownBrowser.CHROME: (
         types.os.KnownBrowser.CHROME,

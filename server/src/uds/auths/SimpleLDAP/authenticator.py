@@ -194,7 +194,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
     icon_file = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
-    isExternalSource = True
+    external_source = True
     # If we need to enter the password for this user
     needs_password = False
     # Label for username field
@@ -226,7 +226,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         if values:
             self._host = values['host']
             self._port = values['port']
-            self._ssl = gui.toBool(values['ssl'])
+            self._ssl = gui.as_bool(values['ssl'])
             self._username = values['username']
             self._password = values['password']
             self._timeout = values['timeout']
@@ -238,14 +238,14 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._memberAttr = values['memberAttr']
             self._userNameAttr = values['userNameAttr'].replace(' ', '')  # Removes white spaces
             self._mfaAttr = values['mfaAttr']
-            self._verifySsl = gui.toBool(values['verifySsl'])
+            self._verifySsl = gui.as_bool(values['verifySsl'])
             self._certificate = values['certificate']
 
-    def dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_values(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
             'port': self._port,
-            'ssl': gui.fromBool(self._ssl),
+            'ssl': gui.from_bool(self._ssl),
             'username': self._username,
             'password': self._password,
             'timeout': self._timeout,
@@ -257,7 +257,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             'memberAttr': self._memberAttr,
             'userNameAttr': self._userNameAttr,
             'mfaAttr': self._mfaAttr,
-            'verifySsl': gui.fromBool(self._verifySsl),
+            'verifySsl': gui.from_bool(self._verifySsl),
             'certificate': self._certificate,
         }
 
@@ -267,7 +267,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 'v2',
                 self._host,
                 self._port,
-                gui.fromBool(self._ssl),
+                gui.from_bool(self._ssl),
                 self._username,
                 self._password,
                 self._timeout,
@@ -279,7 +279,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
                 self._memberAttr,
                 self._userNameAttr,
                 self._mfaAttr,
-                gui.fromBool(self._verifySsl),
+                gui.from_bool(self._verifySsl),
                 self._certificate.strip(),
             ]
         ).encode('utf8')
@@ -306,11 +306,11 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._memberAttr,
             self._userNameAttr,
         ) = vals[1:14]
-        self._ssl = gui.toBool(ssl)
+        self._ssl = gui.as_bool(ssl)
 
         if vals[0] == 'v2':
             (self._mfaAttr, verifySsl, self._certificate) = vals[14:17]
-            self._verifySsl = gui.toBool(verifySsl)
+            self._verifySsl = gui.as_bool(verifySsl)
 
     def mfaStorageKey(self, username: str) -> str:
         return 'mfa_' + str(self.db_obj().uuid) + username

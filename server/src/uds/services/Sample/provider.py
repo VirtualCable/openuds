@@ -181,7 +181,7 @@ class Provider(services.ServiceProvider):
         # If you say meth is alive, you are wrong!!! (i guess..)
         # values are only passed from administration client. Internals
         # instantiations are always empty.
-        if values and self.methAlive.isTrue():
+        if values and self.methAlive.as_bool():
             raise exceptions.validation.ValidationError(
                 _('Methuselah is not alive!!! :-)')
             )

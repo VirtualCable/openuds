@@ -200,7 +200,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             # if int(self.memory.value) < 128:
             #     raise exceptions.ValidationException(_('The minimum allowed memory is 128 Mb'))
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         # Here we have to use "default values", cause values aren't used at form initialization
         # This is that value is always '', so if we want to change something, we have to do it
         # at defValue
@@ -209,22 +209,22 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setChoices(
+        self.machine.set_choices(
             [
-                gui.choiceItem(
+                gui.choice_item(
                     str(m.vmid), f'{m.node}\\{m.name or m.vmid} ({m.vmid})'
                 )
                 for m in self.parent().listMachines()
                 if m.name and m.name[:3] != 'UDS'
             ]
         )
-        self.pool.setChoices(
-            [gui.choiceItem('', _('None'))]
-            + [gui.choiceItem(p.poolid, p.poolid) for p in self.parent().listPools()]
+        self.pool.set_choices(
+            [gui.choice_item('', _('None'))]
+            + [gui.choice_item(p.poolid, p.poolid) for p in self.parent().listPools()]
         )
-        self.ha.setChoices(
-            [gui.choiceItem('', _('Enabled')), gui.choiceItem('__', _('Disabled'))]
-            + [gui.choiceItem(group, group) for group in self.parent().listHaGroups()]
+        self.ha.set_choices(
+            [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
+            + [gui.choice_item(group, group) for group in self.parent().listHaGroups()]
         )
 
     def parent(self) -> 'ProxmoxProvider':
@@ -331,10 +331,10 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return self.parent().getMacRange()
 
     def isHaEnabled(self) -> bool:
-        return self.ha.isTrue()
+        return self.ha.as_bool()
 
     def tryGracelyShutdown(self) -> bool:
-        return self.guestShutdown.isTrue()
+        return self.guestShutdown.as_bool()
 
     def getConsoleConnection(
         self, machineId: str

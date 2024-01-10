@@ -221,7 +221,7 @@ class ServersServers(DetailHandler):
                         'tooltip': gettext('Server to include on group'),
                         'type': types.ui.FieldType.CHOICE,
                         'choices': [
-                            ui.gui.choiceItem(item.uuid, item.hostname)
+                            ui.gui.choice_item(item.uuid, item.hostname)
                             for item in models.Server.objects.filter(type=parent.type, subtype=parent.subtype)
                             if item not in parent.servers.all()
                         ],

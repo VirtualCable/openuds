@@ -125,7 +125,7 @@ class Providers(ModelHandler):
         providerType = services.factory().lookup(type_)
         if providerType:
             provider = providerType(Environment.getTempEnv(), None)
-            return self.add_default_fields(provider.guiDescription(), ['name', 'comments', 'tags'])
+            return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
         raise exceptions.rest.NotFound('Type not found!')
 
     def allservices(self) -> typing.Generator[dict, None, None]:

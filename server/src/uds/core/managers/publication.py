@@ -208,13 +208,13 @@ class PublicationFinishChecker(DelayedTask):
                 # Mark all previous publications deployed services as removables
                 # and make this usable
                 publicationInstance.finish()
-                publication.updateData(publicationInstance)
+                publication.update_data(publicationInstance)
             elif State.is_errored(state):
-                publication.updateData(publicationInstance)
+                publication.update_data(publicationInstance)
                 publication.set_state(State.ERROR)
             else:
                 checkLater = True  # The task is running
-                publication.updateData(publicationInstance)
+                publication.update_data(publicationInstance)
 
             if checkLater:
                 PublicationFinishChecker.check_later(publication, publicationInstance)

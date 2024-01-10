@@ -110,7 +110,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         authInstance = authenticator.get_instance()
         # Check if user is locked
         if (
-            authInstance.blockUserOnLoginFailures is True
+            authInstance.block_user_on_failures is True
             and (tries >= maxTries)
             or triesByIp >= maxTries
         ):

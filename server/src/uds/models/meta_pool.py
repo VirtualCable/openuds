@@ -140,7 +140,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 maintenance += 1
         return total == maintenance
 
-    def isAccessAllowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
+    def is_access_allowed(self, chkDateTime: typing.Optional['datetime.datetime'] = None) -> bool:
         """
         Checks if the access for a service pool is allowed or not (based esclusively on associated calendars)
         """
@@ -212,7 +212,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         return sn if sn else self.name
 
     @staticmethod
-    def getForGroups(
+    def metapools_for_groups(
         groups: collections.abc.Iterable['Group'], user: typing.Optional['User'] = None
     ) -> 'QuerySet[MetaPool]':
         """

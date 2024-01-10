@@ -201,7 +201,6 @@ class RegexLdap(auths.Authenticator):
     icon_file = 'auth.png'
 
     # If it has and external source where to get "new" users (groups must be declared inside UDS)
-    isExternalSource = True
     # If we need to enter the password for this user
     needs_password = False
     # Label for username field
@@ -236,7 +235,7 @@ class RegexLdap(auths.Authenticator):
 
             self._host = values['host']
             self._port = values['port']
-            self._ssl = gui.toBool(values['ssl'])
+            self._ssl = gui.as_bool(values['ssl'])
             self._username = values['username']
             self._password = values['password']
             self._timeout = values['timeout']
@@ -248,7 +247,7 @@ class RegexLdap(auths.Authenticator):
             self._userNameAttr = values['userNameAttr']
             self._altClass = values['altClass']
             self._mfaAttr = values['mfaAttr']
-            self._verifySsl = gui.toBool(values['verifySsl'])
+            self._verifySsl = gui.as_bool(values['verifySsl'])
             self._certificate = values['certificate']
 
     def __getAttrsFromField(self, field: str) -> list[str]:
@@ -277,11 +276,11 @@ class RegexLdap(auths.Authenticator):
     def mfa_identifier(self, username: str) -> str:
         return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
 
-    def dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_values(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
             'port': self._port,
-            'ssl': gui.fromBool(self._ssl),
+            'ssl': gui.from_bool(self._ssl),
             'username': self._username,
             'password': self._password,
             'timeout': self._timeout,
@@ -292,7 +291,7 @@ class RegexLdap(auths.Authenticator):
             'userNameAttr': self._userNameAttr,
             'altClass': self._altClass,
             'mfaAttr': self._mfaAttr,
-            'verifySsl': gui.fromBool(self._verifySsl),
+            'verifySsl': gui.from_bool(self._verifySsl),
             'certificate': self._certificate,
         }
 
@@ -302,7 +301,7 @@ class RegexLdap(auths.Authenticator):
                 'v5',
                 self._host,
                 self._port,
-                gui.fromBool(self._ssl),
+                gui.from_bool(self._ssl),
                 self._username,
                 self._password,
                 self._timeout,
@@ -313,7 +312,7 @@ class RegexLdap(auths.Authenticator):
                 self._userNameAttr,
                 self._altClass,
                 self._mfaAttr,
-                gui.fromBool(self._verifySsl),
+                gui.from_bool(self._verifySsl),
                 self._certificate.strip(),
             ]
         ).encode('utf8')
@@ -339,7 +338,7 @@ class RegexLdap(auths.Authenticator):
             self._userIdAttr,
             self._groupNameAttr,
         ) = vals[1:11]
-        self._ssl = gui.toBool(ssl)
+        self._ssl = gui.as_bool(ssl)
 
         if vals[0] == 'v1':
             logger.debug("Data: %s", vals[11:])
@@ -349,7 +348,7 @@ class RegexLdap(auths.Authenticator):
         elif vals[0] == 'v2':
             logger.debug("Data v2: %s", vals[1:])
             self._userNameAttr = vals[11]
-            self._ssl = gui.toBool(ssl)
+            self._ssl = gui.as_bool(ssl)
         elif vals[0] == 'v3':
             logger.debug("Data v3: %s", vals[1:])
             (
@@ -372,7 +371,7 @@ class RegexLdap(auths.Authenticator):
                 verifySsl,
                 self._certificate,
             ) = vals[11:]
-            self._verifySsl = gui.toBool(verifySsl)
+            self._verifySsl = gui.as_bool(verifySsl)
 
     def __connection(self) -> typing.Any:
         """

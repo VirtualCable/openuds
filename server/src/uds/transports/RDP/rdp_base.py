@@ -378,10 +378,10 @@ class BaseRDPTransport(transports.Transport):
                 azureAd = True
             else:
                 domain = self.fixedDomain.value
-        if self.useEmptyCreds.isTrue():
+        if self.useEmptyCreds.as_bool():
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.isTrue():
+        if self.withoutDomain.as_bool():
             domain = ''
 
         if domain:  # If has domain
@@ -403,7 +403,7 @@ class BaseRDPTransport(transports.Transport):
         if azureAd:
             username = 'AzureAD\\' + username
 
-        if self.optimizeTeams.isTrue():
+        if self.optimizeTeams.as_bool():
             password = ''  # nosec
 
         return types.connections.ConnectionData(

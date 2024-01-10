@@ -105,7 +105,7 @@ class OsManagers(ModelHandler):
             osmanager = osmanagerType(Environment.getTempEnv(), None)
 
             return self.add_default_fields(
-                osmanager.guiDescription(),  # type: ignore  # may raise an exception if lookup fails
+                osmanager.gui_description(),  # type: ignore  # may raise an exception if lookup fails
                 ['name', 'comments', 'tags'],
             )
         except:

@@ -74,10 +74,10 @@ class CountersPoolAssigned(StatsReport):
     def initialize(self, values):
         pass
 
-    def initGui(self):
+    def init_gui(self):
         logger.debug('Initializing gui')
-        vals = [gui.choiceItem(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
-        self.pools.setChoices(vals)
+        vals = [gui.choice_item(v.uuid, v.name) for v in ServicePool.objects.all().order_by('name')]
+        self.pools.set_choices(vals)
 
     def getData(self) -> list[dict[str, typing.Any]]:
         # Generate the sampling intervals and get dataUsers from db

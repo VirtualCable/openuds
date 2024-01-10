@@ -165,6 +165,7 @@ def process_init(server: 'models.Server', data: dict[str, typing.Any]) -> typing
     return rest_result(consts.OK)
 
 
+# Dictionary of processors by type
 PROCESSORS: typing.Final[
     collections.abc.Mapping[str, collections.abc.Callable[['models.Server', dict[str, typing.Any]], typing.Any]]
 ] = {

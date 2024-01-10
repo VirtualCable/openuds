@@ -66,7 +66,7 @@ class InternalDBAuth(auths.Authenticator):
     needs_password = True
 
     # This is the only internal source
-    isExternalSource = False
+    external_source = False
 
     differentForEachHost = gui.CheckBoxField(
         label=_('Different user for each host'),
@@ -96,9 +96,9 @@ class InternalDBAuth(auths.Authenticator):
 
     def getIp(self, request: 'ExtendedHttpRequest') -> str:
         ip = (
-            request.ip_proxy if self.acceptProxy.isTrue() else request.ip
+            request.ip_proxy if self.acceptProxy.as_bool() else request.ip
         )  # pylint: disable=maybe-no-member
-        if self.reverseDns.isTrue():
+        if self.reverseDns.as_bool():
             try:
                 return str(
                     dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
@@ -116,9 +116,9 @@ class InternalDBAuth(auths.Authenticator):
 
     def transformed_username(self, username: str, request: 'ExtendedHttpRequest') -> str:
         username = username.lower()
-        if self.differentForEachHost.isTrue():
+        if self.differentForEachHost.as_bool():
             newUsername = (
-                (request.ip_proxy if self.acceptProxy.isTrue() else request.ip)
+                (request.ip_proxy if self.acceptProxy.as_bool() else request.ip)
                 + '-'
                 + username
             )

@@ -56,7 +56,7 @@ def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     provider.deserialize(parameters['ov'])
 
     if isinstance(provider, OpenStackProvider):
-        useSubnetsName = provider.useSubnetsName.isTrue()
+        useSubnetsName = provider.useSubnetsName.as_bool()
     else:
         useSubnetsName = False
 
@@ -71,17 +71,17 @@ def getResources(
     '''
     api, nameFromSubnets = getApi(parameters)
 
-    zones = [gui.choiceItem(z, z) for z in api.listAvailabilityZones()]
+    zones = [gui.choice_item(z, z) for z in api.listAvailabilityZones()]
     networks = [
-        gui.choiceItem(z['id'], z['name'])
+        gui.choice_item(z['id'], z['name'])
         for z in api.listNetworks(nameFromSubnets=nameFromSubnets)
     ]
-    flavors = [gui.choiceItem(z['id'], z['name']) for z in api.listFlavors()]
+    flavors = [gui.choice_item(z['id'], z['name']) for z in api.listFlavors()]
     securityGroups = [
-        gui.choiceItem(z['id'], z['name']) for z in api.listSecurityGroups()
+        gui.choice_item(z['id'], z['name']) for z in api.listSecurityGroups()
     ]
-    volumeTypes = [gui.choiceItem('-', _('None'))] + [
-        gui.choiceItem(t['id'], t['name']) for t in api.listVolumeTypes()
+    volumeTypes = [gui.choice_item('-', _('None'))] + [
+        gui.choice_item(t['id'], t['name']) for t in api.listVolumeTypes()
     ]
 
     data = [
@@ -103,9 +103,9 @@ def getVolumes(
     '''
     api, _ = getApi(parameters)
     # Source volumes are all available for us
-    # volumes = [gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
+    # volumes = [gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != '' and v['availability_zone'] == parameters['availabilityZone']]
     volumes = [
-        gui.choiceItem(v['id'], v['name']) for v in api.listVolumes() if v['name'] != ''
+        gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != ''
     ]
 
     data = [

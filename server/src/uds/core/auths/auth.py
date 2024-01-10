@@ -87,7 +87,7 @@ class AuthResult(typing.NamedTuple):
     url: typing.Optional[str] = None
 
 
-def getUDSCookie(
+def uds_cookie(
     request: HttpRequest,
     response: typing.Optional[HttpResponse] = None,
     force: bool = False,
@@ -114,7 +114,7 @@ def getUDSCookie(
     return cookie
 
 
-def getRootUser() -> models.User:
+def root_user() -> models.User:
     """
     Returns an user not in DB that is ROOT for the platform
 
@@ -188,12 +188,12 @@ def web_login_required(
 
 
 # Helper for checking if requests is from trusted source
-def isTrustedSource(ip: str) -> bool:
+def is_source_trusted(ip: str) -> bool:
     return net.contains(GlobalConfig.TRUSTED_SOURCES.get(True), ip)
 
 
 # Decorator to protect pages that needs to be accessed from "trusted sites"
-def trustedSourceRequired(
+def needs_trusted_source(
     view_func: collections.abc.Callable[..., HttpResponse]
 ) -> collections.abc.Callable[..., HttpResponse]:
     """
@@ -206,7 +206,7 @@ def trustedSourceRequired(
         Wrapped function for decorator
         """
         try:
-            if not isTrustedSource(request.ip):
+            if not is_source_trusted(request.ip):
                 return HttpResponseForbidden()
         except Exception:
             logger.warning(
@@ -302,7 +302,7 @@ def authenticate(
         and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
         and CryptoManager().check_hash(password, GlobalConfig.SUPER_USER_PASS.get(True))
     ):
-        return AuthResult(user=getRootUser())
+        return AuthResult(user=root_user())
 
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.get_instance()
@@ -422,7 +422,7 @@ def web_login(
         manager_id = -1
 
     # If for any reason the "uds" cookie is removed, recreated it
-    cookie = getUDSCookie(request, response)
+    cookie = uds_cookie(request, response)
 
     user.update_last_access()
     request.authorized = (
@@ -468,7 +468,7 @@ def web_password(request: HttpRequest) -> str:
         )
     passkey = base64.b64decode(request.session.get(PASS_KEY, ''))
     return CryptoManager().symmetric_decrypt(
-        passkey, getUDSCookie(request)
+        passkey, uds_cookie(request)
     )  # recover as original unicode string
 
 

@@ -125,7 +125,7 @@ def getServicesData(
         ServicePool.get_pools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
     availMetaPools = list(
-        MetaPool.getForGroups(groups, request.user)
+        MetaPool.metapools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
     now = sql_datetime()
 
@@ -299,7 +299,7 @@ def getServicesData(
                     allow_users_remove=meta.allow_users_remove,
                     allow_users_reset=meta.allow_users_remove,
                     maintenance=meta.is_in_maintenance(),
-                    not_accesible=not meta.isAccessAllowed(now),
+                    not_accesible=not meta.is_access_allowed(now),
                     in_use=in_use,
                     to_be_replaced=None,
                     to_be_replaced_text='',

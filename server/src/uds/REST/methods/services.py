@@ -300,15 +300,15 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 Environment.getTempEnv(), parentInstance
             )  # Instantiate it so it has the opportunity to alter gui description based on parent
             localGui = self.add_default_fields(
-                service.guiDescription(), ['name', 'comments', 'tags']
+                service.gui_description(), ['name', 'comments', 'tags']
             )
             self.add_field(
                 localGui,
                 {
                     'name': 'max_services_count_type',
                     'choices': [
-                        gui.choiceItem('0', _('Standard')),
-                        gui.choiceItem('1', _('Conservative')),
+                        gui.choice_item('0', _('Standard')),
+                        gui.choice_item('1', _('Conservative')),
                     ],
                     'label': _('Service counting method'),
                     'tooltip': _(

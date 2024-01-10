@@ -196,7 +196,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
                 self.username.value,
                 self.password.value,
                 True,
-                self.verifySSL.isTrue(),
+                self.verifySSL.as_bool(),
             )
 
         return self._api

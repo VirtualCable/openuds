@@ -187,7 +187,7 @@ class EmailMFA(mfas.MFA):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        hostname = self.hostname.cleanStr()
+        hostname = self.hostname.as_clean_str()
         if not hostname:
             raise exceptions.validation.ValidationError(_('Invalid SMTP hostname'))
 
@@ -196,7 +196,7 @@ class EmailMFA(mfas.MFA):
             host, port = validators.validateHostPortPair(hostname)
             self.hostname.value = f'{host}:{port}'
         else:
-            host = self.hostname.cleanStr()
+            host = self.hostname.as_clean_str()
             self.hostname.value = validators.validateFqdn(host)
 
         # now check from email and to email
@@ -205,10 +205,10 @@ class EmailMFA(mfas.MFA):
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext('Check your mail. You will receive an email with the verification code')
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         # Populate the networks list
-        self.networks.setChoices(
-            [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
+        self.networks.set_choices(
+            [gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
@@ -224,8 +224,8 @@ class EmailMFA(mfas.MFA):
             try:
                 # Create message container
                 msg = MIMEMultipart('alternative')
-                msg['Subject'] = self.emailSubject.cleanStr()
-                msg['From'] = self.fromEmail.cleanStr()
+                msg['Subject'] = self.emailSubject.as_clean_str()
+                msg['From'] = self.fromEmail.as_clean_str()
                 msg['To'] = identifier
 
                 msg.attach(
@@ -267,7 +267,7 @@ class EmailMFA(mfas.MFA):
         """
         Login to SMTP server
         """
-        host = self.hostname.cleanStr()
+        host = self.hostname.as_clean_str()
         if ':' in host:
             host, ports = host.split(':')
             port = int(ports)

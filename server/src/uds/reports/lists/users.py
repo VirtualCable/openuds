@@ -67,11 +67,11 @@ class ListReportUsers(ListReport):
             auth = Authenticator.objects.get(uuid=self.authenticator.value)
             self.filename = auth.name + '.pdf'
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         logger.debug('Initializing gui')
-        vals = [gui.choiceItem(v.uuid, v.name) for v in Authenticator.objects.all()]
+        vals = [gui.choice_item(v.uuid, v.name) for v in Authenticator.objects.all()]
 
-        self.authenticator.setChoices(vals)
+        self.authenticator.set_choices(vals)
 
     def generate(self) -> bytes:
         auth = Authenticator.objects.get(uuid=self.authenticator.value)

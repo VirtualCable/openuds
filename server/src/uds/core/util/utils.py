@@ -156,7 +156,7 @@ def loadIcon(iconFilename: str) -> bytes:
     return data
 
 
-def loadIconBase64(iconFilename: str) -> str:
+def load_Icon_b64(iconFilename: str) -> str:
     """
     Loads an icon from icons directory
     """

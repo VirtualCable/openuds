@@ -61,7 +61,7 @@ def _server_group_values(
         fltr = fltr.filter(subtype=subtype)
 
     return [
-        ui.gui.choiceItem(v.uuid, f'{v.name} {("("+ v.pretty_host + ")") if v.pretty_host else ""}')
+        ui.gui.choice_item(v.uuid, f'{v.name} {("("+ v.pretty_host + ")") if v.pretty_host else ""}')
         for v in fltr.all()
     ]
 

@@ -260,10 +260,10 @@ class SMSMFA(mfas.MFA):
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         # Populate the networks list
-        self.networks.setChoices(
-            [gui.choiceItem(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
+        self.networks.set_choices(
+            [gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
         )
 
     def composeSmsUrl(
@@ -282,7 +282,7 @@ class SMSMFA(mfas.MFA):
         return url
 
     def getSession(self) -> requests.Session:
-        session = security.secureRequestsSession(verify=self.ignoreCertificateErrors.isTrue())
+        session = security.secureRequestsSession(verify=self.ignoreCertificateErrors.as_bool())
         # 0 means no authentication
         if self.authenticationMethod.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(

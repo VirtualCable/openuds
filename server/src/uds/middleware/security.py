@@ -38,7 +38,7 @@ import collections.abc
 from django.http import HttpResponseForbidden
 
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import isTrustedSource, IP_KEY
+from uds.core.auths.auth import is_source_trusted, IP_KEY
 
 from . import builder
 
@@ -55,7 +55,7 @@ bot = re.compile(r'bot|spider', re.IGNORECASE)
 def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpResponse']:
     ua = request.META.get('HTTP_USER_AGENT', '') or 'Unknown'
     # If bot, break now
-    if bot.search(ua) or (ua == 'Unknown' and not isTrustedSource(request.ip)):
+    if bot.search(ua) or (ua == 'Unknown' and not is_source_trusted(request.ip)):
         # Return emty response if bot is detected
         logger.info(
             'Denied Bot %s from %s to %s',

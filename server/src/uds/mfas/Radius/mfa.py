@@ -126,7 +126,7 @@ class RadiusOTP(mfas.MFA):
         tooltip=_('Networks for Radius OTP authentication'),
         required=False,
         choices=lambda: [
-            gui.choiceItem(v.uuid, v.name)  # type: ignore
+            gui.choice_item(v.uuid, v.name)  # type: ignore
             for v in models.Network.objects.all().order_by('name')
         ],
         tab=_('Config'),

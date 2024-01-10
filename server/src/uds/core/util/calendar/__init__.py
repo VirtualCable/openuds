@@ -68,7 +68,7 @@ class CalendarChecker:
     def __init__(self, calendar: Calendar) -> None:
         self.calendar = calendar
 
-    def _gen_state_on_minute(self, dtime: datetime.datetime) -> bitarray.bitarray:
+    def _get_minutes_state_array(self, dtime: datetime.datetime) -> bitarray.bitarray:
         logger.debug('Updating %s', dtime)
         CalendarChecker.updates += 1
 
@@ -162,7 +162,7 @@ class CalendarChecker:
             state_on_minute.frombytes(cached)
             CalendarChecker.cache_hit += 1
         else:
-            state_on_minute = self._gen_state_on_minute(dtime)
+            state_on_minute = self._get_minutes_state_array(dtime)
 
             # Now data can be accessed as an array of booleans.
             # Store data on persistent cache

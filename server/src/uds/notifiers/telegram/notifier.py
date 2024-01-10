@@ -127,14 +127,14 @@ class TelegramNotifier(messaging.Notifier):
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
         for i in (self.botname, self.accessToken, self.secret):
-            s = i.cleanStr()
+            s = i.as_clean_str()
             if not s:
                 raise exceptions.validation.ValidationError(_('Invalid value for {}').format(i.label))
             i.value = s
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         self.secret.default = self.secret.default or secrets.token_urlsafe(8)
-        return super().initGui()
+        return super().init_gui()
 
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'

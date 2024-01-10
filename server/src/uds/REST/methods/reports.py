@@ -144,7 +144,7 @@ class Reports(model.BaseModelHandler):
     # Gui related
     def get_gui(self, type_: str) -> list[typing.Any]:
         report = self._findReport(type_)
-        return sorted(report.guiDescription(), key=lambda f: f['gui']['order'])
+        return sorted(report.gui_description(), key=lambda f: f['gui']['order'])
 
     # Returns the list of
     def get_items(

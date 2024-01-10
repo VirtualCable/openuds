@@ -95,13 +95,13 @@ class PoolPerformanceReport(StatsReport):
         default=8,
     )
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         logger.debug('Initializing gui')
         vals = [
-            gui.choiceItem(v.uuid, v.name)
+            gui.choice_item(v.uuid, v.name)
             for v in ServicePool.objects.all().order_by('name')
         ]
-        self.pools.setChoices(vals)
+        self.pools.set_choices(vals)
 
     def getPools(self) -> collections.abc.Iterable[tuple[str, str]]:
         for p in ServicePool.objects.filter(uuid__in=self.pools.value):

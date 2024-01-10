@@ -93,7 +93,7 @@ class Transports(ModelHandler):
         transport = transportType(Environment.getTempEnv(), None)
 
         field = self.add_default_fields(
-            transport.guiDescription(), ['name', 'comments', 'tags', 'priority', 'networks']
+            transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']
         )
         field = self.add_field(
             field,
@@ -101,7 +101,7 @@ class Transports(ModelHandler):
                 'name': 'allowed_oss',
                 'value': [],
                 'choices': sorted(
-                    [ui.gui.choiceItem(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
+                    [ui.gui.choice_item(x.name, x.name) for x in consts.os.KNOWN_OS_LIST],
                     key=lambda x: x['text'].lower(),
                 ),
                 'label': gettext('Allowed Devices'),
@@ -119,7 +119,7 @@ class Transports(ModelHandler):
                 'name': 'pools',
                 'value': [],
                 'choices': [
-                    ui.gui.choiceItem(x.uuid, x.name)
+                    ui.gui.choice_item(x.uuid, x.name)
                     for x in ServicePool.objects.filter(service__isnull=False)
                     .order_by('name')
                     .prefetch_related('service')

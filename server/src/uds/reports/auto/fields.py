@@ -117,10 +117,10 @@ def source_field_data(
     field: typing.Union[gui.ChoiceField, gui.MultiChoiceField],
 ) -> None:
     dataList: list[types.ui.ChoiceItem] = [
-        gui.choiceItem(str(x.uuid), x.name) for x in model.objects.all().order_by('name')
+        gui.choice_item(str(x.uuid), x.name) for x in model.objects.all().order_by('name')
     ]
 
     if isinstance(field, gui.MultiChoiceField):
         dataList.insert(0, {'id': '0-0-0-0', 'text': _('All')})
 
-    field.setChoices(dataList)
+    field.set_choices(dataList)

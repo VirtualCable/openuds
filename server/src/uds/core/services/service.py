@@ -31,7 +31,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
-from ast import If
 import typing
 import collections.abc
 import logging

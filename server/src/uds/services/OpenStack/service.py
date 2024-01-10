@@ -218,7 +218,7 @@ class LiveService(services.Service):
     def parent(self) -> 'Provider':
         return typing.cast('Provider', super().parent())
 
-    def initGui(self):
+    def init_gui(self):
         """
         Loads required values inside
         """
@@ -233,27 +233,27 @@ class LiveService(services.Service):
 
         if parentCurrent and parentCurrent.region.value:
             regions = [
-                gui.choiceItem(parentCurrent.region.value, parentCurrent.region.value)
+                gui.choice_item(parentCurrent.region.value, parentCurrent.region.value)
             ]
         else:
-            regions = [gui.choiceItem(r['id'], r['id']) for r in api.listRegions()]
+            regions = [gui.choice_item(r['id'], r['id']) for r in api.listRegions()]
 
-        self.region.setChoices(regions)
+        self.region.set_choices(regions)
 
         if parentCurrent and parentCurrent.tenant.value:
             tenants = [
-                gui.choiceItem(parentCurrent.tenant.value, parentCurrent.tenant.value)
+                gui.choice_item(parentCurrent.tenant.value, parentCurrent.tenant.value)
             ]
         else:
-            tenants = [gui.choiceItem(t['id'], t['name']) for t in api.listProjects()]
-        self.project.setChoices(tenants)
+            tenants = [gui.choice_item(t['id'], t['name']) for t in api.listProjects()]
+        self.project.set_choices(tenants)
 
         # So we can instantiate parent to get API
         logger.debug(self.parent().serialize())
 
         self.ov.value = self.parent().serialize()
         self.ev.value = self.parent().env.key
-        self.legacy.value = gui.fromBool(self.parent().legacy)
+        self.legacy.value = gui.from_bool(self.parent().legacy)
 
     @property
     def api(self) -> 'openstack.Client':

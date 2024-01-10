@@ -105,7 +105,7 @@ class LinuxOsManager(osmanagers.OSManager):
         if values is not None:
             self._onLogout = values['onLogout']
             self._idle = int(values['idle'])
-            self._deadLine = gui.toBool(values['deadLine'])
+            self._deadLine = gui.as_bool(values['deadLine'])
         else:
             self._onLogout = ''
             self._idle = -1
@@ -192,7 +192,7 @@ class LinuxOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._onLogout, str(self._idle), gui.fromBool(self._deadLine)]
+            ['v3', self._onLogout, str(self._idle), gui.from_bool(self._deadLine)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
@@ -207,14 +207,14 @@ class LinuxOsManager(osmanagers.OSManager):
             self._onLogout, self._idle, self._deadLine = (
                 values[1],
                 int(values[2]),
-                gui.toBool(values[3]),
+                gui.as_bool(values[3]),
             )
 
         self._set_process_unused_machines()
 
-    def dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_values(self) -> gui.ValuesDictType:
         return {
             'onLogout': self._onLogout,
             'idle': str(self._idle),
-            'deadLine': gui.fromBool(self._deadLine),
+            'deadLine': gui.from_bool(self._deadLine),
         }

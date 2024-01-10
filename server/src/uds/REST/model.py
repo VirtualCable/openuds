@@ -346,8 +346,8 @@ class BaseModelHandler(Handler):
         """
         if isinstance(item, ManagedObjectModel):
             i = item.get_instance()
-            i.initGui()  # Defaults & stuff
-            res.update(i.dict_of_values())
+            i.init_gui()  # Defaults & stuff
+            res.update(i.get_dict_of_values())
         return res
 
     # Exceptions

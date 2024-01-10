@@ -50,26 +50,26 @@ class GuiTest(UDSTestCase):
         # 3.- A list of strings
         # 4.- A list of dictinaries, must be {'id': 'xxxx', 'text': 'yyy'}
         # 5.- A Dictionary, Keys will be used in 'id' and values in 'text'
-        self.assertEqual(gui.convertToChoices([]), [])
-        self.assertEqual(gui.convertToChoices('aaaa'), [{'id': 'aaaa', 'text': 'aaaa'}])
+        self.assertEqual(gui.as_choices([]), [])
+        self.assertEqual(gui.as_choices('aaaa'), [{'id': 'aaaa', 'text': 'aaaa'}])
         self.assertEqual(
-            gui.convertToChoices(['a', 'b']),
+            gui.as_choices(['a', 'b']),
             [{'id': 'a', 'text': 'a'}, {'id': 'b', 'text': 'b'}],
         )
         self.assertEqual(
-            gui.convertToChoices({'a': 'b', 'c': 'd'}),
+            gui.as_choices({'a': 'b', 'c': 'd'}),
             [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}],
         )
         self.assertEqual(
-            gui.convertToChoices({'a': 'b', 'c': 'd'}),
+            gui.as_choices({'a': 'b', 'c': 'd'}),
             [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}],
         )
         # Expect an exception if we pass a list of dictionaries without id or text
-        self.assertRaises(ValueError, gui.convertToChoices, [{'a': 'b', 'c': 'd'}])
+        self.assertRaises(ValueError, gui.as_choices, [{'a': 'b', 'c': 'd'}])
         # Also if we pass a list of dictionaries with id and text, but not all of them
         self.assertRaises(
             ValueError,
-            gui.convertToChoices,
+            gui.as_choices,
             [{'id': 'a', 'text': 'b'}, {'id': 'c', 'text': 'd'}, {'id': 'e'}],
         )
 
@@ -86,14 +86,14 @@ class GuiTest(UDSTestCase):
     def test_choice_image(self) -> None:
         # id, text, and base64 image
         self.assertEqual(
-            gui.choiceImage('id', 'text', 'image'),
+            gui.choice_image('id', 'text', 'image'),
             {'id': 'id', 'text': 'text', 'img': 'image'},
         )
 
     def test_to_bool(self) -> None:
         for val in ('true', 'True', 'TRUE', 'yes', 'Yes', 'YES', '1'):
-            self.assertTrue(gui.toBool(val), f'Failed to convert "{val}" to True')
+            self.assertTrue(gui.as_bool(val), f'Failed to convert "{val}" to True')
         for val in ('false', 'False', 'FALSE', 'no', 'No', 'NO', '0'):
             self.assertFalse(
-                gui.toBool(val), f'Failed to convert "{val}" to False'
+                gui.as_bool(val), f'Failed to convert "{val}" to False'
             )

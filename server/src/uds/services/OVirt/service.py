@@ -174,9 +174,9 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         order=113,
         tooltip=_('Enable usb redirection for SPICE'),
         choices=[
-            gui.choiceItem('disabled', 'disabled'),
-            gui.choiceItem('native', 'native'),
-            # gui.choiceItem('legacy', 'legacy (deprecated)'),
+            gui.choice_item('disabled', 'disabled'),
+            gui.choice_item('native', 'native'),
+            # gui.choice_item('legacy', 'legacy (deprecated)'),
         ],
         tab=_('Machine'),
         default='1',  # Default value is the ID of the choicefield
@@ -187,7 +187,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         readonly=False,
         order=114,
         tooltip=_('Display type (only for administration purposes)'),
-        choices=[gui.choiceItem('spice', 'Spice'), gui.choiceItem('vnc', 'Vnc')],
+        choices=[gui.choice_item('spice', 'Spice'), gui.choice_item('vnc', 'Vnc')],
         tab=_('Machine'),
         default='1',  # Default value is the ID of the choicefield
     )
@@ -231,7 +231,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
             if int(self.memoryGuaranteed.value) > int(self.memory.value):
                 self.memoryGuaranteed.value = self.memory.value
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         """
         Loads required values inside
         """
@@ -245,18 +245,18 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         machines = self.parent().getMachines()
         vals = []
         for m in machines:
-            vals.append(gui.choiceItem(m['id'], m['name']))
+            vals.append(gui.choice_item(m['id'], m['name']))
 
         # This is not the same case, values is not the "value" of the field, but
         # the list of values shown because this is a "ChoiceField"
-        self.machine.setChoices(vals)
+        self.machine.set_choices(vals)
 
         clusters = self.parent().getClusters()
         vals = []
         for c in clusters:
-            vals.append(gui.choiceItem(c['id'], c['name']))
+            vals.append(gui.choice_item(c['id'], c['name']))
 
-        self.cluster.setChoices(vals)
+        self.cluster.set_choices(vals)
 
     def parent(self) -> 'OVirtProvider':
         return typing.cast('OVirtProvider', super().parent())

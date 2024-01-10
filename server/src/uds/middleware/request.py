@@ -43,7 +43,7 @@ from uds.core.auths.auth import (
     EXPIRY_KEY,
     ROOT_ID,
     USER_KEY,
-    getRootUser,
+    root_user,
     web_logout,
 )
 from uds.models import User
@@ -118,7 +118,7 @@ def _get_user(request: 'ExtendedHttpRequest') -> None:
     if user_id:
         try:
             if user_id == ROOT_ID:
-                user = getRootUser()
+                user = root_user()
             else:
                 user = User.objects.get(pk=user_id)
         except User.DoesNotExist:

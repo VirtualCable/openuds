@@ -97,7 +97,7 @@ class Authenticator(Module):
     "update" group membership information for an user whenever it logs in.
 
     External authenticator are in fact all authenticators except local database,
-    so we have defined isExternalSource as True by default, that will be most
+    so we have defined external_source as True by default, that will be most
     cases.
 
     :note: All attributes that are "_" here means that they will be
@@ -133,8 +133,8 @@ class Authenticator(Module):
 
     # : Mark this authenticator as that the users comes from outside the UDS
     # : database, that are most authenticator (except Internal DB)
-    # : So, isInternalSource means that "user is kept at database only"
-    isExternalSource: typing.ClassVar[bool] = True
+    # : So, external_source means that "user is kept at database only"
+    external_source: typing.ClassVar[bool] = True
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
@@ -152,7 +152,7 @@ class Authenticator(Module):
     label_password: typing.ClassVar[str] = _('Password')
 
     # : If this authenticators casues a temporal block of an user on repeated login failures
-    blockUserOnLoginFailures: typing.ClassVar[bool] = True
+    block_user_on_failures: typing.ClassVar[bool] = True
 
     from .user import User  # pylint: disable=import-outside-toplevel
     from .group import Group  # pylint: disable=import-outside-toplevel
@@ -160,12 +160,12 @@ class Authenticator(Module):
     # : The type of user provided, normally standard user will be enough.
     # : This is here so if we need it in some case, we can write our own
     # : user class
-    userType: typing.ClassVar[type[User]] = User
+    user_type: typing.ClassVar[type[User]] = User
 
     # : The type of group provided, normally standard group will be enough
     # : This is here so if we need it in some case, we can write our own
     # : group class
-    groupType: typing.ClassVar[type[Group]] = Group
+    group_type: typing.ClassVar[type[Group]] = Group
 
     _db_obj: typing.Optional['models.Authenticator'] = None  # Cached dbAuth object
 
@@ -224,7 +224,7 @@ class Authenticator(Module):
             GroupsManager,
         )
 
-        if self.isExternalSource:
+        if self.external_source:
             groupsManager = GroupsManager(self.db_obj())
             self.get_groups(user.name, groupsManager)
             # cast for typechecking. user.groups is a "simmmilar to a QuerySet", but it's not a QuerySet, so "set" is not there

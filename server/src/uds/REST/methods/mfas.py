@@ -75,7 +75,7 @@ class MFA(ModelHandler):
         # Create a temporal instance to get the gui
         mfa = mfaType(Environment.getTempEnv(), None)
 
-        localGui = self.add_default_fields(mfa.guiDescription(), ['name', 'comments', 'tags'])
+        localGui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
         self.add_field(
             localGui,
             {

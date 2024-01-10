@@ -77,12 +77,11 @@ class IPAuth(auths.Authenticator):
     needs_password = False
     label_username = _('IP')
     label_groupname = _('IP Range')
-    isExternalSource = True
 
-    blockUserOnLoginFailures = False
+    block_user_on_failures = False
 
     def getIp(self, request: 'ExtendedHttpRequest') -> str:
-        ip = request.ip_proxy if self.acceptProxy.isTrue() else request.ip
+        ip = request.ip_proxy if self.acceptProxy.as_bool() else request.ip
         logger.debug('Client IP: %s', ip)
         # If ipv4 on ipv6, we must remove the ipv6 prefix
         if ':' in ip and '.' in ip:

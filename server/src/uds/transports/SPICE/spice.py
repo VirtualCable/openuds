@@ -103,14 +103,14 @@ class SPICETransport(BaseSpiceTransport):
             con['ticket']['value'],
             con.get('ca', self.serverCertificate.value.strip()),
             con['cert_subject'],
-            fullscreen=self.fullScreen.isTrue(),
+            fullscreen=self.fullScreen.as_bool(),
         )
         r.proxy = self.overridedProxy.value.strip() or con.get('proxy', None)
 
-        r.usb_auto_share = self.usbShare.isTrue()
-        r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
-        r.smartcard = self.smartCardRedirect.isTrue()
-        r.ssl_connection = self.sslConnection.isTrue()
+        r.usb_auto_share = self.usbShare.as_bool()
+        r.new_usb_auto_share = self.autoNewUsbShare.as_bool()
+        r.smartcard = self.smartCardRedirect.as_bool()
+        r.ssl_connection = self.sslConnection.as_bool()
 
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')

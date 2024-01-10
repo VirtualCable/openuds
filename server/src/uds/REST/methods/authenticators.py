@@ -95,7 +95,7 @@ class Authenticators(ModelHandler):
                 'label_groupname': _(type_.label_groupname),
                 'label_password': _(type_.label_password),
                 'create_users_supported': type_.create_user != auths.Authenticator.create_user,  # type: ignore
-                'is_external': type_.isExternalSource,
+                'is_external': type_.external_source,
                 'mfa_supported': type_.provides_mfa(),
             }
         # Not of my type
@@ -108,7 +108,7 @@ class Authenticators(ModelHandler):
                 # Create a new instance of the authenticator to access to its GUI
                 authInstance = authType(Environment.getTempEnv(), None)
                 field = self.add_default_fields(
-                    authInstance.guiDescription(),
+                    authInstance.gui_description(),
                     ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
                 )
                 self.add_field(
@@ -136,9 +136,9 @@ class Authenticators(ModelHandler):
                         field,
                         {
                             'name': 'mfa_id',
-                            'choices': [gui.choiceItem('', typing.cast(str, _('None')))]
-                            + gui.sortedChoices(
-                                [gui.choiceItem(v.uuid or '', v.name) for v in MFA.objects.all()]
+                            'choices': [gui.choice_item('', typing.cast(str, _('None')))]
+                            + gui.sorted_choices(
+                                [gui.choice_item(v.uuid or '', v.name) for v in MFA.objects.all()]
                             ),
                             'label': gettext('MFA Provider'),
                             'tooltip': gettext('MFA provider to use for this authenticator'),

@@ -87,13 +87,13 @@ class Notifiers(ModelHandler):
         notifier = notifierType(Environment.getTempEnv(), None)
 
         localGui = self.add_default_fields(
-            notifier.guiDescription(), ['name', 'comments', 'tags']
+            notifier.gui_description(), ['name', 'comments', 'tags']
         )
 
         for field in [
             {
                 'name': 'level',
-                'choices': [gui.choiceItem(i[0], i[1]) for i in LogLevel.interesting()],
+                'choices': [gui.choice_item(i[0], i[1]) for i in LogLevel.interesting()],
                 'label': gettext('Level'),
                 'tooltip': gettext('Level of notifications'),
                 'type': types.ui.FieldType.CHOICE,

@@ -47,7 +47,7 @@ OK = 'OK'
 CONTENT_TYPE = 'text/plain'
 
 
-@auth.trustedSourceRequired
+@auth.needs_trusted_source
 def opengnsys(
     request: HttpRequest,  # pylint: disable=unused-argument
     msg: str,

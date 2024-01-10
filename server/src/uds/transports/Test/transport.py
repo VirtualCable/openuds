@@ -99,7 +99,7 @@ class TestTransport(transports.Transport):
         # No check is done for URL transport
         return True
 
-    def getLink(
+    def get_link(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -118,7 +118,7 @@ class TestTransport(transports.Transport):
 
         onw = (
             '&o_n_w={}'.format(hash(transport.name))
-            if self.forceNewWindow.isTrue()
+            if self.forceNewWindow.as_bool()
             else ''
         )
         return str("{}{}".format(url, onw))

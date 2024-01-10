@@ -104,11 +104,11 @@ class HTML5VNCTransport(transports.Transport):
         tooltip=_('Color depth for VNC connection. Use this to control bandwidth.'),
         required=True,
         choices=[
-            gui.choiceItem('-', 'default'),
-            gui.choiceItem('8', '8 bits'),
-            gui.choiceItem('16', '16 bits'),
-            gui.choiceItem('24', '24 bits'),
-            gui.choiceItem('32', '33 bits'),
+            gui.choice_item('-', 'default'),
+            gui.choice_item('8', '8 bits'),
+            gui.choice_item('16', '16 bits'),
+            gui.choice_item('24', '24 bits'),
+            gui.choice_item('32', '33 bits'),
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
@@ -156,7 +156,7 @@ class HTML5VNCTransport(transports.Transport):
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
         return ready == 'Y'
 
-    def getLink(
+    def get_link(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -182,13 +182,13 @@ class HTML5VNCTransport(transports.Transport):
         if self.colorDepth.value != '-':
             params['color-depth'] = self.colorDepth.value
 
-        if self.swapRedBlue.isTrue():
+        if self.swapRedBlue.as_bool():
             params['swap-red-blue'] = 'true'
 
-        if self.cursor.isTrue():
+        if self.cursor.as_bool():
             params['cursor'] = 'remote'
 
-        if self.readOnly.isTrue():
+        if self.readOnly.as_bool():
             params['read-only'] = 'true'
 
         logger.debug('VNC Params: %s', params)
@@ -203,7 +203,7 @@ class HTML5VNCTransport(transports.Transport):
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
-        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
+        path = self.customGEPath.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 

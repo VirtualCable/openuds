@@ -127,10 +127,10 @@ class ServiceOne(services.Service):
         # In this case, the choice can have none value selected by default
         required=True,
         choices=[
-            gui.choiceItem('red', 'Red'),
-            gui.choiceItem('green', 'Green'),
-            gui.choiceItem('blue', 'Blue'),
-            gui.choiceItem('nonsense', 'Blagenta'),
+            gui.choice_item('red', 'Red'),
+            gui.choice_item('green', 'Green'),
+            gui.choice_item('blue', 'Blue'),
+            gui.choice_item('nonsense', 'Blagenta'),
         ],
         default='1',  # Default value is the ID of the choicefield
     )

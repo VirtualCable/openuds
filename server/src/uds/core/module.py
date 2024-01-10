@@ -30,6 +30,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import abc
 import logging
 import os.path
 import sys
@@ -47,7 +48,7 @@ from .serializable import Serializable
 logger = logging.getLogger(__name__)
 
 
-class Module(UserInterface, Environmentable, Serializable):
+class Module(abc.ABC, UserInterface, Environmentable, Serializable):
     """
     Base class for all modules used by UDS.
     This base module provides all the needed methods that modules must implement
@@ -186,16 +187,18 @@ class Module(UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'icon_file' class attribute
         """
-        return utils.loadIcon(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file)
+        return utils.loadIcon(
+            os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
+        )
 
     @classmethod
     def icon64(cls: type['Module']) -> str:
-        return utils.loadIconBase64(os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file)
+        return utils.load_Icon_b64(
+            os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
+        )
 
     @staticmethod
-    def test(
-        env: Environment, data: dict[str, str]
-    ) -> list[typing.Any]:  # pylint: disable=unused-argument
+    def test(env: Environment, data: dict[str, str]) -> list[typing.Any]:  # pylint: disable=unused-argument
         """
         Test if the connection data is ok.
 
@@ -268,14 +271,14 @@ class Module(UserInterface, Environmentable, Serializable):
         from Serializable, and returns the serialization of
         form field stored values.
         """
-        return self.serializeForm()
+        return self.serialize_fields()
 
     def unmarshal(self, data: bytes) -> None:
         """
         By default and if not overriden by descendants, this method recovers
         data serialized using serializeForm
         """
-        self.deserializeForm(data)
+        self.unserialize_fields(data)
 
     def check(self) -> str:
         """

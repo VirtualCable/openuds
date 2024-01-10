@@ -156,19 +156,19 @@ class LiveService(services.Service):
     def parent(self) -> 'OpenNebulaProvider':
         return typing.cast('OpenNebulaProvider', super().parent())
 
-    def initGui(self) -> None:
+    def init_gui(self) -> None:
         """
         Loads required values inside
         """
 
         t: 'on.types.TemplateType'
-        self.template.setChoices(
-            [gui.choiceItem(t.id, t.name) for t in self.parent().getTemplates()]
+        self.template.set_choices(
+            [gui.choice_item(t.id, t.name) for t in self.parent().getTemplates()]
         )
 
         d: 'on.types.StorageType'
-        self.datastore.setChoices(
-            [gui.choiceItem(d.id, d.name) for d in self.parent().getDatastores()]
+        self.datastore.set_choices(
+            [gui.choice_item(d.id, d.name) for d in self.parent().getDatastores()]
         )
 
     def sanitizeVmName(self, name: str) -> str:

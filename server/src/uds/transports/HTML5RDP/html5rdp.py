@@ -187,25 +187,25 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Keyboard Layout of server'),
         required=True,
         choices=[
-            ui.gui.choiceItem('-', 'default'),
-            ui.gui.choiceItem('en-us-qwerty', _('English (US) keyboard')),
-            ui.gui.choiceItem('en-gb-qwerty', _('English (GB) keyboard')),
-            ui.gui.choiceItem('es-es-qwerty', _('Spanish keyboard')),
-            ui.gui.choiceItem('es-latam-qwerty', _('Latin American keyboard')),
-            ui.gui.choiceItem('da-dk-querty', _('Danish keyboard')),
-            ui.gui.choiceItem('de-de-qwertz', _('German keyboard (qwertz)')),
-            ui.gui.choiceItem('fr-fr-azerty', _('French keyboard (azerty)')),
-            ui.gui.choiceItem('fr-be-azerty', _('Belgian French keyboard (azerty)')),
-            ui.gui.choiceItem('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
-            ui.gui.choiceItem('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
-            ui.gui.choiceItem('hu-hu-qwerty', _('Hungarian keyboard')),
-            ui.gui.choiceItem('it-it-qwerty', _('Italian keyboard')),
-            ui.gui.choiceItem('ja-jp-qwerty', _('Japanese keyboard')),
-            ui.gui.choiceItem('no-no-querty', _('Norwegian keyboard')),
-            ui.gui.choiceItem('pt-br-qwerty', _('Portuguese Brazilian keyboard')),
-            ui.gui.choiceItem('sv-se-qwerty', _('Swedish keyboard')),
-            ui.gui.choiceItem('tr-tr-qwerty', _('Turkish keyboard')),
-            ui.gui.choiceItem('failsafe', _('Failsafe')),
+            ui.gui.choice_item('-', 'default'),
+            ui.gui.choice_item('en-us-qwerty', _('English (US) keyboard')),
+            ui.gui.choice_item('en-gb-qwerty', _('English (GB) keyboard')),
+            ui.gui.choice_item('es-es-qwerty', _('Spanish keyboard')),
+            ui.gui.choice_item('es-latam-qwerty', _('Latin American keyboard')),
+            ui.gui.choice_item('da-dk-querty', _('Danish keyboard')),
+            ui.gui.choice_item('de-de-qwertz', _('German keyboard (qwertz)')),
+            ui.gui.choice_item('fr-fr-azerty', _('French keyboard (azerty)')),
+            ui.gui.choice_item('fr-be-azerty', _('Belgian French keyboard (azerty)')),
+            ui.gui.choice_item('de-ch-qwertz', _('Swiss German keyboard (qwertz)')),
+            ui.gui.choice_item('fr-ch-qwertz', _('Swiss French keyboard (qwertz)')),
+            ui.gui.choice_item('hu-hu-qwerty', _('Hungarian keyboard')),
+            ui.gui.choice_item('it-it-qwerty', _('Italian keyboard')),
+            ui.gui.choice_item('ja-jp-qwerty', _('Japanese keyboard')),
+            ui.gui.choice_item('no-no-querty', _('Norwegian keyboard')),
+            ui.gui.choice_item('pt-br-qwerty', _('Portuguese Brazilian keyboard')),
+            ui.gui.choice_item('sv-se-qwerty', _('Swedish keyboard')),
+            ui.gui.choice_item('tr-tr-qwerty', _('Turkish keyboard')),
+            ui.gui.choice_item('failsafe', _('Failsafe')),
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
@@ -219,12 +219,12 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Select windows behavior for new connections on HTML5'),
         required=True,
         choices=[
-            ui.gui.choiceItem(
+            ui.gui.choice_item(
                 'false',
                 _('Open every connection on the same window, but keeps UDS window.'),
             ),
-            ui.gui.choiceItem('true', _('Force every connection to be opened on a new window.')),
-            ui.gui.choiceItem(
+            ui.gui.choice_item('true', _('Force every connection to be opened on a new window.')),
+            ui.gui.choice_item(
                 'overwrite',
                 _('Override UDS window and replace it with the connection.'),
             ),
@@ -238,24 +238,24 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('Connection security mode for Guacamole RDP connection'),
         required=True,
         choices=[
-            ui.gui.choiceItem('any', _('Any (Allow the server to choose the type of auth)')),
-            ui.gui.choiceItem(
+            ui.gui.choice_item('any', _('Any (Allow the server to choose the type of auth)')),
+            ui.gui.choice_item(
                 'rdp',
                 _('RDP (Standard RDP encryption. Should be supported by all servers)'),
             ),
-            ui.gui.choiceItem(
+            ui.gui.choice_item(
                 'nla',
                 _(
                     'NLA (Network Layer authentication. Requires VALID username&password, or connection will fail)'
                 ),
             ),
-            ui.gui.choiceItem(
+            ui.gui.choice_item(
                 'nla-ext',
                 _(
                     'NLA extended (Network Layer authentication. Requires VALID username&password, or connection will fail)'
                 ),
             ),
-            ui.gui.choiceItem('tls', _('TLS (Transport Security Layer encryption)')),
+            ui.gui.choice_item('tls', _('TLS (Transport Security Layer encryption)')),
         ],
         default='any',
         tab=types.ui.Tab.ADVANCED,
@@ -286,7 +286,7 @@ class HTML5RDPTransport(transports.Transport):
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
             return
-        # if self.useEmptyCreds.isTrue() and self.security.value != 'rdp':
+        # if self.useEmptyCreds.as_bool() and self.security.value != 'rdp':
         #    raise exceptions.ValidationException(
         #        _(
         #            'Empty credentials (on Credentials tab) is only allowed with Security level (on Parameters tab) set to "RDP"'
@@ -348,10 +348,10 @@ class HTML5RDPTransport(transports.Transport):
             else:
                 domain = self.fixedDomain.value
 
-        if self.useEmptyCreds.isTrue():
+        if self.useEmptyCreds.as_bool():
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.isTrue():
+        if self.withoutDomain.as_bool():
             domain = ''
 
         if '.' in domain:  # FQDN domain form
@@ -373,7 +373,7 @@ class HTML5RDPTransport(transports.Transport):
             domain=domain,
         )
 
-    def getLink(
+    def get_link(
         self,
         userService: 'models.UserService',
         transport: 'models.Transport',
@@ -449,22 +449,22 @@ class HTML5RDPTransport(transports.Transport):
         if self.serverLayout.value != '-':
             params['server-layout'] = self.serverLayout.value
 
-        if not self.enableAudio.isTrue():
+        if not self.enableAudio.as_bool():
             params['disable-audio'] = 'true'
-        elif self.enableAudioInput.isTrue():
+        elif self.enableAudioInput.as_bool():
             params['enable-audio-input'] = 'true'
 
-        if self.enablePrinting.isTrue():
+        if self.enablePrinting.as_bool():
             params['enable-printing'] = 'true'
             params['printer-name'] = 'UDS-Printer'
 
-        if self.wallpaper.isTrue():
+        if self.wallpaper.as_bool():
             params['enable-wallpaper'] = 'true'
 
-        if self.desktopComp.isTrue():
+        if self.desktopComp.as_bool():
             params['enable-desktop-composition'] = 'true'
 
-        if self.smooth.isTrue():
+        if self.smooth.as_bool():
             params['enable-font-smoothing'] = 'true'
 
         logger.debug('RDP Params: %s', params)
@@ -476,7 +476,7 @@ class HTML5RDPTransport(transports.Transport):
             onw = f'&o_n_w={userService.deployed_service.uuid}'
         elif self.forceNewWindow.value == 'overwrite':
             onw = '&o_s_w=yes'
-        path = self.customGEPath.value if self.useGlyptodonTunnel.isTrue() else '/guacamole'
+        path = self.customGEPath.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 

@@ -267,7 +267,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Now, get from serviceInstance the data
         assignedInstance = assigned.get_instance()
         state = serviceInstance.assign_from_assignables(assignableId, user, assignedInstance)
-        # assigned.updateData(assignedInstance)
+        # assigned.u(assignedInstance)
 
         UserServiceOpChecker.make_unique(assigned, assignedInstance, state)
 
@@ -909,7 +909,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         meta: MetaPool = MetaPool.objects.get(uuid=idMetaPool)
 
         # If access is denied by calendar...
-        if meta.isAccessAllowed() is False:
+        if meta.is_access_allowed() is False:
             raise ServiceAccessDeniedByCalendar()
 
         # Get pool members. Just pools "visible" and "usable"

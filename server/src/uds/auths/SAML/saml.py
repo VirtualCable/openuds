@@ -100,7 +100,6 @@ class SAMLAuthenticator(auths.Authenticator):
     # : Mark this authenticator as that the users comes from outside the UDS
     # : database, that are most authenticator (except Internal DB)
     # : True is the default value, so we do not need it in fact
-    # isExternalSource = True
 
     # : If we need to enter the password for this user when creating a new
     # : user at administration interface. Used basically by internal authenticator.
@@ -390,7 +389,7 @@ class SAMLAuthenticator(auths.Authenticator):
             try:
                 resp = requests.get(
                     idpMetadata.split('\n')[0],
-                    verify=self.checkSSLCertificate.isTrue(),
+                    verify=self.checkSSLCertificate.as_bool(),
                     timeout=10,
                 )
                 idpMetadata = resp.content.decode()
@@ -439,7 +438,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 'server_port': port,  # params['server_port'],
                 'get_data': params.get_params.copy(),
                 'post_data': params.post_params.copy(),
-                'lowercase_urlencoding': self.adFS.isTrue(),
+                'lowercase_urlencoding': self.adFS.as_bool(),
                 'query_string': params.query_string,
             }
         # No callback parameters, we use the request
@@ -450,7 +449,7 @@ class SAMLAuthenticator(auths.Authenticator):
             'server_port': port,  # request.META['SERVER_PORT'],
             'get_data': request.GET.copy(),
             'post_data': request.POST.copy(),
-            'lowercase_urlencoding': self.adFS.isTrue(),
+            'lowercase_urlencoding': self.adFS.as_bool(),
             'query_string': request.META['QUERY_STRING'],
         }
 
@@ -464,7 +463,7 @@ class SAMLAuthenticator(auths.Authenticator):
             try:
                 resp = requests.get(
                     self.idpMetadata.value.split('\n')[0],
-                    verify=self.checkSSLCertificate.isTrue(),
+                    verify=self.checkSSLCertificate.as_bool(),
                     timeout=10,
                 )
                 val = resp.content.decode()
@@ -503,19 +502,19 @@ class SAMLAuthenticator(auths.Authenticator):
                 + datetime.timedelta(seconds=self.metadataValidityDuration.int_value)
                 if self.metadataCacheDuration.int_value > 0
                 else sql_datetime() + datetime.timedelta(days=365 * 10),
-                'nameIdEncrypted': self.nameIdEncrypted.isTrue(),
-                'authnRequestsSigned': self.authnRequestsSigned.isTrue(),
-                'logoutRequestSigned': self.logoutRequestSigned.isTrue(),
-                'logoutResponseSigned': self.logoutResponseSigned.isTrue(),
-                'signMetadata': self.signMetadata.isTrue(),
-                'wantMessagesSigned': self.wantMessagesSigned.isTrue(),
-                'wantAssertionsSigned': self.wantAssertionsSigned.isTrue(),
-                'wantAssertionsEncrypted': self.wantAssertionsEncrypted.isTrue(),
-                'wantNameIdEncrypted': self.wantNameIdEncrypted.isTrue(),
-                'requestedAuthnContext': self.requestedAuthnContext.isTrue(),
+                'nameIdEncrypted': self.nameIdEncrypted.as_bool(),
+                'authnRequestsSigned': self.authnRequestsSigned.as_bool(),
+                'logoutRequestSigned': self.logoutRequestSigned.as_bool(),
+                'logoutResponseSigned': self.logoutResponseSigned.as_bool(),
+                'signMetadata': self.signMetadata.as_bool(),
+                'wantMessagesSigned': self.wantMessagesSigned.as_bool(),
+                'wantAssertionsSigned': self.wantAssertionsSigned.as_bool(),
+                'wantAssertionsEncrypted': self.wantAssertionsEncrypted.as_bool(),
+                'wantNameIdEncrypted': self.wantNameIdEncrypted.as_bool(),
+                'requestedAuthnContext': self.requestedAuthnContext.as_bool(),
                 "signatureAlgorithm": "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
                 "digestAlgorithm": "http://www.w3.org/2001/04/xmlenc#sha256",
-                "rejectDeprecatedAlgorithm": not self.allowDeprecatedSignatureAlgorithms.isTrue(),
+                "rejectDeprecatedAlgorithm": not self.allowDeprecatedSignatureAlgorithms.as_bool(),
             },
             'organization': {
                 'en-US': {
@@ -693,7 +692,7 @@ class SAMLAuthenticator(auths.Authenticator):
         return types.auth.AuthenticationResult(success=types.auth.AuthenticationState.SUCCESS, username=username)
 
     def logout(self, request: 'ExtendedHttpRequest', username: str) -> types.auth.AuthenticationResult:
-        if not self.globalLogout.isTrue():
+        if not self.globalLogout.as_bool():
             return types.auth.SUCCESS_AUTH
 
         req = self.getReqFromRequest(request)

@@ -90,7 +90,7 @@ class StatsReportLogin(StatsReport):
     def initialize(self, values):
         pass
 
-    def initGui(self):
+    def init_gui(self):
         pass
 
     def getRangeData(self) -> tuple[str, list, list]:

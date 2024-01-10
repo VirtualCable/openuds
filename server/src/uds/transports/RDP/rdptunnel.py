@@ -152,39 +152,39 @@ class TRDPTransport(BaseRDPTransport):
         tunHost, tunPort = tunnelFields.host, tunnelFields.port
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
-        #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.isTrue()
-        r.enablecredsspsupport = self.credssp.isTrue()
+        #r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
+        r.enablecredsspsupport = self.credssp.as_bool()
         r.address = '{address}'
         r.username = ci.username
         r.password = ci.password
         r.domain = ci.domain
 
-        r.redirectPrinters = self.allowPrinters.isTrue()
-        r.redirectSmartcards = self.allowSmartcards.isTrue()
+        r.redirectPrinters = self.allowPrinters.as_bool()
+        r.redirectSmartcards = self.allowSmartcards.as_bool()
         r.redirectDrives = self.allowDrives.value
-        r.redirectSerials = self.allowSerials.isTrue()
-        r.enableClipboard = self.allowClipboard.isTrue()
-        r.redirectAudio = self.allowAudio.isTrue()
-        r.redirectWebcam = self.allowWebcam.isTrue()
-        r.showWallpaper = self.wallpaper.isTrue()
-        r.multimon = self.multimon.isTrue()
-        r.desktopComposition = self.aero.isTrue()
-        r.smoothFonts = self.smooth.isTrue()
-        r.displayConnectionBar = self.showConnectionBar.isTrue()
-        r.enablecredsspsupport = self.credssp.isTrue()
-        r.multimedia = self.multimedia.isTrue()
-        r.alsa = self.alsa.isTrue()
+        r.redirectSerials = self.allowSerials.as_bool()
+        r.enableClipboard = self.allowClipboard.as_bool()
+        r.redirectAudio = self.allowAudio.as_bool()
+        r.redirectWebcam = self.allowWebcam.as_bool()
+        r.showWallpaper = self.wallpaper.as_bool()
+        r.multimon = self.multimon.as_bool()
+        r.desktopComposition = self.aero.as_bool()
+        r.smoothFonts = self.smooth.as_bool()
+        r.displayConnectionBar = self.showConnectionBar.as_bool()
+        r.enablecredsspsupport = self.credssp.as_bool()
+        r.multimedia = self.multimedia.as_bool()
+        r.alsa = self.alsa.as_bool()
         r.smartcardString = self.smartcardString.value
         r.printerString = self.printerString.value
         r.enforcedShares = self.enforceDrives.value
         r.redirectUSB = self.usbRedirection.value
-        r.optimizeTeams = self.optimizeTeams.isTrue()
+        r.optimizeTeams = self.optimizeTeams.as_bool()
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
             'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),
-            'tunChk': self.verifyCertificate.isTrue(),
+            'tunChk': self.verifyCertificate.as_bool(),
             'ticket': ticket,
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
@@ -197,7 +197,7 @@ class TRDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_file': r.as_file,
-                    'optimize_teams': self.optimizeTeams.isTrue(),
+                    'optimize_teams': self.optimizeTeams.as_bool(),
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
@@ -212,8 +212,8 @@ class TRDPTransport(BaseRDPTransport):
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                    'as_file': r.as_file if self.allowMacMSRDC.isTrue() else '',
-                    'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.isTrue() else '',
+                    'as_file': r.as_file if self.allowMacMSRDC.as_bool() else '',
+                    'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.as_bool() else '',
                 }
             )
         else:

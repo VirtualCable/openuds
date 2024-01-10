@@ -38,7 +38,7 @@ from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
 
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import getRootUser
+from uds.core.auths.auth import root_user
 from uds.core.util import net
 from uds.models import Authenticator, User
 from uds.core.managers.crypto import CryptoManager
@@ -369,7 +369,7 @@ class Handler:
             and username == GlobalConfig.SUPER_USER_LOGIN.get(True)
             and authId == -1
         ):
-            return getRootUser()
+            return root_user()
 
         return Authenticator.objects.get(pk=authId).users.get(name=username)
 

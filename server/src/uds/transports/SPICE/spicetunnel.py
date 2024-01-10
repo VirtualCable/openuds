@@ -146,13 +146,13 @@ class TSPICETransport(BaseSpiceTransport):
             con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
             con.get('ca', self.serverCertificate.value.strip()),
             con['cert_subject'],
-            fullscreen=self.fullScreen.isTrue(),
+            fullscreen=self.fullScreen.as_bool(),
         )
 
-        r.usb_auto_share = self.usbShare.isTrue()
-        r.new_usb_auto_share = self.autoNewUsbShare.isTrue()
-        r.smartcard = self.smartCardRedirect.isTrue()
-        r.ssl_connection = self.sslConnection.isTrue()
+        r.usb_auto_share = self.usbShare.as_bool()
+        r.new_usb_auto_share = self.autoNewUsbShare.as_bool()
+        r.smartcard = self.smartCardRedirect.as_bool()
+        r.ssl_connection = self.sslConnection.as_bool()
 
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')
@@ -163,7 +163,7 @@ class TSPICETransport(BaseSpiceTransport):
             'tunHost': tunHost,
             'tunPort': tunPort,
             'tunWait': self.tunnelWait.num(),
-            'tunChk': self.verifyCertificate.isTrue(),
+            'tunChk': self.verifyCertificate.as_bool(),
             'ticket': ticket,
             'ticket_secure': ticket_secure,
         }

@@ -208,7 +208,7 @@ class BaseSpiceTransport(transports.Transport):
         if self.fixedPassword.value:
             password = self.fixedPassword.value
 
-        if self.useEmptyCreds.isTrue():
+        if self.useEmptyCreds.as_bool():
             username, password = '', ''
 
         # Fix username/password acording to os manager

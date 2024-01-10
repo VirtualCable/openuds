@@ -114,7 +114,7 @@ class ReportAuto(Report, metaclass=ReportAutoType):
 
         return reportAutoModelDct[data_source]
 
-    def initGui(self):
+    def init_gui(self):
         # Fills datasource
         fields.source_field_data(self.getModel(), self.source)
         logger.debug('Source field data: %s', self.source)
