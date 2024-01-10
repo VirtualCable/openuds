@@ -80,7 +80,7 @@ class MessageProcessorThread(BaseThread):
             not_before = sql_datetime() - datetime.timedelta(
                 seconds=DO_NOT_REPEAT.getInt()
             )
-            for n in Notification.getPersistentQuerySet().all():
+            for n in Notification.get_persistent_queryset().all():
                 # If there are any other notification simmilar to this on default db, skip it
                 # Simmilar means that group, identificator and message are already been logged less than DO_NOT_REPEAT seconds ago
                 # from last time
@@ -91,7 +91,7 @@ class MessageProcessorThread(BaseThread):
                     stamp__gt=not_before,
                 ).exists():
                     # Remove it from the persistent db
-                    n.deletePersistent()
+                    n.delete_persistent()
                     continue
                 # Try to insert into Main DB
                 notify = (
@@ -105,14 +105,14 @@ class MessageProcessorThread(BaseThread):
                     n.save(using='default')
                     # Delete from Persistent DB, first restore PK
                     n.pk = pk
-                    n.deletePersistent()
+                    n.delete_persistent()
                     logger.debug('Saved notification %s to main DB', n)
                 except Exception:
                     # try notificators, but keep on db with error
                     # Restore pk, and save locally so we can try again
                     n.pk = pk
                     try:
-                        Notification.savePersistent(n)
+                        Notification.save_persistent(n)
                     except Exception:
                         logger.error('Error saving notification %s to persistent DB', n)
                         continue

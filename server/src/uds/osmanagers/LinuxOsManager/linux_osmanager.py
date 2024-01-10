@@ -97,7 +97,7 @@ class LinuxOsManager(osmanagers.OSManager):
         default=True,
     )
 
-    def __setProcessUnusedMachines(self) -> None:
+    def _set_process_unused_machines(self) -> None:
         self.processUnusedMachines = self._onLogout == 'remove'
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
@@ -111,7 +111,7 @@ class LinuxOsManager(osmanagers.OSManager):
             self._idle = -1
             self._deadLine = True
 
-        self.__setProcessUnusedMachines()
+        self._set_process_unused_machines()
 
     def release(self, userService: 'UserService') -> None:
         pass
@@ -119,7 +119,7 @@ class LinuxOsManager(osmanagers.OSManager):
     def ignore_deadline(self) -> bool:
         return not self._deadLine
 
-    def is_removableOnLogout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userService: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''
@@ -131,11 +131,11 @@ class LinuxOsManager(osmanagers.OSManager):
 
         return False
 
-    def getName(self, service: 'UserService') -> str:
+    def get_name(self, service: 'UserService') -> str:
         """
         gets name from deployed
         """
-        return service.getName()
+        return service.get_name()
 
     def do_log(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
         # Stores a log associated with this service
@@ -153,14 +153,14 @@ class LinuxOsManager(osmanagers.OSManager):
     def actor_data(
         self, userService: 'UserService'
     ) -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.getName()}  # No custom data
+        return {'action': 'rename', 'name': userService.get_name()}  # No custom data
 
     def process_unused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removableOnLogout(userService):
+        if self.is_removable_on_logout(userService):
             log.log(
                 userService,
                 log.LogLevel.INFO,
@@ -210,9 +210,9 @@ class LinuxOsManager(osmanagers.OSManager):
                 gui.toBool(values[3]),
             )
 
-        self.__setProcessUnusedMachines()
+        self._set_process_unused_machines()
 
-    def valuesDict(self) -> gui.ValuesDictType:
+    def dict_of_values(self) -> gui.ValuesDictType:
         return {
             'onLogout': self._onLogout,
             'idle': str(self._idle),

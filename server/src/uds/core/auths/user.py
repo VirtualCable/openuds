@@ -97,7 +97,7 @@ class User:
             else:
                 # From db
                 usr = DBUser.objects.get(pk=self._db_user.id)  # @UndefinedVariable
-                self._groups = [Group(g) for g in usr.getGroups()]
+                self._groups = [Group(g) for g in usr.get_groups()]
         return self._groups
 
     def manager(self) -> 'AuthenticatorInstance':

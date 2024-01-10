@@ -192,7 +192,7 @@ class ServiceOne(services.Service):
         """
         return self.passw.value
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         return self.baseName.value
 
 
@@ -236,7 +236,7 @@ class ServiceTwo(services.Service):
 
         # No checks here
 
-    def getNames(self) -> str:
+    def get_names(self) -> str:
         """
         For using at deployed services, really nothing
         """

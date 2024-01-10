@@ -319,7 +319,7 @@ class HTML5RDPTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        username = user.getUsernameForAuth()
+        username = user.get_username_for_auth()
 
         # Maybe this is called from another provider, as for example WYSE, that need all connections BEFORE
         if isinstance(userService, models.UserService):

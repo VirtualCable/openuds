@@ -114,7 +114,7 @@ class LinuxRandomPassManager(LinuxOsManager):
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
-            'name': userService.getName(),
+            'name': userService.get_name(),
 
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
@@ -144,7 +144,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             self._userAccount = values[1].decode()
             LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
-    def valuesDict(self) -> gui.ValuesDictType:
-        dic = LinuxOsManager.valuesDict(self)
+    def dict_of_values(self) -> gui.ValuesDictType:
+        dic = LinuxOsManager.dict_of_values(self)
         dic['userAccount'] = self._userAccount
         return dic

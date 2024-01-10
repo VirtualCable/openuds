@@ -108,7 +108,7 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
 def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
     try:
         icon = Image.objects.get(uuid=process_uuid(idImage))
-        return icon.imageResponse()
+        return icon.image_as_response()
     except Image.DoesNotExist:
         pass  # Tries to get image from transport
 

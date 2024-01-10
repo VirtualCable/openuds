@@ -413,7 +413,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.parent().getMacRange()
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         """
         Returns the base name
         """

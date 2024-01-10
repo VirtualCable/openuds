@@ -104,7 +104,7 @@ class Permissions(Handler):
                     'entity_id': entity.uuid,  # type: ignore
                     'entity_name': entity.name,  # type: ignore
                     'perm': perm.permission,
-                    'perm_name': perm.permission_as_string,
+                    'perm_name': perm.as_str,
                 }
             )
 

@@ -131,8 +131,8 @@ def getRootUser() -> models.User:
     )
     user.manager = models.Authenticator()  # type: ignore
     # Fake overwrite some methods, a bit cheating? maybe? :)
-    user.getGroups = lambda: []  # type: ignore
-    user.updateLastAccess = lambda: None  # type: ignore
+    user.get_groups = lambda: []  # type: ignore
+    user.update_last_access = lambda: None  # type: ignore
     # Override logout method to do nothing for this user
     user.logout = lambda request: types.auth.SUCCESS_AUTH  # type: ignore
     return user
@@ -175,7 +175,7 @@ def web_login_required(
                 return HttpResponseRedirect(reverse('page.login'))
 
             if admin in (True, 'admin'):
-                if request.user.isStaff() is False or (
+                if request.user.is_staff() is False or (
                     admin == 'admin' and not request.user.is_admin
                 ):
                     return HttpResponseForbidden(_('Forbidden'))
@@ -424,7 +424,7 @@ def web_login(
     # If for any reason the "uds" cookie is removed, recreated it
     cookie = getUDSCookie(request, response)
 
-    user.updateLastAccess()
+    user.update_last_access()
     request.authorized = (
         False  # For now, we don't know if the user is authorized until MFA is checked
     )

@@ -258,6 +258,6 @@ class Authenticators(ModelHandler):
         for user in item.users.all():
             for userService in user.userServices.all():
                 userService.user = None  # type: ignore
-                userService.removeOrCancel()
+                userService.remove_or_cancel()
 
         item.delete()

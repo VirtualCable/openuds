@@ -72,7 +72,7 @@ class StateUpdater:
         if newState:
             self.user_service.set_state(newState)
 
-        self.user_service.updateData(self.user_service_instance)
+        self.user_service.update_data(self.user_service_instance)
 
     def log_ip(self):
         ip = self.user_service_instance.get_ip()

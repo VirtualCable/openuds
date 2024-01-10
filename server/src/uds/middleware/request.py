@@ -160,7 +160,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
             now
             + datetime.timedelta(
                 seconds=GlobalConfig.SESSION_DURATION_ADMIN.getInt()
-                if request.user.isStaff()
+                if request.user.is_staff()
                 else GlobalConfig.SESSION_DURATION_USER.getInt()
             )
         ).isoformat()  # store as ISO format, str, json serilizable

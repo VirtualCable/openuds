@@ -102,7 +102,7 @@ class TestProvider(services.ServiceProvider):
     ) -> list[typing.Any]:
         return [True, _('Nothing tested, but all went fine..')]
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """
         returns a random name for testing pourposes
         """

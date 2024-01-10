@@ -186,7 +186,7 @@ class LinuxOsADManager(LinuxOsManager):
     def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
-            'name': userService.getName(),
+            'name': userService.get_name(),
             'custom': {
                 'domain': self._domain,
                 'username': self._account,
@@ -238,8 +238,8 @@ class LinuxOsADManager(LinuxOsManager):
             self._automaticIdMapping = values[10]
         super().unmarshal(codecs.decode(values[11].encode(), 'hex'))
 
-    def valuesDict(self) -> gui.ValuesDictType:
-        dct = super().valuesDict()
+    def dict_of_values(self) -> gui.ValuesDictType:
+        dct = super().dict_of_values()
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password

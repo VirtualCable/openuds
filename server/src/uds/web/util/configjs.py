@@ -70,7 +70,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     if user:
         role = (
             'staff'
-            if user.isStaff() and not user.is_admin
+            if user.is_staff() and not user.is_admin
             else 'admin'
             if user.is_admin
             else 'user'
@@ -214,9 +214,9 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
     }
 
     info: typing.Optional[collections.abc.MutableMapping] = None
-    if user and user.isStaff():
+    if user and user.is_staff():
         info = {
-            'networks': [n.name for n in Network.networksFor(request.ip)],
+            'networks': [n.name for n in Network.get_networks_for_ip(request.ip)],
             'transports': [
                 t.name for t in Transport.objects.all() if t.is_ip_allowed(request.ip)
             ],
@@ -289,7 +289,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
 
     actors: list[dict[str, str]] = []
 
-    if user and user.isStaff():  # Add staff things
+    if user and user.is_staff():  # Add staff things
         # If is admin (informational, REST api checks users privileges anyway...)
         profile['admin'] = True
         # REST auth

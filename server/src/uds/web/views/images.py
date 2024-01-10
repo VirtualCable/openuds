@@ -50,6 +50,6 @@ if typing.TYPE_CHECKING:
 def image(request: 'HttpRequest', idImage: str) -> 'HttpResponse':
     try:
         icon = Image.objects.get(uuid=process_uuid(idImage))
-        return icon.imageResponse()
+        return icon.image_as_response()
     except Image.DoesNotExist:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

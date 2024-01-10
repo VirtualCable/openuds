@@ -152,7 +152,7 @@ class TaskStatus(typing.NamedTuple):
     def fromJson(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'TaskStatus':
         return convertFromDict(TaskStatus, dictionary['data'])
 
-    def isRunning(self) -> bool:
+    def is_running(self) -> bool:
         return self.status == 'running'
 
     def is_finished(self) -> bool:

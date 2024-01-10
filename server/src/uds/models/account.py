@@ -59,7 +59,7 @@ class Account(UUIDModel, TaggingMixin):
     # objects: 'models.manager.Manager["Account"]'
     usages: 'models.manager.RelatedManager[AccountUsage]'
 
-    def startUsageAccounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
+    def start_accounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
         if hasattr(userService, 'accounting'):  # Already has an account
             return None
 
@@ -82,7 +82,7 @@ class Account(UUIDModel, TaggingMixin):
             end=start,
         )
 
-    def stopUsageAccounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
+    def stop_accounting(self, userService: 'UserService') -> typing.Optional['AccountUsage']:
         # if one to one does not exists, attr is not there
         if not hasattr(userService, 'accounting'):
             return None

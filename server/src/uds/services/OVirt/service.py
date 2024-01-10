@@ -442,7 +442,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.parent().getMacRange()
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         """
         Returns the base name
         """

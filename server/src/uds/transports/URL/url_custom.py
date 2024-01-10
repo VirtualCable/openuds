@@ -112,7 +112,7 @@ class URLCustomTransport(transports.Transport):
     ) -> str:
 
         # Fix username/password acording to os manager
-        username: str = user.getUsernameForAuth()
+        username: str = user.get_username_for_auth()
         username, password = userService.process_user_password(username, password)
 
         url = self.urlPattern.value.replace('_IP_', ip).replace('_USER_', username)

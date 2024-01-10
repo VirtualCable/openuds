@@ -70,17 +70,17 @@ class Notification(models.Model):
         app_label = 'uds'
 
     @staticmethod
-    def getPersistentQuerySet() -> 'models.QuerySet[Notification]':
+    def get_persistent_queryset() -> 'models.QuerySet[Notification]':
         return Notification.objects.using('persistent')
 
-    def savePersistent(self) -> None:
+    def save_persistent(self) -> None:
         self.save(using='persistent')
 
-    def deletePersistent(self) -> None:
+    def delete_persistent(self) -> None:
         self.delete(using='persistent')
 
     @staticmethod
-    def atomicPersistent() -> 'transaction.Atomic':
+    def atomic_persistent() -> 'transaction.Atomic':
         return transaction.atomic(using='persistent')
 
 

@@ -122,7 +122,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self.__setProcessUnusedMachines()
 
-    def is_removableOnLogout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userService: 'UserService') -> bool:
         """
         Says if a machine is removable on logout
         """
@@ -140,8 +140,8 @@ class WindowsOsManager(osmanagers.OSManager):
     def ignore_deadline(self) -> bool:
         return not self._deadLine
 
-    def getName(self, userService: 'UserService') -> str:
-        return userService.getName()
+    def get_name(self, userService: 'UserService') -> str:
+        return userService.get_name()
 
     def do_log(self, userService: 'UserService', data: str, origin=log.LogSource.OSMANAGER):
         # Stores a log associated with this service
@@ -163,7 +163,7 @@ class WindowsOsManager(osmanagers.OSManager):
     def actor_data(
         self, userService: 'UserService'
     ) -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.getName()}  # No custom data
+        return {'action': 'rename', 'name': userService.get_name()}  # No custom data
 
     def process_user_password(
         self, userService: 'UserService', username: str, password: str
@@ -191,7 +191,7 @@ class WindowsOsManager(osmanagers.OSManager):
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removableOnLogout(userService):
+        if self.is_removable_on_logout(userService):
             log.log(
                 userService,
                 log.LogLevel.INFO,
@@ -249,7 +249,7 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self.__setProcessUnusedMachines()
 
-    def valuesDict(self) -> gui.ValuesDictType:
+    def dict_of_values(self) -> gui.ValuesDictType:
         return {
             'onLogout': self._onLogout,
             'idle': str(self._idle),

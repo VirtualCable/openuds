@@ -134,7 +134,7 @@ class DeployedServiceRemover(Job):
         if servicePool.userServices.all().count() == 0:
             try:
                 logger.debug('All services removed, checking active publication')
-                if servicePool.activePublication() is not None:
+                if servicePool.active_publication() is not None:
                     logger.debug('Active publication found, unpublishing it')
                     servicePool.unpublish()
                 else:

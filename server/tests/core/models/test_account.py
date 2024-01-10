@@ -71,7 +71,7 @@ class ModelAccountTest(UDSTestCase):
     def test_start_single_userservice(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
         for i in range(32):
-            acc.startUsageAccounting(self.user_services[0])
+            acc.start_accounting(self.user_services[0])
 
             # Only one usage is createdm even with different accounters
             self.assertEqual(acc.usages.count(), 1, f'loop {i}')
@@ -80,7 +80,7 @@ class ModelAccountTest(UDSTestCase):
         # no usage is created because already created one for that user service
         for i in range(32):
             acc = models.Account.objects.create(name='Test Account')
-            acc.startUsageAccounting(self.user_services[0])
+            acc.start_accounting(self.user_services[0])
 
             self.assertEqual(acc.usages.count(), 0, f'loop {i}')
 
@@ -88,7 +88,7 @@ class ModelAccountTest(UDSTestCase):
         acc = models.Account.objects.create(name='Test Account')
         for i in range(32):
             for i in range(NUM_USERSERVICES):
-                acc.startUsageAccounting(self.user_services[i])
+                acc.start_accounting(self.user_services[i])
 
             # Only one usage is createdm even with different accounters
             self.assertEqual(acc.usages.count(), NUM_USERSERVICES, f'loop {i}'.format(i))
@@ -98,22 +98,22 @@ class ModelAccountTest(UDSTestCase):
         for i in range(32):
             acc = models.Account.objects.create(name='Test Account')
             for i in range(NUM_USERSERVICES):
-                acc.startUsageAccounting(self.user_services[i])
+                acc.start_accounting(self.user_services[i])
 
             self.assertEqual(acc.usages.count(), 0, f'loop {i}')
 
     def test_start_multiple(self) -> None:
         for i in range(NUM_USERSERVICES):
             acc = models.Account.objects.create(name='Test Account')
-            acc.startUsageAccounting(self.user_services[i])
+            acc.start_accounting(self.user_services[i])
 
             self.assertEqual(acc.usages.count(), 1)
 
     def test_end_single(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
         for i in range(32):  # will create 32 usages, because we close them all, even with one user service
-            acc.startUsageAccounting(self.user_services[i % NUM_USERSERVICES])
-            acc.stopUsageAccounting(self.user_services[i % NUM_USERSERVICES])
+            acc.start_accounting(self.user_services[i % NUM_USERSERVICES])
+            acc.stop_accounting(self.user_services[i % NUM_USERSERVICES])
 
             self.assertEqual(acc.usages.count(), i + 1)
 
@@ -123,19 +123,19 @@ class ModelAccountTest(UDSTestCase):
         for _ in range(32):
             acc = models.Account.objects.create(name='Test Account')
             for j in range(NUM_USERSERVICES):
-                acc.startUsageAccounting(self.user_services[j])
-                acc.stopUsageAccounting(self.user_services[j])
+                acc.start_accounting(self.user_services[j])
+                acc.stop_accounting(self.user_services[j])
 
             self.assertEqual(acc.usages.count(), NUM_USERSERVICES)  # This acc will only have one usage
 
     def test_account_usage(self) -> None:
         acc = models.Account.objects.create(name='Test Account')
         for i in range(NUM_USERSERVICES):
-            usage = acc.startUsageAccounting(self.user_services[i])
+            usage = acc.start_accounting(self.user_services[i])
             self.assertIsNotNone(usage)
             usage.start = usage.start - datetime.timedelta(seconds=32 + i)  # type: ignore
             usage.save(update_fields=['start'])  # type: ignore
-            usage_end = acc.stopUsageAccounting(self.user_services[i])
+            usage_end = acc.stop_accounting(self.user_services[i])
             self.assertIsNotNone(usage_end)
 
         self.assertEqual(acc.usages.count(), NUM_USERSERVICES)

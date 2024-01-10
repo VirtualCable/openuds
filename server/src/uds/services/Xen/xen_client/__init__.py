@@ -399,9 +399,9 @@ class XenServer:  # pylint: disable=too-many-public-methods
             return self.Async.VM.resume(vmId, False, False)
         return self.VM.resume(vmId, False, False)
 
-    def cloneVM(self, vmId: str, targetName: str, targetSR: typing.Optional[str] = None) -> str:
+    def clone_vm(self, vmId: str, target_name: str, target_sr: typing.Optional[str] = None) -> str:
         """
-        If targetSR is NONE:
+        If target_sr is NONE:
             Clones the specified VM, making a new VM.
             Clone automatically exploits the capabilities of the underlying storage repository
             in which the VM's disk images are stored (e.g. Copy on Write).
@@ -412,19 +412,19 @@ class XenServer:  # pylint: disable=too-many-public-methods
             'full disks' - i.e. not part of a CoW chain.
         This function can only be called when the VM is in the Halted State.
         """
-        logger.debug('Cloning VM %s to %s on sr %s', vmId, targetName, targetSR)
+        logger.debug('Cloning VM %s to %s on sr %s', vmId, target_name, target_sr)
         operations = self.VM.get_allowed_operations(vmId)
         logger.debug('Allowed operations: %s', operations)
 
         try:
-            if targetSR:
+            if target_sr:
                 if 'copy' not in operations:
                     raise XenException('Copy is not supported for this machine (maybe it\'s powered on?)')
-                task = self.Async.VM.copy(vmId, targetName, targetSR)
+                task = self.Async.VM.copy(vmId, target_name, target_sr)
             else:
                 if 'clone' not in operations:
                     raise XenException('Clone is not supported for this machine (maybe it\'s powered on?)')
-                task = self.Async.VM.clone(vmId, targetName)
+                task = self.Async.VM.clone(vmId, target_name)
             return task
         except XenAPI.Failure as e:
             raise XenFailure(e.details)
@@ -536,8 +536,8 @@ class XenServer:  # pylint: disable=too-many-public-methods
     def removeTemplate(self, templateId: str) -> None:
         self.removeVM(templateId)
 
-    def cloneTemplate(self, templateId: str, targetName: str) -> str:
+    def cloneTemplate(self, templateId: str, target_name: str) -> str:
         """
         After cloning template, we must deploy the VM so it's a full usable VM
         """
-        return self.cloneVM(templateId, targetName)
+        return self.clone_vm(templateId, target_name)

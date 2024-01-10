@@ -167,7 +167,7 @@ class Report(UserInterface):
         that contains the form data requested from user.
 
         If you override marshal, unmarshal and inherited UserInterface method
-        valuesDict, you must also take account of values (dict) provided at the
+        dict_of_values, you must also take account of values (dict) provided at the
         __init__ method of your class.
         """
         #

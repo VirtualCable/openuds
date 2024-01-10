@@ -104,7 +104,7 @@ class User(UUIDModel, properties.PropertiesMixin):
     def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'user'
 
-    def getUsernameForAuth(self) -> str:
+    def get_username_for_auth(self) -> str:
         """
         Return the username transformed for authentication.
         This transformation is used for transports only, not for transforming
@@ -129,13 +129,13 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         return self.manager.get_instance()
 
-    def isStaff(self) -> bool:
+    def is_staff(self) -> bool:
         """
         Return true if this user is admin or staff member
         """
         return self.staff_member or self.is_admin
 
-    def updateLastAccess(self) -> None:
+    def update_last_access(self) -> None:
         """
         Updates the last access for this user with the current time of the sql server
         """
@@ -149,7 +149,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         """
         return self.get_manager().logout(request, self.name)
 
-    def getGroups(self) -> typing.Generator['Group', None, None]:
+    def get_groups(self) -> typing.Generator['Group', None, None]:
         """
         returns the groups (and metagroups) this user belongs to
         """
@@ -192,34 +192,13 @@ class User(UUIDModel, properties.PropertiesMixin):
                 # This group matches
                 yield g
 
-    # Get custom data
-    def getCustomData(self, key: str) -> typing.Optional[str]:
-        """
-        Returns the custom data for this user for the provided key.
-
-        Usually custom data will be associated with transports, but can be custom data registered by ANY module.
-
-        Args:
-            key: key of the custom data to get
-
-        Returns:
-
-            The custom data for the key specified as a string (can be empty if key is not found).
-
-            If the key exists, the custom data will always contain something, but may be the values are the default ones.
-
-        """
-        with storage.StorageAccess('manager' + str(self.manager.uuid)) as store:
-            return store[str(self.uuid) + '_' + key]
-
     def __str__(self):
         return f'{self.pretty_name} (id:{self.id})'
 
-    def cleanRelated(self) -> None:
+    def clean_related_data(self) -> None:
         """
         Cleans up all related external data, such as mfa data, etc
         """
-        # If has mfa, remove related data
         # If has mfa, remove related data
         if self.manager.mfa:
             self.manager.mfa.get_instance().reset_data(mfas.MFA.get_user_id(self))
@@ -241,7 +220,7 @@ class User(UUIDModel, properties.PropertiesMixin):
         to_delete.get_manager().remove_user(to_delete.name)
 
         # If has mfa, remove related data
-        to_delete.cleanRelated()
+        to_delete.clean_related_data()
 
         # Remove related stored values
         with storage.StorageAccess('manager' + str(to_delete.manager.uuid)) as store:

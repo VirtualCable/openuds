@@ -101,7 +101,7 @@ class ServiceCacheUpdater(Job):
                 )
                 continue
 
-            if servicePool.activePublication() is None and spServiceInstance.publication_type is not None:
+            if servicePool.active_publication() is None and spServiceInstance.publication_type is not None:
                 logger.debug(
                     'Skipping. %s Needs publication but do not have one',
                     servicePool.name,
@@ -232,12 +232,12 @@ class ServiceCacheUpdater(Job):
                         break
 
             if valid is not None:
-                valid.moveToLevel(services.UserService.L1_CACHE)
+                valid.move_to_level(services.UserService.L1_CACHE)
                 return
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager().create_cache_for(
-                typing.cast(ServicePoolPublication, servicePool.activePublication()),
+                typing.cast(ServicePoolPublication, servicePool.active_publication()),
                 services.UserService.L1_CACHE,
             )
         except MaxServicesReachedError:
@@ -273,7 +273,7 @@ class ServiceCacheUpdater(Job):
         try:
             # This has a velid publication, or it will not be here
             UserServiceManager().create_cache_for(
-                typing.cast(ServicePoolPublication, servicePool.activePublication()),
+                typing.cast(ServicePoolPublication, servicePool.active_publication()),
                 services.UserService.L2_CACHE,
             )
         except MaxServicesReachedError:
@@ -321,11 +321,11 @@ class ServiceCacheUpdater(Job):
                     break
 
             if valid is not None:
-                valid.moveToLevel(services.UserService.L2_CACHE)
+                valid.move_to_level(services.UserService.L2_CACHE)
                 return
 
         cache = cacheItems[0]
-        cache.removeOrCancel()
+        cache.remove_or_cancel()
 
     def reduceL2Cache(
         self,
@@ -343,7 +343,7 @@ class ServiceCacheUpdater(Job):
             )
             # TODO: Look first for non finished cache items and cancel them?
             cache: UserService = cacheItems[0]
-            cache.removeOrCancel()
+            cache.remove_or_cancel()
 
     def run(self) -> None:
         logger.debug('Starting cache checking')

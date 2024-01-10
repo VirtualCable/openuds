@@ -274,7 +274,7 @@ class Users(DetailHandler):
                 try:
                     assignedUserService.user = None  # type: ignore  # Remove assigned user (avoid cascade deletion)
                     assignedUserService.save(update_fields=['user'])
-                    assignedUserService.removeOrCancel()
+                    assignedUserService.remove_or_cancel()
                 except Exception:
                     logger.exception('Removing user service')
                     try:
@@ -294,7 +294,7 @@ class Users(DetailHandler):
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
         res = []
-        groups = list(user.getGroups())
+        groups = list(user.get_groups())
         for i in get_service_pools_for_groups(groups):
             res.append(
                 {
@@ -327,7 +327,7 @@ class Users(DetailHandler):
     def cleanRelated(self, parent: 'Authenticator', item: str) -> dict[str, str]:
         uuid = process_uuid(item)
         user = parent.users.get(uuid=process_uuid(uuid))
-        user.cleanRelated()
+        user.clean_related_data()
         return {'status': 'ok'}
 
 

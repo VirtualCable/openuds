@@ -173,7 +173,7 @@ class Scheduler:
                 job.last_execution = now
                 job.save(update_fields=['state', 'owner_server', 'last_execution'])
 
-            jobInstance = job.get_intance()
+            jobInstance = job.get_instance()
 
             if jobInstance is None:
                 logger.error('Job instance can\'t be resolved for %s, removing it', job)

@@ -166,7 +166,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
 
-    def activePublication(self) -> typing.Optional['ServicePoolPublication']:
+    def active_publication(self) -> typing.Optional['ServicePoolPublication']:
         """
         Returns the current valid publication for this deployed service.
 
@@ -180,7 +180,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         except Exception:
             return None
 
-    def transformsUserOrPasswordForService(self) -> bool:
+    def transforms_user_or_password_for_service(self) -> bool:
         if self.osmanager:
             return self.osmanager.get_type().transforms_user_or_password_for_service()
         return False
@@ -282,7 +282,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         )
 
     def when_will_be_replaced(self, forUser: 'User') -> typing.Optional[datetime]:
-        activePub: typing.Optional['ServicePoolPublication'] = self.activePublication()
+        activePub: typing.Optional['ServicePoolPublication'] = self.active_publication()
         # If no publication or current revision, it's not going to be replaced
         if activePub is None:
             return None
@@ -472,7 +472,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         raises an IvalidServiceException if check fails
         """
         if (
-            self.activePublication() is None
+            self.active_publication() is None
             and self.service
             and self.service.get_type().publication_type is not None
         ):
@@ -502,7 +502,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         logger.debug('User: %s', user.id)
         logger.debug('ServicePool: %s', self.id)
-        self.validate_groups(user.getGroups())
+        self.validate_groups(user.get_groups())
         self.validate_publication()
 
     @staticmethod
@@ -599,7 +599,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
 
         It checks that there is an active publication, and then redirects the request to the publication itself
         """
-        pub = self.activePublication()
+        pub = self.active_publication()
         if pub:
             pub.unpublish()
 

@@ -1356,7 +1356,7 @@ class UserInterface(metaclass=UserInterfaceType):
                of this posibility in a near version...
         """
 
-    def valuesDict(self) -> gui.ValuesDictType:
+    def dict_of_values(self) -> gui.ValuesDictType:
         """
         Returns own data needed for user interaction as a dict of key-names ->
         values. The values returned must be strings.
@@ -1370,7 +1370,7 @@ class UserInterface(metaclass=UserInterfaceType):
                return { 'host' : self.host, 'port' : self.port }
 
             (Just the reverse of :py:meth:`.__init__`, __init__ receives this
-            dict, valuesDict must return the dict)
+            dict, dict_of_values must return the dict)
 
         Names must coincide with fields declared.
 

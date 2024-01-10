@@ -42,6 +42,7 @@ from uds.core.environment import Environment
 from uds.core.util import log, unique, properties
 from uds.core.util.model import sql_datetime
 from uds.core.util.state import State
+from uds.models import service_pool
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
 from uds.models.user import User
@@ -124,6 +125,11 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             models.Index(fields=['deployed_service', 'cache_level', 'state']),
         ]
 
+    # Helper to allow new names
+    @property
+    def service_pool(self) -> 'ServicePool':
+        return self.deployed_service
+
     # For properties
     def get_owner_id_and_type(self) -> tuple[str, str]:
         return self.uuid, 'userservice'
@@ -140,7 +146,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Returns True if this service is to be removed
         """
-        return self.properties.get('destroy_after', False) in ('y', True)
+        return self.properties.get('destroy_after', False) in ('y', True)  # Compare to str to keep compatibility with old values
 
     @destroy_after.setter
     def destroy_after(self, value: bool) -> None:
@@ -207,7 +213,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         publicationInstance = None
         try:  # We may have deleted publication...
             if self.publication is not None:
-                publicationInstance = self.publication.get_intance()
+                publicationInstance = self.publication.get_instance()
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None  # type: ignore
@@ -238,7 +244,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 )
         return us
 
-    def updateData(self, userServiceInstance: 'services.UserService'):
+    def update_data(self, userServiceInstance: 'services.UserService'):
         """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 
@@ -250,14 +256,14 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         self.data = userServiceInstance.serialize()
         self.save(update_fields=['data'])
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         """
         Returns the name of the user deployed service
         """
         if self.friendly_name == '':
             si = self.get_instance()
             self.friendly_name = si.get_name()
-            self.updateData(si)
+            self.update_data(si)
 
         return self.friendly_name
 
@@ -268,7 +274,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if self.unique_id == '':
             si = self.get_instance()
             self.unique_id = si.get_unique_id()
-            self.updateData(si)
+            self.update_data(si)
         return self.unique_id
 
     def storeValue(self, name: str, value: str) -> None:
@@ -356,7 +362,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         If the os manager changes the username or the password, this will return True
         """
-        return self.deployed_service.transformsUserOrPasswordForService()
+        return self.deployed_service.transforms_user_or_password_for_service()
 
     def process_user_password(self, username: str, password: str) -> tuple[str, str]:
         """
@@ -446,15 +452,15 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         # Start/stop accounting
         if inUse:
-            self.startUsageAccounting()
+            self.start_accounting()
         else:
-            self.stopUsageAccounting()
+            self.stop_accounting()
 
         if not inUse:  # Service released, check y we should mark it for removal
             # If our publication is not current, mark this for removal
             UserServiceManager().check_for_removal(self)
 
-    def startUsageAccounting(self) -> None:
+    def start_accounting(self) -> None:
         # 1.- If do not have any account associated, do nothing
         # 2.- If called but already accounting, do nothing
         # 3.- If called and not accounting, start accounting
@@ -462,18 +468,18 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         if self.deployed_service.account is None or hasattr(self, 'accounting'):
             return
 
-        self.deployed_service.account.startUsageAccounting(self)
+        self.deployed_service.account.start_accounting(self)
 
-    def stopUsageAccounting(self) -> None:
+    def stop_accounting(self) -> None:
         # 1.- If do not have any accounter associated, do nothing
         # 2.- If called but not accounting, do nothing
         # 3.- If called and accounting, stop accounting
         if self.deployed_service.account is None or hasattr(self, 'accounting') is False:
             return
 
-        self.deployed_service.account.stopUsageAccounting(self)
+        self.deployed_service.account.stop_accounting(self)
 
-    def initSession(self) -> str:
+    def start_session(self) -> str:
         """
         Starts a new session for this user deployed service.
         Returns the session id
@@ -481,15 +487,15 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         session = self.sessions.create()
         return session.session_id
 
-    def closeSession(self, sessionId: str) -> None:
-        if sessionId == '':
+    def end_session(self, session_id: str) -> None:
+        if session_id == '':
             # Close all sessions
             for session in self.sessions.all():
                 session.close()
         else:
             # Close a specific session
             try:
-                session = self.sessions.get(session_id=sessionId)
+                session = self.sessions.get(session_id=session_id)
                 session.close()
             except Exception:  # Does not exists, log it and ignore it
                 logger.warning('Session %s does not exists for user deployed service', self.id)
@@ -506,7 +512,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         return State.is_preparing(self.state)
 
-    def isReady(self) -> bool:
+    def is_ready(self) -> bool:
         """
         Returns if this service is ready (not preparing or marked for removal)
         """
@@ -516,7 +522,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # Call to isReady of the instance
         return UserServiceManager().is_ready(self)
 
-    def isInMaintenance(self) -> bool:
+    def is_in_maintenance(self) -> bool:
         return self.deployed_service.is_in_maintenance()
 
     def remove(self) -> None:
@@ -540,7 +546,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         UserServiceManager().cancel(self)
 
-    def removeOrCancel(self) -> None:
+    def remove_or_cancel(self) -> None:
         """
         Marks for removal or cancels it, depending on state
         """
@@ -549,13 +555,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         else:
             self.cancel()
 
-    def releaseOrCancel(self) -> None:
+    def release_or_cancel(self) -> None:
         """
         A much more convenient method name that "removeOrCancel" (i think :) )
         """
-        self.removeOrCancel()
+        self.remove_or_cancel()
 
-    def moveToLevel(self, cacheLevel: int) -> None:
+    def move_to_level(self, cacheLevel: int) -> None:
         """
         Moves cache items betwen levels, managed directly
 
@@ -567,7 +573,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         UserServiceManager().move_to_level(self, cacheLevel)
 
-    def setCommsUrl(self, commsUrl: typing.Optional[str] = None) -> None:
+    def set_comms_endpoint(self, commsUrl: typing.Optional[str] = None) -> None:
         self.properties['comms_url'] = commsUrl
 
     def get_comms_endpoint(
@@ -602,7 +608,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         return (
             self.deployed_service.service and self.deployed_service.service.get_type().publication_type is None
-        ) or self.publication == self.deployed_service.activePublication()
+        ) or self.publication == self.deployed_service.active_publication()
 
     # Utility for logging
     def log(self, message: str, level: log.LogLevel = log.LogLevel.INFO) -> None:
@@ -634,7 +640,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # Ensure all sessions are closed (invoke with '' to close all sessions)
         # In fact, sessions are going to be deleted also, but we give then
         # the oportunity to execute some code before deleting them
-        to_delete.closeSession('')
+        to_delete.end_session('')
 
         # Clear related logs to this user service
         log.clear_logs(to_delete)

@@ -91,7 +91,7 @@ class TestOSManager(osmanagers.OSManager):
     def release(self, userService: 'UserService') -> None:
         logger.debug('User service %s released', userService)
 
-    def is_removableOnLogout(self, userService: 'UserService') -> bool:
+    def is_removable_on_logout(self, userService: 'UserService') -> bool:
         '''
         Says if a machine is removable on logout
         '''
@@ -103,11 +103,11 @@ class TestOSManager(osmanagers.OSManager):
 
         return False
 
-    def getName(self, userService: 'UserService') -> str:
+    def get_name(self, userService: 'UserService') -> str:
         """
         gets name from deployed
         """
-        return userService.getName()
+        return userService.get_name()
 
     def do_log(self, service: 'UserService', data, origin=log.LogSource.OSMANAGER) -> None:
         # Stores a log associated with this service
@@ -125,14 +125,14 @@ class TestOSManager(osmanagers.OSManager):
     def actor_data(
         self, userService: 'UserService'
     ) -> collections.abc.MutableMapping[str, typing.Any]:
-        return {'action': 'rename', 'name': userService.getName()}
+        return {'action': 'rename', 'name': userService.get_name()}
 
     def process_unused(self, userService: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removableOnLogout(userService):
+        if self.is_removable_on_logout(userService):
             log.log(
                 userService,
                 log.LogLevel.INFO,

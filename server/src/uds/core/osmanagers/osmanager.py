@@ -163,7 +163,7 @@ class OSManager(Module):
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
 
-    def is_removableOnLogout(self, userService: 'UserService') -> bool:  # pylint: disable=unused-argument
+    def is_removable_on_logout(self, userService: 'UserService') -> bool:  # pylint: disable=unused-argument
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden
@@ -239,7 +239,7 @@ class OSManager(Module):
         userService.properties['last_username'] = userName or 'unknown'  # Store it for convenience
         userServiceInstance = userService.get_instance()
         userServiceInstance.user_logged_in(userName or 'unknown')
-        userService.updateData(userServiceInstance)
+        userService.update_data(userServiceInstance)
 
         serviceIp = userServiceInstance.get_ip()
 
@@ -303,7 +303,7 @@ class OSManager(Module):
         userService.setInUse(False)
         userServiceInstance = userService.get_instance()
         userServiceInstance.user_logged_out(userName or 'unknown')
-        userService.updateData(userServiceInstance)
+        userService.update_data(userServiceInstance)
 
         serviceIp = userServiceInstance.get_ip()
 

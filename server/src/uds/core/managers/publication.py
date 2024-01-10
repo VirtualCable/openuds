@@ -78,7 +78,7 @@ class PublicationOldMachinesCleaner(DelayedTask):
             now = sql_datetime()
             activePub: typing.Optional[
                 ServicePoolPublication
-            ] = servicePoolPub.deployed_service.activePublication()
+            ] = servicePoolPub.deployed_service.active_publication()
             servicePoolPub.deployed_service.userServices.filter(in_use=True).update(
                 in_use=False, state_date=now
             )
@@ -115,7 +115,7 @@ class PublicationLauncher(DelayedTask):
                     return
                 servicePoolPub.state = State.PREPARING
                 servicePoolPub.save()
-            pi = servicePoolPub.get_intance()
+            pi = servicePoolPub.get_instance()
             state = pi.publish()
             servicePool: ServicePool = servicePoolPub.deployed_service
             servicePool.current_pub_revision += 1
@@ -246,7 +246,7 @@ class PublicationFinishChecker(DelayedTask):
             if publication.state != self._state:
                 logger.debug('Task overrided by another task (state of item changed)')
             else:
-                publicationInstance = publication.get_intance()
+                publicationInstance = publication.get_instance()
                 logger.debug(
                     "publication instance class: %s", publicationInstance.__class__
                 )
@@ -360,7 +360,7 @@ class PublicationManager(metaclass=singleton.Singleton):
             return publication
 
         try:
-            pubInstance = publication.get_intance()
+            pubInstance = publication.get_instance()
             state = pubInstance.cancel()
             publication.set_state(State.CANCELING)
             PublicationFinishChecker.state_updater(
@@ -387,7 +387,7 @@ class PublicationManager(metaclass=singleton.Singleton):
                 _('Can\'t unpublish publications with services in process')
             )
         try:
-            pubInstance = servicePoolPub.get_intance()
+            pubInstance = servicePoolPub.get_instance()
             state = pubInstance.destroy()
             servicePoolPub.set_state(State.REMOVING)
             PublicationFinishChecker.state_updater(

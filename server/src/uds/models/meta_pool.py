@@ -126,7 +126,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 return False
         return True
 
-    def isInMaintenance(self) -> bool:
+    def is_in_maintenance(self) -> bool:
         """If a Metapool is in maintenance (that is, all its pools are in maintenance)
 
         Returns:

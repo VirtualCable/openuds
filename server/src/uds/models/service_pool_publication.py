@@ -115,7 +115,7 @@ class ServicePoolPublication(UUIDModel):
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
 
-    def get_intance(self) -> 'services.Publication':
+    def get_instance(self) -> 'services.Publication':
         """
         Instantiates the object this record contains.
 

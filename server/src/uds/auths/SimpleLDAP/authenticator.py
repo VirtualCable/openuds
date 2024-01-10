@@ -241,7 +241,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             self._verifySsl = gui.toBool(values['verifySsl'])
             self._certificate = values['certificate']
 
-    def valuesDict(self) -> gui.ValuesDictType:
+    def dict_of_values(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
             'port': self._port,

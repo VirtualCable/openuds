@@ -89,7 +89,7 @@ class Scheduler(models.Model):
         """
         return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
 
-    def get_intance(self) -> typing.Optional[jobs.Job]:
+    def get_instance(self) -> typing.Optional[jobs.Job]:
         """
         Returns an instance of the class that this record of the Scheduler represents. This clas is derived
         of uds.core.jobs.Job.Job

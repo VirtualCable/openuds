@@ -200,7 +200,7 @@ class BaseSpiceTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        username = user.getUsernameForAuth()
+        username = user.get_username_for_auth()
 
         if self.fixedName.value:
             username = self.fixedName.value

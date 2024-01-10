@@ -120,7 +120,7 @@ def getServicesData(
 
     """
     # We look for services for this authenticator groups. User is logged in in just 1 authenticator, so his groups must coincide with those assigned to ds
-    groups = list(request.user.getGroups())
+    groups = list(request.user.get_groups())
     availServicePools = list(
         ServicePool.get_pools_for_groups(groups, request.user)
     )  # Pass in user to get "number_assigned" to optimize
@@ -136,8 +136,8 @@ def getServicesData(
     osType: 'types.os.KnownOS' = request.os.os
     logger.debug('OS: %s', osType)
 
-    if request.user.isStaff():
-        nets = ','.join([n.name for n in Network.networksFor(request.ip)])
+    if request.user.is_staff():
+        nets = ','.join([n.name for n in Network.get_networks_for_ip(request.ip)])
         tt = []
         t: Transport
         for t in Transport.objects.all().prefetch_related('networks'):
@@ -250,7 +250,7 @@ def getServicesData(
             )
         else:
             for member in meta.members.all():
-                # if pool.isInMaintenance():
+                # if pool.is_in_maintenance():
                 #    continue
                 for t in member.pool.transports.all():
                     typeTrans = t.get_type()
@@ -298,7 +298,7 @@ def getServicesData(
                     show_transports=len(metaTransports) > 1,
                     allow_users_remove=meta.allow_users_remove,
                     allow_users_reset=meta.allow_users_remove,
-                    maintenance=meta.isInMaintenance(),
+                    maintenance=meta.is_in_maintenance(),
                     not_accesible=not meta.isAccessAllowed(now),
                     in_use=in_use,
                     to_be_replaced=None,

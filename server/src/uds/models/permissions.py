@@ -90,27 +90,22 @@ class Permissions(UUIDModel):
     # objects: 'models.manager.Manager[Permissions]'
 
     @staticmethod
-    def addPermission(**kwargs) -> 'Permissions':
+    def add_permission(
+        *,
+        user: typing.Optional['User'] = None,
+        group: typing.Optional['Group'] = None,
+        object_type: 'objtype.ObjectType',
+        object_id: typing.Optional[int] = None,
+        permission: PermissionType = PermissionType.NONE,
+    ) -> 'Permissions':
         """
         Adds a permission to an object and an user or group
         """
-        user = kwargs.get('user', None)
-        group = kwargs.get('group', None)
-
-        if user is not None and group is not None:
+        if user and group:
             raise Exception('Use only user or group, but not both')
 
         if user is None and group is None:
             raise Exception('Must at least indicate user or group')
-
-        object_type = kwargs.get('object_type', None)
-
-        if object_type is None:
-            raise Exception('At least an object type is required')
-
-        object_id = kwargs.get('object_id', None)
-
-        permission = kwargs.get('permission', PermissionType.NONE)
 
         if user is not None:
             q = Q(user=user)
@@ -118,9 +113,7 @@ class Permissions(UUIDModel):
             q = Q(group=group)
 
         try:
-            existing: Permissions = Permissions.objects.filter(
-                q, object_type=object_type, object_id=object_id
-            )[
+            existing: Permissions = Permissions.objects.filter(q, object_type=object_type.type, object_id=object_id)[
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
             existing.permission = permission
@@ -132,13 +125,13 @@ class Permissions(UUIDModel):
                 ends=None,
                 user=user,
                 group=group,
-                object_type=object_type,
+                object_type=object_type.type,
                 object_id=object_id,
                 permission=permission,
             )
 
     @staticmethod
-    def getPermissions(
+    def get_permissions(
         object_type: 'objtype.ObjectType',
         object_id: typing.Optional[int] = None,
         user: typing.Optional['User'] = None,
@@ -174,28 +167,35 @@ class Permissions(UUIDModel):
             return PermissionType.NONE
 
     @staticmethod
-    def enumeratePermissions(object_type, object_id) -> 'models.QuerySet[Permissions]':
+    def enumerate_permissions(
+        object_type: 'objtype.ObjectType', object_id: int
+    ) -> 'models.QuerySet[Permissions]':
         """
         Get users permissions over object
         """
-        return Permissions.objects.filter(object_type=object_type, object_id=object_id)
+        return Permissions.objects.filter(object_type=object_type.type, object_id=object_id)
 
     @staticmethod
-    def cleanPermissions(object_type, object_id) -> None:
-        Permissions.objects.filter(
-            object_type=object_type, object_id=object_id
-        ).delete()
+    def clean_permissions(
+        object_type: 'objtype.ObjectType',
+        object_id: int,
+        user: typing.Optional['User'] = None,
+        group: typing.Optional['Group'] = None,
+    ) -> None:
+        if user and group:  # Using both is same as using none
+            user = None
+            group = None
+        if not user and not group:
+            q = Q()
+        elif user:
+            q = Q(user=user)
+        else:
+            q = Q(group=group)
 
-    @staticmethod
-    def cleanUserPermissions(user) -> None:
-        Permissions.objects.filter(user=user).delete()
-
-    @staticmethod
-    def cleanGroupPermissions(group) -> None:
-        Permissions.objects.filter(group=group).delete()
+        Permissions.objects.filter(Q(object_type=object_type.type), Q(object_id=object_id), q).delete()
 
     @property
-    def permission_as_string(self) -> str:
+    def as_str(self) -> str:
         return PermissionType(self.permission).as_str()
 
     def __str__(self) -> str:

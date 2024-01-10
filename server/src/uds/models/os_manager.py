@@ -64,9 +64,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         ordering = ('name',)
         app_label = 'uds'
 
-    def get_instance(
-        self, values: typing.Optional[dict[str, str]] = None
-    ) -> 'osmanagers.OSManager':
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> 'osmanagers.OSManager':
         return typing.cast('osmanagers.OSManager', super().get_instance(values=values))
 
     def get_type(self) -> type['osmanagers.OSManager']:
@@ -101,9 +99,6 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         self.delete()
         return True
 
-    def __str__(self) -> str:
-        return f'{self.name} of type {self.data_type} (id:{self.id})'
-
     @staticmethod
     def pre_delete(sender, **kwargs) -> None:  # pylint: disable=unused-argument
         """
@@ -116,9 +111,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         """
         to_delete: 'OSManager' = kwargs['instance']
         if to_delete.deployedServices.count() > 0:
-            raise IntegrityError(
-                'Can\'t remove os managers with assigned deployed services'
-            )
+            raise IntegrityError('Can\'t remove os managers with assigned deployed services')
         # Only tries to get instance if data is not empty
         if to_delete.data != '':
             s = to_delete.get_instance()
@@ -126,6 +119,9 @@ class OSManager(ManagedObjectModel, TaggingMixin):
             s.env.clearRelatedData()
 
         logger.debug('Before delete os manager %s', to_delete)
+
+    def __str__(self) -> str:
+        return f'{self.name} of type {self.data_type} (id:{self.id})'
 
 
 # : Connects a pre deletion signal to OS Manager

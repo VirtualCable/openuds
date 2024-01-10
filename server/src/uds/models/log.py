@@ -73,7 +73,7 @@ class Log(models.Model):
         app_label = 'uds'
 
     @property
-    def level_str(self) -> str:
+    def level_as_str(self) -> str:
         # pylint: disable=import-outside-toplevel
         from uds.core.util.log import LogLevel
 

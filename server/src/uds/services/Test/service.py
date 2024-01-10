@@ -75,11 +75,11 @@ class TestServiceNoCache(services.Service):
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())
 
-    def getName(self) -> str:
-        return self.parent().getName() + '{' + self.type_name + '}'
+    def get_name(self) -> str:
+        return self.parent().get_name() + '{' + self.type_name + '}'
 
-    def getBaseName(self) -> str:
-        return self.parent().getName()
+    def get_base_name(self) -> str:
+        return self.parent().get_name()
 
 class TestServiceCache(services.Service):
     """
@@ -111,8 +111,8 @@ class TestServiceCache(services.Service):
     def parent(self) -> 'TestProvider':
         return typing.cast('TestProvider', super().parent())
 
-    def getName(self) -> str:
-        return self.parent().getName() + '{' + self.type_name + '}'
+    def get_name(self) -> str:
+        return self.parent().get_name() + '{' + self.type_name + '}'
 
-    def getBaseName(self) -> str:
-        return self.parent().getName()
+    def get_base_name(self) -> str:
+        return self.parent().get_name()

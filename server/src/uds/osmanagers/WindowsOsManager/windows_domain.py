@@ -440,7 +440,7 @@ class WinDomainOsManager(WindowsOsManager):
     def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
-            'name': userService.getName(),
+            'name': userService.get_name(),
 
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
@@ -503,8 +503,8 @@ class WinDomainOsManager(WindowsOsManager):
             self._removeOnExit = 'y'
         super().unmarshal(codecs.decode(values[5].encode(), 'hex'))
 
-    def valuesDict(self) -> gui.ValuesDictType:
-        dct = super().valuesDict()
+    def dict_of_values(self) -> gui.ValuesDictType:
+        dct = super().dict_of_values()
         dct['domain'] = self._domain
         dct['ou'] = self._ou
         dct['account'] = self._account

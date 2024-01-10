@@ -300,7 +300,7 @@ class LiveService(services.Service):
         """
         return self.parent().getNetInfo(machineId, networkId=None)
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         """
         Returns the base name
         """

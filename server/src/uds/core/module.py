@@ -89,7 +89,7 @@ class Module(UserInterface, Environmentable, Serializable):
          Anyway, if you override this method, you must also override previous one
 
     * UserInterface Methods:
-       * :py:meth:`from from uds.core.ui.valuesDict`
+       * :py:meth:`from from uds.core.ui.dict_of_values`
          This method, by default, provides the values contained in the form fields. If you don't override the marshal and
          unmarshal, this method should be fine as is for you also.
 
@@ -240,7 +240,7 @@ class Module(UserInterface, Environmentable, Serializable):
         that contains the form data requested from user.
 
         If you override marshal, unmarshal and inherited UserInterface method
-        valuesDict, you must also take account of values (dict) provided at the
+        dict_of_values, you must also take account of values (dict) provided at the
         __init__ method of your class.
         """
         UserInterface.__init__(self, values)

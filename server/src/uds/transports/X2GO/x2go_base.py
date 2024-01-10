@@ -229,7 +229,7 @@ class BaseX2GOTransport(transports.Transport):
         user: 'models.User',
         password: str,
     ) -> types.connections.ConnectionData:
-        username = user.getUsernameForAuth()
+        username = user.get_username_for_auth()
 
         # Get the type of service (VDI, VAPP, ...)
         if isinstance(userService, models.UserService):

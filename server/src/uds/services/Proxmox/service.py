@@ -318,7 +318,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def setVmMac(self, vmId: int, mac: str) -> None:
         self.parent().setVmMac(vmId, mac)
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         return self.baseName.value
 
     def getLenName(self) -> int:

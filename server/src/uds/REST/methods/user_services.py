@@ -511,7 +511,7 @@ class Publications(DetailHandler):
                 'revision': i.revision,
                 'publish_date': i.publish_date,
                 'state': i.state,
-                'reason': State.is_errored(i.state) and i.get_intance().error_reason() or '',
+                'reason': State.is_errored(i.state) and i.get_instance().error_reason() or '',
                 'state_date': i.state_date,
             }
             for i in parent.publications.all()

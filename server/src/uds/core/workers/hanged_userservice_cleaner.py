@@ -121,4 +121,4 @@ class HangedCleaner(Job):
                         log.LogLevel.ERROR,
                         f'Removing user service {us.friendly_name} because it seems to be hanged'
                     )
-                    us.releaseOrCancel()
+                    us.release_or_cancel()

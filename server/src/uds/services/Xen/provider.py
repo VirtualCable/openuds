@@ -312,7 +312,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         return self.__getApi().getNetworks()
 
     def cloneForTemplate(self, name: str, comments: str, machineId: str, sr: str):
-        task = self.__getApi().cloneVM(machineId, name, sr)
+        task = self.__getApi().clone_vm(machineId, name, sr)
         logger.debug('Task for cloneForTemplate: %s', task)
         return task
 

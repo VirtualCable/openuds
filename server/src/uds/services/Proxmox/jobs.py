@@ -87,7 +87,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
     ) -> bool:
         counter = 0
         while (
-            providerInstance.getTaskInfo(upid.node, upid.upid).isRunning()
+            providerInstance.getTaskInfo(upid.node, upid.upid).is_running()
             and counter < maxWait
         ):
             time.sleep(0.3)

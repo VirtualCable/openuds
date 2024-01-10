@@ -139,16 +139,16 @@ class ActorV3Action(Handler):
     path = 'actor/v3'
 
     @staticmethod
-    def actorResult(result: typing.Any = None, **kwargs: typing.Any) -> dict[str, typing.Any]:
+    def actor_result(result: typing.Any = None, **kwargs: typing.Any) -> dict[str, typing.Any]:
         return rest_result(result=result, **kwargs)
 
     @staticmethod
-    def setCommsUrl(userService: UserService, ip: str, port: int, secret: str):
-        userService.setCommsUrl(f'https://{ip}:{port}/actor/{secret}')
+    def set_comms_endpoint(userService: UserService, ip: str, port: int, secret: str):
+        userService.set_comms_endpoint(f'https://{ip}:{port}/actor/{secret}')
 
     @staticmethod
     def actorCertResult(key: str, certificate: str, password: str) -> dict[str, typing.Any]:
-        return ActorV3Action.actorResult(
+        return ActorV3Action.actor_result(
             {
                 'private_key': key,  # To be removed on 5.0
                 'key': key,
@@ -170,7 +170,7 @@ class ActorV3Action(Handler):
             raise BlockAccess() from None
 
     def action(self) -> dict[str, typing.Any]:
-        return ActorV3Action.actorResult(error='Base action invoked')
+        return ActorV3Action.actor_result(error='Base action invoked')
 
     def post(self) -> dict[str, typing.Any]:
         try:
@@ -248,9 +248,9 @@ class Test(ActorV3Action):
             # Increase failed attempts
             incFailedIp(self._request)
             # And return test failed
-            return ActorV3Action.actorResult('invalid token', error='invalid token')
+            return ActorV3Action.actor_result('invalid token', error='invalid token')
 
-        return ActorV3Action.actorResult('ok')
+        return ActorV3Action.actor_result('ok')
 
 
 class Register(ActorV3Action):
@@ -329,7 +329,7 @@ class Register(ActorV3Action):
 
             actorToken = Server.objects.create(**kwargs)
 
-        return ActorV3Action.actorResult(actorToken.token)  # type: ignore  # actorToken is always assigned
+        return ActorV3Action.actor_result(actorToken.token)  # type: ignore  # actorToken is always assigned
 
 
 class Initialize(ActorV3Action):
@@ -387,7 +387,7 @@ class Initialize(ActorV3Action):
             os: typing.Any,
             alias_token: typing.Optional[str],
         ) -> dict[str, typing.Any]:
-            return ActorV3Action.actorResult(
+            return ActorV3Action.actor_result(
                 {
                     'own_token': own_token or alias_token,  # Compat with old actor versions, TBR on 5.0
                     'token': own_token or alias_token,  # New token, will be used from now onwards
@@ -497,10 +497,10 @@ class BaseReadyChange(ActorV3Action):
         userService.log_ip(self._params['ip'])
         userServiceInstance = userService.get_instance()
         userServiceInstance.set_ip(self._params['ip'])
-        userService.updateData(userServiceInstance)
+        userService.update_data(userServiceInstance)
 
         # Store communications url also
-        ActorV3Action.setCommsUrl(
+        ActorV3Action.set_comms_endpoint(
             userService,
             self._params['ip'],
             int(self._params['port']),
@@ -578,7 +578,7 @@ class Version(ActorV3Action):
         userService.actor_version = self._params['version']
         userService.log_ip(self._params['ip'])
 
-        return ActorV3Action.actorResult()
+        return ActorV3Action.actor_result()
 
 
 class Login(ActorV3Action):
@@ -620,7 +620,7 @@ class Login(ActorV3Action):
             logger.debug('Max idle: %s', maxIdle)
 
             src = userService.getConnectionSource()
-            session_id = userService.initSession()  # creates a session for every login requested
+            session_id = userService.start_session()  # creates a session for every login requested
 
             if osManager:  # For os managed services, let's check if we honor deadline
                 if osManager.ignore_deadline():
@@ -637,7 +637,7 @@ class Login(ActorV3Action):
                 raise
             self.notifyService(action=NotifyActionType.LOGIN)
 
-        return ActorV3Action.actorResult(
+        return ActorV3Action.actor_result(
             {
                 'ip': src.ip,
                 'hostname': src.hostname,
@@ -664,12 +664,12 @@ class Logout(ActorV3Action):
 
         # Close session
         # For compat, we have taken '' as "all sessions"
-        userService.closeSession(session_id)
+        userService.end_session(session_id)
 
         if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
             osmanagers.OSManager.logged_out(userService, username)
             if osManager:
-                if osManager.is_removableOnLogout(userService):
+                if osManager.is_removable_on_logout(userService):
                     logger.debug('Removable on logout: %s', osManager)
                     userService.remove()
             else:
@@ -692,9 +692,9 @@ class Logout(ActorV3Action):
                 raise
             self.notifyService(NotifyActionType.LOGOUT)  # Logout notification
             # Result is that we have not processed the logout in fact, but notified the service
-            return ActorV3Action.actorResult('notified')
+            return ActorV3Action.actor_result('notified')
 
-        return ActorV3Action.actorResult('ok')
+        return ActorV3Action.actor_result('ok')
 
 
 class Log(ActorV3Action):
@@ -719,7 +719,7 @@ class Log(ActorV3Action):
             log.LogSource.ACTOR,
         )
 
-        return ActorV3Action.actorResult('ok')
+        return ActorV3Action.actor_result('ok')
 
 
 class Ticket(ActorV3Action):
@@ -741,9 +741,9 @@ class Ticket(ActorV3Action):
             raise BlockAccess() from None  # If too many blocks...
 
         try:
-            return ActorV3Action.actorResult(TicketStore.get(self._params['ticket'], invalidate=True))
+            return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
         except TicketStore.DoesNotExist:
-            return ActorV3Action.actorResult(error='Invalid ticket')
+            return ActorV3Action.actor_result(error='Invalid ticket')
 
 
 class Unmanaged(ActorV3Action):
@@ -770,7 +770,7 @@ class Unmanaged(ActorV3Action):
             dbService: Service = Service.objects.get(token=self._params['token'])
             service: 'services.Service' = dbService.get_instance()
         except Exception:
-            return ActorV3Action.actorResult(error='Invalid token')
+            return ActorV3Action.actor_result(error='Invalid token')
 
         # Build the possible ids and ask service if it recognizes any of it
         # If not recognized, will generate anyway the certificate, but will not be saved
@@ -857,7 +857,7 @@ class Notify(ActorV3Action):
             elif action == NotifyActionType.DATA:
                 self.notifyService(action)
 
-            return ActorV3Action.actorResult('ok')
+            return ActorV3Action.actor_result('ok')
         except UserService.DoesNotExist:
             # For blocking attacks
             incFailedIp(self._request)  # pylint: disable=protected-access

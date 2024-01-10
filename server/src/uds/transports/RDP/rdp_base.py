@@ -358,7 +358,7 @@ class BaseRDPTransport(transports.Transport):
         *,
         altUsername: typing.Optional[str]
     ) -> types.connections.ConnectionData:
-        username: str = altUsername or user.getUsernameForAuth()
+        username: str = altUsername or user.get_username_for_auth()
 
         if self.fixedName.value:
             username = self.fixedName.value

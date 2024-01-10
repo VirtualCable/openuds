@@ -96,8 +96,8 @@ class NotificationsManager(metaclass=singleton.Singleton):
         # Store the notification on local persistent storage
         # Will be processed by UDS backend
         try:
-            with Notification.atomicPersistent():
+            with Notification.atomic_persistent():
                 notify = Notification(group=group, identificator=identificator, level=level, message=message)
-                notify.savePersistent()
+                notify.save_persistent()
         except Exception:
             logger.info('Error saving notification %s, %s, %s, %s', group, identificator, level, message)

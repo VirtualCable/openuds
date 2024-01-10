@@ -189,7 +189,7 @@ class IPMachinesService(IPServiceBase):
     def get_token(self):
         return self._token or None
 
-    def valuesDict(self) -> gui.ValuesDictType:
+    def dict_of_values(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
         return {
             'ipList': ensure.is_list(ips),

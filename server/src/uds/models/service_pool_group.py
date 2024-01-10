@@ -45,6 +45,7 @@ from .image import Image
 
 logger = logging.getLogger(__name__)
 
+
 # pylint: disable=no-member
 class ServicePoolGroup(UUIDModel):
     """
@@ -73,9 +74,6 @@ class ServicePoolGroup(UUIDModel):
         db_table = 'uds__pools_groups'
         app_label = 'uds'
 
-    def __str__(self) -> str:
-        return f'Service Pool group {self.name}({self.comments}): {self.image.name if self.image else ""}'
-
     @property
     def as_dict(self) -> collections.abc.MutableMapping[str, typing.Any]:
         return {
@@ -98,3 +96,6 @@ class ServicePoolGroup(UUIDModel):
             [ServicePoolGroup]: Default ServicePoolGroup
         """
         return ServicePoolGroup(uuid='', name=_('General'), comments='', priority=-10000)
+
+    def __str__(self) -> str:
+        return f'Service Pool group {self.name}({self.comments}): {self.image.name if self.image else ""}'

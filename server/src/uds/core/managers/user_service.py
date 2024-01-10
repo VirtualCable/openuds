@@ -204,7 +204,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise ServiceNotReadyError()
 
         if servicePool.service.get_type().publication_type is not None:
-            publication = servicePool.activePublication()
+            publication = servicePool.active_publication()
             if publication:
                 assigned = self._create_assigned_user_service_at_db(publication, user)
                 operationsLogger.info(
@@ -241,7 +241,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             raise Exception('This service type cannot assign asignables')
 
         if servicePool.service.get_type().publication_type is not None:
-            publication = servicePool.activePublication()
+            publication = servicePool.active_publication()
             if publication:
                 assigned = self._create_assigned_user_service_at_db(publication, user)
                 operationsLogger.info(
@@ -579,7 +579,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         logger.debug('State: %s', state)
 
         if state == State.FINISHED:
-            userService.updateData(userServiceInstance)
+            userService.update_data(userServiceInstance)
             return True
 
         userService.set_state(State.PREPARING)
@@ -637,11 +637,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
             remove = False
             with transaction.atomic():
                 userService = UserService.objects.select_for_update().get(id=userService.id)
-                activePublication = userService.deployed_service.activePublication()
+                active_publication = userService.deployed_service.active_publication()
                 if (
                     userService.publication
-                    and activePublication
-                    and userService.publication.id != activePublication.id
+                    and active_publication
+                    and userService.publication.id != active_publication.id
                 ):
                     logger.debug(
                         'Old revision of user service, marking as removable: %s',
@@ -659,7 +659,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             state = userServiceInstance.process_ready_from_os_manager(data)
             logger.debug('State: %s', state)
             if state == State.FINISHED:
-                userService.updateData(userServiceInstance)
+                userService.update_data(userServiceInstance)
                 logger.debug('Service is now ready')
             elif userService.state in (
                 State.USABLE,
@@ -740,7 +740,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Early log of "access try" so we can imagine what is going on
         userService.setConnectionSource(types.connections.ConnectionSource(src_ip, client_hostname or src_ip))
 
-        if userService.isInMaintenance():
+        if userService.is_in_maintenance():
             raise ServiceInMaintenanceMode()
 
         if not userService.deployed_service.is_access_allowed():
@@ -783,7 +783,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         serviceNotReadyCode = 0x0001
         ip = 'unknown'
         # Test if the service is ready
-        if userService.isReady():
+        if userService.is_ready():
             serviceNotReadyCode = 0x0002
             log.log(
                 userService,

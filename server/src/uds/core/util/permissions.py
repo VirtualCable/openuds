@@ -50,13 +50,13 @@ logger = logging.getLogger(__name__)
 
 
 def clean(obj: 'Model') -> None:
-    models.Permissions.cleanPermissions(objtype.ObjectType.from_model(obj).type, obj.pk)
+    models.Permissions.clean_permissions(objtype.ObjectType.from_model(obj), obj.pk)
 
 
 def getPermissions(obj: 'Model') -> list[models.Permissions]:
     return list(
-        models.Permissions.enumeratePermissions(
-            object_type=objtype.ObjectType.from_model(obj).type, object_id=obj.pk
+        models.Permissions.enumerate_permissions(
+            object_type=objtype.ObjectType.from_model(obj), object_id=obj.pk
         )
     )
 
@@ -71,14 +71,14 @@ def effective_permissions(
         # Just check permissions for staff members
         # root means for "object type" not for an object
         if for_type is False:
-            return models.Permissions.getPermissions(
+            return models.Permissions.get_permissions(
                 object_type=objtype.ObjectType.from_model(obj),
                 user=user,
                 object_id=obj.pk,
                 groups=user.groups.all(),
             )
 
-        return models.Permissions.getPermissions(
+        return models.Permissions.get_permissions(
             object_type=objtype.ObjectType.from_model(obj),
             user=user,
             groups=user.groups.all(),
@@ -93,9 +93,9 @@ def add_user_permission(
     permission: PermissionType = PermissionType.READ,
 ):
     # Some permissions added to some object types needs at least READ_PERMISSION on parent
-    models.Permissions.addPermission(
+    models.Permissions.add_permission(
         user=user,
-        object_type=objtype.ObjectType.from_model(obj).type,
+        object_type=objtype.ObjectType.from_model(obj),
         object_id=obj.pk,
         permission=permission,
     )
@@ -106,9 +106,9 @@ def add_group_permission(
     obj: 'Model',
     permission: PermissionType = PermissionType.READ,
 ):
-    models.Permissions.addPermission(
+    models.Permissions.add_permission(
         group=group,
-        object_type=objtype.ObjectType.from_model(obj).type,
+        object_type=objtype.ObjectType.from_model(obj),
         object_id=obj.pk,
         permission=permission,
     )

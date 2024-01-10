@@ -142,7 +142,7 @@ class ProxmoxPublication(services.Publication):
         node, upid = self._task.split(',')
         try:
             task = self.service().getTaskInfo(node, upid)
-            if task.isRunning():
+            if task.is_running():
                 return State.RUNNING
         except Exception as e:
             logger.exception('Proxmox publication')

@@ -162,7 +162,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         return prov.get_service_by_type(self.data_type) or services.Service
 
     @property
-    def maxServicesCountType(self) -> ServicesCountingType:
+    def services_counting_type(self) -> ServicesCountingType:
         return ServicesCountingType.from_int(self.max_services_count_type)
 
     def is_in_maintenance(self) -> bool:
@@ -190,13 +190,13 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
     def old_max_accounting_method(self) -> bool:
         # Compatibility with old accounting method
         # Counts only "creating and running" instances for max limit checking
-        return self.maxServicesCountType == ServicesCountingType.STANDARD
+        return self.services_counting_type == ServicesCountingType.STANDARD
 
     @property
     def new_max_accounting_method(self) -> bool:
         # Compatibility with new accounting method,
         # Counts EVERYTHING for max limit checking
-        return self.maxServicesCountType == ServicesCountingType.CONSERVATIVE
+        return self.services_counting_type == ServicesCountingType.CONSERVATIVE
 
     def __str__(self) -> str:
         return f'{self.name} of type {self.data_type} (id:{self.id})'

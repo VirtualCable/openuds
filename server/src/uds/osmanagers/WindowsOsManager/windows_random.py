@@ -127,7 +127,7 @@ class WinRandomPassManager(WindowsOsManager):
     def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename',
-            'name': userService.getName(),
+            'name': userService.get_name(),
 
             # Repeat data, to keep compat with old versions of Actor
             # Will be removed in a couple of versions
@@ -158,8 +158,8 @@ class WinRandomPassManager(WindowsOsManager):
             self._password = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
-    def valuesDict(self) -> gui.ValuesDictType:
-        dic = super().valuesDict()
+    def dict_of_values(self) -> gui.ValuesDictType:
+        dic = super().dict_of_values()
         dic['userAccount'] = self._userAccount
         dic['password'] = self._password
         return dic

@@ -429,7 +429,7 @@ class LiveService(services.Service):
         # vals = six.next(six.itervalues(net))[0]
         return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
 
-    def getBaseName(self) -> str:
+    def get_base_name(self) -> str:
         """
         Returns the base name
         """

@@ -89,7 +89,7 @@ class Image(UUIDModel):
         app_label = 'uds'
 
     @staticmethod
-    def resizeAndConvert(image: PIL.Image.Image, size: tuple[int, int]) -> tuple[int, int, bytes]:
+    def to_resized_png(image: PIL.Image.Image, size: tuple[int, int]) -> tuple[int, int, bytes]:
         """
         Resizes an image to the given size
         """
@@ -99,7 +99,7 @@ class Image(UUIDModel):
         return (image.width, image.height, output.getvalue())
 
     @staticmethod
-    def prepareForDb(data: bytes) -> tuple[int, int, bytes]:
+    def prepare_for_db(data: bytes) -> tuple[int, int, bytes]:
         try:
             stream = io.BytesIO(data)
             image = PIL.Image.open(stream)
@@ -107,7 +107,7 @@ class Image(UUIDModel):
             image = PIL.Image.new('RGBA', Image.MAX_IMAGE_SIZE)
 
         # Max image size, keeping aspect and using antialias
-        return Image.resizeAndConvert(image, Image.MAX_IMAGE_SIZE)
+        return Image.to_resized_png(image, Image.MAX_IMAGE_SIZE)
 
     @property
     def data64(self) -> str:
@@ -164,7 +164,7 @@ class Image(UUIDModel):
             else:
                 raise ValueError('Invalid image type')
 
-            self.width, self.height, self.data = Image.prepareForDb(data)
+            self.width, self.height, self.data = Image.prepare_for_db(data)
 
             # Setup thumbnail
             with io.BytesIO(data) as input:
@@ -191,10 +191,10 @@ class Image(UUIDModel):
         """
         return len(self.data)
 
-    def imageResponse(self) -> HttpResponse:
+    def image_as_response(self) -> HttpResponse:
         return HttpResponse(self.data, content_type='image/png')
 
-    def thumbnailResponse(self) -> HttpResponse:
+    def thumbnail_as_response(self) -> HttpResponse:
         return HttpResponse(self.thumb, content_type='image/png')
 
     def save(self, *args, **kwargs):

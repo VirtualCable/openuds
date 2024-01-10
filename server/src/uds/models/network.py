@@ -99,7 +99,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         return int(number, 16)
 
     @staticmethod
-    def networksFor(ip: str) -> collections.abc.Iterable['Network']:
+    def get_networks_for_ip(ip: str) -> collections.abc.Iterable['Network']:
         """
         Returns the networks that are valid for specified ip in dotted quad (xxx.xxx.xxx.xxx)
         """
@@ -195,6 +195,7 @@ class Network(UUIDModel, TaggingMixin):  # type: ignore
         ipInt, version = net.ip_to_long(ip)
         return self.net_start <= ipInt <= self.net_end and self.version == version
 
+    # utility method to allow "in" operator
     __contains__ = contains
 
     def save(self, *args, **kwargs) -> None:
