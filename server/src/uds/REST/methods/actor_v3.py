@@ -96,7 +96,7 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
         logger.info(
             'Access to actor from %s is blocked for %s seconds since last fail',
             request.ip,
-            GlobalConfig.LOGIN_BLOCK.getInt(),
+            GlobalConfig.LOGIN_BLOCK.as_int(),
         )
         # Sleep a while to try to minimize brute force attacks somehow
         time.sleep(3)  # 3 seconds should be enough
@@ -105,7 +105,7 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
 
 def incFailedIp(request: 'ExtendedHttpRequest') -> None:
     fails = cache.get(request.ip, 0) + 1
-    cache.put(request.ip, fails, GlobalConfig.LOGIN_BLOCK.getInt())
+    cache.put(request.ip, fails, GlobalConfig.LOGIN_BLOCK.as_int())
 
 
 # Decorator that clears failed counter for the IP if succeeds
@@ -509,7 +509,7 @@ class BaseReadyChange(ActorV3Action):
                 UserServiceManager().notify_ready_from_os_manager(userService, '')
 
         # Generates a certificate and send it to client.
-        privateKey, cert, password = security.selfSignedCert(self._params['ip'])
+        privateKey, cert, password = security.create_self_signed_cert(self._params['ip'])
         # Store certificate with userService
         userService.properties['cert'] = cert
         userService.properties['priv'] = privateKey
@@ -800,7 +800,7 @@ class Unmanaged(ActorV3Action):
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client (actor).
-        privateKey, certificate, password = security.selfSignedCert(ip)
+        privateKey, certificate, password = security.create_self_signed_cert(ip)
 
         if validId:
             # If id is assigned to an user service, notify "logout" to it

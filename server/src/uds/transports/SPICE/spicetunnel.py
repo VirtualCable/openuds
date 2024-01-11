@@ -87,7 +87,7 @@ class TSPICETransport(BaseSpiceTransport):
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
-            validators.validateHostPortPair(values.get('tunnelServer', ''))
+            validators.validate_host_port(values.get('tunnelServer', ''))
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,

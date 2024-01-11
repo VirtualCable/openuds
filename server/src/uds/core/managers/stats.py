@@ -89,7 +89,7 @@ class StatsManager(metaclass=singleton.Singleton):
         model: type[typing.Union['StatsCounters', 'StatsEvents', 'StatsCountersAccum']],
     ) -> None:
         minTime = time.mktime(
-            (sql_datetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.getInt())).timetuple()
+            (sql_datetime() - datetime.timedelta(days=GlobalConfig.STATS_DURATION.as_int())).timetuple()
         )
         model.objects.filter(stamp__lt=minTime).delete()
 

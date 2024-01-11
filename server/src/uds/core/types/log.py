@@ -32,8 +32,8 @@ class LogObjectType(enum.IntEnum):
         from uds.core.util.config import GlobalConfig  # pylint: disable=import-outside-toplevel
 
         if self == LogObjectType.SYSLOG:
-            return GlobalConfig.GENERAL_LOG_MAX_ELEMENTS.getInt()
-        return GlobalConfig.INDIVIDIAL_LOG_MAX_ELEMENTS.getInt()
+            return GlobalConfig.GENERAL_LOG_MAX_ELEMENTS.as_int()
+        return GlobalConfig.INDIVIDIAL_LOG_MAX_ELEMENTS.as_int()
     
     @staticmethod
     def get_type_from_model(model: 'Model') -> 'LogObjectType|None':

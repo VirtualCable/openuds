@@ -318,7 +318,7 @@ class Service(Module):
 
         Returns the environment unique mac addresses generator
         """
-        return typing.cast('UniqueMacGenerator', self.id_generators('mac'))
+        return typing.cast('UniqueMacGenerator', self.id_generator('mac'))
 
     def name_generator(self) -> typing.Optional['UniqueNameGenerator']:
         """
@@ -326,7 +326,7 @@ class Service(Module):
 
         Returns the environment unique name generator
         """
-        return typing.cast('UniqueNameGenerator', self.id_generators('name'))
+        return typing.cast('UniqueNameGenerator', self.id_generator('name'))
 
     def enumerate_assignables(self) -> collections.abc.Iterable[tuple[str, str]]:
         """

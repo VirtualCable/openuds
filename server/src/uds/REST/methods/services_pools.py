@@ -138,7 +138,7 @@ class ServicesPools(ModelHandler):
 
     def get_items(self, *args, **kwargs) -> typing.Generator[typing.Any, None, None]:
         # Optimized query, due that there is a lot of info needed for theee
-        d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        d = sql_datetime() - datetime.timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         return super().get_items(
             overview=kwargs.get('overview', True),
             query=(
@@ -240,7 +240,7 @@ class ServicesPools(ModelHandler):
             if hasattr(item, 'valid_count'):
                 valid_count = item.valid_count  # type: ignore
                 preparing_count = item.preparing_count  # type: ignore
-                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.getInt()  # type: ignore
+                restrained = item.error_count >= GlobalConfig.RESTRAINT_COUNT.as_int()  # type: ignore
                 usage_count = item.usage_count  # type: ignore
             else:
                 valid_count = item.userServices.exclude(state__in=State.INFO_STATES).count()

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
     """
-    Migrates an old tunnel transport to a new one (with tunnelServer)
+    Migrates old properties to new ones
     """
     try:
         UserServiceProperty = apps.get_model('uds', 'UserServiceProperty')
@@ -28,7 +28,7 @@ def migrate(apps: typing.Any, schema_editor: typing.Any) -> None:
 
 def rollback(apps: typing.Any, schema_editor: typing.Any) -> None:
     """
-    Migrates an old tunnel transport to a new one (with tunnelServer)
+    rollback migration
     """
     try:
         UserServiceProperty = apps.get_model('uds', 'UserServiceProperty')

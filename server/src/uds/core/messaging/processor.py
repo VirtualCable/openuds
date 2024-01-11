@@ -78,7 +78,7 @@ class MessageProcessorThread(BaseThread):
             # Locate all notifications from "persistent" and try to process them
             # If no notification can be fully resolved, it will be kept in the database
             not_before = sql_datetime() - datetime.timedelta(
-                seconds=DO_NOT_REPEAT.getInt()
+                seconds=DO_NOT_REPEAT.as_int()
             )
             for n in Notification.get_persistent_queryset().all():
                 # If there are any other notification simmilar to this on default db, skip it

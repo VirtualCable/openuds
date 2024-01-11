@@ -220,7 +220,7 @@ class ProviderLegacy(ServiceProvider):
         # Just reset _api connection variable
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            self.timeout.value = validators.validate_timeout(self.timeout.value)
 
     def api(self, projectId=None, region=None) -> openstack.Client:
         proxies = None

@@ -149,7 +149,7 @@ class LiveService(services.Service):
         if not values:
             return
 
-        self.baseName.value = validators.validateBasename(
+        self.baseName.value = validators.validate_basename(
             self.baseName.value, length=self.lenName.num()
         )
 

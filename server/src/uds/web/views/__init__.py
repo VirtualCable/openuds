@@ -32,13 +32,13 @@
 import logging
 
 # from .login import login, logout
-from uds.web.util.errors import error, errorMessage
+from uds.web.util.errors import error, error_message
 from .service import (
-    transportOwnLink,
-    transportIcon,
-    userServiceEnabler,
-    userServiceStatus,
-    serviceImage,
+    transport_own_link,
+    transport_icon,
+    user_service_enabler,
+    user_service_status,
+    service_image,
     action,
 )
 from .auth import auth_callback, auth_callback_stage2, auth_info, ticket_auth, custom_auth

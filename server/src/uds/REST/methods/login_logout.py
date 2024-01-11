@@ -104,7 +104,7 @@ class Login(Handler):
             logger.info(
                 'Access to REST API %s is blocked for %s seconds since last fail',
                 self._request.ip,
-                GlobalConfig.LOGIN_BLOCK.getInt(),
+                GlobalConfig.LOGIN_BLOCK.as_int(),
             )
             raise exceptions.rest.AccessDenied('Too many fails')
 
@@ -177,7 +177,7 @@ class Login(Handler):
                 # Sleep a while here to "prottect"
                 time.sleep(3)  # Wait 3 seconds if credentials fails for "protection"
                 # And store in cache for blocking for a while if fails
-                fail_cache.put(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+                fail_cache.put(self._request.ip, fails + 1, GlobalConfig.LOGIN_BLOCK.as_int())
 
                 return Login.result(error='Invalid credentials')
             return Login.result(

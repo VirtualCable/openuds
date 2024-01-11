@@ -93,7 +93,7 @@ class TX2GOTransport(BaseX2GOTransport):
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
-            validators.validateHostPortPair(values.get('tunnelServer', ''))
+            validators.validate_host_port(values.get('tunnelServer', ''))
 
     def get_transport_script(
         self,

@@ -56,7 +56,7 @@ from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
 from uds.web.util import configjs, errors
 from uds.web.util.authentication import check_login
-from uds.web.util.services import getServicesData
+from uds.web.util.services import get_services_data
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +132,7 @@ def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str]
                 )  # On failure, wait a bit if not localhost (random wait)
             # If error is numeric, redirect...
             if loginResult.errid:
-                return errors.errorView(request, loginResult.errid)
+                return errors.error_view(request, loginResult.errid)
 
             # Error, set error on session for process for js
             request.session['errors'] = [loginResult.errstr]
@@ -162,7 +162,7 @@ def js(request: types.requests.ExtendedHttpRequest) -> HttpResponse:
 @never_cache
 @auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
 def services_data_json(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
-    return JsonResponse(getServicesData(request))
+    return JsonResponse(get_services_data(request))
 
 
 # The MFA page does not needs CSRF token, so we disable it
@@ -232,7 +232,7 @@ def mfa(
                 request.user.manager.name,
                 mfa_provider.name,
             )
-            return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
+            return errors.error_view(request, types.errors.Error.ACCESS_DENIED)
         # None, the authenticator will decide what to do if mfa_identifier is empty
 
     tries = request.session.get('mfa_tries', 0)
@@ -277,12 +277,12 @@ def mfa(
                 logger.error('MFA error: %s', e)
                 tries += 1
                 request.session['mfa_tries'] = tries
-                if tries >= config.GlobalConfig.MAX_LOGIN_TRIES.getInt():
+                if tries >= config.GlobalConfig.MAX_LOGIN_TRIES.as_int():
                     # Clean session
                     request.session.flush()
                     # Too many tries, redirect to login error page
-                    return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
-                return errors.errorView(request, types.errors.Error.INVALID_MFA_CODE)
+                    return errors.error_view(request, types.errors.Error.ACCESS_DENIED)
+                return errors.error_view(request, types.errors.Error.INVALID_MFA_CODE)
         else:
             pass  # Will render again the page
     else:
@@ -306,7 +306,7 @@ def mfa(
                 request.session['mfa_start_time'] = now
         except Exception as e:
             logger.error('Error processing MFA: %s', e)
-            return errors.errorView(request, types.errors.Error.UNKNOWN_ERROR)
+            return errors.error_view(request, types.errors.Error.UNKNOWN_ERROR)
 
     # Compose a nice "XX years, XX months, XX days, XX hours, XX minutes" string from mfaProvider.remember_device
     remember_device = ''

@@ -73,7 +73,7 @@ class Command(BaseCommand):
             elif options['yaml']:
                 writer = {}  # Create a dict to store data, and write at the end
             # Get sections, key, value as a list of tuples
-            for section, data in config.Config.getConfigValues().items():
+            for section, data in config.Config.get_config_values().items():
                 for key, value in data.items():
                     # value is a dict, get 'value' key
                     if options['csv']:

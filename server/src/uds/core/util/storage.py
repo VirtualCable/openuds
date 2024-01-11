@@ -29,6 +29,7 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from email.mime import base
 import pickle  # nosec: This is e controled pickle use
 import base64
 import hashlib
@@ -46,20 +47,22 @@ logger = logging.getLogger(__name__)
 MARK = '_mgb_'
 
 
-def _calculate_key(owner: bytes, key: bytes, extra: typing.Optional[bytes] = None) -> str:
+def _old_calculate_key(owner: bytes, key: bytes) -> str:
     h = hashlib.md5(usedforsecurity=False)
     h.update(owner)
     h.update(key)
-    if extra:
-        h.update(extra)
     return h.hexdigest()
 
 
-def _encode_value(key: str, value: typing.Any, compat: bool = False) -> str:
-    if not compat:
-        return base64.b64encode(pickle.dumps((MARK, key, value))).decode()
-    # Compatibility save
-    return base64.b64encode(pickle.dumps(value)).decode()
+def _calculate_key(owner: bytes, key: bytes) -> str:
+    h = hashlib.sha256(usedforsecurity=False)
+    h.update(owner)
+    h.update(key)
+    return h.hexdigest()
+
+
+def _encode_value(key: str, value: typing.Any) -> str:
+    return base64.b64encode(pickle.dumps((MARK, key, value))).decode()
 
 
 def _decode_value(dbk: str, value: typing.Optional[str]) -> tuple[str, typing.Any]:
@@ -83,12 +86,15 @@ class StorageAsDict(MutableMapping):
     Accesses storage as dictionary. Much more convenient that old method
     """
 
+    _group: str
+    _owner: str
+    _atomic: bool
+
     def __init__(
         self,
         owner: str,
         group: typing.Optional[str],
         atomic: bool = False,
-        compat: bool = False,
     ) -> None:
         """Initializes an storage as dict accesor
 
@@ -102,7 +108,6 @@ class StorageAsDict(MutableMapping):
         self._group = group or ''
         self._owner = owner
         self._atomic = atomic  # Not used right now, maybe removed
-        self._compat = compat
 
     @property
     def _db(self) -> typing.Union[models.QuerySet, models.Manager]:
@@ -117,33 +122,43 @@ class StorageAsDict(MutableMapping):
             fltr_params['attr1'] = self._group
         return typing.cast('models.QuerySet[DBStorage]', self._db.filter(**fltr_params))
 
-    def _key(self, key: str) -> str:
+    def _key(self, key: str, old_method: bool = False) -> str:
         if key[0] == '#':
             # Compat with old db key
             return key[1:]
-        return _calculate_key(self._owner.encode(), key.encode())
+        if not old_method:
+            return _calculate_key(self._owner.encode(), key.encode())
+        return _old_calculate_key(self._owner.encode(), key.encode())
 
     def __getitem__(self, key: str) -> typing.Any:
         if not isinstance(key, str):
             raise TypeError(f'Key must be str, {type(key)} found')
 
-        dbk = self._key(key)
-        try:
-            c: DBStorage = typing.cast(DBStorage, self._db.get(pk=dbk))
-            if c.owner != self._owner:  # Maybe a key collision,
-                logger.error('Key collision detected for key %s', key)
-                return None
-            okey, value = _decode_value(dbk, c.data)
-            return _decode_value(dbk, c.data)[1]  # Ignores original key
-        except DBStorage.DoesNotExist:
-            return None
+        # First, try new key, and, if needed, old key
+        # If old key is found, it will be updated to new key
+        for use_old_method in (False, True):
+            db_key = self._key(key, old_method=use_old_method)
+            try:
+                c: DBStorage = typing.cast(DBStorage, self._db.get(pk=db_key))
+                if c.owner != self._owner:  # Maybe a key collision,
+                    logger.error('Key collision detected for key %s', key)
+                    return None
+                okey, value = _decode_value(db_key, c.data)
+                if use_old_method:
+                    # Update key on db
+                    c.delete()
+                    DBStorage.objects.create(key=self._key(key), owner=self._owner, data=c.data, attr1=c.attr1)
+                return value
+            except DBStorage.DoesNotExist:
+                pass
+        return None
 
     def __setitem__(self, key: str, value: typing.Any) -> None:
         if not isinstance(key, str):
             raise TypeError(f'Key must be str type, {type(key)} found')
 
         dbk = self._key(key)
-        data = _encode_value(key, value, self._compat)
+        data = _encode_value(key, value)
         # ignores return value, we don't care if it was created or updated
         DBStorage.objects.update_or_create(
             key=dbk, defaults={'data': data, 'attr1': self._group, 'owner': self._owner}
@@ -195,22 +210,19 @@ class StorageAccess:
     Allows the access to the storage as a dict, with atomic transaction if requested
     """
 
-    owner: str
-    group: typing.Optional[str]
-    atomic: bool
-    compat: bool
+    _owner: str
+    _group: typing.Optional[str]
+    _atomic: typing.Optional[transaction.Atomic]
 
     def __init__(
         self,
         owner: str,
         group: typing.Optional[str] = None,
         atomic: bool = False,
-        compat: bool = False,
     ):
         self._owner = owner
         self._group = group
         self._atomic = transaction.atomic() if atomic else None
-        self._compat = compat
 
     def __enter__(self):
         if self._atomic:
@@ -219,7 +231,6 @@ class StorageAccess:
             owner=self._owner,
             group=self._group,
             atomic=bool(self._atomic),
-            compat=self._compat,
         )
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -235,8 +246,11 @@ class Storage:
         self._owner = typing.cast(str, owner.decode('utf-8') if isinstance(owner, bytes) else owner)
         self._bowner = self._owner.encode('utf8')
 
-    def get_key(self, key: typing.Union[str, bytes]) -> str:
-        return _calculate_key(self._bowner, key.encode('utf8') if isinstance(key, str) else key)
+    def get_key(self, key: typing.Union[str, bytes], old_method: bool = False) -> str:
+        bkey: bytes = key.encode('utf8') if isinstance(key, str) else key
+        if not old_method:
+            return _calculate_key(self._bowner, bkey)
+        return _old_calculate_key(self._bowner, bkey)
 
     def save_to_db(
         self,
@@ -252,14 +266,14 @@ class Storage:
         key = self.get_key(skey)
         if isinstance(data, str):
             data = data.encode('utf-8')
-        data_string = codecs.encode(data, 'base64').decode()
+        data_encoded = base64.b64encode(data).decode()
         attr1 = attr1 or ''
         try:
-            DBStorage.objects.create(owner=self._owner, key=key, data=data_string, attr1=attr1)
+            DBStorage.objects.create(owner=self._owner, key=key, data=data_encoded, attr1=attr1)
         except Exception:
             with transaction.atomic():
                 DBStorage.objects.filter(key=key).select_for_update().update(
-                    owner=self._owner, data=data_string, attr1=attr1
+                    owner=self._owner, data=data_encoded, attr1=attr1
                 )  # @UndefinedVariable
 
     def put(self, skey: typing.Union[str, bytes], data: typing.Any) -> None:
@@ -286,20 +300,29 @@ class Storage:
     def read_from_db(
         self, skey: typing.Union[str, bytes], fromPickle: bool = False
     ) -> typing.Optional[typing.Union[str, bytes]]:
-        try:
-            key = self.get_key(skey)
-            c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
-            val = codecs.decode(c.data.encode(), 'base64')
-
-            if fromPickle:
-                return val
-
+        for use_old_method in (False, True):
             try:
-                return val.decode('utf-8')  # Tries to encode in utf-8
-            except Exception:
-                return val
-        except DBStorage.DoesNotExist:  # @UndefinedVariable
-            return None
+                key = self.get_key(skey, old_method=use_old_method)
+                c: DBStorage = DBStorage.objects.get(pk=key)  # @UndefinedVariable
+                val = base64.b64decode(c.data.encode())
+                # if old key is used, update it to new key
+                if use_old_method:
+                    # Remove and re-create with new key
+                    c.delete()
+                    DBStorage.objects.create(
+                        key=self.get_key(skey), owner=self._owner, data=c.data, attr1=c.attr1
+                    )
+
+                if fromPickle:
+                    return val
+
+                try:
+                    return val.decode('utf-8')  # Tries to encode in utf-8
+                except Exception:
+                    return val
+            except DBStorage.DoesNotExist:
+                pass
+        return None
 
     def get(self, skey: typing.Union[str, bytes]) -> typing.Optional[typing.Union[str, bytes]]:
         return self.read_from_db(skey)
@@ -348,13 +371,12 @@ class Storage:
         """
         # dbStorage.objects.unlock()  # @UndefinedVariable
 
-    def map(
+    def as_dict(
         self,
         group: typing.Optional[str] = None,
         atomic: bool = False,
-        compat: bool = False,
     ) -> StorageAccess:
-        return StorageAccess(self._owner, group=group, atomic=atomic, compat=compat)
+        return StorageAccess(self._owner, group=group, atomic=atomic)
 
     def search_by_attr1(
         self, attr1: typing.Union[collections.abc.Iterable[str], str]
@@ -368,14 +390,14 @@ class Storage:
             yield codecs.decode(v.data.encode(), 'base64')
 
     def filter(
-        self, attr1: typing.Optional[str] = None, forUpdate: bool = False
+        self, attr1: typing.Optional[str] = None, for_update: bool = False
     ) -> collections.abc.Iterable[tuple[str, bytes, 'str|None']]:
         if attr1 is None:
             query = DBStorage.objects.filter(owner=self._owner)  # @UndefinedVariable
         else:
             query = DBStorage.objects.filter(owner=self._owner, attr1=attr1)  # @UndefinedVariable
 
-        if forUpdate:
+        if for_update:
             query = query.select_for_update()
 
         for v in query:  # @UndefinedVariable

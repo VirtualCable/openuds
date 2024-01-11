@@ -50,6 +50,7 @@ DEFAULTS: dict[str, typing.Any] = {
     'info_field': 'Default value info',
 }
 
+
 class TestingUserInterface(UserInterface):
     str_field = gui.TextField(
         label='Text Field',
@@ -57,6 +58,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a text field',
         required=True,
         default=typing.cast(str, DEFAULTS['str_field']),
+        stored_field_name='strField',
     )
     str_auto_field = gui.TextAutocompleteField(
         label='Text Autocomplete Field',
@@ -136,7 +138,6 @@ class TestingUserInterface(UserInterface):
         default=typing.cast(str, DEFAULTS['info_field']),
     )
 
-
     # Equals operator, to speed up tests writing
     def __eq__(self, other: typing.Any) -> bool:
         if not isinstance(other, TestingUserInterface):
@@ -155,3 +156,24 @@ class TestingUserInterface(UserInterface):
             and self.date_field.value == other.date_field.value
             # Info field is not compared, because it is not serialized
         )
+
+
+class TestingUserInterfaceFieldNameOrig(UserInterface):
+    strField = gui.TextField(
+        label='Text Field',
+        order=0,
+        tooltip='This is a text field',
+        required=True,
+        default=typing.cast(str, DEFAULTS['str_field']),
+    )
+
+
+class TestingUserInterfaceFieldName(UserInterface):
+    str_field = gui.TextField(
+        label='Text Field',
+        order=0,
+        tooltip='This is a text field',
+        required=True,
+        default='',  # Will be loaded from orig
+        stored_field_name='strField',
+    )

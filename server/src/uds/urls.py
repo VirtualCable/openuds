@@ -156,7 +156,7 @@ urlpatterns = [
     # WEB API path (not REST api, frontend)
     re_path(
         r'^uds/webapi/img/transport/(?P<idTrans>[a-zA-Z0-9:-]+)$',
-        uds.web.views.transportIcon,
+        uds.web.views.transport_icon,
         name='webapi.transportIcon',
     ),
     re_path(
@@ -167,12 +167,12 @@ urlpatterns = [
     # Enabler and Status action are first processed, and if not match, execute the generic "action" handler
     re_path(
         r'^uds/webapi/action/(?P<idService>[a-zA-Z0-9:-]+)/enable/(?P<idTransport>[a-zA-Z0-9:-]+)$',
-        uds.web.views.userServiceEnabler,
+        uds.web.views.user_service_enabler,
         name='webapi.enabler',
     ),
     re_path(
         r'^uds/webapi/action/(?P<idService>[a-zA-Z0-9:-]+)/status/(?P<idTransport>[a-zA-Z0-9:-]+)$',
-        uds.web.views.userServiceStatus,
+        uds.web.views.user_service_status,
         name='webapi.status',
     ),
     re_path(
@@ -189,7 +189,7 @@ urlpatterns = [
     # Transport own link processor
     re_path(
         r'^uds/webapi/trans/(?P<idService>[a-zA-Z0-9:-]+)/(?P<idTransport>[a-zA-Z0-9:-]+)$',
-        uds.web.views.transportOwnLink,
+        uds.web.views.transport_own_link,
         name='TransportOwnLink',
     ),
     # Transport ticket update (for username/password on html5)
@@ -207,7 +207,7 @@ urlpatterns = [
     # Error message
     re_path(
         r'^uds/webapi/error/(?P<err>[0-9]+)$',
-        uds.web.views.errorMessage,
+        uds.web.views.error_message,
         name='webapi.error',
     ),
     # END WEB API

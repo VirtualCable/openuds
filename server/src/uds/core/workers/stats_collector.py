@@ -171,7 +171,7 @@ class StatsAccumulator(Job):
 
     def run(self):
         try:
-            StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.getInt())
+            StatsManager.manager().acummulate(config.GlobalConfig.STATS_ACCUM_MAX_CHUNK_TIME.as_int())
         except Exception:
             logger.exception('Compressing counters')
 

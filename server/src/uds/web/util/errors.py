@@ -55,7 +55,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def errorView(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
+def error_view(request: 'HttpRequest', errorCode: int) -> HttpResponseRedirect:
     return HttpResponseRedirect(reverse('page.error', kwargs={'err': errorCode}))
 
 
@@ -66,15 +66,15 @@ def error(request: 'HttpRequest', err: str) -> 'HttpResponse':
     return render(request, 'uds/modern/index.html', {})
 
 
-def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
+def exception_view(request: 'HttpRequest', exception: Exception) -> HttpResponseRedirect:
     """
     Tries to render an error page with error information
     """
     logger.debug(traceback.format_exc())
-    return errorView(request, types.errors.Error.from_exception(exception))
+    return error_view(request, types.errors.Error.from_exception(exception))
 
 
-def errorMessage(request: 'HttpRequest', err: int) -> 'HttpResponse':
+def error_message(request: 'HttpRequest', err: int) -> 'HttpResponse':
     """
     Error view, responsible of error display
     """

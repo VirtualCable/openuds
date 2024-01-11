@@ -193,14 +193,14 @@ class EmailMFA(mfas.MFA):
 
         # Now check is valid format
         if ':' in hostname:
-            host, port = validators.validateHostPortPair(hostname)
+            host, port = validators.validate_host_port(hostname)
             self.hostname.value = f'{host}:{port}'
         else:
             host = self.hostname.as_clean_str()
-            self.hostname.value = validators.validateFqdn(host)
+            self.hostname.value = validators.validate_fqdn(host)
 
         # now check from email and to email
-        self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
+        self.fromEmail.value = validators.validate_email(self.fromEmail.value)
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext('Check your mail. You will receive an email with the verification code')

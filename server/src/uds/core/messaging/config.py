@@ -45,4 +45,4 @@ DO_NOT_REPEAT: typing.Final[cfg.Config.Value] = cfg.Config.section(cfg.Config.Se
 )
 
 # Ensure that we have a default value for this on startup
-DO_NOT_REPEAT.getInt()
+DO_NOT_REPEAT.as_int()

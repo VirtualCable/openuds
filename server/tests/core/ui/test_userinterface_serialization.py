@@ -41,7 +41,12 @@ from ...utils.test import UDSTestCase
 from uds.core import types, consts
 from uds.core.ui.user_interface import gui
 
-from ...fixtures.user_interface import TestingUserInterface, DEFAULTS
+from ...fixtures.user_interface import (
+    TestingUserInterface,
+    DEFAULTS,
+    TestingUserInterfaceFieldName,
+    TestingUserInterfaceFieldNameOrig,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -168,3 +173,12 @@ class UserinterfaceTest(UDSTestCase):
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
+
+    def test_stored_field_name(self):
+        # This test is to ensure that new serialized data can be loaded
+        ui = TestingUserInterfaceFieldNameOrig()
+        data = ui.serialize_fields()
+        ui2 = TestingUserInterfaceFieldName()
+        ui2.unserialize_fields(data)
+
+        self.assertEqual(ui.strField.value, ui2.str_field.value)

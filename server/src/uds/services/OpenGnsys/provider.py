@@ -186,7 +186,7 @@ class OGProvider(ServiceProvider):
         self._api = None
 
         if values:
-            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            self.timeout.value = validators.validate_timeout(self.timeout.value)
             logger.debug('Endpoint: %s', self.endpoint)
 
             try:

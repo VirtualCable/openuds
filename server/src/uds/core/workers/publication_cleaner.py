@@ -54,7 +54,7 @@ class PublicationInfoItemsCleaner(Job):
 
     def run(self) -> None:
         removeFrom = sql_datetime() - timedelta(
-            seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
+            seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True)
         )
         ServicePoolPublication.objects.filter(
             state__in=State.INFO_STATES, state_date__lt=removeFrom

@@ -70,7 +70,7 @@ class Command(BaseCommand):
                     if options['password']:
                         kwargs['type'] = Config.FieldType.PASSWORD
                     if options['force_crypt']:
-                        value = Config.section(mod).valueCrypt(name, value).get()
+                        value = Config.section(mod).value_encrypted(name, value).get()
                     else:
                         Config.section(mod).value(name, value).get()
         except Exception as e:

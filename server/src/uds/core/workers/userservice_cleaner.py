@@ -59,7 +59,7 @@ class UserServiceInfoItemsCleaner(Job):
 
     def run(self) -> None:
         removeFrom = sql_datetime() - timedelta(
-            seconds=GlobalConfig.KEEP_INFO_TIME.getInt(True)
+            seconds=GlobalConfig.KEEP_INFO_TIME.as_int(True)
         )
         logger.debug('Removing information user services from %s', removeFrom)
         with transaction.atomic():
@@ -78,7 +78,7 @@ class UserServiceRemover(Job):
     def run(self) -> None:
         # USER_SERVICE_REMOVAL_LIMIT is the maximum number of items to remove at once
         # This configuration value is cached at startup, so it is not updated until next reload
-        removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.getInt()
+        removeAtOnce: int = GlobalConfig.USER_SERVICE_CLEAN_NUMBER.as_int()
         manager = UserServiceManager()
 
         with transaction.atomic():

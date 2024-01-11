@@ -98,7 +98,7 @@ class ServerApiRequester:
                 with tempfile.NamedTemporaryFile('w', delete=False) as f:
                     f.write(self.server.certificate)  # Save cert
                     verify = f.name
-            session = security.secureRequestsSession(verify=verify)
+            session = security.secure_requests_session(verify=verify)
             # Setup headers
             session.headers.update(
                 {

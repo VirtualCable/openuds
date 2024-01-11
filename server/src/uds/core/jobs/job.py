@@ -58,7 +58,7 @@ class Job(Environmentable):
         """
         if cls.frecuency_cfg:
             try:
-                cls.frecuency = cls.frecuency_cfg.getInt(force=True)
+                cls.frecuency = cls.frecuency_cfg.as_int(force=True)
                 logger.debug(
                     'Setting frequency from DB setting for %s to %s', cls, cls.frecuency
                 )

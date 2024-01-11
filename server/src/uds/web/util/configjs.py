@@ -164,7 +164,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         'os': request.os.os.name,
         'image_size': Image.MAX_IMAGE_SIZE,
         'experimental_features': GlobalConfig.EXPERIMENTAL_FEATURES.as_bool(),
-        'reload_time': GlobalConfig.RELOAD_TIME.getInt(True),
+        'reload_time': GlobalConfig.RELOAD_TIME.as_int(True),
         'site_name': GlobalConfig.SITE_NAME.get(),
         'site_copyright_info': GlobalConfig.SITE_COPYRIGHT.get(),
         'site_copyright_link': GlobalConfig.SITE_COPYRIGHT_LINK.get(),
@@ -210,7 +210,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             'launch': request.session.get('launch', ''),
             'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else ''
         },
-        'min_for_filter': GlobalConfig.SITE_FILTER_MIN.getInt(True),
+        'min_for_filter': GlobalConfig.SITE_FILTER_MIN.as_int(True),
     }
 
     info: typing.Optional[collections.abc.MutableMapping] = None
@@ -308,7 +308,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         config['urls']['admin'] = reverse('uds.admin.views.index')
         config['urls']['rest'] = reverse('REST', kwargs={'arguments': ''})
         # Admin config
-        page_size = GlobalConfig.ADMIN_PAGESIZE.getInt(True)
+        page_size = GlobalConfig.ADMIN_PAGESIZE.as_int(True)
         vnc_userservices = GlobalConfig.ADMIN_ENABLE_USERSERVICES_VNC.as_bool(True)
         # Fix page size to razonable usable values
         page_size = 10 if page_size < 10 else 100 if page_size > 100 else page_size

@@ -210,7 +210,7 @@ class LiveService(services.Service):
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validateBasename(self.baseName.value, self.lenName.num())
+            validators.validate_basename(self.baseName.value, self.lenName.num())
 
         # self.ov.value = self.parent().serialize()
         # self.ev.value = self.parent().env.key

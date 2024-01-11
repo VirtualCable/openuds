@@ -238,7 +238,7 @@ class UserService(Environmentable, Serializable):
 
         Returns the environment unique mac addresses generator
         """
-        return typing.cast('UniqueMacGenerator', self.id_generators('mac'))
+        return typing.cast('UniqueMacGenerator', self.id_generator('mac'))
 
     def name_generator(self) -> 'UniqueNameGenerator':
         """
@@ -246,7 +246,7 @@ class UserService(Environmentable, Serializable):
 
         Returns the environment unique name generator
         """
-        return typing.cast('UniqueNameGenerator', self.id_generators('name'))
+        return typing.cast('UniqueNameGenerator', self.id_generator('name'))
 
     def gid_generator(self) -> 'UniqueGIDGenerator':
         """
@@ -254,7 +254,7 @@ class UserService(Environmentable, Serializable):
 
         Returns the environment unique global id generator
         """
-        return typing.cast('UniqueGIDGenerator', self.id_generators('id'))
+        return typing.cast('UniqueGIDGenerator', self.id_generator('id'))
 
     def get_unique_id(self) -> str:
         """

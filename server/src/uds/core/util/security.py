@@ -35,7 +35,7 @@ except Exception:  # nosec: simple check for disabling warnings,
     pass
 
 
-def selfSignedCert(ip: str) -> tuple[str, str, str]:
+def create_self_signed_cert(ip: str) -> tuple[str, str, str]:
     """
     Generates a self signed certificate for the given ip.
     This method is mainly intended to be used for generating/saving Actor certificates.
@@ -80,7 +80,7 @@ def selfSignedCert(ip: str) -> tuple[str, str, str]:
     )
 
 
-def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
+def create_client_sslcontext(verify: bool = True) -> ssl.SSLContext:
     """
     Creates a SSLContext for client connections.
 
@@ -115,7 +115,7 @@ def createClientSslContext(verify: bool = True) -> ssl.SSLContext:
     return sslContext
 
 
-def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
+def check_certificate_matches_private_key(*, cert: str, key: str) -> bool:
     """
     Checks if a certificate and a private key match.
     All parameters must be keyword arguments.
@@ -147,7 +147,7 @@ def checkCertificateMatchPrivateKey(*, cert: str, key: str) -> bool:
         return False
 
 
-def secureRequestsSession(
+def secure_requests_session(
     *, verify: typing.Union[str, bool] = True
 ) -> 'requests.Session':
     '''
@@ -167,7 +167,7 @@ def secureRequestsSession(
 
     class UDSHTTPAdapter(requests.adapters.HTTPAdapter):
         def init_poolmanager(self, *args, **kwargs) -> None:
-            kwargs["ssl_context"] = createClientSslContext(verify=verify is True)
+            kwargs["ssl_context"] = create_client_sslcontext(verify=verify is True)
 
             # See urllib3.poolmanager.SSL_KEYWORDS for all available keys.
             return super().init_poolmanager(*args, **kwargs)
@@ -196,7 +196,7 @@ def secureRequestsSession(
 
     return session
 
-def checkServerCertificateIsValid(cert: str) -> bool:
+def is_server_certificate_valid(cert: str) -> bool:
     """
     Checks if a certificate is valid.
     All parameters must be keyword arguments.

@@ -207,7 +207,7 @@ class Tunnels(ModelHandler):
         fields['type'] = types.servers.ServerType.TUNNEL.value
         fields['port'] = int(fields['port'])
         # Ensure host is a valid IP(4 or 6) or hostname
-        validators.validateHost(fields['host'])
+        validators.validate_host(fields['host'])
 
     def assign(self, parent: 'Model') -> typing.Any:
         parent = ensure.is_instance(parent, models.ServerGroup)

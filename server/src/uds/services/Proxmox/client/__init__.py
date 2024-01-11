@@ -160,7 +160,7 @@ class ProxmoxClient:
 
     def _get(self, path: str) -> typing.Any:
         try:
-            result = security.secureRequestsSession(verify=self._validateCert).get(
+            result = security.secure_requests_session(verify=self._validateCert).get(
                 self._getPath(path),
                 headers=self.headers,
                 cookies={'PVEAuthCookie': self._ticket},
@@ -179,7 +179,7 @@ class ProxmoxClient:
         data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
-            result = security.secureRequestsSession(verify=self._validateCert).post(
+            result = security.secure_requests_session(verify=self._validateCert).post(
                 self._getPath(path),
                 data=data,  # type: ignore
                 headers=self.headers,
@@ -199,7 +199,7 @@ class ProxmoxClient:
         data: typing.Optional[collections.abc.Iterable[tuple[str, str]]] = None,
     ) -> typing.Any:
         try:
-            result = security.secureRequestsSession(verify=self._validateCert).delete(
+            result = security.secure_requests_session(verify=self._validateCert).delete(
                 self._getPath(path),
                 data=data,  # type: ignore
                 headers=self.headers,
@@ -231,7 +231,7 @@ class ProxmoxClient:
                 return
 
         try:
-            result = security.secureRequestsSession(verify=self._validateCert).post(
+            result = security.secure_requests_session(verify=self._validateCert).post(
                 url=self._getPath('access/ticket'),
                 data=self._credentials,
                 headers=self.headers,

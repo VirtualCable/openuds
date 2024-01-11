@@ -51,17 +51,17 @@ class Environment:
     not stored with main module data.
     The environment is composed of a "cache" and a "storage". First are volatile data, while second are persistent data.
     """
-    __slots__ = ['_key', '_cache', '_storage', '_idGenerators']
+    __slots__ = ['_key', '_cache', '_storage', '_id_generators']
 
     _key: str
     _cache: 'Cache'
     _storage: 'Storage'
-    _idGenerators: dict[str, 'UniqueIDGenerator']
+    _id_generators: dict[str, 'UniqueIDGenerator']
 
     def __init__(
         self,
         uniqueKey: str,
-        idGenerators: typing.Optional[dict[str, 'UniqueIDGenerator']] = None,
+        id_generators: typing.Optional[dict[str, 'UniqueIDGenerator']] = None,
     ):
         """
         Initialized the Environment for the specified id
@@ -77,7 +77,7 @@ class Environment:
         self._key = uniqueKey
         self._cache = Cache(uniqueKey)
         self._storage = Storage(uniqueKey)
-        self._idGenerators = idGenerators or {}
+        self._id_generators = id_generators or {}
 
     @property
     def cache(self) -> 'Cache':
@@ -95,7 +95,7 @@ class Environment:
         """
         return self._storage
 
-    def idGenerators(self, generatorId: str) -> 'UniqueIDGenerator':
+    def id_generator(self, generator_id: str) -> 'UniqueIDGenerator':
         """
         The idea of generator of id is to obtain at some moment Ids with a proper generator.
         If the environment do not contains generators of id, this method will return None.
@@ -103,9 +103,9 @@ class Environment:
         @param generatorId: Id of the generator to obtain
         @return: Generator for that id, or None if no generator for that id is found
         """
-        if not self._idGenerators or generatorId not in self._idGenerators:
-            raise Exception(f'No generator found for {generatorId}')
-        return self._idGenerators[generatorId]
+        if not self._id_generators or generator_id not in self._id_generators:
+            raise Exception(f'No generator found for {generator_id}')
+        return self._id_generators[generator_id]
 
     @property
     def key(self) -> str:
@@ -114,17 +114,17 @@ class Environment:
         """
         return self._key
 
-    def clearRelatedData(self):
+    def clean_related_data(self):
         """
         Removes all related information from database for this environment.
         """
         self._cache.clear()
         self._storage.clear()
-        for _, v in self._idGenerators.items():
+        for _, v in self._id_generators.items():
             v.release()
 
     @staticmethod
-    def getEnvForTableElement(
+    def get_environment_for_table(
         tblName,
         id_,
         idGeneratorsTypes: typing.Optional[dict[str, typing.Any]] = None,
@@ -147,7 +147,7 @@ class Environment:
         return Environment(name, idGenerators)
 
     @staticmethod
-    def getEnvForType(type_) -> 'Environment':
+    def get_environment_for_type(type_) -> 'Environment':
         """
         Obtains an environment associated with a type instead of a record
         @param type_: Type
@@ -167,7 +167,7 @@ class Environment:
         return env
 
     @staticmethod
-    def getGlobalEnv() -> 'Environment':
+    def get_common_environment() -> 'Environment':
         """
         Provides global environment
         """
@@ -236,7 +236,7 @@ class Environmentable:
         """
         return self._env.storage
 
-    def id_generators(self, generatorId: str) -> 'UniqueIDGenerator':
+    def id_generator(self, generatorId: str) -> 'UniqueIDGenerator':
         """
         Utility method to access the id generator of the environment containe by this object
 
@@ -246,4 +246,4 @@ class Environmentable:
         Returns:
             Generator for the object and the id specified
         """
-        return self._env.idGenerators(generatorId)
+        return self._env.id_generator(generatorId)

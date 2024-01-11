@@ -30,8 +30,10 @@
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 
+import base64
 from ...utils.test import UDSTestCase
-from uds.core.util.storage import Storage
+from uds.core.util import storage
+from uds import models
 
 UNICODE_CHARS = 'ñöçóá^(pípè)'
 UNICODE_CHARS_2 = 'ñöçóá^(€íöè)'
@@ -40,32 +42,84 @@ VALUE_1 = ['unicode', b'string', {'a': 1, 'b': 2.0}]
 
 class StorageTest(UDSTestCase):
     def test_storage(self):
-        storage = Storage(UNICODE_CHARS)
+        strg = storage.Storage(UNICODE_CHARS)
 
-        storage.put(UNICODE_CHARS, b'chars')
-        storage.save_to_db('saveData', UNICODE_CHARS, UNICODE_CHARS)
-        storage.save_to_db('saveData2', UNICODE_CHARS_2, UNICODE_CHARS)
-        storage.save_to_db('saveData3', UNICODE_CHARS, 'attribute')
-        storage.save_to_db('saveData4', UNICODE_CHARS_2, 'attribute')
-        storage.put(b'key', UNICODE_CHARS)
-        storage.put(UNICODE_CHARS_2, UNICODE_CHARS)
+        strg.put(UNICODE_CHARS, b'chars')
+        strg.save_to_db('saveData', UNICODE_CHARS, UNICODE_CHARS)
+        strg.save_to_db('saveData2', UNICODE_CHARS_2, UNICODE_CHARS)
+        strg.save_to_db('saveData3', UNICODE_CHARS, 'attribute')
+        strg.save_to_db('saveData4', UNICODE_CHARS_2, 'attribute')
+        strg.put(b'key', UNICODE_CHARS)
+        strg.put(UNICODE_CHARS_2, UNICODE_CHARS)
 
-        storage.put_pickle('pickle', VALUE_1)
+        strg.put_pickle('pickle', VALUE_1)
 
-        self.assertEqual(storage.get(UNICODE_CHARS), u'chars')  # Always returns unicod
-        self.assertEqual(storage.read_from_db('saveData'), UNICODE_CHARS)
-        self.assertEqual(storage.read_from_db('saveData2'), UNICODE_CHARS_2)
-        self.assertEqual(storage.get(b'key'), UNICODE_CHARS)
-        self.assertEqual(storage.get(UNICODE_CHARS_2), UNICODE_CHARS)
-        self.assertEqual(storage.get_unpickle('pickle'), VALUE_1)
+        self.assertEqual(strg.get(UNICODE_CHARS), u'chars')  # Always returns unicod
+        self.assertEqual(strg.read_from_db('saveData'), UNICODE_CHARS)
+        self.assertEqual(strg.read_from_db('saveData2'), UNICODE_CHARS_2)
+        self.assertEqual(strg.get(b'key'), UNICODE_CHARS)
+        self.assertEqual(strg.get(UNICODE_CHARS_2), UNICODE_CHARS)
+        self.assertEqual(strg.get_unpickle('pickle'), VALUE_1)
 
-        self.assertEqual(len(list(storage.search_by_attr1(UNICODE_CHARS))), 2)
-        self.assertEqual(len(list(storage.search_by_attr1('attribute'))), 2)
+        self.assertEqual(len(list(strg.search_by_attr1(UNICODE_CHARS))), 2)
+        self.assertEqual(len(list(strg.search_by_attr1('attribute'))), 2)
 
-        storage.remove(UNICODE_CHARS)
-        storage.remove(b'key')
-        storage.remove('pickle')
+        strg.remove(UNICODE_CHARS)
+        strg.remove(b'key')
+        strg.remove('pickle')
 
-        self.assertIsNone(storage.get(UNICODE_CHARS))
-        self.assertIsNone(storage.get(b'key'))
-        self.assertIsNone(storage.get_unpickle('pickle'))
+        self.assertIsNone(strg.get(UNICODE_CHARS))
+        self.assertIsNone(strg.get(b'key'))
+        self.assertIsNone(strg.get_unpickle('pickle'))
+
+    def test_storage_as_dict(self):
+        strg = storage.Storage(UNICODE_CHARS)
+
+        strg.put(UNICODE_CHARS, 'chars')
+
+        with strg.as_dict() as d:
+            d['test_key'] = UNICODE_CHARS_2
+
+            # Assert that UNICODE_CHARS is in the dict
+            self.assertEqual(d[UNICODE_CHARS], 'chars')
+
+            self.assertEqual(d['test_key'], UNICODE_CHARS_2)
+
+        # The values set inside the "with" are not available "outside"
+        # because the format is not compatible (with the dict, the values are stored as a tuple, with the original key stored
+        # and with old format, only the value is stored
+
+    def test_old_storage_compat(self):
+        models.Storage.objects.create(
+            owner=UNICODE_CHARS,
+            key=storage._old_calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
+            data=base64.b64encode((UNICODE_CHARS * 5).encode()).decode(),
+        )
+        strg = storage.Storage(UNICODE_CHARS)
+        # Ensure that key is found
+        self.assertEqual(strg.get(UNICODE_CHARS), UNICODE_CHARS * 5)
+        # And that now, the key is stored in the new format
+        # If not exists, will raise an exception
+        models.Storage.objects.get(
+            owner=UNICODE_CHARS,
+            key=storage._calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
+        )
+
+    def test_storage_as_dict_old(self):
+        models.Storage.objects.create(
+            owner=UNICODE_CHARS,
+            key=storage._old_calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
+            data=base64.b64encode((UNICODE_CHARS * 5).encode()).decode(),
+        )
+        strg = storage.Storage(UNICODE_CHARS)
+
+        with strg.as_dict() as d:
+            # Assert that UNICODE_CHARS is in the dict (stored with old format)
+            self.assertEqual(d[UNICODE_CHARS], UNICODE_CHARS * 5)
+
+        # And that now, the key is stored in the new format
+        # If not exists, will raise an exception
+        models.Storage.objects.get(
+            owner=UNICODE_CHARS,
+            key=storage._calculate_key(UNICODE_CHARS.encode(), UNICODE_CHARS.encode()),
+        )

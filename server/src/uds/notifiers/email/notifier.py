@@ -153,15 +153,15 @@ class EmailNotifier(messaging.Notifier):
 
         # Now check is valid format
         if ':' in hostname:
-            host, port = validators.validateHostPortPair(hostname)
+            host, port = validators.validate_host_port(hostname)
             self.hostname.value = f'{host}:{port}'
         else:
             host = self.hostname.as_clean_str()
-            self.hostname.value = validators.validateFqdn(host)
+            self.hostname.value = validators.validate_fqdn(host)
 
         # now check from email and to email
-        self.fromEmail.value = validators.validateEmail(self.fromEmail.value)
-        self.toEmail.value = validators.validateEmail(self.toEmail.value)
+        self.fromEmail.value = validators.validate_email(self.fromEmail.value)
+        self.toEmail.value = validators.validate_email(self.toEmail.value)
 
         # Done
 

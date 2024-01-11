@@ -209,8 +209,8 @@ class OVirtProvider(
         self._api = None
 
         if values is not None:
-            self.macsRange.value = validators.validateMacRange(self.macsRange.value)
-            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            self.macsRange.value = validators.validate_mac_range(self.macsRange.value)
+            self.timeout.value = validators.validate_timeout(self.timeout.value)
             logger.debug(self.host.value)
 
     def testConnection(self) -> bool:

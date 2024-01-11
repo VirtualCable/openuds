@@ -80,11 +80,11 @@ class ServerRegisterBase(Handler):
                 raise ValueError(_('Invalid data. Max length is 2048.'))
             if port < 1 or port > 65535:
                 raise ValueError(_('Invalid port. Must be between 1 and 65535'))
-            validators.validateIpv4OrIpv6(ip)  # Will raise "validation error"
-            validators.validateFqdn(hostname)
-            validators.validateMac(mac)
-            validators.validateJson(data)
-            validators.validateServerCertificate(certificate)
+            validators.validate_ip(ip)  # Will raise "validation error"
+            validators.validate_fqdn(hostname)
+            validators.validate_mac(mac)
+            validators.validate_json(data)
+            validators.validate_server_certificate(certificate)
         except Exception as e:
             raise rest_exceptions.RequestError(str(e)) from e
 

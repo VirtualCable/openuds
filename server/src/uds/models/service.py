@@ -103,7 +103,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(
+        return Environment.get_environment_for_table(
             self._meta.verbose_name,  # type: ignore
             self.id,
             {
@@ -220,7 +220,7 @@ class Service(ManagedObjectModel, TaggingMixin):  # type: ignore
         if to_delete.data != '':
             s = to_delete.get_instance()
             s.destroy()
-            s.env.clearRelatedData()
+            s.env.clean_related_data()
 
         # Clears related logs
         log.clear_logs(to_delete)

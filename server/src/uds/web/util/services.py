@@ -60,7 +60,7 @@ logger = logging.getLogger(__name__)
 
 
 # pylint: disable=too-many-arguments
-def _serviceInfo(
+def _service_info(
     uuid: str,
     is_meta: bool,
     name: str,
@@ -101,7 +101,7 @@ def _serviceInfo(
 
 
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-def getServicesData(
+def get_services_data(
     request: 'ExtendedHttpRequestWithUser',
 ) -> dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
@@ -285,7 +285,7 @@ def getServicesData(
             )
 
             services.append(
-                _serviceInfo(
+                _service_info(
                     uuid=meta.uuid,
                     is_meta=True,
                     name=macro_info(meta.name),
@@ -386,7 +386,7 @@ def getServicesData(
             toBeReplacedTxt = ''
 
         services.append(
-            _serviceInfo(
+            _service_info(
                 uuid=sPool.uuid,
                 is_meta=False,
                 name=macro_info(sPool.name),
@@ -432,7 +432,7 @@ def getServicesData(
     }
 
 
-def enableService(
+def enable_service(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
 ) -> collections.abc.Mapping[str, typing.Any]:
     # Maybe we could even protect this even more by limiting referer to own server /? (just a meditation..)

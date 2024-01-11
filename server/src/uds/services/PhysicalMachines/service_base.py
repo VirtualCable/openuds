@@ -79,7 +79,7 @@ class IPServiceBase(services.Service):
             if wolurl:
                 logger.info('Launching WOL: %s', wolurl)
                 try:
-                    security.secureRequestsSession(verify=verify_ssl).get(wolurl)
+                    security.secure_requests_session(verify=verify_ssl).get(wolurl)
                     # logger.debug('Result: %s', result)
                 except Exception as e:
                     logger.error('Error on WOL: %s', e)

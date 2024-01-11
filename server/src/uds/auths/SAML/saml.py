@@ -370,7 +370,7 @@ class SAMLAuthenticator(auths.Authenticator):
         except Exception as e:
             raise exceptions.validation.ValidationError(gettext('Invalid private key. ') + str(e))
 
-        if not security.checkCertificateMatchPrivateKey(
+        if not security.check_certificate_matches_private_key(
             cert=self.serverCertificate.value, key=self.privateKey.value
         ):
             raise exceptions.validation.ValidationError(gettext('Certificate and private key do not match'))

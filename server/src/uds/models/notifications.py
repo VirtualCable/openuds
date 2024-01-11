@@ -140,7 +140,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
             try:
                 s = to_delete.get_instance()
                 s.destroy()  # Invokes the destruction of "related own data"
-                s.env.clearRelatedData()  # Clears related data, such as storage, cache, etc...
+                s.env.clean_related_data()  # Clears related data, such as storage, cache, etc...
             except Exception as e:
                 logger.error(
                     'Error processing deletion of notifier %s: %s (forced deletion)',

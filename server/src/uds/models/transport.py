@@ -170,7 +170,7 @@ class Transport(ManagedObjectModel, TaggingMixin):
         if toDelete.data != '':
             s = toDelete.get_instance()
             s.destroy()
-            s.env.clearRelatedData()
+            s.env.clean_related_data()
 
         # Clears related permissions
         clean(toDelete)

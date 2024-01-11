@@ -95,7 +95,7 @@ def auth_callback(request: HttpRequest, authName: str) -> HttpResponse:
         return HttpResponseRedirect(reverse('page.auth.callback_stage2', args=[ticket]))
     except Exception as e:
         # No authenticator found...
-        return errors.exceptionView(request, e)
+        return errors.exception_view(request, e)
 
 
 def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
@@ -138,7 +138,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) 
         )
     except Exception as e:
         logger.exception('authCallback')
-        return errors.exceptionView(request, e)
+        return errors.exception_view(request, e)
 
 
 @csrf_exempt
@@ -278,15 +278,15 @@ def ticket_auth(
         uds_cookie(request, response, True)
         return response
     except ServiceNotReadyError:
-        return errors.errorView(request, types.errors.Error.SERVICE_NOT_READY)
+        return errors.error_view(request, types.errors.Error.SERVICE_NOT_READY)
     except TicketStore.InvalidTicket:
-        return errors.errorView(request, types.errors.Error.RELOAD_NOT_SUPPORTED)
+        return errors.error_view(request, types.errors.Error.RELOAD_NOT_SUPPORTED)
     except Authenticator.DoesNotExist:
         logger.error('Ticket has an non existing authenticator')
-        return errors.errorView(request, types.errors.Error.ACCESS_DENIED)
+        return errors.error_view(request, types.errors.Error.ACCESS_DENIED)
     except ServicePool.DoesNotExist:  # type: ignore  # DoesNotExist is different for each model
         logger.error('Ticket has an invalid Service Pool')
-        return errors.errorView(request, types.errors.Error.SERVICE_NOT_FOUND)
+        return errors.error_view(request, types.errors.Error.SERVICE_NOT_FOUND)
     except Exception as e:
         logger.exception('Exception')
-        return errors.exceptionView(request, e)
+        return errors.exception_view(request, e)

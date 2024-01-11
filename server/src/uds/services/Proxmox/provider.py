@@ -190,7 +190,7 @@ class ProxmoxProvider(
         self._api = None
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            self.timeout.value = validators.validate_timeout(self.timeout.value)
             logger.debug(self.host.value)
 
         # All proxmox use same UniqueId generator

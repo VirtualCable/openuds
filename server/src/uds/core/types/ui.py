@@ -125,6 +125,7 @@ class FieldInfo:
     tooltip: str
     order: int
     type: FieldType
+    stored_field_name: typing.Optional[str] = None
     readonly: typing.Optional[bool] = None
     value: typing.Union[collections.abc.Callable[[], typing.Any], typing.Any] = None
     default: typing.Optional[typing.Union[collections.abc.Callable[[], str], str]] = None

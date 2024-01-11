@@ -98,25 +98,25 @@ class Config:
             return Config.SectionType
 
     class Section:
-        _sectionName: 'Config.SectionType'
+        _section_name: 'Config.SectionType'
 
         def __init__(self, sectionName: 'Config.SectionType') -> None:
-            self._sectionName = sectionName
+            self._section_name = sectionName
 
         def value(self, key, default='', **kwargs) -> 'Config.Value':
             return Config.value(self, key, default, **kwargs)
 
-        def valueCrypt(self, key, default='', **kwargs) -> 'Config.Value':
+        def value_encrypted(self, key, default='', **kwargs) -> 'Config.Value':
             return Config.value(self, key, default, True, **kwargs)
 
-        def valueLong(self, key, default='', **kwargs) -> 'Config.Value':
+        def value_longtext(self, key, default='', **kwargs) -> 'Config.Value':
             return Config.value(self, key, default, False, True, **kwargs)
 
         def name(self) -> str:
-            return self._sectionName
+            return self._section_name
 
         def __str__(self) -> str:
-            return self._sectionName
+            return self._section_name
 
     class Value:
         _section: 'Config.Section'  # type: ignore  # mypy complains??
@@ -195,10 +195,10 @@ class Config:
                 return CryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
-        def setParams(self, params: typing.Any) -> None:
+        def set_params(self, params: typing.Any) -> None:
             _configParams[self._section.name() + self._key] = params
 
-        def getInt(self, force: bool = False) -> int:
+        def as_int(self, force: bool = False) -> int:
             try:
                 return int(self.get(force))
             except Exception:
@@ -228,19 +228,19 @@ class Config:
         def section(self) -> str:
             return self._section.name()
 
-        def isCrypted(self) -> bool:
+        def is_encrypted(self) -> bool:
             return self._crypt
 
-        def isLongText(self) -> bool:
+        def is_long_text(self) -> bool:
             return self._longText
 
         def get_type(self) -> int:
             return self._type
 
-        def getParams(self) -> typing.Any:
+        def get_params(self) -> typing.Any:
             return _configParams.get(self._section.name() + self._key, None)
 
-        def getHelp(self) -> str:
+        def get_help(self) -> str:
             return gettext(self._help)
 
         def set(self, value: typing.Union[str, bool, int]) -> None:
@@ -309,7 +309,7 @@ class Config:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             if cfg.crypt:
-                val = Config.section(Config.SectionType.from_str(cfg.section)).valueCrypt(cfg.key)
+                val = Config.section(Config.SectionType.from_str(cfg.section)).value_encrypted(cfg.key)
             else:
                 val = Config.section(Config.SectionType.from_str(cfg.section)).value(cfg.key)
             yield val
@@ -342,7 +342,7 @@ class Config:
             return False
 
     @staticmethod
-    def getConfigValues(
+    def get_config_values(
         addCrypt: bool = False,
     ) -> collections.abc.Mapping[str, collections.abc.Mapping[str, collections.abc.Mapping[str, typing.Any]]]:
         """
@@ -355,7 +355,7 @@ class Config:
             if cfg.key() in REMOVED_CONFIG_ELEMENTS.get(cfg.section(), ()):
                 continue
 
-            if cfg.isCrypted() is True and addCrypt is False:
+            if cfg.is_encrypted() is True and addCrypt is False:
                 continue
 
             if cfg.get_type() == Config.FieldType.PASSWORD and addCrypt is False:
@@ -366,11 +366,11 @@ class Config:
                 res[cfg.section()] = {}
             res[cfg.section()][cfg.key()] = {
                 'value': cfg.get(),
-                'crypt': cfg.isCrypted(),
-                'longText': cfg.isLongText(),
+                'crypt': cfg.is_encrypted(),
+                'longText': cfg.is_long_text(),
                 'type': cfg.get_type(),
-                'params': cfg.getParams(),
-                'help': cfg.getHelp(),
+                'params': cfg.get_params(),
+                'help': cfg.get_help(),
             }
         logger.debug('Configuration: %s', res)
         return res
@@ -448,7 +448,7 @@ class GlobalConfig:
         'superUser', 'root', type=Config.FieldType.TEXT, help=_('Superuser username')
     )
     # Superuser password (do not need to be at database!!!)
-    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).valueCrypt(
+    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).value_encrypted(
         'rootPass', 'udsmam0', type=Config.FieldType.PASSWORD, help=_('Superuser password')
     )
     SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(Config.SectionType.SECURITY).value(

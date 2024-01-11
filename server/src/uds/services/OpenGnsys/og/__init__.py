@@ -135,7 +135,7 @@ class OpenGnsysClient:
     ) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                security.secureRequestsSession(verify=self.verifyCert).post(
+                security.secure_requests_session(verify=self.verifyCert).post(
                     self._ogUrl(path),
                     data=json.dumps(data),
                     headers=self.headers,
@@ -149,7 +149,7 @@ class OpenGnsysClient:
     def _get(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                security.secureRequestsSession(verify=self.verifyCert).get(
+                security.secure_requests_session(verify=self.verifyCert).get(
                     self._ogUrl(path), headers=self.headers, verify=self.verifyCert,
                     timeout=TIMEOUT,
                 ),
@@ -161,7 +161,7 @@ class OpenGnsysClient:
     def _delete(self, path: str, errMsg: typing.Optional[str] = None) -> typing.Any:
         if not FAKE:
             return ensureResponseIsValid(
-                security.secureRequestsSession(verify=self.verifyCert).delete(
+                security.secure_requests_session(verify=self.verifyCert).delete(
                     self._ogUrl(path),
                     headers=self.headers,
                     timeout=TIMEOUT,

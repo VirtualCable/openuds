@@ -45,7 +45,7 @@ class Config(Handler):
     needs_admin = True  # By default, staff is lower level needed
 
     def get(self) -> typing.Any:
-        return CfgConfig.getConfigValues(self.is_admin())
+        return CfgConfig.get_config_values(self.is_admin())
 
 
     def put(self) -> typing.Any:

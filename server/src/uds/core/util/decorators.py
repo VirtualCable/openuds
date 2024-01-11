@@ -393,7 +393,7 @@ def blocker(
                 result = f(*args, **kwargs)
             except uds.core.exceptions.rest.BlockAccess:
                 # Increment
-                blockCache.put(ip, failuresCount + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+                blockCache.put(ip, failuresCount + 1, GlobalConfig.LOGIN_BLOCK.as_int())
                 raise exceptions.rest.AccessDenied
             # Any other exception will be raised
             except Exception:

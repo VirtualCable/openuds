@@ -172,7 +172,7 @@ class Client:  # pylint: disable=too-many-public-methods
         access: typing.Optional[str] = None,
         proxies: typing.Optional[collections.abc.MutableMapping[str, str]] = None,
     ):
-        self._session = security.secureRequestsSession(verify=VERIFY_SSL)
+        self._session = security.secure_requests_session(verify=VERIFY_SSL)
         if proxies:
             self._session.proxies = proxies
 

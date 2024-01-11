@@ -215,6 +215,4 @@ class CalendarChecker:
 
     @staticmethod
     def _gen_cache_key(key: str) -> str:
-        # Returns a valid cache key for all caching backends (memcached, redis, or whatever)
-        # Simple, fastest algorihm is to use md5
-        return hashlib.md5(key.encode('utf-8')).hexdigest()  # nosec  simple fast algorithm for cache keys
+        return hashlib.sha256(key.encode('utf-8'), usedforsecurity=False).hexdigest()

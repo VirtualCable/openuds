@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 url_validator = dj_validators.URLValidator(['http', 'https'])
 
 
-def validateNumeric(
+def validate_numeric(
     value: typing.Union[str, int],
     min_value: typing.Optional[int] = None,
     max_value: typing.Optional[int] = None,
@@ -87,7 +87,7 @@ def validateNumeric(
     return int(value)
 
 
-def validateHostname(hostname: str, maxLength: int = 64, allowDomain=False) -> str:
+def validate_hostname(hostname: str, maxLength: int = 64, allowDomain=False) -> str:
     if len(hostname) > maxLength:
         raise exceptions.validation.ValidationError(
             _('{} is not a valid hostname: maximum host name length exceeded.').format(hostname)
@@ -107,8 +107,8 @@ def validateHostname(hostname: str, maxLength: int = 64, allowDomain=False) -> s
     return hostname
 
 
-def validateFqdn(fqdn: str, maxLength: int = 255) -> str:
-    return validateHostname(fqdn, maxLength, allowDomain=True)
+def validate_fqdn(fqdn: str, maxLength: int = 255) -> str:
+    return validate_hostname(fqdn, maxLength, allowDomain=True)
 
 
 def validateUrl(url: str, maxLength: int = 1024) -> str:
@@ -123,7 +123,7 @@ def validateUrl(url: str, maxLength: int = 1024) -> str:
     return url
 
 
-def validateIpv4(ipv4: str) -> str:
+def validate_ipv4(ipv4: str) -> str:
     """
     Validates that a ipv4 address is valid
     :param ipv4: ipv4 address to validate
@@ -137,7 +137,7 @@ def validateIpv4(ipv4: str) -> str:
     return ipv4
 
 
-def validateIpv6(ipv6: str) -> str:
+def validate_ipv6(ipv6: str) -> str:
     """
     Validates that a ipv6 address is valid
     :param ipv6: ipv6 address to validate
@@ -151,7 +151,7 @@ def validateIpv6(ipv6: str) -> str:
     return ipv6
 
 
-def validateIpv4OrIpv6(ipv4OrIpv6: str) -> str:
+def validate_ip(ipv4_or_ipv6: str) -> str:
     """
     Validates that a ipv4 or ipv6 address is valid
     :param ipv4OrIpv6: ipv4 or ipv6 address to validate
@@ -159,15 +159,15 @@ def validateIpv4OrIpv6(ipv4OrIpv6: str) -> str:
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
     try:
-        dj_validators.validate_ipv46_address(ipv4OrIpv6)
+        dj_validators.validate_ipv46_address(ipv4_or_ipv6)
     except Exception:
         raise exceptions.validation.ValidationError(
-            _('{} is not a valid IPv4 or IPv6 address').format(ipv4OrIpv6)
+            _('{} is not a valid IPv4 or IPv6 address').format(ipv4_or_ipv6)
         ) from None
-    return ipv4OrIpv6
+    return ipv4_or_ipv6
 
 
-def validatePath(
+def validate_path(
     path: str,
     maxLength: int = 1024,
     mustBeWindows: bool = False,
@@ -207,7 +207,7 @@ def validatePath(
     return path
 
 
-def validatePort(port: typing.Union[str, int]) -> int:
+def validate_port(port: typing.Union[str, int]) -> int:
     """
     Validates that a port number is valid
 
@@ -220,10 +220,10 @@ def validatePort(port: typing.Union[str, int]) -> int:
     Raises:
         exceptions.ValidationException: if port is not valid
     """
-    return validateNumeric(port, min_value=1, max_value=65535, fieldName='Port')
+    return validate_numeric(port, min_value=1, max_value=65535, fieldName='Port')
 
 
-def validateHost(host: str) -> str:
+def validate_host(host: str) -> str:
     """
     Validates that a host is valid
     :param host: host to validate
@@ -233,10 +233,10 @@ def validateHost(host: str) -> str:
         dj_validators.validate_ipv46_address(host)
         return host
     except Exception:
-        return validateFqdn(host)
+        return validate_fqdn(host)
 
 
-def validateHostPortPair(hostPortPair: str) -> tuple[str, int]:
+def validate_host_port(host_port_pair: str) -> tuple[str, int]:
     """
     Validates that a host:port pair is valid
     :param hostPortPair: host:port pair to validate
@@ -244,32 +244,32 @@ def validateHostPortPair(hostPortPair: str) -> tuple[str, int]:
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
     try:
-        if '[' in hostPortPair and ']' in hostPortPair:  # IPv6
-            host, port = hostPortPair.split(']:')
+        if '[' in host_port_pair and ']' in host_port_pair:  # IPv6
+            host, port = host_port_pair.split(']:')
             host = host[1:]
         else:
-            host, port = hostPortPair.split(':')
+            host, port = host_port_pair.split(':')
         # if an ip address is used, it must be valid
         try:
             dj_validators.validate_ipv46_address(host)
-            return host, validatePort(port)
+            return host, validate_port(port)
         except Exception:
-            return validateHostname(host, 255, False), validatePort(port)
+            return validate_hostname(host, 255, False), validate_port(port)
     except Exception:
-        raise exceptions.validation.ValidationError(_('{} is not a valid host:port pair').format(hostPortPair)) from None
+        raise exceptions.validation.ValidationError(_('{} is not a valid host:port pair').format(host_port_pair)) from None
 
 
-def validateTimeout(timeOutStr: str) -> int:
+def validate_timeout(timeOutStr: str) -> int:
     """
     Validates that a timeout value is valid
     :param timeOutStr: timeout to validate
     :param returnAsInteger: if True, returns value as integer, if not, as string
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
-    return validateNumeric(timeOutStr, min_value=0, fieldName='Timeout')
+    return validate_numeric(timeOutStr, min_value=0, fieldName='Timeout')
 
 
-def validateMac(mac: str) -> str:
+def validate_mac(mac: str) -> str:
     """
     Validates that a mac address is valid
     :param mac: mac address to validate
@@ -288,7 +288,7 @@ def validateMac(mac: str) -> str:
     return mac
 
 
-def validateMacRange(macRange: str) -> str:
+def validate_mac_range(macRange: str) -> str:
     """
     Corrects mac range (uppercase, without spaces), and checks that is range is valid
     :param macRange: Range to fix
@@ -296,15 +296,15 @@ def validateMacRange(macRange: str) -> str:
     """
     try:
         macRangeStart, macRangeEnd = macRange.split('-')
-        validateMac(macRangeStart)
-        validateMac(macRangeEnd)
+        validate_mac(macRangeStart)
+        validate_mac(macRangeEnd)
     except Exception:
         raise exceptions.validation.ValidationError(_('{} is not a valid MAC range').format(macRange)) from None
 
     return macRange
 
 
-def validateEmail(email: str) -> str:
+def validate_email(email: str) -> str:
     """
     Validates that an email is valid
     :param email: email to validate
@@ -319,7 +319,7 @@ def validateEmail(email: str) -> str:
     return email
 
 
-def validateBasename(baseName: str, length: int = -1) -> str:
+def validate_basename(baseName: str, length: int = -1) -> str:
     """ "Checks if the basename + length is valid for services. Raises an exception if not valid"
 
     Arguments:
@@ -348,7 +348,7 @@ def validateBasename(baseName: str, length: int = -1) -> str:
     return baseName
 
 
-def validateJson(jsonData: typing.Optional[str]) -> typing.Any:
+def validate_json(jsonData: typing.Optional[str]) -> typing.Any:
     """
     Validates that a json data is valid (or empty)
 
@@ -369,7 +369,7 @@ def validateJson(jsonData: typing.Optional[str]) -> typing.Any:
         raise exceptions.validation.ValidationError(_('Invalid JSON data')) from None
 
 
-def validateServerCertificate(cert: typing.Optional[str]) -> str:
+def validate_server_certificate(cert: typing.Optional[str]) -> str:
     """
     Validates that a certificate is valid
 
@@ -385,13 +385,13 @@ def validateServerCertificate(cert: typing.Optional[str]) -> str:
     if not cert:
         return ''
     try:
-        security.checkServerCertificateIsValid(cert)
+        security.is_server_certificate_valid(cert)
     except Exception as e:
         raise exceptions.validation.ValidationError(_('Invalid certificate') + f' :{e}') from e
     return cert
 
 
-def validateServerCertificateMulti(value: typing.Optional[str]) -> str:
+def validate_server_certificate_multiple(value: typing.Optional[str]) -> str:
     """
     Validates the multi line fields refering to attributes
     """

@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 
 @web_login_required(admin=False)
-def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
+def transport_own_link(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str):
     response: collections.abc.MutableMapping[str, typing.Any] = {}
 
     # If userService is not owned by user, will raise an exception
@@ -89,7 +89,7 @@ def transportOwnLink(request: 'ExtendedHttpRequestWithUser', idService: str, idT
 
 # pylint: disable=unused-argument
 @cache_page(3600, key_prefix='img', cache='memory')
-def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
+def transport_icon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
     try:
         transport: Transport
         if idTrans[:6] == 'LABEL:':
@@ -105,7 +105,7 @@ def transportIcon(request: 'ExtendedHttpRequest', idTrans: str) -> HttpResponse:
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
+def service_image(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
     try:
         icon = Image.objects.get(uuid=process_uuid(idImage))
         return icon.image_as_response()
@@ -121,11 +121,11 @@ def serviceImage(request: 'ExtendedHttpRequest', idImage: str) -> HttpResponse:
 
 @web_login_required(admin=False)
 @never_cache
-def userServiceEnabler(
+def user_service_enabler(
     request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str
 ) -> HttpResponse:
     return HttpResponse(
-        json.dumps(services.enableService(request, idService=idService, idTransport=idTransport)),
+        json.dumps(services.enable_service(request, idService=idService, idTransport=idTransport)),
         content_type='application/json',
     )
 
@@ -141,7 +141,7 @@ def closer(request: 'ExtendedHttpRequest') -> HttpResponse:
 
 @web_login_required(admin=False)
 @never_cache
-def userServiceStatus(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
+def user_service_status(request: 'ExtendedHttpRequestWithUser', idService: str, idTransport: str) -> HttpResponse:
     '''
     Returns;
      'running' if not ready
@@ -222,7 +222,7 @@ def action(request: 'ExtendedHttpRequestWithUser', idService: str, actionString:
 
     if rebuild:
         # Rebuild services data, but return only "this" service
-        for v in services.getServicesData(request)['services']:
+        for v in services.get_services_data(request)['services']:
             if v['id'] == idService:
                 response = v
                 break

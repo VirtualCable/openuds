@@ -32,7 +32,6 @@ import collections.abc
 import logging
 import typing
 
-from django.http import HttpResponseRedirect
 from django.utils.translation import gettext as _
 
 from uds.core import types
@@ -44,8 +43,6 @@ from uds.models import Authenticator
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from django.http import HttpRequest  # pylint: disable=ungrouped-imports
-
     from uds.core.types.requests import ExtendedHttpRequest
     from uds.web.forms.LoginForm import LoginForm
 
@@ -83,9 +80,7 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
     if form.is_valid():
         os = request.os
         try:
-            authenticator = Authenticator.objects.get(
-                uuid=process_uuid(form.cleaned_data['authenticator'])
-            )
+            authenticator = Authenticator.objects.get(uuid=process_uuid(form.cleaned_data['authenticator']))
         except Exception:
             authenticator = Authenticator.null()
         userName = form.cleaned_data['user']
@@ -95,22 +90,14 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
         cache = Cache('auth')
         cacheKey = str(authenticator.id) + userName
         tries = cache.get(cacheKey) or 0
-        triesByIp = (
-            (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.as_bool() else 0
-        )
-        maxTries = GlobalConfig.MAX_LOGIN_TRIES.getInt()
+        triesByIp = (cache.get(request.ip) or 0) if GlobalConfig.LOGIN_BLOCK_IP.as_bool() else 0
+        maxTries = GlobalConfig.MAX_LOGIN_TRIES.as_int()
         # Get instance..
         authInstance = authenticator.get_instance()
         # Check if user is locked
-        if (
-            authInstance.block_user_on_failures is True
-            and (tries >= maxTries)
-            or triesByIp >= maxTries
-        ):
+        if authInstance.block_user_on_failures is True and (tries >= maxTries) or triesByIp >= maxTries:
             log_login(request, authenticator, userName, 'Temporarily blocked')
-            return types.auth.LoginResult(
-                errstr=_('Too many authentication errrors. User temporarily blocked')
-            )
+            return types.auth.LoginResult(errstr=_('Too many authentication errrors. User temporarily blocked'))
         # check if authenticator is visible for this requests
         if authInstance.is_ip_allowed(request=request) is False:
             log_login(
@@ -121,14 +108,16 @@ def check_login(  # pylint: disable=too-many-branches, too-many-statements
             )
             return types.auth.LoginResult(errstr=_('Access tried from an unallowed source'))
 
-        password = form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'  # Random string, in fact, just a placeholder that will not be used :)
+        password = (
+            form.cleaned_data['password'] or 'axd56adhg466jasd6q8sadñ€sáé--v'
+        )  # Random string, in fact, just a placeholder that will not be used :)
         authResult = authenticate(userName, password, authenticator, request=request)
         logger.debug('User: %s', authResult.user)
 
         if authResult.user is None:
             logger.debug("Invalid user %s (access denied)", userName)
-            cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.getInt())
-            cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.getInt())
+            cache.put(cacheKey, tries + 1, GlobalConfig.LOGIN_BLOCK.as_int())
+            cache.put(request.ip, triesByIp + 1, GlobalConfig.LOGIN_BLOCK.as_int())
             log_login(
                 request,
                 authenticator,

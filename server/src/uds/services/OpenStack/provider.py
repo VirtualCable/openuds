@@ -232,7 +232,7 @@ class OpenStackProvider(ServiceProvider):
         self._api = None
 
         if values is not None:
-            self.timeout.value = validators.validateTimeout(self.timeout.value)
+            self.timeout.value = validators.validate_timeout(self.timeout.value)
 
     def api(self, projectId=None, region=None) -> openstack.Client:
         projectId = projectId or self.tenant.value or None

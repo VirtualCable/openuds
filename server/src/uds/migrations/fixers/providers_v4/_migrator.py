@@ -72,7 +72,7 @@ def migrate(
             server_ip_hostname: list[tuple[str, str]] = []
             for server in servers:
                 try:
-                    validators.validateIpv4OrIpv6(server)
+                    validators.validate_ip(server)
                     # Is Pure IP, try to get hostname
                     try:
                         answers = dns.resolver.resolve(dns.reversename.from_address(server), 'PTR')

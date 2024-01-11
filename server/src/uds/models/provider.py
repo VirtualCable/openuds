@@ -121,7 +121,7 @@ class Provider(ManagedObjectModel, TaggingMixin):  # type: ignore
         if to_delete.data != '':
             s = to_delete.get_instance()
             s.destroy()
-            s.env.clearRelatedData()
+            s.env.clean_related_data()
 
         # Clears related logs
         log.clear_logs(to_delete)

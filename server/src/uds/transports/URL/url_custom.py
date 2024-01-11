@@ -64,16 +64,17 @@ class URLCustomTransport(transports.Transport):
     protocol = types.transports.Protocol.OTHER
     group = types.transports.Grouping.DIRECT
 
-    urlPattern = gui.TextField(
+    url_pattern = gui.TextField(
         label=_('URL Pattern'),
         order=1,
         tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'),
         default='https://www.udsenterprise.com',
         length=256,
         required=True,
+        stored_field_name='urlPattern',  # Allows compat with old versions
     )
 
-    forceNewWindow = gui.CheckBoxField(
+    force_new_window = gui.CheckBoxField(
         label=_('Force new HTML Window'),
         order=91,
         tooltip=_(
@@ -81,6 +82,7 @@ class URLCustomTransport(transports.Transport):
         ),
         default=False,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='forceNewWindow',  # Allows compat with old versions
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -88,8 +90,8 @@ class URLCustomTransport(transports.Transport):
             return
         # Strip spaces
         if not (
-            self.urlPattern.value.startswith('http://')
-            or self.urlPattern.value.startswith('https://')
+            self.url_pattern.value.startswith('http://')
+            or self.url_pattern.value.startswith('https://')
         ):
             raise exceptions.validation.ValidationError(
                 _('The url must be http or https')
@@ -115,11 +117,11 @@ class URLCustomTransport(transports.Transport):
         username: str = user.get_username_for_auth()
         username, password = userService.process_user_password(username, password)
 
-        url = self.urlPattern.value.replace('_IP_', ip).replace('_USER_', username)
+        url = self.url_pattern.value.replace('_IP_', ip).replace('_USER_', username)
 
         onw = (
             '&o_n_w={}'.format(hash(transport.name))
-            if self.forceNewWindow.as_bool()
+            if self.force_new_window.as_bool()
             else ''
         )
         return str("{}{}".format(url, onw))

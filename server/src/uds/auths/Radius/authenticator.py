@@ -174,7 +174,7 @@ class RadiusAuth(auths.Authenticator):
             groups.append(self.globalGroup.value.strip())
 
         # Cache groups for "getGroups", because radius will not send us those
-        with self.storage.map() as storage:
+        with self.storage.as_dict() as storage:
             storage[username] = groups
 
         # Validate groups
@@ -183,14 +183,14 @@ class RadiusAuth(auths.Authenticator):
         return types.auth.SUCCESS_AUTH
 
     def get_groups(self, username: str, groupsManager: 'auths.GroupsManager') -> None:
-        with self.storage.map() as storage:
+        with self.storage.as_dict() as storage:
             groupsManager.validate(storage.get(username, []))
 
     def create_user(self, usrData: dict[str, str]) -> None:
         pass
 
     def remove_user(self, username: str) -> None:
-        with self.storage.map() as storage:
+        with self.storage.as_dict() as storage:
             if username in storage:
                 del storage[username]
         return super().remove_user(username)

@@ -93,7 +93,7 @@ class Connection(Handler):
         self._request.user = self._user
 
         return Connection.result(
-            result=services.getServicesData(typing.cast(ExtendedHttpRequestWithUser, self._request))
+            result=services.get_services_data(typing.cast(ExtendedHttpRequestWithUser, self._request))
         )
 
     def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:
@@ -183,7 +183,7 @@ class Connection(Handler):
         self._request.user = self._user  # type: ignore
         setattr(self._request, '_cryptedpass', self._session['REST']['password'])  # type: ignore  # pylint: disable=protected-access
         setattr(self._request, '_scrambler', self._request.META['HTTP_SCRAMBLER'])  # type: ignore  # pylint: disable=protected-access
-        linkInfo = services.enableService(self._request, idService=idService, idTransport=idTransport)
+        linkInfo = services.enable_service(self._request, idService=idService, idTransport=idTransport)
         if linkInfo['error']:
             return Connection.result(error=linkInfo['error'])
         return Connection.result(result=linkInfo['url'])

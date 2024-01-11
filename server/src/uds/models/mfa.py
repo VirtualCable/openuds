@@ -101,7 +101,7 @@ class MFA(ManagedObjectModel, TaggingMixin):  # type: ignore
             try:
                 s = to_delete.get_instance()
                 s.destroy()
-                s.env.clearRelatedData()
+                s.env.clean_related_data()
             except Exception as e:
                 logger.error(
                     'Error processing deletion of notifier %s: %s (forced deletion)',

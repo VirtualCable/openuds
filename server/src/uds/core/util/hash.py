@@ -43,7 +43,7 @@ try:
 except ImportError:
     import hashlib
 
-    hasher = hashlib.md5  # nosec: just a hashm not for crypto
+    hasher = hashlib.sha256  # nosec: just a hashm not for crypto
 
 
 

@@ -282,7 +282,7 @@ class SMSMFA(mfas.MFA):
         return url
 
     def getSession(self) -> requests.Session:
-        session = security.secureRequestsSession(verify=self.ignoreCertificateErrors.as_bool())
+        session = security.secure_requests_session(verify=self.ignoreCertificateErrors.as_bool())
         # 0 means no authentication
         if self.authenticationMethod.value == '1':
             session.auth = requests.auth.HTTPBasicAuth(

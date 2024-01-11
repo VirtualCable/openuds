@@ -37,7 +37,7 @@ import typing
 import collections.abc
 
 from uds.core import exceptions, types
-from uds.core.util.security import secureRequestsSession
+from uds.core.util.security import secure_requests_session
 
 if typing.TYPE_CHECKING:
     from uds.models import UserService
@@ -86,7 +86,7 @@ def _execute_actor_request(
                 verify = f.name
         else:
             verify = False
-        session = secureRequestsSession(verify=cert)
+        session = secure_requests_session(verify=cert)
         if data is None:
             r = session.get(url, verify=verify, timeout=TIMEOUT)
         else:

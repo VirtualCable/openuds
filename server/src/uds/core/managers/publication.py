@@ -124,7 +124,7 @@ class PublicationLauncher(DelayedTask):
                 serialize(
                     now
                     + datetime.timedelta(
-                        hours=GlobalConfig.SESSION_EXPIRE_TIME.getInt(True)
+                        hours=GlobalConfig.SESSION_EXPIRE_TIME.as_int(True)
                     )
                 ),
             )
@@ -188,7 +188,7 @@ class PublicationFinishChecker(DelayedTask):
                         if doPublicationCleanup:
                             pc = PublicationOldMachinesCleaner(old.id)
                             pc.register(
-                                GlobalConfig.SESSION_EXPIRE_TIME.getInt(True) * 3600,
+                                GlobalConfig.SESSION_EXPIRE_TIME.as_int(True) * 3600,
                                 'pclean-' + str(old.id),
                                 True,
                             )
@@ -371,27 +371,27 @@ class PublicationManager(metaclass=singleton.Singleton):
             raise PublishException(str(e)) from e
 
     def unpublish(
-        self, servicePoolPub: ServicePoolPublication
+        self, servicepool_publication: ServicePoolPublication
     ):  # pylint: disable=no-self-use
         """
         Unpublishes an active (usable) or removable publication
         :param servicePoolPub: Publication to unpublish
         """
         if (
-            State.from_str(servicePoolPub.state).is_usable() is False
-            and State.from_str(servicePoolPub.state).is_removable() is False
+            State.from_str(servicepool_publication.state).is_usable() is False
+            and State.from_str(servicepool_publication.state).is_removable() is False
         ):
             raise PublishException(_('Can\'t unpublish non usable publication'))
-        if servicePoolPub.userServices.exclude(state__in=State.INFO_STATES).count() > 0:
+        if servicepool_publication.userServices.exclude(state__in=State.INFO_STATES).count() > 0:
             raise PublishException(
                 _('Can\'t unpublish publications with services in process')
             )
         try:
-            pubInstance = servicePoolPub.get_instance()
+            pubInstance = servicepool_publication.get_instance()
             state = pubInstance.destroy()
-            servicePoolPub.set_state(State.REMOVING)
+            servicepool_publication.set_state(State.REMOVING)
             PublicationFinishChecker.state_updater(
-                servicePoolPub, pubInstance, state
+                servicepool_publication, pubInstance, state
             )
         except Exception as e:
             raise PublishException(str(e)) from e

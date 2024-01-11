@@ -165,7 +165,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.get_environment_for_table(self._meta.verbose_name, self.id)  # type: ignore
 
     def active_publication(self) -> typing.Optional['ServicePoolPublication']:
         """
@@ -207,13 +207,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         from uds.models.user_service import \
             UserService  # pylint: disable=import-outside-toplevel
 
-        if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
+        if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return (
                 ServicePool.objects.none()
             )  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
-        min_ = GlobalConfig.RESTRAINT_COUNT.getInt()
+        date = sql_datetime() - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
+        min_ = GlobalConfig.RESTRAINT_COUNT.as_int()
 
         res = []
         for v in (
@@ -258,13 +258,13 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         from uds.core.util.config import \
             GlobalConfig  # pylint: disable=import-outside-toplevel
 
-        if GlobalConfig.RESTRAINT_TIME.getInt() <= 0:
+        if GlobalConfig.RESTRAINT_TIME.as_int() <= 0:
             return False  # Do not perform any restraint check if we set the globalconfig to 0 (or less)
 
-        date = typing.cast(datetime, sql_datetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.getInt())
+        date = typing.cast(datetime, sql_datetime()) - timedelta(seconds=GlobalConfig.RESTRAINT_TIME.as_int())
         if (
             self.userServices.filter(state=types.states.State.ERROR, state_date__gt=date).count()
-            >= GlobalConfig.RESTRAINT_COUNT.getInt()
+            >= GlobalConfig.RESTRAINT_COUNT.as_int()
         ):
             return True
 
@@ -677,7 +677,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         toDelete: 'ServicePool' = kwargs['instance']
 
         logger.debug('Deleting Service Pool %s', toDelete)
-        toDelete.get_environment().clearRelatedData()
+        toDelete.get_environment().clean_related_data()
 
         # Clears related logs
         log.clear_logs(toDelete)

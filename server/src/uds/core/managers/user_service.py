@@ -327,27 +327,27 @@ class UserServiceManager(metaclass=singleton.Singleton):
 
         return user_service
 
-    def remove(self, user_service: UserService) -> UserService:
+    def remove(self, userservice: UserService) -> UserService:
         """
         Removes a uService element
         """
         with transaction.atomic():
-            user_service = UserService.objects.select_for_update().get(id=user_service.id)
-            operationsLogger.info('Removing userService %a', user_service.name)
-            if user_service.is_usable() is False and State.from_str(user_service.state).is_removable() is False:
+            userservice = UserService.objects.select_for_update().get(id=userservice.id)
+            operationsLogger.info('Removing userService %a', userservice.name)
+            if userservice.is_usable() is False and State.from_str(userservice.state).is_removable() is False:
                 raise OperationException(_('Can\'t remove a non active element'))
-            user_service.set_state(State.REMOVING)
-            logger.debug("***** The state now is %s *****", State.from_str(user_service.state).literal)
-            user_service.setInUse(False)  # For accounting, ensure that it is not in use right now
-            user_service.save()
+            userservice.set_state(State.REMOVING)
+            logger.debug("***** The state now is %s *****", State.from_str(userservice.state).literal)
+            userservice.setInUse(False)  # For accounting, ensure that it is not in use right now
+            userservice.save()
 
-        userServiceInstance = user_service.get_instance()
+        userServiceInstance = userservice.get_instance()
         state = userServiceInstance.destroy()
 
         # Data will be serialized on makeUnique process
-        UserServiceOpChecker.make_unique(user_service, userServiceInstance, state)
+        UserServiceOpChecker.make_unique(userservice, userServiceInstance, state)
 
-        return user_service
+        return userservice
 
     def remove_or_cancel(self, user_service: UserService):
         if user_service.is_usable() or State.from_str(user_service.state).is_removable():

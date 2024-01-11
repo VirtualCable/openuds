@@ -71,7 +71,7 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         offers = []
         for s in type_.offers:
             if s.uses_cache_l2:
-                s.uses_cache = True
+                s.uses_cache = True   # Ensures uses cache is true
                 if s.publication_type is None:
                     logger.error(
                         'Provider %s offers %s, but %s needs cache and do not have publication_type defined',
@@ -93,9 +93,16 @@ class ServiceProviderFactory(factory.ModuleFactory[ServiceProvider]):
         Returns a list of all service providers registered that do not need
         to be published
         """
-        res = []
-        for p in self.providers().values():
-            for s in p.offers:
-                if s.publication_type is None and s.must_assign_manually is False:
-                    res.append(s)
-        return res
+        return [
+            s
+            for p in self.providers().values()
+            for s in p.offers
+            if s.publication_type is None and s.must_assign_manually is False
+        ]
+        # old code :-)
+        # res = []
+        # for p in self.providers().values():
+        #     for s in p.offers:
+        #         if s.publication_type is None and s.must_assign_manually is False:
+        #             res.append(s)
+        # return res

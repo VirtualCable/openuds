@@ -68,13 +68,13 @@ class DelayedTaskThread(BaseThread):
 
 class TaskManager(metaclass=singleton.Singleton):
 
-    __slots__ = ('threads', 'keepRunning')
+    __slots__ = ('threads', 'keep_running')
 
-    keepRunning: bool
+    keep_running: bool
     threads: list[BaseThread]
 
     def __init__(self):
-        self.keepRunning = True
+        self.keep_running = True
         self.threads = []
 
     @staticmethod
@@ -82,7 +82,7 @@ class TaskManager(metaclass=singleton.Singleton):
         return TaskManager()
 
     @staticmethod
-    def sig_term(sigNum, frame):  # pylint: disable=unused-argument
+    def sig_term(sigNum: int, frame: typing.Any) -> None:
         """
         This method will ensure that we finish correctly current running task before exiting.
         If we need to stop cause something went wrong (that should not happen), we must send sigterm, wait a while (10-20 secs) and after that send sigkill
@@ -92,7 +92,7 @@ class TaskManager(metaclass=singleton.Singleton):
         Take a look at killTaskManager.sh :-)
         """
         logger.info("Caught term signal, finishing task manager")
-        TaskManager.manager().keepRunning = False
+        TaskManager.manager().keep_running = False
 
     def register_job(self, jobType: type[jobs.Job]) -> None:
         jobName = jobType.friendly_name
@@ -114,7 +114,7 @@ class TaskManager(metaclass=singleton.Singleton):
         self.threads.append(thread)
 
     def run(self) -> None:
-        self.keepRunning = True
+        self.keep_running = True
         # Don't know why, but with django 1.8, must "reset" connections so them do not fail on first access...
         # Is simmilar to https://code.djangoproject.com/ticket/21597#comment:29
         connection.close()
@@ -124,8 +124,8 @@ class TaskManager(metaclass=singleton.Singleton):
 
         self.register_scheduled_tasks()
 
-        noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.getInt()
-        noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.getInt()
+        noSchedulers: int = GlobalConfig.SCHEDULER_THREADS.as_int()
+        noDelayedTasks: int = GlobalConfig.DELAYED_TASKS_THREADS.as_int()
 
         logger.info(
             'Starting %s schedulers and %s task executors', noSchedulers, noDelayedTasks
@@ -156,7 +156,7 @@ class TaskManager(metaclass=singleton.Singleton):
         # Remote.on()
 
         # gc.set_debug(gc.DEBUG_LEAK)
-        while self.keepRunning:
+        while self.keep_running:
             time.sleep(1)
 
         for thread in self.threads:

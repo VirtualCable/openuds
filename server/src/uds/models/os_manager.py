@@ -116,7 +116,7 @@ class OSManager(ManagedObjectModel, TaggingMixin):
         if to_delete.data != '':
             s = to_delete.get_instance()
             s.destroy()
-            s.env.clearRelatedData()
+            s.env.clean_related_data()
 
         logger.debug('Before delete os manager %s', to_delete)
 

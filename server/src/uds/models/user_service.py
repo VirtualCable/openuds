@@ -174,7 +174,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         (see related classes uds.core.util.unique_name_generator and uds.core.util.unique_mac_generator)
         """
-        return Environment.getEnvForTableElement(
+        return Environment.get_environment_for_table(
             self._meta.verbose_name,  # type: ignore  # pylint: disable=no-member
             self.id,
             {
@@ -636,7 +636,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         to_delete: 'UserService' = kwargs['instance']
         # Clear environment
-        to_delete.get_environment().clearRelatedData()
+        to_delete.get_environment().clean_related_data()
         # Ensure all sessions are closed (invoke with '' to close all sessions)
         # In fact, sessions are going to be deleted also, but we give then
         # the oportunity to execute some code before deleting them

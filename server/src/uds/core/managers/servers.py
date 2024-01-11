@@ -73,7 +73,7 @@ class ServerManager(metaclass=singleton.Singleton):
         # If counters are too old, restart them
         if datetime.datetime.now() - self.last_counters_clean > self.MAX_COUNTERS_AGE:
             self.clear_unmanaged_usage()
-        return Storage(self.STORAGE_NAME).map(atomic=True, group='counters')
+        return Storage(self.STORAGE_NAME).as_dict(atomic=True, group='counters')
 
     def property_name(self, user: typing.Optional[typing.Union[str, 'models.User']]) -> str:
         """Returns the property name for a user"""

@@ -50,7 +50,7 @@ class AssignedAndUnused(Job):
 
     def run(self) -> None:
         since_state = sql_datetime() - timedelta(
-            seconds=GlobalConfig.CHECK_UNUSED_TIME.getInt()
+            seconds=GlobalConfig.CHECK_UNUSED_TIME.as_int()
         )
         # Locate service pools with pending assigned service in use
         outdatedServicePools = ServicePool.objects.annotate(

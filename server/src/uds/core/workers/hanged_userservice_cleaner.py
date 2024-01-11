@@ -51,9 +51,9 @@ class HangedCleaner(Job):
     def run(self) -> None:
         now = sql_datetime()
         since_state = now - timedelta(
-            seconds=GlobalConfig.MAX_INITIALIZING_TIME.getInt()
+            seconds=GlobalConfig.MAX_INITIALIZING_TIME.as_int()
         )
-        since_removing = now - timedelta(seconds=GlobalConfig.MAX_REMOVAL_TIME.getInt())
+        since_removing = now - timedelta(seconds=GlobalConfig.MAX_REMOVAL_TIME.as_int())
         # Filter for locating machine not ready
         flt = Q(state_date__lt=since_state, state=State.PREPARING) | Q(
             state_date__lt=since_state, state=State.USABLE, os_state=State.PREPARING

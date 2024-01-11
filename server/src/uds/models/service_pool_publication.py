@@ -113,7 +113,7 @@ class ServicePoolPublication(UUIDModel):
         """
         Returns an environment valid for the record this object represents
         """
-        return Environment.getEnvForTableElement(self._meta.verbose_name, self.id)  # type: ignore
+        return Environment.get_environment_for_table(self._meta.verbose_name, self.id)  # type: ignore
 
     def get_instance(self) -> 'services.Publication':
         """
@@ -210,7 +210,7 @@ class ServicePoolPublication(UUIDModel):
         :note: If destroy raises an exception, the deletion is not taken.
         """
         to_delete: ServicePoolPublication = kwargs['instance']
-        to_delete.get_environment().clearRelatedData()
+        to_delete.get_environment().clean_related_data()
 
         # Delete method is invoked directly by PublicationManager,
         # Destroying a publication is not obligatory an 1 step action.

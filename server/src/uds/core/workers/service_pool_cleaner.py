@@ -55,7 +55,7 @@ class DeployedServiceInfoItemsCleaner(Job):
 
     def run(self) -> None:
         removeFrom = sql_datetime() - timedelta(
-            seconds=GlobalConfig.KEEP_INFO_TIME.getInt()
+            seconds=GlobalConfig.KEEP_INFO_TIME.as_int()
         )
         ServicePool.objects.filter(
             state__in=State.INFO_STATES, state_date__lt=removeFrom

@@ -83,7 +83,7 @@ class TestGetServicesData(UDSTransactionTestCase):
                 )[0].deployed_service
             )
 
-        data = services.getServicesData(self.request)
+        data = services.get_services_data(self.request)
         now = datetime.datetime.now()
         # Will return this:
         #  return {
@@ -184,7 +184,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
                 
 
-        data = services.getServicesData(self.request)
+        data = services.get_services_data(self.request)
         now = datetime.datetime.now()
 
         result_services: typing.Final[
@@ -239,7 +239,7 @@ class TestGetServicesData(UDSTransactionTestCase):
             )
                 
 
-        data = services.getServicesData(self.request)
+        data = services.get_services_data(self.request)
         now = datetime.datetime.now()
 
         result_services: typing.Final[

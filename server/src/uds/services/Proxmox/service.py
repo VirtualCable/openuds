@@ -194,7 +194,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
-            self.baseName.value = validators.validateBasename(
+            self.baseName.value = validators.validate_basename(
                 self.baseName.value, length=self.lenName.num()
             )
             # if int(self.memory.value) < 128:
