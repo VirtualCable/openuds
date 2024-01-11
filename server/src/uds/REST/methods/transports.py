@@ -90,7 +90,7 @@ class Transports(ModelHandler):
         if not transportType:
             raise self.invalid_item_response()
 
-        transport = transportType(Environment.getTempEnv(), None)
+        transport = transportType(Environment.get_temporary_environment(), None)
 
         field = self.add_default_fields(
             transport.gui_description(), ['name', 'comments', 'tags', 'priority', 'networks']

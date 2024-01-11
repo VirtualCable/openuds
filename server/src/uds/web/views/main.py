@@ -33,7 +33,6 @@ import datetime
 import json
 import logging
 import random
-import re
 import time
 import typing
 
@@ -45,13 +44,13 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
-from uds import auths, models
+from uds import models
 from uds.core import exceptions, mfas, types, consts
 from uds.core.auths import auth
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.types.request import ExtendedHttpRequest, ExtendedHttpRequestWithUser
-from uds.core.util import config, state, storage
+from uds.core import types
+from uds.core.util import config, storage
 from uds.core.util.model import sql_stamp_seconds
 from uds.web.forms.LoginForm import LoginForm
 from uds.web.forms.MFAForm import MFAForm
@@ -92,7 +91,7 @@ def ticketLauncher(request: HttpRequest) -> HttpResponse:
 
 # Basically, the original /login method, but fixed for modern interface
 @never_cache
-def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
+def login(request: types.requests.ExtendedHttpRequest, tag: typing.Optional[str] = None) -> HttpResponse:
     # Default empty form
     tag = tag or request.session.get('tag', None)
 
@@ -117,7 +116,7 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
             if (
                 loginResult.user.manager.get_type().provides_mfa()
                 and loginResult.user.manager.mfa
-                and loginResult.user.groups.filter(skip_mfa=state.State.ACTIVE).count() == 0
+                and loginResult.user.groups.filter(skip_mfa=types.states.State.ACTIVE).count() == 0
             ):
                 request.authorized = False
                 response = HttpResponseRedirect(reverse('page.mfa'))
@@ -145,7 +144,7 @@ def login(request: ExtendedHttpRequest, tag: typing.Optional[str] = None) -> Htt
 
 @never_cache
 @auth.web_login_required(admin=False)
-def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
+def logout(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     auth.log_logout(request)
     request.session['restricted'] = False  # Remove restricted
     request.authorized = False
@@ -156,20 +155,20 @@ def logout(request: ExtendedHttpRequestWithUser) -> HttpResponse:
 
 
 @never_cache
-def js(request: ExtendedHttpRequest) -> HttpResponse:
+def js(request: types.requests.ExtendedHttpRequest) -> HttpResponse:
     return HttpResponse(content=configjs.uds_js(request), content_type='application/javascript')
 
 
 @never_cache
 @auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
-def services_data_json(request: ExtendedHttpRequestWithUser) -> HttpResponse:
+def services_data_json(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
     return JsonResponse(getServicesData(request))
 
 
 # The MFA page does not needs CSRF token, so we disable it
 @csrf_exempt
 def mfa(
-    request: ExtendedHttpRequest,
+    request: types.requests.ExtendedHttpRequest,
 ) -> HttpResponse:  # pylint: disable=too-many-return-statements,too-many-statements
     if not request.user or request.authorized:  # If no user, or user is already authorized, redirect to index
         logger.warning('MFA: No user or user is already authorized')
@@ -335,16 +334,18 @@ def mfa(
 @csrf_exempt
 @auth.deny_non_authenticated
 def update_transport_ticket(
-    request: ExtendedHttpRequestWithUser, idTicket: str, scrambler: str
+    request: types.requests.ExtendedHttpRequestWithUser, ticket_id: str, scrambler: str
 ) -> HttpResponse:
     try:
         if request.method == 'POST':
             # Get request body as json
-            data = json.loads(request.body)
+            data: dict[str, str] = json.loads(request.body)
 
             # Update username andd password in ticket
             username = data.get('username', None) or None  # None if not present
-            password = data.get('password', None) or None  # If password is empty, set it to None
+            password: 'str|bytes|None' = (
+                data.get('password', None) or None
+            )  # If password is empty, set it to None
             domain = data.get('domain', None) or None  # If empty string, set to None
 
             if password:
@@ -353,7 +354,9 @@ def update_transport_ticket(
             def _is_ticket_valid(data: collections.abc.Mapping[str, typing.Any]) -> bool:
                 if 'ticket-info' in data:
                     try:
-                        user = models.User.objects.get(uuid=data['ticket-info'].get('user', None))
+                        user = models.User.objects.get(
+                            uuid=typing.cast(dict[str, str], data['ticket-info']).get('user', None)
+                        )
                         if request.user != user:
                             return False
                     except models.User.DoesNotExist:
@@ -378,7 +381,7 @@ def update_transport_ticket(
                 return True
 
             models.TicketStore.update(
-                uuid=idTicket,
+                uuid=ticket_id,
                 checkFnc=_is_ticket_valid,
                 username=username,
                 password=password,

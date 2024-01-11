@@ -106,7 +106,7 @@ class Authenticators(ModelHandler):
             authType = auths.factory().lookup(type_)
             if authType:
                 # Create a new instance of the authenticator to access to its GUI
-                authInstance = authType(Environment.getTempEnv(), None)
+                authInstance = authType(Environment.get_temporary_environment(), None)
                 field = self.add_default_fields(
                     authInstance.gui_description(),
                     ['name', 'comments', 'tags', 'priority', 'small_name', 'networks'],
@@ -233,7 +233,7 @@ class Authenticators(ModelHandler):
 
         dct = self._params.copy()
         dct['_request'] = self._request
-        res = authType.test(Environment.getTempEnv(), dct)
+        res = authType.test(Environment.get_temporary_environment(), dct)
         if res[0]:
             return self.success()
         return res[1]

@@ -36,7 +36,7 @@ import collections.abc
 from django.utils.translation import gettext_lazy as _
 
 from uds import models
-from uds.core import consts, exceptions, types
+from uds.core import consts, types
 from uds.core.exceptions import rest as rest_exceptions
 from uds.core.util import decorators, validators, log, model
 from uds.REST import Handler
@@ -175,9 +175,9 @@ class ServerEvent(Handler):
     path = 'servers'
     name = 'event'
 
-    def getUserService(self) -> models.UserService:
+    def get_user_service(self) -> models.UserService:
         '''
-        Looks for an userService and, if not found, raises a BlockAccess request
+        Looks for an userService and, if not found, reraises DoesNotExist exception
         '''
         try:
             return models.UserService.objects.get(uuid=self._params['uuid'])
@@ -193,7 +193,7 @@ class ServerEvent(Handler):
         try:
             server = models.Server.objects.get(token=self._params['token'])
         except models.Server.DoesNotExist:
-            raise exceptions.BlockAccess() from None  # Block access if token is not valid
+            raise rest_exceptions.BlockAccess() from None  # Block access if token is not valid
         except KeyError:
             raise rest_exceptions.RequestError('Token not present') from None  # Invalid request if token is not present
         # Notify a server that a new service has been assigned to it

@@ -36,7 +36,7 @@ import typing
 import collections.abc
 
 from uds.core import services
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 from . import service
 

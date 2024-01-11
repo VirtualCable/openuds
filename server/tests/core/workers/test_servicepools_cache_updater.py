@@ -34,7 +34,7 @@ import collections.abc
 import logging
 
 
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.workers.servicepools_cache_updater import ServiceCacheUpdater
 from uds.core.environment import Environment
 
@@ -71,7 +71,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
     def runCacheUpdater(self, times: int) -> int:
         for _ in range(times):
-            updater = ServiceCacheUpdater(Environment.getTempEnv())
+            updater = ServiceCacheUpdater(Environment.get_temporary_environment())
             updater.run()
         # Test user service will cancel automatically so it will not get in "removable" state (on remove start, it will tell it has been removed)
         return self.servicePool.userServices.count() - self.numberOfRemovingOrCanced()

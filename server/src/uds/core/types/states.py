@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 #
-# Copyright (c) 2024 Virtual Cable S.L.U.
+# Copyright (c) 2012-2021 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,14 +28,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-Author: Adolfo Gómez, dkmaster at dkmon dot com
+@author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import enum
 import typing
-from django.utils.translation import gettext_noop as _, gettext_lazy
+import enum
+import collections.abc
+
+from django.utils.translation import gettext_lazy as _
+
+from uds.core.util.decorators import classproperty
 
 
+# States for different objects. Not all objects supports all States
 class State(enum.StrEnum):
+    """
+    This class represents possible states for objects at database.
+    Take in consideration that objects do not have to support all states, they are here for commodity
+    """
+
     ACTIVE = 'A'
     BLOCKED = 'B'
     CANCELED = 'C'
@@ -42,20 +53,111 @@ class State(enum.StrEnum):
     FINISHED = 'F'
     BALANCING = 'H'
     INACTIVE = 'I'
+    SLOWED_DOWN = 'J'  # Only used on admin dashboard, not internal real state
     CANCELING = 'K'
     LAUNCHING = 'L'
     REMOVING = 'M'
     PREPARING = 'P'
     REMOVABLE = 'R'
     REMOVED = 'S'
+    # "Visual" state, no element will in fact be in this state, but admins uses it to "notily" user
+    RESTRAINED = 'T'
     USABLE = 'U'
     RUNNING = 'W'
     FOR_EXECUTE = 'X'
-    MAINTENANCE = 'Y'  # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
-    WAITING_OS = 'Z'  # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are whating for os manager
+    # "Visual" state, no element will be in fact in maintenance, but used to show "Services Pools" for which a Provider is in maintenance
+    MAINTENANCE = 'Y'
+    # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
+    WAITING_OS = 'Z'
+    # "Visual" state, no element will be in fact in WAITING_OS, but used to show "User Services" that are waiting for os manager
+    META_MEMBER = 'V'
 
-    def as_str(self) -> str:
-        return _TRANSLATIONS.get(self, self.value)
+    # For accesses (calendar actions)
+    ALLOW = 'ALLOW'
+    DENY = 'DENY'
+
+    # Unkonwn state
+    UNKNOWN = 'UKN'
+
+    # States that are merely for "information" to the user. They don't contain any usable instance
+    @classproperty
+    def INFO_STATES(self) -> list[str]:
+        return [self.REMOVED, self.CANCELED, self.ERROR]
+
+    # States that indicates that the service is "Valid" for a user
+    @classproperty
+    def VALID_STATES(self) -> list[str]:
+        return [self.USABLE, self.PREPARING]
+
+    # Publication States
+    @classproperty
+    def PUBLISH_STATES(self) -> list[str]:
+        return [self.LAUNCHING, self.PREPARING]
+
+    @classproperty
+    def literal(self) -> str:
+        """Returns the literal translation of the state"""
+        return _TRANSLATIONS.get(self, _TRANSLATIONS[State.UNKNOWN])
+
+    def is_active(self) -> bool:
+        return self == State.ACTIVE
+
+    def is_inactive(self) -> bool:
+        return self == State.INACTIVE
+
+    def is_blocked(self) -> bool:
+        return self == State.BLOCKED
+
+    def is_preparing(self) -> bool:
+        return self == State.PREPARING
+
+    def is_usable(self) -> bool:
+        return self == State.USABLE
+
+    def is_removable(self) -> bool:
+        return self == State.REMOVABLE
+
+    def is_removing(self) -> bool:
+        return self == State.REMOVING
+
+    def is_removed(self) -> bool:
+        return self == State.REMOVED
+
+    def is_canceling(self) -> bool:
+        return self == State.CANCELING
+
+    def is_canceled(self) -> bool:
+        return self == State.CANCELED
+
+    def is_errored(self) -> bool:
+        return self == State.ERROR
+
+    def is_finished(self) -> bool:
+        return self == State.FINISHED
+
+    def is_runing(self) -> bool:
+        return self == State.RUNNING
+
+    def is_for_execute(self) -> bool:
+        return self == State.FOR_EXECUTE
+
+    @staticmethod
+    def from_str(state: str) -> 'State':
+        try:
+            return State(state)
+        except ValueError:
+            return State.UNKNOWN
+
+    @staticmethod
+    def literals_dict(*lst: 'State') -> dict[str, str]:
+        """
+        Returns a dictionary with current active locale translation of States to States String
+        if lst is empty, returns all states
+        """
+        if not lst:
+            return {k: str(v) for k, v in _TRANSLATIONS.items()}
+        else:
+            return {k: str(_TRANSLATIONS[k]) for k in lst}
 
 
 _TRANSLATIONS: typing.Final[dict[State, str]] = {
@@ -65,7 +167,8 @@ _TRANSLATIONS: typing.Final[dict[State, str]] = {
     State.LAUNCHING: _('Waiting publication'),
     State.PREPARING: _('In preparation'),
     State.USABLE: _('Valid'),
-    State.REMOVABLE: _('Waiting for removal'),
+    State.REMOVABLE: _('Removing'),  # Display as it is removing
+    State.RESTRAINED: _('Restrained'),
     State.REMOVING: _('Removing'),
     State.REMOVED: _('Removed'),
     State.CANCELED: _('Canceled'),
@@ -77,4 +180,9 @@ _TRANSLATIONS: typing.Final[dict[State, str]] = {
     State.BALANCING: _('Balancing'),
     State.MAINTENANCE: _('In maintenance'),
     State.WAITING_OS: _('Waiting OS'),
+    State.SLOWED_DOWN: _('Too many preparing services'),
+    State.META_MEMBER: _('Meta member'),
+    State.ALLOW: _('Allowed'),
+    State.DENY: _('Denied'),
+    State.UNKNOWN: _('Unknown'),
 }

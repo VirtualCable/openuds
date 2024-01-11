@@ -41,7 +41,7 @@ from uds.core import types, consts
 from uds.core.environment import Environment
 from uds.core.util import log, unique, properties
 from uds.core.util.model import sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import service_pool
 from uds.models.service_pool import ServicePool
 from uds.models.service_pool_publication import ServicePoolPublication
@@ -504,13 +504,13 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Returns if this service is usable
         """
-        return State.is_usable(self.state)
+        return State.from_str(self.state).is_usable()
 
     def is_preparing(self) -> bool:
         """
         Returns if this service is in preparation (not ready to use, but in its way to be so...)
         """
-        return State.is_preparing(self.state)
+        return State.from_str(self.state).is_preparing()
 
     def is_ready(self) -> bool:
         """
@@ -621,7 +621,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return (
             f'User service {self.name}, unique_id {self.unique_id},'
             f' cache_level {self.cache_level}, user {self.user},'
-            f' name {self.friendly_name}, state {State.as_str(self.state)}:{State.as_str(self.os_state)}'
+            f' name {self.friendly_name}, state {State.from_str(self.state).literal}:{State.from_str(self.os_state).literal}'
         )
 
     @staticmethod

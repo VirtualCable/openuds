@@ -34,7 +34,6 @@ import collections.abc
 
 from uds import models
 from uds.core import environment, types
-from uds.core.util import states
 
 from ..utils import generators
 
@@ -157,7 +156,7 @@ def createPublication(
 ) -> models.ServicePoolPublication:
     publication: 'models.ServicePoolPublication' = service_pool.publications.create(
         publish_date=datetime.datetime.now(),
-        state=states.publication.USABLE,
+        state=types.states.State.USABLE,
         state_date=datetime.datetime.now(),
         # Rest of fields are left as default
     )
@@ -194,8 +193,8 @@ def createUserService(
         friendly_name='user-service-{}'.format(glob['user_service_id']),
         publication=publication,
         unique_id=generators.random_mac(),
-        state=states.userService.USABLE,
-        os_state=states.userService.USABLE,
+        state=types.states.State.USABLE,
+        os_state=types.states.State.USABLE,
         state_date=datetime.datetime.now(),
         creation_date=datetime.datetime.now() - datetime.timedelta(minutes=30),
         user=user,

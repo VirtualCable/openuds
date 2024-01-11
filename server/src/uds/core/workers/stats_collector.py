@@ -35,7 +35,7 @@ import collections.abc
 
 from uds import models
 from uds.core.util import model
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.stats import counters
 from uds.core.managers.stats import StatsManager
 from uds.core.jobs import Job

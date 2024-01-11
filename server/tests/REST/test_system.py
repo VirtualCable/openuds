@@ -34,7 +34,8 @@ import datetime
 import logging
 
 from uds.REST.handlers import AUTH_TOKEN_HEADER
-from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED
+from uds.core.consts.actor import UNMANAGED
+from uds.core.consts.actor import MANAGED
 from uds.core.util.stats import counters
 
 from ..utils import rest

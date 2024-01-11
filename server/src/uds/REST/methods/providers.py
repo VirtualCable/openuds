@@ -41,7 +41,7 @@ import uds.core.types.permissions
 from uds.core import exceptions, services
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import Provider, Service, UserService
 from uds.REST.model import ModelHandler
 
@@ -124,7 +124,7 @@ class Providers(ModelHandler):
     def get_gui(self, type_: str) -> list[typing.Any]:
         providerType = services.factory().lookup(type_)
         if providerType:
-            provider = providerType(Environment.getTempEnv(), None)
+            provider = providerType(Environment.get_temporary_environment(), None)
             return self.add_default_fields(provider.gui_description(), ['name', 'comments', 'tags'])
         raise exceptions.rest.NotFound('Type not found!')
 
@@ -173,7 +173,7 @@ class Providers(ModelHandler):
         if not spType:
             raise exceptions.rest.NotFound('Type not found!')
 
-        tmpEnvironment = Environment.getTempEnv()
+        tmpEnvironment = Environment.get_temporary_environment()
         logger.debug('spType: %s', spType)
 
         dct = self._params.copy()

@@ -45,30 +45,22 @@ from uds.core.util import log, security
 from uds.core.util.cache import Cache
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import Server, Service, TicketStore, UserService
 from uds.models.service import ServiceTokenAlias
 from uds.REST.utils import rest_result
 
-from ...core.exceptions.rest import AccessDenied, RequestError
 from ..handlers import Handler
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core import services
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 
-MANAGED = 'managed'
-UNMANAGED = 'unmanaged'  # matches the definition of UDS Actors OFC
-
 # Cache the "failed login attempts" for a given IP
 cache = Cache('actorv3')
-
-
-class BlockAccess(exceptions.UDSException):
-    pass
 
 
 class NotifyActionType(enum.StrEnum):
@@ -108,7 +100,7 @@ def checkBlockedIp(request: 'ExtendedHttpRequest') -> None:
         )
         # Sleep a while to try to minimize brute force attacks somehow
         time.sleep(3)  # 3 seconds should be enough
-        raise BlockAccess()
+        raise exceptions.rest.BlockAccess()
 
 
 def incFailedIp(request: 'ExtendedHttpRequest') -> None:
@@ -161,13 +153,13 @@ class ActorV3Action(Handler):
 
     def getUserService(self) -> UserService:
         '''
-        Looks for an userService and, if not found, raises a BlockAccess request
+        Looks for an userService and, if not found, raises a exceptions.rest.BlockAccess request
         '''
         try:
             return UserService.objects.get(uuid=self._params['token'])
         except UserService.DoesNotExist:
             logger.error('User service not found (params: %s)', self._params)
-            raise BlockAccess() from None
+            raise exceptions.rest.BlockAccess() from None
 
     def action(self) -> dict[str, typing.Any]:
         return ActorV3Action.actor_result(error='Base action invoked')
@@ -178,13 +170,13 @@ class ActorV3Action(Handler):
             result = self.action()
             logger.debug('Action result: %s', result)
             return result
-        except (BlockAccess, KeyError):
+        except (exceptions.rest.BlockAccess, KeyError):
             # For blocking attacks
             incFailedIp(self._request)
         except Exception as e:
             logger.exception('Posting %s: %s', self.__class__, e)
 
-        raise AccessDenied('Access denied')
+        raise exceptions.rest.AccessDenied('Access denied')
 
     # Some helpers
     def notifyService(self, action: NotifyActionType) -> None:
@@ -224,7 +216,7 @@ class ActorV3Action(Handler):
         except Exception as e:
             # Log error and continue
             logger.error('Error notifying service: %s (%s)', e, self._params)
-            raise BlockAccess() from None
+            raise exceptions.rest.BlockAccess() from None
 
 
 class Test(ActorV3Action):
@@ -237,7 +229,7 @@ class Test(ActorV3Action):
     def action(self) -> dict[str, typing.Any]:
         # First, try to locate an user service providing this token.
         try:
-            if self._params.get('type') == UNMANAGED:
+            if self._params.get('type') == consts.actor.UNMANAGED:
                 Service.objects.get(token=self._params['token'])
             else:
                 Server.objects.get(
@@ -399,7 +391,7 @@ class Initialize(ActorV3Action):
         try:
             token = self._params['token']
             # First, try to locate an user service providing this token.
-            if self._params['type'] == UNMANAGED:
+            if self._params['type'] == consts.actor.UNMANAGED:
                 # First, try to locate on alias table
                 if ServiceTokenAlias.objects.filter(alias=token).exists():
                     # Retrieve real service from token alias
@@ -414,7 +406,7 @@ class Initialize(ActorV3Action):
                     # Get first mac and, if not exists, get first ip
                     unique_id = self._params['id'][0].get('mac', self._params['id'][0].get('ip', ''))
                     if unique_id is None:
-                        raise BlockAccess()
+                        raise exceptions.rest.BlockAccess()
                     # If exists, do not create a new one (avoid creating for old 3.x actors lots of aliases...)
                     if not ServiceTokenAlias.objects.filter(service=service, unique_id=unique_id).exists():
                         alias_token = CryptoManager().random_string(40)  # fix alias with new token
@@ -430,7 +422,7 @@ class Initialize(ActorV3Action):
             else:
                 # If not service provided token, use actor tokens
                 if not Server.validate_token(token, types.servers.ServerType.ACTOR):
-                    raise BlockAccess()
+                    raise exceptions.rest.BlockAccess()
                 # Build the possible ids and make initial filter to match ANY userservice with provided MAC
                 idsList = [i['mac'] for i in self._params['id'][:5]]
                 dbFilter = UserService.objects.all()
@@ -465,7 +457,7 @@ class Initialize(ActorV3Action):
 
             return initialization_result(userService.uuid, userService.unique_id, osData, alias_token)
         except Service.DoesNotExist:
-            raise BlockAccess() from None
+            raise exceptions.rest.BlockAccess() from None
 
 
 class BaseReadyChange(ActorV3Action):
@@ -604,7 +596,7 @@ class Login(ActorV3Action):
         return osManager
 
     def action(self) -> dict[str, typing.Any]:
-        isManaged = self._params.get('type') != UNMANAGED
+        isManaged = self._params.get('type') != consts.actor.UNMANAGED
         src = types.connections.ConnectionSource('', '')
         deadLine = maxIdle = None
         session_id = ''
@@ -676,7 +668,7 @@ class Logout(ActorV3Action):
                 userService.remove()
 
     def action(self) -> dict[str, typing.Any]:
-        isManaged = self._params.get('type') != UNMANAGED
+        isManaged = self._params.get('type') != consts.actor.UNMANAGED
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
@@ -738,7 +730,7 @@ class Ticket(ActorV3Action):
                 token=self._params['token'], type=types.servers.ServerType.ACTOR
             )  # Not assigned, because only needs check
         except Server.DoesNotExist:
-            raise BlockAccess() from None  # If too many blocks...
+            raise exceptions.rest.BlockAccess() from None  # If too many blocks...
 
         try:
             return ActorV3Action.actor_result(TicketStore.get(self._params['ticket'], invalidate=True))
@@ -836,7 +828,7 @@ class Notify(ActorV3Action):
 
     def post(self) -> dict[str, typing.Any]:
         # Raplaces original post (non existent here)
-        raise AccessDenied('Access denied')
+        raise exceptions.rest.AccessDenied('Access denied')
 
     def get(self) -> collections.abc.MutableMapping[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
@@ -845,7 +837,7 @@ class Notify(ActorV3Action):
             token = self._params['token']  # pylint: disable=unused-variable  # Just to check it exists
         except Exception as e:
             # Requested login, logout or whatever
-            raise RequestError('Invalid parameters') from e
+            raise exceptions.rest.RequestError('Invalid parameters') from e
 
         try:
             # Check block manually
@@ -862,4 +854,4 @@ class Notify(ActorV3Action):
             # For blocking attacks
             incFailedIp(self._request)  # pylint: disable=protected-access
 
-        raise AccessDenied('Access denied')
+        raise exceptions.rest.AccessDenied('Access denied')

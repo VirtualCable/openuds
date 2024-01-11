@@ -322,7 +322,7 @@ class Authenticator(Module):
         username: str,
         credentials: str,
         groupsManager: 'GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
         This method must be overriden, and is responsible for authenticating
@@ -371,13 +371,13 @@ class Authenticator(Module):
         if not self.db_obj().id:
             return True
         return self.db_obj().state != consts.auth.DISABLED and self.db_obj().is_ip_allowed(
-            typing.cast('types.request.ExtendedHttpRequest', request).ip
+            typing.cast('types.requests.ExtendedHttpRequest', request).ip
         )
 
     def transformed_username(
         self,
         username: str,
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> str:
         """
         On login, this method get called so we can "transform" provided user name.
@@ -398,7 +398,7 @@ class Authenticator(Module):
         username: str,
         credentials: str,
         groupsManager: 'GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
         This method is provided so "plugins" (For example, a custom dispatcher), can test
@@ -437,7 +437,7 @@ class Authenticator(Module):
 
     def logout(
         self,
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
         username: str,
     ) -> types.auth.AuthenticationResult:
         """
@@ -535,7 +535,7 @@ class Authenticator(Module):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
         There is a view inside UDS, an url, that will redirect the petition

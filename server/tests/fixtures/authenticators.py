@@ -33,7 +33,7 @@ import collections.abc
 import random  # nosec: testing only
 
 from uds import models
-from uds.core.util import states
+from uds.core import types
 from uds.core.managers.crypto import CryptoManager
 
 # Counters so we can reinvoke the same method and generate new data
@@ -80,7 +80,7 @@ def createUsers(
             comments=f'User {i}',
             staff_member=is_staff or is_admin,
             is_admin=is_admin,
-            state=states.common.ACTIVE if enabled else states.common.BLOCKED,
+            state=types.states.State.ACTIVE if enabled else types.states.State.BLOCKED,
         )
         for i in range(glob['user_id'], glob['user_id'] + number_of_users)
     ]

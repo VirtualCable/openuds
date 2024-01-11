@@ -38,7 +38,7 @@ from django.core.cache import cache
 
 from uds.core.util.config import GlobalConfig
 from uds.core.util.cache import Cache
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import Scheduler
 
 

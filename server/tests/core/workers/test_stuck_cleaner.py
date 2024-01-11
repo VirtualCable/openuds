@@ -38,7 +38,7 @@ from ...utils.test import UDSTestCase
 from ...fixtures import services as services_fixtures
 
 from uds.models import UserService
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.workers.stuck_cleaner import StuckCleaner
 from uds.core.environment import Environment
 
@@ -80,7 +80,7 @@ class StuckCleanerTest(UDSTestCase):
 
     def test_worker_outdated(self):
         count = UserService.objects.count()
-        cleaner = StuckCleaner(Environment.getTempEnv())
+        cleaner = StuckCleaner(Environment.get_temporary_environment())
         cleaner.run()
         self.assertEqual(
             UserService.objects.count(), count // 4
@@ -94,7 +94,7 @@ class StuckCleanerTest(UDSTestCase):
             )
             us.save(update_fields=['state_date'])
         count = UserService.objects.count()
-        cleaner = StuckCleaner(Environment.getTempEnv())
+        cleaner = StuckCleaner(Environment.get_temporary_environment())
         cleaner.run()
         self.assertEqual(
             UserService.objects.count(), count

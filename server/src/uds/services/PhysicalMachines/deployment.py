@@ -37,7 +37,7 @@ import collections.abc
 import dns.resolver
 
 from uds.core import services
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.auto_attributes import AutoAttributes
 from uds.core.util import net
 from uds.core.util import log

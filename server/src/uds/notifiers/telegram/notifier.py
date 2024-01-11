@@ -42,7 +42,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import messaging, exceptions
 from uds.core.ui import gui
 from uds.core.util.model import sql_datetime
-from uds.core.util.utils import ignoreExceptions
+from uds.core.util.utils import ignore_exceptions
 
 from . import telegram
 
@@ -143,7 +143,7 @@ class TelegramNotifier(messaging.Notifier):
         chatIds = self.storage.get_unpickle('chatIds') or []
         t = telegram.Telegram(self.accessToken.value, self.botname.value)
         for chatId in chatIds:
-            with ignoreExceptions():
+            with ignore_exceptions():
                 t.send_message(chatId, telegramMsg)
                 # Wait a bit, so we don't send more than 10 messages per second
                 time.sleep(0.1)
@@ -187,10 +187,10 @@ class TelegramNotifier(messaging.Notifier):
 
         lastOffset = self.storage.get_unpickle('lastOffset') or 0
         t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
-        with ignoreExceptions():  # In case getUpdates fails, ignore it
+        with ignore_exceptions():  # In case getUpdates fails, ignore it
             for update in t.get_updates():
                 # Process update
-                with ignoreExceptions():  # Any failure will be ignored and next update will be processed
+                with ignore_exceptions():  # Any failure will be ignored and next update will be processed
                     message = update.text.strip()
                     if message.split(' ')[0] in ('/join', '/subscribe'):
                         try:

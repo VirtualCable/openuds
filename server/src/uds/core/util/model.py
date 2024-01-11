@@ -37,7 +37,7 @@ from threading import Lock
 import datetime
 from time import mktime
 
-from django.db import connection, models
+from django.db import connection
 
 from uds.core import consts
 from uds.core.managers.crypto import CryptoManager

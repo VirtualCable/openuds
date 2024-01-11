@@ -20,7 +20,7 @@ from uds.core import exceptions, osmanagers, types, consts
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import TicketStore
 
 # Not imported at runtime, just for type checking

@@ -73,7 +73,7 @@ class MFA(ModelHandler):
             raise self.invalid_item_response()
 
         # Create a temporal instance to get the gui
-        mfa = mfaType(Environment.getTempEnv(), None)
+        mfa = mfaType(Environment.get_temporary_environment(), None)
 
         localGui = self.add_default_fields(mfa.gui_description(), ['name', 'comments', 'tags'])
         self.add_field(

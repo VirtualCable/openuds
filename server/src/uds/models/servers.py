@@ -37,7 +37,7 @@ from django.db import models
 
 from uds.core import consts, types
 from uds.core.consts import MAC_UNKNOWN
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.util import log, net, properties, resolver
 from uds.core.util.model import sql_stamp, sql_datetime
 

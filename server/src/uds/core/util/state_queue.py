@@ -45,17 +45,17 @@ class StateQueue:
     def __str__(self):
         return f'<StateQueue Current: {self._current}, Queue: ({",".join(state for state in self._queue)})>'
 
-    def clearQueue(self) -> None:
+    def clear(self) -> None:
         self._queue.clear()
 
     def reset(self) -> None:
         self._queue.clear()
         self._current = None
 
-    def getCurrent(self) -> typing.Any:
+    def current(self) -> typing.Any:
         return self._current
 
-    def setCurrent(self, newState: typing.Any) -> typing.Any:
+    def set_current(self, newState: typing.Any) -> typing.Any:
         self._current = newState
         return self._current
 
@@ -66,6 +66,8 @@ class StateQueue:
         #     if s == state:
         #         return True
         # return False
+    
+    __contains__ = contains
 
     def push_back(self, state: typing.Any) -> None:
         self._queue.append(state)

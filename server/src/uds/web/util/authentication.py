@@ -46,7 +46,7 @@ from uds.models import Authenticator
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest  # pylint: disable=ungrouped-imports
 
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
     from uds.web.forms.LoginForm import LoginForm
 
 logger = logging.getLogger(__name__)

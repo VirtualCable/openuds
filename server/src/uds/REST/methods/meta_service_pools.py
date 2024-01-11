@@ -42,7 +42,7 @@ from uds import models
 # from uds.models.user_service import UserService
 # from uds.models.user import User
 
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, ensure
 from uds.REST.model import DetailHandler
@@ -222,7 +222,7 @@ class MetaAssignedService(DetailHandler):
                 'state': {
                     'title': _('status'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': State.literals_dict(),
                 }
             },
             {'in_use': {'title': _('In Use')}},

@@ -39,7 +39,7 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import services
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 logger = logging.getLogger(__name__)
 

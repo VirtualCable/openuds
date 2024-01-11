@@ -39,7 +39,7 @@ from django.utils.translation import gettext_noop as _, gettext_lazy
 from uds.core import types
 from uds.core.ui import gui
 from uds.core import osmanagers
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util import log
 
 if typing.TYPE_CHECKING:

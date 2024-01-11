@@ -38,7 +38,7 @@ from django.forms.models import model_to_dict
 from django.db import IntegrityError, transaction
 from django.core.exceptions import ValidationError
 
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 from uds.core.auths.user import User as aUser
 from uds.core.util import log, ensure

@@ -34,7 +34,7 @@ import typing
 import collections.abc
 
 from uds.core.services import Publication
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.model import sql_datetime
 
 # Not imported at runtime, just for type checking

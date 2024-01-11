@@ -38,7 +38,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 
 from uds.models import UserService, Provider
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
 from uds.core.util import ensure

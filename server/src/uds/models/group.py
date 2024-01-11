@@ -36,7 +36,7 @@ import collections.abc
 
 from django.db import models
 
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util import log
 
 from .uuid_model import UUIDModel

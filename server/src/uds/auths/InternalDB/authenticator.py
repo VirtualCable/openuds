@@ -44,12 +44,12 @@ from uds.core import auths, types, exceptions, consts
 from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
 from uds.core.ui import gui
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds import models
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

@@ -44,7 +44,7 @@ from uds.core.ui import gui
 from . import client
 
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

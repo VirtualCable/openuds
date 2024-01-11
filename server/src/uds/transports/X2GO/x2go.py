@@ -42,7 +42,7 @@ from . import x2go_file
 if typing.TYPE_CHECKING:
     from uds import models
     from uds.core import transports, types
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

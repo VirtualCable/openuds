@@ -38,7 +38,7 @@ from uds.core import services
 from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util import log
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import UserService
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,7 @@ class StateUpdater:
         logger.debug(
             'Running Executor for %s with state %s and executor %s',
             self.user_service.friendly_name,
-            State.as_str(state),
+            State.from_str(state).literal,
             executor,
         )
 
@@ -124,7 +124,7 @@ class UpdateFromPreparing(StateUpdater):
         # and make this usable if os manager says that it is usable, else it pass to configuring state
         # This is an "early check" for os manager, so if we do not have os manager, or os manager
         # already notifies "ready" for this, we
-        if osManager is not None and State.is_preparing(self.user_service.os_state):
+        if osManager is not None and State.from_str(self.user_service.os_state).is_preparing():
             logger.debug('Has valid osmanager for %s', self.user_service.friendly_name)
 
             stateOs = osManager.check_state(self.user_service)
@@ -133,8 +133,8 @@ class UpdateFromPreparing(StateUpdater):
 
         logger.debug(
             'State %s, StateOS %s for %s',
-            State.as_str(state),
-            State.as_str(stateOs),
+            State.from_str(state).literal,
+            State.from_str(stateOs).literal,
             self.user_service.friendly_name,
         )
         if stateOs == State.RUNNING:
@@ -193,10 +193,10 @@ class UpdateFromCanceling(StateUpdater):
 
 class UpdateFromOther(StateUpdater):
     def finish(self):
-        self.set_error(f'Unknown running transition from {State.as_str(self.user_service.state)}')
+        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).literal}')
 
     def running(self):
-        self.set_error(f'Unknown running transition from {State.as_str(self.user_service.state)}')
+        self.set_error(f'Unknown running transition from {State.from_str(self.user_service.state).literal}')
 
 
 class UserServiceOpChecker(DelayedTask):
@@ -237,13 +237,13 @@ class UserServiceOpChecker(DelayedTask):
                     State.PREPARING: UpdateFromPreparing,
                     State.REMOVING: UpdateFromRemoving,
                     State.CANCELING: UpdateFromCanceling,
-                }.get(userService.state, UpdateFromOther),
+                }.get(State.from_str(userService.state), UpdateFromOther),
             )
 
             logger.debug(
                 'Updating %s from %s with updater %s and state %s',
                 userService.friendly_name,
-                State.as_str(userService.state),
+                State.from_str(userService.state).literal,
                 updater,
                 state,
             )

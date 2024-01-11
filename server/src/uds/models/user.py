@@ -47,7 +47,7 @@ from .uuid_model import UUIDModel
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.models import Group, UserService, Permissions
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
     from django.db.models.manager import RelatedManager # type: ignore  # MyPy complains because of django-stubs
 
 

@@ -35,7 +35,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext_noop as _
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core import auths, exceptions, types, consts
 
@@ -43,7 +43,7 @@ if typing.TYPE_CHECKING:
     from django.http import (
         HttpRequest,
     )  # pylint: disable=ungrouped-imports
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
     from uds.core.auths.groups_manager import GroupsManager
 
 
@@ -274,7 +274,7 @@ class SampleAuth(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """
         We provide this as a sample of callback for an user.
@@ -309,7 +309,7 @@ class SampleAuth(auths.Authenticator):
 
         Here, we will set the state to "Inactive" and realName to the same as username, but twice :-)
         """
-        from uds.core.util.state import State  # pylint: disable=import-outside-toplevel
+        from uds.core.types.states import State  # pylint: disable=import-outside-toplevel
 
         usrData['real_name'] = usrData['name'] + ' ' + usrData['name']
         usrData['state'] = State.INACTIVE

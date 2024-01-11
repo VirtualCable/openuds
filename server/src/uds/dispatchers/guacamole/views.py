@@ -41,7 +41,7 @@ from uds.core.auths import auth
 from uds.core.managers.crypto import CryptoManager
 from uds.core.util import log
 from uds.core.util.stats import events
-from uds.core.types.request import ExtendedHttpRequestWithUser
+from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 from uds.models import TicketStore, UserService, Server
 

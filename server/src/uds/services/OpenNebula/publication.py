@@ -35,7 +35,7 @@ import typing
 import collections.abc
 
 from uds.core.services import Publication
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

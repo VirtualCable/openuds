@@ -38,7 +38,7 @@ import collections.abc
 from django.db import models
 
 from uds.core.managers import publication_manager
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.environment import Environment
 from uds.core.util import log
 
@@ -223,7 +223,7 @@ class ServicePoolPublication(UUIDModel):
 
     def __str__(self) -> str:
         return (
-            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.as_str(self.state)}'
+            f'Publication {self.deployed_service.name}, rev {self.revision}, state {State.from_str(self.state).literal}'
         )
 
 

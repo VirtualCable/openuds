@@ -42,7 +42,7 @@ from uds.core.jobs.delayed_task import DelayedTask
 from uds.core.jobs.delayed_task_runner import DelayedTaskRunner
 from uds.core.util.config import GlobalConfig
 from uds.core.services.exceptions import PublishException
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util import log
 
 from uds.models import ServicePoolPublication, ServicePool
@@ -168,9 +168,9 @@ class PublicationFinishChecker(DelayedTask):
         try:
             prevState: str = publication.state
             checkLater: bool = False
-            if State.is_finished(state):
+            if State.from_str(state).is_finished():
                 # Now we mark, if it exists, the previous usable publication as "Removable"
-                if State.is_preparing(prevState):
+                if State.from_str(prevState).is_preparing():
                     old: ServicePoolPublication
                     for old in publication.deployed_service.publications.filter(
                         state=State.USABLE
@@ -201,7 +201,7 @@ class PublicationFinishChecker(DelayedTask):
                             )
 
                     publication.set_state(State.USABLE)
-                elif State.is_removing(prevState):
+                elif State.from_str(prevState).is_removing():
                     publication.set_state(State.REMOVED)
                 else:  # State is canceling
                     publication.set_state(State.CANCELED)
@@ -209,7 +209,7 @@ class PublicationFinishChecker(DelayedTask):
                 # and make this usable
                 publicationInstance.finish()
                 publication.update_data(publicationInstance)
-            elif State.is_errored(state):
+            elif State.from_str(state).is_errored():
                 publication.update_data(publicationInstance)
                 publication.set_state(State.ERROR)
             else:
@@ -378,8 +378,8 @@ class PublicationManager(metaclass=singleton.Singleton):
         :param servicePoolPub: Publication to unpublish
         """
         if (
-            State.is_usable(servicePoolPub.state) is False
-            and State.is_removable(servicePoolPub.state) is False
+            State.from_str(servicePoolPub.state).is_usable() is False
+            and State.from_str(servicePoolPub.state).is_removable() is False
         ):
             raise PublishException(_('Can\'t unpublish non usable publication'))
         if servicePoolPub.userServices.exclude(state__in=State.INFO_STATES).count() > 0:

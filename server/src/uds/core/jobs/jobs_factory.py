@@ -50,7 +50,7 @@ class JobsFactory(factory.Factory['Job']):
         """
         from uds.models import Scheduler                  # pylint: disable=import-outside-toplevel
         from uds.core.util.model import sql_datetime        # pylint: disable=import-outside-toplevel
-        from uds.core.util.state import State             # pylint: disable=import-outside-toplevel
+        from uds.core.types.states import State             # pylint: disable=import-outside-toplevel
         from uds.core import workers                      # pylint: disable=import-outside-toplevel
 
         try:

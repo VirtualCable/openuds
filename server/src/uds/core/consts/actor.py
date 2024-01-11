@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2015-2023 Virtual Cable S.L.U.
+# Copyright (c) 2023 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -28,8 +28,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import typing
+import collections.abc
 
-# pylint: disable=unused-import
-from .common import ACTIVE, REMOVABLE, REMOVING, REMOVED
+MANAGED: typing.Final[str] = 'managed'
+UNMANAGED: typing.Final[str] = 'unmanaged'  # matches the definition of UDS Actors OFC
+

@@ -37,7 +37,7 @@ from uds import models
 from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.workers.assigned_unused import AssignedAndUnused
 
 from ...utils.test import UDSTestCase
@@ -58,7 +58,7 @@ class AssignedAndUnusedTest(UDSTestCase):
             us.set_state(State.USABLE)
         # Set now, should not be removed
         count = models.UserService.objects.filter(state=State.REMOVABLE).count()
-        cleaner = AssignedAndUnused(Environment.getTempEnv())
+        cleaner = AssignedAndUnused(Environment.get_temporary_environment())
         # since_state = util.sql_datetime() - datetime.timedelta(seconds=cleaner.frecuency)
         cleaner.run()
         self.assertEqual(models.UserService.objects.filter(state=State.REMOVABLE).count(), count)

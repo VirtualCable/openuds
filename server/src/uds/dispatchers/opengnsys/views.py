@@ -39,7 +39,7 @@ from uds.REST.methods import actor_v3
 from uds.core.auths import auth
 from uds.models import UserService
 from uds.core.util.model import process_uuid
-from uds.core.util import states
+from uds.core import types
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def opengnsys(
 
     def getUserService() -> typing.Optional[UserService]:
         try:
-            userService = UserService.objects.get(uuid=process_uuid(uuid), state=states.userService.USABLE)
+            userService = UserService.objects.get(uuid=process_uuid(uuid), state=types.states.State.USABLE)
             if userService.properties.get('token') == token:
                 return userService
             logger.warning(

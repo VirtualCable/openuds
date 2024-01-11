@@ -42,7 +42,7 @@ from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import Image, MetaPool, ServicePoolGroup
 from uds.REST.methods.op_calendars import AccessCalendars
 from uds.REST.model import ModelHandler

@@ -36,7 +36,7 @@ import collections.abc
 from django.db import transaction
 from django.db.models import Q
 from uds.core.util.config import GlobalConfig
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import MaxServicesReachedError
 from uds.models import ServicePool, ServicePoolPublication, UserService
@@ -93,7 +93,7 @@ class ServiceCacheUpdater(Job):
             servicePool.userServices.update()  # Cleans cached queries
             # If this deployedService don't have a publication active and needs it, ignore it
             spServiceInstance = servicePool.service.get_instance()  # type: ignore
-            
+
             if spServiceInstance.uses_cache is False:
                 logger.debug(
                     'Skipping cache generation for service pool that does not uses cache: %s',
@@ -132,10 +132,16 @@ class ServiceCacheUpdater(Job):
                 .count()
             )
             inCacheL2: int = (
-                servicePool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE))
-                .count()
-            ) if spServiceInstance.uses_cache_l2 else 0
+                (
+                    servicePool.cached_users_services()
+                    .filter(
+                        UserServiceManager().get_cache_state_filter(servicePool, services.UserService.L2_CACHE)
+                    )
+                    .count()
+                )
+                if spServiceInstance.uses_cache_l2
+                else 0
+            )
             inAssigned: int = (
                 servicePool.assigned_user_services()
                 .filter(UserServiceManager().get_state_filter(servicePool.service))  # type: ignore
@@ -224,7 +230,10 @@ class ServiceCacheUpdater(Job):
                     .order_by('creation_date')
                 ):
                     if n.needsOsManager():
-                        if State.is_usable(n.state) is False or State.is_usable(n.os_state):
+                        if (
+                            State.from_str(n.state).is_usable() is False
+                            or State.from_str(n.os_state).is_usable()
+                        ):
                             valid = n
                             break
                     else:
@@ -313,7 +322,7 @@ class ServiceCacheUpdater(Job):
             valid = None
             for n in cacheItems:
                 if n.needsOsManager():
-                    if State.is_usable(n.state) is False or State.is_usable(n.os_state):
+                    if State.from_str(n.state).is_usable() is False or State.from_str(n.os_state).is_usable():
                         valid = n
                         break
                 else:
@@ -338,7 +347,9 @@ class ServiceCacheUpdater(Job):
         if cacheL2 > 0:
             cacheItems = (
                 service_pool.cached_users_services()
-                .filter(UserServiceManager().get_cache_state_filter(service_pool, services.UserService.L2_CACHE))
+                .filter(
+                    UserServiceManager().get_cache_state_filter(service_pool, services.UserService.L2_CACHE)
+                )
                 .order_by('creation_date')
             )
             # TODO: Look first for non finished cache items and cancel them?

@@ -36,7 +36,7 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 from uds.core import services
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:

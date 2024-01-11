@@ -111,7 +111,7 @@ def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
     return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
 
 
-def secondsToTimeString(seconds: int) -> str:
+def seconds_to_time_string(seconds: int) -> str:
     seconds = int(seconds)
     minutes = seconds // 60
     seconds %= 60
@@ -122,7 +122,7 @@ def secondsToTimeString(seconds: int) -> str:
     return gettext('{} days {:d}:{:02d}:{:02d}').format(days, hours, minutes, seconds)
 
 
-def removeControlCharacters(s: str) -> str:
+def remove_control_chars(s: str) -> str:
     """
     Removes control characters from an unicode string
 
@@ -135,7 +135,7 @@ def removeControlCharacters(s: str) -> str:
     return ''.join(ch for ch in s if unicodedata.category(ch)[0] != "C")
 
 
-def loadIcon(iconFilename: str) -> bytes:
+def load_icon(iconFilename: str) -> bytes:
     """
     Loads an icon from icons directory
     """
@@ -160,11 +160,11 @@ def load_Icon_b64(iconFilename: str) -> str:
     """
     Loads an icon from icons directory
     """
-    return base64.b64encode(loadIcon(iconFilename)).decode('ascii')
+    return base64.b64encode(load_icon(iconFilename)).decode('ascii')
 
 
 @contextlib.contextmanager
-def ignoreExceptions():
+def ignore_exceptions():
     """
     Ignores exceptions
     """

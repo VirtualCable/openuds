@@ -37,7 +37,7 @@ from django.db import models
 
 from uds.core import auths, environment, consts
 from uds.core.util import log, net
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 from .managed_object_model import ManagedObjectModel
 from .network import Network
@@ -103,7 +103,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
-            return auths.Authenticator(environment.Environment.getTempEnv(), values, uuid=self.uuid)
+            return auths.Authenticator(environment.Environment.get_temporary_environment(), values, uuid=self.uuid)
 
         auType = self.get_type()
         env = self.get_environment()
@@ -197,7 +197,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         """
         try:
             usr: 'User' = self.users.get(name=username)
-            return State.is_active(usr.state)
+            return State.from_str(usr.state).is_active()
         except Exception:
             return returnValueIfNot
 

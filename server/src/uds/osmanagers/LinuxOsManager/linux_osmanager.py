@@ -41,7 +41,7 @@ from uds.core import osmanagers, types, consts
 from uds.core.types.services import ServiceType as serviceTypes
 from uds.core.ui import gui
 from uds.core.util import log
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment

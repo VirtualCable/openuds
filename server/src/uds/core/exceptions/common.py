@@ -37,8 +37,4 @@ class UDSException(Exception):
     Base class for all UDS exceptions
     """
 
-class BlockAccess(UDSException):
-    """
-    Exception used to signal that the access to a resource is blocked
-    """
 

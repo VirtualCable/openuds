@@ -52,13 +52,13 @@ from uds.core.managers.user_service import UserServiceManager
 from uds.core.managers.crypto import CryptoManager
 from uds.core.services.exceptions import ServiceNotReadyError
 from uds.core.util import html
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.models import Authenticator, ServicePool
 from uds.models import TicketStore
 
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +229,7 @@ def ticket_auth(
             raise Exception('Invalid ticket authentication')
 
         usr = auth.get_or_create_user(username, realname)
-        if usr is None or State.is_active(usr.state) is False:  # If user is inactive, raise an exception
+        if usr is None or State.from_str(usr.state).is_active() is False:  # If user is inactive, raise an exception
             raise exceptions.auth.InvalidUserException()
 
         # Add groups to user (replace existing groups)

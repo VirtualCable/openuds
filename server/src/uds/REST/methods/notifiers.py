@@ -84,7 +84,7 @@ class Notifiers(ModelHandler):
         if not notifierType:
             raise self.invalid_item_response()
 
-        notifier = notifierType(Environment.getTempEnv(), None)
+        notifier = notifierType(Environment.get_temporary_environment(), None)
 
         localGui = self.add_default_fields(
             notifier.gui_description(), ['name', 'comments', 'tags']

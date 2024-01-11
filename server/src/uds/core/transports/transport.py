@@ -45,7 +45,7 @@ from uds.core.util import net
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
     from uds.core.environment import Environment
     from uds import models
 

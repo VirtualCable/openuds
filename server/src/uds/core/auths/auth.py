@@ -51,13 +51,13 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from uds.core import auths, types, exceptions, consts
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.util import log
 from uds.core.util import net
 from uds.core.util import config
 from uds.core.util.config import GlobalConfig
 from uds.core.util.stats import events
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.managers.crypto import CryptoManager
 from uds.core.auths import Authenticator as AuthenticatorInstance
 
@@ -65,7 +65,7 @@ from uds import models
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)
@@ -250,7 +250,7 @@ def register_user(
     usr = authenticator.get_or_create_user(username, username)
     usr.real_name = authInstance.get_real_name(username)
     usr.save()
-    if usr is not None and State.is_active(usr.state):
+    if usr is not None and State.from_str(usr.state).is_active():
         # Now we update database groups for this user
         usr.get_manager().recreate_groups(usr)
         # And add an login event

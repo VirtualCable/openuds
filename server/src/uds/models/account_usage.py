@@ -34,7 +34,7 @@ import logging
 
 from django.db import models
 
-from uds.core.util.utils import secondsToTimeString
+from uds.core.util.utils import seconds_to_time_string
 
 from .uuid_model import UUIDModel
 from .account import Account
@@ -104,11 +104,11 @@ class AccountUsage(UUIDModel):
 
     @property
     def elapsed(self) -> str:
-        return secondsToTimeString(self.elapsed_seconds)
+        return seconds_to_time_string(self.elapsed_seconds)
 
     @property
     def elapsed_timemark(self) -> str:
-        return secondsToTimeString(self.elapsed_seconds_timemark)
+        return seconds_to_time_string(self.elapsed_seconds_timemark)
 
     def __str__(self):
         return f'AccountUsage id {self.id}, pool {self.pool_name}, name {self.user_name}, start {self.start}, end {self.end}'

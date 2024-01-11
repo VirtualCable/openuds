@@ -187,7 +187,7 @@ class Module(abc.ABC, UserInterface, Environmentable, Serializable):
             Base 64 encoded or raw image, obtained from the specified file at
             'icon_file' class attribute
         """
-        return utils.loadIcon(
+        return utils.load_icon(
             os.path.dirname(typing.cast(str, sys.modules[cls.__module__].__file__)) + '/' + cls.icon_file
         )
 

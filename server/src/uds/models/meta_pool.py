@@ -40,7 +40,7 @@ from django.db.models import QuerySet, signals
 from django.utils.translation import gettext_noop as _
 
 from uds.core import consts, types
-from uds.core.util import log, states
+from uds.core.util import log
 from uds.core.util.calendar import CalendarChecker
 
 from ..core.util.model import sql_datetime
@@ -88,7 +88,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
     # Message if access denied
     calendar_message = models.CharField(default='', max_length=256)
     # Default fallback action for access
-    fallbackAccess = models.CharField(default=states.action.ALLOW, max_length=8)
+    fallbackAccess = models.CharField(default=types.states.State.ALLOW, max_length=8)
 
     # Pool selection policy
     policy = models.SmallIntegerField(default=types.pools.LoadBalancingPolicy.ROUND_ROBIN)
@@ -154,7 +154,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                 access = ac.access
                 break  # Stops on first rule match found
 
-        return access == states.action.ALLOW
+        return access == types.states.State.ALLOW
 
     def usage(self, cachedValue=-1) -> types.pools.UsageInfo:
         """
@@ -171,13 +171,13 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         query = (
             ServicePool.objects.filter(
                 memberOfMeta__meta_pool=self,
-                state=states.servicePool.ACTIVE,
+                state=types.states.State.ACTIVE,
             )
             .annotate(
                 usage_count=models.Count(
                     'userServices',
                     filter=models.Q(
-                        userServices__state__in=states.userService.VALID_STATES,
+                        userServices__state__in=types.states.State.VALID_STATES,
                         userServices__cache_level=0,
                     ),
                     distinct=True,
@@ -227,7 +227,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
         # Get services that HAS publications
         meta = MetaPool.objects.filter(
             assignedGroups__in=groups,
-            assignedGroups__state=states.group.ACTIVE,
+            assignedGroups__state=types.states.State.ACTIVE,
             visible=True,
         ).prefetch_related(
             'servicesPoolGroup',
@@ -252,7 +252,7 @@ class MetaPool(UUIDModel, TaggingMixin):  # type: ignore
                     filter=models.Q(
                         members__pool__userServices__user=user,
                         members__pool__userServices__in_use=True,
-                        members__pool__userServices__state__in=states.userService.USABLE,
+                        members__pool__userServices__state__in=types.states.State.USABLE,
                     ),
                 )
             )

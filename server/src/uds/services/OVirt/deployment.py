@@ -37,7 +37,7 @@ import collections.abc
 
 from uds.core import services
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util import log
 
 from .jobs import OVirtDeferredRemoval

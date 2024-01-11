@@ -102,7 +102,7 @@ class OsManagers(ModelHandler):
             if not osmanagerType:
                 raise exceptions.rest.NotFound('OS Manager type not found')
 
-            osmanager = osmanagerType(Environment.getTempEnv(), None)
+            osmanager = osmanagerType(Environment.get_temporary_environment(), None)
 
             return self.add_default_fields(
                 osmanager.gui_description(),  # type: ignore  # may raise an exception if lookup fails

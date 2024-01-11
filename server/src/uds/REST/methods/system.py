@@ -42,7 +42,7 @@ from uds.core import exceptions, types
 from uds.core.util import permissions
 from uds.core.util.cache import Cache
 from uds.core.util.model import process_uuid, sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.stats import counters
 from uds.REST import Handler
 

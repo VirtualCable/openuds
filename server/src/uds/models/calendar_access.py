@@ -35,8 +35,8 @@ import logging
 
 from django.db import models
 
-from uds.core.util import states
 
+from uds.core import types
 from .uuid_model import UUIDModel
 from .calendar import Calendar
 from .service_pool import ServicePool
@@ -51,7 +51,7 @@ class CalendarAccess(UUIDModel):
     service_pool = models.ForeignKey(
         ServicePool, related_name='calendarAccess', on_delete=models.CASCADE
     )
-    access = models.CharField(max_length=8, default=states.action.DENY)
+    access = models.CharField(max_length=8, default=types.states.State.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 
     # "fake" declarations for type checking
@@ -73,7 +73,7 @@ class CalendarAccess(UUIDModel):
 class CalendarAccessMeta(UUIDModel):
     calendar = models.ForeignKey(Calendar, on_delete=models.CASCADE)
     meta_pool = models.ForeignKey(MetaPool, related_name='calendarAccess', on_delete=models.CASCADE)
-    access = models.CharField(max_length=8, default=states.action.DENY)
+    access = models.CharField(max_length=8, default=types.states.State.DENY)
     priority = models.IntegerField(default=0, db_index=True)
 
     # "fake" declarations for type checking

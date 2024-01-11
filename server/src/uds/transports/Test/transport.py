@@ -43,7 +43,7 @@ from uds.core.ui import gui
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

@@ -37,5 +37,5 @@ from . import validation
 from . import rest
 
 # Common exceptions inserted here
-from .common import UDSException, BlockAccess
+from .common import UDSException
 

@@ -46,7 +46,7 @@ from uds.core.util.model import process_uuid
 from uds.core.environment import Environment
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.ui import gui
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 
 from uds.REST.model import DetailHandler
@@ -297,7 +297,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
                 raise self.invalid_item_response(f'Gui for {forType} not found')
 
             service = serviceType(
-                Environment.getTempEnv(), parentInstance
+                Environment.get_temporary_environment(), parentInstance
             )  # Instantiate it so it has the opportunity to alter gui description based on parent
             localGui = self.add_default_fields(
                 service.gui_description(), ['name', 'comments', 'tags']

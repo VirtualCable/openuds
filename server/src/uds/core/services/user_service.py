@@ -35,7 +35,7 @@ import collections.abc
 
 from uds.core.environment import Environmentable
 from uds.core.serializable import Serializable
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util import log
 
 if typing.TYPE_CHECKING:

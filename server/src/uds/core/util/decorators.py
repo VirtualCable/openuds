@@ -39,18 +39,13 @@ import typing
 import collections.abc
 
 from django.db import transaction
-from uds.core import consts
-from uds.core.exceptions import BlockAccess
 
-from uds.core.util.cache import Cache
-from uds.core.util.config import GlobalConfig
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core import consts, types, exceptions
+import uds.core.exceptions.rest
 
 logger = logging.getLogger(__name__)
 
 RT = typing.TypeVar('RT')
-
-blockCache = Cache('uds:blocker')  # One year
 
 
 # Caching statistics
@@ -113,6 +108,22 @@ class CacheInfo:
     total: int
     exec_time: int
 
+class ClassPropertyDescriptor:
+    """
+    Class property descriptor
+    """
+
+    def __init__(self, fget: collections.abc.Callable) -> None:
+        self.fget = fget
+
+    def __get__(self, obj: typing.Any, cls: typing.Any = None) -> typing.Any:
+        return self.fget(cls)
+    
+def classproperty(func: collections.abc.Callable) -> ClassPropertyDescriptor:
+    """
+    Class property decorator
+    """
+    return ClassPropertyDescriptor(func)
 
 def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
@@ -207,6 +218,8 @@ def cached(
         If args and cachingKWArgs are not provided, the whole arguments will be used for cache key
 
     """
+    from uds.core.util.cache import Cache  # To avoid circular references
+    
     timeout = consts.system.DEFAULT_CACHE_TIMEOUT if timeout == -1 else timeout
     args_list: list[int] = [args] if isinstance(args, int) else list(args or [])
     kwargs_list: list[str] = isinstance(kwargs, str) and [kwargs] or list(kwargs or [])
@@ -350,7 +363,10 @@ def blocker(
         Decorator
 
     """
-    from uds.core.exceptions.rest import AccessDenied  # To avoid circular references
+    from uds.core.util.cache import Cache  # To avoid circular references
+    from uds.core.util.config import GlobalConfig
+   
+    blockCache = Cache('uds:blocker')  # Cache for blocked ips
 
     max_failures = max_failures or consts.system.ALLOWED_FAILS
 
@@ -360,7 +376,7 @@ def blocker(
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
-            request: typing.Optional['ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)
+            request: typing.Optional['types.requests.ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)
 
             # No request object, so we can't block
             if request is None:
@@ -371,14 +387,14 @@ def blocker(
             # if ip is blocked, raise exception
             failuresCount = blockCache.get(ip, 0)
             if failuresCount >= max_failures:
-                raise AccessDenied
+                raise exceptions.rest.AccessDenied
 
             try:
                 result = f(*args, **kwargs)
-            except BlockAccess:
+            except uds.core.exceptions.rest.BlockAccess:
                 # Increment
                 blockCache.put(ip, failuresCount + 1, GlobalConfig.LOGIN_BLOCK.getInt())
-                raise AccessDenied
+                raise exceptions.rest.AccessDenied
             # Any other exception will be raised
             except Exception:
                 raise

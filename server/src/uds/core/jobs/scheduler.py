@@ -43,7 +43,7 @@ from django.db.models import Q
 
 from uds.models import Scheduler as DBScheduler
 from uds.core.util.model import sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from .jobs_factory import JobsFactory
 
 logger = logging.getLogger(__name__)

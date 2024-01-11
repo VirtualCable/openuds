@@ -36,7 +36,7 @@ import logging
 import re
 import typing
 
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 from .group import Group
 

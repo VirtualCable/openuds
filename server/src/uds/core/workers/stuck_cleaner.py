@@ -38,7 +38,7 @@ from django.db.models import Q, Count
 
 from uds.models import ServicePool, UserService
 from uds.core.util.model import sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.jobs import Job
 from uds.core.util import log
 

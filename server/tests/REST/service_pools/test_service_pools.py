@@ -35,7 +35,8 @@ import collections.abc
 from uds import models
 from uds.core import consts
 from uds.REST.handlers import AUTH_TOKEN_HEADER
-from uds.REST.methods.actor_v3 import MANAGED, UNMANAGED
+from uds.core.consts.actor import UNMANAGED
+from uds.core.consts.actor import MANAGED
 
 from ...fixtures import rest as rest_fixtures
 from ...utils import rest

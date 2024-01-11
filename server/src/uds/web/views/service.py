@@ -38,7 +38,7 @@ from django.views.decorators.cache import cache_page, never_cache
 
 from uds.core.auths.auth import web_login_required, web_password
 from uds.core.managers.user_service import UserServiceManager
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.consts.images import DEFAULT_IMAGE
 from uds.core.util.model import process_uuid
 from uds.models import Transport, Image
@@ -49,7 +49,7 @@ from uds.web.util import services
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
     from uds.models import UserService
 
 logger = logging.getLogger(__name__)

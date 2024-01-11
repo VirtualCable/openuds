@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 from uds import models
 from uds.core import exceptions
 import uds.core.types.permissions
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.model import process_uuid
 from uds.core.util import log, permissions, ensure
 from uds.core.managers.user_service import UserServiceManager
@@ -164,7 +164,7 @@ class AssignedService(DetailHandler):
                 'state': {
                     'title': _('status'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': State.literals_dict(),
                 }
             },
             {'state_date': {'title': _('Status date'), 'type': 'datetime'}},
@@ -284,7 +284,7 @@ class CachedService(AssignedService):
                 'state': {
                     'title': _('State'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': State.literals_dict(),
                 }
             },
             {'cache_level': {'title': _('Cache level')}},
@@ -347,7 +347,7 @@ class Groups(DetailHandler):
                 'state': {
                     'title': _('State'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': State.literals_dict(),
                 }
             },
         ]
@@ -511,7 +511,7 @@ class Publications(DetailHandler):
                 'revision': i.revision,
                 'publish_date': i.publish_date,
                 'state': i.state,
-                'reason': State.is_errored(i.state) and i.get_instance().error_reason() or '',
+                'reason': State.from_str(i.state).is_errored() and i.get_instance().error_reason() or '',
                 'state_date': i.state_date,
             }
             for i in parent.publications.all()
@@ -529,7 +529,7 @@ class Publications(DetailHandler):
                 'state': {
                     'title': _('State'),
                     'type': 'dict',
-                    'dict': State.dictionary(),
+                    'dict': State.literals_dict(),
                 }
             },
             {'reason': {'title': _('Reason')}},

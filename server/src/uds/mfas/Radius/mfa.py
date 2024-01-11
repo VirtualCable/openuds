@@ -52,7 +52,7 @@ from uds.core.auths.auth import web_password
 
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
 
 logger = logging.getLogger(__name__)
 

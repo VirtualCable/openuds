@@ -47,7 +47,7 @@ from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from uds.core import auths, exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
-from uds.core.types.request import ExtendedHttpRequest
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core.util import security, decorators, ensure, auth as auth_utils
 from uds.core.util.model import sql_datetime
@@ -58,7 +58,7 @@ from . import config
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
 
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 
 logger = logging.getLogger(__name__)

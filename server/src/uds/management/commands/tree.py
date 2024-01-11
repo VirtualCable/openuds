@@ -40,7 +40,7 @@ from django.core.management.base import BaseCommand
 
 from uds.core.util import log
 from uds import models
-from uds.core.util.state import State
+from uds.core.types.states import State
 
 
 logger = logging.getLogger(__name__)
@@ -161,8 +161,8 @@ class Command(BaseCommand):
                                     'id': item.uuid,
                                     'unique_id': item.unique_id,
                                     'friendly_name': item.friendly_name,
-                                    'state': State.as_str(item.state),
-                                    'os_state': State.as_str(item.os_state),
+                                    'state': State.from_str(item.state).literal,
+                                    'os_state': State.from_str(item.os_state).literal,
                                     'state_date': item.state_date,
                                     'creation_date': item.creation_date,
                                     'revision': item.publication and item.publication.revision or '',

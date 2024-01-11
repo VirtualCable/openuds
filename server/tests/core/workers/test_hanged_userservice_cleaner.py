@@ -37,7 +37,7 @@ from uds import models
 from uds.core.util import model
 from uds.core.environment import Environment
 from uds.core.util import config
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.workers.hanged_userservice_cleaner import HangedCleaner
 
 from ...utils.test import UDSTestCase
@@ -84,7 +84,7 @@ class HangedCleanerTest(UDSTestCase):
 
     def test_hanged_cleaner(self):
         # At start, there is no "removable" user services
-        cleaner = HangedCleaner(Environment.getTempEnv())
+        cleaner = HangedCleaner(Environment.get_temporary_environment())
         cleaner.run()
         one_fith = TEST_SERVICES // 5
         self.assertEqual(

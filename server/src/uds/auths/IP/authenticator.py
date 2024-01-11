@@ -44,7 +44,7 @@ from uds.core.util import net
 logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
 
 
 class IPAuth(auths.Authenticator):

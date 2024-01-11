@@ -47,7 +47,7 @@ from ..HTML5RDP.html5rdp import HTML5RDPTransport
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
-    from uds.core.types.request import ExtendedHttpRequestWithUser
+    from uds.core.types.requests import ExtendedHttpRequestWithUser
 
 logger = logging.getLogger(__name__)
 

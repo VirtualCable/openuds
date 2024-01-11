@@ -72,3 +72,9 @@ class SaveException(HandlerError):
     Exception thrown if couldn't save
     """
 
+
+class BlockAccess(UDSException):
+    """
+    Exception used to signal that the access to a resource is blocked
+    """
+

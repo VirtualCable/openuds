@@ -39,7 +39,7 @@ from uds.core.util.config import GlobalConfig
 from uds.models import ServicePoolPublication
 from uds.core.util.model import sql_datetime
 from uds.core.services.exceptions import PublishException
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.jobs import Job
 
 logger = logging.getLogger(__name__)

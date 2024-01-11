@@ -51,7 +51,7 @@ from uds.core.services.exceptions import (
 )
 from uds.core.util import log, singleton
 from uds.core.util.model import sql_datetime
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.core.util.stats import events
 from uds.models import MetaPool, ServicePool, ServicePoolPublication, Transport, User, UserService
 
@@ -286,11 +286,11 @@ class UserServiceManager(metaclass=singleton.Singleton):
         cache.save(update_fields=['cache_level'])
         logger.debug(
             'Service State: %a %s %s',
-            State.as_str(state),
-            State.as_str(cache.state),
-            State.as_str(cache.os_state),
+            State.from_str(state).literal,
+            State.from_str(cache.state).literal,
+            State.from_str(cache.os_state).literal,
         )
-        if State.is_runing(state) and cache.is_usable():
+        if State.from_str(state).is_runing() and cache.is_usable():
             cache.set_state(State.PREPARING)
 
         # Data will be serialized on makeUnique process
@@ -334,10 +334,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         with transaction.atomic():
             user_service = UserService.objects.select_for_update().get(id=user_service.id)
             operationsLogger.info('Removing userService %a', user_service.name)
-            if user_service.is_usable() is False and State.is_removable(user_service.state) is False:
+            if user_service.is_usable() is False and State.from_str(user_service.state).is_removable() is False:
                 raise OperationException(_('Can\'t remove a non active element'))
             user_service.set_state(State.REMOVING)
-            logger.debug("***** The state now is %s *****", State.as_str(user_service.state))
+            logger.debug("***** The state now is %s *****", State.from_str(user_service.state).literal)
             user_service.setInUse(False)  # For accounting, ensure that it is not in use right now
             user_service.save()
 
@@ -350,7 +350,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         return user_service
 
     def remove_or_cancel(self, user_service: UserService):
-        if user_service.is_usable() or State.is_removable(user_service.state):
+        if user_service.is_usable() or State.from_str(user_service.state).is_removable():
             return self.remove(user_service)
 
         if user_service.is_preparing():

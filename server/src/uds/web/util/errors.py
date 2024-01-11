@@ -42,7 +42,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-from uds.core import consts
+from uds.core import types
 from uds.models import ServicePool, Transport, UserService, Authenticator
 
 # Not imported at runtime, just for type checking
@@ -71,7 +71,7 @@ def exceptionView(request: 'HttpRequest', exception: Exception) -> HttpResponseR
     Tries to render an error page with error information
     """
     logger.debug(traceback.format_exc())
-    return errorView(request, consts.errors.Error.from_exception(exception))
+    return errorView(request, types.errors.Error.from_exception(exception))
 
 
 def errorMessage(request: 'HttpRequest', err: int) -> 'HttpResponse':
@@ -79,6 +79,6 @@ def errorMessage(request: 'HttpRequest', err: int) -> 'HttpResponse':
     Error view, responsible of error display
     """
     return HttpResponse(
-        json.dumps({'error': consts.errors.Error.from_int(err).message, 'code': str(err)}),
+        json.dumps({'error': types.errors.Error.from_int(err).message, 'code': str(err)}),
         content_type='application/json',
     )

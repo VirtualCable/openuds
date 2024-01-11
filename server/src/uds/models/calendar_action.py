@@ -43,9 +43,8 @@ from django.db import models
 
 from uds.core.util import calendar
 from uds.core.util import log
-from uds.core.util import state
 from uds.core.managers.user_service import UserServiceManager
-from uds.core import services
+from uds.core import services, types
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
@@ -334,14 +333,14 @@ class CalendarAction(UUIDModel):
 
         def remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assigned_user_services().filter(state=state.State.USABLE):
+            for userService in self.service_pool.assigned_user_services().filter(state=types.states.State.USABLE):
                 userService.remove()
 
         def remove_stuck_userservice() -> None:
             # 1.- Remove stuck assigned services (Ignore "creating ones", just for created)
             since = sql_datetime() - datetime.timedelta(hours=numVal('hours'))
             for userService in self.service_pool.assigned_user_services().filter(
-                state_date__lt=since, state=state.State.USABLE
+                state_date__lt=since, state=types.states.State.USABLE
             ):
                 userService.remove()
 

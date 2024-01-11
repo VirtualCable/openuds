@@ -49,7 +49,7 @@ from uds.models import Authenticator, Image, Network, Transport
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
-    from uds.core.types.request import ExtendedHttpRequest
+    from uds.core.types.requests import ExtendedHttpRequest
     from uds.models import User
 
 logger = logging.getLogger(__name__)

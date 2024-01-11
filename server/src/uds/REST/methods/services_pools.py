@@ -46,7 +46,7 @@ from uds.core.consts.images import DEFAULT_THUMB_BASE64
 from uds.core.util import log, permissions, ensure
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime, process_uuid
-from uds.core.util.state import State
+from uds.core.types.states import State
 from uds.models import (Account, Image, OSManager, Service, ServicePool,
                         ServicePoolGroup, User)
 from uds.models.calendar_action import (
@@ -115,7 +115,7 @@ class ServicesPools(ModelHandler):
     table_title = typing.cast(str, _('Service Pools'))
     table_fields = [
         {'name': {'title': _('Name')}},
-        {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.dictionary()}},
+        {'state': {'title': _('Status'), 'type': 'dict', 'dict': State.literals_dict()}},
         {'user_services_count': {'title': _('User services'), 'type': 'number'}},
         {'user_services_in_preparation': {'title': _('In Preparation')}},
         {'usage': {'title': _('Usage')}},

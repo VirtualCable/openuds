@@ -156,7 +156,7 @@ class Environment:
         return Environment('type-' + str(type_))
 
     @staticmethod
-    def getTempEnv() -> 'Environment':
+    def get_temporary_environment() -> 'Environment':
         """
         Provides a temporary environment needed in some calls (test provider, for example)
         It will not make environment persistent

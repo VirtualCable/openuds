@@ -473,7 +473,7 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         match self.responseType.value:
             case 'code' | 'pkce':
@@ -490,7 +490,7 @@ class OAuth2Authenticator(auths.Authenticator):
 
     def logout(
         self,
-        request: 'types.request.ExtendedHttpRequest',  # pylint: disable=unused-argument
+        request: 'types.requests.ExtendedHttpRequest',  # pylint: disable=unused-argument
         username: str,  # pylint: disable=unused-argument
     ) -> types.auth.AuthenticationResult:
         return types.auth.SUCCESS_AUTH
@@ -517,7 +517,7 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """Process the callback for code authorization flow"""
         state = parameters.get_params.get('state', '')
@@ -546,7 +546,7 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """Process the callback for PKCE authorization flow"""
         state = parameters.get_params.get('state', '')
@@ -574,7 +574,7 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
@@ -604,7 +604,7 @@ class OAuth2Authenticator(auths.Authenticator):
         self,
         parameters: 'types.auth.AuthCallbackParams',
         gm: 'auths.GroupsManager',
-        request: 'types.request.ExtendedHttpRequest',
+        request: 'types.requests.ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         """Process the callback for OpenID authorization flow"""
         state = parameters.post_params.get('state', '')
