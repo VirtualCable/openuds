@@ -1429,7 +1429,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         }
         # Any unexpected type will raise an exception
         arr = [
-            (field_name, field.stored_field_name() or field.type.name, fw_converters[field.type](field))
+            (field.stored_field_name() or field_name, field.type.name, fw_converters[field.type](field))
             for field_name, field in self._gui.items()
             if fw_converters[field.type](field) is not None
         ]

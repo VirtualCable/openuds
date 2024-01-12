@@ -40,6 +40,7 @@ from ...utils.test import UDSTestCase
 
 from uds.core import types, consts
 from uds.core.ui.user_interface import gui
+from unittest import mock
 
 from ...fixtures.user_interface import (
     TestingUserInterface,
@@ -166,6 +167,7 @@ class UserinterfaceTest(UDSTestCase):
 
     def test_new_serialization(self):
         # This test is to ensure that new serialized data can be loaded
+        # First
         ui = TestingUserInterface()
         data = ui.serialize_fields()
         ui2 = TestingUserInterface()
@@ -176,9 +178,21 @@ class UserinterfaceTest(UDSTestCase):
 
     def test_stored_field_name(self):
         # This test is to ensure that new serialized data can be loaded
+        # mock logging warning
         ui = TestingUserInterfaceFieldNameOrig()
         data = ui.serialize_fields()
         ui2 = TestingUserInterfaceFieldName()
         ui2.unserialize_fields(data)
 
         self.assertEqual(ui.strField.value, ui2.str_field.value)
+        with mock.patch('logging.Logger.warning') as mock_warning:
+            data = ui2.serialize_fields()  # Should store str_field as strField
+            
+            ui.unserialize_fields(data)
+            
+            # Logger.warning should has not been called
+            mock_warning.assert_not_called()
+            
+            # And strField should be loaded from str_field
+            self.assertEqual(ui.strField.value, ui2.str_field.value)
+
