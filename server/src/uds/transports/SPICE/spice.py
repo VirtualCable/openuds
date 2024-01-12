@@ -64,13 +64,13 @@ class SPICETransport(BaseSpiceTransport):
     # useEmptyCreds = BaseSpiceTransport.useEmptyCreds
     # fixedName = BaseSpiceTransport.fixedName
     # fixedPassword = BaseSpiceTransport.fixedPassword
-    serverCertificate = BaseSpiceTransport.serverCertificate
-    fullScreen = BaseSpiceTransport.fullScreen
-    usbShare = BaseSpiceTransport.usbShare
-    autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
-    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
-    sslConnection = BaseSpiceTransport.SSLConnection
-    overridedProxy = BaseSpiceTransport.overridedProxy
+    server_certificate = BaseSpiceTransport.server_certificate
+    fullscreen = BaseSpiceTransport.fullscreen
+    allow_usb_redirection = BaseSpiceTransport.allow_usb_redirection
+    allow_usb_redirection_new_plugs = BaseSpiceTransport.allow_usb_redirection_new_plugs
+    allow_usb_redirection_new_plugs = BaseSpiceTransport.allow_smartcards
+    allow_usb_redirection_new_plugs = BaseSpiceTransport.ssl_connection
+    overrided_proxy = BaseSpiceTransport.overrided_proxy
 
     def get_transport_script(
         self,
@@ -101,16 +101,16 @@ class SPICETransport(BaseSpiceTransport):
             port,
             secure_port,
             con['ticket']['value'],
-            con.get('ca', self.serverCertificate.value.strip()),
+            con.get('ca', self.server_certificate.value.strip()),
             con['cert_subject'],
-            fullscreen=self.fullScreen.as_bool(),
+            fullscreen=self.fullscreen.as_bool(),
         )
-        r.proxy = self.overridedProxy.value.strip() or con.get('proxy', None)
+        r.proxy = self.overrided_proxy.value.strip() or con.get('proxy', None)
 
-        r.usb_auto_share = self.usbShare.as_bool()
-        r.new_usb_auto_share = self.autoNewUsbShare.as_bool()
-        r.smartcard = self.smartCardRedirect.as_bool()
-        r.ssl_connection = self.sslConnection.as_bool()
+        r.usb_auto_share = self.allow_usb_redirection.as_bool()
+        r.new_usb_auto_share = self.allow_usb_redirection_new_plugs.as_bool()
+        r.smartcard = self.allow_usb_redirection_new_plugs.as_bool()
+        r.ssl_connection = self.allow_usb_redirection_new_plugs.as_bool()
 
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')

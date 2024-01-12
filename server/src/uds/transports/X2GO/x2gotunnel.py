@@ -68,26 +68,27 @@ class TX2GOTransport(BaseX2GOTransport):
     group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnel_field()
-    tunnelWait = fields.tunnel_wait_time()
+    tunnel_wait = fields.tunnel_wait_time()
 
-    verifyCertificate = gui.CheckBoxField(
+    verify_certificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
         tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
         default=False,
         tab=types.ui.Tab.TUNNEL,
+        stored_field_name='verifyCertificate',
     )
 
-    fixedName = BaseX2GOTransport.fixedName
-    screenSize = BaseX2GOTransport.screenSize
-    desktopType = BaseX2GOTransport.desktopType
-    customCmd = BaseX2GOTransport.customCmd
+    fixed_name = BaseX2GOTransport.fixed_name
+    screen_size = BaseX2GOTransport.screen_size
+    desktop_type = BaseX2GOTransport.desktop_type
+    custom_cmd = BaseX2GOTransport.custom_cmd
     sound = BaseX2GOTransport.sound
     exports = BaseX2GOTransport.exports
     speed = BaseX2GOTransport.speed
 
-    soundType = BaseX2GOTransport.soundType
-    keyboardLayout = BaseX2GOTransport.keyboardLayout
+    sound_type = BaseX2GOTransport.sound_type
+    keyboard_layout = BaseX2GOTransport.keyboard_layout
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
@@ -112,9 +113,9 @@ class TX2GOTransport(BaseX2GOTransport):
         width, height = self.getScreenSize()
 
         rootless = False
-        desktop = self.desktopType.value
+        desktop = self.desktop_type.value
         if desktop == "UDSVAPP":
-            desktop = "/usr/bin/udsvapp " + self.customCmd.value
+            desktop = "/usr/bin/udsvapp " + self.custom_cmd.value
             rootless = True
 
         xf = x2go_file.getTemplate(
@@ -134,7 +135,7 @@ class TX2GOTransport(BaseX2GOTransport):
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
             port=22,
-            validity=self.tunnelWait.num() + 60,  # Ticket overtime
+            validity=self.tunnel_wait.num() + 60,  # Ticket overtime
         )
 
         tunnelFields = fields.get_tunnel_from_field(self.tunnel)
@@ -143,8 +144,8 @@ class TX2GOTransport(BaseX2GOTransport):
         sp = {
             'tunHost': tunHost,
             'tunPort': tunPort,
-            'tunWait': self.tunnelWait.num(),
-            'tunChk': self.verifyCertificate.as_bool(),
+            'tunWait': self.tunnel_wait.num(),
+            'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
             'key': priv,
             'xf': xf,

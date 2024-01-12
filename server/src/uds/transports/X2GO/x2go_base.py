@@ -68,14 +68,15 @@ class BaseX2GOTransport(transports.Transport):
     protocol = types.transports.Protocol.X2GO
     supported_oss = (types.os.KnownOS.LINUX, types.os.KnownOS.WINDOWS)
 
-    fixedName = gui.TextField(
+    fixed_name = gui.TextField(
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedName',
     )
 
-    screenSize = gui.ChoiceField(
+    screen_size = gui.ChoiceField(
         label=_('Screen size'),
         order=10,
         tooltip=_('Screen size'),
@@ -89,9 +90,10 @@ class BaseX2GOTransport(transports.Transport):
             {'id': CommonPrefs.SZ_FULLSCREEN, 'text': gettext_lazy('Full Screen')},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='screenSize',
     )
 
-    desktopType = gui.ChoiceField(
+    desktop_type = gui.ChoiceField(
         label=_('Desktop'),
         order=11,
         tooltip=_('Desktop session'),
@@ -107,15 +109,17 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='desktopType',
     )
 
-    customCmd = gui.TextField(
+    custom_cmd = gui.TextField(
         order=12,
         label=_('vAPP'),
         tooltip=_(
             'If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='customCmd',
     )
 
     sound = gui.CheckBoxField(
@@ -149,7 +153,7 @@ class BaseX2GOTransport(transports.Transport):
         tab=types.ui.Tab.PARAMETERS,
     )
 
-    soundType = gui.ChoiceField(
+    sound_type = gui.ChoiceField(
         label=_('Sound'),
         order=30,
         tooltip=_('Sound server'),
@@ -159,14 +163,16 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'esd', 'text': 'ESD'},
         ],
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='soundType',
     )
 
-    keyboardLayout = gui.TextField(
+    keyboard_layout = gui.TextField(
         label=_('Keyboard'),
         order=31,
         tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         default='',
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='keyboardLayout',
     )
     # 'nopack', '8', '64', '256', '512', '4k', '32k', '64k', '256k', '2m', '16m'
     # '256-rdp', '256-rdp-compressed', '32k-rdp', '32k-rdp-compressed', '64k-rdp'
@@ -217,7 +223,7 @@ class BaseX2GOTransport(transports.Transport):
         return ready == 'Y'
 
     def getScreenSize(self) -> tuple[int, int]:
-        return CommonPrefs.get_wh(self.screenSize.value)
+        return CommonPrefs.get_wh(self.screen_size.value)
 
     def processed_username(self, userService: 'models.UserService', user: 'models.User') -> str:
         v = self.process_user_password(userService, user, '')
@@ -239,8 +245,8 @@ class BaseX2GOTransport(transports.Transport):
 
         services_type_provided = service.get_type().services_type_provided
 
-        if self.fixedName.value != '':
-            username = self.fixedName.value
+        if self.fixed_name.value != '':
+            username = self.fixed_name.value
 
         # Fix username/password acording to os manager
         username, password = userService.process_user_password(username, password)

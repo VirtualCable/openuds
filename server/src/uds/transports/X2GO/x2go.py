@@ -59,22 +59,22 @@ class X2GOTransport(BaseX2GOTransport):
     type_type = 'X2GOTransport'
     type_description = _('X2Go access (Experimental). Direct connection.')
 
-    fixedName = BaseX2GOTransport.fixedName
-    screenSize = BaseX2GOTransport.screenSize
-    desktopType = BaseX2GOTransport.desktopType
-    customCmd = BaseX2GOTransport.customCmd
+    fixed_name = BaseX2GOTransport.fixed_name
+    screen_size = BaseX2GOTransport.screen_size
+    desktop_type = BaseX2GOTransport.desktop_type
+    custom_cmd = BaseX2GOTransport.custom_cmd
     sound = BaseX2GOTransport.sound
     exports = BaseX2GOTransport.exports
     speed = BaseX2GOTransport.speed
 
-    soundType = BaseX2GOTransport.soundType
-    keyboardLayout = BaseX2GOTransport.keyboardLayout
+    sound_type = BaseX2GOTransport.sound_type
+    keyboard_layout = BaseX2GOTransport.keyboard_layout
     pack = BaseX2GOTransport.pack
     quality = BaseX2GOTransport.quality
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
-        userService: 'models.UserService',
+        userservice: 'models.UserService',
         transport: 'models.Transport',
         ip: str,
         os: 'types.os.DetectedOsInfo',
@@ -82,15 +82,15 @@ class X2GOTransport(BaseX2GOTransport):
         password: str,
         request: 'ExtendedHttpRequestWithUser',
     ) -> 'types.transports.TransportScript':
-        ci = self.get_connection_info(userService, user, password)
+        ci = self.get_connection_info(userservice, user, password)
 
-        priv, pub = self.getAndPushKey(ci.username, userService)
+        priv, pub = self.getAndPushKey(ci.username, userservice)
 
         width, height = self.getScreenSize()
         rootless = False
-        desktop = self.desktopType.value
+        desktop = self.desktop_type.value
         if desktop == "UDSVAPP":
-            desktop = "/usr/bin/udsvapp " + self.customCmd.value
+            desktop = "/usr/bin/udsvapp " + self.custom_cmd.value
             rootless = True
 
         xf = x2go_file.getTemplate(
@@ -113,5 +113,5 @@ class X2GOTransport(BaseX2GOTransport):
             return self.get_script(os.os.os_name(), 'direct', sp)
         except Exception:
             return super().get_transport_script(
-                userService, transport, ip, os, user, password, request
+                userservice, transport, ip, os, user, password, request
             )

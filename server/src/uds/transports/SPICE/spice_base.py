@@ -58,25 +58,28 @@ class BaseSpiceTransport(transports.Transport):
     icon_file = 'spice.png'
     protocol = types.transports.Protocol.SPICE
 
-    useEmptyCreds = gui.CheckBoxField(
+    force_empty_creds = gui.CheckBoxField(
         order=1,
         label=_('Empty credentials'),
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='useEmptyCreds',
     )
-    fixedName = gui.TextField(
+    forced_username = gui.TextField(
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedName',
     )
-    fixedPassword = gui.PasswordField(
+    forced_password = gui.PasswordField(
         order=3,
         label=_('Password'),
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedPassword',
     )
-    serverCertificate = gui.TextField(
+    server_certificate = gui.TextField(
         order=4,
         length=4096,
         lines=4,
@@ -85,43 +88,49 @@ class BaseSpiceTransport(transports.Transport):
             'Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'
         ),
         required=False,
+        stored_field_name='serverCertificate',
     )
-    fullScreen = gui.CheckBoxField(
+    fullscreen = gui.CheckBoxField(
         order=5,
         label=_('Fullscreen Mode'),
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='fullScreen',
     )
-    smartCardRedirect = gui.CheckBoxField(
+    allow_smartcards = gui.CheckBoxField(
         order=6,
         label=_('Smartcard Redirect'),
         tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='smartCardRedirect',
     )
-    usbShare = gui.CheckBoxField(
+    allow_usb_redirection = gui.CheckBoxField(
         order=7,
         label=_('Enable USB'),
         tooltip=_('If checked, USB redirection will be allowed.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='usbShare',
     )
-    autoNewUsbShare = gui.CheckBoxField(
+    allow_usb_redirection_new_plugs = gui.CheckBoxField(
         order=8,
         label=_('New USB Auto Sharing'),
         tooltip=_('Auto-redirect USB devices when plugged in.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='autoNewUsbShare',
     )
-    SSLConnection = gui.CheckBoxField(
+    ssl_connection = gui.CheckBoxField(
         order=9,
         label=_('SSL Connection'),
         tooltip=_('If checked, SPICE protocol will allow SSL connections.'),
         default=True,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='SSLConnection',
     )
 
-    overridedProxy = gui.TextField(
+    overrided_proxy = gui.TextField(
         order=10,
         label=_('Override Proxy'),
         tooltip=_(
@@ -130,16 +139,7 @@ class BaseSpiceTransport(transports.Transport):
         required=False,
         tab=types.ui.Tab.ADVANCED,
         pattern=types.ui.FieldPatternType.URL,
-    )
-
-    overridedProxy = gui.TextField(
-        order=10,
-        label=_('Override Proxy'),
-        tooltip=_(
-            'If not empty, this proxy will be used to connect to the service instead of the one provided by the hypervisor. Format: http://host:port'
-        ),
-        required=False,
-        tab=types.ui.Tab.ADVANCED,
+        stored_field_name='overridedProxy',
     )
 
     def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
@@ -202,13 +202,13 @@ class BaseSpiceTransport(transports.Transport):
     ) -> types.connections.ConnectionData:
         username = user.get_username_for_auth()
 
-        if self.fixedName.value:
-            username = self.fixedName.value
+        if self.forced_username.value:
+            username = self.forced_username.value
 
-        if self.fixedPassword.value:
-            password = self.fixedPassword.value
+        if self.forced_password.value:
+            password = self.forced_password.value
 
-        if self.useEmptyCreds.as_bool():
+        if self.force_empty_creds.as_bool():
             username, password = '', ''
 
         # Fix username/password acording to os manager

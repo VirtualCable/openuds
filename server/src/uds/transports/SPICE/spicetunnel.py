@@ -66,9 +66,9 @@ class TSPICETransport(BaseSpiceTransport):
     group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnel_field()
-    tunnelWait = fields.tunnel_wait_time()
+    tunnel_wait = fields.tunnel_wait_time()
 
-    verifyCertificate = gui.CheckBoxField(
+    verify_certificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
         order=23,
         tooltip=_(
@@ -76,14 +76,15 @@ class TSPICETransport(BaseSpiceTransport):
         ),
         default=False,
         tab=types.ui.Tab.TUNNEL,
+        stored_field_name='verifyCertificate',
     )
 
-    serverCertificate = BaseSpiceTransport.serverCertificate
-    fullScreen = BaseSpiceTransport.fullScreen
-    usbShare = BaseSpiceTransport.usbShare
-    autoNewUsbShare = BaseSpiceTransport.autoNewUsbShare
-    smartCardRedirect = BaseSpiceTransport.smartCardRedirect
-    sslConnection = BaseSpiceTransport.SSLConnection
+    server_certificate = BaseSpiceTransport.server_certificate
+    fullscreen = BaseSpiceTransport.fullscreen
+    allow_usb_redirection = BaseSpiceTransport.allow_usb_redirection
+    allow_usb_redirection_new_plugs = BaseSpiceTransport.allow_usb_redirection_new_plugs
+    allow_smartcards = BaseSpiceTransport.allow_smartcards
+    ssl_connection = BaseSpiceTransport.ssl_connection
 
     def initialize(self, values: 'Module.ValuesType'):
         if values:
@@ -128,7 +129,7 @@ class TSPICETransport(BaseSpiceTransport):
             ticket = TicketStore.create_for_tunnel(
                 userService=userService,
                 port=int(con['port']),
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
+                validity=self.tunnel_wait.num() + 60,  # Ticket overtime
             )
 
         if con['secure_port']:
@@ -136,7 +137,7 @@ class TSPICETransport(BaseSpiceTransport):
                 userService=userService,
                 port=int(con['secure_port']),
                 host=con['address'],
-                validity=self.tunnelWait.num() + 60,  # Ticket overtime
+                validity=self.tunnel_wait.num() + 60,  # Ticket overtime
             )
 
         r = RemoteViewerFile(
@@ -144,15 +145,15 @@ class TSPICETransport(BaseSpiceTransport):
             '{port}',
             '{secure_port}',
             con['ticket']['value'],  # This is secure ticket from kvm, not UDS ticket
-            con.get('ca', self.serverCertificate.value.strip()),
+            con.get('ca', self.server_certificate.value.strip()),
             con['cert_subject'],
-            fullscreen=self.fullScreen.as_bool(),
+            fullscreen=self.fullscreen.as_bool(),
         )
 
-        r.usb_auto_share = self.usbShare.as_bool()
-        r.new_usb_auto_share = self.autoNewUsbShare.as_bool()
-        r.smartcard = self.smartCardRedirect.as_bool()
-        r.ssl_connection = self.sslConnection.as_bool()
+        r.usb_auto_share = self.allow_usb_redirection.as_bool()
+        r.new_usb_auto_share = self.allow_usb_redirection_new_plugs.as_bool()
+        r.smartcard = self.allow_smartcards.as_bool()
+        r.ssl_connection = self.ssl_connection.as_bool()
 
         # if sso:  # If SSO requested, and when supported by platform
         #     userServiceInstance.desktopLogin(user, password, '')
@@ -162,8 +163,8 @@ class TSPICETransport(BaseSpiceTransport):
             'as_file_ns': r.as_file_ns,
             'tunHost': tunHost,
             'tunPort': tunPort,
-            'tunWait': self.tunnelWait.num(),
-            'tunChk': self.verifyCertificate.as_bool(),
+            'tunWait': self.tunnel_wait.num(),
+            'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
             'ticket_secure': ticket_secure,
         }

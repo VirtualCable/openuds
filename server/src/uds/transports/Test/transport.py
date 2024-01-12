@@ -63,7 +63,7 @@ class TestTransport(transports.Transport):
     protocol = types.transports.Protocol.OTHER
     group = types.transports.Grouping.DIRECT
 
-    testURL = gui.TextField(
+    test_url = gui.TextField(
         label=_('URL Pattern'),
         order=1,
         tooltip=_('URL Pattern to open (i.e. https://_IP_/test?user=_USER_'),
@@ -72,7 +72,7 @@ class TestTransport(transports.Transport):
         required=True,
     )
 
-    forceNewWindow = gui.CheckBoxField(
+    force_new_window = gui.CheckBoxField(
         label=_('Force new HTML Window'),
         order=91,
         tooltip=_(
@@ -87,8 +87,8 @@ class TestTransport(transports.Transport):
             return
         # Strip spaces
         if not (
-            self.testURL.value.startswith('http://')
-            or self.testURL.value.startswith('https://')
+            self.test_url.value.startswith('http://')
+            or self.test_url.value.startswith('https://')
         ):
             raise exceptions.validation.ValidationError(
                 _('The url must be http or https')
@@ -114,11 +114,11 @@ class TestTransport(transports.Transport):
         username: str = user.get_username_for_auth()
         username, password = userService.process_user_password(username, password)
 
-        url = self.testURL.value.replace('_IP_', ip).replace('_USER_', username)
+        url = self.test_url.value.replace('_IP_', ip).replace('_USER_', username)
 
         onw = (
             '&o_n_w={}'.format(hash(transport.name))
-            if self.forceNewWindow.as_bool()
+            if self.force_new_window.as_bool()
             else ''
         )
         return str("{}{}".format(url, onw))

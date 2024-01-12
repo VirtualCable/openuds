@@ -277,9 +277,9 @@ class Dispatcher(View):
         modfinder.dynamically_load_and_register_packages(
             Dispatcher.registerClass,
             Handler,
-            modName=modName,
+            module_name=modName,
             checker=checker,
-            packageName='methods',
+            package_name='methods',
         )       
 
 Dispatcher.initialize()
