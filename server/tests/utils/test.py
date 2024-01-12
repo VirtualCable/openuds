@@ -49,6 +49,7 @@ class UDSHttpResponse(HttpResponse):
     """
     Custom response class to be able to access the response content
     """
+    url: str
 
     def __init__(self, content, *args, **kwargs):
         super().__init__(content, *args, **kwargs)

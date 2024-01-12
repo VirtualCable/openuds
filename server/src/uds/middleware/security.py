@@ -37,8 +37,9 @@ import collections.abc
 
 from django.http import HttpResponseForbidden
 
+from uds.core import consts
 from uds.core.util.config import GlobalConfig
-from uds.core.auths.auth import is_source_trusted, IP_KEY
+from uds.core.auths.auth import is_source_trusted
 
 from . import builder
 
@@ -70,7 +71,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
 
     if GlobalConfig.ENHANCED_SECURITY.as_bool():
         # Check that ip stored in session is the same as the one that is requesting if user is logged in
-        session_ip = request.session.get(IP_KEY, None)
+        session_ip = request.session.get(consts.auth.SESSION_IP_KEY, None)
         if request.user and session_ip and session_ip != request.ip:
             logger.info(
                 'Denied request from %s to %s. User %s is logged in from a different IP (%s)',

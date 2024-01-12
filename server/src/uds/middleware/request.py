@@ -38,11 +38,8 @@ from django.utils import timezone
 
 from uds.core.util import os_detector as OsDetector
 from uds.core.util.config import GlobalConfig
+from uds.core import consts
 from uds.core.auths.auth import (
-    AUTHORIZED_KEY,
-    EXPIRY_KEY,
-    ROOT_ID,
-    USER_KEY,
     root_user,
     web_logout,
 )
@@ -75,7 +72,7 @@ def _fill_ips(request: 'ExtendedHttpRequest') -> None:
     # We will accept only 2 proxies, the last ones
     # And the only trusted address, counting with NGINX, will be PROXY if behind_proxy is True
     proxies = list(
-        reversed([i.split('%')[0].strip() for i in request.META.get('HTTP_X_FORWARDED_FOR', '').split(",")])
+        reversed([i.split('%')[0].strip() for i in request.headers.get(consts.auth.X_FORWARDED_FOR_HEADER, '').split(",")])
     )
 
     # Original IP will be empty in case of nginx & gunicorn using sockets, as we do
@@ -113,11 +110,11 @@ def _get_user(request: 'ExtendedHttpRequest') -> None:
     """
     Ensures request user is the correct user
     """
-    user_id = request.session.get(USER_KEY)
+    user_id = request.session.get(consts.auth.SESSION_USER_KEY)
     user: typing.Optional[User] = None
     if user_id:
         try:
-            if user_id == ROOT_ID:
+            if user_id == consts.auth.ROOT_ID:
                 user = root_user()
             else:
                 user = User.objects.get(pk=user_id)
@@ -133,7 +130,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
     # Add IP to request, user, ...
     # Add IP to request
     _fill_ips(request)
-    request.authorized = request.session.get(AUTHORIZED_KEY, False)
+    request.authorized = request.session.get(consts.auth.SESSION_AUTHORIZED_KEY, False)
 
     # Ensures request contains os
     request.os = OsDetector.detect_os(request.headers)
@@ -146,7 +143,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
         # return HttpResponse(content='Session Expired', status=403, content_type='text/plain')
         now = timezone.now()
         try:
-            expiry = datetime.datetime.fromisoformat(request.session.get(EXPIRY_KEY, ''))
+            expiry = datetime.datetime.fromisoformat(request.session.get(consts.auth.SESSION_EXPIRY_KEY, ''))
         except ValueError:
             expiry = now
         if expiry < now:
@@ -156,7 +153,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
                 pass  # If fails, we don't care, we just want to logout
             return HttpResponseForbidden(content='Session Expired', content_type='text/plain')
         # Update session timeout..self.
-        request.session[EXPIRY_KEY] = (
+        request.session[consts.auth.SESSION_EXPIRY_KEY] = (
             now
             + datetime.timedelta(
                 seconds=GlobalConfig.SESSION_DURATION_ADMIN.as_int()
@@ -171,7 +168,7 @@ def _process_request(request: 'ExtendedHttpRequest') -> typing.Optional['HttpRes
 def _process_response(request: 'ExtendedHttpRequest', response: 'HttpResponse') -> 'HttpResponse':
     # Update authorized on session
     if hasattr(request, 'session'):
-        request.session[AUTHORIZED_KEY] = request.authorized
+        request.session[consts.auth.SESSION_AUTHORIZED_KEY] = request.authorized
     return response
 
 

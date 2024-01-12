@@ -35,9 +35,9 @@ from unittest import mock
 
 from django.urls import reverse
 
+from uds.core import consts
 from uds.core.util import config
 from uds.middleware import request
-from uds.core.auths.auth import AUTHORIZED_KEY
 
 from ..utils.web import test
 
@@ -62,7 +62,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         response = self.client.get('/', secure=False)
         req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = False, not logged in
-        self.assertEqual(req.session.get(AUTHORIZED_KEY), False)
+        self.assertEqual(req.session.get(consts.auth.SESSION_AUTHORIZED_KEY), False)
 
         # Ensure ip, and ip_proxy are set and both are the same, 127.0.0.1
         self.assertEqual(req.ip, '127.0.0.1')
@@ -84,7 +84,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         response = self.client.get('/', secure=False)
         req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = False, not logged in
-        self.assertEqual(req.session.get(AUTHORIZED_KEY), False)
+        self.assertEqual(req.session.get(consts.auth.SESSION_AUTHORIZED_KEY), False)
 
         # Ensure ip, and ip_proxy are set and both are the same,
         self.assertEqual(req.ip, '::1')
@@ -108,7 +108,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         response = self.client.get('/', secure=False)
         req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = True, logged in
-        self.assertEqual(req.session.get(AUTHORIZED_KEY), True)
+        self.assertEqual(req.session.get(consts.auth.SESSION_AUTHORIZED_KEY), True)
 
         # Ensure ip, and ip_proxy are set and both are the same,
         self.assertEqual(req.ip, '127.0.0.1')
@@ -132,7 +132,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         response = self.client.get('/', secure=False)
         req = typing.cast('ExtendedHttpRequestWithUser', response.wsgi_request)
         # session[AUTHORIZED_KEY] = True, logged in
-        self.assertEqual(req.session.get(AUTHORIZED_KEY), True)
+        self.assertEqual(req.session.get(consts.auth.SESSION_AUTHORIZED_KEY), True)
 
         # Ensure ip, and ip_proxy are set and both are the same,
         self.assertEqual(req.ip, '::1')
@@ -155,7 +155,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
         response = self.client.get('/', secure=False)
         req = response.wsgi_request
         # session[AUTHORIZED_KEY] is not present
-        self.assertEqual(AUTHORIZED_KEY in req.session, False)
+        self.assertEqual(consts.auth.SESSION_AUTHORIZED_KEY in req.session, False)
 
         # ip is not present, nor ip_proxy or ip_version
         self.assertEqual(hasattr(req, 'ip'), False)

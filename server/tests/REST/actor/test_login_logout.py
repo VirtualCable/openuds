@@ -33,6 +33,8 @@ import typing
 import collections.abc
 
 
+from uds.core import consts
+
 from ...fixtures import authenticators as fixtures_authenticators
 from ...utils import rest, test
 
@@ -83,7 +85,8 @@ class LoginLogoutTest(test.UDSTestCase):
             self.assertIsNotNone(
                 response['scrambler'], 'Login user {}'.format(user.name)
             )
-            rest.logout(self, self.client, response['token'])
+            self.client.add_header(consts.auth.AUTH_TOKEN_HEADER, response['token'])
+            rest.logout(self, self.client)
 
         # Login with invalid creds just for a single user, because server will "block" us for a while
         response = rest.login(

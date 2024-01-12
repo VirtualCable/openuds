@@ -78,18 +78,13 @@ def login(
     return {}
 
 
-def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
+def logout(caller: SimpleTestCase, client: Client) -> None:
     response = client.get(
         '/uds/rest/auth/logout',
         content_type='application/json',
-        **{consts.auth.AUTH_TOKEN_HEADER: auth_token}  # type: ignore
     )
-    caller.assertEqual(
-        response.status_code, 200, f'Logout Result: {response.content}'
-    )
-    caller.assertEqual(
-        response.json(), {'result': 'ok'}, 'Logout Result: {response.content}'
-    )
+    caller.assertEqual(response.status_code, 200, f'Logout Result: {response.content}')
+    caller.assertEqual(response.json(), {'result': 'ok'}, 'Logout Result: {response.content}')
 
 
 # Rest related utils for fixtures
@@ -103,6 +98,7 @@ class uuid_type:
 
 RestFieldType = tuple[str, typing.Union[typing.Type, tuple[str, ...]]]
 RestFieldReference = typing.Final[list[RestFieldType]]
+
 
 # pylint: disable=too-many-return-statements
 def random_value(
@@ -129,9 +125,7 @@ def random_value(
     if field_type == list[int]:
         return [generators.random_int() for _ in range(generators.random_int(1, 10))]
     if field_type == list[bool]:
-        return [
-            random.choice([True, False]) for _ in range(generators.random_int(1, 10))  # nosec: test values
-        ]
+        return [random.choice([True, False]) for _ in range(generators.random_int(1, 10))]  # nosec: test values
     if field_type == list[tuple[str, str]]:
         return [
             (generators.random_utf8_string(), generators.random_utf8_string())
@@ -167,9 +161,4 @@ class RestStruct:
     def random_create(cls, **kwargs) -> 'RestStruct':
         # Use kwargs to override values
         # Extract type from annotations
-        return cls(
-            **{
-                k: random_value(v, kwargs.get(k, None))
-                for k, v in cls.__annotations__.items()
-            }
-        )
+        return cls(**{k: random_value(v, kwargs.get(k, None)) for k, v in cls.__annotations__.items()})

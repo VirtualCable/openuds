@@ -71,13 +71,6 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 authLogger = logging.getLogger('authLog')
 
-USER_KEY = 'uk'
-PASS_KEY = 'pk'  # nosec: this is not a password but a cookie to store encrypted data
-EXPIRY_KEY = 'ek'
-AUTHORIZED_KEY = 'ak'
-ROOT_ID = -20091204  # Any negative number will do the trick
-UDS_COOKIE_LENGTH = 48
-IP_KEY = 'session_ip'
 
 RT = typing.TypeVar('RT')
 
@@ -96,7 +89,7 @@ def uds_cookie(
     Generates a random cookie for uds, used, for example, to encript things
     """
     if 'uds' not in request.COOKIES:
-        cookie = CryptoManager().random_string(UDS_COOKIE_LENGTH)
+        cookie = CryptoManager().random_string(consts.auth.UDS_COOKIE_LENGTH)
         if response is not None:
             response.set_cookie(
                 'uds',
@@ -106,7 +99,7 @@ def uds_cookie(
             )
         request.COOKIES['uds'] = cookie
     else:
-        cookie = request.COOKIES['uds'][:UDS_COOKIE_LENGTH]
+        cookie = request.COOKIES['uds'][:consts.auth.UDS_COOKIE_LENGTH]
 
     if response and force:
         response.set_cookie('uds', cookie)
@@ -122,7 +115,7 @@ def root_user() -> models.User:
         User: [description]
     """
     user = models.User(
-        id=ROOT_ID,
+        id=consts.auth.ROOT_ID,
         name=GlobalConfig.SUPER_USER_LOGIN.get(True),
         real_name=_('System Administrator'),
         state=State.ACTIVE,
@@ -415,7 +408,7 @@ def web_login(
     )
 
     if (
-        user.id != ROOT_ID
+        user.id != consts.auth.ROOT_ID
     ):  # If not ROOT user (this user is not inside any authenticator)
         manager_id = user.manager.id
     else:
@@ -429,13 +422,13 @@ def web_login(
         False  # For now, we don't know if the user is authorized until MFA is checked
     )
     # Store request ip in session
-    request.session[IP_KEY] = request.ip
+    request.session[consts.auth.SESSION_IP_KEY] = request.ip
     # If Enabled zero trust, do not cache credentials
     if GlobalConfig.ENFORCE_ZERO_TRUST.as_bool(False):
         password = ''  # nosec: clear password if zero trust is enabled
 
-    request.session[USER_KEY] = user.id
-    request.session[PASS_KEY] = codecs.encode(
+    request.session[consts.auth.SESSION_USER_KEY] = user.id
+    request.session[consts.auth.SESSION_PASS_KEY] = codecs.encode(
         CryptoManager().symmetric_encrypt(password, cookie), "base64"
     ).decode()  # as str
 
@@ -466,7 +459,7 @@ def web_password(request: HttpRequest) -> str:
             getattr(request, '_cryptedpass'),
             getattr(request, '_scrambler'),
         )
-    passkey = base64.b64decode(request.session.get(PASS_KEY, ''))
+    passkey = base64.b64decode(request.session.get(consts.auth.SESSION_PASS_KEY, ''))
     return CryptoManager().symmetric_decrypt(
         passkey, uds_cookie(request)
     )  # recover as original unicode string
@@ -492,7 +485,7 @@ def web_logout(
             logout = authenticator.logout(request, username)
             if logout and logout.success == types.auth.AuthenticationState.REDIRECT:
                 exit_url = logout.url or exit_url
-            if request.user.id != ROOT_ID:
+            if request.user.id != consts.auth.ROOT_ID:
                 # Log the event if not root user
                 events.add_event(
                     request.user.manager,
