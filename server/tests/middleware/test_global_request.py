@@ -176,6 +176,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
             req.META = {
                 'REMOTE_ADDR': ip,
             }
+            req.headers = {}
             request._fill_ips(req)  # pylint: disable=protected-access
             self.assertEqual(req.ip, ip)
             self.assertEqual(req.ip_proxy, ip)
@@ -192,11 +193,12 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
                     if with_nginx is False:
                         req.META = {
                             'REMOTE_ADDR': proxy,
-                            'HTTP_X_FORWARDED_FOR': client_ip,
                         }
-                    else:
-                        req.META = {'HTTP_X_FORWARDED_FOR': f'{client_ip},{proxy}'}
-
+                        req.headers = {consts.auth.X_FORWARDED_FOR_HEADER: client_ip}
+                    else:  # Without nginx, remote addres is not included
+                        req.META = {}
+                        req.headers = {consts.auth.X_FORWARDED_FOR_HEADER: f'{client_ip},{proxy}'}
+                        
                     request._fill_ips(req)  # pylint: disable=protected-access
                     self.assertEqual(
                         req.ip, client_ip, "Failed for {}".format(req.META)
@@ -228,10 +230,11 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
                         if with_nginx is False:
                             req.META = {
                                 'REMOTE_ADDR': client_ip,
-                                'HTTP_X_FORWARDED_FOR': x_forwarded_for,
                             }
-                        else:
-                            req.META = {
+                            req.headers = {consts.auth.X_FORWARDED_FOR_HEADER: x_forwarded_for}
+                        else:  # Without nginx, remote addres is not included
+                            req.META = {}
+                            req.headers = {
                                 'HTTP_X_FORWARDED_FOR': "{}, {}".format(
                                     x_forwarded_for, second_proxy
                                 ),

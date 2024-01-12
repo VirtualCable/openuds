@@ -155,6 +155,7 @@ class UDSClient(UDSClientMixin, Client):
         return self.put(self.compose_rest_url(method), *args, **kwargs)
 
     def delete(self, *args, **kwargs) -> 'UDSHttpResponse':
+        self.update_request_kwargs(kwargs)
         kwargs['content_type'] = kwargs.get('content_type', 'application/json')
         return typing.cast('UDSHttpResponse', super().delete(*args, **kwargs))
 
