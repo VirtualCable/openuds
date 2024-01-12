@@ -72,13 +72,14 @@ class HTML5SSHTransport(transports.Transport):
 
     tunnel = fields.tunnel_field()
 
-    useGlyptodonTunnel = HTML5RDPTransport.useGlyptodonTunnel
+    useGlyptodonTunnel = HTML5RDPTransport.use_glyptodon
 
     username = gui.TextField(
         label=_('Username'),
         order=20,
         tooltip=_('Username for SSH connection authentication.'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='username'
     )
 
     # password = gui.PasswordField(
@@ -105,22 +106,24 @@ class HTML5SSHTransport(transports.Transport):
     #     tab=types.ui.Tab.CREDENTIALS,
     # )
 
-    sshCommand = gui.TextField(
+    ssh_command = gui.TextField(
         label=_('SSH Command'),
         order=30,
         tooltip=_(
             'Command to execute on the remote server. If not provided, an interactive shell will be executed.'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='sshCommand'
     )
-    enableFileSharing = HTML5RDPTransport.enableFileSharing
-    fileSharingRoot = gui.TextField(
+    enable_file_sharing = HTML5RDPTransport.enable_file_sharing
+    filesharing_root = gui.TextField(
         label=_('File Sharing Root'),
         order=32,
         tooltip=_('Root path for file sharing. If not provided, root directory will be used.'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='fileSharingRoot'
     )
-    sshPort = gui.NumericField(
+    ssh_port = gui.NumericField(
         length=40,
         label=_('SSH Server port'),
         default=22,
@@ -128,14 +131,16 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_('Port of the SSH server.'),
         required=True,
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='sshPort'
     )
-    sshHostKey = gui.TextField(
+    ssh_host_key = gui.TextField(
         label=_('SSH Host Key'),
         order=34,
         tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done.'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='sshHostKey'
     )
-    serverKeepAlive = gui.NumericField(
+    server_keep_alive = gui.NumericField(
         length=3,
         label=_('Server Keep Alive'),
         default=30,
@@ -146,12 +151,13 @@ class HTML5SSHTransport(transports.Transport):
         required=True,
         min_value=0,
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='serverKeepAlive'
     )
 
-    ticketValidity = fields.tunnel_ricket_validity_field()
+    ticket_validity = fields.tunnel_ticket_validity_field()
 
-    forceNewWindow = HTML5RDPTransport.forceNewWindow
-    customGEPath = HTML5RDPTransport.customGEPath
+    force_new_window = HTML5RDPTransport.force_new_window
+    custom_glyptodon_path = HTML5RDPTransport.custom_glyptodon_path
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
@@ -166,7 +172,7 @@ class HTML5SSHTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.sshPort.value) is True:
+            if self.test_connectivity(userService, ip, self.ssh_port.value) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -186,12 +192,12 @@ class HTML5SSHTransport(transports.Transport):
         params = {
             'protocol': 'ssh',
             'hostname': ip,
-            'port': str(self.sshPort.num()),
+            'port': str(self.ssh_port.num()),
         }
 
         # Optional numeric keep alive. If less than 2, it is not sent
-        if self.serverKeepAlive.num() >= 2:
-            params['server-alive-interval'] = str(self.serverKeepAlive.num())
+        if self.server_keep_alive.num() >= 2:
+            params['server-alive-interval'] = str(self.server_keep_alive.num())
 
         # Add optional parameters (strings only)
         for i in (
@@ -199,38 +205,38 @@ class HTML5SSHTransport(transports.Transport):
             # ('password', self.password),
             # ('private-key', self.sshPrivateKey),
             # ('passphrase', self.sshPassphrase),
-            ('command', self.sshCommand),
-            ('host-key', self.sshHostKey),
+            ('command', self.ssh_command),
+            ('host-key', self.ssh_host_key),
         ):
             if i[1].value.strip():
                 params[i[0]] = i[1].value.strip()
 
         # Filesharing using guacamole sftp
-        if self.enableFileSharing.value != 'false':
+        if self.enable_file_sharing.value != 'false':
             params['enable-sftp'] = 'true'
 
-            if self.fileSharingRoot.value.strip():
-                params['sftp-root-directory'] = self.fileSharingRoot.value.strip()
+            if self.filesharing_root.value.strip():
+                params['sftp-root-directory'] = self.filesharing_root.value.strip()
 
-            if self.enableFileSharing.value not in ('down', 'true'):
+            if self.enable_file_sharing.value not in ('down', 'true'):
                 params['sftp-disable-download'] = 'true'
 
-            if self.enableFileSharing.value not in ('up', 'true'):
+            if self.enable_file_sharing.value not in ('up', 'true'):
                 params['sftp-disable-upload'] = 'true'
 
         logger.debug('SSH Params: %s', params)
 
         scrambler = CryptoManager().random_string(32)
-        ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
 
         onw = ''
-        if self.forceNewWindow.value == 'true':
+        if self.force_new_window.value == 'true':
             onw = 'o_n_w={}'
-        elif self.forceNewWindow.value == 'overwrite':
+        elif self.force_new_window.value == 'overwrite':
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
-        path = self.customGEPath.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
+        path = self.custom_glyptodon_path.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 

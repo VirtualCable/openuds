@@ -73,22 +73,24 @@ class HTML5VNCTransport(transports.Transport):
 
     tunnel = fields.tunnel_field()
 
-    useGlyptodonTunnel = HTML5RDPTransport.useGlyptodonTunnel
+    use_glyptodon = HTML5RDPTransport.use_glyptodon
 
     username = gui.TextField(
         label=_('Username'),
         order=20,
         tooltip=_('Username for VNC connection authentication.'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='username'
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for VNC connection authentication'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='password'
     )
 
-    vncPort = gui.NumericField(
+    vnc_port = gui.NumericField(
         length=22,
         label=_('VNC Server port'),
         default=5900,
@@ -96,9 +98,10 @@ class HTML5VNCTransport(transports.Transport):
         tooltip=_('Port of the VNC server.'),
         required=True,
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='vncPort'
     )
 
-    colorDepth = gui.ChoiceField(
+    color_depth = gui.ChoiceField(
         order=26,
         label=_('Color depth'),
         tooltip=_('Color depth for VNC connection. Use this to control bandwidth.'),
@@ -112,30 +115,34 @@ class HTML5VNCTransport(transports.Transport):
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='colorDepth'
     )
-    swapRedBlue = gui.CheckBoxField(
+    swap_red_blue = gui.CheckBoxField(
         label=_('Swap red/blue'),
         order=27,
         tooltip=_('Use this if your colours seems incorrect (blue appears red, ..) to swap them.'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='swapRedBlue'
     )
     cursor = gui.CheckBoxField(
         label=_('Remote cursor'),
         order=28,
         tooltip=_('If set, force to show remote cursor'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='cursor'
     )
-    readOnly = gui.CheckBoxField(
+    read_only = gui.CheckBoxField(
         label=_('Read only'),
         order=29,
         tooltip=_('If set, the connection will be read only'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='readOnly'
     )
 
-    ticketValidity = fields.tunnel_ricket_validity_field()
+    ticket_validity = fields.tunnel_ticket_validity_field()
 
-    forceNewWindow = HTML5RDPTransport.forceNewWindow
-    customGEPath = HTML5RDPTransport.customGEPath
+    force_new_window = HTML5RDPTransport.force_new_window
+    custom_glyptodon_path = HTML5RDPTransport.custom_glyptodon_path
 
     def initialize(self, values: 'Module.ValuesType'):
         if not values:
@@ -150,7 +157,7 @@ class HTML5VNCTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.vncPort.value) is True:
+            if self.test_connectivity(userService, ip, self.vnc_port.value) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -170,7 +177,7 @@ class HTML5VNCTransport(transports.Transport):
         params = {
             'protocol': 'vnc',
             'hostname': ip,
-            'port': str(self.vncPort.num()),
+            'port': str(self.vnc_port.num()),
         }
 
         if self.username.value.strip():
@@ -179,31 +186,31 @@ class HTML5VNCTransport(transports.Transport):
         if self.password.value.strip():
             params['password'] = self.password.value.strip()
 
-        if self.colorDepth.value != '-':
-            params['color-depth'] = self.colorDepth.value
+        if self.color_depth.value != '-':
+            params['color-depth'] = self.color_depth.value
 
-        if self.swapRedBlue.as_bool():
+        if self.swap_red_blue.as_bool():
             params['swap-red-blue'] = 'true'
 
         if self.cursor.as_bool():
             params['cursor'] = 'remote'
 
-        if self.readOnly.as_bool():
+        if self.read_only.as_bool():
             params['read-only'] = 'true'
 
         logger.debug('VNC Params: %s', params)
 
         scrambler = CryptoManager().random_string(32)
-        ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
 
         onw = ''
-        if self.forceNewWindow.value == 'true':
+        if self.force_new_window.value == 'true':
             onw = 'o_n_w={}'
-        elif self.forceNewWindow.value == 'overwrite':
+        elif self.force_new_window.value == 'overwrite':
             onw = 'o_s_w=yes'
         onw = onw.format(hash(transport.name))
 
-        path = self.customGEPath.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
+        path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 

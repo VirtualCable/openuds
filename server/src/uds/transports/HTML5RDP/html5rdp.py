@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 
 READY_CACHE_TIMEOUT = 30
 
+
 class HTML5RDPTransport(transports.Transport):
     """
     Provides access via RDP to service.
@@ -70,46 +71,52 @@ class HTML5RDPTransport(transports.Transport):
 
     tunnel = fields.tunnel_field()
 
-    useGlyptodonTunnel = ui.gui.CheckBoxField(
+    use_glyptodon = ui.gui.CheckBoxField(
         label=_('Use Glyptodon Enterprise tunnel'),
         order=2,
         tooltip=_(
             'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
         ),
         tab=types.ui.Tab.TUNNEL,
+        stored_field_name='useGlyptodonTunnel',
     )
 
-    useEmptyCreds = ui.gui.CheckBoxField(
+    force_empty_creds = ui.gui.CheckBoxField(
         label=_('Empty creds'),
         order=3,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='useEmptyCreds',
     )
-    fixedName = ui.gui.TextField(
+    forced_username = ui.gui.TextField(
         label=_('Username'),
         order=4,
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedName',
     )
-    fixedPassword = ui.gui.PasswordField(
+    forced_password = ui.gui.PasswordField(
         label=_('Password'),
         order=5,
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedPassword',
     )
-    withoutDomain = ui.gui.CheckBoxField(
+    force_no_domain = ui.gui.CheckBoxField(
         label=_('Without Domain'),
         order=6,
         tooltip=_(
             'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
         ),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='withoutDomain',
     )
-    fixedDomain = ui.gui.TextField(
+    forced_domain = ui.gui.TextField(
         label=_('Domain'),
         order=7,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedDomain',
     )
     wallpaper = ui.gui.CheckBoxField(
         label=_('Show wallpaper'),
@@ -118,43 +125,49 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='wallpaper',
     )
-    desktopComp = ui.gui.CheckBoxField(
+    allow_destop_composition = ui.gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=19,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='desktopComp',
     )
     smooth = ui.gui.CheckBoxField(
         label=_('Font Smoothing'),
         order=20,
         tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='smooth',
     )
-    enableAudio = ui.gui.CheckBoxField(
+    enable_audio = ui.gui.CheckBoxField(
         label=_('Enable Audio'),
         order=21,
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
+        stored_field_name='enableAudio',
     )
-    enableAudioInput = ui.gui.CheckBoxField(
+    enable_microphone = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
         order=22,
         tooltip=_(
             'If checked, the microphone will be redirected to remote session (if client browser supports it)'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='enableAudioInput',
     )
-    enablePrinting = ui.gui.CheckBoxField(
+    enable_printing = ui.gui.CheckBoxField(
         label=_('Enable Printing'),
         order=23,
         tooltip=_(
             'If checked, the printing will be redirected to remote session (if client browser supports it)'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='enablePrinting',
     )
-    enableFileSharing = ui.gui.ChoiceField(
+    enable_file_sharing = ui.gui.ChoiceField(
         label=_('File Sharing'),
         order=24,
         tooltip=_('File upload/download redirection policy'),
@@ -166,8 +179,9 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='enableFileSharing',
     )
-    enableClipboard = ui.gui.ChoiceField(
+    enable_clipboard = ui.gui.ChoiceField(
         label=_('Clipboard'),
         order=25,
         tooltip=_('Clipboard redirection policy'),
@@ -179,9 +193,10 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'enabled', 'text': _('Enable clipboard')},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='enableClipboard',
     )
 
-    serverLayout = ui.gui.ChoiceField(
+    server_layout = ui.gui.ChoiceField(
         order=26,
         label=_('Layout'),
         tooltip=_('Keyboard Layout of server'),
@@ -209,11 +224,12 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='serverLayout',
     )
 
-    ticketValidity = fields.tunnel_ricket_validity_field()
+    ticket_validity = fields.tunnel_ticket_validity_field()
 
-    forceNewWindow = ui.gui.ChoiceField(
+    force_new_window = ui.gui.ChoiceField(
         order=91,
         label=_('Force new HTML Window'),
         tooltip=_('Select windows behavior for new connections on HTML5'),
@@ -231,7 +247,9 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='true',
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='forceNewWindow',
     )
+    
     security = ui.gui.ChoiceField(
         order=92,
         label=_('Security'),
@@ -259,9 +277,10 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='any',
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='security',
     )
 
-    rdpPort = ui.gui.NumericField(
+    rdp_port = ui.gui.NumericField(
         order=93,
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
@@ -269,9 +288,10 @@ class HTML5RDPTransport(transports.Transport):
         required=True,  #: Numeric fields have always a value, so this not really needed
         default=3389,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='rdpPort',
     )
 
-    customGEPath = ui.gui.TextField(
+    custom_glyptodon_path = ui.gui.TextField(
         label=_('Glyptodon Enterprise context path'),
         order=94,
         tooltip=_(
@@ -281,6 +301,7 @@ class HTML5RDPTransport(transports.Transport):
         length=128,
         required=False,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='customGEPath',
     )
 
     def initialize(self, values: 'Module.ValuesType'):
@@ -303,7 +324,7 @@ class HTML5RDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.rdpPort.num()) is True:
+            if self.test_connectivity(userService, ip, self.rdp_port.num()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -328,11 +349,11 @@ class HTML5RDPTransport(transports.Transport):
                 username = cdata[1] or username
                 password = cdata[2] or password
 
-        if self.fixedPassword.value:
-            password = self.fixedPassword.value
+        if self.forced_password.value:
+            password = self.forced_password.value
 
-        if self.fixedName.value:
-            username = self.fixedName.value
+        if self.forced_username.value:
+            username = self.forced_username.value
 
         proc = username.split('@')
         if len(proc) > 1:
@@ -342,16 +363,16 @@ class HTML5RDPTransport(transports.Transport):
         username = proc[0]
 
         azureAd = False
-        if self.fixedDomain.value != '':
-            if self.fixedDomain.value.lower() == 'azuread':
+        if self.forced_domain.value != '':
+            if self.forced_domain.value.lower() == 'azuread':
                 azureAd = True
             else:
-                domain = self.fixedDomain.value
+                domain = self.forced_domain.value
 
-        if self.useEmptyCreds.as_bool():
+        if self.force_empty_creds.as_bool():
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.as_bool():
+        if self.force_no_domain.as_bool():
             domain = ''
 
         if '.' in domain:  # FQDN domain form
@@ -400,18 +421,18 @@ class HTML5RDPTransport(transports.Transport):
         params = {
             'protocol': 'rdp',
             'hostname': ip,
-            'port': self.rdpPort.num(),
+            'port': self.rdp_port.num(),
             'username': username,
             'password': passwordCrypted,
             'resize-method': 'display-update',
             'ignore-cert': 'true',
             'security': self.security.value,
-            'enable-drive': as_txt(self.enableFileSharing.value in ('true', 'down', 'up')),
-            'disable-upload': as_txt(self.enableFileSharing.value not in ('true', 'up')),
+            'enable-drive': as_txt(self.enable_file_sharing.value in ('true', 'down', 'up')),
+            'disable-upload': as_txt(self.enable_file_sharing.value not in ('true', 'up')),
             'drive-path': f'/share/{user.uuid}',
             'drive-name': 'UDSfs',
-            'disable-copy': as_txt(self.enableClipboard.value in ('dis-copy', 'disabled')),
-            'disable-paste': as_txt(self.enableClipboard.value in ('dis-paste', 'disabled')),
+            'disable-copy': as_txt(self.enable_clipboard.value in ('dis-copy', 'disabled')),
+            'disable-paste': as_txt(self.enable_clipboard.value in ('dis-paste', 'disabled')),
             'create-drive-path': 'true',
             'ticket-info': {
                 'userService': userService.uuid,
@@ -446,22 +467,22 @@ class HTML5RDPTransport(transports.Transport):
         if domain:
             params['domain'] = domain
 
-        if self.serverLayout.value != '-':
-            params['server-layout'] = self.serverLayout.value
+        if self.server_layout.value != '-':
+            params['server-layout'] = self.server_layout.value
 
-        if not self.enableAudio.as_bool():
+        if not self.enable_audio.as_bool():
             params['disable-audio'] = 'true'
-        elif self.enableAudioInput.as_bool():
+        elif self.enable_microphone.as_bool():
             params['enable-audio-input'] = 'true'
 
-        if self.enablePrinting.as_bool():
+        if self.enable_printing.as_bool():
             params['enable-printing'] = 'true'
             params['printer-name'] = 'UDS-Printer'
 
         if self.wallpaper.as_bool():
             params['enable-wallpaper'] = 'true'
 
-        if self.desktopComp.as_bool():
+        if self.allow_destop_composition.as_bool():
             params['enable-desktop-composition'] = 'true'
 
         if self.smooth.as_bool():
@@ -469,14 +490,14 @@ class HTML5RDPTransport(transports.Transport):
 
         logger.debug('RDP Params: %s', params)
 
-        ticket = models.TicketStore.create(params, validity=self.ticketValidity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
 
         onw = f'&o_n_w={transport.uuid}'
-        if self.forceNewWindow.value == consts.TRUE_STR:
+        if self.force_new_window.value == consts.TRUE_STR:
             onw = f'&o_n_w={userService.deployed_service.uuid}'
-        elif self.forceNewWindow.value == 'overwrite':
+        elif self.force_new_window.value == 'overwrite':
             onw = '&o_s_w=yes'
-        path = self.customGEPath.value if self.useGlyptodonTunnel.as_bool() else '/guacamole'
+        path = self.custom_glyptodon_path.value if self.use_glyptodon.as_bool() else '/guacamole'
         # Remove trailing /
         path = path.rstrip('/')
 

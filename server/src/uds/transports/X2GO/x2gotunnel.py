@@ -68,7 +68,7 @@ class TX2GOTransport(BaseX2GOTransport):
     group = types.transports.Grouping.TUNNELED
 
     tunnel = fields.tunnel_field()
-    tunnelWait = fields.tunnel_runnel_wait()
+    tunnelWait = fields.tunnel_wait_time()
 
     verifyCertificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),

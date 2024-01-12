@@ -64,41 +64,41 @@ class RDPTransport(BaseRDPTransport):
     type_type = 'RDPTransport'
     type_description = _('RDP Protocol. Direct connection.')
 
-    useEmptyCreds = BaseRDPTransport.useEmptyCreds
-    fixedName = BaseRDPTransport.fixedName
-    fixedPassword = BaseRDPTransport.fixedPassword
-    withoutDomain = BaseRDPTransport.withoutDomain
-    fixedDomain = BaseRDPTransport.fixedDomain
-    allowSmartcards = BaseRDPTransport.allowSmartcards
-    allowPrinters = BaseRDPTransport.allowPrinters
-    allowDrives = BaseRDPTransport.allowDrives
-    enforceDrives = BaseRDPTransport.enforceDrives
-    allowSerials = BaseRDPTransport.allowSerials
-    allowClipboard = BaseRDPTransport.allowClipboard
-    allowAudio = BaseRDPTransport.allowAudio
-    allowWebcam = BaseRDPTransport.allowWebcam
-    usbRedirection = BaseRDPTransport.usbRedirection
+    force_empty_creds = BaseRDPTransport.force_empty_creds
+    forced_username = BaseRDPTransport.forced_username
+    forced_password = BaseRDPTransport.forced_password
+    force_no_domain = BaseRDPTransport.force_no_domain
+    forced_domain = BaseRDPTransport.forced_domain
+    allow_smartcards = BaseRDPTransport.allow_smartcards
+    allow_printers = BaseRDPTransport.allow_printers
+    allow_drives = BaseRDPTransport.allow_drives
+    enforce_drives = BaseRDPTransport.enforce_drives
+    allow_serial_ports = BaseRDPTransport.allow_serial_ports
+    allow_clipboard = BaseRDPTransport.allow_clipboard
+    allow_audio = BaseRDPTransport.allow_audio
+    allow_webcam = BaseRDPTransport.allow_webcam
+    allow_usb_redirection = BaseRDPTransport.allow_usb_redirection
 
     wallpaper = BaseRDPTransport.wallpaper
     multimon = BaseRDPTransport.multimon
     aero = BaseRDPTransport.aero
     smooth = BaseRDPTransport.smooth
-    showConnectionBar = BaseRDPTransport.showConnectionBar
+    show_connection_bar = BaseRDPTransport.show_connection_bar
     credssp = BaseRDPTransport.credssp
-    rdpPort = BaseRDPTransport.rdpPort
+    rdp_port = BaseRDPTransport.rdp_port
 
-    screenSize = BaseRDPTransport.screenSize
-    colorDepth = BaseRDPTransport.colorDepth
+    screen_size = BaseRDPTransport.screen_size
+    color_depth = BaseRDPTransport.color_depth
 
-    alsa = BaseRDPTransport.alsa
-    multimedia = BaseRDPTransport.multimedia
-    printerString = BaseRDPTransport.printerString
-    smartcardString = BaseRDPTransport.smartcardString
-    allowMacMSRDC = BaseRDPTransport.allowMacMSRDC
-    customParameters = BaseRDPTransport.customParameters
-    customParametersMAC = BaseRDPTransport.customParametersMAC
-    customParametersWindows = BaseRDPTransport.customParametersWindows
-    optimizeTeams = BaseRDPTransport.optimizeTeams
+    lnx_alsa = BaseRDPTransport.lnx_alsa
+    lnx_multimedia = BaseRDPTransport.lnx_multimedia
+    lnx_printer_string = BaseRDPTransport.lnx_printer_string
+    lnx_smartcard_string = BaseRDPTransport.lnx_smartcard_string
+    mac_allow_msrdc = BaseRDPTransport.mac_allow_msrdc
+    lnx_custom_parameters = BaseRDPTransport.lnx_custom_parameters
+    mac_custom_parameters = BaseRDPTransport.mac_custom_parameters
+    wnd_custom_parameters = BaseRDPTransport.wnd_custom_parameters
+    wnd_optimize_teams = BaseRDPTransport.wnd_optimize_teams
 
     def get_transport_script(  # pylint: disable=too-many-locals
         self,
@@ -119,57 +119,57 @@ class RDPTransport(BaseRDPTransport):
 
         # width, height = CommonPrefs.getWidthHeight(prefs)
         # depth = CommonPrefs.getDepth(prefs)
-        width, height = self.screenSize.value.split('x')
-        depth = self.colorDepth.value
+        width, height = self.screen_size.value.split('x')
+        depth = self.color_depth.value
 
         r = RDPFile(width == '-1' or height == '-1', width, height, depth, target=os.os)
         # r.enablecredsspsupport = ci.get('sso') == 'True' or self.credssp.as_bool()
         r.enablecredsspsupport = self.credssp.as_bool()
-        r.address = f'{ip}:{self.rdpPort.num()}'
+        r.address = f'{ip}:{self.rdp_port.num()}'
         r.username = ci.username
         r.password = ci.password
         r.domain = ci.domain
-        r.redirectPrinters = self.allowPrinters.as_bool()
-        r.redirectSmartcards = self.allowSmartcards.as_bool()
-        r.redirectDrives = self.allowDrives.value
-        r.redirectSerials = self.allowSerials.as_bool()
-        r.enableClipboard = self.allowClipboard.as_bool()
-        r.redirectAudio = self.allowAudio.as_bool()
-        r.redirectWebcam = self.allowWebcam.as_bool()
+        r.redirectPrinters = self.allow_printers.as_bool()
+        r.redirectSmartcards = self.allow_smartcards.as_bool()
+        r.redirectDrives = self.allow_drives.value
+        r.redirectSerials = self.allow_serial_ports.as_bool()
+        r.enableClipboard = self.allow_clipboard.as_bool()
+        r.redirectAudio = self.allow_audio.as_bool()
+        r.redirectWebcam = self.allow_webcam.as_bool()
         r.showWallpaper = self.wallpaper.as_bool()
         r.multimon = self.multimon.as_bool()
         r.desktopComposition = self.aero.as_bool()
         r.smoothFonts = self.smooth.as_bool()
-        r.displayConnectionBar = self.showConnectionBar.as_bool()
+        r.displayConnectionBar = self.show_connection_bar.as_bool()
         r.enablecredsspsupport = self.credssp.as_bool()
-        r.multimedia = self.multimedia.as_bool()
-        r.alsa = self.alsa.as_bool()
-        r.smartcardString = self.smartcardString.value
-        r.printerString = self.printerString.value
-        r.enforcedShares = self.enforceDrives.value
-        r.redirectUSB = self.usbRedirection.value
-        r.optimizeTeams = self.optimizeTeams.as_bool()
+        r.multimedia = self.lnx_multimedia.as_bool()
+        r.alsa = self.lnx_alsa.as_bool()
+        r.smartcardString = self.lnx_smartcard_string.value
+        r.printerString = self.lnx_printer_string.value
+        r.enforcedShares = self.enforce_drives.value
+        r.redirectUSB = self.allow_usb_redirection.value
+        r.optimizeTeams = self.wnd_optimize_teams.as_bool()
 
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'password': ci.password,
             'this_server': request.build_absolute_uri('/'),
             'ip': ip,
-            'port': self.rdpPort.value,  # As string, because we need to use it in the template
+            'port': self.rdp_port.value,  # As string, because we need to use it in the template
             'address': r.address,
         }
 
         if os.os == types.os.KnownOS.WINDOWS:
-            r.customParameters = self.customParametersWindows.value
+            r.customParameters = self.wnd_custom_parameters.value
             if ci.password:
                 r.password = '{password}'  # nosec: password is not hardcoded
             sp.update(
                 {
                     'as_file': r.as_file,
-                    'optimize_teams': self.optimizeTeams.as_bool(),
+                    'optimize_teams': self.wnd_optimize_teams.as_bool(),
                 }
             )
         elif os.os == types.os.KnownOS.LINUX:
-            r.customParameters = self.customParameters.value
+            r.customParameters = self.lnx_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
@@ -177,12 +177,12 @@ class RDPTransport(BaseRDPTransport):
                 }
             )
         elif os.os == types.os.KnownOS.MAC_OS:
-            r.customParameters = self.customParametersMAC.value
+            r.customParameters = self.mac_custom_parameters.value
             sp.update(
                 {
                     'as_new_xfreerdp_params': r.as_new_xfreerdp_params,
-                    'as_rdp_url': r.as_rdp_url if self.allowMacMSRDC.as_bool() else '',
-                    'as_file': r.as_file if self.allowMacMSRDC.as_bool() else '',
+                    'as_rdp_url': r.as_rdp_url if self.mac_allow_msrdc.as_bool() else '',
+                    'as_file': r.as_file if self.mac_allow_msrdc.as_bool() else '',
                     'address': r.address,
                 }
             )

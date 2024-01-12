@@ -59,52 +59,59 @@ class BaseRDPTransport(transports.Transport):
     icon_file = 'rdp.png'
     protocol = types.transports.Protocol.RDP
 
-    useEmptyCreds = gui.CheckBoxField(
+    force_empty_creds = gui.CheckBoxField(
         label=_('Empty creds'),
         order=11,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='useEmptyCreds',
     )
-    fixedName = gui.TextField(
+    forced_username = gui.TextField(
         label=_('Username'),
         order=12,
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedName',
     )
-    fixedPassword = gui.PasswordField(
+    forced_password = gui.PasswordField(
         label=_('Password'),
         order=13,
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedPassword',
     )
-    withoutDomain = gui.CheckBoxField(
+    force_no_domain = gui.CheckBoxField(
         label=_('Without Domain'),
         order=14,
         tooltip=_(
             'If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'
         ),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='withoutDomain',
     )
-    fixedDomain = gui.TextField(
+    forced_domain = gui.TextField(
         label=_('Domain'),
         order=15,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=types.ui.Tab.CREDENTIALS,
+        stored_field_name='fixedDomain',
     )
 
-    allowSmartcards = gui.CheckBoxField(
+    allow_smartcards = gui.CheckBoxField(
         label=_('Allow Smartcards'),
         order=20,
         tooltip=_('If checked, this transport will allow the use of smartcards'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='allowSmartcards',
     )
-    allowPrinters = gui.CheckBoxField(
+    allow_printers = gui.CheckBoxField(
         label=_('Allow Printers'),
         order=21,
         tooltip=_('If checked, this transport will allow the use of user printers'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='allowPrinters',
     )
-    allowDrives = gui.ChoiceField(
+    allow_drives = gui.ChoiceField(
         label=_('Local drives policy'),
         order=22,
         tooltip=_('Local drives redirection policy'),
@@ -115,44 +122,50 @@ class BaseRDPTransport(transports.Transport):
             {'id': 'true', 'text': 'Allow any drive'},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='allowDrives',
     )
-    enforceDrives = gui.TextField(
+    enforce_drives = gui.TextField(
         label=_('Force drives'),
         order=23,
         tooltip=_(
             'Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'
         ),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='enforceDrives',
     )
 
-    allowSerials = gui.CheckBoxField(
+    allow_serial_ports = gui.CheckBoxField(
         label=_('Allow Serials'),
         order=24,
         tooltip=_('If checked, this transport will allow the use of user serial ports'),
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='allowSerials',
     )
-    allowClipboard = gui.CheckBoxField(
+    allow_clipboard = gui.CheckBoxField(
         label=_('Enable clipboard'),
         order=25,
         tooltip=_('If checked, copy-paste functions will be allowed'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
+        stored_field_name='allowClipboard',
     )
-    allowAudio = gui.CheckBoxField(
+    allow_audio = gui.CheckBoxField(
         label=_('Enable sound'),
         order=26,
         tooltip=_('If checked, sound will be redirected.'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
+        stored_field_name='allowAudio',
     )
-    allowWebcam = gui.CheckBoxField(
+    allow_webcam = gui.CheckBoxField(
         label=_('Enable webcam'),
         order=27,
         tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
         tab=types.ui.Tab.PARAMETERS,
         default=False,
+        stored_field_name='allowWebcam',
     )
-    usbRedirection = gui.ChoiceField(
+    allow_usb_redirection = gui.ChoiceField(
         label=_('USB redirection'),
         order=28,
         tooltip=_('USB redirection policy'),
@@ -167,6 +180,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
         ],
         tab=types.ui.Tab.PARAMETERS,
+        stored_field_name='usbRedirection',
     )
 
     credssp = gui.CheckBoxField(
@@ -175,8 +189,9 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, will enable Credentials Provider Support)'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
+        stored_field_name='credssp',
     )
-    rdpPort = gui.NumericField(
+    rdp_port = gui.NumericField(
         order=30,
         length=5,  # That is, max allowed value is 65535
         label=_('RDP Port'),
@@ -184,9 +199,10 @@ class BaseRDPTransport(transports.Transport):
         tab=types.ui.Tab.PARAMETERS,
         required=True,  #: Numeric fields have always a value, so this not really needed
         default=3389,
+        stored_field_name='rdpPort',
     )
 
-    screenSize = gui.ChoiceField(
+    screen_size = gui.ChoiceField(
         label=_('Screen Size'),
         order=31,
         tooltip=_('Screen size for this transport'),
@@ -208,9 +224,10 @@ class BaseRDPTransport(transports.Transport):
             {'id': '-1x-1', 'text': 'Full screen'},
         ],
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='screenSize',
     )
 
-    colorDepth = gui.ChoiceField(
+    color_depth = gui.ChoiceField(
         label=_('Color depth'),
         order=32,
         tooltip=_('Color depth for this connection'),
@@ -222,6 +239,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '32', 'text': '32'},
         ],
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='colorDepth',
     )
 
     wallpaper = gui.CheckBoxField(
@@ -231,6 +249,7 @@ class BaseRDPTransport(transports.Transport):
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='wallpaper',
     )
     multimon = gui.CheckBoxField(
         label=_('Multiple monitors'),
@@ -239,12 +258,14 @@ class BaseRDPTransport(transports.Transport):
             'If checked, all client monitors will be used for displaying (only works on windows clients)'
         ),
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='multimon',
     )
     aero = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=35,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='aero',
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
@@ -252,42 +273,48 @@ class BaseRDPTransport(transports.Transport):
         order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=types.ui.Tab.DISPLAY,
+        stored_field_name='smooth',
     )
-    showConnectionBar = gui.CheckBoxField(
+    show_connection_bar = gui.CheckBoxField(
         label=_('Connection Bar'),
         order=37,
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
         tab=types.ui.Tab.DISPLAY,
         default=True,
+        stored_field_name='showConnectionBar',
     )
 
-    multimedia = gui.CheckBoxField(
+    lnx_multimedia = gui.CheckBoxField(
         label=_('Multimedia sync'),
         order=40,
         tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'),
         tab='Linux Client',
+        stored_field_name='multimedia',
     )
-    alsa = gui.CheckBoxField(
+    lnx_alsa = gui.CheckBoxField(
         label=_('Use Alsa'),
         order=41,
         tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'),
         tab='Linux Client',
+        stored_field_name='alsa',
     )
-    printerString = gui.TextField(
+    lnx_printer_string = gui.TextField(
         label=_('Printer string'),
         order=43,
         tooltip=_('If printer is checked, the printer string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
+        stored_field_name='printerString',
     )
-    smartcardString = gui.TextField(
+    lnx_smartcard_string = gui.TextField(
         label=_('Smartcard string'),
         order=44,
         tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
+        stored_field_name='smartcardString',
     )
-    customParameters = gui.TextField(
+    lnx_custom_parameters = gui.TextField(
         label=_('Custom parameters'),
         order=45,
         tooltip=_(
@@ -295,17 +322,19 @@ class BaseRDPTransport(transports.Transport):
         ),
         tab='Linux Client',
         length=256,
+        stored_field_name='customParameters',
     )
 
-    allowMacMSRDC = gui.CheckBoxField(
+    mac_allow_msrdc = gui.CheckBoxField(
         label=_('Allow Microsoft Rdp Client'),
         order=50,
         tooltip=_('If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'),
         tab='Mac OS X',
         default=False,
+        stored_field_name='allowMacMSRDC',
     )
 
-    customParametersMAC = gui.TextField(
+    mac_custom_parameters = gui.TextField(
         label=_('Custom parameters'),
         order=51,
         tooltip=_(
@@ -313,22 +342,25 @@ class BaseRDPTransport(transports.Transport):
         ),
         tab='Mac OS X',
         length=256,
+        stored_field_name='customParametersMAC',
     )
 
-    customParametersWindows = gui.TextField(
+    wnd_custom_parameters = gui.TextField(
         label=_('Custom parameters'),
         order=45,
         tooltip=_('If not empty, extra parameters to include for Windows Client'),
         length=4096,
         lines=10,
         tab='Windows Client',
+        stored_field_name='customParametersWindows',
     )
 
-    optimizeTeams = gui.CheckBoxField(
+    wnd_optimize_teams = gui.CheckBoxField(
         label=_('Optimize Teams'),
         order=46,
         tooltip=_('If checked, Teams will be optimized (only works on Windows clients)'),
         tab='Windows Client',
+        stored_field_name='optimizeTeams',
     )
 
     def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:
@@ -340,7 +372,7 @@ class BaseRDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if ready is None:
             # Check again for ready
-            if self.test_connectivity(userService, ip, self.rdpPort.num()) is True:
+            if self.test_connectivity(userService, ip, self.rdp_port.num()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -360,8 +392,8 @@ class BaseRDPTransport(transports.Transport):
     ) -> types.connections.ConnectionData:
         username: str = altUsername or user.get_username_for_auth()
 
-        if self.fixedName.value:
-            username = self.fixedName.value
+        if self.forced_username.value:
+            username = self.forced_username.value
 
         proc = username.split('@')
         domain: str = ''
@@ -369,19 +401,19 @@ class BaseRDPTransport(transports.Transport):
             domain = proc[1]
         username = proc[0]
 
-        if self.fixedPassword.value:
-            password = self.fixedPassword.value
+        if self.forced_password.value:
+            password = self.forced_password.value
 
         azureAd = False
-        if self.fixedDomain.value != '':
-            if self.fixedDomain.value.lower() == 'azuread':
+        if self.forced_domain.value != '':
+            if self.forced_domain.value.lower() == 'azuread':
                 azureAd = True
             else:
-                domain = self.fixedDomain.value
-        if self.useEmptyCreds.as_bool():
+                domain = self.forced_domain.value
+        if self.force_empty_creds.as_bool():
             username, password, domain = '', '', ''
 
-        if self.withoutDomain.as_bool():
+        if self.force_no_domain.as_bool():
             domain = ''
 
         if domain:  # If has domain
@@ -403,7 +435,7 @@ class BaseRDPTransport(transports.Transport):
         if azureAd:
             username = 'AzureAD\\' + username
 
-        if self.optimizeTeams.as_bool():
+        if self.wnd_optimize_teams.as_bool():
             password = ''  # nosec
 
         return types.connections.ConnectionData(

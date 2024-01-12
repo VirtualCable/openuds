@@ -83,6 +83,7 @@ def tunnel_field() -> ui.gui.ChoiceField:
         required=True,
         choices=functools.partial(_server_group_values, [types.servers.ServerType.TUNNEL]),
         tab=types.ui.Tab.TUNNEL,
+        stored_field_name='tunnel',
     )
 
 
@@ -93,7 +94,7 @@ def get_tunnel_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 # Server group field
 def server_group_field(
-    type: typing.Optional[list[types.servers.ServerType]] = None,
+    valid_types: typing.Optional[list[types.servers.ServerType]] = None,
     subtype: typing.Optional[str] = None,
     tab: typing.Optional[types.ui.Tab] = None,
 ) -> ui.gui.ChoiceField:
@@ -106,14 +107,15 @@ def server_group_field(
     Returns:
         A ChoiceField with the server group selection
     """
-    type = type or [types.servers.ServerType.UNMANAGED]
+    valid_types = valid_types or [types.servers.ServerType.UNMANAGED]
     return ui.gui.ChoiceField(
         label=_('Server group'),
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        choices=functools.partial(_server_group_values, type, subtype),  # So it gets evaluated at runtime
+        choices=functools.partial(_server_group_values, valid_types, subtype),  # So it gets evaluated at runtime
         tab=tab,
+        stored_field_name='serverGroup',
     )
 
 
@@ -127,7 +129,7 @@ def get_server_group_from_field(fld: ui.gui.ChoiceField) -> models.ServerGroup:
 
 
 # Ticket validity time field (for http related tunnels)
-def tunnel_ricket_validity_field() -> ui.gui.NumericField:
+def tunnel_ticket_validity_field() -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Ticket Validity'),
@@ -139,11 +141,12 @@ def tunnel_ricket_validity_field() -> ui.gui.NumericField:
         required=True,
         min_value=60,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='ticketValidity',
     )
 
 
 # Tunnel wait time (for uds client related tunnels)
-def tunnel_runnel_wait(order: int = 2) -> ui.gui.NumericField:
+def tunnel_wait_time(order: int = 2) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
@@ -154,6 +157,7 @@ def tunnel_runnel_wait(order: int = 2) -> ui.gui.NumericField:
         tooltip=_('Maximum time, in seconds, to wait before disable new connections on client tunnel listener'),
         required=True,
         tab=types.ui.Tab.TUNNEL,
+        stored_field_name='tunnelWait',
     )
 
 
