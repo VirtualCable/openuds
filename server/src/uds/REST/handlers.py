@@ -37,6 +37,7 @@ import codecs
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.sessions.backends.db import SessionStore
 
+from uds.core import consts
 from uds.core.util.config import GlobalConfig
 from uds.core.auths.auth import root_user
 from uds.core.util import net
@@ -52,9 +53,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-AUTH_TOKEN_HEADER: typing.Final[
-    str
-] = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password
 
 
 class Handler:
@@ -94,7 +92,7 @@ class Handler:
     _kwargs: dict
     _headers: dict[str, str]
     _session: typing.Optional[SessionStore]
-    _authToken: typing.Optional[str]
+    _auth_token: typing.Optional[str]
     _user: 'User'
 
     # method names: 'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace'
@@ -124,20 +122,20 @@ class Handler:
         self._args = args
         self._kwargs = kwargs
         self._headers = {}
-        self._authToken = None
+        self._auth_token = None
         if (
             self.authenticated
         ):  # Only retrieve auth related data on authenticated handlers
             try:
-                self._authToken = self._request.META.get(AUTH_TOKEN_HEADER, '')
-                self._session = SessionStore(session_key=self._authToken)
+                self._auth_token = self._request.headers.get(consts.auth.AUTH_TOKEN_HEADER, '')
+                self._session = SessionStore(session_key=self._auth_token)
                 if 'REST' not in self._session:
                     raise Exception()  # No valid session, so auth_token is also invalid
             except Exception:  # Couldn't authenticate
-                self._authToken = None
+                self._auth_token = None
                 self._session = None
 
-            if self._authToken is None:
+            if self._auth_token is None:
                 raise AccessDenied()
 
             if self.needs_admin and not self.is_admin():
@@ -210,7 +208,7 @@ class Handler:
         """
         Returns the authentication token for this REST request
         """
-        return self._authToken
+        return self._auth_token
 
     @staticmethod
     def set_rest_auth(
@@ -284,16 +282,16 @@ class Handler:
             scrambler,
         )
         session.save()
-        self._authToken = session.session_key
+        self._auth_token = session.session_key
         self._session = session
 
-        return self._authToken
+        return self._auth_token
 
     def clear_auth_token(self) -> None:
         """
         Cleans up the authentication token
         """
-        self._authToken = None
+        self._auth_token = None
         if self._session:
             self._session.delete()
         self._session = None
@@ -331,7 +329,7 @@ class Handler:
                 'Got an exception setting session value %s to %s', key, value
             )
 
-    def valid_source(self) -> bool:
+    def is_ip_allowed(self) -> bool:
         try:
             return net.contains(
                 GlobalConfig.ADMIN_TRUSTED_SOURCES.get(True), self._request.ip
@@ -348,13 +346,13 @@ class Handler:
         """
         True if user of this REST request is administrator and SOURCE is valid admint trusted sources
         """
-        return bool(self.recover_value('is_admin')) and self.valid_source()
+        return bool(self.recover_value('is_admin')) and self.is_ip_allowed()
 
     def is_staff_member(self) -> bool:
         """
         True if user of this REST request is member of staff
         """
-        return bool(self.recover_value('staff_member')) and self.valid_source()
+        return bool(self.recover_value('staff_member')) and self.is_ip_allowed()
 
     def get_user(self) -> 'User':
         """

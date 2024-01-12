@@ -73,7 +73,7 @@ class UDSClientMixin:
             'uds.middleware.request.GlobalRequestMiddleware',
         ]
         self.uds_headers = {
-            'HTTP_USER_AGENT': 'Testing user agent',
+            'User-Agent': 'Testing user agent',
         }
 
         # Update settings security options
@@ -86,7 +86,7 @@ class UDSClientMixin:
     def set_user_agent(self, user_agent: typing.Optional[str] = None):
         user_agent = user_agent or ''
         # Add 'HTTP_USER_AGENT' header
-        self.uds_headers['HTTP_USER_AGENT'] = user_agent
+        self.uds_headers['User-Agent'] = user_agent
 
     def enable_ipv4(self):
         self.ip_version = 4
@@ -94,11 +94,13 @@ class UDSClientMixin:
     def enable_ipv6(self):
         self.ip_version = 6
 
-    def append_remote_addr(self, kwargs: dict[str, typing.Any]) -> None:
+    def update_request_kwargs(self, kwargs: dict[str, typing.Any]) -> None:
         if self.ip_version == 4:
             kwargs['REMOTE_ADDR'] = '127.0.0.1'
         elif self.ip_version == 6:
             kwargs['REMOTE_ADDR'] = '::1'
+            
+        kwargs['headers'] = self.uds_headers
 
     def compose_rest_url(self, method: str) -> str:
         return f'{REST_PATH}/{method}'
@@ -121,13 +123,13 @@ class UDSClient(UDSClientMixin, Client):
 
     def request(self, **request: typing.Any):
         # Copy request dict
-        request = request.copy()
-        # Add headers
-        request.update(self.uds_headers)
+        # request = request.copy()
+        # Add META headers
+        # request.update(self.uds_headers)
         return super().request(**request)
 
     def get(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', super().get(*args, **kwargs))
 
     def rest_get(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
@@ -135,7 +137,7 @@ class UDSClient(UDSClientMixin, Client):
         return self.get(self.compose_rest_url(method), *args, **kwargs)
 
     def post(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', super().post(*args, **kwargs))
 
     def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
@@ -144,7 +146,7 @@ class UDSClient(UDSClientMixin, Client):
         return self.post(self.compose_rest_url(method), *args, **kwargs)
 
     def put(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', super().put(*args, **kwargs))
 
     def rest_put(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
@@ -184,7 +186,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
 
     # pylint: disable=invalid-overridden-method
     async def get(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', await super().get(*args, **kwargs))
 
     async def rest_get(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
@@ -193,7 +195,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
 
     # pylint: disable=invalid-overridden-method
     async def post(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', await super().post(*args, **kwargs))
 
     async def rest_post(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':
@@ -211,7 +213,7 @@ class UDSAsyncClient(UDSClientMixin, AsyncClient):
 
     # pylint: disable=invalid-overridden-method
     async def delete(self, *args, **kwargs) -> 'UDSHttpResponse':
-        self.append_remote_addr(kwargs)
+        self.update_request_kwargs(kwargs)
         return typing.cast('UDSHttpResponse', await super().delete(*args, **kwargs))
 
     async def rest_delete(self, method: str, *args, **kwargs) -> 'UDSHttpResponse':

@@ -37,7 +37,7 @@ import collections.abc
 from django.test import SimpleTestCase
 from django.test.client import Client
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
+from uds.core import consts
 
 # Not used, allows "rest.test" or "rest.assertions"
 from . import test  # pylint: disable=unused-import
@@ -82,7 +82,7 @@ def logout(caller: SimpleTestCase, client: Client, auth_token: str) -> None:
     response = client.get(
         '/uds/rest/auth/logout',
         content_type='application/json',
-        **{AUTH_TOKEN_HEADER: auth_token}  # type: ignore
+        **{consts.auth.AUTH_TOKEN_HEADER: auth_token}  # type: ignore
     )
     caller.assertEqual(
         response.status_code, 200, f'Logout Result: {response.content}'

@@ -38,4 +38,4 @@ logger = logging.getLogger(__name__)
 # Convenience imports, must be present before initializing handlers
 from .handlers import Handler
 
-from .dispatcher import Dispatcher, AUTH_TOKEN_HEADER
+from .dispatcher import Dispatcher

@@ -28,20 +28,16 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import typing
 import collections.abc
+import typing
 
 from uds import models
+from uds.core import consts
 from uds.core.util import log
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
-
-from .. import test, generators, rest, constants
-from ...fixtures import (
-    authenticators as authenticators_fixtures,
-    services as services_fixtures,
-)
-
+from ...fixtures import authenticators as authenticators_fixtures
+from ...fixtures import services as services_fixtures
+from .. import constants, generators, rest, test
 
 NUMBER_OF_ITEMS_TO_CREATE = 4
 
@@ -137,7 +133,7 @@ class RESTTestCase(test.UDSTransactionTestCase):
         )
         self.assertEqual(response['result'], 'ok', f'Login failed: {response}')
         # Insert token into headers
-        self.client.add_header(AUTH_TOKEN_HEADER, response['token'])
+        self.client.add_header(consts.auth.AUTH_TOKEN_HEADER, response['token'])
         self.auth_token = response['token']
 
 

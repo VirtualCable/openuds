@@ -31,7 +31,6 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 import logging
 
 from uds.core import consts
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 from uds.core.consts.actor import UNMANAGED
 from uds.core.consts.actor import MANAGED
 
@@ -85,7 +84,7 @@ class ActorTestTest(rest.test.RESTActorTestCase):
 
         # And this one too, without authentication token
         # Without header, test will success because its not authenticated
-        self.client.add_header(AUTH_TOKEN_HEADER, 'invalid')
+        self.client.add_header(consts.auth.AUTH_TOKEN_HEADER, 'invalid')
         response = success()
 
         self.assertEqual(response.status_code, 200)

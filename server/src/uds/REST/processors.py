@@ -68,7 +68,7 @@ class ContentProcessor:
     def __init__(self, request: 'HttpRequest'):
         self._request = request
 
-    def processGetParameters(self) -> dict[str, typing.Any]:
+    def process_get_parameters(self) -> dict[str, typing.Any]:
         """
         returns parameters based on request method
         GET parameters are understood
@@ -78,13 +78,13 @@ class ContentProcessor:
 
         return {k: v[0] if len(v) == 1 else v for k, v in self._request.GET.lists()}
 
-    def processParameters(self) -> dict[str, typing.Any]:
+    def process_parameters(self) -> dict[str, typing.Any]:
         """
         Returns the parameter from the request
         """
         return {}
 
-    def getResponse(self, obj):
+    def get_response(self, obj):
         """
         Converts an obj to a response of specific type (json, XML, ...)
         This is done using "render" method of specific type
@@ -98,7 +98,7 @@ class ContentProcessor:
         return str(obj)
 
     @staticmethod
-    def procesForRender(obj: typing.Any):
+    def process_for_render(obj: typing.Any):
         """
         Helper for renderers. Alters some types so they can be serialized correctly (as we want them to be)
         """
@@ -106,10 +106,10 @@ class ContentProcessor:
             return obj
 
         if isinstance(obj, dict):
-            return {k: ContentProcessor.procesForRender(v) for k, v in obj.items()}
+            return {k: ContentProcessor.process_for_render(v) for k, v in obj.items()}
 
         if isinstance(obj, (list, tuple, types.GeneratorType)):
-            return [ContentProcessor.procesForRender(v) for v in obj]
+            return [ContentProcessor.process_for_render(v) for v in obj]
 
         if isinstance(obj, (datetime.datetime,)):  # Datetime as timestamp
             return int(time.mktime(obj.timetuple()))
@@ -131,11 +131,11 @@ class MarshallerProcessor(ContentProcessor):
 
     marshaller: typing.ClassVar[typing.Any] = None
 
-    def processParameters(self) -> dict[str, typing.Any]:
+    def process_parameters(self) -> dict[str, typing.Any]:
         try:
             length = int(self._request.META.get('CONTENT_LENGTH') or '0')
             if length == 0 or not self._request.body:
-                return self.processGetParameters()
+                return self.process_get_parameters()
             
             # logger.debug('Body: >>{}<< {}'.format(self._request.body, len(self._request.body)))
             if length > consts.system.MAX_REQUEST_SIZE or length > len(self._request.body):
@@ -149,7 +149,7 @@ class MarshallerProcessor(ContentProcessor):
             raise ParametersException(str(e))
 
     def render(self, obj: typing.Any):
-        return self.marshaller.dumps(ContentProcessor.procesForRender(obj))
+        return self.marshaller.dumps(ContentProcessor.process_for_render(obj))
 
 
 # ---------------
@@ -159,10 +159,9 @@ class JsonProcessor(MarshallerProcessor):
     """
     Provides JSON content processor
     """
-
-    mime_type = 'application/json'
-    extensions = ['json']
-    marshaller = json  # type: ignore
+    mime_type: typing.ClassVar[str] = 'application/json'
+    extensions: typing.ClassVar[collections.abc.Iterable[str]] = ['json']
+    marshaller: typing.ClassVar[typing.Any] = json
 
 
 # ---------------

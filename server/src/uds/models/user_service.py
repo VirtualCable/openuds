@@ -267,7 +267,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         return self.friendly_name
 
-    def getUniqueId(self) -> str:
+    def get_unique_id(self) -> str:
         """
         Returns the unique id of the user deployed service
         """

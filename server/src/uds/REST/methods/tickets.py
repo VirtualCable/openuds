@@ -112,7 +112,7 @@ class Tickets(Handler):
 
         raise exceptions.rest.RequestError('Invalid request')
 
-    def _checkInput(self) -> None:
+    def _check_parameters(self) -> None:
         # Parameters can only be theese
         for p in self._params:
             if p not in VALID_PARAMS:
@@ -152,7 +152,7 @@ class Tickets(Handler):
         logger.debug(self._args)
 
         # Check that call is correct (pamateters, args, ...)
-        self._checkInput()
+        self._check_parameters()
 
         force: bool = self.get_param('force') in ('1', 'true', 'True', True)
 

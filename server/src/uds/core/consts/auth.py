@@ -48,3 +48,8 @@ DENY: typing.Final[str] = 'd'
 # Cookie for mfa and csrf field
 MFA_COOKIE_NAME: typing.Final[str] = 'mfa_status'
 CSRF_FIELD: typing.Final[str] = 'csrfmiddlewaretoken'
+
+# Auth token
+AUTH_TOKEN_HEADER: typing.Final[str] = 'X-Auth-Token'  # nosec: this is not a password, but a header name
+# Meta header for auth token, not used
+# AUTH_TOKEN_HEADER: typing.Final[str] = 'HTTP_X_AUTH_TOKEN'  # nosec: this is not a password

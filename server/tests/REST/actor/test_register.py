@@ -33,7 +33,6 @@ import collections.abc
 import logging
 
 from uds import models
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 
 from ...utils import rest, constants
 

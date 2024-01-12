@@ -33,7 +33,6 @@ import collections.abc
 import datetime
 import logging
 
-from uds.REST.handlers import AUTH_TOKEN_HEADER
 from uds.core.consts.actor import UNMANAGED
 from uds.core.consts.actor import MANAGED
 from uds.core.util.stats import counters

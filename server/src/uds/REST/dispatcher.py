@@ -56,8 +56,6 @@ logger = logging.getLogger(__name__)
 
 __all__ = ['Handler', 'Dispatcher']
 
-AUTH_TOKEN_HEADER = 'X-Auth-Token'  # nosec: this is not a password, but a header name
-
 @dataclasses.dataclass(frozen=True)
 class HandlerNode:
     """
@@ -151,7 +149,7 @@ class Dispatcher(View):
                 request,
                 full_path,
                 http_method,
-                processor.processParameters(),
+                processor.process_parameters(),
                 *args,
                 **kwargs,
             )
@@ -186,7 +184,7 @@ class Dispatcher(View):
             response = operation()
 
             if not handler.raw:  # Raw handlers will return an HttpResponse Object
-                response = processor.getResponse(response)
+                response = processor.get_response(response)
             # Set response headers
             response['UDS-Version'] = f'{consts.system.VERSION};{consts.system.VERSION_STAMP}'
             for k, val in handler.headers().items():
@@ -225,7 +223,7 @@ class Dispatcher(View):
             return http.HttpResponseServerError(str(e), content_type="text/plain")
 
     @staticmethod
-    def registerClass(type_: type[Handler]) -> None:
+    def register_handler(type_: type[Handler]) -> None:
         """
         Method to register a class as a REST service
         param type_: Class to be registered
@@ -275,7 +273,7 @@ class Dispatcher(View):
 
         # Register all subclasses of Handler
         modfinder.dynamically_load_and_register_packages(
-            Dispatcher.registerClass,
+            Dispatcher.register_handler,
             Handler,
             module_name=modName,
             checker=checker,

@@ -102,7 +102,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         actor_token = self.login_and_register()
 
         # Get the user service unique_id
-        unique_id = self.user_service_managed.getUniqueId()
+        unique_id = self.user_service_managed.get_unique_id()
 
         success = functools.partial(self.invoke_success, 'managed', actor_token)
         failure = functools.partial(self.invoke_failure, 'managed')  
@@ -143,7 +143,7 @@ class ActorInitializeTest(rest.test.RESTActorTestCase):
         user_service = self.user_service_unmanaged
         actor_token: str = (user_service.deployed_service.service.token if user_service.deployed_service.service else None) or ''
 
-        unique_id = user_service.getUniqueId()
+        unique_id = user_service.get_unique_id()
 
         success = functools.partial(self.invoke_success, 'unmanaged')
         failure = functools.partial(self.invoke_failure, 'unmanaged')

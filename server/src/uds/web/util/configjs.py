@@ -40,7 +40,6 @@ from django.utils.translation import gettext, get_language
 from django.urls import reverse
 from django.templatetags.static import static
 
-from uds.REST import AUTH_TOKEN_HEADER
 from uds.REST.methods.client import CLIENT_VERSION
 from uds.core import consts
 from uds.core.managers import downloads_manager
@@ -294,7 +293,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         profile['admin'] = True
         # REST auth
         config['auth_token'] = request.session.session_key
-        config['auth_header'] = AUTH_TOKEN_HEADER
+        config['auth_header'] = consts.auth.AUTH_TOKEN_HEADER
         # Actors
         actors = [
             {
