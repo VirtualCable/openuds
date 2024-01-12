@@ -349,8 +349,9 @@ class gui:
             alter original values.
             """
             data = typing.cast(dict, self._fields_info.as_dict())
-            if 'value' in data:
-                del data['value']  # We don't want to send value on gui_description
+            for i in ('value', 'stored_field_name'):
+                if i in data:
+                    del data[i]  # We don't want to send some values on gui_description
             data['label'] = _(data['label']) if data['label'] else ''
             data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
