@@ -235,7 +235,7 @@ class GlobalRequestMiddlewareTest(test.WEBTestCase):
                         else:  # Without nginx, remote addres is not included
                             req.META = {}
                             req.headers = {
-                                'HTTP_X_FORWARDED_FOR': "{}, {}".format(
+                                consts.auth.X_FORWARDED_FOR_HEADER: "{}, {}".format(
                                     x_forwarded_for, second_proxy
                                 ),
                             }
