@@ -70,7 +70,7 @@ class ServerEventsLoginLogoutTest(rest.test.RESTTestCase):
         # {
         #     'ip': src.ip,
         #     'hostname': src.hostname,
-        #     'dead_line': deadLine,
+        #     'deadline': deadLine,
         #     'max_idle': maxIdle,
         #     'session_id': session_id,
         # }

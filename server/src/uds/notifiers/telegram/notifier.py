@@ -80,7 +80,7 @@ class TelegramNotifier(messaging.Notifier):
         tab=_('Telegram'),
     )
 
-    accessToken = gui.TextField(
+    access_token = gui.TextField(
         length=64,
         label=_('Access Token'),
         order=2,
@@ -88,6 +88,7 @@ class TelegramNotifier(messaging.Notifier):
         required=True,
         default='',
         tab=_('Telegram'),
+        stored_field_name='accessToken',
     )
 
     # Secret key used to validate join and subscribe requests
@@ -104,7 +105,7 @@ class TelegramNotifier(messaging.Notifier):
     # The bot will allow commmand (/join {secret} or /subscribe {secret} and /leave or /unsubscribe) to subscribe and unsubscribe
     # For this to work, we will process the message and check if it is a command from time to time
     # This var defines the delay in secods between checks (1 hour by default, we do not need to check this every second)
-    checkDelay = gui.NumericField(
+    check_delay = gui.NumericField(
         length=3,
         label=_('Check delay'),
         order=3,
@@ -114,6 +115,7 @@ class TelegramNotifier(messaging.Notifier):
         min_value=60,
         max_value=86400,
         tab=_('Telegram'),
+        stored_field_name='checkDelay',
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):
@@ -126,7 +128,7 @@ class TelegramNotifier(messaging.Notifier):
         # check hostname for stmp server si valid and is in the right format
         # that is a hostname or ip address with optional port
         # if hostname is not valid, we will raise an exception
-        for i in (self.botname, self.accessToken, self.secret):
+        for i in (self.botname, self.access_token, self.secret):
             s = i.as_clean_str()
             if not s:
                 raise exceptions.validation.ValidationError(_('Invalid value for {}').format(i.label))
@@ -139,54 +141,54 @@ class TelegramNotifier(messaging.Notifier):
     def notify(self, group: str, identificator: str, level: messaging.LogLevel, message: str) -> None:
         telegramMsg = f'{group} - {identificator} - {str(level)}: {message}'
         logger.debug('Sending telegram message: %s', telegramMsg)
-        # load chatIds
-        chatIds = self.storage.get_unpickle('chatIds') or []
-        t = telegram.Telegram(self.accessToken.value, self.botname.value)
-        for chatId in chatIds:
+        # load chat_ids
+        chat_ids = self.storage.get_unpickle('chat_ids') or []
+        t = telegram.Telegram(self.access_token.value, self.botname.value)
+        for chatId in chat_ids:
             with ignore_exceptions():
                 t.send_message(chatId, telegramMsg)
                 # Wait a bit, so we don't send more than 10 messages per second
                 time.sleep(0.1)
 
-    def subscribeUser(self, chatId: int) -> None:
+    def subscribe_user(self, chat_id: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
-        # that holds a list of chatIds
-        chatIds = self.storage.get_unpickle('chatIds') or []
-        if chatId not in chatIds:
-            chatIds.append(chatId)
-            self.storage.put_pickle('chatIds', chatIds)
-            logger.info('User %s subscribed to notifications', chatId)
+        # that holds a list of chat_ids
+        chat_ids = self.storage.get_unpickle('chat_ids') or []
+        if chat_id not in chat_ids:
+            chat_ids.append(chat_id)
+            self.storage.put_pickle('chat_ids', chat_ids)
+            logger.info('User %s subscribed to notifications', chat_id)
 
-    def unsubscriteUser(self, chatId: int) -> None:
+    def unsubscrite_user(self, chatId: int) -> None:
         # we do not expect to have a lot of users, so we will use a simple storage
-        # that holds a list of chatIds
-        chatIds = self.storage.get_unpickle('chatIds') or []
-        if chatId in chatIds:
-            chatIds.remove(chatId)
-            self.storage.put_pickle('chatIds', chatIds)
+        # that holds a list of chat_ids
+        chat_ids = self.storage.get_unpickle('chat_ids') or []
+        if chatId in chat_ids:
+            chat_ids.remove(chatId)
+            self.storage.put_pickle('chat_ids', chat_ids)
             logger.info('User %s unsubscribed from notifications', chatId)
 
-    def retrieveMessages(self) -> None:
-        if not self.accessToken.value.strip():
+    def retrieve_messages(self) -> None:
+        if not self.access_token.value.strip():
             return  # no access token, no messages
         # Time of last retrieve
-        lastCheck: typing.Optional[datetime.datetime] = self.storage.get_unpickle('lastCheck')
+        last_check: typing.Optional[datetime.datetime] = self.storage.get_unpickle('last_check')
         now = sql_datetime()
 
         # If last check is not set, we will set it to now
-        if lastCheck is None:
-            lastCheck = now - datetime.timedelta(seconds=self.checkDelay.as_int() + 1)
-            self.storage.put_pickle('lastCheck', lastCheck)
+        if last_check is None:
+            last_check = now - datetime.timedelta(seconds=self.check_delay.as_int() + 1)
+            self.storage.put_pickle('last_check', last_check)
 
         # If not enough time has passed, we will not check
-        if lastCheck + datetime.timedelta(seconds=self.checkDelay.as_int()) > now:
+        if last_check + datetime.timedelta(seconds=self.check_delay.as_int()) > now:
             return
 
         # Update last check
-        self.storage.put_pickle('lastCheck', now)
+        self.storage.put_pickle('last_check', now)
 
-        lastOffset = self.storage.get_unpickle('lastOffset') or 0
-        t = telegram.Telegram(self.accessToken.value, last_offset=lastOffset)
+        last_offset = self.storage.get_unpickle('last_offset') or 0
+        t = telegram.Telegram(self.access_token.value, last_offset=last_offset)
         with ignore_exceptions():  # In case getUpdates fails, ignore it
             for update in t.get_updates():
                 # Process update
@@ -202,9 +204,9 @@ class TelegramNotifier(messaging.Notifier):
                                 'Invalid subscribe command received from telegram bot (invalid secret: %s)',
                                 message,
                             )
-                        self.subscribeUser(update.chat.id)
+                        self.subscribe_user(update.chat.id)
                         t.send_message(update.chat.id, _('You have been subscribed to notifications'))
                     elif message in ('/leave', '/unsubscribe'):
-                        self.unsubscriteUser(update.chat.id)
+                        self.unsubscrite_user(update.chat.id)
                         t.send_message(update.chat.id, _('You have been unsubscribed from notifications'))
-            self.storage.put_pickle('lastOffset', t.lastOffset)
+            self.storage.put_pickle('last_offset', t.last_offset)

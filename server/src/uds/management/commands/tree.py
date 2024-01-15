@@ -57,7 +57,7 @@ def getSerializedFromManagedObject(
     try:
         obj = mod.get_instance()
         gui = {i['name']: i['gui']['type'] for i in obj.gui_description()}
-        values = obj.get_dict_of_values()
+        values = obj.get_dict_of_fields_values()
         # Remove password fields
         for k, v in gui.items():
             if v == 'password':

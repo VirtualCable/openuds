@@ -47,9 +47,11 @@ from ldap import (
 from django.utils.translation import gettext as _
 from django.conf import settings
 
+# So it is avaliable for importers
 from ldap.ldapobject import LDAPObject
 
 from uds.core.util import utils
+
 
 logger = logging.getLogger(__name__)
 

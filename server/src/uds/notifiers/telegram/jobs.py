@@ -36,4 +36,4 @@ class TelegramReceiver(jobs.Job):
                 logger.error('Notifier %s is not a Telegram notifier', telegramDbNotifier.name)
                 continue
 
-            n.retrieveMessages()
+            n.retrieve_messages()

@@ -59,7 +59,7 @@ class LinuxOsManager(osmanagers.OSManager):
 
     servicesType = serviceTypes.VDI
 
-    onLogout = gui.ChoiceField(
+    on_logout = gui.ChoiceField(
         label=_('Logout Action'),
         order=10,
         readonly=True,
@@ -87,7 +87,7 @@ class LinuxOsManager(osmanagers.OSManager):
         required=True,
     )
 
-    deadLine = gui.CheckBoxField(
+    deadline = gui.CheckBoxField(
         label=_('Calendar logout'),
         order=90,
         tooltip=_(
@@ -99,29 +99,29 @@ class LinuxOsManager(osmanagers.OSManager):
     
     _on_logout: str
     _idle: int
-    _deadLine: bool
+    _deadline: bool
 
-    def _set_process_unused_machines(self) -> None:
-        self.processUnusedMachines = self._on_logout == 'remove'
+    def _flag_processes_unused_machines(self) -> None:
+        self.handles_unused_userservices = self._on_logout == 'remove'
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
         if values is not None:
-            self._on_logout = values['onLogout']
+            self._on_logout = values['on_logout']
             self._idle = int(values['idle'])
-            self._deadLine = gui.as_bool(values['deadLine'])
+            self._deadline = gui.as_bool(values['deadline'])
         else:
             self._on_logout = ''
             self._idle = -1
-            self._deadLine = True
+            self._deadline = True
 
-        self._set_process_unused_machines()
+        self._flag_processes_unused_machines()
 
     def release(self, userService: 'UserService') -> None:
         pass
 
     def ignore_deadline(self) -> bool:
-        return not self._deadLine
+        return not self._deadline
 
     def is_removable_on_logout(self, userService: 'UserService') -> bool:
         '''
@@ -159,19 +159,19 @@ class LinuxOsManager(osmanagers.OSManager):
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.get_name()}  # No custom data
 
-    def process_unused(self, userService: 'UserService') -> None:
+    def handle_unused(self, userservice: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removable_on_logout(userService):
+        if self.is_removable_on_logout(userservice):
             log.log(
-                userService,
+                userservice,
                 log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
                 log.LogSource.OSMANAGER,
             )
-            userService.remove()
+            userservice.remove()
 
     def is_persistent(self) -> bool:
         return self._on_logout == 'keep-always'
@@ -186,7 +186,7 @@ class LinuxOsManager(osmanagers.OSManager):
         """
         if (
             self._idle <= 0
-        ):  # or (settings.DEBUG is False and self._onLogout != 'remove'):
+        ):  # or (settings.DEBUG is False and self._on_logout != 'remove'):
             return None
 
         return self._idle
@@ -196,29 +196,29 @@ class LinuxOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._on_logout, str(self._idle), gui.from_bool(self._deadLine)]
+            ['v3', self._on_logout, str(self._idle), gui.from_bool(self._deadline)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
         values = data.decode('utf8').split('\t')
         self._idle = -1
-        self._deadLine = True
+        self._deadline = True
         if values[0] == 'v1':
             self._on_logout = values[1]
         elif values[0] == 'v2':
             self._on_logout, self._idle = values[1], int(values[2])
         elif values[0] == 'v3':
-            self._on_logout, self._idle, self._deadLine = (
+            self._on_logout, self._idle, self._deadline = (
                 values[1],
                 int(values[2]),
                 gui.as_bool(values[3]),
             )
 
-        self._set_process_unused_machines()
+        self._flag_processes_unused_machines()
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
         return {
-            'onLogout': self._on_logout,
+            'on_logout': self._on_logout,
             'idle': str(self._idle),
-            'deadLine': gui.from_bool(self._deadLine),
+            'deadline': gui.from_bool(self._deadline),
         }

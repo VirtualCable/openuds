@@ -277,7 +277,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
             self.update_data(si)
         return self.unique_id
 
-    def storeValue(self, name: str, value: str) -> None:
+    def store_value(self, name: str, value: str) -> None:
         """
         Stores a value inside custom storage
 
@@ -288,7 +288,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # Store value as a property
         self.properties[name] = value
 
-    def recoverValue(self, name: str) -> str:
+    def recover_value(self, name: str) -> str:
         """
         Recovers a value from custom storage
 
@@ -346,7 +346,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     def getOsManager(self) -> typing.Optional['OSManager']:
         return self.deployed_service.osmanager
 
-    def getOsManagerInstance(self) -> typing.Optional['osmanagers.OSManager']:
+    def get_osmanager_instance(self) -> typing.Optional['osmanagers.OSManager']:
         osManager = self.getOsManager()
         if osManager:
             return osManager.get_instance()

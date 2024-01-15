@@ -276,7 +276,7 @@ class RegexLdap(auths.Authenticator):
     def mfa_identifier(self, username: str) -> str:
         return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
             'port': self._port,

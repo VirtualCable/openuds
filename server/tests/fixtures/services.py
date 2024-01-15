@@ -90,7 +90,7 @@ def createOsManager() -> models.OSManager:
     from uds.osmanagers.Test import TestOSManager
 
     values: dict[str, typing.Any] = {
-        'onLogout': 'remove',
+        'on_logout': 'remove',
         'idle': 300,
     }
     osmanager = models.OSManager.objects.create(

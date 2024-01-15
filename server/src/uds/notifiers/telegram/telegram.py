@@ -24,19 +24,19 @@ class From:
 @dataclasses.dataclass
 class Message:
     chat: Chat
-    from_: From
+    src: From
     date: int
     text: str
 
     @staticmethod
     def from_dict(data: collections.abc.Mapping[str, typing.Any]) -> 'Message':
         return Message(
-            Chat(
+            chat=Chat(
                 id=data['chat']['id'],
                 type=data['chat']['type'],
                 first_name=data['chat']['first_name'],
             ),
-            From(
+            src=From(
                 id=data['from']['id'],
                 is_bot=data['from']['is_bot'],
                 first_name=data['from']['first_name'],
@@ -50,13 +50,13 @@ class Message:
 
 class Telegram:
     token: str
-    reqTimeout: int
-    lastOffset: int
+    req_timeout: int
+    last_offset: int
 
     def __init__(self, token: str, last_offset: int = 0) -> None:
         self.token = token
-        self.reqTimeout = 3 * 2 + 1
-        self.lastOffset = last_offset
+        self.req_timeout = 3 * 2 + 1
+        self.last_offset = last_offset
 
     def request(
         self,
@@ -71,7 +71,7 @@ class Telegram:
         if stream:
             kwargs['stream'] = True
         # If params has a timeout, use the max of that and our own timeout
-        timeout = max(params.get('timeout', 0), self.reqTimeout)
+        timeout = max(params.get('timeout', 0), self.req_timeout)
         response = requests.get(
             f'https://api.telegram.org/bot{self.token}/{method}',
             timeout=timeout,
@@ -83,10 +83,10 @@ class Telegram:
         return self.request('send_message', {'chat_id': chat_id, 'text': text})
 
     def get_updates(self, offset: int = 0, timeout: int = 0) -> collections.abc.Iterable[Message]:
-        self.lastOffset = offset or self.lastOffset
-        res = self.request('get_updates', {'offset': self.lastOffset, 'timeout': timeout}, stream=True)
+        self.last_offset = offset or self.last_offset
+        res = self.request('get_updates', {'offset': self.last_offset, 'timeout': timeout}, stream=True)
         if res['ok'] and res['result']:  # if ok and there are results
             # Update the offset
-            self.lastOffset = res['result'][-1]['update_id'] + 1
+            self.last_offset = res['result'][-1]['update_id'] + 1
             for update in res['result']:
                 yield Message.from_dict(update['message'])

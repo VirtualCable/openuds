@@ -63,7 +63,7 @@ class WinRandomPassManager(WindowsOsManager):
     icon_file = 'wosmanager.png'
 
     # Apart form data from windows os manager, we need also domain and credentials
-    userAccount = gui.TextField(
+    user_account = gui.TextField(
         length=64,
         label=_('Account'),
         order=2,
@@ -78,10 +78,10 @@ class WinRandomPassManager(WindowsOsManager):
         required=True,
     )
 
-    # Inherits base "onLogout"
-    onLogout = WindowsOsManager.onLogout
+    # Inherits base "on_logout"
+    on_logout = WindowsOsManager.on_logout
     idle = WindowsOsManager.idle
-    deadLine = WindowsOsManager.deadLine
+    dead_line = WindowsOsManager.deadline
 
     _user_account: str
     _password: str
@@ -103,12 +103,12 @@ class WinRandomPassManager(WindowsOsManager):
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if username == self._user_account:
-            password = userService.recoverValue('winOsRandomPass')
+            password = userService.recover_value('winOsRandomPass')
 
         return WindowsOsManager.process_user_password(self, userService, username, password)
 
     def gen_random_password(self, userService: 'UserService'):
-        randomPass = userService.recoverValue('winOsRandomPass')
+        randomPass = userService.recover_value('winOsRandomPass')
         if not randomPass:
             # Generates a password that conforms to complexity
             rnd = random.SystemRandom()
@@ -118,7 +118,7 @@ class WinRandomPassManager(WindowsOsManager):
             randomPass = ''.join(rnd.choice(string.ascii_letters + string.digits) for _ in range(12))
             pos = rnd.randrange(0, len(randomPass))
             randomPass = randomPass[:pos] + base + randomPass[pos:]
-            userService.storeValue('winOsRandomPass', randomPass)
+            userService.store_value('winOsRandomPass', randomPass)
             log.log(
                 userService,
                 log.LogLevel.INFO,
@@ -159,8 +159,8 @@ class WinRandomPassManager(WindowsOsManager):
             self._password = CryptoManager().decrypt(values[2])
             super().unmarshal(codecs.decode(values[3].encode(), 'hex'))
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
-        dic = super().get_dict_of_values()
-        dic['userAccount'] = self._user_account
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+        dic = super().get_dict_of_fields_values()
+        dic['user_account'] = self._user_account
         dic['password'] = self._password
         return dic

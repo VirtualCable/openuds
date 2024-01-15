@@ -74,7 +74,7 @@ class NotifyActionType(enum.StrEnum):
 
 
 # Helpers
-def fixIdsList(idsList: list[str]) -> list[str]:
+def fix_list_of_ids(idsList: list[str]) -> list[str]:
     """
     Params:
         idsList: List of ids to fix
@@ -151,7 +151,7 @@ class ActorV3Action(Handler):
             }
         )
 
-    def getUserService(self) -> UserService:
+    def get_userservice(self) -> UserService:
         '''
         Looks for an userService and, if not found, raises a exceptions.rest.BlockAccess request
         '''
@@ -179,7 +179,7 @@ class ActorV3Action(Handler):
         raise exceptions.rest.AccessDenied('Access denied')
 
     # Some helpers
-    def notifyService(self, action: NotifyActionType) -> None:
+    def notify_service(self, action: NotifyActionType) -> None:
         try:
             # If unmanaged, use Service locator
             service: 'services.Service' = Service.objects.get(token=self._params['token']).get_instance()
@@ -190,7 +190,7 @@ class ActorV3Action(Handler):
             idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
 
             # ensure idsLists has upper and lower versions for case sensitive databases
-            idsList = fixIdsList(idsList)
+            idsList = fix_list_of_ids(idsList)
 
             validId: typing.Optional[str] = service.get_valid_id(idsList)
 
@@ -430,7 +430,7 @@ class Initialize(ActorV3Action):
             # Valid actor token, now validate access allowed. That is, look for a valid mac from the ones provided.
             try:
                 # ensure idsLists has upper and lower versions for case sensitive databases
-                idsList = fixIdsList(idsList)
+                idsList = fix_list_of_ids(idsList)
                 # Set full filter
                 dbFilter = dbFilter.filter(
                     unique_id__in=idsList,
@@ -446,7 +446,7 @@ class Initialize(ActorV3Action):
             # Set last seen actor version
             userService.actor_version = self._params['version']
             osData: collections.abc.MutableMapping[str, typing.Any] = {}
-            osManager = userService.getOsManagerInstance()
+            osManager = userService.get_osmanager_instance()
             if osManager:
                 osData = osManager.actor_data(userService)
 
@@ -484,7 +484,7 @@ class BaseReadyChange(ActorV3Action):
         }
         """
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        userService = self.getUserService()
+        userService = self.get_userservice()
         # Stores known IP and notifies it to deployment
         userService.log_ip(self._params['ip'])
         userServiceInstance = userService.get_instance()
@@ -502,7 +502,7 @@ class BaseReadyChange(ActorV3Action):
         if userService.os_state != State.USABLE:
             userService.setOsState(State.USABLE)
             # Notify osManager or readyness if has os manager
-            osManager = userService.getOsManagerInstance()
+            osManager = userService.get_osmanager_instance()
 
             if osManager:
                 osManager.to_ready(userService)
@@ -550,7 +550,7 @@ class Ready(BaseReadyChange):
         result = super().action()
 
         # Maybe we could also set as "inUse" to false because a ready can only ocurr if an user is not logged in
-        userService = self.getUserService()
+        userService = self.get_userservice()
         userService.setInUse(False)
 
         return result
@@ -566,7 +566,7 @@ class Version(ActorV3Action):
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Version Args: %s,  Params: %s', self._args, self._params)
-        userService = self.getUserService()
+        userService = self.get_userservice()
         userService.actor_version = self._params['version']
         userService.log_ip(self._params['ip'])
 
@@ -589,52 +589,53 @@ class Login(ActorV3Action):
     #    }
 
     @staticmethod
-    def process_login(userService: UserService, username: str) -> typing.Optional[osmanagers.OSManager]:
-        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
-        if not userService.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
-            osmanagers.OSManager.logged_in(userService, username)
+    def process_login(userservice: UserService, username: str) -> typing.Optional[osmanagers.OSManager]:
+        osManager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
+        if not userservice.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
+            osmanagers.OSManager.logged_in(userservice, username)
         return osManager
 
     def action(self) -> dict[str, typing.Any]:
         isManaged = self._params.get('type') != consts.actor.UNMANAGED
         src = types.connections.ConnectionSource('', '')
-        deadLine = maxIdle = None
+        deadline = max_idle = None
         session_id = ''
 
         logger.debug('Login Args: %s,  Params: %s', self._args, self._params)
 
         try:
-            userService: UserService = self.getUserService()
-            osManager = Login.process_login(userService, self._params.get('username') or '')
+            userservice: UserService = self.get_userservice()
+            os_manager = Login.process_login(userservice, self._params.get('username') or '')
 
-            maxIdle = osManager.max_idle() if osManager else None
+            max_idle = os_manager.max_idle() if os_manager else None
 
-            logger.debug('Max idle: %s', maxIdle)
+            logger.debug('Max idle: %s', max_idle)
 
-            src = userService.getConnectionSource()
-            session_id = userService.start_session()  # creates a session for every login requested
+            src = userservice.getConnectionSource()
+            session_id = userservice.start_session()  # creates a session for every login requested
 
-            if osManager:  # For os managed services, let's check if we honor deadline
-                if osManager.ignore_deadline():
-                    deadLine = userService.deployed_service.get_deadline()
+            if os_manager:  # For os managed services, let's check if we honor deadline
+                if os_manager.ignore_deadline():
+                    deadline = userservice.deployed_service.get_deadline()
                 else:
-                    deadLine = None
+                    deadline = None
             else:  # For non os manager machines, process deadline as always
-                deadLine = userService.deployed_service.get_deadline()
+                deadline = userservice.deployed_service.get_deadline()
 
         except (
             Exception
         ):  # If unamanaged host, lest do a bit more work looking for a service with the provided parameters...
             if isManaged:
                 raise
-            self.notifyService(action=NotifyActionType.LOGIN)
+            self.notify_service(action=NotifyActionType.LOGIN)
 
         return ActorV3Action.actor_result(
             {
                 'ip': src.ip,
                 'hostname': src.hostname,
-                'dead_line': deadLine,
-                'max_idle': maxIdle,
+                'dead_line': deadline,  # Kept for compat, will be removed on 5.x
+                'deadline': deadline,
+                'max_idle': max_idle,
                 'session_id': session_id,
             }
         )
@@ -648,41 +649,41 @@ class Logout(ActorV3Action):
     name = 'logout'
 
     @staticmethod
-    def process_logout(userService: UserService, username: str, session_id: str) -> None:
+    def process_logout(userservice: UserService, username: str, session_id: str) -> None:
         """
         This method is static so can be invoked from elsewhere
         """
-        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        osManager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
 
         # Close session
         # For compat, we have taken '' as "all sessions"
-        userService.end_session(session_id)
+        userservice.end_session(session_id)
 
-        if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
-            osmanagers.OSManager.logged_out(userService, username)
+        if userservice.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
+            osmanagers.OSManager.logged_out(userservice, username)
             if osManager:
-                if osManager.is_removable_on_logout(userService):
+                if osManager.is_removable_on_logout(userservice):
                     logger.debug('Removable on logout: %s', osManager)
-                    userService.remove()
+                    userservice.remove()
             else:
-                userService.remove()
+                userservice.remove()
 
     def action(self) -> dict[str, typing.Any]:
-        isManaged = self._params.get('type') != consts.actor.UNMANAGED
+        is_managed = self._params.get('type') != consts.actor.UNMANAGED
 
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
         try:
-            userService: UserService = self.getUserService()  # if not exists, will raise an error
+            userservice: UserService = self.get_userservice()  # if not exists, will raise an error
             Logout.process_logout(
-                userService,
+                userservice,
                 self._params.get('username') or '',
                 self._params.get('session_id') or '',
             )
         # If unamanaged host, lets do a bit more work looking for a service with the provided parameters...
         except Exception:
-            if isManaged:
+            if is_managed:
                 raise
-            self.notifyService(NotifyActionType.LOGOUT)  # Logout notification
+            self.notify_service(NotifyActionType.LOGOUT)  # Logout notification
             # Result is that we have not processed the logout in fact, but notified the service
             return ActorV3Action.actor_result('notified')
 
@@ -698,14 +699,14 @@ class Log(ActorV3Action):
 
     def action(self) -> dict[str, typing.Any]:
         logger.debug('Args: %s,  Params: %s', self._args, self._params)
-        userService = self.getUserService()
-        if userService.actor_version < '4.0.0':
+        userservice = self.get_userservice()
+        if userservice.actor_version < '4.0.0':
             # Adjust loglevel to own, we start on 10000 for OTHER, and received is 0 for OTHER
             level = log.LogLevel.from_int(int(self._params['level']) + 10000)
         else:
             level = log.LogLevel.from_int(int(self._params['level']))
         log.log(
-            userService,
+            userservice,
             level,
             self._params['message'],
             log.LogSource.ACTOR,
@@ -766,53 +767,53 @@ class Unmanaged(ActorV3Action):
 
         # Build the possible ids and ask service if it recognizes any of it
         # If not recognized, will generate anyway the certificate, but will not be saved
-        idsList = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
-        validId: typing.Optional[str] = service.get_valid_id(idsList)
+        list_of_ids = [x['ip'] for x in self._params['id']] + [x['mac'] for x in self._params['id']][:10]
+        valid_id: typing.Optional[str] = service.get_valid_id(list_of_ids)
 
         # ensure idsLists has upper and lower versions for case sensitive databases
-        idsList = fixIdsList(idsList)
+        list_of_ids = fix_list_of_ids(list_of_ids)
 
         # Check if there is already an assigned user service
         # To notify it logout
-        userService: typing.Optional[UserService]
+        userservice: typing.Optional[UserService]
         try:
-            dbFilter = UserService.objects.filter(
-                unique_id__in=idsList,
+            db_filter = UserService.objects.filter(
+                unique_id__in=list_of_ids,
                 state__in=[State.USABLE, State.PREPARING],
             )
 
-            userService = next(
+            userservice = next(
                 iter(
-                    dbFilter.filter(
-                        unique_id__in=idsList,
+                    db_filter.filter(
+                        unique_id__in=list_of_ids,
                         state__in=[State.USABLE, State.PREPARING],
                     )
                 )
             )
         except StopIteration:
-            userService = None
+            userservice = None
 
         # Try to infer the ip from the valid id (that could be an IP or a MAC)
         ip: str
         try:
-            ip = next(x['ip'] for x in self._params['id'] if validId in (x['ip'], x['mac']))
+            ip = next(x['ip'] for x in self._params['id'] if valid_id in (x['ip'], x['mac']))
         except StopIteration:
             ip = self._params['id'][0]['ip']  # Get first IP if no valid ip found
 
         # Generates a certificate and send it to client (actor).
-        privateKey, certificate, password = security.create_self_signed_cert(ip)
+        private_key, certificate, password = security.create_self_signed_cert(ip)
 
-        if validId:
+        if valid_id:
             # If id is assigned to an user service, notify "logout" to it
-            if userService:
-                Logout.process_logout(userService, 'init', '')
+            if userservice:
+                Logout.process_logout(userservice, 'init', '')
             else:
                 # If it is not assgined to an user service, notify service
-                service.notify_initialization(validId)
+                service.notify_initialization(valid_id)
 
             # Store certificate, secret & port with service if validId
             service.store_id_info(
-                validId,
+                valid_id,
                 {
                     'cert': certificate,
                     'secret': self._params['secret'],
@@ -820,7 +821,7 @@ class Unmanaged(ActorV3Action):
                 },
             )
 
-        return ActorV3Action.actorCertResult(privateKey, certificate, password)
+        return ActorV3Action.actorCertResult(private_key, certificate, password)
 
 
 class Notify(ActorV3Action):
@@ -847,7 +848,7 @@ class Notify(ActorV3Action):
             elif action == NotifyActionType.LOGOUT:
                 Logout.action(typing.cast(Logout, self))
             elif action == NotifyActionType.DATA:
-                self.notifyService(action)
+                self.notify_service(action)
 
             return ActorV3Action.actor_result('ok')
         except UserService.DoesNotExist:

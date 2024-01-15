@@ -88,7 +88,7 @@ class LinuxOsADManager(LinuxOsManager):
             'Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'
         ),
     )
-    clientSoftware = gui.ChoiceField(
+    client_software = gui.ChoiceField(
         label=_('Client software'),
         order=5,
         tooltip=_('Use specific client software'),
@@ -100,7 +100,7 @@ class LinuxOsADManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    membershipSoftware = gui.ChoiceField(
+    membership_software = gui.ChoiceField(
         label=_('Membership software'),
         order=6,
         tooltip=_('Use specific membership software'),
@@ -112,7 +112,7 @@ class LinuxOsADManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    removeOnExit = gui.CheckBoxField(
+    remove_on_exit = gui.CheckBoxField(
         label=_('Machine clean'),
         order=7,
         tooltip=_(
@@ -128,7 +128,7 @@ class LinuxOsADManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    automaticIdMapping = gui.CheckBoxField(
+    automatic_id_mapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=9,
         tooltip=_('If checked, automatic ID mapping'),
@@ -136,10 +136,10 @@ class LinuxOsADManager(LinuxOsManager):
         default=True,
     )
 
-    # Inherits base "onLogout"
-    onLogout = LinuxOsManager.onLogout
+    # Inherits base "on_logout"
+    on_logout = LinuxOsManager.on_logout
     idle = LinuxOsManager.idle
-    deadLine = LinuxOsManager.deadLine
+    deadline = LinuxOsManager.deadline
 
     _domain: str
     _ou: str
@@ -154,6 +154,7 @@ class LinuxOsADManager(LinuxOsManager):
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
+        self._server_software = 'active-directory'  # Currently, fixed value
         if values:
             if values['domain'] == '':
                 raise exceptions.validation.ValidationError(_('Must provide a domain!'))
@@ -165,19 +166,17 @@ class LinuxOsADManager(LinuxOsManager):
             self._account = values['account']
             self._password = values['password']
             self._ou = values['ou'].strip()
-            self._client_software = values['clientSoftware']
-            self._server_software = 'active-directory'
-            self._membership_software = values['membershipSoftware']
-            self._remove_on_exit = 'y' if values['removeOnExit'] else 'n'
+            self._client_software = values['client_software']
+            self._membership_software = values['membership_software']
+            self._remove_on_exit = 'y' if values['remove_on_exit'] else 'n'
             self._ssl = 'y' if values['ssl'] else 'n'
-            self._automatic_id_mapping = 'y' if values['automaticIdMapping'] else 'n'
+            self._automatic_id_mapping = 'y' if values['automatic_id_mapping'] else 'n'
         else:
             self._domain = ''
             self._account = ''
             self._password = ''  # nosec: no encoded password
             self._ou = ''
             self._client_software = ''
-            self._server_software = 'active-directory'
             self._membership_software = ''
             self._remove_on_exit = 'n'
             self._ssl = 'n'
@@ -238,16 +237,15 @@ class LinuxOsADManager(LinuxOsManager):
             self._automatic_id_mapping = values[10]
         super().unmarshal(codecs.decode(values[11].encode(), 'hex'))
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
-        dct = super().get_dict_of_values()
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+        dct = super().get_dict_of_fields_values()
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password
         dct['ou'] = self._ou
-        dct['clientSoftware'] = self._client_software
-        dct['serverSoftware'] = self._server_software
-        dct['membershipSoftware'] = self._membership_software
-        dct['removeOnExit'] = self._remove_on_exit == 'y'
+        dct['client_software'] = self._client_software
+        dct['membership_software'] = self._membership_software
+        dct['remove_on_exit'] = self._remove_on_exit == 'y'
         dct['ssl'] = self._ssl == 'y'
-        dct['automaticIdMapping'] = self._automatic_id_mapping == 'y'
+        dct['automatic_id_mapping'] = self._automatic_id_mapping == 'y'
         return dct

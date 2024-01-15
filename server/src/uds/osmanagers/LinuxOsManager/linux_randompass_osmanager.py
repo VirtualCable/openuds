@@ -48,6 +48,8 @@ logger = logging.getLogger(__name__)
 
 if typing.TYPE_CHECKING:
     from uds.models.user_service import UserService
+    from uds.core.environment import Environment
+    from uds.core.module import Module
 
 
 class LinuxRandomPassManager(LinuxOsManager):
@@ -59,7 +61,7 @@ class LinuxRandomPassManager(LinuxOsManager):
     icon_file = 'losmanager.png'
 
     # Apart form data from linux os manager, we need also domain and credentials
-    userAccount = gui.TextField(
+    user_account = gui.TextField(
         length=64,
         label=_('Account'),
         order=2,
@@ -67,21 +69,21 @@ class LinuxRandomPassManager(LinuxOsManager):
         required=True,
     )
 
-    # Inherits base "onLogout"
-    onLogout = LinuxOsManager.onLogout
+    # Inherits base "on_logout"
+    on_logout = LinuxOsManager.on_logout
     idle = LinuxOsManager.idle
-    deadLine = LinuxOsManager.deadLine
+    deadline = LinuxOsManager.deadline
 
     _user_account: str
 
-    def __init__(self, environment, values):
+    def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
         if values is not None:
-            if values['userAccount'] == '':
+            if values['user_account'] == '':
                 raise exceptions.validation.ValidationError(
                     _('Must provide an user account!!!')
                 )
-            self._user_account = values['userAccount']
+            self._user_account = values['user_account']
         else:
             self._user_account = ''
 
@@ -89,17 +91,17 @@ class LinuxRandomPassManager(LinuxOsManager):
         self, userService: 'UserService', username: str, password: str
     ) -> tuple[str, str]:
         if username == self._user_account:
-            return (username, userService.recoverValue('linOsRandomPass'))
+            return (username, userService.recover_value('linOsRandomPass'))
         return username, password
 
     def gen_random_password(self, service: 'UserService') -> str:
-        randomPass = service.recoverValue('linOsRandomPass')
+        randomPass = service.recover_value('linOsRandomPass')
         if randomPass is None:
             randomPass = ''.join(
                 random.SystemRandom().choice(string.ascii_letters + string.digits)
                 for _ in range(16)
             )
-            service.storeValue('linOsRandomPass', randomPass)
+            service.store_value('linOsRandomPass', randomPass)
             log.log(
                 service,
                 log.LogLevel.INFO,
@@ -144,7 +146,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             self._user_account = values[1].decode()
             LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
-        dic = LinuxOsManager.get_dict_of_values(self)
-        dic['userAccount'] = self._user_account
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+        dic = LinuxOsManager.get_dict_of_fields_values(self)
+        dic['user_account'] = self._user_account
         return dic

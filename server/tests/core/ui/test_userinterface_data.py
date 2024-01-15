@@ -151,7 +151,7 @@ class UserinterfaceInternalTest(UDSTestCase):
     def test_valuesDict(self):
         ui = TestingUserInterface()
         self.assertEqual(
-            ui.get_dict_of_values(),
+            ui.get_dict_of_fields_values(),
             {
                 'str_field': DEFAULTS['str_field'],
                 'str_auto_field': DEFAULTS['str_auto_field'],

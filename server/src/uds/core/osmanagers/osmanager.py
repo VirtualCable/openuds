@@ -66,8 +66,8 @@ class OSManager(Module):
     icon_file = 'osmanager.png'
 
     # If true, this os manager  will be invoked with every user service assigned, but not used
-    # The interval is defined as a global config
-    processUnusedMachines: bool = False
+    # This is an object variable, so it can be overriden on derived classes on runtime
+    handles_unused_userservices: bool = False
 
     # : Type of services for which this OS Manager is designed
     # : Defaults to all. (list or tuple)
@@ -93,7 +93,7 @@ class OSManager(Module):
         Default implementation does nothing
         """
 
-    def release(self, userService: 'UserService') -> None:
+    def release(self, userservice: 'UserService') -> None:
         """
         Called by a service that is in Usable state before destroying it so osmanager can release data associated with it
         Only invoked for services that reach the state "removed"
@@ -102,7 +102,7 @@ class OSManager(Module):
 
     # These methods must be overriden
     def actor_data(
-        self, userService: 'UserService'  # pylint: disable=unused-argument
+        self, userservice: 'UserService'  # pylint: disable=unused-argument
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         """
         This method provides information to actor, so actor can complete os configuration.
@@ -144,7 +144,7 @@ class OSManager(Module):
         """
         return {}
 
-    def check_state(self, userService: 'UserService') -> str:  # pylint: disable=unused-argument
+    def check_state(self, userservice: 'UserService') -> str:  # pylint: disable=unused-argument
         """
         This method must be overriden so your os manager can respond to requests from system to the current state of the service
         This method will be invoked when:
@@ -157,13 +157,14 @@ class OSManager(Module):
         """
         return State.FINISHED
 
-    def process_unused(self, userService: 'UserService') -> None:
+    def handle_unused(self, userservice: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-
-    def is_removable_on_logout(self, userService: 'UserService') -> bool:  # pylint: disable=unused-argument
+        pass
+    
+    def is_removable_on_logout(self, userservice: 'UserService') -> bool:  # pylint: disable=unused-argument
         """
         If returns true, when actor notifies "logout", UDS will mark service for removal
         can be overriden
@@ -190,7 +191,7 @@ class OSManager(Module):
 
     def process_user_password(
         self,
-        userService: 'UserService',  # pylint: disable=unused-argument
+        userservice: 'UserService',  # pylint: disable=unused-argument
         username: str,
         password: str,
     ) -> tuple[str, str]:
@@ -227,42 +228,42 @@ class OSManager(Module):
         self.ready_notified(userService)
 
     @staticmethod
-    def logged_in(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def logged_in(userservice: 'UserService', username: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         """
-        uniqueId = userService.unique_id
-        userService.setInUse(True)
-        userService.properties['last_username'] = userName or 'unknown'  # Store it for convenience
-        userServiceInstance = userService.get_instance()
-        userServiceInstance.user_logged_in(userName or 'unknown')
-        userService.update_data(userServiceInstance)
+        uniqueId = userservice.unique_id
+        userservice.setInUse(True)
+        userservice.properties['last_username'] = username or 'unknown'  # Store it for convenience
+        userServiceInstance = userservice.get_instance()
+        userServiceInstance.user_logged_in(username or 'unknown')
+        userservice.update_data(userServiceInstance)
 
         serviceIp = userServiceInstance.get_ip()
 
-        fullUserName = userService.user.pretty_name if userService.user else 'unknown'
+        fullUserName = userservice.user.pretty_name if userservice.user else 'unknown'
 
-        knownUserIP = userService.src_ip + ':' + userService.src_hostname
+        knownUserIP = userservice.src_ip + ':' + userservice.src_hostname
         knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
 
-        userName = userName or 'unknown'
+        username = username or 'unknown'
 
         add_event(
-            userService.deployed_service,
+            userservice.deployed_service,
             types.stats.EventType.LOGIN,
-            fld1=userName,
+            fld1=username,
             fld2=knownUserIP,
             fld3=serviceIp,
             fld4=fullUserName,
         )
 
         log.log(
-            userService,
+            userservice,
             log.LogLevel.INFO,
-            f'User {userName} has logged in',
+            f'User {username} has logged in',
             log.LogSource.OSMANAGER,
         )
 
@@ -270,27 +271,27 @@ class OSManager(Module):
             'login',
             uniqueId,
             serviceIp,
-            userName,
+            username,
             knownUserIP,
             fullUserName,
-            userService.friendly_name,
-            userService.deployed_service.name,
+            userservice.friendly_name,
+            userservice.deployed_service.name,
         )
 
         # Context makes a transaction, so we can use it to update the counter
-        with userService.properties as p:
+        with userservice.properties as p:
             counter = int(typing.cast(str, p.get('logins_counter', 0))) + 1
             p['logins_counter'] = counter
 
     @staticmethod
-    def logged_out(userService: 'UserService', userName: typing.Optional[str] = None) -> None:
+    def logged_out(userservice: 'UserService', username: typing.Optional[str] = None) -> None:
         """
         This method:
           - Add log in event to stats
           - Sets service in use
           - Invokes userLoggedIn for user service instance
         """
-        with userService.properties as p:
+        with userservice.properties as p:
             counter = int(typing.cast(str, p.get('logins_counter', 0))) - 1
             if counter > 0:
                 counter -= 1
@@ -299,49 +300,49 @@ class OSManager(Module):
         if GlobalConfig.EXCLUSIVE_LOGOUT.as_bool(True) and counter > 0:
             return
 
-        uniqueId = userService.unique_id
-        userService.setInUse(False)
-        userServiceInstance = userService.get_instance()
-        userServiceInstance.user_logged_out(userName or 'unknown')
-        userService.update_data(userServiceInstance)
+        unique_id = userservice.unique_id
+        userservice.setInUse(False)
+        user_service_instance = userservice.get_instance()
+        user_service_instance.user_logged_out(username or 'unknown')
+        userservice.update_data(user_service_instance)
 
-        serviceIp = userServiceInstance.get_ip()
+        service_ip = user_service_instance.get_ip()
 
-        fullUserName = userService.user.pretty_name if userService.user else 'unknown'
+        full_username = userservice.user.pretty_name if userservice.user else 'unknown'
 
-        knownUserIP = userService.src_ip + ':' + userService.src_hostname
-        knownUserIP = knownUserIP if knownUserIP != ':' else 'unknown'
+        known_user_ip = userservice.src_ip + ':' + userservice.src_hostname
+        known_user_ip = known_user_ip if known_user_ip != ':' else 'unknown'
 
-        userName = userName or 'unknown'
+        username = username or 'unknown'
 
         add_event(
-            userService.deployed_service,
+            userservice.deployed_service,
             types.stats.EventType.LOGOUT,
-            fld1=userName,
-            fld2=knownUserIP,
-            fld3=serviceIp,
-            fld4=fullUserName,
+            fld1=username,
+            fld2=known_user_ip,
+            fld3=service_ip,
+            fld4=full_username,
         )
 
         log.log(
-            userService,
+            userservice,
             log.LogLevel.INFO,
-            f'User {userName} has logged out',
+            f'User {username} has logged out',
             log.LogSource.OSMANAGER,
         )
 
         log.log_use(
             'logout',
-            uniqueId,
-            serviceIp,
-            userName,
-            knownUserIP,
-            fullUserName,
-            userService.friendly_name,
-            userService.deployed_service.name,
+            unique_id,
+            service_ip,
+            username,
+            known_user_ip,
+            full_username,
+            userservice.friendly_name,
+            userservice.deployed_service.name,
         )
 
-    def ready_notified(self, userService: 'UserService') -> None:
+    def ready_notified(self, userservice: 'UserService') -> None:
         """
         Invoked by actor when userService is ready
         """

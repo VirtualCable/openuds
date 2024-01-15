@@ -50,7 +50,7 @@ class WindowsOsManager(osmanagers.OSManager):
     icon_file = 'wosmanager.png'
     servicesType = serviceTypes.VDI
 
-    onLogout = gui.ChoiceField(
+    on_logout = gui.ChoiceField(
         label=_('Logout Action'),
         order=10,
         readonly=True,
@@ -78,7 +78,7 @@ class WindowsOsManager(osmanagers.OSManager):
         required=True,
     )
 
-    deadLine = gui.CheckBoxField(
+    deadline = gui.CheckBoxField(
         label=_('Calendar logout'),
         order=90,
         tooltip=_(
@@ -106,21 +106,21 @@ class WindowsOsManager(osmanagers.OSManager):
             )
         return length
 
-    def __setProcessUnusedMachines(self):
-        self.processUnusedMachines = self._on_logout == 'remove'
+    def _set_handles_unused(self):
+        self.handles_unused_userservices = self._on_logout == 'remove'
 
     def __init__(self, environment, values):
         super().__init__(environment, values)
         if values is not None:
-            self._on_logout = values['onLogout']
+            self._on_logout = values['on_logout']
             self._idle = int(values['idle'])
-            self._deadline = gui.as_bool(values['deadLine'])
+            self._deadline = gui.as_bool(values['deadline'])
         else:
             self._on_logout = ''
             self._idle = -1
             self._deadline = True
 
-        self.__setProcessUnusedMachines()
+        self._set_handles_unused()
 
     def is_removable_on_logout(self, userService: 'UserService') -> bool:
         """
@@ -186,26 +186,26 @@ class WindowsOsManager(osmanagers.OSManager):
             self, userService, username, password
         )
 
-    def process_unused(self, userService: 'UserService') -> None:
+    def handle_unused(self, userservice: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removable_on_logout(userService):
+        if self.is_removable_on_logout(userservice):
             log.log(
-                userService,
+                userservice,
                 log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
                 log.LogSource.OSMANAGER,
             )
-            userService.remove()
+            userservice.remove()
 
     def is_persistent(self):
         return self._on_logout == 'keep-always'
 
-    def check_state(self, userService: 'UserService') -> str:
+    def check_state(self, userservice: 'UserService') -> str:
         # will alway return true, because the check is done by an actor callback
-        logger.debug('Checking state for service %s', userService)
+        logger.debug('Checking state for service %s', userservice)
         return State.RUNNING
 
     def max_idle(self):
@@ -214,7 +214,7 @@ class WindowsOsManager(osmanagers.OSManager):
         """
         if (
             self._idle <= 0
-        ):  # or (settings.DEBUG is False and self._onLogout != 'remove'):
+        ):  # or (settings.DEBUG is False and self._on_logout != 'remove'):
             return None
 
         return self._idle
@@ -247,11 +247,11 @@ class WindowsOsManager(osmanagers.OSManager):
                 'Exception unmarshalling. Some values left as default ones'
             )
 
-        self.__setProcessUnusedMachines()
+        self._set_handles_unused()
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_fields_values(self) -> 'gui.ValuesDictType':
         return {
-            'onLogout': self._on_logout,
+            'on_logout': self._on_logout,
             'idle': str(self._idle),
-            'deadLine': gui.from_bool(self._deadline),
+            'deadline': gui.from_bool(self._deadline),
         }

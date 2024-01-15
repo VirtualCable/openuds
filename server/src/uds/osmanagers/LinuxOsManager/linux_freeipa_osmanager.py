@@ -80,7 +80,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         tooltip=_('Password of the account'),
         required=True,
     )
-    clientSoftware = gui.ChoiceField(
+    client_software = gui.ChoiceField(
         label=_('Client software'),
         order=4,
         tooltip=_('Use specific client software'),
@@ -92,7 +92,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    membershipSoftware = gui.ChoiceField(
+    membership_software = gui.ChoiceField(
         label=_('Membership software'),
         order=5,
         tooltip=_('Use specific membership software'),
@@ -104,7 +104,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
     )
-    removeOnExit = gui.CheckBoxField(
+    remove_on_exit = gui.CheckBoxField(
         label=_('Machine clean'),
         order=6,
         tooltip=_(
@@ -120,7 +120,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    automaticIdMapping = gui.CheckBoxField(
+    automatic_id_mapping = gui.CheckBoxField(
         label=_('Automatic ID mapping'),
         order=8,
         tooltip=_('If checked, automatic ID mapping'),
@@ -129,9 +129,9 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
     )
 
     # Inherits base "fields"
-    onLogout = LinuxOsManager.onLogout
+    on_logout = LinuxOsManager.on_logout
     idle = LinuxOsManager.idle
-    deadLine = LinuxOsManager.deadLine
+    deadline = LinuxOsManager.deadline
 
     _domain: str
     _account: str
@@ -145,6 +145,7 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
 
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
+        self._server_software = 'ipa'  # Currently fixed to IPA
         if values:
             if values['domain'] == '':
                 raise exceptions.validation.ValidationError(_('Must provide a domain!'))
@@ -155,18 +156,16 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             self._domain = values['domain']
             self._account = values['account']
             self._password = values['password']
-            self._client_software = values['clientSoftware']
-            self._server_software = 'ipa'
-            self._membership_software = values['membershipSoftware']
-            self._remove_on_exit = 'y' if values['removeOnExit'] else 'n'
+            self._client_software = values['client_software']
+            self._membership_software = values['membership_software']
+            self._remove_on_exit = 'y' if values['remove_on_exit'] else 'n'
             self._ssl = 'y' if values['ssl'] else 'n'
-            self._automatic_id_mapping = 'y' if values['automaticIdMapping'] else 'n'
+            self._automatic_id_mapping = 'y' if values['automatic_id_mapping'] else 'n'
         else:
             self._domain = ''
             self._account = ''
             self._password = ''  # nosec: no encoded password
             self._client_software = ''
-            self._server_software = 'ipa'
             self._membership_software = ''
             self._remove_on_exit = 'n'
             self._ssl = 'n'
@@ -224,15 +223,14 @@ class LinuxOsFreeIPAManager(LinuxOsManager):
             self._automatic_id_mapping = values[9]
         super().unmarshal(codecs.decode(values[10].encode(), 'hex'))
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
-        dct = super().get_dict_of_values()
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+        dct = super().get_dict_of_fields_values()
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password
-        dct['clientSoftware'] = self._client_software
-        dct['serverSoftware'] = self._server_software
-        dct['membershipSoftware'] = self._membership_software
-        dct['removeOnExit'] = self._remove_on_exit == 'y'
+        dct['client_software'] = self._client_software
+        dct['membership_software'] = self._membership_software
+        dct['remove_on_exit'] = self._remove_on_exit == 'y'
         dct['ssl'] = self._ssl == 'y'
-        dct['automaticIdMapping'] = self._automatic_id_mapping == 'y'
+        dct['automatic_id_mapping'] = self._automatic_id_mapping == 'y'
         return dct

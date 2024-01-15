@@ -1387,7 +1387,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                of this posibility in a near version...
         """
 
-    def get_dict_of_values(self) -> gui.ValuesDictType:
+    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
         """
         Returns own data needed for user interaction as a dict of key-names ->
         values. The values returned must be strings.

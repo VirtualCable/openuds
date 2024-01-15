@@ -75,7 +75,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
     {
         'ip': 'ip of connection origin',
         'hostname': 'hostname of connection origin',
-        'dead_line': 'dead line of service',  # The point in time when the service will be automatically removed, optional (None if not set)
+        'deadline': 'dead line of service',  # The point in time when the service will be automatically removed, optional (None if not set)
         'max_idle': 'max idle time of service',  # The max time the service can be idle before being removed, optional (None if not set)
         'session_id': 'session id',  # The session id assigned to this login
         'ticket': 'ticket if any' # optional
@@ -99,7 +99,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
     src = userService.getConnectionSource()
     session_id = userService.start_session()  # creates a session for every login requested
 
-    osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+    osManager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
     maxIdle = osManager.max_idle() if osManager else None
 
     logger.debug('Max idle: %s', maxIdle)
@@ -111,7 +111,7 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
         'ip': src.ip,
         'hostname': src.hostname,
         'session_id': session_id,
-        'dead_line': deadLine,  # Can be None
+        'deadline': deadLine,  # For compatibility with old clients
         'max_idle': maxIdle,  # Can be None
     }
     # If ticket is included, add it to result (the content of the ticket, not the ticket id itself)
@@ -138,7 +138,7 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
 
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
         osmanagers.OSManager.logged_out(userService, data['username'])
-        osManager: typing.Optional[osmanagers.OSManager] = userService.getOsManagerInstance()
+        osManager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
         if not osManager or osManager.is_removable_on_logout(userService):
             logger.debug('Removable on logout: %s', osManager)
             userService.remove()

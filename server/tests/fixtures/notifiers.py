@@ -60,9 +60,9 @@ def createEmailNotifier(
     )
     instance.username.value = username or ''
     instance.password.value = password or ''
-    instance.fromEmail.value = fromEmail or 'from@email.com'
-    instance.toEmail.value = toEmail or 'to@email.com'
-    instance.enableHTML.value = enableHtml
+    instance.from_email.value = fromEmail or 'from@email.com'
+    instance.to_email.value = toEmail or 'to@email.com'
+    instance.enable_html.value = enableHtml
     instance.security.value = security or 'none'
     # Save
     notifier.data = instance.serialize()

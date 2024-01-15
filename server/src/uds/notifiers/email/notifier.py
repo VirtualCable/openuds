@@ -111,30 +111,33 @@ class EmailNotifier(messaging.Notifier):
         tab=_('SMTP Server'),
     )
 
-    fromEmail = gui.TextField(
+    from_email = gui.TextField(
         length=128,
         label=_('From Email'),
         order=11,
         tooltip=_('Email address that will be used as sender'),
         required=True,
         tab=_('Config'),
+        stored_field_name='fromEmail'
     )
 
-    toEmail = gui.TextField(
+    to_email = gui.TextField(
         length=128,
         label=_('To Email'),
         order=12,
         tooltip=_('Email address that will be used as recipient'),
         required=True,
         tab=_('Config'),
+        stored_field_name='toEmail'
     )
 
-    enableHTML = gui.CheckBoxField(
+    enable_html = gui.CheckBoxField(
         label=_('Enable HTML'),
         order=13,
         tooltip=_('Enable HTML in emails'),
         default=True,
         tab=_('Config'),
+        stored_field_name='enableHTML'
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):
@@ -160,8 +163,8 @@ class EmailNotifier(messaging.Notifier):
             self.hostname.value = validators.validate_fqdn(host)
 
         # now check from email and to email
-        self.fromEmail.value = validators.validate_email(self.fromEmail.value)
-        self.toEmail.value = validators.validate_email(self.toEmail.value)
+        self.from_email.value = validators.validate_email(self.from_email.value)
+        self.to_email.value = validators.validate_email(self.to_email.value)
 
         # Done
 
@@ -172,18 +175,18 @@ class EmailNotifier(messaging.Notifier):
                 # Create message container
                 msg = MIMEMultipart('alternative')
                 msg['Subject'] = f'{group} - {identificator}'
-                msg['From'] = self.fromEmail.value
-                msg['To'] = self.toEmail.value
+                msg['From'] = self.from_email.value
+                msg['To'] = self.to_email.value
 
                 part1 = MIMEText(message, 'plain')
                 part2 = MIMEText(message, 'html')
 
                 msg.attach(part1)
 
-                if self.enableHTML.value:
+                if self.enable_html.value:
                     msg.attach(part2)
 
-                smtp.sendmail(self.fromEmail.value, self.toEmail.value, msg.as_string())
+                smtp.sendmail(self.from_email.value, self.to_email.value, msg.as_string())
             except smtplib.SMTPException as e:
                 logger.error('Error sending email: %s', e)
 

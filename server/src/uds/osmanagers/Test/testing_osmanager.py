@@ -57,7 +57,7 @@ class TestOSManager(osmanagers.OSManager):
 
     servicesType = types.services.ServiceType.VDI
 
-    onLogout = gui.ChoiceField(
+    on_logout = gui.ChoiceField(
         label=_('Logout Action'),
         order=10,
         readonly=True,
@@ -86,7 +86,7 @@ class TestOSManager(osmanagers.OSManager):
     )
 
     def initialize(self, values: 'Module.ValuesType'):
-        self.processUnusedMachines = True
+        self.handles_unused_userservices = True
 
     def release(self, userService: 'UserService') -> None:
         logger.debug('User service %s released', userService)
@@ -96,8 +96,8 @@ class TestOSManager(osmanagers.OSManager):
         Says if a machine is removable on logout
         '''
         if not userService.in_use:
-            if (self.onLogout.value == 'remove') or (
-                not userService.check_publication_validity() and self.onLogout.value == 'keep'
+            if (self.on_logout.value == 'remove') or (
+                not userService.check_publication_validity() and self.on_logout.value == 'keep'
             ):
                 return True
 
@@ -127,22 +127,22 @@ class TestOSManager(osmanagers.OSManager):
     ) -> collections.abc.MutableMapping[str, typing.Any]:
         return {'action': 'rename', 'name': userService.get_name()}
 
-    def process_unused(self, userService: 'UserService') -> None:
+    def handle_unused(self, userservice: 'UserService') -> None:
         """
         This will be invoked for every assigned and unused user service that has been in this state at least 1/2 of Globalconfig.CHECK_UNUSED_TIME
         This function can update userService values. Normal operation will be remove machines if this state is not valid
         """
-        if self.is_removable_on_logout(userService):
+        if self.is_removable_on_logout(userservice):
             log.log(
-                userService,
+                userservice,
                 log.LogLevel.INFO,
                 'Unused user service for too long. Removing due to OS Manager parameters.',
                 log.LogSource.OSMANAGER,
             )
-            userService.remove()
+            userservice.remove()
 
     def is_persistent(self):
-        return self.onLogout.value == 'keep-always'
+        return self.on_logout.value == 'keep-always'
 
     def check_state(self, userService: 'UserService') -> str:
         logger.debug('Checking state for service %s', userService)
@@ -154,7 +154,7 @@ class TestOSManager(osmanagers.OSManager):
         """
         if (
             self.idle.value <= 0
-        ):  # or (settings.DEBUG is False and self._onLogout != 'remove'):
+        ):  # or (settings.DEBUG is False and self.on_logout != 'remove'):
             return None
 
         return self.idle.value
