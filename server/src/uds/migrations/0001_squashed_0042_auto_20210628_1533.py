@@ -640,10 +640,6 @@ class Migration(migrations.Migration):
             name='last_execution',
             field=models.DateTimeField(auto_now_add=True, db_index=True),
         ),
-        migrations.AlterIndexTogether(
-            name='userservice',
-            index_together={('deployed_service', 'cache_level', 'state')},
-        ),
         migrations.CreateModel(
             name='Tag',
             fields=[
@@ -1087,10 +1083,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='userserviceproperty',
             unique_together=set(),
-        ),
-        migrations.AlterIndexTogether(
-            name='userservice',
-            index_together=set(),
         ),
         migrations.AddIndex(
             model_name='statscounters',
