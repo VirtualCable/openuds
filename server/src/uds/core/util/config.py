@@ -186,9 +186,9 @@ class Config:
                 elif not self._crypt:
                     self.set(self._default)
                 self._data = self._default
-            except Exception as e:
+            except Exception as e:  # On migration, this could happen
                 logger.info('Error accessing db config %s.%s', self._section.name(), self._key)
-                logger.exception(e)
+                # logger.exception(e)
                 self._data = self._default
 
             if self._crypt:
