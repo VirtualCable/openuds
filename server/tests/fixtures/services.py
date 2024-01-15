@@ -169,8 +169,8 @@ def createTransport() -> models.Transport:
     from uds.transports.Test import TestTransport
 
     values = {
-        'testURL': 'http://www.udsenterprise.com',
-        'forceNewWindow': True,
+        'test_url': 'http://www.udsenterprise.com',
+        'force_new_window': True,
     }
     transport: 'models.Transport' = models.Transport.objects.create(
         name='Transport %d' % (glob['transport_id']),

@@ -1505,11 +1505,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         arr = _unserialize(values)
 
         # Dict of translations from stored_field_name to field_name
-        field_names_translations: dict[str, str] = {}
-        for fld_name, fld in self._gui.items():
-            fld_stored_field_name = fld.stored_field_name()
-            if fld_stored_field_name and fld_stored_field_name != fld_name:
-                field_names_translations[fld_stored_field_name] = fld_name
+        field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
         # Set all values to defaults ones
         for fld_name in self._gui:
@@ -1647,3 +1643,15 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 found_errors.append(UserInterface.ValidationFieldInfo(key, 'Field is not valid'))
 
         return found_errors
+
+    def _get_fieldname_translations(self) -> dict[str, str]:
+        # Dict of translations from stored_field_name to field_name
+        field_names_translations: dict[str, str] = {}
+        for fld_name, fld in self._gui.items():
+            fld_stored_field_name = fld.stored_field_name()
+            if fld_stored_field_name and fld_stored_field_name != fld_name:
+                field_names_translations[fld_stored_field_name] = fld_name
+                
+        return field_names_translations
+
+        

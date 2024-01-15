@@ -29,24 +29,28 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
+import enum
+import logging
 import sys
 import typing
-import collections.abc
-import logging
-import enum
 
 from django.apps import apps
-from django.utils.translation import gettext_lazy as _, gettext
-from uds.models.config import Config as DBConfig
+from django.db.models import signals
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+
 from uds.core.managers.crypto import CryptoManager
+from uds.models.config import Config as DBConfig
 
 logger = logging.getLogger(__name__)
 
-_saveLater: list[tuple['Config.Value', typing.Any]] = []
-_getLater: list['Config.Value'] = []
+_for_saving_later: list[tuple['Config.Value', typing.Any]] = []
+_for_recovering_later: list['Config.Value'] = []
+_is_migrating: bool = False
 
 # For custom params (for choices mainly)
-_configParams: dict[str, typing.Any] = {}
+_config_params: dict[str, typing.Any] = {}
 
 # Pair of section/value removed from current UDS version
 # Note: As of version 4.0, all previous REMOVED values has been moved to migration script 0043
@@ -153,12 +157,12 @@ class Config:
             logger.debug(self)
 
         def get(self, force: bool = False) -> str:
-            if apps.ready:
+            if apps.ready and _is_migrating is False:
                 if not GlobalConfig.isInitialized():
                     logger.debug('Initializing configuration & updating db values')
                     GlobalConfig.initialize()
             else:
-                _getLater.append(self)
+                _for_recovering_later.append(self)
                 return self._default
 
             try:
@@ -196,7 +200,7 @@ class Config:
             return typing.cast(str, self._data)
 
         def set_params(self, params: typing.Any) -> None:
-            _configParams[self._section.name() + self._key] = params
+            _config_params[self._section.name() + self._key] = params
 
         def as_int(self, force: bool = False) -> int:
             try:
@@ -238,14 +242,14 @@ class Config:
             return self._type
 
         def get_params(self) -> typing.Any:
-            return _configParams.get(self._section.name() + self._key, None)
+            return _config_params.get(self._section.name() + self._key, None)
 
         def get_help(self) -> str:
             return gettext(self._help)
 
         def set(self, value: typing.Union[str, bool, int]) -> None:
-            if GlobalConfig.isInitialized() is False:
-                _saveLater.append((self, value))
+            if GlobalConfig.isInitialized() is False or _is_migrating is True:
+                _for_saving_later.append((self, value))
                 return
 
             if isinstance(value, bool):
@@ -797,19 +801,33 @@ class GlobalConfig:
                         v.get()
                         logger.debug('Initialized global config value %s=%s', v.key(), v.get())
 
-                for c in _getLater:
+                for c in _for_recovering_later:
                     logger.debug('Get later: %s', c)
                     c.get()
 
-                _getLater[:] = []
+                _for_recovering_later[:] = []
 
-                for c, v in _saveLater:
+                for c, v in _for_saving_later:
                     logger.debug('Saving delayed value: %s', c)
                     c.set(v)
-                _saveLater[:] = []
+                _for_saving_later[:] = []
 
                 # Process some global config parameters
                 # GlobalConfig.UDS_THEME.setParams(['html5', 'semantic'])
 
             except Exception:
                 logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
+
+# Signals for avoid saving config values on migrations
+def _pre_migrate(sender, **kwargs):
+    # logger.info('Migrating database, AVOID saving config values')
+    global _is_migrating
+    _is_migrating = True
+    
+def _post_migrate(sender, **kwargs):
+    # logger.info('Migration DONE, ALLOWING saving config values')
+    global _is_migrating
+    _is_migrating = False
+    
+signals.pre_migrate.connect(_pre_migrate)
+signals.post_migrate.connect(_post_migrate)
