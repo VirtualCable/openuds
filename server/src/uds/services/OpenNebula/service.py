@@ -150,7 +150,7 @@ class LiveService(services.Service):
             return
 
         self.baseName.value = validators.validate_basename(
-            self.baseName.value, length=self.lenName.num()
+            self.baseName.value, length=self.lenName.as_int()
         )
 
     def parent(self) -> 'OpenNebulaProvider':
@@ -300,7 +300,7 @@ class LiveService(services.Service):
         """
         return self.parent().getNetInfo(machineId, networkId=None)
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         """
         Returns the base name
         """
@@ -310,7 +310,7 @@ class LiveService(services.Service):
         """
         Returns the length of numbers part
         """
-        return self.lenName.num()
+        return self.lenName.as_int()
 
     def getConsoleConnection(self, machineId: str) -> dict[str, typing.Any]:
         return self.parent().getConsoleConnection(machineId)

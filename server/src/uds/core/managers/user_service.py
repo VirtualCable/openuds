@@ -195,7 +195,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Creates a new assigned deployed service for the current publication (if any) of service pool and user indicated
         """
-        # First, honor maxPreparingServices
+        # First, honor max_preparing_services
         if self.can_grow_service_pool(service_pool) is False:
             # Cannot create new
             operationsLogger.info(

@@ -247,4 +247,4 @@ class Provider(services.ServiceProvider):
         """
         Another sample return, it will in fact return the Methuselah years
         """
-        return self.methAge.num()
+        return self.methAge.as_int()

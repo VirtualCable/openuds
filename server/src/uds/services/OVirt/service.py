@@ -223,7 +223,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validate_basename(self.baseName.value, self.lenName.num())
+            validators.validate_basename(self.baseName.value, self.lenName.as_int())
             if int(self.memory.value) < 256 or int(self.memoryGuaranteed.value) < 256:
                 raise exceptions.validation.ValidationError(
                     _('The minimum allowed memory is 256 Mb')
@@ -275,10 +275,10 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         info = self.parent().getStorageInfo(self.datastore.value)
         logger.debug('Datastore Info: %s', info)
         availableGB = info['available'] / (1024 * 1024 * 1024)
-        if availableGB < self.minSpaceGB.num():
+        if availableGB < self.minSpaceGB.as_int():
             raise Exception(
                 'Not enough free space available: (Needs at least {0} GB and there is only {1} GB '.format(
-                    self.minSpaceGB.num(), availableGB
+                    self.minSpaceGB.as_int(), availableGB
                 )
             )
 
@@ -442,7 +442,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         """
         return self.parent().getMacRange()
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         """
         Returns the base name
         """

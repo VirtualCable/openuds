@@ -47,24 +47,27 @@ from uds.core.util import modfinder
 
 logger = logging.getLogger(__name__)
 
-availableReports: list[type['reports.Report']] = []
+available_reports: list[type['reports.Report']] = []
 
 
-def __loadModules() -> None:
+def __load_modules() -> None:
     """
     This imports all packages that are descendant of this package, and, after that,
     """
-    alreadyAdded: typing.Set[str] = set()
+    already_seen: typing.Set[str] = set()
 
-    def addReportCls(cls: type[reports.Report]) -> None:
-        alreadyAdded.add(cls.uuid)
-        availableReports.append(cls)
+    def _add_report_class(cls: type[reports.Report]) -> None:
+        already_seen.add(cls.uuid)
+        available_reports.append(cls)
+        
+    def _checker(cls: type[reports.Report]) -> bool:
+        return bool(cls.uuid) and cls.uuid not in already_seen
 
     modfinder.dynamically_load_and_register_packages(
-        addReportCls,
+        _add_report_class,
         reports.Report,
         __name__,
-        checker=lambda x: x.uuid and x.uuid not in alreadyAdded,  # type: ignore
+        checker=_checker,
     )
 
-__loadModules()
+__load_modules()

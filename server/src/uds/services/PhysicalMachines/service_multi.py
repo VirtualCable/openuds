@@ -181,8 +181,8 @@ class IPMachinesService(IPServiceBase):
 
         self._token = self.token.value.strip()
         self._port = self.port.value
-        self._skipTimeOnFailure = self.skipTimeOnFailure.num()
-        self._maxSessionForMachine = self.maxSessionForMachine.num()
+        self._skipTimeOnFailure = self.skipTimeOnFailure.as_int()
+        self._maxSessionForMachine = self.maxSessionForMachine.as_int()
         self._lockByExternalAccess = self.lockByExternalAccess.as_bool()
         self._useRandomIp = self.useRandomIp.as_bool()
 

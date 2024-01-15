@@ -113,13 +113,13 @@ class ServiceProvider(module.Module):
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     # : Note: This cannot be renamed with out a "migration", because it's used at database
-    maxPreparingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
+    max_preparing_services: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     # : Note: This cannot be renamed with out a "migration", because it's used at database
-    maxRemovingServices: typing.Optional[typing.Union[int, gui.InputField]] = None
+    max_removing_services: typing.Optional[typing.Union[int, gui.InputField]] = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
@@ -193,9 +193,9 @@ class ServiceProvider(module.Module):
         return self._dbObj
 
     def get_max_preparing_services(self) -> int:
-        val = self.maxPreparingServices
+        val = self.max_preparing_services
         if val is None:
-            val = self.maxPreparingServices = 15
+            val = self.max_preparing_services = consts.DEFAULT_MAX_PREPARING_SERVICES
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)
@@ -204,9 +204,9 @@ class ServiceProvider(module.Module):
         return retVal if retVal > 0 else 1
 
     def get_max_removing_services(self) -> int:
-        val = self.maxRemovingServices
+        val = self.max_removing_services
         if val is None:
-            val = self.maxRemovingServices = 15
+            val = self.max_removing_services = 15
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)

@@ -68,7 +68,7 @@ class OpenGnsysMaintainer(jobs.Job):
             for service in provider.services.all():
                 instance: OGService = typing.cast(OGService, service.get_instance())
                 since = sql_datetime() - datetime.timedelta(
-                    hours=instance.maxReservationTime.num() - 8
+                    hours=instance.maxReservationTime.as_int() - 8
                 )  # If less than 8 hours of reservation...
                 # Now mark for removal every CACHED service that is about to expire its reservation on OpenGnsys
                 userService: models.UserService

@@ -98,7 +98,7 @@ class ProxmoxProvider(
         required=True,
     )
 
-    maxPreparingServices = gui.NumericField(
+    max_preparing_services = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
         default=10,
@@ -108,8 +108,9 @@ class ProxmoxProvider(
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='maxPreparingServices',
     )
-    maxRemovingServices = gui.NumericField(
+    max_removing_services = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
         default=5,
@@ -119,6 +120,7 @@ class ProxmoxProvider(
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='maxRemovingServices',
     )
 
     timeout = gui.NumericField(
@@ -170,10 +172,10 @@ class ProxmoxProvider(
         if self._api is None:
             self._api = client.ProxmoxClient(
                 self.host.value,
-                self.port.num(),
+                self.port.as_int(),
                 self.username.value,
                 self.password.value,
-                self.timeout.num(),
+                self.timeout.as_int(),
                 False,
                 self.cache,
             )
@@ -305,7 +307,7 @@ class ProxmoxProvider(
 
     def getNewVmId(self) -> int:
         while True:  # look for an unused VmId
-            vmId = self._vmid_generator.get(self.startVmId.num(), MAX_VM_ID)
+            vmId = self._vmid_generator.get(self.startVmId.as_int(), MAX_VM_ID)
             if self._getApi().isVMIdAvailable(vmId):
                 return vmId
             # All assigned VMId will be left as unusable on UDS until released by time (3 months)

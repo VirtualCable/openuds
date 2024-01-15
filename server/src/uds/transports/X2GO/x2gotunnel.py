@@ -135,7 +135,7 @@ class TX2GOTransport(BaseX2GOTransport):
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
             port=22,
-            validity=self.tunnel_wait.num() + 60,  # Ticket overtime
+            validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
         )
 
         tunnelFields = fields.get_tunnel_from_field(self.tunnel)
@@ -144,7 +144,7 @@ class TX2GOTransport(BaseX2GOTransport):
         sp = {
             'tunHost': tunHost,
             'tunPort': tunPort,
-            'tunWait': self.tunnel_wait.num(),
+            'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
             'key': priv,

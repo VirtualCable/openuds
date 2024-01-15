@@ -54,8 +54,8 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
     def setUp(self) -> None:
         # Default values for max
-        TestProvider.maxPreparingServices = 1000
-        TestProvider.maxRemovingServices = 1000
+        TestProvider.max_preparing_services = 1000
+        TestProvider.max_removing_services = 1000
         TestServiceCache.max_user_services = 1000
         TestServiceNoCache.max_user_services = 1000
 
@@ -141,7 +141,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         )
 
     def test_provider_preparing_limits(self) -> None:
-        TestProvider.maxPreparingServices = 10
+        TestProvider.max_preparing_services = 10
         self.setCache(initial=100, cache=10, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
@@ -151,11 +151,11 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         self.servicePool.userServices.all().delete()
 
         # Now, set provider limit to 0. Minumum aceptable is 1, so 1 will be created
-        TestProvider.maxPreparingServices = 0
+        TestProvider.max_preparing_services = 0
         self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 1)
 
     def test_provider_removing_limits(self) -> None:
-        TestProvider.maxRemovingServices = 10
+        TestProvider.max_removing_services = 10
         self.setCache(initial=0, cache=50, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
@@ -164,7 +164,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         # Now set cache to a lower value
         self.setCache(cache=10)
 
-        # Execute updater, must remove 10 elements (maxRemovingServices)
+        # Execute updater, must remove 10 elements (max_removing_services)
         self.assertEqual(self.runCacheUpdater(10), 40)
 
     def test_service_max_deployed(self) -> None:

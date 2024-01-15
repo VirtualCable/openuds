@@ -182,7 +182,7 @@ class OGService(services.Service):
             self.ou.value,
             self.image.value,
             self.lab.value,
-            self.maxReservationTime.num(),
+            self.maxReservationTime.as_int(),
         )
 
     def unreserve(self, machineId: str) -> typing.Any:

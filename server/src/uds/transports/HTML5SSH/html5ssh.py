@@ -192,12 +192,12 @@ class HTML5SSHTransport(transports.Transport):
         params = {
             'protocol': 'ssh',
             'hostname': ip,
-            'port': str(self.ssh_port.num()),
+            'port': str(self.ssh_port.as_int()),
         }
 
         # Optional numeric keep alive. If less than 2, it is not sent
-        if self.server_keep_alive.num() >= 2:
-            params['server-alive-interval'] = str(self.server_keep_alive.num())
+        if self.server_keep_alive.as_int() >= 2:
+            params['server-alive-interval'] = str(self.server_keep_alive.as_int())
 
         # Add optional parameters (strings only)
         for i in (
@@ -227,7 +227,7 @@ class HTML5SSHTransport(transports.Transport):
         logger.debug('SSH Params: %s', params)
 
         scrambler = CryptoManager().random_string(32)
-        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
         onw = ''
         if self.force_new_window.value == 'true':

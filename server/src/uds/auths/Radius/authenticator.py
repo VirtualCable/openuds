@@ -130,7 +130,7 @@ class RadiusAuth(auths.Authenticator):
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
-            authPort=self.port.num(),
+            authPort=self.port.as_int(),
             nasIdentifier=self.nasIdentifier.value,
             appClassPrefix=self.appClassPrefix.value,
         )

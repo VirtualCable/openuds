@@ -159,7 +159,7 @@ class SampleUserServiceTwo(services.UserService):
         generate more names. (Generator are simple utility classes)
         """
         if self._name == '':
-            self._name = self.name_generator().get(self.publication().get_base_name(), 3)
+            self._name = self.name_generator().get(self.publication().get_basename(), 3)
         # self._name will be stored when object is marshaled
         return self._name
 

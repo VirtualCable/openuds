@@ -177,7 +177,7 @@ class HTML5VNCTransport(transports.Transport):
         params = {
             'protocol': 'vnc',
             'hostname': ip,
-            'port': str(self.vnc_port.num()),
+            'port': str(self.vnc_port.as_int()),
         }
 
         if self.username.value.strip():
@@ -201,7 +201,7 @@ class HTML5VNCTransport(transports.Transport):
         logger.debug('VNC Params: %s', params)
 
         scrambler = CryptoManager().random_string(32)
-        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
         onw = ''
         if self.force_new_window.value == 'true':

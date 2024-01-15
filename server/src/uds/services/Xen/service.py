@@ -188,7 +188,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validate_basename(self.baseName.value, self.lenName.num())
+            validators.validate_basename(self.baseName.value, self.lenName.as_int())
 
             if int(self.memory.value) < 256:
                 raise exceptions.validation.ValidationError(
@@ -237,10 +237,10 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         info = self.parent().getStorageInfo(self.datastore.value)
         logger.debug('Checking datastore space for %s: %s', self.datastore.value, info)
         availableGB = (info['size'] - info['used']) / 1024
-        if availableGB < self.minSpaceGB.num():
+        if availableGB < self.minSpaceGB.as_int():
             raise Exception(
                 'Not enough free space available: (Needs at least {} GB and there is only {} GB '.format(
-                    self.minSpaceGB.num(), availableGB
+                    self.minSpaceGB.as_int(), availableGB
                 )
             )
 
@@ -413,7 +413,7 @@ class XenLinkedService(services.Service):  # pylint: disable=too-many-public-met
         """
         return self.parent().getMacRange()
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         """
         Returns the base name
         """

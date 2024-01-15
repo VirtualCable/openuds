@@ -145,7 +145,7 @@ class TestingUserInterface(UserInterface):
         return (
             self.str_field.value == other.str_field.value
             and self.str_auto_field.value == other.str_auto_field.value
-            and self.num_field.num() == other.num_field.num()
+            and self.num_field.as_int() == other.num_field.as_int()
             and self.password_field.value == other.password_field.value
             # Hidden field is not compared, because it is not serialized
             and self.choice_field.value == other.choice_field.value

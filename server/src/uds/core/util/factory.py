@@ -43,10 +43,17 @@ class Factory(typing.Generic[V], metaclass=singleton.Singleton):
         Returns an object from the factory.
         '''
         return self._objects.get(type_name.lower())
-
+    
+    def has(self, type_name: str) -> bool:
+        '''
+        Returns an object from the factory.
+        '''
+        return type_name.lower() in self._objects
+    
     # aliases for get
     lookup = get
     __getitem__ = get
+    __contains__ = has
 
 
 class ModuleFactory(Factory[T]):

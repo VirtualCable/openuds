@@ -79,7 +79,7 @@ class TestUserService(services.UserService):
 
     def get_name(self) -> str:
         if not self.data.name:
-            self.data.name = self.name_generator().get(self.service().get_base_name(), 3)
+            self.data.name = self.name_generator().get(self.service().get_basename(), 3)
 
         logger.info('Getting name of deployment %s', self.data)
 

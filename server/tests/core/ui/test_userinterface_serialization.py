@@ -52,7 +52,7 @@ from ...fixtures.user_interface import (
 logger = logging.getLogger(__name__)
 
 
-def oldSerializeForm(ui) -> bytes:
+def old_serialize_form(ui) -> bytes:
     """
     All values stored at form fields are serialized and returned as a single
     string
@@ -101,7 +101,7 @@ def oldSerializeForm(ui) -> bytes:
         elif v.is_type(types.ui.FieldType.PASSWORD):
             val = PASSWORD_FIELD + CryptoManager().aes_crypt(v.value.encode('utf8'), UDSK, True)
         elif v.is_type(types.ui.FieldType.NUMERIC):
-            val = str(int(v.num())).encode('utf8')
+            val = str(int(v.as_int())).encode('utf8')
         elif v.is_type(types.ui.FieldType.CHECKBOX):
             val = v.as_bool()
         elif v.is_type(types.ui.FieldType.DATE):
@@ -125,7 +125,7 @@ class UserinterfaceTest(UDSTestCase):
         # Ensure that all values are fine for the ui fields
         self.assertEqual(ui.str_field.value, DEFAULTS['str_field'], 'str_field')
         self.assertEqual(ui.str_auto_field.value, DEFAULTS['str_auto_field'], 'str_auto_field')
-        self.assertEqual(ui.num_field.num(), DEFAULTS['num_field'], 'num_field')
+        self.assertEqual(ui.num_field.as_int(), DEFAULTS['num_field'], 'num_field')
         self.assertEqual(ui.password_field.value, DEFAULTS['password_field'], 'password_field')
         # Hidden field is not stored, so it's not checked
         self.assertEqual(ui.choice_field.value, DEFAULTS['choice_field'], 'choice_field')
@@ -151,7 +151,7 @@ class UserinterfaceTest(UDSTestCase):
         # This test is to ensure that old serialized data can be loaded
         # This data is from a
         ui = TestingUserInterface()
-        data = oldSerializeForm(ui)
+        data = old_serialize_form(ui)
         ui2 = TestingUserInterface()
         ui2.deserialize_old_fields(data)
 

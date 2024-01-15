@@ -34,6 +34,7 @@
 import logging
 import typing
 import collections.abc
+import time
 
 # We use commit/rollback
 from ...utils.test import UDSTestCase
@@ -51,16 +52,40 @@ class UserinterfaceInternalTest(UDSTestCase):
         # Asserts that data is correctly stored and retrieved
         ui = TestingUserInterface()
         self.assertEqual(ui.str_field.value, DEFAULTS['str_field'])
+        self.assertEqual(ui.str_field.as_str(), DEFAULTS['str_field'])
+        
         self.assertEqual(ui.str_auto_field.value, DEFAULTS['str_auto_field'])
+        self.assertEqual(ui.str_auto_field.as_str(), DEFAULTS['str_auto_field'])
+        
         self.assertEqual(ui.num_field.value, DEFAULTS['num_field'])
+        self.assertEqual(ui.num_field.as_int(), DEFAULTS['num_field'])
+        
         self.assertEqual(ui.password_field.value, DEFAULTS['password_field'])
+        self.assertEqual(ui.password_field.as_str(), DEFAULTS['password_field'])
+        
         self.assertEqual(ui.hidden_field.value, DEFAULTS['hidden_field'])
+        # Hidden field has no as_...
+        
         self.assertEqual(ui.choice_field.value, DEFAULTS['choice_field'])
+        self.assertEqual(ui.choice_field.as_str(), DEFAULTS['choice_field'])
+        
         self.assertEqual(ui.multi_choice_field.value, DEFAULTS['multi_choice_field'])
+        self.assertEqual(ui.multi_choice_field.as_list(), DEFAULTS['multi_choice_field'])
+        
         self.assertEqual(ui.editable_list_field.value, DEFAULTS['editable_list_field'])
+        self.assertEqual(ui.editable_list_field.as_list(), DEFAULTS['editable_list_field'])
+        
         self.assertEqual(ui.checkbox_field.value, DEFAULTS['checkbox_field'])
+        self.assertEqual(ui.checkbox_field.as_bool(), DEFAULTS['checkbox_field'])
+        
         self.assertEqual(ui.image_choice_field.value, DEFAULTS['image_choice_field'])
+        self.assertEqual(ui.image_choice_field.as_str(), DEFAULTS['image_choice_field'])
+        
         self.assertEqual(ui.date_field.value, DEFAULTS['date_field'])
+        self.assertEqual(ui.date_field.as_date(), DEFAULTS['date_field'])
+        self.assertEqual(ui.date_field.as_datetime().date(), DEFAULTS['date_field'])
+        self.assertEqual(ui.date_field.as_timestamp(), int(time.mktime(DEFAULTS['date_field'].timetuple())))
+        
         self.assertEqual(ui.info_field.value, DEFAULTS['info_field'])
         
     def test_default(self):

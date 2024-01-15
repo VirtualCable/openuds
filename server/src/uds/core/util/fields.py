@@ -113,7 +113,9 @@ def server_group_field(
         order=2,
         tooltip=_('Server group to use'),
         required=True,
-        choices=functools.partial(_server_group_values, valid_types, subtype),  # So it gets evaluated at runtime
+        choices=functools.partial(
+            _server_group_values, valid_types, subtype
+        ),  # So it gets evaluated at runtime
         tab=tab,
         stored_field_name='serverGroup',
     )
@@ -184,3 +186,30 @@ def get_vertificates_from_field(
         certs.append(load_pem_x509_certificate(pemCert.encode('ascii'), None))
 
     return certs
+
+
+# For services
+
+
+def get_basename_field(order: typing.Optional[int] = None) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        label=_('Base Name'),
+        order=order or 32,
+        tooltip=_('Base name for clones from this service'),
+        tab=_('Service'),
+        required=True,
+        stored_field_name='baseName',
+    )
+
+
+def get_lenname_field(order: typing.Optional[int] = None) -> ui.gui.NumericField:
+    return ui.gui.NumericField(
+        length=1,
+        label=_('Name Length'),
+        default=3,
+        order=order or 33,
+        tooltip=_('Size of numeric part for the names of these services'),
+        tab=_('Service'),
+        required=True,
+        stored_field_name='lenName',
+    )

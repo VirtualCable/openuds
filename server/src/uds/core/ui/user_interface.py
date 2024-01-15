@@ -30,7 +30,6 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
-import calendar
 import codecs
 import copy
 import datetime
@@ -44,7 +43,7 @@ import collections.abc
 import collections.abc
 import abc
 
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext
 
 from uds.core import consts, exceptions, types
 from uds.core.managers.crypto import UDSK, CryptoManager
@@ -211,6 +210,30 @@ class gui:
         if bol:
             return consts.TRUE_STR
         return consts.FALSE_STR
+    
+    @staticmethod
+    def as_int(value: typing.Union[str, bytes, bool, int]) -> int:
+        """
+        Converts the string "true" (case insensitive) to True (boolean).
+        Anything else is converted to false
+
+        Args:
+            str: Str to convert to boolean
+
+        Returns:
+            True if the string is "true" (case insensitive), False else.
+        """
+        try:
+            return int(value)
+        except Exception:
+            return 0
+        
+    @staticmethod
+    def as_str(value: typing.Any) -> str:
+        """
+        Converts the value to string.
+        """
+        return str(value)
 
     # Classes
 
@@ -297,24 +320,12 @@ class gui:
 
         def is_serializable(self) -> bool:
             return True
-        
+
         def stored_field_name(self) -> typing.Optional[str]:
             """
             Returns the name of the field
             """
             return self._fields_info.stored_field_name
-
-        def num(self) -> int:
-            try:
-                return int(self.value)
-            except Exception:
-                return -1
-
-        def as_bool(self) -> bool:
-            try:
-                return gui.as_bool(self.value)
-            except Exception:
-                return False
 
         @property
         def value(self) -> typing.Any:
@@ -352,10 +363,10 @@ class gui:
             for i in ('value', 'stored_field_name'):
                 if i in data:
                     del data[i]  # We don't want to send some values on gui_description
-            data['label'] = _(data['label']) if data['label'] else ''
-            data['tooltip'] = _(data['tooltip']) if data['tooltip'] else ''
+            data['label'] = gettext(data['label']) if data['label'] else ''
+            data['tooltip'] = gettext(data['tooltip']) if data['tooltip'] else ''
             if 'tab' in data:
-                data['tab'] = _(data['tab'])  # Translates tab name
+                data['tab'] = gettext(data['tab'])  # Translates tab name
             data['default'] = self.default  # We need to translate default value
             return data
 
@@ -533,6 +544,9 @@ class gui:
                 return re.match(pattern, self.value) is not None
             return True  # No pattern, so it's valid
 
+        def as_str(self) -> str:
+            return gui.as_str(self.value)
+
         def __str__(self):
             return str(self.value)
 
@@ -559,6 +573,7 @@ class gui:
                 dict[str, str],
                 None,
             ] = None,
+            stored_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -570,6 +585,7 @@ class gui:
                 tab=tab,
                 default=default,
                 value=value,
+                stored_field_name=stored_field_name,
             )
             # Update parent type
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
@@ -580,6 +596,9 @@ class gui:
             Set the values for this choice field
             """
             self._fields_info.choices = gui.as_choices(values)
+
+        def as_str(self) -> str:
+            return gui.as_str(self.value)
 
     class NumericField(InputField):
         """
@@ -634,11 +653,7 @@ class gui:
             self._fields_info.min_value = min_value
             self._fields_info.max_value = max_value
 
-        def _set_value(self, value: typing.Any):
-            # Internally stores an string
-            super()._set_value(value)
-
-        def num(self) -> int:
+        def as_int(self) -> int:
             """
             Return value as integer
             """
@@ -649,7 +664,7 @@ class gui:
 
         @property
         def int_value(self) -> int:
-            return self.num()
+            return self.as_int()
 
     class DateField(InputField):
         """
@@ -698,9 +713,10 @@ class gui:
                 typing.cast(datetime.date, self.value), datetime.datetime.min.time()
             )
 
-        def stamp(self) -> int:
+        def as_timestamp(self) -> int:
             """Alias for "value" property, but as timestamp"""
-            return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
+            return int(time.mktime(self.as_date().timetuple()))
+            # return int(time.mktime(datetime.datetime.strptime(self.value, '%Y-%m-%d').timetuple()))
 
         # Override value setter, so we can convert from datetime.datetime or str to datetime.date
         def _set_value(self, value: typing.Any) -> None:
@@ -774,8 +790,8 @@ class gui:
                 type=types.ui.FieldType.PASSWORD,
             )
 
-        def as_clean_str(self):
-            return str(self.value).strip()
+        def as_str(self):
+            return gui.as_str(self.value).strip()
 
         def __str__(self):
             return '********'
@@ -813,7 +829,7 @@ class gui:
 
         """
 
-        _isSerializable: bool
+        _is_serializable: bool
 
         def __init__(
             self,
@@ -832,10 +848,10 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.HIDDEN,
             )
-            self._isSerializable = serializable
+            self._is_serializable = serializable
 
         def is_serializable(self) -> bool:
-            return self._isSerializable
+            return self._is_serializable
 
         def set_default(self, value: typing.Any) -> None:
             """
@@ -895,7 +911,8 @@ class gui:
             """
             Override to set value to True or False (bool)
             """
-            self._fields_info.value = gui.as_bool(value)
+            super()._set_value(gui.as_bool(value))
+            # self._fields_info.value = gui.as_bool(value)
 
         def as_bool(self):
             """
@@ -1050,6 +1067,9 @@ class gui:
             """
             self._fields_info.choices = gui.as_choices(values)
 
+        def as_str(self) -> str:
+            return gui.as_str(self.value)
+
     class ImageChoiceField(InputField):
         def __init__(
             self,
@@ -1089,6 +1109,9 @@ class gui:
             Set the values for this choice field
             """
             self._fields_info.choices = gui.as_choices(values)
+
+        def as_str(self) -> str:
+            return gui.as_str(self.value)
 
     class MultiChoiceField(InputField):
         """
@@ -1167,6 +1190,12 @@ class gui:
             """
             self._fields_info.choices = gui.as_choices(choices)
 
+        def as_list(self) -> list[str]:
+            """
+            Return value as list of strings
+            """
+            return list(self.value)
+
     class EditableListField(InputField):
         """
         Editables list are lists of editable elements (i.e., a list of IPs, macs,
@@ -1221,11 +1250,11 @@ class gui:
                 type=types.ui.FieldType.EDITABLELIST,
             )
 
-        def _set_value(self, value):
+        def as_list(self) -> list[str]:
             """
-            So we can override value setting at descendants
+            Return value as list of strings
             """
-            super()._set_value(value)
+            return list(self.value)
 
     class InfoField(InputField):
         """
@@ -1414,7 +1443,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         ] = {
             types.ui.FieldType.TEXT: lambda x: x.value,
             types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
-            types.ui.FieldType.NUMERIC: lambda x: str(int(x.num())),
+            types.ui.FieldType.NUMERIC: lambda x: str(int(gui.as_int(x.value))),
             types.ui.FieldType.PASSWORD: lambda x: (
                 CryptoManager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
             ),
@@ -1422,7 +1451,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             types.ui.FieldType.CHOICE: lambda x: x.value,
             types.ui.FieldType.MULTICHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
             types.ui.FieldType.EDITABLELIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if x.as_bool() else consts.FALSE_STR,
+            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if gui.as_bool(x.value) else consts.FALSE_STR,
             types.ui.FieldType.IMAGECHOICE: lambda x: x.value,
             types.ui.FieldType.DATE: lambda x: x.value,
             types.ui.FieldType.INFO: lambda x: None,
@@ -1474,7 +1503,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             return
 
         arr = _unserialize(values)
-        
+
         # Dict of translations from stored_field_name to field_name
         field_names_translations: dict[str, str] = {}
         for fld_name, fld in self._gui.items():
@@ -1485,7 +1514,10 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         # Set all values to defaults ones
         for fld_name in self._gui:
             fld = self._gui[fld_name]
-            if self._gui[fld_name].is_type(types.ui.FieldType.HIDDEN) and self._gui[fld_name].is_serializable() is False:
+            if (
+                self._gui[fld_name].is_type(types.ui.FieldType.HIDDEN)
+                and self._gui[fld_name].is_serializable() is False
+            ):
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
             self._gui[fld_name].value = self._gui[fld_name].default
@@ -1509,7 +1541,9 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         for fld_name, fld_type, fld_value in arr:
             if fld_name in field_names_translations:
-                fld_name = field_names_translations[fld_name]  # Convert stored_field_name to field_name if needed
+                fld_name = field_names_translations[
+                    fld_name
+                ]  # Convert stored_field_name to field_name if needed
             if fld_name not in self._gui:
                 logger.warning('Field %s not found in form', fld_name)
                 continue

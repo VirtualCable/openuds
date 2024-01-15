@@ -113,7 +113,7 @@ class TestPublication(services.Publication):
     # Methods provided below are specific for this publication
     # and will be used by user deployments that uses this kind of publication
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         """
         This sample method (just for this sample publication), provides
         the name generater for this publication. This is just a sample, and

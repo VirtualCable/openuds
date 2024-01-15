@@ -110,14 +110,14 @@ class PoolPerformanceReport(StatsReport):
     def getRangeData(
         self,
     ) -> tuple[str, list, list]:  # pylint: disable=too-many-locals
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
-        if self.samplingPoints.num() < 2:
+        start = self.startDate.as_timestamp()
+        end = self.endDate.as_timestamp()
+        if self.samplingPoints.as_int() < 2:
             self.samplingPoints.value = 2
-        if self.samplingPoints.num() > 128:
+        if self.samplingPoints.as_int() > 128:
             self.samplingPoints.value = 128
 
-        samplingPoints = self.samplingPoints.num()
+        samplingPoints = self.samplingPoints.as_int()
 
         # x axis label format
         if end - start > 3600 * 24 * 2:
@@ -238,7 +238,7 @@ class PoolPerformanceReport(StatsReport):
                 'pools': [i[1] for i in self.getPools()],
                 'beginning': self.startDate.as_date(),
                 'ending': self.endDate.as_date(),
-                'intervals': self.samplingPoints.num(),
+                'intervals': self.samplingPoints.as_int(),
             },
             header=gettext('UDS Pools Performance Report'),
             water=gettext('Pools Performance'),

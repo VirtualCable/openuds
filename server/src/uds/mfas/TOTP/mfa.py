@@ -207,11 +207,11 @@ class TOTP_MFA(mfas.MFA):
 
         # Validate code
         if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.num(), for_time=sql_datetime()
+            code, valid_window=self.validWindow.as_int(), for_time=sql_datetime()
         ):
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 
-        self.cache.put(userId + code, True, self.validWindow.num() * (TOTP_INTERVAL + 1))
+        self.cache.put(userId + code, True, self.validWindow.as_int() * (TOTP_INTERVAL + 1))
 
         if qrShown is False:
             self._saveUserData(userId, (secret, True))  # Update user data to show QR code only once

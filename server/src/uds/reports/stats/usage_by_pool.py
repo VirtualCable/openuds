@@ -90,8 +90,8 @@ class UsageByPool(StatsReport):
 
     def getData(self) -> tuple[list[dict[str, typing.Any]], str]:
         # Generate the sampling intervals and get dataUsers from db
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
+        start = self.startDate.as_timestamp()
+        end = self.endDate.as_timestamp()
         logger.debug(self.pool.value)
         if '0-0-0-0' in self.pool.value:
             pools = ServicePool.objects.all()

@@ -151,7 +151,7 @@ class ProxmoxDeployment(services.UserService):
         if self._name == '':
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_base_name(), self.service().getLenName()
+                    self.service().get_basename(), self.service().getLenName()
                 )
             except KeyError:
                 return NO_MORE_NAMES

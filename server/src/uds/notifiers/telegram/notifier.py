@@ -175,11 +175,11 @@ class TelegramNotifier(messaging.Notifier):
 
         # If last check is not set, we will set it to now
         if lastCheck is None:
-            lastCheck = now - datetime.timedelta(seconds=self.checkDelay.num() + 1)
+            lastCheck = now - datetime.timedelta(seconds=self.checkDelay.as_int() + 1)
             self.storage.put_pickle('lastCheck', lastCheck)
 
         # If not enough time has passed, we will not check
-        if lastCheck + datetime.timedelta(seconds=self.checkDelay.num()) > now:
+        if lastCheck + datetime.timedelta(seconds=self.checkDelay.as_int()) > now:
             return
 
         # Update last check

@@ -145,8 +145,8 @@ class TRDPTransport(BaseRDPTransport):
 
         ticket = TicketStore.create_for_tunnel(
             userService=userService,
-            port=self.rdp_port.num(),
-            validity=self.tunnel_wait.num() + 60,  # Ticket overtime
+            port=self.rdp_port.as_int(),
+            validity=self.tunnel_wait.as_int() + 60,  # Ticket overtime
         )
 
         tunnelFields = fields.get_tunnel_from_field(self.tunnel)
@@ -184,7 +184,7 @@ class TRDPTransport(BaseRDPTransport):
         sp: collections.abc.MutableMapping[str, typing.Any] = {
             'tunHost': tunHost,
             'tunPort': tunPort,
-            'tunWait': self.tunnel_wait.num(),
+            'tunWait': self.tunnel_wait.as_int(),
             'tunChk': self.verify_certificate.as_bool(),
             'ticket': ticket,
             'password': ci.password,

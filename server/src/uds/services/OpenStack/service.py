@@ -143,6 +143,7 @@ class LiveService(services.Service):
         tooltip=_('Service availability zones'),
         required=True,
         readonly=True,
+        stored_field_name='availabilityZone',
     )
     volume = gui.ChoiceField(
         label=_('Volume'),
@@ -210,7 +211,7 @@ class LiveService(services.Service):
         initialized by __init__ method of base class, before invoking this.
         """
         if values:
-            validators.validate_basename(self.baseName.value, self.lenName.num())
+            validators.validate_basename(self.baseName.value, self.lenName.as_int())
 
         # self.ov.value = self.parent().serialize()
         # self.ev.value = self.parent().env.key
@@ -297,7 +298,7 @@ class LiveService(services.Service):
         """
         logger.debug('Deploying from template %s machine %s', snapshotId, name)
         # self.datastoreHasSpace()
-        return self.api.createServerFromSnapshot(
+        return self.api.create_server_from_snapshot(
             snapshotId=snapshotId,
             name=name,
             availabilityZone=self.availabilityZone.value,
@@ -429,7 +430,7 @@ class LiveService(services.Service):
         # vals = six.next(six.itervalues(net))[0]
         return vals['OS-EXT-IPS-MAC:mac_addr'].upper(), vals['addr']
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         """
         Returns the base name
         """

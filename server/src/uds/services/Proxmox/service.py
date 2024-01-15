@@ -195,7 +195,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def initialize(self, values: 'Module.ValuesType') -> None:
         if values:
             self.baseName.value = validators.validate_basename(
-                self.baseName.value, length=self.lenName.num()
+                self.baseName.value, length=self.lenName.as_int()
             )
             # if int(self.memory.value) < 128:
             #     raise exceptions.ValidationException(_('The minimum allowed memory is 128 Mb'))
@@ -318,7 +318,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def setVmMac(self, vmId: int, mac: str) -> None:
         self.parent().setVmMac(vmId, mac)
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         return self.baseName.value
 
     def getLenName(self) -> int:

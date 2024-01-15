@@ -73,10 +73,10 @@ class TestProvider(services.ServiceProvider):
     icon_file = 'provider.png'
 
     # Max preparing concurrent services
-    maxPreparingServices = 1000 # a lot, this in fact will not make anything
+    max_preparing_services = 1000 # a lot, this in fact will not make anything
 
     # Mas removing concurrent services
-    maxRemovingServices = 1000 # a lot, this in fact will not make anything
+    max_removing_services = 1000 # a lot, this in fact will not make anything
 
     # Simple data for testing pourposes
     @dataclasses.dataclass

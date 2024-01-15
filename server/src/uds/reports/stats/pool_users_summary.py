@@ -87,8 +87,8 @@ class UsageSummaryByUsersPool(StatsReport):
     def getPoolData(
         self, pool
     ) -> tuple[list[dict[str, typing.Any]], str]:
-        start = self.startDate.stamp()
-        end = self.endDate.stamp()
+        start = self.startDate.as_timestamp()
+        end = self.endDate.as_timestamp()
         logger.debug(self.pool.value)
 
         items = (

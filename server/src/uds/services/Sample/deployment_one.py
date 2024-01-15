@@ -120,7 +120,7 @@ class SampleUserServiceOne(services.UserService):
         name: str = typing.cast(str, self.storage.read_from_db('name'))
         if name is None:
             name = self.name_generator().get(
-                self.service().get_base_name() + '-' + self.service().getColour(), 3
+                self.service().get_basename() + '-' + self.service().getColour(), 3
             )
             # Store value for persistence
             self.storage.save_to_db('name', name)

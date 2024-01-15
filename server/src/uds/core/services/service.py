@@ -283,7 +283,7 @@ class Service(Module):
                 if isinstance(maxServices, int):
                     self.max_user_services = maxServices
                 elif isinstance(maxServices, gui.NumericField):
-                    self.max_user_services = maxServices.num()
+                    self.max_user_services = maxServices.as_int()
                     # For 0 values on max_user_services field, we will set it to UNLIMITED
                     if self.max_user_services == 0:
                         self.max_user_services = consts.UNLIMITED

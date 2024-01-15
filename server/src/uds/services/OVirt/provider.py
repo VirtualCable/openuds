@@ -134,7 +134,7 @@ class OVirtProvider(
         required=True,
     )
 
-    maxPreparingServices = gui.NumericField(
+    max_preparing_services = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
         default=10,
@@ -144,8 +144,9 @@ class OVirtProvider(
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='maxPreparingServices',
     )
-    maxRemovingServices = gui.NumericField(
+    max_removing_services = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
         default=5,
@@ -155,6 +156,7 @@ class OVirtProvider(
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        stored_field_name='maxRemovingServices',
     )
 
     timeout = gui.NumericField(

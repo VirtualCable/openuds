@@ -192,7 +192,7 @@ class ServiceOne(services.Service):
         """
         return self.passw.value
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         return self.baseName.value
 
 

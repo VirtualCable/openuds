@@ -71,3 +71,6 @@ FALSE_STR: typing.Final[str] = 'false'
 
 # Constant to mark an "UNLIMITED" value
 UNLIMITED: typing.Final[int] = -1
+
+# Default maximum preparing services
+DEFAULT_MAX_PREPARING_SERVICES: typing.Final[int] = 15

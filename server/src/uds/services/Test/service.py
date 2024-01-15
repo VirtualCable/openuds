@@ -78,7 +78,7 @@ class TestServiceNoCache(services.Service):
     def get_name(self) -> str:
         return self.parent().get_name() + '{' + self.type_name + '}'
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         return self.parent().get_name()
 
 class TestServiceCache(services.Service):
@@ -114,5 +114,5 @@ class TestServiceCache(services.Service):
     def get_name(self) -> str:
         return self.parent().get_name() + '{' + self.type_name + '}'
 
-    def get_base_name(self) -> str:
+    def get_basename(self) -> str:
         return self.parent().get_name()

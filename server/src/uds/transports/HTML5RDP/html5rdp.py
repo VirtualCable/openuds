@@ -324,7 +324,7 @@ class HTML5RDPTransport(transports.Transport):
         ready = self.cache.get(ip)
         if not ready:
             # Check again for readyness
-            if self.test_connectivity(userService, ip, self.rdp_port.num()) is True:
+            if self.test_connectivity(userService, ip, self.rdp_port.as_int()) is True:
                 self.cache.put(ip, 'Y', READY_CACHE_TIMEOUT)
                 return True
             self.cache.put(ip, 'N', READY_CACHE_TIMEOUT)
@@ -421,7 +421,7 @@ class HTML5RDPTransport(transports.Transport):
         params = {
             'protocol': 'rdp',
             'hostname': ip,
-            'port': self.rdp_port.num(),
+            'port': self.rdp_port.as_int(),
             'username': username,
             'password': passwordCrypted,
             'resize-method': 'display-update',
@@ -490,7 +490,7 @@ class HTML5RDPTransport(transports.Transport):
 
         logger.debug('RDP Params: %s', params)
 
-        ticket = models.TicketStore.create(params, validity=self.ticket_validity.num())
+        ticket = models.TicketStore.create(params, validity=self.ticket_validity.as_int())
 
         onw = f'&o_n_w={transport.uuid}'
         if self.force_new_window.value == consts.TRUE_STR:

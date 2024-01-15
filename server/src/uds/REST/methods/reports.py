@@ -79,7 +79,7 @@ class Reports(model.BaseModelHandler):
     def _findReport(self, uuid: str, values=None) -> 'Report':
         found = None
         logger.debug('Looking for report %s', uuid)
-        for i in reports.availableReports:
+        for i in reports.available_reports:
             if i.get_uuid() == uuid:
                 found = i(values)
                 break
@@ -150,7 +150,7 @@ class Reports(model.BaseModelHandler):
     def get_items(
         self, *args, **kwargs
     ) -> typing.Generator[dict[str, typing.Any], None, None]:
-        for i in reports.availableReports:
+        for i in reports.available_reports:
             yield {
                 'id': i.get_uuid(),
                 'mime_type': i.mime_type,
