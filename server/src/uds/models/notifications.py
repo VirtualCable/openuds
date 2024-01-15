@@ -50,7 +50,7 @@ class Notification(models.Model):
     stamp = models.DateTimeField(auto_now_add=True)
     group = models.CharField(max_length=128, db_index=True)
     identificator = models.CharField(max_length=128, db_index=True)
-    level = models.PositiveSmallIntegerField()
+    level = models.PositiveIntegerField()
     message = models.TextField()
     # Processed is only used on local persistent storage
     # On local storage will be set to "True" if notification has been procesed, but not transferred to remote DB
@@ -88,7 +88,7 @@ class Notifier(ManagedObjectModel, TaggingMixin):
     name = models.CharField(max_length=128, default='')
     comments = models.CharField(max_length=256, default='')
     enabled = models.BooleanField(default=True)
-    level = models.PositiveSmallIntegerField(default=LogLevel.ERROR)
+    level = models.PositiveIntegerField(default=LogLevel.ERROR)
 
     # "fake" declarations for type checking
     objects: 'models.manager.Manager[Notifier]'

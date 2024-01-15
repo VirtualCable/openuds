@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 ("stamp", models.DateTimeField(auto_now_add=True)),
                 ("group", models.CharField(db_index=True, max_length=128)),
                 ("identificator", models.CharField(db_index=True, max_length=128)),
-                ("level", models.PositiveSmallIntegerField()),
+                ("level", models.PositiveIntegerField()),
                 ("message", models.TextField()),
                 ("processed", models.BooleanField(default=False)),
             ],
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
                 ("enabled", models.BooleanField(default=True)),
                 (
                     "level",
-                    models.PositiveSmallIntegerField(
+                    models.PositiveIntegerField(
                         default=uds.models.notifications.LogLevel["ERROR"]
                     ),
                 ),
