@@ -148,7 +148,7 @@ CACHES = {
 
 # Update DB and CACHE if we are running tests
 # Note that this may need some adjustments depending on your environment
-if any(arg.endswith('test') or 'pytest/' or '/pytest' in arg for arg in sys.argv) or 'PYTEST_XDIST_WORKER' in os.environ or 'TEST_UUID' in os.environ:
+if any(arg.endswith('test') or 'pytest/' in arg or '/pytest' in arg for arg in sys.argv) or 'PYTEST_XDIST_WORKER' in os.environ or 'TEST_UUID' in os.environ:
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'OPTIONS': {
