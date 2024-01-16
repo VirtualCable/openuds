@@ -53,7 +53,7 @@ def resolve(hostname: str) -> list[str]:
     return ips
 
 @cached(prefix='resolver.reverse', timeout=60)  # Cache for 1 hour
-def reverse(ip: str) -> list[str]:
+def reverse_resolve(ip: str) -> list[str]:
     """
     Resolves an ip to a list of hostnames
     """

@@ -93,13 +93,13 @@ class RESTTestCase(test.UDSTransactionTestCase):
 
         self.provider = services_fixtures.createProvider()
 
-        self.user_service_managed = services_fixtures.createOneCacheTestingUserService(
+        self.user_service_managed = services_fixtures.create_one_cache_testing_userservice(
             self.provider,
             self.admins[0],
             self.groups,
             'managed',
         )
-        self.user_service_unmanaged = services_fixtures.createOneCacheTestingUserService(
+        self.user_service_unmanaged = services_fixtures.create_one_cache_testing_userservice(
             self.provider,
             self.admins[0],
             self.groups,
@@ -109,10 +109,10 @@ class RESTTestCase(test.UDSTransactionTestCase):
         self.user_services = []
         for user in self.users:
             self.user_services.append(
-                services_fixtures.createOneCacheTestingUserService(self.provider, user, self.groups, 'managed')
+                services_fixtures.create_one_cache_testing_userservice(self.provider, user, self.groups, 'managed')
             )
             self.user_services.append(
-                services_fixtures.createOneCacheTestingUserService(
+                services_fixtures.create_one_cache_testing_userservice(
                     self.provider, user, self.groups, 'unmanaged'
                 )
             )

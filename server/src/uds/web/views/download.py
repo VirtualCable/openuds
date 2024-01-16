@@ -47,11 +47,11 @@ logger = logging.getLogger(__name__)
 
 
 @web_login_required(admin=True)
-def download(request: 'HttpRequest', idDownload: str) -> 'HttpResponse':
+def download(request: 'HttpRequest', download_id: str) -> 'HttpResponse':
     """
     Downloadables management
     """
-    if idDownload.strip() == '':
+    if download_id.strip() == '':
         return index(request)
 
-    return downloads_manager().send(request, idDownload)
+    return downloads_manager().send(request, download_id)

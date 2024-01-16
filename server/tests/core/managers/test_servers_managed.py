@@ -76,7 +76,7 @@ class ServerManagerManagedServersTest(UDSTestCase):
 
         for i in range(NUM_USERSERVICES):
             # So we have 8 userservices, each one with a different user
-            self.user_services.extend(services_fixtures.createCacheTestingUserServices())
+            self.user_services.extend(services_fixtures.create_cache_testing_userservices())
 
         self.registered_servers_group = servers_fixtures.createServerGroup(
             type=types.servers.ServerType.SERVER, subtype='test', num_servers=NUM_REGISTEREDSERVERS

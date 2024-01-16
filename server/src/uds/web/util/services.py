@@ -101,7 +101,7 @@ def _service_info(
 
 
 # pylint: disable=too-many-locals, too-many-branches, too-many-statements
-def get_services_data(
+def get_services_info_dict(
     request: 'ExtendedHttpRequestWithUser',
 ) -> dict[str, typing.Any]:  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     """Obtains the service data dictionary will all available services for this request
@@ -348,7 +348,7 @@ def get_services_data(
                 and t.is_os_allowed(osType)
             ):
                 if typeTrans.own_link:
-                    link = reverse('TransportOwnLink', args=('F' + sPool.uuid, t.uuid))  # type: ignore
+                    link = reverse('webapi.transport_own_link', args=('F' + sPool.uuid, t.uuid))  # type: ignore
                 else:
                     link = html.uds_access_link(request, 'F' + sPool.uuid, t.uuid)  # type: ignore
                 trans.append({'id': t.uuid, 'name': t.name, 'link': link, 'priority': t.priority})
@@ -458,7 +458,7 @@ def enable_service(
         error = ''  # No error
 
         if typeTrans.own_link:
-            url = reverse('TransportOwnLink', args=('A' + userService.uuid, trans.uuid))  # type: ignore
+            url = reverse('webapi.transport_own_link', args=('A' + userService.uuid, trans.uuid))  # type: ignore
         else:
             data = {
                 'service': 'A' + userService.uuid,  # type: ignore

@@ -28,34 +28,28 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
-from django.urls import reverse
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
-from uds.web.util import errors
-from uds.core import auths, types, exceptions, consts
-from uds.core.auths.auth import (
-    web_login,
-    web_logout,
-    authenticate_via_callback,
-    log_login,
-    uds_cookie,
-)
-from uds.core.managers.user_service import UserServiceManager
+from uds.core import auths, consts, exceptions, types
+from uds.core.auths.auth import (authenticate_via_callback, log_login,
+                                 uds_cookie, web_login, web_logout)
 from uds.core.managers.crypto import CryptoManager
+from uds.core.managers.user_service import UserServiceManager
 from uds.core.services.exceptions import ServiceNotReadyError
-from uds.core.util import html
 from uds.core.types.states import State
+from uds.core.util import html
 from uds.core.util.model import process_uuid
-from uds.models import Authenticator, ServicePool
-from uds.models import TicketStore
+from uds.models import Authenticator, ServicePool, TicketStore
+from uds.web.util import errors
 
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequestWithUser
@@ -72,7 +66,7 @@ logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
-def auth_callback(request: HttpRequest, authName: str) -> HttpResponse:
+def auth_callback(request: HttpRequest, authenticator_name: str) -> HttpResponse:
     """
     This url is provided so external SSO authenticators can get an url for
     redirecting back the users.
@@ -82,7 +76,7 @@ def auth_callback(request: HttpRequest, authName: str) -> HttpResponse:
     """
     try:
         authenticator = (
-            Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name)).order_by('priority').first()
         )
         if not authenticator:
             raise Exception('Authenticator not found')
@@ -98,9 +92,9 @@ def auth_callback(request: HttpRequest, authName: str) -> HttpResponse:
         return errors.exception_view(request, e)
 
 
-def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
+def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticket_id: str) -> HttpResponse:
     try:
-        ticket = TicketStore.get(ticketId, invalidate=True)
+        ticket = TicketStore.get(ticket_id, invalidate=True)
         params: types.auth.AuthCallbackParams = ticket['params']
         auth_uuid: str = ticket['auth']
         authenticator = Authenticator.objects.get(uuid=auth_uuid)
@@ -142,7 +136,7 @@ def auth_callback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) 
 
 
 @csrf_exempt
-def auth_info(request: 'HttpRequest', authName: str) -> HttpResponse:
+def auth_info(request: 'HttpRequest', authenticator_name: str) -> HttpResponse:
     """
     This url is provided so authenticators can provide info (such as SAML metadata)
 
@@ -150,9 +144,9 @@ def auth_info(request: 'HttpRequest', authName: str) -> HttpResponse:
     by name, so it's easier to access from external sources
     """
     try:
-        logger.debug('Getting info for %s', authName)
+        logger.debug('Getting info for %s', authenticator_name)
         authenticator = (
-            Authenticator.objects.filter(Q(name=authName) | Q(small_name=authName)).order_by('priority').first()
+            Authenticator.objects.filter(Q(name=authenticator_name) | Q(small_name=authenticator_name)).order_by('priority').first()
         )
         if not authenticator:
             raise Exception('Authenticator not found')
@@ -176,13 +170,13 @@ def auth_info(request: 'HttpRequest', authName: str) -> HttpResponse:
 
 # Gets the javascript from the custom authtenticator
 @never_cache
-def custom_auth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
+def custom_auth(request: 'HttpRequest', auth_id: str) -> HttpResponse:
     res: typing.Optional[str] = ''
     try:
         try:
-            auth = Authenticator.objects.get(uuid=process_uuid(idAuth))
+            auth = Authenticator.objects.get(uuid=process_uuid(auth_id))
         except Authenticator.DoesNotExist:
-            auth = Authenticator.objects.get(pk=idAuth)
+            auth = Authenticator.objects.get(pk=auth_id)
         res = auth.get_instance().get_javascript(request)
         if not res:
             res = ''
@@ -194,13 +188,13 @@ def custom_auth(request: 'HttpRequest', idAuth: str) -> HttpResponse:
 
 @never_cache
 def ticket_auth(
-    request: 'ExtendedHttpRequestWithUser', ticketId: str
+    request: 'ExtendedHttpRequestWithUser', ticket_id: str
 ) -> HttpResponse:  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     """
     Used to authenticate an user via a ticket
     """
     try:
-        data = TicketStore.get(ticketId, invalidate=True)
+        data = TicketStore.get(ticket_id, invalidate=True)
 
         try:
             # Extract ticket.data from ticket.data storage, and remove it if success
@@ -259,15 +253,15 @@ def ticket_auth(
             res = UserServiceManager().get_user_service_info(
                 request.user, request.os, request.ip, poolUuid, None, False
             )
-            _, userService, _, transport, _ = res
+            _, userservice, _, transport, _ = res
 
             transportInstance = transport.get_instance()
             if transportInstance.own_link is True:
                 link = reverse(
-                    'TransportOwnLink', args=('A' + userService.uuid, transport.uuid)  # type: ignore
+                    'webapi.transport_own_link', args=('A' + userservice.uuid, transport.uuid)  # type: ignore
                 )
             else:
-                link = html.uds_access_link(request, 'A' + userService.uuid, transport.uuid)  # type: ignore
+                link = html.uds_access_link(request, 'A' + userservice.uuid, transport.uuid)  # type: ignore
 
             request.session['launch'] = link
             response = HttpResponseRedirect(reverse('page.ticket.launcher'))

@@ -71,7 +71,7 @@ class PermissionsTest(UDSTestCase):
         self.staffs = authenticators_fixtures.createUsers(
             self.authenticator, is_staff=True, groups=self.groups
         )
-        self.userService = services_fixtures.createOneCacheTestingUserService(
+        self.userService = services_fixtures.create_one_cache_testing_userservice(
             services_fixtures.createProvider(),
             self.users[0],
             list(self.users[0].groups.all()),

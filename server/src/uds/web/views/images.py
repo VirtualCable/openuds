@@ -47,9 +47,9 @@ if typing.TYPE_CHECKING:
 
 
 @cache_page(3600, key_prefix='img', cache='memory')
-def image(request: 'HttpRequest', idImage: str) -> 'HttpResponse':
+def image(request: 'HttpRequest', image_id: str) -> 'HttpResponse':
     try:
-        icon = Image.objects.get(uuid=process_uuid(idImage))
+        icon = Image.objects.get(uuid=process_uuid(image_id))
         return icon.image_as_response()
     except Image.DoesNotExist:
         return HttpResponse(DEFAULT_IMAGE, content_type='image/png')

@@ -78,12 +78,12 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(10):
             user_services.append(
-                fixtures_services.createCacheTestingUserServices(
+                fixtures_services.create_cache_testing_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
 
-        data = services.get_services_data(self.request)
+        data = services.get_services_info_dict(self.request)
         now = datetime.datetime.now()
         # Will return this:
         #  return {
@@ -169,7 +169,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(100):
             user_services.append(
-                fixtures_services.createCacheTestingUserServices(
+                fixtures_services.create_cache_testing_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -178,13 +178,13 @@ class TestGetServicesData(UDSTransactionTestCase):
         meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
-                fixtures_services.createMetaPool(
+                fixtures_services.create_test_metapool(
                     service_pools=user_services[i * 10 : (i + 1) * 10], groups=self.groups
                 )
             )
                 
 
-        data = services.get_services_data(self.request)
+        data = services.get_services_info_dict(self.request)
         now = datetime.datetime.now()
 
         result_services: typing.Final[
@@ -224,7 +224,7 @@ class TestGetServicesData(UDSTransactionTestCase):
         user_services: list[models.ServicePool] = []
         for i in range(110):
             user_services.append(
-                fixtures_services.createCacheTestingUserServices(
+                fixtures_services.create_cache_testing_userservices(
                     count=1, user=self.user, groups=self.groups
                 )[0].deployed_service
             )
@@ -233,13 +233,13 @@ class TestGetServicesData(UDSTransactionTestCase):
         meta_services: list[models.MetaPool] = []
         for i in range(10):
             meta_services.append(
-                fixtures_services.createMetaPool(
+                fixtures_services.create_test_metapool(
                     service_pools=user_services[i * 10 : (i + 1) * 10], groups=self.groups
                 )
             )
                 
 
-        data = services.get_services_data(self.request)
+        data = services.get_services_info_dict(self.request)
         now = datetime.datetime.now()
 
         result_services: typing.Final[

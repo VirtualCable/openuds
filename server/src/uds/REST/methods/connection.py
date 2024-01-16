@@ -93,7 +93,7 @@ class Connection(Handler):
         self._request.user = self._user
 
         return Connection.result(
-            result=services.get_services_data(typing.cast(ExtendedHttpRequestWithUser, self._request))
+            result=services.get_services_info_dict(typing.cast(ExtendedHttpRequestWithUser, self._request))
         )
 
     def connection(self, idService: str, idTransport: str, skip: str = '') -> dict[str, typing.Any]:

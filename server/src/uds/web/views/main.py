@@ -45,18 +45,17 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 from uds import models
-from uds.core import exceptions, mfas, types, consts
+from uds.core import consts, exceptions, mfas, types
 from uds.core.auths import auth
 from uds.core.managers.crypto import CryptoManager
 from uds.core.managers.user_service import UserServiceManager
-from uds.core import types
 from uds.core.util import config, storage
 from uds.core.util.model import sql_stamp_seconds
-from uds.web.forms.LoginForm import LoginForm
-from uds.web.forms.MFAForm import MFAForm
+from uds.web.forms.login_form import LoginForm
+from uds.web.forms.mfa_form import MFAForm
 from uds.web.util import configjs, errors
 from uds.web.util.authentication import check_login
-from uds.web.util.services import get_services_data
+from uds.web.util.services import get_services_info_dict
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +84,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
 # Includes a request.session ticket, indicating that
 @never_cache
-def ticketLauncher(request: HttpRequest) -> HttpResponse:
+def ticket_launcher(request: HttpRequest) -> HttpResponse:
     return index(request)
 
 
@@ -162,7 +161,7 @@ def js(request: types.requests.ExtendedHttpRequest) -> HttpResponse:
 @never_cache
 @auth.deny_non_authenticated  # web_login_required not used here because this is not a web page, but js
 def services_data_json(request: types.requests.ExtendedHttpRequestWithUser) -> HttpResponse:
-    return JsonResponse(get_services_data(request))
+    return JsonResponse(get_services_info_dict(request))
 
 
 # The MFA page does not needs CSRF token, so we disable it

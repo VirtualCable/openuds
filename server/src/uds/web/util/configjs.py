@@ -177,34 +177,34 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
             or gettext('Access limited by calendar')
         },
         'urls': {
-            'changeLang': reverse('set_language'),
+            'change_language': reverse('set_language'),
             'login': reverse('page.login'),
             'mfa': reverse('page.mfa'),
             'logout': reverse('page.logout'),
             'user': reverse('page.index'),
-            'customAuth': reverse('uds.web.views.customAuth', kwargs={'idAuth': ''}),
+            'custom_auth': reverse('uds.web.views.custom_auth', kwargs={'auth_id': ''}),
             'services': reverse('webapi.services'),
             'error': reverse('webapi.error', kwargs={'err': '9999'}),
             'enabler': reverse(
                 'webapi.enabler',
-                kwargs={'idService': 'param1', 'idTransport': 'param2'},
+                kwargs={'service_id': 'param1', 'transport_id': 'param2'},
             ),
             'status': reverse(
-                'webapi.status', kwargs={'idService': 'param1', 'idTransport': 'param2'}
+                'webapi.status', kwargs={'service_id': 'param1', 'transport_id': 'param2'}
             ),
             'action': reverse(
                 'webapi.action',
-                kwargs={'idService': 'param1', 'actionString': 'param2'},
+                kwargs={'service_id': 'param1', 'action_string': 'param2'},
             ),
-            'galleryImage': reverse(
-                'webapi.galleryImage', kwargs={'idImage': 'param1'}
+            'gallery_image': reverse(
+                'webapi.gallery_image', kwargs={'image_id': 'param1'}
             ),
-            'transportIcon': reverse(
-                'webapi.transportIcon', kwargs={'idTrans': 'param1'}
+            'transport_icon': reverse(
+                'webapi.transport_icon', kwargs={'transport_id': 'param1'}
             ),
             'static': static(''),
-            'clientDownload': reverse('page.client-download'),
-            'updateTransportTicket': reverse('webapi.transport.UpdateTransportTicket', kwargs={'idTicket': 'param1', 'scrambler': 'param2'}),
+            'client_download': reverse('page.client-download'),
+            'update_transport_ticket': reverse('webapi.transport.update_transport_ticket', kwargs={'ticket_id': 'param1', 'scrambler': 'param2'}),
             # Launcher URL if exists
             'launch': request.session.get('launch', ''),
             'brand': settings.UDSBRAND if hasattr(settings, 'UDSBRAND') else ''
@@ -297,7 +297,7 @@ def uds_js(request: 'ExtendedHttpRequest') -> str:
         # Actors
         actors = [
             {
-                'url': reverse('utility.downloader', kwargs={'idDownload': key}),
+                'url': reverse('utility.downloader', kwargs={'download_id': key}),
                 'name': val['name'],
                 'description': gettext(val['comment']),
             }

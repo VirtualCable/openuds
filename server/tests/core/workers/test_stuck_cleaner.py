@@ -54,7 +54,7 @@ class StuckCleanerTest(UDSTestCase):
     def setUp(self) -> None:
         StuckCleaner.setup()
 
-        self.userServices = services_fixtures.createCacheTestingUserServices(count=128)
+        self.userServices = services_fixtures.create_cache_testing_userservices(count=128)
         # Set state date of all to 2 days ago
         for i, us in enumerate(self.userServices):
             us.state_date = datetime.datetime.now() - datetime.timedelta(days=2)

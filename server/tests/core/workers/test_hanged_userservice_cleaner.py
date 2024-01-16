@@ -55,7 +55,7 @@ class HangedCleanerTest(UDSTestCase):
         config.GlobalConfig.MAX_REMOVAL_TIME.set(MAX_INIT)
         HangedCleaner.setup()
         # All created user services has "in_use" to False, os_state and state to USABLE
-        self.userServices = fixtures_services.createCacheTestingUserServices(
+        self.userServices = fixtures_services.create_cache_testing_userservices(
             count=TEST_SERVICES
         )
 

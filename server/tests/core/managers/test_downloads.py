@@ -90,7 +90,7 @@ class DownloadsManagerTest(WEBTestCase):
 
             # This will fail, no user has logged in
             self.client.get(
-                reverse('utility.downloader', kwargs={'idDownload': knownUuid})
+                reverse('utility.downloader', kwargs={'download_id': knownUuid})
             )
             # Remove last '/' for redirect check. URL redirection will not contain it
             # Commented because i don't know why when executed in batch returns the last '/', and alone don't
@@ -98,7 +98,7 @@ class DownloadsManagerTest(WEBTestCase):
 
             # And try to download again
             response = self.client.get(
-                reverse('utility.downloader', kwargs={'idDownload': knownUuid})
+                reverse('utility.downloader', kwargs={'download_id': knownUuid})
             )
             self.assertEqual(
                 response.get('Content-Type'),

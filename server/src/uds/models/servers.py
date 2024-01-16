@@ -356,7 +356,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
         if net.is_valid_ip(ip_or_host):
             found = Server.objects.filter(ip=ip_or_host).first()
             if not found:  # Try reverse dns lookup
-                found = Server.objects.filter(hostname__in=resolver.reverse(ip_or_host)).first()
+                found = Server.objects.filter(hostname__in=resolver.reverse_resolve(ip_or_host)).first()
         else:
             found = Server.objects.filter(hostname=ip_or_host).first()
         return found

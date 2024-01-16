@@ -604,7 +604,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         return types.auth.AuthenticationResult(
             success=types.auth.AuthenticationState.REDIRECT,
-            url=url or types.auth.AuthenticationInternalUrl.LOGIN.getUrl(),
+            url=url or types.auth.AuthenticationInternalUrl.LOGIN.get_url(),
         )
 
     # pylint: disable=too-many-locals,too-many-branches,too-many-statements

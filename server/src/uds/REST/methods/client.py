@@ -216,9 +216,12 @@ class Client(Handler):
         def noargs() -> dict[str, typing.Any]:
             return Client.result(
                 {
-                    'availableVersion': CLIENT_VERSION,
-                    'requiredVersion': consts.system.REQUIRED_CLIENT_VERSION,
-                    'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),
+                    'availableVersion': CLIENT_VERSION,  # Compat with old clients, TB removed soon...
+                    'available_version': CLIENT_VERSION,
+                    'requiredVersion': consts.system.REQUIRED_CLIENT_VERSION,  # Compat with old clients, TB removed soon...
+                    'required_version': consts.system.REQUIRED_CLIENT_VERSION,
+                    'downloadUrl': self._request.build_absolute_uri(reverse('page.client-download')),  # Compat with old clients, TB removed soon...
+                    'download_url': self._request.build_absolute_uri(reverse('page.client-download')),
                 }
             )
 

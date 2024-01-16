@@ -44,7 +44,7 @@ from uds.models import Authenticator
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from uds.core.types.requests import ExtendedHttpRequest
-    from uds.web.forms.LoginForm import LoginForm
+    from uds.web.forms.login_form import LoginForm
 
 logger = logging.getLogger(__name__)
 

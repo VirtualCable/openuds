@@ -376,7 +376,7 @@ def authenticate_callback_url(authenticator: models.Authenticator) -> str:
     """
     Helper method, so we can get the auth call back url for an authenticator
     """
-    return reverse('page.auth.callback', kwargs={'authName': authenticator.small_name})
+    return reverse('page.auth.callback', kwargs={'authenticator_name': authenticator.small_name})
 
 
 def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authenticator]) -> str:
@@ -390,7 +390,7 @@ def authenticate_info_url(authenticator: typing.Union[str, bytes, models.Authent
     else:
         name = typing.cast('models.Authenticator', authenticator).small_name
 
-    return reverse('page.auth.info', kwargs={'authName': name})
+    return reverse('page.auth.info', kwargs={'authenticator_name': name})
 
 
 def web_login(

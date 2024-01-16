@@ -61,7 +61,7 @@ class AuthenticationInternalUrl(enum.Enum):
     LOGIN = 'page.login'
     LOGOUT = 'page.logout'
 
-    def getUrl(self) -> str:
+    def get_url(self) -> str:
         """
         Returns the url for the given internal url
         """
