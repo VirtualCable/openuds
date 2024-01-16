@@ -72,6 +72,8 @@ class TunnelClientProtocol(asyncio.Protocol):
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
         # Ensure close other side if not server_side
+        if exc:
+            logger.error('CLIENT CONNECTION LOST: %s', exc)
         try:
             self.receiver.close_connection()
         except Exception:
