@@ -72,3 +72,12 @@ SHORT_CACHE_TIMEOUT: typing.Final[int] = DEFAULT_CACHE_TIMEOUT // 3  # 1 minute
 DEFAULT_REQUEST_TIMEOUT: typing.Final[int] = 20  # In seconds
 DEFAULT_CONNECT_TIMEOUT: typing.Final[int] = 4   # In seconds
 DEFAULT_WAIT_TIME: typing.Final[int] = 8  # seconds
+
+# Tickets related
+DEFAULT_TICKET_VALIDITY_TIME: typing.Final[int] = 60  # 1 minute
+MAX_TICKET_VALIDITY_TIME: typing.Final[int] = 60 * 60 * 24 * 7  # 1 week
+TUNNEL_TICKET_VALIDITY_TIME: typing.Final[int] = 60 * 60 * 24 * 7  # 1 week
+
+TICKET_SECURED_ONWER = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but weird enough
+# Note that the tunnel ticket will be the owner + the ticket itself, so it will be 48 chars long (Secured or not)
+TICKET_LENGTH = 40  # Ticket length must much the length of the ticket length on tunnel server!!! (take care with previous note)
