@@ -326,6 +326,8 @@ class TunnelProtocol(asyncio.Protocol):
         self.runner(data)  # send data to current runner (command or proxy)
 
     def connection_lost(self, exc: typing.Optional[Exception]) -> None:
+        if exc: # Log if there is an exception
+            logger.error('CONNECTION LOST: %s', exc)
         # Ensure close other side if not server_side
         if self.client:
             self.client.close_connection()
@@ -387,9 +389,12 @@ class TunnelProtocol(asyncio.Protocol):
     async def notify_end_to_uds(
         cfg: config.ConfigurationType, ticket: bytes, stats_mngr: stats.StatsManager
     ) -> None:
-        await TunnelProtocol._read_from_uds(
-            cfg,
-            ticket,
-            'stop',
-            {'sent': str(stats_mngr.sent), 'recv': str(stats_mngr.recv)},
-        )
+        try:
+            await TunnelProtocol._read_from_uds(
+                cfg,
+                ticket,
+                'stop',
+                {'sent': str(stats_mngr.sent), 'recv': str(stats_mngr.recv)},
+            )
+        except Exception as e:
+            logger.error('ERROR notifying end to UDS: %s', e.args[0] if e.args else e)

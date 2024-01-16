@@ -50,6 +50,7 @@ ValidatorType = typing.Callable[[typing.Any], bool]
 SECURED = '#SECURE#'  # Just a "different" owner. If used anywhere, it's not important (will not fail), but weird enough
 # Note that the tunnel ticket will be the owner + the ticket itself, so it will be 48 chars long (Secured or not)
 TICKET_LENGTH = 40  # Ticket length must much the length of the ticket length on tunnel server!!! (take care with previous note)
+TUNNEL_VALIDITY = 60 * 60 * 24 * 7 # 7 days validity for tunnel tickets
 
 class TicketStore(UUIDModel):
     """
@@ -57,7 +58,7 @@ class TicketStore(UUIDModel):
     """
 
     DEFAULT_VALIDITY = 60
-    MAX_VALIDITY = 60 * 60 * 12
+    MAX_VALIDITY = 60 * 60 * 24 * 7  # 1 weeks is max validity for a ticket
     # Cleanup will purge all elements that have been created MAX_VALIDITY ago
 
     owner = models.CharField(null=True, blank=True, default=None, max_length=8)
@@ -232,7 +233,7 @@ class TicketStore(UUIDModel):
         port: int,
         host: typing.Optional[str] = None,
         extra: typing.Optional[typing.Mapping[str, typing.Any]] = None,
-        validity: int = 60 * 60 * 24,  # 24 Hours default validity for tunnel tickets
+        validity: int = TUNNEL_VALIDITY,  # 24 Hours default validity for tunnel tickets
     ) -> str:
         owner = cryptoManager().randomString(length=8)
         if not userService.user:
