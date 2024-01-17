@@ -103,11 +103,11 @@ def package_relative_file(moduleName: str, fileName: str) -> str:
     return fileName
 
 
-def timestampAsStr(stamp, format_='SHORT_DATETIME_FORMAT'):
+def timestamp_as_str(stamp: float, format_: typing.Optional[str]=None):
     """
     Converts a timestamp to date string using specified format (DJANGO format such us SHORT_DATETIME_FORMAT..)
     """
-    format_ = formats.get_format(format_)
+    format_ = formats.get_format(format_ or 'SHORT_DATETIME_FORMAT')
     return filters.date(datetime.datetime.fromtimestamp(stamp), format_)
 
 

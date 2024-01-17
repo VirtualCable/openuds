@@ -63,21 +63,21 @@ class BaseSpiceTransport(transports.Transport):
         label=_('Empty credentials'),
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='useEmptyCreds',
+        old_field_name='useEmptyCreds',
     )
     forced_username = gui.TextField(
         order=2,
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedName',
+        old_field_name='fixedName',
     )
     forced_password = gui.PasswordField(
         order=3,
         label=_('Password'),
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedPassword',
+        old_field_name='fixedPassword',
     )
     server_certificate = gui.TextField(
         order=4,
@@ -88,14 +88,14 @@ class BaseSpiceTransport(transports.Transport):
             'Server certificate (public), can be found on your ovirt engine, probably at /etc/pki/ovirt-engine/certs/ca.der (Use the contents of this file).'
         ),
         required=False,
-        stored_field_name='serverCertificate',
+        old_field_name='serverCertificate',
     )
     fullscreen = gui.CheckBoxField(
         order=5,
         label=_('Fullscreen Mode'),
         tooltip=_('If checked, viewer will be shown on fullscreen mode-'),
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='fullScreen',
+        old_field_name='fullScreen',
     )
     allow_smartcards = gui.CheckBoxField(
         order=6,
@@ -103,7 +103,7 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('If checked, SPICE protocol will allow smartcard redirection.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='smartCardRedirect',
+        old_field_name='smartCardRedirect',
     )
     allow_usb_redirection = gui.CheckBoxField(
         order=7,
@@ -111,7 +111,7 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('If checked, USB redirection will be allowed.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='usbShare',
+        old_field_name='usbShare',
     )
     allow_usb_redirection_new_plugs = gui.CheckBoxField(
         order=8,
@@ -119,7 +119,7 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('Auto-redirect USB devices when plugged in.'),
         default=False,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='autoNewUsbShare',
+        old_field_name='autoNewUsbShare',
     )
     ssl_connection = gui.CheckBoxField(
         order=9,
@@ -127,7 +127,7 @@ class BaseSpiceTransport(transports.Transport):
         tooltip=_('If checked, SPICE protocol will allow SSL connections.'),
         default=True,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='SSLConnection',
+        old_field_name='SSLConnection',
     )
 
     overrided_proxy = gui.TextField(
@@ -139,7 +139,7 @@ class BaseSpiceTransport(transports.Transport):
         required=False,
         tab=types.ui.Tab.ADVANCED,
         pattern=types.ui.FieldPatternType.URL,
-        stored_field_name='overridedProxy',
+        old_field_name='overridedProxy',
     )
 
     def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:

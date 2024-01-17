@@ -153,7 +153,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='maxPreparingServices',
+        old_field_name='maxPreparingServices',
     )
     max_removing_services = gui.NumericField(
         length=3,
@@ -165,7 +165,7 @@ class OpenStackProvider(ServiceProvider):
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='maxRemovingServices',
+        old_field_name='maxRemovingServices',
     )
 
     timeout = gui.NumericField(

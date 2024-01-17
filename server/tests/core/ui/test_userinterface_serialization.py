@@ -153,7 +153,7 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterface()
         data = old_serialize_form(ui)
         ui2 = TestingUserInterface()
-        ui2.deserialize_old_fields(data)
+        ui2.deserialize_from_old_format(data)
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
@@ -176,7 +176,7 @@ class UserinterfaceTest(UDSTestCase):
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
 
-    def test_stored_field_name(self):
+    def test_old_field_name(self):
         # This test is to ensure that new serialized data can be loaded
         # mock logging warning
         ui = TestingUserInterfaceFieldNameOrig()
@@ -185,6 +185,9 @@ class UserinterfaceTest(UDSTestCase):
         ui2.unserialize_fields(data)
 
         self.assertEqual(ui.strField.value, ui2.str_field.value)
+        
+        # On current version, we allow backwards compatibility, so no warning is issued
+        # Will be removed on next major version
         with mock.patch('logging.Logger.warning') as mock_warning:
             data = ui2.serialize_fields()  # Should store str_field as strField
             

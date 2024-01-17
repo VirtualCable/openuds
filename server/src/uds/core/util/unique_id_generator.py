@@ -54,21 +54,19 @@ class CreateNewIdException(Exception):
 
 
 class UniqueIDGenerator:
-    __slots__ = ('_owner', '_baseName')
+    __slots__ = ('_owner', '_base_name')
 
     # owner is the owner of the UniqueID
     _owner: str
     # base name for filtering unique ids. (I.e. "mac", "ip", "ipv6" ....)
-    _baseName: str
+    _base_name: str
 
-    def __init__(
-        self, type_name: str, owner: str, baseName: typing.Optional[str] = None
-    ):
+    def __init__(self, type_name: str, owner: str, baseName: typing.Optional[str] = None):
         self._owner = owner + type_name
-        self._baseName = 'uds' if baseName is None else baseName
+        self._base_name = 'uds' if baseName is None else baseName
 
     def setBaseName(self, newBaseName: str):
-        self._baseName = newBaseName
+        self._base_name = newBaseName
 
     def __filter(
         self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False
@@ -76,9 +74,7 @@ class UniqueIDGenerator:
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
         obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
-        return obj.filter(
-            basename=self._baseName, seq__gte=rangeStart, seq__lte=rangeEnd
-        )
+        return obj.filter(basename=self._base_name, seq__gte=rangeStart, seq__lte=rangeEnd)
 
     def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> int:
         """
@@ -127,7 +123,7 @@ class UniqueIDGenerator:
                         # will get an "duplicate key error",
                         UniqueId.objects.create(
                             owner=self._owner,
-                            basename=self._baseName,
+                            basename=self._base_name,
                             seq=seq,
                             assigned=True,
                             stamp=stamp,
@@ -150,13 +146,13 @@ class UniqueIDGenerator:
     def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
         self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(
             owner=toUidGen._owner,  # pylint: disable=protected-access
-            basename=toUidGen._baseName,  # pylint: disable=protected-access
+            basename=toUidGen._base_name,  # pylint: disable=protected-access
             stamp=sql_stamp_seconds(),
         )
         return True
 
     def free(self, seq) -> None:
-        logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._baseName)
+        logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._base_name)
         with transaction.atomic():
             flt = (
                 self.__filter(0, forUpdate=True)
@@ -164,9 +160,9 @@ class UniqueIDGenerator:
                 .update(owner='', assigned=False, stamp=sql_stamp_seconds())
             )
         if flt > 0:
-            self.__purge()
+            self._purge()
 
-    def __purge(self) -> None:
+    def _purge(self) -> None:
         logger.debug('Purging UniqueID database')
         try:
             last: UniqueId = self.__filter(0, forUpdate=False).filter(assigned=True)[0]  # type: ignore  # Slicing is not supported by pylance right now
@@ -176,21 +172,17 @@ class UniqueIDGenerator:
             # logger.exception('Error here')
             seq = 0
         with transaction.atomic():
-            self.__filter(
-                seq
-            ).delete()  # Clean ups all unassigned after last assigned in this range
+            self.__filter(seq).delete()  # Clean ups all unassigned after last assigned in this range
 
     def release(self) -> None:
         UniqueId.objects.select_for_update().filter(owner=self._owner).update(
             assigned=False, owner='', stamp=sql_stamp_seconds()
-        )  # @UndefinedVariable
-        self.__purge()
+        )
+        self._purge()
 
-    def releaseOlderThan(self, stamp=None) -> None:
+    def release_older_than(self, stamp: typing.Optional[int] = None) -> None:
         stamp = sql_stamp_seconds() if stamp is None else stamp
-        UniqueId.objects.select_for_update().filter(
-            owner=self._owner, stamp__lt=stamp
-        ).update(
+        UniqueId.objects.select_for_update().filter(owner=self._owner, stamp__lt=stamp).update(
             assigned=False, owner='', stamp=stamp
-        )  # @UndefinedVariable
-        self.__purge()
+        )
+        self._purge()

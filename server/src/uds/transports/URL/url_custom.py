@@ -71,7 +71,7 @@ class URLCustomTransport(transports.Transport):
         default='https://www.udsenterprise.com',
         length=256,
         required=True,
-        stored_field_name='urlPattern',  # Allows compat with old versions
+        old_field_name='urlPattern',  # Allows compat with old versions
     )
 
     force_new_window = gui.CheckBoxField(
@@ -82,7 +82,7 @@ class URLCustomTransport(transports.Transport):
         ),
         default=False,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='forceNewWindow',  # Allows compat with old versions
+        old_field_name='forceNewWindow',  # Allows compat with old versions
     )
 
     def initialize(self, values: 'Module.ValuesType'):

@@ -64,21 +64,21 @@ class BaseRDPTransport(transports.Transport):
         order=11,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='useEmptyCreds',
+        old_field_name='useEmptyCreds',
     )
     forced_username = gui.TextField(
         label=_('Username'),
         order=12,
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedName',
+        old_field_name='fixedName',
     )
     forced_password = gui.PasswordField(
         label=_('Password'),
         order=13,
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedPassword',
+        old_field_name='fixedPassword',
     )
     force_no_domain = gui.CheckBoxField(
         label=_('Without Domain'),
@@ -87,14 +87,14 @@ class BaseRDPTransport(transports.Transport):
             'If checked, the domain part will always be emptied (to connect to xrdp for example is needed)'
         ),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='withoutDomain',
+        old_field_name='withoutDomain',
     )
     forced_domain = gui.TextField(
         label=_('Domain'),
         order=15,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedDomain',
+        old_field_name='fixedDomain',
     )
 
     allow_smartcards = gui.CheckBoxField(
@@ -102,14 +102,14 @@ class BaseRDPTransport(transports.Transport):
         order=20,
         tooltip=_('If checked, this transport will allow the use of smartcards'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='allowSmartcards',
+        old_field_name='allowSmartcards',
     )
     allow_printers = gui.CheckBoxField(
         label=_('Allow Printers'),
         order=21,
         tooltip=_('If checked, this transport will allow the use of user printers'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='allowPrinters',
+        old_field_name='allowPrinters',
     )
     allow_drives = gui.ChoiceField(
         label=_('Local drives policy'),
@@ -122,7 +122,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': 'true', 'text': 'Allow any drive'},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='allowDrives',
+        old_field_name='allowDrives',
     )
     enforce_drives = gui.TextField(
         label=_('Force drives'),
@@ -131,7 +131,7 @@ class BaseRDPTransport(transports.Transport):
             'Use comma separated values, for example "C:,D:". If drives policy is disallowed, this will be ignored'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='enforceDrives',
+        old_field_name='enforceDrives',
     )
 
     allow_serial_ports = gui.CheckBoxField(
@@ -139,7 +139,7 @@ class BaseRDPTransport(transports.Transport):
         order=24,
         tooltip=_('If checked, this transport will allow the use of user serial ports'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='allowSerials',
+        old_field_name='allowSerials',
     )
     allow_clipboard = gui.CheckBoxField(
         label=_('Enable clipboard'),
@@ -147,7 +147,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, copy-paste functions will be allowed'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
-        stored_field_name='allowClipboard',
+        old_field_name='allowClipboard',
     )
     allow_audio = gui.CheckBoxField(
         label=_('Enable sound'),
@@ -155,7 +155,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, sound will be redirected.'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
-        stored_field_name='allowAudio',
+        old_field_name='allowAudio',
     )
     allow_webcam = gui.CheckBoxField(
         label=_('Enable webcam'),
@@ -163,7 +163,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, webcam will be redirected (ONLY Windows).'),
         tab=types.ui.Tab.PARAMETERS,
         default=False,
-        stored_field_name='allowWebcam',
+        old_field_name='allowWebcam',
     )
     allow_usb_redirection = gui.ChoiceField(
         label=_('USB redirection'),
@@ -180,7 +180,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '{745a17a0-74d3-11d0-b6fe-00a0c90f57da}', 'text': 'HIDs'},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='usbRedirection',
+        old_field_name='usbRedirection',
     )
 
     credssp = gui.CheckBoxField(
@@ -189,7 +189,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, will enable Credentials Provider Support)'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
-        stored_field_name='credssp',
+        old_field_name='credssp',
     )
     rdp_port = gui.NumericField(
         order=30,
@@ -199,7 +199,7 @@ class BaseRDPTransport(transports.Transport):
         tab=types.ui.Tab.PARAMETERS,
         required=True,  #: Numeric fields have always a value, so this not really needed
         default=3389,
-        stored_field_name='rdpPort',
+        old_field_name='rdpPort',
     )
 
     screen_size = gui.ChoiceField(
@@ -224,7 +224,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '-1x-1', 'text': 'Full screen'},
         ],
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='screenSize',
+        old_field_name='screenSize',
     )
 
     color_depth = gui.ChoiceField(
@@ -239,7 +239,7 @@ class BaseRDPTransport(transports.Transport):
             {'id': '32', 'text': '32'},
         ],
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='colorDepth',
+        old_field_name='colorDepth',
     )
 
     wallpaper = gui.CheckBoxField(
@@ -249,7 +249,7 @@ class BaseRDPTransport(transports.Transport):
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='wallpaper',
+        old_field_name='wallpaper',
     )
     multimon = gui.CheckBoxField(
         label=_('Multiple monitors'),
@@ -258,14 +258,14 @@ class BaseRDPTransport(transports.Transport):
             'If checked, all client monitors will be used for displaying (only works on windows clients)'
         ),
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='multimon',
+        old_field_name='multimon',
     )
     aero = gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=35,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='aero',
+        old_field_name='aero',
     )
     smooth = gui.CheckBoxField(
         label=_('Font Smoothing'),
@@ -273,7 +273,7 @@ class BaseRDPTransport(transports.Transport):
         order=36,
         tooltip=_('If checked, fonts smoothing will be allowed'),
         tab=types.ui.Tab.DISPLAY,
-        stored_field_name='smooth',
+        old_field_name='smooth',
     )
     show_connection_bar = gui.CheckBoxField(
         label=_('Connection Bar'),
@@ -281,7 +281,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, connection bar will be shown (only on Windows clients)'),
         tab=types.ui.Tab.DISPLAY,
         default=True,
-        stored_field_name='showConnectionBar',
+        old_field_name='showConnectionBar',
     )
 
     lnx_multimedia = gui.CheckBoxField(
@@ -289,14 +289,14 @@ class BaseRDPTransport(transports.Transport):
         order=40,
         tooltip=_('If checked. Linux client will use multimedia parameter for xfreerdp'),
         tab='Linux Client',
-        stored_field_name='multimedia',
+        old_field_name='multimedia',
     )
     lnx_alsa = gui.CheckBoxField(
         label=_('Use Alsa'),
         order=41,
         tooltip=_('If checked, Linux client will try to use ALSA, otherwise Pulse will be used'),
         tab='Linux Client',
-        stored_field_name='alsa',
+        old_field_name='alsa',
     )
     lnx_printer_string = gui.TextField(
         label=_('Printer string'),
@@ -304,7 +304,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If printer is checked, the printer string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
-        stored_field_name='printerString',
+        old_field_name='printerString',
     )
     lnx_smartcard_string = gui.TextField(
         label=_('Smartcard string'),
@@ -312,7 +312,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If smartcard is checked, the smartcard string used with xfreerdp client'),
         tab='Linux Client',
         length=256,
-        stored_field_name='smartcardString',
+        old_field_name='smartcardString',
     )
     lnx_custom_parameters = gui.TextField(
         label=_('Custom parameters'),
@@ -322,7 +322,7 @@ class BaseRDPTransport(transports.Transport):
         ),
         tab='Linux Client',
         length=256,
-        stored_field_name='customParameters',
+        old_field_name='customParameters',
     )
 
     mac_allow_msrdc = gui.CheckBoxField(
@@ -331,7 +331,7 @@ class BaseRDPTransport(transports.Transport):
         tooltip=_('If checked, allows use of Microsoft Remote Desktop Client. PASSWORD WILL BE PROMPTED!'),
         tab='Mac OS X',
         default=False,
-        stored_field_name='allowMacMSRDC',
+        old_field_name='allowMacMSRDC',
     )
 
     mac_custom_parameters = gui.TextField(
@@ -342,7 +342,7 @@ class BaseRDPTransport(transports.Transport):
         ),
         tab='Mac OS X',
         length=256,
-        stored_field_name='customParametersMAC',
+        old_field_name='customParametersMAC',
     )
 
     wnd_custom_parameters = gui.TextField(
@@ -352,7 +352,7 @@ class BaseRDPTransport(transports.Transport):
         length=4096,
         lines=10,
         tab='Windows Client',
-        stored_field_name='customParametersWindows',
+        old_field_name='customParametersWindows',
     )
 
     wnd_optimize_teams = gui.CheckBoxField(
@@ -360,7 +360,7 @@ class BaseRDPTransport(transports.Transport):
         order=46,
         tooltip=_('If checked, Teams will be optimized (only works on Windows clients)'),
         tab='Windows Client',
-        stored_field_name='optimizeTeams',
+        old_field_name='optimizeTeams',
     )
 
     def is_ip_allowed(self, userService: 'models.UserService', ip: str) -> bool:

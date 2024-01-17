@@ -113,13 +113,13 @@ class ServiceProvider(module.Module):
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_PREPARING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     # : Note: This cannot be renamed with out a "migration", because it's used at database
-    max_preparing_services: typing.Optional[typing.Union[int, gui.InputField]] = None
+    max_preparing_services: typing.Optional[typing.Union[int, gui.NumericField]] = None
 
     # : This defines the maximum number of concurrent services that should be in state "removing" for this provider
     # : Default is return the GlobalConfig value of GlobalConfig.MAX_REMOVING_SERVICES
     # : Note: this variable can be either a fixed value (integer, string) or a Gui text field (with a .value property)
     # : Note: This cannot be renamed with out a "migration", because it's used at database
-    max_removing_services: typing.Optional[typing.Union[int, gui.InputField]] = None
+    max_removing_services: typing.Optional[typing.Union[int, gui.NumericField]] = None
 
     # : This defines if the limits (max.. vars) should be taken into accout or simply ignored
     # : Default is return the GlobalConfig value of GlobalConfig.IGNORE_LIMITS
@@ -197,22 +197,22 @@ class ServiceProvider(module.Module):
         if val is None:
             val = self.max_preparing_services = consts.system.DEFAULT_MAX_PREPARING_SERVICES
 
-        if isinstance(val, gui.InputField):
-            retVal = int(val.value)
+        if isinstance(val, gui.NumericField):
+            ret_val = val.as_int()
         else:
-            retVal = val
-        return retVal if retVal > 0 else 1
+            ret_val = val
+        return max(ret_val, 1)  # Ensure that is at least 1
 
     def get_max_removing_services(self) -> int:
         val = self.max_removing_services
         if val is None:
             val = self.max_removing_services = 15
 
-        if isinstance(val, gui.InputField):
-            retVal = int(val.value)
+        if isinstance(val, gui.NumericField):
+            ret_val = val.as_int()
         else:
-            retVal = val
-        return retVal if retVal > 0 else 1
+            ret_val = val
+        return max(ret_val, 1)
 
     def get_ignore_limits(self) -> bool:
         val = self.ignore_limits

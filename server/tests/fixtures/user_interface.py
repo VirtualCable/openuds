@@ -58,7 +58,7 @@ class TestingUserInterface(UserInterface):
         tooltip='This is a text field',
         required=True,
         default=typing.cast(str, DEFAULTS['str_field']),
-        stored_field_name='strField',
+        old_field_name='strField',
     )
     str_auto_field = gui.TextAutocompleteField(
         label='Text Autocomplete Field',
@@ -175,5 +175,5 @@ class TestingUserInterfaceFieldName(UserInterface):
         tooltip='This is a text field',
         required=True,
         default='',  # Will be loaded from orig
-        stored_field_name='strField',
+        old_field_name='strField',
     )

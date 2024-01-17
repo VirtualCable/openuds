@@ -80,14 +80,14 @@ class HTML5VNCTransport(transports.Transport):
         order=20,
         tooltip=_('Username for VNC connection authentication.'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='username'
+        old_field_name='username'
     )
     password = gui.PasswordField(
         label=_('Password'),
         order=21,
         tooltip=_('Password for VNC connection authentication'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='password'
+        old_field_name='password'
     )
 
     vnc_port = gui.NumericField(
@@ -98,7 +98,7 @@ class HTML5VNCTransport(transports.Transport):
         tooltip=_('Port of the VNC server.'),
         required=True,
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='vncPort'
+        old_field_name='vncPort'
     )
 
     color_depth = gui.ChoiceField(
@@ -115,28 +115,28 @@ class HTML5VNCTransport(transports.Transport):
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='colorDepth'
+        old_field_name='colorDepth'
     )
     swap_red_blue = gui.CheckBoxField(
         label=_('Swap red/blue'),
         order=27,
         tooltip=_('Use this if your colours seems incorrect (blue appears red, ..) to swap them.'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='swapRedBlue'
+        old_field_name='swapRedBlue'
     )
     cursor = gui.CheckBoxField(
         label=_('Remote cursor'),
         order=28,
         tooltip=_('If set, force to show remote cursor'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='cursor'
+        old_field_name='cursor'
     )
     read_only = gui.CheckBoxField(
         label=_('Read only'),
         order=29,
         tooltip=_('If set, the connection will be read only'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='readOnly'
+        old_field_name='readOnly'
     )
 
     ticket_validity = fields.tunnel_ticket_validity_field()

@@ -70,7 +70,7 @@ class TRDPTransport(BaseRDPTransport):
 
     tunnel = fields.tunnel_field()
 
-    tunnel_wait = fields.tunnel_wait_time()
+    tunnel_wait = fields.tunnel_wait_time_field()
 
     verify_certificate = gui.CheckBoxField(
         label=_('Force SSL certificate verification'),
@@ -78,7 +78,7 @@ class TRDPTransport(BaseRDPTransport):
         tooltip=_('If enabled, the certificate of tunnel server will be verified (recommended).'),
         default=False,
         tab=types.ui.Tab.TUNNEL,
-        stored_field_name='tunnelVerifyCert',
+        old_field_name='tunnelVerifyCert',
     )
 
     force_empty_creds = BaseRDPTransport.force_empty_creds

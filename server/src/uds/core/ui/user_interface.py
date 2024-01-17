@@ -279,13 +279,13 @@ class gui:
         _fields_info: types.ui.FieldInfo
 
         def __init__(
-            self, label: str, type: types.ui.FieldType, stored_field_name: typing.Optional[str], **kwargs
+            self, label: str, type: types.ui.FieldType, old_field_name: typing.Optional[str], **kwargs
         ) -> None:
             default = kwargs.get('default')
             # Length is not used on some kinds of fields, but present in all anyway
             # This property only affects in "modify" operations
             self._fields_info = types.ui.FieldInfo(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 order=kwargs.get('order') or 0,
                 label=label,
                 tooltip=kwargs.get('tooltip') or '',
@@ -321,11 +321,11 @@ class gui:
         def is_serializable(self) -> bool:
             return True
 
-        def stored_field_name(self) -> typing.Optional[str]:
+        def old_field_name(self) -> typing.Optional[str]:
             """
             Returns the name of the field
             """
-            return self._fields_info.stored_field_name
+            return self._fields_info.old_field_name
 
         @property
         def value(self) -> typing.Any:
@@ -360,7 +360,7 @@ class gui:
             alter original values.
             """
             data = typing.cast(dict, self._fields_info.as_dict())
-            for i in ('value', 'stored_field_name'):
+            for i in ('value', 'old_field_name'):
                 if i in data:
                     del data[i]  # We don't want to send some values on gui_description
             data['label'] = gettext(data['label']) if data['label'] else ''
@@ -466,10 +466,10 @@ class gui:
             value: typing.Optional[str] = None,
             pattern: typing.Union[str, types.ui.FieldPatternType] = types.ui.FieldPatternType.NONE,
             lines: int = 0,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 length=length,
                 readonly=readonly,
@@ -573,7 +573,7 @@ class gui:
                 dict[str, str],
                 None,
             ] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
                 label=label,
@@ -585,7 +585,7 @@ class gui:
                 tab=tab,
                 default=default,
                 value=value,
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
             )
             # Update parent type
             self.type = types.ui.FieldType.TEXT_AUTOCOMPLETE
@@ -635,10 +635,10 @@ class gui:
             value: typing.Optional[int] = None,
             min_value: typing.Optional[int] = None,
             max_value: typing.Optional[int] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 length=length,
                 readonly=readonly,
@@ -686,10 +686,10 @@ class gui:
                 typing.Union[collections.abc.Callable[[], datetime.date], datetime.date]
             ] = None,
             value: typing.Optional[typing.Union[str, datetime.date]] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 length=length,
                 readonly=readonly,
@@ -774,10 +774,10 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str] = '',
             value: typing.Optional[str] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ):
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 length=length,
                 readonly=readonly,
@@ -838,10 +838,10 @@ class gui:
             default: typing.Any = None,  # May be also callable
             value: typing.Any = None,
             serializable: bool = False,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 order=order,
                 default=default,
@@ -892,10 +892,10 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], bool], bool] = False,
             value: typing.Optional[bool] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ):
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 readonly=readonly,
                 order=order,
@@ -1034,10 +1034,10 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 readonly=readonly,
                 order=order,
@@ -1087,10 +1087,10 @@ class gui:
             tab: typing.Optional[typing.Union[str, types.ui.Tab]] = None,
             default: typing.Union[collections.abc.Callable[[], str], str, None] = None,
             value: typing.Optional[str] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ):
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 readonly=readonly,
                 order=order,
@@ -1166,10 +1166,10 @@ class gui:
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[collections.abc.Iterable[str]] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ):
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 readonly=readonly,
                 order=order,
@@ -1235,10 +1235,10 @@ class gui:
                 collections.abc.Callable[[], str], collections.abc.Callable[[], list[str]], list[str], str, None
             ] = None,
             value: typing.Optional[collections.abc.Iterable[str]] = None,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                stored_field_name=stored_field_name,
+                old_field_name=old_field_name,
                 label=label,
                 readonly=readonly,
                 order=order,
@@ -1269,10 +1269,10 @@ class gui:
             self,
             label: str,
             default: str,
-            stored_field_name: typing.Optional[str] = None,
+            old_field_name: typing.Optional[str] = None,
         ) -> None:
             super().__init__(
-                label=label, default=default, type=types.ui.FieldType.INFO, stored_field_name=stored_field_name
+                label=label, default=default, type=types.ui.FieldType.INFO, old_field_name=old_field_name
             )
 
 
@@ -1457,8 +1457,10 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             types.ui.FieldType.INFO: lambda x: None,
         }
         # Any unexpected type will raise an exception
+        # Note that currently, we will store old field name on db
+        # to allow "backwards" migration if needed, but will be removed on a future version
         arr = [
-            (field.stored_field_name() or field_name, field.type.name, fw_converters[field.type](field))
+            (field.old_field_name() or field_name, field.type.name, fw_converters[field.type](field))
             for field_name, field in self._gui.items()
             if fw_converters[field.type](field) is not None
         ]
@@ -1489,7 +1491,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         if not values.startswith(SERIALIZATION_HEADER):
             # Unserialize with old method
-            self.deserialize_old_fields(values)
+            self.deserialize_from_old_format(values)
             return
 
         # For future use, right now we only have one version
@@ -1504,7 +1506,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         arr = _unserialize(values)
 
-        # Dict of translations from stored_field_name to field_name
+        # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
         # Set all values to defaults ones
@@ -1539,7 +1541,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             if fld_name in field_names_translations:
                 fld_name = field_names_translations[
                     fld_name
-                ]  # Convert stored_field_name to field_name if needed
+                ]  # Convert old field name to new one if needed
             if fld_name not in self._gui:
                 logger.warning('Field %s not found in form', fld_name)
                 continue
@@ -1552,7 +1554,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 continue
             self._gui[fld_name].value = converters[field_type](fld_value)
 
-    def deserialize_old_fields(self, values: bytes) -> None:
+    def deserialize_from_old_format(self, values: bytes) -> None:
         """
         This method deserializes the values previously obtained using
         :py:meth:`serializeForm`, and stores
@@ -1645,12 +1647,12 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         return found_errors
 
     def _get_fieldname_translations(self) -> dict[str, str]:
-        # Dict of translations from stored_field_name to field_name
+        # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = {}
         for fld_name, fld in self._gui.items():
-            fld_stored_field_name = fld.stored_field_name()
-            if fld_stored_field_name and fld_stored_field_name != fld_name:
-                field_names_translations[fld_stored_field_name] = fld_name
+            fld_old_field_name = fld.old_field_name()
+            if fld_old_field_name and fld_old_field_name != fld_name:
+                field_names_translations[fld_old_field_name] = fld_name
                 
         return field_names_translations
 

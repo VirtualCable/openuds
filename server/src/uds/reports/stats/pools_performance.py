@@ -162,9 +162,9 @@ class PoolPerformanceReport(StatsReport):
                 reportData.append(
                     {
                         'name': p[1],
-                        'date': utils.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
+                        'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
                         + ' - '
-                        + utils.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
+                        + utils.timestamp_as_str(interval[1], 'SHORT_DATETIME_FORMAT'),
                         'users': len(q),
                         'accesses': accesses,
                     }

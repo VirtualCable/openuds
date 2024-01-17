@@ -143,7 +143,7 @@ class LiveService(services.Service):
         tooltip=_('Service availability zones'),
         required=True,
         readonly=True,
-        stored_field_name='availabilityZone',
+        old_field_name='availabilityZone',
     )
     volume = gui.ChoiceField(
         label=_('Volume'),

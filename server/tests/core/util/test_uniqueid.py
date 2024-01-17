@@ -94,7 +94,7 @@ class UniqueIdTest(UDSTestCase):
         for i in range(NUM):
             self.assertEqual(self.uidGen.get(), i + NUM)
 
-        self.uidGen.releaseOlderThan(stamp)  # Clear ups older than 0 seconds ago
+        self.uidGen.release_older_than(stamp)  # Clear ups older than 0 seconds ago
 
         for i in range(NUM):
             self.assertEqual(self.uidGen.get(), i)

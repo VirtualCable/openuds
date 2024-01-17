@@ -44,7 +44,7 @@ class UniqueNameGenerator(UniqueIDGenerator):
     def __init__(self, owner):
         super().__init__('name', owner)
 
-    def __toName(self, seq: int, length: int) -> str:
+    def _to_name(self, seq: int, length: int) -> str:
         """Converts a sequence number to a name
         
         Args:
@@ -56,18 +56,18 @@ class UniqueNameGenerator(UniqueIDGenerator):
         """
         if seq == -1:
             raise KeyError('No more names available. Please, increase service digits.')
-        return f'{self._baseName}{seq:0{length}d}'
+        return f'{self._base_name}{seq:0{length}d}'
 
     def get(self, baseName: str, length: int = 5) -> str:  # type: ignore  # pylint: disable=arguments-differ,arguments-renamed
         self.setBaseName(baseName)
         minVal = 0
         maxVal = 10**length - 1
-        return self.__toName(super().get(minVal, maxVal), length)
+        return self._to_name(super().get(minVal, maxVal), length)
 
     def transfer(self, baseName: str, name: str, toUNGen: 'UniqueNameGenerator') -> None:  # type: ignore  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
-        super().transfer(int(name[len(self._baseName) :]), toUNGen)
+        super().transfer(int(name[len(self._base_name) :]), toUNGen)
 
     def free(self, baseName: str, name: str) -> None:  # type: ignore  # pylint: disable=arguments-differ
         self.setBaseName(baseName)
-        super().free(int(name[len(self._baseName) :]))
+        super().free(int(name[len(self._base_name) :]))

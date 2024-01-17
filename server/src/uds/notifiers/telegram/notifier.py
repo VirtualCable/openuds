@@ -88,7 +88,7 @@ class TelegramNotifier(messaging.Notifier):
         required=True,
         default='',
         tab=_('Telegram'),
-        stored_field_name='accessToken',
+        old_field_name='accessToken',
     )
 
     # Secret key used to validate join and subscribe requests
@@ -115,7 +115,7 @@ class TelegramNotifier(messaging.Notifier):
         min_value=60,
         max_value=86400,
         tab=_('Telegram'),
-        stored_field_name='checkDelay',
+        old_field_name='checkDelay',
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):

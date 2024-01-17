@@ -79,7 +79,7 @@ class HTML5SSHTransport(transports.Transport):
         order=20,
         tooltip=_('Username for SSH connection authentication.'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='username'
+        old_field_name='username'
     )
 
     # password = gui.PasswordField(
@@ -113,7 +113,7 @@ class HTML5SSHTransport(transports.Transport):
             'Command to execute on the remote server. If not provided, an interactive shell will be executed.'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='sshCommand'
+        old_field_name='sshCommand'
     )
     enable_file_sharing = HTML5RDPTransport.enable_file_sharing
     filesharing_root = gui.TextField(
@@ -121,7 +121,7 @@ class HTML5SSHTransport(transports.Transport):
         order=32,
         tooltip=_('Root path for file sharing. If not provided, root directory will be used.'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='fileSharingRoot'
+        old_field_name='fileSharingRoot'
     )
     ssh_port = gui.NumericField(
         length=40,
@@ -131,14 +131,14 @@ class HTML5SSHTransport(transports.Transport):
         tooltip=_('Port of the SSH server.'),
         required=True,
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='sshPort'
+        old_field_name='sshPort'
     )
     ssh_host_key = gui.TextField(
         label=_('SSH Host Key'),
         order=34,
         tooltip=_('Host key of the SSH server. If not provided, no verification of host identity is done.'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='sshHostKey'
+        old_field_name='sshHostKey'
     )
     server_keep_alive = gui.NumericField(
         length=3,
@@ -151,7 +151,7 @@ class HTML5SSHTransport(transports.Transport):
         required=True,
         min_value=0,
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='serverKeepAlive'
+        old_field_name='serverKeepAlive'
     )
 
     ticket_validity = fields.tunnel_ticket_validity_field()

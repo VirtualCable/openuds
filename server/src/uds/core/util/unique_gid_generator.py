@@ -43,11 +43,11 @@ class UniqueGIDGenerator(UniqueIDGenerator):
     def __init__(self, owner, baseName=None):
         super().__init__('id', owner, baseName)
 
-    def __toName(self, seq: int) -> str:
+    def _to_name(self, seq: int) -> str:
         if seq == -1:
             raise KeyError('No more GIDS available.')
-        return f'{self._baseName}{seq:08d}'
+        return f'{self._base_name}{seq:08d}'
         # return "%s%0*d" % (self._baseName, 8, seq)
 
     def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> str:  # type: ignore
-        return self.__toName(super().get())
+        return self._to_name(super().get())

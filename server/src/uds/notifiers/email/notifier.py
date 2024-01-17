@@ -118,7 +118,7 @@ class EmailNotifier(messaging.Notifier):
         tooltip=_('Email address that will be used as sender'),
         required=True,
         tab=_('Config'),
-        stored_field_name='fromEmail'
+        old_field_name='fromEmail'
     )
 
     to_email = gui.TextField(
@@ -128,7 +128,7 @@ class EmailNotifier(messaging.Notifier):
         tooltip=_('Email address that will be used as recipient'),
         required=True,
         tab=_('Config'),
-        stored_field_name='toEmail'
+        old_field_name='toEmail'
     )
 
     enable_html = gui.CheckBoxField(
@@ -137,7 +137,7 @@ class EmailNotifier(messaging.Notifier):
         tooltip=_('Enable HTML in emails'),
         default=True,
         tab=_('Config'),
-        stored_field_name='enableHTML'
+        old_field_name='enableHTML'
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):

@@ -78,7 +78,7 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, UDS will use Glyptodon Enterprise Tunnel for HTML tunneling instead of UDS Tunnel'
         ),
         tab=types.ui.Tab.TUNNEL,
-        stored_field_name='useGlyptodonTunnel',
+        old_field_name='useGlyptodonTunnel',
     )
 
     force_empty_creds = ui.gui.CheckBoxField(
@@ -86,21 +86,21 @@ class HTML5RDPTransport(transports.Transport):
         order=3,
         tooltip=_('If checked, the credentials used to connect will be emtpy'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='useEmptyCreds',
+        old_field_name='useEmptyCreds',
     )
     forced_username = ui.gui.TextField(
         label=_('Username'),
         order=4,
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedName',
+        old_field_name='fixedName',
     )
     forced_password = ui.gui.PasswordField(
         label=_('Password'),
         order=5,
         tooltip=_('If not empty, this password will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedPassword',
+        old_field_name='fixedPassword',
     )
     force_no_domain = ui.gui.CheckBoxField(
         label=_('Without Domain'),
@@ -109,14 +109,14 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, the domain part will always be emptied (to connecto to xrdp for example is needed)'
         ),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='withoutDomain',
+        old_field_name='withoutDomain',
     )
     forced_domain = ui.gui.TextField(
         label=_('Domain'),
         order=7,
         tooltip=_('If not empty, this domain will be always used as credential (used as DOMAIN\\user)'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedDomain',
+        old_field_name='fixedDomain',
     )
     wallpaper = ui.gui.CheckBoxField(
         label=_('Show wallpaper'),
@@ -125,21 +125,21 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, the wallpaper and themes will be shown on machine (better user experience, more bandwidth)'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='wallpaper',
+        old_field_name='wallpaper',
     )
     allow_destop_composition = ui.gui.CheckBoxField(
         label=_('Allow Desk.Comp.'),
         order=19,
         tooltip=_('If checked, desktop composition will be allowed'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='desktopComp',
+        old_field_name='desktopComp',
     )
     smooth = ui.gui.CheckBoxField(
         label=_('Font Smoothing'),
         order=20,
         tooltip=_('If checked, fonts smoothing will be allowed (windows clients only)'),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='smooth',
+        old_field_name='smooth',
     )
     enable_audio = ui.gui.CheckBoxField(
         label=_('Enable Audio'),
@@ -147,7 +147,7 @@ class HTML5RDPTransport(transports.Transport):
         tooltip=_('If checked, the audio will be redirected to remote session (if client browser supports it)'),
         tab=types.ui.Tab.PARAMETERS,
         default=True,
-        stored_field_name='enableAudio',
+        old_field_name='enableAudio',
     )
     enable_microphone = ui.gui.CheckBoxField(
         label=_('Enable Microphone'),
@@ -156,7 +156,7 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, the microphone will be redirected to remote session (if client browser supports it)'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='enableAudioInput',
+        old_field_name='enableAudioInput',
     )
     enable_printing = ui.gui.CheckBoxField(
         label=_('Enable Printing'),
@@ -165,7 +165,7 @@ class HTML5RDPTransport(transports.Transport):
             'If checked, the printing will be redirected to remote session (if client browser supports it)'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='enablePrinting',
+        old_field_name='enablePrinting',
     )
     enable_file_sharing = ui.gui.ChoiceField(
         label=_('File Sharing'),
@@ -179,7 +179,7 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'true', 'text': _('Enable file sharing')},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='enableFileSharing',
+        old_field_name='enableFileSharing',
     )
     enable_clipboard = ui.gui.ChoiceField(
         label=_('Clipboard'),
@@ -193,7 +193,7 @@ class HTML5RDPTransport(transports.Transport):
             {'id': 'enabled', 'text': _('Enable clipboard')},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='enableClipboard',
+        old_field_name='enableClipboard',
     )
 
     server_layout = ui.gui.ChoiceField(
@@ -224,7 +224,7 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='-',
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='serverLayout',
+        old_field_name='serverLayout',
     )
 
     ticket_validity = fields.tunnel_ticket_validity_field()
@@ -247,7 +247,7 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='true',
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='forceNewWindow',
+        old_field_name='forceNewWindow',
     )
     
     security = ui.gui.ChoiceField(
@@ -277,7 +277,7 @@ class HTML5RDPTransport(transports.Transport):
         ],
         default='any',
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='security',
+        old_field_name='security',
     )
 
     rdp_port = ui.gui.NumericField(
@@ -288,7 +288,7 @@ class HTML5RDPTransport(transports.Transport):
         required=True,  #: Numeric fields have always a value, so this not really needed
         default=3389,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='rdpPort',
+        old_field_name='rdpPort',
     )
 
     custom_glyptodon_path = ui.gui.TextField(
@@ -301,7 +301,7 @@ class HTML5RDPTransport(transports.Transport):
         length=128,
         required=False,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='customGEPath',
+        old_field_name='customGEPath',
     )
 
     def initialize(self, values: 'Module.ValuesType'):

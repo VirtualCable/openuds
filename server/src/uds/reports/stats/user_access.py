@@ -133,9 +133,9 @@ class StatsReportLogin(StatsReport):
             data.append((key, val))
             reportData.append(
                 {
-                    'date': utils.timestampAsStr(interval[0], 'SHORT_DATETIME_FORMAT')
+                    'date': utils.timestamp_as_str(interval[0], 'SHORT_DATETIME_FORMAT')
                     + ' - '
-                    + utils.timestampAsStr(interval[1], 'SHORT_DATETIME_FORMAT'),
+                    + utils.timestamp_as_str(interval[1], 'SHORT_DATETIME_FORMAT'),
                     'users': val,
                 }
             )

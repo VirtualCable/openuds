@@ -73,7 +73,7 @@ class BaseX2GOTransport(transports.Transport):
         label=_('Username'),
         tooltip=_('If not empty, this username will be always used as credential'),
         tab=types.ui.Tab.CREDENTIALS,
-        stored_field_name='fixedName',
+        old_field_name='fixedName',
     )
 
     screen_size = gui.ChoiceField(
@@ -90,7 +90,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': CommonPrefs.SZ_FULLSCREEN, 'text': gettext_lazy('Full Screen')},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='screenSize',
+        old_field_name='screenSize',
     )
 
     desktop_type = gui.ChoiceField(
@@ -109,7 +109,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'UDSVAPP', 'text': 'UDS vAPP'},
         ],
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='desktopType',
+        old_field_name='desktopType',
     )
 
     custom_cmd = gui.TextField(
@@ -119,7 +119,7 @@ class BaseX2GOTransport(transports.Transport):
             'If UDS vAPP is selected as "Desktop", the FULL PATH of the app to be executed. If UDS vAPP is not selected, this field will be ignored.'
         ),
         tab=types.ui.Tab.PARAMETERS,
-        stored_field_name='customCmd',
+        old_field_name='customCmd',
     )
 
     sound = gui.CheckBoxField(
@@ -163,7 +163,7 @@ class BaseX2GOTransport(transports.Transport):
             {'id': 'esd', 'text': 'ESD'},
         ],
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='soundType',
+        old_field_name='soundType',
     )
 
     keyboard_layout = gui.TextField(
@@ -172,7 +172,7 @@ class BaseX2GOTransport(transports.Transport):
         tooltip=_('Keyboard layout (es, us, fr, ...). Empty value means autodetect.'),
         default='',
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='keyboardLayout',
+        old_field_name='keyboardLayout',
     )
     # 'nopack', '8', '64', '256', '512', '4k', '32k', '64k', '256k', '2m', '16m'
     # '256-rdp', '256-rdp-compressed', '32k-rdp', '32k-rdp-compressed', '64k-rdp'

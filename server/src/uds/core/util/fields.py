@@ -83,7 +83,7 @@ def tunnel_field() -> ui.gui.ChoiceField:
         required=True,
         choices=functools.partial(_server_group_values, [types.servers.ServerType.TUNNEL]),
         tab=types.ui.Tab.TUNNEL,
-        stored_field_name='tunnel',
+        old_field_name='tunnel',
     )
 
 
@@ -117,7 +117,7 @@ def server_group_field(
             _server_group_values, valid_types, subtype
         ),  # So it gets evaluated at runtime
         tab=tab,
-        stored_field_name='serverGroup',
+        old_field_name='serverGroup',
     )
 
 
@@ -143,12 +143,12 @@ def tunnel_ticket_validity_field() -> ui.gui.NumericField:
         required=True,
         min_value=60,
         tab=types.ui.Tab.ADVANCED,
-        stored_field_name='ticketValidity',
+        old_field_name='ticketValidity',
     )
 
 
 # Tunnel wait time (for uds client related tunnels)
-def tunnel_wait_time(order: int = 2) -> ui.gui.NumericField:
+def tunnel_wait_time_field(order: int = 2) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Tunnel wait time'),
@@ -159,12 +159,12 @@ def tunnel_wait_time(order: int = 2) -> ui.gui.NumericField:
         tooltip=_('Maximum time, in seconds, to wait before disable new connections on client tunnel listener'),
         required=True,
         tab=types.ui.Tab.TUNNEL,
-        stored_field_name='tunnelWait',
+        old_field_name='tunnelWait',
     )
 
 
 # Get certificates from field
-def get_vertificates_from_field(
+def get_certificates_from_field(
     field: ui.gui.TextField, field_value: typing.Optional[str] = None
 ) -> list['Certificate']:
     # Get certificates in self.publicKey.value, encoded as PEM
@@ -188,28 +188,149 @@ def get_vertificates_from_field(
     return certs
 
 
-# For services
+# Timeout
+def timeout_field(
+    default: int = 3,
+    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None, old_field_name: typing.Optional[str] = None
+) -> ui.gui.NumericField:
+    return ui.gui.NumericField(
+        length=3,
+        label=_('Timeout'),
+        default=default,
+        order=order or 90,
+        tooltip=_('Timeout in seconds for connections to server'),
+        required=True,
+        min_value=1,
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name=old_field_name,
+    )
+    
 
-
-def get_basename_field(order: typing.Optional[int] = None) -> ui.gui.TextField:
+# Basename field
+def basename_field(order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None) -> ui.gui.TextField:
     return ui.gui.TextField(
         label=_('Base Name'),
         order=order or 32,
         tooltip=_('Base name for clones from this service'),
-        tab=_('Service'),
+        tab=tab,
         required=True,
-        stored_field_name='baseName',
+        old_field_name='baseName',
     )
 
 
-def get_lenname_field(order: typing.Optional[int] = None) -> ui.gui.NumericField:
+# Length of name field
+def lenname_field(
+    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=1,
         label=_('Name Length'),
         default=3,
         order=order or 33,
-        tooltip=_('Size of numeric part for the names of these services'),
-        tab=_('Service'),
+        tooltip=_('Size of numeric part for the names derived from this service'),
+        tab=tab,
         required=True,
-        stored_field_name='lenName',
+        old_field_name='lenName',
+    )
+
+
+# Max preparing services field
+def max_preparing_services_field(
+    order: typing.Optional[int] = None, tab: typing.Optional[types.ui.Tab] = None
+) -> ui.gui.NumericField:
+    # Advanced tab
+    return ui.gui.NumericField(
+        length=3,
+        label=_('Creation concurrency'),
+        default=30,
+        min_value=1,
+        max_value=65536,
+        order=order or 50,
+        tooltip=_('Maximum number of concurrently creating VMs'),
+        required=True,
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name='maxPreparingServices',
+    )
+
+
+def max_removing_services_field(
+    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+) -> ui.gui.NumericField:
+    return ui.gui.NumericField(
+        length=3,
+        label=_('Removal concurrency'),
+        default=15,
+        min_value=1,
+        max_value=65536,
+        order=order or 51,
+        tooltip=_('Maximum number of concurrently removing VMs'),
+        required=True,
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name='maxRemovingServices',
+    )
+
+
+def remove_duplicates_field(
+    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+) -> ui.gui.CheckBoxField:
+    return ui.gui.CheckBoxField(
+        label=_('Remove found duplicates'),
+        default=True,
+        order=order or 102,
+        tooltip=_('If active, found duplicates vApps for this service will be removed'),
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name='removeDuplicates',
+    )
+
+
+def soft_shutdown_field(
+    order: typing.Optional[int] = None,
+    tab: 'types.ui.Tab|str|None' = None,
+    old_field_name: typing.Optional[str] = None,
+) -> ui.gui.CheckBoxField:
+    return ui.gui.CheckBoxField(
+        label=_('Try SOFT Shutdown first'),
+        default=False,
+        order=order or 103,
+        tooltip=_(
+            'If active, UDS will try to shutdown (soft) the machine using Nutanix ACPI. Will delay 30 seconds the power off of hanged machines.'
+        ),
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name=old_field_name,
+    )
+
+
+def keep_on_access_error_field(
+    order: typing.Optional[int] = None,
+    tab: 'types.ui.Tab|str|None' = None,
+    old_field_name: typing.Optional[str] = None,
+) -> ui.gui.CheckBoxField:
+    return ui.gui.CheckBoxField(
+        label=_('Keep on error'),
+        value=False,
+        order=order or 104,
+        tooltip=_('If active, access errors found on machine will not be considered errors.'),
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name=old_field_name,
+    )
+
+
+def macs_range_field(
+    default: str,
+    order: typing.Optional[int] = None,
+    tab: 'types.ui.Tab|str|None' = None,
+    readonly: bool = False,
+) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        length=36,
+        label=_('Macs range'),
+        default=default,
+        order=order or 91,
+        readonly=readonly,
+        tooltip=_('Range of valid macs for created machines. Must be in the range {default}').format(
+            default=default
+        ),
+        required=True,
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name='macsRange',
     )
