@@ -158,7 +158,7 @@ class Cache:
     ) -> None:
         # logger.debug('Saving key "%s" for cache "%s"' % (skey, self._owner,))
         if validity is None:
-            validity = consts.system.DEFAULT_CACHE_TIMEOUT
+            validity = consts.cache.DEFAULT_CACHE_TIMEOUT
         key = self.__get_key(skey)
         strValue = Cache._serializer(value)
         now = sql_datetime()

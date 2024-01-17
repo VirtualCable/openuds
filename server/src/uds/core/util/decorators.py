@@ -220,7 +220,7 @@ def cached(
     """
     from uds.core.util.cache import Cache  # To avoid circular references
     
-    timeout = consts.system.DEFAULT_CACHE_TIMEOUT if timeout == -1 else timeout
+    timeout = consts.cache.DEFAULT_CACHE_TIMEOUT if timeout == -1 else timeout
     args_list: list[int] = [args] if isinstance(args, int) else list(args or [])
     kwargs_list: list[str] = isinstance(kwargs, str) and [kwargs] or list(kwargs or [])
 

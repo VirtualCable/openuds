@@ -65,7 +65,7 @@ class MessageProcessorThread(BaseThread):
         # we need to refresh it
         if (
             self._cached_providers is None
-            or time.time() - self._cached_stamp > consts.system.SHORT_CACHE_TIMEOUT
+            or time.time() - self._cached_stamp > consts.cache.SHORT_CACHE_TIMEOUT
         ):
             self._cached_providers = [
                 (p.level, p.get_instance()) for p in Notifier.objects.filter(enabled=True)

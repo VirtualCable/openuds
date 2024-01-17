@@ -512,7 +512,7 @@ class OVirtProvider(
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.__getApi().getConsoleConnection(machineId)
 
-    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

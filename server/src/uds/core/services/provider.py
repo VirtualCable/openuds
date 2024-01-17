@@ -195,7 +195,7 @@ class ServiceProvider(module.Module):
     def get_max_preparing_services(self) -> int:
         val = self.max_preparing_services
         if val is None:
-            val = self.max_preparing_services = consts.DEFAULT_MAX_PREPARING_SERVICES
+            val = self.max_preparing_services = consts.system.DEFAULT_MAX_PREPARING_SERVICES
 
         if isinstance(val, gui.InputField):
             retVal = int(val.value)

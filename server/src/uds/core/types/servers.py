@@ -155,7 +155,7 @@ class ServerStats:
 
     @property
     def is_valid(self) -> bool:
-        """If the stamp is lesss than consts.DEFAULT_CACHE_TIMEOUT, it is considered valid
+        """If the stamp is lesss than consts.cache.DEFAULT_CACHE_TIMEOUT, it is considered valid
 
         Returns:
             bool: True if valid, False otherwise
@@ -166,7 +166,7 @@ class ServerStats:
         """
         from uds.core.util.model import sql_stamp  # To avoid circular import
 
-        return self.stamp > sql_stamp() - consts.system.DEFAULT_CACHE_TIMEOUT
+        return self.stamp > sql_stamp() - consts.cache.DEFAULT_CACHE_TIMEOUT
 
     def weight(self, minMemory: int = 0) -> float:
         # Weights are calculated as:

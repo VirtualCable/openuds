@@ -341,6 +341,6 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.parent().getConsoleConnection(machineId)
 
-    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
         return self.parent().isAvailable()

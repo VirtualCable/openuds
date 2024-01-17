@@ -148,7 +148,7 @@ class Server(UUIDModel, TaggingMixin, properties.PropertiesMixin):
     # that has more than one record, it will fail
     hostname = models.CharField(max_length=consts.system.MAX_DNS_NAME_LENGTH)
     # Port where server listens for connections (if it listens)
-    listen_port = models.IntegerField(default=consts.system.SERVER_DEFAULT_LISTEN_PORT)
+    listen_port = models.IntegerField(default=consts.net.SERVER_DEFAULT_LISTEN_PORT)
 
     # Token identifies de Registered Server (for API use, it's like the "secret" on other systems)
     token = models.CharField(max_length=48, db_index=True, unique=True, default=create_token)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,39 +30,13 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-import time
 import typing
 import collections.abc
 
-from django.conf import settings
+# Request related timeouts, etc..
+DEFAULT_REQUEST_TIMEOUT: typing.Final[int] = 20  # In seconds
+DEFAULT_CONNECT_TIMEOUT: typing.Final[int] = 4   # In seconds
 
-# UDS Version related
-VERSION = '4.0.0'
-VERSION_STAMP = f'{time.strftime("%Y%m%d")}'
-# Minimal uds client version required to connect to this server
-REQUIRED_CLIENT_VERSION = '3.6.0'
+# Default UDS Registerd Server listen port
+SERVER_DEFAULT_LISTEN_PORT: typing.Final[int] = 43910
 
-# Max size of a rest request body
-MAX_REQUEST_SIZE: typing.Final[int] = int(getattr(settings, 'MAX_REST_BODY_SIZE', 1024 * 1024 * 10))  # from settings, 10Mb by default
-
-# Max ip v6 string length representation, allowing ipv4 mapped addresses
-MAX_IPV6_LENGTH: typing.Final[int] = 45
-MAX_DNS_NAME_LENGTH: typing.Final[int] = 255
-
-# Maximum number of failures before blocking on REST API
-ALLOWED_FAILS: typing.Final[int] = 5
-
-# Servers communications constants
-USER_AGENT: typing.Final[str] = f'UDS/{VERSION}'
-COMMS_TIMEOUT: typing.Final[int] = 5  # Timeout for communications with servers
-MIN_SERVER_VERSION: typing.Final[str] = '4.0.0'
-FAILURE_TIMEOUT: typing.Final[int] = 60  # In case of failure, wait this time before retrying (where applicable)
-
-# Default length for Gui Text Fields
-DEFAULT_TEXT_LENGTH: typing.Final[int] = 64
-
-# Default maximum preparing services
-DEFAULT_MAX_PREPARING_SERVICES: typing.Final[int] = 15
-
-# Default wait time for rechecks, etc...
-DEFAULT_WAIT_TIME: typing.Final[int] = 8  # seconds

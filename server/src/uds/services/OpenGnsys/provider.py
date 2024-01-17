@@ -292,7 +292,7 @@ class OGProvider(ServiceProvider):
     def status(self, machineId: str) -> typing.Any:
         return self.api.status(machineId)
 
-    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable

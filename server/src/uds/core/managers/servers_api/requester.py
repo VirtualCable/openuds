@@ -141,7 +141,7 @@ class ServerApiRequester:
             return None
 
         with self.setup_session(minVersion=minVersion) as session:
-            response = session.get(url, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
+            response = session.get(url, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text
@@ -156,7 +156,7 @@ class ServerApiRequester:
             return None
 
         with self.setup_session(minVersion=minVersion) as session:
-            response = session.post(url, json=data, timeout=(consts.system.DEFAULT_CONNECT_TIMEOUT, consts.system.DEFAULT_REQUEST_TIMEOUT))
+            response = session.post(url, json=data, timeout=(consts.net.DEFAULT_CONNECT_TIMEOUT, consts.net.DEFAULT_REQUEST_TIMEOUT))
             if not response.ok:
                 logger.error(
                     'Error requesting %s from server %s: %s', method, self.server.hostname, response.text

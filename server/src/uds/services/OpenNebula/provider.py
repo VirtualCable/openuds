@@ -342,7 +342,7 @@ class OpenNebulaProvider(ServiceProvider):  # pylint: disable=too-many-public-me
     def test(env: 'Environment', data: 'Module.ValuesType') -> list[typing.Any]:
         return OpenNebulaProvider(env, data).testConnection()
 
-    @cached('reachable', consts.system.SHORT_CACHE_TIMEOUT)
+    @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def isAvailable(self) -> bool:
         """
         Check if aws provider is reachable
