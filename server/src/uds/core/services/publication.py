@@ -211,7 +211,8 @@ class Publication(Environmentable, Serializable):
         State values RUNNING, FINISHED or ERROR.
 
         This method will be invoked whenever a publication is started, but it
-        do not finish in 1 step.
+        do not finish in 1 step. (that is, invoked as long as the instance has not 
+        finished or produced an error)
 
         The idea behind this is simple, we can initiate an operation of publishing,
         that will be done at :py:meth:.publish method.
@@ -224,10 +225,11 @@ class Publication(Environmentable, Serializable):
         done in 1 step (meaning this that if publish can return State.RUNNING, this
         will get called)
 
-        :note: All task methods, like this one, are expected to handle
-               all exceptions, and never raise an exception from these methods
-               to the core. Take that into account and handle exceptions inside
-               this method.
+        Note:
+            All task methods, like this one, are expected to handle
+            all exceptions, and never raise an exception from these methods
+            to the core. Take that into account and handle exceptions inside
+            this method.
         """
         raise NotImplementedError(f'check_state method for class {self.__class__.__name__} not provided!!!')
 

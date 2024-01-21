@@ -35,23 +35,15 @@ import collections.abc
 
 hasher: typing.Any
 
-try:
-    # Try to use fast hashlib (if available)
-    import xxhash
-
-    hasher = xxhash.xxh3_64
-except ImportError:
-    import hashlib
-
-    hasher = hashlib.sha256  # nosec: just a hashm not for crypto
-
+import hashlib
 
 
 def hash_key(key: typing.Union[str, bytes]) -> str:
     """
     Returns a hash of the given key
+    Return value should be, at most, 64 bytes long (as db field is 64 bytes long)
     """
     if isinstance(key, str):
         key = key.encode('utf-8')
 
-    return hasher(key).hexdigest()
+    return hashlib.sha256(key).hexdigest()

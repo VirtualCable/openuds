@@ -108,6 +108,7 @@ class CacheInfo:
     total: int
     exec_time: int
 
+
 class ClassPropertyDescriptor:
     """
     Class property descriptor
@@ -118,12 +119,14 @@ class ClassPropertyDescriptor:
 
     def __get__(self, obj: typing.Any, cls: typing.Any = None) -> typing.Any:
         return self.fget(cls)
-    
+
+
 def classproperty(func: collections.abc.Callable) -> ClassPropertyDescriptor:
     """
     Class property decorator
     """
     return ClassPropertyDescriptor(func)
+
 
 def deprecated(func: collections.abc.Callable[..., RT]) -> collections.abc.Callable[..., RT]:
     """This is a decorator which can be used to mark functions
@@ -215,14 +218,15 @@ def cached(
         key_fnc: Function to use for cache key. If provided, this function will be called with the same arguments as the wrapped function, and must return a string to use as cache key
 
     Note:
-        If args and cachingKWArgs are not provided, the whole arguments will be used for cache key
+        If args and kwargs are not provided, all parameters (except *args and **kwargs) will be used for building cache key
+
 
     """
     from uds.core.util.cache import Cache  # To avoid circular references
-    
+
     timeout = consts.cache.DEFAULT_CACHE_TIMEOUT if timeout == -1 else timeout
     args_list: list[int] = [args] if isinstance(args, int) else list(args or [])
-    kwargs_list: list[str] = isinstance(kwargs, str) and [kwargs] or list(kwargs or [])
+    kwargs_list = [kwargs] if isinstance(kwargs, str) else list(kwargs or [])
 
     lock = threading.Lock()
 
@@ -232,9 +236,9 @@ def cached(
         # If no caching args and no caching kwargs, we will cache the whole call
         # If no parameters provider, try to infer them from function signature
         try:
-            if args_list is None and kwargs_list is None:
-                for pos, (paramName, param) in enumerate(inspect.signature(fnc).parameters.items()):
-                    if paramName == 'self':
+            if not args_list and not kwargs_list:
+                for pos, (param_name, param) in enumerate(inspect.signature(fnc).parameters.items()):
+                    if param_name == 'self':
                         continue
                     # Parameters can be included twice in the cache, but it's not a problem
                     if param.kind in (
@@ -242,14 +246,15 @@ def cached(
                         inspect.Parameter.POSITIONAL_ONLY,
                     ):
                         args_list.append(pos)
-                    elif param.kind in (
-                        inspect.Parameter.KEYWORD_ONLY,
+                    if param.kind in (
                         inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        inspect.Parameter.KEYWORD_ONLY,
                     ):
-                        kwargs_list.append(paramName)
-                    # *args and **kwargs are not supported
-        except Exception:  # nosec
-            pass  # Not inspectable, no caching
+                        kwargs_list.append(param_name)
+                    # *args and **kwargs are not supported as cache parameters
+        except Exception:
+            # Not inspectable, no caching possible, return original function
+            return fnc
 
         lkey_fnc = key_fnc or (lambda x: fnc.__name__)
 
@@ -257,19 +262,20 @@ def cached(
         def wrapper(*args, **kwargs) -> RT:
             nonlocal hits, misses, exec_time
             with transaction.atomic():  # On its own transaction (for cache operations, that are on DB)
-                key_hash = hashlib.sha256(usedforsecurity=False)
+                cache_key: str = prefix
                 for i in args_list:
                     if i < len(args):
-                        key_hash.update(str(args[i]).encode('utf-8'))
+                        cache_key += str(args[i])
                 for s in kwargs_list:
-                    key_hash.update(str(kwargs.get(s, '')).encode('utf-8'))
+                    cache_key += str(kwargs.get(s, ''))
                 # Append key data
-                key_hash.update(lkey_fnc(args[0] if len(args) > 0 else fnc.__name__).encode('utf-8'))
-                # compute cache key
-                cache_key = f'{prefix}-{key_hash.hexdigest()}'
+                cache_key += lkey_fnc(args[0] if len(args) > 0 else fnc.__name__)
 
-                # Get cache from object, or create a new one (generic, common to all objects)
-                cache: 'Cache' = getattr(args[0], 'cache', None) or Cache('functionCache')
+                # Note tha this value (cache_key) will be hashed by cache, so it's not a problem if it's too long
+
+                # Get cache from object if present, or use the global 'functionCache' (generic, common to all objects)
+                inner_cache: 'Cache|None' = getattr(args[0], 'cache', None) if len(args) > 0 else None
+                cache: 'Cache' = inner_cache or Cache('functionCache')
 
                 # if timeout is a function, call it
                 ltimeout = timeout() if callable(timeout) else timeout
@@ -365,7 +371,7 @@ def blocker(
     """
     from uds.core.util.cache import Cache  # To avoid circular references
     from uds.core.util.config import GlobalConfig
-   
+
     blockCache = Cache('uds:blocker')  # Cache for blocked ips
 
     max_failures = max_failures or consts.system.ALLOWED_FAILS
@@ -376,7 +382,9 @@ def blocker(
             if not GlobalConfig.BLOCK_ACTOR_FAILURES.as_bool(True) and not ignore_block_config:
                 return f(*args, **kwargs)
 
-            request: typing.Optional['types.requests.ExtendedHttpRequest'] = getattr(args[0], request_attr or '_request', None)
+            request: typing.Optional['types.requests.ExtendedHttpRequest'] = getattr(
+                args[0], request_attr or '_request', None
+            )
 
             # No request object, so we can't block
             if request is None:

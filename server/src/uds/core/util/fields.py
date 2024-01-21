@@ -198,7 +198,7 @@ def timeout_field(
         label=_('Timeout'),
         default=default,
         order=order or 90,
-        tooltip=_('Timeout in seconds for connections to server'),
+        tooltip=_('Timeout in seconds for network connections'),
         required=True,
         min_value=1,
         tab=tab or types.ui.Tab.ADVANCED,

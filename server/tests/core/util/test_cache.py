@@ -34,8 +34,8 @@
 # We use commit/rollback
 from ...utils.test import UDSTransactionTestCase
 from uds.core.util.cache import Cache
+from uds.core.util.decorators import cached
 import time
-import string
 
 # Some random chars, that include unicode non-ascci chars
 UNICODE_CHARS = 'ñöçóá^(pípè)'
@@ -55,17 +55,13 @@ class CacheTest(UDSTransactionTestCase):
         )
 
         # Remove unexisting key, not a problem
-        self.assertEqual(
-            cache.remove('non-existing-1'), False, 'Removing unexisting key'
-        )
+        self.assertEqual(cache.remove('non-existing-1'), False, 'Removing unexisting key')
 
         # Add new key (non existing) with default duration (60 seconds probable)
         cache.put(UNICODE_CHARS_2, VALUE_1)
 
         # checks it
-        self.assertEqual(
-            cache.get(UNICODE_CHARS_2), VALUE_1, 'Put a key and recover it'
-        )
+        self.assertEqual(cache.get(UNICODE_CHARS_2), VALUE_1, 'Put a key and recover it')
 
         # Add new "str" key, with 1 second life, wait 2 seconds and recover
         cache.put(b'key', VALUE_1, 1)
@@ -81,9 +77,7 @@ class CacheTest(UDSTransactionTestCase):
         self.assertEqual(
             cache.get(b'key'),
             VALUE_1,
-            'Refreshed cache key is {} and should be {}'.format(
-                cache.get(b'key'), VALUE_1
-            ),
+            'Refreshed cache key is {} and should be {}'.format(cache.get(b'key'), VALUE_1),
         )
 
         # Checks cache clean
@@ -106,3 +100,4 @@ class CacheTest(UDSTransactionTestCase):
             None,
             'Put a key and recover it once it has expired and has been cleaned',
         )
+
