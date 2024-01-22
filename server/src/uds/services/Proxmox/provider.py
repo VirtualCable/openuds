@@ -144,6 +144,7 @@ class ProxmoxProvider(
         required=True,
         readonly=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='startVmId',
     )
 
     macsRange = gui.TextField(
@@ -157,6 +158,7 @@ class ProxmoxProvider(
         ),
         required=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='macsRange',
     )
 
 
@@ -198,7 +200,7 @@ class ProxmoxProvider(
         # All proxmox use same UniqueId generator
         self._vmid_generator = UniqueIDGenerator('vmid', 'proxmox', 'proxmox')
 
-    def testConnection(self) -> bool:
+    def test_connection(self) -> bool:
         """
         Test that conection to Proxmox server is fine
 
@@ -349,7 +351,7 @@ class ProxmoxProvider(
         #    return [False, str(e)]
         # return [True, _('Nothing tested, but all went fine..')]
         prox = ProxmoxProvider(env, data)
-        if prox.testConnection() is True:
+        if prox.test_connection() is True:
             return [True, 'Test successfully passed']
 
         return [False, _("Connection failed. Check connection params")]

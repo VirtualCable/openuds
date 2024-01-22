@@ -661,6 +661,12 @@ class gui:
                 return int(self.value)
             except Exception:
                 return 0
+            
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an int
+            """
+            super()._set_value(gui.as_int(value))
 
         @property
         def int_value(self) -> int:
