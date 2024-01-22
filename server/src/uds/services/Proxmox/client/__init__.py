@@ -266,7 +266,7 @@ class ProxmoxClient:
         return int(self._get('cluster/nextid')['data'])
 
     @ensure_connected
-    def isVMIdAvailable(self, vmId: int) -> bool:
+    def is_vmid_available(self, vmId: int) -> bool:
         try:
             self._get(f'cluster/nextid?vmid={vmId}')
         except Exception:  # Not available
@@ -428,7 +428,7 @@ class ProxmoxClient:
         return [g['group'] for g in self._get('cluster/ha/groups')['data']]
 
     @ensure_connected
-    def enableVmHA(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
+    def enable_machine_ha(self, vmId: int, started: bool = False, group: typing.Optional[str] = None) -> None:
         self._post(
             'cluster/ha/resources',
             data=[
@@ -442,7 +442,7 @@ class ProxmoxClient:
         )
 
     @ensure_connected
-    def disableVmHA(self, vmId: int) -> None:
+    def disable_machine_ha(self, vmId: int) -> None:
         try:
             self._delete('cluster/ha/resources/vm%3A{}'.format(vmId))
         except Exception:
@@ -457,12 +457,12 @@ class ProxmoxClient:
         self._post('nodes/{}/qemu/{}/config'.format(node, vmId), data=params)
 
     @ensure_connected
-    def deleteVm(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
+    def remove_machine(self, vmId: int, node: typing.Optional[str] = None, purge: bool = True) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._delete('nodes/{}/qemu/{}?purge=1'.format(node, vmId)))
 
     @ensure_connected
-    def getTask(self, node: str, upid: str) -> types.TaskStatus:
+    def get_task(self, node: str, upid: str) -> types.TaskStatus:
         return types.TaskStatus.fromJson(
             self._get('nodes/{}/tasks/{}/status'.format(node, urllib.parse.quote(upid)))
         )
@@ -552,7 +552,7 @@ class ProxmoxClient:
         return types.VMConfiguration.from_dict(self._get('nodes/{}/qemu/{}/config'.format(node, vmId))['data'])
 
     @ensure_connected
-    def setVmMac(
+    def set_machine_ha(
         self,
         vmId: int,
         mac: str,
@@ -581,29 +581,29 @@ class ProxmoxClient:
         )
 
     @ensure_connected
-    def startVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def start_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/start'.format(node, vmId)))
 
     @ensure_connected
-    def stopVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def stop_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/stop'.format(node, vmId)))
 
     @ensure_connected
-    def resetVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def reset_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/reset'.format(node, vmId)))
 
     @ensure_connected
-    def suspendVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def suspend_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/suspend'.format(node, vmId)))
 
     @ensure_connected
-    def shutdownVm(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
+    def shutdown_machine(self, vmId: int, node: typing.Optional[str] = None) -> types.UPID:
         # if exitstatus is "OK" or contains "already running", all is fine
         node = node or self.getVmInfo(vmId).node
         return types.UPID.from_dict(self._post('nodes/{}/qemu/{}/status/shutdown'.format(node, vmId)))
@@ -616,7 +616,7 @@ class ProxmoxClient:
         self.getVmInfo(vmId, force=True)
 
     # proxmox has a "resume", but start works for suspended vm so we use it
-    resumeVm = startVm
+    resumeVm = start_machine
 
     @ensure_connected
     @cached(
@@ -677,7 +677,7 @@ class ProxmoxClient:
         return [types.PoolInfo.from_dict(nodeStat) for nodeStat in self._get('pools')['data']]
 
     @ensure_connected
-    def getConsoleConnection(
+    def get_console_connection(
         self, vmId: int, node: typing.Optional[str] = None
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         """

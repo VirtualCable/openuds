@@ -299,9 +299,9 @@ class OpenStackProvider(ServiceProvider):
         return OpenStackProvider(env, data).testConnection()
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
-    def isAvailable(self) -> bool:
+    def is_available(self) -> bool:
         """
         Check if aws provider is reachable
         """
-        return self.api().isAvailable()
+        return self.api().is_available()
 

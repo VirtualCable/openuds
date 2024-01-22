@@ -69,21 +69,21 @@ class UniqueIDGenerator:
         self._base_name = newBaseName
 
     def __filter(
-        self, rangeStart: int, rangeEnd: int = MAX_SEQ, forUpdate: bool = False
+        self, range_start: int, range_end: int = MAX_SEQ, for_update: bool = False
     ) -> 'models.QuerySet[UniqueId]':
         # Order is defined on UniqueId model, and is '-seq' by default (so this gets items in sequence order)
         # if not for update, do not use the clause :)
-        obj = UniqueId.objects.select_for_update() if forUpdate else UniqueId.objects
-        return obj.filter(basename=self._base_name, seq__gte=rangeStart, seq__lte=rangeEnd)
+        obj = UniqueId.objects.select_for_update() if for_update else UniqueId.objects
+        return obj.filter(basename=self._base_name, seq__gte=range_start, seq__lte=range_end)
 
-    def get(self, rangeStart: int = 0, rangeEnd: int = MAX_SEQ) -> int:
+    def get(self, range_start: int = 0, range_end: int = MAX_SEQ) -> int:
         """
         Tries to generate a new unique id in the range provided. This unique id
         is global to "unique ids' database
         """
         # First look for a name in the range defined
         stamp = sql_stamp_seconds()
-        seq = rangeStart
+        seq = range_start
         # logger.debug(UniqueId)
         counter = 0
         while True:
@@ -91,7 +91,7 @@ class UniqueIDGenerator:
             try:
                 # logger.debug('Creating new seq in range {}-{}'.format(rangeStart, rangeEnd))
                 with transaction.atomic():
-                    flt = self.__filter(rangeStart, rangeEnd, forUpdate=True)
+                    flt = self.__filter(range_start, range_end, for_update=True)
                     item: typing.Optional[UniqueId] = None
                     try:
                         item = flt.filter(assigned=False).order_by('seq')[0]  # type: ignore  # Slicing is not supported by pylance right now
@@ -115,9 +115,9 @@ class UniqueIDGenerator:
                             ]  # DB Returns correct order so the 0 item is the last
                             seq = last.seq + 1
                         except IndexError:  # If there is no assigned at database
-                            seq = rangeStart
+                            seq = range_start
                         # logger.debug('Found seq {0}'.format(seq))
-                        if seq > rangeEnd:
+                        if seq > range_end:
                             return -1  # No ids free in range
                         # May ocurr on some circustance that a concurrency access gives same item twice, in this case, we
                         # will get an "duplicate key error",
@@ -144,7 +144,7 @@ class UniqueIDGenerator:
         return seq
 
     def transfer(self, seq: int, toUidGen: 'UniqueIDGenerator') -> bool:
-        self.__filter(0, forUpdate=True).filter(owner=self._owner, seq=seq).update(
+        self.__filter(0, for_update=True).filter(owner=self._owner, seq=seq).update(
             owner=toUidGen._owner,  # pylint: disable=protected-access
             basename=toUidGen._base_name,  # pylint: disable=protected-access
             stamp=sql_stamp_seconds(),
@@ -155,7 +155,7 @@ class UniqueIDGenerator:
         logger.debug('Freeing seq %s from %s (%s)', seq, self._owner, self._base_name)
         with transaction.atomic():
             flt = (
-                self.__filter(0, forUpdate=True)
+                self.__filter(0, for_update=True)
                 .filter(owner=self._owner, seq=seq)
                 .update(owner='', assigned=False, stamp=sql_stamp_seconds())
             )
@@ -165,7 +165,7 @@ class UniqueIDGenerator:
     def _purge(self) -> None:
         logger.debug('Purging UniqueID database')
         try:
-            last: UniqueId = self.__filter(0, forUpdate=False).filter(assigned=True)[0]  # type: ignore  # Slicing is not supported by pylance right now
+            last: UniqueId = self.__filter(0, for_update=False).filter(assigned=True)[0]  # type: ignore  # Slicing is not supported by pylance right now
             logger.debug('Last: %s', last)
             seq = last.seq + 1
         except Exception:

@@ -466,4 +466,4 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         return self.parent().getConsoleConnection(machineId)
 
     def is_avaliable(self) -> bool:
-        return self.parent().isAvailable()
+        return self.parent().is_available()

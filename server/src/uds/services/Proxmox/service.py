@@ -272,22 +272,22 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return config.networks[0].mac.lower()
 
     def getTaskInfo(self, node: str, upid: str) -> 'client.types.TaskStatus':
-        return self.parent().getTaskInfo(node, upid)
+        return self.parent().get_task_info(node, upid)
 
     def startMachine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().startMachine(vmId)
+        return self.parent().start_machine(vmId)
 
     def stopMachine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().stopMachine(vmId)
+        return self.parent().stop_machine(vmId)
 
     def resetMachine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().resetMachine(vmId)
+        return self.parent().reset_machine(vmId)
 
     def suspendMachine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().suspendMachine(vmId)
+        return self.parent().suspend_machine(vmId)
 
     def shutdownMachine(self, vmId: int) -> 'client.types.UPID':
-        return self.parent().shutdownMachine(vmId)
+        return self.parent().shutdown_machine(vmId)
 
     def removeMachine(self, vmId: int) -> 'client.types.UPID':
         # First, remove from HA if needed
@@ -298,17 +298,17 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
             
         # And remove it
-        return self.parent().removeMachine(vmId)
+        return self.parent().remove_machine(vmId)
 
     def enableHA(self, vmId: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
-        self.parent().enableHA(vmId, started, self.ha.value or None)
+        self.parent().enable_ha(vmId, started, self.ha.value or None)
 
     def disableHA(self, vmId: int) -> None:
         if self.ha.value == '__':
             return
-        self.parent().disableHA(vmId)
+        self.parent().disable_ha(vmId)
 
     def set_protection(
         self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
@@ -328,7 +328,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         """
         Returns de selected mac range
         """
-        return self.parent().getMacRange()
+        return self.parent().get_macs_range()
 
     def isHaEnabled(self) -> bool:
         return self.ha.value != '__'
@@ -339,8 +339,8 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def getConsoleConnection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.parent().getConsoleConnection(machineId)
+        return self.parent().get_console_connection(machineId)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
     def is_avaliable(self) -> bool:
-        return self.parent().isAvailable()
+        return self.parent().is_available()

@@ -44,15 +44,31 @@ from django.conf import settings
 from uds.services.Vmware_enterprise import service_linked, provider
 
 PROVIDER_SERIALIZE_DATA: typing.Final[str] = (
-    'R1VJWgF2MRKGpo40r0qAyiorr5SEbg/cXmhQPC9zfAFccS20LF2du6+QhrCna7WykmcPW95FHOLWwEBpuYc3Fdh4Id'
-    '/jIs/hyWb/0f+30JduzD2Bjpgop+wO8sdXpy1/MilpVYKOycbGJ8JxNGov0zU4kw6FWpRD6MiCXaGBvQrzLmMFY78D'
-    '25y0YtOV6RhP+KKp1AUiEvS9bqGogiFuGrxq/bqI+at1CgLHXn0OK0ZSqLUroOizDu+3PNoMHC2lqbgO8CRIPVf0Cz'
-    '1/ZEyvJ44PCeOZZKLqzxhgbikL4g8GJptBAIMVedVMdxjpTo5oWS3O9TCtSB51iXkqpOjP7UFmUUQmsYe7/7CkHM8g'
-    '3y30ZN/lgB5pr5GSrfAwXKsxwNZ9cKAzm3G/xVtYpm69zcmNGWE+md+aGhGDBOVBCyvE9AkFsFdZ'
+    'R1VJWgF2Mf5E0Eb/AlXtUzvdsF+YFTi08PsxvNhRm+Hu3Waqa0Gw0WeReoM5XTnmvopa9+Ex99oRhzW7xr6THkQ7vMZvwKlcI77l'
+    '+Zz3FKXnbZnXZkqY0GIqvUzHjQra2Xx9koxkvtAXl64aldXSCjO4xMqCzsCsxgn2fPYnD76TgSccUftTLr5UpaKxXrOg5qr836Si'
+    'Y83F6Ko20viicmczi3NmMTR+ii+lmSCUrnRJc/IcxTrfmturJu0X0TipMX5C3xqMyIa1LtsPyHO3yTkYW9bGqP/B1DbDOHy27gu6'
+    'DlJwQpi2SRSYEO9pOCTosuVqOpP7hDwCFYn5D1jcEDKZcOmOMuN9qDD423eXUUoCRx2YHmSS0mt03nWxZScV7Ny4U9gmv/x2jsK3'
+    '4YL88CPDjh/eMGc7V+LhCSqpEOFmvEz6DVAf'
 )
 
+PROVIDER_FIELDS_DATA: typing.Final[dict[str, typing.Any]] = {
+    'host': 'proxmox_host',
+    'port': 8666,
+    'username': 'proxmox_username',
+    'password': 'proxmox_passwd',
+    'max_preparing_services': 31,
+    'max_removing_services': 32,
+    'timeout': 9999,
+    'start_vmid': 99999,
+    'macs_range': '52:54:01:02:03:04-52:54:05:06:07:08',
+}
 
-class ProxmoxUserInterface(UDSTestCase):
-    def test_provider_userinterface(self) -> None:
+
+class TestProxmoProvider(UDSTestCase):
+    def test_provider_serialization(self) -> None:
         provider = ProxmoxProvider(environment=Environment.get_temporary_environment())
         provider.deserialize(PROVIDER_SERIALIZE_DATA)
+
+        # Ensure values are ok
+        for field in PROVIDER_FIELDS_DATA:
+            self.assertEqual(getattr(provider, field).value, PROVIDER_FIELDS_DATA[field])

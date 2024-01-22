@@ -124,7 +124,7 @@ class gui:
         Helper method to create a single choice item.
         """
         return {'id': str(id_), 'text': str(text)}
-    
+
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
         """
@@ -178,7 +178,9 @@ class gui:
         raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
-    def sorted_choices(choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False) -> list[types.ui.ChoiceItem]:
+    def sorted_choices(
+        choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False
+    ) -> list[types.ui.ChoiceItem]:
         if by_id:
             return sorted(choices, key=lambda item: item['id'], reverse=reverse)
         return sorted(choices, key=lambda item: item['text'].lower(), reverse=reverse)
@@ -210,7 +212,7 @@ class gui:
             "true" if bol evals to True, "false" if don't.
         """
         return consts.TRUE_STR if bol else consts.FALSE_STR
-    
+
     @staticmethod
     def as_int(value: typing.Union[str, bytes, bool, int]) -> int:
         """
@@ -227,7 +229,7 @@ class gui:
             return int(value)
         except Exception:
             return 0
-        
+
     @staticmethod
     def as_str(value: typing.Any) -> str:
         """
@@ -661,7 +663,7 @@ class gui:
                 return int(self.value)
             except Exception:
                 return 0
-            
+
         def _set_value(self, value: typing.Any) -> None:
             """
             To ensure value is an int
@@ -1457,7 +1459,9 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             types.ui.FieldType.CHOICE: lambda x: x.value,
             types.ui.FieldType.MULTICHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
             types.ui.FieldType.EDITABLELIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if gui.as_bool(x.value) else consts.FALSE_STR,
+            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR
+            if gui.as_bool(x.value)
+            else consts.FALSE_STR,
             types.ui.FieldType.IMAGECHOICE: lambda x: x.value,
             types.ui.FieldType.DATE: lambda x: x.value,
             types.ui.FieldType.INFO: lambda x: None,
@@ -1545,9 +1549,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         for fld_name, fld_type, fld_value in arr:
             if fld_name in field_names_translations:
-                fld_name = field_names_translations[
-                    fld_name
-                ]  # Convert old field name to new one if needed
+                fld_name = field_names_translations[fld_name]  # Convert old field name to new one if needed
             if fld_name not in self._gui:
                 logger.warning('Field %s not found in form', fld_name)
                 continue
@@ -1659,7 +1661,5 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             fld_old_field_name = fld.old_field_name()
             if fld_old_field_name and fld_old_field_name != fld_name:
                 field_names_translations[fld_old_field_name] = fld_name
-                
-        return field_names_translations
 
-        
+        return field_names_translations

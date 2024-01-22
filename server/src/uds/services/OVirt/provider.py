@@ -51,9 +51,6 @@ if typing.TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-CACHE_TIME_FOR_SERVER = 1800
-
-
 class OVirtProvider(
     services.ServiceProvider
 ):  # pylint: disable=too-many-public-methods
@@ -513,7 +510,7 @@ class OVirtProvider(
         return self.__getApi().getConsoleConnection(machineId)
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
-    def isAvailable(self) -> bool:
+    def is_available(self) -> bool:
         """
         Check if aws provider is reachable
         """

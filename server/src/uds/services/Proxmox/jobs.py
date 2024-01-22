@@ -63,11 +63,11 @@ class ProxmoxDeferredRemoval(jobs.Job):
             if vmInfo.status == 'running':
                 # If running vm,  simply stops it and wait for next
                 ProxmoxDeferredRemoval.waitForTaskFinish(
-                    providerInstance, providerInstance.stopMachine(vmId)
+                    providerInstance, providerInstance.stop_machine(vmId)
                 )
 
             ProxmoxDeferredRemoval.waitForTaskFinish(
-                providerInstance, providerInstance.removeMachine(vmId)
+                providerInstance, providerInstance.remove_machine(vmId)
             )
         except client.ProxmoxNotFound:
             return  # Machine does not exists
@@ -87,7 +87,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
     ) -> bool:
         counter = 0
         while (
-            providerInstance.getTaskInfo(upid.node, upid.upid).is_running()
+            providerInstance.get_task_info(upid.node, upid.upid).is_running()
             and counter < maxWait
         ):
             time.sleep(0.3)
@@ -118,7 +118,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                     # tries to remove in sync mode
                     if vmInfo.status == 'running':
                         ProxmoxDeferredRemoval.waitForTaskFinish(
-                            instance, instance.stopMachine(vmId)
+                            instance, instance.stop_machine(vmId)
                         )
                         return
 
@@ -126,7 +126,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                         vmInfo.status == 'stopped'
                     ):  # Machine exists, try to remove it now
                         ProxmoxDeferredRemoval.waitForTaskFinish(
-                            instance, instance.removeMachine(vmId)
+                            instance, instance.remove_machine(vmId)
                         )
 
                     # It this is reached, remove check

@@ -226,4 +226,4 @@ class OGService(services.Service):
         return self.startIfUnavailable.as_bool()
 
     def is_avaliable(self) -> bool:
-        return self.parent().isAvailable()
+        return self.parent().is_available()

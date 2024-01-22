@@ -321,4 +321,4 @@ class LiveService(services.Service):
         return self.parent().desktopLogin(machineId, username, password, domain)
 
     def is_avaliable(self) -> bool:
-        return self.parent().isAvailable()
+        return self.parent().is_available()

@@ -56,8 +56,6 @@ if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
     from uds.core.module import Module
 
-CACHE_TIME_FOR_SERVER = 1800
-
 
 class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
     """
@@ -459,7 +457,7 @@ class XenProvider(ServiceProvider):  # pylint: disable=too-many-public-methods
         return self.macsRange.value
 
     @cached('reachable', consts.cache.SHORT_CACHE_TIMEOUT)
-    def isAvailable(self) -> bool:
+    def is_available(self) -> bool:
         try:
             self.testConnection()
             return True

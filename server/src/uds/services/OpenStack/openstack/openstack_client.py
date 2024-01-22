@@ -776,7 +776,7 @@ class Client:  # pylint: disable=too-many-public-methods
             )
         )
 
-    def isAvailable(self) -> bool:
+    def is_available(self) -> bool:
         try:
             # If we can connect, it is available
             self._session.get(
