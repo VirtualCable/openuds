@@ -107,6 +107,7 @@ def authCallback(request: HttpRequest, authName: str) -> HttpResponse:
 
 
 def authCallback_stage2(request: 'ExtendedHttpRequestWithUser', ticketId: str) -> HttpResponse:
+    logger.debug('Auth callback stage 2 for ticket %s', ticketId)
     try:
         ticket = TicketStore.get(ticketId)
         params: typing.Dict[str, typing.Any] = ticket['params'].copy()

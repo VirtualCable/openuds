@@ -315,6 +315,8 @@ def authenticateViaCallback(authenticator: Authenticator, params: typing.Any) ->
     """
     gm = auths.GroupsManager(authenticator)
     authInstance = authenticator.getInstance()
+    
+    logger.debug('Authenticating user with authenticator %s and params %s', authenticator, params)
 
     # If there is no callback for this authenticator...
     if authInstance.authCallback is auths.Authenticator.authCallback:
