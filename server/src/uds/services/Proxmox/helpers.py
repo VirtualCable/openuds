@@ -39,7 +39,7 @@ from django.utils.translation import gettext as _
 logger = logging.getLogger(__name__)
 
 
-def getStorage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
+def get_storage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)

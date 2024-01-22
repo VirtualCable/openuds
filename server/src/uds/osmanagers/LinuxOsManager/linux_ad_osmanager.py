@@ -237,8 +237,8 @@ class LinuxOsADManager(LinuxOsManager):
             self._automatic_id_mapping = values[10]
         super().unmarshal(codecs.decode(values[11].encode(), 'hex'))
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
-        dct = super().get_dict_of_fields_values()
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
+        dct = super().get_fields_as_dict()
         dct['domain'] = self._domain
         dct['account'] = self._account
         dct['password'] = self._password

@@ -159,7 +159,7 @@ class ProxmoxPublication(services.Publication):
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
                 # Disable Protection (removal)
-                self.service().setProtection(int(self._vm), protection=False)
+                self.service().set_protection(int(self._vm), protection=False)
                 time.sleep(
                     0.5
                 )  # Give some tome to proxmox. We have observed some concurrency issues

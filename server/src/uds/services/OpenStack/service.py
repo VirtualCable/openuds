@@ -254,7 +254,7 @@ class LiveService(services.Service):
 
         self.ov.value = self.parent().serialize()
         self.ev.value = self.parent().env.key
-        self.legacy.value = gui.from_bool(self.parent().legacy)
+        self.legacy.value = gui.bool_as_str(self.parent().legacy)
 
     @property
     def api(self) -> 'openstack.Client':

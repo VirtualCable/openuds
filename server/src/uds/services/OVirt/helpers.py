@@ -15,7 +15,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
+def get_resources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     """
     This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
     """

@@ -224,7 +224,7 @@ class WindowsOsManager(osmanagers.OSManager):
         Serializes the os manager data so we can store it in database
         """
         return '\t'.join(
-            ['v3', self._on_logout, str(self._idle), gui.from_bool(self._deadline)]
+            ['v3', self._on_logout, str(self._idle), gui.bool_as_str(self._deadline)]
         ).encode('utf8')
 
     def unmarshal(self, data: bytes) -> None:
@@ -249,9 +249,9 @@ class WindowsOsManager(osmanagers.OSManager):
 
         self._set_handles_unused()
 
-    def get_dict_of_fields_values(self) -> 'gui.ValuesDictType':
+    def get_fields_as_dict(self) -> 'gui.ValuesDictType':
         return {
             'on_logout': self._on_logout,
             'idle': str(self._idle),
-            'deadline': gui.from_bool(self._deadline),
+            'deadline': gui.bool_as_str(self._deadline),
         }

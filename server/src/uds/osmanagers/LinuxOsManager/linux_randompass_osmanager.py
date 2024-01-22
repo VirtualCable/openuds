@@ -146,7 +146,7 @@ class LinuxRandomPassManager(LinuxOsManager):
             self._user_account = values[1].decode()
             LinuxOsManager.unmarshal(self, codecs.decode(values[2], 'hex'))
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
-        dic = LinuxOsManager.get_dict_of_fields_values(self)
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
+        dic = LinuxOsManager.get_fields_as_dict(self)
         dic['user_account'] = self._user_account
         return dic

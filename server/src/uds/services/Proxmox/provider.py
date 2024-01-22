@@ -284,7 +284,7 @@ class ProxmoxProvider(
     ) -> None:
         self._getApi().enableVmHA(vmId, started, group)
 
-    def setVmMac(
+    def set_machine_mac(
         self, vmId: int, macAddress: str
     ) -> None:
         self._getApi().setVmMac(vmId, macAddress)
@@ -292,12 +292,12 @@ class ProxmoxProvider(
     def disableHA(self, vmId: int) -> None:
         self._getApi().disableVmHA(vmId)
 
-    def setProtection(
+    def set_protection(
         self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
     ) -> None:
         self._getApi().setProtection(vmId, node, protection)
 
-    def listHaGroups(self) -> list[str]:
+    def list_ha_groups(self) -> list[str]:
         return self._getApi().listHAGroups()
 
     def getConsoleConnection(

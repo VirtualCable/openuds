@@ -124,7 +124,7 @@ class gui:
         Helper method to create a single choice item.
         """
         return {'id': str(id_), 'text': str(text)}
-
+    
     @staticmethod
     def choice_image(id_: typing.Union[str, int], text: str, img: str) -> types.ui.ChoiceItem:
         """
@@ -178,8 +178,10 @@ class gui:
         raise ValueError(f'Invalid type for convertToChoices: {vals}')
 
     @staticmethod
-    def sorted_choices(choices: collections.abc.Iterable[types.ui.ChoiceItem]):
-        return sorted(choices, key=lambda item: item['text'].lower())
+    def sorted_choices(choices: collections.abc.Iterable[types.ui.ChoiceItem], *, by_id: bool = False, reverse: bool = False) -> list[types.ui.ChoiceItem]:
+        if by_id:
+            return sorted(choices, key=lambda item: item['id'], reverse=reverse)
+        return sorted(choices, key=lambda item: item['text'].lower(), reverse=reverse)
 
     @staticmethod
     def as_bool(value: typing.Union[str, bytes, bool, int]) -> bool:
@@ -196,7 +198,7 @@ class gui:
         return value in consts.BOOL_TRUE_VALUES
 
     @staticmethod
-    def from_bool(bol: bool) -> str:
+    def bool_as_str(bol: bool) -> str:
         """
         Converts a boolean to the string representation. True is converted to
         "true", False to "false". (gui.TRUE and gui.FALSE are the same)
@@ -207,9 +209,7 @@ class gui:
         Returns:
             "true" if bol evals to True, "false" if don't.
         """
-        if bol:
-            return consts.TRUE_STR
-        return consts.FALSE_STR
+        return consts.TRUE_STR if bol else consts.FALSE_STR
     
     @staticmethod
     def as_int(value: typing.Union[str, bytes, bool, int]) -> int:
@@ -1387,7 +1387,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                of this posibility in a near version...
         """
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
         """
         Returns own data needed for user interaction as a dict of key-names ->
         values. The values returned must be strings.

@@ -111,7 +111,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         order=100,
         fills={
             'callback_name': 'ovFillResourcesFromCluster',
-            'function': helpers.getResources,
+            'function': helpers.get_resources,
             'parameters': ['cluster', 'ov', 'ev'],
         },
         tooltip=_("Cluster to contain services"),

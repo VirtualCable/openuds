@@ -72,3 +72,5 @@ FALSE_STR: typing.Final[str] = 'false'
 # Constant to mark an "UNLIMITED" value
 UNLIMITED: typing.Final[int] = -1
 
+# Constant marking no more names available
+NO_MORE_NAMES: typing.Final[str] = 'NO-NAME-ERROR'

@@ -151,7 +151,7 @@ class ProxmoxDeployment(services.UserService):
         if self._name == '':
             try:
                 self._name = self.name_generator().get(
-                    self.service().get_basename(), self.service().getLenName()
+                    self.service().get_basename(), self.service().get_lenname()
                 )
             except KeyError:
                 return NO_MORE_NAMES
@@ -459,7 +459,7 @@ if sys.platform == 'win32':
             )  # Enable HA before continuing here
 
             # Set vm mac address now on first interface
-            self.service().setVmMac(int(self._vmid), self.get_unique_id())
+            self.service().set_machine_mac(int(self._vmid), self.get_unique_id())
         except Exception as e:
             logger.exception('Setting HA and MAC on proxmox')
             raise Exception(f'Error setting MAC and HA on proxmox: {e}') from e

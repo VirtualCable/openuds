@@ -137,7 +137,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         order=110,
         fills={
             'callback_name': 'pmFillResourcesFromMachine',
-            'function': helpers.getStorage,
+            'function': helpers.get_storage,
             'parameters': ['machine', 'ov', 'ev'],
         },
         tooltip=_('Service base machine'),
@@ -224,7 +224,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         )
         self.ha.set_choices(
             [gui.choice_item('', _('Enabled')), gui.choice_item('__', _('Disabled'))]
-            + [gui.choice_item(group, group) for group in self.parent().listHaGroups()]
+            + [gui.choice_item(group, group) for group in self.parent().list_ha_groups()]
         )
 
     def parent(self) -> 'ProxmoxProvider':
@@ -310,18 +310,18 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             return
         self.parent().disableHA(vmId)
 
-    def setProtection(
+    def set_protection(
         self, vmId: int, node: typing.Optional[str] = None, protection: bool = False
     ) -> None:
-        self.parent().setProtection(vmId, node, protection)
+        self.parent().set_protection(vmId, node, protection)
 
-    def setVmMac(self, vmId: int, mac: str) -> None:
-        self.parent().setVmMac(vmId, mac)
+    def set_machine_mac(self, vmId: int, mac: str) -> None:
+        self.parent().set_machine_mac(vmId, mac)
 
     def get_basename(self) -> str:
         return self.baseName.value
 
-    def getLenName(self) -> int:
+    def get_lenname(self) -> int:
         return int(self.lenName.value)
 
     def getMacRange(self) -> str:
@@ -331,7 +331,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         return self.parent().getMacRange()
 
     def isHaEnabled(self) -> bool:
-        return self.ha.as_bool()
+        return self.ha.value != '__'
 
     def tryGracelyShutdown(self) -> bool:
         return self.guestShutdown.as_bool()

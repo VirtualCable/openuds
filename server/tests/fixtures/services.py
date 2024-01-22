@@ -164,7 +164,7 @@ def create_test_transport() -> models.Transport:
 
     values = TestTransport(
         environment.Environment.get_temporary_environment(), None
-    ).get_dict_of_fields_values()
+    ).get_fields_as_dict()
     transport: 'models.Transport' = models.Transport.objects.create(
         name='Transport %d' % (glob['transport_id']),
         comments='Comment for Transport %d' % (glob['transport_id']),

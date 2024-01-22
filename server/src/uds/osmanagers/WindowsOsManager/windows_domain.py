@@ -503,8 +503,8 @@ class WinDomainOsManager(WindowsOsManager):
             self._remove_on_exit = 'y'
         super().unmarshal(codecs.decode(values[5].encode(), 'hex'))
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
-        dct = super().get_dict_of_fields_values()
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
+        dct = super().get_fields_as_dict()
         dct['domain'] = self._domain
         dct['ou'] = self._ou
         dct['account'] = self._account

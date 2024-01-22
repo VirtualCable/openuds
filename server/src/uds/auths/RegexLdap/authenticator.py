@@ -276,11 +276,11 @@ class RegexLdap(auths.Authenticator):
     def mfa_identifier(self, username: str) -> str:
         return self.storage.get_unpickle(self.mfaStorageKey(username)) or ''
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
         return {
             'host': self._host,
             'port': self._port,
-            'ssl': gui.from_bool(self._ssl),
+            'ssl': gui.bool_as_str(self._ssl),
             'username': self._username,
             'password': self._password,
             'timeout': self._timeout,
@@ -291,7 +291,7 @@ class RegexLdap(auths.Authenticator):
             'userNameAttr': self._userNameAttr,
             'altClass': self._altClass,
             'mfaAttr': self._mfaAttr,
-            'verifySsl': gui.from_bool(self._verifySsl),
+            'verifySsl': gui.bool_as_str(self._verifySsl),
             'certificate': self._certificate,
         }
 
@@ -301,7 +301,7 @@ class RegexLdap(auths.Authenticator):
                 'v5',
                 self._host,
                 self._port,
-                gui.from_bool(self._ssl),
+                gui.bool_as_str(self._ssl),
                 self._username,
                 self._password,
                 self._timeout,
@@ -312,7 +312,7 @@ class RegexLdap(auths.Authenticator):
                 self._userNameAttr,
                 self._altClass,
                 self._mfaAttr,
-                gui.from_bool(self._verifySsl),
+                gui.bool_as_str(self._verifySsl),
                 self._certificate.strip(),
             ]
         ).encode('utf8')

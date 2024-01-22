@@ -347,7 +347,7 @@ class BaseModelHandler(Handler):
         if isinstance(item, ManagedObjectModel):
             i = item.get_instance()
             i.init_gui()  # Defaults & stuff
-            res.update(i.get_dict_of_fields_values())
+            res.update(i.get_fields_as_dict())
         return res
 
     # Exceptions

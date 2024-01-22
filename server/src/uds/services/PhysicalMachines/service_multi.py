@@ -189,7 +189,7 @@ class IPMachinesService(IPServiceBase):
     def get_token(self):
         return self._token or None
 
-    def get_dict_of_fields_values(self) -> gui.ValuesDictType:
+    def get_fields_as_dict(self) -> gui.ValuesDictType:
         ips = (i.split('~')[0] for i in self._ips)
         return {
             'ipList': ensure.is_list(ips),
@@ -197,8 +197,8 @@ class IPMachinesService(IPServiceBase):
             'port': str(self._port),
             'skipTimeOnFailure': str(self._skipTimeOnFailure),
             'maxSessionForMachine': str(self._maxSessionForMachine),
-            'lockByExternalAccess': gui.from_bool(self._lockByExternalAccess),
-            'useRandomIp': gui.from_bool(self._useRandomIp),
+            'lockByExternalAccess': gui.bool_as_str(self._lockByExternalAccess),
+            'useRandomIp': gui.bool_as_str(self._useRandomIp),
         }
 
     def marshal(self) -> bytes:
@@ -210,8 +210,8 @@ class IPMachinesService(IPServiceBase):
                 str(self._port).encode(),
                 str(self._skipTimeOnFailure).encode(),
                 str(self._maxSessionForMachine).encode(),
-                gui.from_bool(self._lockByExternalAccess).encode(),
-                gui.from_bool(self._useRandomIp).encode(),
+                gui.bool_as_str(self._lockByExternalAccess).encode(),
+                gui.bool_as_str(self._useRandomIp).encode(),
             ]
         )
 
