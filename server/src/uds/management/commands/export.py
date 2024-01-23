@@ -117,10 +117,14 @@ def authenticator_exporter(
     Exports an authenticator to a dict
     """
     a = managed_object_exporter(authenticator)
-    a['priority'] = authenticator.priority
-    a['provider'] = authenticator.small_name
-    a['visible'] = authenticator.state == consts.auth.VISIBLE
-    a['enabled'] = authenticator.state != consts.auth.DISABLED
+    a.update(
+        {
+            'priority': authenticator.priority,
+            'provider': authenticator.small_name,
+            'visible': authenticator.state == consts.auth.VISIBLE,
+            'enabled': authenticator.state != consts.auth.DISABLED,
+        }
+    )
     return a
 
 

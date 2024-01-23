@@ -32,13 +32,14 @@
 """
 import logging
 import typing
+import datetime
 import collections.abc
 
 import yaml
 
 from django.core.management.base import BaseCommand
 
-from uds.core.util import log
+from uds.core.util import log, model
 from uds import models
 from uds.core.types.states import State
 
@@ -49,8 +50,9 @@ if typing.TYPE_CHECKING:
     from uds.core.module import Module
     from django.db import models as dbmodels
 
+CONSIDERED_OLD: typing.Final[datetime.timedelta] = datetime.timedelta(days=365)
 
-def getSerializedFromManagedObject(
+def get_serialized_from_managed_object(
     mod: 'models.ManagedObjectModel',
     removableFields: typing.Optional[list[str]] = None,
 ) -> collections.abc.Mapping[str, typing.Any]:
@@ -116,7 +118,7 @@ class Command(BaseCommand):
             '--max-items',
             action='store',
             dest='maxitems',
-            default=100,
+            default=400,
             help='Maximum elements exported for groups and user services',
         )
 
@@ -132,6 +134,7 @@ class Command(BaseCommand):
             return f'{cntr:02d}.-{s}'
 
         max_items = int(options['maxitems'])
+        now = model.sql_datetime()
 
         tree: dict[str, typing.Any] = {}
         try:
@@ -223,13 +226,13 @@ class Command(BaseCommand):
                     totalServicePools += numberOfServicePools
 
                     services[f'{service.name} ({numberOfServicePools}, {numberOfUserServices})'] = {
-                        '_': getSerializedFromManagedObject(service),
+                        '_': get_serialized_from_managed_object(service),
                         'servicePools': servicePools,
                     }
 
                 totalServices += len(services)
                 providers[f'{provider.name} ({totalServices}, {totalServicePools}, {totalUserServices})'] = {
-                    '_': getSerializedFromManagedObject(provider),
+                    '_': get_serialized_from_managed_object(provider),
                     'services': services,
                 }
 
@@ -243,10 +246,12 @@ class Command(BaseCommand):
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
                     grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
                 num_users: int = authenticator.users.count()
+                last_year_num_users: int = authenticator.users.filter(last_access__gt=now - CONSIDERED_OLD).count()
                 authenticators[authenticator.name] = {
-                    '_': getSerializedFromManagedObject(authenticator),
+                    '_': get_serialized_from_managed_object(authenticator),
                     'groups': grps,
                     'users': num_users,
+                    'last_year_users': last_year_num_users,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators
@@ -254,7 +259,7 @@ class Command(BaseCommand):
             # transports
             transports: dict[str, typing.Any] = {}
             for transport in models.Transport.objects.all():
-                transports[transport.name] = getSerializedFromManagedObject(transport)
+                transports[transport.name] = get_serialized_from_managed_object(transport)
 
             tree[counter('TRANSPORTS')] = transports
 
@@ -271,7 +276,7 @@ class Command(BaseCommand):
             # os managers
             osManagers: dict[str, typing.Any] = {}
             for osManager in models.OSManager.objects.all():
-                osManagers[osManager.name] = getSerializedFromManagedObject(osManager)
+                osManagers[osManager.name] = get_serialized_from_managed_object(osManager)
 
             tree[counter('OSMANAGERS')] = osManagers
 

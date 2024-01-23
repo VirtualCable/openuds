@@ -174,8 +174,14 @@ class InternalDBAuth(auths.Authenticator):
             user: 'models.User' = dbAuth.users.get(name=username.lower(), state=State.ACTIVE)
         except Exception:
             return
-
-        groupsManager.validate([g.name for g in user.groups.all()])
+        grps = [g.name for g in user.groups.all()]
+        if user.parent:
+            try:
+                parent = dbAuth.users.get(uuid=user.parent, state=State.ACTIVE)
+                grps.extend([g.name for g in parent.groups.all()])
+            except Exception:
+                pass
+        groupsManager.validate(grps)
 
     def get_real_name(self, username: str) -> str:
         # Return the real name of the user, if it is set
