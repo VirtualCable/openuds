@@ -33,6 +33,7 @@
 import logging
 import typing
 import yaml
+import datetime
 import collections
 
 from django.core.management.base import BaseCommand
@@ -46,6 +47,8 @@ logger = logging.getLogger(__name__)
 if typing.TYPE_CHECKING:
     from uds.core.module import Module
     from django.db import models as dbmodels
+
+CONSIDERED_OLD: typing.Final[datetime.timedelta] = datetime.timedelta(days=365)
 
 
 def getSerializedFromManagedObject(
@@ -118,7 +121,7 @@ class Command(BaseCommand):
             help='Maximum elements exported for groups and user services',
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options) -> None:
         logger.debug("Show Tree")
         # firt, genertate Provider-service-servicepool tree
         cntr = 0
@@ -129,6 +132,7 @@ class Command(BaseCommand):
             return f'{cntr:02d}.-{s}'
 
         max_items = int(options['maxitems'])
+        now = models.getSqlDatetime()
 
         tree = {}
         try:
@@ -184,7 +188,7 @@ class Command(BaseCommand):
                         totalUserServices += numberOfUserServices
 
                         # get publications
-                        publications = {}
+                        publications: dict[str, typing.Any] = {}
                         for publication in servicePool.publications.all():
                             # Get all changelogs for this publication
                             try:
@@ -197,10 +201,10 @@ class Command(BaseCommand):
                             except Exception:
                                 changelogs = []
 
-                            publications[publication.revision] = getSerializedFromModel(
+                            publications[str(publication.revision)] = getSerializedFromModel(
                                 publication, ['data']
                             )
-                            publications[publication.revision][
+                            publications[str(publication.revision)][
                                 'changelogs'
                             ] = changelogs
 
@@ -257,29 +261,32 @@ class Command(BaseCommand):
 
             tree[counter('PROVIDERS')] = providers
 
-            # authenticators
-            authenticators = {}
+            authenticators: dict[str, typing.Any] = {}
             for authenticator in models.Authenticator.objects.all():
                 # Groups
-                groups = {}
+                grps: dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
-                    groups[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                    grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
+                num_users: int = authenticator.users.count()
+                last_year_num_users: int = authenticator.users.filter(last_access__gt=now - CONSIDERED_OLD).count()
                 authenticators[authenticator.name] = {
                     '_': getSerializedFromManagedObject(authenticator),
-                    'groups': groups,
+                    'groups': grps,
+                    'users': num_users,
+                    'last_year_users': last_year_num_users,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators
 
             # transports
-            transports = {}
+            transports: dict[str, typing.Any] = {}
             for transport in models.Transport.objects.all():
                 transports[transport.name] = getSerializedFromManagedObject(transport)
 
             tree[counter('TRANSPORTS')] = transports
 
             # Networks
-            networks = {}
+            networks: dict[str, typing.Any] = {}
             for network in models.Network.objects.all():
                 networks[network.name] = {
                     'networks': network.net_string,
@@ -289,14 +296,14 @@ class Command(BaseCommand):
             tree[counter('NETWORKS')] = networks
 
             # os managers
-            osManagers = {}
+            osManagers: dict[str, typing.Any] = {}
             for osManager in models.OSManager.objects.all():
                 osManagers[osManager.name] = getSerializedFromManagedObject(osManager)
 
             tree[counter('OSMANAGERS')] = osManagers
 
             # calendars
-            calendars = {}
+            calendars: dict[str, typing.Any] = {}
             for calendar in models.Calendar.objects.all():
                 # calendar rules
                 rules = {}
@@ -313,14 +320,14 @@ class Command(BaseCommand):
             tree[counter('CALENDARS')] = calendars
 
             # Metapools
-            metapools = {}
+            metapools: dict[str, typing.Any] = {}
             for metapool in models.MetaPool.objects.all():
                 metapools[metapool.name] = getSerializedFromModel(metapool)
 
             tree[counter('METAPOOLS')] = metapools
 
             # accounts
-            accounts = {}
+            accounts: dict[str, typing.Any] = {}
             for account in models.Account.objects.all():
                 accounts[account.name] = {
                     '_': getSerializedFromModel(account),
@@ -344,7 +351,7 @@ class Command(BaseCommand):
             tree[counter('SERVICEPOOLGROUPS')] = servicePoolGroups
 
             # Gallery
-            gallery = {}
+            gallery: dict[str, typing.Any] = {}
             for galleryItem in models.Image.objects.all():
                 gallery[galleryItem.name] = {
                     'size': f'{galleryItem.width}x{galleryItem.height}',
@@ -355,7 +362,7 @@ class Command(BaseCommand):
             tree[counter('GALLERY')] = gallery
 
             # Actor tokens
-            actorTokens = {}
+            actorTokens: dict[str, typing.Any] = {}
             for actorToken in models.ActorToken.objects.all():
                 actorTokens[actorToken.hostname] = getSerializedFromModel(
                     actorToken, passwordFields=['token']
@@ -364,7 +371,7 @@ class Command(BaseCommand):
             tree[counter('ACTORTOKENS')] = actorTokens
 
             # Tunnel tokens
-            tunnelTokens = {}
+            tunnelTokens: dict[str, typing.Any] = {}
             for tunnelToken in models.TunnelToken.objects.all():
                 tunnelTokens[tunnelToken.hostname] = getSerializedFromModel(
                     tunnelToken, passwordFields=['token']
