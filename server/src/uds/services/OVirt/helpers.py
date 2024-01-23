@@ -8,6 +8,9 @@ import logging
 import typing
 import collections.abc
 
+from uds.core import types
+from uds.core.ui.user_interface import gui
+
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from .provider import OVirtProvider
@@ -15,7 +18,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def get_resources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
+def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
     """
     This helper is designed as a callback for machine selector, so we can provide valid clusters and datastores domains based on it
     """
@@ -30,27 +33,21 @@ def get_resources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
     # Obtains datacenter from cluster
     ci = provider.getClusterInfo(parameters['cluster'])
 
-    res = []
+    res: list[types.ui.ChoiceItem] = []
     # Get storages for that datacenter
     for storage in provider.getDatacenterInfo(ci['datacenter_id'])['storage']:
         if storage['type'] == 'data':
-            space, free = (
-                storage['available'] + storage['used']
-            ) / 1024 / 1024 / 1024, storage['available'] / 1024 / 1024 / 1024
+            space, free = (storage['available'] + storage['used']) / 1024 / 1024 / 1024, storage[
+                'available'
+            ] / 1024 / 1024 / 1024
 
             res.append(
-                {
-                    'id': storage['id'],
-                    'text': "%s (%4.2f GB/%4.2f GB) %s"
-                    % (
-                        storage['name'],
-                        space,
-                        free,
-                        storage['active'] and '(ok)' or '(disabled)',
-                    ),
-                }
+                gui.choice_item(
+                    storage['id'],
+                    f'{storage["name"]} ({space:4.2f} GB/{free:4.2f} GB) {storage["active"] and "(ok)" or "(disabled)"}',
+                )
             )
-    data = [{'name': 'datastore', 'choices': res}]
+    data: types.ui.CallbackResultType = [{'name': 'datastore', 'choices': res}]
 
     logger.debug('return data: %s', data)
     return data

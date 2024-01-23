@@ -115,7 +115,6 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
     # Own variables
     _api: typing.Optional[client.ProxmoxClient] = None
     _vmid_generator: UniqueIDGenerator
-    _macs_generator: UniqueMacGenerator
 
     def _getApi(self) -> client.ProxmoxClient:
         """
@@ -162,24 +161,24 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         return self._getApi().test()
 
     def listMachines(self) -> list[client.types.VMInfo]:
-        return self._getApi().listVms()
+        return self._getApi().list_machines()
 
-    def getMachineInfo(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
-        return self._getApi().getVMPoolInfo(vmId, poolId, force=True)
+    def get_machine_info(self, vmId: int, poolId: typing.Optional[str] = None) -> client.types.VMInfo:
+        return self._getApi().get_machines_pool_info(vmId, poolId, force=True)
 
-    def getMachineConfiguration(self, vmId: int) -> client.types.VMConfiguration:
-        return self._getApi().getVmConfiguration(vmId, force=True)
+    def get_machine_configuration(self, vmId: int) -> client.types.VMConfiguration:
+        return self._getApi().get_machine_configuration(vmId, force=True)
 
     def getStorageInfo(self, storageId: str, node: str) -> client.types.StorageInfo:
-        return self._getApi().getStorage(storageId, node)
+        return self._getApi().get_storage(storageId, node)
 
     def listStorages(self, node: typing.Optional[str]) -> list[client.types.StorageInfo]:
-        return self._getApi().listStorages(node=node, content='images')
+        return self._getApi().list_storages(node=node, content='images')
 
     def listPools(self) -> list[client.types.PoolInfo]:
-        return self._getApi().listPools()
+        return self._getApi().list_pools()
 
-    def makeTemplate(self, vmId: int) -> None:
+    def make_template(self, vmId: int) -> None:
         return self._getApi().convertToTemplate(vmId)
 
     def cloneMachine(
@@ -193,7 +192,7 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         toPool: typing.Optional[str] = None,
         mustHaveVGPUS: typing.Optional[bool] = None,
     ) -> client.types.VmCreationResult:
-        return self._getApi().cloneVm(
+        return self._getApi().clone_machine(
             vmId,
             self.get_new_vmid(),
             name,
@@ -236,10 +235,10 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         self._getApi().disable_machine_ha(vmid)
 
     def set_protection(self, vmId: int, node: typing.Optional[str] = None, protection: bool = False) -> None:
-        self._getApi().setProtection(vmId, node, protection)
+        self._getApi().set_protection(vmId, node, protection)
 
     def list_ha_groups(self) -> list[str]:
-        return self._getApi().listHAGroups()
+        return self._getApi().list_ha_groups()
 
     def get_console_connection(
         self, machineId: str

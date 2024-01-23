@@ -54,7 +54,7 @@ class ProxmoxPublication(services.Publication):
     _task: str
     _state: str
     _operation: str
-    _destroyAfter: str
+    _destroy_after_finish: str
     _reason: str
 
     def __init__(self, environment, **kwargs):
@@ -64,7 +64,7 @@ class ProxmoxPublication(services.Publication):
         self._task = ''
         self._state = ''
         self._operation = ''
-        self._destroyAfter = ''
+        self._destroy_after_finish = ''
         self._reason = ''
 
     # Utility overrides for type checking...
@@ -83,7 +83,7 @@ class ProxmoxPublication(services.Publication):
                 self._task,
                 self._state,
                 self._operation,
-                self._destroyAfter,
+                self._destroy_after_finish,
                 self._reason,
             ]
         ).encode('utf8')
@@ -101,7 +101,7 @@ class ProxmoxPublication(services.Publication):
                 self._task,
                 self._state,
                 self._operation,
-                self._destroyAfter,
+                self._destroy_after_finish,
                 self._reason,
             ) = vals[1:]
 
@@ -122,12 +122,12 @@ class ProxmoxPublication(services.Publication):
             comments = _('UDS Publication for {0} created at {1}').format(
                 self.servicepool_name(), str(datetime.now()).split('.')[0]
             )
-            task = self.service().cloneMachine(self._name, comments)
+            task = self.service().clone_machine(self._name, comments)
             self._vm = str(task.vmid)
             self._task = ','.join((task.upid.node, task.upid.upid))
             self._state = State.RUNNING
             self._operation = 'p'  # Publishing
-            self._destroyAfter = ''
+            self._destroy_after_finish = ''
             return State.RUNNING
         except Exception as e:
             logger.exception('Caught exception %s', e)
@@ -141,7 +141,7 @@ class ProxmoxPublication(services.Publication):
             return self._state
         node, upid = self._task.split(',')
         try:
-            task = self.service().getTaskInfo(node, upid)
+            task = self.service().get_task_info(node, upid)
             if task.is_running():
                 return State.RUNNING
         except Exception as e:
@@ -154,7 +154,7 @@ class ProxmoxPublication(services.Publication):
             self._reason = task.exitstatus
             self._state = State.ERROR
         else:  # Finished
-            if self._destroyAfter:
+            if self._destroy_after_finish:
                 return self.destroy()
             self._state = State.FINISHED
             if self._operation == 'p':  # not Destroying
@@ -164,10 +164,10 @@ class ProxmoxPublication(services.Publication):
                     0.5
                 )  # Give some tome to proxmox. We have observed some concurrency issues
                 # And add it to HA if
-                self.service().enableHA(int(self._vm))
+                self.service().enable_ha(int(self._vm))
                 time.sleep(0.5)
                 # Mark vm as template
-                self.service().makeTemplate(int(self._vm))
+                self.service().make_template(int(self._vm))
 
                 # This seems to cause problems on Proxmox
                 # makeTemplate --> setProtection (that calls "config"). Seems that the HD dissapears...
@@ -177,20 +177,20 @@ class ProxmoxPublication(services.Publication):
 
     def finish(self) -> None:
         self._task = ''
-        self._destroyAfter = ''
+        self._destroy_after_finish = ''
 
     def destroy(self) -> str:
         if (
-            self._state == State.RUNNING and self._destroyAfter is False
+            self._state == State.RUNNING and self._destroy_after_finish is False
         ):  # If called destroy twice, will BREAK STOP publication
-            self._destroyAfter = 'y'
+            self._destroy_after_finish = 'y'
             return State.RUNNING
 
         self.state = State.RUNNING
         self._operation = 'd'
-        self._destroyAfter = ''
+        self._destroy_after_finish = ''
         try:
-            task = self.service().removeMachine(self.machine())
+            task = self.service().remove_machine(self.machine())
             self._task = ','.join((task.node, task.upid))
             return State.RUNNING
         except Exception as e:

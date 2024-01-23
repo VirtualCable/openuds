@@ -115,7 +115,7 @@ class gui:
     callbacks: typing.ClassVar[
         dict[
             str,
-            collections.abc.Callable[[dict[str, str]], list[dict[str, str]]],
+            collections.abc.Callable[[dict[str, str]], list[types.ui.CallbackResultItem]],
         ]
     ] = {}
 
@@ -1662,7 +1662,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         return field_names_translations
 
 
-# Dictionaries used to encode/deconde fields
+# Dictionaries used to encode/decode fields to be stored on database
 FIELDS_ENCODERS: typing.Final[
     collections.abc.Mapping[
         types.ui.FieldType, collections.abc.Callable[[gui.InputField], typing.Optional[str]]

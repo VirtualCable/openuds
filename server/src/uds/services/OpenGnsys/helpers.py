@@ -28,12 +28,13 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 
+from uds.core import types
 from uds.core.environment import Environment
 from uds.core.ui import gui
 
@@ -44,7 +45,7 @@ if typing.TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
+def get_resources(parameters: typing.Any) -> types.ui.CallbackResultType:
     from .provider import OGProvider
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)
@@ -61,10 +62,10 @@ def getResources(parameters: typing.Any) -> list[dict[str, typing.Any]]:
         gui.choice_item(z['id'], z['name']) for z in api.getImages(ou=parameters['ou'])
     ]
 
-    data = [
+    data: types.ui.CallbackResultType = [
         {'name': 'lab', 'choices': labs},
         {'name': 'image', 'choices': images},
     ]
-    logger.debug('Return data: %s', data)
+    logger.debug('Return data from helper: %s', data)
 
     return data

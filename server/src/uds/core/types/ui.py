@@ -29,6 +29,7 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+from ast import Call
 import dataclasses
 import enum
 import re
@@ -103,11 +104,17 @@ class FieldPatternType(enum.StrEnum):
     PATH = 'path'
     NONE = ''
 
+class CallbackResultItem(typing.TypedDict):
+    # data = [{'name': 'datastore', 'choices': res}]
+    name: str
+    choices: typing.List['ChoiceItem']
+    
+CallbackResultType = list[CallbackResultItem]
 
 class Filler(typing.TypedDict):
     callback_name: str
     parameters: list[str]
-    function: typing.NotRequired[collections.abc.Callable[..., typing.Any]]
+    function: typing.NotRequired[collections.abc.Callable[..., CallbackResultType]]
 
 
 class ChoiceItem(typing.TypedDict):
@@ -116,7 +123,9 @@ class ChoiceItem(typing.TypedDict):
     img: typing.NotRequired[str]  # Only for IMAGECHOICE
 
 
-ChoicesType = typing.Union[collections.abc.Callable[[], collections.abc.Iterable[ChoiceItem]], collections.abc.Iterable[ChoiceItem]]
+ChoicesType = typing.Union[
+    collections.abc.Callable[[], collections.abc.Iterable[ChoiceItem]], collections.abc.Iterable[ChoiceItem]
+]
 
 
 @dataclasses.dataclass

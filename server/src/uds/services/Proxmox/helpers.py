@@ -30,16 +30,19 @@
 import logging
 import typing
 import collections.abc
+from uds.core import types
 
 from uds.core.environment import Environment 
 
 from django.utils.translation import gettext as _
 
+from uds.core.ui.user_interface import gui
+
 
 logger = logging.getLogger(__name__)
 
 
-def get_storage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
+def get_storage(parameters: typing.Any) -> types.ui.CallbackResultType:
     from .provider import ProxmoxProvider  # pylint: disable=import-outside-toplevel
 
     logger.debug('Parameters received by getResources Helper: %s', parameters)
@@ -49,14 +52,14 @@ def get_storage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
 
     # Obtains datacenter from cluster
     try:
-        vmInfo = provider.getMachineInfo(int(parameters['machine']))
+        vm_info = provider.get_machine_info(int(parameters['machine']))
     except Exception:
         return []
 
     res = []
     # Get storages for that datacenter
     for storage in sorted(
-        provider.listStorages(vmInfo.node), key=lambda x: int(not x.shared)
+        provider.listStorages(vm_info.node), key=lambda x: int(not x.shared)
     ):
         if storage.type in ('lvm', 'iscsi', 'iscsidirect'):
             continue
@@ -65,17 +68,16 @@ def get_storage(parameters: typing.Any) -> list[dict[str, typing.Any]]:
             (storage.avail - storage.used) / 1024 / 1024 / 1024,
         )
         extra = (
-            _(' shared') if storage.shared else _(' (bound to {})').format(vmInfo.node)
+            _(' shared') if storage.shared else _(' (bound to {})').format(vm_info.node)
         )
         res.append(
-            {
-                'id': storage.storage,
-                'text': "%s (%4.2f GB/%4.2f GB)%s"
-                % (storage.storage, space, free, extra),
-            }
+            gui.choice_item(
+                storage.storage,
+                f'{storage.storage} ({space:4.2f} GB/{free:4.2f} GB){extra}'
+            )
         )
 
-    data = [{'name': 'datastore', 'choices': res}]
+    data: types.ui.CallbackResultType = [{'name': 'datastore', 'choices': res}]
 
     logger.debug('return data: %s', data)
     return data

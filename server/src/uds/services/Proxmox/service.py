@@ -130,6 +130,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         tooltip=_(
             'If active, UDS will try to shutdown (soft) the machine using VMWare Guest Tools. Will delay 30 seconds the power off of hanged machines.'
         ),
+        old_field_name='guestShutdown',
     )
 
     machine = gui.ChoiceField(
@@ -175,6 +176,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         tooltip=_('Base name for clones from this machine'),
         tab=_('Machine'),
         required=True,
+        old_field_name='baseName',
     )
 
     lenName = gui.NumericField(
@@ -185,6 +187,7 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         tooltip=_('Size of numeric part for the names of these machines'),
         tab=_('Machine'),
         required=True,
+        old_field_name='lenName',
     )
 
     ov = gui.HiddenField(value=None)
@@ -230,19 +233,19 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def parent(self) -> 'ProxmoxProvider':
         return typing.cast('ProxmoxProvider', super().parent())
 
-    def sanitizeVmName(self, name: str) -> str:
+    def sanitized_name(self, name: str) -> str:
         """
         Proxmox only allows machine names with [a-zA-Z0-9_-]
         """
         return re.sub("[^a-zA-Z0-9_-]", "-", name)
 
-    def makeTemplate(self, vmId: int) -> None:
-        self.parent().makeTemplate(vmId)
+    def make_template(self, vmId: int) -> None:
+        self.parent().make_template(vmId)
 
-    def cloneMachine(
+    def clone_machine(
         self, name: str, description: str, vmId: int = -1
     ) -> 'client.types.VmCreationResult':
-        name = self.sanitizeVmName(name)
+        name = self.sanitized_name(name)
         pool = self.pool.value or None
         if vmId == -1:  # vmId == -1 if cloning for template
             return self.parent().cloneMachine(
@@ -264,35 +267,35 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
             mustHaveVGPUS={'1': True, '2': False}.get(self.gpu.value, None),
         )
 
-    def getMachineInfo(self, vmId: int) -> 'client.types.VMInfo':
-        return self.parent().getMachineInfo(vmId, self.pool.value.strip())
+    def get_machine_info(self, vmId: int) -> 'client.types.VMInfo':
+        return self.parent().get_machine_info(vmId, self.pool.value.strip())
 
-    def getMac(self, vmId: int) -> str:
-        config = self.parent().getMachineConfiguration(vmId)
+    def get_nic_mac(self, vmid: int) -> str:
+        config = self.parent().get_machine_configuration(vmid)
         return config.networks[0].mac.lower()
 
-    def getTaskInfo(self, node: str, upid: str) -> 'client.types.TaskStatus':
+    def get_task_info(self, node: str, upid: str) -> 'client.types.TaskStatus':
         return self.parent().get_task_info(node, upid)
 
-    def startMachine(self, vmId: int) -> 'client.types.UPID':
+    def start_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().start_machine(vmId)
 
-    def stopMachine(self, vmId: int) -> 'client.types.UPID':
+    def stop_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().stop_machine(vmId)
 
-    def resetMachine(self, vmId: int) -> 'client.types.UPID':
+    def reset_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().reset_machine(vmId)
 
-    def suspendMachine(self, vmId: int) -> 'client.types.UPID':
+    def suspend_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().suspend_machine(vmId)
 
-    def shutdownMachine(self, vmId: int) -> 'client.types.UPID':
+    def shutdown_machine(self, vmId: int) -> 'client.types.UPID':
         return self.parent().shutdown_machine(vmId)
 
-    def removeMachine(self, vmId: int) -> 'client.types.UPID':
+    def remove_machine(self, vmId: int) -> 'client.types.UPID':
         # First, remove from HA if needed
         try:
-            self.disableHA(vmId)
+            self.disable_ha(vmId)
         except Exception as e:
             logger.warning('Exception disabling HA for vm %s: %s', vmId, e)
             self.do_log(level=log.LogLevel.WARNING, message=f'Exception disabling HA for vm {vmId}: {e}')
@@ -300,12 +303,12 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
         # And remove it
         return self.parent().remove_machine(vmId)
 
-    def enableHA(self, vmId: int, started: bool = False) -> None:
+    def enable_ha(self, vmId: int, started: bool = False) -> None:
         if self.ha.value == '__':
             return
         self.parent().enable_ha(vmId, started, self.ha.value or None)
 
-    def disableHA(self, vmId: int) -> None:
+    def disable_ha(self, vmId: int) -> None:
         if self.ha.value == '__':
             return
         self.parent().disable_ha(vmId)
@@ -324,19 +327,19 @@ class ProxmoxLinkedService(services.Service):  # pylint: disable=too-many-public
     def get_lenname(self) -> int:
         return int(self.lenName.value)
 
-    def getMacRange(self) -> str:
+    def get_macs_range(self) -> str:
         """
         Returns de selected mac range
         """
         return self.parent().get_macs_range()
 
-    def isHaEnabled(self) -> bool:
+    def enable_ha_for_machines(self) -> bool:
         return self.ha.value != '__'
 
-    def tryGracelyShutdown(self) -> bool:
+    def try_graceful_shutdown(self) -> bool:
         return self.guestShutdown.as_bool()
 
-    def getConsoleConnection(
+    def get_console_connection(
         self, machineId: str
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
         return self.parent().get_console_connection(machineId)

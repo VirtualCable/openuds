@@ -102,7 +102,7 @@ class OGService(services.Service):
         order=100,
         fills={
             'callback_name': 'osFillData',
-            'function': helpers.getResources,
+            'function': helpers.get_resources,
             'parameters': ['ov', 'ev', 'ou'],
         },
         tooltip=_('Organizational Unit'),

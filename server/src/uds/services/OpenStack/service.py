@@ -118,7 +118,7 @@ class LiveService(services.Service):
         order=2,
         fills={
             'callback_name': 'osFillResources',
-            'function': helpers.getResources,
+            'function': helpers.get_resources,
             'parameters': ['ov', 'ev', 'project', 'region', 'legacy'],
         },
         tooltip=_('Project for this service'),
@@ -130,7 +130,7 @@ class LiveService(services.Service):
         order=3,
         fills={
             'callback_name': 'osFillVolumees',
-            'function': helpers.getVolumes,
+            'function': helpers.get_volumes,
             'parameters': [
                 'ov',
                 'ev',

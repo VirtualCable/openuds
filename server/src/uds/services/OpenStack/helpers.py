@@ -34,6 +34,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
+from uds.core import types
 from uds.core.ui import gui
 
 from . import openstack
@@ -63,9 +64,9 @@ def getApi(parameters: dict[str, str]) -> tuple[openstack.Client, bool]:
     return (provider.api(parameters['project'], parameters['region']), useSubnetsName)
 
 
-def getResources(
+def get_resources(
     parameters: dict[str, str]
-) -> list[dict[str, typing.Any]]:
+) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Project Selector
     '''
@@ -84,7 +85,7 @@ def getResources(
         gui.choice_item(t['id'], t['name']) for t in api.listVolumeTypes()
     ]
 
-    data = [
+    data: types.ui.CallbackResultType = [
         {'name': 'availabilityZone', 'choices': zones},
         {'name': 'network', 'choices': networks},
         {'name': 'flavor', 'choices': flavors},
@@ -95,9 +96,9 @@ def getResources(
     return data
 
 
-def getVolumes(
+def get_volumes(
     parameters: dict[str, str]
-) -> list[dict[str, typing.Any]]:
+) -> types.ui.CallbackResultType:
     '''
     This helper is designed as a callback for Zone Selector
     '''
@@ -108,7 +109,7 @@ def getVolumes(
         gui.choice_item(v['id'], v['name']) for v in api.listVolumes() if v['name'] != ''
     ]
 
-    data = [
+    data: types.ui.CallbackResultType = [
         {'name': 'volume', 'choices': volumes},
     ]
     logger.debug('Return data: %s', data)

@@ -59,7 +59,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
         ProxmoxDeferredRemoval.counter += 1
         try:
             # First check state & stop machine if needed
-            vmInfo = providerInstance.getMachineInfo(vmId)
+            vmInfo = providerInstance.get_machine_info(vmId)
             if vmInfo.status == 'running':
                 # If running vm,  simply stops it and wait for next
                 ProxmoxDeferredRemoval.waitForTaskFinish(
@@ -112,7 +112,7 @@ class ProxmoxDeferredRemoval(jobs.Job):
                 vmId = int(i[1].decode())
 
                 try:
-                    vmInfo = instance.getMachineInfo(vmId)
+                    vmInfo = instance.get_machine_info(vmId)
                     logger.debug('Found %s for removal %s', vmId, i)
                     # If machine is powered on, tries to stop it
                     # tries to remove in sync mode

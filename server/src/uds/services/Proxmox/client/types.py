@@ -1,12 +1,13 @@
 import datetime
 import re
 import typing
+import dataclasses
 import collections.abc
 
-networkRe = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
+NETWORK_RE: typing.Final[typing.Pattern] = re.compile(r'([a-zA-Z0-9]+)=([^,]+)')  # May have vla id at end
 
 # Conversor from dictionary to NamedTuple
-conversors: collections.abc.MutableMapping[typing.Type, collections.abc.Callable] = {
+CONVERSORS: typing.Final[collections.abc.MutableMapping[typing.Type, collections.abc.Callable]] = {
     str: lambda x: str(x),
     bool: lambda x: bool(x),
     int: lambda x: int(x or '0'),
@@ -15,7 +16,7 @@ conversors: collections.abc.MutableMapping[typing.Type, collections.abc.Callable
 }
 
 
-def convertFromDict(
+def _from_dict(
     type: type[typing.Any],
     dictionary: collections.abc.MutableMapping[str, typing.Any],
     extra: typing.Optional[collections.abc.Mapping[str, typing.Any]] = None,
@@ -23,7 +24,7 @@ def convertFromDict(
     extra = extra or {}
     return type(
         **{
-            k: conversors.get(type.__annotations__.get(k, str), lambda x: x)(
+            k: CONVERSORS.get(type.__annotations__.get(k, str), lambda x: x)(
                 dictionary.get(k, extra.get(k, None))
             )
             for k in type._fields  # type: ignore
@@ -31,7 +32,8 @@ def convertFromDict(
     )
 
 
-class Cluster(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class Cluster:
     name: str
     version: str
     id: str
@@ -40,10 +42,11 @@ class Cluster(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Cluster':
-        return convertFromDict(Cluster, dictionary)
+        return _from_dict(Cluster, dictionary)
 
 
-class Node(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class Node:
     name: str
     online: bool
     local: bool
@@ -54,10 +57,11 @@ class Node(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'Node':
-        return convertFromDict(Node, dictionary)
+        return _from_dict(Node, dictionary)
 
 
-class NodeStats(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class NodeStats:
     name: str
     status: str
     uptime: int
@@ -73,7 +77,7 @@ class NodeStats(typing.NamedTuple):
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'NodeStats':
         dictionary['name'] = dictionary['node']
-        return convertFromDict(NodeStats, dictionary)
+        return _from_dict(NodeStats, dictionary)
 
     @staticmethod
     def empty():
@@ -92,12 +96,13 @@ class NodeStats(typing.NamedTuple):
         )
 
 
-class ClusterStatus(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class ClusterStatus:
     cluster: typing.Optional[Cluster]
     nodes: list[Node]
 
     @staticmethod
-    def fromJson(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'ClusterStatus':
         nodes: list[Node] = []
         cluster: typing.Optional[Cluster] = None
 
@@ -110,7 +115,8 @@ class ClusterStatus(typing.NamedTuple):
         return ClusterStatus(cluster=cluster, nodes=nodes)
 
 
-class UPID(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class UPID:
     node: str
     pid: int
     pstart: int
@@ -136,7 +142,8 @@ class UPID(typing.NamedTuple):
         )
 
 
-class TaskStatus(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class TaskStatus:
     node: str
     pid: int
     pstart: int
@@ -149,8 +156,8 @@ class TaskStatus(typing.NamedTuple):
     id: str
 
     @staticmethod
-    def fromJson(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'TaskStatus':
-        return convertFromDict(TaskStatus, dictionary['data'])
+    def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'TaskStatus':
+        return _from_dict(TaskStatus, dictionary['data'])
 
     def is_running(self) -> bool:
         return self.status == 'running'
@@ -165,14 +172,15 @@ class TaskStatus(typing.NamedTuple):
         return self.is_finished() and not self.isCompleted()
 
 
-class NetworkConfiguration(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class NetworkConfiguration:
     net: str
     type: str
     mac: str
 
     @staticmethod
-    def fromString(net: str, value: str) -> 'NetworkConfiguration':
-        v = networkRe.match(value)
+    def from_str(net: str, value: str) -> 'NetworkConfiguration':
+        v = NETWORK_RE.match(value)
         type = mac = ''
         if v:
             type, mac = v.group(1), v.group(2)
@@ -180,7 +188,8 @@ class NetworkConfiguration(typing.NamedTuple):
         return NetworkConfiguration(net=net, type=type, mac=mac)
 
 
-class VMInfo(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class VMInfo:
     status: str
     vmid: int
     node: str
@@ -217,12 +226,13 @@ class VMInfo(typing.NamedTuple):
             if vgpu_type is not None:
                 break  # Already found it, stop looking
 
-        data = convertFromDict(VMInfo, dictionary, {'vgpu_type': vgpu_type})
+        data = _from_dict(VMInfo, dictionary, {'vgpu_type': vgpu_type})
 
         return data
 
 
-class VMConfiguration(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class VMConfiguration:
     name: str
     vga: str
     sockets: int
@@ -238,19 +248,21 @@ class VMConfiguration(typing.NamedTuple):
         nets: list[NetworkConfiguration] = []
         for k in src.keys():
             if k[:3] == 'net':
-                nets.append(NetworkConfiguration.fromString(k, src[k]))
+                nets.append(NetworkConfiguration.from_str(k, src[k]))
 
         src['networks'] = nets
-        return convertFromDict(VMConfiguration, src)
+        return _from_dict(VMConfiguration, src)
 
 
-class VmCreationResult(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class VmCreationResult:
     node: str
     vmid: int
     upid: UPID
 
 
-class StorageInfo(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class StorageInfo:
     node: str
     storage: str
     content: tuple[str, ...]
@@ -265,13 +277,14 @@ class StorageInfo(typing.NamedTuple):
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'StorageInfo':
-        return convertFromDict(StorageInfo, dictionary)
+        return _from_dict(StorageInfo, dictionary)
 
 
-class PoolInfo(typing.NamedTuple):
+@dataclasses.dataclass(slots=True)
+class PoolInfo:
     poolid: str
     comments: str
 
     @staticmethod
     def from_dict(dictionary: collections.abc.MutableMapping[str, typing.Any]) -> 'PoolInfo':
-        return convertFromDict(PoolInfo, dictionary)
+        return _from_dict(PoolInfo, dictionary)

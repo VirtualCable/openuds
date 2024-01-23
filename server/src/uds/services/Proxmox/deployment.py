@@ -172,7 +172,7 @@ class ProxmoxDeployment(services.UserService):
         to use to get an unused mac.
         """
         if self._mac == '':
-            self._mac = self.mac_generator().get(self.service().getMacRange())
+            self._mac = self.mac_generator().get(self.service().get_macs_range())
         return self._mac
 
     def get_ip(self) -> str:
@@ -183,7 +183,7 @@ class ProxmoxDeployment(services.UserService):
             return State.FINISHED
 
         try:
-            vmInfo = self.service().getMachineInfo(int(self._vmid))
+            vmInfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             raise  # If connection fails, let it fail on parent
         except Exception as e:
@@ -202,14 +202,14 @@ class ProxmoxDeployment(services.UserService):
         """
         if self._vmid != '':
             try:
-                self.service().resetMachine(int(self._vmid))
+                self.service().reset_machine(int(self._vmid))
             except Exception:  # nosec: if cannot reset, ignore it
                 pass  # If could not reset, ignore it...
 
     def get_console_connection(
         self,
     ) -> typing.Optional[collections.abc.MutableMapping[str, typing.Any]]:
-        return self.service().getConsoleConnection(self._vmid)
+        return self.service().get_console_connection(self._vmid)
 
     def desktopLogin(
         self,
@@ -373,7 +373,7 @@ if sys.platform == 'win32':
 
         comments = 'UDS Linked clone'
 
-        taskResult = self.service().cloneMachine(name, comments, templateId)
+        taskResult = self.service().clone_machine(name, comments, templateId)
 
         self.__setTask(taskResult.upid)
 
@@ -386,7 +386,7 @@ if sys.platform == 'win32':
         Removes a machine from system
         """
         try:
-            vmInfo = self.service().getMachineInfo(int(self._vmid))
+            vmInfo = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
             raise Exception('Machine not found on remove machine') from e
 
@@ -394,45 +394,45 @@ if sys.platform == 'win32':
             logger.debug('Info status: %s', vmInfo)
             self._queue = [opStop, opRemove, opFinish]
             return self.__executeQueue()
-        self.__setTask(self.service().removeMachine(int(self._vmid)))
+        self.__setTask(self.service().remove_machine(int(self._vmid)))
 
         return State.RUNNING
 
     def __startMachine(self) -> str:
         try:
-            vmInfo = self.service().getMachineInfo(int(self._vmid))
+            vmInfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             return self.__retryLater()
         except Exception as e:
             raise Exception('Machine not found on start machine') from e
 
         if vmInfo.status == 'stopped':
-            self.__setTask(self.service().startMachine(int(self._vmid)))
+            self.__setTask(self.service().start_machine(int(self._vmid)))
 
         return State.RUNNING
 
     def __stopMachine(self) -> str:
         try:
-            vmInfo = self.service().getMachineInfo(int(self._vmid))
+            vmInfo = self.service().get_machine_info(int(self._vmid))
         except Exception as e:
             raise Exception('Machine not found on stop machine') from e
 
         if vmInfo.status != 'stopped':
             logger.debug('Stopping machine %s', vmInfo)
-            self.__setTask(self.service().stopMachine(int(self._vmid)))
+            self.__setTask(self.service().stop_machine(int(self._vmid)))
 
         return State.RUNNING
 
     def __shutdownMachine(self) -> str:
         try:
-            vmInfo = self.service().getMachineInfo(int(self._vmid))
+            vmInfo = self.service().get_machine_info(int(self._vmid))
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
         except Exception as e:
             raise Exception('Machine not found on suspend machine') from e
 
         if vmInfo.status != 'stopped':
-            self.__setTask(self.service().shutdownMachine(int(self._vmid)))
+            self.__setTask(self.service().shutdown_machine(int(self._vmid)))
 
         return State.RUNNING
 
@@ -444,9 +444,9 @@ if sys.platform == 'win32':
         """
         self._task = ''
         shutdown = -1  # Means machine already stopped
-        vmInfo = self.service().getMachineInfo(int(self._vmid))
+        vmInfo = self.service().get_machine_info(int(self._vmid))
         if vmInfo.status != 'stopped':
-            self.__setTask(self.service().shutdownMachine(int(self._vmid)))
+            self.__setTask(self.service().shutdown_machine(int(self._vmid)))
             shutdown = sql_stamp_seconds()
         logger.debug('Stoped vm using guest tools')
         self.storage.put_pickle('shutdown', shutdown)
@@ -454,7 +454,7 @@ if sys.platform == 'win32':
 
     def __updateVmMacAndHA(self) -> str:
         try:
-            self.service().enableHA(
+            self.service().enable_ha(
                 int(self._vmid), True
             )  # Enable HA before continuing here
 
@@ -473,7 +473,7 @@ if sys.platform == 'win32':
         node, upid = self.__getTask()
 
         try:
-            task = self.service().getTaskInfo(node, upid)
+            task = self.service().get_task_info(node, upid)
         except client.ProxmoxConnectionError:
             return State.RUNNING  # Try again later
 
@@ -526,7 +526,7 @@ if sys.platform == 'win32':
 
         logger.debug('Checking State')
         # Check if machine is already stopped
-        if self.service().getMachineInfo(int(self._vmid)).status == 'stopped':
+        if self.service().get_machine_info(int(self._vmid)).status == 'stopped':
             return State.FINISHED  # It's stopped
 
         logger.debug('State is running')
@@ -641,7 +641,7 @@ if sys.platform == 'win32':
         if op == opError:
             return self.__error('Machine is already in error state!')
 
-        lst = [] if not self.service().tryGracelyShutdown() else [opGracelyStop]
+        lst = [] if not self.service().try_graceful_shutdown() else [opGracelyStop]
         queue = lst + [opStop, opRemove, opFinish]
 
         if op in (opFinish, opWait):
