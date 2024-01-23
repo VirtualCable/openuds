@@ -42,8 +42,6 @@ from uds.services.Proxmox.provider import ProxmoxProvider
 from django.conf import settings
 
 
-from uds.services.Vmware_enterprise import service_linked, provider
-
 PROVIDER_SERIALIZE_DATA: typing.Final[str] = (
     'R1VJWgF2Mf5E0Eb/AlXtUzvdsF+YFTi08PsxvNhRm+Hu3Waqa0Gw0WeReoM5XTnmvopa9+Ex99oRhzW7xr6THkQ7vMZvwKlcI77l'
     '+Zz3FKXnbZnXZkqY0GIqvUzHjQra2Xx9koxkvtAXl64aldXSCjO4xMqCzsCsxgn2fPYnD76TgSccUftTLr5UpaKxXrOg5qr836Si'
