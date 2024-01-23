@@ -64,8 +64,8 @@ if typing.TYPE_CHECKING:
     from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
     from cryptography.hazmat.primitives.asymmetric.dh import DHPrivateKey
 
-
-UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new
+# Note the REAL BIG importance of the SECRET_KEY. if lost, all encripted stored data (almost all fields) will be lost...
+UDSK: typing.Final[bytes] = settings.SECRET_KEY[8:24].encode()  # UDS key, new, for AES256, so it's 16 bytes length
 
 
 class CryptoManager(metaclass=singleton.Singleton):

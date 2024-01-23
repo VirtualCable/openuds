@@ -34,10 +34,13 @@ import typing
 import collections.abc
 import pickle  # nosec:  Used with care :)
 import lzma
+import logging
 
 from uds.core.managers.crypto import CryptoManager
 
-CURRENT_SERIALIZER_VERSION = b'v1'
+logger = logging.getLogger(__name__)
+
+CURRENT_SERIALIZER_VERSION: typing.Final[bytes] = b'v1'
 DESERIALIZERS: typing.Final[collections.abc.Mapping[bytes, collections.abc.Callable[[bytes], bytes]]] = {
     b'v1': CryptoManager().fast_decrypt,
 }
@@ -50,9 +53,7 @@ def serialize(obj: typing.Any) -> bytes:
     # generate pickle dump and encrypt it to keep it safe
     # Compress data using lzma first
 
-    data = CryptoManager().fast_crypt(
-        lzma.compress(pickle.dumps(obj))
-    )  # With latest available protocol
+    data = CryptoManager().fast_crypt(lzma.compress(pickle.dumps(obj)))  # With latest available protocol
     return CURRENT_SERIALIZER_VERSION + data
 
 
@@ -60,15 +61,16 @@ def deserialize(data: typing.Optional[bytes]) -> typing.Any:
     """
     Deserializes an object from a json string
     """
-    if not data:
+    if not data or len(data) < 2:
         return None
 
-    if data[0:2] in DESERIALIZERS:
-        return pickle.loads(
-            lzma.decompress(DESERIALIZERS[data[0:2]](data[2:]))
-        )  # nosec:  Secured by encryption
-    # Old version, try to unpickle it
     try:
+        if data[0:2] in DESERIALIZERS:
+            return pickle.loads(
+                lzma.decompress(DESERIALIZERS[data[0:2]](data[2:]))
+            )  # nosec:  Secured by encryption
+        # Old version, try to unpickle it
         return pickle.loads(data)  # nosec:  Backward compatibility
-    except Exception:
+    except Exception:  # If error deserialize, return None
+        logger.warning('Deserialization error', exc_info=True)
         return None

@@ -103,6 +103,7 @@ class Authenticator(ManagedObjectModel, TaggingMixin):
         Raises:
         """
         if self.id is None:
+            # Return a fake authenticator
             return auths.Authenticator(environment.Environment.get_temporary_environment(), values, uuid=self.uuid)
 
         auType = self.get_type()

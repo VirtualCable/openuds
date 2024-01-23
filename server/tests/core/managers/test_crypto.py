@@ -51,14 +51,20 @@ CRYPTED_STRING = (
     b'\xd9\x90\x04Y\x82 \xb5\xa2\xf1'    
 )
 
+UDSK = crypto.UDSK  # Store original UDSK
 
 class CryptoManagerTest(UDSTestCase):
     manager = crypto.CryptoManager()
+    _oldUDSK: bytes
 
     def setUp(self) -> None:
         # Override UDSK
-        crypto.UDSK = b'1234567890123456'  # type: ignore  # UDSK is final
+        crypto.UDSK = b'1234567890123456'  # type: ignore  # UDSK is final, 
         return super().setUp()
+    
+    def tearDown(self) -> None:
+        crypto.UDSK = UDSK  # type: ignore  # UDSK is final,
+        return super().tearDown()
 
     def test_RSA(self) -> None:
         testStr = 'Test string'

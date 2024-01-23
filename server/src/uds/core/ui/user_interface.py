@@ -30,6 +30,7 @@
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
 # pylint: disable=too-many-lines
+import base64
 import codecs
 import copy
 import datetime
@@ -549,6 +550,12 @@ class gui:
         def as_str(self) -> str:
             return gui.as_str(self.value)
 
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an str
+            """
+            super()._set_value(gui.as_str(value))
+
         def __str__(self):
             return str(self.value)
 
@@ -797,6 +804,12 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.PASSWORD,
             )
+
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an str
+            """
+            super()._set_value(gui.as_str(value))
 
         def as_str(self):
             return gui.as_str(self.value).strip()
@@ -1075,6 +1088,12 @@ class gui:
             """
             self._fields_info.choices = gui.as_choices(values)
 
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an str
+            """
+            super()._set_value(gui.as_str(value))
+
         def as_str(self) -> str:
             return gui.as_str(self.value)
 
@@ -1117,6 +1136,12 @@ class gui:
             Set the values for this choice field
             """
             self._fields_info.choices = gui.as_choices(values)
+
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an str
+            """
+            super()._set_value(gui.as_str(value))
 
         def as_str(self) -> str:
             return gui.as_str(self.value)
@@ -1198,6 +1223,16 @@ class gui:
             """
             self._fields_info.choices = gui.as_choices(choices)
 
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an list of strings
+            """
+            if not isinstance(value, collections.abc.Iterable):
+                value = [gui.as_str(value)]
+            else:
+                value = [gui.as_str(i) for i in value]
+            super()._set_value(value)
+
         def as_list(self) -> list[str]:
             """
             Return value as list of strings
@@ -1257,6 +1292,16 @@ class gui:
                 value=value,
                 type=types.ui.FieldType.EDITABLELIST,
             )
+
+        def _set_value(self, value: typing.Any) -> None:
+            """
+            To ensure value is an list of strings
+            """
+            if not isinstance(value, collections.abc.Iterable):
+                value = [gui.as_str(value)]
+            else:
+                value = [gui.as_str(i) for i in value]
+            super()._set_value(value)
 
         def as_list(self) -> list[str]:
             """
@@ -1433,7 +1478,6 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
     def serialize_fields(
         self,
-        opt_serializer: typing.Optional[collections.abc.Callable[[typing.Any], bytes]] = None,
     ) -> bytes:
         """New form serialization
 
@@ -1441,46 +1485,20 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             bytes -- serialized form (zipped)
         """
 
-        def serialize(value: typing.Any) -> bytes:
-            if opt_serializer:
-                return opt_serializer(value)
-            return serializer.serialize(value)
-
-        fw_converters: collections.abc.Mapping[
-            types.ui.FieldType, collections.abc.Callable[[gui.InputField], typing.Optional[str]]
-        ] = {
-            types.ui.FieldType.TEXT: lambda x: x.value,
-            types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
-            types.ui.FieldType.NUMERIC: lambda x: str(int(gui.as_int(x.value))),
-            types.ui.FieldType.PASSWORD: lambda x: (
-                CryptoManager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
-            ),
-            types.ui.FieldType.HIDDEN: (lambda x: None if not x.is_serializable() else x.value),
-            types.ui.FieldType.CHOICE: lambda x: x.value,
-            types.ui.FieldType.MULTICHOICE: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.EDITABLELIST: lambda x: codecs.encode(serialize(x.value), 'base64').decode(),
-            types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR
-            if gui.as_bool(x.value)
-            else consts.FALSE_STR,
-            types.ui.FieldType.IMAGECHOICE: lambda x: x.value,
-            types.ui.FieldType.DATE: lambda x: x.value,
-            types.ui.FieldType.INFO: lambda x: None,
-        }
         # Any unexpected type will raise an exception
         # Note that currently, we will store old field name on db
         # to allow "backwards" migration if needed, but will be removed on a future version
         arr = [
-            (field.old_field_name() or field_name, field.type.name, fw_converters[field.type](field))
+            (field.old_field_name() or field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
             for field_name, field in self._gui.items()
-            if fw_converters[field.type](field) is not None
+            if FIELDS_ENCODERS[field.type](field) is not None
         ]
 
-        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serialize(arr)
+        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(arr)
 
-    def unserialize_fields(
+    def deserialize_fields(
         self,
         values: bytes,
-        opt_deserializer: typing.Optional[collections.abc.Callable[[bytes], typing.Any]] = None,
     ) -> None:
         """New form unserialization
 
@@ -1490,11 +1508,6 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         Keyword Arguments:
             serializer {typing.Optional[collections.abc.Callable[[str], typing.Any]]} -- deserializer (default: {None})
         """
-
-        def _unserialize(value: bytes) -> typing.Any:
-            if opt_deserializer:
-                return opt_deserializer(value)
-            return serializer.deserialize(value) or []
 
         if not values:
             return
@@ -1511,10 +1524,11 @@ class UserInterface(metaclass=UserInterfaceAbstract):
 
         values = values[len(SERIALIZATION_HEADER) + len(SERIALIZATION_VERSION) :]
 
-        if not values:
+        if not values:  # Apart of the header, there is nothing...
+            logger.info('Empty values on unserialize_fields')
             return
 
-        arr = _unserialize(values)
+        arr = serializer.deserialize(values) or []
 
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
@@ -1530,23 +1544,6 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 continue
             self._gui[fld_name].value = self._gui[fld_name].default
 
-        converters: collections.abc.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]] = {
-            types.ui.FieldType.TEXT: lambda x: x,
-            types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
-            types.ui.FieldType.NUMERIC: int,
-            types.ui.FieldType.PASSWORD: lambda x: (
-                CryptoManager().aes_decrypt(x.encode(), UDSK, True).decode()
-            ),
-            types.ui.FieldType.HIDDEN: lambda x: None,
-            types.ui.FieldType.CHOICE: lambda x: x,
-            types.ui.FieldType.MULTICHOICE: lambda x: _unserialize(codecs.decode(x.encode(), 'base64')),
-            types.ui.FieldType.EDITABLELIST: lambda x: _unserialize(codecs.decode(x.encode(), 'base64')),
-            types.ui.FieldType.CHECKBOX: lambda x: x,
-            types.ui.FieldType.IMAGECHOICE: lambda x: x,
-            types.ui.FieldType.DATE: lambda x: x,
-            types.ui.FieldType.INFO: lambda x: None,
-        }
-
         for fld_name, fld_type, fld_value in arr:
             if fld_name in field_names_translations:
                 fld_name = field_names_translations[fld_name]  # Convert old field name to new one if needed
@@ -1554,13 +1551,13 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 logger.warning('Field %s not found in form', fld_name)
                 continue
             field_type = self._gui[fld_name].type
-            if field_type not in converters:
+            if field_type not in FIELD_DECODERS:
                 logger.warning('Field %s has no converter', fld_name)
                 continue
             if fld_type != field_type.name:
                 logger.warning('Field %s has different type than expected', fld_name)
                 continue
-            self._gui[fld_name].value = converters[field_type](fld_value)
+            self._gui[fld_name].value = FIELD_DECODERS[field_type](fld_value)
 
     def deserialize_from_old_format(self, values: bytes) -> None:
         """
@@ -1663,3 +1660,41 @@ class UserInterface(metaclass=UserInterfaceAbstract):
                 field_names_translations[fld_old_field_name] = fld_name
 
         return field_names_translations
+
+
+# Dictionaries used to encode/deconde fields
+FIELDS_ENCODERS: typing.Final[
+    collections.abc.Mapping[
+        types.ui.FieldType, collections.abc.Callable[[gui.InputField], typing.Optional[str]]
+    ]
+] = {
+    types.ui.FieldType.TEXT: lambda x: x.value,
+    types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x.value,
+    types.ui.FieldType.NUMERIC: lambda x: str(int(gui.as_int(x.value))),
+    types.ui.FieldType.PASSWORD: lambda x: (
+        CryptoManager().aes_crypt(x.value.encode('utf8'), UDSK, True).decode()
+    ),
+    types.ui.FieldType.HIDDEN: (lambda x: None if not x.is_serializable() else x.value),
+    types.ui.FieldType.CHOICE: lambda x: x.value,
+    types.ui.FieldType.MULTICHOICE: lambda x: base64.b64encode(serializer.serialize(x.value)).decode(),
+    types.ui.FieldType.EDITABLELIST: lambda x: base64.b64encode(serializer.serialize(x.value)).decode(),
+    types.ui.FieldType.CHECKBOX: lambda x: consts.TRUE_STR if gui.as_bool(x.value) else consts.FALSE_STR,
+    types.ui.FieldType.IMAGECHOICE: lambda x: x.value,
+    types.ui.FieldType.DATE: lambda x: x.value,
+    types.ui.FieldType.INFO: lambda x: None,
+}
+
+FIELD_DECODERS: typing.Final[collections.abc.Mapping[types.ui.FieldType, collections.abc.Callable[[str], typing.Any]]] = {
+    types.ui.FieldType.TEXT: lambda x: x,
+    types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
+    types.ui.FieldType.NUMERIC: int,
+    types.ui.FieldType.PASSWORD: lambda x: (CryptoManager().aes_decrypt(x.encode(), UDSK, True).decode()),
+    types.ui.FieldType.HIDDEN: lambda x: None,
+    types.ui.FieldType.CHOICE: lambda x: x,
+    types.ui.FieldType.MULTICHOICE: lambda x: serializer.deserialize(base64.b64decode(x.encode())),
+    types.ui.FieldType.EDITABLELIST: lambda x: serializer.deserialize(base64.b64decode(x.encode())),
+    types.ui.FieldType.CHECKBOX: lambda x: x,
+    types.ui.FieldType.IMAGECHOICE: lambda x: x,
+    types.ui.FieldType.DATE: lambda x: x,
+    types.ui.FieldType.INFO: lambda x: None,
+}

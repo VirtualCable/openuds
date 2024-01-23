@@ -54,6 +54,7 @@ def createAuthenticator(
         authenticator.name = 'Testing authenticator'
         authenticator.comments = 'Tesging authenticator'
         authenticator.data_type = InternalDBAuth.type_type
+        authenticator.save()  # get id, so no fake authenticator is created
         authenticator.data = authenticator.get_instance().serialize()
         authenticator.save()
 

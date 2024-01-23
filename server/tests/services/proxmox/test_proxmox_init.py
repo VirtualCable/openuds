@@ -33,7 +33,8 @@ import typing
 # We use commit/rollback
 
 from tests.utils.test import UDSTestCase
-from uds.core.ui.user_interface import gui, UDSB, UDSK
+from uds.core.ui.user_interface import gui, UDSB
+from uds.core.managers import crypto
 from uds.core.environment import Environment
 
 from uds.services.Proxmox.provider import ProxmoxProvider
@@ -64,7 +65,20 @@ PROVIDER_FIELDS_DATA: typing.Final[dict[str, typing.Any]] = {
 }
 
 
-class TestProxmoProvider(UDSTestCase):
+class TestProxmoxProvider(UDSTestCase):
+    _oldUDSK: bytes
+    
+    def setUp(self) -> None:
+        # Override UDSK
+        self._oldUDSK = crypto.UDSK
+        # Set same key as used to encrypt serialized data
+        crypto.UDSK = b'f#s35!e38xv%e-+i'  # type: ignore  # UDSK is final, but this is a test
+        return super().setUp()
+    
+    def tearDown(self) -> None:
+        crypto.UDSK = self._oldUDSK  # type: ignore  # UDSK is final, but this is a test
+        return super().tearDown()
+        
     def test_provider_serialization(self) -> None:
         provider = ProxmoxProvider(environment=Environment.get_temporary_environment())
         provider.deserialize(PROVIDER_SERIALIZE_DATA)

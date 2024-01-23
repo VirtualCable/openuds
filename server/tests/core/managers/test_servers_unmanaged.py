@@ -172,11 +172,11 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
 
             self.assertEqual(len(self.registered_servers_group.properties), 0)
 
-    def testAssignAutoLockLimit(self) -> None:
+    def test_assign_autolock_limit(self) -> None:
         with self.createMockApiRequester() as mockServerApiRequester:
             # Assign all user services with lock
             for userService in self.user_services[:NUM_REGISTEREDSERVERS]:
-                assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1))
+                assignation = self.assign(userService, lockTime=datetime.timedelta(seconds=1.1))
                 if assignation is None:
                     self.fail('Assignation returned None')
                     return  # For mypy
@@ -194,8 +194,8 @@ class ServerManagerUnmanagedServersTest(UDSTestCase):
                 self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
             )
 
-            # Wait a second, and try again, it should work
-            time.sleep(1)
+            # Wait a bit more than a second, and try again, it should work
+            time.sleep(1.1)
             self.assign(self.user_services[NUM_REGISTEREDSERVERS], lockTime=datetime.timedelta(seconds=1))
 
             # notify_release should has been called once

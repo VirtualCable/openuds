@@ -160,7 +160,7 @@ class UserinterfaceTest(UDSTestCase):
 
         # Now deserialize old data with new method, (will internally call oldUnserializeForm)
         ui3 = TestingUserInterface()
-        ui3.unserialize_fields(data)
+        ui3.deserialize_fields(data)
 
         self.assertEqual(ui, ui3)
         self.ensure_values_fine(ui3)
@@ -171,7 +171,7 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterface()
         data = ui.serialize_fields()
         ui2 = TestingUserInterface()
-        ui2.unserialize_fields(data)
+        ui2.deserialize_fields(data)
 
         self.assertEqual(ui, ui2)
         self.ensure_values_fine(ui2)
@@ -182,7 +182,7 @@ class UserinterfaceTest(UDSTestCase):
         ui = TestingUserInterfaceFieldNameOrig()
         data = ui.serialize_fields()
         ui2 = TestingUserInterfaceFieldName()
-        ui2.unserialize_fields(data)
+        ui2.deserialize_fields(data)
 
         self.assertEqual(ui.strField.value, ui2.str_field.value)
         
@@ -191,7 +191,7 @@ class UserinterfaceTest(UDSTestCase):
         with mock.patch('logging.Logger.warning') as mock_warning:
             data = ui2.serialize_fields()  # Should store str_field as strField
             
-            ui.unserialize_fields(data)
+            ui.deserialize_fields(data)
             
             # Logger.warning should has not been called
             mock_warning.assert_not_called()
