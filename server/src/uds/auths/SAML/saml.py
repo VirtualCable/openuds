@@ -52,8 +52,6 @@ from uds.core.ui import gui
 from uds.core.util import security, decorators, ensure, auth as auth_utils
 from uds.core.util.model import sql_datetime
 
-from . import config
-
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
     from django.http import HttpRequest
@@ -319,7 +317,34 @@ class SAMLAuthenticator(auths.Authenticator):
         tooltip=_('Duration of metadata validity in days. 0 means default (ten years)'),
         tab=_('Metadata'),
     )
-
+    
+    organization_name = gui.TextField(
+        length=256,
+        label=_('Organization Name'),
+        default='UDS',
+        order=40,
+        tooltip=_('Organization name to use on SAML SP Metadata'),
+        tab=_('Organization'),
+    )
+    
+    organization_display_name = gui.TextField(
+        length=256,
+        label=_('Organization Display Name'),
+        default='UDS Organization',
+        order=41,
+        tooltip=_('Organization Display name to use on SAML SP Metadata'),
+        tab=_('Organization'),
+    )
+    
+    organization_url = gui.TextField(
+        length=256,
+        label=_('Organization URL'),
+        default='https://www.udsenterprise.com',
+        order=42,
+        tooltip=_('Organization url to use on SAML SP Metadata'),
+        tab=_('Organization'),
+    )
+    
     manageUrl = gui.HiddenField(serializable=True)
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
@@ -518,9 +543,9 @@ class SAMLAuthenticator(auths.Authenticator):
             },
             'organization': {
                 'en-US': {
-                    'name': config.ORGANIZATION_NAME.get(),
-                    'displayname': config.ORGANIZATION_DISPLAY.get(),
-                    'url': config.ORGANIZATION_URL.get(),
+                    'name': self.organization_name.as_str(),
+                    'displayname': self.organization_display_name.as_str(),
+                    'url': self.organization_url.as_str(),
                 },
             },
         }

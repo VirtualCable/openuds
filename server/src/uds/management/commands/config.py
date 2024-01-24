@@ -44,8 +44,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser) -> None:
         parser.add_argument('name_value', nargs='+', type=str)
-        # if force crypt is specified, we will force crypting of passwords
-        parser.add_argument('--force-crypt', action='store_true', default=False, help='Force crypting of passwords')
         # If set as "password field"
         parser.add_argument('--password', action='store_true', default=False, help='Set as password field')
         
@@ -69,10 +67,7 @@ class Command(BaseCommand):
                     kwargs = {}
                     if options['password']:
                         kwargs['type'] = Config.FieldType.PASSWORD
-                    if options['force_crypt']:
-                        value = Config.section(mod).value_encrypted(name, value).get()
-                    else:
-                        Config.section(mod).value(name, value).get()
+                    Config.section(mod).value(name, value).get()
         except Exception as e:
             self.stderr.write(f'The command could not be processed: {e}')
             logger.exception('Exception processing %s', args)

@@ -351,4 +351,13 @@ class Migration(migrations.Migration):
             name="skip_mfa",
             field=models.CharField(db_index=True, default="I", max_length=1),
         ),
+        # Remove old fields
+        migrations.RemoveField(
+            model_name="config",
+            name="crypt",
+        ),
+        migrations.RemoveField(
+            model_name="config",
+            name="long",
+        ),
     ]

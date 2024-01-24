@@ -65,8 +65,12 @@ REMOVED_CONFIG_ELEMENTS = {
         'downloadUrl',
         'tunnelOpenedTime',
     ),
+    'SAML': (
+        'Organization Name',
+        'Org. Display Name',
+        'Organization URL',
+    ),
 }
-
 
 class Config:
     # Fields types, so inputs get more "beautiful"
@@ -76,10 +80,17 @@ class Config:
         LONGTEXT = 1
         NUMERIC = 2
         BOOLEAN = 3
-        CHOICE = 4  # Choice fields must set its parameters on global "configParams" (better by calling ".setParams" method)
+        CHOICE = 4  # Choice fields must set its parameters on global "_config_params" (by calling ".set_params" method)
         READ = 5  # Only can viewed, but not changed (can be changed througn API, it's just read only to avoid "mistakes")
         HIDDEN = 6  # Not visible on "admin" config edition
         PASSWORD = 7  # Password field (not encrypted, but "hashed" on database)
+
+        @staticmethod
+        def from_int(value: int) -> 'Config.FieldType':
+            try:
+                return Config.FieldType(value)
+            except ValueError:
+                return Config.FieldType.UNKNOWN
 
     class SectionType(enum.StrEnum):
         GLOBAL = 'UDS'
@@ -87,7 +98,6 @@ class Config:
         CUSTOM = 'Custom'
         ADMIN = 'Admin'
         WYSE = 'WYSE'  # Legacy
-        SAML = 'SAML'  # Legacy
         ENTERPRISE = 'Enterprise'  # For enterprise pourposes
         OTHER = 'Other'
 
@@ -104,17 +114,18 @@ class Config:
     class Section:
         _section_name: 'Config.SectionType'
 
-        def __init__(self, sectionName: 'Config.SectionType') -> None:
-            self._section_name = sectionName
+        def __init__(self, section_name: 'Config.SectionType') -> None:
+            self._section_name = section_name
 
-        def value(self, key, default='', long_text: bool = False, type: int = -1, help: str = '') -> 'Config.Value':
-            return Config.value(self, key=key, default=default, crypt=False, long_text=long_text, type=type, help=help)
-
-        def value_encrypted(self, key, default='', long_text: bool = False, type: int = -1, help: str = '') -> 'Config.Value':
-            return Config.value(self, key=key, default=default, crypt=True, long_text=long_text, type=type, help=help)
-
-        def value_longtext(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, False, True, **kwargs)
+        def value(
+            self,
+            key: str,
+            default: typing.Optional[str] = None,
+            type: typing.Optional['Config.FieldType'] = None,
+            help: str = '',
+        ) -> 'Config.Value':
+            type = type or Config.FieldType.UNKNOWN
+            return Config.value(type=type, section=self, key=key, default=default, help=help)
 
         def name(self) -> str:
             return self._section_name
@@ -126,33 +137,22 @@ class Config:
         _section: 'Config.Section'  # type: ignore  # mypy complains??
         _type: int
         _key: str
-        _crypt: bool
-        _long_text: bool
         _default: str
         _help: str
         _data: typing.Optional[str] = None
 
         def __init__(
             self,
+            type: 'Config.FieldType',
             section: 'Config.Section',
             key: str,
-            default: str = '',
-            crypt: bool = False,
-            long_text: bool = False,
-            type: int = -1,
+            default: typing.Optional[str],
             help: str = '',
-        ):
+        ) -> None:
             self._type = type
-
             self._section = section
             self._key = key
-            self._crypt = crypt
-            self._long_text = long_text
-            if crypt is False or not default:
-                self._default = default
-            else:
-                self._default = CryptoManager().encrypt(default)
-
+            self._default = default or ''
             self._help = help
 
             logger.debug(self)
@@ -171,33 +171,26 @@ class Config:
                     # logger.debug('Accessing db config {0}.{1}'.format(self._section.name(), self._key))
                     readed = DBConfig.objects.get(section=self._section.name(), key=self._key)
                     self._data = readed.value
-                    # Ensure password are not encrypted again on DB, even if legacy values were
-                    self._crypt = (
-                        (readed.crypt or self._crypt) if self._type != Config.FieldType.PASSWORD else False
-                    )
-                    self._long_text = readed.long
+
+                    # Force update field type and help if needed
                     if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
                         readed.save(update_fields=['field_type'])
                     if self._help not in ('', readed.help):
                         readed.help = self._help
                         readed.save(update_fields=['help'])  # Append help field if not exists
+
                     self._type = readed.field_type
                     self._help = readed.help or self._help
             except DBConfig.DoesNotExist:
                 # Not found, so we create it
-                if self._default and self._crypt:
-                    self.set(CryptoManager().decrypt(self._default))
-                elif not self._crypt:
-                    self.set(self._default)
+                self.set(self._default)
                 self._data = self._default
             except Exception as e:  # On migration, this could happen
                 logger.info('Error accessing db config %s.%s', self._section.name(), self._key)
                 # logger.exception(e)
                 self._data = self._default
 
-            if self._crypt:
-                return CryptoManager().decrypt(typing.cast(str, self._data))
             return typing.cast(str, self._data)
 
         def set_params(self, params: typing.Any) -> None:
@@ -233,12 +226,6 @@ class Config:
         def section(self) -> str:
             return self._section.name()
 
-        def is_encrypted(self) -> bool:
-            return self._crypt
-
-        def is_long_text(self) -> bool:
-            return self._long_text
-
         def get_type(self) -> int:
             return self._type
 
@@ -259,23 +246,18 @@ class Config:
             if isinstance(value, int):
                 value = str(value)
 
-            if self._crypt:
-                value = CryptoManager().encrypt(value)
-
             if self._type == Config.FieldType.PASSWORD:
                 value = CryptoManager().hash(value)
 
             logger.debug('Saving config %s.%s as %s', self._section.name(), self._key, value)
             try:
                 obj, _ = DBConfig.objects.get_or_create(section=self._section.name(), key=self._key)
-                obj.value, obj.crypt, obj.long, obj.field_type, obj.help = (
+                obj.value, obj.field_type, obj.help = (
                     str(value),
-                    self._crypt,
-                    self._long_text,
                     self._type,
                     self._help,
                 )
-                obj.save()
+                obj.save(update_fields=['value', 'field_type', 'help'])
             except Exception:
                 if 'migrate' in sys.argv:  # During migration, set could be saved as part of initialization...
                     return
@@ -298,9 +280,13 @@ class Config:
 
     @staticmethod
     def value(
-        section: Section, key: str, default: str, crypt: bool = False, long_text: bool = False, type: int = -1, help: str = ''
+        type: 'Config.FieldType',
+        section: Section,
+        key: str,
+        default: typing.Optional[str] = None,
+        help: str = '',
     ) -> 'Config.Value':
-        return Config.Value(section=section, key=key, default=default, crypt=crypt, long_text=long_text, type=type, help=help)
+        return Config.Value(type=type, section=section, key=key, default=default, help=help)
 
     @staticmethod
     def enumerate() -> collections.abc.Iterable['Config.Value']:
@@ -313,31 +299,26 @@ class Config:
             if cfg.field_type == Config.FieldType.HIDDEN:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
-            if cfg.crypt:
-                val = Config.section(Config.SectionType.from_str(cfg.section)).value_encrypted(cfg.key, type=cfg.field_type)
-            else:
-                val = Config.section(Config.SectionType.from_str(cfg.section)).value(cfg.key, type=cfg.field_type)
+            val = Config.section(Config.SectionType.from_str(cfg.section)).value(
+                cfg.key, type=Config.FieldType.from_int(cfg.field_type), help=cfg.help
+            )
             yield val
 
     @staticmethod
-    def update(section: 'Config.SectionType', key: str, value: str, checkType: bool = False) -> bool:
+    def update(section: 'Config.SectionType', key: str, value: str, check_type: bool = False) -> bool:
         # If cfg value does not exists, simply ignore request
         try:
             cfg: DBConfig = DBConfig.objects.filter(section=section, key=key)[
                 0  # type: ignore  # Slicing is not supported by pylance right now
             ]
-            if checkType and cfg.field_type in (
+            if check_type and cfg.field_type in (
                 Config.FieldType.READ,
                 Config.FieldType.HIDDEN,
             ):
                 return False  # Skip non writable elements
 
-            if cfg.crypt:
-                # If field type is a password, store hashed value
-                if cfg.field_type == Config.FieldType.PASSWORD.value:
-                    value = CryptoManager().hash(value)
-                else:
-                    value = CryptoManager().encrypt(value)  # Rest, encrypt value (symetrically)
+            if cfg.field_type == Config.FieldType.PASSWORD.value:
+                value = CryptoManager().hash(value)
 
             cfg.value = value
             cfg.save()
@@ -360,9 +341,6 @@ class Config:
             if cfg.key() in REMOVED_CONFIG_ELEMENTS.get(cfg.section(), ()):
                 continue
 
-            if cfg.is_encrypted() is True and addCrypt is False:
-                continue
-
             if cfg.get_type() == Config.FieldType.PASSWORD and addCrypt is False:
                 continue
 
@@ -372,8 +350,6 @@ class Config:
             res[cfg.section()][cfg.key()] = {
                 # Password are now hashes, and cannot be reversed, so we do not show them
                 'value': cfg.get() if not cfg.get_type() == Config.FieldType.PASSWORD else '********',
-                'crypt': cfg.is_encrypted(),
-                'longText': cfg.is_long_text(),
                 'type': cfg.get_type(),
                 'params': cfg.get_params(),
                 'help': cfg.get_help(),
@@ -441,27 +417,29 @@ class GlobalConfig:
         'userServiceCleanNumber',
         '24',
         type=Config.FieldType.NUMERIC,
-        help=_('Number of services to initiate removal per run of CacheCleaner'),
+        help=_('Number of services to initiate removal per run of service cleaner'),
     )  # Defaults to 3 per wun
     # Removal Check time for cache, publications and deployed services
     REMOVAL_CHECK: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
         'removalCheck',
         '31',
         type=Config.FieldType.NUMERIC,
-        help=_('Removal Check time for cache, publications and deployed services'),
+        help=_('Removal Check time for cache, publications and deployed services, in seconds'),
     )  # Defaults to 30 seconds
     SUPER_USER_LOGIN: Config.Value = Config.section(Config.SectionType.SECURITY).value(
         'superUser', 'root', type=Config.FieldType.TEXT, help=_('Superuser username')
     )
     # Superuser password (do not need to be at database!!!)
-    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).value_encrypted(
+    SUPER_USER_PASS: Config.Value = Config.section(Config.SectionType.SECURITY).value(
         'rootPass', 'udsmam0', type=Config.FieldType.PASSWORD, help=_('Superuser password')
     )
     SUPER_USER_ALLOW_WEBACCESS: Config.Value = Config.section(Config.SectionType.SECURITY).value(
         'allowRootWebAccess',
         '1',
         type=Config.FieldType.BOOLEAN,
-        help=_('Allow root user to access using web interface'),
+        help=_(
+            'Allow root user to access using web interface.\n Once configured one authenticator,\nit\'s recommended to disable this option'
+        ),
     )
     # Enhaced security
     ENHANCED_SECURITY: Config.Value = Config.section(Config.SectionType.SECURITY).value(
@@ -472,7 +450,12 @@ class GlobalConfig:
     )
     # Paranoid security
     ENFORCE_ZERO_TRUST: Config.Value = Config.section(Config.SectionType.SECURITY).value(
-        'Enforce Zero-Trust Mode', '0', type=Config.FieldType.BOOLEAN
+        'Enforce Zero-Trust Mode',
+        '0',
+        type=Config.FieldType.BOOLEAN,
+        help=_(
+            'Enforced maximum security mode (Zero-Trust Mode). No password redirection will be allowed if this mode is set.'
+        ),
     )
     # Time an admi session can be idle before being "logged out"
     # ADMIN_IDLE_TIME: Config.Value = Config.section(Config.SectionType.SECURITY).value('adminIdleTime', '14400', type=Config.FieldType.NUMERIC_FIELD)  # Defaults to 4 hous
@@ -535,7 +518,7 @@ class GlobalConfig:
         type=Config.FieldType.BOOLEAN,
         help=_('Redirects login page to the tag used when logged in if active.'),
     )
-    
+
     # Max time needed to get a service "fully functional" before it's considered "failed" and removed
     # The time is in seconds
     MAX_INITIALIZING_TIME: Config.Value = Config.section(Config.SectionType.GLOBAL).value(
@@ -820,16 +803,19 @@ class GlobalConfig:
             except Exception:
                 logger.debug('Config table do not exists!!!, maybe we are installing? :-)')
 
+
 # Signals for avoid saving config values on migrations
 def _pre_migrate(sender, **kwargs):
     # logger.info('Migrating database, AVOID saving config values')
     global _is_migrating
     _is_migrating = True
-    
+
+
 def _post_migrate(sender, **kwargs):
     # logger.info('Migration DONE, ALLOWING saving config values')
     global _is_migrating
     _is_migrating = False
-    
+
+
 signals.pre_migrate.connect(_pre_migrate)
 signals.post_migrate.connect(_post_migrate)

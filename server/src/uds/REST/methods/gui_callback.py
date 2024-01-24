@@ -34,7 +34,7 @@ import collections.abc
 import logging
 import typing
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.ui import gui
 from uds.REST import Handler
 
@@ -48,7 +48,7 @@ class Callback(Handler):
     authenticated = True
     needs_staff = True
 
-    def get(self) -> list[dict[str, typing.Any]]:
+    def get(self) -> types.ui.CallbackResultType:
         if len(self._args) != 1:
             raise exceptions.rest.RequestError('Invalid Request')
 

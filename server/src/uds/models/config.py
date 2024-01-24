@@ -47,8 +47,6 @@ class Config(models.Model):
     section = models.CharField(max_length=128, db_index=True)
     key = models.CharField(max_length=64, db_index=True)
     value = models.TextField(default='')
-    crypt = models.BooleanField(default=False)
-    long = models.BooleanField(default=False)
     field_type = models.IntegerField(default=-1)
     help = models.CharField(max_length=256, default='')
 
