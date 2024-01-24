@@ -47,23 +47,28 @@ from uds.core.util import log, permissions, ensure
 from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime, process_uuid
 from uds.core.types.states import State
-from uds.models import (Account, Image, OSManager, Service, ServicePool,
-                        ServicePoolGroup, User)
+from uds.models import Account, Image, OSManager, Service, ServicePool, ServicePoolGroup, User
 from uds.models.calendar_action import (
-    CALENDAR_ACTION_ADD_GROUP, CALENDAR_ACTION_ADD_TRANSPORT,
-    CALENDAR_ACTION_CACHE_L1, CALENDAR_ACTION_CACHE_L2,
-    CALENDAR_ACTION_DEL_ALL_GROUPS, CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
-    CALENDAR_ACTION_DEL_GROUP, CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_IGNORE_UNUSED, CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX, CALENDAR_ACTION_PUBLISH,
+    CALENDAR_ACTION_ADD_GROUP,
+    CALENDAR_ACTION_ADD_TRANSPORT,
+    CALENDAR_ACTION_CACHE_L1,
+    CALENDAR_ACTION_CACHE_L2,
+    CALENDAR_ACTION_DEL_ALL_GROUPS,
+    CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
+    CALENDAR_ACTION_DEL_GROUP,
+    CALENDAR_ACTION_DEL_TRANSPORT,
+    CALENDAR_ACTION_IGNORE_UNUSED,
+    CALENDAR_ACTION_INITIAL,
+    CALENDAR_ACTION_MAX,
+    CALENDAR_ACTION_PUBLISH,
     CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
-    CALENDAR_ACTION_REMOVE_USERSERVICES)
+    CALENDAR_ACTION_REMOVE_USERSERVICES,
+)
 from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
 from .services import Services
-from .user_services import (AssignedService, CachedService, Changelog, Groups,
-                            Publications, Transports)
+from .user_services import AssignedService, CachedService, Changelog, Groups, Publications, Transports
 
 if typing.TYPE_CHECKING:
     from django.db.models import Model
@@ -126,7 +131,7 @@ class ServicesPools(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = {'field': 'state', 'prefix': 'row-state-'}
+    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     custom_methods = [
         ('setFallbackAccess', True),
@@ -280,7 +285,9 @@ class ServicesPools(ModelHandler):
         # if OSManager.objects.count() < 1:  # No os managers, can't create db
         #    raise exceptions.rest.ResponseError(gettext('Create at least one OS Manager before creating a new service pool'))
         if Service.objects.count() < 1:
-            raise exceptions.rest.ResponseError(gettext('Create at least a service before creating a new service pool'))
+            raise exceptions.rest.ResponseError(
+                gettext('Create at least a service before creating a new service pool')
+            )
 
         g = self.add_default_fields([], ['name', 'comments', 'tags'])
 
@@ -475,10 +482,10 @@ class ServicesPools(ModelHandler):
             for i in ('{use}', '{total}', '{usec}', '{left}'):
                 w = w.replace(i, 'xx')
             return len(w)
-                
+
         if macro_fld_len(fields['name']) > 128:
             raise exceptions.rest.RequestError(gettext('Name too long'))
-        
+
         if macro_fld_len(fields['short_name']) > 32:
             raise exceptions.rest.RequestError(gettext('Short name too long'))
 

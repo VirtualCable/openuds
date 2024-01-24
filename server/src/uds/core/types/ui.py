@@ -33,6 +33,7 @@ from ast import Call
 import dataclasses
 import enum
 import re
+import stat
 import typing
 import collections.abc
 
@@ -105,6 +106,9 @@ class FieldPatternType(enum.StrEnum):
     NONE = ''
 
 
+# Callbacks
+
+
 class CallbackResultItem(typing.TypedDict):
     # data = [{'name': 'datastore', 'choices': res}]
     name: str
@@ -120,6 +124,9 @@ class Filler(typing.TypedDict):
     function: typing.NotRequired[collections.abc.Callable[..., CallbackResultType]]
 
 
+# Choices
+
+
 class ChoiceItem(typing.TypedDict):
     id: str
     text: str
@@ -131,6 +138,7 @@ ChoicesType = typing.Union[
 ]
 
 
+# Field Info
 @dataclasses.dataclass
 class FieldInfo:
     label: str
@@ -161,3 +169,34 @@ class GuiElement(typing.TypedDict):
     name: str
     gui: dict[str, list[dict[str, typing.Any]]]
     value: typing.Any
+
+
+# Row styles
+@dataclasses.dataclass
+class RowStyleInfo:
+    prefix: str
+    field: str
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """Returns a dict with all fields that are not None"""
+        return dataclasses.asdict(self)
+
+    @staticmethod
+    def null() -> 'RowStyleInfo':
+        return RowStyleInfo('', '')
+
+# Table information
+@dataclasses.dataclass
+class TableInfo:
+    fields: list[FieldInfo]
+    row_style: RowStyleInfo
+    title: str
+    subtitle: typing.Optional[str] = None
+
+    def as_dict(self) -> dict[str, typing.Any]:
+        """Returns a dict with all fields that are not None"""
+        return dataclasses.asdict(self)
+    
+    @staticmethod
+    def null() -> 'TableInfo':
+        return TableInfo([], RowStyleInfo.null(), '')

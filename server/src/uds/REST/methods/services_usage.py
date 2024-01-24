@@ -36,6 +36,7 @@ import typing
 import collections.abc
 
 from django.utils.translation import gettext as _
+from uds.core import types
 
 from uds.models import UserService, Provider
 from uds.core.types.states import State
@@ -130,8 +131,8 @@ class ServicesUsage(DetailHandler):
             {'source_host': {'title': _('Src Host')}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'state', 'prefix': 'row-state-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def delete_item(self, parent: 'Model', item: str) -> None:
         parent = ensure.is_instance(parent, Provider)

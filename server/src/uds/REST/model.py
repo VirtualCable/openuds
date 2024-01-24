@@ -296,7 +296,7 @@ class BaseModelHandler(Handler):
         self,
         title: str,
         fields: list[typing.Any],
-        row_style: collections.abc.MutableMapping[str, typing.Any],
+        row_style: types.ui.RowStyleInfo,
         subtitle: typing.Optional[str] = None,
     ) -> dict[str, typing.Any]:
         """
@@ -305,7 +305,7 @@ class BaseModelHandler(Handler):
         return {
             'title': title,
             'fields': fields,
-            'row-style': row_style,
+            'row-style': row_style.as_dict(),
             'subtitle': subtitle or '',
         }
 
@@ -641,7 +641,7 @@ class DetailHandler(BaseModelHandler):
         """
         return []
 
-    def get_row_style(self, parent: models.Model) -> dict[str, typing.Any]:
+    def get_row_style(self, parent: models.Model) -> types.ui.RowStyleInfo:
         """
         A "generic" row style based on row field content.
         If not overridden, defaults to {}
@@ -652,7 +652,7 @@ class DetailHandler(BaseModelHandler):
         Return:
             dict[str, typing.Any]: A dictionary with 'field' and 'prefix' keys
         """
-        return {}
+        return types.ui.RowStyleInfo.null()
 
     def get_gui(self, parent: models.Model, forType: str) -> collections.abc.Iterable[typing.Any]:
         """
@@ -737,7 +737,7 @@ class ModelHandler(BaseModelHandler):
     remove_fields: typing.ClassVar[list[str]] = []
     # Table info needed fields and title
     table_fields: typing.ClassVar[list[typing.Any]] = []
-    table_row_style: typing.ClassVar[dict] = {}
+    table_row_style: typing.ClassVar[types.ui.RowStyleInfo] = types.ui.RowStyleInfo.null()
     table_title: typing.ClassVar[str] = ''
     table_subtitle: typing.ClassVar[str] = ''
 

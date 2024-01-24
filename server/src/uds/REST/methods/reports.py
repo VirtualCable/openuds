@@ -33,8 +33,10 @@
 import logging
 import typing
 import collections.abc
+from click import style
 
 from django.utils.translation import gettext_lazy as _
+from uds.core import types
 
 from uds.core.util.rest.tools import match
 from uds.REST import model
@@ -74,7 +76,7 @@ class Reports(model.BaseModelHandler):
         {'mime_type': {'title': _('Generates')}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = {'field': 'state', 'prefix': 'row-state-'}
+    table_row_style = types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def _findReport(self, uuid: str, values=None) -> 'Report':
         found = None

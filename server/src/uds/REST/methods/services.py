@@ -131,9 +131,8 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
             logger.error('Error getting services for %s: %s', parent, e)
             raise self.invalid_item_response() from e
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        parent = ensure.is_instance(parent, models.Provider)
-        return {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
     def _deleteIncompleteService(
         self, service: models.Service

@@ -38,7 +38,7 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 import uds.core.types.permissions
-from uds.core import exceptions, services
+from uds.core import exceptions, services, types
 from uds.core.environment import Environment
 from uds.core.util import ensure, permissions
 from uds.core.types.states import State
@@ -79,7 +79,7 @@ class Providers(ModelHandler):
         {'tags': {'title': _('tags'), 'visible': False}},
     ]
     # Field from where to get "class" and prefix for that class, so this will generate "row-state-A, row-state-X, ....
-    table_row_style = {'field': 'maintenance_mode', 'prefix': 'row-maintenance-'}
+    table_row_style = types.ui.RowStyleInfo(prefix='row-maintenance-', field='maintenance_mode')
 
     def item_as_dict(self, item: 'Provider') -> dict[str, typing.Any]:
         type_ = item.get_type()

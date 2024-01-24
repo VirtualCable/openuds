@@ -45,7 +45,7 @@ from uds.core.util import log, ensure
 from uds.core.util.model import process_uuid
 from uds.models import Authenticator, User, Group, ServicePool
 from uds.core.managers.crypto import CryptoManager
-from uds.core import consts, exceptions
+from uds.core import consts, exceptions, types
 
 from uds.REST.model import DetailHandler
 
@@ -179,8 +179,8 @@ class Users(DetailHandler):
             {'last_access': {'title': _('Last access'), 'type': 'datetime'}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'state', 'prefix': 'row-state-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, Authenticator)

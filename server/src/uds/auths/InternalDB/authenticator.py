@@ -32,19 +32,19 @@
 
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 import dns.resolver
 import dns.reversename
 from django.utils.translation import gettext_noop as _
 
-from uds.core import auths, types, exceptions, consts
+from uds.core import auths, consts, exceptions, types
 from uds.core.auths.auth import log_login
 from uds.core.managers.crypto import CryptoManager
-from uds.core.ui import gui
 from uds.core.types.states import State
+from uds.core.ui import gui
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -57,9 +57,7 @@ logger = logging.getLogger(__name__)
 class InternalDBAuth(auths.Authenticator):
     type_name = _('Internal Database')
     type_type = 'InternalDBAuth'
-    type_description = _(
-        'Internal dabasase authenticator. Doesn\'t use external sources'
-    )
+    type_description = _('Internal dabasase authenticator. Doesn\'t use external sources')
     icon_file = 'auth.png'
 
     # If we need to enter the password for this user
@@ -68,23 +66,25 @@ class InternalDBAuth(auths.Authenticator):
     # This is the only internal source
     external_source = False
 
-    differentForEachHost = gui.CheckBoxField(
+    unique_by_host = gui.CheckBoxField(
         label=_('Different user for each host'),
         order=1,
         tooltip=_('If checked, each host will have a different user name'),
         default=False,
         readonly=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='differentForEachHost',
     )
-    reverseDns = gui.CheckBoxField(
+    reverse_dns = gui.CheckBoxField(
         label=_('Reverse DNS'),
         order=2,
         tooltip=_('If checked, the host will be reversed dns'),
         default=False,
         readonly=True,
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='reverseDns',
     )
-    acceptProxy = gui.CheckBoxField(
+    accepts_proxy = gui.CheckBoxField(
         label=_('Accept proxy'),
         order=3,
         default=False,
@@ -92,18 +92,16 @@ class InternalDBAuth(auths.Authenticator):
             'If checked, requests via proxy will get FORWARDED ip address (take care with this bein checked, can take internal IP addresses from internet)'
         ),
         tab=types.ui.Tab.ADVANCED,
+        old_field_name='acceptProxy',
     )
 
-    def getIp(self, request: 'ExtendedHttpRequest') -> str:
-        ip = (
-            request.ip_proxy if self.acceptProxy.as_bool() else request.ip
-        )  # pylint: disable=maybe-no-member
-        if self.reverseDns.as_bool():
+    def get_ip(self, request: 'ExtendedHttpRequest') -> str:
+        ip = request.ip_proxy if self.accepts_proxy.as_bool() else request.ip  # pylint: disable=maybe-no-member
+        if self.reverse_dns.as_bool():
             try:
-                return str(
-                    dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
-                )
-            except Exception:  # nosec: intentionally
+                return str(dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0])
+            except Exception:
+                # if we can't get the reverse, we will use the ip
                 pass
         return ip
 
@@ -116,29 +114,37 @@ class InternalDBAuth(auths.Authenticator):
 
     def transformed_username(self, username: str, request: 'ExtendedHttpRequest') -> str:
         username = username.lower()
-        if self.differentForEachHost.as_bool():
-            newUsername = (
-                (request.ip_proxy if self.acceptProxy.as_bool() else request.ip)
-                + '-'
-                + username
-            )
+        if self.unique_by_host.as_bool():
+            ip_username = (request.ip_proxy if self.accepts_proxy.as_bool() else request.ip) + '-' + username
             # Duplicate basic user into username.
             auth = self.db_obj()
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
             # This way also, we protect from using forged "ip" + "username", because those will belong in fact to no group
             # and access will be denied
+            grps: list['models.Group'] = []
+
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 parent = usr.uuid
+                grps = [g for g in usr.groups.all()]
                 usr.id = usr.uuid = None  # type: ignore  # Empty id
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
-                usr.name = newUsername
+                usr.name = ip_username
                 usr.parent = parent
                 usr.save()
             except Exception:  # nosec: intentionally
                 pass  # User already exists
-            username = newUsername
+            username = ip_username
+
+            # Update groups of user
+            try:
+                usr = auth.users.get(name=ip_username, state=State.ACTIVE)
+                usr.groups.clear()
+                for grp in grps:
+                    usr.groups.add(grp)
+            except Exception:
+                pass
 
         return username
 
@@ -146,7 +152,7 @@ class InternalDBAuth(auths.Authenticator):
         self,
         username: str,
         credentials: str,
-        groupsManager: 'auths.GroupsManager',
+        groups_manager: 'auths.GroupsManager',
         request: 'ExtendedHttpRequest',
     ) -> types.auth.AuthenticationResult:
         username = username.lower()
@@ -162,7 +168,7 @@ class InternalDBAuth(auths.Authenticator):
 
         # Internal Db Auth has its own groups. (That is, no external source). If a group is active it is valid
         if CryptoManager().check_hash(credentials, user.password):
-            groupsManager.validate([g.name for g in user.groups.all()])
+            groups_manager.validate([g.name for g in user.groups.all()])
             return types.auth.SUCCESS_AUTH
 
         log_login(request, self.db_obj(), username, 'Invalid password')

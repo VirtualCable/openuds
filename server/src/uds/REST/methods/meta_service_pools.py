@@ -36,6 +36,7 @@ import collections.abc
 from django.utils.translation import gettext as _
 
 from uds import models
+from uds.core import types
 
 # from uds.models.meta_pool import MetaPool, MetaPoolMember
 # from uds.models.service_pool import ServicePool
@@ -232,10 +233,9 @@ class MetaAssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        parent = ensure.is_instance(parent, models.MetaPool)
-        return {'field': 'state', 'prefix': 'row-state-'}
-
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
+        
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.MetaPool)
         try:

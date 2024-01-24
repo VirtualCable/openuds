@@ -36,7 +36,7 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 
-from uds.core import exceptions
+from uds.core import exceptions, types
 from uds.core.util import ensure, permissions
 from uds.core.util.model import process_uuid
 from uds.models import Account, AccountUsage
@@ -101,8 +101,8 @@ class AccountsUsage(DetailHandler):  # pylint: disable=too-many-public-methods
             {'elapsed_timemark': {'title': _('Elapsed timemark')}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'running', 'prefix': 'row-running-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-running-', field='running')
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         raise exceptions.rest.RequestError('Accounts usage cannot be edited')

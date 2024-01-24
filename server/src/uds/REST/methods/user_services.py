@@ -30,19 +30,19 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import logging
 import typing
-import collections.abc
 
 from django.utils.translation import gettext as _
 
-from uds import models
-from uds.core import exceptions
 import uds.core.types.permissions
-from uds.core.types.states import State
-from uds.core.util.model import process_uuid
-from uds.core.util import log, permissions, ensure
+from uds import models
+from uds.core import exceptions, types
 from uds.core.managers.user_service import UserServiceManager
+from uds.core.types.states import State
+from uds.core.util import ensure, log, permissions
+from uds.core.util.model import process_uuid
 from uds.REST.model import DetailHandler
 
 if typing.TYPE_CHECKING:
@@ -175,8 +175,8 @@ class AssignedService(DetailHandler):
             {'actor_version': {'title': _('Actor version')}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'state', 'prefix': 'row-state-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def get_logs(self, parent: 'Model', item: str) -> list[typing.Any]:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -352,8 +352,8 @@ class Groups(DetailHandler):
             },
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'state', 'prefix': 'row-state-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
         parent = ensure.is_instance(parent, models.ServicePool)
@@ -385,6 +385,7 @@ class Transports(DetailHandler):
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]):
         parent = ensure.is_instance(parent, models.ServicePool)
+
         def get_type(trans: 'models.Transport'):
             try:
                 return self.type_as_dict(trans.get_type())
@@ -535,8 +536,8 @@ class Publications(DetailHandler):
             {'reason': {'title': _('Reason')}},
         ]
 
-    def get_row_style(self, parent: 'Model') -> dict[str, typing.Any]:
-        return {'field': 'state', 'prefix': 'row-state-'}
+    def get_row_style(self, parent: 'Model') -> types.ui.RowStyleInfo:
+        return types.ui.RowStyleInfo(prefix='row-state-', field='state')
 
 
 class Changelog(DetailHandler):
