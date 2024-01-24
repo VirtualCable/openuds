@@ -71,9 +71,7 @@ class ManagedObjectModel(UUIDModel):
         """
         return Environment.get_environment_for_table(self._meta.verbose_name, self.id)  # type: ignore  # pylint: disable=no-member
 
-    def deserialize(
-        self, obj: Module, values: typing.Optional[collections.abc.Mapping[str, str]]
-    ):
+    def deserialize(self, obj: Module, values: typing.Optional[collections.abc.Mapping[str, str]]):
         """
         Conditionally deserializes obj if not initialized via user interface and data holds something
         """
@@ -81,18 +79,16 @@ class ManagedObjectModel(UUIDModel):
         # data contains something
         if not values and self.data:
             obj.deserialize(self.data)
-            
-        if obj.needs_remarshal():
-            # Re-serialize to db
-            self.data = obj.serialize()
-            self.save(update_fields=['data'])
-            obj.flag_for_remarshalling(False)
+
+            if obj.needs_remarshalling():
+                # Re-serialize to db
+                self.data = obj.serialize()
+                self.save(update_fields=['data'])
+                obj.flag_for_remarshalling(False)
 
         self._cached_instance = None  # Ensures returns correct value on get_instance
 
-    def get_instance(
-        self, values: typing.Optional[dict[str, str]] = None
-    ) -> Module:
+    def get_instance(self, values: typing.Optional[dict[str, str]] = None) -> Module:
         """
         Instantiates the object this record contains.
 
@@ -125,9 +121,7 @@ class ManagedObjectModel(UUIDModel):
         Returns the type of self (as python type)
         Must be overriden!!!
         """
-        raise NotImplementedError(
-            f'get_type has not been implemented for {self.__class__.__name__}'
-        )
+        raise NotImplementedError(f'get_type has not been implemented for {self.__class__.__name__}')
 
     def is_type(self, type_: str) -> bool:
         """

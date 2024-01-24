@@ -251,7 +251,7 @@ def lenname_field(
 
 
 # Max preparing services field
-def max_preparing_services_field(
+def concurrent_creation_limit_field(
     order: int = 50, tab: typing.Optional[types.ui.Tab] = None
 ) -> ui.gui.NumericField:
     # Advanced tab
@@ -269,7 +269,7 @@ def max_preparing_services_field(
     )
 
 
-def max_removing_services_field(
+def concurrent_removal_limit_field(
     order: int = 51, tab: 'types.ui.Tab|str|None' = None
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(

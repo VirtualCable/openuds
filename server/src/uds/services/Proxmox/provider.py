@@ -92,8 +92,8 @@ class ProxmoxProvider(services.ServiceProvider):  # pylint: disable=too-many-pub
         required=True,
     )
 
-    max_preparing_services = fields.max_preparing_services_field()
-    max_removing_services = fields.max_removing_services_field()
+    concurrent_creation_limit = fields.concurrent_creation_limit_field()
+    concurrent_removal_limit = fields.concurrent_removal_limit_field()
     timeout = fields.timeout_field()
 
     start_vmid = gui.NumericField(

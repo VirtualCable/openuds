@@ -43,6 +43,7 @@ class Serializable:
     - Initialize the object with default values
     - Read values from seralized data
     """
+
     _flag_for_remarshal: bool
 
     # Note:
@@ -68,7 +69,7 @@ class Serializable:
         # This is an struct, and will be pickled by default
 
         if hasattr(self, 'data') and hasattr(getattr(self, 'data'), '__dict__'):
-            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)   # type: ignore
+            return pickle.dumps(getattr(self, 'data'), protocol=pickle.HIGHEST_PROTOCOL)  # type: ignore
 
         raise NotImplementedError('You must override the marshal method or provide a data member')
 
@@ -113,10 +114,18 @@ class Serializable:
     def flag_for_remarshalling(self, value: bool = True) -> None:
         """
         Flags this object for remarshalling
+        
+        Args:
+            value: True if this object needs remarshalling, False if not
+
+        Note:
+            This is not mandatory, meaning this that even if flagged, the object
+            will not be remarshalled if not appropriate (basically, it's remarshalled on
+            get_instance unserialize method call)
         """
         self._flag_for_remarshal = value
-        
-    def needs_remarshal(self) -> bool:
+
+    def needs_remarshalling(self) -> bool:
         """
         Returns true if this object needs remarshalling
         """

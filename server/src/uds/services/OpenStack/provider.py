@@ -143,7 +143,7 @@ class OpenStackProvider(ServiceProvider):
         required=True,
     )
 
-    max_preparing_services = gui.NumericField(
+    concurrent_creation_limit = gui.NumericField(
         length=3,
         label=_('Creation concurrency'),
         default=10,
@@ -155,7 +155,7 @@ class OpenStackProvider(ServiceProvider):
         tab=types.ui.Tab.ADVANCED,
         old_field_name='maxPreparingServices',
     )
-    max_removing_services = gui.NumericField(
+    concurrent_removal_limit = gui.NumericField(
         length=3,
         label=_('Removal concurrency'),
         default=5,

@@ -195,7 +195,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Creates a new assigned deployed service for the current publication (if any) of service pool and user indicated
         """
-        # First, honor max_preparing_services
+        # First, honor concurrent_creation_limit
         if self.can_grow_service_pool(service_pool) is False:
             # Cannot create new
             operationsLogger.info(
@@ -539,7 +539,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         service_instance = service_pool.service.get_instance()
         if (
             service_instance.is_avaliable()
-            and removing >= service_instance.parent().get_max_removing_services()
+            and removing >= service_instance.parent().get_concurrent_removal_limit()
             and service_instance.parent().get_ignore_limits() is False
         ):
             return False
@@ -554,7 +554,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         )
         serviceInstance = service_pool.service.get_instance()
         if self.maximum_user_services_reached(service_pool.service) or (
-            preparingForProvider >= serviceInstance.parent().get_max_preparing_services()
+            preparingForProvider >= serviceInstance.parent().get_concurrent_creation_limit()
             and serviceInstance.parent().get_ignore_limits() is False
         ):
             return False
