@@ -81,6 +81,12 @@ class ManagedObjectModel(UUIDModel):
         # data contains something
         if not values and self.data:
             obj.deserialize(self.data)
+            
+        if obj.needs_remarshal():
+            # Re-serialize to db
+            self.data = obj.serialize()
+            self.save(update_fields=['data'])
+            obj.flag_for_remarshalling(False)
 
         self._cached_instance = None  # Ensures returns correct value on get_instance
 

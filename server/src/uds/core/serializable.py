@@ -43,7 +43,7 @@ class Serializable:
     - Initialize the object with default values
     - Read values from seralized data
     """
-    __slots__ = ()
+    _flag_for_remarshal: bool
 
     # Note:
     #   We can include a "data" member variable in the class
@@ -51,7 +51,7 @@ class Serializable:
     #   on marshal and unmarshal methods
 
     def __init__(self):
-        pass
+        self._flag_for_remarshal = False
 
     def marshal(self) -> bytes:
         """
@@ -106,3 +106,18 @@ class Serializable:
         des-obfuscates the data and then de-serializes it via unmarshal method
         """
         self.unmarshal(base64.b64decode(data))
+
+    # For remarshalling purposes
+    # These allows us to faster migration of old data formats to new ones
+    # alowing us to remove old format support as soon as possible
+    def flag_for_remarshalling(self, value: bool = True) -> None:
+        """
+        Flags this object for remarshalling
+        """
+        self._flag_for_remarshal = value
+        
+    def needs_remarshal(self) -> bool:
+        """
+        Returns true if this object needs remarshalling
+        """
+        return self._flag_for_remarshal

@@ -39,9 +39,4 @@ class ValidationError(UDSException):
     Exception used to indicate that the params assigned are invalid
     """
 
-class ForceMarshalling(UDSException):
-    """
-    Exception used to force marshalling of an object
-    """
-    data: bytes
-    
+    pass
