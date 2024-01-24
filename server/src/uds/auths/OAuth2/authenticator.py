@@ -380,14 +380,14 @@ class OAuth2Authenticator(auths.Authenticator):
         # After this point, we don't mind about the token, we only need to authenticate user
         # and get some basic info from it
 
-        username = ''.join(auth_utils.processRegexField(self.userNameAttr.value, userInfo)).replace(' ', '_')
+        username = ''.join(auth_utils.process_regex_field(self.userNameAttr.value, userInfo)).replace(' ', '_')
         if len(username) == 0:
             raise Exception('No username received')
 
-        realName = ''.join(auth_utils.processRegexField(self.realNameAttr.value, userInfo))
+        realName = ''.join(auth_utils.process_regex_field(self.realNameAttr.value, userInfo))
 
         # Get groups
-        groups = auth_utils.processRegexField(self.groupNameAttr.value, userInfo)
+        groups = auth_utils.process_regex_field(self.groupNameAttr.value, userInfo)
         # Append common groups
         groups.extend(self.commonGroups.value.split(','))
 
@@ -445,8 +445,8 @@ class OAuth2Authenticator(auths.Authenticator):
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
-        auth_utils.validateRegexField(self.userNameAttr)
-        auth_utils.validateRegexField(self.userNameAttr)
+        auth_utils.validate_regex_field(self.userNameAttr)
+        auth_utils.validate_regex_field(self.userNameAttr)
 
         if self.responseType.value in ('code', 'pkce', 'openid+code'):
             if self.commonGroups.value.strip() == '':

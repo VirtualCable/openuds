@@ -40,7 +40,7 @@ from uds.core.util import ensure
 logger = logging.getLogger(__name__)
 
 
-def validateRegexField(field: ui.gui.TextField, field_value: typing.Optional[str] = None):
+def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[str] = None):
     """
     Validates the multi line fields refering to attributes
     """
@@ -59,7 +59,7 @@ def validateRegexField(field: ui.gui.TextField, field_value: typing.Optional[str
                 raise exceptions.validation.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
 
 
-def processRegexField(
+def process_regex_field(
     field: str, attributes: collections.abc.Mapping[str, typing.Union[str, list[str]]]
 ) -> list[str]:
     """Proccesses a field, that can be a multiline field, and returns a list of values

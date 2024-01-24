@@ -1488,13 +1488,13 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         # Any unexpected type will raise an exception
         # Note that currently, we will store old field name on db
         # to allow "backwards" migration if needed, but will be removed on a future version
-        arr = [
+        fields = [
             (field.old_field_name() or field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
             for field_name, field in self._gui.items()
             if FIELDS_ENCODERS[field.type](field) is not None
         ]
 
-        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(arr)
+        return SERIALIZATION_HEADER + SERIALIZATION_VERSION + serializer.serialize(fields)
 
     def deserialize_fields(
         self,
@@ -1528,36 +1528,36 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             logger.info('Empty values on unserialize_fields')
             return
 
-        arr = serializer.deserialize(values) or []
+        fields = serializer.deserialize(values) or []
 
         # Dict of translations from old_field_name to field_name
         field_names_translations: dict[str, str] = self._get_fieldname_translations()
 
         # Set all values to defaults ones
-        for fld_name in self._gui:
-            fld = self._gui[fld_name]
+        for field_name in self._gui:
+            field = self._gui[field_name]
             if (
-                self._gui[fld_name].is_type(types.ui.FieldType.HIDDEN)
-                and self._gui[fld_name].is_serializable() is False
+                field.is_type(types.ui.FieldType.HIDDEN)
+                and field.is_serializable() is False
             ):
                 # logger.debug('Field {0} is not unserializable'.format(k))
                 continue
-            self._gui[fld_name].value = self._gui[fld_name].default
+            field.value = field.default
 
-        for fld_name, fld_type, fld_value in arr:
-            if fld_name in field_names_translations:
-                fld_name = field_names_translations[fld_name]  # Convert old field name to new one if needed
-            if fld_name not in self._gui:
-                logger.warning('Field %s not found in form', fld_name)
+        for field_name, field_type, field_value in fields:
+            if field_name in field_names_translations:
+                field_name = field_names_translations[field_name]  # Convert old field name to new one if needed
+            if field_name not in self._gui:
+                logger.warning('Field %s not found in form', field_name)
                 continue
-            field_type = self._gui[fld_name].type
-            if field_type not in FIELD_DECODERS:
-                logger.warning('Field %s has no converter', fld_name)
+            internal_field_type = self._gui[field_name].type
+            if internal_field_type not in FIELD_DECODERS:
+                logger.warning('Field %s has no converter', field_name)
                 continue
-            if fld_type != field_type.name:
-                logger.warning('Field %s has different type than expected', fld_name)
+            if field_type != internal_field_type.name:
+                logger.warning('Field %s has different type than expected', field_name)
                 continue
-            self._gui[fld_name].value = FIELD_DECODERS[field_type](fld_value)
+            self._gui[field_name].value = FIELD_DECODERS[internal_field_type](field_value)
 
     def deserialize_from_old_format(self, values: bytes) -> None:
         """
@@ -1689,7 +1689,7 @@ FIELD_DECODERS: typing.Final[collections.abc.Mapping[types.ui.FieldType, collect
     types.ui.FieldType.TEXT_AUTOCOMPLETE: lambda x: x,
     types.ui.FieldType.NUMERIC: int,
     types.ui.FieldType.PASSWORD: lambda x: (CryptoManager().aes_decrypt(x.encode(), UDSK, True).decode()),
-    types.ui.FieldType.HIDDEN: lambda x: None,
+    types.ui.FieldType.HIDDEN: lambda x: x,
     types.ui.FieldType.CHOICE: lambda x: x,
     types.ui.FieldType.MULTICHOICE: lambda x: serializer.deserialize(base64.b64decode(x.encode())),
     types.ui.FieldType.EDITABLELIST: lambda x: serializer.deserialize(base64.b64decode(x.encode())),

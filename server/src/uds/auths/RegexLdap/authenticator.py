@@ -229,9 +229,9 @@ class RegexLdap(auths.Authenticator):
 
     def initialize(self, values: typing.Optional[dict[str, typing.Any]]) -> None:
         if values:
-            auth_utils.validateRegexField(self.userNameAttr, values['userNameAttr'])
-            auth_utils.validateRegexField(self.userIdAttr, values['userIdAttr'])
-            auth_utils.validateRegexField(self.groupNameAttr, values['groupNameAttr'])
+            auth_utils.validate_regex_field(self.userNameAttr, values['userNameAttr'])
+            auth_utils.validate_regex_field(self.userIdAttr, values['userIdAttr'])
+            auth_utils.validate_regex_field(self.groupNameAttr, values['groupNameAttr'])
 
             self._host = values['host']
             self._port = values['port']
@@ -464,13 +464,13 @@ class RegexLdap(auths.Authenticator):
         return user
 
     def __getGroups(self, user: ldaputil.LDAPResultType):
-        grps = auth_utils.processRegexField(self._groupNameAttr, user)
+        grps = auth_utils.process_regex_field(self._groupNameAttr, user)
         if extra:
             grps += extra.getGroups(self, user)
         return grps
 
     def __getUserRealName(self, user: ldaputil.LDAPResultType):
-        return ' '.join(auth_utils.processRegexField(self._userNameAttr, user))
+        return ' '.join(auth_utils.process_regex_field(self._userNameAttr, user))
 
     def authenticate(
         self,
