@@ -39,7 +39,7 @@ import yaml
 
 from django.core.management.base import BaseCommand
 
-from uds.core.util import log, model
+from uds.core.util import log, model, config
 from uds import models
 from uds.core.types.states import State
 
@@ -51,6 +51,7 @@ if typing.TYPE_CHECKING:
     from django.db import models as dbmodels
 
 CONSIDERED_OLD: typing.Final[datetime.timedelta] = datetime.timedelta(days=365)
+
 
 def get_serialized_from_managed_object(
     mod: 'models.ManagedObjectModel',
@@ -141,17 +142,17 @@ class Command(BaseCommand):
             providers = {}
             for provider in models.Provider.objects.all():
                 services = {}
-                totalServices = 0
-                totalServicePools = 0
-                totalUserServices = 0
+                services_count = 0
+                servicepools_count = 0
+                userservices_count = 0
                 for service in provider.services.all():
                     servicePools = {}
-                    numberOfServicePools = 0
-                    numberOfUserServices = 0
-                    for servicePool in service.deployedServices.all():
+                    partial_servicepools_count = 0
+                    partial_userservices_count = 0
+                    for service_pool in service.deployedServices.all():
                         # get assigned user services with ERROR status
-                        userServices = {}
-                        fltr = servicePool.userServices.all()
+                        userservices = {}
+                        fltr = service_pool.userServices.all()
                         if not options['alluserservices']:
                             fltr = fltr.filter(state=State.ERROR)
                         for item in fltr[:max_items]:  # at most max_items items
@@ -159,7 +160,7 @@ class Command(BaseCommand):
                                 f'{l["date"]}: {log.LogLevel.from_str(l["level"])} [{l["source"]}] - {l["message"]}'
                                 for l in log.get_logs(item)
                             ]
-                            userServices[item.friendly_name] = {
+                            userservices[item.friendly_name] = {
                                 '_': {
                                     'id': item.uuid,
                                     'unique_id': item.unique_id,
@@ -176,62 +177,62 @@ class Command(BaseCommand):
                                 'logs': logs,
                             }
 
-                        numberOfUserServices = len(userServices)
-                        totalUserServices += numberOfUserServices
+                        partial_userservices_count = len(userservices)
+                        userservices_count += partial_userservices_count
 
                         # get publications
                         publications: dict[str, typing.Any] = {}
-                        changeLogs = models.ServicePoolPublicationChangelog.objects.filter(
-                            publication=servicePool
+                        changelogs = models.ServicePoolPublicationChangelog.objects.filter(
+                            publication=service_pool
                         ).values('stamp', 'revision', 'log')
 
-                        for publication in servicePool.publications.all():
+                        for publication in service_pool.publications.all():
                             publications[str(publication.revision)] = getSerializedFromModel(
                                 publication, ['data']
                             )
 
                         # get assigned groups
                         groups = []
-                        for group in servicePool.assignedGroups.all():
+                        for group in service_pool.assignedGroups.all():
                             groups.append(group.pretty_name)
 
                         # get calendar actions
-                        calendarActions = {}
-                        for calendarAction in models.CalendarAction.objects.filter(service_pool=servicePool):
-                            calendarActions[calendarAction.calendar.name] = {
-                                'action': calendarAction.action,
-                                'params': calendarAction.prettyParams,
-                                'at_start': calendarAction.at_start,
-                                'events_offset': calendarAction.events_offset,
-                                'last_execution': calendarAction.last_execution,
-                                'next_execution': calendarAction.next_execution,
+                        calendar_actions = {}
+                        for calendar_action in models.CalendarAction.objects.filter(service_pool=service_pool):
+                            calendar_actions[calendar_action.calendar.name] = {
+                                'action': calendar_action.action,
+                                'params': calendar_action.prettyParams,
+                                'at_start': calendar_action.at_start,
+                                'events_offset': calendar_action.events_offset,
+                                'last_execution': calendar_action.last_execution,
+                                'next_execution': calendar_action.next_execution,
                             }
 
                         # get calendar access
-                        calendarAccess: dict[str, typing.Any] = {}
-                        for ca in models.CalendarAccess.objects.filter(service_pool=servicePool):
-                            calendarAccess[ca.calendar.name] = ca.access
+                        calendar_access: dict[str, typing.Any] = {}
+                        for ca in models.CalendarAccess.objects.filter(service_pool=service_pool):
+                            calendar_access[ca.calendar.name] = ca.access
 
-                        servicePools[f'{servicePool.name} ({numberOfUserServices})'] = {
-                            '_': getSerializedFromModel(servicePool),
-                            'userServices': userServices,
-                            'calendarAccess': calendarAccess,
-                            'calendarActions': calendarActions,
+                        servicePools[f'{service_pool.name} ({partial_userservices_count})'] = {
+                            '_': getSerializedFromModel(service_pool),
+                            'userservices': userservices,
+                            'calendar_access': calendar_access,
+                            'calendar_actions': calendar_actions,
                             'groups': groups,
                             'publications': publications,
-                            'publicationChangelog': list(changeLogs),
+                            'publicationChangelog': list(changelogs),
                         }
 
-                    numberOfServicePools = len(servicePools)
-                    totalServicePools += numberOfServicePools
+                    partial_servicepools_count = len(servicePools)
+                    servicepools_count += partial_servicepools_count
 
-                    services[f'{service.name} ({numberOfServicePools}, {numberOfUserServices})'] = {
+                    services[f'{service.name} ({partial_servicepools_count}, {partial_userservices_count})'] = {
                         '_': get_serialized_from_managed_object(service),
                         'servicePools': servicePools,
                     }
 
-                totalServices += len(services)
-                providers[f'{provider.name} ({totalServices}, {totalServicePools}, {totalUserServices})'] = {
+                services_count += len(services)
+                providers[f'{provider.name} ({services_count}, {servicepools_count}, {userservices_count})'] = {
                     '_': get_serialized_from_managed_object(provider),
                     'services': services,
                 }
@@ -245,13 +246,15 @@ class Command(BaseCommand):
                 grps: dict[str, typing.Any] = {}
                 for group in authenticator.groups.all()[:max_items]:  # at most max_items items
                     grps[group.name] = getSerializedFromModel(group, ['manager_id', 'name'])
-                num_users: int = authenticator.users.count()
-                last_year_num_users: int = authenticator.users.filter(last_access__gt=now - CONSIDERED_OLD).count()
+                users_count: int = authenticator.users.count()
+                last_year_users_count: int = authenticator.users.filter(
+                    last_access__gt=now - CONSIDERED_OLD
+                ).count()
                 authenticators[authenticator.name] = {
                     '_': get_serialized_from_managed_object(authenticator),
                     'groups': grps,
-                    'users': num_users,
-                    'last_year_users': last_year_num_users,
+                    'users_count': users_count,
+                    'last_year_users_count': last_year_users_count,
                 }
 
             tree[counter('AUTHENTICATORS')] = authenticators
@@ -337,6 +340,17 @@ class Command(BaseCommand):
             registeredServers: dict[str, typing.Any] = {}
             for i, registeredServer in enumerate(models.Server.objects.all()):
                 registeredServers[f'{i}'] = getSerializedFromModel(registeredServer)
+
+            tree[counter('REGISTEREDSERVERS')] = registeredServers
+
+            cfg: dict[str, typing.Any] = {}
+            # Now, config, but not passwords
+            for section, data in config.Config.get_config_values().items():
+                for key, value in data.items():
+                    # value is a dict, get 'value' key
+                    cfg[f'{section}.{key}'] = value['value']
+
+            tree[counter('CONFIG')] = cfg
 
             self.stdout.write(yaml.safe_dump(tree, default_flow_style=False))
 

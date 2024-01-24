@@ -107,11 +107,11 @@ class Config:
         def __init__(self, sectionName: 'Config.SectionType') -> None:
             self._section_name = sectionName
 
-        def value(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, **kwargs)
+        def value(self, key, default='', long_text: bool = False, type: int = -1, help: str = '') -> 'Config.Value':
+            return Config.value(self, key=key, default=default, crypt=False, long_text=long_text, type=type, help=help)
 
-        def value_encrypted(self, key, default='', **kwargs) -> 'Config.Value':
-            return Config.value(self, key, default, True, **kwargs)
+        def value_encrypted(self, key, default='', long_text: bool = False, type: int = -1, help: str = '') -> 'Config.Value':
+            return Config.value(self, key=key, default=default, crypt=True, long_text=long_text, type=type, help=help)
 
         def value_longtext(self, key, default='', **kwargs) -> 'Config.Value':
             return Config.value(self, key, default, False, True, **kwargs)
@@ -127,7 +127,7 @@ class Config:
         _type: int
         _key: str
         _crypt: bool
-        _longText: bool
+        _long_text: bool
         _default: str
         _help: str
         _data: typing.Optional[str] = None
@@ -138,21 +138,22 @@ class Config:
             key: str,
             default: str = '',
             crypt: bool = False,
-            longText: bool = False,
-            **kwargs,
+            long_text: bool = False,
+            type: int = -1,
+            help: str = '',
         ):
-            self._type = kwargs.get('type', -1)
+            self._type = type
 
             self._section = section
             self._key = key
             self._crypt = crypt
-            self._longText = longText
+            self._long_text = long_text
             if crypt is False or not default:
                 self._default = default
             else:
                 self._default = CryptoManager().encrypt(default)
 
-            self._help = kwargs.get('help', '')
+            self._help = help
 
             logger.debug(self)
 
@@ -174,7 +175,7 @@ class Config:
                     self._crypt = (
                         (readed.crypt or self._crypt) if self._type != Config.FieldType.PASSWORD else False
                     )
-                    self._longText = readed.long
+                    self._long_text = readed.long
                     if self._type not in (-1, readed.field_type):
                         readed.field_type = self._type
                         readed.save(update_fields=['field_type'])
@@ -236,7 +237,7 @@ class Config:
             return self._crypt
 
         def is_long_text(self) -> bool:
-            return self._longText
+            return self._long_text
 
         def get_type(self) -> int:
             return self._type
@@ -270,7 +271,7 @@ class Config:
                 obj.value, obj.crypt, obj.long, obj.field_type, obj.help = (
                     str(value),
                     self._crypt,
-                    self._longText,
+                    self._long_text,
                     self._type,
                     self._help,
                 )
@@ -297,9 +298,9 @@ class Config:
 
     @staticmethod
     def value(
-        section: Section, key: str, default: str, crypt: bool = False, longText: bool = False, **kwargs
+        section: Section, key: str, default: str, crypt: bool = False, long_text: bool = False, type: int = -1, help: str = ''
     ) -> 'Config.Value':
-        return Config.Value(section, key, default, crypt, longText, **kwargs)
+        return Config.Value(section=section, key=key, default=default, crypt=crypt, long_text=long_text, type=type, help=help)
 
     @staticmethod
     def enumerate() -> collections.abc.Iterable['Config.Value']:
@@ -313,9 +314,9 @@ class Config:
                 continue
             logger.debug('%s.%s:%s,%s', cfg.section, cfg.key, cfg.value, cfg.field_type)
             if cfg.crypt:
-                val = Config.section(Config.SectionType.from_str(cfg.section)).value_encrypted(cfg.key)
+                val = Config.section(Config.SectionType.from_str(cfg.section)).value_encrypted(cfg.key, type=cfg.field_type)
             else:
-                val = Config.section(Config.SectionType.from_str(cfg.section)).value(cfg.key)
+                val = Config.section(Config.SectionType.from_str(cfg.section)).value(cfg.key, type=cfg.field_type)
             yield val
 
     @staticmethod
@@ -369,7 +370,8 @@ class Config:
             if cfg.section() not in res:
                 res[cfg.section()] = {}
             res[cfg.section()][cfg.key()] = {
-                'value': cfg.get(),
+                # Password are now hashes, and cannot be reversed, so we do not show them
+                'value': cfg.get() if not cfg.get_type() == Config.FieldType.PASSWORD else '********',
                 'crypt': cfg.is_encrypted(),
                 'longText': cfg.is_long_text(),
                 'type': cfg.get_type(),
