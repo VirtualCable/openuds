@@ -346,7 +346,7 @@ def authInfoUrl(authenticator: typing.Union[str, bytes, Authenticator]) -> str:
     elif isinstance(authenticator, bytes):
         name = authenticator.decode('utf8')
     else:
-        name = authenticator.name
+        name = typing.cast('Authenticator', authenticator).name
 
     return reverse('page.auth.info', kwargs={'authName': name})
 

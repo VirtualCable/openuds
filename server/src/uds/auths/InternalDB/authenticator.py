@@ -56,9 +56,7 @@ logger = logging.getLogger(__name__)
 class InternalDBAuth(auths.Authenticator):
     typeName = _('Internal Database')
     typeType = 'InternalDBAuth'
-    typeDescription = _(
-        'Internal dabasase authenticator. Doesn\'t use external sources'
-    )
+    typeDescription = _('Internal dabasase authenticator. Doesn\'t use external sources')
     iconFile = 'auth.png'
 
     # If we need to enter the password for this user
@@ -98,9 +96,7 @@ class InternalDBAuth(auths.Authenticator):
         )  # pylint: disable=maybe-no-member
         if self.reverseDns.isTrue():
             try:
-                return str(
-                    dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0]
-                )
+                return str(dns.resolver.query(dns.reversename.from_address(ip).to_text(), 'PTR')[0])
             except Exception:
                 pass
         return ip
@@ -120,24 +116,36 @@ class InternalDBAuth(auths.Authenticator):
             # "Derived" users will belong to no group at all, because we will extract groups from "base" user
             # This way also, we protect from using forged "ip" + "username", because those will belong in fact to no group
             # and access will be denied
+            grps: typing.List['models.Group'] = []
             try:
                 usr = auth.users.get(name=username, state=State.ACTIVE)
                 parent = usr.uuid
+                grps = [g for g in usr.groups.all()]
                 usr.id = usr.uuid = None  # type: ignore  # Empty id
                 if usr.real_name.strip() == '':
                     usr.real_name = usr.name
                 usr.name = newUsername
                 usr.parent = parent
                 usr.save()
+                # Now, coyp groups from base user
+
             except Exception:
                 pass  # User already exists
+
+            # Update groups of user
+            try:
+                usr = auth.users.get(name=newUsername, state=State.ACTIVE)
+                usr.groups.clear()
+                for grp in grps:
+                    usr.groups.add(grp)
+            except Exception:
+                pass
+
             username = newUsername
 
         return username
 
-    def authenticate(
-        self, username: str, credentials: str, groupsManager: 'auths.GroupsManager'
-    ) -> bool:
+    def authenticate(self, username: str, credentials: str, groupsManager: 'auths.GroupsManager') -> bool:
         username = username.lower()
         logger.debug('Username: %s, Password: %s', username, credentials)
         dbAuth = self.dbAuthenticator()
@@ -164,12 +172,6 @@ class InternalDBAuth(auths.Authenticator):
         except Exception:
             return
         grps = [g.name for g in user.groups.all()]
-        if user.parent:
-            try:
-                parent = dbAuth.users.get(uuid=user.parent, state=State.ACTIVE)
-                grps.extend([g.name for g in parent.groups.all()])
-            except Exception:
-                pass
         groupsManager.validate(grps)
 
     def getRealName(self, username: str) -> str:
