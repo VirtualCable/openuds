@@ -362,7 +362,7 @@ class gui:
             and don't want to
             alter original values.
             """
-            data = typing.cast(dict, self._fields_info.as_dict())
+            data = self._fields_info.as_dict()
             for i in ('value', 'old_field_name'):
                 if i in data:
                     del data[i]  # We don't want to send some values on gui_description
@@ -1616,7 +1616,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
             # Values can contain invalid characters, so we log every single char
             # logger.info('Invalid serialization data on {0} {1}'.format(self, values.encode('hex')))
 
-    def gui_description(self) -> list[collections.abc.MutableMapping[str, typing.Any]]:
+    def gui_description(self) -> list[types.ui.GuiElement]:
         """
         This simple method generates the theGui description needed by the
         administration client, so it can
@@ -1628,7 +1628,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         """
         self.init_gui()  # We give the "oportunity" to fill necesary theGui data before providing it to client
 
-        res: list[collections.abc.MutableMapping[str, typing.Any]] = []
+        res: list[types.ui.GuiElement] = []
         for key, val in self._gui.items():
             # Only add "value" for hidden fields on gui description. Rest of fields will be filled by client
             res.append(

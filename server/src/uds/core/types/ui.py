@@ -104,12 +104,15 @@ class FieldPatternType(enum.StrEnum):
     PATH = 'path'
     NONE = ''
 
+
 class CallbackResultItem(typing.TypedDict):
     # data = [{'name': 'datastore', 'choices': res}]
     name: str
     choices: typing.List['ChoiceItem']
-    
+
+
 CallbackResultType = list[CallbackResultItem]
+
 
 class Filler(typing.TypedDict):
     callback_name: str
@@ -152,3 +155,9 @@ class FieldInfo:
     def as_dict(self) -> dict[str, typing.Any]:
         """Returns a dict with all fields that are not None"""
         return {k: v for k, v in dataclasses.asdict(self).items() if v is not None}
+
+
+class GuiElement(typing.TypedDict):
+    name: str
+    gui: dict[str, list[dict[str, typing.Any]]]
+    value: typing.Any
