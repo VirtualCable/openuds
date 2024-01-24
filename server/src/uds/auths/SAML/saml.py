@@ -382,7 +382,7 @@ class SAMLAuthenticator(auths.Authenticator):
             return
 
         if ' ' in values['name']:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
@@ -393,7 +393,7 @@ class SAMLAuthenticator(auths.Authenticator):
 
         # This is in fact not needed, but we may say something useful to user if we check this
         if self.server_certificate.value.startswith('-----BEGIN CERTIFICATE-----\n') is False:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 gettext(
                     'Server certificate should be a valid PEM (PEM certificates starts with -----BEGIN CERTIFICATE-----)'
                 )
@@ -402,13 +402,13 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             CryptoManager().load_certificate(self.server_certificate.value)
         except Exception as e:
-            raise exceptions.validation.ValidationError(gettext('Invalid server certificate. ') + str(e))
+            raise exceptions.ui.ValidationError(gettext('Invalid server certificate. ') + str(e))
 
         if (
             self.private_key.value.startswith('-----BEGIN RSA PRIVATE KEY-----\n') is False
             and self.private_key.value.startswith('-----BEGIN PRIVATE KEY-----\n') is False
         ):
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 gettext(
                     'Private key should be a valid PEM (PEM private keys starts with -----BEGIN RSA PRIVATE KEY-----'
                 )
@@ -417,12 +417,12 @@ class SAMLAuthenticator(auths.Authenticator):
         try:
             CryptoManager().load_private_key(self.private_key.value)
         except Exception as e:
-            raise exceptions.validation.ValidationError(gettext('Invalid private key. ') + str(e))
+            raise exceptions.ui.ValidationError(gettext('Invalid private key. ') + str(e))
 
         if not security.check_certificate_matches_private_key(
             cert=self.server_certificate.value, key=self.private_key.value
         ):
-            raise exceptions.validation.ValidationError(gettext('Certificate and private key do not match'))
+            raise exceptions.ui.ValidationError(gettext('Certificate and private key do not match'))
 
         request: 'ExtendedHttpRequest' = values['_request']
 
@@ -443,7 +443,7 @@ class SAMLAuthenticator(auths.Authenticator):
                 )
                 idp_metadata = resp.content.decode()
             except Exception as e:
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     gettext('Can\'t fetch url {0}: {1}').format(self.idp_metadata.value, str(e))
                 )
             from_url = True
@@ -454,7 +454,7 @@ class SAMLAuthenticator(auths.Authenticator):
             xml.sax.parseString(idp_metadata, xml.sax.ContentHandler())  # type: ignore  # nosec: url provided by admin
         except Exception as e:
             msg = (gettext(' (obtained from URL)') if from_url else '') + str(e)
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 gettext('XML does not seem valid for IDP Metadata ') + msg
             )
 

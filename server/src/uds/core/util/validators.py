@@ -70,39 +70,39 @@ def validate_numeric(
     try:
         numeric = int(value)
         if min_value is not None and numeric < min_value:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('{0} must be greater than or equal to {1}').format(fieldName, min_value)
             )
 
         if max_value is not None and numeric > max_value:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('{0} must be lower than or equal to {1}').format(fieldName, max_value)
             )
 
         value = str(numeric)
 
     except ValueError:
-        raise exceptions.validation.ValidationError(_('{0} contains invalid characters').format(fieldName)) from None
+        raise exceptions.ui.ValidationError(_('{0} contains invalid characters').format(fieldName)) from None
 
     return int(value)
 
 
 def validate_hostname(hostname: str, maxLength: int = 64, allowDomain=False) -> str:
     if len(hostname) > maxLength:
-        raise exceptions.validation.ValidationError(
+        raise exceptions.ui.ValidationError(
             _('{} is not a valid hostname: maximum host name length exceeded.').format(hostname)
         )
 
     if not allowDomain:
         if '.' in hostname:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('{} is not a valid hostname: (domains not allowed)').format(hostname)
             )
 
     allowed = re.compile(r'(?!-)[A-Z\d-]{1,63}(?<!-)$', re.IGNORECASE)
 
     if not all(allowed.match(x) for x in hostname.split(".")):
-        raise exceptions.validation.ValidationError(_('{} is not a valid hostname: (invalid characters)').format(hostname))
+        raise exceptions.ui.ValidationError(_('{} is not a valid hostname: (invalid characters)').format(hostname))
 
     return hostname
 
@@ -113,12 +113,12 @@ def validate_fqdn(fqdn: str, maxLength: int = 255) -> str:
 
 def validateUrl(url: str, maxLength: int = 1024) -> str:
     if len(url) > maxLength:
-        raise exceptions.validation.ValidationError(_('{} is not a valid URL: exceeds maximum length.').format(url))
+        raise exceptions.ui.ValidationError(_('{} is not a valid URL: exceeds maximum length.').format(url))
 
     try:
         url_validator(url)
     except Exception as e:
-        raise exceptions.validation.ValidationError(str(e))
+        raise exceptions.ui.ValidationError(str(e))
 
     return url
 
@@ -133,7 +133,7 @@ def validate_ipv4(ipv4: str) -> str:
     try:
         dj_validators.validate_ipv4_address(ipv4)
     except Exception:
-        raise exceptions.validation.ValidationError(_('{} is not a valid IPv4 address').format(ipv4)) from None
+        raise exceptions.ui.ValidationError(_('{} is not a valid IPv4 address').format(ipv4)) from None
     return ipv4
 
 
@@ -147,7 +147,7 @@ def validate_ipv6(ipv6: str) -> str:
     try:
         dj_validators.validate_ipv6_address(ipv6)
     except Exception:
-        raise exceptions.validation.ValidationError(_('{} is not a valid IPv6 address').format(ipv6)) from None
+        raise exceptions.ui.ValidationError(_('{} is not a valid IPv6 address').format(ipv6)) from None
     return ipv6
 
 
@@ -161,7 +161,7 @@ def validate_ip(ipv4_or_ipv6: str) -> str:
     try:
         dj_validators.validate_ipv46_address(ipv4_or_ipv6)
     except Exception:
-        raise exceptions.validation.ValidationError(
+        raise exceptions.ui.ValidationError(
             _('{} is not a valid IPv4 or IPv6 address').format(ipv4_or_ipv6)
         ) from None
     return ipv4_or_ipv6
@@ -189,20 +189,20 @@ def validate_path(
         str: path
     """
     if len(path) > maxLength:
-        raise exceptions.validation.ValidationError(_('{} exceeds maximum path length.').format(path))
+        raise exceptions.ui.ValidationError(_('{} exceeds maximum path length.').format(path))
 
     valid_for_windows = re.compile(r'^[a-zA-Z]:\\.*$')
     valid_for_unix = re.compile(r'^/.*$')
 
     if mustBeWindows:
         if not valid_for_windows.match(path):
-            raise exceptions.validation.ValidationError(_('{} is not a valid windows path').format(path))
+            raise exceptions.ui.ValidationError(_('{} is not a valid windows path').format(path))
     elif mustBeUnix:
         if not valid_for_unix.match(path):
-            raise exceptions.validation.ValidationError(_('{} is not a valid unix path').format(path))
+            raise exceptions.ui.ValidationError(_('{} is not a valid unix path').format(path))
     else:
         if not valid_for_windows.match(path) and not valid_for_unix.match(path):
-            raise exceptions.validation.ValidationError(_('{} is not a valid path').format(path))
+            raise exceptions.ui.ValidationError(_('{} is not a valid path').format(path))
 
     return path
 
@@ -256,7 +256,7 @@ def validate_host_port(host_port_pair: str) -> tuple[str, int]:
         except Exception:
             return validate_hostname(host, 255, False), validate_port(port)
     except Exception:
-        raise exceptions.validation.ValidationError(_('{} is not a valid host:port pair').format(host_port_pair)) from None
+        raise exceptions.ui.ValidationError(_('{} is not a valid host:port pair').format(host_port_pair)) from None
 
 
 def validate_timeout(timeOutStr: str) -> int:
@@ -283,7 +283,7 @@ def validate_mac(mac: str) -> str:
     )  # In fact, it could be XX-XX-XX-XX-XX-XX, but we use - as range separator
 
     if macRE.match(mac) is None:
-        raise exceptions.validation.ValidationError(_('{} is not a valid MAC address').format(mac))
+        raise exceptions.ui.ValidationError(_('{} is not a valid MAC address').format(mac))
 
     return mac
 
@@ -299,7 +299,7 @@ def validate_mac_range(macRange: str) -> str:
         validate_mac(macRangeStart)
         validate_mac(macRangeEnd)
     except Exception:
-        raise exceptions.validation.ValidationError(_('{} is not a valid MAC range').format(macRange)) from None
+        raise exceptions.ui.ValidationError(_('{} is not a valid MAC range').format(macRange)) from None
 
     return macRange
 
@@ -311,10 +311,10 @@ def validate_email(email: str) -> str:
     :return: Raises exceptions.Validation exception if is invalid, else return the value "fixed"
     """
     if len(email) > 254:
-        raise exceptions.validation.ValidationError(_('Email address is too long'))
+        raise exceptions.ui.ValidationError(_('Email address is too long'))
 
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        raise exceptions.validation.ValidationError(_('Email address is not valid'))
+        raise exceptions.ui.ValidationError(_('Email address is not valid'))
 
     return email
 
@@ -334,16 +334,16 @@ def validate_basename(baseName: str, length: int = -1) -> str:
         None -- [description]
     """
     if re.match(r'^[a-zA-Z0-9][a-zA-Z0-9-]*$', baseName) is None:
-        raise exceptions.validation.ValidationError(_('The basename is not a valid for a hostname'))
+        raise exceptions.ui.ValidationError(_('The basename is not a valid for a hostname'))
 
     if length == 0:
-        raise exceptions.validation.ValidationError(_('The length of basename plus length must be greater than 0'))
+        raise exceptions.ui.ValidationError(_('The length of basename plus length must be greater than 0'))
 
     if length != -1 and len(baseName) + length > 15:
-        raise exceptions.validation.ValidationError(_('The length of basename plus length must not be greater than 15'))
+        raise exceptions.ui.ValidationError(_('The length of basename plus length must not be greater than 15'))
 
     if baseName.isdigit():
-        raise exceptions.validation.ValidationError(_('The machine name can\'t be only numbers'))
+        raise exceptions.ui.ValidationError(_('The machine name can\'t be only numbers'))
 
     return baseName
 
@@ -356,7 +356,7 @@ def validate_json(jsonData: typing.Optional[str]) -> typing.Any:
         jsonData (typing.Optional[str]): Json data to validate
 
     Raises:
-        exceptions.validation.ValidationError: If json data is not valid
+        exceptions.ui.ValidationError: If json data is not valid
 
     Returns:
         typing.Any: Json data as python object
@@ -366,7 +366,7 @@ def validate_json(jsonData: typing.Optional[str]) -> typing.Any:
     try:
         return json.loads(jsonData)
     except Exception:
-        raise exceptions.validation.ValidationError(_('Invalid JSON data')) from None
+        raise exceptions.ui.ValidationError(_('Invalid JSON data')) from None
 
 
 def validate_server_certificate(cert: typing.Optional[str]) -> str:
@@ -377,7 +377,7 @@ def validate_server_certificate(cert: typing.Optional[str]) -> str:
         cert (str): Certificate to validate
 
     Raises:
-        exceptions.validation.ValidationError: If certificate is not valid
+        exceptions.ui.ValidationError: If certificate is not valid
 
     Returns:
         str: Certificate
@@ -387,7 +387,7 @@ def validate_server_certificate(cert: typing.Optional[str]) -> str:
     try:
         security.is_server_certificate_valid(cert)
     except Exception as e:
-        raise exceptions.validation.ValidationError(_('Invalid certificate') + f' :{e}') from e
+        raise exceptions.ui.ValidationError(_('Invalid certificate') + f' :{e}') from e
     return cert
 
 
@@ -408,6 +408,6 @@ def validate_server_certificate_multiple(value: typing.Optional[str]) -> str:
         try:
             load_pem_x509_certificate(pemCert.encode())
         except Exception as e:
-            raise exceptions.validation.ValidationError(_('Invalid certificate') + f' :{e}') from e
+            raise exceptions.ui.ValidationError(_('Invalid certificate') + f' :{e}') from e
 
     return value

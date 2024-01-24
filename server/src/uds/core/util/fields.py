@@ -191,26 +191,42 @@ def get_certificates_from_field(
 # Timeout
 def timeout_field(
     default: int = 3,
-    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None, old_field_name: typing.Optional[str] = None
+    order: int = 90, tab: 'types.ui.Tab|str|None' = None, old_field_name: typing.Optional[str] = None
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
         label=_('Timeout'),
         default=default,
-        order=order or 90,
+        order=order,
         tooltip=_('Timeout in seconds for network connections'),
         required=True,
         min_value=1,
         tab=tab or types.ui.Tab.ADVANCED,
         old_field_name=old_field_name,
     )
+
+# Ssl verification    
+def verify_ssl_field(
+    default: bool = True,
+    order: int = 92, tab: 'types.ui.Tab|str|None' = None, old_field_name: typing.Optional[str] = None
+) -> ui.gui.CheckBoxField:
+        return ui.gui.CheckBoxField(
+        label=_('Verify SSL'),
+        default=default,
+        order=order,
+        tooltip=_(
+            'If checked, SSL verification will be enforced. If not, SSL verification will be disabled'
+        ),
+        tab=tab or types.ui.Tab.ADVANCED,
+        old_field_name=old_field_name,
+    )
     
 
 # Basename field
-def basename_field(order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None) -> ui.gui.TextField:
+def basename_field(order: int = 32, tab: 'types.ui.Tab|str|None' = None) -> ui.gui.TextField:
     return ui.gui.TextField(
         label=_('Base Name'),
-        order=order or 32,
+        order=order,
         tooltip=_('Base name for clones from this service'),
         tab=tab,
         required=True,
@@ -220,13 +236,13 @@ def basename_field(order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|No
 
 # Length of name field
 def lenname_field(
-    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+    order: int = 33, tab: 'types.ui.Tab|str|None' = None
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=1,
         label=_('Name Length'),
         default=3,
-        order=order or 33,
+        order=order,
         tooltip=_('Size of numeric part for the names derived from this service'),
         tab=tab,
         required=True,
@@ -236,7 +252,7 @@ def lenname_field(
 
 # Max preparing services field
 def max_preparing_services_field(
-    order: typing.Optional[int] = None, tab: typing.Optional[types.ui.Tab] = None
+    order: int = 50, tab: typing.Optional[types.ui.Tab] = None
 ) -> ui.gui.NumericField:
     # Advanced tab
     return ui.gui.NumericField(
@@ -245,7 +261,7 @@ def max_preparing_services_field(
         default=30,
         min_value=1,
         max_value=65536,
-        order=order or 50,
+        order=order,
         tooltip=_('Maximum number of concurrently creating VMs'),
         required=True,
         tab=tab or types.ui.Tab.ADVANCED,
@@ -254,7 +270,7 @@ def max_preparing_services_field(
 
 
 def max_removing_services_field(
-    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+    order: int = 51, tab: 'types.ui.Tab|str|None' = None
 ) -> ui.gui.NumericField:
     return ui.gui.NumericField(
         length=3,
@@ -262,7 +278,7 @@ def max_removing_services_field(
         default=15,
         min_value=1,
         max_value=65536,
-        order=order or 51,
+        order=order,
         tooltip=_('Maximum number of concurrently removing VMs'),
         required=True,
         tab=tab or types.ui.Tab.ADVANCED,
@@ -271,12 +287,12 @@ def max_removing_services_field(
 
 
 def remove_duplicates_field(
-    order: typing.Optional[int] = None, tab: 'types.ui.Tab|str|None' = None
+    order: int = 102, tab: 'types.ui.Tab|str|None' = None
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(
         label=_('Remove found duplicates'),
         default=True,
-        order=order or 102,
+        order=order,
         tooltip=_('If active, found duplicates vApps for this service will be removed'),
         tab=tab or types.ui.Tab.ADVANCED,
         old_field_name='removeDuplicates',
@@ -284,14 +300,14 @@ def remove_duplicates_field(
 
 
 def soft_shutdown_field(
-    order: typing.Optional[int] = None,
+    order: int = 103,
     tab: 'types.ui.Tab|str|None' = None,
     old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(
         label=_('Try SOFT Shutdown first'),
         default=False,
-        order=order or 103,
+        order=order,
         tooltip=_(
             'If active, UDS will try to shutdown (soft) the machine using Nutanix ACPI. Will delay 30 seconds the power off of hanged machines.'
         ),
@@ -301,14 +317,14 @@ def soft_shutdown_field(
 
 
 def keep_on_access_error_field(
-    order: typing.Optional[int] = None,
+    order: int = 104,
     tab: 'types.ui.Tab|str|None' = None,
     old_field_name: typing.Optional[str] = None,
 ) -> ui.gui.CheckBoxField:
     return ui.gui.CheckBoxField(
         label=_('Keep on error'),
         value=False,
-        order=order or 104,
+        order=order,
         tooltip=_('If active, access errors found on machine will not be considered errors.'),
         tab=tab or types.ui.Tab.ADVANCED,
         old_field_name=old_field_name,
@@ -317,7 +333,7 @@ def keep_on_access_error_field(
 
 def macs_range_field(
     default: str,
-    order: typing.Optional[int] = None,
+    order: int = 91,
     tab: 'types.ui.Tab|str|None' = None,
     readonly: bool = False,
 ) -> ui.gui.TextField:
@@ -325,7 +341,7 @@ def macs_range_field(
         length=36,
         label=_('Macs range'),
         default=default,
-        order=order or 91,
+        order=order,
         readonly=readonly,
         tooltip=_('Range of valid macs for created machines. Must be in the range {default}').format(
             default=default

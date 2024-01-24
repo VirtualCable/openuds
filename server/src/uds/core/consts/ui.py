@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (c) 2023 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -30,12 +30,12 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import actor
-from . import auth
-from . import service
-from . import ui
-from . import rest
+import typing
+import collections.abc
 
-# Common exceptions inserted here
-from .common import UDSException
+# Old encryption key, log ago deprecated, but still here for reading old data
+UDSB: typing.Final[bytes] = b'udsprotect'
+
+SERIALIZATION_HEADER: typing.Final[bytes] = b'GUIZ'
+SERIALIZATION_VERSION: typing.Final[bytes] = b'\001'
 

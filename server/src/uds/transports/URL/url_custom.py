@@ -93,7 +93,7 @@ class URLCustomTransport(transports.Transport):
             self.url_pattern.value.startswith('http://')
             or self.url_pattern.value.startswith('https://')
         ):
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('The url must be http or https')
             )
 

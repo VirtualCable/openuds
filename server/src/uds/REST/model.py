@@ -1159,7 +1159,7 @@ class ModelHandler(BaseModelHandler):
             raise exceptions.rest.NotFound('Item not found') from None
         except IntegrityError:  # Duplicate key probably
             raise exceptions.rest.RequestError('Element already exists (duplicate key error)') from None
-        except (exceptions.rest.SaveException, exceptions.validation.ValidationError) as e:
+        except (exceptions.rest.SaveException, exceptions.ui.ValidationError) as e:
             raise exceptions.rest.RequestError(str(e)) from e
         except (exceptions.rest.RequestError, exceptions.rest.ResponseError):
             raise

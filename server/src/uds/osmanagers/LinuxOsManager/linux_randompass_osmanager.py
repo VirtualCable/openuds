@@ -80,7 +80,7 @@ class LinuxRandomPassManager(LinuxOsManager):
         super().__init__(environment, values)
         if values is not None:
             if values['user_account'] == '':
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     _('Must provide an user account!!!')
                 )
             self._user_account = values['user_account']

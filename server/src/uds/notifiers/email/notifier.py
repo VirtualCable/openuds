@@ -152,7 +152,7 @@ class EmailNotifier(messaging.Notifier):
         # if hostname is not valid, we will raise an exception
         hostname = self.hostname.as_clean_str()
         if not hostname:
-            raise exceptions.validation.ValidationError(_('Invalid SMTP hostname'))
+            raise exceptions.ui.ValidationError(_('Invalid SMTP hostname'))
 
         # Now check is valid format
         if ':' in hostname:

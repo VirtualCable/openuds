@@ -97,11 +97,11 @@ class WindowsOsManager(osmanagers.OSManager):
         try:
             length = int(length)
         except Exception:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('Length must be numeric!!')
             ) from None
         if length > 6 or length < 1:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 _('Length must be betwen 1 and 6')
             )
         return length

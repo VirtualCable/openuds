@@ -30,12 +30,18 @@
 """
 Author: Adolfo Gómez, dkmaster at dkmon dot com
 """
-from . import actor
-from . import auth
-from . import service
-from . import ui
-from . import rest
 
-# Common exceptions inserted here
 from .common import UDSException
 
+
+class ValidationError(UDSException):
+    """
+    Exception used to indicate that the params assigned are invalid
+    """
+
+class ForceMarshalling(UDSException):
+    """
+    Exception used to force marshalling of an object
+    """
+    data: bytes
+    

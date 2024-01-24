@@ -132,7 +132,7 @@ class SampleAuth(auths.Authenticator):
         # unserialization, and at this point all will be default values
         # so self.groups.value will be []
         if values and len(self.groups.value) < 2:
-            raise exceptions.validation.ValidationError(_('We need more than two groups!'))
+            raise exceptions.ui.ValidationError(_('We need more than two groups!'))
 
     def search_users(self, pattern: str) -> collections.abc.Iterable[dict[str, str]]:
         """

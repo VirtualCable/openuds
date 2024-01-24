@@ -131,7 +131,7 @@ class TelegramNotifier(messaging.Notifier):
         for i in (self.botname, self.access_token, self.secret):
             s = i.as_clean_str()
             if not s:
-                raise exceptions.validation.ValidationError(_('Invalid value for {}').format(i.label))
+                raise exceptions.ui.ValidationError(_('Invalid value for {}').format(i.label))
             i.value = s
 
     def init_gui(self) -> None:

@@ -535,12 +535,12 @@ class gui:
                     elif pattern == types.ui.FieldPatternType.HOST:
                         try:
                             validators.validate_hostname(self.value, allowDomain=True)
-                        except exceptions.validation.ValidationError:
+                        except exceptions.ui.ValidationError:
                             validators.validate_ip(self.value)
                     elif pattern == types.ui.FieldPatternType.PATH:
                         validators.validate_path(self.value)
                     return True
-                except exceptions.validation.ValidationError:
+                except exceptions.ui.ValidationError:
                     return False
             elif isinstance(pattern, str):
                 # It's a regex

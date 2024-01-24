@@ -157,11 +157,11 @@ class LinuxOsADManager(LinuxOsManager):
         self._server_software = 'active-directory'  # Currently, fixed value
         if values:
             if values['domain'] == '':
-                raise exceptions.validation.ValidationError(_('Must provide a domain!'))
+                raise exceptions.ui.ValidationError(_('Must provide a domain!'))
             if values['account'] == '':
-                raise exceptions.validation.ValidationError(_('Must provide an account to add machines to domain!'))
+                raise exceptions.ui.ValidationError(_('Must provide an account to add machines to domain!'))
             if values['password'] == '':
-                raise exceptions.validation.ValidationError(_('Must provide a password for the account!'))
+                raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))
             self._domain = values['domain']
             self._account = values['account']
             self._password = values['password']

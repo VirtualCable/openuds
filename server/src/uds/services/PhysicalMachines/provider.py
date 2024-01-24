@@ -88,13 +88,13 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 config.read_string(self.config.value)
                 # Seems a valid configuration file, let's see if all se
             except Exception as e:
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     _('Invalid advanced configuration: ') + str(e)
                 )
 
             for section in config.sections():
                 if section not in VALID_CONFIG_SECTIONS:
-                    raise exceptions.validation.ValidationError(
+                    raise exceptions.ui.ValidationError(
                         _('Invalid section in advanced configuration: ') + section
                     )
 
@@ -104,12 +104,12 @@ class PhysicalMachinesProvider(services.ServiceProvider):
                 try:
                     net.networks_from_str(key)  # Raises exception if net is invalid
                 except Exception:
-                    raise exceptions.validation.ValidationError(
+                    raise exceptions.ui.ValidationError(
                         _('Invalid network in advanced configuration: ') + key
                     ) from None
                 # Now check value is an url
                 if config['wol'][key][:4] != 'http':
-                    raise exceptions.validation.ValidationError(
+                    raise exceptions.ui.ValidationError(
                         _('Invalid url in advanced configuration: ') + key
                     )
 

@@ -225,7 +225,7 @@ class OVirtLinkedService(services.Service):  # pylint: disable=too-many-public-m
         if values:
             validators.validate_basename(self.baseName.value, self.lenName.as_int())
             if int(self.memory.value) < 256 or int(self.memoryGuaranteed.value) < 256:
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     _('The minimum allowed memory is 256 Mb')
                 )
             if int(self.memoryGuaranteed.value) > int(self.memory.value):

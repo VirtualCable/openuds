@@ -441,7 +441,7 @@ class OAuth2Authenticator(auths.Authenticator):
             return
 
         if ' ' in values['name']:
-            raise exceptions.validation.ValidationError(
+            raise exceptions.ui.ValidationError(
                 gettext('This kind of Authenticator does not support white spaces on field NAME')
             )
 
@@ -450,9 +450,9 @@ class OAuth2Authenticator(auths.Authenticator):
 
         if self.responseType.value in ('code', 'pkce', 'openid+code'):
             if self.commonGroups.value.strip() == '':
-                raise exceptions.validation.ValidationError(gettext('Common groups is required for "code" response types'))
+                raise exceptions.ui.ValidationError(gettext('Common groups is required for "code" response types'))
             if self.tokenEndpoint.value.strip() == '':
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     gettext('Token endpoint is required for "code" response types')
                 )
             # infoEndpoint will not be necesary if the response of tokenEndpoint contains the user info
@@ -460,7 +460,7 @@ class OAuth2Authenticator(auths.Authenticator):
         if self.responseType.value == 'openid+token_id':
             # Ensure we have a public key
             if self.publicKey.value.strip() == '':
-                raise exceptions.validation.ValidationError(
+                raise exceptions.ui.ValidationError(
                     gettext('Public key is required for "openid+token_id" response type')
                 )
 
