@@ -59,6 +59,30 @@ def validate_regex_field(field: ui.gui.TextField, field_value: typing.Optional[s
                 raise exceptions.ui.ValidationError(f'Invalid pattern at {field.label}: {line}') from e
 
 
+def get_attributes_regex_field(field: 'ui.gui.TextField|str') -> set[str]:
+    """
+    Returns a dict of attributes from a multiline field
+    """
+    content: str = (field.value if isinstance(field, ui.gui.TextField) else field).strip()
+
+    if content == '':
+        return set()
+
+    res: set[str] = set()
+    for line in content.splitlines():
+        attr, pattern = (line.split('=')[0:2] + [''])[0:2]
+
+        # If attributes concateated with +, add all
+        if '+' in attr:
+            res.update(attr.split('+'))
+        elif ':' in attr:  # lower precedence than +
+            res.add(attr.split(':')[0])
+        else:  # If not, add the attribute
+            res.add(attr)
+
+    return res
+
+
 def process_regex_field(
     field: str, attributes: collections.abc.Mapping[str, typing.Union[str, list[str]]]
 ) -> list[str]:
@@ -74,27 +98,29 @@ def process_regex_field(
         if field == '':
             return res
 
-        def getAttr(attrName: str) -> list[str]:
+        def _get_attr(attr_name: str) -> list[str]:
             try:
                 val: list[str] = []
-                if '+' in attrName:
-                    attrList = attrName.split('+')
+                if '+' in attr_name:
+                    attrs_list = attr_name.split('+')
                     # Check all attributes are present, and has only one value
-                    attrValues = [ensure.is_list(attributes.get(a, [''])) for a in attrList]
-                    if not all([len(v) <= 1 for v in attrValues]):
-                        logger.warning('Attribute %s do not has exactly one value, skipping %s', attrName, line)
+                    attrs_values = [ensure.is_list(attributes.get(a, [''])) for a in attrs_list]
+                    if not all([len(v) <= 1 for v in attrs_values]):
+                        logger.warning(
+                            'Attribute %s do not has exactly one value, skipping %s', attr_name, line
+                        )
                         return val
 
-                    val = [''.join(v) for v in attrValues]  # flatten
-                elif '**' in attrName:
+                    val = [''.join(v) for v in attrs_values]  # flatten
+                elif '**' in attr_name:
                     # Prepend the value after : to attribute value before :
-                    attr, prependable = attrName.split('**')
+                    attr, prependable = attr_name.split('**')
                     val = [prependable + a for a in ensure.is_list(attributes.get(attr, []))]
                 else:
-                    val = ensure.is_list(attributes.get(attrName, []))
+                    val = ensure.is_list(attributes.get(attr_name, []))
                 return val
             except Exception as e:
-                logger.warning('Error processing attribute %s (%s): %s', attrName, attributes, e)
+                logger.warning('Error processing attribute %s (%s): %s', attr_name, attributes, e)
                 return []
 
         for line in field.splitlines():
@@ -105,7 +131,7 @@ def process_regex_field(
                 if pattern.find('(') == -1:
                     pattern = '(' + pattern + ')'
 
-                val = getAttr(attr)
+                val = _get_attr(attr)
 
                 for v in val:
                     try:
@@ -119,7 +145,7 @@ def process_regex_field(
                         logger.debug(e)
                         break
             else:
-                res += getAttr(line)
+                res += _get_attr(line)
             logger.debug('Result: %s', res)
         return res
     except Exception as e:

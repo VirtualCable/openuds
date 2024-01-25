@@ -198,19 +198,19 @@ def connection(
 def as_dict(
     con: 'LDAPObject',
     base: str,
-    ldapFilter: str,
-    attrList: typing.Optional[collections.abc.Iterable[str]] = None,
-    sizeLimit: int = 100,
+    ldap_filter: str,
+    attributes: typing.Optional[collections.abc.Iterable[str]] = None,
+    limit: int = 100,
     scope: typing.Any = SCOPE_SUBTREE,
 ) -> typing.Generator[LDAPResultType, None, None]:
     """
     Makes a search on LDAP, adjusting string to required type (ascii on python2, str on python3).
     returns an generator with the results, where each result is a dictionary where it values are always a list of strings
     """
-    logger.debug('Filter: %s, attr list: %s', ldapFilter, attrList)
+    logger.debug('Filter: %s, attr list: %s', ldap_filter, attributes)
 
-    if attrList:
-        attrList = list(attrList)  # Ensures iterable is a list
+    if attributes:
+        attributes = list(attributes)  # Ensures iterable is a list
 
     res = None
     try:
@@ -218,9 +218,9 @@ def as_dict(
         res = con.search_ext_s(
             base,
             scope=scope,
-            filterstr=ldapFilter,
-            attrlist=attrList,
-            sizelimit=sizeLimit,
+            filterstr=ldap_filter,
+            attrlist=attributes,
+            sizelimit=limit,
         )
     except ldap.LDAPError as e:  # type: ignore
         LDAPError.reraise(e)
@@ -228,7 +228,7 @@ def as_dict(
         logger.exception('Exception connection:')
         raise LDAPError(str(e)) from e
 
-    logger.debug('Result of search %s on %s: %s', ldapFilter, base, res)
+    logger.debug('Result of search %s on %s: %s', ldap_filter, base, res)
 
     if res is not None:
         for r in res:
@@ -237,8 +237,8 @@ def as_dict(
 
             # Convert back attritutes to test_type ONLY on python2
             dct = (
-                utils.CaseInsensitiveDict((k, ['']) for k in attrList)
-                if attrList is not None
+                utils.CaseInsensitiveDict((k, ['']) for k in attributes)
+                if attributes is not None
                 else utils.CaseInsensitiveDict()
             )
 
@@ -304,7 +304,7 @@ def get_root_dse(con: 'LDAPObject') -> typing.Optional[LDAPResultType]:
         as_dict(
             con=con,
             base='',
-            ldapFilter='(objectClass=*)',
+            ldap_filter='(objectClass=*)',
             scope=SCOPE_BASE,
         )
     )

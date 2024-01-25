@@ -397,9 +397,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             for d in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter=filter_,
-                attrList=[self._groupIdAttr],
-                sizeLimit=10 * LDAP_RESULT_LIMIT,
+                ldap_filter=filter_,
+                attributes=[self._groupIdAttr],
+                limit=10 * LDAP_RESULT_LIMIT,
             ):
                 if self._groupIdAttr in d:
                     for k in d[self._groupIdAttr]:
@@ -531,9 +531,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             for r in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter=f'(&(objectClass={self._userClass})({self._userIdAttr}={pattern}*))',
-                attrList=[self._userIdAttr, self._userNameAttr],
-                sizeLimit=LDAP_RESULT_LIMIT,
+                ldap_filter=f'(&(objectClass={self._userClass})({self._userIdAttr}={pattern}*))',
+                attributes=[self._userIdAttr, self._userNameAttr],
+                limit=LDAP_RESULT_LIMIT,
             ):
                 res.append(
                     {
@@ -553,9 +553,9 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
             for r in ldaputil.as_dict(
                 con=self.__connection(),
                 base=self._ldapBase,
-                ldapFilter=f'(&(objectClass={self._groupClass})({self._groupIdAttr}={pattern}*))',
-                attrList=[self._groupIdAttr, 'memberOf', 'description'],
-                sizeLimit=LDAP_RESULT_LIMIT,
+                ldap_filter=f'(&(objectClass={self._groupClass})({self._groupIdAttr}={pattern}*))',
+                attributes=[self._groupIdAttr, 'memberOf', 'description'],
+                limit=LDAP_RESULT_LIMIT,
             ):
                 res.append({'id': r[self._groupIdAttr][0], 'name': r['description'][0]})
 
