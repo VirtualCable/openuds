@@ -534,7 +534,7 @@ class gui:
                         validators.validate_hostname(self.value)
                     elif pattern == types.ui.FieldPatternType.HOST:
                         try:
-                            validators.validate_hostname(self.value, allowDomain=True)
+                            validators.validate_hostname(self.value, domain_allowed=True)
                         except exceptions.ui.ValidationError:
                             validators.validate_ip(self.value)
                     elif pattern == types.ui.FieldPatternType.PATH:

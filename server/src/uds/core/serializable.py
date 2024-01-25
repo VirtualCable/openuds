@@ -44,7 +44,7 @@ class Serializable:
     - Read values from seralized data
     """
 
-    _flag_for_remarshal: bool
+    _needs_upgrade: bool
 
     # Note:
     #   We can include a "data" member variable in the class
@@ -52,7 +52,7 @@ class Serializable:
     #   on marshal and unmarshal methods
 
     def __init__(self):
-        self._flag_for_remarshal = False
+        self._needs_upgrade = False
 
     def marshal(self) -> bytes:
         """
@@ -111,7 +111,7 @@ class Serializable:
     # For remarshalling purposes
     # These allows us to faster migration of old data formats to new ones
     # alowing us to remove old format support as soon as possible
-    def flag_for_remarshalling(self, value: bool = True) -> None:
+    def flag_for_upgrade(self, value: bool = True) -> None:
         """
         Flags this object for remarshalling
         
@@ -123,10 +123,10 @@ class Serializable:
             will not be remarshalled if not appropriate (basically, it's remarshalled on
             get_instance unserialize method call)
         """
-        self._flag_for_remarshal = value
+        self._needs_upgrade = value
 
-    def needs_remarshalling(self) -> bool:
+    def needs_upgrade(self) -> bool:
         """
         Returns true if this object needs remarshalling
         """
-        return self._flag_for_remarshal
+        return self._needs_upgrade

@@ -172,7 +172,7 @@ class Authenticator(Module):
     def __init__(
         self,
         environment: 'Environment',
-        values: typing.Optional[dict[str, str]],
+        values: typing.Optional[dict[str, str]] = None,
         uuid: typing.Optional[str] = None,
     ):
         """

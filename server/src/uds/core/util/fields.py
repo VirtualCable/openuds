@@ -350,3 +350,15 @@ def macs_range_field(
         tab=tab or types.ui.Tab.ADVANCED,
         old_field_name='macsRange',
     )
+
+def mfa_attr_field(order: int = 20, tab: 'types.ui.Tab|str|None' = None) -> ui.gui.TextField:
+    return ui.gui.TextField(
+        length=2048,
+        lines=2,
+        label=_('MFA attribute'),
+        order=order,
+        tooltip=_('Attribute from where to extract the MFA code'),
+        required=False,
+        tab=tab or types.ui.Tab.MFA,
+        old_field_name='mfaAttr',
+    )
