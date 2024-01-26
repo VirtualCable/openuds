@@ -31,13 +31,8 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import typing
 
-# We use commit/rollback
-
 from tests.utils.test import UDSTestCase
-from uds.core import ui
-from uds.core.ui.user_interface import gui, UDSB, UDSK
 from uds.core.environment import Environment
-from uds.core.managers import crypto
 
 from django.conf import settings
 

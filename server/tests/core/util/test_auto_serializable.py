@@ -48,8 +48,10 @@ class AutoSerializableClass(auto_serializable.AutoSerializable):
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField()
+    list_field = auto_serializable.ListField[int]()
     dict_field = auto_serializable.DictField()
+
+    non_auto_int = 1
 
 
 class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompressed):
@@ -58,8 +60,10 @@ class AutoSerializableCompressedClass(auto_serializable.AutoSerializableCompress
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField()
+    list_field = auto_serializable.ListField[int]()
     dict_field = auto_serializable.DictField()
+
+    non_auto_int = 1
 
 
 class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted):
@@ -68,19 +72,29 @@ class AutoSerializableEncryptedClass(auto_serializable.AutoSerializableEncrypted
     float_field = auto_serializable.FloatField()
     bool_field = auto_serializable.BoolField()
     password_field = auto_serializable.PasswordField()
-    list_field = auto_serializable.ListField()
+    list_field = auto_serializable.ListField[int]()
     dict_field = auto_serializable.DictField()
+
+    non_auto_int = 1
+
+class AddedClass:
+    tr1: int = 0
+    tr2: str = 'tr2'
+
+class DerivedAutoSerializableClass(AutoSerializableClass):
+    int_field2 = auto_serializable.IntegerField()
+    str_field2 = auto_serializable.StringField()
+    
+class DerivedAutoSerializableClass2(AddedClass, AutoSerializableClass):
+    int_field2 = auto_serializable.IntegerField()
+    str_field2 = auto_serializable.StringField()
 
 
 class AutoSerializable(UDSTestCase):
     def basic_check(
         self,
-        cls1: type[
-            'AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'
-        ],
-        cls2: type[
-            'AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'
-        ],
+        cls1: type['AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'],
+        cls2: type['AutoSerializableClass|AutoSerializableCompressedClass|AutoSerializableEncryptedClass'],
     ) -> None:
         # Test basic serialization
         a = cls1()
@@ -92,12 +106,30 @@ class AutoSerializable(UDSTestCase):
         a.list_field = [1, 2, 3]
         a.dict_field = {'a': 1, 'b': 2, 'c': 3}
 
+        a.non_auto_int = 2
+
         data = a.marshal()
 
         b = cls2()
+        b.non_auto_int = 111
         b.unmarshal(data)
 
-        self.assertEqual(a, b)
+        self.assertEqual(a, b)  # Non auto fields are not compared
+
+        for i in (a, b):
+            self.assertEqual(i.int_field, 1)
+            self.assertEqual(i.str_field, UNICODE_CHARS)
+            self.assertEqual(i.float_field, 3.0)
+            self.assertEqual(i.bool_field, True)
+            self.assertEqual(i.password_field, UNICODE_CHARS_2)
+            self.assertEqual(i.list_field, [1, 2, 3])
+            self.assertEqual(i.dict_field, {'a': 1, 'b': 2, 'c': 3})
+        
+        self.assertEqual(a.non_auto_int, 2)    # Not altered by serialization
+        
+        self.assertEqual(b.non_auto_int, 111)  # Not altered by deserialization
+        
+
 
     def test_auto_serializable_base(self):
         self.basic_check(AutoSerializableClass, AutoSerializableClass)
@@ -113,3 +145,43 @@ class AutoSerializable(UDSTestCase):
 
     def test_auto_serializable_base_encrypted(self):
         self.basic_check(AutoSerializableClass, AutoSerializableEncryptedClass)
+
+    def test_auto_serializable_derived(self):
+        instance = DerivedAutoSerializableClass()
+        instance.int_field = 1
+        instance.str_field = UNICODE_CHARS
+        instance.float_field = 3.0
+        instance.bool_field = True
+        instance.password_field = UNICODE_CHARS_2
+        instance.list_field = [1, 2, 3]
+        instance.dict_field = {'a': 1, 'b': 2, 'c': 3}
+        instance.int_field2 = 2
+        instance.str_field2 = UNICODE_CHARS_2
+        
+        data = instance.marshal()
+        
+        instance2 = DerivedAutoSerializableClass()
+        instance2.unmarshal(data)
+        
+        self.assertEqual(instance, instance2)
+        
+    def test_auto_serializable_derived_added(self):
+        instance = DerivedAutoSerializableClass2()
+        instance.int_field = 1
+        instance.str_field = UNICODE_CHARS
+        instance.float_field = 3.0
+        instance.bool_field = True
+        instance.password_field = UNICODE_CHARS_2
+        instance.list_field = [1, 2, 3]
+        instance.dict_field = {'a': 1, 'b': 2, 'c': 3}
+        instance.int_field2 = 2
+        instance.str_field2 = UNICODE_CHARS_2
+        instance.tr1 = 3
+        instance.tr2 = UNICODE_CHARS
+        
+        data = instance.marshal()
+        
+        instance2 = DerivedAutoSerializableClass2()
+        instance2.unmarshal(data)
+        
+        self.assertEqual(instance, instance2)

@@ -44,6 +44,7 @@ class UserDeploymentService(AutoSerializable, services.UserDeployment):
 
 """
 
+import dataclasses
 import itertools
 import typing
 import collections.abc
@@ -102,6 +103,7 @@ def fernet_key(crypt_key: bytes) -> str:
     # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
     return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
 
+
 # checker for autoserializable data
 def is_autoserializable_data(data: bytes) -> bool:
     """Check if data is is from an autoserializable class
@@ -114,6 +116,45 @@ def is_autoserializable_data(data: bytes) -> bool:
     """
     return data[: len(HEADER_BASE)] == HEADER_BASE
 
+
+@dataclasses.dataclass(slots=True)
+class _SerializableFieldMarshaler:
+    name: str
+    type_name: str
+    value: bytes
+
+    def marshal(self) -> bytes:
+        """Field data marshalling"""
+        return (
+            pack_struct.pack(len(self.name.encode()), len(self.type_name.encode()), len(self.value))
+            + self.name.encode()
+            + self.type_name.encode()
+            + self.value
+        )
+
+    @staticmethod
+    def unmarshal(data: bytes) -> typing.Tuple['_SerializableFieldMarshaler', bytes]:
+        """Field data unmarshalling
+
+        Args:
+            data: Data to unmarshal
+
+        Returns:
+            Tuple with field and remaining data (that is, data without the unmarshalled field)
+        """
+        # Extract name length, type name length and data length
+        name_len, type_name_len, data_len = pack_struct.unpack(data[:8])
+        # Extract name, type name and data
+        name, type_name, value = (
+            data[8 : 8 + name_len].decode(),
+            data[8 + name_len : 8 + name_len + type_name_len].decode(),
+            data[8 + name_len + type_name_len : 8 + name_len + type_name_len + data_len],
+        )
+        # Return field and remaining data
+        return (
+            _SerializableFieldMarshaler(name, type_name, value),
+            data[8 + name_len + type_name_len + data_len :],
+        )
 
 
 # pylint: disable=unnecessary-dunder-call
@@ -227,7 +268,7 @@ class BoolField(_SerializableField[bool]):
         self.__set__(instance, data == b'1')
 
 
-class ListField(_SerializableField[list[T]]):
+class ListField(_SerializableField[list[T]], list[T]):
     """List field
 
     Note:
@@ -351,6 +392,19 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
 
     _fields: dict[str, typing.Any]
 
+    def _all_fields_attrs(self) -> collections.abc.Iterator[tuple[str, typing.Any]]:
+        cls = self.__class__
+        while True:
+            for k, v in cls.__dict__.items():
+                if isinstance(v, _SerializableField):
+                    yield k, v
+            for c in cls.__bases__:
+                if issubclass(c, AutoSerializable) and c != AutoSerializable:
+                    cls = c
+                    break
+            else:
+                break  # No more bases
+
     def process_data(self, header: bytes, data: bytes) -> bytes:
         """Process data before marshalling
 
@@ -358,11 +412,11 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             data: Data to process
 
         Returns:
-            Processed data
+            Processed data (basycally xor with header cyclically)
 
         Note:
-            We provide header as a way of some constant value to be used in the
-            processing. This is useful for encryption. (as salt, for example)
+            process is used so we can, for example, encrypt data
+            or compress then (as in derived classes)
         """
         return bytes(a ^ b for a, b in zip(data, itertools.cycle(header)))
 
@@ -373,20 +427,20 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             data: Data to process
 
         Returns:
-            Processed data
+            Processed data (basycally xor with header cyclically)
 
         Note:
-            We provide header as a way of some constant value to be used in the
-            processing. This is useful for encryption. (as salt, for example)
+            unprocess is used so we can, for example, unencrypt data
+            or uncompress then (as in derived classes)
         """
         return bytes(a ^ b for a, b in zip(data, itertools.cycle(header)))
 
     def marshal(self) -> bytes:
         # Iterate over own members and extract fields
-        fields = {}
-        for _, v in self.__class__.__dict__.items():
-            if isinstance(v, _SerializableField):
-                fields[v.name] = (str(v.__class__.__name__), v.marshal(self))
+        fields: list[_SerializableFieldMarshaler] = [
+            _SerializableFieldMarshaler(name=v.name, type_name=str(v.__class__.__name__), value=v.marshal(self))
+            for _, v in self._all_fields_attrs()
+        ]
 
         # Serialized data is:
         # 2 bytes -> name length
@@ -395,13 +449,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         # n bytes -> name
         # n bytes -> type name
         # n bytes -> data
-        data = b''.join(
-            pack_struct.pack(len(name.encode()), len(type_name.encode()), len(value))
-            + name.encode()
-            + type_name.encode()
-            + value
-            for name, (type_name, value) in fields.items()
-        )
+        data = b''.join(field.marshal() for field in fields)
 
         # Calculate checksum
         checksum = zlib.crc32(data)
@@ -428,25 +476,15 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
             raise ValueError('Invalid checksum')
 
         # Iterate over fields
-        fields = {}
+        fields: dict[str, _SerializableFieldMarshaler] = {}
         while data:
-            # Extract name length, type name length and data length
-            name_len, type_name_len, data_len = pack_struct.unpack(data[:8])
-            # Extract name, type name and data
-            name, type_name, value = (
-                data[8 : 8 + name_len].decode(),
-                data[8 + name_len : 8 + name_len + type_name_len].decode(),
-                data[8 + name_len + type_name_len : 8 + name_len + type_name_len + data_len],
-            )
-            # Add to fields
-            fields[name] = (type_name, value)
-            # Remove from data
-            data = data[8 + name_len + type_name_len + data_len :]
+            field, data = _SerializableFieldMarshaler.unmarshal(data)
+            fields[field.name] = field
 
-        for _, v in self.__class__.__dict__.items():
+        for _, v in self._all_fields_attrs():
             if isinstance(v, _SerializableField):
-                if v.name in fields and fields[v.name][0] == str(v.__class__.__name__):
-                    v.unmarshal(self, fields[v.name][1])
+                if v.name in fields and fields[v.name].type_name == str(v.__class__.__name__):
+                    v.unmarshal(self, fields[v.name].value)
                 else:
                     if not v.name in fields:
                         logger.warning('Field %s not found in unmarshalled data', v.name)
@@ -454,18 +492,20 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
                         logger.warning(
                             'Field %s has wrong type in unmarshalled data (should be %s and is %s',
                             v.name,
-                            fields[v.name][0],
+                            fields[v.name].type_name,
                             v.__class__.__name__,
                         )
 
     def __eq__(self, other: typing.Any) -> bool:
         """
         Basic equality check, checks if all _SerializableFields are equal
+
+        note: NON _SerializableFields are not checked!!
         """
         if not isinstance(other, AutoSerializable):
             return False
 
-        for k, v in self.__class__.__dict__.items():
+        for k, v in self._all_fields_attrs():
             if isinstance(v, _SerializableField):
                 if getattr(self, k) != getattr(other, k):
                     return False
@@ -476,7 +516,7 @@ class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
         return ', '.join(
             [
                 f"{k}={v.obj_type.__name__}({v.__get__(self)})"
-                for k, v in self.__class__.__dict__.items()
+                for k, v in self._all_fields_attrs()
                 if isinstance(v, _SerializableField)
             ]
         )
@@ -509,7 +549,7 @@ class AutoSerializableEncrypted(AutoSerializable):
         """Generate key from password and seed
 
         Args:
-            seed: Seed to use (normally header)
+            seed: Seed to use (normally header, that is outside the encription and is variable, acting as a salt)
 
         Note: if password is not set, this will raise an exception
         """

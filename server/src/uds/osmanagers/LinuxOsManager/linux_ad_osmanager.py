@@ -40,13 +40,13 @@ from django.utils.translation import gettext_noop as _
 
 from uds.core import exceptions, types, consts
 from uds.core.managers.crypto import CryptoManager
+from uds.core.module import Module
 from uds.core.ui import gui
 
 from .linux_osmanager import LinuxOsManager
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
-    from uds.core.module import Module
     from uds.models.user_service import UserService
 
 
@@ -85,7 +85,7 @@ class LinuxOsADManager(LinuxOsManager):
         label=_('OU'),
         order=4,
         tooltip=_(
-            'Organizational unit where to add machines in domain (check it before using it). i.e.: ou=My Machines,dc=mydomain,dc=local'
+            'Organizational unit where to add machines in domain (not used if IPA is selected). i.e.: ou=My Machines,dc=mydomain,dc=local'
         ),
     )
     client_software = gui.ChoiceField(
@@ -93,9 +93,9 @@ class LinuxOsADManager(LinuxOsManager):
         order=5,
         tooltip=_('Use specific client software'),
         choices=[
-            {'id': 'automatically', 'text': gettext_lazy('Automatically')},
-            {'id': 'sssd', 'text': gettext_lazy('SSSD')},
-            {'id': 'winbind', 'text': gettext_lazy('Winbind')},
+            gui.choice_item('automatically', gettext_lazy('Automatically')),
+            gui.choice_item('sssd', gettext_lazy('SSSD')),
+            gui.choice_item('winbind', gettext_lazy('Winbind')),
         ],
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
@@ -105,23 +105,35 @@ class LinuxOsADManager(LinuxOsManager):
         order=6,
         tooltip=_('Use specific membership software'),
         choices=[
-            {'id': 'automatically', 'text': gettext_lazy('Automatically')},
-            {'id': 'samba', 'text': gettext_lazy('Samba')},
-            {'id': 'adcli', 'text': gettext_lazy('adcli')},
+            gui.choice_item('automatically', gettext_lazy('Automatically')),
+            gui.choice_item('samba', gettext_lazy('Samba')),
+            gui.choice_item('adcli', gettext_lazy('AdCli')),
         ],
         tab=types.ui.Tab.ADVANCED,
         default='automatically',
+    )
+    server_software = gui.ChoiceField(
+        label=_('Server software'),
+        order=7,
+        tooltip=_('Use specific server software'),
+        choices=[
+            # gui.choice_item('automatically', gettext_lazy('Automatically')),
+            gui.choice_item('active-directory', gettext_lazy('Active Directory')),
+            gui.choice_item('freeipa', gettext_lazy('FreeIPA')),
+        ],
+        tab=types.ui.Tab.ADVANCED,
+        default='active-directory',
     )
     remove_on_exit = gui.CheckBoxField(
         label=_('Machine clean'),
         order=7,
         tooltip=_(
-            'If checked, UDS will try to remove the machine from the domain USING the provided credentials'
+            'If checked, UDS will try to remove the machine from the domain USING the provided credentials. (Not used if IPA is selected)'
         ),
         tab=types.ui.Tab.ADVANCED,
         default=True,
     )
-    ssl = gui.CheckBoxField(
+    use_ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=8,
         tooltip=_('If checked, a ssl connection to Active Directory will be used'),
@@ -141,111 +153,54 @@ class LinuxOsADManager(LinuxOsManager):
     idle = LinuxOsManager.idle
     deadline = LinuxOsManager.deadline
 
-    _domain: str
-    _ou: str
-    _account: str
-    _password: str
-    _remove_on_exit: str
-    _ssl: str
-    _automatic_id_mapping: str
-    _client_software: str
-    _server_software: str
-    _membership_software: str
-
     def __init__(self, environment: 'Environment', values: 'Module.ValuesType') -> None:
         super().__init__(environment, values)
-        self._server_software = 'active-directory'  # Currently, fixed value
         if values:
-            if values['domain'] == '':
+            if self.domain.as_clean_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a domain!'))
-            if values['account'] == '':
+            if self.account.as_clean_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide an account to add machines to domain!'))
-            if values['password'] == '':
+            if self.password.as_str() == '':
                 raise exceptions.ui.ValidationError(_('Must provide a password for the account!'))
-            self._domain = values['domain']
-            self._account = values['account']
-            self._password = values['password']
-            self._ou = values['ou'].strip()
-            self._client_software = values['client_software']
-            self._membership_software = values['membership_software']
-            self._remove_on_exit = 'y' if values['remove_on_exit'] else 'n'
-            self._ssl = 'y' if values['ssl'] else 'n'
-            self._automatic_id_mapping = 'y' if values['automatic_id_mapping'] else 'n'
-        else:
-            self._domain = ''
-            self._account = ''
-            self._password = ''  # nosec: no encoded password
-            self._ou = ''
-            self._client_software = ''
-            self._membership_software = ''
-            self._remove_on_exit = 'n'
-            self._ssl = 'n'
-            self._automatic_id_mapping = 'n'
+            self.ou.value = self.ou.value.strip()
 
-    def actor_data(self, userService: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
+    def actor_data(self, userservice: 'UserService') -> collections.abc.MutableMapping[str, typing.Any]:
         return {
             'action': 'rename_ad',
-            'name': userService.get_name(),
+            'name': userservice.get_name(),
             'custom': {
-                'domain': self._domain,
-                'username': self._account,
-                'password': self._password,
-                'ou': self._ou,
-                'isPersistent': self.is_persistent(),
-                'clientSoftware': self._client_software,
-                'serverSoftware': self._server_software,
-                'membershipSoftware': self._membership_software,
-                'ssl': self._ssl == 'y',
-                'automaticIdMapping': self._automatic_id_mapping == 'y',
-            }
+                'domain': self.domain.as_str(),
+                'username': self.account.as_str(),
+                'password': self.password.as_str(),
+                'ou': self.ou.as_str(),
+                'is_persistent': self.remove_on_exit.as_bool(),
+                'client_software': self.client_software.as_str(),
+                'server_software': self.server_software.as_str(),
+                'membership_software': self.membership_software.as_str(),
+                'ssl': self.use_ssl.as_bool(),
+                'automatic_id_mapping': self.automatic_id_mapping.as_bool(),
+                # Compatibility with old actors
+                'isPersistent': self.is_persistent(),  # compatibility
+                'clientSoftware': self.client_software.as_str(),  # compatibility
+                'serverSoftware': self.server_software.as_str(),  # compatibility
+                'membershipSoftware': self.membership_software.as_str(),  # compatibility
+                'automaticIdMapping': self.automatic_id_mapping.as_bool(),  # compatibility
+            },
         }
 
     def marshal(self) -> bytes:
-        """
-        Serializes the os manager data so we can store it in database
-        """
-        base = super().marshal()
-        return '\t'.join(
-            [
-                'v1',
-                self._domain,
-                self._account,
-                CryptoManager().encrypt(self._password),
-                self._ou,
-                self._client_software,
-                self._server_software,
-                self._membership_software,
-                self._remove_on_exit,
-                self._ssl,
-                self._automatic_id_mapping,
-                codecs.encode(base, 'hex').decode(),
-            ]
-        ).encode('utf8')
+        # Override parent marshaller and go directly to Module serialization
+        # Use this until remove marshal/unmarshal from LinuxOsManager
+        data = Module.marshal(self)
+        return data
 
     def unmarshal(self, data: bytes) -> None:
-        values = data.decode('utf8').split('\t')
-        if values[0] in ('v1'):
-            self._domain = values[1]
-            self._account = values[2]
-            self._password = CryptoManager().decrypt(values[3])
-            self._ou = values[4]
-            self._client_software = values[5]
-            self._server_software = values[6]
-            self._membership_software = values[7]
-            self._remove_on_exit = values[8]
-            self._ssl = values[9]
-            self._automatic_id_mapping = values[10]
-        super().unmarshal(codecs.decode(values[11].encode(), 'hex'))
+        # Override parent unmarshaller and go directly to Module serialization
+        # Use this until remove marshal/unmarshal from LinuxOsManager
+        Module.unmarshal(self, data)
+        logger.debug('Unmarshalling data: %s', data)
 
-    def get_fields_as_dict(self) -> gui.ValuesDictType:
-        dct = super().get_fields_as_dict()
-        dct['domain'] = self._domain
-        dct['account'] = self._account
-        dct['password'] = self._password
-        dct['ou'] = self._ou
-        dct['client_software'] = self._client_software
-        dct['membership_software'] = self._membership_software
-        dct['remove_on_exit'] = self._remove_on_exit == 'y'
-        dct['ssl'] = self._ssl == 'y'
-        dct['automatic_id_mapping'] = self._automatic_id_mapping == 'y'
-        return dct
+    def get_fields_as_dict(self) -> typing.Dict[str, typing.Any]:
+        # Override parent get_fields_as_dict and go directly to Serializable
+        # Use this until remove get_fields_as_dict from LinuxOsManager
+        return Module.get_fields_as_dict(self)
