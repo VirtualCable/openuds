@@ -41,6 +41,8 @@ from django.utils.translation import gettext_noop as _, gettext
 
 from uds import models
 from uds.core import mfas, exceptions
+from uds.core.mfas.mfa import MFA
+from uds.core.types.requests import ExtendedHttpRequest
 from uds.core.ui import gui
 from uds.core.util import validators, decorators
 
@@ -140,6 +142,20 @@ class EmailMFA(mfas.MFA):
         choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
         old_field_name='allowLoginWithoutMFA',
+    )
+
+    allow_skip_mfa_from_networks = gui.MultiChoiceField(
+        label=_('Allow skip MFA from networks'),
+        readonly=False,
+        rows=5,
+        order=32,
+        tooltip=_('Users within these networks will not be asked for OTP'),
+        required=False,
+        choices=lambda: [
+            gui.choice_item(v.uuid, v.name)  # type: ignore
+            for v in models.Network.objects.all().order_by('name')
+        ],
+        tab=_('Config'),
     )
 
     networks = gui.MultiChoiceField(
@@ -306,3 +322,16 @@ class EmailMFA(mfas.MFA):
             smtp.login(self.username.value, self.password.value)
 
         return smtp
+
+    def process(
+        self,
+        request: ExtendedHttpRequest,
+        userId: str,
+        username: str,
+        identifier: str,
+        validity: int | None = None,
+    ) -> mfas.MFA.RESULT:
+        # if ip allowed to skip mfa, return allowed
+        if mfas.LoginAllowed.check_ip_allowed(request, self.allow_skip_mfa_from_networks.value):
+            return mfas.MFA.RESULT.ALLOWED
+        return super().process(request, userId, username, identifier, validity)

@@ -66,15 +66,17 @@ class LoginAllowed(enum.StrEnum):
     DENIED_IF_IN_NETWORKS = '3'
 
     @staticmethod
+    def check_ip_allowed(request: 'ExtendedHttpRequest', networks: typing.Optional[collections.abc.Iterable[str]] = None) -> bool:
+        if networks is None:
+            return True  # No network restrictions, so we allow
+        return any(i.contains(request.ip) for i in Network.objects.filter(uuid__in=list(networks)))
+
+    @staticmethod
     def check_action(
         action: 'LoginAllowed|str',
         request: 'ExtendedHttpRequest',
         networks: typing.Optional[collections.abc.Iterable[str]] = None,
     ) -> bool:
-        def checkIp() -> bool:
-            if networks is None:
-                return True  # No network restrictions, so we allow
-            return any(i.contains(request.ip) for i in Network.objects.filter(uuid__in=list(networks)))
 
         if isinstance(action, str):
             action = LoginAllowed(action)
@@ -82,8 +84,8 @@ class LoginAllowed(enum.StrEnum):
         return {
             LoginAllowed.ALLOWED: True,
             LoginAllowed.DENIED: False,
-            LoginAllowed.ALLOWED_IF_IN_NETWORKS: checkIp(),
-            LoginAllowed.DENIED_IF_IN_NETWORKS: not checkIp(),
+            LoginAllowed.ALLOWED_IF_IN_NETWORKS: LoginAllowed.check_ip_allowed(request, networks),
+            LoginAllowed.DENIED_IF_IN_NETWORKS: not LoginAllowed.check_ip_allowed(request, networks)
         }.get(action, False)
 
     @staticmethod
