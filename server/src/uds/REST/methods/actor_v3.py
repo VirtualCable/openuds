@@ -446,9 +446,9 @@ class Initialize(ActorV3Action):
             # Set last seen actor version
             userService.actor_version = self._params['version']
             osData: collections.abc.MutableMapping[str, typing.Any] = {}
-            osManager = userService.get_osmanager_instance()
-            if osManager:
-                osData = osManager.actor_data(userService)
+            osmanager = userService.get_osmanager_instance()
+            if osmanager:
+                osData = osmanager.actor_data(userService)
 
             if service and not alias_token:  # Is a service managed by UDS
                 # Create a new alias for it, and save
@@ -501,11 +501,11 @@ class BaseReadyChange(ActorV3Action):
 
         if userService.os_state != State.USABLE:
             userService.setOsState(State.USABLE)
-            # Notify osManager or readyness if has os manager
-            osManager = userService.get_osmanager_instance()
+            # Notify osmanager or readyness if has os manager
+            osmanager = userService.get_osmanager_instance()
 
-            if osManager:
-                osManager.to_ready(userService)
+            if osmanager:
+                osmanager.to_ready(userService)
                 UserServiceManager().notify_ready_from_os_manager(userService, '')
 
         # Generates a certificate and send it to client.
@@ -590,10 +590,10 @@ class Login(ActorV3Action):
 
     @staticmethod
     def process_login(userservice: UserService, username: str) -> typing.Optional[osmanagers.OSManager]:
-        osManager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
+        osmanager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
         if not userservice.in_use:  # If already logged in, do not add a second login (windows does this i.e.)
             osmanagers.OSManager.logged_in(userservice, username)
-        return osManager
+        return osmanager
 
     def action(self) -> dict[str, typing.Any]:
         isManaged = self._params.get('type') != consts.actor.UNMANAGED
@@ -605,17 +605,17 @@ class Login(ActorV3Action):
 
         try:
             userservice: UserService = self.get_userservice()
-            os_manager = Login.process_login(userservice, self._params.get('username') or '')
+            osmanager = Login.process_login(userservice, self._params.get('username') or '')
 
-            max_idle = os_manager.max_idle() if os_manager else None
+            max_idle = osmanager.max_idle() if osmanager else None
 
             logger.debug('Max idle: %s', max_idle)
 
             src = userservice.getConnectionSource()
             session_id = userservice.start_session()  # creates a session for every login requested
 
-            if os_manager:  # For os managed services, let's check if we honor deadline
-                if os_manager.ignore_deadline():
+            if osmanager:  # For os managed services, let's check if we honor deadline
+                if osmanager.ignore_deadline():
                     deadline = userservice.deployed_service.get_deadline()
                 else:
                     deadline = None
@@ -653,7 +653,7 @@ class Logout(ActorV3Action):
         """
         This method is static so can be invoked from elsewhere
         """
-        osManager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
+        osmanager: typing.Optional[osmanagers.OSManager] = userservice.get_osmanager_instance()
 
         # Close session
         # For compat, we have taken '' as "all sessions"
@@ -661,9 +661,9 @@ class Logout(ActorV3Action):
 
         if userservice.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
             osmanagers.OSManager.logged_out(userservice, username)
-            if osManager:
-                if osManager.is_removable_on_logout(userservice):
-                    logger.debug('Removable on logout: %s', osManager)
+            if osmanager:
+                if osmanager.is_removable_on_logout(userservice):
+                    logger.debug('Removable on logout: %s', osmanager)
                     userservice.remove()
             else:
                 userservice.remove()

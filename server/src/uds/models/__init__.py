@@ -42,7 +42,7 @@ from .provider import Provider
 from .service import Service, ServiceTokenAlias
 
 # Os managers
-from .os_manager import OSManager
+from .osmanager import OSManager
 
 # Transports
 from .transport import Transport

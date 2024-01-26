@@ -95,7 +95,7 @@ class TestProvider(services.ServiceProvider):
             self.data.name = ''.join(random.SystemRandom().choices(string.ascii_letters, k=10))
             self.data.integer = random.randint(0, 100)
             return super().initialize(values)
-
+        
     @staticmethod
     def test(
         env: 'Environment', data: dict[str, str]

@@ -164,7 +164,7 @@ class UserService(Environmentable, Serializable):
         This is provided so you don't have to provide your own __init__ method,
         and invoke base class __init__.
         This will get invoked when all initialization stuff is done, so
-        you can here access publication, service, osManager, ...
+        you can here access publication, service, osmanager, ...
         """
 
     def db_obj(self) -> 'models.UserService':

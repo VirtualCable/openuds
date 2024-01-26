@@ -36,6 +36,7 @@ import typing
 import collections.abc
 
 from django.db import models
+import public
 
 from uds.core.managers import publication_manager
 from uds.core.types.states import State
@@ -132,32 +133,36 @@ class ServicePoolPublication(UUIDModel):
         """
         if not self.deployed_service.service:
             raise Exception('No service assigned to publication')
-        serviceInstance = self.deployed_service.service.get_instance()
-        osManager = self.deployed_service.osmanager
-        osManagerInstance = osManager.get_instance() if osManager else None
+        service_instance = self.deployed_service.service.get_instance()
+        osmanager = self.deployed_service.osmanager
+        osmanager_instance = osmanager.get_instance() if osmanager else None
 
         # Sanity check, so it's easier to find when we have created
         # a service that needs publication but do not have
 
-        if serviceInstance.publication_type is None:
+        if service_instance.publication_type is None:
             raise Exception(
-                f'Class {serviceInstance.__class__.__name__} do not have defined publication_type but needs to be published!!!'
+                f'Class {service_instance.__class__.__name__} do not have defined publication_type but needs to be published!!!'
             )
 
-        publication = serviceInstance.publication_type(
+        publication = service_instance.publication_type(
             self.get_environment(),
-            service=serviceInstance,
-            osManager=osManagerInstance,
+            service=service_instance,
+            osmanager=osmanager_instance,
             revision=self.revision,
-            dsName=self.deployed_service.name,
+            servicepool_name=self.deployed_service.name,
             uuid=self.uuid,
         )
         # Only invokes deserialization if data has something. '' is nothing
         if self.data:
             publication.deserialize(self.data)
+            if publication.needs_upgrade():
+                self.update_data(publication)
+                publication.flag_for_upgrade(False)
+                
         return publication
 
-    def update_data(self, publication):
+    def update_data(self, publication_instance: 'services.Publication') -> None:
         """
         Updates the data field with the serialized uds.core.services.Publication
 
@@ -166,7 +171,7 @@ class ServicePoolPublication(UUIDModel):
 
         :note: This method do not saves the updated record, just updates the field
         """
-        self.data = publication.serialize()
+        self.data = publication_instance.serialize()
         self.save(update_fields=['data'])
 
     def set_state(self, state: str) -> None:

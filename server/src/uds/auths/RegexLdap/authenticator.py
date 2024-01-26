@@ -98,23 +98,10 @@ class RegexLdap(auths.Authenticator):
         required=True,
         tab=types.ui.Tab.CREDENTIALS,
     )
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        order=6,
-        tooltip=_('Timeout in seconds of connection to LDAP'),
-        required=True,
-        min_value=1,
-    )
-    verify_ssl = gui.CheckBoxField(
-        label=_('Verify SSL'),
-        default=True,
-        order=11,
-        tooltip=_('If checked, SSL verification will be enforced. If not, SSL verification will be disabled'),
-        tab=types.ui.Tab.ADVANCED,
-        old_field_name='verifySsl',
-    )
+
+    timeout = fields.timeout_field(tab=False, default=10)  # Use "main tab"
+    verify_ssl = fields.verify_ssl_field(order=11)
+
     certificate = gui.TextField(
         length=8192,
         lines=4,
@@ -123,7 +110,6 @@ class RegexLdap(auths.Authenticator):
         tooltip=_('Certificate to use for SSL verification'),
         required=False,
         tab=types.ui.Tab.ADVANCED,
-        old_field_name='certificate',
     )
     ldap_base = gui.TextField(
         length=64,
@@ -132,7 +118,6 @@ class RegexLdap(auths.Authenticator):
         tooltip=_('Common search base (used for "users" and "groups")'),
         required=True,
         tab=_('Ldap info'),
-        old_field_name='ldapBase',
     )
     user_class = gui.TextField(
         length=64,
@@ -142,7 +127,6 @@ class RegexLdap(auths.Authenticator):
         tooltip=_('Class for LDAP users (normally posixAccount)'),
         required=True,
         tab=_('Ldap info'),
-        old_field_name='userClass',
     )
     userid_attr = gui.TextField(
         length=64,
@@ -152,7 +136,6 @@ class RegexLdap(auths.Authenticator):
         tooltip=_('Attribute that contains the user id.'),
         required=True,
         tab=_('Ldap info'),
-        old_field_name='userIdAttr',
     )
     username_attr = gui.TextField(
         length=640,
@@ -165,7 +148,6 @@ class RegexLdap(auths.Authenticator):
         ),
         required=True,
         tab=_('Ldap info'),
-        old_field_name='userNameAttr',
     )
     groupname_attr = gui.TextField(
         length=640,
@@ -178,7 +160,6 @@ class RegexLdap(auths.Authenticator):
         ),
         required=True,
         tab=_('Ldap info'),
-        old_field_name='groupNameAttr',
     )
     # regex = gui.TextField(length=64, label = _('Regular Exp. for groups'), defvalue = '^(.*)', order = 12, tooltip = _('Regular Expression to extract the group name'), required = True)
 
@@ -190,7 +171,6 @@ class RegexLdap(auths.Authenticator):
         tooltip=_('Class for LDAP objects that will be also checked for groups retrieval (normally empty)'),
         required=False,
         tab=_('Advanced'),
-        old_field_name='altClass',
     )
 
     mfa_attribute = fields.mfa_attr_field()

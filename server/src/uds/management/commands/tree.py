@@ -278,8 +278,8 @@ class Command(BaseCommand):
 
             # os managers
             osManagers: dict[str, typing.Any] = {}
-            for osManager in models.OSManager.objects.all():
-                osManagers[osManager.name] = get_serialized_from_managed_object(osManager)
+            for osmanager in models.OSManager.objects.all():
+                osManagers[osmanager.name] = get_serialized_from_managed_object(osmanager)
 
             tree[counter('OSMANAGERS')] = osManagers
 

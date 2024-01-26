@@ -47,7 +47,7 @@ from uds.core.util.model import sql_datetime
 from .account import Account
 from .group import Group
 from .image import Image
-from .os_manager import OSManager
+from .osmanager import OSManager
 from .service import Service
 from .service_pool_group import ServicePoolGroup
 from .tag import TaggingMixin
@@ -642,7 +642,7 @@ class ServicePool(UUIDModel, TaggingMixin):  #  type: ignore
         """
         maxs = self.max_srvs
         if maxs == 0 and self.service:
-            maxs = self.service.get_instance().max_user_services
+            maxs = self.service.get_instance().userservices_limit
 
         if cachedValue == -1:
             cachedValue = (

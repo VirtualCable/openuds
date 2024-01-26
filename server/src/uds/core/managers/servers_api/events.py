@@ -99,13 +99,13 @@ def process_login(server: 'models.Server', data: dict[str, typing.Any]) -> typin
     src = userService.getConnectionSource()
     session_id = userService.start_session()  # creates a session for every login requested
 
-    osManager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
-    maxIdle = osManager.max_idle() if osManager else None
+    osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
+    maxIdle = osmanager.max_idle() if osmanager else None
 
     logger.debug('Max idle: %s', maxIdle)
 
     deadLine = (
-        userService.deployed_service.get_deadline() if not osManager or osManager.ignore_deadline() else None
+        userService.deployed_service.get_deadline() if not osmanager or osmanager.ignore_deadline() else None
     )
     result = {
         'ip': src.ip,
@@ -138,9 +138,9 @@ def process_logout(server: 'models.Server', data: dict[str, typing.Any]) -> typi
 
     if userService.in_use:  # If already logged out, do not add a second logout (windows does this i.e.)
         osmanagers.OSManager.logged_out(userService, data['username'])
-        osManager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
-        if not osManager or osManager.is_removable_on_logout(userService):
-            logger.debug('Removable on logout: %s', osManager)
+        osmanager: typing.Optional[osmanagers.OSManager] = userService.get_osmanager_instance()
+        if not osmanager or osmanager.is_removable_on_logout(userService):
+            logger.debug('Removable on logout: %s', osmanager)
             userService.remove()
 
     return rest_result(consts.OK)

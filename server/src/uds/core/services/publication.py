@@ -100,10 +100,10 @@ class Publication(Environmentable, Serializable):
         """
         Environmentable.__init__(self, environment)
         Serializable.__init__(self)
-        self._osManager = kwargs.get('osManager', None)
+        self._osManager = kwargs.get('osmanager', None)
         self._service = kwargs['service']  # Raises an exception if service is not included
         self._revision = kwargs.get('revision', -1)
-        self._servicepool_name = kwargs.get('dsName', 'Unknown')
+        self._servicepool_name = kwargs.get('servicepool_name', 'Unknown')
         self._uuid = kwargs.get('uuid', '')
 
         self.initialize()
@@ -114,7 +114,7 @@ class Publication(Environmentable, Serializable):
         This is provided so you don't have to provide your own __init__ method,
         and invoke base class __init__.
         This will get invoked when all initialization stuff is done, so
-        you can here access service, osManager, ...
+        you can here access service, osmanager, ...
         """
 
     def db_obj(self) -> 'models.ServicePoolPublication':
@@ -137,7 +137,7 @@ class Publication(Environmentable, Serializable):
         """
         return self._service
 
-    def os_manager(self) -> typing.Optional['osmanagers.OSManager']:
+    def osmanager(self) -> typing.Optional['osmanagers.OSManager']:
         """
         Utility method to access os manager for this publication.
 

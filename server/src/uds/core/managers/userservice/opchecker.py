@@ -117,17 +117,17 @@ class StateUpdater:
 
 class UpdateFromPreparing(StateUpdater):
     def check_os_manager_related(self) -> str:
-        osManager = self.user_service_instance.osmanager()
+        osmanager = self.user_service_instance.osmanager()
 
         state = State.USABLE
 
         # and make this usable if os manager says that it is usable, else it pass to configuring state
         # This is an "early check" for os manager, so if we do not have os manager, or os manager
         # already notifies "ready" for this, we
-        if osManager is not None and State.from_str(self.user_service.os_state).is_preparing():
+        if osmanager is not None and State.from_str(self.user_service.os_state).is_preparing():
             logger.debug('Has valid osmanager for %s', self.user_service.friendly_name)
 
-            stateOs = osManager.check_state(self.user_service)
+            stateOs = osmanager.check_state(self.user_service)
         else:
             stateOs = State.FINISHED
 
@@ -175,18 +175,18 @@ class UpdateFromPreparing(StateUpdater):
 
 class UpdateFromRemoving(StateUpdater):
     def finish(self):
-        osManager = self.user_service_instance.osmanager()
-        if osManager is not None:
-            osManager.release(self.user_service)
+        osmanager = self.user_service_instance.osmanager()
+        if osmanager is not None:
+            osmanager.release(self.user_service)
 
         self.save(State.REMOVED)
 
 
 class UpdateFromCanceling(StateUpdater):
     def finish(self):
-        osManager = self.user_service_instance.osmanager()
-        if osManager is not None:
-            osManager.release(self.user_service)
+        osmanager = self.user_service_instance.osmanager()
+        if osmanager is not None:
+            osmanager.release(self.user_service)
 
         self.save(State.CANCELED)
 
@@ -203,33 +203,35 @@ class UserServiceOpChecker(DelayedTask):
     """
     This is the delayed task responsible of executing the service tasks and the service state transitions
     """
+    _svrId: int
+    _state: str
 
-    def __init__(self, service):
+    def __init__(self, service: 'UserService'):
         super().__init__()
         self._svrId = service.id
         self._state = service.state
 
     @staticmethod
-    def make_unique(userService: UserService, userServiceInstance: services.UserService, state: str):
+    def make_unique(userservice: UserService, userservice_instance: services.UserService, state: str):
         """
         This method ensures that there will be only one delayedtask related to the userService indicated
         """
-        DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userService.uuid)
-        UserServiceOpChecker.state_updater(userService, userServiceInstance, state)
+        DelayedTaskRunner.runner().remove(USERSERVICE_TAG + userservice.uuid)
+        UserServiceOpChecker.state_updater(userservice, userservice_instance, state)
 
     @staticmethod
-    def state_updater(userService: UserService, userServiceInstance: services.UserService, state: str):
+    def state_updater(userservice: UserService, userservice_instance: services.UserService, state: str):
         """
         Checks the value returned from invocation to publish or checkPublishingState, updating the servicePoolPub database object
         Return True if it has to continue checking, False if finished
         """
         try:
             # Fills up basic data
-            userService.unique_id = userServiceInstance.get_unique_id()  # Updates uniqueId
-            userService.friendly_name = (
-                userServiceInstance.get_name()
+            userservice.unique_id = userservice_instance.get_unique_id()  # Updates uniqueId
+            userservice.friendly_name = (
+                userservice_instance.get_name()
             )  # And name, both methods can modify serviceInstance, so we save it later
-            userService.save(update_fields=['unique_id', 'friendly_name'])
+            userservice.save(update_fields=['unique_id', 'friendly_name'])
 
             updater = typing.cast(
                 type[StateUpdater],
@@ -237,39 +239,39 @@ class UserServiceOpChecker(DelayedTask):
                     State.PREPARING: UpdateFromPreparing,
                     State.REMOVING: UpdateFromRemoving,
                     State.CANCELING: UpdateFromCanceling,
-                }.get(State.from_str(userService.state), UpdateFromOther),
+                }.get(State.from_str(userservice.state), UpdateFromOther),
             )
 
             logger.debug(
                 'Updating %s from %s with updater %s and state %s',
-                userService.friendly_name,
-                State.from_str(userService.state).literal,
+                userservice.friendly_name,
+                State.from_str(userservice.state).literal,
                 updater,
                 state,
             )
 
-            updater(userService, userServiceInstance).run(state)
+            updater(userservice, userservice_instance).run(state)
 
         except Exception as e:
             logger.exception('Checking service state')
-            log.log(userService, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
-            userService.set_state(State.ERROR)
-            userService.save(update_fields=['data'])
+            log.log(userservice, log.LogLevel.ERROR, f'Exception: {e}', log.LogSource.INTERNAL)
+            userservice.set_state(State.ERROR)
+            userservice.save(update_fields=['data'])
 
     @staticmethod
-    def check_later(userService, ci):
+    def check_later(userservice: 'UserService', instance: 'services.UserService'):
         """
-        Inserts a task in the delayedTaskRunner so we can check the state of this publication
+        Inserts a task in the delayedTaskRunner so we can check the state of this service later
         @param dps: Database object for ServicePoolPublication
         @param pi: Instance of Publication manager for the object
         """
         # Do not add task if already exists one that updates this service
-        if DelayedTaskRunner.runner().tag_exists(USERSERVICE_TAG + userService.uuid):
+        if DelayedTaskRunner.runner().tag_exists(USERSERVICE_TAG + userservice.uuid):
             return
         DelayedTaskRunner.runner().insert(
-            UserServiceOpChecker(userService),
-            ci.suggested_delay,
-            USERSERVICE_TAG + userService.uuid,
+            UserServiceOpChecker(userservice),
+            instance.suggested_delay,
+            USERSERVICE_TAG + userservice.uuid,
         )
 
     def run(self) -> None:

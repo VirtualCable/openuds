@@ -86,7 +86,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
             states = [State.PREPARING, State.USABLE, State.REMOVING, State.REMOVABLE]
         return Q(state__in=states)
 
-    def _check_if_max_user_services_reached(self, service_pool: ServicePool) -> None:
+    def _check_user_services_limit_reached(self, service_pool: ServicePool) -> None:
         """
         Checks if max_user_services for the service has been reached, and, if so,
         raises an exception that no more services of this kind can be reached
@@ -110,10 +110,10 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         serviceInstance = service.get_instance()
         # Early return, so no database count is needed
-        if serviceInstance.max_user_services == consts.UNLIMITED:
+        if serviceInstance.userservices_limit == consts.UNLIMITED:
             return False
 
-        if self.get_existing_user_services(service) >= serviceInstance.max_user_services:
+        if self.get_existing_user_services(service) >= serviceInstance.userservices_limit:
             return True
 
         return False
@@ -123,7 +123,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         Private method to instatiate a cache element at database with default states
         """
         # Checks if max_user_services has been reached and if so, raises an exception
-        self._check_if_max_user_services_reached(publication.deployed_service)
+        self._check_user_services_limit_reached(publication.deployed_service)
         now = sql_datetime()
         return publication.userServices.create(
             cache_level=cacheLevel,
@@ -141,7 +141,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         """
         Private method to instatiate an assigned element at database with default state
         """
-        self._check_if_max_user_services_reached(publication.deployed_service)
+        self._check_user_services_limit_reached(publication.deployed_service)
         now = sql_datetime()
         return publication.userServices.create(
             cache_level=0,
@@ -161,7 +161,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         There is cases where deployed services do not have publications (do not need them), so we need this method to create
         an UserService with no publications, and create them from an ServicePool
         """
-        self._check_if_max_user_services_reached(service_pool)
+        self._check_user_services_limit_reached(service_pool)
         now = sql_datetime()
         return service_pool.userServices.create(
             cache_level=0,
@@ -296,7 +296,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(cache, cacheInstance, state)
 
-    def cancel(self, user_service: UserService) -> UserService:
+    def cancel(self, user_service: UserService) -> None:
         """
         Cancels an user service creation
         @return: the Uservice canceling
@@ -325,9 +325,8 @@ class UserServiceManager(metaclass=singleton.Singleton):
             # opchecker will set state to "removable"
             UserServiceOpChecker.make_unique(user_service, user_service_instance, state)
 
-        return user_service
 
-    def remove(self, userservice: UserService) -> UserService:
+    def remove(self, userservice: UserService) -> None:
         """
         Removes a uService element
         """
@@ -347,9 +346,7 @@ class UserServiceManager(metaclass=singleton.Singleton):
         # Data will be serialized on makeUnique process
         UserServiceOpChecker.make_unique(userservice, userServiceInstance, state)
 
-        return userservice
-
-    def remove_or_cancel(self, user_service: UserService):
+    def remove_or_cancel(self, user_service: UserService) -> None:
         if user_service.is_usable() or State.from_str(user_service.state).is_removable():
             return self.remove(user_service)
 
@@ -629,9 +626,9 @@ class UserServiceManager(metaclass=singleton.Singleton):
         This method is used by UserService when a request for setInUse(False) is made
         This checks that the service can continue existing or not
         """
-        osManager = user_service.deployed_service.osmanager
+        osmanager = user_service.deployed_service.osmanager
         # If os manager says "machine is persistent", do not try to delete "previous version" assigned machines
-        doPublicationCleanup = True if not osManager else not osManager.get_instance().is_persistent()
+        doPublicationCleanup = True if not osmanager else not osmanager.get_instance().is_persistent()
 
         if doPublicationCleanup:
             remove = False

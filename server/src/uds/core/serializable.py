@@ -38,7 +38,7 @@ class Serializable:
     """
     This class represents the interface that all serializable objects must provide.
 
-    Every single serializable class must implement marshall & unmarshall methods. Also, the class must allow
+    Every single serializable class must implement marshal & unmarshal methods. Also, the class must allow
     to be initialized without parameters, so we can:
     - Initialize the object with default values
     - Read values from seralized data
@@ -109,7 +109,7 @@ class Serializable:
         self.unmarshal(base64.b64decode(data))
 
     # For remarshalling purposes
-    # These allows us to faster migration of old data formats to new ones
+    # These facilitates a faster migration of old data formats to new ones
     # alowing us to remove old format support as soon as possible
     def flag_for_upgrade(self, value: bool = True) -> None:
         """

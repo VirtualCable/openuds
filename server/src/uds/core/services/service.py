@@ -124,11 +124,11 @@ class Service(Module):
     # : for providing user services. This attribute can be set here or
     # : modified at instance level, core will access always to it using an instance object.
     # : Note: you can override this value on service instantiation by providing a "maxService":
-    # :      - If maxServices is an integer, it will be used as max_user_services
-    # :      - If maxServices is a gui.NumericField, it will be used as max_user_services (.num() will be called)
-    # :      - If maxServices is a callable, it will be called and the result will be used as max_user_services
-    # :      - If maxServices is None, max_user_services will be set to consts.UNLIMITED (as default)
-    max_user_services: int = consts.UNLIMITED
+    # :      - If userservices_limit is an integer, it will be used as max_user_services
+    # :      - If userservices_limit is a gui.NumericField, it will be used as max_user_services (.num() will be called)
+    # :      - If userservices_limit is a callable, it will be called and the result will be used as max_user_services
+    # :      - If userservices_limit is None, max_user_services will be set to consts.UNLIMITED (as default)
+    userservices_limit: int = consts.UNLIMITED
 
     # : If this item "has overrided fields", on deployed service edition, defined keys will overwrite defined ones
     # : That is, this Dicionary will OVERWRITE fields ON ServicePool (normally cache related ones) dictionary from a REST api save invocation!!
@@ -271,34 +271,34 @@ class Service(Module):
         return True
 
     def unmarshal(self, data: bytes) -> None:
-        # In fact, we will not unmarshall anything here, but setup maxDeployed
-        # if maxServices exists and it is a gui.NumericField
-        # Invoke base unmarshall, so "gui fields" gets loaded from data
+        # In fact, we will not unmarshal anything here, but setup maxDeployed
+        # if services_limit exists and it is a gui.NumericField
+        # Invoke base unmarshal, so "gui fields" gets loaded from data
         super().unmarshal(data)
 
-        if hasattr(self, 'maxServices'):
+        if hasattr(self, 'services_limit'):
             # Fix self "max_user_services" value after loading fields
             try:
-                maxServices = getattr(self, 'maxServices', None)
-                if isinstance(maxServices, int):
-                    self.max_user_services = maxServices
-                elif isinstance(maxServices, gui.NumericField):
-                    self.max_user_services = maxServices.as_int()
+                services_limit = getattr(self, 'services_limit', None)
+                if isinstance(services_limit, int):
+                    self.userservices_limit = services_limit
+                elif isinstance(services_limit, gui.NumericField):
+                    self.userservices_limit = services_limit.as_int()
                     # For 0 values on max_user_services field, we will set it to UNLIMITED
-                    if self.max_user_services == 0:
-                        self.max_user_services = consts.UNLIMITED
-                elif callable(maxServices):
-                    self.max_user_services = maxServices()
+                    if self.userservices_limit == 0:
+                        self.userservices_limit = consts.UNLIMITED
+                elif callable(services_limit):
+                    self.userservices_limit = services_limit()
                 else:
-                    self.max_user_services = consts.UNLIMITED
+                    self.userservices_limit = consts.UNLIMITED
             except Exception:
-                self.max_user_services = consts.UNLIMITED
+                self.userservices_limit = consts.UNLIMITED
 
             # Ensure that max_user_services is not negative
-            if self.max_user_services < 0:
-                self.max_user_services = consts.UNLIMITED
+            if self.userservices_limit < 0:
+                self.userservices_limit = consts.UNLIMITED
 
-        # Keep untouched if maxServices is not present
+        # Keep untouched if services_limit is not present
 
     def user_services_for_assignation(self, **kwargs) -> collections.abc.Iterable['UserService']:
         """

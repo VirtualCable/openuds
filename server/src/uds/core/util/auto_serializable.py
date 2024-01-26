@@ -60,6 +60,8 @@ from cryptography import fernet
 from django.conf import settings
 from requests import get
 
+from uds.core.serializable import Serializable
+
 
 # pylint: disable=too-few-public-methods
 class _Unassigned:
@@ -77,9 +79,9 @@ logger = logging.getLogger(__name__)
 # Constants
 
 # Headers for the serialized data
-HEADER_BASE: typing.Final[bytes] = b'MGB1'
-HEADER_COMPRESSED: typing.Final[bytes] = b'MGZ1'
-HEADER_ENCRYPTED: typing.Final[bytes] = b'MGE1'
+HEADER_BASE: typing.Final[bytes] = b'MGBAS1'
+HEADER_COMPRESSED: typing.Final[bytes] = b'MGZAS1'
+HEADER_ENCRYPTED: typing.Final[bytes] = b'MGEAS1'
 
 # Size of crc32 checksum
 CRC_SIZE: typing.Final[int] = 4
@@ -99,6 +101,19 @@ def fernet_key(crypt_key: bytes) -> str:
     """
     # Generate an URL-Safe base64 encoded 32 bytes key for Fernet
     return base64.b64encode(hashlib.sha256(crypt_key).digest()).decode()
+
+# checker for autoserializable data
+def is_autoserializable_data(data: bytes) -> bool:
+    """Check if data is is from an autoserializable class
+
+    Args:
+        data: Data to check
+
+    Returns:
+        True if data is autoserializable, False otherwise
+    """
+    return data[: len(HEADER_BASE)] == HEADER_BASE
+
 
 
 # pylint: disable=unnecessary-dunder-call
@@ -212,16 +227,16 @@ class BoolField(_SerializableField[bool]):
         self.__set__(instance, data == b'1')
 
 
-class ListField(_SerializableField[list]):
+class ListField(_SerializableField[list[T]]):
     """List field
 
     Note:
-        All elements in the list must be serializable.
+        All elements in the list must be serializable in JSON, but can be of different types.
     """
 
     def __init__(
         self,
-        default: typing.Union[list, collections.abc.Callable[[], list]] = lambda: [],
+        default: typing.Union[list[T], collections.abc.Callable[[], list[T]]] = lambda: [],
     ):
         super().__init__(list, default)
 
@@ -323,7 +338,7 @@ class _FieldNameSetter(type):
         return super().__new__(mcs, name, bases, attrs)
 
 
-class AutoSerializable(metaclass=_FieldNameSetter):
+class AutoSerializable(Serializable, metaclass=_FieldNameSetter):
     """This class allows the automatic serialization of fields in a class.
 
     Example:
@@ -366,7 +381,6 @@ class AutoSerializable(metaclass=_FieldNameSetter):
         """
         return bytes(a ^ b for a, b in zip(data, itertools.cycle(header)))
 
-    @typing.final
     def marshal(self) -> bytes:
         # Iterate over own members and extract fields
         fields = {}
@@ -396,8 +410,8 @@ class AutoSerializable(metaclass=_FieldNameSetter):
         # Return data processed with header
         return header + self.process_data(header, data)
 
-    # final method, do not override
-    @typing.final
+    # Only override this for checking if data is valid
+    # and, alternatively, retrieve it from a different source
     def unmarshal(self, data: bytes) -> None:
         # Check header
         if data[: len(HEADER_BASE)] != HEADER_BASE:

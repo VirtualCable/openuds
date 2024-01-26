@@ -56,15 +56,15 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         # Default values for max
         TestProvider.concurrent_creation_limit = 1000
         TestProvider.concurrent_removal_limit = 1000
-        TestServiceCache.max_user_services = 1000
-        TestServiceNoCache.max_user_services = 1000
+        TestServiceCache.userservices_limit = 1000
+        TestServiceNoCache.userservices_limit = 1000
 
         ServiceCacheUpdater.setup()
         userService = services_fixtures.create_cache_testing_userservices()[0]
         self.servicePool = userService.deployed_service
         userService.delete()  # empty all
 
-    def numberOfRemovingOrCanced(self) -> int:
+    def removing_or_canceled_count(self) -> int:
         return self.servicePool.userServices.filter(
             state__in=[State.REMOVABLE, State.CANCELED]
         ).count()
@@ -74,7 +74,7 @@ class ServiceCacheUpdaterTest(UDSTestCase):
             updater = ServiceCacheUpdater(Environment.get_temporary_environment())
             updater.run()
         # Test user service will cancel automatically so it will not get in "removable" state (on remove start, it will tell it has been removed)
-        return self.servicePool.userServices.count() - self.numberOfRemovingOrCanced()
+        return self.servicePool.userServices.count() - self.removing_or_canceled_count()
 
     def setCache(
         self,
@@ -113,10 +113,10 @@ class ServiceCacheUpdaterTest(UDSTestCase):
 
         self.setCache(cache=10)
         self.assertEqual(
-            self.runCacheUpdater(mustDelete), self.servicePool.initial_srvs
+            self.runCacheUpdater(mustDelete*2), self.servicePool.initial_srvs
         )
 
-        self.assertEqual(self.numberOfRemovingOrCanced(), mustDelete)
+        self.assertEqual(self.removing_or_canceled_count(), mustDelete)
 
     def test_max(self) -> None:
         self.setCache(initial=100, cache=10, max=50)
@@ -154,8 +154,9 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         TestProvider.concurrent_creation_limit = 0
         self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 1)
 
-    def test_provider_removing_limits(self) -> None:
-        TestProvider.concurrent_removal_limit = 10
+    def test_provider_no_removing_limits(self) -> None:
+        # Removing limits are appliend in fact when EXECUTING removal, not when marking as removable
+        # Note that "cancel" also overpass this limit
         self.setCache(initial=0, cache=50, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
@@ -164,21 +165,22 @@ class ServiceCacheUpdaterTest(UDSTestCase):
         # Now set cache to a lower value
         self.setCache(cache=10)
 
-        # Execute updater, must remove 10 elements (concurrent_removal_limit)
-        self.assertEqual(self.runCacheUpdater(10), 40)
+        # Execute updater, must remove as long as runs elements (we use cancle here, so it will be removed)
+        # removes until 10, that is the limit due to cache
+        self.assertEqual(self.runCacheUpdater(50), 10)
 
     def test_service_max_deployed(self) -> None:
-        TestServiceCache.max_user_services = 22
+        TestServiceCache.userservices_limit = 22
 
         self.setCache(initial=100, cache=100, max=50)
 
         # Try to "overcreate" cache elements but provider limits it to 10
-        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.max_user_services)
+        self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), TestServiceCache.userservices_limit)
 
         # Delete all userServices
         self.servicePool.userServices.all().delete()
 
         # We again allow masUserServices to be zero (meaning that no service will be created)
         # This allows us to "honor" some external providers that, in some cases, will not have services available...
-        TestServiceCache.max_user_services = 0
+        TestServiceCache.userservices_limit = 0
         self.assertEqual(self.runCacheUpdater(self.servicePool.cache_l1_srvs + 10), 0)

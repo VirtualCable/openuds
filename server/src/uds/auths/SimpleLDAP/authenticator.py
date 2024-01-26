@@ -1,6 +1,6 @@
 # pylint: disable=no-member   # ldap module gives errors to pylint
 #
-# Copyright (c) 2012-2021 Virtual Cable S.L.U.
+# Copyright (c) 2024 Virtual Cable S.L.U.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
-@author: Adolfo Gómez, dkmaster at dkmon dot com
+Author: Adolfo Gómez, dkmaster at dkmon dot com
 '''
 import logging
 import typing
@@ -40,7 +40,7 @@ from django.utils.translation import gettext_noop as _
 from uds.core import auths, types, consts, exceptions
 from uds.core.auths.auth import log_login
 from uds.core.ui import gui
-from uds.core.util import ldaputil
+from uds.core.util import fields, ldaputil
 
 # Not imported at runtime, just for type checking
 if typing.TYPE_CHECKING:
@@ -68,7 +68,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tooltip=_('Ldap port (usually 389 for non ssl and 636 for ssl)'),
         required=True,
     )
-    ssl = gui.CheckBoxField(
+    use_ssl = gui.CheckBoxField(
         label=_('Use SSL'),
         order=3,
         tooltip=_('If checked, the connection will be ssl, using port 636 instead of 389'),
@@ -89,23 +89,10 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=types.ui.Tab.CREDENTIALS,
     )
-    timeout = gui.NumericField(
-        length=3,
-        label=_('Timeout'),
-        default=10,
-        order=10,
-        tooltip=_('Timeout in seconds of connection to LDAP'),
-        required=True,
-        min_value=1,
-        tab=types.ui.Tab.ADVANCED,
-    )
-    verifySsl = gui.CheckBoxField(
-        label=_('Verify SSL'),
-        default=True,
-        order=11,
-        tooltip=_('If checked, SSL verification will be enforced. If not, SSL verification will be disabled'),
-        tab=types.ui.Tab.ADVANCED,
-    )
+    
+    timeout = fields.timeout_field(tab=False, default=10)  # Use "main tab"
+    verify_ssl = fields.verify_ssl_field(order=11)
+    
     certificate = gui.TextField(
         length=8192,
         lines=4,
@@ -116,7 +103,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         tab=types.ui.Tab.ADVANCED,
     )
 
-    ldapBase = gui.TextField(
+    ldap_base = gui.TextField(
         length=64,
         label=_('Base'),
         order=30,
@@ -124,7 +111,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    userClass = gui.TextField(
+    user_class = gui.TextField(
         length=64,
         label=_('User class'),
         default='posixAccount',
@@ -133,7 +120,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    userIdAttr = gui.TextField(
+    user_id_attr = gui.TextField(
         length=64,
         label=_('User Id Attr'),
         default='uid',
@@ -142,7 +129,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    userNameAttr = gui.TextField(
+    username_attr = gui.TextField(
         length=64,
         label=_('User Name Attr'),
         default='uid',
@@ -151,7 +138,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    groupClass = gui.TextField(
+    group_class = gui.TextField(
         length=64,
         label=_('Group class'),
         default='posixGroup',
@@ -160,7 +147,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    groupIdAttr = gui.TextField(
+    group_id_attr = gui.TextField(
         length=64,
         label=_('Group Id Attr'),
         default='cn',
@@ -169,7 +156,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    memberAttr = gui.TextField(
+    member_attr = gui.TextField(
         length=64,
         label=_('Group membership attr'),
         default='memberUid',
@@ -178,7 +165,7 @@ class SimpleLDAPAuthenticator(auths.Authenticator):
         required=True,
         tab=_('Ldap info'),
     )
-    mfaAttr = gui.TextField(
+    mfa_attribute = gui.TextField(
         length=2048,
         lines=2,
         label=_('MFA attribute'),

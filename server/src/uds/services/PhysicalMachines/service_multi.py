@@ -239,7 +239,7 @@ class IPMachinesService(IPServiceBase):
                 self._useRandomIp = gui.as_bool(values[6].decode())
 
         # Sets maximum services for this
-        self.max_user_services = len(self._ips)
+        self.userservices_limit = len(self._ips)
 
     def canBeUsed(self, locked: typing.Optional[typing.Union[str, int]], now: int) -> int:
         # If _maxSessionForMachine is 0, it can be used only if not locked

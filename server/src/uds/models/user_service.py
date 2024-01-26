@@ -146,7 +146,10 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         """
         Returns True if this service is to be removed
         """
-        return self.properties.get('destroy_after', False) in ('y', True)  # Compare to str to keep compatibility with old values
+        return self.properties.get('destroy_after', False) in (
+            'y',
+            True,
+        )  # Compare to str to keep compatibility with old values
 
     @destroy_after.setter
     def destroy_after(self, value: bool) -> None:
@@ -201,19 +204,19 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         Raises:
         """
         # We get the service instance, publication instance and osmanager instance
-        servicePool = self.deployed_service
-        if not servicePool.service:
+        servicepool = self.deployed_service
+        if not servicepool.service:
             raise Exception('Service not found')
-        serviceInstance = servicePool.service.get_instance()
-        if serviceInstance.needs_manager is False or not servicePool.osmanager:
-            osmanagerInstance = None
+        service_instance = servicepool.service.get_instance()
+        if service_instance.needs_manager is False or not servicepool.osmanager:
+            osmanager_instance = None
         else:
-            osmanagerInstance = servicePool.osmanager.get_instance()
+            osmanager_instance = servicepool.osmanager.get_instance()
         # We get active publication
-        publicationInstance = None
+        publication_instance = None
         try:  # We may have deleted publication...
             if self.publication is not None:
-                publicationInstance = self.publication.get_instance()
+                publication_instance = self.publication.get_instance()
         except Exception:
             # The publication to witch this item points to, does not exists
             self.publication = None  # type: ignore
@@ -221,20 +224,29 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 'Got exception at get_instance of an userService %s (seems that publication does not exists!)',
                 self,
             )
-        if serviceInstance.user_service_type is None:
+        if service_instance.user_service_type is None:
             raise Exception(
-                f'Class {serviceInstance.__class__.__name__} needs user_service_type but it is not defined!!!'
+                f'Class {service_instance.__class__.__name__} needs user_service_type but it is not defined!!!'
             )
-        us = serviceInstance.user_service_type(
+        us = service_instance.user_service_type(
             self.get_environment(),
-            service=serviceInstance,
-            publication=publicationInstance,
-            osmanager=osmanagerInstance,
+            service=service_instance,
+            publication=publication_instance,
+            osmanager=osmanager_instance,
             uuid=self.uuid,
         )
-        if self.data != '' and self.data is not None:
+        if self.data:
             try:
                 us.deserialize(self.data)
+
+                # if needs upgrade, we will serialize it again to ensure it is upgraded ASAP
+                # Eventually, it will be upgraded anyway, but could take too much time...
+                # This way, if we instantiate it, it will be upgraded
+                if us.needs_upgrade():
+                    self.data = us.serialize()
+                    self.save(update_fields=['data'])
+                    us.flag_for_upgrade(False)
+
             except Exception:
                 logger.exception(
                     'Error unserializing %s//%s : %s',
@@ -244,7 +256,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
                 )
         return us
 
-    def update_data(self, userServiceInstance: 'services.UserService'):
+    def update_data(self, userservice_instance: 'services.UserService'):
         """
         Updates the data field with the serialized :py:class:uds.core.services.UserDeployment
 
@@ -253,7 +265,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
 
         :note: This method SAVES the updated record, just updates the field
         """
-        self.data = userServiceInstance.serialize()
+        self.data = userservice_instance.serialize()
         self.save(update_fields=['data'])
 
     def get_name(self) -> str:
@@ -347,9 +359,9 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         return self.deployed_service.osmanager
 
     def get_osmanager_instance(self) -> typing.Optional['osmanagers.OSManager']:
-        osManager = self.getOsManager()
-        if osManager:
-            return osManager.get_instance()
+        osmanager = self.getOsManager()
+        if osmanager:
+            return osmanager.get_instance()
         return None
 
     def needsOsManager(self) -> bool:
@@ -544,6 +556,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
         # pylint: disable=import-outside-toplevel
         from uds.core.managers.user_service import UserServiceManager
 
+        # Cancel is a "forced" operation, so they are not checked against limits
         UserServiceManager().cancel(self)
 
     def remove_or_cancel(self) -> None:
@@ -597,7 +610,7 @@ class UserService(UUIDModel, properties.PropertiesMixin):
     @property
     def actor_version(self) -> str:
         return self.properties.get('actor_version') or '0.0.0'
-    
+
     @actor_version.setter
     def actor_version(self, version: str) -> None:
         self.properties['actor_version'] = version

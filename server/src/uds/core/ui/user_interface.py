@@ -1488,6 +1488,7 @@ class UserInterface(metaclass=UserInterfaceAbstract):
         # Any unexpected type will raise an exception
         # Note that currently, we will store old field name on db
         # to allow "backwards" migration if needed, but will be removed on a future version
+        # this allows even several name changes, as long as we keep "old_field_name" as original one...
         fields = [
             (field.old_field_name() or field_name, field.type.name, FIELDS_ENCODERS[field.type](field))
             for field_name, field in self._gui.items()

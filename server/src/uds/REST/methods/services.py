@@ -72,7 +72,7 @@ class Services(DetailHandler):  # pylint: disable=too-many-public-methods
         return {
             'icon': info.icon64().replace('\n', ''),
             'needs_publication': info.publication_type is not None,
-            'max_deployed': info.max_user_services,
+            'max_deployed': info.userservices_limit,
             'uses_cache': info.uses_cache and info.overrided_fields is None,
             'uses_cache_l2': info.uses_cache_l2,
             'cache_tooltip': _(info.cache_tooltip),

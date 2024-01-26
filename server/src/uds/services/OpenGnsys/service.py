@@ -144,7 +144,7 @@ class OGService(services.Service):
         ),
     )
 
-    maxServices = gui.NumericField(
+    services_limit = gui.NumericField(
         order=4,
         label=_("Max. Allowed services"),
         min_value=0,
@@ -153,7 +153,8 @@ class OGService(services.Service):
         readonly=False,
         tooltip=_('Maximum number of allowed services (0 or less means no limit)'),
         required=True,
-        tab=types.ui.Tab.ADVANCED
+        tab=types.ui.Tab.ADVANCED,
+        old_field_name='maxServices',
     )
 
     ov = gui.HiddenField(value=None)

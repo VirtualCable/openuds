@@ -77,8 +77,8 @@ class AutoAttributes(Serializable):
     attrs: collections.abc.MutableMapping[str, Attribute]
 
     def __init__(self, **kwargs):
+        self.attrs = {}  # Ensure attrs is created BEFORE calling super, that can contain _ variables
         Serializable.__init__(self)
-        self.attrs = {}
         self.declare(**kwargs)
 
     def __getattribute__(self, name) -> typing.Any:
@@ -97,7 +97,7 @@ class AutoAttributes(Serializable):
         for key, typ in kwargs.items():
             d[key] = Attribute(typ)
         self.attrs = d
-
+        
     def marshal(self) -> bytes:
         return b'v1' + pickle.dumps(self.attrs)
 
