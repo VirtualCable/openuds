@@ -37,11 +37,10 @@ import collections.abc
 
 from django.utils.translation import gettext as _
 
-from uds.core import types
+from uds.core import types, consts
 from uds.core.util import log, ensure
 from uds.core.util.model import process_uuid
 from uds.models import Calendar, CalendarAction, CalendarAccess, ServicePool
-from uds.models.calendar_action import CALENDAR_ACTION_DICT
 from uds.REST.model import DetailHandler
 
 # Not imported at runtime, just for type checking
@@ -59,7 +58,7 @@ class AccessCalendars(DetailHandler):
     def as_dict(item: 'CalendarAccess'):
         return {
             'id': item.uuid,
-            'calendarId': item.calendar.uuid,
+            'calendar_id': item.calendar.uuid,
             'calendar': item.calendar.name,
             'access': item.access,
             'priority': item.priority,
@@ -94,7 +93,7 @@ class AccessCalendars(DetailHandler):
 
         try:
             calendar: Calendar = Calendar.objects.get(
-                uuid=process_uuid(self._params['calendarId'])
+                uuid=process_uuid(self._params['calendar_id'])
             )
             access: str = self._params['access'].upper()
             if access not in (ALLOW, DENY):
@@ -144,20 +143,21 @@ class ActionsCalendars(DetailHandler):
 
     @staticmethod
     def as_dict(item: 'CalendarAction') -> dict[str, typing.Any]:
-        action = CALENDAR_ACTION_DICT.get(item.action, {})
+        action = consts.calendar.CALENDAR_ACTION_DICT.get(item.action)
+        descrption = action.get('description') if action is not None else ''
         params = json.loads(item.params)
         return {
             'id': item.uuid,
-            'calendarId': item.calendar.uuid,
+            'calendar_id': item.calendar.uuid,
             'calendar': item.calendar.name,
             'action': item.action,
-            'actionDescription': action.get('description'),
-            'atStart': item.at_start,
-            'eventsOffset': item.events_offset,
+            'description': descrption,
+            'at_start': item.at_start,
+            'events_offset': item.events_offset,
             'params': params,
             'pretty_params': item.prettyParams,
-            'nextExecution': item.next_execution,
-            'lastExecution': item.last_execution,
+            'next_execution': item.next_execution,
+            'last_execution': item.last_execution,
         }
 
     def get_items(self, parent: 'Model', item: typing.Optional[str]):
@@ -178,12 +178,12 @@ class ActionsCalendars(DetailHandler):
     def get_fields(self, parent: 'Model') -> list[typing.Any]:
         return [
             {'calendar': {'title': _('Calendar')}},
-            {'actionDescription': {'title': _('Action')}},
+            {'description': {'title': _('Action')}},
             {'pretty_params': {'title': _('Parameters')}},
-            {'atStart': {'title': _('Relative to')}},
-            {'eventsOffset': {'title': _('Time offset')}},
-            {'nextExecution': {'title': _('Next execution'), 'type': 'datetime'}},
-            {'lastExecution': {'title': _('Last execution'), 'type': 'datetime'}},
+            {'at_start': {'title': _('Relative to')}},
+            {'events_offset': {'title': _('Time offset')}},
+            {'next_execution': {'title': _('Next execution'), 'type': 'datetime'}},
+            {'last_execution': {'title': _('Last execution'), 'type': 'datetime'}},
         ]
 
     def save_item(self, parent: 'Model', item: typing.Optional[str]) -> None:
@@ -191,18 +191,18 @@ class ActionsCalendars(DetailHandler):
         # If already exists
         uuid = process_uuid(item) if item is not None else None
 
-        calendar = Calendar.objects.get(uuid=process_uuid(self._params['calendarId']))
+        calendar = Calendar.objects.get(uuid=process_uuid(self._params['calendar_id']))
         action = self._params['action'].upper()
-        if action not in CALENDAR_ACTION_DICT:
+        if action not in consts.calendar.CALENDAR_ACTION_DICT:
             raise self.invalid_request_response()
-        eventsOffset = int(self._params['eventsOffset'])
-        atStart = self._params['atStart'] not in ('false', False, '0', 0)
+        events_offset = int(self._params['events_offset'])
+        at_start = self._params['at_start'] not in ('false', False, '0', 0)
         params = json.dumps(self._params['params'])
 
-        # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, eventsOffset, atStart, params))
+        # logger.debug('Got parameters: {} {} {} {} ----> {}'.format(calendar, action, events_offset, at_start, params))
         logStr = (
             f'{"Added" if uuid is None else "Updated"} scheduled action '
-            f'{calendar.name},{action},{eventsOffset},{"start" if atStart else "end"},{params} '
+            f'{calendar.name},{action},{events_offset},{"start" if at_start else "end"},{params} '
             f'by {self._user.pretty_name}'
         )
 
@@ -211,8 +211,8 @@ class ActionsCalendars(DetailHandler):
             calAction.calendar = calendar  # type: ignore
             calAction.service_pool = parent  # type: ignore
             calAction.action = action
-            calAction.at_start = atStart
-            calAction.events_offset = eventsOffset
+            calAction.at_start = at_start
+            calAction.events_offset = events_offset
             calAction.params = params
             calAction.save()
         else:
@@ -220,8 +220,8 @@ class ActionsCalendars(DetailHandler):
                 calendar=calendar,
                 service_pool=parent,
                 action=action,
-                at_start=atStart,
-                events_offset=eventsOffset,
+                at_start=at_start,
+                events_offset=events_offset,
                 params=params,
             )
 

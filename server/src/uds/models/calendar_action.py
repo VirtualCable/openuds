@@ -44,7 +44,7 @@ from django.db import models
 from uds.core.util import calendar
 from uds.core.util import log
 from uds.core.managers.user_service import UserServiceManager
-from uds.core import services, types
+from uds.core import services, types, consts
 
 from .calendar import Calendar
 from .uuid_model import UUIDModel
@@ -57,171 +57,6 @@ from .authenticator import Authenticator
 
 
 logger = logging.getLogger(__name__)
-
-# Current posible actions
-#
-CALENDAR_ACTION_PUBLISH: dict[str, typing.Any] = {
-    'id': 'PUBLISH',
-    'description': _('Publish'),
-    'params': (),
-}
-CALENDAR_ACTION_CACHE_L1: dict[str, typing.Any] = {
-    'id': 'CACHEL1',
-    'description': _('Set cache size'),
-    'params': (
-        {
-            'type': 'numeric',
-            'name': 'size',
-            'description': _('Cache size'),
-            'default': '1',
-        },
-    ),
-}
-CALENDAR_ACTION_CACHE_L2: dict[str, typing.Any] = {
-    'id': 'CACHEL2',
-    'description': _('Set L2 cache size'),
-    'params': (
-        {
-            'type': 'numeric',
-            'name': 'size',
-            'description': _('Cache L2 size'),
-            'default': '1',
-        },
-    ),
-}
-CALENDAR_ACTION_INITIAL: dict[str, typing.Any] = {
-    'id': 'INITIAL',
-    'description': _('Set initial services'),
-    'params': (
-        {
-            'type': 'numeric',
-            'name': 'size',
-            'description': _('Initial services'),
-            'default': '1',
-        },
-    ),
-}
-CALENDAR_ACTION_MAX: dict[str, typing.Any] = {
-    'id': 'MAX',
-    'description': _('Set maximum number of services'),
-    'params': (
-        {
-            'type': 'numeric',
-            'name': 'size',
-            'description': _('Maximum services'),
-            'default': '10',
-        },
-    ),
-}
-CALENDAR_ACTION_ADD_TRANSPORT: dict[str, typing.Any] = {
-    'id': 'ADD_TRANSPORT',
-    'description': _('Add a transport'),
-    'params': (
-        {
-            'type': 'transport',
-            'name': 'transport',
-            'description': _('Transport'),
-            'default': '',
-        },
-    ),
-}
-CALENDAR_ACTION_DEL_TRANSPORT: dict[str, typing.Any] = {
-    'id': 'REMOVE_TRANSPORT',
-    'description': _('Remove a transport'),
-    'params': (
-        {
-            'type': 'transport',
-            'name': 'transport',
-            'description': _('Trasport'),
-            'default': '',
-        },
-    ),
-}
-CALENDAR_ACTION_DEL_ALL_TRANSPORTS: dict[str, typing.Any] = {
-    'id': 'REMOVE_ALL_TRANSPORTS',
-    'description': _('Remove all transports'),
-    'params': (),
-}
-CALENDAR_ACTION_ADD_GROUP: dict[str, typing.Any] = {
-    'id': 'ADD_GROUP',
-    'description': _('Add a group'),
-    'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
-}
-CALENDAR_ACTION_DEL_GROUP: dict[str, typing.Any] = {
-    'id': 'REMOVE_GROUP',
-    'description': _('Remove a group'),
-    'params': ({'type': 'group', 'name': 'group', 'description': _('Group'), 'default': ''},),
-}
-CALENDAR_ACTION_DEL_ALL_GROUPS: dict[str, typing.Any] = {
-    'id': 'REMOVE_ALL_GROUPS',
-    'description': _('Remove all groups'),
-    'params': (),
-}
-CALENDAR_ACTION_IGNORE_UNUSED: dict[str, typing.Any] = {
-    'id': 'IGNORE_UNUSED',
-    'description': _('Sets the ignore unused'),
-    'params': (
-        {
-            'type': 'bool',
-            'name': 'state',
-            'description': _('Ignore assigned and unused'),
-            'default': False,
-        },
-    ),
-}
-CALENDAR_ACTION_REMOVE_USERSERVICES: dict[str, typing.Any] = {
-    'id': 'REMOVE_USERSERVICES',
-    'description': _('Remove ALL assigned user service. USE WITH CAUTION!'),
-    'params': (),
-}
-
-CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES: dict[str, typing.Any] = {
-    'id': 'STUCK_USERSERVICES',
-    'description': _('Remove OLD assigned user services.'),
-    'params': (
-        {
-            'type': 'numeric',
-            'name': 'hours',
-            'description': _('Time in hours before considering the user service is OLD.'),
-            'default': '72',
-        },
-    ),
-}
-
-CALENDAR_ACTION_CLEAN_CACHE_L1: dict[str, typing.Any] = {
-    'id': 'CLEAN_CACHE_L1',
-    'description': _('Clean L1 cache'),
-    'params': (),
-}
-
-CALENDAR_ACTION_CLEAN_CACHE_L2: dict[str, typing.Any] = {
-    'id': 'CLEAN_CACHE_L2',
-    'description': _('Clean L2 cache'),
-    'params': (),
-}
-
-
-CALENDAR_ACTION_DICT: dict[str, dict] = {
-    c['id']: c
-    for c in (
-        CALENDAR_ACTION_PUBLISH,
-        CALENDAR_ACTION_CACHE_L1,
-        CALENDAR_ACTION_CACHE_L2,
-        CALENDAR_ACTION_INITIAL,
-        CALENDAR_ACTION_MAX,
-        CALENDAR_ACTION_ADD_TRANSPORT,
-        CALENDAR_ACTION_DEL_TRANSPORT,
-        CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
-        CALENDAR_ACTION_ADD_GROUP,
-        CALENDAR_ACTION_DEL_GROUP,
-        CALENDAR_ACTION_DEL_ALL_GROUPS,
-        CALENDAR_ACTION_IGNORE_UNUSED,
-        CALENDAR_ACTION_REMOVE_USERSERVICES,
-        CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
-        CALENDAR_ACTION_CLEAN_CACHE_L1,
-        CALENDAR_ACTION_CLEAN_CACHE_L2,
-    )
-}
 
 
 class CalendarAction(UUIDModel):
@@ -253,7 +88,7 @@ class CalendarAction(UUIDModel):
     @property
     def prettyParams(self) -> str:
         try:
-            ca = CALENDAR_ACTION_DICT.get(self.action)
+            ca = consts.calendar.CALENDAR_ACTION_DICT.get(self.action)
 
             if ca is None:
                 raise Exception(f'Action {self.action} not found')
@@ -333,7 +168,9 @@ class CalendarAction(UUIDModel):
 
         def remove_userservices() -> None:
             # 1.- Remove usable assigned services (Ignore "creating ones", just for created)
-            for userService in self.service_pool.assigned_user_services().filter(state=types.states.State.USABLE):
+            for userService in self.service_pool.assigned_user_services().filter(
+                state=types.states.State.USABLE
+            ):
                 userService.remove()
 
         def remove_stuck_userservice() -> None:
@@ -358,7 +195,7 @@ class CalendarAction(UUIDModel):
                 UserServiceManager().get_cache_state_filter(
                     self.service_pool,
                     services.UserService.L1_CACHE
-                    if self.action == CALENDAR_ACTION_CLEAN_CACHE_L1['id']
+                    if self.action == consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']
                     else services.UserService.L2_CACHE,
                 )
             ):
@@ -367,7 +204,7 @@ class CalendarAction(UUIDModel):
         def add_del_transport() -> None:
             try:
                 t = Transport.objects.get(uuid=params['transport'])
-                if self.action == CALENDAR_ACTION_ADD_TRANSPORT['id']:
+                if self.action == consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT['id']:
                     self.service_pool.transports.add(t)
                 else:
                     self.service_pool.transports.remove(t)
@@ -380,7 +217,7 @@ class CalendarAction(UUIDModel):
             try:
                 auth, grp = params['group'].split('@')
                 grp = Authenticator.objects.get(uuid=auth).groups.get(uuid=grp)
-                if self.action == CALENDAR_ACTION_ADD_GROUP['id']:
+                if self.action == consts.calendar.CALENDAR_ACTION_ADD_GROUP['id']:
                     self.service_pool.assignedGroups.add(grp)
                 else:
                     self.service_pool.assignedGroups.remove(grp)
@@ -389,34 +226,37 @@ class CalendarAction(UUIDModel):
 
         actions: collections.abc.Mapping[str, tuple[collections.abc.Callable[[], None], bool]] = {
             # Id, actions (lambda), saveServicePool (bool)
-            CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
-            CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),
-            CALENDAR_ACTION_INITIAL['id']: (set_initial, True),
-            CALENDAR_ACTION_MAX['id']: (set_max, True),
-            CALENDAR_ACTION_PUBLISH['id']: (publish, False),
-            CALENDAR_ACTION_IGNORE_UNUSED['id']: (ignores_unused, True),
-            CALENDAR_ACTION_REMOVE_USERSERVICES['id']: (remove_userservices, False),
-            CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id']: (
+            consts.calendar.CALENDAR_ACTION_CACHE_L1['id']: (set_l1_cache, True),
+            consts.calendar.CALENDAR_ACTION_CACHE_L2['id']: (set_l2_cache, True),
+            consts.calendar.CALENDAR_ACTION_INITIAL['id']: (set_initial, True),
+            consts.calendar.CALENDAR_ACTION_MAX['id']: (set_max, True),
+            consts.calendar.CALENDAR_ACTION_PUBLISH['id']: (publish, False),
+            consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED['id']: (ignores_unused, True),
+            consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES['id']: (remove_userservices, False),
+            consts.calendar.CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES['id']: (
                 remove_stuck_userservice,
                 False,
             ),
-            CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id']: (del_all_transport, False),
-            CALENDAR_ACTION_DEL_ALL_GROUPS['id']: (del_all_groups, False),
-            CALENDAR_ACTION_CLEAN_CACHE_L1['id']: (clear_cache, False),
-            CALENDAR_ACTION_CLEAN_CACHE_L2['id']: (clear_cache, False),
-            CALENDAR_ACTION_ADD_TRANSPORT['id']: (
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_TRANSPORTS['id']: (del_all_transport, False),
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_GROUPS['id']: (del_all_groups, False),
+            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L1['id']: (clear_cache, False),
+            consts.calendar.CALENDAR_ACTION_CLEAN_CACHE_L2['id']: (clear_cache, False),
+            consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT['id']: (
                 add_del_transport,
                 False,
             ),
-            CALENDAR_ACTION_DEL_TRANSPORT['id']: (
+            consts.calendar.CALENDAR_ACTION_DEL_TRANSPORT['id']: (
                 add_del_transport,
                 False,
             ),
-            CALENDAR_ACTION_ADD_GROUP['id']: (add_del_group, False),
-            CALENDAR_ACTION_DEL_GROUP['id']: (add_del_group, False),
+            consts.calendar.CALENDAR_ACTION_ADD_GROUP['id']: (add_del_group, False),
+            consts.calendar.CALENDAR_ACTION_DEL_GROUP['id']: (add_del_group, False),
         }
 
         fncAction, saveServicePool = actions.get(self.action, (None, False))
+
+        action = consts.calendar.CALENDAR_ACTION_DICT.get(self.action)
+        description = self.action if not action else action.get('description', self.action)
 
         if fncAction:
             try:
@@ -426,25 +266,23 @@ class CalendarAction(UUIDModel):
                     self.service_pool.save()
 
                 self.service_pool.log(
-                    f'Executed action {CALENDAR_ACTION_DICT.get(self.action, {}).get("description", self.action)} [{self.prettyParams}]',
+                    f'Executed action {description} [{self.prettyParams}]',
                     level=log.LogLevel.INFO,
                 )
             except Exception:
-                self.service_pool.log(
-                    f'Error executing scheduled action {CALENDAR_ACTION_DICT.get(self.action, {}).get("description", self.action)} [{self.prettyParams}]'
-                )
+                self.service_pool.log(f'Error executing scheduled action {description} [{self.prettyParams}]')
                 logger.exception('Error executing scheduled action')
         else:
             self.service_pool.log(f'Scheduled action not executed because is not supported: {self.action}')
 
-        # On save, will regenerate nextExecution
+        # On save, will regenerate next_execution
         if save:
             self.save()
 
     def save(self, *args, **kwargs):
-        lastExecution = self.last_execution or sql_datetime()
+        last_execution = self.last_execution or sql_datetime()
         possibleNext = calendar.CalendarChecker(self.calendar).next_event(
-            check_from=lastExecution - self.offset, start_event=self.at_start
+            check_from=last_execution - self.offset, start_event=self.at_start
         )
         if possibleNext:
             self.next_execution = possibleNext + self.offset

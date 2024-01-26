@@ -39,7 +39,7 @@ from django.db.models import Count, Q
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from uds.core import types, exceptions
+from uds.core import types, exceptions, consts
 from uds.core.managers.user_service import UserServiceManager
 from uds.core.ui import gui
 from uds.core.consts.images import DEFAULT_THUMB_BASE64
@@ -48,22 +48,6 @@ from uds.core.util.config import GlobalConfig
 from uds.core.util.model import sql_datetime, process_uuid
 from uds.core.types.states import State
 from uds.models import Account, Image, OSManager, Service, ServicePool, ServicePoolGroup, User
-from uds.models.calendar_action import (
-    CALENDAR_ACTION_ADD_GROUP,
-    CALENDAR_ACTION_ADD_TRANSPORT,
-    CALENDAR_ACTION_CACHE_L1,
-    CALENDAR_ACTION_CACHE_L2,
-    CALENDAR_ACTION_DEL_ALL_GROUPS,
-    CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
-    CALENDAR_ACTION_DEL_GROUP,
-    CALENDAR_ACTION_DEL_TRANSPORT,
-    CALENDAR_ACTION_IGNORE_UNUSED,
-    CALENDAR_ACTION_INITIAL,
-    CALENDAR_ACTION_MAX,
-    CALENDAR_ACTION_PUBLISH,
-    CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
-    CALENDAR_ACTION_REMOVE_USERSERVICES,
-)
 from uds.REST.model import ModelHandler
 
 from .op_calendars import AccessCalendars, ActionsCalendars
@@ -631,35 +615,35 @@ class ServicesPools(ModelHandler):
     #  Returns the action list based on current element, for calendar
     def actionsList(self, item: 'Model') -> typing.Any:
         item = ensure.is_instance(item, ServicePool)
-        validActions: tuple[dict, ...] = ()
+        validActions: tuple[types.calendar.CalendarAction, ...] = ()
         itemInfo = item.service.get_type()  # type: ignore
         if itemInfo.uses_cache is True:
             validActions += (
-                CALENDAR_ACTION_INITIAL,
-                CALENDAR_ACTION_CACHE_L1,
-                CALENDAR_ACTION_MAX,
+                consts.calendar.CALENDAR_ACTION_INITIAL,
+                consts.calendar.CALENDAR_ACTION_CACHE_L1,
+                consts.calendar.CALENDAR_ACTION_MAX,
             )
             if itemInfo.uses_cache_l2 is True:
-                validActions += (CALENDAR_ACTION_CACHE_L2,)
+                validActions += (consts.calendar.CALENDAR_ACTION_CACHE_L2,)
 
         if itemInfo.publication_type is not None:
-            validActions += (CALENDAR_ACTION_PUBLISH,)
+            validActions += (consts.calendar.CALENDAR_ACTION_PUBLISH,)
 
         # Transport & groups actions
         validActions += (
-            CALENDAR_ACTION_ADD_TRANSPORT,
-            CALENDAR_ACTION_DEL_TRANSPORT,
-            CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
-            CALENDAR_ACTION_ADD_GROUP,
-            CALENDAR_ACTION_DEL_GROUP,
-            CALENDAR_ACTION_DEL_ALL_GROUPS,
+            consts.calendar.CALENDAR_ACTION_ADD_TRANSPORT,
+            consts.calendar.CALENDAR_ACTION_DEL_TRANSPORT,
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_TRANSPORTS,
+            consts.calendar.CALENDAR_ACTION_ADD_GROUP,
+            consts.calendar.CALENDAR_ACTION_DEL_GROUP,
+            consts.calendar.CALENDAR_ACTION_DEL_ALL_GROUPS,
         )
 
         # Advanced actions
         validActions += (
-            CALENDAR_ACTION_IGNORE_UNUSED,
-            CALENDAR_ACTION_REMOVE_USERSERVICES,
-            CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
+            consts.calendar.CALENDAR_ACTION_IGNORE_UNUSED,
+            consts.calendar.CALENDAR_ACTION_REMOVE_USERSERVICES,
+            consts.calendar.CALENDAR_ACTION_REMOVE_STUCK_USERSERVICES,
         )
         return validActions
 

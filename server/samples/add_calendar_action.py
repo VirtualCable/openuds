@@ -119,9 +119,9 @@ async def add_calendar_action(
     data = {
         'action': action,
         'calendar': '',
-        'calendarId': calendar_id,
-        'atStart': at_start,
-        'eventsOffset': events_offset,
+        'calendar_id': calendar_id,
+        'at_start': at_start,
+        'events_offset': events_offset,
         'params': params or {},
     }
 
@@ -157,7 +157,7 @@ async def main():
         # request_pools()  # Not logged in, this will generate an error
         await login(session, options.auth, options.username, options.password)
 
-        # {"action":"PUBLISH","calendar":"","calendarId":"370b5b59-687e-5a94-8c30-1c9eda6ac005","atStart":true,"eventsOffset":222,"params":{}}
+        # {"action":"PUBLISH","calendar":"","calendar_id":"370b5b59-687e-5a94-8c30-1c9eda6ac005","at_start":true,"events_offset":222,"params":{}}
         await add_calendar_action(
             session,
             service_pool_id=options.service_pool_id,
@@ -173,7 +173,7 @@ async def main():
         #     action='PUBLISH',
         #     calendar_id='c1221a6d-3848-5fa3-ae98-172662c0f554',
         #     at_start=True,
-        #     eventsOffset=222,
+        #     events_offset=222,
         # )
 
         await logout(session)

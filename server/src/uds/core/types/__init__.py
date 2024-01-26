@@ -33,6 +33,7 @@ Author: Adolfo Gómez, dkmaster at dkmon dot com
 # pylint: disable=unused-import
 from . import (
     auth,
+    calendar,
     connections,
     errors,
     os,
