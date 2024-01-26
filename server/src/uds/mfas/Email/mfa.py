@@ -101,7 +101,7 @@ class EmailMFA(mfas.MFA):
         tab=_('SMTP Server'),
     )
 
-    emailSubject = gui.TextField(
+    email_subject = gui.TextField(
         length=128,
         default='Verification Code',
         label=_('Subject'),
@@ -109,26 +109,29 @@ class EmailMFA(mfas.MFA):
         tooltip=_('Subject of the email'),
         required=True,
         tab=_('Config'),
+        old_field_name='emailSubject',
     )
 
-    fromEmail = gui.TextField(
+    from_email = gui.TextField(
         length=128,
         label=_('From Email'),
         order=11,
         tooltip=_('Email address that will be used as sender'),
         required=True,
         tab=_('Config'),
+        old_field_name='fromEmail',
     )
 
-    enableHTML = gui.CheckBoxField(
+    enable_html = gui.CheckBoxField(
         label=_('Enable HTML'),
         order=13,
         tooltip=_('Enable HTML in emails'),
         default=True,
         tab=_('Config'),
+        old_field_name='enableHTML',
     )
 
-    allowLoginWithoutMFA = gui.ChoiceField(
+    allow_login_without_mfa = gui.ChoiceField(
         label=_('Policy for users without MFA support'),
         order=31,
         default='0',
@@ -136,6 +139,7 @@ class EmailMFA(mfas.MFA):
         required=True,
         choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
+        old_field_name='allowLoginWithoutMFA',
     )
 
     networks = gui.MultiChoiceField(
@@ -145,10 +149,14 @@ class EmailMFA(mfas.MFA):
         order=32,
         tooltip=_('Networks for Email OTP authentication'),
         required=False,
+        choices=lambda: [
+            gui.choice_item(v.uuid, v.name)  # type: ignore
+            for v in models.Network.objects.all().order_by('name')
+        ],
         tab=_('Config'),
     )
 
-    mailTxt = gui.TextField(
+    mail_txt = gui.TextField(
         length=1024,
         label=_('Mail text'),
         order=33,
@@ -160,9 +168,10 @@ class EmailMFA(mfas.MFA):
         required=True,
         default='',
         tab=_('Config'),
+        old_field_name='mailTxt',
     )
 
-    mailHtml = gui.TextField(
+    mail_html = gui.TextField(
         length=1024,
         label=_('Mail HTML'),
         order=34,
@@ -175,6 +184,7 @@ class EmailMFA(mfas.MFA):
         required=False,
         default='',
         tab=_('Config'),
+        old_field_name='mailHtml',
     )
 
     def initialize(self, values: 'Module.ValuesType' = None):
@@ -200,32 +210,26 @@ class EmailMFA(mfas.MFA):
             self.hostname.value = validators.validate_fqdn(host)
 
         # now check from email and to email
-        self.fromEmail.value = validators.validate_email(self.fromEmail.value)
+        self.from_email.value = validators.validate_email(self.from_email.value)
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         return gettext('Check your mail. You will receive an email with the verification code')
 
-    def init_gui(self) -> None:
-        # Populate the networks list
-        self.networks.set_choices(
-            [gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
-        )
-
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
-        return mfas.LoginAllowed.check_action(self.allowLoginWithoutMFA.value, request, self.networks.value)
+        return mfas.LoginAllowed.check_action(self.allow_login_without_mfa.value, request, self.networks.value)
 
     def label(self) -> str:
         return 'OTP received via email'
 
     @decorators.threaded
-    def doSendCode(self, request: 'ExtendedHttpRequest', identifier: str, code: str) -> None:
+    def send_verification_code_thread(self, request: 'ExtendedHttpRequest', identifier: str, code: str) -> None:
         # Send and email with the notification
         with self.login() as smtp:
             try:
                 # Create message container
                 msg = MIMEMultipart('alternative')
-                msg['Subject'] = self.emailSubject.as_clean_str()
-                msg['From'] = self.fromEmail.as_clean_str()
+                msg['Subject'] = self.email_subject.as_clean_str()
+                msg['From'] = self.from_email.as_clean_str()
                 msg['To'] = identifier
 
                 msg.attach(
@@ -235,7 +239,7 @@ class EmailMFA(mfas.MFA):
                     )
                 )
 
-                if self.enableHTML.value:
+                if self.enable_html.value:
                     msg.attach(
                         MIMEText(
                             f'<p>A login attemt has been made from <b>{request.ip}</b>.</p><p>To continue, provide the verification code <b>{code}</b></p>',
@@ -243,7 +247,7 @@ class EmailMFA(mfas.MFA):
                         )
                     )
 
-                smtp.sendmail(self.fromEmail.value, identifier, msg.as_string())
+                smtp.sendmail(self.from_email.value, identifier, msg.as_string())
             except smtplib.SMTPException as e:
                 logger.error('Error sending email: %s', e)
                 raise
@@ -256,7 +260,7 @@ class EmailMFA(mfas.MFA):
         identifier: str,
         code: str,
     ) -> mfas.MFA.RESULT:
-        self.doSendCode(
+        self.send_verification_code_thread(
             request,
             identifier,
             code,

@@ -99,16 +99,17 @@ class RadiusOTP(mfas.MFA):
             'If checked, all users must enter OTP, so authentication step is skipped.'
         ),
     )
-    nasIdentifier = gui.TextField(
+    nas_identifier = gui.TextField(
         length=64,
         label=_('NAS Identifier'),
         default='uds-server',
         order=5,
         tooltip=_('NAS Identifier for Radius Server'),
         required=True,
+        old_field_name='nasIdentifier',
     )
 
-    responseErrorAction = gui.ChoiceField(
+    response_error_action = gui.ChoiceField(
         label=_('Radius OTP communication error action'),
         order=31,
         default='0',
@@ -116,6 +117,7 @@ class RadiusOTP(mfas.MFA):
         required=True,
         choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
+        old_field_name='responseErrorAction',
     )
 
     networks = gui.MultiChoiceField(
@@ -132,7 +134,7 @@ class RadiusOTP(mfas.MFA):
         tab=_('Config'),
     )
 
-    allowLoginWithoutMFA = gui.ChoiceField(
+    allow_login_without_mfa = gui.ChoiceField(
         label=_('User without defined OTP in server'),
         order=33,
         default='0',
@@ -140,21 +142,22 @@ class RadiusOTP(mfas.MFA):
         required=True,
         choices=mfas.LoginAllowed.choices(),
         tab=_('Config'),
+        old_field_name='allowLoginWithoutMFA',
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    def radiusClient(self) -> client.RadiusClient:
+    def radius_client(self) -> client.RadiusClient:
         """Return a new radius client ."""
         return client.RadiusClient(
             self.server.value,
             self.secret.value.encode(),
             authPort=self.port.as_int(),
-            nasIdentifier=self.nasIdentifier.value,
+            nasIdentifier=self.nas_identifier.value,
         )
 
-    def checkResult(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
+    def check_result(self, action: str, request: 'ExtendedHttpRequest') -> mfas.MFA.RESULT:
         if mfas.LoginAllowed.check_action(action, request, self.networks.value):
             return mfas.MFA.RESULT.OK
         raise Exception('User not allowed to login')
@@ -192,11 +195,11 @@ class RadiusOTP(mfas.MFA):
 
         web_pwd = web_password(request)
         try:
-            connection = self.radiusClient()
+            connection = self.radius_client()
             auth_reply = connection.authenticate_challenge(username, password=web_pwd)
         except Exception as e:
             logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-            if not mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
+            if not mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.networks.value):
                 raise Exception(_('Radius OTP connection error')) from e
             logger.warning(
                 "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",
@@ -213,7 +216,7 @@ class RadiusOTP(mfas.MFA):
             )
             # we should not be here: not synchronized user password between auth server and radius server
             # What do we want to do here ??
-            return self.checkResult(self.responseErrorAction.value, request)
+            return self.check_result(self.response_error_action.value, request)
 
         if auth_reply.otp_needed == NOT_NEEDED:
             logger.warning(
@@ -221,7 +224,7 @@ class RadiusOTP(mfas.MFA):
                 username,
                 request.ip,
             )
-            return self.checkResult(self.allowLoginWithoutMFA.value, request)
+            return self.check_result(self.allow_login_without_mfa.value, request)
 
         # Store state for later use, related to this user
         request.session[client.STATE_VAR_NAME] = auth_reply.state or b''
@@ -253,7 +256,7 @@ class RadiusOTP(mfas.MFA):
 
             web_pwd = web_password(request)
             try:
-                connection = self.radiusClient()
+                connection = self.radius_client()
                 state = request.session.get(client.STATE_VAR_NAME, b'')
                 if state:
                     # Remove state from session
@@ -264,7 +267,7 @@ class RadiusOTP(mfas.MFA):
                     auth_reply = connection.authenticate_challenge(username, password=web_pwd, otp=code)
             except Exception as e:
                 logger.error("Exception found connecting to Radius OTP %s: %s", e.__class__, e)
-                if mfas.LoginAllowed.check_action(self.responseErrorAction.value, request, self.networks.value):
+                if mfas.LoginAllowed.check_action(self.response_error_action.value, request, self.networks.value):
                     raise Exception(_('Radius OTP connection error')) from e
                 logger.warning(
                     "Radius OTP connection error: Allowing access to user [%s] from IP [%s] without OTP",

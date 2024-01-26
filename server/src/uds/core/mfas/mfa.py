@@ -30,19 +30,22 @@
 """
 @author: Adolfo Gómez, dkmaster at dkmon dot com
 """
+import collections.abc
 import datetime
-import random
 import enum
 import hashlib
 import logging
+import random
 import typing
-import collections.abc
 
-from django.utils.translation import gettext_noop as _, gettext
+from django.utils.translation import gettext
+from django.utils.translation import gettext_noop as _
+
+from uds.core import exceptions, types
+from uds.core.ui import gui
 from uds.core.module import Module
 from uds.core.util.model import sql_datetime
 from uds.models.network import Network
-from uds.core import exceptions
 
 if typing.TYPE_CHECKING:
     from uds.core.environment import Environment
@@ -71,10 +74,7 @@ class LoginAllowed(enum.StrEnum):
         def checkIp() -> bool:
             if networks is None:
                 return True  # No network restrictions, so we allow
-            return any(
-                i.contains(request.ip)
-                for i in Network.objects.filter(uuid__in=list(networks))
-            )
+            return any(i.contains(request.ip) for i in Network.objects.filter(uuid__in=list(networks)))
 
         if isinstance(action, str):
             action = LoginAllowed(action)
@@ -87,17 +87,18 @@ class LoginAllowed(enum.StrEnum):
         }.get(action, False)
 
     @staticmethod
-    def choices() -> collections.abc.Mapping[str, str]:
-        return {
-            LoginAllowed.ALLOWED.value: gettext('Allow user login'),
-            LoginAllowed.DENIED.value: gettext('Deny user login'),
-            LoginAllowed.ALLOWED_IF_IN_NETWORKS.value: gettext(
-                'Allow user to login if it IP is in the networks list'
-            ),
-            LoginAllowed.DENIED_IF_IN_NETWORKS.value: gettext(
-                'Deny user to login if it IP is in the networks list'
-            ),
-        }
+    def choices(include_global_allowance: bool = True) -> list[types.ui.ChoiceItem]:
+        result = [
+            gui.choice_item(LoginAllowed.ALLOWED.value, gettext('Allow user login')),
+            gui.choice_item(LoginAllowed.DENIED.value, gettext('Deny user login'))
+        ] if include_global_allowance else []
+        result.extend(
+            [
+                gui.choice_item(LoginAllowed.ALLOWED_IF_IN_NETWORKS.value, gettext('Allow user to login if it IP is in the networks list')),
+                gui.choice_item(LoginAllowed.DENIED_IF_IN_NETWORKS.value, gettext('Deny user to login if it IP is in the networks list')),
+            ]
+        )
+        return result
 
 
 class MFA(Module):
@@ -179,9 +180,7 @@ class MFA(Module):
         """
         return ''
 
-    def allow_login_without_identifier(
-        self, request: 'ExtendedHttpRequest'
-    ) -> typing.Optional[bool]:
+    def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         """
         If this method returns True, an user that has no "identifier" is allowed to login without MFA
         Returns:
@@ -319,11 +318,7 @@ class MFA(Module):
             data = self._get_data(request, userId)
             if data and len(data) == 2:
                 validity = validity if validity is not None else 0
-                if (
-                    validity > 0
-                    and data[0] + datetime.timedelta(seconds=validity)
-                    < sql_datetime()
-                ):
+                if validity > 0 and data[0] + datetime.timedelta(seconds=validity) < sql_datetime():
                     # if it is no more valid, raise an error
                     # Remove stored code and raise error
                     self._remove_data(request, userId)
@@ -358,6 +353,4 @@ class MFA(Module):
         if not mfa:
             raise exceptions.auth.MFAError('MFA is not enabled')
 
-        return hashlib.sha3_256(
-            (user.name + (user.uuid or '') + mfa.uuid).encode()
-        ).hexdigest()
+        return hashlib.sha3_256((user.name + (user.uuid or '') + mfa.uuid).encode()).hexdigest()

@@ -74,7 +74,7 @@ class TOTP_MFA(mfas.MFA):
         readonly=True,  # This is not editable, as it is used to generate the QR code. Once generated, it can't be changed
     )
 
-    validWindow = gui.NumericField(
+    valid_window = gui.NumericField(
         length=2,
         label=_('Valid Window'),
         default=1,
@@ -84,6 +84,7 @@ class TOTP_MFA(mfas.MFA):
         tooltip=_('Number of valid codes before and after the current one'),
         required=True,
         tab=_('Config'),
+        old_field_name='validWindow',
     )
     networks = gui.MultiChoiceField(
         label=_('TOTP networks'),
@@ -92,26 +93,20 @@ class TOTP_MFA(mfas.MFA):
         order=32,
         tooltip=_('Users within these networks will not be asked for OTP'),
         required=False,
+        choices=lambda: [
+            gui.choice_item(v.uuid, v.name)  # type: ignore
+            for v in models.Network.objects.all().order_by('name')
+        ],
         tab=_('Config'),
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    @classmethod
-    def initClassGui(cls) -> None:
-        # Populate the networks list
-        cls.networks.set_choices(
-            [
-                gui.choice_item(v.uuid, v.name)  # type: ignore
-                for v in models.Network.objects.all().order_by('name')
-            ]
-        )
-
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return None
 
-    def askForOTP(self, request: 'ExtendedHttpRequest') -> bool:
+    def ask_for_otp(self, request: 'ExtendedHttpRequest') -> bool:
         """
         Check if we need to ask for OTP for a given user
 
@@ -124,25 +119,25 @@ class TOTP_MFA(mfas.MFA):
     def label(self) -> str:
         return gettext('Authentication Code')
 
-    def _userData(self, userId: str) -> tuple[str, bool]:
+    def _user_data(self, userId: str) -> tuple[str, bool]:
         # Get data from storage related to this user
         # Data contains the secret and if the user has already logged in already some time
         # so we show the QR code only once
         data: typing.Optional[tuple[str, bool]] = self.storage.get_unpickle(userId)
         if data is None:
             data = (pyotp.random_base32(), False)
-            self._saveUserData(userId, data)
+            self._save_user_data(userId, data)
         return data
 
-    def _saveUserData(self, userId: str, data: tuple[str, bool]) -> None:
+    def _save_user_data(self, userId: str, data: tuple[str, bool]) -> None:
         self.storage.put_pickle(userId, data)
 
-    def _removeUserData(self, userId: str) -> None:
+    def _remove_user_data(self, userId: str) -> None:
         self.storage.remove(userId)
 
-    def getTOTP(self, userId: str, username: str) -> pyotp.TOTP:
+    def get_totp(self, userId: str, username: str) -> pyotp.TOTP:
         return pyotp.TOTP(
-            self._userData(userId)[0],
+            self._user_data(userId)[0],
             issuer=self.issuer.value,
             name=username,
             interval=TOTP_INTERVAL,
@@ -150,11 +145,11 @@ class TOTP_MFA(mfas.MFA):
 
     def html(self, request: 'ExtendedHttpRequest', userId: str, username: str) -> str:
         # Get data from storage related to this user
-        qrShown = self._userData(userId)[1]
+        qrShown = self._user_data(userId)[1]
         if qrShown:
             return _('Enter your authentication code')
         # Compose the QR code from provisioning URI
-        totp = self.getTOTP(userId, username)
+        totp = self.get_totp(userId, username)
         uri = totp.provisioning_uri()
         img = qrcode.make(uri)
         imgByteStream = io.BytesIO()
@@ -181,7 +176,7 @@ class TOTP_MFA(mfas.MFA):
         identifier: str,
         validity: typing.Optional[int] = None,
     ) -> 'mfas.MFA.RESULT':
-        if self.askForOTP(request) is False:
+        if self.ask_for_otp(request) is False:
             return mfas.MFA.RESULT.ALLOWED
 
         # The data is provided by an external source, so we need to process anything on the request
@@ -196,25 +191,25 @@ class TOTP_MFA(mfas.MFA):
         code: str,
         validity: typing.Optional[int] = None,
     ) -> None:
-        if self.askForOTP(request) is False:
+        if self.ask_for_otp(request) is False:
             return
 
         if self.cache.get(userId + code) is not None:
             raise exceptions.auth.MFAError(gettext('Code is already used. Wait a minute and try again.'))
 
         # Get data from storage related to this user
-        secret, qrShown = self._userData(userId)
+        secret, qrShown = self._user_data(userId)
 
         # Validate code
-        if not self.getTOTP(userId, username).verify(
-            code, valid_window=self.validWindow.as_int(), for_time=sql_datetime()
+        if not self.get_totp(userId, username).verify(
+            code, valid_window=self.valid_window.as_int(), for_time=sql_datetime()
         ):
             raise exceptions.auth.MFAError(gettext('Invalid code'))
 
-        self.cache.put(userId + code, True, self.validWindow.as_int() * (TOTP_INTERVAL + 1))
+        self.cache.put(userId + code, True, self.valid_window.as_int() * (TOTP_INTERVAL + 1))
 
         if qrShown is False:
-            self._saveUserData(userId, (secret, True))  # Update user data to show QR code only once
+            self._save_user_data(userId, (secret, True))  # Update user data to show QR code only once
 
     def reset_data(self, userId: str) -> None:
-        self._removeUserData(userId)
+        self._remove_user_data(userId)

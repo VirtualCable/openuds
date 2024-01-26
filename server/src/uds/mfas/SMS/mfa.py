@@ -254,19 +254,17 @@ class SMSMFA(mfas.MFA):
         order=32,
         tooltip=_('Networks for SMS authentication'),
         required=False,
+        choices=lambda: [
+            gui.choice_item(v.uuid, v.name)  # type: ignore
+            for v in models.Network.objects.all().order_by('name')
+        ],
         tab=_('Config'),
     )
 
     def initialize(self, values: 'Module.ValuesType') -> None:
         return super().initialize(values)
 
-    def init_gui(self) -> None:
-        # Populate the networks list
-        self.networks.set_choices(
-            [gui.choice_item(v.uuid, v.name) for v in models.Network.objects.all().order_by('name') if v.uuid]
-        )
-
-    def composeSmsUrl(
+    def build_sms_url(
         self,
         userId: str,  # pylint: disable=unused-argument
         userName: str,
@@ -281,7 +279,7 @@ class SMSMFA(mfas.MFA):
         url = url.replace('{justUsername}', userName.split('@')[0])
         return url
 
-    def getSession(self) -> requests.Session:
+    def get_session(self) -> requests.Session:
         session = security.secure_requests_session(verify=self.ignoreCertificateErrors.as_bool())
         # 0 means no authentication
         if self.authenticationMethod.value == '1':
@@ -307,7 +305,7 @@ class SMSMFA(mfas.MFA):
     def allow_login_without_identifier(self, request: 'ExtendedHttpRequest') -> typing.Optional[bool]:
         return mfas.LoginAllowed.check_action(self.allowLoginWithoutMFA.value, request, self.networks.value)
 
-    def processResponse(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
+    def process_response(self, request: 'ExtendedHttpRequest', response: requests.Response) -> mfas.MFA.RESULT:
         logger.debug('Response: %s', response)
         if not response.ok:
             logger.warning(
@@ -336,7 +334,7 @@ class SMSMFA(mfas.MFA):
                 return mfas.MFA.RESULT.ALLOWED
         return mfas.MFA.RESULT.OK
 
-    def getData(
+    def _build_data(
         self,
         request: 'ExtendedHttpRequest',  # pylint: disable=unused-argument
         userId: str,  # pylint: disable=unused-argument
@@ -356,16 +354,16 @@ class SMSMFA(mfas.MFA):
             )
         return data.encode(self.encoding.value)
 
-    def sendSMS_GET(
+    def _send_sms_using_get(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,  # pylint: disable=unused-argument
         username: str,  # pylint: disable=unused-argument
         url: str,
     ) -> mfas.MFA.RESULT:
-        return self.processResponse(request, self.getSession().get(url))
+        return self.process_response(request, self.get_session().get(url))
 
-    def sendSMS_POST(
+    def _send_sms_using_post(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,
@@ -375,14 +373,14 @@ class SMSMFA(mfas.MFA):
         phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
-        session = self.getSession()
-        bdata = self.getData(request, userId, username, url, code, phone)
+        session = self.get_session()
+        bdata = self._build_data(request, userId, username, url, code, phone)
         # Add content-length header
         session.headers['Content-Length'] = str(len(bdata))
 
-        return self.processResponse(request, session.post(url, data=bdata))
+        return self.process_response(request, session.post(url, data=bdata))
 
-    def sendSMS_PUT(
+    def _send_sms_using_put(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,
@@ -392,10 +390,10 @@ class SMSMFA(mfas.MFA):
         phone: str,
     ) -> mfas.MFA.RESULT:
         # Compose POST data
-        bdata = self.getData(request, userId, username, url, code, phone)
-        return self.processResponse(request, self.getSession().put(url, data=bdata))
+        bdata = self._build_data(request, userId, username, url, code, phone)
+        return self.process_response(request, self.get_session().put(url, data=bdata))
 
-    def sendSMS(
+    def _send_sms(
         self,
         request: 'ExtendedHttpRequest',
         userId: str,
@@ -403,13 +401,13 @@ class SMSMFA(mfas.MFA):
         code: str,
         phone: str,
     ) -> mfas.MFA.RESULT:
-        url = self.composeSmsUrl(userId, username, code, phone)
+        url = self.build_sms_url(userId, username, code, phone)
         if self.sendingMethod.value == 'GET':
-            return self.sendSMS_GET(request, userId, username, url)
+            return self._send_sms_using_get(request, userId, username, url)
         if self.sendingMethod.value == 'POST':
-            return self.sendSMS_POST(request, userId, username, url, code, phone)
+            return self._send_sms_using_post(request, userId, username, url, code, phone)
         if self.sendingMethod.value == 'PUT':
-            return self.sendSMS_PUT(request, userId, username, url, code, phone)
+            return self._send_sms_using_put(request, userId, username, url, code, phone)
         raise Exception('Unknown SMS sending method')
 
     def label(self) -> str:
@@ -433,4 +431,4 @@ class SMSMFA(mfas.MFA):
             userId,
             identifier,
         )
-        return self.sendSMS(request, userId, username, code, identifier)
+        return self._send_sms(request, userId, username, code, identifier)
